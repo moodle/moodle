@@ -201,7 +201,7 @@ class course_edit_form extends moodleform {
 
         $calendartypes = array();
         $calendartypes[''] = get_string('forceno');
-        $calendartypes += core_calendar\type_factory::get_list_of_calendar_types();
+        $calendartypes += \core_calendar\type_factory::get_list_of_calendar_types();
         $mform->addElement('select', 'calendartype', get_string('forcecalendartype', 'calendar'), $calendartypes);
 
         $options = range(0, 10);

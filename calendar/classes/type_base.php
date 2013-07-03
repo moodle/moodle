@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core_calendar;
+
 /**
  * Defines functions used by calendar type plugins.
  *
@@ -26,7 +28,7 @@
  * @copyright 2008 onwards Foodle Group {@link http://foodle.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class calendar_type_plugin_base {
+abstract class type_base {
 
     /**
      * Returns a list of all the possible days for all months.
@@ -232,73 +234,3 @@ abstract class calendar_type_plugin_base {
         return $getdate;
     }
 }
-
-/**
- * Class calendar_type_plugin_factory.
- *
- * Factory class producing required subclasses of {@link calendar_type_plugin_base}.
- */
-class calendar_type_plugin_factory {
-
-    /**
-     * Returns an instance of the currently used calendar type.
-     *
-     * @return calendar_type_plugin_* the created calendar_type class
-     * @throws coding_exception if the calendar type file could not be loaded
-     */
-    static function factory() {
-        global $CFG;
-
-        $type = self::get_calendar_type();
-        $file = 'calendar/type/' . $type . '/lib.php';
-        $fullpath = $CFG->dirroot . '/' . $file;
-        if (is_readable($fullpath)) {
-            require_once($fullpath);
-            $class = "calendar_type_plugin_$type";
-            return new $class();
-        } else {
-            throw new coding_exception("The calendar type file $file could not be initialised, check that it exists
-                and that the web server has permission to read it.");
-        }
-    }
-
-    /**
-     * Returns a list of calendar typess available for use.
-     *
-     * @return array the list of calendar types
-     */
-    static function get_list_of_calendar_types() {
-        $calendars = array();
-        $calendardirs = core_component::get_plugin_list('calendartype');
-
-        foreach ($calendardirs as $name => $location) {
-            $calendars[$name] = get_string('name', "calendartype_{$name}");
-        }
-
-        return $calendars;
-    }
-
-    /**
-     * Returns the current calendar type in use.
-     *
-     * @return string the current calendar type being used
-     */
-    static function get_calendar_type() {
-        global $CFG, $USER, $SESSION, $COURSE;
-
-        if (!empty($COURSE->id) and $COURSE->id != SITEID and !empty($COURSE->calendartype)) { // Course calendartype can override all other settings for this page.
-            $return = $COURSE->calendartype;
-        } else if (!empty($SESSION->calendartype)) { // Session calendartype can override other settings.
-            $return = $SESSION->calendartype;
-        } else if (!empty($USER->calendartype)) {
-            $return = $USER->calendartype;
-        } else if (!empty($CFG->calendartype)) {
-            $return = $CFG->calendartype;
-        } else {
-            $return = 'gregorian';
-        }
-
-        return $return;
-    }
-}
-

@@ -80,7 +80,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
      */
     function MoodleQuickForm_date_time_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
         // Get the calendar type used - see MDL-18375.
-        $calendartype = calendar_type_plugin_factory::factory();
+        $calendartype = \core_calendar\type_factory::factory();
         $this->_options = array('startyear' => $calendartype->get_min_year(), 'stopyear' => $calendartype->get_max_year(),
                                 'defaulttime' => 0, 'timezone' => 99, 'step' => 5, 'optional' => false);
 
@@ -101,7 +101,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
             }
         }
         // The YUI2 calendar only supports the gregorian calendar type.
-        if (calendar_type_plugin_factory::get_calendar_type() === 'gregorian') {
+        if (\core_calendar\type_factory::get_calendar_type() === 'gregorian') {
             form_init_date_js();
         }
     }
@@ -115,7 +115,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
         global $OUTPUT;
 
         // Get the calendar type used - see MDL-18375.
-        $calendartype = calendar_type_plugin_factory::factory();
+        $calendartype = \core_calendar\type_factory::factory();
         $days = $calendartype->get_days();
         $months = $calendartype->get_months();
         for ($i = $this->_options['startyear']; $i <= $this->_options['stopyear']; $i++) {
@@ -141,7 +141,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
             $this->_elements[] = @MoodleQuickForm::createElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
         }
         // The YUI2 calendar only supports the gregorian calendar type so only display the calendar image if this is being used.
-        if (calendar_type_plugin_factory::get_calendar_type() === 'gregorian') {
+        if (\core_calendar\type_factory::get_calendar_type() === 'gregorian') {
             $this->_elements[] = @MoodleQuickForm::createElement('image', 'calendar', $OUTPUT->pix_url('i/calendar', 'moodle'),
                 array('title' => get_string('calendar', 'calendar'), 'class' => 'visibleifjs'));
         }
@@ -291,7 +291,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
                 }
             }
             // Get the calendar type used - see MDL-18375.
-            $calendartype = core_calendar\type_factory::factory();
+            $calendartype = \core_calendar\type_factory::factory();
             $gregoriandate = $calendartype->convert_to_gregorian($valuearray['year'],
                                                                  $valuearray['month'],
                                                                  $valuearray['day'],

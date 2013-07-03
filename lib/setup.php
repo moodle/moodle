@@ -561,7 +561,6 @@ require_once($CFG->libdir .'/editorlib.php');       // All text editor related f
 require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
 require_once($CFG->libdir .'/modinfolib.php');      // Cached information on course-module instances
 require_once($CFG->dirroot.'/cache/lib.php');       // Cache API
-require_once($CFG->dirroot.'/calendar/type/calendartype.class.php'); // Calendar type.
 
 // make sure PHP is not severly misconfigured
 setup_validate_php_configuration();

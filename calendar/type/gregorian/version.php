@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013062000; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->version   = 2013070300; // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2012120300; // Requires this Moodle version.
 $plugin->component = 'calendartype_gregorian'; // Full name of the plugin (used for diagnostics).

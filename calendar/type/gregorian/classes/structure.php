@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace calendartype_gregorian;
+use core_calendar\type_base;
+
 /**
  * Handles calendar functions for the gregorian calendar.
  *
@@ -24,7 +27,7 @@
  * @copyright 2008 onwards Foodle Group {@link http://foodle.org}
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class calendar_type_plugin_gregorian extends calendar_type_plugin_base {
+class structure extends type_base {
 
     /**
      * Returns a list of all the possible days for all months.
