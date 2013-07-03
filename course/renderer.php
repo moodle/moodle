@@ -325,28 +325,40 @@ class core_course_renderer extends plugin_renderer_base {
      *
      * @see course_get_cm_edit_actions()
      *
-     * @param array $actions array of action_link objects
+     * @param action_link[] $actions Array of action_link objects
+     * @param cm_info $mod The module we are displaying actions for.
+     * @param array $displayoptions additional display options:
+     *     ownerselector => A JS/CSS selector that can be used to find an cm node.
+     *         If specified the owning node will be given the class 'action-menu-shown' when the action
+     *         menu is being displayed.
      * @return string
      */
-    public function course_section_cm_edit_actions($actions) {
-        $this->page->requires->yui_module('moodle-core-actionmenu', 'M.core.actionmenu.init');
-        $output = html_writer::start_tag('span', array('class' => 'actionmenu'));
-        $output .= html_writer::start_tag('span', array('class' => 'statuses'));
+    public function course_section_cm_edit_actions($actions, cm_info $mod = null, $displayoptions = array()) {
+        if (empty($actions)) {
+            return '';
+        }
+
+        if (isset($displayoptions['ownerselector'])) {
+            $ownerselector = $displayoptions['ownerselector'];
+        } else if ($mod) {
+            $ownerselector = '#module-'.$mod->id;
+        } else {
+            debugging('You should upgrade your call to '.__FUNCTION__.' and provide $mod', DEBUG_DEVELOPER);
+            $ownerselector = 'li.activity';
+        }
+
+        $menu = new action_menu();
+        $menu->set_owner_selector($ownerselector);
         foreach ($actions as $action) {
+            $action->add_class('cm-edit-action');
             if ($action->has_class('status')) {
-                $output .= $this->output->render($action);
+                $menu->add_primary_action($action);
+            } else {
+                $menu->add_secondary_action($action);
             }
         }
-        $output .= html_writer::end_tag('span');
-        $output .= html_writer::start_tag('span', array('class' => 'actions'));
-        foreach ($actions as $action) {
-            if (!$action->has_class('status')) {
-                $output .= $this->output->render($action);
-            }
-        }
-        $output .= html_writer::end_tag('span');
-        $output .= html_writer::end_tag('span');
-        return $output;
+        $menu->attributes['class'] .= ' section-cm-edit-actions commands';
+        return $this->render($menu);
     }
 
     /**
@@ -868,7 +880,7 @@ class core_course_renderer extends plugin_renderer_base {
             return $output;
         }
 
-        $indentclasses = 'mod-indent clearfix';
+        $indentclasses = 'mod-indent';
         if (!empty($mod->indent)) {
             $indentclasses .= ' mod-indent-'.$mod->indent;
             if ($mod->indent > 15) {
@@ -901,10 +913,13 @@ class core_course_renderer extends plugin_renderer_base {
             $output .= $contentpart;
         }
 
-        // Display completion first - so it is the right most floated element (and will align vertically).
+        if ($this->page->user_is_editing()) {
+            $editactions = course_get_cm_edit_actions($mod, $mod->indent, $sectionreturn);
+            $output .= ' '. $this->course_section_cm_edit_actions($editactions, $mod, $displayoptions);
+            $output .= $mod->get_after_edit_icons();
+        }
 
         $output .= $this->course_section_cm_completion($course, $completioninfo, $mod, $displayoptions);
-
 
         // If there is content AND a link, then display the content here
         // (AFTER any icons). Otherwise it was displayed before
@@ -914,15 +929,6 @@ class core_course_renderer extends plugin_renderer_base {
 
         // show availability info (if module is not available)
         $output .= $this->course_section_cm_availability($mod, $displayoptions);
-
-        // Now action icons (if editing).
-        if ($this->page->user_is_editing()) {
-            $editactions = course_get_cm_edit_actions($mod, $mod->indent, $sectionreturn);
-            $output .= ' '. $this->course_section_cm_edit_actions($editactions);
-            $output .= $mod->get_after_edit_icons();
-        }
-
-        // Add a clear div so the container includes all floated elements.
 
         $output .= html_writer::end_tag('div'); // $indentclasses
         return $output;

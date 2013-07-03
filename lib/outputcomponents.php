@@ -2879,41 +2879,6 @@ class custom_menu extends custom_menu_item {
 }
 
 /**
- * A list of action links/icons relating to a specific element in the page.
- *
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package core
- */
-class action_menu implements renderable {
-    /** @var string unique id of the tab in this tree, it is used to find selected and/or inactive tabs */
-    var $id;
-    /** @var string title under the link, by default equals to text */
-    var $title;
-    /** @var pix_icon representing the icon to open the menu */
-    var $icon;
-    /** @var array of action_link objects representing a list of menu items */
-    var $items;
-
-    /**
-     * Constructor
-     *
-     * @param string $title title for the menu. Should include the name of the item this menu relates to.
-     * @param string $icon pix_icon for the menu. Defaults to a menu icon.
-     * @param array $items a list of items to put in the menu.
-     */
-    public function __construct($title, $icon = '', $items = array()) {
-        $this->id = html_writer::random_id('actionmenu');
-        $this->icon = $icon;
-        $this->title = $title;
-        $this->items = $items;
-    }
-
-    public function add(action_link $link) {
-        array_push($this->items, $link);
-    }
-}
-
-/**
  * Stores one tab
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -3062,5 +3027,165 @@ class tabtree extends tabobject {
             }
         }
         $this->set_level(0);
+    }
+}
+
+/**
+ * An action menu.
+ *
+ * This action menu component takes a series of primary and secondary actions.
+ * The primary actions are displayed permanently and the secondary attributes are displayed within a drop
+ * down menu.
+ *
+ * @package core
+ * @category output
+ * @copyright 2013 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class action_menu implements renderable {
+
+    /**
+     * An array of primary actions. Please use {@see action_menu::add_primary_action()} to add actions.
+     * @var array
+     */
+    protected $primaryactions = array();
+
+    /**
+     * An array of secondary actions. Please use {@see action_menu::add_secondary_action()} to add actions.
+     * @var array
+     */
+    protected $secondaryactions = array();
+
+    /**
+     * An array of attributes added to the container of the action menu.
+     * Initialised with defaults during construction.
+     * @var array
+     */
+    public $attributes = array();
+    /**
+     * An array of attributes added to the container of the primary actions.
+     * Initialised with defaults during construction.
+     * @var array
+     */
+    public $attributesprimary = array();
+    /**
+     * An array of attributes added to the container of the secondary actions.
+     * Initialised with defaults during construction.
+     * @var array
+     */
+    public $attributessecondary = array();
+
+    /**
+     * If set to true only the icons for primary action_link objects will be displayed.
+     * @var bool
+     */
+    public $displayprimaryiconsonly = true;
+
+    /**
+     * Constructs the action menu with the given items.
+     *
+     * @param array $primaryactions An array of primary actions.
+     * @param array $secondaryactions An array of secondary actions.
+     */
+    public function __construct(array $primaryactions = array(), array $secondaryactions = array()) {
+        static $initialised = 0;
+        $this->attributes = array(
+            'id' => 'action-menu-'.$initialised,
+            'class' => 'moodle-actionmenu',
+            'data-enhance' => 'moodle-core-actionmenu'
+        );
+        $this->attributesprimary = array(
+            'id' => 'action-menu-'.$initialised.'-primary',
+            'class' => 'primary'
+        );
+        $this->attributessecondary = array(
+            'id' => 'action-menu-'.$initialised.'-secondary',
+            'class' => 'secondary',
+            'data-rel' => 'menu-content',
+        );
+        foreach ($primaryactions as $action) {
+            $this->add_primary_action($action);
+        }
+        foreach ($secondaryactions as $action) {
+            $this->add_secondary_action($action);
+        }
+        // We've initialised!
+        $initialised++;
+    }
+
+    /**
+     * Initialises JS required fore the action menu.
+     * The JS is only required once as it manages all action menu's on the page.
+     *
+     * @param moodle_page $page
+     */
+    public function initialise_js(moodle_page $page) {
+        static $initialised = false;
+        if (!$initialised) {
+            $page->requires->yui_module('moodle-core-actionmenu', 'M.core.actionmenu.init');
+            $initialised = true;
+        }
+    }
+
+    /**
+     * Adds a primary action to the action menu.
+     *
+     * @param action_link|string $action
+     */
+    public function add_primary_action($action) {
+        $this->primaryactions[] = $action;
+    }
+
+    /**
+     * Adds a secondary action to the action menu.
+     *
+     * @param action_link|string $action
+     */
+    public function add_secondary_action($action) {
+        $this->secondaryactions[] = $action;
+    }
+
+    /**
+     * Returns the primary actions ready to be rendered.
+     *
+     * @param core_renderer $output The renderer to use for getting icons.
+     * @return array
+     */
+    public function get_primary_actions(core_renderer $output = null) {
+        global $OUTPUT;
+        if ($output === null) {
+            $output = $OUTPUT;
+        }
+        $actions = array();
+        foreach ($this->primaryactions as $action) {
+            if ($this->displayprimaryiconsonly && $action instanceof action_link && $action->icon) {
+                $action->text = null;
+            }
+            $actions[] = $action;
+        }
+        $attributes = array(
+            'type' => 'image',
+            'src' => $output->pix_url('t/contextmenu', 'moodle'),
+            'alt' => get_string('actions', 'moodle'),
+            'class' => 'toggle-display'
+        );
+        $actions[] = html_writer::empty_tag('input', $attributes);
+        return $actions;
+    }
+
+    /**
+     * Returns the secondary actions ready to be rendered.
+     * @return array
+     */
+    public function get_secondary_actions() {
+        return $this->secondaryactions;
+    }
+
+    /**
+     * Sets the selector that should be used to find the owning node of this menu.
+     * @param string $selector A CSS/YUI selector to identify the owner of the menu.
+     */
+    public function set_owner_selector($selector) {
+        $this->attributes['data-owner'] = $selector;
     }
 }

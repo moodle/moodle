@@ -1911,65 +1911,121 @@ div.badge .expireimage {
     margin: 0;
 }
 
-.jsenabled .actions {
-    visibility: hidden;
+.jsenabled .block .editing_move {
+  display:none;
+}
+
+.jsenabled .moodle-actionmenu [data-rel=menu-content] {
+    display:none;
     margin-top: 4px;
 }
 
-a.actionmenu {
+.moodle-actionmenu .toggle-display {
     padding-left: 4px;
-    padding-right: 4px;
-
-/*
-    padding-right: 16px;
-    background-image:url([[pix:t/expanded]]);
-    background-position:100% 30%;
-    background-repeat:no-repeat;
-*/
+    display: none; /** Hidden by default, display none so that we don't take up space. **/
+    cursor:auto;
+}
+.jsenabled .moodle-actionmenu .toggle-display {
+    display: inline; /** JS is enabled, we'll be using it so return display to normal **/
+    .opacity(50);
+}
+.moodle-actionmenu[data-enhanced] .toggle-display {
+  .opacity(100);
 }
 
-.yui3-overlay .actions {
-    visibility: inherit;
-    background-color: @dropdownBackground;
-    border: 1px solid @dropdownBorder;
+.action-menu-shown .moodle-actionmenu[data-enhanced] .toggle-display {
+    background-color: #FFF;
+}
+
+.moodle-actionmenu,
+.moodle-actionmenu .secondary {
+    display: inline-block;
+}
+.jsenabled .moodle-actionmenu,
+.jsenabled .moodle-actionmenu .secondary {
     display: block;
-    padding: 4px;
-    .border-radius(4px);
 }
 
-.autocompletion,
-a.status .iconsmall {
-    padding-left: 8px;
-    padding-right: 8px;
+.moodle-actionmenu .actionlinktext {
+    display:none;
 }
-.statuses .actionlinktext {
-    display: none;
+.jsenabled .moodle-actionmenu[data-enhanced] .actionlinktext  {
+    display:inline;
 }
 
-.yui3-overlay .actions a {
-    display: block;
-    color: @dropdownLinkColor;
-    padding-left: 4px;
-    padding-right: 4px;
-}
-.yui3-overlay .actions a.hidden {
-    display: none;
-}
-.yui3-overlay .actions img {
-    vertical-align: middle;
-}
-.yui3-overlay .actions a:hover,
-.yui3-overlay .actions a:focus
- {
-    color: @dropdownLinkColorHover;
-    background-color: @dropdownLinkBackgroundHover;
-}
-
-.block span.actionmenu {
-    display: block;
+.block .moodle-actionmenu {
     text-align: right;
 }
 
-.dir-rtl .block span.actionmenu {
-    text-align: left;
+.jsenabled #page .moodle-actionmenu .secondary {
+    display: none;
+}
+
+.action-menu-dialogue {
+
+    .moodle-dialogue-wrap {
+          margin-top:4px;
+          margin-left:4px;
+          .border-radius(4px);
+    }
+
+    .moodle-dialogue {
+        .moodle-dialogue-bd {
+            padding: 0;
+        }
+    }
+
+    .moodle-dialogue-hd,
+    .moodle-dialogue-ft {
+        display: none;
+    }
+    a {
+        display: block;
+        color: @dropdownLinkColor;
+        padding:2px 1em 2px 0.5em;
+        &:hover,
+        &:focus {
+            color: @dropdownLinkColorHover;
+            background-color: @dropdownLinkBackgroundHover;
+        }
+        &:first-child {
+            .border-top-radius(4px);
+        }
+        &:last-child {
+            .border-bottom-radius(4px);
+        }
+    }
+    a.hidden {
+        display: none;
+    }
+    img {
+        vertical-align: middle;
+    }
+    .iconsmall {
+        margin-right:8px;
+    }
+}
+
+.safari .action-menu-dialogue .moodle-dialogue {
+    /** Safari specific bug here **/
+    white-space: nowrap;
+}
+
+.dir-rtl {
+    .block .moodle-actionmenu {
+        text-align: left;
+    }
+    .action-menu-dialogue {
+        a {
+            padding:2px 0.5em 2px 1em;
+        }
+        .iconsmall {
+            margin-right:0;
+            margin-left:8px;
+        }
+    }
+    .moodle-actionmenu .toggle-display {
+        padding-left:0;
+        padding-right:4px;
+    }
 }

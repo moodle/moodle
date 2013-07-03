@@ -1808,7 +1808,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('update' => $mod->id)),
             $str->edittitle,
             null,
-            array('class' => 'editing_title', 'title' => $str->edittitle),
+            array('class' => 'editing_title', 'title' => $str->edittitle, 'data-action' => 'edittitle'),
             new pix_icon('t/editstring', $str->edittitle, 'moodle', array('class' => 'iconsmall visibleifjs', 'title' => ''))
         );
     }
@@ -1831,7 +1831,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '-1')),
             $str->moveleft,
             null,
-            array('class' => 'editing_moveleft ' . $hiddenclass, 'title' => $str->moveleft),
+            array('class' => 'editing_moveleft ' . $hiddenclass, 'title' => $str->moveleft, 'data-action' => 'moveleft'),
             new pix_icon($leftarrow, $str->moveleft, 'moodle', array('class' => 'iconsmall', 'title' => ''))
         );
         $hiddenclass = 'hidden';
@@ -1842,7 +1842,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '1')),
             $str->moveright,
             null,
-            array('class' => 'editing_moveright ' . $hiddenclass, 'title' => $str->moveright),
+            array('class' => 'editing_moveright ' . $hiddenclass, 'title' => $str->moveright, 'data-action' => 'moveright'),
             new pix_icon($rightarrow, $str->moveright, 'moodle', array('class' => 'iconsmall', 'title' => ''))
         );
     }
@@ -1853,7 +1853,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('copy' => $mod->id)),
             $str->move,
             null,
-            array('class' => 'editing_move status', 'title' => $str->move),
+            array('class' => 'editing_move status', 'title' => $str->move, 'data-action' => 'move'),
             new pix_icon('t/move', $str->move, 'moodle', array('class' => 'iconsmall', 'title' => ''))
         );
     }
@@ -1864,7 +1864,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('update' => $mod->id)),
             $str->update,
             null,
-            array('class' => 'editing_update', 'title' => $str->update),
+            array('class' => 'editing_update', 'title' => $str->update, 'data-action' => 'update'),
             new pix_icon('t/edit', $str->update, 'moodle', array('class' => 'iconsmall', 'title' => ''))
         );
     }
@@ -1877,7 +1877,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('duplicate' => $mod->id)),
             $str->duplicate,
             null,
-            array('class' => 'editing_duplicate', 'title' => $str->duplicate),
+            array('class' => 'editing_duplicate', 'title' => $str->duplicate, 'data-action' => 'duplicate'),
             new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall', 'title' => ''))
         );
     }
@@ -1888,7 +1888,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('delete' => $mod->id)),
             $str->delete,
             null,
-            array('class' => 'editing_delete', 'title' => $str->delete),
+            array('class' => 'editing_delete', 'title' => $str->delete, 'data-action' => 'delete'),
             new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall', 'title' => ''))
         );
     }
@@ -1900,7 +1900,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 new moodle_url($baseurl, array('hide' => $mod->id)),
                 $str->hide,
                 null,
-                array('class' => 'editing_hide', 'title' => $str->hide),
+                array('class' => 'editing_hide', 'title' => $str->hide, 'data-action' => 'hide'),
                 new pix_icon('t/hide', $str->hide, 'moodle', array('class' => 'iconsmall', 'title' => ''))
             );
             $actions['hide']->add_class('status');
@@ -1909,7 +1909,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 new moodle_url($baseurl, array('show' => $mod->id)),
                 $str->show,
                 null,
-                array('class' => 'editing_show', 'title' => $str->show),
+                array('class' => 'editing_show', 'title' => $str->show, 'data-action' => 'show'),
                 new pix_icon('t/show', $str->show, 'moodle', array('class' => 'iconsmall', 'title' => ''))
             );
             $actions['show']->add_class('status');
@@ -1947,7 +1947,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $groupmode)),
                 $grouptitle,
                 null,
-                array('class' => 'editing_'. $actionname, 'title' => $grouptitle),
+                array('class' => 'editing_'. $actionname, 'title' => $grouptitle, 'data-action' => $actionname, 'data-groupmode' => $groupmode),
                 new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => ''))
             );
         } else {
@@ -1962,7 +1962,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url('/admin/roles/assign.php', array('contextid' => $modcontext->id)),
             $str->assign,
             null,
-            array('class' => 'editing_assign', 'title' => $str->assign),
+            array('class' => 'editing_assign', 'title' => $str->assign, 'data-action' => 'assignroles'),
             new pix_icon('t/assignroles', $str->assign, 'moodle', array('class' => 'iconsmall', 'title' => ''))
         );
     }

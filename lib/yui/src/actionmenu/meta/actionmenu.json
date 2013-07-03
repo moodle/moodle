@@ -2,9 +2,8 @@
   "moodle-core-actionmenu": {
     "requires": [
         "base",
-        "node",
-        "overlay",
-        "event"
+        "event",
+        "moodle-core-notification"
     ]
   }
 }

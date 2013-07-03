@@ -1029,26 +1029,53 @@ class core_renderer extends renderer_base {
      * Output the row of editing icons for a block, as defined by the controls array.
      *
      * @param array $controls an array like {@link block_contents::$controls}.
+     * @param string $blockid The ID given to the block.
      * @return string HTML fragment.
      */
-    public function block_controls($actions) {
-        $this->page->requires->yui_module('moodle-core-actionmenu', 'M.core.actionmenu.init');
-        $output = html_writer::start_tag('span', array('class' => 'actionmenu'));
-        $output .= html_writer::start_tag('span', array('class' => 'statuses'));
+    public function block_controls($actions, $blockid = null) {
+        if (empty($actions)) {
+            return '';
+        }
+        $menu = new action_menu();
+        if ($blockid !== null) {
+            $menu->set_owner_selector('#'.$blockid);
+        }
         foreach ($actions as $action) {
             if ($action->has_class('status')) {
+                $menu->add_primary_action($action);
+            } else {
+                $menu->add_secondary_action($action);
+            }
+        }
+        $menu->attributes['class'] .= ' block-control-actions commands';
+        return $this->render($menu);
+    }
+
+    /**
+     * Renders an action menu component.
+     *
+     * @param action_menu $menu
+     * @return string HTML
+     */
+    public function render_action_menu(action_menu $menu) {
+        $menu->initialise_js($this->page);
+
+        $output = html_writer::start_tag('div', $menu->attributes);
+        $output .= html_writer::start_tag('span', $menu->attributesprimary);
+        foreach ($menu->get_primary_actions($this) as $action) {
+            if ($action instanceof renderable) {
                 $output .= $this->render($action);
+            } else {
+                $output .= $action;
             }
         }
         $output .= html_writer::end_tag('span');
-        $output .= html_writer::start_tag('span', array('class' => 'actions'));
-        foreach ($actions as $action) {
-            if (!$action->has_class('status')) {
-                $output .= $this->render($action);
-            }
+        $output .= html_writer::start_tag('div', $menu->attributessecondary);
+        foreach ($menu->get_secondary_actions() as $action) {
+            $output .= $this->render($action);
         }
-        $output .= html_writer::end_tag('span');
-        $output .= html_writer::end_tag('span');
+        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('div');
         return $output;
     }
 
@@ -1138,7 +1165,11 @@ class core_renderer extends renderer_base {
             $title = html_writer::tag('h2', $bc->title, $attributes);
         }
 
-        $controlshtml = $this->block_controls($bc->controls);
+        $blockid = null;
+        if (isset($bc->attributes['id'])) {
+            $blockid = $bc->attributes['id'];
+        }
+        $controlshtml = $this->block_controls($bc->controls, $blockid);
 
         $output = '';
         if ($title || $controlshtml) {
