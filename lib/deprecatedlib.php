@@ -4899,3 +4899,19 @@ function get_context_instance_by_id($id, $strictness = IGNORE_MISSING) {
     debugging('get_context_instance_by_id() is deprecated, please use context::instance_by_id($id) instead.', DEBUG_DEVELOPER);
     return context::instance_by_id($id, $strictness);
 }
+
+/**
+ * @deprecated since Moodle 2.2
+ * @see load_temp_course_role()
+ */
+function load_temp_role($context, $roleid, array $accessdata) {
+    throw new coding_exception('load_temp_role() can not be used any more, please use load_temp_course_role()');
+}
+
+/**
+ * @deprecated since Moodle 2.2
+ * @see remove_temp_course_roles()
+ */
+function remove_temp_roles($context, array $accessdata) {
+    throw new coding_exception('remove_temp_roles() can not be used any more, please use remove_temp_course_roles()');
+}
