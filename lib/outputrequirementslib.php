@@ -192,7 +192,7 @@ class page_requirements_manager {
         $this->YUI_config->comboBase    = $this->yui3loader->comboBase;
         $this->YUI_config->combine      = $this->yui3loader->combine;
 
-        $configname = $this->YUI_config->set_config_function("if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin');}");
+        $configname = $this->YUI_config->set_config_source('lib/yui/config/yui2.js');
         $this->YUI_config->add_group('yui2', array(
             // Loader configuration for our 2in3, for now ignores $CFG->useexternalyui.
             'base' => $CFG->httpswwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
@@ -207,7 +207,7 @@ class page_requirements_manager {
                 )
             )
         ));
-        $configname = $this->YUI_config->set_config_function("var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n;if(me.type !== 'css'){me.path=me.path+'-min';};me.path=me.path+'.'+me.type;");
+        $configname = $this->YUI_config->set_config_source('lib/yui/config/moodle.js');
         $this->YUI_config->add_group('moodle', array(
             'name' => 'moodle',
             'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
@@ -1551,6 +1551,36 @@ class YUI_config {
         }
         $this->jsconfigfunctions[$configname] = $function;
         return '@' . $configname . '@';
+    }
+
+    /**
+     * Allow setting of the config function described in {@see set_config_function} from a file.
+     * The contents of this file are then passed to set_config_function.
+     *
+     * When jsrev is positive, the function is minified and stored in a MUC cache for subsequent uses.
+     *
+     * @param $file The path to the JavaScript function used for YUI configuration.
+     * @return String the name of the function to use in the group pattern configuration.
+     */
+    public function set_config_source($file) {
+        global $CFG;
+        $cache = cache::make('core', 'yuimodules');
+
+        // Attempt to get the metadata from the cache.
+        $keyname = 'configfn_' . $file;
+        $fullpath = $CFG->dirroot . '/' . $file;
+        if (!isset($CFG->jsrev) || $CFG->jsrev == -1) {
+            $cache->delete($keyname);
+            $configfn = file_get_contents($fullpath);
+        } else {
+            $configfn = $cache->get($keyname);
+            if ($configfn === false) {
+                require_once($CFG->libdir . '/jslib.php');
+                $configfn = js_minify($fullpath);
+                $cache->set($keyname, $configfn);
+            }
+        }
+        return $this->set_config_function($configfn);
     }
 
     /**
