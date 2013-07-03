@@ -94,7 +94,7 @@ switch ($action) {
     // global search
     case 'gsearch':
         $params = array();
-        $params['context'] = array(context::instance_by_id($contextid), get_system_context());
+        $params['context'] = array(context::instance_by_id($contextid), context_system::instance());
         $params['currentcontext'] = context::instance_by_id($contextid);
         $repos = repository::get_instances($params);
         $list = array();

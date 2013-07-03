@@ -1725,7 +1725,7 @@ class global_navigation extends navigation_node {
         $categoryname = format_string($category->name, true, array('context' => $context));
         $categorynode = $parent->add($categoryname, $url, $nodetype, $categoryname, $category->id);
         if (empty($category->visible)) {
-            if (has_capability('moodle/category:viewhiddencategories', get_system_context())) {
+            if (has_capability('moodle/category:viewhiddencategories', context_system::instance())) {
                 $categorynode->hidden = true;
             } else {
                 $categorynode->display = false;
@@ -2484,7 +2484,7 @@ class global_navigation extends navigation_node {
         $coursenode->add('frontpageloaded', null, self::TYPE_CUSTOM, null, 'frontpageloaded')->display = false;
 
         //Participants
-        if (has_capability('moodle/course:viewparticipants',  get_system_context())) {
+        if (has_capability('moodle/course:viewparticipants',  context_system::instance())) {
             $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CUSTOM, get_string('participants'), 'participants');
         }
 
@@ -3913,7 +3913,7 @@ class settings_navigation extends navigation_node {
         }
 
         $coursecontext = context_course::instance($course->id);   // Course context
-        $systemcontext   = get_system_context();
+        $systemcontext   = context_system::instance();
         $currentuser = ($USER->id == $userid);
 
         if ($currentuser) {
@@ -4059,7 +4059,7 @@ class settings_navigation extends navigation_node {
             $enablemanagetokens = true;
         } else if (!is_siteadmin($USER->id)
              && !empty($CFG->enablewebservices)
-             && has_capability('moodle/webservice:createtoken', get_system_context()) ) {
+             && has_capability('moodle/webservice:createtoken', context_system::instance()) ) {
             $enablemanagetokens = true;
         }
         // Security keys

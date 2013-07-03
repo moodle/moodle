@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @category grading
  * @example $manager = get_grading_manager($areaid);
- * @example $manager = get_grading_manager(get_system_context());
+ * @example $manager = get_grading_manager(context_system::instance());
  * @example $manager = get_grading_manager($context, 'mod_assignment', 'submission');
  * @param stdClass|int|null $context_or_areaid if $areaid is passed, no other parameter is needed
  * @param string|null $component the frankenstyle name of the component

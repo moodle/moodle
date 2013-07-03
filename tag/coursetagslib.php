@@ -401,7 +401,7 @@ function coursetag_delete_course_tags($courseid, $showfeedback=false) {
                 $DB->delete_records('tag', array('id'=>$tag->tagid));
                 // Delete files
                 $fs = get_file_storage();
-                $fs->delete_area_files(get_system_context()->id, 'tag', 'description', $tag->tagid);
+                $fs->delete_area_files(context_system::instance()->id, 'tag', 'description', $tag->tagid);
             }
         }
     }

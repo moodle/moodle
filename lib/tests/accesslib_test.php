@@ -2348,7 +2348,7 @@ class accesslib_testcase extends advanced_testcase {
         // =================================================================
         // note: watch out, the fake site might be pretty borked already
 
-        $this->assertSame(get_system_context(), context_system::instance());
+        $this->assertSame(context_system::instance(), context_system::instance());
 
         foreach ($DB->get_records('context') as $contextid=>$record) {
             $context = context::instance_by_id($contextid);

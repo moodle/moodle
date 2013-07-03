@@ -26,7 +26,7 @@ require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/locallib.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/filter_form.php');
 
 require_login(SITEID, false);
-require_capability('tool/customlang:edit', get_system_context());
+require_capability('tool/customlang:edit', context_system::instance());
 
 $lng                    = required_param('lng', PARAM_LANG);
 $currentpage            = optional_param('p', 0, PARAM_INT);

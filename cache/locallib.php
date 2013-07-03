@@ -901,7 +901,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_store_instance_actions($name, array $storedetails) {
         $actions = array();
-        if (has_capability('moodle/site:config', get_system_context())) {
+        if (has_capability('moodle/site:config', context_system::instance())) {
             $baseurl = new moodle_url('/cache/admin.php', array('store' => $name, 'sesskey' => sesskey()));
             if (empty($storedetails['default'])) {
                 $actions[] = array(

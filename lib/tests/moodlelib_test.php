@@ -2283,7 +2283,7 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertEquals(convert_to_array($obj), (array)$obj);
 
         // check that context object (with iterator) is converted to array properly
-        $obj = get_system_context();
+        $obj = context_system::instance();
         $ar = array(
             'id'           => $obj->id,
             'contextlevel' => $obj->contextlevel,

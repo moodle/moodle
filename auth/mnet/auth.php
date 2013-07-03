@@ -146,7 +146,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         // check remote login permissions
-        if (! has_capability('moodle/site:mnetlogintoremote', get_system_context())
+        if (! has_capability('moodle/site:mnetlogintoremote', context_system::instance())
                 or is_mnet_remote_user($USER)
                 or isguestuser()
                 or !isloggedin()) {

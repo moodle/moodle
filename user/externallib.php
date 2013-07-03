@@ -678,7 +678,7 @@ class core_user_external extends external_api {
         $users = $DB->get_recordset_sql($usersql, $params);
 
         $result = array();
-        $hasuserupdatecap = has_capability('moodle/user:update', get_system_context());
+        $hasuserupdatecap = has_capability('moodle/user:update', context_system::instance());
         foreach ($users as $user) {
             if (!empty($user->deleted)) {
                 continue;

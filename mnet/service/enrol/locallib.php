@@ -552,7 +552,7 @@ class mnetservice_enrol_potential_users_selector extends user_selector_base {
     public function find_users($search) {
         global $CFG, $DB;
 
-        $systemcontext = get_system_context();
+        $systemcontext = context_system::instance();
         $userids = get_users_by_capability($systemcontext, 'moodle/site:mnetlogintoremote', 'u.id');
 
         if (empty($userids)) {

@@ -16,7 +16,7 @@ class editcategory_form extends moodleform {
 
         // get list of categories to use as parents, with site as the first one
         $options = array();
-        if (has_capability('moodle/category:manage', get_system_context()) || $category->parent == 0) {
+        if (has_capability('moodle/category:manage', context_system::instance()) || $category->parent == 0) {
             $options[0] = get_string('top');
         }
         if ($category->id) {

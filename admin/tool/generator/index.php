@@ -39,7 +39,7 @@ if (!debugging('', DEBUG_DEVELOPER)) {
 }
 
 $PAGE->set_url('/admin/tool/generator/index.php');
-$PAGE->set_context(get_system_context());
+$PAGE->set_context(context_system::instance());
 $PAGE->set_pagelayout('base');
 $generator = new generator_web();
 $generator->setup();

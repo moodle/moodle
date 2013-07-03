@@ -40,7 +40,7 @@ if (!$service->is_available()) {
     die();
 }
 
-$roamingusers = get_users_by_capability(get_system_context(), 'moodle/site:mnetlogintoremote', 'u.id');
+$roamingusers = get_users_by_capability(context_system::instance(), 'moodle/site:mnetlogintoremote', 'u.id');
 if (empty($roamingusers)) {
     $capname = get_string('site:mnetlogintoremote', 'role');
     $url = new moodle_url('/admin/roles/manage.php');
