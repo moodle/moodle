@@ -43,6 +43,7 @@ class key_form extends moodleform {
 
         $mform->addHelpButton('iprestriction', 'keyiprestriction', 'userkey');
         $mform->addHelpButton('validuntil', 'keyvaliduntil', 'userkey');
+        $mform->setType('iprestriction', PARAM_RAW_TRIMMED);
 
         $mform->addElement('hidden','id');
         $mform->setType('id', PARAM_INT);
