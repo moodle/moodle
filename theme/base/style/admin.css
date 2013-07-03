@@ -111,7 +111,7 @@
 #page-admin-qtypes #qtypes img { padding-right: .45em; vertical-align: text-bottom; }
 
 .path-admin-roles .buttons .singlebutton,
-#path-admin-course-manage .buttons {
+#page-admin-course-manage .buttons {
   display: inline;
   padding: 5px;
 }
