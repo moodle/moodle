@@ -2348,7 +2348,7 @@ class accesslib_testcase extends advanced_testcase {
         // =================================================================
         // note: watch out, the fake site might be pretty borked already
 
-        $this->assertSame(context_system::instance(), context_system::instance());
+        $this->assertSame(get_system_context(), context_system::instance());
 
         foreach ($DB->get_records('context') as $contextid=>$record) {
             $context = context::instance_by_id($contextid);
@@ -2372,6 +2372,8 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled('get_context_instance() is deprecated, please use context_xxxx::instance() instead.', DEBUG_DEVELOPER);
         get_context_instance_by_id($record->id);
         $this->assertDebuggingCalled('get_context_instance_by_id() is deprecated, please use context::instance_by_id($id) instead.', DEBUG_DEVELOPER);
+        get_system_context();
+        $this->assertDebuggingCalled('get_system_context() is deprecated, please use context_system::instance() instead.', DEBUG_DEVELOPER);
 
         $DB->delete_records('context', array('contextlevel'=>CONTEXT_BLOCK));
         create_contexts();
