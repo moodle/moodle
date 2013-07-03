@@ -48,13 +48,13 @@ YUI.add('moodle-tool_installaddon-permcheck', function(Y) {
                         var resultline = Y.one('#tool_installaddon_installfromzip_permcheck');
                         if (resultline) {
                             if (status === 'success') {
-                                resultline.setContent('<span class="success"><img src="' + M.util.image_url('i/tick_green_big') + '" /> ' +
+                                resultline.setContent('<span class="success"><img src="' + M.util.image_url('i/valid') + '" /> ' +
                                     msg + '</span>');
                             } else if (status === 'progress') {
                                 resultline.setContent('<span class="progress"><img src="' + M.cfg.loadingicon + '" /> ' +
                                     msg + '</span>');
                             } else {
-                                resultline.setContent('<span class="error"><img src="' + M.util.image_url('i/cross_red_big') + '" /> ' +
+                                resultline.setContent('<span class="error"><img src="' + M.util.image_url('i/invalid') + '" /> ' +
                                     msg + '</span>');
                             }
                         }
