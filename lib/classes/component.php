@@ -79,20 +79,44 @@ class core_component {
             return;
         }
 
-        if (PHPUNIT_TEST or !empty($CFG->early_install_lang) or
-                (defined('BEHAT_UTIL') and BEHAT_UTIL) or
-                (defined('BEHAT_TEST') and BEHAT_TEST)) {
-            // 1/ Do not bother storing the file for unit tests,
-            //    we need fresh copy for each execution and
-            //    later we keep it in memory.
-            // 2/ We can not write to dataroot in installer yet.
+        if (defined('IGNORE_COMPONENT_CACHE') and IGNORE_COMPONENT_CACHE) {
             self::fill_all_caches();
             return;
         }
 
-        // Note: cachedir MUST be shared by all servers in a cluster, sorry guys...
-        //       MUC should use classloading, we can not depend on it here.
-        $cachefile = "$CFG->cachedir/core_component.php";
+        if (!empty($CFG->alternative_component_cache)) {
+            // Hack for heavily clustered sites that want to manage component cache invalidation manually.
+            $cachefile = $CFG->alternative_component_cache;
+
+            if (file_exists($cachefile)) {
+                if (CACHE_DISABLE_ALL) {
+                    // Verify the cache state only on upgrade pages.
+                    $content = self::get_cache_content();
+                    if (sha1_file($cachefile) !== sha1($content)) {
+                        die('Outdated component cache file defined in $CFG->alternative_component_cache, can not continue');
+                    }
+                    return;
+                }
+                $cache = array();
+                include($cachefile);
+                self::$plugintypes = $cache['plugintypes'];
+                self::$plugins     = $cache['plugins'];
+                self::$subsystems  = $cache['subsystems'];
+                self::$classmap    = $cache['classmap'];
+                return;
+            }
+
+            if (!is_writable(dirname($cachefile))) {
+                die('Can not create alternative component cache file defined in $CFG->alternative_component_cache, can not continue');
+            }
+
+            // Lets try to create the file, it might be in some writable directory or a local cache dir.
+
+        } else {
+            // Note: $CFG->cachedir MUST be shared by all servers in a cluster,
+            //       use $CFG->alternative_component_cache if you do not like it.
+            $cachefile = "$CFG->cachedir/core_component.php";
+        }
 
         if (!CACHE_DISABLE_ALL and !self::is_developer()) {
             // 1/ Use the cache only outside of install and upgrade.
@@ -105,7 +129,7 @@ class core_component {
                 } else if (!isset($cache['plugintypes']) or !isset($cache['plugins']) or !isset($cache['subsystems']) or !isset($cache['classmap'])) {
                     // Something is very wrong.
                 } else if ($cache['plugintypes']['mod'] !== "$CFG->dirroot/mod") {
-                    // Dirroot was changed.
+                    // $CFG->dirroot was changed.
                 } else {
                     // The cache looks ok, let's use it.
                     self::$plugintypes = $cache['plugintypes'];
@@ -114,17 +138,12 @@ class core_component {
                     self::$classmap    = $cache['classmap'];
                     return;
                 }
+                // Note: we do not verify $CFG->admin here intentionally,
+                //       they must visit admin/index.php after any change.
             }
         }
 
-        $cachedir = dirname($cachefile);
-        if (!is_dir($cachedir)) {
-            mkdir($cachedir, $CFG->directorypermissions, true);
-        }
-
         if (!isset(self::$plugintypes)) {
-            self::fill_all_caches();
-
             // This needs to be atomic and self-fixing as much as possible.
 
             $content = self::get_cache_content();
@@ -132,7 +151,13 @@ class core_component {
                 if (sha1_file($cachefile) === sha1($content)) {
                     return;
                 }
+                // Stale cache detected!
                 unlink($cachefile);
+            }
+
+            $cachedir = dirname($cachefile);
+            if (!is_dir($cachedir)) {
+                mkdir($cachedir, $CFG->directorypermissions, true);
             }
 
             if ($fp = @fopen($cachefile.'.tmp', 'xb')) {
@@ -157,11 +182,16 @@ class core_component {
     protected static function is_developer() {
         global $CFG;
 
-        if (!isset($CFG->config_php_settings['debug'])) {
+        if (isset($CFG->config_php_settings['debug'])) {
+            // Standard moodle script.
+            $debug = (int)$CFG->config_php_settings['debug'];
+        } else if (isset($CFG->debug)) {
+            // Usually script with ABORT_AFTER_CONFIG.
+            $debug = (int)$CFG->debug;
+        } else {
             return false;
         }
 
-        $debug = (int)$CFG->config_php_settings['debug'];
         if ($debug & E_ALL and $debug & E_STRICT) {
             return true;
         }
@@ -172,9 +202,15 @@ class core_component {
     /**
      * Create cache file content.
      *
+     * @private this is intended for $CFG->alternative_component_cache only.
+     *
      * @return string
      */
-    protected static function get_cache_content() {
+    public static function get_cache_content() {
+        if (!isset(self::$plugintypes)) {
+            self::fill_all_caches();
+        }
+
         $cache = array(
             'subsystems'  => self::$subsystems,
             'plugintypes' => self::$plugintypes,
