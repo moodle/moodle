@@ -7231,17 +7231,6 @@ class context_block extends context {
 // then we will add error message and only after that we can remove the functions
 // completely.
 /**
- * Remove stale context records
- *
- * @deprecated since 2.2, use context_helper::cleanup_instances() instead
- * @return bool
- */
-function cleanup_contexts() {
-    context_helper::cleanup_instances();
-    return true;
-}
-
-/**
  * Populate context.path and context.depth where missing.
  *
  * @deprecated since 2.2, use context_helper::build_all_paths() instead

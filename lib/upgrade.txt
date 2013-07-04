@@ -13,6 +13,7 @@ information provided here is intended especially for developers.
 * get_parent_contextid() is deprecated, please use $context->get_parent_context().
 * get_child_contexts() is deprecated, please use $context->get_child_contexts().
 * create_contexts() is deprecated, please use context_helper::create_instances().
+* cleanup_contexts() is deprecated, please use context_helper::cleanup_instances().
 
 === 2.5.1 ===
 

@@ -5000,3 +5000,16 @@ function create_contexts($contextlevel = null, $buildpaths = true) {
     debugging('create_contexts() is deprecated, please use context_helper::create_instances() instead.', DEBUG_DEVELOPER);
     context_helper::create_instances($contextlevel, $buildpaths);
 }
+
+/**
+ * Remove stale context records.
+ *
+ * @see context_helper::cleanup_instances()
+ * @deprecated since 2.2
+ * @return bool
+ */
+function cleanup_contexts() {
+    debugging('cleanup_contexts() is deprecated, please use context_helper::cleanup_instances() instead.', DEBUG_DEVELOPER);
+    context_helper::cleanup_instances();
+    return true;
+}

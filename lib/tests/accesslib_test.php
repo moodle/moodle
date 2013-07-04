@@ -2400,6 +2400,7 @@ class accesslib_testcase extends advanced_testcase {
         $DB->delete_records('block_instances', array('parentcontextid'=>$frontpagepagecontext->id));
         $DB->delete_records('course_modules', array('id'=>$frontpagepagecontext->instanceid));
         cleanup_contexts();
+        $this->assertDebuggingCalled('cleanup_contexts() is deprecated, please use context_helper::cleanup_instances() instead.', DEBUG_DEVELOPER);
         $count = 1; //system
         $count += $DB->count_records('user', array('deleted'=>0));
         $count += $DB->count_records('course_categories');
