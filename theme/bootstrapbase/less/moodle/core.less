@@ -1910,3 +1910,66 @@ div.badge .expireimage {
 .breadcrumb-nav .breadcrumb {
     margin: 0;
 }
+
+.jsenabled .actions {
+    visibility: hidden;
+    margin-top: 4px;
+}
+
+a.actionmenu {
+    padding-left: 4px;
+    padding-right: 4px;
+
+/*
+    padding-right: 16px;
+    background-image:url([[pix:t/expanded]]);
+    background-position:100% 30%;
+    background-repeat:no-repeat;
+*/
+}
+
+.yui3-overlay .actions {
+    visibility: inherit;
+    background-color: @dropdownBackground;
+    border: 1px solid @dropdownBorder;
+    display: block;
+    padding: 4px;
+    .border-radius(4px);
+}
+
+.autocompletion,
+a.status .iconsmall {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+.statuses .actionlinktext {
+    display: none;
+}
+
+.yui3-overlay .actions a {
+    display: block;
+    color: @dropdownLinkColor;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.yui3-overlay .actions a.hidden {
+    display: none;
+}
+.yui3-overlay .actions img {
+    vertical-align: middle;
+}
+.yui3-overlay .actions a:hover,
+.yui3-overlay .actions a:focus
+ {
+    color: @dropdownLinkColorHover;
+    background-color: @dropdownLinkBackgroundHover;
+}
+
+.block span.actionmenu {
+    display: block;
+    text-align: right;
+}
+
+.dir-rtl .block span.actionmenu {
+    text-align: left;
+}

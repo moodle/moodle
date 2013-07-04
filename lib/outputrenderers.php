@@ -1031,17 +1031,25 @@ class core_renderer extends renderer_base {
      * @param array $controls an array like {@link block_contents::$controls}.
      * @return string HTML fragment.
      */
-    public function block_controls($controls) {
-        if (empty($controls)) {
-            return '';
+    public function block_controls($actions) {
+        $this->page->requires->yui_module('moodle-core-actionmenu', 'M.core.actionmenu.init');
+        $output = html_writer::start_tag('span', array('class' => 'actionmenu'));
+        $output .= html_writer::start_tag('span', array('class' => 'statuses'));
+        foreach ($actions as $action) {
+            if ($action->has_class('status')) {
+                $output .= $this->render($action);
+            }
         }
-        $controlshtml = array();
-        foreach ($controls as $control) {
-            $controlshtml[] = html_writer::tag('a',
-                    html_writer::empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false), 'alt' => $control['caption'])),
-                    array('class' => 'icon ' . $control['class'],'title' => $control['caption'], 'href' => $control['url']));
+        $output .= html_writer::end_tag('span');
+        $output .= html_writer::start_tag('span', array('class' => 'actions'));
+        foreach ($actions as $action) {
+            if (!$action->has_class('status')) {
+                $output .= $this->render($action);
+            }
         }
-        return html_writer::tag('div', implode('', $controlshtml), array('class' => 'commands'));
+        $output .= html_writer::end_tag('span');
+        $output .= html_writer::end_tag('span');
+        return $output;
     }
 
     /**
@@ -1284,13 +1292,14 @@ class core_renderer extends renderer_base {
      * @param string $text HTML fragment
      * @param component_action $action
      * @param array $attributes associative array of html link attributes + disabled
+     * @param pix_icon optional pix icon to render with the link
      * @return string HTML fragment
      */
-    public function action_link($url, $text, component_action $action = null, array $attributes=null) {
+    public function action_link($url, $text, component_action $action = null, array $attributes = null, $icon = null) {
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
-        $link = new action_link($url, $text, $action, $attributes);
+        $link = new action_link($url, $text, $action, $attributes, $icon);
 
         return $this->render($link);
     }
@@ -1307,11 +1316,18 @@ class core_renderer extends renderer_base {
     protected function render_action_link(action_link $link) {
         global $CFG;
 
-        if ($link->text instanceof renderable) {
-            $text = $this->render($link->text);
-        } else {
-            $text = $link->text;
+        $text = '';
+        if ($link->icon) {
+            $text .= $this->render($link->icon);
         }
+
+        $text .= html_writer::start_tag('span', array('class'=>'actionlinktext'));
+        if ($link->text instanceof renderable) {
+            $text .= $this->render($link->text);
+        } else {
+            $text .= $link->text;
+        }
+        $text .= html_writer::end_tag('span');
 
         // A disabled link is rendered as formatted text
         if (!empty($link->attributes['disabled'])) {

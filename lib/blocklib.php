@@ -1037,35 +1037,72 @@ class block_manager {
 
         if ($this->page->user_can_edit_blocks()) {
             // Move icon.
-            $controls[] = array('url' => $actionurl . '&bui_moveid=' . $block->instance->id,
-                    'icon' => 't/move', 'caption' => get_string('moveblock', 'block', $blocktitle),
-                    'class' => 'editing_move');
+            //$controls[] = array('url' => $actionurl . '&bui_moveid=' . $block->instance->id,
+            //        'icon' => 't/move', 'caption' => get_string('moveblock', 'block', $blocktitle),
+            //        'class' => 'editing_move status');
+            $controls[] = new action_link(
+                new moodle_url($actionurl, array('bui_moveid' => $block->instance->id)),
+                get_string('moveblock', 'block', $blocktitle),
+                null,
+                array('class' => 'editing_move status', 'title' => get_string('moveblock', 'block', $blocktitle)),
+                new pix_icon('t/move', get_string('moveblock', 'block', $blocktitle), 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            );
+
         }
 
         if ($this->page->user_can_edit_blocks() || $block->user_can_edit()) {
             // Edit config icon - always show - needed for positioning UI.
-            $controls[] = array('url' => $actionurl . '&bui_editid=' . $block->instance->id,
-                    'icon' => 't/edit', 'caption' => get_string('configureblock', 'block', $blocktitle),
-                    'class' => 'editing_edit');
+            //$controls[] = array('url' => $actionurl . '&bui_editid=' . $block->instance->id,
+            //        'icon' => 't/edit', 'caption' => get_string('configureblock', 'block', $blocktitle),
+            //        'class' => 'editing_edit');
+            $controls[] = new action_link(
+                new moodle_url($actionurl, array('bui_editid' => $block->instance->id)),
+                get_string('configureblock', 'block', $blocktitle),
+                null,
+                array('class' => 'editing_edit', 'title' => get_string('configureblock', 'block', $blocktitle)),
+                new pix_icon('t/edit', get_string('configureblock', 'block', $blocktitle), 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            );
+
         }
 
         if ($this->user_can_delete_block($block)) {
             // Delete icon.
-            $controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
-                    'icon' => 't/delete', 'caption' => get_string('deleteblock', 'block', $blocktitle),
-                    'class' => 'editing_delete');
+            //$controls[] = array('url' => $actionurl . '&bui_deleteid=' . $block->instance->id,
+            ////        'icon' => 't/delete', 'caption' => get_string('deleteblock', 'block', $blocktitle),
+            //        'class' => 'editing_delete');
+            $controls[] = new action_link(
+                new moodle_url($actionurl, array('bui_deleteid' => $block->instance->id)),
+                get_string('deleteblock', 'block', $blocktitle),
+                null,
+                array('class' => 'editing_delete', 'title' => get_string('deleteblock', 'block', $blocktitle)),
+                new pix_icon('t/delete', get_string('deleteblock', 'block', $blocktitle), 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            );
         }
 
         if ($this->page->user_can_edit_blocks() && $block->instance_can_be_hidden()) {
             // Show/hide icon.
             if ($block->instance->visible) {
-                $controls[] = array('url' => $actionurl . '&bui_hideid=' . $block->instance->id,
-                        'icon' => 't/hide', 'caption' => get_string('hideblock', 'block', $blocktitle),
-                        'class' => 'editing_hide');
+                $controls[] = new action_link(
+                    new moodle_url($actionurl, array('bui_hideid' => $block->instance->id)),
+                    get_string('deleteblock', 'block', $blocktitle),
+                    null,
+                    array('class' => 'editing_hide status', 'title' => get_string('hideblock', 'block', $blocktitle)),
+                    new pix_icon('t/hide', get_string('hideblock', 'block', $blocktitle), 'moodle', array('class' => 'iconsmall', 'title' => ''))
+                );
+                //$controls[] = array('url' => $actionurl . '&bui_hideid=' . $block->instance->id,
+                //        'icon' => 't/hide', 'caption' => get_string('hideblock', 'block', $blocktitle),
+                //        'class' => 'editing_hide status');
             } else {
-                $controls[] = array('url' => $actionurl . '&bui_showid=' . $block->instance->id,
-                        'icon' => 't/show', 'caption' => get_string('showblock', 'block', $blocktitle),
-                        'class' => 'editing_show');
+                $controls[] = new action_link(
+                    new moodle_url($actionurl, array('bui_showid' => $block->instance->id)),
+                    get_string('deleteblock', 'block', $blocktitle),
+                    null,
+                    array('class' => 'editing_show status', 'title' => get_string('showblock', 'block', $blocktitle)),
+                    new pix_icon('t/show', get_string('showblock', 'block', $blocktitle), 'moodle', array('class' => 'iconsmall', 'title' => ''))
+                );
+                //$controls[] = array('url' => $actionurl . '&bui_showid=' . $block->instance->id,
+               //         'icon' => 't/show', 'caption' => get_string('showblock', 'block', $blocktitle),
+                //        'class' => 'editing_show status');
             }
         }
 
@@ -1077,12 +1114,20 @@ class block_manager {
             $return = $this->page->url->out(false);
             $return = str_replace($CFG->wwwroot . '/', '', $return);
 
-            $controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
-                    '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($return),
-                    'icon' => 't/assignroles', 'caption' => get_string('assignrolesinblock', 'block', $blocktitle),
-                    'class' => 'editing_roles');
+            $rolesurl = new moodle_url('/admin/roles/assign.php', array('contextid'=>$block->context->id,
+                                                                         'returnurl'=>$return));
+            $controls[] = new action_link(
+                    $rolesurl,
+                    get_string('assignrolesinblock', 'block', $blocktitle),
+                    null,
+                    array('class' => 'editing_roles', 'title' => get_string('assignrolesinblock', 'block', $blocktitle)),
+                    new pix_icon('t/assignroles', get_string('assignrolesinblock', 'block', $blocktitle), 'moodle', array('class' => 'iconsmall', 'title' => ''))
+                );
+            //$controls[] = array('url' => $CFG->wwwroot . '/' . $CFG->admin .
+           //         '/roles/assign.php?contextid=' . $block->context->id . '&returnurl=' . urlencode($return),
+            //        'icon' => 't/assignroles', 'caption' => get_string('assignrolesinblock', 'block', $blocktitle),
+             //       'class' => 'editing_roles');
         }
-
         return $controls;
     }
 

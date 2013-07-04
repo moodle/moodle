@@ -3,8 +3,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     // The CSS selectors we use
     var CSS = {
         ACTIVITYLI : 'li.activity',
-        COMMANDSPAN : 'span.commands',
-        SPINNERCOMMANDSPAN : 'span.commands',
+        COMMANDSPAN : 'span.actionmenu',
+        ACTIONPREFIX : 'span.actions',
+        SPINNERCOMMANDSPAN : 'span.instancename',
         CONTENTAFTERLINK : 'div.contentafterlink',
         DELETE : 'a.editing_delete',
         DIMCLASS : 'dimmed',
@@ -26,7 +27,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         MOVELEFT : 'a.editing_moveleft',
         MOVELEFTCLASS : 'editing_moveleft',
         MOVERIGHT : 'a.editing_moveright',
-        PAGECONTENT : 'div#page-content',
+        PAGECONTENT : 'body',
         RIGHTSIDE : '.right',
         SECTIONHIDDENCLASS : 'hidden',
         SECTIONIDPREFIX : 'section-',
@@ -56,7 +57,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          * resource show/hide button
          */
         toggle_hide_resource_ui : function(button) {
-            var element = button.ancestor(CSS.ACTIVITYLI);
+            var element = this.get_activity_container(button);
             var hideicon = button.one('img');
 
             var dimarea;
@@ -101,6 +102,47 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 availabilityinfo.toggleClass(CSS.HIDECLASS);
             }
             return value;
+        },
+        get_activity_action_link : function(node, selector) {
+            // The node is either a direct descendant of the activity container,
+            // or it is linked through the actionmenu.
+
+            Y.log('find activity container');
+            var element = node.one(selector);
+
+            if (element) {
+                Y.log('direct ancestor ' + element);
+                return element;
+            }
+
+            var actionmenulink = node.one('a.actionmenu');
+            Y.log('get action menu link ' + actionmenulink);
+            var overlay = actionmenulink.getData('actionmenu-menu');
+
+            element = overlay.get('boundingBox').one(selector);
+            Y.log('get ancestor ' + element);
+            return element;
+        },
+
+        get_activity_container : function(node) {
+            // The node is either a direct descendant of the activity container,
+            // or it is linked through the actionmenu.
+
+            Y.log('find activity container');
+            var element = node.ancestor(CSS.ACTIVITYLI);
+
+            if (element) {
+                Y.log('direct ancestor ' + element);
+                return element;
+            }
+
+            var actionlink = node.ancestor('a');
+            Y.log('get action link ' + actionlink);
+            var actionmenulink = actionlink.getData('actionmenu-link');
+            Y.log('get menu link ' + actionmenulink);
+            element = actionmenulink.ancestor(CSS.ACTIVITYLI);
+            Y.log('get ancestor ' + element);
+            return element;
         },
         /**
          * Send a request using the REST API
@@ -242,9 +284,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             M.course.coursebase.register_module(this);
 
             var prefix = CSS.ACTIVITYLI + ' ' + CSS.COMMANDSPAN + ' ';
-            Y.delegate('click', this.edit_resource_title, CSS.PAGECONTENT, prefix + CSS.EDITTITLE, this);
-            Y.delegate('click', this.move_left, CSS.PAGECONTENT, prefix + CSS.MOVELEFT, this);
-            Y.delegate('click', this.move_right, CSS.PAGECONTENT, prefix + CSS.MOVERIGHT, this);
+            Y.delegate('click', this.edit_resource_title, CSS.PAGECONTENT, CSS.EDITTITLE, this);
+            Y.delegate('click', this.move_left, CSS.PAGECONTENT, CSS.MOVELEFT, this);
+            Y.delegate('click', this.move_right, CSS.PAGECONTENT, CSS.MOVERIGHT, this);
             Y.delegate('click', this.delete_resource, CSS.PAGECONTENT, prefix + CSS.DELETE, this);
             Y.delegate('click', this.toggle_hide_resource, CSS.PAGECONTENT, prefix + CSS.HIDE, this);
             Y.delegate('click', this.toggle_hide_resource, CSS.PAGECONTENT, prefix + CSS.SHOW, this);
@@ -292,7 +334,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             e.preventDefault();
 
             // Get the element we're working on
-            var element = e.target.ancestor(CSS.ACTIVITYLI);
+            var element = this.get_activity_container(e.target);
 
             // And we need to determine the current and new indent level
             var indentdiv = element.one(CSS.MODINDENTDIV);
@@ -319,10 +361,11 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             this.send_request(data, spinner);
 
             // Handle removal/addition of the moveleft button
+            Y.log(element);
             if (newindent == 0) {
-                element.one(CSS.MOVELEFT).remove();
+                this.get_activity_action_link(element, CSS.MOVELEFT).addClass('hidden');
             } else if (newindent == 1 && oldindent == 0) {
-                this.add_moveleft(element);
+                this.get_activity_action_link(element, CSS.MOVELEFT).removeClass('hidden');
             }
 
             // Handle massive indentation to match non-ajax display
@@ -338,7 +381,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             e.preventDefault();
 
             // Get the element we're working on
-            var element   = e.target.ancestor(CSS.ACTIVITYLI);
+            var element = this.get_activity_container(e.target);
+
 
             // Create confirm string (different if element has or does not have name)
             var confirmstring = '';
@@ -377,7 +421,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             }
 
             // Get the element we're working on
-            var element = e.target.ancestor(CSS.ACTIVITYLI);
+            var element = this.get_activity_container(e.target);
 
             var button = e.target.ancestor('a', true);
 
@@ -399,7 +443,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             e.preventDefault();
 
             // Get the element we're working on
-            var element = e.target.ancestor(CSS.ACTIVITYLI);
+            var element = this.get_activity_container(e.target);
 
             var button = e.target.ancestor('a', true);
             var icon = button.one('img');
@@ -456,6 +500,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          * @param target The encapsulating <li> element
          */
         add_moveleft : function(target) {
+            Y.log(target);
             var left_string = M.util.get_string('moveleft', 'moodle');
             var moveimage = 't/left'; // ltr mode
             if ( Y.one(document.body).hasClass('dir-rtl') ) {
@@ -484,7 +529,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          */
         edit_resource_title : function(e) {
             // Get the element we're working on
-            var element = e.target.ancestor(CSS.ACTIVITYLI);
+            var element = this.get_activity_container(e.target);
             var elementdiv = element.one('div');
             var instancename  = element.one(CSS.INSTANCENAME);
             var currenttitle = instancename.get('firstChild');

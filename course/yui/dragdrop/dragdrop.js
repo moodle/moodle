@@ -2,7 +2,8 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
     var CSS = {
         ACTIVITY : 'activity',
-        COMMANDSPAN : 'span.commands',
+        COMMANDSPAN : 'span.actionmenu',
+        SPINNERCOMMANDSPAN : 'span.instancename',
         CONTENT : 'content',
         COURSECONTENT : 'course-content',
         EDITINGMOVE : 'editing_move',
@@ -351,7 +352,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             var dropnode = e.drop.get('node');
 
             // Add spinner if it not there
-            var spinner = M.util.add_spinner(Y, dragnode.one(CSS.COMMANDSPAN));
+            var spinner = M.util.add_spinner(Y, dragnode.one(CSS.SPINNERCOMMANDSPAN));
 
             var params = {};
 
