@@ -741,7 +741,7 @@ abstract class restore_dbops {
                  // Build the array of contexts we are going to look
                  $systemctx = context_system::instance();
                  $coursectx = context_course::instance($courseid);
-                 $parentctxs= get_parent_contexts($coursectx);
+                 $parentctxs = $coursectx->get_parent_context_ids();
                  foreach ($parentctxs as $parentctx) {
                      // Exclude system context
                      if ($parentctx == $systemctx->id) {

@@ -394,7 +394,7 @@ function enrol_cohort_get_cohorts(course_enrolment_manager $manager) {
             $enrolled[] = $instance->customint1;
         }
     }
-    list($sqlparents, $params) = $DB->get_in_or_equal(get_parent_contexts($context));
+    list($sqlparents, $params) = $DB->get_in_or_equal($context->get_parent_context_ids());
     $sql = "SELECT id, name, idnumber, contextid
               FROM {cohort}
              WHERE contextid $sqlparents

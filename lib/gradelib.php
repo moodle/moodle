@@ -839,7 +839,7 @@ function grade_get_letters($context=null) {
 
     $letters = array();
 
-    $contexts = get_parent_contexts($context);
+    $contexts = $context->get_parent_context_ids();
     array_unshift($contexts, $context->id);
 
     foreach ($contexts as $ctxid) {

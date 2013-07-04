@@ -345,7 +345,7 @@ class external_api {
         } else if ($rcontext->contextlevel > $context->contextlevel) {
             throw new restricted_context_exception();
         } else {
-            $parents = get_parent_contexts($context);
+            $parents = $context->get_parent_context_ids();
             if (!in_array($rcontext->id, $parents)) {
                 throw new restricted_context_exception();
             }

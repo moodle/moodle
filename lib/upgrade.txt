@@ -2,12 +2,14 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 2.6 ===
+
 * Use new core_component::* plugin listing and component normalisation methods.
 * Use core_text::* instead of textlib:: and also core_collator::* instead of collatorlib::*.
 * get_context_instance() is deprecated, please use use context_xxxx::instance().
 * get_context_instance_by_id() is deprecated, please use context::instance_by_id($id).
 * load_temp_role() and remove_temp_roles() can not be used any more.
 * get_system_context() is deprecated, please use context_system::instance().
+* get_parent_contexts() is deprecated, please use $context->get_parent_context_ids().
 
 === 2.5.1 ===
 

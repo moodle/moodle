@@ -7226,20 +7226,6 @@ class context_block extends context {
 // then we will add error message and only after that we can remove the functions
 // completely.
 /**
- * Recursive function which, given a context, find all parent context ids,
- * and return the array in reverse order, i.e. parent first, then grand
- * parent, etc.
- *
- * @deprecated since 2.2, use $context->get_parent_context_ids() instead
- * @param context $context
- * @param bool $includeself optional, defaults to false
- * @return array
- */
-function get_parent_contexts(context $context, $includeself = false) {
-    return $context->get_parent_context_ids($includeself);
-}
-
-/**
  * Return the id of the parent of this context, or false if there is no parent (only happens if this
  * is the site context.)
  *

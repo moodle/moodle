@@ -4928,3 +4928,19 @@ function get_system_context($cache = true) {
     debugging('get_system_context() is deprecated, please use context_system::instance() instead.', DEBUG_DEVELOPER);
     return context_system::instance(0, IGNORE_MISSING, $cache);
 }
+
+/**
+ * Recursive function which, given a context, find all parent context ids,
+ * and return the array in reverse order, i.e. parent first, then grand
+ * parent, etc.
+ *
+ * @see context::get_parent_context_ids()
+ * @deprecated since 2.2, use $context->get_parent_context_ids() instead
+ * @param context $context
+ * @param bool $includeself optional, defaults to false
+ * @return array
+ */
+function get_parent_contexts(context $context, $includeself = false) {
+    debugging('get_parent_contexts() is deprecated, please use $context->get_parent_context_ids() instead.', DEBUG_DEVELOPER);
+    return $context->get_parent_context_ids($includeself);
+}

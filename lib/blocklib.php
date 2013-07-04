@@ -566,7 +566,7 @@ class block_manager {
         $context = $this->page->context;
         $contexttest = 'bi.parentcontextid = :contextid2';
         $parentcontextparams = array();
-        $parentcontextids = get_parent_contexts($context);
+        $parentcontextids = $context->get_parent_context_ids();
         if ($parentcontextids) {
             list($parentcontexttest, $parentcontextparams) =
                     $DB->get_in_or_equal($parentcontextids, SQL_PARAMS_NAMED, 'parentcontext');
