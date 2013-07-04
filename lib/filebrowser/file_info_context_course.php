@@ -472,13 +472,10 @@ class file_info_context_course extends file_info {
     /**
      * Returns parent file_info instance
      *
-     * @todo error checking if get_parent_contextid() returns false
      * @return file_info or null for root
      */
     public function get_parent() {
-        //TODO: error checking if get_parent_contextid() returns false
-        $pcid = get_parent_contextid($this->context);
-        $parent = context::instance_by_id($pcid, IGNORE_MISSING);
+        $parent = $this->context->get_parent_context();
         return $this->browser->get_file_info($parent);
     }
 }

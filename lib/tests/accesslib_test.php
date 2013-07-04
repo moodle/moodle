@@ -2360,6 +2360,7 @@ class accesslib_testcase extends advanced_testcase {
             } else {
                 $this->assertSame(get_parent_contextid($context), $context->get_parent_context()->id);
             }
+            $this->assertDebuggingCalled('get_parent_contextid() is deprecated, please use $context->get_parent_context() instead.', DEBUG_DEVELOPER);
         }
 
         $children = get_child_contexts($systemcontext);

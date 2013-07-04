@@ -441,8 +441,13 @@ function question_delete_course_category($category, $newcategory, $feedback=true
                     $questionids = $DB->get_records_menu('question',
                             array('category'=>$category->id), '', 'id, 1');
                     if (!empty($questionids)) {
+                        $parentcontextid = false;
+                        $parentcontext = $context->get_parent_context();
+                        if ($parentcontext) {
+                            $parentcontextid = $parentcontext->id;
+                        }
                         if (!$rescueqcategory = question_save_from_deletion(
-                                array_keys($questionids), get_parent_contextid($context),
+                                array_keys($questionids), $parentcontextid,
                                 print_context_name($context), $rescueqcategory)) {
                             return false;
                         }

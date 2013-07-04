@@ -917,7 +917,8 @@ class moodle_page {
                 // fine - no change needed
             } else if ($this->_context->contextlevel == CONTEXT_SYSTEM or $this->_context->contextlevel == CONTEXT_COURSE) {
                 // hmm - not ideal, but it might produce too many warnings due to the design of require_login
-            } else if ($this->_context->contextlevel == CONTEXT_MODULE and $this->_context->id == get_parent_contextid($context)) {
+            } else if ($this->_context->contextlevel == CONTEXT_MODULE and ($parentcontext = $context->get_parent_context()) and
+                    $this->_context->id == $parentcontext->id) {
                 // hmm - most probably somebody did require_login() and after that set the block context
             } else {
                 // we do not want devs to do weird switching of context levels on the fly,

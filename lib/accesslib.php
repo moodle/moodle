@@ -7231,22 +7231,6 @@ class context_block extends context {
 // then we will add error message and only after that we can remove the functions
 // completely.
 /**
- * Return the id of the parent of this context, or false if there is no parent (only happens if this
- * is the site context.)
- *
- * @deprecated since 2.2, use $context->get_parent_context() instead
- * @param context $context
- * @return integer the id of the parent context.
- */
-function get_parent_contextid(context $context) {
-    if ($parent = $context->get_parent_context()) {
-        return $parent->id;
-    } else {
-        return false;
-    }
-}
-
-/**
  * Recursive function which, given a context, find all its children context ids.
  *
  * For course category contexts it will return immediate children only categories and courses.
