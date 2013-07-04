@@ -7231,17 +7231,6 @@ class context_block extends context {
 // then we will add error message and only after that we can remove the functions
 // completely.
 /**
- * Populate context.path and context.depth where missing.
- *
- * @deprecated since 2.2, use context_helper::build_all_paths() instead
- * @param bool $force force a complete rebuild of the path and depth fields, defaults to false
- * @return void
- */
-function build_context_path($force = false) {
-    context_helper::build_all_paths($force);
-}
-
-/**
  * Rebuild all related context depth and path caches
  *
  * @deprecated since 2.2

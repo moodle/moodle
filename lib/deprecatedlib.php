@@ -5013,3 +5013,16 @@ function cleanup_contexts() {
     context_helper::cleanup_instances();
     return true;
 }
+
+/**
+ * Populate context.path and context.depth where missing.
+ *
+ * @see context_helper::build_all_paths()
+ * @deprecated since 2.2
+ * @param bool $force force a complete rebuild of the path and depth fields, defaults to false
+ * @return void
+ */
+function build_context_path($force = false) {
+    debugging('build_context_path() is deprecated, please use context_helper::build_all_paths() instead.', DEBUG_DEVELOPER);
+    context_helper::build_all_paths($force);
+}

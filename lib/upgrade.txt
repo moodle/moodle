@@ -14,6 +14,7 @@ information provided here is intended especially for developers.
 * get_child_contexts() is deprecated, please use $context->get_child_contexts().
 * create_contexts() is deprecated, please use context_helper::create_instances().
 * cleanup_contexts() is deprecated, please use context_helper::cleanup_instances().
+* build_context_path() is deprecated, please use context_helper::build_all_paths().
 
 === 2.5.1 ===
 

@@ -2389,6 +2389,7 @@ class accesslib_testcase extends advanced_testcase {
 
         $DB->set_field('context', 'depth', 0, array('contextlevel'=>CONTEXT_BLOCK));
         build_context_path();
+        $this->assertDebuggingCalled('build_context_path() is deprecated, please use context_helper::build_all_paths() instead.', DEBUG_DEVELOPER);
         $this->assertFalse($DB->record_exists('context', array('depth'=>0)));
 
         $lastcourse = $DB->get_field_sql("SELECT MAX(id) FROM {course}");
