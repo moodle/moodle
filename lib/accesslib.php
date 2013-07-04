@@ -7231,18 +7231,6 @@ class context_block extends context {
 // then we will add error message and only after that we can remove the functions
 // completely.
 /**
- * Precreates all contexts including all parents
- *
- * @deprecated since 2.2
- * @param int $contextlevel empty means all
- * @param bool $buildpaths update paths and depths
- * @return void
- */
-function create_contexts($contextlevel = null, $buildpaths = true) {
-    context_helper::create_instances($contextlevel, $buildpaths);
-}
-
-/**
  * Remove stale context records
  *
  * @deprecated since 2.2, use context_helper::cleanup_instances() instead

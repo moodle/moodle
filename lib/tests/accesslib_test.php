@@ -2292,7 +2292,6 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertEquals($DB->count_records('context', array('depth'=>0)), 0);
         $this->assertEquals($DB->count_records('context', array('path'=>NULL)), 0);
 
-
         // ======= context_helper::cleanup_instances() ==========================
 
         $lastcourse = $DB->get_field_sql("SELECT MAX(id) FROM {course}");
@@ -2385,6 +2384,7 @@ class accesslib_testcase extends advanced_testcase {
 
         $DB->delete_records('context', array('contextlevel'=>CONTEXT_BLOCK));
         create_contexts();
+        $this->assertDebuggingCalled('create_contexts() is deprecated, please use context_helper::create_instances() instead.', DEBUG_DEVELOPER);
         $this->assertFalse($DB->record_exists('context', array('contextlevel'=>CONTEXT_BLOCK)));
 
         $DB->set_field('context', 'depth', 0, array('contextlevel'=>CONTEXT_BLOCK));

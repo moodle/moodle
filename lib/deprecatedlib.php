@@ -4986,3 +4986,17 @@ function get_child_contexts(context $context) {
     debugging('get_child_contexts() is deprecated, please use $context->get_child_contexts() instead.', DEBUG_DEVELOPER);
     return $context->get_child_contexts();
 }
+
+/**
+ * Precreates all contexts including all parents.
+ *
+ * @see context_helper::create_instances()
+ * @deprecated since 2.2
+ * @param int $contextlevel empty means all
+ * @param bool $buildpaths update paths and depths
+ * @return void
+ */
+function create_contexts($contextlevel = null, $buildpaths = true) {
+    debugging('create_contexts() is deprecated, please use context_helper::create_instances() instead.', DEBUG_DEVELOPER);
+    context_helper::create_instances($contextlevel, $buildpaths);
+}
