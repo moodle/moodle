@@ -84,6 +84,11 @@ class block_section_links extends block_base {
         $courseformatoptions = $courseformat->get_format_options();
         $context = context_course::instance($course->id);
 
+        // Course format options 'numsections' is required to display the block.
+        if (empty($courseformatoptions['numsections'])) {
+            return $this->content;
+        }
+
         // Prepare the highlight value.
         if ($course->format == 'weeks') {
             $highlight = ceil((time() - $course->startdate) / 604800);
