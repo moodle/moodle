@@ -289,6 +289,11 @@ umask(0000);
 $CFG->yui2version = '2.9.0';
 $CFG->yui3version = '3.9.1';
 
+if (!defined('MOODLE_INTERNAL')) { // Necessary because cli installer has to define it earlier.
+    /** Used by library scripts to check they are being called by Moodle. */
+    define('MOODLE_INTERNAL', true);
+}
+
 // core_component can be used in any scripts, it does not need anything else.
 require_once($CFG->libdir .'/classes/component.php');
 
@@ -314,11 +319,6 @@ if (defined('ABORT_AFTER_CONFIG')) {
         require_once("$CFG->dirroot/lib/configonlylib.php");
         return;
     }
-}
-
-/** Used by library scripts to check they are being called by Moodle */
-if (!defined('MOODLE_INTERNAL')) { // necessary because cli installer has to define it earlier
-    define('MOODLE_INTERNAL', true);
 }
 
 // Early profiling start, based exclusively on config.php $CFG settings
