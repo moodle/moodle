@@ -147,4 +147,27 @@ class test_external_files extends advanced_testcase {
                 $filename, $filecontent, $contextlevel, $instanceid);
     }
 
+    /*
+     * Make sure core_files_external::upload() works without new parameters.
+     */
+    public function test_upload_without_new_param() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $context = context_user::instance($USER->id);
+        $contextid = $context->id;
+        $component = "user";
+        $filearea = "private";
+        $itemid = 0;
+        $filepath = "/";
+        $filename = "Simple4.txt";
+        $filecontent = base64_encode("Let us create a nice simple file");
+
+        // Make sure the file is created.
+        @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+        $browser = get_file_browser();
+        $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
+        $this->assertNotEmpty($file);
+    }
 }
