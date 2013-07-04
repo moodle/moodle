@@ -140,7 +140,8 @@ class mssql_native_moodle_database extends moodle_database {
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         $dbhost = $this->dbhost;
-        if (isset($dboptions['dbport'])) {
+        // Zero shouldn't be used as a port number so doing a check with empty() should be fine.
+        if (!empty($dboptions['dbport'])) {
             if (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) {
                 $dbhost .= ','.$dboptions['dbport'];
             } else {
