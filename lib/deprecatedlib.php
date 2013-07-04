@@ -4963,3 +4963,26 @@ function get_parent_contextid(context $context) {
         return false;
     }
 }
+
+/**
+ * Recursive function which, given a context, find all its children contexts.
+ *
+ * For course category contexts it will return immediate children only categories and courses.
+ * It will NOT recurse into courses or child categories.
+ * If you want to do that, call it on the returned courses/categories.
+ *
+ * When called for a course context, it will return the modules and blocks
+ * displayed in the course page.
+ *
+ * If called on a user/course/module context it _will_ populate the cache with the appropriate
+ * contexts ;-)
+ *
+ * @see context::get_child_contexts()
+ * @deprecated since 2.2
+ * @param context $context
+ * @return array Array of child records
+ */
+function get_child_contexts(context $context) {
+    debugging('get_child_contexts() is deprecated, please use $context->get_child_contexts() instead.', DEBUG_DEVELOPER);
+    return $context->get_child_contexts();
+}

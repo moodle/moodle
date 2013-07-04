@@ -11,6 +11,7 @@ information provided here is intended especially for developers.
 * get_system_context() is deprecated, please use context_system::instance().
 * get_parent_contexts() is deprecated, please use $context->get_parent_context_ids().
 * get_parent_contextid() is deprecated, please use $context->get_parent_context().
+* get_child_contexts() is deprecated, please use $context->get_child_contexts().
 
 === 2.5.1 ===
 
