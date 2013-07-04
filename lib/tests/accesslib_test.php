@@ -2410,6 +2410,16 @@ class accesslib_testcase extends advanced_testcase {
         $count += $DB->count_records('block_instances');
         $this->assertEquals($DB->count_records('context'), $count);
 
+        // Test legacy rebuild_contexts().
+        $context = context_course::instance($testcourses[2]);
+        rebuild_contexts(array($context));
+        $this->assertDebuggingCalled('rebuild_contexts() is deprecated, please use $context->reset_paths(true) instead.', DEBUG_DEVELOPER);
+        $context = context_course::instance($testcourses[2]);
+        $this->assertEquals($DB->get_field('context', 'path', array('id' => $context->id)), $context->path);
+        $this->assertEquals($DB->get_field('context', 'depth', array('id' => $context->id)), $context->depth);
+        $this->assertEquals(0, $DB->count_records('context', array('depth' => 0)));
+        $this->assertEquals(0, $DB->count_records('context', array('path' => null)));
+
         context_helper::reset_caches();
         preload_course_contexts($SITE->id);
         $this->assertEquals(1 + $DB->count_records('course_modules', array('course' => $SITE->id)),

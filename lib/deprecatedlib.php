@@ -5026,3 +5026,19 @@ function build_context_path($force = false) {
     debugging('build_context_path() is deprecated, please use context_helper::build_all_paths() instead.', DEBUG_DEVELOPER);
     context_helper::build_all_paths($force);
 }
+
+/**
+ * Rebuild all related context depth and path caches.
+ *
+ * @see context::reset_paths()
+ * @deprecated since 2.2
+ * @param array $fixcontexts array of contexts, strongtyped
+ * @return void
+ */
+function rebuild_contexts(array $fixcontexts) {
+    debugging('rebuild_contexts() is deprecated, please use $context->reset_paths(true) instead.', DEBUG_DEVELOPER);
+    foreach ($fixcontexts as $fixcontext) {
+        $fixcontext->reset_paths(false);
+    }
+    context_helper::build_all_paths(false);
+}

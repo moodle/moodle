@@ -7231,20 +7231,6 @@ class context_block extends context {
 // then we will add error message and only after that we can remove the functions
 // completely.
 /**
- * Rebuild all related context depth and path caches
- *
- * @deprecated since 2.2
- * @param array $fixcontexts array of contexts, strongtyped
- * @return void
- */
-function rebuild_contexts(array $fixcontexts) {
-    foreach ($fixcontexts as $fixcontext) {
-        $fixcontext->reset_paths(false);
-    }
-    context_helper::build_all_paths(false);
-}
-
-/**
  * Preloads all contexts relating to a course: course, modules. Block contexts
  * are no longer loaded here. The contexts for all the blocks on the current
  * page are now efficiently loaded by {@link block_manager::load_blocks()}.
