@@ -380,66 +380,43 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
- * Return the authentication plugin title
- *
- * @param string $authtype plugin type
- * @return string
+ * @deprecated use get_string("pluginname", "auth_[PLUINNAME]") instead.
+ * @todo remove completely in MDL-40517
  */
 function auth_get_plugin_title($authtype) {
-    debugging('Function auth_get_plugin_title() is deprecated, please use standard get_string("pluginname", "auth_'.$authtype.'")!');
-    return get_string('pluginname', "auth_{$authtype}");
+    throw new coding_exception('Function auth_get_plugin_title() is deprecated, please use standard get_string("pluginname", "auth_'.$authtype.'")!');
 }
 
 /**
- * Returns a role object that is the default role for new enrolments in a given course
- *
- * @deprecated
- * @param object $course
- * @return object returns a role or NULL if none set
+ * @deprecated use indivividual enrol plugin settings instead
+ * @todo remove completely in MDL-40517
  */
 function get_default_course_role($course) {
-    debugging('Function get_default_course_role() is deprecated, please use individual enrol plugin settings instead!');
-
-    $student = get_archetype_roles('student');
-    $student = reset($student);
-
-    return $student;
+    throw new coding_exception('get_default_course_role() can not be used any more, please use enrol plugin settings instead!');
 }
 
 /**
- * Was returning list of translations, use new string_manager instead
- *
- * @deprecated
- * @param bool $refreshcache force refreshing of lang cache
- * @param bool $returnall ignore langlist, return all languages available
- * @return array An associative array with contents in the form of LanguageCode => LanguageName
+ * @deprecated use get_string_manager()->get_list_of_translations() instead.
+ * @todo remove completely in MDL-40517
  */
 function get_list_of_languages($refreshcache=false, $returnall=false) {
-    debugging('get_list_of_languages() is deprecated, please use get_string_manager()->get_list_of_translations() instead.');
-    if ($refreshcache) {
-        get_string_manager()->reset_caches();
-    }
-    return get_string_manager()->get_list_of_translations($returnall);
+    throw new coding_exception('get_list_of_languages() can not be used any more, please use get_string_manager()->get_list_of_translations() instead.');
 }
 
 /**
- * Returns a list of currencies in the current language
- * @deprecated
- * @return array
+ * @deprecated use get_string_manager()->get_list_of_currencies() instead.
+ * @todo remove completely in MDL-40517
  */
 function get_list_of_currencies() {
-    debugging('get_list_of_currencies() is deprecated, please use get_string_manager()->get_list_of_currencies() instead.');
-    return get_string_manager()->get_list_of_currencies();
+    throw new coding_exception('get_list_of_currencies() can not be used any more, please use get_string_manager()->get_list_of_currencies() instead.');
 }
 
 /**
- * Returns a list of all enabled country names in the current translation
- * @deprecated
- * @return array two-letter country code => translated name.
+ * @deprecated use get_string_manager()->get_list_of_countries() instead.
+ * @todo remove completely in MDL-40517
  */
 function get_list_of_countries() {
-    debugging('get_list_of_countries() is deprecated, please use get_string_manager()->get_list_of_countries() instead.');
-    return get_string_manager()->get_list_of_countries(false);
+    throw new coding_exception('get_list_of_countries() can not be used any more, please use get_string_manager()->get_list_of_countries() instead.');
 }
 
 /**
@@ -499,144 +476,52 @@ function get_recent_enrolments($courseid, $timestart) {
 
 ########### FROM weblib.php ##########################################################################
 
-
 /**
- * Print a message in a standard themed box.
- * This old function used to implement boxes using tables.  Now it uses a DIV, but the old
- * parameters remain.  If possible, $align, $width and $color should not be defined at all.
- * Preferably just use print_box() in weblib.php
- *
- * @deprecated
- * @param string $message The message to display
- * @param string $align alignment of the box, not the text (default center, left, right).
- * @param string $width width of the box, including units %, for example '100%'.
- * @param string $color background colour of the box, for example '#eee'.
- * @param int $padding padding in pixels, specified without units.
- * @param string $class space-separated class names.
- * @param string $id space-separated id names.
- * @param boolean $return return as string or just print it
- * @return string|void Depending on $return
+ * @deprecated use $OUTPUT->box() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
-    $output = '';
-    $output .= print_simple_box_start($align, $width, $color, $padding, $class, $id, true);
-    $output .= $message;
-    $output .= print_simple_box_end(true);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_simple_box can not be used any more. Please use $OUTPUT->box() instead');
 }
 
-
-
 /**
- * This old function used to implement boxes using tables.  Now it uses a DIV, but the old
- * parameters remain.  If possible, $align, $width and $color should not be defined at all.
- * Even better, please use print_box_start() in weblib.php
- *
- * @param string $align alignment of the box, not the text (default center, left, right).   DEPRECATED
- * @param string $width width of the box, including % units, for example '100%'.            DEPRECATED
- * @param string $color background colour of the box, for example '#eee'.                   DEPRECATED
- * @param int $padding padding in pixels, specified without units.                          OBSOLETE
- * @param string $class space-separated class names.
- * @param string $id space-separated id names.
- * @param boolean $return return as string or just print it
- * @return string|void Depending on $return
+ * @deprecated use $OUTPUT->box_start instead.
+ * @todo remove completely in MDL-40517
  */
 function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
-    debugging('print_simple_box(_start/_end) is deprecated. Please use $OUTPUT->box(_start/_end) instead', DEBUG_DEVELOPER);
-
-    $output = '';
-
-    $divclasses = 'box '.$class.' '.$class.'content';
-    $divstyles  = '';
-
-    if ($align) {
-        $divclasses .= ' boxalign'.$align;    // Implement alignment using a class
-    }
-    if ($width) {    // Hopefully we can eliminate these in calls to this function (inline styles are bad)
-        if (substr($width, -1, 1) == '%') {    // Width is a % value
-            $width = (int) substr($width, 0, -1);    // Extract just the number
-            if ($width < 40) {
-                $divclasses .= ' boxwidthnarrow';    // Approx 30% depending on theme
-            } else if ($width > 60) {
-                $divclasses .= ' boxwidthwide';      // Approx 80% depending on theme
-            } else {
-                $divclasses .= ' boxwidthnormal';    // Approx 50% depending on theme
-            }
-        } else {
-            $divstyles  .= ' width:'.$width.';';     // Last resort
-        }
-    }
-    if ($color) {    // Hopefully we can eliminate these in calls to this function (inline styles are bad)
-        $divstyles  .= ' background:'.$color.';';
-    }
-    if ($divstyles) {
-        $divstyles = ' style="'.$divstyles.'"';
-    }
-
-    if ($id) {
-        $id = ' id="'.$id.'"';
-    }
-
-    $output .= '<div'.$id.$divstyles.' class="'.$divclasses.'">';
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_simple_box_start can not be used any more. Please use $OUTPUT->box_start instead');
 }
 
-
 /**
- * Print the end portion of a standard themed box.
- * Preferably just use print_box_end() in weblib.php
- *
- * @param boolean $return return as string or just print it
- * @return string|void Depending on $return
+ * @deprecated use $OUTPUT->box_end instead.
+ * @todo remove completely in MDL-40517
  */
 function print_simple_box_end($return=false) {
-    $output = '</div>';
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_simple_box_end can not be used any more. Please use $OUTPUT->box_end instead');
 }
 
 /**
- * Given some text this function converted any URLs it found into HTML links
- *
- * This core function has been replaced with filter_urltolink since Moodle 2.0
- *
- * @param string $text Passed in by reference. The string to be searched for urls.
+ * @deprecated the urltolink filter now does this job.
+ * @todo remove completely in MDL-40517
  */
 function convert_urls_into_links($text) {
-    debugging('convert_urls_into_links() has been deprecated and replaced by a new filter');
+    throw new coding_exception('convert_urls_into_links() can not be used any more and replaced by the urltolink filter');
 }
 
 /**
- * Used to be called from help.php to inject a list of smilies into the
- * emoticons help file.
- *
- * @return string HTML
+ * @deprecated use the emoticon_manager class instead.
+ * @todo remove completely in MDL-40517
  */
 function get_emoticons_list_for_help_file() {
-    debugging('get_emoticons_list_for_help_file() has been deprecated, see the new emoticon_manager API');
-    return '';
+    throw new coding_exception('get_emoticons_list_for_help_file() can not be used any more, use the new emoticon_manager API instead');
 }
 
 /**
- * Was used to replace all known smileys in the text with image equivalents
- *
- * This core function has been replaced with filter_emoticon since Moodle 2.0
+ * @deprecated use emoticon filter now does this job.
+ * @todo remove completely in MDL-40517
  */
 function replace_smilies(&$text) {
-    debugging('replace_smilies() has been deprecated and replaced with the new filter_emoticon');
+    throw new coding_exception('replace_smilies() can not be used any more and replaced with the emoticon filter.');
 }
 
 /**
@@ -979,132 +864,51 @@ function skip_main_destination() {
 }
 
 /**
- * Prints a string in a specified size  (retained for backward compatibility)
- *
- * @deprecated
- * @param string $text The text to be displayed
- * @param int $size The size to set the font for text display.
- * @param bool $return If set to true output is returned rather than echoed Default false
- * @return string|void String if return is true
+ * @deprecated use $OUTPUT->heading() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_headline($text, $size=2, $return=false) {
-    global $OUTPUT;
-    debugging('print_headline() has been deprecated. Please change your code to use $OUTPUT->heading().');
-    $output = $OUTPUT->heading($text, $size);
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_headline() can not be used any more. Please use $OUTPUT->heading() instead.');
 }
 
 /**
- * Prints text in a format for use in headings.
- *
- * @deprecated
- * @param string $text The text to be displayed
- * @param string $deprecated No longer used. (Use to do alignment.)
- * @param int $size The size to set the font for text display.
- * @param string $class
- * @param bool $return If set to true output is returned rather than echoed, default false
- * @param string $id The id to use in the element
- * @return string|void String if return=true nothing otherwise
+ * @deprecated use $OUTPUT->heading() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_heading($text, $deprecated = '', $size = 2, $class = 'main', $return = false, $id = '') {
-    global $OUTPUT;
-    debugging('print_heading() has been deprecated. Please change your code to use $OUTPUT->heading().');
-    if (!empty($deprecated)) {
-        debugging('Use of deprecated align attribute of print_heading. ' .
-                'Please do not specify styling in PHP code like that.', DEBUG_DEVELOPER);
-    }
-    $output = $OUTPUT->heading($text, $size, $class, $id);
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_heading() can not be used any more. Please use $OUTPUT->heading() instead.');
 }
 
 /**
- * Output a standard heading block
- *
- * @deprecated
- * @param string $heading The text to write into the heading
- * @param string $class An additional Class Attr to use for the heading
- * @param bool $return If set to true output is returned rather than echoed, default false
- * @return string|void HTML String if return=true nothing otherwise
+ * @deprecated use $OUTPUT->heading() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_heading_block($heading, $class='', $return=false) {
-    global $OUTPUT;
-    debugging('print_heading_with_block() has been deprecated. Please change your code to use $OUTPUT->heading().');
-    $output = $OUTPUT->heading($heading, 2, 'headingblock header ' . renderer_base::prepare_classes($class));
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_heading_with_block() can not be used any more. Please use $OUTPUT->heading() instead.');
 }
 
 /**
- * Print a message in a standard themed box.
- * Replaces print_simple_box (see deprecatedlib.php)
- *
- * @deprecated
- * @param string $message, the content of the box
- * @param string $classes, space-separated class names.
- * @param string $ids
- * @param boolean $return, return as string or just print it
- * @return string|void mixed string or void
+ * @deprecated use $OUTPUT->box() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_box($message, $classes='generalbox', $ids='', $return=false) {
-    global $OUTPUT;
-    debugging('print_box() has been deprecated. Please change your code to use $OUTPUT->box().');
-    $output = $OUTPUT->box($message, $classes, $ids);
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_box() can not be used any more. Please use $OUTPUT->box() instead.');
 }
 
 /**
- * Starts a box using divs
- * Replaces print_simple_box_start (see deprecatedlib.php)
- *
- * @deprecated
- * @param string $classes, space-separated class names.
- * @param string $ids
- * @param boolean $return, return as string or just print it
- * @return string|void  string or void
+ * @deprecated use $OUTPUT->box_start() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_box_start($classes='generalbox', $ids='', $return=false) {
-    global $OUTPUT;
-    debugging('print_box_start() has been deprecated. Please change your code to use $OUTPUT->box_start().');
-    $output = $OUTPUT->box_start($classes, $ids);
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_box_start() can not be used any more. Please use $OUTPUT->box_start() instead.');
 }
 
 /**
- * Simple function to end a box (see above)
- * Replaces print_simple_box_end (see deprecatedlib.php)
- *
- * @deprecated
- * @param boolean $return, return as string or just print it
- * @return string|void Depending on value of return
+ * @deprecated use $OUTPUT->box_end() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_box_end($return=false) {
-    global $OUTPUT;
-    debugging('print_box_end() has been deprecated. Please change your code to use $OUTPUT->box_end().');
-    $output = $OUTPUT->box_end();
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_box_end() can not be used any more. Please use $OUTPUT->box_end() instead.');
 }
 
 /**
@@ -1155,10 +959,11 @@ function print_container_start($clearfix=false, $classes='', $idbase='', $return
 }
 
 /**
- * Deprecated, now handled automatically in themes
+ * @deprecated do not use any more, is not automatic
+ * @todo remove completely in MDL-40517
  */
 function check_theme_arrows() {
-    debugging('check_theme_arrows() has been deprecated, do not use it anymore, it is now automatic.');
+    throw new coding_exception('check_theme_arrows() has been deprecated, do not use it anymore, it is now automatic.');
 }
 
 /**
@@ -1334,43 +1139,20 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
     }
 }
 
+/**
+ * @deprecated use $OUTPUT->footer() instead.
+ * @todo remove completely in MDL-40517
+ */
 function print_footer($course = NULL, $usercourse = NULL, $return = false) {
-    global $PAGE, $OUTPUT;
-    debugging('print_footer() has been deprecated. Please change your code to use $OUTPUT->footer().');
-    // TODO check arguments.
-    if (is_string($course)) {
-        debugging("Magic values like 'home', 'empty' passed to print_footer no longer have any effect. " .
-                'To achieve a similar effect, call $PAGE->set_pagelayout before you call print_header.', DEBUG_DEVELOPER);
-    } else if (!empty($course->id) && $course->id != $PAGE->course->id) {
-        throw new coding_exception('The $course object you passed to print_footer does not match $PAGE->course.');
-    }
-    if (!is_null($usercourse)) {
-        debugging('The second parameter ($usercourse) to print_footer is no longer supported. ' .
-                '(I did not think it was being used anywhere.)', DEBUG_DEVELOPER);
-    }
-    $output = $OUTPUT->footer();
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_footer() cant be used anymore. Please use $OUTPUT->footer() instead.');
 }
 
 /**
- * Returns text to be displayed to the user which reflects their login status
- *
- * @global object
- * @global object
- * @global object
- * @global object
- * @uses CONTEXT_COURSE
- * @param course $course {@link $COURSE} object containing course information
- * @param user $user {@link $USER} object containing user information
- * @return string HTML
+ * @deprecated use theme layouts instead.
+ * @todo remove completely in MDL-40517
  */
 function user_login_string($course='ignored', $user='ignored') {
-    debugging('user_login_info() has been deprecated. User login info is now handled via themes layouts.');
-    return '';
+    throw new coding_exception('user_login_info() cant be used anymore. User login info is now handled via themes layouts.');
 }
 
 /**
@@ -1422,306 +1204,87 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 }
 
 /**
- * This was used by old code to see whether a block region had anything in it,
- * and hence wether that region should be printed.
- *
- * We don't ever want old code to print blocks, so we now always return false.
- * The function only exists to avoid fatal errors in old code.
- *
- * @deprecated since Moodle 2.0. always returns false.
- *
- * @param object $blockmanager
- * @param string $region
- * @return bool
+ * @deprecated blocks are now printed by theme.
+ * @todo remove completely in MDL-40517
  */
 function blocks_have_content(&$blockmanager, $region) {
-    debugging('The function blocks_have_content should no longer be used. Blocks are now printed by the theme.');
-    return false;
+    throw new coding_exception('blocks_have_content() can no longer be used. Blocks are now printed by the theme.');
 }
 
 /**
- * This was used by old code to print the blocks in a region.
- *
- * We don't ever want old code to print blocks, so this is now a no-op.
- * The function only exists to avoid fatal errors in old code.
- *
- * @deprecated since Moodle 2.0. does nothing.
- *
- * @param object $page
- * @param object $blockmanager
- * @param string $region
+ * @deprecated blocks are now printed by the theme.
+ * @todo remove completely in MDL-40517
  */
 function blocks_print_group($page, $blockmanager, $region) {
-    debugging('The function blocks_print_group should no longer be used. Blocks are now printed by the theme.');
+    throw new coding_exception('function blocks_print_group() can no longer be used. Blocks are now printed by the theme.');
 }
 
 /**
- * This used to be the old entry point for anyone that wants to use blocks.
- * Since we don't want people people dealing with blocks this way any more,
- * just return a suitable empty array.
- *
- * @deprecated since Moodle 2.0.
- *
- * @param object $page
- * @return array
+ * @deprecated blocks are now printed by the theme.
+ * @todo remove completely in MDL-40517
  */
 function blocks_setup(&$page, $pinned = BLOCKS_PINNED_FALSE) {
-    debugging('The function blocks_print_group should no longer be used. Blocks are now printed by the theme.');
-    return array(BLOCK_POS_LEFT => array(), BLOCK_POS_RIGHT => array());
+    throw new coding_exception('blocks_print_group() can no longer be used. Blocks are now printed by the theme.');
 }
 
 /**
- * This iterates over an array of blocks and calculates the preferred width
- * Parameter passed by reference for speed; it's not modified.
- *
- * @deprecated since Moodle 2.0. Layout is now controlled by the theme.
- *
- * @param mixed $instances
+ * @deprecated Layout is now controlled by the theme.
+ * @todo remove completely in MDL-40517
  */
 function blocks_preferred_width($instances) {
-    debugging('The function blocks_print_group should no longer be used. Blocks are now printed by the theme.');
-    $width = 210;
+    throw new coding_exception('blocks_print_group() can no longer be used. Blocks are now printed by the theme.');
 }
 
 /**
- * Print a nicely formatted table.
- *
- * @deprecated since Moodle 2.0
- *
- * @param array $table is an object with several properties.
+ * @deprecated use html_writer::table() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_table($table, $return=false) {
-    global $OUTPUT;
-    // TODO MDL-19755 turn debugging on once we migrate the current core code to use the new API
-    debugging('print_table() has been deprecated. Please change your code to use html_writer::table().');
-    $newtable = new html_table();
-    foreach ($table as $property => $value) {
-        if (property_exists($newtable, $property)) {
-            $newtable->{$property} = $value;
-        }
-    }
-    if (isset($table->class)) {
-        $newtable->attributes['class'] = $table->class;
-    }
-    if (isset($table->rowclass) && is_array($table->rowclass)) {
-        debugging('rowclass[] has been deprecated for html_table and should be replaced by rowclasses[]. please fix the code.');
-        $newtable->rowclasses = $table->rowclass;
-    }
-    $output = html_writer::table($newtable);
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-        return true;
-    }
+    throw new coding_exception('print_table() can no longer be used. Use html_writer::table() instead.');
 }
 
 /**
- * Creates and displays (or returns) a link to a popup window
- *
- * @deprecated since Moodle 2.0
- *
- * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
- * @param string $name Name to be assigned to the popup window (this is used by
- *   client-side scripts to "talk" to the popup window)
- * @param string $linkname Text to be displayed as web link
- * @param int $height Height to assign to popup window
- * @param int $width Height to assign to popup window
- * @param string $title Text to be displayed as popup page title
- * @param string $options List of additional options for popup window
- * @param bool $return If true, return as a string, otherwise print
- * @param string $id id added to the element
- * @param string $class class added to the element
- * @return string html code to display a link to a popup window.
+ * @deprecated use $OUTPUT->action_link() instead (note: popups are discouraged for accesibility reasons)
+ * @todo remove completely in MDL-40517
  */
 function link_to_popup_window ($url, $name=null, $linkname=null, $height=400, $width=500, $title=null, $options=null, $return=false) {
-    debugging('link_to_popup_window() has been removed. Please change your code to use $OUTPUT->action_link(). Please note popups are discouraged for accessibility reasons');
-
-    return html_writer::link($url, $name);
+    throw new coding_exception('link_to_popup_window() can no longer be used. Please to use $OUTPUT->action_link() instead.');
 }
 
 /**
- * Creates and displays (or returns) a buttons to a popup window.
- *
- * @deprecated since Moodle 2.0
- *
- * @param string $url Web link. Either relative to $CFG->wwwroot, or a full URL.
- * @param string $name Name to be assigned to the popup window (this is used by
- *   client-side scripts to "talk" to the popup window)
- * @param string $linkname Text to be displayed as web link
- * @param int $height Height to assign to popup window
- * @param int $width Height to assign to popup window
- * @param string $title Text to be displayed as popup page title
- * @param string $options List of additional options for popup window
- * @param bool $return If true, return as a string, otherwise print
- * @param string $id id added to the element
- * @param string $class class added to the element
- * @return string html code to display a link to a popup window.
+ * @deprecated use $OUTPUT->single_button() instead.
+ * @todo remove completely in MDL-40517
  */
 function button_to_popup_window ($url, $name=null, $linkname=null,
                                  $height=400, $width=500, $title=null, $options=null, $return=false,
                                  $id=null, $class=null) {
-    global $OUTPUT;
-
-    debugging('button_to_popup_window() has been deprecated. Please change your code to use $OUTPUT->single_button().');
-
-    if ($options == 'none') {
-        $options = null;
-    }
-
-    if (empty($linkname)) {
-        throw new coding_exception('A link must have a descriptive text value! See $OUTPUT->action_link() for usage.');
-    }
-
-    // Create a single_button object
-    $form = new single_button($url, $linkname, 'post');
-    $form->button->title = $title;
-    $form->button->id = $id;
-
-    // Parse the $options string
-    $popupparams = array();
-    if (!empty($options)) {
-        $optionsarray = explode(',', $options);
-        foreach ($optionsarray as $option) {
-            if (strstr($option, '=')) {
-                $parts = explode('=', $option);
-                if ($parts[1] == '0') {
-                    $popupparams[$parts[0]] = false;
-                } else {
-                    $popupparams[$parts[0]] = $parts[1];
-                }
-            } else {
-                $popupparams[$option] = true;
-            }
-        }
-    }
-
-    if (!empty($height)) {
-        $popupparams['height'] = $height;
-    }
-    if (!empty($width)) {
-        $popupparams['width'] = $width;
-    }
-
-    $form->button->add_action(new popup_action('click', $url, $name, $popupparams));
-    $output = $OUTPUT->render($form);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('button_to_popup_window() can no longer be used. Please use $OUTPUT->single_button() instead.');
 }
 
 /**
- * Print a self contained form with a single submit button.
- *
- * @deprecated since Moodle 2.0
- *
- * @param string $link used as the action attribute on the form, so the URL that will be hit if the button is clicked.
- * @param array $options these become hidden form fields, so these options get passed to the script at $link.
- * @param string $label the caption that appears on the button.
- * @param string $method HTTP method used on the request of the button is clicked. 'get' or 'post'.
- * @param string $notusedanymore no longer used.
- * @param boolean $return if false, output the form directly, otherwise return the HTML as a string.
- * @param string $tooltip a tooltip to add to the button as a title attribute.
- * @param boolean $disabled if true, the button will be disabled.
- * @param string $jsconfirmmessage if not empty then display a confirm dialogue with this string as the question.
- * @param string $formid The id attribute to use for the form
- * @return string|void Depending on the $return paramter.
+ * @deprecated use $OUTPUT->single_button() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_single_button($link, $options, $label='OK', $method='get', $notusedanymore='',
         $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='', $formid = '') {
-    global $OUTPUT;
 
-    debugging('print_single_button() has been deprecated. Please change your code to use $OUTPUT->single_button().');
-
-    // Cast $options to array
-    $options = (array) $options;
-
-    $button = new single_button(new moodle_url($link, $options), $label, $method, array('disabled'=>$disabled, 'title'=>$tooltip, 'id'=>$formid));
-
-    if ($jsconfirmmessage) {
-        $button->button->add_confirm_action($jsconfirmmessage);
-    }
-
-    $output = $OUTPUT->render($button);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_single_button() can no longer be used. Please use $OUTPUT->single_button() instead.');
 }
 
 /**
- * Print a spacer image with the option of including a line break.
- *
- * @deprecated since Moodle 2.0
- *
- * @global object
- * @param int $height The height in pixels to make the spacer
- * @param int $width The width in pixels to make the spacer
- * @param boolean $br If set to true a BR is written after the spacer
+ * @deprecated use $OUTPUT->spacer() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_spacer($height=1, $width=1, $br=true, $return=false) {
-    global $CFG, $OUTPUT;
-
-    debugging('print_spacer() has been deprecated. Please change your code to use $OUTPUT->spacer().');
-
-    $output = $OUTPUT->spacer(array('height'=>$height, 'width'=>$width, 'br'=>$br));
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_spacer() can no longer be used. Please use $OUTPUT->spacer() instead.');
 }
 
 /**
- * Print the specified user's avatar.
- *
- * @deprecated since Moodle 2.0
- *
- * @global object
- * @global object
- * @param mixed $user Should be a $user object with at least fields id, picture, imagealt, firstname, lastname, email
- *      If any of these are missing, or if a userid is passed, the the database is queried. Avoid this
- *      if at all possible, particularly for reports. It is very bad for performance.
- * @param int $courseid The course id. Used when constructing the link to the user's profile.
- * @param boolean $picture The picture to print. By default (or if NULL is passed) $user->picture is used.
- * @param int $size Size in pixels. Special values are (true/1 = 100px) and (false/0 = 35px) for backward compatibility
- * @param boolean $return If false print picture to current page, otherwise return the output as string
- * @param boolean $link enclose printed image in a link the user's profile (default true).
- * @param string $target link target attribute. Makes the profile open in a popup window.
- * @param boolean $alttext add non-blank alt-text to the image. (Default true, set to false for purely
- *      decorative images, or where the username will be printed anyway.)
- * @return string|void String or nothing, depending on $return.
+ * @deprecated use $OUTPUT->user_picture() instead.
+ * @todo remove completely in MDL-40517
  */
 function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
-    global $OUTPUT;
-
-    debugging('print_user_picture() has been deprecated. Please change your code to use $OUTPUT->user_picture($user, array(\'courseid\'=>$courseid).');
-
-    if (!is_object($user)) {
-        $userid = $user;
-        $user = new stdClass();
-        $user->id = $userid;
-    }
-
-    if (empty($user->picture) and $picture) {
-        $user->picture = $picture;
-    }
-
-    $options = array('size'=>$size, 'link'=>$link, 'alttext'=>$alttext, 'courseid'=>$courseid, 'popup'=>!empty($target));
-
-    $output = $OUTPUT->user_picture($user, $options);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_user_picture() can no longer be used. Please use $OUTPUT->user_picture($user, array(\'courseid\'=>$courseid) instead.');
 }
 
 /**
@@ -1803,23 +1366,11 @@ function helpbutton($page, $title, $module='moodle', $image=true, $linktext=fals
 }
 
 /**
- * Print a help button.
- *
- * Prints a special help button that is a link to the "live" emoticon popup
- *
- * @todo Finish documenting this function
- *
- * @global object
- * @global object
- * @param string $form ?
- * @param string $field ?
- * @param boolean $return If true then the output is returned as a string, if false it is printed to the current page.
- * @return string|void Depending on value of $return
+ * @deprecated this is now handled by text editors
+ * @todo remove completely in MDL-40517
  */
 function emoticonhelpbutton($form, $field, $return = false) {
-    /// TODO: MDL-21215
-
-    debugging('emoticonhelpbutton() was removed, new text editors will implement this feature');
+    throw new coding_exception('emoticonhelpbutton() was removed, new text editors will implement this feature');
 }
 
 /**
@@ -1924,66 +1475,19 @@ function doc_link($path='', $text='', $iconpath='ignored') {
 }
 
 /**
- * Prints a single paging bar to provide access to other pages  (usually in a search)
- *
- * @deprecated since Moodle 2.0
- *
- * @param int $totalcount Thetotal number of entries available to be paged through
- * @param int $page The page you are currently viewing
- * @param int $perpage The number of entries that should be shown per page
- * @param mixed $baseurl If this  is a string then it is the url which will be appended with $pagevar, an equals sign and the page number.
- *                          If this is a moodle_url object then the pagevar param will be replaced by the page no, for each page.
- * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
- * @param bool $nocurr do not display the current page as a link (dropped, link is never displayed for the current page)
- * @param bool $return whether to return an output string or echo now
- * @return bool|string depending on $result
+ * @deprecated use $OUTPUT->render($pagingbar) instead.
+ * @todo remove completely in MDL-40517
  */
 function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false, $return=false) {
-    global $OUTPUT;
-
-    debugging('print_paging_bar() has been deprecated. Please change your code to use $OUTPUT->render($pagingbar).');
-
-    if (empty($nocurr)) {
-        debugging('the feature of parameter $nocurr has been removed from the paging_bar');
-    }
-
-    $pagingbar = new paging_bar($totalcount, $page, $perpage, $baseurl);
-    $pagingbar->pagevar = $pagevar;
-    $output = $OUTPUT->render($pagingbar);
-
-    if ($return) {
-        return $output;
-    }
-
-    echo $output;
-    return true;
+    throw new coding_exception('print_paging_bar() can not be used any more. Please use $OUTPUT->render($pagingbar) instead.');
 }
 
 /**
- * Print a message along with "Yes" and "No" links for the user to continue.
- *
- * @deprecated since Moodle 2.0
- *
- * @global object
- * @param string $message The text to display
- * @param string $linkyes The link to take the user to if they choose "Yes"
- * @param string $linkno The link to take the user to if they choose "No"
- * @param string $optionyes The yes option to show on the notice
- * @param string $optionsno The no option to show
- * @param string $methodyes Form action method to use if yes [post, get]
- * @param string $methodno Form action method to use if no [post, get]
- * @return void Output is echo'd
+ * @deprecated use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel) instead.
+ * @todo remove completely in MDL-40517
  */
 function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=NULL, $methodyes='post', $methodno='post') {
-
-    debugging('notice_yesno() has been deprecated. Please change your code to use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel).');
-
-    global $OUTPUT;
-
-    $buttoncontinue = new single_button(new moodle_url($linkyes, $optionsyes), get_string('yes'), $methodyes);
-    $buttoncancel   = new single_button(new moodle_url($linkno, $optionsno), get_string('no'), $methodno);
-
-    echo $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel);
+    throw new coding_exception('notice_yesno() can not be used any more. Please use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel) instead.');
 }
 
 /**
@@ -2043,69 +1547,21 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 }
 
 /**
- * Choose value 0 or 1 from a menu with options 'No' and 'Yes'.
- * Other options like choose_from_menu.
- *
- * @deprecated since Moodle 2.0
- *
- * Calls {@link choose_from_menu()} with preset arguments
- * @see choose_from_menu()
- *
- * @param string $name the name of this form control, as in &lt;select name="..." ...
- * @param string $selected the option to select initially, default none.
- * @param string $script if not '', then this is added to the &lt;select> element as an onchange handler.
- * @param boolean $return Whether this function should return a string or output it (defaults to false)
- * @param boolean $disabled (defaults to false)
- * @param int $tabindex
- * @return string|void If $return=true returns string, else echo's and returns void
+ * @deprecated use html_writer::select_yes_no() instead.
+ * @todo remove completely in MDL-40517
  */
 function choose_from_menu_yesno($name, $selected, $script = '', $return = false, $disabled = false, $tabindex = 0) {
-    debugging('choose_from_menu_yesno() has been deprecated. Please change your code to use html_writer.');
-    global $OUTPUT;
-
-    if ($script) {
-        debugging('The $script parameter has been deprecated. You must use component_actions instead', DEBUG_DEVELOPER);
-    }
-
-    $output = html_writer::select_yes_no($name, $selected, array('disabled'=>($disabled ? 'disabled' : null), 'tabindex'=>$tabindex));
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('choose_from_menu_yesno() can not be used anymore. Please use html_writerselect_yes_no() instead.');
 }
 
 /**
- * Just like choose_from_menu, but takes a nested array (2 levels) and makes a dropdown menu
- * including option headings with the first level.
- *
- * @deprecated since Moodle 2.0
- *
- * This function is very similar to {@link choose_from_menu_yesno()}
- * and {@link choose_from_menu()}
- *
- * @todo Add datatype handling to make sure $options is an array
- *
- * @param array $options An array of objects to choose from
- * @param string $name The XHTML field name
- * @param string $selected The value to select by default
- * @param string $nothing The label for the 'nothing is selected' option.
- *                        Defaults to get_string('choose').
- * @param string $script If not '', then this is added to the &lt;select> element
- *                       as an onchange handler.
- * @param string $nothingvalue The value for the first `nothing` option if $nothing is set
- * @param bool $return Whether this function should return a string or output
- *                     it (defaults to false)
- * @param bool $disabled Is the field disabled by default
- * @param int|string $tabindex Override the tabindex attribute [numeric]
- * @return string|void If $return=true returns string, else echo's and returns void
+ * @deprecated use html_writer::select() instead.
+ * @todo remove completely in MDL-40517
  */
 function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
                                  $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
 
-    debugging('choose_from_menu_nested() has been removed. Please change your code to use html_writer::select().');
-    global $OUTPUT;
+    throw new coding_exception('choose_from_menu_nested() can not be used any more. Please use html_writer::select() instead.');
 }
 
 /**
@@ -2133,58 +1589,19 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
 }
 
 /**
- * Prints form items with the names $hour and $minute
- *
- * @deprecated since Moodle 2.0
- *
- * @param string $hour  fieldname
- * @param string $minute  fieldname
- * @param int $currenttime A default timestamp in GMT
- * @param int $step minute spacing
- * @param boolean $return If set to true returns rather than echo's
- * @return string|bool Depending on value of $return
+ * @deprecated use html_writer::select_time() instead
+ * @todo remove completely in MDL-40517
  */
 function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
-    debugging('print_time_selector() has been deprecated. Please change your code to use html_writer.');
-
-    $hourselector = html_writer::select_time('hours', $hour, $currenttime);
-    $minuteselector = html_writer::select_time('minutes', $minute, $currenttime, $step);
-
-    $output = $hourselector . $$minuteselector;
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new moodle_exception('print_time_selector() can not be used any more . Please use html_writer::select_time() instead.');
 }
 
 /**
- * Prints form items with the names $day, $month and $year
- *
- * @deprecated since Moodle 2.0
- *
- * @param string $day   fieldname
- * @param string $month  fieldname
- * @param string $year  fieldname
- * @param int $currenttime A default timestamp in GMT
- * @param boolean $return If set to true returns rather than echo's
- * @return string|bool Depending on value of $return
+ * @deprecated please use html_writer::select_time instead
+ * @todo remove completely in MDL-40517
  */
 function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
-    debugging('print_date_selector() has been deprecated. Please change your code to use html_writer.');
-
-    $dayselector = html_writer::select_time('days', $day, $currenttime);
-    $monthselector = html_writer::select_time('months', $month, $currenttime);
-    $yearselector = html_writer::select_time('years', $year, $currenttime);
-
-    $output = $dayselector . $monthselector . $yearselector;
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_date_selector() can not be used any more. Please use html_writer::select_time() instead.');
 }
 
 /**
@@ -2198,45 +1615,19 @@ function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose'
 }
 
 /**
- * Prints a simple button to close a window
- *
- * @deprecated since Moodle 2.0
- *
- * @global object
- * @param string $name Name of the window to close
- * @param boolean $return whether this function should return a string or output it.
- * @param boolean $reloadopener if true, clicking the button will also reload
- *      the page that opend this popup window.
- * @return string|void if $return is true, void otherwise
+ * @deprecated use $OUTPUT->close_window_button() instead.
+ * @todo remove completely in MDL-40517
  */
 function close_window_button($name='closewindow', $return=false, $reloadopener = false) {
-    global $OUTPUT;
-
-    debugging('close_window_button() has been deprecated. Please change your code to use $OUTPUT->close_window_button().');
-    $output = $OUTPUT->close_window_button(get_string($name));
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('close_window_button() can not be used any more. Use $OUTPUT->close_window_button() instead.');
 }
 
 /**
- * Given an array of values, creates a group of radio buttons to be part of a form
- *
- * @deprecated since Moodle 2.0
- *
- * @staticvar int $idcounter
- * @param array  $options  An array of value-label pairs for the radio group (values as keys)
- * @param string $name     Name of the radiogroup (unique in the form)
- * @param string $checked  The value that is already checked
- * @param bool $return Whether this function should return a string or output
- *                     it (defaults to false)
- * @return string|void If $return=true returns string, else echo's and returns void
+ * @deprecated use html_writer instead.
+ * @todo remove completely in MDL-40517
  */
 function choose_from_radio ($options, $name, $checked='', $return=false) {
-    debugging('choose_from_radio() has been removed. Please change your code to use html_writer.');
+    throw new coding_exception('choose_from_radio() can not be used any more. Please use html_writer instead.');
 }
 
 /**
@@ -2275,90 +1666,29 @@ function print_checkbox($name, $value, $checked = true, $label = '', $alt = '', 
 
 }
 
-
 /**
- * Display an standard html text field with an optional label
- *
- * @deprecated since Moodle 2.0
- *
- * @param string $name    The name of the text field
- * @param string $value   The value of the text field
- * @param string $alt     The info to be inserted in the alt tag
- * @param int $size Sets the size attribute of the field. Defaults to 50
- * @param int $maxlength Sets the maxlength attribute of the field. Not set by default
- * @param bool $return Whether this function should return a string or output
- *                     it (defaults to false)
- * @return string|void If $return=true returns string, else echo's and returns void
+ * @deprecated use mforms or html_writer instead.
+ * @todo remove completely in MDL-40517
  */
 function print_textfield($name, $value, $alt = '', $size=50, $maxlength=0, $return=false) {
-    debugging('print_textfield() has been deprecated. Please use mforms or html_writer.');
-
-    if ($alt === '') {
-        $alt = null;
-    }
-
-    $style = "width: {$size}px;";
-    $attributes = array('type'=>'text', 'name'=>$name, 'alt'=>$alt, 'style'=>$style, 'value'=>$value);
-    if ($maxlength) {
-        $attributes['maxlength'] = $maxlength;
-    }
-
-    $output = html_writer::empty_tag('input', $attributes);
-
-    if (empty($return)) {
-        echo $output;
-    } else {
-        return $output;
-    }
+    throw new coding_exception('print_textfield() can not be used anymore. Please use mforms or html_writer instead.');
 }
 
 
 /**
- * Centered heading with attached help button (same title text)
- * and optional icon attached
- *
- * @deprecated since Moodle 2.0
- *
- * @param string $text The text to be displayed
- * @param string $helppage The help page to link to
- * @param string $module The module whose help should be linked to
- * @param string $icon Image to display if needed
- * @param bool $return If set to true output is returned rather than echoed, default false
- * @return string|void String if return=true nothing otherwise
+ * @deprecated use $OUTPUT->heading_with_help() instead
+ * @todo remove completely in MDL-40517
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon=false, $return=false) {
-
-    debugging('print_heading_with_help() has been deprecated. Please change your code to use $OUTPUT->heading().');
-
-    global $OUTPUT;
-
-    // Extract the src from $icon if it exists
-    if (preg_match('/src="([^"]*)"/', $icon, $matches)) {
-        $icon = $matches[1];
-        $icon = new moodle_url($icon);
-    } else {
-        $icon = '';
-    }
-
-    $output = $OUTPUT->heading_with_help($text, $helppage, $module, $icon);
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
+    throw new coding_exception('print_heading_with_help() can not be used anymore. Please use $OUTPUT->heading_with_help() instead.');
 }
 
 /**
- * Returns a turn edit on/off button for tag in a self contained form.
- * @deprecated since Moodle 2.0
- * @param string $tagid The ID attribute
- * @return string
+ * @deprecated use $OUTPUT->edit_button() instead.
+ * @todo remove completely in MDL-40517
  */
 function update_tag_button($tagid) {
-    global $OUTPUT;
-    debugging('update_tag_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
-    return $OUTPUT->edit_button(new moodle_url('/tag/index.php', array('id' => $tagid)));
+    throw new coding_exception('update_tag_button() can not be used any more. Please $OUTPUT->edit_button(moodle_url) instead.');
 }
 
 
@@ -2390,22 +1720,11 @@ function update_module_button($cmid, $ignored, $string) {
 }
 
 /**
- * Returns a turn edit on/off button for course in a self contained form.
- * Used to be an icon, but it's now a simple form button
- *
- * Note that the caller is responsible for capchecks.
- *
- * @global object
- * @global object
- * @param int $courseid The course  to update by id as found in 'course' table
- * @return string
+ * @deprecated use $OUTPUT->edit_button() instead.
+ * @todo remove completely in MDL-40517
  */
 function update_course_icon($courseid) {
-    global $CFG, $OUTPUT;
-
-    debugging('update_course_button() has been deprecated. Please change your code to use $OUTPUT->edit_button(moodle_url).');
-
-    return $OUTPUT->edit_button(new moodle_url('/course/view.php', array('id' => $courseid)));
+    throw new coding_exception('update_course_button() can not be used anymore. Please use $OUTPUT->edit_button(moodle_url) instead.');
 }
 
 /**
@@ -2527,38 +1846,27 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 }
 
 /**
- * Returns a little popup menu for switching roles
- *
- * @deprecated in Moodle 2.0
- * @param int $courseid The course  to update by id as found in 'course' table
- * @return string
+ * @deprecated use the settings block instead.
+ * @todo remove completely in MDL-40517
  */
 function switchroles_form($courseid) {
-    debugging('switchroles_form() has been deprecated and replaced by an item in the global settings block');
-    return '';
+    throw new coding_exception('switchroles_form() can not be used any more. The global settings block does this job.');
 }
 
 /**
- * Print header for admin page
- * @deprecated since Moodle 20. Please use normal $OUTPUT->header() instead
- * @param string $focus focus element
+ * @deprecated Please use normal $OUTPUT->header() instead
+ * @todo remove completely in MDL-40517
  */
 function admin_externalpage_print_header($focus='') {
-    global $OUTPUT;
-
-    debugging('admin_externalpage_print_header is deprecated. Please $OUTPUT->header() instead.', DEBUG_DEVELOPER);
-
-    echo $OUTPUT->header();
+    throw new coding_exception('admin_externalpage_print_header can not be used any more. Please $OUTPUT->header() instead.');
 }
 
 /**
- * @deprecated since Moodle 1.9. Please use normal $OUTPUT->footer() instead
+ * @deprecated Please use normal $OUTPUT->footer() instead
+ * @todo remove completely in MDL-40517
  */
 function admin_externalpage_print_footer() {
-// TODO Still 103 referernces in core code. Don't do debugging output yet.
-    debugging('admin_externalpage_print_footer is deprecated. Please $OUTPUT->footer() instead.', DEBUG_DEVELOPER);
-    global $OUTPUT;
-    echo $OUTPUT->footer();
+    throw new coding_exception('admin_externalpage_print_footer can not be used anymore Please $OUTPUT->footer() instead.');
 }
 
 /// CALENDAR MANAGEMENT  ////////////////////////////////////////////////////////////////
