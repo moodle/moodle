@@ -4153,3 +4153,16 @@ function get_context_url(context $context) {
     return $context->get_url();
 }
 
+/**
+ * Is this context part of any course? if yes return course context,
+ * if not return null or throw exception.
+ *
+ * @deprecated since 2.2
+ * @see context::get_course_context()
+ * @param context $context
+ * @return course_context context of the enclosing course, null if not found or exception
+ */
+function get_course_context(context $context) {
+    debugging('get_course_context() is deprecated, please use $context->get_course_context(true) instead.', DEBUG_DEVELOPER);
+    return $context->get_course_context(true);
+}

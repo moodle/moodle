@@ -469,7 +469,7 @@ class grade_report_grader extends grade_report {
                            AND e.status = :estatus
                            AND e.courseid = :courseid
                   GROUP BY ue.userid";
-            $coursecontext = get_course_context($this->context);
+            $coursecontext = $this->context->get_course_context(true);
             $params = array_merge($uparams, array('estatus'=>ENROL_INSTANCE_ENABLED, 'uestatus'=>ENROL_USER_ACTIVE, 'courseid'=>$coursecontext->instanceid));
             $useractiveenrolments = $DB->get_records_sql($sql, $params);
 

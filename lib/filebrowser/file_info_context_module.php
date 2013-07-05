@@ -94,7 +94,7 @@ class file_info_context_module extends file_info {
             return null;
         }
 
-        $coursecontext = get_course_context($this->context);
+        $coursecontext = $this->context->get_course_context(true);
         if (!$this->course->visible and !has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
             return null;
         }
