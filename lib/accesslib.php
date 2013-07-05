@@ -7232,7 +7232,7 @@ class context_block extends context {
 // completely.
 /**
  * Preloads context information together with instances.
- * Use context_instance_preload() to strip the context info from the record and cache the context instance.
+ * Use context_helper::preload_from_record() to strip the context info from the record and cache the context instance.
  *
  * @deprecated since 2.2
  * @param string $joinon for example 'u.id'

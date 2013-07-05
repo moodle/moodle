@@ -1445,7 +1445,7 @@ class global_navigation extends navigation_node {
                     if (!$this->can_add_more_courses_to_category($course->category)) {
                         continue;
                     }
-                    context_instance_preload($course);
+                    context_helper::preload_from_record($course);
                     if (!$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
                         continue;
                     }
@@ -1481,7 +1481,7 @@ class global_navigation extends navigation_node {
                         if (!$this->can_add_more_courses_to_category($course->category)) {
                             break;
                         }
-                        context_instance_preload($course);
+                        context_helper::preload_from_record($course);
                         if (!$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
                             continue;
                         }
@@ -1509,7 +1509,7 @@ class global_navigation extends navigation_node {
                     // Don't include the currentcourse in this nodelist - it's displayed in the Current course node
                     continue;
                 }
-                context_instance_preload($course);
+                context_helper::preload_from_record($course);
                 if (!$course->visible && !is_role_switched($course->id) && !has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
                     continue;
                 }

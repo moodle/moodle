@@ -599,7 +599,7 @@ function get_recent_enrolments($courseid, $timestart) {
  * This allows us to SELECT from major tables JOINing with
  * context at no cost, saving a ton of context lookups...
  *
- * Use context_instance_preload() instead.
+ * Use context_helper::preload_from_record() instead.
  *
  * @deprecated since 2.0
  * @param object $rec
@@ -612,7 +612,7 @@ function make_context_subobj($rec) {
 /**
  * Do some basic, quick checks to see whether $rec->context looks like a valid context object.
  *
- * Use context_instance_preload() instead.
+ * Use context_helper::preload_from_record() instead.
  *
  * @deprecated since 2.0
  * @param object $rec a think that has a context, for example a course,
@@ -632,7 +632,7 @@ function is_context_subobj_valid($rec, $contextlevel) {
  * or may not, have come from a place that does make_context_subobj, you can use
  * this method to ensure that $rec->context is present and correct before you continue.
  *
- * Use context_instance_preload() instead.
+ * Use context_helper::preload_from_record() instead.
  *
  * @deprecated since 2.0
  * @param object $rec a thing that has an associated context.
@@ -4069,7 +4069,7 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
 
     $rs = $DB->get_recordset_sql($sql, $params);
     foreach($rs as $cat) {
-        context_instance_preload($cat);
+        context_helper::preload_from_record($cat);
         $catcontext = context_coursecat::instance($cat->id);
         if ($cat->visible || has_capability('moodle/category:viewhiddencategories', $catcontext)) {
             $categories[$cat->id] = $cat;
@@ -4301,7 +4301,7 @@ function get_course_category_tree($id = 0, $depth = 0) {
             if ($course->id == SITEID) {
                 continue;
             }
-            context_instance_preload($course);
+            context_helper::preload_from_record($course);
             if (!empty($course->visible) || has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
                 $categoryids[$course->category]->courses[$course->id] = $course;
             }
@@ -4605,7 +4605,7 @@ function get_courses_wmanagers($categoryid=0, $sort="c.sortorder ASC", $fields=a
         // the context, and prepping data to fetch the
         // managers efficiently later...
         foreach ($courses as $k => $course) {
-            context_instance_preload($course);
+            context_helper::preload_from_record($course);
             $coursecontext = context_course::instance($course->id);
             $courses[$k] = $course;
             $courses[$k]->managers = array();

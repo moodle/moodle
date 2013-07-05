@@ -48,7 +48,7 @@ function online_assignment_cleanup($output=false) {
 
     /// cycle through each course
     foreach ($courses as $course) {
-        context_instance_preload($course);
+        context_helper::preload_from_record($course);
         $context = context_course::instance($course->id);
 
         if (empty($course->fullname)) {

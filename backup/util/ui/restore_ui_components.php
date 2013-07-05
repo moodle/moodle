@@ -191,7 +191,7 @@ abstract class restore_search_base implements renderable {
         while ($totalcourses > $offs and $this->totalcount < $this->maxresults) {
             $resultset = $DB->get_records_sql($sql, $params, $offs, $blocksz);
             foreach ($resultset as $result) {
-                context_instance_preload($result);
+                context_helper::preload_from_record($result);
                 $classname = context_helper::get_class_for_level($contextlevel);
                 $context = $classname::instance($result->id);
                 if (count($requiredcaps) > 0) {
