@@ -2476,7 +2476,9 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled('print_context_name() is deprecated, please use $context->get_context_name() instead.', DEBUG_DEVELOPER);
         $this->assertFalse(empty($name));
 
-        $url = get_context_url($coursecontext);
+        get_context_url($coursecontext);
+        $this->assertDebuggingCalled('get_context_url() is deprecated, please use $context->get_url() instead.', DEBUG_DEVELOPER);
+        $url = $coursecontext->get_url();
         $this->assertFalse($url instanceof modole_url);
 
         $pagecm = get_coursemodule_from_instance('page', $testpages[7]);

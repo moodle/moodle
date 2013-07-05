@@ -212,7 +212,7 @@ if (empty($availablefilters)) {
 /// Appropriate back link.
 if (!$isfrontpage) {
     echo html_writer::start_tag('div', array('class'=>'backlink'));
-    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>get_context_url($context)));
+    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href' => $context->get_url()));
     echo html_writer::end_tag('div');
 }
 
