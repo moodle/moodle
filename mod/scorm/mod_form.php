@@ -346,28 +346,8 @@ class mod_scorm_mod_form extends moodleform_mod {
                 make_temp_directory('scormimport');
                 $file->copy_content_to($filename);
 
-                $packer = get_file_packer('application/zip');
+                $errors = array_merge($errors, scorm_validate_package($filename));
 
-                $filelist = $packer->list_files($filename);
-                if (!is_array($filelist)) {
-                    $errors['packagefile'] = 'Incorrect file package - not an archive'; //TODO: localise
-                } else {
-                    $manifestpresent = false;
-                    $aiccfound       = false;
-                    foreach ($filelist as $info) {
-                        if ($info->pathname == 'imsmanifest.xml') {
-                            $manifestpresent = true;
-                            break;
-                        }
-                        if (preg_match('/\.cst$/', $info->pathname)) {
-                            $aiccfound = true;
-                            break;
-                        }
-                    }
-                    if (!$manifestpresent and !$aiccfound) {
-                        $errors['packagefile'] = 'Incorrect file package - missing imsmanifest.xml or AICC structure'; //TODO: localise
-                    }
-                }
                 unlink($filename);
             }
 
