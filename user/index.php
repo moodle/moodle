@@ -401,7 +401,9 @@
     }
 
     // performance hacks - we preload user contexts together with accounts
-    list($ccselect, $ccjoin) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
+    $params['contextlevel'] = CONTEXT_USER;
     $select .= $ccselect;
     $joins[] = $ccjoin;
 

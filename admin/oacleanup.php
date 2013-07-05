@@ -42,9 +42,10 @@ function online_assignment_cleanup($output=false) {
 
 
     /// get a list of all courses on this site
-    list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $ctxselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
     $sql = "SELECT c.* $ctxselect FROM {course} c $ctxjoin";
-    $courses = $DB->get_records_sql($sql);
+    $courses = $DB->get_records_sql($sql, array('contextlevel' => CONTEXT_COURSE));
 
     /// cycle through each course
     foreach ($courses as $course) {

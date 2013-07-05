@@ -1423,8 +1423,10 @@ class global_navigation extends navigation_node {
             if (count($fullfetch)) {
                 // First up fetch all of the courses in categories where we know that we are going to
                 // need the majority of courses.
-                list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
                 list($categoryids, $categoryparams) = $DB->get_in_or_equal($fullfetch, SQL_PARAMS_NAMED, 'lcategory');
+                $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+                $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+                $categoryparams['contextlevel'] = CONTEXT_COURSE;
                 $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
                             FROM {course} c
                                 $ccjoin
@@ -1458,13 +1460,14 @@ class global_navigation extends navigation_node {
                 // Next we will work our way through the categories where we will likely only need a small
                 // proportion of the courses.
                 foreach ($partfetch as $categoryid) {
-                    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+                    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+                    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
                     $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
                                 FROM {course} c
                                     $ccjoin
                                 WHERE c.category = :categoryid
                             ORDER BY c.sortorder ASC";
-                    $courseparams = array('categoryid' => $categoryid);
+                    $courseparams = array('categoryid' => $categoryid, 'contextlevel' => CONTEXT_COURSE);
                     $coursesrs = $DB->get_recordset_sql($sql, $courseparams, 0, $limit * 5);
                     foreach ($coursesrs as $course) {
                         if ($course->id == $SITE->id) {
@@ -1492,8 +1495,10 @@ class global_navigation extends navigation_node {
             }
         } else {
             // Prepare the SQL to load the courses and their contexts
-            list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
             list($courseids, $courseparams) = $DB->get_in_or_equal(array_keys($this->addedcourses), SQL_PARAMS_NAMED, 'lc', false);
+            $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+            $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+            $courseparams['contextlevel'] = CONTEXT_COURSE;
             $sql = "SELECT c.id, c.sortorder, c.visible, c.fullname, c.shortname, c.category $ccselect
                         FROM {course} c
                             $ccjoin

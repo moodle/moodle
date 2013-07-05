@@ -4306,4 +4306,33 @@ function get_courseid_from_context(context $context) {
     } else {
         return false;
     }
+
+/**
+ * Preloads context information together with instances.
+ * Use context_instance_preload() to strip the context info from the record and cache the context instance.
+ *
+ * If you are using this methid, you should have something like this:
+ *
+ *    list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+ *
+ * To prevent the use of this deprecated function, replace the line above with something similar to this:
+ *
+ *    $ctxselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+ *                                                                        ^
+ *    $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+ *                                    ^       ^                ^        ^
+ *    $params = array('contextlevel' => CONTEXT_COURSE);
+ *                                      ^
+ * @see context_helper:;get_preload_record_columns_sql()
+ * @deprecated since 2.2
+ * @param string $joinon for example 'u.id'
+ * @param string $contextlevel context level of instance in $joinon
+ * @param string $tablealias context table alias
+ * @return array with two values - select and join part
+ */
+function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
+    debugging('context_instance_preload_sql() is deprecated, please use context_helper::get_preload_record_columns_sql() instead.', DEBUG_DEVELOPER);
+    $select = ", " . context_helper::get_preload_record_columns_sql($tablealias);
+    $join = "LEFT JOIN {context} $tablealias ON ($tablealias.instanceid = $joinon AND $tablealias.contextlevel = $contextlevel)";
+    return array($select, $join);
 }

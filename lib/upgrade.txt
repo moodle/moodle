@@ -18,6 +18,7 @@ Accesslib:
     * context_moved()               ->  context::update_moved()
     * preload_course_contexts()     ->  context_helper::preload_course()
     * context_instance_preload()    ->  context_helper::preload_from_record()
+    * context_instance_preload_sql()->  context_helper::get_preload_record_columns_sql()
     * get_contextlevel_name()       ->  context_helper::get_level_name()
     * create_contexts()             ->  context_helper::create_instances()
     * cleanup_contexts()            ->  context_helper::cleanup_instances()

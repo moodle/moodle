@@ -577,9 +577,11 @@ class block_manager {
         list($pagetypepatterntest, $pagetypepatternparams) =
                 $DB->get_in_or_equal($pagetypepatterns, SQL_PARAMS_NAMED, 'pagetypepatterntest');
 
-        list($ccselect, $ccjoin) = context_instance_preload_sql('bi.id', CONTEXT_BLOCK, 'ctx');
+        $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = bi.id AND ctx.contextlevel = :contextlevel)";
 
         $params = array(
+            'contextlevel' => CONTEXT_BLOCK,
             'subpage1' => $this->page->subpage,
             'subpage2' => $this->page->subpage,
             'contextid1' => $context->id,
