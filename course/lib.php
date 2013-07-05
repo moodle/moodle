@@ -2036,7 +2036,7 @@ function move_courses($courseids, $categoryid) {
             add_to_log($course->id, "course", "move", "edit.php?id=$course->id", $course->id);
 
             $context   = context_course::instance($course->id);
-            context_moved($context, $newparent);
+            $context->update_moved($newparent);
         }
     }
     fix_course_sortorder();
@@ -2353,7 +2353,7 @@ function update_course($data, $editoroptions = NULL) {
 
     if ($movecat) {
         $newparent = context_coursecat::instance($course->category);
-        context_moved($context, $newparent);
+        $context->update_moved($newparent);
     }
 
     fix_course_sortorder();

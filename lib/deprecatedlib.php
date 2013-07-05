@@ -5057,3 +5057,25 @@ function preload_course_contexts($courseid) {
     debugging('preload_course_contexts() is deprecated, please use context_helper::preload_course() instead.', DEBUG_DEVELOPER);
     context_helper::preload_course($courseid);
 }
+
+/**
+ * Update the path field of the context and all dep. subcontexts that follow
+ *
+ * Update the path field of the context and
+ * all the dependent subcontexts that follow
+ * the move.
+ *
+ * The most important thing here is to be as
+ * DB efficient as possible. This op can have a
+ * massive impact in the DB.
+ *
+ * @deprecated since Moodle 2.2
+ * @see context::update_moved()
+ * @param context $context context obj
+ * @param context $newparent new parent obj
+ * @return void
+ */
+function context_moved(context $context, context $newparent) {
+    debugging('context_moved() is deprecated, please use context::update_moved() instead.', DEBUG_DEVELOPER);
+    $context->update_moved($newparent);
+}

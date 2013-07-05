@@ -2453,6 +2453,7 @@ class accesslib_testcase extends advanced_testcase {
         $course->category = $miscid;
         $DB->update_record('course', $course);
         context_moved($context, $categorycontext);
+        $this->assertDebuggingCalled('context_moved() is deprecated, please use context::update_moved() instead.', DEBUG_DEVELOPER);
         $context = context_course::instance($course->id);
         $this->assertEquals($context->get_parent_context(), $categorycontext);
 
