@@ -41,7 +41,7 @@ class core_role_check_capability_table extends core_role_capability_table_base {
      * Constructor
      * @param object $context the context this table relates to.
      * @param object $user the user we are generating the results for.
-     * @param string $contextname print_context_name($context) - to save recomputing.
+     * @param string $contextname $context->get_context_name() - to save recomputing.
      */
     public function __construct($context, $user, $contextname) {
         parent::__construct($context, 'explaincaps');

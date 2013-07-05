@@ -448,7 +448,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
                         }
                         if (!$rescueqcategory = question_save_from_deletion(
                                 array_keys($questionids), $parentcontextid,
-                                print_context_name($context), $rescueqcategory)) {
+                                $context->get_context_name(), $rescueqcategory)) {
                             return false;
                         }
                         $feedbackdata[] = array($category->name,
@@ -482,8 +482,8 @@ function question_delete_course_category($category, $newcategory, $feedback=true
                 array('contextid'=>$context->id));
         if ($feedback) {
             $a = new stdClass();
-            $a->oldplace = print_context_name($context);
-            $a->newplace = print_context_name($newcontext);
+            $a->oldplace = $context->get_context_name();
+            $a->newplace = $newcontext->get_context_name();
             echo $OUTPUT->notification(
                     get_string('movedquestionsandcategories', 'question', $a), 'notifysuccess');
         }
@@ -1064,7 +1064,7 @@ function question_make_default_categories($contexts) {
                 array('contextid' => $context->id))) {
             // Otherwise, we need to make one
             $category = new stdClass();
-            $contextname = print_context_name($context, false, true);
+            $contextname = $context->get_context_name(false, true);
             $category->name = get_string('defaultfor', 'question', $contextname);
             $category->info = get_string('defaultinfofor', 'question', $contextname);
             $category->contextid = $context->id;

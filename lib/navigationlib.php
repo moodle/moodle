@@ -4143,7 +4143,7 @@ class settings_navigation extends navigation_node {
     protected function load_block_settings() {
         global $CFG;
 
-        $blocknode = $this->add(print_context_name($this->context));
+        $blocknode = $this->add($this->context->get_context_name());
         $blocknode->force_open();
 
         // Assign local roles
@@ -4172,7 +4172,7 @@ class settings_navigation extends navigation_node {
     protected function load_category_settings() {
         global $CFG;
 
-        $categorynode = $this->add(print_context_name($this->context), null, null, null, 'categorysettings');
+        $categorynode = $this->add($this->context->get_context_name(), null, null, null, 'categorysettings');
         $categorynode->force_open();
         $onmanagepage = $this->page->url->compare(new moodle_url('/course/manage.php'), URL_MATCH_BASE);
 

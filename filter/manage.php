@@ -53,7 +53,7 @@ if (!in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, C
 
 $isfrontpage = ($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID);
 
-$contextname = print_context_name($context);
+$contextname = $context->get_context_name();
 
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $heading = "$SITE->fullname: ".get_string("categories");

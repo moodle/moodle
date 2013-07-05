@@ -819,7 +819,7 @@ class moodle_page {
         $summary = '';
         $summary .= 'General type: ' . $this->pagelayout . '. ';
         if (!during_initial_install()) {
-            $summary .= 'Context ' . print_context_name($this->_context) . ' (context id ' . $this->_context->id . '). ';
+            $summary .= 'Context ' . $this->context->get_context_name() . ' (context id ' . $this->_context->id . '). ';
         }
         $summary .= 'Page type ' . $this->pagetype .  '. ';
         if ($this->subpage) {
