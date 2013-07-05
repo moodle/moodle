@@ -264,6 +264,10 @@ function forum_delete_instance($id) {
         }
     }
 
+    if (!$DB->delete_records('forum_digests', array('forum' => $forum->id))) {
+        $result = false;
+    }
+
     if (!$DB->delete_records('forum_subscriptions', array('forum'=>$forum->id))) {
         $result = false;
     }
@@ -456,6 +460,17 @@ function forum_cron() {
     $timenow   = time();
     $endtime   = $timenow - $CFG->maxeditingtime;
     $starttime = $endtime - 48 * 3600;   // Two days earlier
+
+    // Get the list of forum subscriptions for per-user per-forum maildigest settings.
+    $digestsset = $DB->get_recordset('forum_digests', null, '', 'id, userid, forum, maildigest');
+    $digests = array();
+    foreach ($digestsset as $thisrow) {
+        if (!isset($digests[$thisrow->forum])) {
+            $digests[$thisrow->forum] = array();
+        }
+        $digests[$thisrow->forum][$thisrow->userid] = $thisrow->maildigest;
+    }
+    $digestsset->close();
 
     if ($posts = forum_get_unmailed_posts($starttime, $endtime, $timenow)) {
         // Mark them all now as being mailed.  It's unlikely but possible there
@@ -666,7 +681,9 @@ function forum_cron() {
                 // OK so we need to send the email.
 
                 // Does the user want this post in a digest?  If so postpone it for now.
-                if ($userto->maildigest > 0) {
+                $maildigest = forum_get_user_maildigest_bulk($digests, $userto, $forum->id);
+
+                if ($maildigest > 0) {
                     // This user wants the mails to be in digest form
                     $queue = new stdClass();
                     $queue->userid       = $userto->id;
@@ -991,7 +1008,8 @@ function forum_cron() {
 
                         $userfrom->customheaders = array ("Precedence: Bulk");
 
-                        if ($userto->maildigest == 2) {
+                        $maildigest = forum_get_user_maildigest_bulk($digests, $userto, $forum->id);
+                        if ($maildigest == 2) {
                             // Subjects and link only
                             $posttext .= "\n";
                             $posttext .= $CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id;
@@ -4820,7 +4838,8 @@ function forum_subscribe($userid, $forumid) {
  */
 function forum_unsubscribe($userid, $forumid) {
     global $DB;
-    return $DB->delete_records("forum_subscriptions", array("userid"=>$userid, "forum"=>$forumid));
+    return ($DB->delete_records('forum_digests', array('userid' => $userid, 'forum' => $forumid))
+            && $DB->delete_records('forum_subscriptions', array('userid' => $userid, 'forum' => $forumid)));
 }
 
 /**
@@ -6278,6 +6297,7 @@ function forum_user_unenrolled($cp) {
         $params = array('userid'=>$cp->userid, 'courseid'=>$cp->courseid);
         $forumselect = "IN (SELECT f.id FROM {forum} f WHERE f.course = :courseid)";
 
+        $DB->delete_records_select('forum_digests',       "userid = :userid AND forum $forumselect", $params);
         $DB->delete_records_select('forum_subscriptions', "userid = :userid AND forum $forumselect", $params);
         $DB->delete_records_select('forum_track_prefs',   "userid = :userid AND forumid $forumselect", $params);
         $DB->delete_records_select('forum_read',          "userid = :userid AND forumid $forumselect", $params);
@@ -7321,6 +7341,12 @@ function forum_reset_userdata($data) {
         }
     }
 
+    // remove all digest settings unconditionally - even for users still enrolled in course.
+    if (!empty($data->reset_forum_digests)) {
+        $DB->delete_records_select('forum_digests', "forum IN ($allforumssql)", $params);
+        $status[] = array('component' => $componentstr, 'item' => get_string('resetdigests', 'forum'), 'error' => false);
+    }
+
     // remove all subscriptions unconditionally - even for users still enrolled in course
     if (!empty($data->reset_forum_subscriptions)) {
         $DB->delete_records_select('forum_subscriptions', "forum IN ($allforumssql)", $params);
@@ -7356,6 +7382,9 @@ function forum_reset_course_form_definition(&$mform) {
     $mform->setAdvanced('reset_forum_types');
     $mform->disabledIf('reset_forum_types', 'reset_forum_all', 'checked');
 
+    $mform->addElement('checkbox', 'reset_forum_digests', get_string('resetdigests','forum'));
+    $mform->setAdvanced('reset_forum_digests');
+
     $mform->addElement('checkbox', 'reset_forum_subscriptions', get_string('resetsubscriptions','forum'));
     $mform->setAdvanced('reset_forum_subscriptions');
 
@@ -7372,7 +7401,7 @@ function forum_reset_course_form_definition(&$mform) {
  * @return array
  */
 function forum_reset_course_form_defaults($course) {
-    return array('reset_forum_all'=>1, 'reset_forum_subscriptions'=>0, 'reset_forum_track_prefs'=>0, 'reset_forum_ratings'=>1);
+    return array('reset_forum_all'=>1, 'reset_forum_digests' => 0, 'reset_forum_subscriptions'=>0, 'reset_forum_track_prefs'=>0, 'reset_forum_ratings'=>1);
 }
 
 /**
@@ -8443,4 +8472,119 @@ function forum_get_posts_by_user($user, array $courses, $musthaveaccess = false,
     }
 
     return $return;
+}
+
+/**
+ * Set the per-forum maildigest option for the specified user.
+ *
+ * @param stdClass $forum The forum to set the option for.
+ * @param int $maildigest The maildigest option.
+ * @param stdClass $user The user object. This defaults to the global $USER object.
+ * @throws invalid_digest_setting thrown if an invalid maildigest option is provided.
+ */
+function forum_set_user_maildigest($forum, $maildigest, $user = null) {
+    global $DB, $USER;
+
+    if (is_number($forum)) {
+        $forum = $DB->get_record('forum', array('id' => $forum));
+    }
+
+    if ($user === null) {
+        $user = $USER;
+    }
+
+    $course  = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
+    $cm      = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
+    $context = context_module::instance($cm->id);
+
+    // User must be allowed to see this forum.
+    require_capability('mod/forum:viewdiscussion', $context, $user->id);
+
+    // Validate the maildigest setting.
+    $digestoptions = forum_get_user_digest_options($user);
+
+    if (!isset($digestoptions[$maildigest])) {
+        throw new moodle_exception('invaliddigestsetting', 'mod_forum');
+    }
+
+    // Attempt to retrieve any existing forum digest record.
+    $subscription = $DB->get_record('forum_digests', array(
+        'userid' => $user->id,
+        'forum' => $forum->id,
+    ));
+
+    // Create or Update the existing maildigest setting.
+    if ($subscription) {
+        if ($maildigest == -1) {
+            $DB->delete_records('forum_digests', array('forum' => $forum->id, 'userid' => $user->id));
+        } else if ($maildigest !== $subscription->maildigest) {
+            // Only update the maildigest setting if it's changed.
+
+            $subscription->maildigest = $maildigest;
+            $DB->update_record('forum_digests', $subscription);
+        }
+    } else {
+        if ($maildigest != -1) {
+            // Only insert the maildigest setting if it's non-default.
+
+            $subscription = new stdClass();
+            $subscription->forum = $forum->id;
+            $subscription->userid = $user->id;
+            $subscription->maildigest = $maildigest;
+            $subscription->id = $DB->insert_record('forum_digests', $subscription);
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Determine the maildigest setting for the specified user against the
+ * specified forum.
+ *
+ * @param Array $digests An array of forums and user digest settings.
+ * @param stdClass $user The user object containing the id and maildigest default.
+ * @param int $forumid The ID of the forum to check.
+ * @return int The calculated maildigest setting for this user and forum.
+ */
+function forum_get_user_maildigest_bulk($digests, $user, $forumid) {
+    if (isset($digests[$forumid]) && isset($digests[$forumid][$user->id])) {
+        $maildigest = $digests[$forumid][$user->id];
+        if ($maildigest === -1) {
+            $maildigest = $user->maildigest;
+        }
+    } else {
+        $maildigest = $user->maildigest;
+    }
+    return $maildigest;
+}
+
+/**
+ * Retrieve the list of available user digest options.
+ *
+ * @param stdClass $user The user object. This defaults to the global $USER object.
+ * @return array The mapping of values to digest options.
+ */
+function forum_get_user_digest_options($user = null) {
+    global $USER;
+
+    // Revert to the global user object.
+    if ($user === null) {
+        $user = $USER;
+    }
+
+    $digestoptions = array();
+    $digestoptions['0']  = get_string('emaildigestoffshort', 'mod_forum');
+    $digestoptions['1']  = get_string('emaildigestcompleteshort', 'mod_forum');
+    $digestoptions['2']  = get_string('emaildigestsubjectsshort', 'mod_forum');
+
+    // We need to add the default digest option at the end - it relies on
+    // the contents of the existing values.
+    $digestoptions['-1'] = get_string('emaildigestdefault', 'mod_forum',
+            $digestoptions[$user->maildigest]);
+
+    // Resort the options to be in a sensible order.
+    ksort($digestoptions);
+
+    return $digestoptions;
 }
