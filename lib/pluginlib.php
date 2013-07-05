@@ -715,7 +715,7 @@ class plugin_manager {
             ),
 
             'enrol' => array(
-                'authorize', 'category', 'cohort', 'database', 'flatfile',
+                'category', 'cohort', 'database', 'flatfile',
                 'guest', 'imsenterprise', 'ldap', 'manual', 'meta', 'mnet',
                 'paypal', 'self'
             ),
