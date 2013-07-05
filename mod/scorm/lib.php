@@ -137,6 +137,7 @@ function scorm_add_instance($scorm, $mform=null) {
         $record->reference = $scorm->packageurl;
     } else if ($record->scormtype === SCORM_TYPE_AICCURL) {
         $record->reference = $scorm->packageurl;
+        $record->hidetoc = SCORM_TOC_DISABLED; // TOC is useless for direct AICCURL so disable it.
     } else {
         return false;
     }
@@ -208,6 +209,7 @@ function scorm_update_instance($scorm, $mform=null) {
         $scorm->reference = $scorm->packageurl;
     } else if ($scorm->scormtype === SCORM_TYPE_AICCURL) {
         $scorm->reference = $scorm->packageurl;
+        $scorm->hidetoc = SCORM_TOC_DISABLED; // TOC is useless for direct AICCURL so disable it.
     } else {
         return false;
     }
