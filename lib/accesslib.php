@@ -7261,25 +7261,6 @@ function get_courseid_from_context(context $context) {
     }
 }
 
-/**
- * Extracts the relevant capabilities given a contextid.
- * All case based, example an instance of forum context.
- * Will fetch all forum related capabilities, while course contexts
- * Will fetch all capabilities
- *
- * capabilities
- * `name` varchar(150) NOT NULL,
- * `captype` varchar(50) NOT NULL,
- * `contextlevel` int(10) NOT NULL,
- * `component` varchar(100) NOT NULL,
- *
- * @deprecated since 2.2
- * @param context $context
- * @return array
- */
-function fetch_context_capabilities(context $context) {
-    return $context->get_capabilities();
-}
 
 /**
  * Runs get_records select on context table and returns the result
