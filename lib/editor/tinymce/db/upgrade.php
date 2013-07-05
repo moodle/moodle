@@ -69,5 +69,56 @@ fontselect,fontsizeselect,code,search,replace,|,cleanup,removeformat,pastetext,p
         upgrade_plugin_savepoint(true, 2013061400, 'editor', 'tinymce');
     }
 
+    if ($oldversion < 2013070500) {
+        // Insert wrap plugin to nicely wrap the toolbars on small screens.
+        $oldorder = "formatselect,bold,italic,|,bullist,numlist,|,link,unlink,|,image
+
+undo,redo,|,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,|,outdent,indent,|,forecolor,backcolor,|,ltr,rtl,|,nonbreaking,charmap,table
+
+fontselect,fontsizeselect,code,search,replace,|,cleanup,removeformat,pastetext,pasteword,|,fullscreen";
+
+        $neworder = "formatselect,bold,italic,wrap,bullist,numlist,|,link,unlink,|,image
+
+undo,redo,|,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,wrap,outdent,indent,|,forecolor,backcolor,|,ltr,rtl,|,nonbreaking,charmap,table
+
+fontselect,fontsizeselect,wrap,code,search,replace,|,cleanup,removeformat,pastetext,pasteword,|,fullscreen";
+        $currentorder = get_config('editor_tinymce', 'customtoolbar');
+        if ($currentorder == $oldorder) {
+            unset_config('customtoolbar', 'editor_tinymce');
+            set_config('customtoolbar', $neworder, 'editor_tinymce');
+        } else {
+            // Simple auto conversion algorithm.
+            $toolbars = explode($oldorder, "\n");
+            $newtoolbars = array();
+            foreach ($toolbars as $toolbar) {
+                $sepcount = substr_count($toolbar, '|');
+
+                if ($sepcount > 0) {
+                    // We assume the middle separator (rounding down).
+                    $divisionindex = $sepcount / 2;
+
+                    $buttons = explode($toolbar, ',');
+                    $index = 0;
+                    foreach ($buttons as $key => $button) {
+                        if ($button === "|") {
+                            if ($index == $divisionindex) {
+                                $buttons[$key] = 'wrap';
+                                break;
+                            }
+                        }
+                    }
+                    $toolbar = implode($buttons, ',');
+                }
+                array_push($newtoolbars, $toolbar);
+            }
+            $neworder = implode($newtoolbars, "\n");
+
+            // Set the new config.
+            unset_config('customtoolbar', 'editor_tinymce');
+            set_config('customtoolbar', $neworder, 'editor_tinymce');
+        }
+        upgrade_plugin_savepoint(true, 2013070500, 'editor', 'tinymce');
+    }
+
     return true;
 }

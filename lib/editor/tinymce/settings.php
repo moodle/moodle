@@ -31,11 +31,11 @@ if ($ADMIN->fulltree) {
     require_once(__DIR__.'/adminlib.php');
     $settings->add(new tiynce_subplugins_settings());
     $settings->add(new admin_setting_heading('tinymcegeneralheader', new lang_string('settings'), ''));
-    $default = "formatselect,bold,italic,|,bullist,numlist,|,link,unlink,|,image
+    $default = "formatselect,bold,italic,wrap,bullist,numlist,|,link,unlink,|,image
 
-undo,redo,|,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,|,outdent,indent,|,forecolor,backcolor,|,ltr,rtl,|,nonbreaking,charmap,table
+undo,redo,|,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,wrap,outdent,indent,|,forecolor,backcolor,|,ltr,rtl,|,nonbreaking,charmap,table
 
-fontselect,fontsizeselect,code,search,replace,|,cleanup,removeformat,pastetext,pasteword,|,fullscreen";
+fontselect,fontsizeselect,wrap,code,search,replace,|,cleanup,removeformat,pastetext,pasteword,|,fullscreen";
     $settings->add(new admin_setting_configtextarea('editor_tinymce/customtoolbar',
         get_string('customtoolbar', 'editor_tinymce'), get_string('customtoolbar_desc', 'editor_tinymce', 'http://www.tinymce.com/wiki.php/Buttons/controls'), $default, PARAM_RAW, 100, 8));
     $settings->add(new admin_setting_configtextarea('editor_tinymce/fontselectlist',

@@ -14,17 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * TinyMCE text editor integration version file.
- *
- * @package    editor_tinymce
- * @copyright  2009 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013070500;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2013050100;        // Requires this Moodle version
-$plugin->component = 'editor_tinymce';  // Full name of the plugin (used for diagnostics)
-$plugin->release   = '3.5.8';           // This is NOT a directory name, see lib.php if you need to know where is the editor code!
+/**
+ * Plugin for Moodle 'wrap' button.
+ *
+ * @package   tinymce_wrap
+ * @copyright 2013 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tinymce_wrap extends editor_tinymce_plugin {
+    /** @var array list of buttons defined by this plugin */
+    protected $buttons = array('wrap');
+
+    protected function update_init_params(array &$params, context $context,
+            array $options = null) {
+
+        // Add JS file, which uses default name.
+        $this->add_js_plugin($params);
+    }
+}

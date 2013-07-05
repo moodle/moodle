@@ -52,6 +52,9 @@ class tinymce_texteditor extends texteditor {
         if (check_browser_version('Safari iOS', 534)) {
             return true;
         }
+        if (check_browser_version('WebKit', 534)) {
+            return true;
+        }
 
         return false;
     }
@@ -155,7 +158,7 @@ class tinymce_texteditor extends texteditor {
             'plugins' => 'lists,table,style,layer,advhr,advlink,emotions,inlinepopups,' .
                 'searchreplace,paste,directionality,fullscreen,nonbreaking,contextmenu,' .
                 'insertdatetime,save,iespell,preview,print,noneditable,visualchars,' .
-                'xhtmlxtras,template,pagebreak',
+                'xhtmlxtras,template,pagebreak,wrap',
             'gecko_spellcheck' => true,
             'theme_advanced_font_sizes' => "1,2,3,4,5,6,7",
             'theme_advanced_layout_manager' => "SimpleLayout",
