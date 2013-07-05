@@ -5079,3 +5079,17 @@ function context_moved(context $context, context $newparent) {
     debugging('context_moved() is deprecated, please use context::update_moved() instead.', DEBUG_DEVELOPER);
     $context->update_moved($newparent);
 }
+
+/**
+ * Preloads context information from db record and strips the cached info.
+ * The db request has to contain both the $join and $select from context_instance_preload_sql()
+ *
+ * @deprecated since 2.2
+ * @see context_helper::preload_from_record()
+ * @param stdClass $rec
+ * @return void (modifies $rec)
+ */
+function context_instance_preload(stdClass $rec) {
+    debugging('context_instance_preload() is deprecated, please use context_helper::preload_from_record() instead.', DEBUG_DEVELOPER);
+    context_helper::preload_from_record($rec);
+}

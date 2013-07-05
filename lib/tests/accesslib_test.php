@@ -2432,6 +2432,8 @@ class accesslib_testcase extends advanced_testcase {
         $records = $DB->get_records_sql($sql);
         foreach ($records as $record) {
             context_instance_preload($record);
+            $this->assertDebuggingCalled('context_instance_preload() is deprecated, please use context_helper::preload_from_record() instead.',
+                    DEBUG_DEVELOPER);
             $record = (array)$record;
             $this->assertEquals(1, count($record)); // only id left
         }

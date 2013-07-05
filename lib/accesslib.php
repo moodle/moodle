@@ -7247,18 +7247,6 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
 }
 
 /**
- * Preloads context information from db record and strips the cached info.
- * The db request has to contain both the $join and $select from context_instance_preload_sql()
- *
- * @deprecated since 2.2
- * @param stdClass $rec
- * @return void (modifies $rec)
- */
-function context_instance_preload(stdClass $rec) {
-    context_helper::preload_from_record($rec);
-}
-
-/**
  * Mark a context as dirty (with timestamp) so as to force reloading of the context.
  *
  * @deprecated since 2.2, use $context->mark_dirty() instead
