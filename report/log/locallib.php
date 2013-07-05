@@ -224,12 +224,14 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
     $modinfo = get_fast_modinfo($course);
     if (!empty($modinfo->cms)) {
         $section = 0;
+        $thissection = array();
         foreach ($modinfo->cms as $cm) {
             if (!$cm->uservisible || !$cm->has_view()) {
                 continue;
             }
             if ($cm->sectionnum > 0 and $section <> $cm->sectionnum) {
-                $activities["section/$cm->sectionnum"] = '--- '.get_section_name($course, $cm->sectionnum).' ---';
+                $activities[] = $thissection;
+                $thissection = array();
             }
             $section = $cm->sectionnum;
             $modname = strip_tags($cm->get_formatted_name());
@@ -239,11 +241,18 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
             if (!$cm->visible) {
                 $modname = "(".$modname.")";
             }
-            $activities["$cm->id"] = $modname;
+            $key = get_section_name($course, $cm->sectionnum);
+            if (!isset($thissection[$key])) {
+                $thissection[$key] = array();
+            }
+            $thissection[$key][$cm->id] = $modname;
 
             if ($cm->id == $modid) {
                 $selectedactivity = "$cm->id";
             }
+        }
+        if (!empty($thissection)) {
+            $activities[] = $thissection;
         }
     }
 
@@ -478,12 +487,14 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
     $modinfo = get_fast_modinfo($course);
     if (!empty($modinfo->cms)) {
         $section = 0;
+        $thissection = array();
         foreach ($modinfo->cms as $cm) {
             if (!$cm->uservisible || !$cm->has_view()) {
                 continue;
             }
             if ($cm->sectionnum > 0 and $section <> $cm->sectionnum) {
-                $activities["section/$cm->sectionnum"] = '--- '.get_section_name($course, $cm->sectionnum).' ---';
+                $activities[] = $thissection;
+                $thissection = array();
             }
             $section = $cm->sectionnum;
             $modname = strip_tags($cm->get_formatted_name());
@@ -493,11 +504,18 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
             if (!$cm->visible) {
                 $modname = "(".$modname.")";
             }
-            $activities["$cm->id"] = $modname;
+            $key = get_section_name($course, $cm->sectionnum);
+            if (!isset($thissection[$key])) {
+                $thissection[$key] = array();
+            }
+            $thissection[$key][$cm->id] = $modname;
 
             if ($cm->id == $modid) {
                 $selectedactivity = "$cm->id";
             }
+        }
+        if (!empty($thissection)) {
+            $activities[] = $thissection;
         }
     }
 
