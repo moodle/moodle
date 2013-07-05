@@ -22,7 +22,8 @@ information provided here is intended especially for developers.
 * context_instance_preload() is deprecated, please use context_helper::preload_from_record().
 * get_contextlevel_name() is deprecated, please use context_helper::get_level_name().
 * print_context_name() is deprecated, please use $context->get_context_name().
-* mark_context_dirty() is deprecated, please use $context->mark_dirty().
+* mark_context_dirty($context->path) is deprecated, please use $context->mark_dirty().
+* delete_context() is deprecated, please use $context->delete_content() or context_helper::delete_instance().
 
 === 2.5.1 ===
 

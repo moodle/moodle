@@ -2462,7 +2462,10 @@ class accesslib_testcase extends advanced_testcase {
 
         $this->assertTrue($DB->record_exists('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$testcourses[2])));
         delete_context(CONTEXT_COURSE, $testcourses[2]);
+        $this->assertDebuggingCalled('delete_context() is deprecated, please use context_helper::delete_instance() instead.', DEBUG_DEVELOPER);
         $this->assertFalse($DB->record_exists('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$testcourses[2])));
+        delete_context(CONTEXT_COURSE, $testcourses[2], false);
+        $this->assertDebuggingCalled('delete_context() is deprecated, please use $context->delete_content() instead.', DEBUG_DEVELOPER);
 
         $name = get_contextlevel_name(CONTEXT_COURSE);
         $this->assertDebuggingCalled('get_contextlevel_name() is deprecated, please use context_helper::get_level_name() instead.', DEBUG_DEVELOPER);

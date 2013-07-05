@@ -1981,7 +1981,7 @@ function blocks_delete_instance($instance, $nolongerused = false, $skipblockstab
     if ($block = block_instance($instance->blockname, $instance)) {
         $block->instance_delete();
     }
-    delete_context(CONTEXT_BLOCK, $instance->id);
+    context_helper::delete_instance(CONTEXT_BLOCK, $instance->id);
 
     if (!$skipblockstables) {
         $DB->delete_records('block_positions', array('blockinstanceid' => $instance->id));
