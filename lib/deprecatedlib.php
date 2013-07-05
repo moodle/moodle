@@ -4166,3 +4166,32 @@ function get_course_context(context $context) {
     debugging('get_course_context() is deprecated, please use $context->get_course_context(true) instead.', DEBUG_DEVELOPER);
     return $context->get_course_context(true);
 }
+
+/**
+ * Get an array of courses where cap requested is available
+ * and user is enrolled, this can be relatively slow.
+ *
+ * @deprecated since 2.2
+ * @see enrol_get_users_courses()
+ * @param int    $userid A user id. By default (null) checks the permissions of the current user.
+ * @param string $cap - name of the capability
+ * @param array  $accessdata_ignored
+ * @param bool   $doanything_ignored
+ * @param string $sort - sorting fields - prefix each fieldname with "c."
+ * @param array  $fields - additional fields you are interested in...
+ * @param int    $limit_ignored
+ * @return array $courses - ordered array of course objects - see notes above
+ */
+function get_user_courses_bycap($userid, $cap, $accessdata_ignored, $doanything_ignored, $sort = 'c.sortorder ASC', $fields = null, $limit_ignored = 0) {
+
+    debugging('get_user_courses_bycap() is deprecated, please use enrol_get_users_courses() instead.', DEBUG_DEVELOPER);
+    $courses = enrol_get_users_courses($userid, true, $fields, $sort);
+    foreach ($courses as $id=>$course) {
+        $context = context_course::instance($id);
+        if (!has_capability($cap, $context, $userid)) {
+            unset($courses[$id]);
+        }
+    }
+
+    return $courses;
+}

@@ -7262,33 +7262,6 @@ function get_courseid_from_context(context $context) {
 }
 
 /**
- * Get an array of courses where cap requested is available
- * and user is enrolled, this can be relatively slow.
- *
- * @deprecated since 2.2, use enrol_get_users_courses() instead
- * @param int    $userid A user id. By default (null) checks the permissions of the current user.
- * @param string $cap - name of the capability
- * @param array  $accessdata_ignored
- * @param bool   $doanything_ignored
- * @param string $sort - sorting fields - prefix each fieldname with "c."
- * @param array  $fields - additional fields you are interested in...
- * @param int    $limit_ignored
- * @return array $courses - ordered array of course objects - see notes above
- */
-function get_user_courses_bycap($userid, $cap, $accessdata_ignored, $doanything_ignored, $sort = 'c.sortorder ASC', $fields = null, $limit_ignored = 0) {
-
-    $courses = enrol_get_users_courses($userid, true, $fields, $sort);
-    foreach ($courses as $id=>$course) {
-        $context = context_course::instance($id);
-        if (!has_capability($cap, $context, $userid)) {
-            unset($courses[$id]);
-        }
-    }
-
-    return $courses;
-}
-
-/**
  * Extracts the relevant capabilities given a contextid.
  * All case based, example an instance of forum context.
  * Will fetch all forum related capabilities, while course contexts
