@@ -5042,3 +5042,18 @@ function rebuild_contexts(array $fixcontexts) {
     }
     context_helper::build_all_paths(false);
 }
+
+/**
+ * Preloads all contexts relating to a course: course, modules. Block contexts
+ * are no longer loaded here. The contexts for all the blocks on the current
+ * page are now efficiently loaded by {@link block_manager::load_blocks()}.
+ *
+ * @deprecated since Moodle 2.2
+ * @see context_helper::preload_course()
+ * @param int $courseid Course ID
+ * @return void
+ */
+function preload_course_contexts($courseid) {
+    debugging('preload_course_contexts() is deprecated, please use context_helper::preload_course() instead.', DEBUG_DEVELOPER);
+    context_helper::preload_course($courseid);
+}

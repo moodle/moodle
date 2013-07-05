@@ -288,7 +288,7 @@ class course_modinfo extends stdClass {
         }
 
         // If we haven't already preloaded contexts for the course, do it now
-        preload_course_contexts($course->id);
+        context_helper::preload_course($course->id);
 
         // Loop through each piece of module data, constructing it
         $modexists = array();
