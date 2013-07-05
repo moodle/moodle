@@ -230,7 +230,7 @@ class block_base {
         global $CFG;
 
         $bc = new block_contents($this->html_attributes());
-
+        $bc->attributes['data-block'] = $this->name();
         $bc->blockinstanceid = $this->instance->id;
         $bc->blockpositionid = $this->instance->blockpositionid;
 

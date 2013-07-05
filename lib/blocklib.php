@@ -446,6 +446,9 @@ class block_manager {
             throw new coding_exception('block_manager has already prepared the blocks in region ' .
                     $region . 'for output. It is too late to add a fake block.');
         }
+        if (!isset($bc->attributes['data-block'])) {
+            $bc->attributes['data-block'] = '_fake';
+        }
         $this->extracontent[$region][] = $bc;
     }
 
@@ -1860,6 +1863,7 @@ function block_add_block_ui($page, $output) {
     $bc = new block_contents();
     $bc->title = get_string('addblock');
     $bc->add_class('block_adminblock');
+    $bc->attributes['data-block'] = 'adminblock';
 
     $missingblocks = $page->blocks->get_addable_blocks();
     if (empty($missingblocks)) {
