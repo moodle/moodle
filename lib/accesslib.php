@@ -7303,17 +7303,6 @@ function delete_context($contextlevel, $instanceid, $deleterecord = true) {
 }
 
 /**
- * Returns context level name
- *
- * @deprecated since 2.2
- * @param integer $contextlevel $context->context level. One of the CONTEXT_... constants.
- * @return string the name for this type of context.
- */
-function get_contextlevel_name($contextlevel) {
-    return context_helper::get_level_name($contextlevel);
-}
-
-/**
  * Prints human readable context identifier.
  *
  * @deprecated since 2.2

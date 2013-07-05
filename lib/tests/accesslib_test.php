@@ -2464,6 +2464,7 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$testcourses[2])));
 
         $name = get_contextlevel_name(CONTEXT_COURSE);
+        $this->assertDebuggingCalled('get_contextlevel_name() is deprecated, please use context_helper::get_level_name() instead.', DEBUG_DEVELOPER);
         $this->assertFalse(empty($name));
 
         $context = context_course::instance($testcourses[2]);
