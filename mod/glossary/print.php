@@ -66,7 +66,6 @@ echo $OUTPUT->header();
 if (!has_capability('mod/glossary:manageentries', $context) and !$glossary->allowprintview) {
     notice(get_string('printviewnotallowed', 'glossary'));
 }
-$PAGE->requires->js_init_code("window.print();");
 
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
@@ -170,10 +169,9 @@ $site = $DB->get_record("course", array("id"=>1));
 
 // Print dialog link.
 $printtext = get_string('print', 'glossary');
-$printicon = $OUTPUT->pix_icon('print', $printtext, 'glossary', array('class' => 'glossary_print_icon'));
-$printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'glossary_no_print');
-$printiconlink = html_writer::link('#', $printicon, $printlinkatt);
-echo html_writer::tag('div', $printiconlink, array('class' => 'printicon'));
+$printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'glossary_no_print printicon');
+$printiconlink = html_writer::link('#', $printtext, $printlinkatt);
+echo  html_writer::tag('div', $printiconlink, array('class' => 'displayprinticon'));
 
 echo html_writer::tag('div', userdate(time()), array('class' => 'displaydate'));
 
@@ -211,7 +209,7 @@ if ( $allentries ) {
                     $user = $DB->get_record("user", array("id"=>$entry->userid));
                     $pivottoshow = fullname($user);
                 }
-                echo html_writer::tag('div', '<span class="strong">' . clean_text($pivottoshow). '</span>', array('class' => 'mdl-align'));
+                echo html_writer::tag('div', clean_text($pivottoshow), array('class' => 'mdl-align strong'));
             }
         }
 

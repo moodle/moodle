@@ -59,7 +59,6 @@ require_capability('mod/wiki:viewpage', $context);
 $wikipage = new page_wiki_prettyview($wiki, $subwiki, $cm);
 
 $wikipage->set_page($page);
-$PAGE->requires->js_init_code("window.print();");
 add_to_log($course->id, "wiki", "view", "prettyview.php?pageid=".$pageid, $pageid, $cm->id);
 
 $wikipage->print_header();
