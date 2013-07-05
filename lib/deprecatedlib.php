@@ -4262,3 +4262,20 @@ function get_role_context_caps($roleid, context $context) {
 
     return $result;
 }
+
+/**
+ * Returns current course id or false if outside of course based on context parameter.
+ *
+ * @see context::get_course_context()
+ * @deprecated since 2.2
+ * @param context $context
+ * @return int|bool related course id or false
+ */
+function get_courseid_from_context(context $context) {
+    debugging('get_courseid_from_context() is deprecated, please use $context->get_course_context(false) instead.', DEBUG_DEVELOPER);
+    if ($coursecontext = $context->get_course_context(false)) {
+        return $coursecontext->instanceid;
+    } else {
+        return false;
+    }
+}

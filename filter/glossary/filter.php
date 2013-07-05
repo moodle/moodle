@@ -56,9 +56,12 @@ class filter_glossary extends moodle_text_filter {
 
         static $nothingtodo;         // To avoid processing if no glossaries / concepts are found
 
-        // Try to get current course
-        if (!$courseid = get_courseid_from_context($this->context)) {
+        // Try to get current course.
+        $coursectx = $this->context->get_course_context(false);
+        if (!$coursectx) {
             $courseid = 0;
+        } else {
+            $courseid = $coursectx->instanceid;
         }
 
         // Initialise/invalidate our trivial cache if dealing with a different context

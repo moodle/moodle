@@ -7247,22 +7247,6 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
 }
 
 /**
- * Returns current course id or null if outside of course based on context parameter.
- *
- * @deprecated since 2.2, use  $context->get_course_context instead
- * @param context $context
- * @return int|bool related course id or false
- */
-function get_courseid_from_context(context $context) {
-    if ($coursecontext = $context->get_course_context(false)) {
-        return $coursecontext->instanceid;
-    } else {
-        return false;
-    }
-}
-
-
-/**
  * Runs get_records select on context table and returns the result
  * Does get_records_select on the context table, and returns the results ordered
  * by contextlevel, and then the natural sort order within each level.
