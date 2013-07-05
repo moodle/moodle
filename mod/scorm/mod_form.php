@@ -132,7 +132,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         // Skip view page.
         $skipviewoptions = scorm_get_skip_view_array();
-        if ($COURSE->format == 'scorm') { // Remove option that would cause a constant redirect.
+        if ($COURSE->format == 'singleactivity') { // Remove option that would cause a constant redirect.
             unset($skipviewoptions[SCORM_SKIPVIEW_ALWAYS]);
             if ($cfg_scorm->skipview == SCORM_SKIPVIEW_ALWAYS) {
                 $cfg_scorm->skipview = SCORM_SKIPVIEW_FIRST;
@@ -283,7 +283,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         file_prepare_draft_area($draftitemid, $this->context->id, 'mod_scorm', 'package', 0);
         $default_values['packagefile'] = $draftitemid;
 
-        if (($COURSE->format == 'scorm') && ((count($scorms) == 0) || ($default_values['instance'] == $coursescorm->id))) {
+        if (($COURSE->format == 'singleactivity') && ((count($scorms) == 0) || ($default_values['instance'] == $coursescorm->id))) {
             $default_values['redirect'] = 'yes';
             $default_values['redirecturl'] = '../course/view.php?id='.$default_values['course'];
         } else {

@@ -728,7 +728,7 @@ class plugin_manager {
             ),
 
             'format' => array(
-                'scorm', 'singleactivity', 'social', 'topics', 'weeks'
+                'singleactivity', 'social', 'topics', 'weeks'
             ),
 
             'gradeexport' => array(
