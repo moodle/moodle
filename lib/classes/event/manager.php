@@ -232,12 +232,12 @@ class manager {
             if ($observer['eventname'] !== '*' and strpos($observer['eventname'], '\\') !== 0) {
                 $observer['eventname'] = '\\'.$observer['eventname'];
             }
-            if (empty($observer['callable'])) {
-                debugging("Invalid 'callable' detected in $file observer definition", DEBUG_DEVELOPER);
+            if (empty($observer['callback'])) {
+                debugging("Invalid 'callback' detected in $file observer definition", DEBUG_DEVELOPER);
                 continue;
             }
             $o = new \stdClass();
-            $o->callable = $observer['callable'];
+            $o->callable = $observer['callback'];
             if (!isset($observer['priority'])) {
                 $o->priority = 0;
             } else {

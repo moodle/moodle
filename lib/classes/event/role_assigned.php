@@ -27,7 +27,35 @@ namespace core\event;
 class role_assigned extends base {
     protected function init() {
         $this->data['crud'] = 'c';
-        $this->data['level'] = 1; // TODO
+        $this->data['level'] = 50;
+    }
+
+    /**
+     * Returns localised general event name.
+     *
+     * @return string|\lang_string
+     */
+    public static function get_name() {
+        //TODO: localise
+        return 'Role assigned';
+    }
+
+    /**
+     * Returns localised description of what happened.
+     *
+     * @return string|\lang_string
+     */
+    public function get_description() {
+        //TODO: localise
+        return 'Role '.$this->objectid.' was assigned to user '.$this->relateduserid.' in context '.$this->contextid;
+    }
+
+    /**
+     * Returns relevant URL.
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return new moodle_url('/admin/roles/assign.php', array('contextid'=>$this->contextid, 'roleid'=>$this->objectid));
     }
 
     /**

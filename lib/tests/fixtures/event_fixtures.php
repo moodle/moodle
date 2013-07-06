@@ -31,6 +31,14 @@ defined('MOODLE_INTERNAL') || die();
 class unittest_executed extends \core\event\base {
     public $nest = false;
 
+    public static function get_name() {
+        return 'xxx';
+    }
+
+    public function get_description() {
+        return 'yyy';
+    }
+
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['level'] = 10;

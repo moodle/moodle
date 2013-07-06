@@ -34,24 +34,24 @@ class core_event_testcase extends advanced_testcase {
         $observers = array(
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '\core_tests\event\unittest_observer::observe_one',
+                'callback'    => '\core_tests\event\unittest_observer::observe_one',
                 'includefile' => 'lib/tests/fixtures/event_fixtures.php',
             ),
             array(
                 'eventname'   => '*',
-                'callable'    => '\core_tests\event\unittest_observer::observe_all',
+                'callback'    => array('\core_tests\event\unittest_observer', 'observe_all'),
                 'includefile' => null,
                 'internal'    => 1,
                 'priority'    => 9999,
             ),
             array(
                 'eventname'   => '\core\event\unknown_executed',
-                'callable'    => '\core_tests\event\unittest_observer::broken_observer',
+                'callback'    => '\core_tests\event\unittest_observer::broken_observer',
                 'priority'    => 100,
             ),
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '\core_tests\event\unittest_observer::external_observer',
+                'callback'    => '\core_tests\event\unittest_observer::external_observer',
                 'priority'    => 200,
                 'internal'    => 0,
             ),
@@ -65,7 +65,7 @@ class core_event_testcase extends advanced_testcase {
 
         $expected = array();
         $observer = new stdClass();
-        $observer->callable = '\core_tests\event\unittest_observer::observe_all';
+        $observer->callable = array('\core_tests\event\unittest_observer', 'observe_all');
         $observer->priority = 9999;
         $observer->internal = true;
         $observer->includefile = null;
@@ -87,7 +87,7 @@ class core_event_testcase extends advanced_testcase {
 
         $expected = array();
         $observer = new stdClass();
-        $observer->callable = '\core_tests\event\unittest_observer::observe_all';
+        $observer->callable = array('\core_tests\event\unittest_observer', 'observe_all');
         $observer->priority = 9999;
         $observer->internal = true;
         $observer->includefile = null;
@@ -103,7 +103,7 @@ class core_event_testcase extends advanced_testcase {
 
         $expected = array();
         $observer = new stdClass();
-        $observer->callable = '\core_tests\event\unittest_observer::observe_all';
+        $observer->callable = array('\core_tests\event\unittest_observer', 'observe_all');
         $observer->priority = 9999;
         $observer->internal = true;
         $observer->includefile = null;
@@ -117,7 +117,7 @@ class core_event_testcase extends advanced_testcase {
         $observers = array(
             array(
                 'eventname'   => 'core_tests\event\unittest_executed', // Fix leading backslash.
-                'callable'    => '\core_tests\event\unittest_observer::observe_one',
+                'callback'    => '\core_tests\event\unittest_observer::observe_one',
                 'includefile' => 'lib/tests/fixtures/event_fixtures.php',
                 'internal'    => 1, // Cast to bool.
             ),
@@ -136,7 +136,7 @@ class core_event_testcase extends advanced_testcase {
         $observers = array(
             array(
                 // Missing eventclass.
-                'callable'    => '\core_tests\event\unittest_observer::observe_one',
+                'callback'    => '\core_tests\event\unittest_observer::observe_one',
                 'includefile' => 'lib/tests/fixtures/event_fixtures.php',
             ),
         );
@@ -147,7 +147,7 @@ class core_event_testcase extends advanced_testcase {
         $observers = array(
             array(
                 'eventname'   => '', // Empty eventclass.
-                'callable'    => '\core_tests\event\unittest_observer::observe_one',
+                'callback'    => '\core_tests\event\unittest_observer::observe_one',
                 'includefile' => 'lib/tests/fixtures/event_fixtures.php',
             ),
         );
@@ -169,7 +169,7 @@ class core_event_testcase extends advanced_testcase {
         $observers = array(
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '', // empty callable
+                'callback'    => '', // empty callable
                 'includefile' => 'lib/tests/fixtures/event_fixtures.php',
             ),
         );
@@ -180,7 +180,7 @@ class core_event_testcase extends advanced_testcase {
         $observers = array(
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '\core_tests\event\unittest_observer::observe_one',
+                'callback'    => '\core_tests\event\unittest_observer::observe_one',
                 'includefile' => 'lib/tests/fixtures/event_fixtures.php_xxx', // Missing file.
             ),
         );
@@ -193,11 +193,11 @@ class core_event_testcase extends advanced_testcase {
         $observers = array(
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '\core_tests\event\unittest_observer::observe_one',
+                'callback'    => '\core_tests\event\unittest_observer::observe_one',
             ),
             array(
                 'eventname'   => '*',
-                'callable'    => '\core_tests\event\unittest_observer::observe_all',
+                'callback'    => '\core_tests\event\unittest_observer::observe_all',
                 'includefile' => null,
                 'internal'    => 1,
                 'priority'    => 9999,
@@ -228,12 +228,12 @@ class core_event_testcase extends advanced_testcase {
 
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '\core_tests\event\unittest_observer::observe_one',
+                'callback'    => '\core_tests\event\unittest_observer::observe_one',
             ),
 
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '\core_tests\event\unittest_observer::broken_observer',
+                'callback'    => '\core_tests\event\unittest_observer::broken_observer',
                 'priority'    => 100,
             ),
         );
@@ -263,12 +263,12 @@ class core_event_testcase extends advanced_testcase {
 
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '\core_tests\event\unittest_observer::observe_one',
+                'callback'    => '\core_tests\event\unittest_observer::observe_one',
             ),
 
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '\core_tests\event\unittest_observer::external_observer',
+                'callback'    => '\core_tests\event\unittest_observer::external_observer',
                 'priority'    => 200,
                 'internal'    => 0,
             ),
@@ -335,11 +335,11 @@ class core_event_testcase extends advanced_testcase {
         $observers = array(
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callable'    => '\core_tests\event\unittest_observer::observe_one',
+                'callback'    => '\core_tests\event\unittest_observer::observe_one',
             ),
             array(
                 'eventname'   => '*',
-                'callable'    => '\core_tests\event\unittest_observer::observe_all',
+                'callback'    => '\core_tests\event\unittest_observer::observe_all',
                 'includefile' => null,
                 'internal'    => 1,
                 'priority'    => 9999,
@@ -396,7 +396,7 @@ class core_event_testcase extends advanced_testcase {
         $event1 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'extra'=>array('sample'=>1, 'xx'=>10)));
         $data1 = $event1->get_data();
 
-        $event2 = \core\event\base::restore($data1);
+        $event2 = \core\event\base::restore($data1, array('origin'=>'clid'));
         $data2 = $event2->get_data();
 
         $this->assertTrue($event2->is_triggered());
@@ -409,20 +409,20 @@ class core_event_testcase extends advanced_testcase {
         // Now test problematic data.
         $data3 = $data1;
         $data3['eventname'] = '\\a\\b\\c';
-        $event3 = \core\event\base::restore($data3);
+        $event3 = \core\event\base::restore($data3, array());
         $this->assertFalse($event3, 'Class name must match');
 
         $data4 = $data1;
         unset($data4['userid']);
-        $event4 = \core\event\base::restore($data4);
+        $event4 = \core\event\base::restore($data4, array());
         $this->assertInstanceOf('core_tests\event\unittest_executed', $event4);
         $this->assertDebuggingCalled();
 
         $data5 = $data1;
         $data5['xx'] = 'xx';
-        $event5 = \core\event\base::restore($data5);
+        $event5 = \core\event\base::restore($data5, array());
         $this->assertInstanceOf('core_tests\event\unittest_executed', $event5);
-        $this->assertDebuggingNotCalled();
+        $this->assertDebuggingCalled();
 
     }
 
@@ -437,7 +437,7 @@ class core_event_testcase extends advanced_testcase {
         }
 
         $data = $event->get_data();
-        $restored = \core_tests\event\unittest_executed::restore($data);
+        $restored = \core_tests\event\unittest_executed::restore($data, array());
         $this->assertTrue($restored->is_triggered());
         $this->assertTrue($restored->is_restored());
 
@@ -467,15 +467,15 @@ class core_event_testcase extends advanced_testcase {
         }
 
         $event = \core_tests\event\bad_event3::create();
-        $event->trigger();
+        @$event->trigger();
         $this->assertDebuggingCalled();
 
         $event = \core_tests\event\bad_event4::create();
-        $event->trigger();
+        @$event->trigger();
         $this->assertDebuggingCalled();
 
         $event = \core_tests\event\bad_event5::create();
-        $event->trigger();
+        @$event->trigger();
         $this->assertDebuggingCalled();
     }
 
@@ -483,6 +483,8 @@ class core_event_testcase extends advanced_testcase {
         global $CFG;
         $event1 = \core_tests\event\problematic_event1::create();
         $this->assertDebuggingNotCalled();
+        $this->assertNull($event1->xxx);
+        $this->assertDebuggingCalled();
 
         $event2 = \core_tests\event\problematic_event1::create(array('xxx'=>0));
         $this->assertDebuggingCalled();
@@ -524,4 +526,4 @@ class core_event_testcase extends advanced_testcase {
         $this->assertEquals(1, $user->id);
         $this->assertSame('guest', $user->username);
     }
-}
+    }

@@ -38,7 +38,7 @@ namespace core\event;
  * @property-read string $object what/who was object of the action (usually similar to database table name)
  * @property-read int $objectid optional id of the object
  * @property-read string $crud letter indicating event type
- * @property-read int $level log level
+ * @property-read int $level log level (number between 1 and 100)
  * @property-read int $contextid
  * @property-read int $contextlevel
  * @property-read int $contextinstanceid
@@ -46,13 +46,14 @@ namespace core\event;
  * @property-read int $courseid
  * @property-read int $relateduserid
  * @property-read mixed $extra array or scalar, can not contain objects
- * @property-read int $realuserid who really did this?
- * @property-read string $origin
  * @property-read int $timecreated
  */
 abstract class base {
     /** @var array event data */
     protected $data;
+
+    /** @var array the format is standardised by logging API */
+    protected $logdata;
 
     /** @var \context of this event */
     protected $context;
@@ -67,7 +68,7 @@ abstract class base {
     private static $fields = array(
         'eventname', 'component', 'action', 'object', 'objectid', 'crud', 'level', 'contextid',
         'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'extra',
-        'realuserid', 'origin', 'timecreated');
+        'timecreated');
 
     /** @var array simple record cache */
     protected $cachedrecords = array();
@@ -103,6 +104,9 @@ abstract class base {
         $event->triggered = false;
         $event->restored = false;
 
+        // Set automatic data.
+        $event->data['timecreated'] = time();
+
         $classname = get_class($event);
         $parts = explode('\\', $classname);
         if (count($parts) !== 3 or $parts[1] !== 'event') {
@@ -118,32 +122,7 @@ abstract class base {
         $event->data['object'] = substr($parts[2], 0, $pos);
         $event->data['action'] = substr($parts[2], $pos+1);
 
-        // Do not let developers to something crazy.
-        if (debugging('', DEBUG_DEVELOPER)) {
-            $keys = array('eventname', 'component', 'action', 'object', 'realuserid', 'origin', 'timecreated');
-            foreach ($keys as $key) {
-                if (array_key_exists($key, $data)) {
-                    debugging("Data key '$key' is no allowed in event \\core\\event\\base::create() method, it is set automatically.", DEBUG_DEVELOPER);
-                }
-            }
-            $keys = array('crud', 'level');
-            foreach ($keys as $key) {
-                if (array_key_exists($key, $data)) {
-                    debugging("Data key '$key' is no allowed in event \\core\\event\\base::create() method, you need to set it in init method.", DEBUG_DEVELOPER);
-                }
-            }
-        }
-        unset($data['eventname']);
-        unset($data['component']);
-        unset($data['action']);
-        unset($data['object']);
-        unset($data['crud']);
-        unset($data['level']);
-        unset($data['realuserid']);
-        unset($data['origin']);
-        unset($data['timecreated']);
-
-        // Set optional data.
+        // Set optional data or use defaults.
         $event->data['objectid'] = isset($data['objectid']) ? $data['objectid'] : null;
         $event->data['courseid'] = isset($data['courseid']) ? $data['courseid'] : null;
         $event->data['userid'] = isset($data['userid']) ? $data['userid'] : $USER->id;
@@ -163,7 +142,6 @@ abstract class base {
         if (!$event->context) {
             $event->context = \context_system::instance();
         }
-        unset($data['context']);
         $event->data['contextid'] = $event->context->id;
         $event->data['contextlevel'] = $event->context->contextlevel;
         $event->data['contextinstanceid'] = $event->context->instanceid;
@@ -180,24 +158,29 @@ abstract class base {
             $event->data['relateduserid'] = $event->context->instanceid;
         }
 
-        if (CLI_SCRIPT) {
-            $event->data['origin'] = 'cli';
-        } else if (AJAX_SCRIPT) {
-            $event->data['origin'] = 'ajax:'.getremoteaddr();
-        } else {
-            $event->data['origin'] = 'web:'.getremoteaddr();
-            // TODO: detect web services somehow, for now it is logged separately.
-        }
+        // Set static event data specific for child class, this should also validate extra data.
+        $event->init();
 
+        // Warn developers if they do something wrong.
         if (debugging('', DEBUG_DEVELOPER)) {
-            foreach (array_keys($data) as $key) {
-                if (!in_array($key, self::$fields)) {
-                    debugging("Unsupported event data field '$key' detected.");
+            static $automatickeys = array('eventname', 'component', 'action', 'object', 'timecreated');
+            static $initkeys = array('crud', 'level');
+
+            foreach ($data as $key => $ignored) {
+                if ($key === 'context') {
+                    continue;
+
+                } else if (in_array($key, $automatickeys)) {
+                    debugging("Data key '$key' is not allowed in \\core\\event\\base::create() method, it is set automatically");
+
+                } else if (in_array($key, $initkeys)) {
+                    debugging("Data key '$key' is not allowed in \\core\\event\\base::create() method, you need to set it in init() method");
+
+                } else if (!in_array($key, self::$fields)) {
+                    debugging("Data key '$key' does not exist in \\core\\event\\base");
                 }
             }
         }
-
-        $event->init();
 
         return $event;
     }
@@ -206,20 +189,58 @@ abstract class base {
      * Override in subclass.
      *
      * Set all required data properties:
-     *  1/ crud
-     *  2/ level
+     *  1/ crud - letter [crud]
+     *  2/ level - number 1...100
+     *
+     * Optionally validate $this->data['extra'].
      *
      * @return void
      */
     protected abstract function init();
 
     /**
+     * Returns localised general event name.
+     *
+     * Override in subclass, we can not make it static and abstract at the same time.
+     *
+     * @return string|\lang_string
+     */
+    public static function get_name() {
+        // Override in subclass with real lang string.
+        $parts = explode('\\', __CLASS__);
+        if (count($parts) !== 3) {
+            return 'unknown event';
+        }
+        return $parts[0].': '.str_replace('_', ' ', $parts[2]);
+    }
+
+    /**
+     * Returns localised description of what happened.
+     *
+     * @return string|\lang_string
+     */
+    public function get_description() {
+        return null;
+    }
+
+    /**
+     * Define whether a user can view the event or not.
+     *
+     * @param int|\stdClass $user_or_id ID of the user.
+     * @return bool True if the user can view the event, false otherwise.
+     */
+    public function can_view($user_or_id = null) {
+        return is_siteadmin($user_or_id);
+    }
+
+    /**
      * Restore event from existing historic data.
      *
      * @param array $data
+     * @param array $logdata the format is standardised by logging API
      * @return bool|\core\event\base
      */
-    public static final function restore(array $data = null) {
+    public static final function restore(array $data, array $logdata) {
         $classname = $data['eventname'];
         $component = $data['component'];
         $action = $data['action'];
@@ -240,28 +261,25 @@ abstract class base {
 
         $event->triggered = true;
         $event->restored = true;
+        $event->logdata = $logdata;
 
         foreach (self::$fields as $key) {
-            if (array_key_exists($key, $data)) {
-                $event->data[$key] = $data[$key];
-            } else {
+            if (!array_key_exists($key, $data)) {
                 debugging("Event restore data must contain key $key");
-                $event->data[$key] = null;
+                $data[$key] = null;
             }
         }
+        if (count($data) != count(self::$fields)) {
+            foreach ($data as $key => $value) {
+                if (!in_array($key, self::$fields)) {
+                    debugging("Event restore data cannot contain key $key");
+                    unset($data[$key]);
+                }
+            }
+        }
+        $event->data = $data;
 
         return $event;
-    }
-
-    /**
-     * Returns localised event name.
-     *
-     * Note: override in child class.
-     *
-     * @return string
-     */
-    public function get_name() {
-        return $this->data['eventname'];
     }
 
     /**
@@ -278,6 +296,7 @@ abstract class base {
 
     /**
      * Returns relevant URL, override in subclasses.
+     * @return \moodle_url
      */
     public function get_url() {
         return null;
@@ -286,12 +305,19 @@ abstract class base {
     /**
      * Return standardised event data as array.
      *
-     * Useful especially for logging of events.
-     *
      * @return array
      */
     public function get_data() {
         return $this->data;
+    }
+
+    /**
+     * Return auxiliary data that was stored in logs.
+     *
+     * @return array the format is standardised by logging API
+     */
+    public function get_logdata() {
+        return $this->logdata;
     }
 
     /**
@@ -337,18 +363,33 @@ abstract class base {
         }
 
         if (debugging('', DEBUG_DEVELOPER)) {
-            if (!in_array($this->data['crud'], array('c', 'r', 'u', 'd'), true)) {
-                debugging("Invalid event crud value specified.", DEBUG_DEVELOPER);
-            }
             // Ideally these should be coding exceptions, but we need to skip these for performance reasons
             // on production servers.
-            if (self::$fields !== array_keys($this->data)) {
-                debugging('Number of event data fields must not be changed in event classes', DEBUG_DEVELOPER);
-            }
 
+            if (!in_array($this->data['crud'], array('c', 'r', 'u', 'd'), true)) {
+                debugging("Invalid event crud value specified.");
+            }
+            if (!is_number($this->data['level'])) {
+                debugging('Event property level must be a number');
+            }
+            if (self::$fields !== array_keys($this->data)) {
+                debugging('Number of event data fields must not be changed in event classes');
+            }
             $encoded = json_encode($this->data['extra']);
             if ($encoded === false or $this->data['extra'] !== json_decode($encoded, true)) {
-                debugging('Extra event data must be compatible with json encoding', DEBUG_DEVELOPER);
+                debugging('Extra event data must be compatible with json encoding');
+            }
+            if ($this->data['userid'] and !is_number($this->data['userid'])) {
+                debugging('Event property userid must be a number');
+            }
+            if ($this->data['courseid'] and !is_number($this->data['courseid'])) {
+                debugging('Event property courseid must be a number');
+            }
+            if ($this->data['objectid'] and !is_number($this->data['objectid'])) {
+                debugging('Event property objectid must be a number');
+            }
+            if ($this->data['relateduserid'] and !is_number($this->data['relateduserid'])) {
+                debugging('Event property relateduserid must be a number');
             }
         }
     }
@@ -395,7 +436,7 @@ abstract class base {
     }
 
     /**
-     * Was this evetn restored?
+     * Was this event restored?
      *
      * @return bool
      */
@@ -407,7 +448,7 @@ abstract class base {
      * Add cached data that will be most probably used in event observers.
      *
      * This is used to improve performance, but it is required for data
-     * thar was just deleted.
+     * that was just deleted.
      *
      * @param string $tablename
      * @param \stdClass $record
@@ -453,14 +494,12 @@ abstract class base {
      *
      * @param string $name
      * @return mixed
-     *
-     * @throws \coding_exception
      */
     public function __get($name) {
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
         }
 
-        throw new \coding_exception("Accessing non-existent property $name from event class");
+        debugging("Accessing non-existent event property '$name'");
     }
 }

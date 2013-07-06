@@ -29,12 +29,12 @@ $observers = array (
 
     array (
         'eventname' => '\core\event\role_assigned',
-        'callable'  => 'enrol_category_observer::role_assigned',
+        'callback'  => 'enrol_category_observer::role_assigned',
     ),
 
     array (
         'eventname' => '\core\event\role_unassigned',
-        'callable'  => 'enrol_category_observer::role_unassigned',
+        'callback'  => 'enrol_category_observer::role_unassigned',
     ),
 
 );

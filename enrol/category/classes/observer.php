@@ -44,7 +44,10 @@ class enrol_category_observer {
             return;
         }
 
-        $ra = $event->get_cached_record('role_assignments', $event->extra['id']);
+        $ra = new stdClass();
+        $ra->roleid = $event->objectid;
+        $ra->userid = $event->relateduserid;
+        $ra->contextid = $event->contextid;
 
         //only category level roles are interesting
         $parentcontext = context::instance_by_id($ra->contextid);
@@ -83,7 +86,7 @@ class enrol_category_observer {
         $params = array('courselevel'=>CONTEXT_COURSE, 'match'=>$parentcontext->path.'/%', 'userid'=>$ra->userid);
         $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $instance) {
-            $plugin->enrol_user($instance, $ra->userid, null, $ra->timemodified);
+            $plugin->enrol_user($instance, $ra->userid, null, time());
         }
         $rs->close();
     }
@@ -100,7 +103,9 @@ class enrol_category_observer {
             return;
         }
 
-        $ra = $event->get_cached_record('role_assignments', $event->extra['id']);
+        $ra = new stdClass();
+        $ra->userid = $event->relateduserid;
+        $ra->contextid = $event->contextid;
 
         // only category level roles are interesting
         $parentcontext = context::instance_by_id($ra->contextid);
