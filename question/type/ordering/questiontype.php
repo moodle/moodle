@@ -86,12 +86,13 @@ class qtype_ordering extends question_type {
 
             if ($answer->id = array_shift($answerids)) {
                 if (! $DB->update_record('question_answers', $answer)) {
-                    $result->error = 'Could not update quiz answer! (id='.$answer->id.')';
+                    $a = 'question_answers (id='.$answer->id.')';
+                    $result->error = get_string('cannotupdaterecord', 'error', $a);
                     return $result;
                 }
             } else {
                 if (! $answer->id = $DB->insert_record('question_answers', $answer)) {
-                    $result->error = 'Could not insert quiz answer! ';
+                    $result->error = get_string('cannotinsertrecord', 'error', 'question_answers');
                     return $result;
                 }
             }
@@ -110,12 +111,13 @@ class qtype_ordering extends question_type {
         // add/update $options for this ordering question
         if ($options->id = $DB->get_field('question_ordering', 'id', array('question' => $question->id))) {
             if (! $DB->update_record('question_ordering', $options)) {
-                $result->error = 'Could not update quiz ordering options! (id='.$options->id.')';
+                $a = 'question_ordering (id='.$options->id.')';
+                $result->error = get_string('cannotupdaterecord', 'error', $a);
                 return $result;
             }
         } else {
             if (! $options->id = $DB->insert_record('question_ordering', $options)) {
-                $result->error = 'Could not insert question ordering options!';
+                $result->error = get_string('cannotinsertrecord', 'error', 'question_ordering');
                 return $result;
             }
         }
