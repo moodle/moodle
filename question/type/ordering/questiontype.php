@@ -86,8 +86,7 @@ class qtype_ordering extends question_type {
 
             if ($answer->id = array_shift($answerids)) {
                 if (! $DB->update_record('question_answers', $answer)) {
-                    $a = 'question_answers (id='.$answer->id.')';
-                    $result->error = get_string('cannotupdaterecord', 'error', $a);
+                    $result->error = get_string('cannotupdaterecord', 'error', 'question_answers (id='.$answer->id.')');
                     return $result;
                 }
             } else {
@@ -111,8 +110,7 @@ class qtype_ordering extends question_type {
         // add/update $options for this ordering question
         if ($options->id = $DB->get_field('question_ordering', 'id', array('question' => $question->id))) {
             if (! $DB->update_record('question_ordering', $options)) {
-                $a = 'question_ordering (id='.$options->id.')';
-                $result->error = get_string('cannotupdaterecord', 'error', $a);
+                $result->error = get_string('cannotupdaterecord', 'error', 'question_ordering (id='.$options->id.')');
                 return $result;
             }
         } else {
