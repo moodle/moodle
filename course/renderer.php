@@ -350,12 +350,10 @@ class core_course_renderer extends plugin_renderer_base {
         $menu = new action_menu();
         $menu->set_owner_selector($ownerselector);
         foreach ($actions as $action) {
-            $action->add_class('cm-edit-action');
-            if ($action->has_class('status')) {
-                $menu->add_primary_action($action);
-            } else {
-                $menu->add_secondary_action($action);
+            if ($action instanceof action_menu_action) {
+                $action->add_class('cm-edit-action');
             }
+            $menu->add($action);
         }
         $menu->attributes['class'] .= ' section-cm-edit-actions commands';
         return $this->render($menu);

@@ -3076,18 +3076,11 @@ class action_menu implements renderable {
     public $attributessecondary = array();
 
     /**
-     * If set to true only the icons for primary action_link objects will be displayed.
-     * @var bool
-     */
-    public $displayprimaryiconsonly = true;
-
-    /**
      * Constructs the action menu with the given items.
      *
-     * @param array $primaryactions An array of primary actions.
-     * @param array $secondaryactions An array of secondary actions.
+     * @param array $actions An array of actions.
      */
-    public function __construct(array $primaryactions = array(), array $secondaryactions = array()) {
+    public function __construct(array $actions = array()) {
         static $initialised = 0;
         $this->attributes = array(
             'id' => 'action-menu-'.$initialised,
@@ -3103,11 +3096,8 @@ class action_menu implements renderable {
             'class' => 'secondary',
             'data-rel' => 'menu-content',
         );
-        foreach ($primaryactions as $action) {
-            $this->add_primary_action($action);
-        }
-        foreach ($secondaryactions as $action) {
-            $this->add_secondary_action($action);
+        foreach ($actions as $action) {
+            $this->add($action);
         }
         // We've initialised!
         $initialised++;
@@ -3124,6 +3114,25 @@ class action_menu implements renderable {
         if (!$initialised) {
             $page->requires->yui_module('moodle-core-actionmenu', 'M.core.actionmenu.init');
             $initialised = true;
+        }
+    }
+
+    /**
+     * Adds an action to this action menu.
+     *
+     * @param $action
+     */
+    public function add($action) {
+        if ($action instanceof action_menu_action) {
+            if ($action->primary) {
+                $this->add_primary_action($action);
+            } else {
+                $this->add_secondary_action($action);
+            }
+        } else if ($action instanceof pix_icon) {
+            $this->add_primary_action($action);
+        } else {
+            $this->add_secondary_action($action);
         }
     }
 
@@ -3156,13 +3165,7 @@ class action_menu implements renderable {
         if ($output === null) {
             $output = $OUTPUT;
         }
-        $actions = array();
-        foreach ($this->primaryactions as $action) {
-            if ($this->displayprimaryiconsonly && $action instanceof action_link && $action->icon) {
-                $action->text = null;
-            }
-            $actions[] = $action;
-        }
+        $actions = $this->primaryactions;
         $attributes = array(
             'type' => 'image',
             'src' => $output->pix_url('t/contextmenu', 'moodle'),
@@ -3187,5 +3190,130 @@ class action_menu implements renderable {
      */
     public function set_owner_selector($selector) {
         $this->attributes['data-owner'] = $selector;
+    }
+}
+
+/**
+ * An action menu action
+ *
+ * @package core
+ * @category output
+ * @copyright 2013 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class action_menu_action implements renderable {
+
+    /**
+     * True if this is a primary action. False if not.
+     * @var bool
+     */
+    public $primary = true;
+
+    /**
+     * The URL for the action.
+     * @var moodle_url
+     */
+    public $url;
+
+    /**
+     * The icon to represent the action.
+     * @var pix_icon
+     */
+    public $icon;
+
+    /**
+     * The text describing the action.
+     * @var string
+     */
+    public $text;
+
+    /**
+     * An array of attributes for the action.
+     * @var array
+     */
+    public $attributes;
+
+    /**
+     * Constructs the object.
+     *
+     * @param moodle_url $url The URL for the action.
+     * @param pix_icon $icon The icon to represent the action.
+     * @param string $text The text to represent the action.
+     * @param bool $primary Whether this is a primary action or not.
+     * @param array $attributes Any attribtues associated with the action.
+     */
+    public function __construct(moodle_url $url, pix_icon $icon, $text, $primary = true, array $attributes = array()) {
+        $this->url = clone($url);
+        $this->icon = $icon;
+        $this->text = $text;
+        $this->primary = (bool)$primary;
+        $this->attributes = $attributes;
+        $this->add_class('menu-action');
+    }
+
+    /**
+     * Adds a CSS class to this action link object
+     * @param string $class
+     */
+    public function add_class($class) {
+        if (empty($this->attributes['class'])) {
+            $this->attributes['class'] = $class;
+        } else {
+            $this->attributes['class'] .= ' ' . $class;
+        }
+    }
+
+    /**
+     * Returns true if the specified class has been added to this link.
+     * @param string $class
+     * @return bool
+     */
+    public function has_class($class) {
+        return strpos(' ' . $this->attributes['class'] . ' ', ' ' . $class . ' ') !== false;
+    }
+
+}
+
+/**
+ * A primary action menu action
+ *
+ * @package core
+ * @category output
+ * @copyright 2013 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class action_menu_primary_action extends action_menu_action {
+    /**
+     * Constructs the object.
+     *
+     * @param moodle_url $url
+     * @param pix_icon $icon
+     * @param string $text
+     * @param array $attributes
+     */
+    public function __construct(moodle_url $url, pix_icon $icon, $text, array $attributes = array()) {
+        parent::__construct($url, $icon, $text, true, $attributes);
+    }
+}
+
+/**
+ * A secondary action menu action
+ *
+ * @package core
+ * @category output
+ * @copyright 2013 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class action_menu_secondary_action extends action_menu_action {
+    /**
+     * Constructs the object.
+     *
+     * @param moodle_url $url
+     * @param pix_icon $icon
+     * @param string $text
+     * @param array $attributes
+     */
+    public function __construct(moodle_url $url, pix_icon $icon, $text, array $attributes = array()) {
+        parent::__construct($url, $icon, $text, false, $attributes);
     }
 }

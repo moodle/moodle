@@ -349,9 +349,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
             // Handle removal/addition of the moveleft button
             if (newindent == 0) {
-                button.remove();
+                button.addClass('hidden');
             } else if (newindent == 1 && oldindent == 0) {
-                this.change_indent_add_left_button(button);
+                button.ancestor().one('> [data-action=moveleft]').removeClass('hidden');
             }
 
             // Handle massive indentation to match non-ajax display
@@ -545,33 +545,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var spinner = M.util.add_spinner(Y, activity.one(SELECTOR.COMMANDSPAN));
             this.send_request(data, spinner);
             return false; // Need to return false to stop the delegate for the new state firing
-        },
-        /**
-         * Add the moveleft button
-         * This is required after moving left from an initial position of 0
-         *
-         * @protected
-         * @method change_indent_add_left_button
-         * @param {Node} moveright. The move right icon which should always be there.
-         */
-        change_indent_add_left_button : function(moveright) {
-            var moveleft = moveright.cloneNode(true);
-            var icon = (BODY.hasClass('dir-rtl')) ? 't/right' : 't/left';
-            var str = M.util.get_string('moveleft', 'moodle');
-            moveleft.setAttrs({
-                'title' : str,
-                'href' : moveright.getAttribute('href').replace('indent=1', 'indent=-1')
-            });
-            moveleft.setData('activity', moveright.getData('activity'));
-            moveleft.setData('action', 'moveleft');
-            moveleft.one('img').setAttrs({
-                'alt' : str,
-                'src' : M.util.image_url(icon, 'moodle')
-            });
-            if (moveleft.one(SELECTOR.ACTIONLINKTEXT)) {
-                moveleft.one(SELECTOR.ACTIONLINKTEXT).setContent(str);
-            }
-            moveright.insert(moveleft, 'before');
         },
 
         /**

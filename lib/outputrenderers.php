@@ -1036,16 +1036,9 @@ class core_renderer extends renderer_base {
         if (empty($actions)) {
             return '';
         }
-        $menu = new action_menu();
+        $menu = new action_menu($actions);
         if ($blockid !== null) {
             $menu->set_owner_selector('#'.$blockid);
-        }
-        foreach ($actions as $action) {
-            if ($action->has_class('status')) {
-                $menu->add_primary_action($action);
-            } else {
-                $menu->add_secondary_action($action);
-            }
         }
         $menu->attributes['class'] .= ' block-control-actions commands';
         return $this->render($menu);
@@ -1077,6 +1070,69 @@ class core_renderer extends renderer_base {
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('div');
         return $output;
+    }
+
+    /**
+     * Renders an action_menu_action item.
+     *
+     * @param action_menu_action $action
+     * @return string HTML fragment
+     */
+    protected function render_action_menu_action(action_menu_action $action) {
+
+        $iconrendered = false;
+
+        $text = '';
+        if ($action->icon) {
+            $icon = $action->icon;
+            if ($action->primary) {
+                $action->attributes['title'] = $action->text;
+            }
+            $text .= $this->render($icon);
+            $iconrendered = true;
+        }
+
+        if (!$iconrendered || $action->primary === false) {
+            $text .= html_writer::start_tag('span', array('class'=>'menu-action-text'));
+            if ($action->text instanceof renderable) {
+                $text .= $this->render($action->text);
+            } else {
+                $text .= $action->text;
+            }
+            $text .= html_writer::end_tag('span');
+        }
+
+        // A disabled link is rendered as formatted text
+        if (!empty($action->attributes['disabled'])) {
+            // do not use div here due to nesting restriction in xhtml strict
+            return html_writer::tag('span', $text, array('class'=>'currentlink'));
+        }
+
+        $attributes = $action->attributes;
+        unset($action->attributes['disabled']);
+        $attributes['href'] = $action->url;
+
+        return html_writer::tag('a', $text, $attributes);
+    }
+
+    /**
+     * Renders a primary action_menu_action item.
+     *
+     * @param action_menu_primary_action $action
+     * @return string HTML fragment
+     */
+    protected function render_action_menu_primary_action(action_menu_primary_action $action) {
+        return $this->render_action_menu_action($action);
+    }
+
+    /**
+     * Renders a secondary action_menu_action item.
+     *
+     * @param action_menu_secondary_action $action
+     * @return string HTML fragment
+     */
+    protected function render_action_menu_secondary_action(action_menu_secondary_action $action) {
+        return $this->render_action_menu_action($action);
     }
 
     /**
@@ -1352,13 +1408,11 @@ class core_renderer extends renderer_base {
             $text .= $this->render($link->icon);
         }
 
-        $text .= html_writer::start_tag('span', array('class'=>'actionlinktext'));
         if ($link->text instanceof renderable) {
             $text .= $this->render($link->text);
         } else {
             $text .= $link->text;
         }
-        $text .= html_writer::end_tag('span');
 
         // A disabled link is rendered as formatted text
         if (!empty($link->attributes['disabled'])) {

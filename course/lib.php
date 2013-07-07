@@ -1773,7 +1773,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     $editcaps = array('moodle/course:manageactivities', 'moodle/course:activityvisibility', 'moodle/role:assign');
     $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
 
-    // no permission to edit anything
+    // No permission to edit anything.
     if (!has_any_capability($editcaps, $modcontext) and !has_all_capabilities($dupecaps, $coursecontext)) {
         return array();
     }
@@ -1799,21 +1799,20 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
     $actions = array();
 
-    // AJAX edit title
+    // AJAX edit title.
     if ($mod->has_view() && $hasmanageactivities &&
                 (($mod->course == $COURSE->id && course_ajax_enabled($COURSE)) ||
                  ($mod->course == SITEID && course_ajax_enabled($SITE)))) {
         // we will not display link if we are on some other-course page (where we should not see this module anyway)
-        $actions['title'] = new action_link(
+        $actions['title'] = new action_menu_secondary_action(
             new moodle_url($baseurl, array('update' => $mod->id)),
+            new pix_icon('t/editstring', $str->edittitle, 'moodle', array('class' => 'iconsmall visibleifjs', 'title' => '')),
             $str->edittitle,
-            null,
-            array('class' => 'editing_title', 'title' => $str->edittitle, 'data-action' => 'edittitle'),
-            new pix_icon('t/editstring', $str->edittitle, 'moodle', array('class' => 'iconsmall visibleifjs', 'title' => ''))
+            array('class' => 'editing_title', 'data-action' => 'edittitle')
         );
     }
 
-    // leftright
+    // Indent.
     if ($hasmanageactivities) {
         if (right_to_left()) {   // Exchange arrows on RTL
             $rightarrow = 't/left';
@@ -1827,96 +1826,86 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
         if ($indent > 0) {
             $hiddenclass = '';
         }
-        $actions['moveleft'] = new action_link(
+        $actions['moveleft'] = new action_menu_secondary_action(
             new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '-1')),
+            new pix_icon($leftarrow, $str->moveleft, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->moveleft,
-            null,
-            array('class' => 'editing_moveleft ' . $hiddenclass, 'title' => $str->moveleft, 'data-action' => 'moveleft'),
-            new pix_icon($leftarrow, $str->moveleft, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            array('class' => 'editing_moveleft ' . $hiddenclass, 'data-action' => 'moveleft')
         );
         $hiddenclass = 'hidden';
         if ($indent >= 0) {
             $hiddenclass = '';
         }
-        $actions['moveright'] = new action_link(
+        $actions['moveright'] = new action_menu_secondary_action(
             new moodle_url($baseurl, array('id' => $mod->id, 'indent' => '1')),
+            new pix_icon($rightarrow, $str->moveright, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->moveright,
-            null,
-            array('class' => 'editing_moveright ' . $hiddenclass, 'title' => $str->moveright, 'data-action' => 'moveright'),
-            new pix_icon($rightarrow, $str->moveright, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            array('class' => 'editing_moveright ' . $hiddenclass, 'data-action' => 'moveright')
         );
     }
 
-    // move
+    // Move.
     if ($hasmanageactivities) {
-        $actions['move'] = new action_link(
+        $actions['move'] = new action_menu_primary_action(
             new moodle_url($baseurl, array('copy' => $mod->id)),
+            new pix_icon('t/move', $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->move,
-            null,
-            array('class' => 'editing_move status', 'title' => $str->move, 'data-action' => 'move'),
-            new pix_icon('t/move', $str->move, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            array('class' => 'editing_move status', 'data-action' => 'move')
         );
     }
 
-    // Update
+    // Update.
     if ($hasmanageactivities) {
-        $actions['update'] = new action_link(
+        $actions['update'] = new action_menu_secondary_action(
             new moodle_url($baseurl, array('update' => $mod->id)),
+            new pix_icon('t/edit', $str->update, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->update,
-            null,
-            array('class' => 'editing_update', 'title' => $str->update, 'data-action' => 'update'),
-            new pix_icon('t/edit', $str->update, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            array('class' => 'editing_update', 'data-action' => 'update')
         );
     }
 
     // Duplicate (require both target import caps to be able to duplicate and backup2 support, see modduplicate.php)
-    // note that restoring on front page is never allowed
+    // note that restoring on front page is never allowed.
     if ($mod->course != SITEID && has_all_capabilities($dupecaps, $coursecontext) &&
             plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2)) {
-        $actions['duplicate'] = new action_link(
+        $actions['duplicate'] = new action_menu_secondary_action(
             new moodle_url($baseurl, array('duplicate' => $mod->id)),
+            new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->duplicate,
-            null,
-            array('class' => 'editing_duplicate', 'title' => $str->duplicate, 'data-action' => 'duplicate'),
-            new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            array('class' => 'editing_duplicate', 'data-action' => 'duplicate')
         );
     }
 
-    // Delete
+    // Delete.
     if ($hasmanageactivities) {
-        $actions['delete'] = new action_link(
+        $actions['delete'] = new action_menu_secondary_action(
             new moodle_url($baseurl, array('delete' => $mod->id)),
+            new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->delete,
-            null,
-            array('class' => 'editing_delete', 'title' => $str->delete, 'data-action' => 'delete'),
-            new pix_icon('t/delete', $str->delete, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            array('class' => 'editing_delete', 'data-action' => 'delete')
         );
     }
 
-    // hideshow
+    // Hide/Show.
     if (has_capability('moodle/course:activityvisibility', $modcontext)) {
         if ($mod->visible) {
-            $actions['hide'] = new action_link(
+            $actions['hide'] = new action_menu_primary_action(
                 new moodle_url($baseurl, array('hide' => $mod->id)),
+                new pix_icon('t/hide', $str->hide, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str->hide,
-                null,
-                array('class' => 'editing_hide', 'title' => $str->hide, 'data-action' => 'hide'),
-                new pix_icon('t/hide', $str->hide, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+                array('class' => 'editing_hide', 'data-action' => 'hide')
             );
-            $actions['hide']->add_class('status');
         } else {
-            $actions['show'] = new action_link(
+            $actions['show'] = new action_menu_primary_action(
                 new moodle_url($baseurl, array('show' => $mod->id)),
+                new pix_icon('t/show', $str->show, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str->show,
-                null,
-                array('class' => 'editing_show', 'title' => $str->show, 'data-action' => 'show'),
-                new pix_icon('t/show', $str->show, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+                array('class' => 'editing_show', 'data-action' => 'show')
             );
-            $actions['show']->add_class('status');
         }
     }
 
-    // groupmode
+    // Groupmode.
     if ($hasmanageactivities and plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
         if ($mod->coursegroupmodeforce) {
             $modgroupmode = $mod->coursegroupmode;
@@ -1943,27 +1932,24 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             $groupimage = 't/groupn';
         }
         if (!$mod->coursegroupmodeforce) {
-            $actions[$actionname] = new action_link(
+            $actions[$actionname] = new action_menu_primary_action(
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $groupmode)),
+                new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $grouptitle,
-                null,
-                array('class' => 'editing_'. $actionname, 'title' => $grouptitle, 'data-action' => $actionname, 'data-groupmode' => $groupmode),
-                new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+                array('class' => 'editing_'. $actionname, 'data-action' => $actionname, 'data-groupmode' => $groupmode)
             );
         } else {
-            $actions[$actionname] = new pix_icon($groupimage, $forcedgrouptitle, 'moodle', array('title' => $forcedgrouptitle, 'class' => 'iconsmall'));
+            $actions[$actionname] = new pix_icon($groupimage, $forcedgrouptitle, 'moodle', array('title' => '', 'class' => 'iconsmall'));
         }
-        $actions[$actionname]->add_class('status');
     }
 
-    // Assign
+    // Assign.
     if (has_capability('moodle/role:assign', $modcontext)){
-        $actions['assign'] = new action_link(
+        $actions['assign'] = new action_menu_secondary_action(
             new moodle_url('/admin/roles/assign.php', array('contextid' => $modcontext->id)),
+            new pix_icon('t/assignroles', $str->assign, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->assign,
-            null,
-            array('class' => 'editing_assign', 'title' => $str->assign, 'data-action' => 'assignroles'),
-            new pix_icon('t/assignroles', $str->assign, 'moodle', array('class' => 'iconsmall', 'title' => ''))
+            array('class' => 'editing_assign', 'data-action' => 'assignroles')
         );
     }
 
