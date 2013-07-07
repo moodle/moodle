@@ -34,7 +34,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class auth_ldap_testcase extends advanced_testcase {
+class auth_ldap_plugin_testcase extends advanced_testcase {
 
     public function test_auth_ldap() {
         global $CFG, $DB;
@@ -169,9 +169,9 @@ class auth_ldap_testcase extends advanced_testcase {
         $auth->sync_users(true);
         ob_end_clean();
 
-        $this->assertEquals(4, $DB->count_records('user', array('auth'=>'ldap')));
-        $this->assertEquals(1, $DB->count_records('user', array('auth'=>'nologin', 'username'=>'username1')));
-        $this->assertEquals(0, $DB->count_records('user', array('suspended'=>1)));
+        $this->assertEquals(5, $DB->count_records('user', array('auth'=>'ldap')));
+        $this->assertEquals(0, $DB->count_records('user', array('auth'=>'nologin', 'username'=>'username1')));
+        $this->assertEquals(1, $DB->count_records('user', array('auth'=>'ldap', 'suspended'=>'1', 'username'=>'username1')));
         $this->assertEquals(0, $DB->count_records('user', array('deleted'=>1)));
         $this->assertEquals(2, $DB->count_records('role_assignments'));
         $this->assertEquals(2, $DB->count_records('role_assignments', array('roleid'=>$creatorrole->id)));
@@ -188,6 +188,17 @@ class auth_ldap_testcase extends advanced_testcase {
         $this->assertEquals(2, $DB->count_records('role_assignments'));
         $this->assertEquals(2, $DB->count_records('role_assignments', array('roleid'=>$creatorrole->id)));
 
+        $DB->set_field('user', 'auth', 'nologin', array('username'=>'username1'));
+
+        ob_start();
+        $auth->sync_users(true);
+        ob_end_clean();
+
+        $this->assertEquals(5, $DB->count_records('user', array('auth'=>'ldap')));
+        $this->assertEquals(0, $DB->count_records('user', array('suspended'=>1)));
+        $this->assertEquals(0, $DB->count_records('user', array('deleted'=>1)));
+        $this->assertEquals(2, $DB->count_records('role_assignments'));
+        $this->assertEquals(2, $DB->count_records('role_assignments', array('roleid'=>$creatorrole->id)));
 
         set_config('removeuser', AUTH_REMOVEUSER_FULLDELETE, 'auth/ldap');
 
