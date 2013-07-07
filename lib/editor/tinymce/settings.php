@@ -37,7 +37,7 @@ bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyr
 
 bullist,numlist,outdent,indent,|,link,unlink,|,image,nonbreaking,charmap,table,|,code";
     $settings->add(new admin_setting_configtextarea('editor_tinymce/customtoolbar',
-        get_string('customtoolbar', 'editor_tinymce'), get_string('customtoolbar_desc', 'editor_tinymce', 'http://www.tinymce.com/wiki.php/Buttons/controls'), $default, PARAM_RAW, 100, 8));
+        get_string('customtoolbar', 'editor_tinymce'), get_string('customtoolbar_desc', 'editor_tinymce', 'http://www.tinymce.com/wiki.php/TinyMCE3x:Buttons/controls'), $default, PARAM_RAW, 100, 8));
     $settings->add(new admin_setting_configtextarea('editor_tinymce/fontselectlist',
         get_string('fontselectlist', 'editor_tinymce'), '',
         'Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings', PARAM_RAW, 100, 8));
