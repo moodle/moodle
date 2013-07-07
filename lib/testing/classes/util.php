@@ -599,6 +599,7 @@ abstract class testing_util {
         make_temp_directory('');
         make_cache_directory('');
         make_cache_directory('htmlpurifier');
+        make_localcache_directory('');
         // Reset the cache API so that it recreates it's required directories as well.
         cache_factory::reset();
         // Purge all data from the caches. This is required for consistency.

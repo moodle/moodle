@@ -37,7 +37,8 @@
  *  - $CFG->dirroot  - Path to moodle's library folder on server's filesystem.
  *  - $CFG->libdir   - Path to moodle's library folder on server's filesystem.
  *  - $CFG->tempdir  - Path to moodle's temp file directory on server's filesystem.
- *  - $CFG->cachedir - Path to moodle's cache directory on server's filesystem.
+ *  - $CFG->cachedir - Path to moodle's cache directory on server's filesystem (shared by cluster nodes).
+ *  - $CFG->localcachedir - Path to moodle's local cache directory (not shared by cluster nodes).
  *
  * @global object $CFG
  * @name $CFG
@@ -154,6 +155,11 @@ if (!isset($CFG->tempdir)) {
 // Allow overriding of cachedir but be backwards compatible
 if (!isset($CFG->cachedir)) {
     $CFG->cachedir = "$CFG->dataroot/cache";
+}
+
+// Allow overriding of localcachedir.
+if (!isset($CFG->localcachedir)) {
+    $CFG->localcachedir = "$CFG->dataroot/localcache";
 }
 
 // The current directory in PHP version 4.3.0 and above isn't necessarily the

@@ -394,8 +394,9 @@ if ($interactive) {
         cli_error(get_string('pathserrcreatedataroot', 'install', $a));
     }
 }
-$CFG->tempdir  = $CFG->dataroot.'/temp';
-$CFG->cachedir = $CFG->dataroot.'/cache';
+$CFG->tempdir       = $CFG->dataroot.'/temp';
+$CFG->cachedir      = $CFG->dataroot.'/cache';
+$CFG->localcachedir = $CFG->dataroot.'/localcache';
 
 // download required lang packs
 if ($CFG->lang !== 'en') {

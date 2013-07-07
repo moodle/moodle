@@ -10,6 +10,7 @@ information provided here is intended especially for developers.
   core_component::get_plugin_list() does not accept empty parameter any more.
 * Use core_text::* instead of textlib:: and also core_collator::* instead of collatorlib::*.
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
+* New $CFG->localcachedir setting useful for cluster nodes. Admins have to update X-Sendfile aliases if used.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
