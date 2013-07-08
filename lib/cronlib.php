@@ -98,6 +98,9 @@ function cron_run() {
                                                   AND (lastname = '' OR firstname = '' OR email = '')",
                                           array($cuttime));
             foreach ($rs as $user) {
+                if (isguestuser($user) or is_siteadmin($user)) {
+                    continue;
+                }
                 delete_user($user);
                 mtrace(" Deleted not fully setup user $user->username ($user->id)");
             }
