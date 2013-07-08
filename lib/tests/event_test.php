@@ -210,9 +210,11 @@ class core_event_testcase extends advanced_testcase {
         $event1 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'extra'=>array('sample'=>1, 'xx'=>10)));
         $event1->nest = 1;
         $this->assertFalse($event1->is_triggered());
+        $this->assertFalse($event1->is_dispatched());
         $this->assertFalse($event1->is_restored());
         $event1->trigger();
         $this->assertTrue($event1->is_triggered());
+        $this->assertTrue($event1->is_dispatched());
         $this->assertFalse($event1->is_restored());
 
         $event1 = \core_tests\event\unittest_executed::create(array('courseid'=>2, 'context'=>\context_system::instance(), 'extra'=>array('sample'=>2, 'xx'=>10)));
@@ -444,6 +446,14 @@ class core_event_testcase extends advanced_testcase {
         try {
             $restored->trigger();
             $this->fail('Exception expected on triggering of restored event');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'extra'=>array('sample'=>5, 'xx'=>10)));
+        try {
+            \core\event\manager::dispatch($event);
+            $this->fail('Exception expected on manual event dispatching');
         } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }

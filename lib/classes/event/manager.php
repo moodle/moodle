@@ -57,6 +57,9 @@ class manager {
         if (during_initial_install()) {
             return;
         }
+        if (!$event->is_triggered() or $event->is_dispatched()) {
+            throw new \coding_exception('Illegal event dispatching attempted.');
+        }
 
         self::$buffer[] = $event;
 

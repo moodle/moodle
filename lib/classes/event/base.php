@@ -58,10 +58,22 @@ abstract class base {
     /** @var \context of this event */
     protected $context;
 
-    /** @var bool indicates if event was already triggered */
+    /**
+     * @var bool indicates if event was already triggered,
+     *           this prevents second attempt to trigger event.
+     */
     private $triggered;
 
-    /** @var bool indicates if event was restored from storage */
+    /**
+     * @var bool indicates if event was already dispatched,
+     *           this prevents direct calling of manager::dispatch($event).
+     */
+    private $dispatched;
+
+    /**
+     * @var bool indicates if event was restored from storage,
+     *           this prevents triggering of restored events.
+     */
     private $restored;
 
     /** @var array list of event properties */
@@ -103,6 +115,7 @@ abstract class base {
         $event = new static();
         $event->triggered = false;
         $event->restored = false;
+        $event->dispatched = false;
 
         // Set automatic data.
         $event->data['timecreated'] = time();
@@ -259,8 +272,9 @@ abstract class base {
             return false;
         }
 
-        $event->triggered = true;
         $event->restored = true;
+        $event->triggered = true;
+        $event->dispatched = true;
         $event->logdata = $logdata;
 
         foreach (self::$fields as $key) {
@@ -403,13 +417,13 @@ abstract class base {
         if ($this->restored) {
             throw new \coding_exception('Can not trigger restored event');
         }
-        if ($this->triggered) {
+        if ($this->triggered or $this->dispatched) {
             throw new \coding_exception('Can not trigger event twice');
         }
 
-        $this->triggered = true;
-
         $this->validate_before_trigger();
+
+        $this->triggered = true;
 
         if (!empty($CFG->loglifetime)) {
             if ($data = $this->get_legacy_logdata()) {
@@ -419,20 +433,29 @@ abstract class base {
 
         \core\event\manager::dispatch($this);
 
+        $this->dispatched = true;
+
         if ($legacyeventname = $this->get_legacy_eventname()) {
             events_trigger($legacyeventname, $this->get_legacy_eventdata());
         }
     }
 
     /**
-     * Was this event already triggered.
-     *
-     * Note: restored events are considered to be triggered too.
+     * Was this event already triggered?
      *
      * @return bool
      */
-    public function is_triggered() {
+    public final function is_triggered() {
         return $this->triggered;
+    }
+
+    /**
+     * Used from event manager to prevent direct access.
+     *
+     * @return bool
+     */
+    public final function is_dispatched() {
+        return $this->dispatched;
     }
 
     /**
@@ -440,7 +463,7 @@ abstract class base {
      *
      * @return bool
      */
-    public function is_restored() {
+    public final function is_restored() {
         return $this->restored;
     }
 
