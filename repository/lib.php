@@ -2078,6 +2078,32 @@ abstract class repository implements cacheable_object {
     }
 
     /**
+     * Delete all the instances associated to a context.
+     *
+     * This method is intended to be a callback when deleting
+     * a course or a user to delete all the instances associated
+     * to their context. The usual way to delete a single instance
+     * is to use {@link self::delete()}.
+     *
+     * @param int $contextid context ID.
+     * @param boolean $downloadcontents true to convert references to hard copies.
+     * @return void
+     */
+    final public static function delete_all_for_context($contextid, $downloadcontents = true) {
+        global $DB;
+        $repoids = $DB->get_fieldset_select('repository_instances', 'id', 'contextid = :contextid', array('contextid' => $contextid));
+        if ($downloadcontents) {
+            foreach ($repoids as $repoid) {
+                $repo = repository::get_repository_by_id($repoid, $contextid);
+                $repo->convert_references_to_local();
+            }
+        }
+        cache::make('core', 'repositories')->purge();
+        $DB->delete_records_list('repository_instances', 'id', $repoids);
+        $DB->delete_records_list('repository_instance_config', 'instanceid', $repoids);
+    }
+
+    /**
      * Hide/Show a repository
      *
      * @param string $hide
