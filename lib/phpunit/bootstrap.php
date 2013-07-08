@@ -31,6 +31,15 @@ error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 
+// Make sure OPcache does not strip comments, we need them in phpunit!
+if (ini_get('opcache.enable') and strtolower(ini_get('opcache.enable')) !== 'off') {
+    if (!ini_get('opcache.save_comments') or strtolower(ini_get('opcache.save_comments')) === 'off') {
+        ini_set('opcache.enable', 0);
+    } else {
+        ini_set('opcache.load_comments', 1);
+    }
+}
+
 require_once(__DIR__.'/bootstraplib.php');
 require_once(__DIR__.'/../testing/lib.php');
 require_once(__DIR__.'/classes/autoloader.php');

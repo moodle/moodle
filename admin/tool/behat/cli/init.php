@@ -26,6 +26,12 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
     die(); // No access from web!
 }
 
+// Force OPcache reset if used, we do not want any stale caches
+// when preparing test environment.
+if (function_exists('opcache_reset')) {
+    opcache_reset();
+}
+
 // Is not really necessary but adding it as is a CLI_SCRIPT.
 define('CLI_SCRIPT', true);
 

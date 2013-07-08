@@ -29,6 +29,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// Force OPcache reset if used, we do not want any stale caches
+// when detecting if upgrade necessary or when running upgrade.
+if (function_exists('opcache_reset') and !isset($_SERVER['REMOTE_ADDR'])) {
+    opcache_reset();
+}
+
 define('CLI_SCRIPT', true);
 define('CACHE_DISABLE_ALL', true);
 

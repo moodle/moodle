@@ -52,6 +52,12 @@ if (empty($_GET['cache']) and empty($_POST['cache'])) {
     // we redirect to self once we known no upgrades are necessary.
     // Note: $_GET and $_POST are used here intentionally because our param cleaning is not loaded yet.
     define('CACHE_DISABLE_ALL', true);
+
+    // Force OPcache reset if used, we do not want any stale caches
+    // when detecting if upgrade necessary or when running upgrade.
+    if (function_exists('opcache_reset')) {
+        opcache_reset();
+    }
 }
 
 require('../config.php');
