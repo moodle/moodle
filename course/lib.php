@@ -1865,7 +1865,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
 
     // Duplicate (require both target import caps to be able to duplicate and backup2 support, see modduplicate.php)
-    // note that restoring on front page is never allowed.
+    // Note that restoring on front page is never allowed.
     if ($mod->course != SITEID && has_all_capabilities($dupecaps, $coursecontext) &&
             plugin_supports('mod', $mod->modname, FEATURE_BACKUP_MOODLE2)) {
         $actions['duplicate'] = new action_menu_secondary_action(
@@ -1913,19 +1913,19 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             $modgroupmode = $mod->groupmode;
         }
         if ($modgroupmode == SEPARATEGROUPS) {
-            $groupmode = NOGROUPS;
+            $nextgroupmode = VISIBLEGROUPS;
             $grouptitle = $str->groupsseparate;
             $forcedgrouptitle = $str->forcedgroupsseparate;
             $actionname = 'groupsseparate';
             $groupimage = 't/groups';
         } else if ($modgroupmode == VISIBLEGROUPS) {
-            $groupmode = SEPARATEGROUPS;
+            $nextgroupmode = NOGROUPS;
             $grouptitle = $str->groupsvisible;
             $forcedgrouptitle = $str->forcedgroupsvisible;
             $actionname = 'groupsvisible';
             $groupimage = 't/groupv';
         } else {
-            $groupmode = VISIBLEGROUPS;
+            $nextgroupmode = SEPARATEGROUPS;
             $grouptitle = $str->groupsnone;
             $forcedgrouptitle = $str->forcedgroupsnone;
             $actionname = 'groupsnone';
@@ -1933,10 +1933,10 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
         }
         if (!$mod->coursegroupmodeforce) {
             $actions[$actionname] = new action_menu_primary_action(
-                new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $groupmode)),
+                new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $nextgroupmode)),
                 new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $grouptitle,
-                array('class' => 'editing_'. $actionname, 'data-action' => $actionname, 'data-groupmode' => $groupmode)
+                array('class' => 'editing_'. $actionname, 'data-action' => $actionname, 'data-nextgroupmode' => $nextgroupmode)
             );
         } else {
             $actions[$actionname] = new pix_icon($groupimage, $forcedgrouptitle, 'moodle', array('title' => '', 'class' => 'iconsmall'));

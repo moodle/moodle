@@ -2,8 +2,7 @@
   "moodle-core-actionmenu": {
     "requires": [
         "base",
-        "event",
-        "moodle-core-notification"
+        "event"
     ]
   }
 }

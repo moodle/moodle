@@ -21,7 +21,8 @@ Feature: Duplicate activities
     And I add a "Database" to section "1" and I fill the form with:
       | Name | Test database name |
       | Description | Test database description |
-    When I click on "Duplicate" "link" in the "#section-1" "css_element"
+    And I click on "Actions" "link" in the "Test database name" activity
+    When I click on "Duplicate" "link" in the "Test database name" activity
     And I press "Continue"
     And I press "Edit the new copy"
     And I fill the moodle form with:

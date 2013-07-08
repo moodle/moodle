@@ -237,6 +237,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         initializer : function(config) {
             M.course.coursebase.register_module(this);
             Y.all(SELECTOR.ACTIVITYLI).each(function(activity){
+                activity.setData('toolbox', this);
                 activity.all(SELECTOR.COMMANDSPAN+ ' ' + SELECTOR.ACTIVITYACTION).each(function(){
                     this.setData('activity', activity);
                 });
@@ -343,11 +344,20 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'field' : 'indent',
                 'value' : newindent,
                 'id'    : this.get_element_id(activity)
-            };
-            var spinner = M.util.add_spinner(Y, activity.one(SELECTOR.COMMANDSPAN));
+                },
+                commands = activity.one(SELECTOR.COMMANDSPAN),
+                spinner = M.util.add_spinner(Y, commands).setStyles({
+                    position: 'absolute',
+                    top: 0
+                });
+            if (BODY.hasClass('dir-ltr')) {
+                spinner.setStyle('left', '100%');
+            }  else {
+                spinner.setStyle('right', '100%');
+            }
             this.send_request(data, spinner);
 
-            // Handle removal/addition of the moveleft button
+            // Handle removal/addition of the moveleft button.
             if (newindent == 0) {
                 button.addClass('hidden');
             } else if (newindent == 1 && oldindent == 0) {
@@ -507,14 +517,18 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             ev.preventDefault();
 
             // Current Mode
-            var oldgroupmode = button.getData('groupmode');
-            var groupmode = parseInt(oldgroupmode, 10) + 1;
-            if (groupmode > 2) {
-                groupmode = 0;
+            var groupmode = parseInt(button.getData('nextgroupmode'), 10),
+                newtitle = '',
+                iconsrc = '',
+                newtitlestr,
+                data,
+                spinner,
+                nextgroupmode = groupmode + 1;
+
+            if (nextgroupmode > 2) {
+                nextgroupmode = 0;
             }
 
-            var newtitle = '';
-            var iconsrc = '';
             if (groupmode === this.GROUPS_NONE) {
                 newtitle = 'groupsnone';
                 iconsrc = M.util.image_url('t/groupn', 'moodle');
@@ -525,24 +539,25 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 newtitle = 'groupsvisible';
                 iconsrc = M.util.image_url('t/groupv', 'moodle');
             }
-            var newtitlestr = M.util.get_string(newtitle, 'moodle'),
-                newtitlestr = M.util.get_string('clicktochangeinbrackets', 'moodle', newtitlestr);
+            newtitlestr = M.util.get_string(newtitle, 'moodle'),
+            newtitlestr = M.util.get_string('clicktochangeinbrackets', 'moodle', newtitlestr);
 
             // Change the UI
             button.one('img').setAttrs({
                 'alt' : newtitlestr,
                 'src' : iconsrc
             });
-            button.setAttribute('title', newtitlestr).setData('action', newtitle).setData('groupmode', groupmode);
+            button.setAttribute('title', newtitlestr).setData('action', newtitle).setData('nextgroupmode', nextgroupmode);
 
             // And send the request
-            var data = {
+            data = {
                 'class' : 'resource',
                 'field' : 'groupmode',
                 'value' : groupmode,
                 'id'    : this.get_element_id(activity)
             };
-            var spinner = M.util.add_spinner(Y, activity.one(SELECTOR.COMMANDSPAN));
+
+            spinner = M.util.add_spinner(Y, activity.one(SELECTOR.COMMANDSPAN));
             this.send_request(data, spinner);
             return false; // Need to return false to stop the delegate for the new state firing
         },
@@ -696,15 +711,17 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          *             and 'visible' being the state that the visibility should be set to.
          */
         set_visibility_resource_ui: function(args) {
-            var element = args.element;
-            var shouldbevisible = args.visible;
-            var buttonnode = element.one(SELECTOR.SHOW);
-            var visible = (buttonnode === null);
+            var element = args.element,
+                shouldbevisible = args.visible,
+                buttonnode = element.one(SELECTOR.SHOW),
+                visible = (buttonnode === null),
+                status = 'hide';
             if (visible) {
                 buttonnode = element.one(SELECTOR.HIDE);
+                status = 'show'
             }
             if (visible != shouldbevisible) {
-                this.change_visibility_ui(buttonnode);
+                this.handle_resource_dim(buttonnode, buttonnode.get('activity'), status);
             }
         }
     }, {
@@ -768,17 +785,19 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // The value to submit
             var value;
             // The status text for strings and images
-            var status;
+            var status,
+                oldstatus;
 
             if (!section.hasClass(CSS.SECTIONHIDDENCLASS)) {
                 section.addClass(CSS.SECTIONHIDDENCLASS);
                 value = 0;
                 status = 'show';
-
+                oldstatus = 'hide';
             } else {
                 section.removeClass(CSS.SECTIONHIDDENCLASS);
                 value = 1;
                 status = 'hide';
+                oldstatus = 'show';
             }
 
             var newstring = M.util.get_string(status + 'fromothers', 'format_' + this.get('format'));
@@ -811,7 +830,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 var activityid = this.get_element_id(node);
 
                 if (Y.Array.indexOf(response.resourcestotoggle, activityid) != -1) {
-                    this.change_visibility_ui(button);
+                    node.getData('toolbox').handle_resource_dim(button, node, oldstatus);
                 }
             }, this);
         },

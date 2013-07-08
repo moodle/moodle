@@ -1911,121 +1911,110 @@ div.badge .expireimage {
     margin: 0;
 }
 
-.jsenabled .block .editing_move {
-  display:none;
+.moodle-actionmenu,
+.moodle-actionmenu .secondary {
+    display: inline-block;
 }
 
-.jsenabled .moodle-actionmenu [data-rel=menu-content] {
-    display:none;
-    margin-top: 4px;
-}
-
-.moodle-actionmenu .toggle-display {
-    padding-left: 4px;
+.moodle-actionmenu .toggle-display,
+.moodle-actionmenu .menu-action-text {
     display: none; /** Hidden by default, display none so that we don't take up space. **/
-    cursor:auto;
 }
-.jsenabled .moodle-actionmenu .toggle-display {
-    display: inline; /** JS is enabled, we'll be using it so return display to normal **/
-    .opacity(50);
+
+.jsenabled {
+    .block .editing_move {
+        display:none;
+    }
+    .moodle-actionmenu {
+        display: block;
+        .secondary {
+            display:none;
+            margin-top: 4px;
+        }
+    }
+    .moodle-actionmenu[data-enhanced].show .secondary {
+        display:block;
+    }
+
+    .moodle-actionmenu .toggle-display {
+        display: inline; /** JS is enabled, we'll be using it so return display to normal **/
+        cursor:auto;
+        .opacity(50);
+    }
+    .moodle-actionmenu[data-enhanced] {
+        .toggle-display {
+            .opacity(100);
+        }
+        .menu-action-text  {
+            display:inline;
+        }
+    }
 }
-.moodle-actionmenu[data-enhanced] .toggle-display {
-  .opacity(100);
+
+.moodle-actionmenu[data-enhanced].show  {
+
+    position: relative;
+
+    .secondary {
+
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: auto;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        z-index:1000;
+        .border-radius(5px);
+        .box-shadow(5px 5px 20px 0 #666);
+
+        a {
+            display: block;
+            color: @dropdownLinkColor;
+            padding:2px 1em 2px 0.5em;
+            &:hover,
+            &:focus {
+                color: @dropdownLinkColorHover;
+                background-color: @dropdownLinkBackgroundHover;
+            }
+            &:first-child {
+                .border-top-radius(4px);
+            }
+            &:last-child {
+                .border-bottom-radius(4px);
+            }
+        }
+        a.hidden {
+            display: none;
+        }
+        img {
+            vertical-align: middle;
+        }
+        .iconsmall {
+            margin-right:8px;
+        }
+    }
 }
 
 .action-menu-shown .moodle-actionmenu[data-enhanced] .toggle-display {
     background-color: #FFF;
 }
 
-.moodle-actionmenu,
-.moodle-actionmenu .secondary {
-    display: inline-block;
-}
-.jsenabled .moodle-actionmenu,
-.jsenabled .moodle-actionmenu .secondary {
-    display: block;
-}
-
-.moodle-actionmenu .menu-action-text {
-    display:none;
-}
-.jsenabled .moodle-actionmenu[data-enhanced] .menu-action-text  {
-    display:inline;
-}
-
 .block .moodle-actionmenu {
     text-align: right;
 }
 
-.jsenabled #page .moodle-actionmenu .secondary {
-    display: none;
-}
-
-.action-menu-dialogue {
-
-    .moodle-dialogue-wrap {
-          margin-top:4px;
-          margin-left:4px;
-          .border-radius(4px);
-    }
-
-    .moodle-dialogue {
-        .moodle-dialogue-bd {
-            padding: 0;
-        }
-    }
-
-    .moodle-dialogue-hd,
-    .moodle-dialogue-ft {
-        display: none;
-    }
-    a {
-        display: block;
-        color: @dropdownLinkColor;
-        padding:2px 1em 2px 0.5em;
-        &:hover,
-        &:focus {
-            color: @dropdownLinkColorHover;
-            background-color: @dropdownLinkBackgroundHover;
-        }
-        &:first-child {
-            .border-top-radius(4px);
-        }
-        &:last-child {
-            .border-bottom-radius(4px);
-        }
-    }
-    a.hidden {
-        display: none;
-    }
-    img {
-        vertical-align: middle;
-    }
-    .iconsmall {
-        margin-right:8px;
-    }
-}
-
-.safari .action-menu-dialogue .moodle-dialogue {
-    /** Safari specific bug here **/
-    white-space: nowrap;
-}
-
 .dir-rtl {
+    .moodle-actionmenu[data-enhanced].show  {
+        .secondary {
+            left: 0;
+            right: auto;
+            .iconsmall {
+                margin-right:0;
+                margin-left:8px;
+            }
+        }
+    }
     .block .moodle-actionmenu {
-        text-align: left;
-    }
-    .action-menu-dialogue {
-        a {
-            padding:2px 0.5em 2px 1em;
-        }
-        .iconsmall {
-            margin-right:0;
-            margin-left:8px;
-        }
-    }
-    .moodle-actionmenu .toggle-display {
-        padding-left:0;
-        padding-right:4px;
+        text-align: right;
     }
 }

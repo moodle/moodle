@@ -3044,6 +3044,8 @@ class tabtree extends tabobject {
  */
 class action_menu implements renderable {
 
+    protected $instance = 0;
+
     /**
      * An array of primary actions. Please use {@see action_menu::add_primary_action()} to add actions.
      * @var array
@@ -3082,25 +3084,27 @@ class action_menu implements renderable {
      */
     public function __construct(array $actions = array()) {
         static $initialised = 0;
+        $this->instance = $initialised;
+        $initialised++;
+
         $this->attributes = array(
-            'id' => 'action-menu-'.$initialised,
+            'id' => 'action-menu-'.$this->instance,
             'class' => 'moodle-actionmenu',
             'data-enhance' => 'moodle-core-actionmenu'
         );
         $this->attributesprimary = array(
-            'id' => 'action-menu-'.$initialised.'-primary',
+            'id' => 'action-menu-'.$this->instance.'-primary',
             'class' => 'primary'
         );
         $this->attributessecondary = array(
-            'id' => 'action-menu-'.$initialised.'-secondary',
+            'id' => 'action-menu-'.$this->instance.'-secondary',
             'class' => 'secondary',
             'data-rel' => 'menu-content',
+            'aria-labelledby' => 'action-menu-toggle-'.$this->instance,
         );
         foreach ($actions as $action) {
             $this->add($action);
         }
-        // We've initialised!
-        $initialised++;
     }
 
     /**
@@ -3165,13 +3169,21 @@ class action_menu implements renderable {
         if ($output === null) {
             $output = $OUTPUT;
         }
-        $actions = $this->primaryactions;
-        $actions[] = $output->pix_icon(
+        $title = get_string('actions', 'moodle');
+        $pixicon = $output->pix_icon(
             't/contextmenu',
-            get_string('actions', 'moodle'),
+            $title,
             'moodle',
-            array('class' => 'toggle-display iconsmall')
+            array('class' => 'iconsmall')
         );
+
+        $actions = $this->primaryactions;
+        $attributes = array(
+            'class' => 'toggle-display',
+            'title' => $title,
+            'id' => 'action-menu-toggle-'.$this->instance
+        );
+        $actions[] = html_writer::link('#', $pixicon, $attributes);
         return $actions;
     }
 

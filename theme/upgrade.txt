@@ -1,6 +1,19 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.6 ===
+
+Notes:
+* A new component action_menu is now used to display editing icons for courses and blocks within a drop down. If you have a theme that doesn't
+  extend base, canvas, or clean then you will need to style for this new component within your theme.
+
+Renderer changes:
+* core_course_renderer::course_section_cm_edit_actions has two new optional arguments and now uses and action_menu component.
+* core_course_renderer::course_section_cm has been altered to call core_course_renderer::course_section_cm_edit_actions with the two new arguments.
+* core_renderer::block_controls has a new optional argument (the block id) and has been altered to use the new action_menu component.
+* core_renderer::block_header has been altered to give core_renderer::block_controls the new second argument, the block id.
+* core_renderer::action_link has a new argument, and optional icon that can be rendererd into the link.
+
 === 2.5.1 ===
 
 Notes:
