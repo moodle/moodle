@@ -1973,7 +1973,6 @@ abstract class repository {
                 $repo->convert_references_to_local();
             }
         }
-        cache::make('core', 'repositories')->purge();
         $DB->delete_records_list('repository_instances', 'id', $repoids);
         $DB->delete_records_list('repository_instance_config', 'instanceid', $repoids);
     }
