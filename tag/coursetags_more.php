@@ -97,67 +97,42 @@ echo $OUTPUT->heading($title, 2, 'centre');
 
 // Prepare data for tags
 $courselink = '';
-if ($courseid) { $courselink = '&amp;courseid='.$courseid; }
+if ($courseid) {
+    $courselink = '&amp;courseid='.$courseid;
+}
 $myurl = $CFG->wwwroot.'/tag/coursetags_more.php';
 $myurl2 = $CFG->wwwroot.'/tag/coursetags_more.php?show='.$show;
 
+// Set up sort order global
+$oldsort = $CFG->tagsort;
+if ($sort == 'popularity') {
+    $CFG->tagsort = 'count';
+} else if ($sort == 'date') {
+    $CFG->tagsort = 'timemodified';
+} else {
+    $CFG->tagsort = 'name';
+}
+
 // Course tags
 if ($show == 'course' and $courseid) {
-
-    if ($sort == 'popularity') {
-        $tags = tag_print_cloud(coursetag_get_tags($courseid, 0, '', 0, 'popularity'), 150, true);
-    } else if ($sort == 'date') {
-        $tags = tag_print_cloud(coursetag_get_tags($courseid, 0, '', 0, 'timemodified'), 150, true);
-    } else {
-        $tags = tag_print_cloud(coursetag_get_tags($courseid, 0, '', 0, 'name'), 150, true);
-    }
-
-// My tags
+    $tags = tag_print_cloud(coursetag_get_tags($courseid, 0, '', 0, 'popularity'), 150, true);
+    // My tags
 } else if ($show == 'my' and $loggedin) {
-
-    if ($sort == 'popularity') {
-        $tags = tag_print_cloud(coursetag_get_tags(0, $USER->id, 'default', 0, 'popularity'), 150, true);
-    } else if ($sort == 'date') {
-        $tags = tag_print_cloud(coursetag_get_tags(0, $USER->id, 'default', 0, 'timemodified'), 150, true);
-    } else {
-        $tags = tag_print_cloud(coursetag_get_tags(0, $USER->id, 'default', 0, 'name'), 150, true);
-    }
-
-// Official course tags
+    $tags = tag_print_cloud(coursetag_get_tags(0, $USER->id, 'default', 0, 'popularity'), 150, true);
+    // Official course tags
 } else if ($show == 'official') {
-
-    if ($sort == 'popularity') {
-        $tags = tag_print_cloud(coursetag_get_tags(0, 0, 'official', 0, 'popularity'), 150, true);
-    } else if ($sort == 'date') {
-        $tags = tag_print_cloud(coursetag_get_tags(0, 0, 'official', 0, 'timemodified'), 150, true);
-    } else {
-        $tags = tag_print_cloud(coursetag_get_tags(0, 0, 'official', 0, 'name'), 150, true);
-    }
-
-// Community (official and personal together) also called user tags
+    $tags = tag_print_cloud(coursetag_get_tags(0, 0, 'official', 0, 'popularity'), 150, true);
+    // Community (official and personal together) also called user tags
 } else if ($show == 'community') {
-
-    if ($sort == 'popularity') {
-        $tags = tag_print_cloud(coursetag_get_tags(0, 0, 'default', 0, 'popularity'), 150, true);
-    } else if ($sort == 'date') {
-        $tags = tag_print_cloud(coursetag_get_tags(0, 0, 'default', 0, 'timemodified'), 150, true);
-    } else {
-        $tags = tag_print_cloud(coursetag_get_tags(0, 0, 'default', 0, 'name'), 150, true);
-    }
-
-// All tags for courses and blogs and any thing else tagged - the fallback default ($show == all)
+    $tags = tag_print_cloud(coursetag_get_tags(0, 0, 'default', 0, 'popularity'), 150, true);
+    // All tags for courses and blogs and any thing else tagged - the fallback default ($show == all)
 } else {
-
     $subtitle = $showalltags;
-    if ($sort == 'popularity') {
-        $tags = tag_print_cloud(coursetag_get_all_tags('popularity'), 150, true);
-    } else if ($sort == 'date') {
-        $tags = tag_print_cloud(coursetag_get_all_tags('timemodified'), 150, true);
-    } else {
-        $tags = tag_print_cloud(coursetag_get_all_tags('name'), 150, true);
-    }
-
+    $tags = tag_print_cloud(coursetag_get_all_tags('popularity'), 150, true);
 }
+
+// Reinstate original sort order global
+$CFG->tagsort = $oldsort;
 
 // Prepare the links for the show and order lines
 if ($show == 'all') {
@@ -209,16 +184,18 @@ if ($sort == 'date') {
 // Prepare output
 $fclass = '';
 // make the tags larger when there are not so many
-if (strlen($tags) < 10000) { $fclass = 'coursetag_more_large'; }
+if (strlen($tags) < 10000) {
+    $fclass = 'coursetag_more_large';
+}
 $outstr = '
-    <div class="coursetag_more_title">
-        <div style="padding-bottom:5px">'.$welcome.'</div>
-        <div class="coursetag_more_link">'.$link1.'</div>
-        <div class="coursetag_more_link">'.$link2.'</div>
-    </div>
-    <div class="coursetag_more_tags '.$fclass.'">'.
-        $tags.'
-    </div>';
+<div class="coursetag_more_title">
+<div style="padding-bottom:5px">'.$welcome.'</div>
+<div class="coursetag_more_link">'.$link1.'</div>
+<div class="coursetag_more_link">'.$link2.'</div>
+</div>
+<div class="coursetag_more_tags '.$fclass.'">'.
+$tags.'
+</div>';
 echo $outstr;
 
 echo $OUTPUT->footer();
