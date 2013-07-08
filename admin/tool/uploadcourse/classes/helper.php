@@ -24,6 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/coursecatlib.php');
+require_once($CFG->dirroot . '/cache/lib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
@@ -36,24 +37,6 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
  */
 class tool_uploadcourse_helper {
 
-    /** @var array category idnumber cache. */
-    static protected $categoryidnumbercache = array();
-
-    /** @var array category path cache. */
-    static protected $categorypathcache = array();
-
-    /** @var array course formats cache. */
-    static protected $courseformatscache;
-
-    /** @var array enrolment plugins cache. */
-    static protected $enrolpluginscache;
-
-    /** @var string restore content path cache. */
-    static protected $restorecontentcache;
-
-    /** @var array roles cache. */
-    static protected $rolescache;
-
     /**
      * Remove the restore content from disk and cache.
      *
@@ -62,11 +45,14 @@ class tool_uploadcourse_helper {
     public static function clean_restore_content() {
         global $CFG;
         if (!empty($CFG->keeptempdirectoriesonbackup)) {
-            foreach (self::$restorecontentcache as $backupid) {
+            $cache = cache::make('tool_uploadcourse', 'helper');
+            $backupids = (array) $cache->get('backupids');
+            foreach ($backupids as $cachekey => $backupid) {
+                $cache->delete($cachekey);
                 fulldelete("$CFG->tempdir/backup/$backupid/");
             }
+            $cache->delete('backupids');
         }
-        self::$restorecontentcache = array();
     }
 
     /**
@@ -147,10 +133,12 @@ class tool_uploadcourse_helper {
      * @return array
      */
     public static function get_course_formats() {
-        if (empty(self::$courseformatscache)) {
-            self::$courseformatscache = array_keys(get_plugin_list('format'));
+        $cache = cache::make('tool_uploadcourse', 'helper');
+        if (($formats = $cache->get('format')) === false) {
+            $formats = array_keys(get_plugin_list('format'));
+            $cache->set('format', $formats);
         }
-        return self::$courseformatscache;
+        return $formats;
     }
 
     /**
@@ -214,10 +202,12 @@ class tool_uploadcourse_helper {
      * @return array
      */
     public static function get_enrolment_plugins() {
-        if (empty(self::$enrolpluginscache)) {
-            self::$enrolpluginscache = enrol_get_plugins(false);
+        $cache = cache::make('tool_uploadcourse', 'helper');
+        if (($enrol = $cache->get('enrol')) === false) {
+            $enrol = enrol_get_plugins(false);
+            $cache->set('enrol', $enrol);
         }
-        return self::$enrolpluginscache;
+        return $enrol;
     }
 
     /**
@@ -237,16 +227,17 @@ class tool_uploadcourse_helper {
         $cachekey = null;
         if (!empty($backupfile)) {
             $backupfile = realpath($backupfile);
-            $cachekey = '[path]:' . $backupfile;
+            $cachekey = 'backup_path:' . $backupfile;
         } else if (!empty($shortname) || is_numeric($shortname)) {
-            $cachekey = '[sn]:' . $shortname;
+            $cachekey = 'backup_sn:' . $shortname;
         }
 
         if (empty($cachekey)) {
             return false;
         }
 
-        if (!isset(self::$restorecontentcache[$cachekey])) {
+        $cache = cache::make('tool_uploadcourse', 'helper');
+        if (($backupid = $cache->get($cachekey)) === false) {
             // Use false instead of null because it would consider that the cache
             // key has not been set.
             $backupid = false;
@@ -277,10 +268,15 @@ class tool_uploadcourse_helper {
                         new lang_string('coursetorestorefromdoesnotexist', 'tool_uploadcourse');
                 }
             }
-            self::$restorecontentcache[$cachekey] = $backupid;
+            $cache->set($cachekey, $backupid);
+
+            // Store all the directories to be able to remove them in self::clean_restore_content().
+            $backupids = (array) $cache->get('backupids');
+            $backupids[$cachekey] = $backupid;
+            $cache->set('backupids', $backupids);
         }
 
-        return self::$restorecontentcache[$cachekey];
+        return $backupid;
     }
 
     /**
@@ -288,17 +284,19 @@ class tool_uploadcourse_helper {
      *
      * The result is cached for faster execution.
      *
-     * @param bool $invalidate invalidate the cache.
      * @return array
      */
-    public static function get_role_ids($invalidate = false) {
-        if (empty(self::$rolescache) || $invalidate) {
-            $roles = get_all_roles();
-            foreach ($roles as $role) {
-                self::$rolescache[$role->shortname] = $role->id;
+    public static function get_role_ids() {
+        $cache = cache::make('tool_uploadcourse', 'helper');
+        if (($roles = $cache->get('roles')) === false) {
+            $roles = array();
+            $rolesraw = get_all_roles();
+            foreach ($rolesraw as $role) {
+                $roles[$role->shortname] = $role->id;
             }
+            $cache->set('roles', $roles);
         }
-        return self::$rolescache;
+        return $roles;
     }
 
     /**
@@ -429,12 +427,26 @@ class tool_uploadcourse_helper {
      */
     public static function resolve_category_by_idnumber($idnumber) {
         global $DB;
-        if (!isset(self::$categoryidnumbercache[$idnumber])) {
+        $cache = cache::make('tool_uploadcourse', 'helper');
+        $cachekey = 'cat_idn_' . $idnumber;
+        if (($id = $cache->get($cachekey)) === false) {
             $params = array('idnumber' => $idnumber);
             $id = $DB->get_field_select('course_categories', 'id', 'idnumber = :idnumber', $params, IGNORE_MISSING);
-            self::$categoryidnumbercache[$idnumber] = $id;
+
+            // Little hack to be able to differenciate between the cache not set and a category not found.
+            if ($id === false) {
+                $id = -1;
+            }
+
+            $cache->set($cachekey, $id);
         }
-        return self::$categoryidnumbercache[$idnumber];
+
+        // Little hack to be able to differenciate between the cache not set and a category not found.
+        if ($id == -1) {
+            $id = false;
+        }
+
+        return $id;
     }
 
     /**
@@ -445,8 +457,9 @@ class tool_uploadcourse_helper {
      */
     public static function resolve_category_by_path(array $path) {
         global $DB;
-        $cachekey = serialize($path);
-        if (!isset(self::$categorypathcache[$cachekey])) {
+        $cache = cache::make('tool_uploadcourse', 'helper');
+        $cachekey = 'cat_path_' . serialize($path);
+        if (($id = $cache->get($cachekey)) === false) {
             $parent = 0;
             $sql = 'name = :name AND parent = :parent';
             while ($name = array_shift($path)) {
@@ -454,7 +467,7 @@ class tool_uploadcourse_helper {
                 if ($records = $DB->get_records_select('course_categories', $sql, $params, null, 'id, parent')) {
                     if (count($records) > 1) {
                         // Too many records with the same name!
-                        $id = false;
+                        $id = -1;
                         break;
                     }
                     $record = reset($records);
@@ -462,13 +475,18 @@ class tool_uploadcourse_helper {
                     $parent = $record->id;
                 } else {
                     // Not found.
-                    $id = false;
+                    $id = -1;
                     break;
                 }
             }
-            self::$categorypathcache[$cachekey] = $id;
+            $cache->set($cachekey, $id);
         }
-        return self::$categorypathcache[$cachekey];
+
+        // We save -1 when the category has not been found to be able to know if the cache was set.
+        if ($id == -1) {
+            $id = false;
+        }
+        return $id;
     }
 
 }

@@ -25,6 +25,7 @@
 $string['allowdeletes'] = 'Allow deletes';
 $string['allowrenames'] = 'Allow renames';
 $string['allowresets'] = 'Allow resets';
+$string['cachedef_helper'] = 'Helper caching';
 $string['cannotdeletecoursenotexist'] = 'Cannot delete a course that does not exist';
 $string['cannotgenerateshortnameupdatemode'] = 'Cannot generate a shortname when updates are allowed';
 $string['cannotreadbackupfile'] = 'Cannot read the backup file';
