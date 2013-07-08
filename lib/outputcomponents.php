@@ -3166,13 +3166,12 @@ class action_menu implements renderable {
             $output = $OUTPUT;
         }
         $actions = $this->primaryactions;
-        $attributes = array(
-            'type' => 'image',
-            'src' => $output->pix_url('t/contextmenu', 'moodle'),
-            'alt' => get_string('actions', 'moodle'),
-            'class' => 'toggle-display'
+        $actions[] = $output->pix_icon(
+            't/contextmenu',
+            get_string('actions', 'moodle'),
+            'moodle',
+            array('class' => 'toggle-display iconsmall')
         );
-        $actions[] = html_writer::empty_tag('input', $attributes);
         return $actions;
     }
 
