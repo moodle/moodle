@@ -146,7 +146,8 @@ class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
             );
         }
 
-        return $class;
+        $classname = reset($candidates);
+        return new ReflectionClass($classname);
     }
 
     public function reload(ReflectionClass $aClass) {
