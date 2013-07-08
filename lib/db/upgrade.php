@@ -2190,5 +2190,24 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013061700.00);
     }
 
+    if ($oldversion < 2013070800.00) {
+
+        // Remove orphan repository instances.
+        if ($DB->get_dbfamily() === 'mysql') {
+            $sql = "DELETE {repository_instances} FROM {repository_instances}
+                    LEFT JOIN {context} ON {context}.id = {repository_instances}.contextid
+                    WHERE {context}.id IS NULL";
+        } else {
+            $sql = "DELETE FROM {repository_instances}
+                    WHERE NOT EXISTS (
+                        SELECT 'x' FROM {context}
+                        WHERE {context}.id = {repository_instances}.contextid)";
+        }
+        $DB->execute($sql);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013070800.00);
+    }
+
     return true;
 }
