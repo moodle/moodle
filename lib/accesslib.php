@@ -7265,24 +7265,6 @@ function get_sorted_contexts($select, $params = array()) {
 }
 
 /**
- * Gets a string for sql calls, searching for stuff in this context or above
- *
- * NOTE: use $DB->get_in_or_equal($context->get_parent_context_ids()...
- *
- * @deprecated since 2.2, $context->use get_parent_context_ids() instead
- * @param context $context
- * @return string
- */
-function get_related_contexts_string(context $context) {
-
-    if ($parents = $context->get_parent_context_ids()) {
-        return (' IN ('.$context->id.','.implode(',', $parents).')');
-    } else {
-        return (' ='.$context->id);
-    }
-}
-
-/**
  * Given context and array of users, returns array of users whose enrolment status is suspended,
  * or enrolment has expired or has not started. Also removes those users from the given array
  *
