@@ -1166,7 +1166,7 @@ class core_course_external extends external_api {
         );
 
         if ($params['deletecontent'] !== 0 and $params['deletecontent'] !== 1) {
-            throw new moodle_exception('invalidextparam', 'webservice', '', $option['deletecontent']);
+            throw new moodle_exception('invalidextparam', 'webservice', '', $params['deletecontent']);
         }
 
         // Context validation.
