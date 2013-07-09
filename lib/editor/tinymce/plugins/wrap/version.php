@@ -15,18 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE image insert/edit plugin version details.
+ * TinyMCE toolbar wrapping break
  *
- * @package   tinymce_pdw
- * @copyright 2013 Jason Fowler
+ * @package   tinymce_wrap
+ * @copyright 2013 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 // The current plugin version (Date: YYYYMMDDXX).
-$plugin->version   = 2013070500;
+$plugin->version   = 2013061900;
 // Required Moodle version.
 $plugin->requires  = 2013050100;
 // Full name of the plugin (used for diagnostics).
-$plugin->component = 'tinymce_pdw';
+$plugin->component = 'tinymce_wrap';

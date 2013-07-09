@@ -15,18 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * TinyMCE image insert/edit plugin version details.
+ * Strings for 'wrap' plugin.
  *
- * @package   tinymce_pdw
- * @copyright 2013 Jason Fowler
+ * @package   tinymce_wrap
+ * @copyright 2013 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+$string['pluginname'] = 'Wrap';
 
-// The current plugin version (Date: YYYYMMDDXX).
-$plugin->version   = 2013070500;
-// Required Moodle version.
-$plugin->requires  = 2013050100;
-// Full name of the plugin (used for diagnostics).
-$plugin->component = 'tinymce_pdw';
+/* All lang strings used from TinyMCE JavaScript code must be named 'pluginname:stringname', no need to create langs/en_dlg.js */
+$string['moodlewrap:desc'] = 'Wrap';

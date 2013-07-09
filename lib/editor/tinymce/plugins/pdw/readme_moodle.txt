@@ -11,3 +11,5 @@ Upgrade procedure:
 1/ extract standard PDW package into lib/editor/tinymce/plugins/pdw/tinymce/
 2/ bump up version.php
 3/ update lib/thirdpartylibs.xml
+4/ reimplement patch in MDL-23646
+5/ reminify the js manually (I used uglifyjs)

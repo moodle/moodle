@@ -14,19 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * TinyMCE image insert/edit plugin version details.
- *
- * @package   tinymce_pdw
- * @copyright 2013 Jason Fowler
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 defined('MOODLE_INTERNAL') || die();
 
-// The current plugin version (Date: YYYYMMDDXX).
-$plugin->version   = 2013070500;
-// Required Moodle version.
-$plugin->requires  = 2013050100;
-// Full name of the plugin (used for diagnostics).
-$plugin->component = 'tinymce_pdw';
+/**
+ * Plugin for Moodle 'wrap' button.
+ *
+ * @package   tinymce_wrap
+ * @copyright 2013 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tinymce_wrap extends editor_tinymce_plugin {
+    /** @var array list of buttons defined by this plugin */
+    protected $buttons = array('wrap');
+
+    protected function update_init_params(array &$params, context $context,
+            array $options = null) {
+
+        // Add JS file, which uses default name.
+        $this->add_js_plugin($params);
+    }
+}
