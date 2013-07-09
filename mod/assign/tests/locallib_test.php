@@ -739,9 +739,6 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         $grades = $assign->get_user_grades_for_gradebook($this->students[0]->id);
         $this->assertEquals(50, (int)$grades[$this->students[0]->id]->rawgrade);
-
-
     }
-
 }
 
