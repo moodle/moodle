@@ -129,7 +129,7 @@ class enrol_category_handler {
 
         foreach ($rs as $instance) {
             $coursecontext = context_course::instance($instance->courseid);
-            $contextids = get_parent_contexts($coursecontext);
+            $contextids = $coursecontext->get_parent_context_ids();
             array_pop($contextids); // Remove system context, we are interested in categories only.
 
             list($contextids, $contextparams) = $DB->get_in_or_equal($contextids, SQL_PARAMS_NAMED, 'c');
@@ -178,7 +178,7 @@ function enrol_category_sync_course($course) {
 
     // First find out if any parent category context contains interesting role assignments.
     $coursecontext = context_course::instance($course->id);
-    $contextids = get_parent_contexts($coursecontext);
+    $contextids = $coursecontext->get_parent_context_ids();
     array_pop($contextids); // Remove system context, we are interested in categories only.
 
     list($roleids, $params) = $DB->get_in_or_equal(array_keys($roles), SQL_PARAMS_NAMED, 'r');
