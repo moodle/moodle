@@ -29,7 +29,8 @@ require_once(__DIR__ . '/../../behat/behat_base.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
-    Behat\Mink\Exception\DriverException as DriverException;
+    Behat\Mink\Exception\DriverException as DriverException,
+    WebDriver\Exception\NoSuchElement as NoSuchElement;
 
 /**
  * Cross component steps definitions.
@@ -78,10 +79,17 @@ class behat_general extends behat_base {
             return false;
         }
 
-        $content = $metarefresh->getAttribute('content');
+        // Wrapped in try & catch in case the redirection has already been executed.
+        try {
+            $content = $metarefresh->getAttribute('content');
+        } catch (NoSuchElement $e) {
+            return false;
+        }
+
+        // Getting the refresh time and the url if present.
         if (strstr($content, 'url') != false) {
 
-            list($waittime, $url) = explode(';', $metarefresh->getAttribute('content'));
+            list($waittime, $url) = explode(';', $content);
 
             // Cleaning the URL value.
             $url = trim(substr($url, strpos($url, 'http')));
