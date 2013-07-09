@@ -65,7 +65,6 @@ class qtype_calculatedmulti_single_question extends qtype_multichoice_single_que
         qtype_calculatedmulti_calculate_helper::calculate_all_expressions($this);
     }
 
-
     public function get_num_variants() {
         return $this->datasetloader->get_number_of_items();
     }
@@ -114,6 +113,19 @@ class qtype_calculatedmulti_multi_question extends qtype_multichoice_multi_quest
 
     public function calculate_all_expressions() {
         qtype_calculatedmulti_calculate_helper::calculate_all_expressions($this);
+    }
+
+    public function get_num_variants() {
+        return $this->datasetloader->get_number_of_items();
+    }
+
+    public function get_variants_selection_seed() {
+        if (!empty($this->synchronised) &&
+                $this->datasetloader->datasets_are_synchronised($this->category)) {
+            return 'category' . $this->category;
+        } else {
+            return parent::get_variants_selection_seed();
+        }
     }
 }
 
