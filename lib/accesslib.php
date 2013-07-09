@@ -7292,26 +7292,6 @@ function mark_context_dirty($path) {
 }
 
 /**
- * Update the path field of the context and all dep. subcontexts that follow
- *
- * Update the path field of the context and
- * all the dependent subcontexts that follow
- * the move.
- *
- * The most important thing here is to be as
- * DB efficient as possible. This op can have a
- * massive impact in the DB.
- *
- * @deprecated since 2.2
- * @param context $context context obj
- * @param context $newparent new parent obj
- * @return void
- */
-function context_moved(context $context, context $newparent) {
-    $context->update_moved($newparent);
-}
-
-/**
  * Remove a context record and any dependent entries,
  * removes context from static context cache too
  *
