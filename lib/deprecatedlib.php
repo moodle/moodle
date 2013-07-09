@@ -265,15 +265,6 @@ function reset_login_count() {
 }
 
 /**
- * Unsupported session id rewriting.
- * @deprecated
- * @param string $buffer
- */
-function sid_ob_rewrite($buffer) {
-    throw new coding_exception('$CFG->usesid support was removed completely and can not be used.');
-}
-
-/**
  * Insert or update log display entry. Entry may already exist.
  * $module, $action must be unique
  * @deprecated
@@ -389,40 +380,6 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
- * If there has been an error uploading a file, print the appropriate error message
- * Numerical constants used as constant definitions not added until PHP version 4.2.0
- * @deprecated removed - use new file api
- */
-function print_file_upload_error($filearray = '', $returnerror = false) {
-    throw new coding_exception('print_file_upload_error() can not be used any more, please use new file API');
-}
-
-/**
- * Handy function for resolving file conflicts
- * @deprecated removed - use new file api
- */
-
-function resolve_filename_collisions($destination,$files,$format='%s_%d.%s') {
-    throw new coding_exception('resolve_filename_collisions() can not be used any more, please use new file API');
-}
-
-/**
- * Checks a file name for any conflicts
- * @deprecated removed - use new file api
- */
-function check_potential_filename($destination,$filename,$files) {
-    throw new coding_exception('check_potential_filename() can not be used any more, please use new file API');
-}
-
-/**
- * This function prints out a number of upload form elements.
- * @deprecated removed - use new file api
- */
-function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null, $uselabels=false, $labelnames=null, $coursebytes=0, $modbytes=0, $return=false) {
-    throw new coding_exception('upload_print_form_fragment() can not be used any more, please use new file API');
-}
-
-/**
  * Return the authentication plugin title
  *
  * @param string $authtype plugin type
@@ -431,16 +388,6 @@ function upload_print_form_fragment($numfiles=1, $names=null, $descriptions=null
 function auth_get_plugin_title($authtype) {
     debugging('Function auth_get_plugin_title() is deprecated, please use standard get_string("pluginname", "auth_'.$authtype.'")!');
     return get_string('pluginname', "auth_{$authtype}");
-}
-
-
-
-/**
- * Enrol someone without using the default role in a course
- * @deprecated
- */
-function enrol_into_course($course, $user, $enrol) {
-    error('Function enrol_into_course() was removed, please use new enrol plugins instead!');
 }
 
 /**
@@ -457,14 +404,6 @@ function get_default_course_role($course) {
     $student = reset($student);
 
     return $student;
-}
-
-/**
- * Extremely slow enrolled courses query.
- * @deprecated
- */
-function get_my_courses($userid, $sort='visible DESC,sortorder ASC', $fields=NULL, $doanything=false,$limit=0) {
-    error('Function get_my_courses() was removed, please use new enrol_get_my_courses() or enrol_get_users_courses()!');
 }
 
 /**
@@ -501,41 +440,6 @@ function get_list_of_currencies() {
 function get_list_of_countries() {
     debugging('get_list_of_countries() is deprecated, please use get_string_manager()->get_list_of_countries() instead.');
     return get_string_manager()->get_list_of_countries(false);
-}
-
-/**
- * @deprecated
- */
-function isteacher() {
-    error('Function isteacher() was removed, please use capabilities instead!');
-}
-
-/**
- * @deprecated
- */
-function isteacherinanycourse() {
-    throw new coding_Exception('Function isteacherinanycourse() was removed, please use capabilities instead!');
-}
-
-/**
- * @deprecated
- */
-function get_guest() {
-    throw new coding_Exception('Function get_guest() was removed, please use capabilities instead!');
-}
-
-/**
- * @deprecated
- */
-function isguest() {
-    throw new coding_Exception('Function isguest() was removed, please use capabilities instead!');
-}
-
-/**
- * @deprecated
- */
-function get_teacher() {
-    throw new coding_Exception('Function get_teacher() was removed, please use capabilities instead!');
 }
 
 /**
@@ -591,55 +495,6 @@ function get_recent_enrolments($courseid, $timestart) {
           ORDER BY MAX(l.time) ASC";
     $params = array($timestart, $courseid);
     return $DB->get_records_sql($sql, $params);
-}
-
-
-/**
- * Turn the ctx* fields in an objectlike record into a context subobject
- * This allows us to SELECT from major tables JOINing with
- * context at no cost, saving a ton of context lookups...
- *
- * Use context_helper::preload_from_record() instead.
- *
- * @deprecated since 2.0
- * @param object $rec
- * @return object
- */
-function make_context_subobj($rec) {
-    throw new coding_Exception('make_context_subobj() was removed, use new context preloading');
-}
-
-/**
- * Do some basic, quick checks to see whether $rec->context looks like a valid context object.
- *
- * Use context_helper::preload_from_record() instead.
- *
- * @deprecated since 2.0
- * @param object $rec a think that has a context, for example a course,
- *      course category, course modules, etc.
- * @param int $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
- * @return bool whether $rec->context looks like the correct context object
- *      for this thing.
- */
-function is_context_subobj_valid($rec, $contextlevel) {
-    throw new coding_Exception('is_context_subobj_valid() was removed, use new context preloading');
-}
-
-/**
- * Ensure that $rec->context is present and correct before you continue
- *
- * When you have a record (for example a $category, $course, $user or $cm that may,
- * or may not, have come from a place that does make_context_subobj, you can use
- * this method to ensure that $rec->context is present and correct before you continue.
- *
- * Use context_helper::preload_from_record() instead.
- *
- * @deprecated since 2.0
- * @param object $rec a thing that has an associated context.
- * @param integer $contextlevel the type of thing $rec is, one of the CONTEXT_... constants.
- */
-function ensure_context_subobj_present(&$rec, $contextlevel) {
-    throw new coding_Exception('ensure_context_subobj_present() was removed, use new context preloading');
 }
 
 ########### FROM weblib.php ##########################################################################
@@ -1072,17 +927,6 @@ function error($message, $link='') {
 //////////////////////////
 
 /**
- * @deprecated
- * @param mixed $name
- * @param mixed $editorhidebuttons
- * @param mixed $id
- * @return void Throws an error and does nothing
- */
-function use_html_editor($name='', $editorhidebuttons='', $id='') {
-    error('use_html_editor() not available anymore');
-}
-
-/**
  * The old method that was used to include JavaScript libraries.
  * Please use $PAGE->requires->js_module() instead.
  *
@@ -1095,38 +939,6 @@ function use_html_editor($name='', $editorhidebuttons='', $id='') {
  */
 function require_js($lib) {
     throw new coding_exception('require_js() was removed, use new JS api');
-}
-
-/**
- * Makes an upload directory for a particular module.
- *
- * This function has been deprecated by the file API changes in Moodle 2.0.
- *
- * @deprecated
- * @param int $courseid The id of the course in question - maps to id field of 'course' table.
- * @return string|false Returns full path to directory if successful, false if not
- */
-function make_mod_upload_directory($courseid) {
-    throw new coding_exception('make_mod_upload_directory has been deprecated by the file API changes in Moodle 2.0.');
-}
-
-/**
- * Used to be used for setting up the theme. No longer used by core code, and
- * should not have been used elsewhere.
- *
- * The theme is now automatically initialised before it is first used. If you really need
- * to force this to happen, just reference $PAGE->theme.
- *
- * To force a particular theme on a particular page, you can use $PAGE->force_theme(...).
- * However, I can't think of any valid reason to do that outside the theme selector UI.
- *
- * @deprecated
- * @param string $theme The theme to use defaults to current theme
- * @param array $params An array of parameters to use
- */
-function theme_setup($theme = '', $params=NULL) {
-    throw new coding_exception('The function theme_setup is no longer required, and should no longer be used. ' .
-            'The current theme gets initialised automatically before it is first used.');
 }
 
 /**
@@ -1610,36 +1422,6 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 }
 
 /**
- * Starts a nice side block with an optional header.
- *
- * @todo Finish documenting this function
- *
- * @global object
- * @global object
- * @param string $heading HTML for the heading. Can include full HTML or just
- *   plain text - plain text will automatically be enclosed in the appropriate
- *   heading tags.
- * @param array $attributes HTML attributes to apply if possible
- * @deprecated
- */
-function print_side_block_start($heading='', $attributes = array()) {
-    throw new coding_exception('print_side_block_start has been deprecated. Please change your code to use $OUTPUT->block().');
-}
-
-/**
- * Print table ending tags for a side block box.
- *
- * @global object
- * @global object
- * @param array $attributes HTML attributes to apply if possible [id]
- * @param string $title
- * @deprecated
- */
-function print_side_block_end($attributes = array(), $title='') {
-    throw new coding_exception('print_side_block_end has been deprecated. Please change your code to use $OUTPUT->block().');
-}
-
-/**
  * This was used by old code to see whether a block region had anything in it,
  * and hence wether that region should be printed.
  *
@@ -1699,68 +1481,6 @@ function blocks_setup(&$page, $pinned = BLOCKS_PINNED_FALSE) {
 function blocks_preferred_width($instances) {
     debugging('The function blocks_print_group should no longer be used. Blocks are now printed by the theme.');
     $width = 210;
-}
-
-/**
- * @deprecated since Moodle 2.0. See the replacements in blocklib.php.
- *
- * @param object $page The page object
- * @param object $blockmanager The block manager object
- * @param string $blockaction One of [config, add, delete]
- * @param int|object $instanceorid The instance id or a block_instance object
- * @param bool $pinned
- * @param bool $redirect To redirect or not to that is the question but you should stick with true
- */
-function blocks_execute_action($page, &$blockmanager, $blockaction, $instanceorid, $pinned=false, $redirect=true) {
-    throw new coding_exception('blocks_execute_action is no longer used. The way blocks work has been changed. See the new code in blocklib.php.');
-}
-
-/**
- * You can use this to get the blocks to respond to URL actions without much hassle
- *
- * @deprecated since Moodle 2.0. Blocks have been changed. {@link block_manager::process_url_actions} is the closest replacement.
- *
- * @param object $PAGE
- * @param object $blockmanager
- * @param bool $pinned
- */
-function blocks_execute_url_action(&$PAGE, &$blockmanager,$pinned=false) {
-    throw new coding_exception('blocks_execute_url_action is no longer used. It has been replaced by methods of block_manager.');
-}
-
-/**
- * This shouldn't be used externally at all, it's here for use by blocks_execute_action()
- * in order to reduce code repetition.
- *
- * @deprecated since Moodle 2.0. See the replacements in blocklib.php.
- *
- * @param $instance
- * @param $newpos
- * @param string|int $newweight
- * @param bool $pinned
- */
-function blocks_execute_repositioning(&$instance, $newpos, $newweight, $pinned=false) {
-    throw new coding_exception('blocks_execute_repositioning is no longer used. The way blocks work has been changed. See the new code in blocklib.php.');
-}
-
-
-/**
- * Moves a block to the new position (column) and weight (sort order).
- *
- * @deprecated since Moodle 2.0. See the replacements in blocklib.php.
- *
- * @param object $instance The block instance to be moved.
- * @param string $destpos BLOCK_POS_LEFT or BLOCK_POS_RIGHT. The destination column.
- * @param string $destweight The destination sort order. If NULL, we add to the end
- *                    of the destination column.
- * @param bool $pinned Are we moving pinned blocks? We can only move pinned blocks
- *                to a new position withing the pinned list. Likewise, we
- *                can only moved non-pinned blocks to a new position within
- *                the non-pinned list.
- * @return boolean success or failure
- */
-function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinned=false) {
-    throw new coding_exception('blocks_move_block is no longer used. The way blocks work has been changed. See the new code in blocklib.php.');
 }
 
 /**
@@ -1959,16 +1679,6 @@ function print_spacer($height=1, $width=1, $br=true, $return=false) {
 }
 
 /**
- * Given the path to a picture file in a course, or a URL,
- * this function includes the picture in the page.
- *
- * @deprecated since Moodle 2.0
- */
-function print_file_picture($path, $courseid=0, $height='', $width='', $link='', $return=false) {
-    throw new coding_exception('print_file_picture() has been deprecated since Moodle 2.0. Please use $OUTPUT->action_icon() instead.');
-}
-
-/**
  * Print the specified user's avatar.
  *
  * @deprecated since Moodle 2.0
@@ -2013,17 +1723,6 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         echo $output;
     }
 }
-
-/**
- * Print a png image.
- *
- * @deprecated since Moodle 2.0: no replacement
- *
- */
-function print_png() {
-    throw new coding_exception('print_png() has been deprecated since Moodle 2.0. Please use $OUTPUT->pix_icon() instead.');
-}
-
 
 /**
  * Prints a basic textarea field.
@@ -2288,14 +1987,6 @@ function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=
 }
 
 /**
- * Prints a scale menu (as part of an existing form) including help button
- * @deprecated since Moodle 2.0
- */
-function print_scale_menu() {
-    throw new coding_exception('print_scale_menu() has been deprecated since the Jurassic period. Get with the times!.');
-}
-
-/**
  * Given an array of values, output the HTML for a select element with those options.
  *
  * @deprecated since Moodle 2.0
@@ -2439,26 +2130,6 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
     } else {
         echo $output;
     }
-}
-
-
-/**
- * Prints time limit value selector
- *
- * @deprecated since Moodle 2.0
- *
- * Uses {@link choose_from_menu()} to generate HTML
- * @see choose_from_menu()
- *
- * @global object
- * @param int $timelimit default
- * @param string $unit
- * @param string $name
- * @param boolean $return If set to true returns rather than echo's
- * @return string|bool Depending on value of $return
- */
-function print_timer_selector($timelimit = 0, $unit = '', $name = 'timelimit', $return=false) {
-    throw new coding_exception('print_timer_selector is completely removed. Please use html_writer instead');
 }
 
 /**
@@ -2679,15 +2350,6 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon=false
 }
 
 /**
- * Returns a turn edit on/off button for course in a self contained form.
- * Used to be an icon, but it's now a simple form button
- * @deprecated since Moodle 2.0
- */
-function update_mymoodle_icon() {
-    throw new coding_exception('update_mymoodle_icon() has been completely deprecated.');
-}
-
-/**
  * Returns a turn edit on/off button for tag in a self contained form.
  * @deprecated since Moodle 2.0
  * @param string $tagid The ID attribute
@@ -2725,23 +2387,6 @@ function update_module_button($cmid, $ignored, $string) {
     } else {
         return '';
     }
-}
-
-/**
- * Prints the editing button on search results listing
- * For bulk move courses to another category
- * @deprecated since Moodle 2.0
- */
-function update_categories_search_button($search,$page,$perpage) {
-    throw new coding_exception('update_categories_search_button() has been completely deprecated.');
-}
-
-/**
- * Prints a summary of a user in a nice little box.
- * @deprecated since Moodle 2.0
- */
-function print_user($user, $course, $messageselect=false, $return=false) {
-    throw new coding_exception('print_user() has been completely deprecated. See user/index.php for new usage.');
 }
 
 /**
