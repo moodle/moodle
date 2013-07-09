@@ -835,14 +835,15 @@ class mod_quiz_renderer extends plugin_renderer_base {
         global $CFG;
 
         $output = '';
+
         // Print quiz name and description.
         $output .= $this->heading(format_string($quiz->name));
-        if (trim(strip_tags($quiz->intro))) {
-            $output .= $this->box(format_module_intro('quiz', $quiz, $cm->id), 'generalbox',
-                    'intro');
-        }
+        $output .= $this->quiz_intro($quiz, $cm);
 
-        $output .= $this->box($this->access_messages($messages), 'quizinfo');
+        // Output any access messages.
+        if ($messages) {
+            $output .= $this->box($this->access_messages($messages), 'quizinfo');
+        }
 
         // Show number of attempts summary to those who can view reports.
         if (has_capability('mod/quiz:viewreports', $context)) {
@@ -862,13 +863,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function quiz_intro($quiz, $cm) {
-        if (trim(strip_tags($quiz->intro))) {
-            return $this->box(format_module_intro('quiz', $quiz, $cm->id),
-                    'generalbox', 'intro');
-
-        } else {
+        if (html_is_blank($quiz->intro)) {
             return '';
         }
+
+        return $this->box(format_module_intro('quiz', $quiz, $cm->id), 'generalbox', 'intro');
     }
 
     /**
