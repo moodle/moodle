@@ -345,6 +345,11 @@ function css_minify_css($files) {
         return '';
     }
 
+    // We do not really want any 304 here!
+    // There does not seem to be any better way to prevent them here.
+    unset($_SERVER['HTTP_IF_NONE_MATCH']);
+    unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
+
     set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
     require_once('Minify.php');
 
@@ -373,7 +378,7 @@ function css_minify_css($files) {
     $error = 'unknown';
     try {
         $result = Minify::serve('Files', $options);
-        if ($result['success']) {
+        if ($result['success'] and $result['statusCode'] == 200) {
             return $result['content'];
         }
     } catch (Exception $e) {
