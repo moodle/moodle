@@ -53,7 +53,7 @@ abstract class base {
     protected $data;
 
     /** @var array the format is standardised by logging API */
-    protected $logdata;
+    protected $logextra;
 
     /** @var \context of this event */
     protected $context;
@@ -256,10 +256,10 @@ abstract class base {
      * Restore event from existing historic data.
      *
      * @param array $data
-     * @param array $logdata the format is standardised by logging API
+     * @param array $logextra the format is standardised by logging API
      * @return bool|\core\event\base
      */
-    public static final function restore(array $data, array $logdata) {
+    public static final function restore(array $data, array $logextra) {
         $classname = $data['eventname'];
         $component = $data['component'];
         $action = $data['action'];
@@ -281,7 +281,7 @@ abstract class base {
         $event->restored = true;
         $event->triggered = true;
         $event->dispatched = true;
-        $event->logdata = $logdata;
+        $event->logextra = $logextra;
 
         foreach (self::$fields as $key) {
             if (!array_key_exists($key, $data)) {
@@ -338,8 +338,8 @@ abstract class base {
      *
      * @return array the format is standardised by logging API
      */
-    public function get_logdata() {
-        return $this->logdata;
+    public function get_logextra() {
+        return $this->logextra;
     }
 
     /**
