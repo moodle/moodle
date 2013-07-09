@@ -124,14 +124,23 @@ class mod_assign_renderer extends plugin_renderer_base {
      */
     public function render_assign_user_summary(assign_user_summary $summary) {
         $o = '';
+        $supendedclass = '';
+        $suspendedicon = '';
 
         if (!$summary->user) {
             return;
         }
+
+        if ($summary->suspendeduser) {
+            $supendedclass = ' usersuspended';
+            $suspendedstring = get_string('userenrolmentsuspended', 'grades');
+            $suspendedicon = ' ' . html_writer::empty_tag('img', array('src' => $this->pix_url('i/enrolmentsuspended'),
+                'title' => $suspendedstring, 'alt' => $suspendedstring, 'class' => 'usersuspendedicon'));
+        }
         $o .= $this->output->container_start('usersummary');
-        $o .= $this->output->box_start('boxaligncenter usersummarysection');
+        $o .= $this->output->box_start('boxaligncenter usersummarysection'.$supendedclass);
         if ($summary->blindmarking) {
-            $o .= get_string('hiddenuser', 'assign') . $summary->uniqueidforuser;
+            $o .= get_string('hiddenuser', 'assign') . $summary->uniqueidforuser.$suspendedicon;
         } else {
             $o .= $this->output->user_picture($summary->user);
             $o .= $this->output->spacer(array('width'=>30));
@@ -145,6 +154,7 @@ class mod_assign_renderer extends plugin_renderer_base {
             if (count($extrainfo)) {
                 $fullname .= ' (' . implode(', ', $extrainfo) . ')';
             }
+            $fullname .= $suspendedicon;
             $o .= $this->output->action_link($url, $fullname);
         }
         $o .= $this->output->box_end();
