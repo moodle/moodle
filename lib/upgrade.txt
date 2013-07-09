@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
 
 * Use new core_component::* plugin listing and component normalisation methods.
 * Use core_text::* instead of textlib:: and also core_collator::* instead of collatorlib::*.
+* Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
 * get_context_instance() is deprecated, please use use context_xxxx::instance().
 * get_context_instance_by_id() is deprecated, please use context::instance_by_id($id).
 * load_temp_role() and remove_temp_roles() can not be used any more.
@@ -16,7 +17,7 @@ information provided here is intended especially for developers.
 * cleanup_contexts() is deprecated, please use context_helper::cleanup_instances().
 * build_context_path() is deprecated, please use context_helper::build_all_paths().
 * rebuild_contexts() is deprecated, please use $context->reset_paths().
-* Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
+* preload_course_contexts() is deprecated, please use context_helper::preload_course().
 
 === 2.5.1 ===
 

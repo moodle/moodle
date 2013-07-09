@@ -2422,6 +2422,7 @@ class accesslib_testcase extends advanced_testcase {
 
         context_helper::reset_caches();
         preload_course_contexts($SITE->id);
+        $this->assertDebuggingCalled('preload_course_contexts() is deprecated, please use context_helper::preload_course() instead.', DEBUG_DEVELOPER);
         $this->assertEquals(1 + $DB->count_records('course_modules', array('course' => $SITE->id)),
                 context_inspection::test_context_cache_size());
 

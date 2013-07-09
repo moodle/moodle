@@ -7231,19 +7231,6 @@ class context_block extends context {
 // then we will add error message and only after that we can remove the functions
 // completely.
 /**
- * Preloads all contexts relating to a course: course, modules. Block contexts
- * are no longer loaded here. The contexts for all the blocks on the current
- * page are now efficiently loaded by {@link block_manager::load_blocks()}.
- *
- * @deprecated since 2.2
- * @param int $courseid Course ID
- * @return void
- */
-function preload_course_contexts($courseid) {
-    context_helper::preload_course($courseid);
-}
-
-/**
  * Preloads context information together with instances.
  * Use context_instance_preload() to strip the context info from the record and cache the context instance.
  *
