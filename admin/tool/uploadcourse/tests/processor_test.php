@@ -166,4 +166,60 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
         $this->assertEquals('ID123: Course 1', $c->shortname);
     }
 
+    public function test_empty_csv() {
+        $this->resetAfterTest(true);
+
+        $content = array();
+        $content = implode("\n", $content);
+        $iid = csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $cir->load_csv_content($content, 'utf-8', 'comma');
+        $cir->init();
+
+        $options = array('mode' => tool_uploadcourse_processor::MODE_CREATE_NEW);
+        $this->setExpectedException('moodle_exception');
+        $p = new tool_uploadcourse_processor($cir, $options, array());
+    }
+
+    public function test_not_enough_columns() {
+        $this->resetAfterTest(true);
+
+        $content = array(
+            "shortname",
+            "c1",
+        );
+        $content = implode("\n", $content);
+        $iid = csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $cir->load_csv_content($content, 'utf-8', 'comma');
+        $cir->init();
+
+        $options = array('mode' => tool_uploadcourse_processor::MODE_CREATE_NEW);
+        $this->setExpectedException('moodle_exception');
+        $p = new tool_uploadcourse_processor($cir, $options, array());
+    }
+
+    public function test_preview() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $content = array(
+            "shortname,fullname,summary",
+            "c1,Course 1,Course 1 summary",
+            "c2,Course 2,Course 2 summary",
+        );
+        $content = implode("\n", $content);
+        $iid = csv_import_reader::get_new_iid('uploadcourse');
+        $cir = new csv_import_reader($iid, 'uploadcourse');
+        $cir->load_csv_content($content, 'utf-8', 'comma');
+        $cir->init();
+
+        $options = array('mode' => tool_uploadcourse_processor::MODE_CREATE_ALL);
+        $defaults = array('category' => '1');
+
+        $p = new tool_uploadcourse_processor($cir, $options, $defaults);
+        // Nothing special to expect here, just make sure no exceptions are thrown.
+        $p->preview();
+    }
+
 }

@@ -60,10 +60,10 @@ class tool_uploadcourse_helper {
      *
      * @param array|object $data course data.
      * @param string $templateshortname template of shortname.
-     * @return null|string shortname based on the template.
+     * @return null|string shortname based on the template, or null when an error occured.
      */
     public static function generate_shortname($data, $templateshortname) {
-        if (is_null($templateshortname)) {
+        if (empty($templateshortname) && !is_numeric($templateshortname)) {
             return null;
         }
         if (strpos($templateshortname, '%') === false) {
@@ -71,15 +71,18 @@ class tool_uploadcourse_helper {
         }
 
         $course = (object) $data;
-        $shortname  = isset($course->shortname) ? $course->shortname  : '';
         $fullname   = isset($course->fullname) ? $course->fullname : '';
         $idnumber   = isset($course->idnumber) ? $course->idnumber  : '';
 
-        $callback = partial(array('tool_uploadcourse_helper', 'generate_shortname_callback'), $shortname, $fullname, $idnumber);
+        $callback = partial(array('tool_uploadcourse_helper', 'generate_shortname_callback'), $fullname, $idnumber);
         $result = preg_replace_callback('/(?<!%)%([+~-])?(\d)*([fi])/', $callback, $templateshortname);
 
         if (!is_null($result)) {
             $result = clean_param($result, PARAM_TEXT);
+        }
+
+        if (empty($result) && !is_numeric($result)) {
+            $result = null;
         }
 
         return $result;
@@ -88,13 +91,12 @@ class tool_uploadcourse_helper {
     /**
      * Callback used when generating a shortname based on a template.
      *
-     * @param string $shortname short name.
      * @param string $fullname full name.
      * @param string $idnumber ID number.
      * @param array $block result from preg_replace_callback.
      * @return string
      */
-    public static function generate_shortname_callback($shortname, $fullname, $idnumber, $block) {
+    public static function generate_shortname_callback($fullname, $idnumber, $block) {
         switch ($block[3]) {
             case 'f':
                 $repl = $fullname;

@@ -36,13 +36,19 @@ global $CFG;
 class tool_uploadcourse_helper_testcase extends advanced_testcase {
 
     public function test_generate_shortname() {
-        $data = (object) array('fullname' => 'Ah Bh Ch 01 02 03', 'idnumber' => 'ID123');
+        $data = (object) array('fullname' => 'Ah bh Ch 01 02 03', 'idnumber' => 'ID123');
 
         $this->assertSame($data->fullname, tool_uploadcourse_helper::generate_shortname($data, '%f'));
         $this->assertSame($data->idnumber, tool_uploadcourse_helper::generate_shortname($data, '%i'));
+        $this->assertSame('Ah Bh Ch', tool_uploadcourse_helper::generate_shortname($data, '%~8f'));
         $this->assertSame('AH BH CH', tool_uploadcourse_helper::generate_shortname($data, '%+8f'));
         $this->assertSame('id123', tool_uploadcourse_helper::generate_shortname($data, '%-i'));
-        $this->assertSame('[Ah Bh Ch] = ID123', tool_uploadcourse_helper::generate_shortname($data, '[%8f] = %i'));
+        $this->assertSame('[Ah bh Ch] = ID123', tool_uploadcourse_helper::generate_shortname($data, '[%8f] = %i'));
+        $this->assertSame('0', tool_uploadcourse_helper::generate_shortname($data, '0'));
+        $this->assertSame('%unknown', tool_uploadcourse_helper::generate_shortname($data, '%unknown'));
+
+        $this->assertNull(tool_uploadcourse_helper::generate_shortname($data, ''));
+        $this->assertNull(tool_uploadcourse_helper::generate_shortname(array(), '%f'));
     }
 
     public function test_get_course_formats() {
@@ -164,6 +170,12 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $bcinfo = backup_general_helper::get_backup_information($dir);
         $this->assertEquals($bcinfo->original_course_id, $c2->id);
         $this->assertEquals($bcinfo->original_course_fullname, $c2->fullname);
+
+        // Get a course that does not exist.
+        $errors = array();
+        $dir = tool_uploadcourse_helper::get_restore_content_dir(null, 'DoesNotExist', $errors);
+        $this->assertFalse($dir);
+        $this->assertArrayHasKey('coursetorestorefromdoesnotexist', $errors);
 
         // Cleaning content directories.
         $oldcfg = isset($CFG->keeptempdirectoriesonbackup) ? $CFG->keeptempdirectoriesonbackup : false;

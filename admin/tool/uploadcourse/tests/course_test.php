@@ -56,6 +56,28 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $co->proceed();
     }
 
+    public function test_proceed_when_already_started() {
+        $this->resetAfterTest(true);
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('shortname' => 'test', 'fullname' => 'New course', 'summary' => 'New', 'category' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $this->setExpectedException('coding_exception');
+        $co->proceed();
+    }
+
+    public function test_invalid_shortname() {
+        $this->resetAfterTest(true);
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('shortname' => '<invalid>', 'fullname' => 'New course', 'summary' => 'New', 'category' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('invalidshortname', $co->get_errors());
+    }
+
     public function test_create() {
         global $DB;
         $this->resetAfterTest(true);
@@ -497,6 +519,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
 
         $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'c1'));
+        $c2 = $this->getDataGenerator()->create_course(array('shortname' => 'c2'));
 
         // Cannot rename when creating.
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
@@ -566,6 +589,24 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertEquals('c1', $DB->get_field_select('course', 'shortname', 'id = :id', array('id' => $c1->id)));
         $this->assertEquals('New summary!', $DB->get_field_select('course', 'summary', 'id = :id', array('id' => $c1->id)));
         $this->assertEquals('Another fullname!', $DB->get_field_select('course', 'fullname', 'id = :id', array('id' => $c1->id)));
+
+        // Renaming with invalid shortname.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $importoptions = array('canrename' => true);
+        $data = array('shortname' => 'c1', 'rename' => '<span>invalid</span>');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('invalidshortname', $co->get_errors());
+
+        // Renaming with invalid shortname.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $importoptions = array('canrename' => true);
+        $data = array('shortname' => 'c1', 'rename' => 'c2');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotrenameshortnamealreadyinuse', $co->get_errors());
     }
 
     public function test_restore_course() {
@@ -779,7 +820,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
     public function test_idnumber_problems() {
         $this->resetAfterTest(true);
 
-        $c1 = $this->getDataGenerator()->create_course(array('idnumber' => 'Taken'));
+        $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'sntaken', 'idnumber' => 'taken'));
         $c2 = $this->getDataGenerator()->create_course();
 
         // Create with existing ID number.
@@ -799,6 +840,84 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
         $this->assertFalse($co->prepare());
         $this->assertArrayHasKey('cannotrenameidnumberconflict', $co->get_errors());
+
+        // Incrementing shortname increments idnumber.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_ALL;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('shortname' => $c1->shortname, 'idnumber' => $c1->idnumber, 'summary' => 'S', 'fullname' => 'F',
+            'category' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), array());
+        $this->assertTrue($co->prepare());
+        $this->assertArrayHasKey('courseshortnameincremented', $co->get_statuses());
+        $this->assertArrayHasKey('courseidnumberincremented', $co->get_statuses());
+        $data = $co->get_data();
+        $this->assertEquals('sntaken_2', $data['shortname']);
+        $this->assertEquals('taken_2', $data['idnumber']);
+
+        // Incrementing shortname increments idnumber unless available.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_ALL;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('shortname' => $c1->shortname, 'idnumber' => 'nottaken', 'summary' => 'S', 'fullname' => 'F',
+            'category' => 1);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), array());
+        $this->assertTrue($co->prepare());
+        $this->assertArrayHasKey('courseshortnameincremented', $co->get_statuses());
+        $this->assertArrayNotHasKey('courseidnumberincremented', $co->get_statuses());
+        $data = $co->get_data();
+        $this->assertEquals('sntaken_2', $data['shortname']);
+        $this->assertEquals('nottaken', $data['idnumber']);
+    }
+
+    public function test_generate_shortname() {
+        $this->resetAfterTest(true);
+
+        $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'taken'));
+
+        // Generate a shortname.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('summary' => 'summary', 'fullname' => 'FN', 'category' => '1', 'idnumber' => 'IDN');
+        $importoptions = array('shortnametemplate' => '%i');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertTrue($co->prepare());
+        $this->assertArrayHasKey('courseshortnamegenerated', $co->get_statuses());
+
+        // Generate a shortname without a template.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('summary' => 'summary', 'fullname' => 'FN', 'category' => '1');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), array());
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('missingshortnamenotemplate', $co->get_errors());
+
+        // Generate a shortname in update mode.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('summary' => 'summary', 'fullname' => 'FN', 'category' => '1');
+        $importoptions = array('shortnametemplate' => '%f');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        // Commented because we never get here as the course without shortname does not exist.
+        // $this->assertArrayHasKey('cannotgenerateshortnameupdatemode', $co->get_errors());
+
+        // Generate a shortname to a course that already exists.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('summary' => 'summary', 'fullname' => 'taken', 'category' => '1');
+        $importoptions = array('shortnametemplate' => '%f');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('generatedshortnamealreadyinuse', $co->get_errors());
+
+        // Generate a shortname to a course that already exists will be incremented.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_ALL;
+        $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
+        $data = array('summary' => 'summary', 'fullname' => 'taken', 'category' => '1');
+        $importoptions = array('shortnametemplate' => '%f');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertTrue($co->prepare());
+        $this->assertArrayHasKey('courseshortnamegenerated', $co->get_statuses());
+        $this->assertArrayHasKey('courseshortnameincremented', $co->get_statuses());
     }
 
 }
