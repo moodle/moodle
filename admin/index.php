@@ -47,10 +47,11 @@ if (!function_exists('iconv')) {
 
 define('NO_OUTPUT_BUFFERING', true);
 
-if (empty($_GET['cache']) and empty($_POST['cache'])) {
+if (empty($_GET['cache']) and empty($_POST['cache']) and empty($_GET['sesskey']) and empty($_POST['sesskey'])) {
     // Prevent caching at all cost when visiting this page directly,
     // we redirect to self once we known no upgrades are necessary.
     // Note: $_GET and $_POST are used here intentionally because our param cleaning is not loaded yet.
+    // Note2: the sesskey is present in all block editing hacks, we can not redirect there, so enable caching.
     define('CACHE_DISABLE_ALL', true);
 }
 
@@ -443,7 +444,7 @@ if (during_initial_install()) {
 
 // Now we can be sure everything was upgraded and caches work fine,
 // redirect if necessary to make sure caching is enabled.
-if (!$cache) {
+if (!$cache and !optional_param('sesskey', '', PARAM_RAW)) {
     redirect(new moodle_url($PAGE->url, array('cache' => 1)));
 }
 
