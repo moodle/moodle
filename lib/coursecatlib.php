@@ -1920,7 +1920,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         } else if ($thislist === false) {
             // We have $baselist cached but not $thislist. Simplier query is used to retrieve.
             $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
-            $sql = "SELECT ctx.instanceid id, $ctxselect
+            $sql = "SELECT ctx.instanceid AS id, $ctxselect
                     FROM {context} ctx WHERE ctx.contextlevel = :contextcoursecat";
             $contexts = $DB->get_records_sql($sql, array('contextcoursecat' => CONTEXT_COURSECAT));
             $thislist = array();
