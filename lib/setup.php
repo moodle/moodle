@@ -717,7 +717,7 @@ initialise_fullme();
 // define SYSCONTEXTID in config.php if you want to save some queries,
 // after install it must match the system context record id.
 if (!defined('SYSCONTEXTID')) {
-    get_system_context();
+    context_system::instance();
 }
 
 // Defining the site - aka frontpage course

@@ -190,7 +190,7 @@ class repository_filesystem extends repository {
 
     public static function instance_config_form($mform) {
         global $CFG, $PAGE;
-        if (has_capability('moodle/site:config', get_system_context())) {
+        if (has_capability('moodle/site:config', context_system::instance())) {
             $path = $CFG->dataroot . '/repository/';
             if (!is_dir($path)) {
                 mkdir($path, $CFG->directorypermissions, true);
@@ -222,10 +222,10 @@ class repository_filesystem extends repository {
 
     public static function create($type, $userid, $context, $params, $readonly=0) {
         global $PAGE;
-        if (has_capability('moodle/site:config', get_system_context())) {
+        if (has_capability('moodle/site:config', context_system::instance())) {
             return parent::create($type, $userid, $context, $params, $readonly);
         } else {
-            require_capability('moodle/site:config', get_system_context());
+            require_capability('moodle/site:config', context_system::instance());
             return false;
         }
     }

@@ -57,7 +57,7 @@ if ($id) {
         }
         $context = context_coursecat::instance($parent);
     } else {
-        $context = get_system_context();
+        $context = context_system::instance();
     }
     $PAGE->set_context($context);
     $category = new stdClass();

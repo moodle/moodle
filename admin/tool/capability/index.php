@@ -190,7 +190,7 @@ function print_report_tree($contextid, $contexts, $allroles) {
 
     // Start the list item, and print the context name as a link to the place to
     // make changes.
-    if ($contextid == get_system_context()->id) {
+    if ($contextid == context_system::instance()->id) {
         $url = "$CFG->wwwroot/$CFG->admin/roles/manage.php";
         $title = get_string('changeroles', 'tool_capability');
     } else {

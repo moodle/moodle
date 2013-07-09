@@ -67,7 +67,7 @@ if ($courseid) {
 if ($courseid) {
     $PAGE->set_context(context_course::instance($courseid));
 } else {
-    $PAGE->set_context(get_system_context());
+    $PAGE->set_context(context_system::instance());
 }
 
 // Language strings

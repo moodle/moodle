@@ -6959,7 +6959,7 @@ class admin_setting_managerepository extends admin_setting {
                     // Calculate number of instances in order to display them for the Moodle administrator
                     if (!empty($instanceoptionnames)) {
                         $params = array();
-                        $params['context'] = array(get_system_context());
+                        $params['context'] = array(context_system::instance());
                         $params['onlyvisible'] = false;
                         $params['type'] = $typename;
                         $admininstancenumber = count(repository::static_function($typename, 'get_instances', $params));
@@ -7117,7 +7117,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
             $assign = true;
         }
         if (!empty($assign)) {
-            $systemcontext = get_system_context();
+            $systemcontext = context_system::instance();
             assign_capability('webservice/xmlrpc:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true);
             assign_capability('webservice/rest:use', $permission, $CFG->defaultuserroleid, $systemcontext->id, true);
         }

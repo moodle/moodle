@@ -146,9 +146,9 @@ if (!empty($user)) {
     if (count($tokens) > 0) {
         $token = array_pop($tokens);
     } else {
-        if ( ($serviceshortname == MOODLE_OFFICIAL_MOBILE_SERVICE and has_capability('moodle/webservice:createmobiletoken', get_system_context()))
+        if ( ($serviceshortname == MOODLE_OFFICIAL_MOBILE_SERVICE and has_capability('moodle/webservice:createmobiletoken', context_system::instance()))
                 //Note: automatically token generation is not available to admin (they must create a token manually)
-                or (!is_siteadmin($user) && has_capability('moodle/webservice:createtoken', get_system_context()))) {
+                or (!is_siteadmin($user) && has_capability('moodle/webservice:createtoken', context_system::instance()))) {
             // if service doesn't exist, dml will throw exception
             $service_record = $DB->get_record('external_services', array('shortname'=>$serviceshortname, 'enabled'=>1), '*', MUST_EXIST);
             // create a new token

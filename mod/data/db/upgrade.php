@@ -40,7 +40,7 @@ function xmldb_data_upgrade($oldversion) {
             // Get directory contents.
             $userfolders = new DirectoryIterator($oldpresetdir);
             // Store the system context, these are site wide presets.
-            $context = get_system_context();
+            $context = context_system::instance();
             // Create file storage object.
             $fs = get_file_storage();
             // Create array of accepted files.

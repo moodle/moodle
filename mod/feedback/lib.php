@@ -1118,7 +1118,7 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     //if the template is public the files are in the system context
     //files in the feedback_item are in the feedback_context of the feedback
     if ($ispublic) {
-        $s_context = get_system_context();
+        $s_context = context_system::instance();
     } else {
         $s_context = context_course::instance($newtempl->course);
     }
@@ -1223,7 +1223,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
     //files in the template_item are in the context of the current course
     //files in the feedback_item are in the feedback_context of the feedback
     if ($template->ispublic) {
-        $s_context = get_system_context();
+        $s_context = context_system::instance();
     } else {
         $s_context = context_course::instance($feedback->course);
     }
@@ -1526,7 +1526,7 @@ function feedback_delete_item($itemid, $renumber = true, $template = false) {
 
     if ($template) {
         if ($template->ispublic) {
-            $context = get_system_context();
+            $context = context_system::instance();
         } else {
             $context = context_course::instance($template->course);
         }

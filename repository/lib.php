@@ -251,7 +251,7 @@ class repository_type implements cacheable_object {
                     // for it
                     $instanceoptions['name'] = $this->_options['pluginname'];
                 }
-                repository::static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
+                repository::static_function($this->_typename, 'create', $this->_typename, 0, context_system::instance(), $instanceoptions);
             }
             //run plugin_init function
             if (!repository::static_function($this->_typename, 'plugin_init')) {
@@ -958,7 +958,7 @@ abstract class repository implements cacheable_object {
     public static function get_editable_types($context = null) {
 
         if (empty($context)) {
-            $context = get_system_context();
+            $context = context_system::instance();
         }
 
         $types= repository::get_types(true);
@@ -3168,7 +3168,7 @@ function initialise_filepicker($args) {
     $user_context = context_user::instance($USER->id);
 
     list($context, $course, $cm) = get_context_info_array($context->id);
-    $contexts = array($user_context, get_system_context());
+    $contexts = array($user_context, context_system::instance());
     if (!empty($course)) {
         // adding course context
         $contexts[] = context_course::instance($course->id);

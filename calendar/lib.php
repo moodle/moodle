@@ -1469,7 +1469,7 @@ function calendar_set_filters(array $courseeventsfrom, $ignorefilters = false) {
             }
         }
         if ($group === false) {
-            if (!empty($CFG->calendar_adminseesall) && has_any_capability($allgroupscaps, get_system_context())) {
+            if (!empty($CFG->calendar_adminseesall) && has_any_capability($allgroupscaps, context_system::instance())) {
                 $group = true;
             } else if ($isloggedin) {
                 $groupids = array();
@@ -1790,7 +1790,7 @@ function calendar_set_event_type_display($type, $display = null, $user = null) {
 function calendar_get_allowed_types(&$allowed, $course = null) {
     global $USER, $CFG, $DB;
     $allowed = new stdClass();
-    $allowed->user = has_capability('moodle/calendar:manageownentries', get_system_context());
+    $allowed->user = has_capability('moodle/calendar:manageownentries', context_system::instance());
     $allowed->groups = false; // This may change just below
     $allowed->courses = false; // This may change just below
     $allowed->site = has_capability('moodle/calendar:manageentries', context_course::instance(SITEID));

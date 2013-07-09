@@ -6005,7 +6005,7 @@ class context_system extends context {
 
 
         try {
-            // we ignore the strictness completely because system context must except except during install
+            // We ignore the strictness completely because system context must exist except during install.
             $record = $DB->get_record('context', array('contextlevel'=>CONTEXT_SYSTEM), '*', MUST_EXIST);
         } catch (dml_exception $e) {
             //table or record does not exist
@@ -7229,46 +7229,6 @@ class context_block extends context {
 // before removing devs will be warned with a debugging message first,
 // then we will add error message and only after that we can remove the functions
 // completely.
-
-
-/**
- * Not available any more, use load_temp_course_role() instead.
- *
- * @deprecated since 2.2
- * @param stdClass $context
- * @param int $roleid
- * @param array $accessdata
- * @return array
- */
-function load_temp_role($context, $roleid, array $accessdata) {
-    debugging('load_temp_role() is deprecated, please use load_temp_course_role() instead, temp role not loaded.');
-    return $accessdata;
-}
-
-/**
- * Not available any more, use remove_temp_course_roles() instead.
- *
- * @deprecated since 2.2
- * @param stdClass $context
- * @param array $accessdata
- * @return array access data
- */
-function remove_temp_roles($context, array $accessdata) {
-    debugging('remove_temp_role() is deprecated, please use remove_temp_course_roles() instead.');
-    return $accessdata;
-}
-
-/**
- * Returns system context or null if can not be created yet.
- *
- * @deprecated since 2.2, use context_system::instance()
- * @param bool $cache use caching
- * @return context system context (null if context table not created yet)
- */
-function get_system_context($cache = true) {
-    return context_system::instance(0, IGNORE_MISSING, $cache);
-}
-
 /**
  * Recursive function which, given a context, find all parent context ids,
  * and return the array in reverse order, i.e. parent first, then grand
