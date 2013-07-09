@@ -4820,7 +4820,7 @@ class assign {
         if ($this->get_instance()->markingworkflow) {
             $notmarked = get_string('markingworkflowstatenotmarked', 'assign');
             $markingworkflowoptions[''] = get_string('filternone', 'assign');
-            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = $notmarked
+            $markingworkflowoptions[ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED] = $notmarked;
             $markingworkflowoptions = array_merge($markingworkflowoptions, $this->get_marking_workflow_states_for_current_user());
         }
 
