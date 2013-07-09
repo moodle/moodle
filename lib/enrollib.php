@@ -596,7 +596,7 @@ function enrol_get_my_courses($fields = NULL, $sort = 'visible DESC,sortorder AS
 
     // preload contexts and check visibility
     foreach ($courses as $id=>$course) {
-        context_instance_preload($course);
+        context_helper::preload_from_record($course);
         if (!$course->visible) {
             if (!$context = context_course::instance($id, IGNORE_MISSING)) {
                 unset($courses[$id]);
@@ -692,7 +692,7 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = NULL, $
     // preload contexts and check visibility
     if ($onlyactive) {
         foreach ($courses as $id=>$course) {
-            context_instance_preload($course);
+            context_helper::preload_from_record($course);
             if (!$course->visible) {
                 if (!$context = context_course::instance($id)) {
                     unset($courses[$id]);

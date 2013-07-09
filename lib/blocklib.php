@@ -630,7 +630,7 @@ class block_manager {
         $this->birecordsbyregion = $this->prepare_per_region_arrays();
         $unknown = array();
         foreach ($blockinstances as $bi) {
-            context_instance_preload($bi);
+            context_helper::preload_from_record($bi);
             if ($this->is_known_region($bi->region)) {
                 $this->birecordsbyregion[$bi->region][] = $bi;
             } else {

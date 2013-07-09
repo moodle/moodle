@@ -583,7 +583,7 @@
                     }
                     $usersprinted[] = $user->id; /// Add new user to the array of users printed
 
-                    context_instance_preload($user);
+                    context_helper::preload_from_record($user);
 
                     $context = context_course::instance($course->id);
                     $usercontext = context_user::instance($user->id);
@@ -705,7 +705,7 @@
                 }
                 $usersprinted[] = $user->id; /// Add new user to the array of users printed
 
-                context_instance_preload($user);
+                context_helper::preload_from_record($user);
 
                 if ($user->lastaccess) {
                     $lastaccess = format_time(time() - $user->lastaccess, $datestring);

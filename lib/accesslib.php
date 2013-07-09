@@ -7232,7 +7232,7 @@ class context_block extends context {
 // completely.
 /**
  * Preloads context information together with instances.
- * Use context_instance_preload() to strip the context info from the record and cache the context instance.
+ * Use context_helper::preload_from_record() to strip the context info from the record and cache the context instance.
  *
  * @deprecated since 2.2
  * @param string $joinon for example 'u.id'
@@ -7244,18 +7244,6 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
     $select = ", ".context_helper::get_preload_record_columns_sql($tablealias);
     $join = "LEFT JOIN {context} $tablealias ON ($tablealias.instanceid = $joinon AND $tablealias.contextlevel = $contextlevel)";
     return array($select, $join);
-}
-
-/**
- * Preloads context information from db record and strips the cached info.
- * The db request has to contain both the $join and $select from context_instance_preload_sql()
- *
- * @deprecated since 2.2
- * @param stdClass $rec
- * @return void (modifies $rec)
- */
-function context_instance_preload(stdClass $rec) {
-    context_helper::preload_from_record($rec);
 }
 
 /**

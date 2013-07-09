@@ -42,7 +42,7 @@ while(!feof($fd)) {
     list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
     $sql = "SELECT c.id, c.fullname $ctxselect FROM {course} c $ctxjoin WHERE c.id = :courseid";
     $course = $DB->get_record_sql($sql, array('courseid' => $log->course));
-    context_instance_preload($course);
+    context_helper::preload_from_record($course);
 
     $user = $DB->get_record("user", array("id"=>$log->userid));
     $subject = get_string('virusfoundsubject','moodle',format_string($site->fullname));

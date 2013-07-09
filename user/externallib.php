@@ -691,7 +691,7 @@ class core_user_external extends external_api {
             if (!empty($user->deleted)) {
                 continue;
             }
-            context_instance_preload($user);
+            context_helper::preload_from_record($user);
             $usercontext = context_user::instance($user->id, IGNORE_MISSING);
             self::validate_context($usercontext);
             $currentuser = ($user->id == $USER->id);
@@ -786,7 +786,7 @@ class core_user_external extends external_api {
         $rs = $DB->get_recordset_sql($coursesql, $params);
         foreach ($rs as $course) {
             // adding course contexts to cache
-            context_instance_preload($course);
+            context_helper::preload_from_record($course);
             // cache courses
             $courses[$course->id] = $course;
         }
@@ -803,7 +803,7 @@ class core_user_external extends external_api {
             if (!empty($user->deleted)) {
                 continue;
             }
-            context_instance_preload($user);
+            context_helper::preload_from_record($user);
             $course = $courses[$courseids[$user->id]];
             $context = context_course::instance($courseids[$user->id], IGNORE_MISSING);
             self::validate_context($context);

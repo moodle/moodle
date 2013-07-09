@@ -2034,7 +2034,7 @@ class course_in_list implements IteratorAggregate {
      *     context preloading
      */
     public function __construct(stdClass $record) {
-        context_instance_preload($record);
+        context_helper::preload_from_record($record);
         $this->record = new stdClass();
         foreach ($record as $key => $value) {
             $this->record->$key = $value;

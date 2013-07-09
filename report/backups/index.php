@@ -58,7 +58,7 @@ $rs = $DB->get_recordset_sql($sql);
 foreach ($rs as $backuprow) {
 
     // Cache the course context
-    context_instance_preload($backuprow);
+    context_helper::preload_from_record($backuprow);
 
     // Prepare a cell to display the status of the entry
     if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_OK) {
