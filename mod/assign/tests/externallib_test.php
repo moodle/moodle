@@ -111,7 +111,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($assignment['grades']));
         $grade = $assignment['grades'][0];
         $this->assertEquals($student->id, $grade['userid']);
-        // Should be the last grade (not the first)
+        // Should be the last grade (not the first).
         $this->assertEquals(75, $grade['grade']);
     }
 
