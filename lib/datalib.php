@@ -177,14 +177,17 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
 
         } else {
             $context = context_course::instance($courseid);
-            $contextlists = get_related_contexts_string($context);
+
+            // We want to query both the current context and parent contexts.
+            list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
 
             $sql = "SELECT u.id, u.firstname, u.lastname, u.email
                       FROM {user} u
                       JOIN {role_assignments} ra ON ra.userid = u.id
-                     WHERE $select AND ra.contextid $contextlists
+                     WHERE $select AND ra.contextid $relatedctxsql
                            $except
                     $order";
+            $params = array_merge($params, $relatedctxparams);
             return $DB->get_records_sql($sql, $params);
         }
     }

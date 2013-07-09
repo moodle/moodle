@@ -394,24 +394,25 @@ class grade_report_grader extends grade_report {
             return;
         }
 
-        //limit to users with a gradeable role
+        // Limit to users with a gradeable role.
         list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
-        //limit to users with an active enrollment
+        // Limit to users with an active enrollment.
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
 
-        //fields we need from the user table
+        // Fields we need from the user table.
         $userfields = user_picture::fields('u', get_extra_user_fields($this->context));
 
-        $sortjoin = $sort = $params = null;
+        // We want to query both the current context and parent contexts.
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
 
-        //if the user has clicked one of the sort asc/desc arrows
+        // If the user has clicked one of the sort asc/desc arrows.
         if (is_numeric($this->sortitemid)) {
-            $params = array_merge(array('gitemid'=>$this->sortitemid), $gradebookrolesparams, $this->groupwheresql_params, $enrolledparams);
+            $params = array_merge(array('gitemid' => $this->sortitemid), $gradebookrolesparams, $this->groupwheresql_params, $enrolledparams,
+                $relatedctxparams);
 
             $sortjoin = "LEFT JOIN {grade_grades} g ON g.userid = u.id AND g.itemid = $this->sortitemid";
             $sort = "g.finalgrade $this->sortorder";
-
         } else {
             $sortjoin = '';
             switch($this->sortitemid) {
@@ -430,7 +431,7 @@ class grade_report_grader extends grade_report {
                     break;
             }
 
-            $params = array_merge($gradebookrolesparams, $this->groupwheresql_params, $enrolledparams);
+            $params = array_merge($gradebookrolesparams, $this->groupwheresql_params, $enrolledparams, $relatedctxparams);
         }
 
         $sql = "SELECT $userfields
@@ -442,12 +443,11 @@ class grade_report_grader extends grade_report {
                            SELECT DISTINCT ra.userid
                              FROM {role_assignments} ra
                             WHERE ra.roleid IN ($this->gradebookroles)
-                              AND ra.contextid " . get_related_contexts_string($this->context) . "
+                              AND ra.contextid $relatedctxsql
                        ) rainner ON rainner.userid = u.id
                    AND u.deleted = 0
                    $this->groupwheresql
               ORDER BY $sort";
-
         $studentsperpage = $this->get_students_per_page();
         $this->users = $DB->get_records_sql($sql, $params, $studentsperpage * $this->page, $studentsperpage);
 
@@ -1273,56 +1273,46 @@ class grade_report_grader extends grade_report {
      * @return array Array of rows for the right part of the report
      */
     public function get_right_avg_row($rows=array(), $grouponly=false) {
-        global $CFG, $USER, $DB, $OUTPUT;
+        global $USER, $DB, $OUTPUT;
 
         if (!$this->canviewhidden) {
-            // totals might be affected by hiding, if user can not see hidden grades the aggregations might be altered
-            // better not show them at all if user can not see all hidden grades
+            // Totals might be affected by hiding, if user can not see hidden grades the aggregations might be altered
+            // better not show them at all if user can not see all hidden grades.
             return $rows;
         }
-
-        $showaverages = $this->get_pref('showaverages');
-        $showaveragesgroup = $this->currentgroup && $showaverages;
 
         $averagesdisplaytype   = $this->get_pref('averagesdisplaytype');
         $averagesdecimalpoints = $this->get_pref('averagesdecimalpoints');
         $meanselection         = $this->get_pref('meanselection');
         $shownumberofgrades    = $this->get_pref('shownumberofgrades');
 
-        $avghtml = '';
-        $avgcssclass = 'avg';
-
         if ($grouponly) {
-            $straverage = get_string('groupavg', 'grades');
             $showaverages = $this->currentgroup && $this->get_pref('showaverages');
             $groupsql = $this->groupsql;
             $groupwheresql = $this->groupwheresql;
             $groupwheresqlparams = $this->groupwheresql_params;
-            $avgcssclass = 'groupavg';
         } else {
-            $straverage = get_string('overallaverage', 'grades');
             $showaverages = $this->get_pref('showaverages');
             $groupsql = "";
             $groupwheresql = "";
             $groupwheresqlparams = array();
         }
 
-        if ($shownumberofgrades) {
-            $straverage .= ' (' . get_string('submissions', 'grades') . ') ';
-        }
-
-        $totalcount = $this->get_numusers($grouponly);
-
-        //limit to users with a gradeable role
-        list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
-
-        //limit to users with an active enrollment
-        list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
-
         if ($showaverages) {
-            $params = array_merge(array('courseid'=>$this->courseid), $gradebookrolesparams, $enrolledparams, $groupwheresqlparams);
+            $totalcount = $this->get_numusers($grouponly);
 
-            // find sums of all grade items in course
+            // Limit to users with a gradeable role.
+            list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
+
+            // Limit to users with an active enrollment.
+            list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
+
+            // We want to query both the current context and parent contexts.
+            list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+
+            $params = array_merge(array('courseid' => $this->courseid), $gradebookrolesparams, $enrolledparams, $groupwheresqlparams, $relatedctxparams);
+
+            // Find sums of all grade items in course.
             $sql = "SELECT g.itemid, SUM(g.finalgrade) AS sum
                       FROM {grade_items} gi
                       JOIN {grade_grades} g ON g.itemid = gi.id
@@ -1332,7 +1322,7 @@ class grade_report_grader extends grade_report {
                                SELECT DISTINCT ra.userid
                                  FROM {role_assignments} ra
                                 WHERE ra.roleid $gradebookrolessql
-                                  AND ra.contextid " . get_related_contexts_string($this->context) . "
+                                  AND ra.contextid $relatedctxsql
                            ) rainner ON rainner.userid = u.id
                       $groupsql
                      WHERE gi.courseid = :courseid
@@ -1361,7 +1351,7 @@ class grade_report_grader extends grade_report {
                       $groupsql
                      WHERE gi.courseid = :courseid
                            AND ra.roleid $gradebookrolessql
-                           AND ra.contextid ".get_related_contexts_string($this->context)."
+                           AND ra.contextid $relatedctxsql
                            AND u.deleted = 0
                            AND g.id IS NULL
                            $groupwheresql
@@ -1398,8 +1388,6 @@ class grade_report_grader extends grade_report {
                     $sumarray[$item->id] += $ungradedcount * $item->grademin;
                     $meancount = $totalcount;
                 }
-
-                $decimalpoints = $item->get_decimals();
 
                 // Determine which display type to use for this average
                 if ($USER->gradeediting[$this->courseid]) {
