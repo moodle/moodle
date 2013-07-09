@@ -45,7 +45,7 @@ class unittest_executed extends \core\event\base {
     }
 
     public function get_url() {
-        return new moodle_url('/somepath/somefile.php', array('id'=>$this->data['extra']['sample']));
+        return new moodle_url('/somepath/somefile.php', array('id'=>$this->data['other']['sample']));
     }
 
     public function get_legacy_eventname() {
@@ -53,11 +53,11 @@ class unittest_executed extends \core\event\base {
     }
 
     public function get_legacy_eventdata() {
-        return array($this->data['courseid'], $this->data['extra']['sample']);
+        return array($this->data['courseid'], $this->data['other']['sample']);
     }
 
     public function get_legacy_logdata() {
-        return array($this->data['courseid'], 'core_unittest', 'view', 'unittest.php?id='.$this->data['extra']['sample']);
+        return array($this->data['courseid'], 'core_unittest', 'view', 'unittest.php?id='.$this->data['other']['sample']);
     }
 }
 
@@ -91,7 +91,7 @@ class unittest_observer {
         self::$event[] = $event;
         if ($event->nest) {
             self::$info[] = 'observe_all-nesting-'.$event->courseid;
-            unittest_executed::create(array('courseid'=>3, 'context'=>\context_system::instance(), 'extra'=>array('sample'=>666, 'xx'=>666)))->trigger();
+            unittest_executed::create(array('courseid'=>3, 'context'=>\context_system::instance(), 'other'=>array('sample'=>666, 'xx'=>666)))->trigger();
         } else {
             self::$info[] = 'observe_all-'.$event->courseid;
         }

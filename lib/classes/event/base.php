@@ -45,7 +45,7 @@ namespace core\event;
  * @property-read int $userid who did this?
  * @property-read int $courseid
  * @property-read int $relateduserid
- * @property-read mixed $extra array or scalar, can not contain objects
+ * @property-read mixed $other array or scalar, can not contain objects
  * @property-read int $timecreated
  */
 abstract class base {
@@ -79,7 +79,7 @@ abstract class base {
     /** @var array list of event properties */
     private static $fields = array(
         'eventname', 'component', 'action', 'object', 'objectid', 'crud', 'level', 'contextid',
-        'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'extra',
+        'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'other',
         'timecreated');
 
     /** @var array simple record cache */
@@ -98,7 +98,7 @@ abstract class base {
      * The optional data keys as:
      * 1/ objectid - the id of the object specified in class name
      * 2/ context - the context of this event
-     * 3/ extra - the extra data describing the event, can not contain objects
+     * 3/ other - the other data describing the event, can not contain objects
      * 4/ relateduserid - the id of user which is somehow related to this event
      *
      * @param array $data
@@ -139,7 +139,7 @@ abstract class base {
         $event->data['objectid'] = isset($data['objectid']) ? $data['objectid'] : null;
         $event->data['courseid'] = isset($data['courseid']) ? $data['courseid'] : null;
         $event->data['userid'] = isset($data['userid']) ? $data['userid'] : $USER->id;
-        $event->data['extra'] = isset($data['extra']) ? $data['extra'] : null;
+        $event->data['other'] = isset($data['other']) ? $data['other'] : null;
         $event->data['relateduserid'] = isset($data['relateduserid']) ? $data['relateduserid'] : null;
 
         $event->context = null;
@@ -171,7 +171,7 @@ abstract class base {
             $event->data['relateduserid'] = $event->context->instanceid;
         }
 
-        // Set static event data specific for child class, this should also validate extra data.
+        // Set static event data specific for child class, this should also validate other data.
         $event->init();
 
         // Warn developers if they do something wrong.
@@ -207,7 +207,7 @@ abstract class base {
      *
      * TODO: MDL-37658
      *
-     * Optionally validate $this->data['extra'].
+     * Optionally validate $this->data['other'].
      *
      * @return void
      */
@@ -397,9 +397,9 @@ abstract class base {
             if (self::$fields !== array_keys($this->data)) {
                 debugging('Number of event data fields must not be changed in event classes');
             }
-            $encoded = json_encode($this->data['extra']);
-            if ($encoded === false or $this->data['extra'] !== json_decode($encoded, true)) {
-                debugging('Extra event data must be compatible with json encoding');
+            $encoded = json_encode($this->data['other']);
+            if ($encoded === false or $this->data['other'] !== json_decode($encoded, true)) {
+                debugging('other event data must be compatible with json encoding');
             }
             if ($this->data['userid'] and !is_number($this->data['userid'])) {
                 debugging('Event property userid must be a number');
