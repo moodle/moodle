@@ -61,7 +61,7 @@ if ($action === 'delete') {
     //show confirmation
     echo $OUTPUT->header();
     $yesurl = new moodle_url($PAGE->url, array('roleid'=>$roleid, 'contextlevel'=>$contextlevel, 'action'=>'delete', 'confirm'=>1, 'sesskey'=>sesskey()));
-    $levelname = get_contextlevel_name($contextlevel);
+    $levelname = context_helper::get_level_name($contextlevel);
     $rolename = format_string($role->name);
     $message = get_string('confirmdelete', 'tool_unsuproles', array('level'=>$levelname, 'role'=>$rolename));
     echo $OUTPUT->confirm($message, $yesurl, $PAGE->url);
@@ -96,7 +96,7 @@ if (!$problems) {
     $roles = get_all_roles();
     $data = array();
     foreach ($problems as $problem) {
-        $levelname = get_contextlevel_name($problem->contextlevel);
+        $levelname = context_helper::get_level_name($problem->contextlevel);
         $rolename = role_get_name($roles[$problem->roleid]);
         //TODO: show list of users if count low
         $count = $problem->racount;

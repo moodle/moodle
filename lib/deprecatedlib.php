@@ -5093,3 +5093,16 @@ function context_instance_preload(stdClass $rec) {
     debugging('context_instance_preload() is deprecated, please use context_helper::preload_from_record() instead.', DEBUG_DEVELOPER);
     context_helper::preload_from_record($rec);
 }
+
+/**
+ * Returns context level name
+ *
+ * @deprecated since 2.2
+ * @see context_helper::get_level_name()
+ * @param integer $contextlevel $context->context level. One of the CONTEXT_... constants.
+ * @return string the name for this type of context.
+ */
+function get_contextlevel_name($contextlevel) {
+    debugging('get_contextlevel_name() is deprecated, please use context_helper::get_level_name() instead.', DEBUG_DEVELOPER);
+    return context_helper::get_level_name($contextlevel);
+}
