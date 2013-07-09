@@ -218,11 +218,10 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * @return mixed The data that was associated with the key, or false if the key did not exist.
      */
     public function get($key) {
-        $maxtime = cache::now() - $this->ttl;
-        if (array_key_exists($key, $this->store)) {
+        if (isset($this->store[$key])) {
             if ($this->ttl == 0) {
-                return $this->store[$key];
-            } else if ($this->store[$key][1] >= $maxtime) {
+                return $this->store[$key][0];
+            } else if ($this->store[$key][1] >= (cache::now() - $this->ttl)) {
                 return $this->store[$key][0];
             }
         }
@@ -240,12 +239,15 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function get_many($keys) {
         $return = array();
-        $maxtime = cache::now() - $this->ttl;
+        if ($this->ttl != 0) {
+            $maxtime = cache::now() - $this->ttl;
+        }
+
         foreach ($keys as $key) {
             $return[$key] = false;
-            if (array_key_exists($key, $this->store)) {
+            if (isset($this->store[$key])) {
                 if ($this->ttl == 0) {
-                    $return[$key] = $this->store[$key];
+                    $return[$key] = $this->store[$key][0];
                 } else if ($this->store[$key][1] >= $maxtime) {
                     $return[$key] = $this->store[$key][0];
                 }
@@ -263,7 +265,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function set($key, $data) {
         if ($this->ttl == 0) {
-            $this->store[$key] = $data;
+            $this->store[$key][0] = $data;
         } else {
             $this->store[$key] = array($data, cache::now());
         }
@@ -294,11 +296,10 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * @return bool
      */
     public function has($key) {
-        $maxtime = cache::now() - $this->ttl;
-        if (array_key_exists($key, $this->store)) {
+        if (isset($this->store[$key])) {
             if ($this->ttl == 0) {
                 return true;
-            } else if ($this->store[$key][1] >= $maxtime) {
+            } else if ($this->store[$key][1] >= (cache::now() - $this->ttl)) {
                 return true;
             }
         }
@@ -312,9 +313,12 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * @return bool
      */
     public function has_all(array $keys) {
-        $maxtime = cache::now() - $this->ttl;
+        if ($this->ttl != 0) {
+            $maxtime = cache::now() - $this->ttl;
+        }
+
         foreach ($keys as $key) {
-            if (!array_key_exists($key, $this->store)) {
+            if (!isset($this->store[$key])) {
                 return false;
             }
             if ($this->ttl != 0 && $this->store[$key][1] < $maxtime) {
@@ -331,9 +335,12 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * @return bool
      */
     public function has_any(array $keys) {
-        $maxtime = cache::now() - $this->ttl;
+        if ($this->ttl != 0) {
+            $maxtime = cache::now() - $this->ttl;
+        }
+
         foreach ($keys as $key) {
-            if (array_key_exists($key, $this->store) && ($this->ttl == 0 || $this->store[$key][1] >= $maxtime)) {
+            if (isset($this->store[$key]) && ($this->ttl == 0 || $this->store[$key][1] >= $maxtime)) {
                 return true;
             }
         }
