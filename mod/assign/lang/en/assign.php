@@ -308,6 +308,7 @@ $string['setmarkingworkflowstateforlog'] = 'Set marking workflow state : (id={$a
 $string['setmarkerallocationforlog'] = 'Set marking allocation : (id={$a->id}, fullname={$a->fullname}, marker={$a->marker}). ';
 $string['settings'] = 'Assignment settings';
 $string['showrecentsubmissions'] = 'Show recent submissions';
+$string['status'] = 'Status';
 $string['submissioncopiedtext'] = 'You have made a copy of your previous
 assignment submission for \'{$a->assignment}\'
 

@@ -260,11 +260,10 @@ class assign_grading_table extends table_sql implements renderable {
         // Submission status.
         if ($assignment->is_any_submission_plugin_enabled()) {
             $columns[] = 'status';
-            $headers[] = get_string('status');
+            $headers[] = get_string('status', 'assign');
         } else if ($this->assignment->get_instance()->markingworkflow) {
             $columns[] = 'workflowstatus';
-            $headers[] = get_string('status');
-
+            $headers[] = get_string('status', 'assign');
         }
 
         // Team submission columns.
