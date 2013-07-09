@@ -65,12 +65,12 @@ class course_enrolment_manager {
      * Limits the focus of the manager to users in specified group
      * @var int
      */
-    protected $groupfilter = '';
+    protected $groupfilter = 0;
     /**
      * Limits the focus of the manager to users who match status active/inactive
      * @var int
      */
-    protected $statusfilter = '';
+    protected $statusfilter = -1;
 
     /**
      * The total number of users enrolled in the course
@@ -172,7 +172,7 @@ class course_enrolment_manager {
                            FROM {user} u
                            JOIN {user_enrolments} ue ON (ue.userid = u.id  AND ue.enrolid $instancessql)
                            JOIN {enrol} e ON (e.id = ue.enrolid)
-                           LEFT JOIN {groups_members} gm ON u.id = gm.userid
+                      LEFT JOIN {groups_members} gm ON u.id = gm.userid
                           WHERE $filtersql";
             $this->totalusers = (int)$DB->count_records_sql($sqltotal, $params);
         }
@@ -298,15 +298,17 @@ class course_enrolment_manager {
                     AND (ue.timeend = 0 OR ue.timeend > :now2)";
             $now = round(time(), -2); // rounding helps caching in DB
             $params += array('enabled' => ENROL_INSTANCE_ENABLED,
-                            'active' => ENROL_USER_ACTIVE,
-                            'now1' => $now, 'now2' => $now);
+                             'active' => ENROL_USER_ACTIVE,
+                             'now1' => $now,
+                             'now2' => $now);
         } else if ($this->statusfilter === ENROL_USER_SUSPENDED) {
             $sql .= " AND ue.status = :inactive OR e.status = :disabled OR ue.timestart > :now1
                     OR (ue.timeend <> 0 AND ue.timeend < :now2)";
             $now = round(time(), -2); // rounding helps caching in DB
             $params += array('disabled' => ENROL_INSTANCE_DISABLED,
-                            'inactive' => ENROL_USER_SUSPENDED,
-                            'now1' => $now, 'now2' => $now);
+                             'inactive' => ENROL_USER_SUSPENDED,
+                             'now1' => $now,
+                             'now2' => $now);
         }
 
         return array($sql, $params);

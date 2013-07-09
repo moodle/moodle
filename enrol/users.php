@@ -33,7 +33,7 @@ $action  = optional_param('action', '', PARAM_ALPHANUMEXT);
 $filter  = optional_param('ifilter', 0, PARAM_INT);
 $search  = optional_param('search', '', PARAM_RAW);
 $role    = optional_param('role', 0, PARAM_INT);
-$fgroup   = optional_param('filtergroup', 0, PARAM_INT);
+$fgroup  = optional_param('filtergroup', 0, PARAM_INT);
 $status  = optional_param('status', -1, PARAM_INT);
 
 // When users reset the form, redirect back to first page without other params.
