@@ -70,6 +70,7 @@ if ($mform->is_cancelled()) {
 
     if ($data->id) {
         // store the files
+        $data->timemodified = time();
         $data = file_postupdate_standard_editor($data, 'content', $options, $context, 'mod_book', 'chapter', $data->id);
         $DB->update_record('book_chapters', $data);
         $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
