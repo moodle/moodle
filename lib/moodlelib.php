@@ -5230,7 +5230,7 @@ function reset_course_userdata($data) {
     $componentstr = get_string('roles');
 
     if (!empty($data->reset_roles_overrides)) {
-        $children = get_child_contexts($context);
+        $children = $context->get_child_contexts();
         foreach ($children as $child) {
             $DB->delete_records('role_capabilities', array('contextid'=>$child->id));
         }
@@ -5241,7 +5241,7 @@ function reset_course_userdata($data) {
     }
 
     if (!empty($data->reset_roles_local)) {
-        $children = get_child_contexts($context);
+        $children = $context->get_child_contexts();
         foreach ($children as $child) {
             role_unassign_all(array('contextid'=>$child->id));
         }

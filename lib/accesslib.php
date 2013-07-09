@@ -7231,27 +7231,6 @@ class context_block extends context {
 // then we will add error message and only after that we can remove the functions
 // completely.
 /**
- * Recursive function which, given a context, find all its children context ids.
- *
- * For course category contexts it will return immediate children only categories and courses.
- * It will NOT recurse into courses or child categories.
- * If you want to do that, call it on the returned courses/categories.
- *
- * When called for a course context, it will return the modules and blocks
- * displayed in the course page.
- *
- * If called on a user/course/module context it _will_ populate the cache with the appropriate
- * contexts ;-)
- *
- * @deprecated since 2.2, use $context->get_child_contexts() instead
- * @param context $context
- * @return array Array of child records
- */
-function get_child_contexts(context $context) {
-    return $context->get_child_contexts();
-}
-
-/**
  * Precreates all contexts including all parents
  *
  * @deprecated since 2.2

@@ -685,7 +685,7 @@ class comment {
         global $DB;
         $contexts = array();
         $contexts[] = $context->id;
-        $children = get_child_contexts($context);
+        $children = $context->get_child_contexts();
         foreach ($children as $c) {
             $contexts[] = $c->id;
         }

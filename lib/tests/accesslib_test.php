@@ -2363,8 +2363,10 @@ class accesslib_testcase extends advanced_testcase {
         }
 
         $children = get_child_contexts($systemcontext);
-        $this->resetDebugging();
+        // Using assertEquals here as assertSame fails for some reason...
+        $this->assertEquals($children, $systemcontext->get_child_contexts());
         $this->assertEquals(count($children), $DB->count_records('context')-1);
+        $this->resetDebugging();
         unset($children);
 
         // Make sure a debugging is thrown.
@@ -2378,6 +2380,8 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled('get_parent_contexts() is deprecated, please use $context->get_parent_context_ids() instead.', DEBUG_DEVELOPER);
         get_parent_contextid($context);
         $this->assertDebuggingCalled('get_parent_contextid() is deprecated, please use $context->get_parent_context() instead.', DEBUG_DEVELOPER);
+        get_child_contexts($frontpagecontext);
+        $this->assertDebuggingCalled('get_child_contexts() is deprecated, please use $context->get_child_contexts() instead.', DEBUG_DEVELOPER);
 
         $DB->delete_records('context', array('contextlevel'=>CONTEXT_BLOCK));
         create_contexts();
