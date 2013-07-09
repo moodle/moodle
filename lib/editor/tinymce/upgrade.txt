@@ -2,6 +2,10 @@ This files describes API changes in /lib/editor/tinymce/* - TinyMCE editor,
 information provided here is intended especially for developers.
 
 
+=== 2.6 ===
+
+* added a new plugin to toggle the 2nd and 3rd toolbars
+
 === 2.5 ===
 
 * update filter related code to use short filter names instead

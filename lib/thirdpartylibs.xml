@@ -308,4 +308,11 @@
     <version>2012.08.22-20-00</version>
     <licenseversion></licenseversion>
   </library>
+  <library>
+    <location>lib/editor/tinymce/plugins/pdw/tinymce</location>
+    <name>PDW Toolbar Toggle</name>
+    <license>MIT</license>
+    <version>1.2</version>
+    <licenseversion></licenseversion>
+  </library>
 </libraries>

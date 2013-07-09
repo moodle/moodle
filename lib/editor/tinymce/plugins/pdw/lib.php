@@ -17,21 +17,21 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Plugin for Moodle 'no link' button.
+ * Plugin for Moodle 'Toolbar Toggle' button.
  *
- * @package   tinymce_moodlenolink
- * @copyright 2012 The Open University
+ * @package   tinymce_pdw
+ * @copyright 2013 Jason Fowler
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tinymce_moodlenolink extends editor_tinymce_plugin {
-    /** @var array list of buttons defined by this plugin */
-    protected $buttons = array('moodlenolink');
-
+class tinymce_pdw extends editor_tinymce_plugin {
     protected function update_init_params(array &$params, context $context,
             array $options = null) {
 
-        // Add button after 'unlink' in advancedbuttons1.
-        $this->add_button_after($params, 1, 'moodlenolink', 'unlink');
+        // Add button before 'undo' in advancedbuttons1.
+        $this->add_button_before($params, 1, ' | ', '');
+        $this->add_button_before($params, 1, 'pdw_toggle', '');
+        $params['pdw_toggle_on'] = 1;
+        $params['pdw_toggle_toolbars'] = '2,3';
 
         // Add JS file, which uses default name.
         $this->add_js_plugin($params);
