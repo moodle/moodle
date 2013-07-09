@@ -614,13 +614,20 @@ abstract class restore_dbops {
                 } else {
                     self::set_backup_ids_record($restoreid, 'question_category', $category->id, $matchcat->id, $targetcontext->id);
                     $questions = self::restore_get_questions($restoreid, $category->id);
+
+                    // Collect all the questions for this category into memory so we only talk to the DB once.
+                    $questioncache = $DB->get_records_sql_menu("SELECT ".$DB->sql_concat('stamp', "' '", 'version').", id
+                                                                  FROM {question}
+                                                                 WHERE category = ?", array($matchcat->id));
+
                     foreach ($questions as $question) {
-                        $matchq = $DB->get_record('question', array(
-                                      'category' => $matchcat->id,
-                                      'stamp' => $question->stamp,
-                                      'version' => $question->version));
+                        if (isset($questioncache[$question->stamp." ".$question->version])) {
+                            $matchqid = $questioncache[$question->stamp." ".$question->version];
+                        } else {
+                            $matchqid = false;
+                        }
                         // 5a) No match, check if user can add q
-                        if (!$matchq) {
+                        if (!$matchqid) {
                             // 6a) User can, mark the q to be created
                             if ($canadd) {
                                 // Nothing to mark, newitemid means create
@@ -645,7 +652,7 @@ abstract class restore_dbops {
 
                         // 5b) Match, mark q to be mapped
                         } else {
-                            self::set_backup_ids_record($restoreid, 'question', $question->id, $matchq->id);
+                            self::set_backup_ids_record($restoreid, 'question', $question->id, $matchqid);
                         }
                     }
                 }
