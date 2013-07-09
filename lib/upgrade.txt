@@ -21,6 +21,7 @@ information provided here is intended especially for developers.
 * context_moved() is deprecated, please use context::update_moved().
 * context_instance_preload() is deprecated, please use context_helper::preload_from_record().
 * get_contextlevel_name() is deprecated, please use context_helper::get_level_name().
+* print_context_name() is deprecated, please use $context->get_context_name().
 
 === 2.5.1 ===
 

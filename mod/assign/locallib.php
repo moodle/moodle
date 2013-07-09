@@ -6460,7 +6460,7 @@ class assign_portfolio_caller extends portfolio_module_caller_base {
             } else if ($this->exporter->get('formatclass') == PORTFOLIO_FORMAT_LEAP2A) {
                 $leapwriter = $this->exporter->get('format')->leap2a_writer();
                 $entry = new portfolio_format_leap2a_entry($this->area . $this->cmid,
-                                                           print_context_name($context),
+                                                           $context->get_context_name(),
                                                            'resource',
                                                            $html);
 
@@ -6509,7 +6509,7 @@ class assign_portfolio_caller extends portfolio_module_caller_base {
 
                 // If we have multiple files, they should be grouped together into a folder.
                 $entry = new portfolio_format_leap2a_entry($baseid . 'group',
-                                                           print_context_name($context),
+                                                           $context->get_context_name(),
                                                            'selection');
                 $leapwriter->add_entry($entry);
                 $leapwriter->make_selection($entry, $entryids, 'Folder');

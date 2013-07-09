@@ -7303,21 +7303,6 @@ function delete_context($contextlevel, $instanceid, $deleterecord = true) {
 }
 
 /**
- * Prints human readable context identifier.
- *
- * @deprecated since 2.2
- * @param context $context the context.
- * @param boolean $withprefix whether to prefix the name of the context with the
- *      type of context, e.g. User, Course, Forum, etc.
- * @param boolean $short whether to user the short name of the thing. Only applies
- *      to course contexts
- * @return string the human readable context name.
- */
-function print_context_name(context $context, $withprefix = true, $short = false) {
-    return $context->get_context_name($withprefix, $short);
-}
-
-/**
  * Get a URL for a context, if there is a natural one. For example, for
  * CONTEXT_COURSE, this is the course page. For CONTEXT_USER it is the
  * user profile page.

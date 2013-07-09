@@ -2469,6 +2469,7 @@ class accesslib_testcase extends advanced_testcase {
 
         $context = context_course::instance($testcourses[2]);
         $name = print_context_name($context);
+        $this->assertDebuggingCalled('print_context_name() is deprecated, please use $context->get_context_name() instead.', DEBUG_DEVELOPER);
         $this->assertFalse(empty($name));
 
         $url = get_context_url($coursecontext);

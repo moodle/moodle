@@ -4474,7 +4474,7 @@ function blog_get_context_url($context=null) {
             break;
         case CONTEXT_MODULE:
             $filterparam = 'modid';
-            $strlevel = print_context_name($context);
+            $strlevel = $context->get_context_name();
             break;
         case CONTEXT_USER:
             $filterparam = 'userid';
@@ -5105,4 +5105,21 @@ function context_instance_preload(stdClass $rec) {
 function get_contextlevel_name($contextlevel) {
     debugging('get_contextlevel_name() is deprecated, please use context_helper::get_level_name() instead.', DEBUG_DEVELOPER);
     return context_helper::get_level_name($contextlevel);
+}
+
+/**
+ * Prints human readable context identifier.
+ *
+ * @deprecated since 2.2
+ * @see context::get_context_name()
+ * @param context $context the context.
+ * @param boolean $withprefix whether to prefix the name of the context with the
+ *      type of context, e.g. User, Course, Forum, etc.
+ * @param boolean $short whether to user the short name of the thing. Only applies
+ *      to course contexts
+ * @return string the human readable context name.
+ */
+function print_context_name(context $context, $withprefix = true, $short = false) {
+    debugging('print_context_name() is deprecated, please use $context->get_context_name() instead.', DEBUG_DEVELOPER);
+    return $context->get_context_name($withprefix, $short);
 }
