@@ -4986,3 +4986,59 @@ function get_child_contexts(context $context) {
     debugging('get_child_contexts() is deprecated, please use $context->get_child_contexts() instead.', DEBUG_DEVELOPER);
     return $context->get_child_contexts();
 }
+
+/**
+ * Precreates all contexts including all parents.
+ *
+ * @see context_helper::create_instances()
+ * @deprecated since 2.2
+ * @param int $contextlevel empty means all
+ * @param bool $buildpaths update paths and depths
+ * @return void
+ */
+function create_contexts($contextlevel = null, $buildpaths = true) {
+    debugging('create_contexts() is deprecated, please use context_helper::create_instances() instead.', DEBUG_DEVELOPER);
+    context_helper::create_instances($contextlevel, $buildpaths);
+}
+
+/**
+ * Remove stale context records.
+ *
+ * @see context_helper::cleanup_instances()
+ * @deprecated since 2.2
+ * @return bool
+ */
+function cleanup_contexts() {
+    debugging('cleanup_contexts() is deprecated, please use context_helper::cleanup_instances() instead.', DEBUG_DEVELOPER);
+    context_helper::cleanup_instances();
+    return true;
+}
+
+/**
+ * Populate context.path and context.depth where missing.
+ *
+ * @see context_helper::build_all_paths()
+ * @deprecated since 2.2
+ * @param bool $force force a complete rebuild of the path and depth fields, defaults to false
+ * @return void
+ */
+function build_context_path($force = false) {
+    debugging('build_context_path() is deprecated, please use context_helper::build_all_paths() instead.', DEBUG_DEVELOPER);
+    context_helper::build_all_paths($force);
+}
+
+/**
+ * Rebuild all related context depth and path caches.
+ *
+ * @see context::reset_paths()
+ * @deprecated since 2.2
+ * @param array $fixcontexts array of contexts, strongtyped
+ * @return void
+ */
+function rebuild_contexts(array $fixcontexts) {
+    debugging('rebuild_contexts() is deprecated, please use $context->reset_paths(true) instead.', DEBUG_DEVELOPER);
+    foreach ($fixcontexts as $fixcontext) {
+        $fixcontext->reset_paths(false);
+    }
+    context_helper::build_all_paths(false);
+}

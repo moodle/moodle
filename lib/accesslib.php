@@ -7231,54 +7231,6 @@ class context_block extends context {
 // then we will add error message and only after that we can remove the functions
 // completely.
 /**
- * Precreates all contexts including all parents
- *
- * @deprecated since 2.2
- * @param int $contextlevel empty means all
- * @param bool $buildpaths update paths and depths
- * @return void
- */
-function create_contexts($contextlevel = null, $buildpaths = true) {
-    context_helper::create_instances($contextlevel, $buildpaths);
-}
-
-/**
- * Remove stale context records
- *
- * @deprecated since 2.2, use context_helper::cleanup_instances() instead
- * @return bool
- */
-function cleanup_contexts() {
-    context_helper::cleanup_instances();
-    return true;
-}
-
-/**
- * Populate context.path and context.depth where missing.
- *
- * @deprecated since 2.2, use context_helper::build_all_paths() instead
- * @param bool $force force a complete rebuild of the path and depth fields, defaults to false
- * @return void
- */
-function build_context_path($force = false) {
-    context_helper::build_all_paths($force);
-}
-
-/**
- * Rebuild all related context depth and path caches
- *
- * @deprecated since 2.2
- * @param array $fixcontexts array of contexts, strongtyped
- * @return void
- */
-function rebuild_contexts(array $fixcontexts) {
-    foreach ($fixcontexts as $fixcontext) {
-        $fixcontext->reset_paths(false);
-    }
-    context_helper::build_all_paths(false);
-}
-
-/**
  * Preloads all contexts relating to a course: course, modules. Block contexts
  * are no longer loaded here. The contexts for all the blocks on the current
  * page are now efficiently loaded by {@link block_manager::load_blocks()}.

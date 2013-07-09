@@ -12,6 +12,10 @@ information provided here is intended especially for developers.
 * get_parent_contexts() is deprecated, please use $context->get_parent_context_ids().
 * get_parent_contextid() is deprecated, please use $context->get_parent_context().
 * get_child_contexts() is deprecated, please use $context->get_child_contexts().
+* create_contexts() is deprecated, please use context_helper::create_instances().
+* cleanup_contexts() is deprecated, please use context_helper::cleanup_instances().
+* build_context_path() is deprecated, please use context_helper::build_all_paths().
+* rebuild_contexts() is deprecated, please use $context->reset_paths().
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
 
 === 2.5.1 ===
