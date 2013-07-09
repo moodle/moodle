@@ -15,160 +15,95 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * For a given capability, show what permission it has for every role, and
- * everywhere that it is overridden.
+ * For a given capability, show what permission it has for every role, and everywhere that it is overridden.
  *
- * @package    tool
- * @subpackage capability
+ * @package    tool_capability
  * @copyright  2008 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(__FILE__) . '/../../../config.php');
+require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/capability/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-// Check permissions.
-require_login();
-$systemcontext = context_system::instance();
-require_capability('moodle/role:manage', $systemcontext);
-
 // Get URL parameters.
-$capability = optional_param('capability', '', PARAM_CAPABILITY);
-$roleids = optional_param_array('roles', array('0'), PARAM_INT);
+$systemcontext = context_system::instance();
+$contextid = optional_param('context', $systemcontext->id, PARAM_INT);
 
-// Clean the passed in list of role ids. If 'All' selected as an option, or
-// if none were selected, do all roles.
-$allroles = role_fix_names(get_all_roles());
-$cleanedroleids = array();
-foreach ($roleids as $roleid) {
-    if ($roleid == 0) {
-        $cleanedroleids = array_keys($allroles);
-        break;
-    }
-    if (array_key_exists($roleid, $allroles)) {
-        $cleanedroleids[] = $roleid;
-    }
-}
-if (empty($cleanedroleids)) {
-    $cleanedroleids = array_keys($allroles);
-}
-
-// Include the required JavaScript.
-$PAGE->requires->js_init_call('M.tool_capability.init', array(get_string('search')));
-
-// Log.
-add_to_log(SITEID, "admin", "tool capability", "tool/capability/index.php?capability=$capability", $capability);
+// Check permissions.
+list($context, $course, $cm) = get_context_info_array($contextid);
+require_login($course, false, $cm);
+require_capability('moodle/role:manage', $context);
 
 // Print the header.
 admin_externalpage_setup('toolcapability');
-echo $OUTPUT->header();
 
-// Prepare the list of capabilities to choose from
-$allcapabilities = fetch_context_capabilities($systemcontext);
+// Prepare the list of capabilities to choose from.
 $capabilitychoices = array();
-foreach ($allcapabilities as $cap) {
+foreach ($context->get_capabilities() as $cap) {
     $capabilitychoices[$cap->name] = $cap->name . ': ' . get_capability_string($cap->name);
 }
 
-// Prepare the list of roles to choose from
+$allroles = role_fix_names(get_all_roles($context));
+// Prepare the list of roles to choose from.
 $rolechoices = array('0' => get_string('all'));
 foreach ($allroles as $role) {
     $rolechoices[$role->id] = $role->localname;
 }
-if (count($cleanedroleids) == count($allroles)) {
-    // Select 'All', rather than each role individually.
-    $selectedroleids = array('0');
-} else {
-    $selectedroleids = $cleanedroleids;
+
+$form = new tool_capability_settings_form(null, array(
+    'capabilities' => $capabilitychoices,
+    'roles' => $rolechoices
+));
+$PAGE->requires->yui_module(
+    'moodle-tool_capability-search',
+    'M.tool_capability.init_capability_search',
+    array(array('strsearch' => get_string('search')))
+);
+
+// Log.
+$capabilities = array();
+$rolestoshow = array();
+$roleids = array('0');
+$cleanedroleids = array();
+if ($data = $form->get_data()) {
+
+    $roleids = array();
+    if (!empty($data->roles)) {
+        $roleids = $data->roles;
+    }
+
+    $capabilities = array();
+    if (!empty($data->capability)) {
+        $capabilities = $data->capability;
+    }
+
+    if (in_array('0', $roleids)) {
+        $rolestoshow = $allroles;
+    } else {
+        $cleanedroleids = array_intersect(array_keys($allroles), $roleids);
+        if (count($cleanedroleids) === 0) {
+            $rolestoshow = $allroles;
+        } else {
+            foreach ($cleanedroleids as $id) {
+                $rolestoshow[$id] = $allroles[$id];
+            }
+        }
+    }
 }
 
-// Print the settings form.
-echo $OUTPUT->box_start('generalbox boxwidthwide boxaligncenter');
-echo '<form method="get" action="" id="settingsform"><div>';
-echo $OUTPUT->heading(get_string('reportsettings', 'tool_capability'));
-echo '<p id="intro">', get_string('intro', 'tool_capability') , '</p>';
-echo '<p><label for="menucapability"> ' . get_string('capabilitylabel', 'tool_capability') . '</label></p>';
-echo  html_writer::select($capabilitychoices, 'capability', $capability, array(''=>'choose'), array('size'=>10));
-echo '<p><label for="menuroles"> ' . get_string('roleslabel', 'tool_capability') . '</label></p>';
-echo  html_writer::select($rolechoices, 'roles[]', $selectedroleids, false, array('size'=>10, 'multiple'=>'multiple'));
-echo '<p><input type="submit" id="settingssubmit" value="' . get_string('getreport', 'tool_capability') . '" /></p>';
-echo '</div></form>';
-echo $OUTPUT->box_end();
+add_to_log(SITEID, "admin", "tool capability", "tool/capability/index.php", count($capabilities));
+
+$renderer = $PAGE->get_renderer('tool_capability');
+
+echo $OUTPUT->header();
+
+$form->display();
 
 // If we have a capability, generate the report.
-if ($capability) {
-
-    // Work out the bits needed for the SQL WHERE clauses.
-    $params = array($capability);
-    $sqlroletest = '';
-    if (count($cleanedroleids) != count($allroles)) {
-        list($sqlroletest, $roleparams) = $DB->get_in_or_equal($cleanedroleids);
-        $params = array_merge($params, $roleparams);
-        $sqlroletest = 'AND roleid ' . $sqlroletest;
-    }
-
-    // Get all the role_capabilities rows for this capability - that is, all
-    // role definitions, and all role overrides.
-    $rolecaps = $DB->get_records_sql("
-            SELECT id, roleid, contextid, permission
-            FROM {role_capabilities}
-            WHERE capability = ? $sqlroletest", $params);
-
-    // In order to display a nice tree of contexts, we need to get all the
-    // ancestors of all the contexts in the query we just did.
-    $relevantpaths = $DB->get_records_sql_menu("
-            SELECT DISTINCT con.path, 1
-            FROM {context} con JOIN {role_capabilities} rc ON rc.contextid = con.id
-            WHERE capability = ? $sqlroletest", $params);
-    $requiredcontexts = array($systemcontext->id);
-    foreach ($relevantpaths as $path => $notused) {
-        $requiredcontexts = array_merge($requiredcontexts, explode('/', trim($path, '/')));
-    }
-    $requiredcontexts = array_unique($requiredcontexts);
-
-    // Now load those contexts.
-    list($sqlcontexttest, $contextparams) = $DB->get_in_or_equal($requiredcontexts);
-    $contexts = get_sorted_contexts('ctx.id ' . $sqlcontexttest, $contextparams);
-
-    // Prepare some empty arrays to hold the data we are about to compute.
-    foreach ($contexts as $conid => $con) {
-        $contexts[$conid]->children = array();
-        $contexts[$conid]->rolecapabilities = array();
-    }
-
-    // Put the contexts into a tree structure.
-    foreach ($contexts as $conid => $con) {
-        $context = context::instance_by_id($conid);
-        $parentcontextid = get_parent_contextid($context);
-        if ($parentcontextid) {
-            $contexts[$parentcontextid]->children[] = $conid;
-        }
-    }
-
-    // Put the role capabilities into the context tree.
-    foreach ($rolecaps as $rolecap) {
-        $contexts[$rolecap->contextid]->rolecapabilities[$rolecap->roleid] = $rolecap->permission;
-    }
-
-    // Fill in any missing rolecaps for the system context.
-    foreach ($cleanedroleids as $roleid) {
-        if (!isset($contexts[$systemcontext->id]->rolecapabilities[$roleid])) {
-            $contexts[$systemcontext->id]->rolecapabilities[$roleid] = CAP_INHERIT;
-        }
-    }
-
-    // Print the report heading.
-    echo $OUTPUT->heading(get_string('reportforcapability', 'tool_capability', get_capability_string($capability)), 2, 'main', 'report');
-    if (count($cleanedroleids) != count($allroles)) {
-        $rolenames = array();
-        foreach ($cleanedroleids as $roleid) {
-            $rolenames[] = $allroles[$roleid]->localname;
-        }
-        echo '<p>', get_string('forroles', 'tool_capability', implode(', ', $rolenames)), '</p>';
-    }
-
-    // Now, recursively print the contexts, and the role information.
-    print_report_tree($systemcontext->id, $contexts, $allroles);
+if (count($capabilities) && count($rolestoshow)) {
+    /* @var tool_capability_renderer $renderer */
+    echo $renderer->capability_comparison_table($capabilities, $context->id, $rolestoshow);
 }
 
 // Footer.
