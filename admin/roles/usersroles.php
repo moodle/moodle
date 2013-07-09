@@ -99,9 +99,9 @@ foreach ($contexts as $conid => $con) {
 // Put the contexts into a tree structure.
 foreach ($contexts as $conid => $con) {
     $context = context::instance_by_id($conid);
-    $parentcontextid = get_parent_contextid($context);
-    if ($parentcontextid) {
-        $contexts[$parentcontextid]->children[] = $conid;
+    $parentcontext = $context->get_parent_context();
+    if ($parentcontext) {
+        $contexts[$parentcontext->id]->children[] = $conid;
     }
 }
 

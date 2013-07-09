@@ -10,6 +10,7 @@ information provided here is intended especially for developers.
 * load_temp_role() and remove_temp_roles() can not be used any more.
 * get_system_context() is deprecated, please use context_system::instance().
 * get_parent_contexts() is deprecated, please use $context->get_parent_context_ids().
+* get_parent_contextid() is deprecated, please use $context->get_parent_context().
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
 
 === 2.5.1 ===

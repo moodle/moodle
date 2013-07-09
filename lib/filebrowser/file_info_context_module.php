@@ -352,8 +352,7 @@ class file_info_context_module extends file_info {
      * @return file_info|null file_info or null for root
      */
     public function get_parent() {
-        $pcid = get_parent_contextid($this->context);
-        $parent = context::instance_by_id($pcid, IGNORE_MISSING);
+        $parent = $this->context->get_parent_context();
         return $this->browser->get_file_info($parent);
     }
 }

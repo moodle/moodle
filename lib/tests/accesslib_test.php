@@ -2376,6 +2376,8 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled('get_system_context() is deprecated, please use context_system::instance() instead.', DEBUG_DEVELOPER);
         get_parent_contexts($context);
         $this->assertDebuggingCalled('get_parent_contexts() is deprecated, please use $context->get_parent_context_ids() instead.', DEBUG_DEVELOPER);
+        get_parent_contextid($context);
+        $this->assertDebuggingCalled('get_parent_contextid() is deprecated, please use $context->get_parent_context() instead.', DEBUG_DEVELOPER);
 
         $DB->delete_records('context', array('contextlevel'=>CONTEXT_BLOCK));
         create_contexts();
