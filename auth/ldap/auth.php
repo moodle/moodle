@@ -61,6 +61,15 @@ if (!defined('AUTH_NTLM_VALID_DOMAINNAME')) {
 if (!defined('AUTH_NTLM_DEFAULT_FORMAT')) {
     define('AUTH_NTLM_DEFAULT_FORMAT', '%domain%\\%username%');
 }
+if (!defined('AUTH_NTLM_FASTPATH_ATTEMPT')) {
+    define('AUTH_NTLM_FASTPATH_ATTEMPT', 0);
+}
+if (!defined('AUTH_NTLM_FASTPATH_YESFORM')) {
+    define('AUTH_NTLM_FASTPATH_YESFORM', 1);
+}
+if (!defined('AUTH_NTLM_FASTPATH_YESATTEMPT')) {
+    define('AUTH_NTLM_FASTPATH_YESATTEMPT', 2);
+}
 
 // Allows us to retrieve a diagnostic message in case of LDAP operation error
 if (!defined('LDAP_OPT_DIAGNOSTIC_MESSAGE')) {
@@ -1626,17 +1635,17 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
 
             // Now start the whole NTLM machinery.
-            if(!empty($this->config->ntlmsso_ie_fastpath)) {
-                // Shortcut for IE browsers: skip the attempt page
+            if($this->config->ntlmsso_ie_fastpath == AUTH_NTLM_FASTPATH_YESATTEMPT ||
+                $this->config->ntlmsso_ie_fastpath == AUTH_NTLM_FASTPATH_YESFORM) {
+
                 if(check_browser_version('MSIE')) {
                     $sesskey = sesskey();
                     redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_magic.php?sesskey='.$sesskey);
-                } else {
+                } else if ($this->config->ntlmsso_ie_fastpath == AUTH_NTLM_FASTPATH_YESFORM) {
                     redirect($CFG->httpswwwroot.'/login/index.php?authldap_skipntlmsso=1');
                 }
-            } else {
-                redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_attempt.php');
             }
+            redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_attempt.php');
         }
 
         // No NTLM SSO, Use the normal login page instead.
