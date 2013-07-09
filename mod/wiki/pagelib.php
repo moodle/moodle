@@ -2169,7 +2169,11 @@ class page_wiki_prettyview extends page_wiki {
         global $CFG, $PAGE, $OUTPUT;
         $PAGE->set_pagelayout('embedded');
         echo $OUTPUT->header();
-
+        // Print dialog link.
+        $printtext = get_string('print', 'wiki');
+        $printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'printicon');
+        $printiconlink = html_writer::link('#', $printtext, $printlinkatt);
+        echo html_writer::tag('div', $printiconlink, array('class' => 'displayprinticon'));
         echo '<h1 id="wiki_printable_title">' . format_string($this->title) . '</h1>';
     }
 

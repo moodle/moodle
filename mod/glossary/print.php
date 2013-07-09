@@ -166,10 +166,24 @@ $entriesshown = 0;
 $currentpivot = '';
 
 $site = $DB->get_record("course", array("id"=>1));
-echo '<p style="text-align:right"><span style="font-size:0.75em">' . userdate(time()) . '</span></p>';
-echo get_string("site") . ': <strong>' . format_string($site->fullname) . '</strong><br />';
-echo get_string("course") . ': <strong>' . format_string($course->fullname) . ' ('. format_string($course->shortname) . ')</strong><br />';
-echo get_string("modulename","glossary") . ': <strong>' . format_string($glossary->name, true) . '</strong>';
+
+// Print dialog link.
+$printtext = get_string('print', 'glossary');
+$printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'glossary_no_print printicon');
+$printiconlink = html_writer::link('#', $printtext, $printlinkatt);
+echo  html_writer::tag('div', $printiconlink, array('class' => 'displayprinticon'));
+
+echo html_writer::tag('div', userdate(time()), array('class' => 'displaydate'));
+
+$sitename = get_string("site") . ': <span class="strong">' . format_string($site->fullname) . '</span>';
+echo html_writer::tag('div', $sitename, array('class' => 'sitename'));
+
+$coursename = get_string("course") . ': <span class="strong">' . format_string($course->fullname) . ' ('. format_string($course->shortname) . ')</span>';
+echo html_writer::tag('div', $coursename, array('class' => 'coursename'));
+
+$modname = get_string("modulename","glossary") . ': <span class="strong">' . format_string($glossary->name, true) . '</span>';
+echo html_writer::tag('div', $modname, array('class' => 'modname'));
+
 if ( $allentries ) {
     foreach ($allentries as $entry) {
 
@@ -195,8 +209,7 @@ if ( $allentries ) {
                     $user = $DB->get_record("user", array("id"=>$entry->userid));
                     $pivottoshow = fullname($user);
                 }
-
-                echo "<p class='mdl-align'><strong>".clean_text($pivottoshow)."</strong></p>" ;
+                echo html_writer::tag('div', clean_text($pivottoshow), array('class' => 'mdl-align strong'));
             }
         }
 

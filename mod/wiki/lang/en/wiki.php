@@ -178,6 +178,7 @@ $string['peerreview'] = 'Peer review';
 $string['pluginadministration'] = 'Wiki administration';
 $string['pluginname'] = 'Wiki';
 $string['prettyprint'] = 'Printer-friendly version';
+$string['print'] = 'Print';
 $string['previewwarning'] = 'This is a preview. Changes have not been saved yet.';
 $string['rated']='You rated this page as a {$a}';
 $string['rating']='Rating';
