@@ -1578,6 +1578,7 @@ function scorm_format_toc_for_treeview($user, $scorm, $scoes, $usertracks, $cmid
     $result = new stdClass();
     $result->prerequisites = true;
     $result->incomplete = true;
+    $result->toc = '';
 
     if (!$children) {
         $attemptsmade = scorm_get_attempt_count($user->id, $scorm);
