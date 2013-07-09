@@ -520,9 +520,6 @@ abstract class base {
     /**
      * Magic getter for read only access.
      *
-     * Note: we must not allow modification of data from outside,
-     *       after trigger() the data MUST NOT CHANGE!!!
-     *
      * @param string $name
      * @return mixed
      */
@@ -532,5 +529,30 @@ abstract class base {
         }
 
         debugging("Accessing non-existent event property '$name'");
+    }
+
+    /**
+     * Magic setter.
+     *
+     * Note: we must not allow modification of data from outside,
+     *       after trigger() the data MUST NOT CHANGE!!!
+     *
+     * @param string $name
+     * @param mixed $value
+     *
+     * @throws \coding_exception
+     */
+    public function __set($name, $value) {
+        throw new \coding_exception('Event properties must not be modified.');
+    }
+
+    /**
+     * Is data property set?
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name) {
+        return isset($this->data[$name]);
     }
 }

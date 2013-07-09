@@ -29,6 +29,52 @@ require_once(__DIR__.'/fixtures/event_fixtures.php');
 
 class core_event_testcase extends advanced_testcase {
 
+    public function test_event_properties() {
+        global $USER;
+
+        $system = \context_system::instance();
+        $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>$system, 'objectid'=>5, 'extra'=>array('sample'=>null, 'xx'=>10)));
+
+        $this->assertSame('\core_tests\event\unittest_executed', $event->eventname);
+        $this->assertSame('core_tests', $event->component);
+        $this->assertSame('executed', $event->action);
+        $this->assertSame('unittest', $event->object);
+        $this->assertSame(5, $event->objectid);
+        $this->assertSame('u', $event->crud);
+        $this->assertSame(10, $event->level);
+
+        $this->assertSame($system, $event->get_context());
+        $this->assertSame($system->id, $event->contextid);
+        $this->assertSame($system->contextlevel, $event->contextlevel);
+        $this->assertSame($system->instanceid, $event->contextinstanceid);
+
+        $this->assertSame($USER->id, $event->userid);
+        $this->assertSame(1, $event->courseid);
+
+        $this->assertNull($event->relateduserid);
+        $this->assertFalse(isset($event->relateduserid));
+
+        $this->assertSame(array('sample'=>null, 'xx'=>10), $event->extra);
+        $this->assertTrue(isset($event->extra['xx']));
+        $this->assertFalse(isset($event->extra['sample']));
+
+        $this->assertLessThanOrEqual(time(), $event->timecreated);
+
+        try {
+            $event->courseid = 2;
+            $this->fail('Exception expected on event modification');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        try {
+            $event->xxxx = 1;
+            $this->fail('Exception expected on event modification');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+    }
+
     public function test_observers_parsing() {
 
         $observers = array(
@@ -536,4 +582,4 @@ class core_event_testcase extends advanced_testcase {
         $this->assertEquals(1, $user->id);
         $this->assertSame('guest', $user->username);
     }
-    }
+}
