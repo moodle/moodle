@@ -205,6 +205,8 @@ abstract class base {
      *  1/ crud - letter [crud]
      *  2/ level - number 1...100
      *
+     * TODO: MDL-37658
+     *
      * Optionally validate $this->data['extra'].
      *
      * @return void
@@ -215,6 +217,8 @@ abstract class base {
      * Returns localised general event name.
      *
      * Override in subclass, we can not make it static and abstract at the same time.
+     *
+     * TODO: MDL-37658
      *
      * @return string|\lang_string
      */
@@ -229,6 +233,8 @@ abstract class base {
 
     /**
      * Returns localised description of what happened.
+     *
+     * TODO: MDL-37658
      *
      * @return string|\lang_string
      */
@@ -327,6 +333,8 @@ abstract class base {
 
     /**
      * Return auxiliary data that was stored in logs.
+     *
+     * TODO: MDL-37658
      *
      * @return array the format is standardised by logging API
      */

@@ -27,6 +27,7 @@ namespace core\event;
 class role_unassigned extends base {
     protected function init() {
         $this->data['crud'] = 'd';
+        // TODO: MDL-37658 set level
         $this->data['level'] = 50;
     }
 
@@ -36,7 +37,7 @@ class role_unassigned extends base {
      * @return string|\lang_string
      */
     public static function get_name() {
-        //TODO: localise
+        //TODO: MDL-37658 localise
         return 'Role unassigned';
     }
 
@@ -46,7 +47,7 @@ class role_unassigned extends base {
      * @return string|\lang_string
      */
     public function get_description() {
-        //TODO: localise
+        //TODO: MDL-37658 localise
         return 'Role '.$this->objectid.'was unassigned from user '.$this->relateduserid.' in context '.$this->contextid;
     }
 
