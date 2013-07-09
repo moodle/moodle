@@ -38,7 +38,7 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
      * @return void.
      */
     public function definition () {
-        global $CFG, $COURSE, $DB;
+        global $CFG;
 
         $mform   = $this->_form;
         $data    = $this->_customdata['data'];
@@ -134,9 +134,6 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->setDefault('defaults[showreports]', $courseconfig->showreports);
 
         if (!empty($CFG->legacyfilesinnewcourses)) {
-            if (empty($course->legacyfiles)) {
-                $choices = array('0' => get_string('no'), '2' => get_string('yes'));
-            }
             $mform->addElement('select', 'defaults[legacyfiles]', get_string('courselegacyfiles'), $choices);
             $mform->addHelpButton('defaults[legacyfiles]', 'courselegacyfiles');
             if (!isset($courseconfig->legacyfiles)) {
@@ -198,8 +195,6 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
      * @return array $errors - form errors
      */
     public function validation($data, $files) {
-        global $DB;
-
         $errors = parent::validation($data, $files);
         $columns = $this->_customdata['columns'];
         $optype  = $data['options']['mode'];

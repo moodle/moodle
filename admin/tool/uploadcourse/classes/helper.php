@@ -390,7 +390,6 @@ class tool_uploadcourse_helper {
      * @return int category ID.
      */
     public static function resolve_category($data, &$errors = array()) {
-        global $DB;
         $catid = null;
 
         if (!empty($data['category'])) {

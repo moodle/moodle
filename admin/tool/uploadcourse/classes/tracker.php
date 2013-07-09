@@ -107,8 +107,6 @@ class tool_uploadcourse_tracker {
      * @return void
      */
     public function results($total, $created, $updated, $deleted, $errors) {
-        global $OUTPUT;
-
         if ($this->outputmode == self::NO_OUTPUT) {
             return;
         }
