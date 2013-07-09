@@ -140,8 +140,6 @@ class assign {
      *                      otherwise this class will load one from the context as required.
      */
     public function __construct($coursemodulecontext, $coursemodule, $course) {
-        global $PAGE, $CFG;
-
         $this->context = $coursemodulecontext;
         $this->coursemodule = $coursemodule;
         $this->course = $course;
