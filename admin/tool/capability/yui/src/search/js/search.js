@@ -120,6 +120,7 @@ SEARCH.prototype = {
         for (capability in this.selectoptions) {
             if (capability.indexOf(search) >= 0) {
                 matching++;
+                last = this.selectoptions[capability];
                 this.select.append(this.selectoptions[capability]);
             }
         }

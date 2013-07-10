@@ -122,6 +122,7 @@ SEARCH.prototype = {
         for (capability in this.selectoptions) {
             if (capability.indexOf(search) >= 0) {
                 matching++;
+                last = this.selectoptions[capability];
                 this.select.append(this.selectoptions[capability]);
             }
         }
@@ -159,5 +160,6 @@ M.tool_capability = M.tool_capability || {};
 M.tool_capability.init_capability_search = function(options) {
     new SEARCH(options);
 };
+
 
 }, '@VERSION@', {"requires": ["base", "node"]});
