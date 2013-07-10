@@ -559,8 +559,13 @@ class question_bank_creator_name_column extends question_bank_column_base {
     protected function display_content($question, $rowclasses) {
         if (!empty($question->creatorfirstname) && !empty($question->creatorlastname)) {
             $u = new stdClass();
-            $u->firstname = $question->creatorfirstname;
-            $u->lastname = $question->creatorlastname;
+            $allnames = get_all_user_name_fields();
+            foreach ($allnames as $allname) {
+                $tempname = 'creator' . $allname;
+                if (isset($question->$tempname)) {
+                    $u->$allname = $question->$tempname;
+                }
+            }
             echo fullname($u);
         }
     }
@@ -570,7 +575,12 @@ class question_bank_creator_name_column extends question_bank_column_base {
     }
 
     public function get_required_fields() {
-        return array('uc.firstname AS creatorfirstname', 'uc.lastname AS creatorlastname');
+        $allnames = get_all_user_name_fields();
+        $requiredfields = array();
+        foreach ($allnames as $allname) {
+            $requiredfields[] = 'uc.' . $allname . ' AS creator' . $allname;
+        }
+        return $requiredfields;
     }
 
     public function is_sortable() {
@@ -600,8 +610,13 @@ class question_bank_modifier_name_column extends question_bank_column_base {
     protected function display_content($question, $rowclasses) {
         if (!empty($question->modifierfirstname) && !empty($question->modifierlastname)) {
             $u = new stdClass();
-            $u->firstname = $question->modifierfirstname;
-            $u->lastname = $question->modifierlastname;
+            $allnames = get_all_user_name_fields();
+            foreach ($allnames as $allname) {
+                $tempname = 'modifier' . $allname;
+                if (isset($question->$tempname)) {
+                    $u->$allname = $question->$tempname;
+                }
+            }
             echo fullname($u);
         }
     }
@@ -611,7 +626,12 @@ class question_bank_modifier_name_column extends question_bank_column_base {
     }
 
     public function get_required_fields() {
-        return array('um.firstname AS modifierfirstname', 'um.lastname AS modifierlastname');
+        $allnames = get_all_user_name_fields();
+        $requiredfields = array();
+        foreach ($allnames as $allname) {
+            $requiredfields[] = 'um.' . $allname . ' AS modifier' . $allname;
+        }
+        return $requiredfields;
     }
 
     public function is_sortable() {
@@ -1387,7 +1407,6 @@ class question_bank_view {
         if ($totalnumber == 0) {
             return;
         }
-
         $questions = $this->load_page_questions($page, $perpage);
 
         echo '<div class="categorypagingbarcontainer">';
