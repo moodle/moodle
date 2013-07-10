@@ -302,8 +302,8 @@ class course_enrolment_manager {
                              'now1' => $now,
                              'now2' => $now);
         } else if ($this->statusfilter === ENROL_USER_SUSPENDED) {
-            $sql .= " AND ue.status = :inactive OR e.status = :disabled OR ue.timestart > :now1
-                    OR (ue.timeend <> 0 AND ue.timeend < :now2)";
+            $sql .= " AND (ue.status = :inactive OR e.status = :disabled OR ue.timestart > :now1
+                    OR (ue.timeend <> 0 AND ue.timeend < :now2))";
             $now = round(time(), -2); // rounding helps caching in DB
             $params += array('disabled' => ENROL_INSTANCE_DISABLED,
                              'inactive' => ENROL_USER_SUSPENDED,
