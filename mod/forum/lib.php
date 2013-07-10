@@ -2684,7 +2684,11 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
         $umfields = "";
         $umtable  = "";
     } else {
-        $umfields = ", um.firstname AS umfirstname, um.lastname AS umlastname";
+        $umfields = '';
+        $umnames = get_all_user_name_fields();
+        foreach ($umnames as $umname) {
+            $umfields .= ', um.' . $umname . ' AS um' . $umname;
+        }
         $umtable  = " LEFT JOIN {user} um ON (d.usermodified = um.id)";
     }
 
@@ -3810,7 +3814,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     $usermodified->id        = $post->usermodified;
     foreach (get_all_user_name_fields() as $addname) {
         $temp = 'um' . $addname;
-        $usermodified->$addname  = $post->$temp;
+        $usermodified->$addname = $post->$temp;
     }
     echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
          fullname($usermodified).'</a><br />';
