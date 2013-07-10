@@ -6,30 +6,71 @@ information provided here is intended especially for developers.
 * Use new core_component::* plugin listing and component normalisation methods.
 * Use core_text::* instead of textlib:: and also core_collator::* instead of collatorlib::*.
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
-* get_context_instance() is deprecated, please use use context_xxxx::instance().
-* get_context_instance_by_id() is deprecated, please use context::instance_by_id($id).
-* load_temp_role() and remove_temp_roles() can not be used any more.
-* get_system_context() is deprecated, please use context_system::instance().
-* get_parent_contexts() is deprecated, please use $context->get_parent_context_ids().
-* get_parent_contextid() is deprecated, please use $context->get_parent_context().
-* get_child_contexts() is deprecated, please use $context->get_child_contexts().
-* create_contexts() is deprecated, please use context_helper::create_instances().
-* cleanup_contexts() is deprecated, please use context_helper::cleanup_instances().
-* build_context_path() is deprecated, please use context_helper::build_all_paths().
-* rebuild_contexts() is deprecated, please use $context->reset_paths().
-* preload_course_contexts() is deprecated, please use context_helper::preload_course().
-* context_moved() is deprecated, please use context::update_moved().
-* fetch_context_capabilities() is deprecated, please use $context->get_capabilities().
-* context_instance_preload() is deprecated, please use context_helper::preload_from_record().
-* get_contextlevel_name() is deprecated, please use context_helper::get_level_name().
-* print_context_name() is deprecated, please use $context->get_context_name().
-* mark_context_dirty($context->path) is deprecated, please use $context->mark_dirty().
-* delete_context() is deprecated, please use $context->delete_content() or context_helper::delete_instance().
-* get_context_url() is deprecated, please use $context->get_url().
-* get_course_context() is deprecated, please use $context->get_course_context().
-* get_user_courses_bycap() is deprecated, please use enrol_get_users_courses().
-* get_role_context_caps() is deprecated, it is really slow. Don't use it.
-* get_courseid_from_context() is deprecated, please use $context->get_course_context(false).
+
+DEPRECATIONS:
+Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
+and will be removed in a future release (target: 2.8), a summary follows:
+
+Accesslib:
+    * get_context_instance() is deprecated, please use use context_xxxx::instance().
+    * get_context_instance_by_id() is deprecated, please use context::instance_by_id($id).
+    * load_temp_role() and remove_temp_roles() can not be used any more.
+    * get_system_context() is deprecated, please use context_system::instance().
+    * get_parent_contexts() is deprecated, please use $context->get_parent_context_ids().
+    * get_parent_contextid() is deprecated, please use $context->get_parent_context().
+    * get_child_contexts() is deprecated, please use $context->get_child_contexts().
+    * create_contexts() is deprecated, please use context_helper::create_instances().
+    * cleanup_contexts() is deprecated, please use context_helper::cleanup_instances().
+    * build_context_path() is deprecated, please use context_helper::build_all_paths().
+    * rebuild_contexts() is deprecated, please use $context->reset_paths().
+    * preload_course_contexts() is deprecated, please use context_helper::preload_course().
+    * context_moved() is deprecated, please use context::update_moved().
+    * context_instance_preload() is deprecated, please use context_helper::preload_from_record().
+    * get_contextlevel_name() is deprecated, please use context_helper::get_level_name().
+    * print_context_name() is deprecated, please use $context->get_context_name().
+    * mark_context_dirty($context->path) is deprecated, please use $context->mark_dirty().
+    * delete_context() is deprecated, please use $context->delete_content() or context_helper::delete_instance().
+    * get_context_url() is deprecated, please use $context->get_url().
+    * get_course_context() is deprecated, please use $context->get_course_context().
+    * get_user_courses_bycap() is deprecated, please use enrol_get_users_courses().
+    * get_role_context_caps() is deprecated, it is really slow. Don't use it.
+    * get_courseid_from_context() is deprecated, please use $context->get_course_context(false).
+
+Enrollment:
+    * get_course_participants() is deprecated, use get_enrolled_users() instead.
+    * is_course_participant() is deprecated, use is_enrolled() instead.
+
+Output:
+    * current_theme() is deprecated, please use $PAGE->theme->name instead
+    * skip_main_destination() is deprecated, please use $OUTPUT->skip_link_target() instead.
+    * print_container() is deprecated. Please use $OUTPUT->container() instead.
+    * print_container_start() is deprecated. Please use $OUTPUT->container_start() instead.
+    * print_container_end() is deprecated. Please use $OUTPUT->container_end() instead.
+    * print_continue() is deprecated. Please use $OUTPUT->continue_button() instead.
+    * print_header() is deprecated. Please use $PAGE methods instead.
+    * print_header_simple() is deprecated. Please use $PAGE methods instead.
+    * print_side_block() is deprecated, please use $OUTPUT->block() instead.
+    * print_arrow() is deprecated. Please use $OUTPUT->arrow() instead.
+    * print_scale_menu_helpbutton() is deprecated. Please use $OUTPUT->help_icon_scale($courseid, $scale) instead.
+    * print_checkbox() is deprecated. Please use html_writer::checkbox() instead.
+
+Navigation:
+    * print_navigation() is deprecated, please update use $OUTPUT->navbar() instead.
+    * build_navigation() is deprecated, please use $PAGE->navbar methods instead.
+    * navmenu() is deprecated, it is no longer relevant with global navigation.
+
+Calendar:
+    * add_event() is deprecated, please use calendar_event::create() instead.
+    * update_event() is deprecated, please use calendar_event->update() instead.
+    * delete_event() is deprecated, please use calendar_event->delete() instead.
+    * hide_event() is deprecated, please use calendar_event->toggle_visibility(false) instead.
+    * show_event() is deprecated, please use calendar_event->toggle_visibility(true) instead.
+
+Misc:
+    * filter_text() is deprecated, use format_text(), format_string() etc instead.
+    * httpsrequired() is deprecated use $PAGE->https_required() instead.
+    * detect_munged_arguments() is deprecated, please use clean_param(,PARAM_FILE) instead.
+    * mygroupid() is deprecated, please use groups_get_all_groups() instead.
 
 === 2.5.1 ===
 
