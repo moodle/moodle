@@ -546,6 +546,8 @@ class grouplib_testcase extends advanced_testcase {
         $this->assertFalse($result); // Requesting all groups.
         $result = groups_group_visible(0, $course, null, $user3->id);
         $this->assertTrue($result); // Requesting all groups.
+        $result = groups_group_visible($group1->id, $course, null, $user3->id);
+        $this->assertTrue($result); // Make sure user with access to all groups can see any group.
 
         $cm->groupmode = NOGROUPS;
         $result = groups_group_visible($group1->id, $course, $cm, $user1->id);
@@ -556,6 +558,8 @@ class grouplib_testcase extends advanced_testcase {
         $this->assertFalse($result); // Cm with separate groups.
         $result = groups_group_visible($group1->id, $course, $cm, $user2->id);
         $this->assertTrue($result); // Cm with separate groups.
+        $result = groups_group_visible($group1->id, $course, $cm, $user3->id);
+        $this->assertTrue($result); // Make sure user with access to all groups can see any group.
 
         $cm->groupmode = VISIBLEGROUPS;
         $result = groups_group_visible($group1->id, $course, $cm, $user1->id);

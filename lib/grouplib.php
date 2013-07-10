@@ -835,17 +835,17 @@ function groups_group_visible($groupid, $course, $cm = null, $userid = null) {
         return true;
     }
 
-    // Group mode is separate, check if user can see requested group.
-    $groups = empty($cm) ? groups_get_all_groups($course->id, $userid) : groups_get_activity_allowed_groups($cm, $userid);
-    if (array_key_exists($groupid, $groups)) {
-        // User can see the group.
+    $context = empty($cm) ? context_course::instance($course->id) : context_module::instance($cm->id);
+    if (has_capability('moodle/site:accessallgroups', $context, $userid)) {
+        // User can see everything. Groupid = 0 is handled here as well.
         return true;
-    }
-
-    // User wants to see all groups.
-    if ($groupid == 0) {
-        $context = empty($cm) ? context_course::instance($course->id) : context_module::instance($cm->id);
-        return has_capability('moodle/site:accessallgroups', $context, $userid);
+    } else if ($groupid != 0) {
+        // Group mode is separate, and user doesn't have access all groups capability. Check if user can see requested group.
+        $groups = empty($cm) ? groups_get_all_groups($course->id, $userid) : groups_get_activity_allowed_groups($cm, $userid);
+        if (array_key_exists($groupid, $groups)) {
+            // User can see the group.
+            return true;
+        }
     }
     return false;
 }
