@@ -262,7 +262,8 @@ class grade_report_grader extends grade_report {
                             }
                         }
                         if ($errorstr) {
-                            $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');
+                            $userfields = 'id, ' . get_all_user_name_fields(true);
+                            $user = $DB->get_record('user', array('id' => $userid), $userfields);
                             $gradestr = new stdClass();
                             $gradestr->username = fullname($user);
                             $gradestr->itemname = $gradeitem->get_name();
