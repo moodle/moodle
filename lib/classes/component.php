@@ -155,16 +155,21 @@ class core_component {
                 unlink($cachefile);
             }
 
+            // Permissions might not be setup properly in installers.
+            $dirpermissions = !isset($CFG->directorypermissions) ? 02777 : $CFG->directorypermissions;
+            $filepermissions = !isset($CFG->filepermissions) ? ($dirpermissions & 0666) : $CFG->filepermissions;
+
+            clearstatcache();
             $cachedir = dirname($cachefile);
             if (!is_dir($cachedir)) {
-                mkdir($cachedir, $CFG->directorypermissions, true);
+                mkdir($cachedir, $dirpermissions, true);
             }
 
             if ($fp = @fopen($cachefile.'.tmp', 'xb')) {
                 fwrite($fp, $content);
                 fclose($fp);
                 @rename($cachefile.'.tmp', $cachefile);
-                @chmod($cachefile, $CFG->filepermissions);
+                @chmod($cachefile, $filepermissions);
             }
             @unlink($cachefile.'.tmp'); // Just in case anything fails (race condition).
             self::invalidate_opcode_php_cache($cachefile);
