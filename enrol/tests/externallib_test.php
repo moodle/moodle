@@ -155,4 +155,66 @@ class core_enrol_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($expecteduserlist['users']));
 
     }
+
+    /**
+     * Test get_course_enrolment_methods
+     */
+    public function test_get_course_enrolment_methods() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Get enrolment plugins.
+        $selfplugin = enrol_get_plugin('self');
+        $this->assertNotEmpty($selfplugin);
+        $manualplugin = enrol_get_plugin('manual');
+        $this->assertNotEmpty($manualplugin);
+
+        $studentrole = $DB->get_record('role', array('shortname'=>'student'));
+        $this->assertNotEmpty($studentrole);
+
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        // Add enrolment methods for course.
+        $instanceid1 = $selfplugin->add_instance($course1, array('status' => ENROL_INSTANCE_ENABLED,
+                                                                'name' => 'Test instance 1',
+                                                                'customint6' => 1,
+                                                                'roleid' => $studentrole->id));
+        $instanceid2 = $selfplugin->add_instance($course1, array('status' => ENROL_INSTANCE_DISABLED,
+                                                                'name' => 'Test instance 2',
+                                                                'roleid' => $studentrole->id));
+
+        $instanceid3 = $manualplugin->add_instance($course1, array('status' => ENROL_INSTANCE_ENABLED,
+                                                                'name' => 'Test instance 3'));
+
+        $enrolmentmethods = $DB->get_records('enrol', array('courseid' => $course1->id, 'status' => ENROL_INSTANCE_ENABLED));
+        $this->assertCount(2, $enrolmentmethods);
+
+        // Check if information is returned.
+        $enrolmentmethods = core_enrol_external::get_course_enrolment_methods($course1->id);
+        // Enrolment information is currently returned by self enrolment plugin, so count == 1.
+        // This should be changed as we implement get_enrol_info() for other enrolment plugins.
+        $this->assertCount(1, $enrolmentmethods);
+
+        $enrolmentmethod = $enrolmentmethods[0];
+        $this->assertEquals($course1->id, $enrolmentmethod['courseid']);
+        $this->assertEquals('self', $enrolmentmethod['type']);
+        $this->assertTrue($enrolmentmethod['status']);
+        $this->assertFalse(isset($enrolmentmethod['wsfunction']));
+
+        $instanceid4 = $selfplugin->add_instance($course2, array('status' => ENROL_INSTANCE_ENABLED,
+                                                                'name' => 'Test instance 4',
+                                                                'roleid' => $studentrole->id,
+                                                                'customint6' => 1,
+                                                                'password' => 'test'));
+        $enrolmentmethods = core_enrol_external::get_course_enrolment_methods($course2->id);
+        $this->assertCount(1, $enrolmentmethods);
+
+        $enrolmentmethod = $enrolmentmethods[0];
+        $this->assertEquals($course2->id, $enrolmentmethod['courseid']);
+        $this->assertEquals('self', $enrolmentmethod['type']);
+        $this->assertTrue($enrolmentmethod['status']);
+        $this->assertEquals('enrol_self_get_instance_info', $enrolmentmethod['wsfunction']);
+    }
 }

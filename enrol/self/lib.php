@@ -335,6 +335,10 @@ class enrol_self_plugin extends enrol_plugin {
             $instanceinfo->requiredparam->enrolpassword = get_string('password', 'enrol_self');
         }
 
+        // If enrolment is possible and password is required then return ws function name to get more information.
+        if ((true === $instanceinfo->status) && $instance->password) {
+            $instanceinfo->wsfunction = 'enrol_self_get_instance_info';
+        }
         return $instanceinfo;
     }
 

@@ -485,6 +485,14 @@ $functions = array(
         'capabilities'=> 'moodle/course:viewparticipants',
     ),
 
+    'core_enrol_get_course_enrolment_methods' => array(
+        'classname'   => 'core_enrol_external',
+        'methodname'  => 'get_course_enrolment_methods',
+        'classpath'   => 'enrol/externallib.php',
+        'description' => 'Get the list of course enrolment methods',
+        'type'        => 'read',
+    ),
+
     // === Role related functions ===
 
     'moodle_role_assign' => array(

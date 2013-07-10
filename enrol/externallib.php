@@ -561,6 +561,64 @@ class core_enrol_external extends external_api {
         );
     }
 
+    /**
+     * Returns description of get_course_enrolment_methods() parameters
+     *
+     * @return external_function_parameters
+     */
+    public static function get_course_enrolment_methods_parameters() {
+        return new external_function_parameters(
+            array(
+                'courseid' => new external_value(PARAM_INT, 'Course id')
+            )
+        );
+    }
+
+    /**
+     * Get list of active course enrolment methods for current user.
+     *
+     * @param int $courseid
+     * @return array of course enrolment methods
+     */
+    public static function get_course_enrolment_methods($courseid) {
+
+        $params = self::validate_parameters(self::get_course_enrolment_methods_parameters(), array('courseid' => $courseid));
+
+        $coursecontext = context_course::instance($params['courseid']);
+        $categorycontext = $coursecontext->get_parent_context();
+        self::validate_context($categorycontext);
+
+        $result = array();
+        $enrolinstances = enrol_get_instances($params['courseid'], true);
+        foreach ($enrolinstances as $enrolinstance) {
+            if ($enrolplugin = enrol_get_plugin($enrolinstance->enrol)) {
+                if ($instanceinfo = $enrolplugin->get_enrol_info($enrolinstance)) {
+                    $result[] = (array) $instanceinfo;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Returns description of get_course_enrolment_methods() result value
+     *
+     * @return external_description
+     */
+    public static function get_course_enrolment_methods_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'id of course enrolment instance'),
+                    'courseid' => new external_value(PARAM_INT, 'id of course'),
+                    'type' => new external_value(PARAM_PLUGIN, 'type of enrolment plugin'),
+                    'name' => new external_value(PARAM_RAW, 'name of enrolment plugin'),
+                    'status' => new external_value(PARAM_RAW, 'status of enrolment plugin'),
+                    'wsfunction' => new external_value(PARAM_ALPHANUMEXT, 'webservice function to get more information', VALUE_OPTIONAL),
+                )
+            )
+        );
+    }
 }
 
 /**
