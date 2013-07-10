@@ -400,7 +400,7 @@ class grade_report_grader extends grade_report {
         }
         $this->setup_users();
 
-        //limit to users with a gradeable role
+        // Limit to users with a gradeable role.
         list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
         // Limit to users with an active enrollment.
@@ -414,7 +414,8 @@ class grade_report_grader extends grade_report {
 
         // If the user has clicked one of the sort asc/desc arrows.
         if (is_numeric($this->sortitemid)) {
-            $params = array_merge(array('gitemid'=>$this->sortitemid), $gradebookrolesparams, $this->userwheresql_params, $this->groupwheresql_params, $enrolledparams);
+            $params = array_merge(array('gitemid' => $this->sortitemid), $gradebookrolesparams, $this->userwheresql_params, 
+                                        $this->groupwheresql_params, $enrolledparams, $relatedctxparams); 
 
             $sortjoin = "LEFT JOIN {grade_grades} g ON g.userid = u.id AND g.itemid = $this->sortitemid";
             $sort = "g.finalgrade $this->sortorder";

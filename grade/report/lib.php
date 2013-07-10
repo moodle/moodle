@@ -138,7 +138,7 @@ abstract class grade_report {
      */
     protected $groupwheresql_params = array();
 
-//// USER VARIABLES (including SQL)
+    // USER VARIABLES (including SQL).
 
     /**
      * An SQL constraint to append to the queries used by this object to build the report.
@@ -357,16 +357,17 @@ abstract class grade_report {
     }
 
     public function setup_users() {
-        global $SESSION;
+        global $USER;
+        
         $this->userwheresql = "";
         $this->userwheresql_params = array();
-        if (isset($SESSION->graderreportsifirst) && !empty($SESSION->graderreportsifirst)) {
+        if (isset($USER->filterfirstname) && !empty($USER->filterfirstname)) {
             $this->userwheresql .= ' AND u.firstname ILIKE  :firstname ';
-            $this->userwheresql_params['firstname'] = $SESSION->graderreportsifirst.'%';
+            $this->userwheresql_params['firstname'] = $USER->filterfirstname.'%';
         }
-        if (isset($SESSION->graderreportsilast) && !empty($SESSION->graderreportsilast)) {
+        if (isset($USER->filtersurname) && !empty($USER->filtersurname)) {
             $this->userwheresql .= ' AND u.lastname ILIKE  :lastname ';
-            $this->userwheresql_params['lastname'] = $SESSION->graderreportsilast.'%';
+            $this->userwheresql_params['lastname'] = $USER->filtersurname.'%';
         }
     }
 

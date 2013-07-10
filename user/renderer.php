@@ -82,7 +82,6 @@ class core_user_renderer extends plugin_renderer_base {
      * Prints user search utility that can search user by first initial of firstname and/or first initial of lastname
      * Prints a header with a title and the number of users found within that subset
      * @param string $url the url to return to, complete with any parameters needed for the return
-     * @param string $hiddenfields any extra hidden fields needed by the selection process or to comlete the reset process
      * @param string $firstinitial the first initial of the firstname
      * @param string $lastinitial the first initial of the lastname
      * @param int $usercount the amount of users meeting the search criteria
@@ -90,7 +89,7 @@ class core_user_renderer extends plugin_renderer_base {
      * @param string $heading heading of the subset being searched, default is All Participants
      * @return string html output
      */
-    public function user_search($url, $hiddenfields, $firstinitial, $lastinitial, $usercount, $totalcount, $heading = null) {
+    public function user_search($url, $firstinitial, $lastinitial, $usercount, $totalcount, $heading = null) {
         global $OUTPUT;
 
         $strall = get_string('all');
@@ -103,18 +102,10 @@ class core_user_renderer extends plugin_renderer_base {
         $content = html_writer::start_tag('form', array('action' => new moodle_url($url)));
         $content .= html_writer::start_tag('div');
 
-        // Search utility heading
+        // Search utility heading.
         $content .= $OUTPUT->heading($heading.get_string('labelsep', 'langconfig').$usercount.'/'.$totalcount, 3);
 
-        // Hidden fields
-        $content .= html_writer::input_hidden_params($url);
-        $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => get_string('reset')));
-        if (isset($hiddenfields)) {
-	    foreach ($hiddenfields as $key => $value) {
-                $content .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $key, 'value' => $value)); 
-            }
-        }
-        // Bar of first initials
+        // Bar of first initials.
         $content .= html_writer::start_tag('div', array('class' => 'initialbar firstinitial'));
         $content .= html_writer::label(get_string('firstname').' : ', null);
 
@@ -150,12 +141,6 @@ class core_user_renderer extends plugin_renderer_base {
                 $content .= html_writer::link($url.'&silast='.$letter, $letter);
             }
         }
-        $content .= html_writer::end_tag('div');
-
-        // Reset button
-        $content .= html_writer::tag('div', '&nbsp');
-        $content .= html_writer::start_tag('div', array('class' => 'mdl-align'));
-        $content .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('reset')));
         $content .= html_writer::end_tag('div');
 
         $content .= html_writer::end_tag('div');

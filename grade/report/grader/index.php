@@ -40,22 +40,16 @@ $target        = optional_param('target', 0, PARAM_ALPHANUM);
 $toggle        = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
-$reset                = optional_param('Reset', NULL, PARAM_ALPHA);
 $graderreportsifirst  = optional_param('sifirst', NULL, PARAM_ALPHA);
 $graderreportsilast   = optional_param('silast', NULL, PARAM_ALPHA);
 
-if (isset($reset)) {
-    $SESSION->graderreportsifirst = '';
-    $SESSION->graderreportsilast = '';
-} else {
-    // the report object is recreated each time, save search information to session for future use
-    if (isset($graderreportsifirst)) {
-        $SESSION->graderreportsifirst = $graderreportsifirst;
-    }  
-    if (isset($graderreportsilast)) {
-        $SESSION->graderreportsilast = $graderreportsilast;
-    } 
-}	
+// The report object is recreated each time, save search information to USER object for future use.
+if (isset($graderreportsifirst)) {
+    $USER->filterfirstname = $graderreportsifirst; 
+}  
+if (isset($graderreportsilast)) {
+    $USER->filtersurname = $graderreportsilast;
+} 
 
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 
@@ -159,12 +153,11 @@ echo $report->group_selector;
 
 // User search
 $url = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-$hiddenfields = array('group' => 0);
-$firstinitial = isset($SESSION->graderreportsifirst) ? $SESSION->graderreportsifirst : '';
-$lastinitial  = isset($SESSION->graderreportsilast) ? $SESSION->graderreportsilast : '';
+$firstinitial = isset($USER->filterfirstname) ? $USER->filterfirstname : '';
+$lastinitial  = isset($USER->filtersurname) ? $USER->filtersurname : '';
 $totalusers = $report->get_numusers(true, false);
 $renderer = $PAGE->get_renderer('core_user');
-echo $renderer->user_search($url, $hiddenfields, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);
+echo $renderer->user_search($url, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);
 
 //show warnings if any
 foreach($warnings as $warning) {
