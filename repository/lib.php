@@ -2163,10 +2163,11 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Get settings for repository instance
+     * Get settings for repository instance.
      *
-     * @param string $config
-     * @return array Settings
+     * @param string $config a specific option to get.
+     * @return mixed returns an array of options. If $config is not empty, then it returns that option,
+     *               or null if the option does not exist.
      */
     public function get_option($config = '') {
         global $DB;
@@ -2175,13 +2176,12 @@ abstract class repository implements cacheable_object {
             $entries = $DB->get_records('repository_instance_config', array('instanceid' => $this->id));
             $cache->set('ops:'. $this->id, $entries);
         }
+
         $ret = array();
-        if (empty($entries)) {
-            return $ret;
-        }
         foreach($entries as $entry) {
             $ret[$entry->name] = $entry->value;
         }
+
         if (!empty($config)) {
             if (isset($ret[$config])) {
                 return $ret[$config];

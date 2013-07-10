@@ -3,6 +3,11 @@ information provided here is intended especially for developers. Full
 details of the repository API are available on Moodle docs:
 http://docs.moodle.org/dev/Repository_API
 
+=== 2.6 ===
+
+* get_option() now always return null when the first parameter ($config) is not empty, and
+  no value was found for this $config. Previously this could sometimes return an empty array().
+
 === 2.5 ===
 
 * repository::append_suffix() has been deprecated, use repository::get_unused_filename() if you need
