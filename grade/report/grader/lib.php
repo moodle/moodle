@@ -226,6 +226,10 @@ class grade_report_grader extends grade_report {
                         $changedgrades = true;
 
                     } else if ($datatype === 'feedback') {
+                        // If quick grading is on, feedback needs to be compared without line breaks.
+                        if ($this->get_pref('quickgrading')) {
+                            $oldvalue->feedback = preg_replace("/\r\n|\r|\n/", "", $oldvalue->feedback);
+                        }
                         if (($oldvalue->feedback === $postedvalue) or ($oldvalue->feedback === NULL and empty($postedvalue))) {
                             continue;
                         }
