@@ -98,7 +98,7 @@ class tool_uploadcourse_course {
         'groupmode', 'groupmodeforce', 'groupmodeforce', 'enablecompletion');
 
     /** @var array fields required on course creation. */
-    static protected $mandatoryfields = array('fullname', 'summary', 'category');
+    static protected $mandatoryfields = array('fullname', 'category');
 
     /** @var array fields which are considered as options. */
     static protected $optionfields = array('delete' => false, 'rename' => null, 'backupfile' => null,
