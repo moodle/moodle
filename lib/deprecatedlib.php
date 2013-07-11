@@ -4217,3 +4217,48 @@ function get_user_courses_bycap($userid, $cap, $accessdata_ignored, $doanything_
 
     return $courses;
 }
+
+/**
+ * This is really slow!!! do not use above course context level
+ *
+ * @deprecated since Moodle 2.2
+ * @param int $roleid
+ * @param context $context
+ * @return array
+ */
+function get_role_context_caps($roleid, context $context) {
+    global $DB;
+    debugging('get_role_context_caps() is deprecated, it is really slow. Don\'t use it.', DEBUG_DEVELOPER);
+
+    // This is really slow!!!! - do not use above course context level.
+    $result = array();
+    $result[$context->id] = array();
+
+    // First emulate the parent context capabilities merging into context.
+    $searchcontexts = array_reverse($context->get_parent_context_ids(true));
+    foreach ($searchcontexts as $cid) {
+        if ($capabilities = $DB->get_records('role_capabilities', array('roleid'=>$roleid, 'contextid'=>$cid))) {
+            foreach ($capabilities as $cap) {
+                if (!array_key_exists($cap->capability, $result[$context->id])) {
+                    $result[$context->id][$cap->capability] = 0;
+                }
+                $result[$context->id][$cap->capability] += $cap->permission;
+            }
+        }
+    }
+
+    // Now go through the contexts below given context.
+    $searchcontexts = array_keys($context->get_child_contexts());
+    foreach ($searchcontexts as $cid) {
+        if ($capabilities = $DB->get_records('role_capabilities', array('roleid'=>$roleid, 'contextid'=>$cid))) {
+            foreach ($capabilities as $cap) {
+                if (!array_key_exists($cap->contextid, $result)) {
+                    $result[$cap->contextid] = array();
+                }
+                $result[$cap->contextid][$cap->capability] = $cap->permission;
+            }
+        }
+    }
+
+    return $result;
+}
