@@ -152,7 +152,7 @@ abstract class restore_dbops {
         $problems = array(); // To store warnings/errors
 
         // Get loaded roles from backup_ids
-        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'role'), '', 'itemid');
+        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'role'), '', 'itemid, info');
         foreach ($rs as $recrole) {
             // If the rolemappings->modified flag is set, that means that we are coming from
             // manually modified mappings (by UI), so accept those mappings an put them to backup_ids
@@ -163,13 +163,12 @@ abstract class restore_dbops {
             // Else, we haven't any info coming from UI, let's calculate the mappings, matching
             // in multiple ways and checking permissions. Note mapping to 0 means "skip"
             } else {
-                $role = (object)self::get_backup_ids_record($restoreid, 'role', $recrole->itemid)->info;
+                $role = (object)backup_controller_dbops::decode_backup_temp_info($recrole->info);
                 $match = self::get_best_assignable_role($role, $courseid, $userid, $samesite);
                 // Send match to backup_ids
                 self::set_backup_ids_record($restoreid, 'role', $recrole->itemid, $match);
                 // Build the rolemappings element for controller
                 unset($role->id);
-                unset($role->nameincourse);
                 unset($role->nameincourse);
                 $role->targetroleid = $match;
                 $rolemappings->mappings[$recrole->itemid] = $role;
@@ -666,20 +665,21 @@ abstract class restore_dbops {
         global $DB;
 
         $results = array();
-        $qcats = $DB->get_records_sql("SELECT itemid, parentitemid AS contextid
+        $qcats = $DB->get_recordset_sql("SELECT itemid, parentitemid AS contextid, info
                                          FROM {backup_ids_temp}
                                        WHERE backupid = ?
                                          AND itemname = 'question_category'", array($restoreid));
         foreach ($qcats as $qcat) {
             // If this qcat context haven't been acummulated yet, do that
             if (!isset($results[$qcat->contextid])) {
-                $temprec = self::get_backup_ids_record($restoreid, 'question_category', $qcat->itemid);
+                $info = backup_controller_dbops::decode_backup_temp_info($qcat->info);
                 // Filter by contextlevel if necessary
-                if (is_null($contextlevel) || $contextlevel == $temprec->info->contextlevel) {
-                    $results[$qcat->contextid] = $temprec->info->contextlevel;
+                if (is_null($contextlevel) || $contextlevel == $info->contextlevel) {
+                    $results[$qcat->contextid] = $info->contextlevel;
                 }
             }
         }
+        $qcats->close();
         // Sort by value (contextlevel from CONTEXT_SYSTEM downto CONTEXT_MODULE)
         asort($results);
         return $results;
@@ -693,15 +693,16 @@ abstract class restore_dbops {
         global $DB;
 
         $results = array();
-        $qcats = $DB->get_records_sql("SELECT itemid
+        $qcats = $DB->get_recordset_sql("SELECT itemid, info
                                          FROM {backup_ids_temp}
                                         WHERE backupid = ?
                                           AND itemname = 'question_category'
                                           AND parentitemid = ?", array($restoreid, $contextid));
         foreach ($qcats as $qcat) {
-            $temprec = self::get_backup_ids_record($restoreid, 'question_category', $qcat->itemid);
-            $results[$qcat->itemid] = $temprec->info;
+            $results[$qcat->itemid] = backup_controller_dbops::decode_backup_temp_info($qcat->info);
         }
+        $qcats->close();
+
         return $results;
     }
 
@@ -791,15 +792,15 @@ abstract class restore_dbops {
         global $DB;
 
         $results = array();
-        $qs = $DB->get_records_sql("SELECT itemid
+        $qs = $DB->get_recordset_sql("SELECT itemid, info
                                       FROM {backup_ids_temp}
                                      WHERE backupid = ?
                                        AND itemname = 'question'
                                        AND parentitemid = ?", array($restoreid, $qcatid));
         foreach ($qs as $q) {
-            $temprec = self::get_backup_ids_record($restoreid, 'question', $q->itemid);
-            $results[$q->itemid] = $temprec->info;
+            $results[$q->itemid] = backup_controller_dbops::decode_backup_temp_info($q->info);
         }
+        $qs->close();
         return $results;
     }
 
@@ -886,7 +887,7 @@ abstract class restore_dbops {
         $basepath = $basepath . '/files/';// Get backup file pool base
         $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $rec) {
-            $file = (object)unserialize(base64_decode($rec->info));
+            $file = (object)backup_controller_dbops::decode_backup_temp_info($rec->info);
 
             // ignore root dirs (they are created automatically)
             if ($file->filepath == '/' && $file->filename == '.') {
@@ -1011,9 +1012,9 @@ abstract class restore_dbops {
         $themes    = get_list_of_themes(); // Get themes for quick search later
 
         // Iterate over all the included users with newitemid = 0, have to create them
-        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'user', 'newitemid' => 0), '', 'itemid, parentitemid');
+        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'user', 'newitemid' => 0), '', 'itemid, parentitemid, info');
         foreach ($rs as $recuser) {
-            $user = (object)self::get_backup_ids_record($restoreid, 'user', $recuser->itemid)->info;
+            $user = (object)backup_controller_dbops::decode_backup_temp_info($recuser->info);
 
             // if user lang doesn't exist here, use site default
             if (!array_key_exists($user->lang, $languages)) {
@@ -1402,9 +1403,9 @@ abstract class restore_dbops {
         }
 
         // Iterate over all the included users
-        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'user'), '', 'itemid');
+        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'user'), '', 'itemid, info');
         foreach ($rs as $recuser) {
-            $user = (object)self::get_backup_ids_record($restoreid, 'user', $recuser->itemid)->info;
+            $user = (object)backup_controller_dbops::decode_backup_temp_info($recuser->info);
 
             // Find the correct mnethostid for user before performing any further check
             if (empty($user->mnethosturl) || $user->mnethosturl === $CFG->wwwroot) {
@@ -1489,7 +1490,7 @@ abstract class restore_dbops {
         global $DB;
 
         // Store external files info in `info` field
-        $filerec->info     = base64_encode(serialize($filerec)); // Serialize the whole rec in info
+        $filerec->info     = backup_controller_dbops::encode_backup_temp_info($filerec); // Encode the whole record into info.
         $filerec->backupid = $restoreid;
         $DB->insert_record('backup_files_temp', $filerec);
     }
@@ -1504,7 +1505,7 @@ abstract class restore_dbops {
             $extrarecord['parentitemid'] = $parentitemid;
         }
         if ($info != null) {
-            $extrarecord['info'] = base64_encode(serialize($info));
+            $extrarecord['info'] = backup_controller_dbops::encode_backup_temp_info($info);
         }
 
         self::set_backup_ids_cached($restoreid, $itemname, $itemid, $extrarecord);
@@ -1513,8 +1514,9 @@ abstract class restore_dbops {
     public static function get_backup_ids_record($restoreid, $itemname, $itemid) {
         $dbrec = self::get_backup_ids_cached($restoreid, $itemname, $itemid);
 
+        // We must test if info is a string, as the cache stores info in object form.
         if ($dbrec && isset($dbrec->info) && is_string($dbrec->info)) {
-            $dbrec->info = unserialize(base64_decode($dbrec->info));
+            $dbrec->info = backup_controller_dbops::decode_backup_temp_info($dbrec->info);
         }
 
         return $dbrec;
@@ -1559,18 +1561,17 @@ abstract class restore_dbops {
         // Get the course context
         $coursectx = context_course::instance($courseid);
         // Get all the mapped roles we have
-        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'role'), '', 'itemid');
+        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'role'), '', 'itemid, info, newitemid');
         foreach ($rs as $recrole) {
-            // Get the complete temp_ids record
-            $role = (object)self::get_backup_ids_record($restoreid, 'role', $recrole->itemid);
+            $info = backup_controller_dbops::decode_backup_temp_info($recrole->info);
             // If it's one mapped role and we have one name for it
-            if (!empty($role->newitemid) && !empty($role->info['nameincourse'])) {
+            if (!empty($recrole->newitemid) && !empty($info['nameincourse'])) {
                 // If role name doesn't exist, add it
                 $rolename = new stdclass();
-                $rolename->roleid = $role->newitemid;
+                $rolename->roleid = $recrole->newitemid;
                 $rolename->contextid = $coursectx->id;
                 if (!$DB->record_exists('role_names', (array)$rolename)) {
-                    $rolename->name = $role->info['nameincourse'];
+                    $rolename->name = $info['nameincourse'];
                     $DB->insert_record('role_names', $rolename);
                 }
             }

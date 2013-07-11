@@ -147,6 +147,18 @@ class backup_dbops_testcase extends advanced_testcase {
         // Drop and check it doesn't exists anymore
         backup_controller_dbops::drop_backup_ids_temp_table('testingid');
         $this->assertFalse($dbman->table_exists('backup_ids_temp'));
+
+        // Test encoding/decoding of backup_ids_temp,backup_files_temp encode/decode functions.
+        // We need to handle both objects and data elements.
+        $object = new stdClass();
+        $object->item1 = 10;
+        $object->item2 = 'a String';
+        $testarray = array($object, 10, null, 'string', array('a' => 'b', 1 => 1));
+        foreach ($testarray as $item) {
+            $encoded = backup_controller_dbops::encode_backup_temp_info($item);
+            $decoded = backup_controller_dbops::decode_backup_temp_info($encoded);
+            $this->assertEquals($item, $decoded);
+        }
     }
 
     /**
