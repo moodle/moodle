@@ -75,6 +75,11 @@ class block_section_links extends block_base {
         $courseformatoptions = course_get_format($course)->get_format_options();
         $context = context_course::instance($course->id);
 
+        // Course format options 'numsections' is required to display the block.
+        if (empty($courseformatoptions['numsections'])) {
+            return $this->content;
+        }
+
         if ($course->format == 'weeks' or $course->format == 'weekscss') {
             $highlight = ceil((time()-$course->startdate)/604800);
             $linktext = get_string('jumptocurrentweek', 'block_section_links');
