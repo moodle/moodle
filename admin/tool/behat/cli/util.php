@@ -142,6 +142,9 @@ foreach ($vars as $var) {
     $CFG->{$var} = $CFG->{'behat_' . $var};
 }
 
+// Clean $CFG extra values before performing any action.
+behat_clean_init_config();
+
 $CFG->noemailever = true;
 $CFG->passwordsaltmain = 'moodle';
 
