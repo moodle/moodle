@@ -44,7 +44,6 @@ require_once($CFG->libdir.'/outputrequirementslib.php');
  */
 function theme_reset_all_caches() {
     global $CFG, $PAGE;
-    require_once("$CFG->libdir/filelib.php");
 
     $next = time();
     if (isset($CFG->themerev) and $next <= $CFG->themerev and $CFG->themerev - $next < 60*60) {
@@ -55,7 +54,6 @@ function theme_reset_all_caches() {
     }
 
     set_config('themerev', $next); // time is unique even when you reset/switch database
-    fulldelete("$CFG->cachedir/theme");
 
     if ($PAGE) {
         $PAGE->reload_theme();

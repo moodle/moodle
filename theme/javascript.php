@@ -63,7 +63,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     die('Theme was not found, sorry.');
 }
 
-$candidate = "$CFG->cachedir/theme/$rev/$themename/javascript_$type.js";
+$candidate = "$CFG->localcachedir/theme/$rev/$themename/javascript_$type.js";
 $etag = sha1("$rev/$themename/$type");
 
 if ($rev > 0 and file_exists($candidate)) {
@@ -93,7 +93,7 @@ if ($themerev <= 0 or $rev != $themerev) {
     js_send_uncached($theme->javascript_content($type));
 }
 
-make_cache_directory('theme', false);
+make_localcache_directory('theme', false);
 
 js_write_cache_file_content($candidate, js_minify($theme->javascript_files($type)));
 // Verify nothing failed in cache file creation.

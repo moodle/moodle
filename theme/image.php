@@ -74,7 +74,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     image_not_found();
 }
 
-$candidatelocation = "$CFG->cachedir/theme/$rev/$themename/pix/$component";
+$candidatelocation = "$CFG->localcachedir/theme/$rev/$themename/pix/$component";
 $etag = sha1("$rev/$themename/$component/$image");
 
 if ($rev > 0) {
@@ -142,7 +142,7 @@ if ($themerev <= 0 or $rev != $themerev) {
     send_uncached_image($imagefile);
 }
 
-make_cache_directory('theme', false);
+make_localcache_directory('theme', false);
 
 // We're not using SVG and there is no cached version of this file (in any format).
 // As we're going to be caching a format other than svg, and because svg use is conditional we need to ensure that at the same

@@ -79,7 +79,7 @@ $etag = sha1($rev.implode(',', $jsfiles));
 
 // Use the caching only for meaningful revision numbers which prevents future cache poisoning.
 if ($rev > 0 and $rev < (time() + 60*60)) {
-    $candidate = $CFG->cachedir.'/js/'.$etag;
+    $candidate = $CFG->localcachedir.'/js/'.$etag;
 
     if (file_exists($candidate)) {
         if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
