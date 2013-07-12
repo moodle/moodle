@@ -123,6 +123,7 @@ class filter_urltolink extends moodle_text_filter {
         }
 
         // TODO MDL-21296 - use of unicode modifiers may cause a timeout
+        $urlstart = '(?:http(s)?://|(?<!://)(www\.))';
         $domainsegment = '(?:[\pLl0-9][\pLl0-9-]*[\pLl0-9]|[\pLl0-9])';
         $numericip = '(?:(?:[0-9]{1,3}\.){3}[0-9]{1,3})';
         $port = '(?::\d*)';
@@ -131,7 +132,7 @@ class filter_urltolink extends moodle_text_filter {
         $querystring = '(?:\?(?:[\pL0-9\.!$&\'\(\)*+,;=_~:@/?-]|%[a-fA-F0-9]{2})*)';
         $fragment = '(?:\#(?:[\pL0-9\.!$&\'\(\)*+,;=_~:@/?-]|%[a-fA-F0-9]{2})*)';
 
-        $regex = "(?<!=[\"'])(?:http(s)?://|(www\.))((?:$domainsegment\.)+$domainsegment|$numericip)" .
+        $regex = "(?<!=[\"'])$urlstart((?:$domainsegment\.)+$domainsegment|$numericip)" .
                 "($port?$path$querystring?$fragment?)(?<![]),.;])";
         if ($unicoderegexp) {
             $regex = '#' . $regex . '#ui';
