@@ -137,11 +137,13 @@ class filter_urltolink_testcase extends basic_testcase {
             '<br />This is some text. www.moodle.com then some more text<br />' => '<br />This is some text. <a href="http://www.moodle.com" class="_blanktarget">www.moodle.com</a> then some more text<br />',
             //check we aren't modifying img tags
             'image<img src="http://moodle.org/logo/logo-240x60.gif" />' => 'image<img src="http://moodle.org/logo/logo-240x60.gif" />',
-            'image<img src="www.moodle.org/logo/logo-240x60.gif" />' => 'image<img src="www.moodle.org/logo/logo-240x60.gif" />',
+            'image<img src="www.moodle.org/logo/logo-240x60.gif" />'    => 'image<img src="www.moodle.org/logo/logo-240x60.gif" />',
+            'image<img src="http://www.example.com/logo.gif" />'        => 'image<img src="http://www.example.com/logo.gif" />',
             //and another url within one tag
             '<td background="http://moodle.org">&nbsp;</td>' => '<td background="http://moodle.org">&nbsp;</td>',
             '<td background="www.moodle.org">&nbsp;</td>' => '<td background="www.moodle.org">&nbsp;</td>',
             '<form name="input" action="http://moodle.org/submit.asp" method="get">'=>'<form name="input" action="http://moodle.org/submit.asp" method="get">',
+            '<td background="https://www.moodle.org">&nbsp;</td>' => '<td background="https://www.moodle.org">&nbsp;</td>',
             //partially escaped img tag
             'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />' => 'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />',
             //fully escaped img tag. Commented out as part of MDL-21183
