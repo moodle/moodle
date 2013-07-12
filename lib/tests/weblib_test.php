@@ -148,6 +148,35 @@ class web_testcase extends advanced_testcase {
     }
 
     /**
+     * Test basic moodle_url construction.
+     */
+    function test_moodle_url_constructor() {
+        global $CFG;
+
+        $url = new moodle_url('/index.php');
+        $this->assertEquals($CFG->wwwroot.'/index.php', $url->out());
+
+        $url = new moodle_url('/index.php', array());
+        $this->assertEquals($CFG->wwwroot.'/index.php', $url->out());
+
+        $url = new moodle_url('/index.php', array('id' => 2));
+        $this->assertEquals($CFG->wwwroot.'/index.php?id=2', $url->out());
+
+        $url = new moodle_url('/index.php', array('id' => 'two'));
+        $this->assertEquals($CFG->wwwroot.'/index.php?id=two', $url->out());
+
+        $url = new moodle_url('/index.php', array('id' => 1, 'cid' => '2'));
+        $this->assertEquals($CFG->wwwroot.'/index.php?id=1&amp;cid=2', $url->out());
+        $this->assertEquals($CFG->wwwroot.'/index.php?id=1&cid=2', $url->out(false));
+
+        $url = new moodle_url('/index.php', null, 'test');
+        $this->assertEquals($CFG->wwwroot.'/index.php#test', $url->out());
+
+        $url = new moodle_url('/index.php', array('id' => 2), 'test');
+        $this->assertEquals($CFG->wwwroot.'/index.php?id=2#test', $url->out());
+    }
+
+    /**
      * Tests moodle_url::get_path().
      */
     public function test_moodle_url_get_path() {
