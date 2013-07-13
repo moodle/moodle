@@ -2289,7 +2289,7 @@ class accesslib_testcase extends advanced_testcase {
                 $this->assertEquals(context_inspection::test_context_cache_size(), CONTEXT_CACHE_MAX_SIZE);
             } else if ($i == CONTEXT_CACHE_MAX_SIZE) {
                 // once the limit is reached roughly 1/3 of records should be removed from cache
-                $this->assertEquals(context_inspection::test_context_cache_size(), (int)(CONTEXT_CACHE_MAX_SIZE * (2/3) +102));
+                $this->assertEquals(context_inspection::test_context_cache_size(), (int)ceil(CONTEXT_CACHE_MAX_SIZE * (2/3) + 101));
             }
         }
         // We keep the first 100 cached
