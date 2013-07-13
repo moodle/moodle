@@ -271,6 +271,39 @@ class core_event_testcase extends advanced_testcase {
             \core_tests\event\unittest_observer::$info);
     }
 
+    public function test_event_sink() {
+        $sink = $this->redirectEvents();
+        $event1 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)));
+        $event1->trigger();
+        $this->assertSame(1, $sink->count());
+        $retult = $sink->get_events();
+        $this->assertSame($event1, $retult[0]);
+
+        $event2 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>2, 'xx'=>10)));
+        $event2->trigger();
+        $this->assertSame(2, $sink->count());
+        $retult = $sink->get_events();
+        $this->assertSame($event1, $retult[0]);
+        $this->assertSame($event2, $retult[1]);
+
+        $sink->clear();
+        $this->assertSame(0, $sink->count());
+        $this->assertSame(array(), $sink->get_events());
+
+        $event3 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>3, 'xx'=>10)));
+        $event3->trigger();
+        $this->assertSame(1, $sink->count());
+        $retult = $sink->get_events();
+        $this->assertSame($event3, $retult[0]);
+
+        $sink->close();
+        $event4 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>4, 'xx'=>10)));
+        $event4->trigger();
+        $this->assertSame(1, $sink->count());
+        $retult = $sink->get_events();
+        $this->assertSame($event3, $retult[0]);
+    }
+
     public function test_ignore_exceptions() {
         $observers = array(
 

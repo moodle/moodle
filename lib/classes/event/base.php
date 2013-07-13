@@ -451,6 +451,12 @@ abstract class base {
             }
         }
 
+        if (PHPUNIT_TEST and \phpunit_util::is_redirecting_events()) {
+            $this->dispatched = true;
+            \phpunit_util::event_triggered($this);
+            return;
+        }
+
         \core\event\manager::dispatch($this);
 
         $this->dispatched = true;
