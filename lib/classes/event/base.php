@@ -49,7 +49,7 @@ namespace core\event;
  * @property-read mixed $other array or scalar, can not contain objects
  * @property-read int $timecreated
  */
-abstract class base {
+abstract class base implements \IteratorAggregate {
     /** @var array event data */
     protected $data;
 
@@ -183,7 +183,7 @@ abstract class base {
         $event->init();
 
         // Warn developers if they do something wrong.
-        if (debugging('', DEBUG_DEVELOPER)) {
+        if (debugging('', DEBUG_DEVELOPER)) { // This should be replaced by new $CFG->slowdebug flag if introduced.
             static $automatickeys = array('eventname', 'component', 'action', 'object', 'timecreated');
             static $initkeys = array('crud', 'level', 'objecttable');
 
@@ -514,7 +514,7 @@ abstract class base {
 
         // NOTE: this might use some kind of MUC cache,
         //       hopefully we will not run out of memory here...
-        if (debugging('', DEBUG_DEVELOPER)) {
+        if (debugging('', DEBUG_DEVELOPER)) { // This should be replaced by new $CFG->slowdebug flag if introduced.
             if (!$DB->get_manager()->table_exists($tablename)) {
                 debugging("Invalid table name '$tablename' specified, database table does not exist.");
             }
@@ -579,5 +579,14 @@ abstract class base {
      */
     public function __isset($name) {
         return isset($this->data[$name]);
+    }
+
+    /**
+     * Create an iterator because magic vars can't be seen by 'foreach'.
+     *
+     * @return \ArrayIterator
+     */
+    public function getIterator() {
+        return new \ArrayIterator($this->data);
     }
 }

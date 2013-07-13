@@ -640,4 +640,15 @@ class core_event_testcase extends advanced_testcase {
         $this->assertEquals(1, $user->id);
         $this->assertSame('guest', $user->username);
     }
+
+    public function test_iteration() {
+        $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)));
+
+        $data = array();
+        foreach ($event as $k => $v) {
+            $data[$k] = $v;
+        }
+
+        $this->assertSame($event->get_data(), $data);
+    }
 }
