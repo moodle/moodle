@@ -276,10 +276,10 @@ if (!defined('AJAX_SCRIPT')) {
 }
 
 // File permissions on created directories in the $CFG->dataroot
-if (empty($CFG->directorypermissions)) {
+if (!isset($CFG->directorypermissions)) {
     $CFG->directorypermissions = 02777;      // Must be octal (that's why it's here)
 }
-if (empty($CFG->filepermissions)) {
+if (!isset($CFG->filepermissions)) {
     $CFG->filepermissions = ($CFG->directorypermissions & 0666); // strip execute flags
 }
 // better also set default umask because recursive mkdir() does not apply permissions recursively otherwise
