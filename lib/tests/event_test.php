@@ -73,6 +73,12 @@ class core_event_testcase extends advanced_testcase {
         } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
+
+        $event2 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'contextid'=>$system->id, 'objectid'=>5, 'other'=>array('sample'=>null, 'xx'=>10)));
+        $this->assertSame($event->get_context(), $event2->get_context());
+
+        $event3 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'contextid'=>999, 'contextlevel'=>CONTEXT_COURSE, 'contextinstanceid'=>4554645, 'objectid'=>5, 'other'=>array('sample'=>null, 'xx'=>10)));
+        $this->assertSame(false, $event3->get_context());
     }
 
     public function test_observers_parsing() {
@@ -539,7 +545,14 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_bad_events() {
-        $event = \core_tests\event\bad_event1::create();
+        try {
+            $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'other'=>array('sample'=>5, 'xx'=>10)));
+            $this->fail('Exception expected when context and contextid missing');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        $event = \core_tests\event\bad_event1::create(array('context'=>\context_system::instance()));
         try {
             $event->trigger();
             $this->fail('Exception expected when $data not valid');
@@ -547,7 +560,7 @@ class core_event_testcase extends advanced_testcase {
             $this->assertInstanceOf('\coding_exception', $e);
         }
 
-        $event = \core_tests\event\bad_event2::create();
+        $event = \core_tests\event\bad_event2::create(array('context'=>\context_system::instance()));
         try {
             $event->trigger();
             $this->fail('Exception expected when $data not valid');
@@ -555,23 +568,23 @@ class core_event_testcase extends advanced_testcase {
             $this->assertInstanceOf('\coding_exception', $e);
         }
 
-        $event = \core_tests\event\bad_event3::create();
+        $event = \core_tests\event\bad_event3::create(array('context'=>\context_system::instance()));
         @$event->trigger();
         $this->assertDebuggingCalled();
 
-        $event = \core_tests\event\bad_event4::create();
+        $event = \core_tests\event\bad_event4::create(array('context'=>\context_system::instance()));
         @$event->trigger();
         $this->assertDebuggingCalled();
 
-        $event = \core_tests\event\bad_event5::create();
+        $event = \core_tests\event\bad_event5::create(array('context'=>\context_system::instance()));
         @$event->trigger();
         $this->assertDebuggingCalled();
 
-        $event = \core_tests\event\bad_event6::create();
+        $event = \core_tests\event\bad_event6::create(array('context'=>\context_system::instance()));
         $event->trigger();
         $this->assertDebuggingCalled();
 
-        $event = \core_tests\event\bad_event7::create(array('objectid'=>1));
+        $event = \core_tests\event\bad_event7::create(array('objectid'=>1, 'context'=>\context_system::instance()));
         try {
             $event->trigger();
             $this->fail('Exception expected when $data contains objectid by objecttable not specified');
@@ -582,30 +595,30 @@ class core_event_testcase extends advanced_testcase {
 
     public function test_problematic_events() {
         global $CFG;
-        $event1 = \core_tests\event\problematic_event1::create();
+        $event1 = \core_tests\event\problematic_event1::create(array('context'=>\context_system::instance()));
         $this->assertDebuggingNotCalled();
         $this->assertNull($event1->xxx);
         $this->assertDebuggingCalled();
 
-        $event2 = \core_tests\event\problematic_event1::create(array('xxx'=>0));
+        $event2 = \core_tests\event\problematic_event1::create(array('xxx'=>0, 'context'=>\context_system::instance()));
         $this->assertDebuggingCalled();
 
         $CFG->debug = 0;
-        $event3 = \core_tests\event\problematic_event1::create(array('xxx'=>0));
+        $event3 = \core_tests\event\problematic_event1::create(array('xxx'=>0, 'context'=>\context_system::instance()));
         $this->assertDebuggingNotCalled();
         $CFG->debug = E_ALL | E_STRICT;
 
-        $event4 = \core_tests\event\problematic_event1::create(array('other'=>array('a'=>1)));
+        $event4 = \core_tests\event\problematic_event1::create(array('context'=>\context_system::instance(), 'other'=>array('a'=>1)));
         $event4->trigger();
         $this->assertDebuggingNotCalled();
 
-        $event5 = \core_tests\event\problematic_event1::create(array('other'=>(object)array('a'=>1)));
+        $event5 = \core_tests\event\problematic_event1::create(array('context'=>\context_system::instance(), 'other'=>(object)array('a'=>1)));
         $this->assertDebuggingNotCalled();
         $event5->trigger();
         $this->assertDebuggingCalled();
 
         $url = new moodle_url('/admin/');
-        $event6 = \core_tests\event\problematic_event1::create(array('other'=>array('a'=>$url)));
+        $event6 = \core_tests\event\problematic_event1::create(array('context'=>\context_system::instance(), 'other'=>array('a'=>$url)));
         $this->assertDebuggingNotCalled();
         $event6->trigger();
         $this->assertDebuggingCalled();

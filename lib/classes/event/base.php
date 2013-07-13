@@ -143,32 +143,39 @@ abstract class base {
         $event->data['other'] = isset($data['other']) ? $data['other'] : null;
         $event->data['relateduserid'] = isset($data['relateduserid']) ? $data['relateduserid'] : null;
 
-        $event->context = null;
-        if (isset($data['context'])) {
+        if (!empty($data['context'])) {
             $event->context = $data['context'];
-        } else if (isset($data['contextid'])) {
-            $event->context = \context::instance_by_id($data['contextid']);
-        } else if ($event->data['courseid']) {
-            $event->context = \context_course::instance($event->data['courseid']);
-        } else if (isset($PAGE)) {
-            $event->context = $PAGE->context;
+            $event->data['contextid'] = $event->context->id;
+            $event->data['contextlevel'] = $event->context->contextlevel;
+            $event->data['contextinstanceid'] = $event->context->instanceid;
+
+        } else if (!empty($data['contextid'])) {
+            $event->context = null;
+            if (isset($data['contextlevel']) and isset($data['contextinstanceid'])) {
+                // Useful especially when deleting contexts because we can nto fetch it from DB anymore.
+                $event->data['contextid'] = $data['contextid'];
+                $event->data['contextlevel'] = $data['contextlevel'];
+                $event->data['contextinstanceid'] = $data['contextinstanceid'];
+                $event->context = \context::instance_by_id($data['contextid'], IGNORE_MISSING);
+            } else {
+                $event->context = \context::instance_by_id($data['contextid'], MUST_EXIST);
+                $event->data['contextid'] = $event->context->id;
+                $event->data['contextlevel'] = $event->context->contextlevel;
+                $event->data['contextinstanceid'] = $event->context->instanceid;
+            }
+        } else {
+            throw new \coding_exception('context (or contextid) is a required event property.');
         }
-        if (!$event->context) {
-            $event->context = \context_system::instance();
-        }
-        $event->data['contextid'] = $event->context->id;
-        $event->data['contextlevel'] = $event->context->contextlevel;
-        $event->data['contextinstanceid'] = $event->context->instanceid;
 
         if (!isset($event->data['courseid'])) {
-            if ($coursecontext = $event->context->get_course_context(false)) {
+            if ($event->context and $coursecontext = $event->context->get_course_context(false)) {
                 $event->data['courseid'] = $coursecontext->id;
             } else {
                 $event->data['courseid'] = 0;
             }
         }
 
-        if (!array_key_exists('relateduserid', $data) and $event->context->contextlevel == CONTEXT_USER) {
+        if (!array_key_exists('relateduserid', $data) and $event->context and $event->context->contextlevel == CONTEXT_USER) {
             $event->data['relateduserid'] = $event->context->instanceid;
         }
 
