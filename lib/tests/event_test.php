@@ -533,6 +533,18 @@ class core_event_testcase extends advanced_testcase {
         $event = \core_tests\event\bad_event5::create();
         @$event->trigger();
         $this->assertDebuggingCalled();
+
+        $event = \core_tests\event\bad_event6::create();
+        $event->trigger();
+        $this->assertDebuggingCalled();
+
+        $event = \core_tests\event\bad_event7::create(array('objectid'=>1));
+        try {
+            $event->trigger();
+            $this->fail('Exception expected when $data contains objectid by objecttable not specified');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('\coding_exception', $e);
+        }
     }
 
     public function test_problematic_events() {

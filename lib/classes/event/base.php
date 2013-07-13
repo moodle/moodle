@@ -36,6 +36,7 @@ namespace core\event;
  * @property-read string $component Full frankenstyle component name
  * @property-read string $action what happened
  * @property-read string $object what/who was object of the action (usually similar to database table name)
+ * @property-read string $objecttable name of database table where is object record stored
  * @property-read int $objectid optional id of the object
  * @property-read string $crud letter indicating event type
  * @property-read int $level log level (number between 1 and 100)
@@ -78,7 +79,7 @@ abstract class base {
 
     /** @var array list of event properties */
     private static $fields = array(
-        'eventname', 'component', 'action', 'object', 'objectid', 'crud', 'level', 'contextid',
+        'eventname', 'component', 'action', 'object', 'objecttable', 'objectid', 'crud', 'level', 'contextid',
         'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'other',
         'timecreated');
 
@@ -177,7 +178,7 @@ abstract class base {
         // Warn developers if they do something wrong.
         if (debugging('', DEBUG_DEVELOPER)) {
             static $automatickeys = array('eventname', 'component', 'action', 'object', 'timecreated');
-            static $initkeys = array('crud', 'level');
+            static $initkeys = array('crud', 'level', 'objecttable');
 
             foreach ($data as $key => $ignored) {
                 if ($key === 'context') {
@@ -204,6 +205,7 @@ abstract class base {
      * Set all required data properties:
      *  1/ crud - letter [crud]
      *  2/ level - number 1...100
+     *  3/ objecttable - name of database table if objectid specified
      *
      * TODO: MDL-37658
      *
@@ -377,14 +379,19 @@ abstract class base {
      * @throws \coding_exception
      */
     protected final function validate_before_trigger() {
+        global $DB;
+
         if (empty($this->data['crud'])) {
             throw new \coding_exception('crud must be specified in init() method of each method');
         }
         if (empty($this->data['level'])) {
             throw new \coding_exception('level must be specified in init() method of each method');
         }
+        if (!empty($this->data['objectid']) and empty($this->data['objecttable'])) {
+            throw new \coding_exception('objecttable must be specified in init() method if objectid present');
+        }
 
-        if (debugging('', DEBUG_DEVELOPER)) {
+        if (debugging('', DEBUG_DEVELOPER)) { // This should be replaced by new $CFG->slowdebug flag if introduced.
             // Ideally these should be coding exceptions, but we need to skip these for performance reasons
             // on production servers.
 
@@ -412,6 +419,11 @@ abstract class base {
             }
             if ($this->data['relateduserid'] and !is_number($this->data['relateduserid'])) {
                 debugging('Event property relateduserid must be a number');
+            }
+            if ($this->data['objecttable']) {
+                if (!$DB->get_manager()->table_exists($this->data['objecttable'])) {
+                    debugging('Unknown table specified in objecttable field');
+                }
             }
         }
     }

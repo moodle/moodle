@@ -26,6 +26,7 @@ namespace core\event;
 
 class role_unassigned extends base {
     protected function init() {
+        $this->data['objecttable'] = 'role';
         $this->data['crud'] = 'd';
         // TODO: MDL-37658 set level
         $this->data['level'] = 50;
