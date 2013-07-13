@@ -566,19 +566,19 @@ class core_event_testcase extends advanced_testcase {
         $this->assertDebuggingCalled();
     }
 
-    public function test_record_cache() {
+    public function test_record_snapshots() {
         global $DB;
 
         $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)));
         $course1 = $DB->get_record('course', array('id'=>1));
         $this->assertNotEmpty($course1);
 
-        $event->add_cached_record('course', $course1);
+        $event->add_record_snapshot('course', $course1);
 
-        $result = $event->get_cached_record('course', 1, $course1);
+        $result = $event->get_record_snapshot('course', 1, $course1);
         $this->assertSame($course1, $result);
 
-        $user = $event->get_cached_record('user', 1);
+        $user = $event->get_record_snapshot('user', 1);
         $this->assertEquals(1, $user->id);
         $this->assertSame('guest', $user->username);
     }

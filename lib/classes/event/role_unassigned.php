@@ -74,6 +74,6 @@ class role_unassigned extends base {
      * @return mixed
      */
     public function get_legacy_eventdata() {
-        return $this->get_cached_record('role_assignments', $this->data['other']['id']);
+        return $this->get_record_snapshot('role_assignments', $this->data['other']['id']);
     }
 }

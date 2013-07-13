@@ -484,7 +484,7 @@ abstract class base {
      * @param string $tablename
      * @param \stdClass $record
      */
-    public function add_cached_record($tablename, $record) {
+    public function add_record_snapshot($tablename, $record) {
         global $DB;
 
         // NOTE: this might use some kind of MUC cache,
@@ -504,7 +504,7 @@ abstract class base {
      * @param int $id
      * @return \stdClass
      */
-    public function get_cached_record($tablename, $id) {
+    public function get_record_snapshot($tablename, $id) {
         global $DB;
 
         if (isset($this->cachedrecords[$tablename][$id])) {
