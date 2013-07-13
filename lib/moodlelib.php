@@ -7257,6 +7257,7 @@ class core_string_manager implements string_manager {
                 collatorlib::asort($languages);
                 check_dir_exists(dirname($this->menucache), true, true);
                 file_put_contents($this->menucache, json_encode($languages));
+                @chmod($this->menucache, $CFG->filepermissions);
             }
         }
 

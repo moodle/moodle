@@ -64,6 +64,8 @@ class file_storage {
      * @param int $filepermissions new file permissions
      */
     public function __construct($filedir, $trashdir, $tempdir, $dirpermissions, $filepermissions) {
+        global $CFG;
+
         $this->filedir         = $filedir;
         $this->trashdir        = $trashdir;
         $this->tempdir         = $tempdir;
@@ -79,6 +81,7 @@ class file_storage {
             if (!file_exists($this->filedir.'/warning.txt')) {
                 file_put_contents($this->filedir.'/warning.txt',
                                   'This directory contains the content of uploaded files and is controlled by Moodle code. Do not manually move, change or rename any of the files and subdirectories here.');
+                chmod($this->filedir.'/warning.txt', $CFG->filepermissions);
             }
         }
         // make sure the file pool directory exists

@@ -259,7 +259,7 @@ abstract class backup_helper {
                 if (@rename($filepath, $filedest)) {
                     return null;
                 }
-                umask(0000);
+                umask($CFG->umaskpermissions);
                 if (copy($filepath, $filedest)) {
                     @chmod($filedest, $CFG->filepermissions); // may fail because the permissions may not make sense outside of dataroot
                     unlink($filepath);

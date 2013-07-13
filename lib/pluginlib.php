@@ -2205,6 +2205,7 @@ class available_update_deployer {
 
             if (!file_exists($filepath)) {
                 $success = file_put_contents($filepath, $password . PHP_EOL . $now . PHP_EOL, LOCK_EX);
+                chmod($filepath, $CFG->filepermissions);
             }
         }
 

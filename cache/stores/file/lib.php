@@ -689,6 +689,8 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @return bool
      */
     protected function write_file($file, $content) {
+        global $CFG;
+
         // Generate a temp file that is going to be unique. We'll rename it at the end to the desired file name.
         // in this way we avoid partial writes.
         $path = dirname($file);
@@ -720,6 +722,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
 
         // Finally rename the temp file to the desired file, returning the true|false result.
         $result = rename($tempfile, $file);
+        @chmod($file, $CFG->filepermissions);
         if (!$result) {
             // Failed to rename, don't leave files lying around.
             @unlink($tempfile);
