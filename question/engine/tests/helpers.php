@@ -1195,3 +1195,68 @@ class question_test_recordset extends moodle_recordset {
         $this->records = null;
     }
 }
+
+/**
+ * A {@link question_variant_selection_strategy} designed for testing.
+ * For selected. questions it wil return a specific variants. In for the other
+ * slots it will use a fallback strategy.
+ *
+ * @copyright  2013 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_variant_forced_choices_selection_strategy
+    implements question_variant_selection_strategy {
+
+    /** @var array seed => variant to select. */
+    protected $forcedchoices;
+
+    /** @var question_variant_selection_strategy strategy used to make the non-forced choices. */
+    protected $basestrategy;
+
+    /**
+     * Constructor.
+     * @param array $forcedchoice array seed => variant to select.
+     * @param question_variant_selection_strategy $basestrategy strategy used
+     *      to make the non-forced choices.
+     */
+    public function __construct(array $forcedchoices, question_variant_selection_strategy $basestrategy) {
+        $this->forcedchoices = $forcedchoices;
+        $this->basestrategy  = $basestrategy;
+    }
+
+    public function choose_variant($maxvariants, $seed) {
+        if (array_key_exists($seed, $this->forcedchoices)) {
+            if ($this->forcedchoices[$seed] > $maxvariants) {
+                throw new coding_exception('Forced variant out of range.');
+            }
+            return $this->forcedchoices[$seed];
+        } else {
+            return $this->basestrategy->choose_variant($maxvariants, $seed);
+        }
+    }
+
+    /**
+     * Helper method for preparing the $forcedchoices array.
+     * @param array $variantsbyslot slot number => variant to select.
+     * @param question_usage_by_activity $quba the question usage we need a strategy for.
+     * @return array that can be passed to the constructor as $forcedchoices.
+     */
+    public static function prepare_forced_choices_array(array $variantsbyslot,
+                                                        question_usage_by_activity $quba) {
+
+        $forcedchoices = array();
+
+        foreach ($variantsbyslot as $slot => $varianttochoose) {
+            $question = $quba->get_question($slot);
+            $seed = $question->get_variants_selection_seed();
+            if (array_key_exists($seed, $forcedchoices) && $forcedchoices[$seed] != $varianttochoose) {
+                throw new coding_exception('Inconsistent forced variant detected at slot ' . $slot);
+            }
+            if ($varianttochoose > $question->get_num_variants()) {
+                throw new coding_exception('Forced variant out of range at slot ' . $slot);
+            }
+            $forcedchoices[$seed] = $varianttochoose;
+        }
+        return $forcedchoices;
+    }
+}
