@@ -491,6 +491,29 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertSame('1', $ras->itemid);
         $this->assertEquals($USER->id, $ras->modifierid);
         $this->assertEquals(666, $ras->timemodified);
+
+        // Test event triggered.
+
+        $user2 = $this->getDataGenerator()->create_user();
+        $sink = $this->redirectEvents();
+        $raid = role_assign($role->id, $user2->id, $context->id);
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertCount(1, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\role_assigned', $event);
+        $this->assertEquals('role', $event->object);
+        $this->assertEquals('role', $event->objecttable);
+        $this->assertEquals($role->id, $event->objectid);
+        $this->assertEquals($context->id, $event->contextid);
+        $this->assertEquals($user2->id, $event->relateduserid);
+        $this->assertCount(3, $event->other);
+        $this->assertEquals($raid, $event->other['id']);
+        $this->assertSame('', $event->other['component']);
+        $this->assertEquals(0, $event->other['itemid']);
+
+        $this->assertSame($event->get_record_snapshot('role_assignments', $event->other['id']), $event->get_legacy_eventdata());
+        $this->assertSame('role_assigned', $event->get_legacy_eventname());
     }
 
     /**
@@ -506,7 +529,7 @@ class accesslib_testcase extends advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
         $role = $DB->get_record('role', array('shortname'=>'student'));
 
-        $context = context_system::instance();
+        $context = context_course::instance($course->id);
         role_assign($role->id, $user->id, $context->id);
         $this->assertTrue($DB->record_exists('role_assignments', array('userid'=>$user->id, 'roleid'=>$role->id, 'contextid'=>$context->id)));
         role_unassign($role->id, $user->id, $context->id);
@@ -516,6 +539,28 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('role_assignments', array('userid'=>$user->id, 'roleid'=>$role->id, 'contextid'=>$context->id)));
         role_unassign($role->id, $user->id, $context->id, 'enrol_self', 1);
         $this->assertFalse($DB->record_exists('role_assignments', array('userid'=>$user->id, 'roleid'=>$role->id, 'contextid'=>$context->id)));
+
+        // Test event triggered.
+
+        role_assign($role->id, $user->id, $context->id);
+        $sink = $this->redirectEvents();
+        role_unassign($role->id, $user->id, $context->id);
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertCount(1, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\role_unassigned', $event);
+        $this->assertEquals('role', $event->object);
+        $this->assertEquals('role', $event->objecttable);
+        $this->assertEquals($role->id, $event->objectid);
+        $this->assertEquals($context->id, $event->contextid);
+        $this->assertEquals($user->id, $event->relateduserid);
+        $this->assertCount(3, $event->other);
+        $this->assertSame('', $event->other['component']);
+        $this->assertEquals(0, $event->other['itemid']);
+
+        $this->assertSame($event->get_record_snapshot('role_assignments', $event->other['id']), $event->get_legacy_eventdata());
+        $this->assertSame('role_unassigned', $event->get_legacy_eventname());
     }
 
     /**
@@ -530,6 +575,7 @@ class accesslib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
         $role = $DB->get_record('role', array('shortname'=>'student'));
+        $role2 = $DB->get_record('role', array('shortname'=>'teacher'));
         $syscontext = context_system::instance();
         $coursecontext = context_course::instance($course->id);
         $page = $this->getDataGenerator()->create_module('page', array('course'=>$course->id));
@@ -559,6 +605,18 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertEquals(4, $DB->count_records('role_assignments', array('userid'=>$user->id)));
         role_unassign_all(array('userid'=>$user->id, 'contextid'=>$coursecontext->id, 'component'=>'enrol_self'), true, true);
         $this->assertEquals(1, $DB->count_records('role_assignments', array('userid'=>$user->id)));
+
+        // Test events triggered.
+
+        role_assign($role2->id, $user->id, $coursecontext->id);
+        role_assign($role2->id, $user->id, $modcontext->id);
+        $sink = $this->redirectEvents();
+        role_unassign_all(array('userid'=>$user->id, 'roleid'=>$role2->id));
+        $events = $sink->get_events();
+        $sink->close();
+        $this->assertCount(2, $events);
+        $this->assertInstanceOf('\core\event\role_unassigned', $events[0]);
+        $this->assertInstanceOf('\core\event\role_unassigned', $events[1]);
     }
 
     /**

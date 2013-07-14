@@ -49,9 +49,9 @@ class phpunit_event_sink {
      * To be called from phpunit_util only!
      *
      * @private
-     * @param stdClass $event record from event_read table
+     * @param \core\event\base $event record from event_read table
      */
-    public function add_event($event) {
+    public function add_event(\core\event\base $event) {
         /* Number events from 0. */
         $this->events[] = $event;
     }
@@ -63,7 +63,7 @@ class phpunit_event_sink {
      * The array indexes are numbered from 0 and the order is matching
      * the creation of events.
      *
-     * @return array
+     * @return \core\event\base[]
      */
     public function get_events() {
         return $this->events;
