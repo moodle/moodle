@@ -65,7 +65,7 @@ class qtype_match_test_helper extends question_test_helper {
         $q->modifiedby = $USER->id;
 
         $q->options = new stdClass();
-        $q->options->shuffleanswers = 0;
+        $q->options->shuffleanswers = 1;
         test_question_maker::set_standard_combined_feedback_fields($q->options);
 
         $q->options->subquestions = array(
@@ -107,7 +107,7 @@ class qtype_match_test_helper extends question_test_helper {
         $q->defaultmark = 1;
         $q->penalty = 0.3333333;
 
-        $q->shuffleanswers = 0;
+        $q->shuffleanswers = 1;
         test_question_maker::set_standard_combined_feedback_form_data($q);
 
         $q->subquestions = array(

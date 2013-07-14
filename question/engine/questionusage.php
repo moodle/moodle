@@ -585,6 +585,28 @@ class question_usage_by_activity {
     }
 
     /**
+     * Transform an array of response data for slots to an array of post data as you would get from quiz attempt form.
+     *
+     * @param $simulatedresponses array keys are slot nos => contains arrays representing student
+     *                                   responses which will be passed to question_definition::prepare_simulated_post_data method
+     *                                   and then have the appropriate prefix added.
+     * @return array simulated post data
+     */
+    public function prepare_simulated_post_data($simulatedresponses) {
+        $simulatedpostdata = array();
+        $simulatedpostdata['slots'] = implode(',', array_keys($simulatedresponses));
+        foreach ($simulatedresponses as $slot => $responsedata) {
+            $prefix = $this->get_field_prefix($slot);
+            $slotresponse = $this->get_question($slot)->prepare_simulated_post_data($responsedata);
+            $slotresponse[':sequencecheck'] =  $this->get_question_attempt($slot)->get_sequence_check_count();
+            foreach ($slotresponse as $key => $value) {
+                $simulatedpostdata[$prefix.$key] = $value;
+            }
+        }
+        return $simulatedpostdata;
+    }
+
+    /**
      * Process a specific action on a specific question.
      * @param int $slot the number used to identify this question within this usage.
      * @param $submitteddata the submitted data that constitutes the action.
