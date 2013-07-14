@@ -84,7 +84,7 @@ abstract class base implements \IteratorAggregate {
         'timecreated');
 
     /** @var array simple record cache */
-    protected $cachedrecords = array();
+    protected $recordsnapshots = array();
 
     /**
      * Private constructor, use create() or restore() methods instead.
@@ -519,7 +519,7 @@ abstract class base implements \IteratorAggregate {
                 debugging("Invalid table name '$tablename' specified, database table does not exist.");
             }
         }
-        $this->cachedrecords[$tablename][$record->id] = $record;
+        $this->recordsnapshots[$tablename][$record->id] = $record;
     }
 
     /**
@@ -532,12 +532,12 @@ abstract class base implements \IteratorAggregate {
     public function get_record_snapshot($tablename, $id) {
         global $DB;
 
-        if (isset($this->cachedrecords[$tablename][$id])) {
-            return $this->cachedrecords[$tablename][$id];
+        if (isset($this->recordsnapshots[$tablename][$id])) {
+            return $this->recordsnapshots[$tablename][$id];
         }
 
         $record = $DB->get_record($tablename, array('id'=>$id));
-        $this->cachedrecords[$tablename][$id] = $record;
+        $this->recordsnapshots[$tablename][$id] = $record;
 
         return $record;
     }
