@@ -50,8 +50,9 @@ class manager {
      * Trigger new event.
      *
      * @internal to be used only from \core\event\base::trigger() method.
-     *
      * @param \core\event\base $event
+     *
+     * @throws \coding_Exception if used directly.
      */
     public static function dispatch(\core\event\base $event) {
         if (during_initial_install()) {
@@ -161,6 +162,11 @@ class manager {
         }
     }
 
+    /**
+     * Returns list of event observers.
+     * @param string $classname
+     * @return array
+     */
     protected static function get_event_observers($classname) {
         self::init_all_observers();
 
@@ -175,6 +181,9 @@ class manager {
         return array();
     }
 
+    /**
+     * Initialise the list of observers.
+     */
     protected static function init_all_observers() {
         global $CFG;
 
@@ -224,6 +233,11 @@ class manager {
         }
     }
 
+    /**
+     * Add observers.
+     * @param array $observers
+     * @param string $file
+     */
     protected static function add_observers(array $observers, $file) {
         global $CFG;
 
@@ -267,12 +281,15 @@ class manager {
         }
     }
 
+    /**
+     * Reorder observers to allow quick lookup of observer for each event.
+     */
     protected static function order_all_observers() {
         $catchall = array();
         if (isset(self::$allobservers['*'])) {
             $catchall = self::$allobservers['*'];
             unset(self::$allobservers['*']); // Move it to the end.
-            \collatorlib::asort_objects_by_property($catchall, 'priority', \collatorlib::SORT_NUMERIC);
+            \core_collator::asort_objects_by_property($catchall, 'priority', \core_collator::SORT_NUMERIC);
             $catchall = array_reverse($catchall);
             self::$allobservers['*'] = $catchall;
         }
@@ -284,7 +301,7 @@ class manager {
                 $observers = array_merge($observers, $catchall);
             }
 
-            \collatorlib::asort_objects_by_property($observers, 'priority', \collatorlib::SORT_NUMERIC);
+            \core_collator::asort_objects_by_property($observers, 'priority', \core_collator::SORT_NUMERIC);
             self::$allobservers[$classname] = array_reverse($observers);
         }
     }
@@ -293,6 +310,8 @@ class manager {
      * Replace all standard observers.
      * @param array $observers
      * @return array
+     *
+     * @throws \coding_Exception if used outside of unit tests.
      */
     public static function phpunit_replace_observers(array $observers) {
         if (!PHPUNIT_TEST) {
@@ -312,6 +331,8 @@ class manager {
     /**
      * Reset everything if necessary.
      * @private
+     *
+     * @throws \coding_Exception if used outside of unit tests.
      */
     public static function phpunit_reset() {
         if (!PHPUNIT_TEST) {
