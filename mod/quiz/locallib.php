@@ -145,10 +145,12 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
  * @param object                        $attempt
  * @param integer                       $attemptnumber      starting from 1
  * @param integer                       $timenow            the attempt start time
+ * @param array   $questionids slot number => question id. Used for random questions, to force the choice of a particular actual
+ *                              question. Intended for testing purposes only.
+ * @throws moodle_exception
  * @return object                       modified attempt object
- * @throws moodle_exception             if a random question exhausts the available questions
  */
-function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow) {
+function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow, $questionids = array()) {
     // Fully load all the questions in this quiz.
     $quizobj->preload_questions();
     $quizobj->load_questions();
@@ -164,8 +166,14 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
             $question = question_bank::make_question($questiondata);
 
         } else {
+            if (!isset($questionids[$quba->next_slot_number()])) {
+                $forcequestionid = null;
+            } else {
+                $forcequestionid = $questionids[$quba->next_slot_number()];
+            }
+
             $question = question_bank::get_qtype('random')->choose_other_question(
-                $questiondata, $questionsinuse, $quizobj->get_quiz()->shuffleanswers);
+                $questiondata, $questionsinuse, $quizobj->get_quiz()->shuffleanswers, $forcequestionid);
             if (is_null($question)) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
                                            $quizobj->view_url(), $questiondata);

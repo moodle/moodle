@@ -218,18 +218,28 @@ class qtype_random extends question_type {
 
     /**
      * Load the definition of another question picked randomly by this question.
-     * @param object $questiondata the data defining a random question.
-     * @param array $excludedquestions of question ids. We will no pick any
-     *      question whose id is in this list.
-     * @param bool $allowshuffle if false, then any shuffle option on the
-     *      selected quetsion is disabled.
+     * @param object       $questiondata the data defining a random question.
+     * @param array        $excludedquestions of question ids. We will no pick any question whose id is in this list.
+     * @param bool         $allowshuffle      if false, then any shuffle option on the selected quetsion is disabled.
+     * @param null|integer $forcequestionid   if not null then force the picking of question with id $forcequestionid.
+     * @throws coding_exception
      * @return question_definition|null the definition of the question that was
      *      selected, or null if no suitable question could be found.
      */
-    public function choose_other_question($questiondata, $excludedquestions, $allowshuffle = true) {
+    public function choose_other_question($questiondata, $excludedquestions, $allowshuffle = true, $forcequestionid = null) {
         $available = $this->get_available_questions_from_category($questiondata->category,
                 !empty($questiondata->questiontext));
         shuffle($available);
+
+        if ($forcequestionid !== null) {
+            $forcedquestionkey = array_search($forcequestionid, $available);
+            if ($forcedquestionkey !== false) {
+                unset($available[$forcedquestionkey]);
+                array_unshift($available, $forcequestionid);
+            } else {
+                throw new coding_exception('thisquestionidisnotavailable', $forcequestionid);
+            }
+        }
 
         foreach ($available as $questionid) {
             if (in_array($questionid, $excludedquestions)) {

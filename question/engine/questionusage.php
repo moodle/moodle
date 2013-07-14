@@ -166,15 +166,17 @@ class question_usage_by_activity {
      */
     public function add_question(question_definition $question, $maxmark = null) {
         $qa = new question_attempt($question, $this->get_id(), $this->observer, $maxmark);
-        if (count($this->questionattempts) == 0) {
-            $this->questionattempts[1] = $qa;
-        } else {
-            $this->questionattempts[] = $qa;
-        }
-        end($this->questionattempts); // Ready to get the last key on the next line.
-        $qa->set_slot(key($this->questionattempts));
+        $qa->set_slot($this->next_slot_number());
+        $this->questionattempts[$this->next_slot_number()] = $qa;
         $this->observer->notify_attempt_added($qa);
         return $qa->get_slot();
+    }
+
+    /**
+     * The slot number that will be allotted to the next question added.
+     */
+    public function next_slot_number() {
+        return count($this->questionattempts) + 1;
     }
 
     /**

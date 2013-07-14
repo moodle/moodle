@@ -88,7 +88,6 @@ class mod_quiz_attempt_walkthrough_testcase extends advanced_testcase {
         $prefix1 = $quba->get_field_prefix(1);
         $prefix2 = $quba->get_field_prefix(2);
 
-
         $tosubmit = array(1 => array('answer' => 'frog'),
                           2 => array('answer' => '3.14'));
 
@@ -121,7 +120,7 @@ class mod_quiz_attempt_walkthrough_testcase extends advanced_testcase {
     }
 
     /**
-     * Create a second quiz with questions and walk through a quiz attempt this time with a random question.
+     * Create a quiz with a random as well as other questions and walk through quiz attempts.
      */
     public function test_quiz_with_random_question_attempt_walkthrough() {
         global $SITE;
@@ -161,65 +160,63 @@ class mod_quiz_attempt_walkthrough_testcase extends advanced_testcase {
 
         quiz_add_quiz_question($multichoicesingle->id, $quiz, 0);
 
-        // Make a user to do the quiz.
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
+        foreach (array($saq->id => 'frog', $numq->id => '3.14') as $randomqidtoselect => $randqanswer) {
+            // Make a new user to do the quiz each loop.
+            $user1 = $this->getDataGenerator()->create_user();
+            $this->setUser($user1);
 
-        $quizobj = quiz::create($quiz->id, $user1->id);
+            $quizobj = quiz::create($quiz->id, $user1->id);
 
-        // Start the attempt.
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
-        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+            // Start the attempt.
+            $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+            $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
-        $timenow = time();
-        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow);
+            $timenow = time();
+            $attempt = quiz_create_attempt($quizobj, 1, false, $timenow);
 
-        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+            quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow, array(1 => $randomqidtoselect));
 
-        quiz_attempt_save_started($quizobj, $quba, $attempt);
+            quiz_attempt_save_started($quizobj, $quba, $attempt);
 
-        // Process some responses from the student.
-        $attemptobj = quiz_attempt::create($attempt->id);
+            // Process some responses from the student.
+            $attemptobj = quiz_attempt::create($attempt->id);
 
-        $tosubmit = array();
-        $selectedquestionid = $quba->get_question_attempt(1)->get_question()->id;
-        if ($selectedquestionid == $numq->id) {
-            $tosubmit[1] = array('answer' => '3.14');
-        } else {
-            $tosubmit[1] = array('answer' => 'frog');
+            $tosubmit = array();
+            $selectedquestionid = $quba->get_question_attempt(1)->get_question()->id;
+            $tosubmit[1] = array('answer' => $randqanswer);
+            $tosubmit[2] = array(
+                0 => 'amphibian',
+                1 => 'mammal',
+                2 => 'amphibian');
+            $tosubmit[3] = array('1', '0', '1', '0'); // First and third choice.
+            $tosubmit[4] = array('answer' => 0); // The first choice.
+
+            $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
+
+            // Finish the attempt.
+            $attemptobj = quiz_attempt::create($attempt->id);
+            $attemptobj->process_finish($timenow, false);
+
+            // Re-load quiz attempt data.
+            $attemptobj = quiz_attempt::create($attempt->id);
+
+            // Check that results are stored as expected.
+            $this->assertEquals(1, $attemptobj->get_attempt_number());
+            $this->assertEquals(4, $attemptobj->get_sum_marks());
+            $this->assertEquals(true, $attemptobj->is_finished());
+            $this->assertEquals($timenow, $attemptobj->get_submitted_date());
+            $this->assertEquals($user1->id, $attemptobj->get_userid());
+
+            // Check quiz grades.
+            $grades = quiz_get_user_grades($quiz, $user1->id);
+            $grade = array_shift($grades);
+            $this->assertEquals(100.0, $grade->rawgrade);
+
+            // Check grade book.
+            $gradebookgrades = grade_get_grades($SITE->id, 'mod', 'quiz', $quiz->id, $user1->id);
+            $gradebookitem = array_shift($gradebookgrades->items);
+            $gradebookgrade = array_shift($gradebookitem->grades);
+            $this->assertEquals(100, $gradebookgrade->grade);
         }
-        $tosubmit[2] = array(
-            0 => 'amphibian',
-            1 => 'mammal',
-            2 => 'amphibian');
-        $tosubmit[3] = array('1', '0', '1', '0'); // First and third choice.
-        $tosubmit[4] = array('answer' => 0); // The first choice.
-
-        $attemptobj->process_submitted_actions($timenow, false, $tosubmit);
-
-        // Finish the attempt.
-        $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_finish($timenow, false);
-
-        // Re-load quiz attempt data.
-        $attemptobj = quiz_attempt::create($attempt->id);
-
-        // Check that results are stored as expected.
-        $this->assertEquals(1, $attemptobj->get_attempt_number());
-        $this->assertEquals(4, $attemptobj->get_sum_marks());
-        $this->assertEquals(true, $attemptobj->is_finished());
-        $this->assertEquals($timenow, $attemptobj->get_submitted_date());
-        $this->assertEquals($user1->id, $attemptobj->get_userid());
-
-        // Check quiz grades.
-        $grades = quiz_get_user_grades($quiz, $user1->id);
-        $grade = array_shift($grades);
-        $this->assertEquals(100.0, $grade->rawgrade);
-
-        // Check grade book.
-        $gradebookgrades = grade_get_grades($SITE->id, 'mod', 'quiz', $quiz->id, $user1->id);
-        $gradebookitem = array_shift($gradebookgrades->items);
-        $gradebookgrade = array_shift($gradebookitem->grades);
-        $this->assertEquals(100, $gradebookgrade->grade);
     }
 }
