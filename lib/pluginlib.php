@@ -823,6 +823,7 @@ class plugin_manager {
 
             'tinymce' => array(
                 'ctrlhelp', 'dragmath', 'moodleemoticon', 'moodleimage', 'moodlemedia', 'moodlenolink', 'spellchecker',
+                'pdw', 'wrap'
             ),
 
             'theme' => array(
