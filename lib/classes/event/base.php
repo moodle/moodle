@@ -136,6 +136,9 @@ abstract class base implements \IteratorAggregate {
         $event->data['object'] = substr($parts[2], 0, $pos);
         $event->data['action'] = substr($parts[2], $pos+1);
 
+        // Set static event data specific for child class.
+        $event->init();
+
         // Set optional data or use defaults.
         $event->data['objectid'] = isset($data['objectid']) ? $data['objectid'] : null;
         $event->data['courseid'] = isset($data['courseid']) ? $data['courseid'] : null;
@@ -143,8 +146,19 @@ abstract class base implements \IteratorAggregate {
         $event->data['other'] = isset($data['other']) ? $data['other'] : null;
         $event->data['relateduserid'] = isset($data['relateduserid']) ? $data['relateduserid'] : null;
 
-        if (!empty($data['context'])) {
+        if (isset($event->context)) {
+            if (isset($data['context']) and $event->context->id != $data['context']->id) {
+                throw new \coding_exception('Given context does not match expected context');
+            }
+            $event->data['contextid'] = $event->context->id;
+            $event->data['contextlevel'] = $event->context->contextlevel;
+            $event->data['contextinstanceid'] = $event->context->instanceid;
+
+        } else if (!empty($data['context'])) {
             $event->context = $data['context'];
+            if (isset($event->data['contextlevel']) and $event->data['contextlevel'] != $event->context->contextlevel) {
+                throw new \coding_exception('Context does not match expected context level');
+            }
             $event->data['contextid'] = $event->context->id;
             $event->data['contextlevel'] = $event->context->contextlevel;
             $event->data['contextinstanceid'] = $event->context->instanceid;
@@ -164,7 +178,7 @@ abstract class base implements \IteratorAggregate {
                 $event->data['contextinstanceid'] = $event->context->instanceid;
             }
         } else {
-            throw new \coding_exception('context (or contextid) is a required event property.');
+            throw new \coding_exception('context (or contextid) is a required event property, system context may be hardcoded in init() method.');
         }
 
         if (!isset($event->data['courseid'])) {
@@ -178,9 +192,6 @@ abstract class base implements \IteratorAggregate {
         if (!array_key_exists('relateduserid', $data) and $event->context and $event->context->contextlevel == CONTEXT_USER) {
             $event->data['relateduserid'] = $event->context->instanceid;
         }
-
-        // Set static event data specific for child class, this should also validate other data.
-        $event->init();
 
         // Warn developers if they do something wrong.
         if (debugging('', DEBUG_DEVELOPER)) { // This should be replaced by new $CFG->slowdebug flag if introduced.
@@ -203,6 +214,9 @@ abstract class base implements \IteratorAggregate {
             }
         }
 
+        // Let developers validate their custom data (such as $this->date['other']).
+        $event->validate_data();
+
         return $event;
     }
 
@@ -210,17 +224,27 @@ abstract class base implements \IteratorAggregate {
      * Override in subclass.
      *
      * Set all required data properties:
-     *  1/ crud - letter [crud]
-     *  2/ level - number 1...100
+     *  1/ crud - letter [crud]     TODO: MDL-37658
+     *  2/ level - number 1...100   TODO: MDL-37658
      *  3/ objecttable - name of database table if objectid specified
      *
-     * TODO: MDL-37658
-     *
-     * Optionally validate $this->data['other'].
+     * Optionally it can set:
+     * a/ fixed system context
+     * b/ required context level
      *
      * @return void
      */
     protected abstract function init();
+
+    /**
+     * Let developers validate their custom data (such as $this->date['other']).
+     *
+     * Throw \coding_exception or debugging() notice in case of any problems.
+     */
+    protected function validate_data() {
+        // Override if you want to validate event properties when
+        // creating new events.
+    }
 
     /**
      * Returns localised general event name.

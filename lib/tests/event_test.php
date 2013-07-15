@@ -622,6 +622,28 @@ class core_event_testcase extends advanced_testcase {
         $this->assertDebuggingNotCalled();
         $event6->trigger();
         $this->assertDebuggingCalled();
+
+        $event = \core_tests\event\problematic_event2::create(array('context'=>\context_course::instance(1)));
+        try {
+            $event = \core_tests\event\problematic_event2::create(array('context'=>\context_system::instance()));
+            $this->fail('Exception expected when $data contains context that does not match hardcoded level');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('\coding_exception', $e);
+        }
+
+        $event = \core_tests\event\problematic_event3::create(array());
+        $event = \core_tests\event\problematic_event3::create(array('context'=>\context_system::instance()));
+        try {
+            $event = \core_tests\event\problematic_event3::create(array('context'=>\context_course::instance(1)));
+            $this->fail('Exception expected when $data contains matching or no context if hardcoded in init');
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('\coding_exception', $e);
+        }
+
+        $event = \core_tests\event\problematic_event4::create(array('other'=>1));
+        $this->assertDebuggingNotCalled();
+        $event = \core_tests\event\problematic_event4::create(array());
+        $this->assertDebuggingCalled();
     }
 
     public function test_record_snapshots() {
