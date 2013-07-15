@@ -156,8 +156,8 @@ class core_webservice_external extends external_api {
 
         $siteinfo['functions'] = $availablefunctions;
 
-        // Mobile CSS theme and alternative login url
-        $siteinfo['mobilecssurl'] = get_config('admin', 'mobilecssurl');
+        // Mobile CSS theme and alternative login url.
+        $siteinfo['mobilecssurl'] = get_config(null, 'mobilecssurl');
 
         return $siteinfo;
     }
