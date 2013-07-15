@@ -95,6 +95,7 @@ class repository_skydrive extends repository {
         $ret = array();
         $ret['dynload'] = true;
         $ret['nosearch'] = true;
+        $ret['manage'] = 'https://skydrive.live.com/';
         $ret['list'] = $this->skydrive->get_file_list($path);
 
         // Generate path bar, always start with the plugin name.

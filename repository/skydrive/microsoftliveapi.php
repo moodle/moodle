@@ -182,9 +182,13 @@ class microsoft_skydrive extends oauth2_client {
                         'title' => $file->name,
                         'size' => $file->size,
                         'date' => strtotime($file->updated_time),
-                        'thumbnail' => $file->picture,
+                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->name, 90))->out(false),
+                        'realthumbnail' => $file->picture,
                         'source' => $file->id,
                         'url' => $file->link,
+                        'image_height' => $file->height,
+                        'image_width' => $file->width,
+                        'author' => $file->from->name,
                     );
                     break;
                 case 'video':
@@ -192,9 +196,11 @@ class microsoft_skydrive extends oauth2_client {
                         'title' => $file->name,
                         'size' => $file->size,
                         'date' => strtotime($file->updated_time),
-                        'thumbnail' => $file->picture,
+                        'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->name, 90))->out(false),
+                        'realthumbnail' => $file->picture,
                         'source' => $file->id,
                         'url' => $file->link,
+                        'author' => $file->from->name,
                     );
                     break;
                 case 'audio':
@@ -205,6 +211,7 @@ class microsoft_skydrive extends oauth2_client {
                         'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->name, 90))->out(false),
                         'source' => $file->id,
                         'url' => $file->link,
+                        'author' => $file->from->name,
                     );
                     break;
                 case 'file':
@@ -215,6 +222,7 @@ class microsoft_skydrive extends oauth2_client {
                         'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file->name, 90))->out(false),
                         'source' => $file->id,
                         'url' => $file->link,
+                        'author' => $file->from->name,
                     );
                     break;
             }
