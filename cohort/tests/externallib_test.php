@@ -147,10 +147,6 @@ class core_cohort_external_testcase extends externallib_advanced_testcase {
         // Check we retrieve the good total number of enrolled cohorts + no error on capability.
         $this->assertEquals(2, count($returnedcohorts));
 
-        // Call the external function.
-        $returnedcohorts = core_cohort_external::get_cohorts(array(
-                    $cohort1->id, $cohort2->id));
-
         foreach ($returnedcohorts as $enrolledcohort) {
             if ($enrolledcohort['idnumber'] == $cohort1->idnumber) {
                 $this->assertEquals($cohort1->name, $enrolledcohort['name']);
