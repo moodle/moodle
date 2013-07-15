@@ -103,7 +103,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
 
             // No need to pass title through s() here as it will be done automatically by html_writer.
             $attributes = array('title' => $course->fullname);
-            if (empty($course->visible)) {
+            if (empty($course->visible) && ($course->id > 0)) {
                 $attributes['class'] = 'dimmed';
             }
             if ($course->id > 0) {
