@@ -636,6 +636,7 @@ class plugin_manager {
         // Moodle 2.3 supports upgrades from 2.2.x only.
         $plugins = array(
             'qformat' => array('blackboard'),
+            'enrol' => array('authorize'),
         );
 
         if (!isset($plugins[$type])) {
