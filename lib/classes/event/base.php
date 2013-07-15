@@ -508,9 +508,15 @@ abstract class base implements \IteratorAggregate {
      *
      * @param string $tablename
      * @param \stdClass $record
+     *
+     * @throws \coding_exception if used after ::trigger()
      */
     public function add_record_snapshot($tablename, $record) {
         global $DB;
+
+        if ($this->triggered) {
+            throw new \coding_exception('It is not possible to add snapshots after triggering of events');
+        }
 
         // NOTE: this might use some kind of MUC cache,
         //       hopefully we will not run out of memory here...

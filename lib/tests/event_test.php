@@ -639,6 +639,15 @@ class core_event_testcase extends advanced_testcase {
         $user = $event->get_record_snapshot('user', 1);
         $this->assertEquals(1, $user->id);
         $this->assertSame('guest', $user->username);
+
+        $event->add_record_snapshot('course', $course1);
+        $event->trigger();
+        try {
+            $event->add_record_snapshot('course', $course1);
+            $this->fail('Updating of snapshots after trigger is not ok');;
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('\coding_exception', $e);
+        }
     }
 
     public function test_iteration() {
