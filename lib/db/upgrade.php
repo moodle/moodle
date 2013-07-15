@@ -2259,5 +2259,39 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013070800.01);
     }
 
+    if ($oldversion < 2013071500.01) {
+        // The enrol_authorize plugin has been removed, if there are no records
+        // and no plugin files then remove the plugin data.
+        $enrolauthorize = new xmldb_table('enrol_authorize');
+        $enrolauthorizerefunds = new xmldb_table('enrol_authorize_refunds');
+
+        if (!file_exists($CFG->dirroot.'/enrol/authorize/version.php') &&
+            $dbman->table_exists($enrolauthorize) &&
+            $dbman->table_exists($enrolauthorizerefunds)) {
+
+            $enrolauthorizecount = $DB->count_records('enrol_authorize');
+            $enrolauthorizerefundcount = $DB->count_records('enrol_authorize_refunds');
+
+            if (empty($enrolauthorizecount) && empty($enrolauthorizerefundcount)) {
+
+                // Drop the database tables.
+                $dbman->drop_table($enrolauthorize);
+                $dbman->drop_table($enrolauthorizerefunds);
+
+                // Drop the message provider and associated data manually.
+                $DB->delete_records('message_providers', array('component' => 'enrol_authorize'));
+                $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("%_provider_enrol_authorize_%"));
+                $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?', false), array("message_provider_enrol_authorize_%"));
+
+                // Remove capabilities.
+                capabilities_cleanup('enrol_authorize');
+
+                // Remove all other associated config.
+                unset_all_config_for_plugin('enrol_authorize');
+            }
+        }
+        upgrade_main_savepoint(true, 2013071500.01);
+    }
+
     return true;
 }

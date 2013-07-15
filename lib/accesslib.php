@@ -2667,6 +2667,7 @@ function update_capabilities($component = 'moodle') {
 /**
  * Deletes cached capabilities that are no longer needed by the component.
  * Also unassigns these capabilities from any roles that have them.
+ * NOTE: this function is called from lib/db/upgrade.php
  *
  * @access private
  * @param string $component examples: 'moodle', 'mod_forum', 'block_quiz_results'
