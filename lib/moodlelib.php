@@ -1468,6 +1468,7 @@ function unset_config($name, $plugin=NULL) {
 
 /**
  * Remove all the config variables for a given plugin.
+ * NOTE: this function is called from lib/db/upgrade.php
  *
  * @param string $plugin a plugin, for example 'quiz' or 'qtype_multichoice';
  * @return boolean whether the operation succeeded.
