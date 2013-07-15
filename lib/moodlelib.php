@@ -1550,6 +1550,9 @@ function purge_all_caches() {
 
     cache_helper::purge_all();
 
+    // Clear course cache for all courses.
+    rebuild_course_cache(0, true);
+
     // purge all other caches: rss, simplepie, etc.
     remove_dir($CFG->cachedir.'', true);
 
