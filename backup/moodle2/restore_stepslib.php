@@ -2029,7 +2029,6 @@ class restore_badges_structure_step extends restore_structure_step {
         $params = array(
                 'name'           => $data->name,
                 'description'    => $data->description,
-                'image'          => 0,
                 'timecreated'    => $this->apply_date_offset($data->timecreated),
                 'timemodified'   => $this->apply_date_offset($data->timemodified),
                 'usercreated'    => $data->usercreated,

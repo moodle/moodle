@@ -2293,5 +2293,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013071500.01);
     }
 
+    if ($oldversion < 2013071500.02) {
+        // Define field attachment to be dropped from badge.
+        $table = new xmldb_table('badge');
+        $field = new xmldb_field('image');
+
+        // Conditionally launch drop field eventtype.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2013071500.02);
+    }
+
     return true;
 }
