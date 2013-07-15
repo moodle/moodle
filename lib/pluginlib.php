@@ -838,7 +838,7 @@ class plugin_manager {
                 'dbtransfer', 'generator', 'health', 'innodb', 'installaddon',
                 'langimport', 'multilangupgrade', 'phpunit', 'profiling',
                 'qeupgradehelper', 'replace', 'spamcleaner', 'timezoneimport',
-                'unittest', 'uploaduser', 'unsuproles', 'xmldb'
+                'unittest', 'uploadcourse', 'uploaduser', 'unsuproles', 'xmldb'
             ),
 
             'webservice' => array(
