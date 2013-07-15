@@ -76,9 +76,6 @@ class core_event_testcase extends advanced_testcase {
 
         $event2 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'contextid'=>$system->id, 'objectid'=>5, 'other'=>array('sample'=>null, 'xx'=>10)));
         $this->assertSame($event->get_context(), $event2->get_context());
-
-        $event3 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'contextid'=>999, 'contextlevel'=>CONTEXT_COURSE, 'contextinstanceid'=>4554645, 'objectid'=>5, 'other'=>array('sample'=>null, 'xx'=>10)));
-        $this->assertSame(false, $event3->get_context());
     }
 
     public function test_observers_parsing() {
@@ -632,13 +629,9 @@ class core_event_testcase extends advanced_testcase {
         }
 
         $event = \core_tests\event\problematic_event3::create(array());
+        $this->assertDebuggingNotCalled();
         $event = \core_tests\event\problematic_event3::create(array('context'=>\context_system::instance()));
-        try {
-            $event = \core_tests\event\problematic_event3::create(array('context'=>\context_course::instance(1)));
-            $this->fail('Exception expected when $data contains matching or no context if hardcoded in init');
-        } catch (\moodle_exception $e) {
-            $this->assertInstanceOf('\coding_exception', $e);
-        }
+        $this->assertDebuggingCalled();
 
         $event = \core_tests\event\problematic_event4::create(array('other'=>1));
         $this->assertDebuggingNotCalled();

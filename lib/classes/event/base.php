@@ -147,55 +147,42 @@ abstract class base implements \IteratorAggregate {
         $event->data['relateduserid'] = isset($data['relateduserid']) ? $data['relateduserid'] : null;
 
         if (isset($event->context)) {
-            if (isset($data['context']) and $event->context->id != $data['context']->id) {
-                throw new \coding_exception('Given context does not match expected context');
+            if (isset($data['context'])) {
+                debugging('Context was already set in init() method, ignoring context parameter', DEBUG_DEVELOPER);
             }
-            $event->data['contextid'] = $event->context->id;
-            $event->data['contextlevel'] = $event->context->contextlevel;
-            $event->data['contextinstanceid'] = $event->context->instanceid;
 
         } else if (!empty($data['context'])) {
             $event->context = $data['context'];
-            if (isset($event->data['contextlevel']) and $event->data['contextlevel'] != $event->context->contextlevel) {
-                throw new \coding_exception('Context does not match expected context level');
-            }
-            $event->data['contextid'] = $event->context->id;
-            $event->data['contextlevel'] = $event->context->contextlevel;
-            $event->data['contextinstanceid'] = $event->context->instanceid;
 
         } else if (!empty($data['contextid'])) {
-            $event->context = null;
-            if (isset($data['contextlevel']) and isset($data['contextinstanceid'])) {
-                // Useful especially when deleting contexts because we can nto fetch it from DB anymore.
-                $event->data['contextid'] = $data['contextid'];
-                $event->data['contextlevel'] = $data['contextlevel'];
-                $event->data['contextinstanceid'] = $data['contextinstanceid'];
-                $event->context = \context::instance_by_id($data['contextid'], IGNORE_MISSING);
-            } else {
-                $event->context = \context::instance_by_id($data['contextid'], MUST_EXIST);
-                $event->data['contextid'] = $event->context->id;
-                $event->data['contextlevel'] = $event->context->contextlevel;
-                $event->data['contextinstanceid'] = $event->context->instanceid;
-            }
+            $event->context = \context::instance_by_id($data['contextid'], MUST_EXIST);
+
         } else {
             throw new \coding_exception('context (or contextid) is a required event property, system context may be hardcoded in init() method.');
         }
 
+        if (isset($event->data['contextlevel']) and $event->data['contextlevel'] != $event->context->contextlevel) {
+            throw new \coding_exception('Context does not match expected context level');
+        }
+        $event->data['contextid'] = $event->context->id;
+        $event->data['contextlevel'] = $event->context->contextlevel;
+        $event->data['contextinstanceid'] = $event->context->instanceid;
+
         if (!isset($event->data['courseid'])) {
-            if ($event->context and $coursecontext = $event->context->get_course_context(false)) {
+            if ($coursecontext = $event->context->get_course_context(false)) {
                 $event->data['courseid'] = $coursecontext->id;
             } else {
                 $event->data['courseid'] = 0;
             }
         }
 
-        if (!array_key_exists('relateduserid', $data) and $event->context and $event->context->contextlevel == CONTEXT_USER) {
+        if (!array_key_exists('relateduserid', $data) and $event->context->contextlevel == CONTEXT_USER) {
             $event->data['relateduserid'] = $event->context->instanceid;
         }
 
         // Warn developers if they do something wrong.
         if (debugging('', DEBUG_DEVELOPER)) { // This should be replaced by new $CFG->slowdebug flag if introduced.
-            static $automatickeys = array('eventname', 'component', 'action', 'object', 'timecreated');
+            static $automatickeys = array('eventname', 'component', 'action', 'object', 'contextlevel', 'contextinstanceid', 'timecreated');
             static $initkeys = array('crud', 'level', 'objecttable');
 
             foreach ($data as $key => $ignored) {
