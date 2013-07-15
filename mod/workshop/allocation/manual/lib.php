@@ -243,7 +243,7 @@ class workshop_manual_allocator implements workshop_allocator {
         $reviewers = array();
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
-            $picturefields = user_picture::fields('r', array(), 'reviewerid')
+            $picturefields = user_picture::fields('r', array(), 'reviewerid');
             $sql = "SELECT a.id AS assessmentid, a.submissionid, $picturefields,
                            s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
