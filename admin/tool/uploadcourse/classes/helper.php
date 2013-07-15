@@ -130,17 +130,10 @@ class tool_uploadcourse_helper {
     /**
      * Return the available course formats.
      *
-     * The result is cached for faster execution.
-     *
      * @return array
      */
     public static function get_course_formats() {
-        $cache = cache::make('tool_uploadcourse', 'helper');
-        if (($formats = $cache->get('format')) === false) {
-            $formats = array_keys(get_plugin_list('format'));
-            $cache->set('format', $formats);
-        }
-        return $formats;
+        return array_keys(core_component::get_plugin_list('format'));
     }
 
     /**
