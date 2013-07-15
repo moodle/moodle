@@ -47,6 +47,7 @@ define('CLI_SCRIPT', false); // prevents some warnings later
 define('AJAX_SCRIPT', false); // prevents some warnings later
 define('CACHE_DISABLE_ALL', true); // Disables caching.. just in case.
 define('PHPUNIT_TEST', false);
+define('IGNORE_COMPONENT_CACHE', true);
 
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
 // This is a quick hack.  Ideally we should ask the admin for a value.  See MDL-22625 for more on this.

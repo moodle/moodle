@@ -139,6 +139,8 @@ define('CACHE_DISABLE_ALL', true);
 
 define('PHPUNIT_TEST', false);
 
+define('IGNORE_COMPONENT_CACHE', true);
+
 // Check that PHP is of a sufficient version
 if (version_compare(phpversion(), "5.3.3") < 0) {
     $phpversion = phpversion();

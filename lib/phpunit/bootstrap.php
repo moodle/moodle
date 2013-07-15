@@ -40,6 +40,10 @@ if (ini_get('opcache.enable') and strtolower(ini_get('opcache.enable')) !== 'off
     }
 }
 
+if (!defined('IGNORE_COMPONENT_CACHE')) {
+    define('IGNORE_COMPONENT_CACHE', true);
+}
+
 require_once(__DIR__.'/bootstraplib.php');
 require_once(__DIR__.'/../testing/lib.php');
 require_once(__DIR__.'/classes/autoloader.php');

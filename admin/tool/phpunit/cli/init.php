@@ -32,6 +32,8 @@ if (function_exists('opcache_reset')) {
     opcache_reset();
 }
 
+define('IGNORE_COMPONENT_CACHE', true);
+
 require_once(__DIR__.'/../../../../lib/clilib.php');
 require_once(__DIR__.'/../../../../lib/phpunit/bootstraplib.php');
 require_once(__DIR__.'/../../../../lib/testing/lib.php');
