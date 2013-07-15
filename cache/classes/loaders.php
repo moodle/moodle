@@ -117,6 +117,8 @@ class cache implements cache_loader {
     /**
      * An array containing just the keys being used in the persist cache.
      * This seems redundant perhaps but is used when managing the size of the persist cache.
+     * Items are added to the end of the array and the when we need to reduce the size of the cache we use the
+     * key that is first on this array.
      * @var array
      */
     private $persistkeys = array();
@@ -965,6 +967,15 @@ class cache implements cache_loader {
             if ($this->perfdebug) {
                 cache_helper::record_cache_hit('** static persist **', $this->definition->get_id());
             }
+            if ($this->persistmaxsize > 1 && $this->persistcount > 1) {
+                // Check to see if this is the last item on the persist keys array.
+                if (end($this->persistkeys) !== $key) {
+                    // It isn't the last item.
+                    // Move the item to the end of the array so that it is last to be removed.
+                    unset($this->persistkeys[$key]);
+                    $this->persistkeys[$key] = $key;
+                }
+            }
             return $result;
         } else {
             if ($this->perfdebug) {
@@ -989,6 +1000,7 @@ class cache implements cache_loader {
         $this->persistcache[$key] = $data;
         if ($this->persistmaxsize !== false) {
             $this->persistcount++;
+            $this->persistkeys[$key] = $key;
             if ($this->persistcount > $this->persistmaxsize) {
                 $dropkey = array_shift($this->persistkeys);
                 unset($this->persistcache[$dropkey]);
