@@ -292,6 +292,47 @@ class format_singleactivity extends format_base {
     }
 
     /**
+     * Checks if the current user can add the activity of the specified type to this course.
+     *
+     * @return bool
+     */
+    protected function can_add_activity() {
+        global $CFG;
+        if (!($modname = $this->get_activitytype())) {
+            return false;
+        }
+        if (!has_capability('moodle/course:manageactivities', context_course::instance($this->courseid))) {
+            return false;
+        }
+        if (!course_allowed_module($this->get_course(), $modname)) {
+            return false;
+        }
+        $libfile = "$CFG->dirroot/mod/$modname/lib.php";
+        if (!file_exists($libfile)) {
+            return null;
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the activity type requires subtypes.
+     *
+     * @return bool|null (null if the check is not possible)
+     */
+    public function activity_has_subtypes() {
+        global $CFG;
+        if (!($modname = $this->get_activitytype())) {
+            return null;
+        }
+        $libfile = "$CFG->dirroot/mod/$modname/lib.php";
+        if (!file_exists($libfile)) {
+            return null;
+        }
+        include_once($libfile);
+        return function_exists($modname. '_get_types');
+    }
+
+    /**
      * Allows course format to execute code on moodle_page::set_course()
      *
      * This function is executed before the output starts.
@@ -335,10 +376,20 @@ class format_singleactivity extends format_base {
                 }
             }
             if ($cm === null) {
-                if (has_capability('moodle/course:manageactivities', context_course::instance($this->courseid))) {
-                    // Teacher is redirected to create a new activity.
-                    $url = new moodle_url('/course/modedit.php',
-                            array('course' => $this->courseid, 'section' => 0, 'add' => $this->get_activitytype()));
+                if ($this->can_add_activity()) {
+                    // This is a user who has capability to create an activity.
+                    if ($this->activity_has_subtypes()) {
+                        // Activity that requires subtype can not be added automatically.
+                        if (optional_param('addactivity', 0, PARAM_INT)) {
+                            return;
+                        } else {
+                            $url = new moodle_url('/course/view.php', array('id' => $this->courseid, 'addactivity' => 1));
+                            redirect($url);
+                        }
+                    }
+                    // Redirect to the add activity form.
+                    $url = new moodle_url('/course/mod.php', array('id' => $this->courseid,
+                        'section' => 0, 'sesskey' => sesskey(), 'add' => $this->get_activitytype()));
                     redirect($url);
                 } else {
                     // Student views an empty course page.
