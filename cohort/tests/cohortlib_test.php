@@ -62,20 +62,48 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertNotEmpty($newcohort->timecreated);
         $this->assertSame($newcohort->component, '');
         $this->assertSame($newcohort->timecreated, $newcohort->timemodified);
+    }
 
-        try {
-            $cohort = new stdClass();
-            $cohort->contextid = context_system::instance()->id;
-            $cohort->name = null;
-            $cohort->idnumber = 'testid';
-            $cohort->description = 'test cohort desc';
-            $cohort->descriptionformat = FORMAT_HTML;
-            cohort_add_cohort($cohort);
+    public function test_cohort_add_cohort_missing_name() {
+        $cohort = new stdClass();
+        $cohort->contextid = context_system::instance()->id;
+        $cohort->name = null;
+        $cohort->idnumber = 'testid';
+        $cohort->description = 'test cohort desc';
+        $cohort->descriptionformat = FORMAT_HTML;
 
-            $this->fail('Exception expected when trying to add cohort without name');
-        } catch (Exception $e) {
-            $this->assertInstanceOf('coding_exception', $e);
-        }
+        $this->setExpectedException('coding_exception', 'Missing cohort name in cohort_add_cohort().');
+        cohort_add_cohort($cohort);
+    }
+
+    public function test_cohort_add_cohort_event() {
+        $this->resetAfterTest();
+
+        // Setup cohort data structure.
+        $cohort = new stdClass();
+        $cohort->contextid = context_system::instance()->id;
+        $cohort->name = 'test cohort';
+        $cohort->idnumber = 'testid';
+        $cohort->description = 'test cohort desc';
+        $cohort->descriptionformat = FORMAT_HTML;
+
+        // Catch Events.
+        $sink = $this->redirectEvents();
+
+        // Perform the add operation.
+        $id = cohort_add_cohort($cohort);
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $this->assertCount(1, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\cohort_created', $event);
+        $this->assertEquals('cohort', $event->objecttable);
+        $this->assertEquals($id, $event->objectid);
+        $this->assertEquals($cohort->contextid, $event->contextid);
     }
 
     public function test_cohort_update_cohort() {
@@ -110,6 +138,42 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertLessThanOrEqual(time(), $newcohort->timemodified);
     }
 
+    public function test_cohort_update_cohort_event() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Setup the cohort data structure.
+        $cohort = new stdClass();
+        $cohort->contextid = context_system::instance()->id;
+        $cohort->name = 'test cohort';
+        $cohort->idnumber = 'testid';
+        $cohort->description = 'test cohort desc';
+        $cohort->descriptionformat = FORMAT_HTML;
+        $id = cohort_add_cohort($cohort);
+        $this->assertNotEmpty($id);
+
+        $cohort->name = 'test cohort 2';
+
+        // Catch Events.
+        $sink = $this->redirectEvents();
+
+        // Peform the update.
+        cohort_update_cohort($cohort);
+
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $this->assertCount(1, $events);
+        $event = $events[0];
+        $updatedcohort = $DB->get_record('cohort', array('id'=>$id));
+        $this->assertInstanceOf('\core\event\cohort_updated', $event);
+        $this->assertEquals('cohort', $event->objecttable);
+        $this->assertEquals($updatedcohort->id, $event->objectid);
+        $this->assertEquals($updatedcohort->contextid, $event->contextid);
+    }
+
     public function test_cohort_delete_cohort() {
         global $DB;
 
@@ -120,6 +184,29 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         cohort_delete_cohort($cohort);
 
         $this->assertFalse($DB->record_exists('cohort', array('id'=>$cohort->id)));
+    }
+
+    public function test_cohort_delete_cohort_event() {
+
+        $this->resetAfterTest();
+
+        $cohort = $this->getDataGenerator()->create_cohort();
+
+        // Capture the events.
+        $sink = $this->redirectEvents();
+
+        // Perform the delete.
+        cohort_delete_cohort($cohort);
+
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event structure.
+        $this->assertCount(1, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\cohort_deleted', $event);
+        $this->assertEquals('cohort', $event->objecttable);
+        $this->assertEquals($cohort->id, $event->objectid);
     }
 
     public function test_cohort_delete_category() {
@@ -151,6 +238,33 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('cohort_members', array('cohortid'=>$cohort->id, 'userid'=>$user->id)));
     }
 
+    public function test_cohort_add_member_event() {
+        global $USER;
+
+        // Setup the data.
+        $this->resetAfterTest();
+        $cohort = $this->getDataGenerator()->create_cohort();
+        $user = $this->getDataGenerator()->create_user();
+
+        // Capture the events.
+        $sink = $this->redirectEvents();
+
+        // Peform the add member operation.
+        cohort_add_member($cohort->id, $user->id);
+
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $this->assertCount(1, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\cohort_member_added', $event);
+        $this->assertEquals('cohort', $event->objecttable);
+        $this->assertEquals($cohort->id, $event->objectid);
+        $this->assertEquals($user->id, $event->relateduserid);
+        $this->assertEquals($USER->id, $event->userid);
+    }
+
     public function test_cohort_remove_member() {
         global $DB;
 
@@ -164,6 +278,33 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
 
         cohort_remove_member($cohort->id, $user->id);
         $this->assertFalse($DB->record_exists('cohort_members', array('cohortid'=>$cohort->id, 'userid'=>$user->id)));
+    }
+
+    public function test_cohort_remove_member_event() {
+        global $USER;
+
+        // Setup the data.
+        $this->resetAfterTest();
+        $cohort = $this->getDataGenerator()->create_cohort();
+        $user = $this->getDataGenerator()->create_user();
+        cohort_add_member($cohort->id, $user->id);
+
+        // Capture the events.
+        $sink = $this->redirectEvents();
+
+        // Peform the remove operation.
+        cohort_remove_member($cohort->id, $user->id);
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $this->assertCount(1, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\cohort_member_removed', $event);
+        $this->assertEquals('cohort', $event->objecttable);
+        $this->assertEquals($cohort->id, $event->objectid);
+        $this->assertEquals($user->id, $event->relateduserid);
+        $this->assertEquals($USER->id, $event->userid);
     }
 
     public function test_cohort_is_member() {
