@@ -534,9 +534,15 @@ abstract class base implements \IteratorAggregate {
      * @param string $tablename
      * @param int $id
      * @return \stdClass
+     *
+     * @throws \coding_exception if used after ::restore()
      */
     public function get_record_snapshot($tablename, $id) {
         global $DB;
+
+        if ($this->restored) {
+            throw new \coding_exception('It is not possible to get snapshots from restored events');
+        }
 
         if (isset($this->recordsnapshots[$tablename][$id])) {
             return $this->recordsnapshots[$tablename][$id];

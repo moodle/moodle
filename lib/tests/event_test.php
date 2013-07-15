@@ -648,6 +648,14 @@ class core_event_testcase extends advanced_testcase {
         } catch (\moodle_exception $e) {
             $this->assertInstanceOf('\coding_exception', $e);
         }
+
+        $event2 = \core_tests\event\unittest_executed::restore($event->get_data(), array());
+        try {
+            $event2->get_record_snapshot('course', 1, $course1);
+            $this->fail('Reading of snapshots from restored events is not ok');;
+        } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('\coding_exception', $e);
+        }
     }
 
     public function test_iteration() {
