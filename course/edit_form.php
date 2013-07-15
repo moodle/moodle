@@ -199,6 +199,11 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'lang', get_string('forcelanguage'), $languages);
         $mform->setDefault('lang', $courseconfig->lang);
 
+        $calendartypes = array();
+        $calendartypes[''] = get_string('forceno');
+        $calendartypes += core_calendar\type_factory::get_list_of_calendar_types();
+        $mform->addElement('select', 'calendartype', get_string('forcecalendartype', 'calendar'), $calendartypes);
+
         $options = range(0, 10);
         $mform->addElement('select', 'newsitems', get_string('newsitemsnumber'), $options);
         $mform->addHelpButton('newsitems', 'newsitemsnumber');
@@ -272,14 +277,6 @@ class course_edit_form extends moodleform {
         $options = array();
         $options[0] = get_string('none');
         $mform->addElement('select', 'defaultgroupingid', get_string('defaultgrouping', 'group'), $options);
-
-        // Multi-Calendar Support - see MDL-18375
-        $mform->addElement('header','', get_string('calendar', 'calendar'));
-
-        $calendartypes = array();
-        $calendartypes[''] = get_string('forceno');
-        $calendartypes += calendar_type_plugin_factory::get_list_of_calendar_types();
-        $mform->addElement('select', 'calendartype', get_string('forcecalendartype', 'calendar'), $calendartypes);
 
         // Customizable role names in this course.
         $mform->addElement('header','rolerenaming', get_string('rolerenaming'));
