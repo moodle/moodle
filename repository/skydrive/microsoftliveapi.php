@@ -57,7 +57,7 @@ class microsoft_skydrive extends oauth2_client {
     public function __construct($clientid, $clientsecret, $returnurl) {
         parent::__construct($clientid, $clientsecret, $returnurl, self::SCOPE);
         // Make a session cache
-        $this->foldernamecache = cache::make_from_params(cache_store::MODE_SESSION, 'repository_skydrive', 'foldernamelist');
+        $this->foldernamecache = cache::make('repository_skydrive', 'foldername');
     }
 
     /**

@@ -22,6 +22,7 @@
  * @author     Dan Poltawski <dan.poltawski@luns.net.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+$string['cachedef_foldername'] = 'Folder name cache';
 $string['clientid'] = 'Client ID';
 $string['configplugin'] = 'Configure Microsoft Skydrive';
 $string['oauthinfo'] = '<p>To use this plugin, you must register your site <a href="https://manage.dev.live.com/Applications/Index">with Microsoft</a>.<p>As part of the registration process, you will need to enter the following URL as \'Redirect domain\':</p><p>{$a->callbackurl}</p>Once registered, you will be provided with a client ID and secret which can be entered here.</p>';
