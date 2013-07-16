@@ -201,7 +201,7 @@ abstract class base implements \IteratorAggregate {
             }
         }
 
-        // Let developers validate their custom data (such as $this->date['other']).
+        // Let developers validate their custom data (such as $this->data['other']).
         $event->validate_data();
 
         return $event;
@@ -224,7 +224,7 @@ abstract class base implements \IteratorAggregate {
     protected abstract function init();
 
     /**
-     * Let developers validate their custom data (such as $this->date['other']).
+     * Let developers validate their custom data (such as $this->data['other']).
      *
      * Throw \coding_exception or debugging() notice in case of any problems.
      */
