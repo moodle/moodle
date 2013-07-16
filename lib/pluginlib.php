@@ -2304,7 +2304,7 @@ class available_update_deployer {
 
         list($plugintype, $pluginname) = normalize_component($component);
 
-        $directory = get_plugin_directory($plugintype, $pluginname);
+        $directory = core_component::get_plugin_directory($plugintype, $pluginname);
 
         if (is_null($directory)) {
             throw new coding_exception('Unknown component location', $component);

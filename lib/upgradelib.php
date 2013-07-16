@@ -1629,7 +1629,7 @@ function upgrade_plugin_mnet_functions($component) {
     global $DB, $CFG;
 
     list($type, $plugin) = explode('_', $component);
-    $path = get_plugin_directory($type, $plugin);
+    $path = core_component::get_plugin_directory($type, $plugin);
 
     $publishes = array();
     $subscribes = array();

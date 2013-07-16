@@ -1228,7 +1228,7 @@ class theme_config {
             if ($imagefile = $this->image_exists("$CFG->dataroot/pix_plugins/$type/$plugin/$image", $svg)) {
                 return $imagefile;
             }
-            $dir = get_plugin_directory($type, $plugin);
+            $dir = core_component::get_plugin_directory($type, $plugin);
             if ($imagefile = $this->image_exists("$dir/pix/$image", $svg)) {
                 return $imagefile;
             }

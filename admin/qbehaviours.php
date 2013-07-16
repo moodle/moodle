@@ -186,14 +186,14 @@ if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey())
     }
 
     // Then the tables themselves
-    drop_plugin_tables($delete, get_plugin_directory('qbehaviour', $delete) . '/db/install.xml', false);
+    drop_plugin_tables($delete, core_component::get_plugin_directory('qbehaviour', $delete) . '/db/install.xml', false);
 
     // Remove event handlers and dequeue pending events
     events_uninstall('qbehaviour_' . $delete);
 
     $a = new stdClass();
     $a->behaviour = $behaviourname;
-    $a->directory = get_plugin_directory('qbehaviour', $delete);
+    $a->directory = core_component::get_plugin_directory('qbehaviour', $delete);
     echo $OUTPUT->box(get_string('qbehaviourdeletefiles', 'question', $a), 'generalbox', 'notice');
     echo $OUTPUT->continue_button($thispageurl);
     echo $OUTPUT->footer();

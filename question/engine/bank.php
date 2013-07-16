@@ -73,7 +73,7 @@ abstract class question_bank {
      * @return bool whether that question type is installed in this Moodle.
      */
     public static function is_qtype_installed($qtypename) {
-        $plugindir = get_plugin_directory('qtype', $qtypename);
+        $plugindir = core_component::get_plugin_directory('qtype', $qtypename);
         return $plugindir && is_readable($plugindir . '/questiontype.php');
     }
 
@@ -89,7 +89,7 @@ abstract class question_bank {
         if (isset(self::$questiontypes[$qtypename])) {
             return self::$questiontypes[$qtypename];
         }
-        $file = get_plugin_directory('qtype', $qtypename) . '/questiontype.php';
+        $file = core_component::get_plugin_directory('qtype', $qtypename) . '/questiontype.php';
         if (!is_readable($file)) {
             if ($mustexist || $qtypename == 'missingtype') {
                 throw new coding_exception('Unknown question type ' . $qtypename);

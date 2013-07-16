@@ -804,7 +804,7 @@ class theme_mymobile_core_renderer extends core_renderer {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$choice = get_plugin_directory('mod', 'choice');
+$choice = core_component::get_plugin_directory('mod', 'choice');
 if (file_exists($choice . '/renderer.php')) {
     require_once($CFG->dirroot . '/theme/mymobile/renderers/mod_choice_renderer.php');
 }

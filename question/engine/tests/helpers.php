@@ -207,7 +207,7 @@ class test_question_maker {
             return self::$testhelpers[$qtype];
         }
 
-        $file = get_plugin_directory('qtype', $qtype) . '/tests/helper.php';
+        $file = core_component::get_plugin_directory('qtype', $qtype) . '/tests/helper.php';
         if (!is_readable($file)) {
             throw new coding_exception('Question type ' . $qtype .
                 ' does not have test helper code.');

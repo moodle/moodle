@@ -166,7 +166,7 @@ function uninstall_plugin($type, $name) {
 
     echo $OUTPUT->heading($pluginname);
 
-    $plugindirectory = get_plugin_directory($type, $name);
+    $plugindirectory = core_component::get_plugin_directory($type, $name);
     $uninstalllib = $plugindirectory . '/db/uninstall.php';
     if (file_exists($uninstalllib)) {
         require_once($uninstalllib);

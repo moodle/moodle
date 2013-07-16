@@ -590,7 +590,7 @@ function mnet_setup_dummy_method($method, $callstack, $rpcrecord) {
     $remoteclient = get_mnet_remote_client();
     // verify that the callpath in the stack matches our records
     // callstack will look like array('mod', 'forum', 'lib.php', 'forum_add_instance');
-    $path = get_plugin_directory($rpcrecord->plugintype, $rpcrecord->pluginname);
+    $path = core_component::get_plugin_directory($rpcrecord->plugintype, $rpcrecord->pluginname);
     $path = substr($path, strlen($CFG->dirroot)+1); // this is a bit hacky and fragile, it is not guaranteed that plugins are in dirroot
     array_pop($callstack);
     $providedpath =  implode('/', $callstack);
