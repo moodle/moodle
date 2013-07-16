@@ -7248,18 +7248,6 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
 }
 
 /**
- * Is this context part of any course? if yes return course context,
- * if not return null or throw exception.
- *
- * @deprecated since 2.2, use $context->get_course_context() instead
- * @param context $context
- * @return course_context context of the enclosing course, null if not found or exception
- */
-function get_course_context(context $context) {
-    return $context->get_course_context(true);
-}
-
-/**
  * Returns current course id or null if outside of course based on context parameter.
  *
  * @deprecated since 2.2, use  $context->get_course_context instead

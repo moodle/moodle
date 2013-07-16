@@ -2484,8 +2484,11 @@ class accesslib_testcase extends advanced_testcase {
 
         $pagecm = get_coursemodule_from_instance('page', $testpages[7]);
         $context = context_module::instance($pagecm->id);
-        $coursecontext = get_course_context($context);
-        $this->assertEquals($coursecontext->contextlevel, CONTEXT_COURSE);
+        $coursecontext1 = get_course_context($context);
+        $this->assertDebuggingCalled('get_course_context() is deprecated, please use $context->get_course_context(true) instead.', DEBUG_DEVELOPER);
+        $coursecontext2 = $context->get_course_context(true);
+        $this->assertEquals($coursecontext1, $coursecontext2);
+        $this->assertEquals($coursecontext2->contextlevel, CONTEXT_COURSE);
         $this->assertEquals(get_courseid_from_context($context), $pagecm->course);
 
         $caps = fetch_context_capabilities($systemcontext);
