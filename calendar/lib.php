@@ -1568,13 +1568,14 @@ function calendar_get_default_courses() {
 
     $courses = array();
     if (!empty($CFG->calendar_adminseesall) && has_capability('moodle/calendar:manageentries', context_system::instance())) {
-        list ($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+        $select = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $join = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
         $sql = "SELECT c.* $select
                   FROM {course} c
                   $join
                   WHERE EXISTS (SELECT 1 FROM {event} e WHERE e.courseid = c.id)
                   ";
-        $courses = $DB->get_records_sql($sql, null, 0, 20);
+        $courses = $DB->get_records_sql($sql, array('contextlevel' => CONTEXT_COURSE), 0, 20);
         foreach ($courses as $course) {
             context_helper::preload_from_record($course);
         }

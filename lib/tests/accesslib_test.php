@@ -2428,6 +2428,9 @@ class accesslib_testcase extends advanced_testcase {
 
         context_helper::reset_caches();
         list($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSECAT, 'ctx');
+        $this->assertDebuggingCalled('context_instance_preload_sql() is deprecated, please use context_helper::get_preload_record_columns_sql() instead.', DEBUG_DEVELOPER);
+        $this->assertEquals(', ' . context_helper::get_preload_record_columns_sql('ctx'), $select);
+        $this->assertEquals('LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = ' . CONTEXT_COURSECAT . ')', $join);
         $sql = "SELECT c.id $select FROM {course_categories} c $join";
         $records = $DB->get_records_sql($sql);
         foreach ($records as $record) {

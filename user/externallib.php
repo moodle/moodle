@@ -678,8 +678,10 @@ class core_user_external extends external_api {
         $params = self::validate_parameters(self::get_users_by_id_parameters(),
                 array('userids'=>$userids));
 
-        list($uselect, $ujoin) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
         list($sqluserids, $params) = $DB->get_in_or_equal($userids);
+        $uselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $ujoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
+        $params['contextlevel'] = CONTEXT_USER;
         $usersql = "SELECT u.* $uselect
                       FROM {user} u $ujoin
                      WHERE u.id $sqluserids";
@@ -778,8 +780,10 @@ class core_user_external extends external_api {
 
         // cache all courses
         $courses = array();
-        list($cselect, $cjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
         list($sqlcourseids, $params) = $DB->get_in_or_equal(array_unique($courseids));
+        $cselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $cjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+        $params['contextlevel'] = CONTEXT_COURSE;
         $coursesql = "SELECT c.* $cselect
                         FROM {course} c $cjoin
                        WHERE c.id $sqlcourseids";
@@ -792,8 +796,10 @@ class core_user_external extends external_api {
         }
         $rs->close();
 
-        list($uselect, $ujoin) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
         list($sqluserids, $params) = $DB->get_in_or_equal($userids);
+        $uselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $ujoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
+        $params['contextlevel'] = CONTEXT_USER;
         $usersql = "SELECT u.* $uselect
                       FROM {user} u $ujoin
                      WHERE u.id $sqluserids";

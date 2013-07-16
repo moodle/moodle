@@ -458,8 +458,9 @@ class core_enrol_external extends external_api {
         }
 
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext, $withcapability, $groupid, $onlyactive);
-        list($ctxselect, $ctxjoin) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
-        $sqlparams['courseid'] = $courseid;
+        $ctxselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
+        $enrolledparams['contextlevel'] = CONTEXT_USER;
         $sql = "SELECT u.* $ctxselect
                   FROM {user} u $ctxjoin
                  WHERE u.id IN ($enrolledsql)

@@ -7231,21 +7231,6 @@ class context_block extends context {
 // before removing devs will be warned with a debugging message first,
 // then we will add error message and only after that we can remove the functions
 // completely.
-/**
- * Preloads context information together with instances.
- * Use context_helper::preload_from_record() to strip the context info from the record and cache the context instance.
- *
- * @deprecated since 2.2
- * @param string $joinon for example 'u.id'
- * @param string $contextlevel context level of instance in $joinon
- * @param string $tablealias context table alias
- * @return array with two values - select and join part
- */
-function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
-    $select = ", ".context_helper::get_preload_record_columns_sql($tablealias);
-    $join = "LEFT JOIN {context} $tablealias ON ($tablealias.instanceid = $joinon AND $tablealias.contextlevel = $contextlevel)";
-    return array($select, $join);
-}
 
 /**
  * Runs get_records select on context table and returns the result

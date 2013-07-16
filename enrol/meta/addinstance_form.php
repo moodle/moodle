@@ -40,9 +40,10 @@ class enrol_meta_addinstance_form extends moodleform {
 
         // TODO: this has to be done via ajax or else it will fail very badly on large sites!
         $courses = array('' => get_string('choosedots'));
-        list ($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+        $select = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+        $join = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
         $sql = "SELECT c.id, c.fullname, c.shortname, c.visible $select FROM {course} c $join ORDER BY c.sortorder ASC";
-        $rs = $DB->get_recordset_sql($sql);
+        $rs = $DB->get_recordset_sql($sql, array('contextlevel' => CONTEXT_COURSE));
         foreach ($rs as $c) {
             if ($c->id == SITEID or $c->id == $course->id or isset($existing[$c->id])) {
                 continue;
