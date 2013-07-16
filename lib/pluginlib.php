@@ -2460,7 +2460,7 @@ abstract class plugininfo_base {
     public static function get_plugins($type, $typerootdir, $typeclass) {
 
         // get the information about plugins at the disk
-        $plugins = get_plugin_list($type);
+        $plugins = core_component::get_plugin_list($type);
         $ondisk = array();
         foreach ($plugins as $pluginname => $pluginrootdir) {
             $ondisk[$pluginname] = plugininfo_default_factory::make($type, $typerootdir,

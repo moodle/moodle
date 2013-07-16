@@ -253,7 +253,7 @@ class grading_manager {
             $list = array();
         }
 
-        foreach (get_plugin_list('gradingform') as $name => $location) {
+        foreach (core_component::get_plugin_list('gradingform') as $name => $location) {
             $list[$name] = get_string('pluginname', 'gradingform_'.$name);
         }
 

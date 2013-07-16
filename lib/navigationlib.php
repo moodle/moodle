@@ -2222,7 +2222,7 @@ class global_navigation extends navigation_node {
         } else if ($course->id == $SITE->id && has_capability('moodle/user:viewdetails', $usercontext) && (!in_array('mycourses', $hiddenfields) || has_capability('moodle/user:viewhiddendetails', $coursecontext))) {
 
             // Add view grade report is permitted
-            $reports = get_plugin_list('gradereport');
+            $reports = core_component::get_plugin_list('gradereport');
             arsort($reports); // user is last, we want to test it first
 
             $userscourses = enrol_get_users_courses($user->id);
@@ -3572,7 +3572,7 @@ class settings_navigation extends navigation_node {
         if (has_capability('moodle/site:viewreports', $coursecontext)) { // Basic capability for listing of reports.
             $reportnav = $coursenode->add(get_string('reports'), null, self::TYPE_CONTAINER, null, null,
                     new pix_icon('i/stats', ''));
-            $coursereports = get_plugin_list('coursereport');
+            $coursereports = core_component::get_plugin_list('coursereport');
             foreach ($coursereports as $report => $dir) {
                 $libfile = $CFG->dirroot.'/course/report/'.$report.'/lib.php';
                 if (file_exists($libfile)) {
@@ -3595,7 +3595,7 @@ class settings_navigation extends navigation_node {
         if (has_capability('moodle/grade:viewall', $coursecontext)) {
             $reportavailable = true;
         } else if (!empty($course->showgrades)) {
-            $reports = get_plugin_list('gradereport');
+            $reports = core_component::get_plugin_list('gradereport');
             if (is_array($reports) && count($reports)>0) {     // Get all installed reports
                 arsort($reports); // user is last, we want to test it first
                 foreach ($reports as $plugin => $plugindir) {
@@ -4297,7 +4297,7 @@ class settings_navigation extends navigation_node {
         if (has_capability('moodle/site:viewreports', $coursecontext)) { // Basic capability for listing of reports.
             $frontpagenav = $frontpage->add(get_string('reports'), null, self::TYPE_CONTAINER, null, null,
                     new pix_icon('i/stats', ''));
-            $coursereports = get_plugin_list('coursereport');
+            $coursereports = core_component::get_plugin_list('coursereport');
             foreach ($coursereports as $report=>$dir) {
                 $libfile = $CFG->dirroot.'/course/report/'.$report.'/lib.php';
                 if (file_exists($libfile)) {

@@ -378,7 +378,7 @@ abstract class editor_tinymce_plugin {
         global $CFG;
 
         // Get list of plugin directories.
-        $plugins = get_plugin_list('tinymce');
+        $plugins = core_component::get_plugin_list('tinymce');
 
         // Get list of disabled subplugins.
         $disabled = array();

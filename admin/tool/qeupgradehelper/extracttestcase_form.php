@@ -44,7 +44,7 @@ class tool_qeupgradehelper_extract_options_form extends moodleform {
             'adaptivenopenalty' => 'Adaptive (no penalties)',
         );
 
-        $qtypes = get_plugin_list('qtype');
+        $qtypes = core_component::get_plugin_list('qtype');
         foreach ($qtypes as $qtype => $notused) {
             $qtypes[$qtype] = get_string($qtype, 'qtype_' . $qtype);
         }

@@ -133,7 +133,7 @@ abstract class question_bank {
      * @return bool whether this question type exists.
      */
     public static function qtype_exists($qtypename) {
-        return array_key_exists($qtypename, get_plugin_list('qtype'));
+        return array_key_exists($qtypename, core_component::get_plugin_list('qtype'));
     }
 
     /**
@@ -149,7 +149,7 @@ abstract class question_bank {
      */
     public static function get_all_qtypes() {
         $qtypes = array();
-        foreach (get_plugin_list('qtype') as $plugin => $notused) {
+        foreach (core_component::get_plugin_list('qtype') as $plugin => $notused) {
             try {
                 $qtypes[$plugin] = self::get_qtype($plugin);
             } catch (coding_exception $e) {

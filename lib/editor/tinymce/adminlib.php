@@ -135,7 +135,7 @@ class tiynce_subplugins_settings extends admin_setting {
             return true;
         }
 
-        $subplugins = get_plugin_list('tinymce');
+        $subplugins = core_component::get_plugin_list('tinymce');
         foreach ($subplugins as $name=>$dir) {
             if (stripos($name, $query) !== false) {
                 return true;
@@ -173,7 +173,7 @@ class tiynce_subplugins_settings extends admin_setting {
         $struninstall = get_string('uninstallplugin', 'core_admin');
         $strversion = get_string('version');
 
-        $subplugins = get_plugin_list('tinymce');
+        $subplugins = core_component::get_plugin_list('tinymce');
 
         $return = $OUTPUT->heading(get_string('subplugintype_tinymce_plural', 'editor_tinymce'), 3, 'main', true);
         $return .= $OUTPUT->box_start('generalbox tinymcesubplugins');

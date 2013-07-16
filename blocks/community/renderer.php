@@ -193,8 +193,8 @@ class block_community_renderer extends plugin_renderer_base {
 
 
                 //Create course content html
-                $blocks = get_plugin_list('block');
-                $activities = get_plugin_list('mod');
+                $blocks = core_component::get_plugin_list('block');
+                $activities = core_component::get_plugin_list('mod');
                 if (!empty($course->contents)) {
                     $activitieshtml = '';
                     $blockhtml = '';

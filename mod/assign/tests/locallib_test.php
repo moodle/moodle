@@ -54,7 +54,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     public function test_get_feedback_plugins() {
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
-        $installedplugins = array_keys(get_plugin_list('assignfeedback'));
+        $installedplugins = array_keys(core_component::get_plugin_list('assignfeedback'));
 
         foreach ($assign->get_feedback_plugins() as $plugin) {
             $this->assertContains($plugin->get_type(), $installedplugins, 'Feedback plugin not in list of installed plugins');
@@ -64,7 +64,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     public function test_get_submission_plugins() {
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
-        $installedplugins = array_keys(get_plugin_list('assignsubmission'));
+        $installedplugins = array_keys(core_component::get_plugin_list('assignsubmission'));
 
         foreach ($assign->get_submission_plugins() as $plugin) {
             $this->assertContains($plugin->get_type(), $installedplugins, 'Submission plugin not in list of installed plugins');

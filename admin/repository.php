@@ -390,7 +390,7 @@ if (($action == 'edit') || ($action == 'new')) {
     }
 
     // Get all the plugins that exist on disk
-    $plugins = get_plugin_list('repository');
+    $plugins = core_component::get_plugin_list('repository');
     if (!empty($plugins)) {
         foreach ($plugins as $plugin => $dir) {
             // Check that it has not already been listed

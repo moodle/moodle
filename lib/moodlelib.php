@@ -8215,7 +8215,7 @@ function get_plugin_list_with_function($plugintype, $function, $file = 'lib.php'
  * Lists plugin-like directories within specified directory
  *
  * This function was originally used for standard Moodle plugins, please use
- * new get_plugin_list() now.
+ * new core_component::get_plugin_list() now.
  *
  * This function is used for general directory listing and backwards compatility.
  *

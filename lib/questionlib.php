@@ -138,7 +138,7 @@ function questions_in_use($questionids) {
         return true;
     }
 
-    foreach (get_plugin_list('mod') as $module => $path) {
+    foreach (core_component::get_plugin_list('mod') as $module => $path) {
         $lib = $path . '/lib.php';
         if (is_readable($lib)) {
             include_once($lib);

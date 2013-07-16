@@ -1665,7 +1665,7 @@ class YUI_config {
         // And finally the plugins.
         $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $pathroot) {
-            $pluginlist = get_plugin_list($plugintype);
+            $pluginlist = core_component::get_plugin_list($plugintype);
             foreach ($pluginlist as $plugin => $path) {
                 if ($module = $this->get_moodle_path_metadata($path)) {
                     $moodlemodules = array_merge($moodlemodules, $module);

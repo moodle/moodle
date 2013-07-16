@@ -331,7 +331,7 @@ class assign {
         global $CFG;
         $result = array();
 
-        $names = get_plugin_list($subtype);
+        $names = core_component::get_plugin_list($subtype);
 
         foreach ($names as $name => $path) {
             if (file_exists($path . '/locallib.php')) {

@@ -112,11 +112,11 @@ class core_user_external extends external_api {
         // If any problems are found then exceptions are thrown with helpful error messages
         $params = self::validate_parameters(self::create_users_parameters(), array('users'=>$users));
 
-        $availableauths  = get_plugin_list('auth');
+        $availableauths  = core_component::get_plugin_list('auth');
         unset($availableauths['mnet']);       // these would need mnethostid too
         unset($availableauths['webservice']); // we do not want new webservice users for now
 
-        $availablethemes = get_plugin_list('theme');
+        $availablethemes = core_component::get_plugin_list('theme');
         $availablelangs  = get_string_manager()->get_list_of_translations();
 
         $transaction = $DB->start_delegated_transaction();

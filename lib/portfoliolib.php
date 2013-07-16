@@ -815,7 +815,7 @@ function portfolio_plugin_sanity_check($plugins=null) {
     if (is_string($plugins)) {
         $plugins = array($plugins);
     } else if (empty($plugins)) {
-        $plugins = get_plugin_list('portfolio');
+        $plugins = core_component::get_plugin_list('portfolio');
         $plugins = array_keys($plugins);
     }
 

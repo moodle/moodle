@@ -240,7 +240,7 @@ switch ($mode) {
 /// Print the browsing interface
 
 ///get the list of possible fields (plugins)
-$plugins = get_plugin_list('datafield');
+$plugins = core_component::get_plugin_list('datafield');
 $menufield = array();
 
 foreach ($plugins as $plugin=>$fulldir){

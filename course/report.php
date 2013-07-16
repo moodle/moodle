@@ -19,7 +19,7 @@
     $PAGE->set_heading($course->fullname.': '.$strreports);
     echo $OUTPUT->header();
 
-    $reports = get_plugin_list('coursereport');
+    $reports = core_component::get_plugin_list('coursereport');
 
     foreach ($reports as $report => $reportdirectory) {
         $pluginfile = $reportdirectory.'/mod.php';

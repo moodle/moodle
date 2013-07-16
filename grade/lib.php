@@ -2513,7 +2513,7 @@ abstract class grade_helper {
         $context = context_course::instance($courseid);
         $gradereports = array();
         $gradepreferences = array();
-        foreach (get_plugin_list('gradereport') as $plugin => $plugindir) {
+        foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
             //some reports make no sense if we're not within a course
             if ($courseid==$SITE->id && ($plugin=='grader' || $plugin=='user')) {
                 continue;
@@ -2679,7 +2679,7 @@ abstract class grade_helper {
         $context = context_course::instance($courseid);
 
         if (has_capability('moodle/grade:import', $context)) {
-            foreach (get_plugin_list('gradeimport') as $plugin => $plugindir) {
+            foreach (core_component::get_plugin_list('gradeimport') as $plugin => $plugindir) {
                 if (!has_capability('gradeimport/'.$plugin.':view', $context)) {
                     continue;
                 }
@@ -2717,7 +2717,7 @@ abstract class grade_helper {
         $context = context_course::instance($courseid);
         $exportplugins = array();
         if (has_capability('moodle/grade:export', $context)) {
-            foreach (get_plugin_list('gradeexport') as $plugin => $plugindir) {
+            foreach (core_component::get_plugin_list('gradeexport') as $plugin => $plugindir) {
                 if (!has_capability('gradeexport/'.$plugin.':view', $context)) {
                     continue;
                 }

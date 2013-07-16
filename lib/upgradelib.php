@@ -385,7 +385,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         return upgrade_plugins_blocks($startcallback, $endcallback, $verbose);
     }
 
-    $plugs = get_plugin_list($type);
+    $plugs = core_component::get_plugin_list($type);
 
     foreach ($plugs as $plug=>$fullplug) {
         // Reset time so that it works when installing a large number of plugins
@@ -540,7 +540,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
 function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
     global $CFG, $DB;
 
-    $mods = get_plugin_list('mod');
+    $mods = core_component::get_plugin_list('mod');
 
     foreach ($mods as $mod=>$fullmod) {
 
@@ -715,7 +715,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
     //Is this a first install
     $first_install = null;
 
-    $blocks = get_plugin_list('block');
+    $blocks = core_component::get_plugin_list('block');
 
     foreach ($blocks as $blockname=>$fullblock) {
 

@@ -95,7 +95,7 @@ class mnet_review_host_form extends moodleform {
         $mform->addRule('wwwroot', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $themes = array('' => get_string('forceno'));
-        foreach (array_keys(get_plugin_list('theme')) as $themename) {
+        foreach (array_keys(core_component::get_plugin_list('theme')) as $themename) {
             $themes[$themename] = get_string('pluginname', 'theme_'.$themename);
         }
         $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);

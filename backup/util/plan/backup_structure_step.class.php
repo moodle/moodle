@@ -146,7 +146,7 @@ abstract class backup_structure_step extends backup_step {
         $element->add_child($optigroup); // Add optigroup to stay connected since beginning
 
         // Get all the optigroup_elements, looking across all the plugin dirs
-        $pluginsdirs = get_plugin_list($plugintype);
+        $pluginsdirs = core_component::get_plugin_list($plugintype);
         foreach ($pluginsdirs as $name => $plugindir) {
             $classname = 'backup_' . $plugintype . '_' . $name . '_plugin';
             $backupfile = $plugindir . '/backup/moodle2/' . $classname . '.class.php';

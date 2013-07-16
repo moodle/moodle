@@ -268,7 +268,7 @@ class moodle1_mod_workshop_handler extends moodle1_mod_handler {
 
         if (is_null($this->strategyhandlers)) {
             $this->strategyhandlers = array();
-            $subplugins = get_plugin_list('workshopform');
+            $subplugins = core_component::get_plugin_list('workshopform');
             foreach ($subplugins as $name => $dir) {
                 $handlerfile  = $dir.'/backup/moodle1/lib.php';
                 $handlerclass = "moodle1_workshopform_{$name}_handler";

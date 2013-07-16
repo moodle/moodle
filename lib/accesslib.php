@@ -6863,7 +6863,7 @@ class context_module extends context {
             include($subpluginsfile);
             if (!empty($subplugins)) {
                 foreach (array_keys($subplugins) as $subplugintype) {
-                    foreach (array_keys(get_plugin_list($subplugintype)) as $subpluginname) {
+                    foreach (array_keys(core_component::get_plugin_list($subplugintype)) as $subpluginname) {
                         $subcaps = array_merge($subcaps, array_keys(load_capability_def($subplugintype.'_'.$subpluginname)));
                     }
                 }

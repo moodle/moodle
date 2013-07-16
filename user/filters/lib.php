@@ -121,7 +121,7 @@ class user_filtering {
             case 'nevermodified': return new user_filter_checkbox('nevermodified', get_string('nevermodified', 'filters'), $advanced, array('timemodified', 'timecreated'), array('timemodified_sck', 'timemodified_eck'));
             case 'cohort':      return new user_filter_cohort($advanced);
             case 'auth':
-                $plugins = get_plugin_list('auth');
+                $plugins = core_component::get_plugin_list('auth');
                 $choices = array();
                 foreach ($plugins as $auth => $unused) {
                     $choices[$auth] = get_string('pluginname', "auth_{$auth}");

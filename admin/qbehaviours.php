@@ -39,7 +39,7 @@ require_capability('moodle/question:config', $systemcontext);
 admin_externalpage_setup('manageqbehaviours');
 $thispageurl = new moodle_url('/admin/qbehaviours.php');
 
-$behaviours = get_plugin_list('qbehaviour');
+$behaviours = core_component::get_plugin_list('qbehaviour');
 $pluginmanager = plugin_manager::instance();
 
 // Get some data we will need - question counts and which types are needed.

@@ -84,7 +84,7 @@ abstract class moodle1_handlers_factory {
         global $CFG;
 
         $handlers = array();
-        $plugins = get_plugin_list($type);
+        $plugins = core_component::get_plugin_list($type);
         foreach ($plugins as $name => $dir) {
             $handlerfile  = $dir . '/backup/moodle1/lib.php';
             $handlerclass = "moodle1_{$type}_{$name}_handler";
@@ -1335,7 +1335,7 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
         if (is_null($this->qtypehandlers)) {
             // initialize the list of qtype handler instances
             $this->qtypehandlers = array();
-            foreach (get_plugin_list('qtype') as $qtypename => $qtypelocation) {
+            foreach (core_component::get_plugin_list('qtype') as $qtypename => $qtypelocation) {
                 $filename = $qtypelocation.'/backup/moodle1/lib.php';
                 if (file_exists($filename)) {
                     $classname = 'moodle1_qtype_'.$qtypename.'_handler';

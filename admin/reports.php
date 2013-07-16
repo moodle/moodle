@@ -49,7 +49,7 @@ $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthw
 $table->setup();
 
 $plugins = array();
-foreach (get_plugin_list('report') as $plugin => $plugindir) {
+foreach (core_component::get_plugin_list('report') as $plugin => $plugindir) {
     if (get_string_manager()->string_exists('pluginname', 'report_' . $plugin)) {
         $strpluginname = get_string('pluginname', 'report_' . $plugin);
     } else {

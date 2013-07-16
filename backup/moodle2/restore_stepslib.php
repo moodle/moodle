@@ -1483,7 +1483,7 @@ class restore_course_structure_step extends restore_structure_step {
                 unset($roleids[$roleid]);
             }
 
-            foreach (get_plugin_list('mod') as $modname => $notused) {
+            foreach (core_component::get_plugin_list('mod') as $modname => $notused) {
                 if (isset($this->legacyallowedmodules[$modname])) {
                     // Module is allowed, no worries.
                     continue;
@@ -3184,7 +3184,7 @@ abstract class restore_activity_structure_step extends restore_structure_step {
              throw new restore_step_exception('incorrect_subplugin_type', $subplugintype);
         }
         // Get all the restore path elements, looking across all the subplugin dirs
-        $subpluginsdirs = get_plugin_list($subplugintype);
+        $subpluginsdirs = core_component::get_plugin_list($subplugintype);
         foreach ($subpluginsdirs as $name => $subpluginsdir) {
             $classname = 'restore_' . $subplugintype . '_' . $name . '_subplugin';
             $restorefile = $subpluginsdir . '/backup/moodle2/' . $classname . '.class.php';

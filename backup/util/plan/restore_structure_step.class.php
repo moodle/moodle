@@ -303,7 +303,7 @@ abstract class restore_structure_step extends restore_step {
         }
 
         // Get all the restore path elements, looking across all the plugin dirs
-        $pluginsdirs = get_plugin_list($plugintype);
+        $pluginsdirs = core_component::get_plugin_list($plugintype);
         foreach ($pluginsdirs as $name => $pluginsdir) {
             // We need to add also backup plugin classes on restore, they may contain
             // some stuff used both in backup & restore

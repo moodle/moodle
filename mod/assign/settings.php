@@ -40,7 +40,7 @@ assign_plugin_manager::add_admin_assign_plugin_settings('assignfeedback', $ADMIN
 
 if ($ADMIN->fulltree) {
     $menu = array();
-    foreach (get_plugin_list('assignfeedback') as $type => $notused) {
+    foreach (core_component::get_plugin_list('assignfeedback') as $type => $notused) {
         $visible = !get_config('assignfeedback_' . $type, 'disabled');
         if ($visible) {
             $menu['assignfeedback_' . $type] = new lang_string('pluginname', 'assignfeedback_' . $type);
