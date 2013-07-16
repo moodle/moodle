@@ -72,59 +72,8 @@ function xmldb_lesson_upgrade($oldversion) {
     // Moodle v2.5.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2013050101) {
-        // Fixed page order for missing page in lesson
-        upgrade_set_timeout(600);  // increase excution time for large sites
 
-        $lessons = $DB->get_records('lesson');
-
-        foreach ($lessons as $lesson) {
-            $pages = $DB->get_records('lesson_pages', array('lessonid' => $lesson->id));
-
-            $iscorrupt = false;
-
-            // Validate lesson prev and next pages.
-            foreach ($pages as $id => $page) {
-                // Setting up prev and next id to 0 is only valid if lesson only has 1 page.
-                // Other than that, it indicates lesson page links are corrupted.
-                if ($page->prevpageid == 0 && $page->nextpageid == 0 && count($pages) != 1) {
-                    $iscorrupt = true;
-                    break;
-                // Make sure page links to an existing page within the lesson.
-                } else if (($page->prevpageid != 0 && !isset($pages[$page->prevpageid])) ||
-                    ($page->nextpageid != 0 && !isset($pages[$page->nextpageid]))) {
-                    $iscorrupt = true;
-                    break;
-                //  Check the pages linked correctly
-                } else if((($page->prevpageid == 0 || $page->nextpageid != 0 ) && $pages[$page->nextpageid]->prevpageid != $page->id) ||
-                    (($page->prevpageid != 0 || $page->nextpageid == 0) && $pages[$page->prevpageid]->nextpageid != $page->id)) {
-                    $iscorrupt = true;
-                    break;
-                }
-            }
-
-            // Process the update for the corrupted lesson pages.
-            $count = 0;
-            $lastpageid = 0;
-            if ($iscorrupt) {
-                foreach($pages as $page) {
-                    $count++;
-                    if ($lastpageid == 0) {  // First page
-                        $DB->set_field('lesson_pages', 'prevpageid', 0, array('id' => $page->id));
-                        $DB->set_field('lesson_pages', 'nextpageid', 0, array('id' => $page->id));
-                    } elseif (count($pages) == $count) {
-                        $DB->set_field('lesson_pages', 'prevpageid', $lastpageid, array('id' => $page->id));
-                        $DB->set_field('lesson_pages', 'nextpageid', 0, array('id' => $page->id));
-                        $DB->set_field('lesson_pages', 'nextpageid', $page->id, array('id' => $lastpageid));
-                    } else {
-                        $DB->set_field('lesson_pages', 'prevpageid', $lastpageid, array('id' => $page->id));
-                        $DB->set_field('lesson_pages', 'nextpageid', $page->id, array('id' => $lastpageid));
-                    }
-                    $lastpageid = $page->id;
-                }
-            }
-        }
-        upgrade_mod_savepoint(true, 2013050101, 'lesson');
-    }
     return true;
 }
+
+
