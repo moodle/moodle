@@ -282,6 +282,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $today = strtotime($today_date);
 
         $table = new html_table();
+        $table->id = 'issued-badge-table';
 
         $imagetable = new html_table();
         $imagetable->attributes = array('class' => 'clearfix badgeissuedimage');
@@ -294,11 +295,13 @@ class core_badges_renderer extends plugin_renderer_base {
             $expiration = isset($issued['expires']) ? strtotime($issued['expires']) : $today + 1;
             if (!empty($CFG->badges_allowexternalbackpack) && ($expiration > $today) && badges_user_has_backpack($USER->id)) {
                 $assertion = new moodle_url('/badges/assertion.php', array('b' => $ibadge->hash));
+                $action = new component_action('click', 'addtobackpack', array('assertion' => $assertion->out(false)));
                 $attributes = array(
-                        'type' => 'button',
-                        'value' => get_string('addtobackpack', 'badges'),
-                        'onclick' => 'OpenBadges.issue(["' . $assertion->out(false) . '"], function(errors, successes) { })');
+                        'type'  => 'button',
+                        'id'    => 'addbutton',
+                        'value' => get_string('addtobackpack', 'badges'));
                 $tobackpack = html_writer::tag('input', '', $attributes);
+                $this->output->add_action_handler($action, 'addbutton');
                 $imagetable->data[] = array($tobackpack);
             }
         }
@@ -459,7 +462,7 @@ class core_badges_renderer extends plugin_renderer_base {
                     get_string('downloadall'), 'POST', array('class' => 'activatebadge'));
 
         // Local badges.
-        $localhtml = html_writer::start_tag('fieldset', array('class' => 'generalbox'));
+        $localhtml = html_writer::start_tag('fieldset', array('id' => 'issued-badge-table', 'class' => 'generalbox'));
         $localhtml .= html_writer::tag('legend',
                     $this->output->heading_with_help(get_string('localbadges', 'badges', $SITE->fullname), 'localbadgesh', 'badges'));
         if ($badges->badges) {
