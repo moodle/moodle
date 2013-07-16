@@ -1191,7 +1191,7 @@ abstract class cache_administration_helper extends cache_helper {
      * @return array
      */
     public static function get_addable_lock_options() {
-        $plugins = get_plugin_list_with_class('cachelock', '', 'lib.php');
+        $plugins = core_component::get_plugin_list_with_class('cachelock', '', 'lib.php');
         $options = array();
         $len = strlen('cachelock_');
         foreach ($plugins as $plugin => $class) {

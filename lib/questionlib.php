@@ -1232,7 +1232,7 @@ function get_import_export_formats($type) {
     global $CFG;
     require_once($CFG->dirroot . '/question/format.php');
 
-    $formatclasses = get_plugin_list_with_class('qformat', '', 'format.php');
+    $formatclasses = core_component::get_plugin_list_with_class('qformat', '', 'format.php');
 
     $fileformatname = array();
     foreach ($formatclasses as $component => $formatclass) {
