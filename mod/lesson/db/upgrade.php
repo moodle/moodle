@@ -68,5 +68,8 @@ function xmldb_lesson_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
 
+
     return true;
 }
+
+
