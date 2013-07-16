@@ -416,7 +416,7 @@ class page_requirements_manager {
             return true;
         }
 
-        $componentdir = get_component_directory($component);
+        $componentdir = core_component::get_component_directory($component);
         if (!file_exists($componentdir) or !file_exists("$componentdir/jquery/plugins.php")) {
             debugging("Can not load jQuery plugin '$plugin', missing plugins.php in component '$component'.", DEBUG_DEVELOPER);
             return false;
@@ -704,7 +704,7 @@ class page_requirements_manager {
             }
 
         } else {
-            if ($dir = get_component_directory($component)) {
+            if ($dir = core_component::get_component_directory($component)) {
                 if (file_exists("$dir/module.js")) {
                     if (strpos($dir, $CFG->dirroot.'/') === 0) {
                         $dir = substr($dir, strlen($CFG->dirroot));
@@ -1647,7 +1647,7 @@ class YUI_config {
     private function get_moodle_metadata() {
         $moodlemodules = array();
         // Core isn't a plugin type or subsystem - handle it seperately.
-        if ($module = $this->get_moodle_path_metadata(get_component_directory('core'))) {
+        if ($module = $this->get_moodle_path_metadata(core_component::get_component_directory('core'))) {
             $moodlemodules = array_merge($moodlemodules, $module);
         }
 

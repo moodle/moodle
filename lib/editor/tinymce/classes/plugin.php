@@ -418,7 +418,7 @@ abstract class editor_tinymce_plugin {
      * @return editor_tinymce_plugin Plugin object
      */
     public static function get($plugin) {
-        $dir = get_component_directory('tinymce_' . $plugin);
+        $dir = core_component::get_component_directory('tinymce_' . $plugin);
         require_once($dir . '/lib.php');
         $classname = 'tinymce_' . $plugin;
         return new $classname($plugin);

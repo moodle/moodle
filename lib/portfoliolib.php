@@ -1313,7 +1313,7 @@ function portfolio_include_callback_file($component, $class = null) {
     }
 
     // Obtain the component's location.
-    if (!$componentloc = get_component_directory($component)) {
+    if (!$componentloc = core_component::get_component_directory($component)) {
         throw new portfolio_button_exception('nocallbackcomponent', 'portfolio', '', $component);
     }
 

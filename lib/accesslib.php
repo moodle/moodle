@@ -2387,7 +2387,7 @@ function count_enrolled_users(context $context, $withcapability = '', $groupid =
  * @return array array of capabilities
  */
 function load_capability_def($component) {
-    $defpath = get_component_directory($component).'/db/access.php';
+    $defpath = core_component::get_component_directory($component).'/db/access.php';
 
     $capabilities = array();
     if (file_exists($defpath)) {
@@ -2863,7 +2863,7 @@ function get_capability_string($capabilityname) {
         return get_string($stringname, $component);
     }
 
-    $dir = get_component_directory($component);
+    $dir = core_component::get_component_directory($component);
     if (!file_exists($dir)) {
         // plugin broken or does not exist, do not bother with printing of debug message
         return $capabilityname.' ???';

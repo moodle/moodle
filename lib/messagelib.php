@@ -116,7 +116,7 @@ function message_send($eventdata) {
 
     if (PHPUNIT_TEST and class_exists('phpunit_util')) {
         // Add some more tests to make sure the normal code can actually work.
-        $componentdir = get_component_directory($eventdata->component);
+        $componentdir = core_component::get_component_directory($eventdata->component);
         if (!$componentdir or !is_dir($componentdir)) {
             throw new coding_exception('Invalid component specified in message-send(): '.$eventdata->component);
         }
@@ -525,7 +525,7 @@ function message_get_providers_from_db($component) {
  * @return array An array of message providers or empty array if not exists
  */
 function message_get_providers_from_file($component) {
-    $defpath = get_component_directory($component).'/db/messages.php';
+    $defpath = core_component::get_component_directory($component).'/db/messages.php';
 
     $messageproviders = array();
 

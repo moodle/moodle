@@ -413,7 +413,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         if (isset($plugin->component)) {
             if ($plugin->component !== $component) {
                 $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullplug);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($plugin->component));
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', core_component::get_component_directory($plugin->component));
                 throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
@@ -571,7 +571,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         if (isset($module->component)) {
             if ($module->component !== $component) {
                 $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullmod);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($module->component));
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', core_component::get_component_directory($module->component));
                 throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
@@ -751,7 +751,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         if (isset($block->component)) {
             if ($block->component !== $component) {
                 $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullblock);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($block->component));
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', core_component::get_component_directory($block->component));
                 throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
@@ -909,7 +909,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 function log_update_descriptions($component) {
     global $DB;
 
-    $defpath = get_component_directory($component).'/db/log.php';
+    $defpath = core_component::get_component_directory($component).'/db/log.php';
 
     if (!file_exists($defpath)) {
         $DB->delete_records('log_display', array('component'=>$component));
@@ -966,7 +966,7 @@ function log_update_descriptions($component) {
 function external_update_descriptions($component) {
     global $DB, $CFG;
 
-    $defpath = get_component_directory($component).'/db/services.php';
+    $defpath = core_component::get_component_directory($component).'/db/services.php';
 
     if (!file_exists($defpath)) {
         require_once($CFG->dirroot.'/lib/externallib.php');
@@ -1187,7 +1187,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
             $currentversion = ($currentversion === false) ? null : $currentversion;
         } catch (Exception $ignored) {
         }
-        $cd = get_component_directory($component);
+        $cd = core_component::get_component_directory($component);
         if (file_exists("$cd/version.php")) {
             $module = new stdClass();
             $module->version = null;
@@ -1202,7 +1202,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
             }
         } catch (Exception $ignored) {
         }
-        $cd = get_component_directory($component);
+        $cd = core_component::get_component_directory($component);
         if (file_exists("$cd/version.php")) {
             $plugin = new stdClass();
             $plugin->version = null;
@@ -1215,7 +1215,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
         if (!empty($pluginversion)) {
             $currentversion = $pluginversion;
         }
-        $cd = get_component_directory($component);
+        $cd = core_component::get_component_directory($component);
         if (file_exists("$cd/version.php")) {
             $plugin = new stdClass();
             $plugin->version = null;

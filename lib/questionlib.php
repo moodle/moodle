@@ -1880,7 +1880,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
                 $component, $filearea, $qubaid, $slot, $args, $forcedownload, $options);
 
     } else {
-        $dir = get_component_directory($module);
+        $dir = core_component::get_component_directory($module);
         if (!file_exists("$dir/lib.php")) {
             send_file_not_found();
         }

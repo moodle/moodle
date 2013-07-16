@@ -40,7 +40,7 @@ function events_load_def($component) {
     if ($component === 'unittest') {
         $defpath = $CFG->dirroot.'/lib/tests/fixtures/events.php';
     } else {
-        $defpath = get_component_directory($component).'/db/events.php';
+        $defpath = core_component::get_component_directory($component).'/db/events.php';
     }
 
     $handlers = array();

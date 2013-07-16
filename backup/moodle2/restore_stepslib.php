@@ -918,7 +918,7 @@ class restore_groups_members_structure_step extends restore_structure_step {
                     }
 
                 } else {
-                    $dir = get_component_directory($data->component);
+                    $dir = core_component::get_component_directory($data->component);
                     if ($dir and is_dir($dir)) {
                         if (component_callback($data->component, 'restore_group_member', array($this, $data), true)) {
                             return;
@@ -1597,7 +1597,7 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
             $data->roleid    = $newroleid;
             $data->userid    = $newuserid;
             $data->contextid = $contextid;
-            $dir = get_component_directory($data->component);
+            $dir = core_component::get_component_directory($data->component);
             if ($dir and is_dir($dir)) {
                 if (component_callback($data->component, 'restore_role_assignment', array($this, $data), true)) {
                     return;

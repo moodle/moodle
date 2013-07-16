@@ -532,7 +532,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
     }
 
     foreach ($plugins as $component=>$cronfunction) {
-        $dir = get_component_directory($component);
+        $dir = core_component::get_component_directory($component);
 
         // Get cron period if specified in version.php, otherwise assume every cron
         $cronperiod = 0;

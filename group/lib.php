@@ -82,7 +82,7 @@ function groups_add_member($grouporid, $userorid, $component=null, $itemid=0) {
 
     // Check the component exists if specified
     if (!empty($component)) {
-        $dir = get_component_directory($component);
+        $dir = core_component::get_component_directory($component);
         if ($dir && is_dir($dir)) {
             // Component exists and can be used
             $member->component = $component;

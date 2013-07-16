@@ -44,7 +44,7 @@ function external_function_info($function, $strictness=MUST_EXIST) {
     }
 
     //first find and include the ext implementation class
-    $function->classpath = empty($function->classpath) ? get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
+    $function->classpath = empty($function->classpath) ? core_component::get_component_directory($function->component).'/externallib.php' : $CFG->dirroot.'/'.$function->classpath;
     if (!file_exists($function->classpath)) {
         throw new coding_exception('Can not find file with external function implementation');
     }
@@ -83,7 +83,7 @@ function external_function_info($function, $strictness=MUST_EXIST) {
     //      on the other hand this is still a bit in a flux and we need to find some new naming
     //      conventions for these descriptions in lang packs
     $function->description = null;
-    $servicesfile = get_component_directory($function->component).'/db/services.php';
+    $servicesfile = core_component::get_component_directory($function->component).'/db/services.php';
     if (file_exists($servicesfile)) {
         $functions = null;
         include($servicesfile);

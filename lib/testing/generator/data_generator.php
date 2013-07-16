@@ -107,7 +107,7 @@ EOD;
             return $this->generators[$component];
         }
 
-        $dir = get_component_directory($component);
+        $dir = core_component::get_component_directory($component);
         $lib = $dir . '/tests/generator/lib.php';
         if (!$dir || !is_readable($lib)) {
             throw new coding_exception("Component {$component} does not support " .
