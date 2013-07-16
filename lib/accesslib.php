@@ -7296,50 +7296,6 @@ function get_sorted_contexts($select, $params = array()) {
 }
 
 /**
- * This is really slow!!! do not use above course context level
- *
- * @deprecated since 2.2
- * @param int $roleid
- * @param context $context
- * @return array
- */
-function get_role_context_caps($roleid, context $context) {
-    global $DB;
-
-    //this is really slow!!!! - do not use above course context level!
-    $result = array();
-    $result[$context->id] = array();
-
-    // first emulate the parent context capabilities merging into context
-    $searchcontexts = array_reverse($context->get_parent_context_ids(true));
-    foreach ($searchcontexts as $cid) {
-        if ($capabilities = $DB->get_records('role_capabilities', array('roleid'=>$roleid, 'contextid'=>$cid))) {
-            foreach ($capabilities as $cap) {
-                if (!array_key_exists($cap->capability, $result[$context->id])) {
-                    $result[$context->id][$cap->capability] = 0;
-                }
-                $result[$context->id][$cap->capability] += $cap->permission;
-            }
-        }
-    }
-
-    // now go through the contexts below given context
-    $searchcontexts = array_keys($context->get_child_contexts());
-    foreach ($searchcontexts as $cid) {
-        if ($capabilities = $DB->get_records('role_capabilities', array('roleid'=>$roleid, 'contextid'=>$cid))) {
-            foreach ($capabilities as $cap) {
-                if (!array_key_exists($cap->contextid, $result)) {
-                    $result[$cap->contextid] = array();
-                }
-                $result[$cap->contextid][$cap->capability] = $cap->permission;
-            }
-        }
-    }
-
-    return $result;
-}
-
-/**
  * Gets a string for sql calls, searching for stuff in this context or above
  *
  * NOTE: use $DB->get_in_or_equal($context->get_parent_context_ids()...

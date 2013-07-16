@@ -28,6 +28,7 @@ information provided here is intended especially for developers.
 * get_context_url() is deprecated, please use $context->get_url().
 * get_course_context() is deprecated, please use $context->get_course_context().
 * get_user_courses_bycap() is deprecated, please use enrol_get_users_courses().
+* get_role_context_caps() is deprecated, it is really slow. Don't use it.
 
 === 2.5.1 ===
 
