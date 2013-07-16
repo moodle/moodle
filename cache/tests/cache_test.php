@@ -192,41 +192,43 @@ class cache_phpunit_tests extends advanced_testcase {
      */
     protected function run_on_cache(cache_loader $cache) {
         $key = 'testkey';
-        $datascalar = 'test data';
+        $datascalars = array('test data', null);
         $dataarray = array('test' => 'data', 'part' => 'two');
         $dataobject = (object)$dataarray;
 
-        $this->assertTrue($cache->purge());
+        foreach ($datascalars as $datascalar) {
+            $this->assertTrue($cache->purge());
 
-        // Check all read methods.
-        $this->assertFalse($cache->get($key));
-        $this->assertFalse($cache->has($key));
-        $result = $cache->get_many(array($key));
-        $this->assertCount(1, $result);
-        $this->assertFalse(reset($result));
-        $this->assertFalse($cache->has_any(array($key)));
-        $this->assertFalse($cache->has_all(array($key)));
+            // Check all read methods.
+            $this->assertFalse($cache->get($key));
+            $this->assertFalse($cache->has($key));
+            $result = $cache->get_many(array($key));
+            $this->assertCount(1, $result);
+            $this->assertFalse(reset($result));
+            $this->assertFalse($cache->has_any(array($key)));
+            $this->assertFalse($cache->has_all(array($key)));
 
-        // Set the data.
-        $this->assertTrue($cache->set($key, $datascalar));
-        // Setting it more than once should be permitted.
-        $this->assertTrue($cache->set($key, $datascalar));
+            // Set the data.
+            $this->assertTrue($cache->set($key, $datascalar));
+            // Setting it more than once should be permitted.
+            $this->assertTrue($cache->set($key, $datascalar));
 
-        // Recheck the read methods.
-        $this->assertEquals($datascalar, $cache->get($key));
-        $this->assertTrue($cache->has($key));
-        $result = $cache->get_many(array($key));
-        $this->assertCount(1, $result);
-        $this->assertEquals($datascalar, reset($result));
-        $this->assertTrue($cache->has_any(array($key)));
-        $this->assertTrue($cache->has_all(array($key)));
+            // Recheck the read methods.
+            $this->assertEquals($datascalar, $cache->get($key));
+            $this->assertTrue($cache->has($key));
+            $result = $cache->get_many(array($key));
+            $this->assertCount(1, $result);
+            $this->assertEquals($datascalar, reset($result));
+            $this->assertTrue($cache->has_any(array($key)));
+            $this->assertTrue($cache->has_all(array($key)));
 
-        // Delete it.
-        $this->assertTrue($cache->delete($key));
+            // Delete it.
+            $this->assertTrue($cache->delete($key));
 
-        // Check its gone.
-        $this->assertFalse($cache->get($key));
-        $this->assertFalse($cache->has($key));
+            // Check its gone.
+            $this->assertFalse($cache->get($key));
+            $this->assertFalse($cache->has($key));
+        }
 
         // Test arrays.
         $this->assertTrue($cache->set($key, $dataarray));
@@ -261,11 +263,13 @@ class cache_phpunit_tests extends advanced_testcase {
         }
 
         // Test set many.
-        $cache->set_many(array('key1' => 'data1', 'key2' => 'data2'));
+        $cache->set_many(array('key1' => 'data1', 'key2' => 'data2', 'key3' => null));
         $this->assertEquals('data1', $cache->get('key1'));
         $this->assertEquals('data2', $cache->get('key2'));
+        $this->assertEquals(null, $cache->get('key3'));
         $this->assertTrue($cache->delete('key1'));
         $this->assertTrue($cache->delete('key2'));
+        $this->assertTrue($cache->delete('key3'));
 
         $cache->set_many(array(
             'key1' => array(1, 2, 3),
@@ -282,14 +286,17 @@ class cache_phpunit_tests extends advanced_testcase {
         // Test delete many.
         $this->assertTrue($cache->set('key1', 'data1'));
         $this->assertTrue($cache->set('key2', 'data2'));
+        $this->assertTrue($cache->set('key3', null));
 
         $this->assertEquals('data1', $cache->get('key1'));
         $this->assertEquals('data2', $cache->get('key2'));
+        $this->assertEquals(null, $cache->get('key3'));
 
-        $this->assertEquals(2, $cache->delete_many(array('key1', 'key2')));
+        $this->assertEquals(3, $cache->delete_many(array('key1', 'key2', 'key3')));
 
         $this->assertFalse($cache->get('key1'));
         $this->assertFalse($cache->get('key2'));
+        $this->assertFalse($cache->get('key3'));
 
         // Quick reference test.
         $obj = new stdClass;
