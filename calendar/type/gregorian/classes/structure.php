@@ -85,6 +85,148 @@ class structure extends type_base {
     }
 
     /**
+     * Returns a formatted string that represents a date in user time.
+     *
+     * Returns a formatted string that represents a date in user time
+     * <b>WARNING: note that the format is for strftime(), not date().</b>
+     * Because of a bug in most Windows time libraries, we can't use
+     * the nicer %e, so we have to use %d which has leading zeroes.
+     * A lot of the fuss in the function is just getting rid of these leading
+     * zeroes as efficiently as possible.
+     *
+     * If parameter fixday = true (default), then take off leading
+     * zero from %d, else maintain it.
+     *
+     * @param int $date the timestamp in UTC, as obtained from the database
+     * @param string $format strftime format
+     * @param int|float|string $timezone the timezone to use
+     *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
+     * @param bool $fixday if true then the leading zero from %d is removed,
+     *        if false then the leading zero is maintained
+     * @param bool $fixhour if true then the leading zero from %I is removed,
+     *        if false then the leading zero is maintained
+     * @return string the formatted date/time
+     */
+    public function timestamp_to_date_string($date, $format, $timezone, $fixday, $fixhour) {
+        global $CFG;
+
+        if (empty($format)) {
+            $format = get_string('strftimedaydatetime', 'langconfig');
+        }
+
+        if (!empty($CFG->nofixday)) { // Config.php can force %d not to be fixed.
+            $fixday = false;
+        } else if ($fixday) {
+            $formatnoday = str_replace('%d', 'DD', $format);
+            $fixday = ($formatnoday != $format);
+            $format = $formatnoday;
+        }
+
+        // Note: This logic about fixing 12-hour time to remove unnecessary leading
+        // zero is required because on Windows, PHP strftime function does not
+        // support the correct 'hour without leading zero' parameter (%l).
+        if (!empty($CFG->nofixhour)) {
+            // Config.php can force %I not to be fixed.
+            $fixhour = false;
+        } else if ($fixhour) {
+            $formatnohour = str_replace('%I', 'HH', $format);
+            $fixhour = ($formatnohour != $format);
+            $format = $formatnohour;
+        }
+
+        // Add daylight saving offset for string timezones only, as we can't get dst for
+        // float values. if timezone is 99 (user default timezone), then try update dst.
+        if ((99 == $timezone) || !is_numeric($timezone)) {
+            $date += dst_offset_on($date, $timezone);
+        }
+
+        $timezone = get_user_timezone_offset($timezone);
+
+        // If we are running under Windows convert to windows encoding and then back to UTF-8
+        // (because it's impossible to specify UTF-8 to fetch locale info in Win32).
+        if (abs($timezone) > 13) { // Server time.
+            $datestring = date_format_string($date, $format, $timezone);
+            if ($fixday) {
+                $daystring  = ltrim(str_replace(array(' 0', ' '), '', strftime(' %d', $date)));
+                $datestring = str_replace('DD', $daystring, $datestring);
+            }
+            if ($fixhour) {
+                $hourstring = ltrim(str_replace(array(' 0', ' '), '', strftime(' %I', $date)));
+                $datestring = str_replace('HH', $hourstring, $datestring);
+            }
+        } else {
+            $date += (int)($timezone * 3600);
+            $datestring = date_format_string($date, $format, $timezone);
+            if ($fixday) {
+                $daystring  = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %d', $date)));
+                $datestring = str_replace('DD', $daystring, $datestring);
+            }
+            if ($fixhour) {
+                $hourstring = ltrim(str_replace(array(' 0', ' '), '', gmstrftime(' %I', $date)));
+                $datestring = str_replace('HH', $hourstring, $datestring);
+            }
+        }
+
+        return $datestring;
+    }
+
+    /**
+     * Given a $time timestamp in GMT (seconds since epoch), returns an array that
+     * represents the date in user time.
+     *
+     * @param int $time Timestamp in GMT
+     * @param float|int|string $timezone offset's time with timezone, if float and not 99, then no
+     *        dst offset is applied {@link http://docs.moodle.org/dev/Time_API#Timezone}
+     * @return array an array that represents the date in user time
+     */
+    public function timestamp_to_date_array($time, $timezone) {
+        // Save input timezone, required for dst offset check.
+        $passedtimezone = $timezone;
+
+        $timezone = get_user_timezone_offset($timezone);
+
+        if (abs($timezone) > 13) { // Server time.
+            return getdate($time);
+        }
+
+        // Add daylight saving offset for string timezones only, as we can't get dst for
+        // float values. if timezone is 99 (user default timezone), then try update dst.
+        if ($passedtimezone == 99 || !is_numeric($passedtimezone)) {
+            $time += dst_offset_on($time, $passedtimezone);
+        }
+
+        $time += intval((float)$timezone * HOURSECS);
+
+        $datestring = gmstrftime('%B_%A_%j_%Y_%m_%w_%d_%H_%M_%S', $time);
+
+        // Be careful to ensure the returned array matches that produced by getdate() above.
+        list (
+            $getdate['month'],
+            $getdate['weekday'],
+            $getdate['yday'],
+            $getdate['year'],
+            $getdate['mon'],
+            $getdate['wday'],
+            $getdate['mday'],
+            $getdate['hours'],
+            $getdate['minutes'],
+            $getdate['seconds']
+            ) = explode('_', $datestring);
+
+        // Set correct datatype to match with getdate().
+        $getdate['seconds'] = (int) $getdate['seconds'];
+        $getdate['yday'] = (int) $getdate['yday'] - 1;
+        $getdate['year'] = (int) $getdate['year'];
+        $getdate['mon'] = (int) $getdate['mon'];
+        $getdate['wday'] = (int) $getdate['wday'];
+        $getdate['mday'] = (int) $getdate['mday'];
+        $getdate['hours'] = (int) $getdate['hours'];
+        $getdate['minutes']  = (int) $getdate['minutes'];
+
+        return $getdate;
+    }
+
+    /**
      * Provided with a day, month, year, hour and minute in a specific
      * calendar type convert it into the equivalent Gregorian date.
      *

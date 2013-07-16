@@ -182,10 +182,12 @@ class core_calendar_type_testcase extends advanced_testcase {
         $calendar = new $class();
 
         // Test the userdate function.
-        $this->assertEquals($calendar->userdate($this->user->timecreated, '', 99, true, true), userdate($this->user->timecreated));
+        $this->assertEquals($calendar->timestamp_to_date_string($this->user->timecreated, '', 99, true, true),
+            userdate($this->user->timecreated));
 
         // Test the usergetdate function.
-        $this->assertEquals($calendar->usergetdate($this->user->timecreated, '', 99, true, true), usergetdate($this->user->timecreated));
+        $this->assertEquals($calendar->timestamp_to_date_array($this->user->timecreated, '', 99, true, true),
+            usergetdate($this->user->timecreated));
     }
 
     /**

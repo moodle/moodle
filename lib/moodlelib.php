@@ -2132,24 +2132,14 @@ function format_time($totalsecs, $str = null) {
 }
 
 /**
- * Returns a formatted string that represents a date in user time
- *
- * Returns a formatted string that represents a date in user time
- * <b>WARNING: note that the format is for strftime(), not date().</b>
- * Because of a bug in most Windows time libraries, we can't use
- * the nicer %e, so we have to use %d which has leading zeroes.
- * A lot of the fuss in the function is just getting rid of these leading
- * zeroes as efficiently as possible.
- *
- * If parameter fixday = true (default), then take off leading
- * zero from %d, else maintain it.
+ * Returns a formatted string that represents a date in user time.
  *
  * @package core
  * @category time
  * @param int $date the timestamp in UTC, as obtained from the database.
  * @param string $format strftime format. You should probably get this using
  *        get_string('strftime...', 'langconfig');
- * @param int|float|string  $timezone by default, uses the user's time zone. if numeric and
+ * @param int|float|string $timezone by default, uses the user's time zone. if numeric and
  *        not 99 then daylight saving will not be added.
  *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
  * @param bool $fixday If true (default) then the leading zero from %d is removed.
@@ -2159,7 +2149,7 @@ function format_time($totalsecs, $str = null) {
  */
 function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour = true) {
     $calendartype = \core_calendar\type_factory::factory();
-    return $calendartype->userdate($date, $format, $timezone, $fixday, $fixhour);
+    return $calendartype->timestamp_to_date_string($date, $format, $timezone, $fixday, $fixhour);
 }
 
 /**
@@ -2201,20 +2191,19 @@ function date_format_string($date, $format, $tz = 99) {
 }
 
 /**
- * Given a $time timestamp in GMT (seconds since epoch),
- * returns an array that represents the date in user time
+ * Given a $time timestamp in GMT (seconds since epoch), returns an array that represents
+ * the date in user time.
  *
  * @package core
  * @category time
- * @uses HOURSECS
- * @param int $time Timestamp in GMT
- * @param float|int|string $timezone offset's time with timezone, if float and not 99, then no
- *        dst offset is applied {@link http://docs.moodle.org/dev/Time_API#Timezone}
- * @return array An array that represents the date in user time
+ * @param int $time timestamp in GMT
+ * @param float|int|string $timezone the timezone to use to calculate the time
+ *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
+ * @return array an array that represents the date in user time
  */
 function usergetdate($time, $timezone = 99) {
     $calendartype = \core_calendar\type_factory::factory();
-    return $calendartype->usergetdate($time, $timezone);
+    return $calendartype->timestamp_to_date_array($time, $timezone);
 }
 
 /**

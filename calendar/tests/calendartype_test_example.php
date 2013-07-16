@@ -88,35 +88,32 @@ class structure extends type_base {
     /**
      * Returns a formatted string that represents a date in user time.
      *
-     * If parameter fixday = true (default), then take off leading
-     * zero from %d, else maintain it.
-     *
-     * @param int $date the timestamp in UTC, as obtained from the database.
-     * @param string $format strftime format. You should probably get this using
-     *        get_string('strftime...', 'langconfig');
-     * @param int|float|string  $timezone by default, uses the user's time zone. if numeric and
-     *        not 99 then daylight saving will not be added.
+     * @param int $date the timestamp in UTC, as obtained from the database
+     * @param string $format strftime format
+     * @param int|float|string $timezone the timezone to use
      *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
-     * @param bool $fixday if true (default) then the leading zero from %d is removed.
-     *        If false then the leading zero is maintained.
-     * @param bool $fixhour if true (default) then the leading zero from %I is removed.
-     * @return string the formatted date/time.
+     * @param bool $fixday if true then the leading zero from %d is removed,
+     *        if false then the leading zero is maintained
+     * @param bool $fixhour if true then the leading zero from %I is removed,
+     *        if false then the leading zero is maintained
+     * @return string the formatted date/time
      */
-    public function userdate($date, $format, $timezone, $fixday, $fixhour) {
+    public function timestamp_to_date_string($date, $format, $timezone, $fixday, $fixhour) {
         return "";
     }
 
     /**
-     * Given a $time timestamp in GMT (seconds since epoch), returns an array that
-     * represents the date in user time.
+     * Given a $time timestamp in GMT (seconds since epoch), returns an array that represents
+     * the date in user time.
      *
-     * @param int $time Timestamp in GMT
-     * @param float|int|string $timezone offset's time with timezone, if float and not 99, then no
-     *        dst offset is applyed {@link http://docs.moodle.org/dev/Time_API#Timezone}
-     * @return array An array that represents the date in user time
+     * @param int $time timestamp in GMT
+     * @param float|int|string $timezone the timezone to use to calculate the time
+     *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
+     * @return array an array that represents the date in user time
      */
-    public function usergetdate($time, $timezone) {
-        $date = parent::usergetdate($time, $timezone);
+    public function timestamp_to_date_array($time, $timezone) {
+        $gregoriancalendar = \core_calendar\type_factory::factory('gregorian');
+        $date = $gregoriancalendar->timestamp_to_date_array($time, $timezone);
         $newdate = $this->convert_from_gregorian($date["year"], $date["mon"], $date["mday"],
             $date['hours'], $date['minutes']);
 
