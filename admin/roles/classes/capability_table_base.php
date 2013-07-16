@@ -36,7 +36,7 @@ abstract class core_role_capability_table_base {
     /** The context this table relates to. */
     protected $context;
 
-    /** The capabilities to display. Initialised as fetch_context_capabilities($context). */
+    /** The capabilities to display. Initialised as $context->get_capabilities(). */
     protected $capabilities = array();
 
     /** Added as an id="" attribute to the table on output. */

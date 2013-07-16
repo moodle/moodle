@@ -88,7 +88,7 @@ class external_service_form extends moodleform {
 
         // Prepare the list of capabilities to choose from
         $systemcontext = context_system::instance();
-        $allcapabilities = fetch_context_capabilities($systemcontext);
+        $allcapabilities = $systemcontext->get_capabilities();
         $capabilitychoices = array();
         $capabilitychoices['norequiredcapability'] = get_string('norequiredcapability',
                         'webservice');

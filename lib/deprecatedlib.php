@@ -4034,6 +4034,28 @@ function context_moved(context $context, context $newparent) {
 }
 
 /**
+ * Extracts the relevant capabilities given a contextid.
+ * All case based, example an instance of forum context.
+ * Will fetch all forum related capabilities, while course contexts
+ * Will fetch all capabilities
+ *
+ * capabilities
+ * `name` varchar(150) NOT NULL,
+ * `captype` varchar(50) NOT NULL,
+ * `contextlevel` int(10) NOT NULL,
+ * `component` varchar(100) NOT NULL,
+ *
+ * @see context::get_capabilities()
+ * @deprecated since 2.2
+ * @param context $context
+ * @return array
+ */
+function fetch_context_capabilities(context $context) {
+    debugging('fetch_context_capabilities() is deprecated, please use $context->get_capabilities() instead.', DEBUG_DEVELOPER);
+    return $context->get_capabilities();
+}
+
+/**
  * Preloads context information from db record and strips the cached info.
  * The db request has to contain both the $join and $select from context_instance_preload_sql()
  *

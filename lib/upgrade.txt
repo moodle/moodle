@@ -19,6 +19,7 @@ information provided here is intended especially for developers.
 * rebuild_contexts() is deprecated, please use $context->reset_paths().
 * preload_course_contexts() is deprecated, please use context_helper::preload_course().
 * context_moved() is deprecated, please use context::update_moved().
+* fetch_context_capabilities() is deprecated, please use $context->get_capabilities().
 * context_instance_preload() is deprecated, please use context_helper::preload_from_record().
 * get_contextlevel_name() is deprecated, please use context_helper::get_level_name().
 * print_context_name() is deprecated, please use $context->get_context_name().
