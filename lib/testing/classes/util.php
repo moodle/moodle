@@ -700,7 +700,7 @@ abstract class testing_util {
         }
 
         // now the rest of plugins
-        $plugintypes = get_plugin_types();
+        $plugintypes = core_component::get_plugin_types();
         unset($plugintypes['mod']);
         ksort($plugintypes);
         foreach ($plugintypes as $type => $unused) {

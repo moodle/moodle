@@ -97,14 +97,14 @@ class plugin_manager {
     }
 
     /**
-     * Returns the result of {@link get_plugin_types()} ordered for humans
+     * Returns the result of {@link core_component::get_plugin_types()} ordered for humans
      *
      * @see self::reorder_plugin_types()
      * @param bool $fullpaths false means relative paths from dirroot
      * @return array (string)name => (string)location
      */
     public function get_plugin_types($fullpaths = true) {
-        return $this->reorder_plugin_types(get_plugin_types($fullpaths));
+        return $this->reorder_plugin_types(core_component::get_plugin_types($fullpaths));
     }
 
     /**
@@ -882,7 +882,7 @@ class plugin_manager {
     /**
      * Reorders plugin types into a sequence to be displayed
      *
-     * For technical reasons, plugin types returned by {@link get_plugin_types()} are
+     * For technical reasons, plugin types returned by {@link core_component::get_plugin_types()} are
      * in a certain order that does not need to fit the expected order for the display.
      * Particularly, activity modules should be displayed first as they represent the
      * real heart of Moodle. They should be followed by other plugin types that are
@@ -1973,7 +1973,7 @@ class available_update_deployer {
      */
     public function plugin_external_source(available_update_info $info) {
 
-        $paths = get_plugin_types(true);
+        $paths = core_component::get_plugin_types();
         list($plugintype, $pluginname) = normalize_component($info->component);
         $pluginroot = $paths[$plugintype].'/'.$pluginname;
 
@@ -2031,7 +2031,7 @@ class available_update_deployer {
             throw new coding_exception('Illegal method call - deployer not initialized.');
         }
 
-        $pluginrootpaths = get_plugin_types(true);
+        $pluginrootpaths = core_component::get_plugin_types();
 
         list($plugintype, $pluginname) = normalize_component($info->component);
 

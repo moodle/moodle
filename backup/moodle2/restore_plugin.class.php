@@ -118,7 +118,7 @@ abstract class restore_plugin {
     static public function get_restore_decode_contents($plugintype) {
         $decodecontents = array();
         // Check the requested plugintype is a valid one
-        if (!array_key_exists($plugintype, get_plugin_types($plugintype))) {
+        if (!array_key_exists($plugintype, core_component::get_plugin_types($plugintype))) {
              throw new backup_step_exception('incorrect_plugin_type', $plugintype);
         }
         // Check the base plugin class exists

@@ -520,7 +520,7 @@ class cache_config_writer extends cache_config {
         }
 
         if (!$coreonly) {
-            $plugintypes = get_plugin_types();
+            $plugintypes = core_component::get_plugin_types();
             foreach ($plugintypes as $type => $location) {
                 $plugins = get_plugin_list_with_file($type, 'db/caches.php');
                 foreach ($plugins as $plugin => $filepath) {

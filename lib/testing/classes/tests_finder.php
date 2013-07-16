@@ -63,7 +63,7 @@ class tests_finder {
     private static function get_all_plugins_with_tests($testtype) {
         $pluginswithtests = array();
 
-        $plugintypes = get_plugin_types();
+        $plugintypes = core_component::get_plugin_types();
         ksort($plugintypes);
         foreach ($plugintypes as $type => $unused) {
             $plugs = get_plugin_list($type);

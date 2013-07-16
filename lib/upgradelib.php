@@ -1583,7 +1583,7 @@ function upgrade_noncore($verbose) {
 
     // upgrade all plugins types
     try {
-        $plugintypes = get_plugin_types();
+        $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $type=>$location) {
             upgrade_plugins($type, 'print_upgrade_part_start', 'print_upgrade_part_end', $verbose);
         }

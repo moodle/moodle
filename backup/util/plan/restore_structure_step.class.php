@@ -289,7 +289,7 @@ abstract class restore_structure_step extends restore_step {
     /**
      * Add plugin structure to any element in the structure restore tree
      *
-     * @param string $plugintype type of plugin as defined by get_plugin_types()
+     * @param string $plugintype type of plugin as defined by core_component::get_plugin_types()
      * @param restore_path_element $element element in the structure restore tree that
      *                                       we are going to add plugin information to
      */
@@ -298,7 +298,7 @@ abstract class restore_structure_step extends restore_step {
         global $CFG;
 
         // Check the requested plugintype is a valid one
-        if (!array_key_exists($plugintype, get_plugin_types($plugintype))) {
+        if (!array_key_exists($plugintype, core_component::get_plugin_types($plugintype))) {
              throw new restore_step_exception('incorrect_plugin_type', $plugintype);
         }
 

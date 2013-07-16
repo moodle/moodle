@@ -182,7 +182,7 @@ class tool_installaddon_installer {
     public function get_plugintype_root($plugintype) {
 
         $plugintypepath = null;
-        foreach (get_plugin_types() as $type => $fullpath) {
+        foreach (core_component::get_plugin_types() as $type => $fullpath) {
             if ($type === $plugintype) {
                 $plugintypepath = $fullpath;
                 break;

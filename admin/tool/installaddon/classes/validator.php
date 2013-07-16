@@ -563,7 +563,7 @@ class tool_installaddon_validator {
 
         $plugintypepath = null;
 
-        foreach (get_plugin_types() as $type => $fullpath) {
+        foreach (core_component::get_plugin_types() as $type => $fullpath) {
             if ($type === $plugintype) {
                 $plugintypepath = $fullpath;
                 break;

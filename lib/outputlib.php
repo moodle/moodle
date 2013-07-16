@@ -774,7 +774,7 @@ class theme_config {
         // get all plugin sheets
         $excludes = $this->resolve_excludes('plugins_exclude_sheets');
         if ($excludes !== true) {
-            foreach (get_plugin_types() as $type=>$unused) {
+            foreach (core_component::get_plugin_types() as $type=>$unused) {
                 if ($type === 'theme' || (!empty($excludes[$type]) and $excludes[$type] === true)) {
                     continue;
                 }

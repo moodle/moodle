@@ -494,8 +494,8 @@ function get_db_directories() {
     /// First, the main one (lib/db)
     $dbdirs[] = $CFG->libdir.'/db';
 
-    /// Then, all the ones defined by get_plugin_types()
-    $plugintypes = get_plugin_types();
+    /// Then, all the ones defined by core_component::get_plugin_types()
+    $plugintypes = core_component::get_plugin_types();
     foreach ($plugintypes as $plugintype => $pluginbasedir) {
         if ($plugins = get_plugin_list($plugintype)) {
             foreach ($plugins as $plugin => $plugindir) {
