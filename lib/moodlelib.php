@@ -5237,7 +5237,7 @@ function reset_course_userdata($data) {
         }
         $DB->delete_records('role_capabilities', array('contextid'=>$context->id));
         //force refresh for logged in users
-        mark_context_dirty($context->path);
+        $context->mark_dirty();
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deletecourseoverrides', 'role'), 'error'=>false);
     }
 
@@ -5247,7 +5247,7 @@ function reset_course_userdata($data) {
             role_unassign_all(array('contextid'=>$child->id));
         }
         //force refresh for logged in users
-        mark_context_dirty($context->path);
+        $context->mark_dirty();
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deletelocalroles', 'role'), 'error'=>false);
     }
 

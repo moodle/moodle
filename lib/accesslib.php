@@ -7248,39 +7248,6 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
 }
 
 /**
- * Mark a context as dirty (with timestamp) so as to force reloading of the context.
- *
- * @deprecated since 2.2, use $context->mark_dirty() instead
- * @param string $path context path
- */
-function mark_context_dirty($path) {
-    global $CFG, $USER, $ACCESSLIB_PRIVATE;
-
-    if (during_initial_install()) {
-        return;
-    }
-
-    // only if it is a non-empty string
-    if (is_string($path) && $path !== '') {
-        set_cache_flag('accesslib/dirtycontexts', $path, 1, time()+$CFG->sessiontimeout);
-        if (isset($ACCESSLIB_PRIVATE->dirtycontexts)) {
-            $ACCESSLIB_PRIVATE->dirtycontexts[$path] = 1;
-        } else {
-            if (CLI_SCRIPT) {
-                $ACCESSLIB_PRIVATE->dirtycontexts = array($path => 1);
-            } else {
-                if (isset($USER->access['time'])) {
-                    $ACCESSLIB_PRIVATE->dirtycontexts = get_cache_flags('accesslib/dirtycontexts', $USER->access['time']-2);
-                } else {
-                    $ACCESSLIB_PRIVATE->dirtycontexts = array($path => 1);
-                }
-                // flags not loaded yet, it will be done later in $context->reload_if_dirty()
-            }
-        }
-    }
-}
-
-/**
  * Remove a context record and any dependent entries,
  * removes context from static context cache too
  *

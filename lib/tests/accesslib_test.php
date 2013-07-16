@@ -2442,6 +2442,7 @@ class accesslib_testcase extends advanced_testcase {
         accesslib_clear_all_caches(true);
         $DB->delete_records('cache_flags', array());
         mark_context_dirty($systemcontext->path);
+        $this->assertDebuggingCalled('mark_context_dirty() is deprecated, please use $context->mark_dirty() instead.', DEBUG_DEVELOPER);
         $dirty = get_cache_flags('accesslib/dirtycontexts', time()-2);
         $this->assertTrue(isset($dirty[$systemcontext->path]));
 
