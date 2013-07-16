@@ -24,6 +24,7 @@ information provided here is intended especially for developers.
 * print_context_name() is deprecated, please use $context->get_context_name().
 * mark_context_dirty($context->path) is deprecated, please use $context->mark_dirty().
 * delete_context() is deprecated, please use $context->delete_content() or context_helper::delete_instance().
+* get_context_url() is deprecated, please use $context->get_url().
 
 === 2.5.1 ===
 

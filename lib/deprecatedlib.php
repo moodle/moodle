@@ -4137,3 +4137,19 @@ function delete_context($contextlevel, $instanceid, $deleterecord = true) {
 
     return true;
 }
+
+/**
+ * Get a URL for a context, if there is a natural one. For example, for
+ * CONTEXT_COURSE, this is the course page. For CONTEXT_USER it is the
+ * user profile page.
+ *
+ * @deprecated since 2.2
+ * @see context::get_url()
+ * @param context $context the context
+ * @return moodle_url
+ */
+function get_context_url(context $context) {
+    debugging('get_context_url() is deprecated, please use $context->get_url() instead.', DEBUG_DEVELOPER);
+    return $context->get_url();
+}
+

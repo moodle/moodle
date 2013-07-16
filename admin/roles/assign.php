@@ -67,7 +67,7 @@ if ($roleid && !isset($assignableroles[$roleid])) {
     $a = new stdClass;
     $a->roleid = $roleid;
     $a->context = $contextname;
-    print_error('cannotassignrolehere', '', get_context_url($context), $a);
+    print_error('cannotassignrolehere', '', $context->get_url(), $a);
 }
 
 // Work out an appropriate page title.

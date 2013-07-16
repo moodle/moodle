@@ -7248,19 +7248,6 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
 }
 
 /**
- * Get a URL for a context, if there is a natural one. For example, for
- * CONTEXT_COURSE, this is the course page. For CONTEXT_USER it is the
- * user profile page.
- *
- * @deprecated since 2.2
- * @param context $context the context.
- * @return moodle_url
- */
-function get_context_url(context $context) {
-    return $context->get_url();
-}
-
-/**
  * Is this context part of any course? if yes return course context,
  * if not return null or throw exception.
  *
