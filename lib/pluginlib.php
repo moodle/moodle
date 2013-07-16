@@ -812,7 +812,7 @@ class plugin_manager {
             'repository' => array(
                 'alfresco', 'boxnet', 'coursefiles', 'dropbox', 'equella', 'filesystem',
                 'flickr', 'flickr_public', 'googledocs', 'local', 'merlot',
-                'picasa', 'recent', 's3', 'upload', 'url', 'user', 'webdav',
+                'picasa', 'recent', 'skydrive', 's3', 'upload', 'url', 'user', 'webdav',
                 'wikimedia', 'youtube'
             ),
 
