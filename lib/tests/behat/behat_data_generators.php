@@ -103,6 +103,11 @@ class behat_data_generators extends behat_base {
             'required' => array('user', 'role', 'contextlevel', 'reference'),
             'switchids' => array('user' => 'userid', 'role' => 'roleid')
         ),
+        'activities' => array(
+            'datagenerator' => 'activity',
+            'required' => array('activity', 'idnumber', 'course'),
+            'switchids' => array('course' => 'course')
+        ),
         'group members' => array(
             'datagenerator' => 'group_member',
             'required' => array('user', 'group'),
@@ -203,6 +208,26 @@ class behat_data_generators extends behat_base {
         return $data;
     }
 
+    /**
+     * Adapter to modules generator
+     * @throws Exception Custom exception for test writers
+     * @param array $data
+     * @return void
+     */
+    protected function process_activity($data) {
+
+        // The the_following_exists() method checks that the field exists.
+        $activityname = $data['activity'];
+        unset($data['activity']);
+
+        // Custom exception.
+        try {
+            $this->datagenerator->create_module($activityname, $data);
+        } catch (coding_exception $e) {
+            throw new Exception('\'' . $activityname . '\' activity can not be added using this step,' .
+                ' use the step \'I add a "ACTIVITY_OR_RESOURCE_NAME_STRING" to section "SECTION_NUMBER"\' instead');
+        }
+    }
 
     /**
      * Adapter to enrol_user() data generator.

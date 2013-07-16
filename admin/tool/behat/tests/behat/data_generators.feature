@@ -107,6 +107,21 @@ Feature: Set up contextual data for tests
     And I follow "Course 1"
     And I should see "Turn editing on"
 
+  Scenario: Add modules
+    Given the following "courses" exists:
+      | fullname | shortname |
+      | Course 1 | C1 |
+    And the following "activities" exists:
+      | activity | name | intro | course | idnumber |
+      | assign   | Test assignment name | Test assignment description | C1 | assign1 |
+      | data     | Test database name | Test database description | C1 | data1 |
+    When I log in as "admin"
+    And I follow "Course 1"
+    Then I should see "Test assignment name"
+    And I should see "Test database name"
+    And I follow "Test assignment name"
+    And I should see "Test assignment description"
+
   @javascript
   Scenario: Add relations between users and groups
     Given the following "users" exists:
