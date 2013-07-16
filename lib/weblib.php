@@ -298,8 +298,9 @@ class moodle_url {
      *      $params instead. For admin URLs, just use /admin/script.php, this
      *      class takes care of the $CFG->admin issue.
      * @param array $params these params override current params or add new
+     * @param string $anchor The anchor to use as part of the URL if there is one.
      */
-    public function __construct($url, array $params = null) {
+    public function __construct($url, array $params = null, $anchor = null) {
         global $CFG;
 
         if ($url instanceof moodle_url) {
@@ -361,6 +362,9 @@ class moodle_url {
         }
 
         $this->params($params);
+        if ($anchor !== null) {
+            $this->anchor = (string)$anchor;
+        }
     }
 
     /**
