@@ -520,7 +520,7 @@ class cache_config_writer extends cache_config {
         }
 
         if (!$coreonly) {
-            $plugintypes = get_plugin_types();
+            $plugintypes = core_component::get_plugin_types();
             foreach ($plugintypes as $type => $location) {
                 $plugins = get_plugin_list_with_file($type, 'db/caches.php');
                 foreach ($plugins as $plugin => $filepath) {
@@ -954,7 +954,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_add_store_form($plugin) {
         global $CFG; // Needed for includes.
-        $plugins = get_plugin_list('cachestore');
+        $plugins = core_component::get_plugin_list('cachestore');
         if (!array_key_exists($plugin, $plugins)) {
             throw new coding_exception('Invalid cache plugin used when trying to create an edit form.');
         }
@@ -986,7 +986,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_edit_store_form($plugin, $store) {
         global $CFG; // Needed for includes.
-        $plugins = get_plugin_list('cachestore');
+        $plugins = core_component::get_plugin_list('cachestore');
         if (!array_key_exists($plugin, $plugins)) {
             throw new coding_exception('Invalid cache plugin used when trying to create an edit form.');
         }
@@ -1191,7 +1191,7 @@ abstract class cache_administration_helper extends cache_helper {
      * @return array
      */
     public static function get_addable_lock_options() {
-        $plugins = get_plugin_list_with_class('cachelock', '', 'lib.php');
+        $plugins = core_component::get_plugin_list_with_class('cachelock', '', 'lib.php');
         $options = array();
         $len = strlen('cachelock_');
         foreach ($plugins as $plugin => $class) {
@@ -1215,7 +1215,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_add_lock_form($plugin, array $lockplugin = null) {
         global $CFG; // Needed for includes.
-        $plugins = get_plugin_list('cachelock');
+        $plugins = core_component::get_plugin_list('cachelock');
         if (!array_key_exists($plugin, $plugins)) {
             throw new coding_exception('Invalid cache lock plugin requested when trying to create a form.');
         }

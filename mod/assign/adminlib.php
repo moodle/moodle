@@ -65,7 +65,7 @@ class assign_admin_page_manage_assign_plugins extends admin_externalpage {
         $found = false;
         $textlib = new textlib();
 
-        foreach (get_plugin_list($this->subtype) as $name => $notused) {
+        foreach (core_component::get_plugin_list($this->subtype) as $name => $notused) {
             if (strpos($textlib::strtolower(get_string('pluginname', $this->subtype . '_' . $name)),
                     $query) !== false) {
                 $found = true;
@@ -116,7 +116,7 @@ class assign_plugin_manager {
      * @return array The list of plugins
      */
     public function get_sorted_plugins_list() {
-        $names = get_plugin_list($this->subtype);
+        $names = core_component::get_plugin_list($this->subtype);
 
         $result = array();
 

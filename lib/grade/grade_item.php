@@ -2094,7 +2094,7 @@ class grade_item extends grade_object {
      * @return bool
      */
     public function can_control_visibility() {
-        if (get_plugin_directory($this->itemtype, $this->itemmodule)) {
+        if (core_component::get_plugin_directory($this->itemtype, $this->itemmodule)) {
             return !plugin_supports($this->itemtype, $this->itemmodule, FEATURE_CONTROLS_GRADE_VISIBILITY, false);
         }
         return true;

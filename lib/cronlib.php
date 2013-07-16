@@ -443,7 +443,7 @@ function cron_run() {
 
 
     // and finally run any local cronjobs, if any
-    if ($locals = get_plugin_list('local')) {
+    if ($locals = core_component::get_plugin_list('local')) {
         mtrace('Processing customized cron scripts ...', '');
         // new cron functions in lib.php first
         cron_execute_plugin_type('local');
@@ -532,7 +532,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
     }
 
     foreach ($plugins as $component=>$cronfunction) {
-        $dir = get_component_directory($component);
+        $dir = core_component::get_component_directory($component);
 
         // Get cron period if specified in version.php, otherwise assume every cron
         $cronperiod = 0;
@@ -589,7 +589,7 @@ function cron_bc_hack_plugin_functions($plugintype, $plugins) {
     if ($plugintype === 'report') {
         // Admin reports only - not course report because course report was
         // never implemented before, so doesn't need BC
-        foreach (get_plugin_list($plugintype) as $pluginname=>$dir) {
+        foreach (core_component::get_plugin_list($plugintype) as $pluginname=>$dir) {
             $component = $plugintype . '_' . $pluginname;
             if (isset($plugins[$component])) {
                 // We already have detected the function using the new API
@@ -612,7 +612,7 @@ function cron_bc_hack_plugin_functions($plugintype, $plugins) {
         // Detect old style cron function names
         // Plugin gradeexport_frog used to use grade_export_frog_cron() instead of
         // new standard API gradeexport_frog_cron(). Also applies to gradeimport, gradereport
-        foreach(get_plugin_list($plugintype) as $pluginname=>$dir) {
+        foreach(core_component::get_plugin_list($plugintype) as $pluginname=>$dir) {
             $component = $plugintype.'_'.$pluginname;
             if (isset($plugins[$component])) {
                 // We already have detected the function using the new API

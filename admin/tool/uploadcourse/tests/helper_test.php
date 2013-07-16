@@ -53,7 +53,7 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
 
     public function test_get_course_formats() {
         $result = tool_uploadcourse_helper::get_course_formats();
-        $this->assertSame(array_keys(get_plugin_list('format')), $result);
+        $this->assertSame(array_keys(core_component::get_plugin_list('format')), $result);
         // Should be similar as first result, as cached.
         $this->assertSame($result, tool_uploadcourse_helper::get_course_formats());
     }

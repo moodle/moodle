@@ -134,7 +134,7 @@ class core_webservice_external extends external_api {
             if ($function->component == 'moodle' || $function->component == 'core') {
                 $version = $CFG->version; // Moodle version.
             } else {
-                $versionpath = get_component_directory($function->component).'/version.php';
+                $versionpath = core_component::get_component_directory($function->component).'/version.php';
                 if (is_readable($versionpath)) {
                     // We store the component version once retrieved (so we don't load twice the version.php).
                     if (!isset($componentversions[$function->component])) {

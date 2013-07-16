@@ -88,7 +88,7 @@ abstract class gradingform_controller {
         global $DB;
 
         $this->context      = $context;
-        list($type, $name)  = normalize_component($component);
+        list($type, $name)  = core_component::normalize_component($component);
         $this->component    = $type.'_'.$name;
         $this->area         = $area;
         $this->areaid       = $areaid;

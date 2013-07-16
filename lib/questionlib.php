@@ -138,7 +138,7 @@ function questions_in_use($questionids) {
         return true;
     }
 
-    foreach (get_plugin_list('mod') as $module => $path) {
+    foreach (core_component::get_plugin_list('mod') as $module => $path) {
         $lib = $path . '/lib.php';
         if (is_readable($lib)) {
             include_once($lib);
@@ -1232,7 +1232,7 @@ function get_import_export_formats($type) {
     global $CFG;
     require_once($CFG->dirroot . '/question/format.php');
 
-    $formatclasses = get_plugin_list_with_class('qformat', '', 'format.php');
+    $formatclasses = core_component::get_plugin_list_with_class('qformat', '', 'format.php');
 
     $fileformatname = array();
     foreach ($formatclasses as $component => $formatclass) {
@@ -1880,7 +1880,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
                 $component, $filearea, $qubaid, $slot, $args, $forcedownload, $options);
 
     } else {
-        $dir = get_component_directory($module);
+        $dir = core_component::get_component_directory($module);
         if (!file_exists("$dir/lib.php")) {
             send_file_not_found();
         }

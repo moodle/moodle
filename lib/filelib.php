@@ -4543,7 +4543,7 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
 
     } else {
         // try to serve general plugin file in arbitrary context
-        $dir = get_component_directory($component);
+        $dir = core_component::get_component_directory($component);
         if (!file_exists("$dir/lib.php")) {
             send_file_not_found();
         }

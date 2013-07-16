@@ -1138,7 +1138,7 @@ function grade_grab_course_grades($courseid, $modname=null, $userid=0) {
         return;
     }
 
-    if (!$mods = get_plugin_list('mod') ) {
+    if (!$mods = core_component::get_plugin_list('mod') ) {
         print_error('nomodules', 'debug');
     }
 

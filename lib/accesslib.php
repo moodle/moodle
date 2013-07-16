@@ -2387,7 +2387,7 @@ function count_enrolled_users(context $context, $withcapability = '', $groupid =
  * @return array array of capabilities
  */
 function load_capability_def($component) {
-    $defpath = get_component_directory($component).'/db/access.php';
+    $defpath = core_component::get_component_directory($component).'/db/access.php';
 
     $capabilities = array();
     if (file_exists($defpath)) {
@@ -2863,7 +2863,7 @@ function get_capability_string($capabilityname) {
         return get_string($stringname, $component);
     }
 
-    $dir = get_component_directory($component);
+    $dir = core_component::get_component_directory($component);
     if (!file_exists($dir)) {
         // plugin broken or does not exist, do not bother with printing of debug message
         return $capabilityname.' ???';
@@ -2895,8 +2895,8 @@ function get_component_string($component, $contextlevel) {
         }
     }
 
-    list($type, $name) = normalize_component($component);
-    $dir = get_plugin_directory($type, $name);
+    list($type, $name) = core_component::normalize_component($component);
+    $dir = core_component::get_plugin_directory($type, $name);
     if (!file_exists($dir)) {
         // plugin not installed, bad luck, there is no way to find the name
         return $component.' ???';
@@ -6863,7 +6863,7 @@ class context_module extends context {
             include($subpluginsfile);
             if (!empty($subplugins)) {
                 foreach (array_keys($subplugins) as $subplugintype) {
-                    foreach (array_keys(get_plugin_list($subplugintype)) as $subpluginname) {
+                    foreach (array_keys(core_component::get_plugin_list($subplugintype)) as $subpluginname) {
                         $subcaps = array_merge($subcaps, array_keys(load_capability_def($subplugintype.'_'.$subpluginname)));
                     }
                 }

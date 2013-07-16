@@ -46,7 +46,7 @@ class user_editadvanced_form extends moodleform {
         $mform->addRule('username', $strrequired, 'required', null, 'client');
         $mform->setType('username', PARAM_RAW);
 
-        $auths = get_plugin_list('auth');
+        $auths = core_component::get_plugin_list('auth');
         $enabled = get_string('pluginenabled', 'core_plugin');
         $disabled = get_string('plugindisabled', 'core_plugin');
         $auth_options = array($enabled=>array(), $disabled=>array());

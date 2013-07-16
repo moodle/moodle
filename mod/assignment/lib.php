@@ -2825,7 +2825,7 @@ function assignment_cron () {
     global $CFG, $USER, $DB;
 
     /// first execute all crons in plugins
-    if ($plugins = get_plugin_list('assignment')) {
+    if ($plugins = core_component::get_plugin_list('assignment')) {
         foreach ($plugins as $plugin=>$dir) {
             require_once("$dir/assignment.class.php");
             $assignmentclass = "assignment_$plugin";
@@ -3637,7 +3637,7 @@ function assignment_get_coursemodule_info($coursemodule) {
  */
 function assignment_types() {
     $types = array();
-    $names = get_plugin_list('assignment');
+    $names = core_component::get_plugin_list('assignment');
     foreach ($names as $name=>$dir) {
         $types[$name] = get_string('type'.$name, 'assignment');
 
@@ -3820,7 +3820,7 @@ function assignment_get_types() {
     }
 
     /// Drop-in extra assignment types
-    $assignmenttypes = get_plugin_list('assignment');
+    $assignmenttypes = core_component::get_plugin_list('assignment');
     foreach ($assignmenttypes as $assignmenttype=>$fulldir) {
         if (!empty($CFG->{'assignment_hide_'.$assignmenttype})) {  // Not wanted
             continue;
@@ -3880,7 +3880,7 @@ function assignment_reset_userdata($data) {
     global $CFG;
 
     $status = array();
-    foreach (get_plugin_list('assignment') as $type=>$dir) {
+    foreach (core_component::get_plugin_list('assignment') as $type=>$dir) {
         require_once("$dir/assignment.class.php");
         $assignmentclass = "assignment_$type";
         $ass = new $assignmentclass();

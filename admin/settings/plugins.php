@@ -382,7 +382,7 @@ $ADMIN->add('reports', new admin_externalpage('comments', new lang_string('comme
 // Course reports settings
 if ($hassiteconfig) {
     $pages = array();
-    foreach (get_plugin_list('coursereport') as $report => $path) {
+    foreach (core_component::get_plugin_list('coursereport') as $report => $path) {
         $file = $CFG->dirroot . '/course/report/' . $report . '/settings.php';
         if (file_exists($file)) {
             $settings = new admin_settingpage('coursereport' . $report,
@@ -405,7 +405,7 @@ if ($hassiteconfig) {
 
 // Now add reports
 $pages = array();
-foreach (get_plugin_list('report') as $report => $plugindir) {
+foreach (core_component::get_plugin_list('report') as $report => $plugindir) {
     $settings_path = "$plugindir/settings.php";
     if (file_exists($settings_path)) {
         $settings = new admin_settingpage('report' . $report,
@@ -431,7 +431,7 @@ if ($hassiteconfig) {
 }
 
 // Now add various admin tools
-foreach (get_plugin_list('tool') as $plugin => $plugindir) {
+foreach (core_component::get_plugin_list('tool') as $plugin => $plugindir) {
     $settings_path = "$plugindir/settings.php";
     if (file_exists($settings_path)) {
         include($settings_path);
@@ -444,7 +444,7 @@ if ($hassiteconfig) {
     $ADMIN->add('cache', new admin_externalpage('cacheconfig', new lang_string('cacheconfig', 'cache'), $CFG->wwwroot .'/cache/admin.php'));
     $ADMIN->add('cache', new admin_externalpage('cachetestperformance', new lang_string('testperformance', 'cache'), $CFG->wwwroot . '/cache/testperformance.php'));
     $ADMIN->add('cache', new admin_category('cachestores', new lang_string('cachestores', 'cache')));
-    foreach (get_plugin_list('cachestore') as $plugin => $path) {
+    foreach (core_component::get_plugin_list('cachestore') as $plugin => $path) {
         $settingspath = $path.'/settings.php';
         if (file_exists($settingspath)) {
             $settings = new admin_settingpage('cachestore_'.$plugin.'_settings', new lang_string('pluginname', 'cachestore_'.$plugin), 'moodle/site:config');
@@ -463,7 +463,7 @@ if ($hassiteconfig) {
 
 // extend settings for each local plugin. Note that their settings may be in any part of the
 // settings tree and may be visible not only for administrators. We can not use $allplugins here
-foreach (get_plugin_list('local') as $plugin => $plugindir) {
+foreach (core_component::get_plugin_list('local') as $plugin => $plugindir) {
     $settings_path = "$plugindir/settings.php";
     if (file_exists($settings_path)) {
         include($settings_path);

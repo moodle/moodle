@@ -86,7 +86,7 @@ function enrol_get_plugins($enabled) {
         }
     } else {
         // sorted alphabetically
-        $plugins = get_plugin_list('enrol');
+        $plugins = core_component::get_plugin_list('enrol');
         ksort($plugins);
     }
 

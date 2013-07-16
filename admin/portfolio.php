@@ -163,7 +163,7 @@ if (($action == 'edit') || ($action == 'new')) {
 
     $output = $OUTPUT->box_start('generalbox');
 
-    $plugins = get_plugin_list('portfolio');
+    $plugins = core_component::get_plugin_list('portfolio');
     $plugins = array_keys($plugins);
     $instances = portfolio_instances(false, false);
     $usedplugins = array();

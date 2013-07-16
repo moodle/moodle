@@ -2985,7 +2985,7 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
  */
 function get_sorted_course_formats($enabledonly = false) {
     global $CFG;
-    $formats = get_plugin_list('format');
+    $formats = core_component::get_plugin_list('format');
 
     if (!empty($CFG->format_plugins_sortorder)) {
         $order = explode(',', $CFG->format_plugins_sortorder);

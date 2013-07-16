@@ -118,7 +118,7 @@ abstract class restore_plugin {
     static public function get_restore_decode_contents($plugintype) {
         $decodecontents = array();
         // Check the requested plugintype is a valid one
-        if (!array_key_exists($plugintype, get_plugin_types($plugintype))) {
+        if (!array_key_exists($plugintype, core_component::get_plugin_types($plugintype))) {
              throw new backup_step_exception('incorrect_plugin_type', $plugintype);
         }
         // Check the base plugin class exists
@@ -135,7 +135,7 @@ abstract class restore_plugin {
         // (only the needed ones have been loaded, so they will
         // be the ones being asked here). Fetch their restore contents
         // by calling (if exists) to their define_decode_contents() method
-        $plugins = get_plugin_list($plugintype);
+        $plugins = core_component::get_plugin_list($plugintype);
         foreach ($plugins as $plugin => $plugindir) {
             $classname = 'restore_' . $plugintype . '_' . $plugin . '_plugin';
             if (class_exists($classname)) {

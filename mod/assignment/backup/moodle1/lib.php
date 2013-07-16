@@ -173,7 +173,7 @@ class moodle1_mod_assignment_handler extends moodle1_mod_handler {
 
         if (is_null($this->subpluginhandlers)) {
             $this->subpluginhandlers = array();
-            $subplugins = get_plugin_list('assignment');
+            $subplugins = core_component::get_plugin_list('assignment');
             foreach ($subplugins as $name => $dir) {
                 $handlerfile  = $dir.'/backup/moodle1/lib.php';
                 $handlerclass = "moodle1_mod_assignment_{$name}_subplugin_handler";

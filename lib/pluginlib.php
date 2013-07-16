@@ -97,14 +97,14 @@ class plugin_manager {
     }
 
     /**
-     * Returns the result of {@link get_plugin_types()} ordered for humans
+     * Returns the result of {@link core_component::get_plugin_types()} ordered for humans
      *
      * @see self::reorder_plugin_types()
      * @param bool $fullpaths false means relative paths from dirroot
      * @return array (string)name => (string)location
      */
     public function get_plugin_types($fullpaths = true) {
-        return $this->reorder_plugin_types(get_plugin_types($fullpaths));
+        return $this->reorder_plugin_types(core_component::get_plugin_types($fullpaths));
     }
 
     /**
@@ -868,7 +868,7 @@ class plugin_manager {
     }
 
     /**
-     * Wrapper for the core function {@link normalize_component()}.
+     * Wrapper for the core function {@link core_component::normalize_component()}.
      *
      * This is here just to make it possible to mock it in unit tests.
      *
@@ -876,13 +876,13 @@ class plugin_manager {
      * @return array
      */
     protected function normalize_component($component) {
-        return normalize_component($component);
+        return core_component::normalize_component($component);
     }
 
     /**
      * Reorders plugin types into a sequence to be displayed
      *
-     * For technical reasons, plugin types returned by {@link get_plugin_types()} are
+     * For technical reasons, plugin types returned by {@link core_component::get_plugin_types()} are
      * in a certain order that does not need to fit the expected order for the display.
      * Particularly, activity modules should be displayed first as they represent the
      * real heart of Moodle. They should be followed by other plugin types that are
@@ -1619,7 +1619,7 @@ class available_update_checker {
                             // is a real update with higher version. That is, the $componentchange
                             // is present in the array of {@link available_update_info} objects
                             // returned by the plugin's available_updates() method.
-                            list($plugintype, $pluginname) = normalize_component($component);
+                            list($plugintype, $pluginname) = core_component::normalize_component($component);
                             if (!empty($plugins[$plugintype][$pluginname])) {
                                 $availableupdates = $plugins[$plugintype][$pluginname]->available_updates();
                                 if (!empty($availableupdates)) {
@@ -1973,8 +1973,8 @@ class available_update_deployer {
      */
     public function plugin_external_source(available_update_info $info) {
 
-        $paths = get_plugin_types(true);
-        list($plugintype, $pluginname) = normalize_component($info->component);
+        $paths = core_component::get_plugin_types();
+        list($plugintype, $pluginname) = core_component::normalize_component($info->component);
         $pluginroot = $paths[$plugintype].'/'.$pluginname;
 
         if (is_dir($pluginroot.'/.git')) {
@@ -2031,9 +2031,9 @@ class available_update_deployer {
             throw new coding_exception('Illegal method call - deployer not initialized.');
         }
 
-        $pluginrootpaths = get_plugin_types(true);
+        $pluginrootpaths = core_component::get_plugin_types();
 
-        list($plugintype, $pluginname) = normalize_component($info->component);
+        list($plugintype, $pluginname) = core_component::normalize_component($info->component);
 
         if (empty($pluginrootpaths[$plugintype])) {
             throw new coding_exception('Unknown plugin type root location', $plugintype);
@@ -2302,9 +2302,9 @@ class available_update_deployer {
      */
     protected function component_writable($component) {
 
-        list($plugintype, $pluginname) = normalize_component($component);
+        list($plugintype, $pluginname) = core_component::normalize_component($component);
 
-        $directory = get_plugin_directory($plugintype, $pluginname);
+        $directory = core_component::get_plugin_directory($plugintype, $pluginname);
 
         if (is_null($directory)) {
             throw new coding_exception('Unknown component location', $component);
@@ -2460,7 +2460,7 @@ abstract class plugininfo_base {
     public static function get_plugins($type, $typerootdir, $typeclass) {
 
         // get the information about plugins at the disk
-        $plugins = get_plugin_list($type);
+        $plugins = core_component::get_plugin_list($type);
         $ondisk = array();
         foreach ($plugins as $pluginname => $pluginrootdir) {
             $ondisk[$pluginname] = plugininfo_default_factory::make($type, $typerootdir,

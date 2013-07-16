@@ -152,7 +152,7 @@ if (!empty($CFG->enabledevicedetection) && empty($device)) {
     $table->id = 'adminthemeselector';
     $table->head = array(get_string('theme'), get_string('info'));
 
-    $themes = get_plugin_list('theme');
+    $themes = core_component::get_plugin_list('theme');
 
     foreach ($themes as $themename => $themedir) {
 

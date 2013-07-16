@@ -212,7 +212,7 @@ class workshop {
      * @return array Array ['string' => 'string'] of localized allocation method names
      */
     public static function installed_allocators() {
-        $installed = get_plugin_list('workshopallocation');
+        $installed = core_component::get_plugin_list('workshopallocation');
         $forms = array();
         foreach ($installed as $allocation => $allocationpath) {
             if (file_exists($allocationpath . '/lib.php')) {
@@ -287,7 +287,7 @@ class workshop {
      * @return array ['string' => 'string']
      */
     public static function available_strategies_list() {
-        $installed = get_plugin_list('workshopform');
+        $installed = core_component::get_plugin_list('workshopform');
         $forms = array();
         foreach ($installed as $strategy => $strategypath) {
             if (file_exists($strategypath . '/lib.php')) {

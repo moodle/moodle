@@ -1877,7 +1877,7 @@ function data_get_available_presets($context) {
     $presets = array();
 
     // First load the ratings sub plugins that exist within the modules preset dir
-    if ($dirs = get_plugin_list('datapreset')) {
+    if ($dirs = core_component::get_plugin_list('datapreset')) {
         foreach ($dirs as $dir=>$fulldir) {
             if (is_directory_a_preset($fulldir)) {
                 $preset = new stdClass();

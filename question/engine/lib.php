@@ -225,7 +225,7 @@ abstract class question_engine {
      */
     public static function get_archetypal_behaviours() {
         $archetypes = array();
-        $behaviours = get_plugin_list('qbehaviour');
+        $behaviours = core_component::get_plugin_list('qbehaviour');
         foreach ($behaviours as $behaviour => $notused) {
             if (self::is_behaviour_archetypal($behaviour)) {
                 $archetypes[$behaviour] = self::get_behaviour_name($behaviour);

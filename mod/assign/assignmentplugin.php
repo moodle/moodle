@@ -75,7 +75,7 @@ abstract class assign_plugin {
      * @return bool
      */
     public final function is_last() {
-        $lastindex = count(get_plugin_list($this->get_subtype()))-1;
+        $lastindex = count(core_component::get_plugin_list($this->get_subtype()))-1;
         $currentindex = get_config($this->get_subtype() . '_' . $this->get_type(), 'sortorder');
         if ($lastindex == $currentindex) {
             return true;

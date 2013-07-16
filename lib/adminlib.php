@@ -166,7 +166,7 @@ function uninstall_plugin($type, $name) {
 
     echo $OUTPUT->heading($pluginname);
 
-    $plugindirectory = get_plugin_directory($type, $name);
+    $plugindirectory = core_component::get_plugin_directory($type, $name);
     $uninstalllib = $plugindirectory . '/db/uninstall.php';
     if (file_exists($uninstalllib)) {
         require_once($uninstalllib);
@@ -342,7 +342,7 @@ function uninstall_plugin($type, $name) {
 function get_component_version($component, $source='installed') {
     global $CFG, $DB;
 
-    list($type, $name) = normalize_component($component);
+    list($type, $name) = core_component::normalize_component($component);
 
     // moodle core or a core subsystem
     if ($type === 'core') {
@@ -368,7 +368,7 @@ function get_component_version($component, $source='installed') {
         if ($source === 'installed') {
             return $DB->get_field('modules', 'version', array('name'=>$name));
         } else {
-            $mods = get_plugin_list('mod');
+            $mods = core_component::get_plugin_list('mod');
             if (empty($mods[$name]) or !is_readable($mods[$name].'/version.php')) {
                 return false;
             } else {
@@ -384,7 +384,7 @@ function get_component_version($component, $source='installed') {
         if ($source === 'installed') {
             return $DB->get_field('block', 'version', array('name'=>$name));
         } else {
-            $blocks = get_plugin_list('block');
+            $blocks = core_component::get_plugin_list('block');
             if (empty($blocks[$name]) or !is_readable($blocks[$name].'/version.php')) {
                 return false;
             } else {
@@ -399,7 +399,7 @@ function get_component_version($component, $source='installed') {
     if ($source === 'installed') {
         return get_config($type.'_'.$name, 'version');
     } else {
-        $plugins = get_plugin_list($type);
+        $plugins = core_component::get_plugin_list($type);
         if (empty($plugins[$name])) {
             return false;
         } else {
@@ -494,10 +494,10 @@ function get_db_directories() {
     /// First, the main one (lib/db)
     $dbdirs[] = $CFG->libdir.'/db';
 
-    /// Then, all the ones defined by get_plugin_types()
-    $plugintypes = get_plugin_types();
+    /// Then, all the ones defined by core_component::get_plugin_types()
+    $plugintypes = core_component::get_plugin_types();
     foreach ($plugintypes as $plugintype => $pluginbasedir) {
-        if ($plugins = get_plugin_list($plugintype)) {
+        if ($plugins = core_component::get_plugin_list($plugintype)) {
             foreach ($plugins as $plugin => $plugindir) {
                 $dbdirs[] = $plugindir.'/db';
             }
@@ -4732,7 +4732,7 @@ class admin_setting_special_gradeexport extends admin_setting_configmulticheckbo
         }
         $this->choices = array();
 
-        if ($plugins = get_plugin_list('gradeexport')) {
+        if ($plugins = core_component::get_plugin_list('gradeexport')) {
             foreach($plugins as $plugin => $unused) {
                 $this->choices[$plugin] = get_string('pluginname', 'gradeexport_'.$plugin);
             }
@@ -4902,7 +4902,7 @@ class admin_setting_grade_profilereport extends admin_setting_configselect {
         global $CFG;
         require_once($CFG->libdir.'/gradelib.php');
 
-        foreach (get_plugin_list('gradereport') as $plugin => $plugindir) {
+        foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
             if (file_exists($plugindir.'/lib.php')) {
                 require_once($plugindir.'/lib.php');
                 $functionname = 'grade_report_'.$plugin.'_profilereport';
@@ -5411,7 +5411,7 @@ class admin_page_manageqbehaviours extends admin_externalpage {
 
         $found = false;
         require_once($CFG->dirroot . '/question/engine/lib.php');
-        foreach (get_plugin_list('qbehaviour') as $behaviour => $notused) {
+        foreach (core_component::get_plugin_list('qbehaviour') as $behaviour => $notused) {
             if (strpos(textlib::strtolower(question_engine::get_behaviour_name($behaviour)),
                     $query) !== false) {
                 $found = true;
@@ -5499,7 +5499,7 @@ class admin_page_manageportfolios extends admin_externalpage {
         }
 
         $found = false;
-        $portfolios = get_plugin_list('portfolio');
+        $portfolios = core_component::get_plugin_list('portfolio');
         foreach ($portfolios as $p => $dir) {
             if (strpos($p, $query) !== false) {
                 $found = true;
@@ -5550,7 +5550,7 @@ class admin_page_managerepositories extends admin_externalpage {
         }
 
         $found = false;
-        $repositories= get_plugin_list('repository');
+        $repositories= core_component::get_plugin_list('repository');
         foreach ($repositories as $p => $dir) {
             if (strpos($p, $query) !== false) {
                 $found = true;
@@ -5632,7 +5632,7 @@ class admin_setting_manageauths extends admin_setting {
             return true;
         }
 
-        $authsavailable = get_plugin_list('auth');
+        $authsavailable = core_component::get_plugin_list('auth');
         foreach ($authsavailable as $auth => $dir) {
             if (strpos($auth, $query) !== false) {
                 return true;
@@ -5663,7 +5663,7 @@ class admin_setting_manageauths extends admin_setting {
             'up', 'down', 'none'));
         $txt->updown = "$txt->up/$txt->down";
 
-        $authsavailable = get_plugin_list('auth');
+        $authsavailable = core_component::get_plugin_list('auth');
         get_enabled_auth_plugins(true); // fix the list of enabled auths
         if (empty($CFG->auth)) {
             $authsenabled = array();
@@ -6782,7 +6782,7 @@ function db_replace($search, $replace) {
     rebuild_course_cache(0, true);
 
     // TODO: we should ask all plugins to do the search&replace, for now let's do only blocks...
-    $blocks = get_plugin_list('block');
+    $blocks = core_component::get_plugin_list('block');
     foreach ($blocks as $blockname=>$fullblock) {
         if ($blockname === 'NEWBLOCK') {   // Someone has unzipped the template, ignore it
             continue;
@@ -6875,7 +6875,7 @@ class admin_setting_managerepository extends admin_setting {
             return true;
         }
 
-        $repositories= get_plugin_list('repository');
+        $repositories= core_component::get_plugin_list('repository');
         foreach ($repositories as $p => $dir) {
             if (strpos($p, $query) !== false) {
                 return true;
@@ -7040,7 +7040,7 @@ class admin_setting_managerepository extends admin_setting {
         }
 
         // Get all the plugins that exist on disk
-        $plugins = get_plugin_list('repository');
+        $plugins = core_component::get_plugin_list('repository');
         if (!empty($plugins)) {
             foreach ($plugins as $plugin => $dir) {
                 // Check that it has not already been listed
@@ -7784,7 +7784,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
             return true;
         }
 
-        $protocols = get_plugin_list('webservice');
+        $protocols = core_component::get_plugin_list('webservice');
         foreach ($protocols as $protocol=>$location) {
             if (strpos($protocol, $query) !== false) {
                 return true;
@@ -7816,7 +7816,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
         $strdisable = get_string('disable');
         $strversion = get_string('version');
 
-        $protocols_available = get_plugin_list('webservice');
+        $protocols_available = core_component::get_plugin_list('webservice');
         $active_protocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
         ksort($protocols_available);
 

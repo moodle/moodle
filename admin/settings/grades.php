@@ -178,7 +178,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
     // Reports
     $ADMIN->add('grades', new admin_category('gradereports', new lang_string('reportsettings', 'grades')));
-    foreach (get_plugin_list('gradereport') as $plugin => $plugindir) {
+    foreach (core_component::get_plugin_list('gradereport') as $plugin => $plugindir) {
      // Include all the settings commands for this plugin if there are any
         if (file_exists($plugindir.'/settings.php')) {
             $settings = new admin_settingpage('gradereport'.$plugin, new lang_string('pluginname', 'gradereport_'.$plugin), 'moodle/grade:manage');
@@ -191,7 +191,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
     // Imports
     $ADMIN->add('grades', new admin_category('gradeimports', new lang_string('importsettings', 'grades')));
-    foreach (get_plugin_list('gradeimport') as $plugin => $plugindir) {
+    foreach (core_component::get_plugin_list('gradeimport') as $plugin => $plugindir) {
 
      // Include all the settings commands for this plugin if there are any
         if (file_exists($plugindir.'/settings.php')) {
@@ -206,7 +206,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
     // Exports
     $ADMIN->add('grades', new admin_category('gradeexports', new lang_string('exportsettings', 'grades')));
-    foreach (get_plugin_list('gradeexport') as $plugin => $plugindir) {
+    foreach (core_component::get_plugin_list('gradeexport') as $plugin => $plugindir) {
      // Include all the settings commands for this plugin if there are any
         if (file_exists($plugindir.'/settings.php')) {
             $settings = new admin_settingpage('gradeexport'.$plugin, new lang_string('pluginname', 'gradeexport_'.$plugin), 'moodle/grade:manage');

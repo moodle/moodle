@@ -39,7 +39,7 @@ require_capability('moodle/question:config', $systemcontext);
 admin_externalpage_setup('manageqbehaviours');
 $thispageurl = new moodle_url('/admin/qbehaviours.php');
 
-$behaviours = get_plugin_list('qbehaviour');
+$behaviours = core_component::get_plugin_list('qbehaviour');
 $pluginmanager = plugin_manager::instance();
 
 // Get some data we will need - question counts and which types are needed.
@@ -186,14 +186,14 @@ if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey())
     }
 
     // Then the tables themselves
-    drop_plugin_tables($delete, get_plugin_directory('qbehaviour', $delete) . '/db/install.xml', false);
+    drop_plugin_tables($delete, core_component::get_plugin_directory('qbehaviour', $delete) . '/db/install.xml', false);
 
     // Remove event handlers and dequeue pending events
     events_uninstall('qbehaviour_' . $delete);
 
     $a = new stdClass();
     $a->behaviour = $behaviourname;
-    $a->directory = get_plugin_directory('qbehaviour', $delete);
+    $a->directory = core_component::get_plugin_directory('qbehaviour', $delete);
     echo $OUTPUT->box(get_string('qbehaviourdeletefiles', 'question', $a), 'generalbox', 'notice');
     echo $OUTPUT->continue_button($thispageurl);
     echo $OUTPUT->footer();

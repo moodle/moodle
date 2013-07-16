@@ -385,7 +385,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         return upgrade_plugins_blocks($startcallback, $endcallback, $verbose);
     }
 
-    $plugs = get_plugin_list($type);
+    $plugs = core_component::get_plugin_list($type);
 
     foreach ($plugs as $plug=>$fullplug) {
         // Reset time so that it works when installing a large number of plugins
@@ -413,7 +413,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         if (isset($plugin->component)) {
             if ($plugin->component !== $component) {
                 $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullplug);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($plugin->component));
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', core_component::get_component_directory($plugin->component));
                 throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
@@ -540,7 +540,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
 function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
     global $CFG, $DB;
 
-    $mods = get_plugin_list('mod');
+    $mods = core_component::get_plugin_list('mod');
 
     foreach ($mods as $mod=>$fullmod) {
 
@@ -571,7 +571,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         if (isset($module->component)) {
             if ($module->component !== $component) {
                 $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullmod);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($module->component));
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', core_component::get_component_directory($module->component));
                 throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
@@ -715,7 +715,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
     //Is this a first install
     $first_install = null;
 
-    $blocks = get_plugin_list('block');
+    $blocks = core_component::get_plugin_list('block');
 
     foreach ($blocks as $blockname=>$fullblock) {
 
@@ -751,7 +751,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         if (isset($block->component)) {
             if ($block->component !== $component) {
                 $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullblock);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($block->component));
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', core_component::get_component_directory($block->component));
                 throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
@@ -909,7 +909,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 function log_update_descriptions($component) {
     global $DB;
 
-    $defpath = get_component_directory($component).'/db/log.php';
+    $defpath = core_component::get_component_directory($component).'/db/log.php';
 
     if (!file_exists($defpath)) {
         $DB->delete_records('log_display', array('component'=>$component));
@@ -966,7 +966,7 @@ function log_update_descriptions($component) {
 function external_update_descriptions($component) {
     global $DB, $CFG;
 
-    $defpath = get_component_directory($component).'/db/services.php';
+    $defpath = core_component::get_component_directory($component).'/db/services.php';
 
     if (!file_exists($defpath)) {
         require_once($CFG->dirroot.'/lib/externallib.php');
@@ -1164,7 +1164,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
         $plugin = 'core';
     }
 
-    list($plugintype, $pluginname) = normalize_component($plugin);
+    list($plugintype, $pluginname) = core_component::normalize_component($plugin);
     $component = is_null($pluginname) ? $plugintype : $plugintype . '_' . $pluginname;
 
     $backtrace = format_backtrace($backtrace, true);
@@ -1187,7 +1187,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
             $currentversion = ($currentversion === false) ? null : $currentversion;
         } catch (Exception $ignored) {
         }
-        $cd = get_component_directory($component);
+        $cd = core_component::get_component_directory($component);
         if (file_exists("$cd/version.php")) {
             $module = new stdClass();
             $module->version = null;
@@ -1202,7 +1202,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
             }
         } catch (Exception $ignored) {
         }
-        $cd = get_component_directory($component);
+        $cd = core_component::get_component_directory($component);
         if (file_exists("$cd/version.php")) {
             $plugin = new stdClass();
             $plugin->version = null;
@@ -1215,7 +1215,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
         if (!empty($pluginversion)) {
             $currentversion = $pluginversion;
         }
-        $cd = get_component_directory($component);
+        $cd = core_component::get_component_directory($component);
         if (file_exists("$cd/version.php")) {
             $plugin = new stdClass();
             $plugin->version = null;
@@ -1583,7 +1583,7 @@ function upgrade_noncore($verbose) {
 
     // upgrade all plugins types
     try {
-        $plugintypes = get_plugin_types();
+        $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $type=>$location) {
             upgrade_plugins($type, 'print_upgrade_part_start', 'print_upgrade_part_end', $verbose);
         }
@@ -1629,7 +1629,7 @@ function upgrade_plugin_mnet_functions($component) {
     global $DB, $CFG;
 
     list($type, $plugin) = explode('_', $component);
-    $path = get_plugin_directory($type, $plugin);
+    $path = core_component::get_plugin_directory($type, $plugin);
 
     $publishes = array();
     $subscribes = array();

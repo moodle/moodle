@@ -528,7 +528,7 @@ class core_course_external extends external_api {
         $params = self::validate_parameters(self::create_courses_parameters(),
                         array('courses' => $courses));
 
-        $availablethemes = get_plugin_list('theme');
+        $availablethemes = core_component::get_plugin_list('theme');
         $availablelangs = get_string_manager()->get_list_of_translations();
 
         $transaction = $DB->start_delegated_transaction();
@@ -692,7 +692,7 @@ class core_course_external extends external_api {
         $params = self::validate_parameters(self::update_courses_parameters(),
                         array('courses' => $courses));
 
-        $availablethemes = get_plugin_list('theme');
+        $availablethemes = core_component::get_plugin_list('theme');
         $availablelangs = get_string_manager()->get_list_of_translations();
 
         foreach ($params['courses'] as $course) {

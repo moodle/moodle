@@ -331,7 +331,7 @@ function quiz_report_list($context) {
     }
 
     $reports = $DB->get_records('quiz_reports', null, 'displayorder DESC', 'name, capability');
-    $reportdirs = get_plugin_list('quiz');
+    $reportdirs = core_component::get_plugin_list('quiz');
 
     // Order the reports tab in descending order of displayorder.
     $reportcaps = array();

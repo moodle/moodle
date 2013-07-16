@@ -609,7 +609,7 @@ class theme_config {
         $files = array();
 
         // first editor plugins
-        $plugins = get_plugin_list('editor');
+        $plugins = core_component::get_plugin_list('editor');
         foreach ($plugins as $plugin=>$fulldir) {
             $sheetfile = "$fulldir/editor_styles.css";
             if (is_readable($sheetfile)) {
@@ -774,11 +774,11 @@ class theme_config {
         // get all plugin sheets
         $excludes = $this->resolve_excludes('plugins_exclude_sheets');
         if ($excludes !== true) {
-            foreach (get_plugin_types() as $type=>$unused) {
+            foreach (core_component::get_plugin_types() as $type=>$unused) {
                 if ($type === 'theme' || (!empty($excludes[$type]) and $excludes[$type] === true)) {
                     continue;
                 }
-                $plugins = get_plugin_list($type);
+                $plugins = core_component::get_plugin_list($type);
                 foreach ($plugins as $plugin=>$fulldir) {
                     if (!empty($excludes[$type]) and is_array($excludes[$type])
                         and in_array($plugin, $excludes[$type])) {
@@ -1228,7 +1228,7 @@ class theme_config {
             if ($imagefile = $this->image_exists("$CFG->dataroot/pix_plugins/$type/$plugin/$image", $svg)) {
                 return $imagefile;
             }
-            $dir = get_plugin_directory($type, $plugin);
+            $dir = core_component::get_plugin_directory($type, $plugin);
             if ($imagefile = $this->image_exists("$dir/pix/$image", $svg)) {
                 return $imagefile;
             }
