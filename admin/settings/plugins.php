@@ -17,9 +17,6 @@ if ($hassiteconfig) {
         $module->load_settings($ADMIN, 'modsettings', $hassiteconfig);
     }
 
-    // hidden script for converting journals to online assignments (or something like that) linked from elsewhere
-    $ADMIN->add('modsettings', new admin_externalpage('oacleanup', 'Online Assignment Cleanup', $CFG->wwwroot.'/'.$CFG->admin.'/oacleanup.php', 'moodle/site:config', true));
-
     // course formats
     $ADMIN->add('modules', new admin_category('formatsettings', new lang_string('courseformats')));
     $temp = new admin_settingpage('manageformats', new lang_string('manageformats', 'core_admin'));
