@@ -35,7 +35,7 @@ namespace core\event;
  * @property-read string $eventname Name of the event (=== class name with leading \)
  * @property-read string $component Full frankenstyle component name
  * @property-read string $action what happened
- * @property-read string $object what/who was object of the action (usually similar to database table name)
+ * @property-read string $target what/who was target of the action
  * @property-read string $objecttable name of database table where is object record stored
  * @property-read int $objectid optional id of the object
  * @property-read string $crud letter indicating event type
@@ -79,7 +79,7 @@ abstract class base implements \IteratorAggregate {
 
     /** @var array list of event properties */
     private static $fields = array(
-        'eventname', 'component', 'action', 'object', 'objecttable', 'objectid', 'crud', 'level', 'contextid',
+        'eventname', 'component', 'action', 'target', 'objecttable', 'objectid', 'crud', 'level', 'contextid',
         'contextlevel', 'contextinstanceid', 'userid', 'courseid', 'relateduserid', 'other',
         'timecreated');
 
@@ -133,7 +133,7 @@ abstract class base implements \IteratorAggregate {
         if ($pos === false) {
             throw new \coding_exception("Invalid event class name '$classname', there must be at least one underscore separating object and action words");
         }
-        $event->data['object'] = substr($parts[2], 0, $pos);
+        $event->data['target'] = substr($parts[2], 0, $pos);
         $event->data['action'] = substr($parts[2], $pos+1);
 
         // Set static event data specific for child class.
@@ -179,7 +179,7 @@ abstract class base implements \IteratorAggregate {
 
         // Warn developers if they do something wrong.
         if (debugging('', DEBUG_DEVELOPER)) { // This should be replaced by new $CFG->slowdebug flag if introduced.
-            static $automatickeys = array('eventname', 'component', 'action', 'object', 'contextlevel', 'contextinstanceid', 'timecreated');
+            static $automatickeys = array('eventname', 'component', 'action', 'target', 'contextlevel', 'contextinstanceid', 'timecreated');
             static $initkeys = array('crud', 'level', 'objecttable');
 
             foreach ($data as $key => $ignored) {
@@ -279,7 +279,7 @@ abstract class base implements \IteratorAggregate {
         $classname = $data['eventname'];
         $component = $data['component'];
         $action = $data['action'];
-        $object = $data['object'];
+        $object = $data['target'];
 
         // Security: make 100% sure this really is an event class.
         if ($classname !== "\\{$component}\\event\\{$object}_{$action}") {

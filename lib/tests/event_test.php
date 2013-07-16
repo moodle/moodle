@@ -38,7 +38,7 @@ class core_event_testcase extends advanced_testcase {
         $this->assertSame('\core_tests\event\unittest_executed', $event->eventname);
         $this->assertSame('core_tests', $event->component);
         $this->assertSame('executed', $event->action);
-        $this->assertSame('unittest', $event->object);
+        $this->assertSame('unittest', $event->target);
         $this->assertSame(5, $event->objectid);
         $this->assertSame('u', $event->crud);
         $this->assertSame(10, $event->level);
