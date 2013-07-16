@@ -1381,4 +1381,54 @@ class cache_phpunit_tests extends advanced_testcase {
             $this->assertContains('Identifier required for cache has not been provided', $ex->getMessage());
         }
     }
+
+    /**
+     * Test that the default stores all support searching.
+     */
+    public function test_defaults_support_searching() {
+        $instance = cache_config_phpunittest::instance(true);
+        $instance->phpunit_add_definition('phpunit/search1', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'search1',
+            'requiresearchable' => true
+        ));
+        $instance->phpunit_add_definition('phpunit/search2', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'search2',
+            'requiresearchable' => true
+        ));
+        $instance->phpunit_add_definition('phpunit/search3', array(
+            'mode' => cache_store::MODE_REQUEST,
+            'component' => 'phpunit',
+            'area' => 'search3',
+            'requiresearchable' => true
+        ));
+        $factory = cache_factory::instance();
+
+        // Test application cache is searchable.
+        $definition = $factory->create_definition('phpunit', 'search1');
+        $this->assertInstanceOf('cache_definition', $definition);
+        $this->assertEquals(cache_store::IS_SEARCHABLE, $definition->get_requirements_bin() & cache_store::IS_SEARCHABLE);
+        $cache = $factory->create_cache($definition);
+        $this->assertInstanceOf('cache_application', $cache);
+        $this->assertArrayHasKey('cache_is_searchable', $cache->phpunit_get_store_implements());
+
+        // Test session cache is searchable.
+        $definition = $factory->create_definition('phpunit', 'search2');
+        $this->assertInstanceOf('cache_definition', $definition);
+        $this->assertEquals(cache_store::IS_SEARCHABLE, $definition->get_requirements_bin() & cache_store::IS_SEARCHABLE);
+        $cache = $factory->create_cache($definition);
+        $this->assertInstanceOf('cache_session', $cache);
+        $this->assertArrayHasKey('cache_is_searchable', $cache->phpunit_get_store_implements());
+
+        // Test request cache is searchable.
+        $definition = $factory->create_definition('phpunit', 'search3');
+        $this->assertInstanceOf('cache_definition', $definition);
+        $this->assertEquals(cache_store::IS_SEARCHABLE, $definition->get_requirements_bin() & cache_store::IS_SEARCHABLE);
+        $cache = $factory->create_cache($definition);
+        $this->assertInstanceOf('cache_request', $cache);
+        $this->assertArrayHasKey('cache_is_searchable', $cache->phpunit_get_store_implements());
+    }
 }
