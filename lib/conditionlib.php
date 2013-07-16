@@ -824,7 +824,11 @@ abstract class condition_info_base {
             foreach ($this->item->conditionsfield as $field => $details) {
                 $a = new stdclass;
                 // Display the fieldname into current lang.
-                $translatedfieldname = get_user_field_name($details->fieldname);
+                if (is_numeric($field)) {
+                    $translatedfieldname = $details->fieldname;
+                } else {
+                    $translatedfieldname = get_user_field_name($details->fieldname);
+                }
                 $a->field = format_string($translatedfieldname, true, array('context' => $context));
                 $a->value = s($details->value);
                 $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
