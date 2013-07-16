@@ -2697,10 +2697,12 @@ class lesson_page_type_manager {
 
         $orderedpages = array();
         $lastpageid = 0;
-
-        while (true) {
+        $morepages = true;
+        while ($morepages) {
+            $morepages = false;
             foreach ($pages as $page) {
                 if ((int)$page->prevpageid === (int)$lastpageid) {
+                    $morepages = true;
                     $orderedpages[$page->id] = $page;
                     unset($pages[$page->id]);
                     $lastpageid = $page->id;
@@ -2711,6 +2713,12 @@ class lesson_page_type_manager {
                     }
                 }
             }
+        }
+
+        // Add remaining pages.
+        foreach ($pages as $page) {
+            $orderedpages[$page->id] = $page;
+            $lastpageid = $page->id;
         }
 
         return $orderedpages;

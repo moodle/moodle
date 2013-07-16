@@ -323,6 +323,13 @@ class qformat_default {
                 $this->count_questions($questions)), 'notifysuccess');
 
         $count = 0;
+        $addquestionontop = false;
+        if ($pageid == 0) {
+            $addquestionontop = true;
+            $updatelessonpage = $DB->get_record('lesson_pages', array('lessonid' => $lesson->id, 'prevpageid' => 0));
+        } else {
+            $updatelessonpage = $DB->get_record('lesson_pages', array('id' => $pageid));
+        }
 
         $unsupportedquestions = 0;
 
@@ -378,7 +385,6 @@ class qformat_default {
                         $newpageid = $DB->insert_record("lesson_pages", $newpage);
                         // update the linked list
                         $DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid));
-
                     } else {
                         // new page is the first page
                         // get the existing (first) page (if any)
@@ -397,6 +403,7 @@ class qformat_default {
                             $DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->id));
                         }
                     }
+
                     // reset $pageid and put the page ID in $question, used in save_question_option()
                     $pageid = $newpageid;
                     $question->id = $newpageid;
@@ -424,7 +431,12 @@ class qformat_default {
                     $unsupportedquestions++;
                     break;
             }
-
+        }
+        // update the prev links
+        if ($addquestionontop) {
+            $DB->set_field("lesson_pages", "prevpageid", $pageid, array("id" => $updatelessonpage->id));
+        } else {
+            $DB->set_field("lesson_pages", "prevpageid", $pageid, array("id" => $updatelessonpage->nextpageid));
         }
         if ($unsupportedquestions) {
             echo $OUTPUT->notification(get_string('unknownqtypesnotimported', 'lesson', $unsupportedquestions));
