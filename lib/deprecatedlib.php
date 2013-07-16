@@ -4111,3 +4111,29 @@ function mark_context_dirty($path) {
         }
     }
 }
+
+/**
+ * Remove a context record and any dependent entries,
+ * removes context from static context cache too
+ *
+ * @deprecated since Moodle 2.2
+ * @see context_helper::delete_instance() or context::delete_content()
+ * @param int $contextlevel
+ * @param int $instanceid
+ * @param bool $deleterecord false means keep record for now
+ * @return bool returns true or throws an exception
+ */
+function delete_context($contextlevel, $instanceid, $deleterecord = true) {
+    if ($deleterecord) {
+        debugging('delete_context() is deprecated, please use context_helper::delete_instance() instead.', DEBUG_DEVELOPER);
+        context_helper::delete_instance($contextlevel, $instanceid);
+    } else {
+        debugging('delete_context() is deprecated, please use $context->delete_content() instead.', DEBUG_DEVELOPER);
+        $classname = context_helper::get_class_for_level($contextlevel);
+        if ($context = $classname::instance($instanceid, IGNORE_MISSING)) {
+            $context->delete_content();
+        }
+    }
+
+    return true;
+}

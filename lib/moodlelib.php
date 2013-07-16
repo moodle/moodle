@@ -4192,7 +4192,7 @@ function delete_user(stdClass $user) {
     session_kill_user($user->id);
 
     // now do a final accesslib cleanup - removes all role assignments in user context and context itself
-    delete_context(CONTEXT_USER, $user->id);
+    context_helper::delete_instance(CONTEXT_USER, $user->id);
 
     // workaround for bulk deletes of users with the same email address
     $delname = "$user->email.".time();
@@ -4838,7 +4838,7 @@ function delete_course($courseorid, $showfeedback = true) {
     remove_course_contents($courseid, $showfeedback);
 
     // delete the course and related context instance
-    delete_context(CONTEXT_COURSE, $courseid);
+    context_helper::delete_instance(CONTEXT_COURSE, $courseid);
 
     // We will update the course's timemodified, as it will be passed to the course_deleted event,
     // which should know about this updated property, as this event is meant to pass the full course record

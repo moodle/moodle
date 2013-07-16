@@ -99,7 +99,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     if (!$returnfromfunc or !is_number($returnfromfunc)) {
         // Undo everything we can.
         $modcontext = context_module::instance($moduleinfo->coursemodule);
-        delete_context(CONTEXT_MODULE, $moduleinfo->coursemodule);
+        context_helper::delete_instance(CONTEXT_MODULE, $moduleinfo->coursemodule);
         $DB->delete_records('course_modules', array('id'=>$moduleinfo->coursemodule));
 
         if (!is_number($returnfromfunc)) {

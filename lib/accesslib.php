@@ -7248,29 +7248,6 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
 }
 
 /**
- * Remove a context record and any dependent entries,
- * removes context from static context cache too
- *
- * @deprecated since 2.2, use $context->delete_content() instead
- * @param int $contextlevel
- * @param int $instanceid
- * @param bool $deleterecord false means keep record for now
- * @return bool returns true or throws an exception
- */
-function delete_context($contextlevel, $instanceid, $deleterecord = true) {
-    if ($deleterecord) {
-        context_helper::delete_instance($contextlevel, $instanceid);
-    } else {
-        $classname = context_helper::get_class_for_level($contextlevel);
-        if ($context = $classname::instance($instanceid, IGNORE_MISSING)) {
-            $context->delete_content();
-        }
-    }
-
-    return true;
-}
-
-/**
  * Get a URL for a context, if there is a natural one. For example, for
  * CONTEXT_COURSE, this is the course page. For CONTEXT_USER it is the
  * user profile page.

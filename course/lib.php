@@ -1534,7 +1534,7 @@ function course_delete_module($cmid) {
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
 
     // Delete the context.
-    delete_context(CONTEXT_MODULE, $cm->id);
+    context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
 
     // Delete the module from the course_modules table.
     $DB->delete_records('course_modules', array('id' => $cm->id));

@@ -1400,7 +1400,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
         // finally delete the category and it's context
         $DB->delete_records('course_categories', array('id' => $this->id));
-        delete_context(CONTEXT_COURSECAT, $this->id);
+        context_helper::delete_instance(CONTEXT_COURSECAT, $this->id);
         add_to_log(SITEID, "category", "delete", "index.php", "$this->name (ID $this->id)");
 
         cache_helper::purge_by_event('changesincoursecat');

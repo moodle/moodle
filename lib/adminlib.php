@@ -208,9 +208,7 @@ function uninstall_plugin($type, $name) {
         // delete module contexts
         if ($coursemods) {
             foreach ($coursemods as $coursemod) {
-                if (!delete_context(CONTEXT_MODULE, $coursemod->id)) {
-                    echo $OUTPUT->notification("Could not delete the context for $strpluginname with id = $coursemod->id");
-                }
+                context_helper::delete_instance(CONTEXT_MODULE, $coursemod->id);
             }
         }
 
