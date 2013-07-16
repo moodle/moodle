@@ -337,6 +337,8 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // removed in 2.6dev
+        '/admin/oacleanup.php',
         // removed in 2.5dev
         '/backup/lib.php',
         '/backup/bb/README.txt',
