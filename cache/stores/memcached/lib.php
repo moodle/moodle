@@ -339,7 +339,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             $options[Memcached::SERIALIZER_JSON] = get_string('serialiser_json', 'cachestore_memcached');
         }
         if (Memcached::HAVE_IGBINARY) {
-            $options[Memcached::SERIALIZER_IGBINARY] = get_string('serialiser_php', 'cachestore_memcached');
+            $options[Memcached::SERIALIZER_IGBINARY] = get_string('serialiser_igbinary', 'cachestore_memcached');
         }
         return $options;
     }
