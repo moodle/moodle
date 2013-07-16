@@ -3,7 +3,11 @@ information provided here is intended especially for developers.
 
 === 2.6 ===
 
-* Use new core_component::* plugin listing and component normalisation methods.
+* Use new methods from core_component class instead of get_core_subsystems(), get_plugin_types(),
+  get_plugin_list(), get_plugin_list_with_class(), get_plugin_directory(), normalize_component()
+  and get_component_directory(). The names of the new methods are exactly the same, the only differences
+  are that core_component::get_plugin_types() now always returns full paths and
+  core_component::get_plugin_list() does not accept empty parameter any more.
 * Use core_text::* instead of textlib:: and also core_collator::* instead of collatorlib::*.
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
 * get_context_instance() is deprecated, please use use context_xxxx::instance().
