@@ -230,7 +230,7 @@ class block_base {
         global $CFG;
 
         $bc = new block_contents($this->html_attributes());
-
+        $bc->attributes['data-block'] = $this->name();
         $bc->blockinstanceid = $this->instance->id;
         $bc->blockpositionid = $this->instance->blockpositionid;
 
@@ -269,6 +269,10 @@ class block_base {
             $bc->collapsible = block_contents::HIDDEN;
         } else {
             $bc->collapsible = block_contents::VISIBLE;
+        }
+
+        if ($this->instance_can_be_docked() && !$this->hide_header()) {
+            $bc->dockable = true;
         }
 
         $bc->annotation = ''; // TODO MDL-19398 need to work out what to say here.
@@ -435,9 +439,13 @@ class block_base {
         $this->specialization();
     }
 
+    /**
+     * Allows the block to load any JS it requires into the page.
+     *
+     * By default this function simply permits the user to dock the block if it is dockable.
+     */
     function get_required_javascript() {
         if ($this->instance_can_be_docked() && !$this->hide_header()) {
-            $this->page->requires->js_init_call('M.core_dock.init_genericblock', array($this->instance->id));
             user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
         }
     }

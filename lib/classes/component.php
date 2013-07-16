@@ -274,7 +274,6 @@ $cache = '.var_export($cache, true).';
             'currencies'  => null,
             'dbtransfer'  => null,
             'debug'       => null,
-            'dock'        => null,
             'editor'      => $CFG->dirroot.'/lib/editor',
             'edufields'   => null,
             'enrol'       => $CFG->dirroot.'/enrol',
