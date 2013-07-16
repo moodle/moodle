@@ -97,6 +97,8 @@ $STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
         'deleted',     // 1 means delete user
         'mnethostid',  // Can not be used for adding, updating or deleting of users - only for enrolments, groups, cohorts and suspending.
     );
+// Include alternate name fields such as firstnamephonetic.
+$STD_FIELDS = array_merge($STD_FIELDS, get_all_user_name_fields());
 
 $PRF_FIELDS = array();
 
