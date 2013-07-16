@@ -30,7 +30,8 @@ require_once(__DIR__ . '/../../behat/behat_base.php');
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
     Behat\Mink\Exception\DriverException as DriverException,
-    WebDriver\Exception\NoSuchElement as NoSuchElement;
+    WebDriver\Exception\NoSuchElement as NoSuchElement,
+    WebDriver\Exception\StaleElementReference as StaleElementReference;
 
 /**
  * Cross component steps definitions.
@@ -83,6 +84,8 @@ class behat_general extends behat_base {
         try {
             $content = $metarefresh->getAttribute('content');
         } catch (NoSuchElement $e) {
+            return false;
+        } catch (StaleElementReference $e) {
             return false;
         }
 
