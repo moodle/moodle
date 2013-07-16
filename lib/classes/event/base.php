@@ -279,10 +279,10 @@ abstract class base implements \IteratorAggregate {
         $classname = $data['eventname'];
         $component = $data['component'];
         $action = $data['action'];
-        $object = $data['target'];
+        $target = $data['target'];
 
         // Security: make 100% sure this really is an event class.
-        if ($classname !== "\\{$component}\\event\\{$object}_{$action}") {
+        if ($classname !== "\\{$component}\\event\\{$target}_{$action}") {
             return false;
         }
 
