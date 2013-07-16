@@ -65,6 +65,37 @@ Feature: Set up contextual data for tests
     And I should see "Grouping 1"
     And I should see "Grouping 2"
 
+  @javascript
+  Scenario: Role overrides
+    Given the following "users" exists:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | student1 | Student | 1 | student1@asd.com |
+    And the following "categories" exists:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+    And the following "courses" exists:
+      | fullname | shortname |
+      | Course 1 | C1 |
+    And the following "course enrolments" exists:
+      | user | course | role |
+      | student1 | C1 | student |
+      | teacher1 | C1 | editingteacher |
+    And the following "permission overrides" exists:
+      | capability | permission | role | contextlevel | reference |
+      | mod/forum:editanypost | Allow | student | Course | C1 |
+      | mod/forum:replynews | Prevent | editingteacher | Course | C1 |
+    When I log in as "admin"
+    And I follow "Course 1"
+    And I expand "Users" node
+    And I follow "Permissions"
+    And I select "Student (1)" from "Advanced role override"
+    Then the "mod/forum:editanypost" field should match "1" value
+    And I press "Cancel"
+    And I select "Teacher (1)" from "Advanced role override"
+    And the "mod/forum:replynews" field should match "-1" value
+    And I press "Cancel"
+
   Scenario: Add course enrolments
     Given the following "users" exists:
       | username | firstname | lastname | email |
