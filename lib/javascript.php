@@ -42,7 +42,7 @@ if ($slashargument = min_get_slash_argument()) {
     $file = '/'.min_clean_param($file, 'SAFEPATH');
 
 } else {
-    $rev  = min_optional_param('rev', 0, 'INT');
+    $rev  = min_optional_param('rev', -1, 'INT');
     $file = min_optional_param('jsfile', '', 'RAW'); // 'file' would collide with URL rewriting!
 }
 
@@ -76,9 +76,11 @@ if (!$jsfiles) {
 }
 
 $etag = sha1($rev.implode(',', $jsfiles));
-$candidate = $CFG->cachedir.'/js/'.$etag;
 
-if ($rev > -1) {
+// Use the caching only for meaningful revision numbers which prevents future cache poisoning.
+if ($rev > 0 and $rev < (time() + 60*60)) {
+    $candidate = $CFG->cachedir.'/js/'.$etag;
+
     if (file_exists($candidate)) {
         if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
             // we do not actually need to verify the etag value because our files
