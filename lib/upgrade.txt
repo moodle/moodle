@@ -6,30 +6,72 @@ information provided here is intended especially for developers.
 * Use new core_component::* plugin listing and component normalisation methods.
 * Use core_text::* instead of textlib:: and also core_collator::* instead of collatorlib::*.
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
-* get_context_instance() is deprecated, please use use context_xxxx::instance().
-* get_context_instance_by_id() is deprecated, please use context::instance_by_id($id).
-* load_temp_role() and remove_temp_roles() can not be used any more.
-* get_system_context() is deprecated, please use context_system::instance().
-* get_parent_contexts() is deprecated, please use $context->get_parent_context_ids().
-* get_parent_contextid() is deprecated, please use $context->get_parent_context().
-* get_child_contexts() is deprecated, please use $context->get_child_contexts().
-* create_contexts() is deprecated, please use context_helper::create_instances().
-* cleanup_contexts() is deprecated, please use context_helper::cleanup_instances().
-* build_context_path() is deprecated, please use context_helper::build_all_paths().
-* rebuild_contexts() is deprecated, please use $context->reset_paths().
-* preload_course_contexts() is deprecated, please use context_helper::preload_course().
-* context_moved() is deprecated, please use context::update_moved().
-* fetch_context_capabilities() is deprecated, please use $context->get_capabilities().
-* context_instance_preload() is deprecated, please use context_helper::preload_from_record().
-* get_contextlevel_name() is deprecated, please use context_helper::get_level_name().
-* print_context_name() is deprecated, please use $context->get_context_name().
-* mark_context_dirty($context->path) is deprecated, please use $context->mark_dirty().
-* delete_context() is deprecated, please use $context->delete_content() or context_helper::delete_instance().
-* get_context_url() is deprecated, please use $context->get_url().
-* get_course_context() is deprecated, please use $context->get_course_context().
-* get_user_courses_bycap() is deprecated, please use enrol_get_users_courses().
-* get_role_context_caps() is deprecated, it is really slow. Don't use it.
-* get_courseid_from_context() is deprecated, please use $context->get_course_context(false).
+
+DEPRECATIONS:
+Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
+and will be removed in a future release (target: 2.8), a summary follows:
+
+Accesslib:
+    * get_context_instance()        ->  context_xxxx::instance()
+    * get_context_instance_by_id()  ->  context::instance_by_id($id)
+    * get_system_context()          ->  context_system::instance()
+    * context_moved()               ->  context::update_moved()
+    * preload_course_contexts()     ->  context_helper::preload_course()
+    * context_instance_preload()    ->  context_helper::preload_from_record()
+    * get_contextlevel_name()       ->  context_helper::get_level_name()
+    * create_contexts()             ->  context_helper::create_instances()
+    * cleanup_contexts()            ->  context_helper::cleanup_instances()
+    * build_context_path()          ->  context_helper::build_all_paths()
+    * print_context_name()          ->  $context->get_context_name()
+    * mark_context_dirty()          ->  $context->mark_dirty()
+    * delete_context()              ->  $context->delete_content() or context_helper::delete_instance()
+    * get_context_url()             ->  $context->get_url()
+    * get_course_context()          ->  $context->get_course_context()
+    * get_parent_contexts()         ->  $context->get_parent_context_ids()
+    * get_parent_contextid()        ->  $context->get_parent_context()
+    * get_child_contexts()          ->  $context->get_child_contexts()
+    * rebuild_contexts()            ->  $context->reset_paths()
+    * get_user_courses_bycap()      ->  enrol_get_users_courses()
+    * get_courseid_from_context()   ->  $context->get_course_context(false)
+    * get_role_context_caps()       ->  (no replacement)
+    * load_temp_role()              ->  (no replacement)
+    * remove_temp_roles()           ->  (no replacement)
+
+Enrollment:
+    * get_course_participants()     -> get_enrolled_users()
+    * is_course_participant()       -> is_enrolled()
+
+Output:
+    * current_theme()               -> $PAGE->theme->name
+    * skip_main_destination()       -> $OUTPUT->skip_link_target()
+    * print_container()             -> $OUTPUT->container()
+    * print_container_start()       -> $OUTPUT->container_start()
+    * print_container_end()         -> $OUTPUT->container_end()
+    * print_continue()              -> $OUTPUT->continue_button()
+    * print_header()                -> $PAGE methods
+    * print_header_simple()         -> $PAGE methods
+    * print_side_block()            -> $OUTPUT->block()
+    * print_arrow()                 -> $OUTPUT->arrow()
+    * print_scale_menu_helpbutton() -> $OUTPUT->help_icon_scale($courseid, $scale)
+    * print_checkbox()              -> html_writer::checkbox()
+
+Navigation:
+    * print_navigation()            -> $OUTPUT->navbar()
+    * build_navigation()            -> $PAGE->navbar methods
+    * navmenu()                     -> (no replacement)
+
+Calendar:
+    * add_event()                   -> calendar_event::create()
+    * update_event()                -> calendar_event->update()
+    * delete_event()                -> calendar_event->delete()
+    * hide_event()                  -> calendar_event->toggle_visibility(false)
+    * show_event()                  -> calendar_event->toggle_visibility(true)
+
+Misc:
+    * filter_text()                 -> format_text(), format_string()...
+    * httpsrequired()               -> $PAGE->https_required()
+    * detect_munged_arguments()     -> clean_param([...], PARAM_FILE)
+    * mygroupid()                   -> groups_get_all_groups()
 
 === 2.5.1 ===
 

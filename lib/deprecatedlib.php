@@ -286,15 +286,17 @@ function update_log_display_entry($module, $action, $mtable, $field) {
  * Given some text in HTML format, this function will pass it
  * through any filters that have been configured for this context.
  *
- * @deprecated use the text formatting in a standard way instead,
+ * @deprecated use the text formatting in a standard way instead (http://docs.moodle.org/dev/Output_functions)
  *             this was abused mostly for embedding of attachments
- *
+ * @todo final deprecation of this function in MDL-40607
  * @param string $text The text to be passed through format filters
  * @param int $courseid The current course.
  * @return string the filtered string.
  */
 function filter_text($text, $courseid = NULL) {
     global $CFG, $COURSE;
+
+    debugging('filter_text() is deprecated, use format_text(), format_string() etc instead.', DEBUG_DEVELOPER);
 
     if (!$courseid) {
         $courseid = $COURSE->id;
@@ -314,9 +316,11 @@ function filter_text($text, $courseid = NULL) {
  * By using this function properly, we can ensure 100% https-ized pages
  * at our entire discretion (login, forgot_password, change_password)
  * @deprecated use $PAGE->https_required() instead
+ * @todo final deprecation of this function in MDL-40607
  */
 function httpsrequired() {
     global $PAGE;
+    debugging('httpsrequired() is deprecated use $PAGE->https_required() instead.', DEBUG_DEVELOPER);
     $PAGE->https_required();
 }
 
@@ -422,23 +426,27 @@ function get_list_of_countries() {
 /**
  * Return all course participant for a given course
  *
- * @deprecated
+ * @deprecated use get_enrolled_users($context) instead.
+ * @todo final deprecation of this function in MDL-40607
  * @param integer $courseid
  * @return array of user
  */
 function get_course_participants($courseid) {
+    debugging('get_course_participants() is deprecated, use get_enrolled_users() instead.', DEBUG_DEVELOPER);
     return get_enrolled_users(context_course::instance($courseid));
 }
 
 /**
  * Return true if the user is a participant for a given course
  *
- * @deprecated
+ * @deprecated use is_enrolled($context, $userid) instead.
+ * @todo final deprecation of this function in MDL-40607
  * @param integer $userid
  * @param integer $courseid
  * @return boolean
  */
 function is_course_participant($userid, $courseid) {
+    debugging('is_course_participant() is deprecated, use is_enrolled() instead.', DEBUG_DEVELOPER);
     return is_enrolled(context_course::instance($courseid), $userid);
 }
 
@@ -525,16 +533,15 @@ function replace_smilies(&$text) {
 }
 
 /**
- * deprecated - use clean_param($string, PARAM_FILE); instead
- * Check for bad characters ?
- *
- * @todo Finish documenting this function - more detail needed in description as well as details on arguments
+ * @deprecated use clean_param($string, PARAM_FILE) instead.
+ * @todo final deprecation of this function in MDL-40607
  *
  * @param string $string ?
  * @param int $allowdots ?
  * @return bool
  */
 function detect_munged_arguments($string, $allowdots=1) {
+    debugging('detect_munged_arguments() is deprecated, please use clean_param(,PARAM_FILE) instead.', DEBUG_DEVELOPER);
     if (substr_count($string, '..') > $allowdots) {   // Sometimes we allow dots in references
         return true;
     }
@@ -690,14 +697,6 @@ function zip_files ($originalfiles, $destination) {
     return $packer->archive_to_pathname($zipfiles, $destpath . '/' . $destfilename);
 }
 
-/////////////////////////////////////////////////////////////
-/// Old functions not used anymore - candidates for removal
-/////////////////////////////////////////////////////////////
-
-
-/** various deprecated groups function **/
-
-
 /**
  * Get the IDs for the user's groups in the given course.
  *
@@ -705,9 +704,14 @@ function zip_files ($originalfiles, $destination) {
  * @param int $courseid The course being examined - the 'course' table id field.
  * @return array|bool An _array_ of groupids, or false
  * (Was return $groupids[0] - consequences!)
+ * @deprecated use groups_get_all_groups() instead.
+ * @todo final deprecation of this function in MDL-40607
  */
 function mygroupid($courseid) {
     global $USER;
+
+    debugging('mygroupid() is deprecated, please use groups_get_all_groups() instead.', DEBUG_DEVELOPER);
+
     if ($groups = groups_get_all_groups($courseid, $USER->id)) {
         return array_keys($groups);
     } else {
@@ -807,20 +811,8 @@ function error($message, $link='') {
 }
 
 
-//////////////////////////
-/// removed functions ////
-//////////////////////////
-
 /**
- * The old method that was used to include JavaScript libraries.
- * Please use $PAGE->requires->js_module() instead.
- *
- * @param mixed $lib The library or libraries to load (a string or array of strings)
- *      There are three way to specify the library:
- *      1. a shorname like 'yui_yahoo'. This translates into a call to $PAGE->requires->yui2_lib('yahoo');
- *      2. the path to the library relative to wwwroot, for example 'lib/javascript-static.js'
- *      3. (legacy) a full URL like $CFG->wwwroot . '/lib/javascript-static.js'.
- *      2. and 3. lead to a call $PAGE->requires->js('/lib/javascript-static.js').
+ * @deprecated use $PAGE->requires->js_module() instead.
  */
 function require_js($lib) {
     throw new coding_exception('require_js() was removed, use new JS api');
@@ -828,12 +820,13 @@ function require_js($lib) {
 
 /**
  * @deprecated use $PAGE->theme->name instead.
+ * @todo final deprecation of this function in MDL-40607
  * @return string the name of the current theme.
  */
 function current_theme() {
     global $PAGE;
-    // TODO, uncomment this once we have eliminated all references to current_theme in core code.
-    // debugging('current_theme is deprecated, use $PAGE->theme->name instead', DEBUG_DEVELOPER);
+
+    debugging('current_theme() is deprecated, please use $PAGE->theme->name instead', DEBUG_DEVELOPER);
     return $PAGE->theme->name;
 }
 
@@ -856,10 +849,13 @@ function formerr($error) {
  * Used in course formats, /index.php and /course/index.php
  *
  * @deprecated use $OUTPUT->skip_link_target() in instead.
+ * @todo final deprecation of this function in MDL-40607
  * @return string HTML element.
  */
 function skip_main_destination() {
     global $OUTPUT;
+
+    debugging('skip_main_destination() is deprecated, please use $OUTPUT->skip_link_target() instead.', DEBUG_DEVELOPER);
     return $OUTPUT->skip_link_target();
 }
 
@@ -914,7 +910,8 @@ function print_box_end($return=false) {
 /**
  * Print a message in a standard themed container.
  *
- * @deprecated
+ * @deprecated use $OUTPUT->container() instead.
+ * @todo final deprecation of this function in MDL-40607
  * @param string $message, the content of the container
  * @param boolean $clearfix clear both sides
  * @param string $classes, space-separated class names.
@@ -924,6 +921,8 @@ function print_box_end($return=false) {
  */
 function print_container($message, $clearfix=false, $classes='', $idbase='', $return=false) {
     global $OUTPUT;
+
+    debugging('print_container() is deprecated. Please use $OUTPUT->container() instead.', DEBUG_DEVELOPER);
     if ($clearfix) {
         $classes .= ' clearfix';
     }
@@ -938,7 +937,8 @@ function print_container($message, $clearfix=false, $classes='', $idbase='', $re
 /**
  * Starts a container using divs
  *
- * @deprecated
+ * @deprecated use $OUTPUT->container_start() instead.
+ * @todo final deprecation of this function in MDL-40607
  * @param boolean $clearfix clear both sides
  * @param string $classes, space-separated class names.
  * @param string $idbase
@@ -947,6 +947,9 @@ function print_container($message, $clearfix=false, $classes='', $idbase='', $re
  */
 function print_container_start($clearfix=false, $classes='', $idbase='', $return=false) {
     global $OUTPUT;
+
+    debugging('print_container_start() is deprecated. Please use $OUTPUT->container_start() instead.', DEBUG_DEVELOPER);
+
     if ($clearfix) {
         $classes .= ' clearfix';
     }
@@ -969,12 +972,14 @@ function check_theme_arrows() {
 /**
  * Simple function to end a container (see above)
  *
- * @deprecated
+ * @deprecated use $OUTPUT->container_end() instead.
+ * @todo final deprecation of this function in MDL-40607
  * @param boolean $return, return as string or just print it
  * @return string|void Based on $return
  */
 function print_container_end($return=false) {
     global $OUTPUT;
+    debugging('print_container_end() is deprecated. Please use $OUTPUT->container_end() instead.', DEBUG_DEVELOPER);
     $output = $OUTPUT->container_end();
     if ($return) {
         return $output;
@@ -1012,7 +1017,8 @@ function notify($message, $classes = 'notifyproblem', $align = 'center', $return
 /**
  * Print a continue button that goes to a particular URL.
  *
- * @deprecated since Moodle 2.0
+ * @deprecated use $OUTPUT->continue_button() instead.
+ * @todo final deprecation of this function in MDL-40607
  *
  * @param string $link The url to create a link to.
  * @param bool $return If set to true output is returned rather than echoed, default false
@@ -1020,6 +1026,8 @@ function notify($message, $classes = 'notifyproblem', $align = 'center', $return
  */
 function print_continue($link, $return = false) {
     global $CFG, $OUTPUT;
+
+    debugging('print_continue() is deprecated. Please use $OUTPUT->continue_button() instead.', DEBUG_DEVELOPER);
 
     if ($link == '') {
         if (!empty($_SERVER['HTTP_REFERER'])) {
@@ -1041,6 +1049,8 @@ function print_continue($link, $return = false) {
 /**
  * Print a standard header
  *
+ * @deprecated use $PAGE methods instead.
+ * @todo final deprecation of this function in MDL-40607
  * @param string  $title Appears at the top of the window
  * @param string  $heading Appears at the top of the page
  * @param string  $navigation Array of $navlinks arrays (keys: name, link, type) for use as breadcrumbs links
@@ -1058,6 +1068,8 @@ function print_header($title='', $heading='', $navigation='', $focus='',
                       $meta='', $cache=true, $button='&nbsp;', $menu=null,
                       $usexml=false, $bodytags='', $return=false) {
     global $PAGE, $OUTPUT;
+
+    debugging('print_header() is deprecated. Please use $PAGE methods instead.', DEBUG_DEVELOPER);
 
     $PAGE->set_title($title);
     $PAGE->set_heading($heading);
@@ -1095,7 +1107,8 @@ function print_header($title='', $heading='', $navigation='', $focus='',
  * provided explicitly in the strings. It can be used on the site page as in courses
  * Eventually all print_header could be replaced by print_header_simple
  *
- * @deprecated since Moodle 2.0
+ * @deprecated use $PAGE methods instead.
+ * @todo final deprecation of this function in MDL-40607
  * @param string $title Appears at the top of the window
  * @param string $heading Appears at the top of the page
  * @param string $navigation Premade navigation string (for use as breadcrumbs links)
@@ -1113,6 +1126,8 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='', $return=false) {
 
     global $COURSE, $CFG, $PAGE, $OUTPUT;
+
+    debugging('print_header_simple() is deprecated. Please use $PAGE methods instead.', DEBUG_DEVELOPER);
 
     if ($meta) {
         throw new coding_exception('The $meta parameter to print_header is no longer supported. '.
@@ -1159,8 +1174,6 @@ function user_login_string($course='ignored', $user='ignored') {
  * Prints a nice side block with an optional header.  The content can either
  * be a block of HTML or a list of text with optional icons.
  *
- * @todo Finish documenting this function. Show example of various attributes, etc.
- *
  * @static int $block_id Increments for each call to the function
  * @param string $heading HTML for the heading. Can include full HTML or just
  *   plain text - plain text will automatically be enclosed in the appropriate
@@ -1173,11 +1186,13 @@ function user_login_string($course='ignored', $user='ignored') {
  * outer div of this block. If there is a class attribute ' block' gets appended to it. If there isn't
  * already a class, class='block' is used.
  * @param string $title Plain text title, as embedded in the $heading.
- * @deprecated
+ * @deprecated use $OUTPUT->block() instead.
+ * @todo final deprecation of this function in MDL-40607
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array(), $title='') {
     global $OUTPUT;
 
+    debugging('print_side_block() is deprecated, please use $OUTPUT->block() instead.', DEBUG_DEVELOPER);
     // We don't use $heading, becuse it often contains HTML that we don't want.
     // However, sometimes $title is not set, but $heading is.
     if (empty($title)) {
@@ -1411,9 +1426,9 @@ function editorshortcutshelpbutton() {
  * Returns an image of an up or down arrow, used for column sorting. To avoid unnecessary DB accesses, please
  * provide this function with the language strings for sortasc and sortdesc.
  *
- * @deprecated since Moodle 2.0
+ * @deprecated use $OUTPUT->arrow() instead.
+ * @todo final deprecation of this function in MDL-40607
  *
- * TODO migrate to outputlib
  * If no sort string is associated with the direction, an arrow with no alt text will be printed/returned.
  *
  * @global object
@@ -1424,9 +1439,9 @@ function editorshortcutshelpbutton() {
  *
  */
 function print_arrow($direction='up', $strsort=null, $return=false) {
-    // debugging('print_arrow() has been deprecated. Please change your code to use $OUTPUT->arrow().');
-
     global $OUTPUT;
+
+    debugging('print_arrow() is deprecated. Please use $OUTPUT->arrow() instead.', DEBUG_DEVELOPER);
 
     if (!in_array($direction, array('up', 'down', 'right', 'left', 'move'))) {
         return null;
@@ -1567,7 +1582,8 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
 /**
  * Prints a help button about a scale
  *
- * @deprecated since Moodle 2.0
+ * @deprecated use $OUTPUT->help_icon_scale($courseid, $scale) instead.
+ * @todo final deprecation of this function in MDL-40607
  *
  * @global object
  * @param id $courseid
@@ -1576,8 +1592,9 @@ function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$
  * @return string|bool Depending on value of $return
  */
 function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
-    // debugging('print_scale_menu_helpbutton() has been deprecated. Please change your code to use $OUTPUT->help_scale($courseid, $scale).');
     global $OUTPUT;
+
+    debugging('print_scale_menu_helpbutton() is deprecated. Please use $OUTPUT->help_icon_scale($courseid, $scale) instead.', DEBUG_DEVELOPER);
 
     $output = $OUTPUT->help_icon_scale($courseid, $scale);
 
@@ -1633,7 +1650,8 @@ function choose_from_radio ($options, $name, $checked='', $return=false) {
 /**
  * Display an standard html checkbox with an optional label
  *
- * @deprecated since Moodle 2.0
+ * @deprecated use html_writer::checkbox() instead.
+ * @todo final deprecation of this function in MDL-40607
  *
  * @staticvar int $idcounter
  * @param string $name    The name of the checkbox
@@ -1648,9 +1666,9 @@ function choose_from_radio ($options, $name, $checked='', $return=false) {
  * @return string|void If $return=true returns string, else echo's and returns void
  */
 function print_checkbox($name, $value, $checked = true, $label = '', $alt = '', $script='', $return=false) {
-
-    // debugging('print_checkbox() has been deprecated. Please change your code to use html_writer::checkbox().');
     global $OUTPUT;
+
+    debugging('print_checkbox() is deprecated. Please use html_writer::checkbox() instead.', DEBUG_DEVELOPER);
 
     if (!empty($script)) {
         debugging('The use of the $script param in print_checkbox has not been migrated into html_writer::checkbox().', DEBUG_DEVELOPER);
@@ -1737,7 +1755,8 @@ function update_course_icon($courseid) {
  * echo $OUTPUT->navbar();
  * </code>
  *
- * @deprecated since 2.0
+ * @deprecated use $OUTPUT->navbar() instead
+ * @todo final deprecation of this function in MDL-40607
  * @param mixed $navigation deprecated
  * @param string $separator OBSOLETE, and now deprecated
  * @param boolean $return False to echo the breadcrumb string (default), true to return it.
@@ -1746,7 +1765,7 @@ function update_course_icon($courseid) {
 function print_navigation ($navigation, $separator=0, $return=false) {
     global $OUTPUT,$PAGE;
 
-    # debugging('print_navigation has been deprecated please update your theme to use $OUTPUT->navbar() instead', DEBUG_DEVELOPER);
+    debugging('print_navigation() is deprecated, please update use $OUTPUT->navbar() instead.', DEBUG_DEVELOPER);
 
     $output = $OUTPUT->navbar();
 
@@ -1792,7 +1811,8 @@ function print_navigation ($navigation, $separator=0, $return=false) {
  * the $cm->module and $cm->instance fields, but this takes extra database queries, so a
  * warning is printed in developer debug mode.
  *
- * @deprecated since 2.0
+ * @deprecated Please use $PAGE->navabar methods instead.
+ * @todo final deprecation of this function in MDL-40607
  * @param mixed $extranavlinks - Normally an array of arrays, keys: name, link, type. If you
  *      only want one extra item with no link, you can pass a string instead. If you don't want
  *      any extra links, pass an empty string.
@@ -1802,8 +1822,8 @@ function print_navigation ($navigation, $separator=0, $return=false) {
 function build_navigation($extranavlinks, $cm = null) {
     global $CFG, $COURSE, $DB, $SITE, $PAGE;
 
+    debugging('build_navigation() is deprecated, please use $PAGE->navbar methods instead.', DEBUG_DEVELOPER);
     if (is_array($extranavlinks) && count($extranavlinks)>0) {
-        # debugging('build_navigation() has been deprecated, please replace with $PAGE->navbar methods', DEBUG_DEVELOPER);
         foreach ($extranavlinks as $nav) {
             if (array_key_exists('name', $nav)) {
                 if (array_key_exists('link', $nav) && !empty($nav['link'])) {
@@ -1820,27 +1840,13 @@ function build_navigation($extranavlinks, $cm = null) {
 }
 
 /**
- * Returns a small popup menu of course activity modules
- *
- * Given a course and a (current) coursemodule
- * his function returns a small popup menu with all the
- * course activity modules in it, as a navigation menu
- * The data is taken from the serialised array stored in
- * the course record
- *
- * @global object
- * @global object
- * @global object
- * @global object
- * @uses CONTEXT_COURSE
- * @param object $course A {@link $COURSE} object.
- * @param object $cm A {@link $COURSE} object.
- * @param string $targetwindow The target window attribute to us
- * @return string
+ * @deprecated not relevant with global navigation in Moodle 2.x+
+ * @todo remove completely in MDL-40517
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
     // This function has been deprecated with the creation of the global nav in
     // moodle 2.0
+    debugging('navmenu() is deprecated, it is no longer relevant with global navigation.', DEBUG_DEVELOPER);
 
     return '';
 }
@@ -1893,10 +1899,14 @@ function admin_externalpage_print_footer() {
  *    <li><b>$event->visible</b> - 0 if the event should be hidden (e.g. because the activity that created it is hidden)
  *  </ul>
  * @return int|false The id number of the resulting record or false if failed
+ * @deprecated please use calendar_event::create() instead.
+ * @todo final deprecation of this function in MDL-40607
  */
  function add_event($event) {
     global $CFG;
     require_once($CFG->dirroot.'/calendar/lib.php');
+
+    debugging('add_event() is deprecated, please use calendar_event::create() instead.', DEBUG_DEVELOPER);
     $event = calendar_event::create($event);
     if ($event !== false) {
         return $event->id;
@@ -1910,10 +1920,13 @@ function admin_externalpage_print_footer() {
  *
  * @param object $event An object representing an event from the calendar table. The event will be identified by the id field.
  * @return bool Success
+ * @deprecated please calendar_event->update() instead.
  */
 function update_event($event) {
     global $CFG;
     require_once($CFG->dirroot.'/calendar/lib.php');
+
+    debugging('update_event() is deprecated, please use calendar_event->update() instead.', DEBUG_DEVELOPER);
     $event = (object)$event;
     $calendarevent = calendar_event::load($event->id);
     return $calendarevent->update($event);
@@ -1924,10 +1937,15 @@ function update_event($event) {
  *
  * @param int $id The id of an event from the 'event' table.
  * @return bool
+ * @deprecated please use calendar_event->delete() instead.
+ * @todo final deprecation of this function in MDL-40607
  */
 function delete_event($id) {
     global $CFG;
     require_once($CFG->dirroot.'/calendar/lib.php');
+
+    debugging('delete_event() is deprecated, please use calendar_event->delete() instead.', DEBUG_DEVELOPER);
+
     $event = calendar_event::load($id);
     return $event->delete();
 }
@@ -1938,10 +1956,15 @@ function delete_event($id) {
  *
  * @param object $event An object representing an event from the calendar table. The event will be identified by the id field.
  * @return true
+ * @deprecated please use calendar_event->toggle_visibility(false) instead.
+ * @todo final deprecation of this function in MDL-40607
  */
 function hide_event($event) {
     global $CFG;
     require_once($CFG->dirroot.'/calendar/lib.php');
+
+    debugging('hide_event() is deprecated, please use calendar_event->toggle_visibility(false) instead.', DEBUG_DEVELOPER);
+
     $event = new calendar_event($event);
     return $event->toggle_visibility(false);
 }
@@ -1952,10 +1975,15 @@ function hide_event($event) {
  *
  * @param object $event An object representing an event from the calendar table. The event will be identified by the id field.
  * @return true
+ * @deprecated please use calendar_event->toggle_visibility(true) instead.
+ * @todo final deprecation of this function in MDL-40607
  */
 function show_event($event) {
     global $CFG;
     require_once($CFG->dirroot.'/calendar/lib.php');
+
+    debugging('show_event() is deprecated, please use calendar_event->toggle_visibility(true) instead.', DEBUG_DEVELOPER);
+
     $event = new calendar_event($event);
     return $event->toggle_visibility(true);
 }
