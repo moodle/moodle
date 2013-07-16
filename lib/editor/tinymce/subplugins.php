@@ -30,7 +30,7 @@ $enable  = optional_param('enable', '', PARAM_PLUGIN);
 $return  = optional_param('return', 'overview', PARAM_ALPHA);
 
 $PAGE->set_context(context_system::instance());
-$PAGE->set_url('/lib/editor/tinymce/subplugins.php', array('delete'=>$delete));
+$PAGE->set_url('/lib/editor/tinymce/subplugins.php');
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());
