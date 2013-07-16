@@ -2895,7 +2895,7 @@ function get_component_string($component, $contextlevel) {
         }
     }
 
-    list($type, $name) = normalize_component($component);
+    list($type, $name) = core_component::normalize_component($component);
     $dir = core_component::get_plugin_directory($type, $name);
     if (!file_exists($dir)) {
         // plugin not installed, bad luck, there is no way to find the name

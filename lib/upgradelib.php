@@ -1164,7 +1164,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
         $plugin = 'core';
     }
 
-    list($plugintype, $pluginname) = normalize_component($plugin);
+    list($plugintype, $pluginname) = core_component::normalize_component($plugin);
     $component = is_null($pluginname) ? $plugintype : $plugintype . '_' . $pluginname;
 
     $backtrace = format_backtrace($backtrace, true);

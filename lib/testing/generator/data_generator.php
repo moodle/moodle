@@ -95,7 +95,7 @@ EOD;
      * @return component_generator_base or rather an instance of the appropriate subclass.
      */
     public function get_plugin_generator($component) {
-        list($type, $plugin) = normalize_component($component);
+        list($type, $plugin) = core_component::normalize_component($component);
         $cleancomponent = $type . '_' . $plugin;
         if ($cleancomponent != $component) {
             debugging("Please specify the component you want a generator for as " .

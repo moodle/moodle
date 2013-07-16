@@ -342,7 +342,7 @@ function uninstall_plugin($type, $name) {
 function get_component_version($component, $source='installed') {
     global $CFG, $DB;
 
-    list($type, $name) = normalize_component($component);
+    list($type, $name) = core_component::normalize_component($component);
 
     // moodle core or a core subsystem
     if ($type === 'core') {

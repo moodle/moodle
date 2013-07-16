@@ -868,7 +868,7 @@ class plugin_manager {
     }
 
     /**
-     * Wrapper for the core function {@link normalize_component()}.
+     * Wrapper for the core function {@link core_component::normalize_component()}.
      *
      * This is here just to make it possible to mock it in unit tests.
      *
@@ -876,7 +876,7 @@ class plugin_manager {
      * @return array
      */
     protected function normalize_component($component) {
-        return normalize_component($component);
+        return core_component::normalize_component($component);
     }
 
     /**
@@ -1619,7 +1619,7 @@ class available_update_checker {
                             // is a real update with higher version. That is, the $componentchange
                             // is present in the array of {@link available_update_info} objects
                             // returned by the plugin's available_updates() method.
-                            list($plugintype, $pluginname) = normalize_component($component);
+                            list($plugintype, $pluginname) = core_component::normalize_component($component);
                             if (!empty($plugins[$plugintype][$pluginname])) {
                                 $availableupdates = $plugins[$plugintype][$pluginname]->available_updates();
                                 if (!empty($availableupdates)) {
@@ -1974,7 +1974,7 @@ class available_update_deployer {
     public function plugin_external_source(available_update_info $info) {
 
         $paths = core_component::get_plugin_types();
-        list($plugintype, $pluginname) = normalize_component($info->component);
+        list($plugintype, $pluginname) = core_component::normalize_component($info->component);
         $pluginroot = $paths[$plugintype].'/'.$pluginname;
 
         if (is_dir($pluginroot.'/.git')) {
@@ -2033,7 +2033,7 @@ class available_update_deployer {
 
         $pluginrootpaths = core_component::get_plugin_types();
 
-        list($plugintype, $pluginname) = normalize_component($info->component);
+        list($plugintype, $pluginname) = core_component::normalize_component($info->component);
 
         if (empty($pluginrootpaths[$plugintype])) {
             throw new coding_exception('Unknown plugin type root location', $plugintype);
@@ -2302,7 +2302,7 @@ class available_update_deployer {
      */
     protected function component_writable($component) {
 
-        list($plugintype, $pluginname) = normalize_component($component);
+        list($plugintype, $pluginname) = core_component::normalize_component($component);
 
         $directory = core_component::get_plugin_directory($plugintype, $pluginname);
 

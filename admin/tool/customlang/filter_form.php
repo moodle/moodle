@@ -39,7 +39,7 @@ class tool_customlang_filter_form extends moodleform {
         // Component
         $options = array();
         foreach (tool_customlang_utils::list_components() as $component => $normalized) {
-            list($type, $plugin) = normalize_component($normalized);
+            list($type, $plugin) = core_component::normalize_component($normalized);
             if ($type == 'core' and is_null($plugin)) {
                 $plugin = 'moodle';
             }

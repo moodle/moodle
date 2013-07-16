@@ -165,7 +165,7 @@ abstract class renderer_factory_base implements renderer_factory {
         global $CFG; // needed in included files
 
         // standardize component name ala frankenstyle
-        list($plugin, $type) = normalize_component($component);
+        list($plugin, $type) = core_component::normalize_component($component);
         if ($type === null) {
             $component = $plugin;
         } else {

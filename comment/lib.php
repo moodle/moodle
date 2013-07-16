@@ -260,7 +260,7 @@ class comment {
             throw new coding_exception('You cannot change the component of a comment once it has been set');
         }
         $this->component = $component;
-        list($this->plugintype, $this->pluginname) = normalize_component($component);
+        list($this->plugintype, $this->pluginname) = core_component::normalize_component($component);
     }
 
     /**

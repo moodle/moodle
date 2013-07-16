@@ -139,7 +139,7 @@ class grading_manager {
      */
     public function set_component($component) {
         $this->areacache = null;
-        list($type, $name) = normalize_component($component);
+        list($type, $name) = core_component::normalize_component($component);
         $this->component = $type.'_'.$name;
     }
 
@@ -288,7 +288,7 @@ class grading_manager {
     public static function available_areas($component) {
         global $CFG;
 
-        list($plugintype, $pluginname) = normalize_component($component);
+        list($plugintype, $pluginname) = core_component::normalize_component($component);
 
         if ($component === 'core_grading') {
             return array();

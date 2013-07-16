@@ -149,7 +149,7 @@ try {
 
 // Work out which component in Moodle we want (from the frankenstyle name)
 $componentdir = get_component_directory($componentname);
-list($type, $plugin) = normalize_component($componentname);
+list($type, $plugin) = core_component::normalize_component($componentname);
 
 
 // Call the component to check/update the feed and tell us the path to the cached file

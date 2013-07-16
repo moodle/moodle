@@ -523,7 +523,7 @@ class rating_manager {
 
         // Get the item table name, the item id field, and the item user field for the given rating item
         // from the related component.
-        list($type, $name) = normalize_component($options->component);
+        list($type, $name) = core_component::normalize_component($options->component);
         $default = array(null, 'id', 'userid');
         list($itemtablename, $itemidcol, $itemuseridcol) = plugin_callback($type, $name, 'rating', 'get_item_fields', array($options), $default);
 
@@ -928,7 +928,7 @@ class rating_manager {
         $pluginpermissionsarray = null;
         $defaultpluginpermissions = array('rate'=>false,'view'=>false,'viewany'=>false,'viewall'=>false);//deny by default
         if (!empty($component)) {
-            list($type, $name) = normalize_component($component);
+            list($type, $name) = core_component::normalize_component($component);
             $pluginpermissionsarray = plugin_callback($type, $name, 'rating', 'permissions', array($contextid, $component, $ratingarea), $defaultpluginpermissions);
         } else {
             $pluginpermissionsarray = $defaultpluginpermissions;
@@ -971,7 +971,7 @@ class rating_manager {
             throw new coding_exception('The rateduserid option is now a required option when checking rating validity');
         }
 
-        list($plugintype, $pluginname) = normalize_component($params['component']);
+        list($plugintype, $pluginname) = core_component::normalize_component($params['component']);
 
         //this looks for a function like forum_rating_validate() in mod_forum lib.php
         //wrapping the params array in another array as call_user_func_array() expands arrays into multiple arguments

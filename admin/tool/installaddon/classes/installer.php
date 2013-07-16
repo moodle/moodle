@@ -250,7 +250,7 @@ class tool_installaddon_installer {
             exit();
         }
 
-        list($plugintype, $pluginname) = normalize_component($data->component);
+        list($plugintype, $pluginname) = core_component::normalize_component($data->component);
 
         $plugintypepath = $this->get_plugintype_root($plugintype);
 
