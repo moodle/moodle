@@ -161,9 +161,6 @@ abstract class base implements \IteratorAggregate {
             throw new \coding_exception('context (or contextid) is a required event property, system context may be hardcoded in init() method.');
         }
 
-        if (isset($event->data['contextlevel']) and $event->data['contextlevel'] != $event->context->contextlevel) {
-            throw new \coding_exception('Context does not match expected context level');
-        }
         $event->data['contextid'] = $event->context->id;
         $event->data['contextlevel'] = $event->context->contextlevel;
         $event->data['contextinstanceid'] = $event->context->instanceid;
@@ -217,7 +214,6 @@ abstract class base implements \IteratorAggregate {
      *
      * Optionally it can set:
      * a/ fixed system context
-     * b/ required context level
      *
      * @return void
      */
