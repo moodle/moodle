@@ -4306,6 +4306,7 @@ function get_courseid_from_context(context $context) {
     } else {
         return false;
     }
+}
 
 /**
  * Preloads context information together with instances.
