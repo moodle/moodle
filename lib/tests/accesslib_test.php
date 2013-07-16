@@ -2490,6 +2490,7 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertEquals($coursecontext1, $coursecontext2);
         $this->assertEquals($coursecontext2->contextlevel, CONTEXT_COURSE);
         $this->assertEquals(get_courseid_from_context($context), $pagecm->course);
+        $this->assertDebuggingCalled('get_courseid_from_context() is deprecated, please use $context->get_course_context(false) instead.', DEBUG_DEVELOPER);
 
         $caps = fetch_context_capabilities($systemcontext);
         $this->assertDebuggingCalled('fetch_context_capabilities() is deprecated, please use $context->get_capabilities() instead.', DEBUG_DEVELOPER);
