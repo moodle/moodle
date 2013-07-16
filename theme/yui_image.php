@@ -41,17 +41,11 @@ $etag = sha1($path);
 $parts = explode('/', $path);
 $version = array_shift($parts);
 if ($version == 'moodle' && count($parts) >= 3) {
-    if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
-        define('ABORT_AFTER_CONFIG_CANCEL', true);
-        define('NO_UPGRADE_CHECK', true);
-        define('NO_MOODLE_COOKIES', true);
-        require($CFG->libdir.'/setup.php');
-    }
     $frankenstyle = array_shift($parts);
     $module = array_shift($parts);
     $image = array_pop($parts);
     $subdir = join('/', $parts);
-    $dir = get_component_directory($frankenstyle);
+    $dir = core_component::get_component_directory($frankenstyle);
 
     // For shifted YUI modules, we need the YUI module name in frankenstyle format.
     $frankenstylemodulename = join('-', array($version, $frankenstyle, $module));
