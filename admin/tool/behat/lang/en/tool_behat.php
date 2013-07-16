@@ -22,8 +22,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['aim'] = 'This administration tool helps developers and test writers to create .feature files describing Moodle\'s functionalities and run them automatically.';
 $string['allavailablesteps'] = 'All the available steps definitions';
 $string['giveninfo'] = 'Given. Processes to set up the environment';
+$string['infoheading'] = 'Info';
 $string['installinfo'] = 'Read {$a} for installation and tests execution info';
 $string['moreinfoin'] = 'More info in {$a}';
 $string['newstepsinfo'] = 'Read {$a} for info about how to add new steps definitions';

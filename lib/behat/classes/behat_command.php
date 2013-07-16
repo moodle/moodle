@@ -207,6 +207,8 @@ class behat_command {
     protected static function output_msg($msg) {
 
         if (!CLI_SCRIPT) {
+            // General info about the tool purpose.
+            $msg = get_string('aim', 'tool_behat') . '<br /><br />' . $msg;
             notice($msg);
         } else {
             echo $msg;

@@ -64,9 +64,10 @@ class tool_behat_renderer extends plugin_renderer_base {
             get_string('newstepsinfo', 'tool_behat', $writestepslink)
         );
 
-        // List of steps
+        // List of steps.
         $html .= $this->output->box_start();
-        $html .= html_writer::tag('h1', 'Info');
+        $html .= html_writer::tag('h1', get_string('infoheading', 'tool_behat'));
+        $html .= html_writer::tag('div', get_string('aim', 'tool_behat'));
         $html .= html_writer::empty_tag('div');
         $html .= html_writer::empty_tag('ul');
         $html .= html_writer::empty_tag('li');
