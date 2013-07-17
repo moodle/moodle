@@ -42,8 +42,10 @@ class tinymce_spellchecker extends editor_tinymce_plugin {
             // Prevent the built-in spell checker in Firefox, Safari and other sane browsers.
             unset($params['gecko_spellcheck']);
 
-            // Add button after code button in advancedbuttons3.
-            $added = $this->add_button_after($params, 3, 'spellchecker', 'code', false);
+            if ($row = $this->find_button($params, 'code')) {
+                // Add button after 'code'.
+                $this->add_button_after($params, $row, 'spellchecker', 'code');
+            }
 
             // Add JS file, which uses default name.
             $this->add_js_plugin($params);
