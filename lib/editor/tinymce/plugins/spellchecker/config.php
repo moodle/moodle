@@ -28,25 +28,18 @@ require('../../../../../config.php');
 
 // General settings
 $engine = get_config('tinymce_spellchecker', 'spellengine');
-if (!$engine) {
-    $engine = 'GoogleSpell';
+if (!$engine or $engine === 'GoogleSpell') {
+    $engine = 'PSpell';
 }
 $config['general.engine'] = $engine;
 
-// GoogleSpell settings
-$config['GoogleSpell.proxyhost'] = isset($CFG->proxyhost) ? $CFG->proxyhost : '';
-$config['GoogleSpell.proxyport'] = isset($CFG->proxyport) ? $CFG->proxyport : '';
-$config['GoogleSpell.proxytype'] = isset($CFG->proxytype) ? $CFG->proxytype : 'HTML';
-$config['GoogleSpell.proxyuser'] = isset($CFG->proxyuser) ? $CFG->proxyuser : '';
-$config['GoogleSpell.proxypassword'] = isset($CFG->proxypassword) ? $CFG->proxypassword : '';
-
-if ($config['general.engine'] === 'PSpell' || $config['general.engine'] === 'PSpellShell') {
+if ($config['general.engine'] === 'PSpell') {
     // PSpell settings
     $config['PSpell.mode'] = PSPELL_FAST;
     $config['PSpell.spelling'] = "";
     $config['PSpell.jargon'] = "";
     $config['PSpell.encoding'] = "";
-
+} else if ($config['general.engine'] === 'PSpellShell') {
     // PSpellShell settings
     $config['PSpellShell.mode'] = PSPELL_FAST;
     $config['PSpellShell.aspell'] = $CFG->aspellpath;
