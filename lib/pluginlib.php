@@ -819,7 +819,8 @@ class plugin_manager {
             'scormreport' => array(
                 'basic',
                 'interactions',
-                'graphs'
+                'graphs',
+                'objectives'
             ),
 
             'tinymce' => array(
