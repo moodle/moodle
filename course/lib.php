@@ -1427,9 +1427,11 @@ function set_coursemodule_visible($id, $visible) {
     if ($events = $DB->get_records('event', array('instance'=>$cm->instance, 'modulename'=>$modulename))) {
         foreach($events as $event) {
             if ($visible) {
-                show_event($event);
+                $event = new calendar_event($event);
+                $event->toggle_visibility(true);
             } else {
-                hide_event($event);
+                $event = new calendar_event($event);
+                $event->toggle_visibility(false);
             }
         }
     }
