@@ -1250,4 +1250,39 @@ class courselib_testcase extends advanced_testcase {
         $pagecm = $modinfo->cms[$page->cmid];
         $this->assertEquals($pagecm->visible, 0);
     }
+
+    public function test_course_delete_module() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Create course and modules.
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 5));
+
+        // Generate an assignment with due date (will generate a course event).
+        $assign = $this->getDataGenerator()->create_module('assign', array('duedate' => time(), 'course' => $course->id));
+
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
+
+        // Verify context exists.
+        $this->assertInstanceOf('context_module', context_module::instance($cm->id, IGNORE_MISSING));
+
+        // Verify event assignment event has been generated.
+        $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
+        $this->assertEquals(1, $eventcount);
+
+        // Run delete..
+        course_delete_module($cm->id);
+
+        // Verify the context has been removed.
+        $this->assertFalse(context_module::instance($cm->id, IGNORE_MISSING));
+
+        // Verify the course_module record has been deleted.
+        $cmcount = $DB->count_records('course_modules', array('id' => $cm->id));
+        $this->assertEmpty($cmcount);
+
+        // Verify event assignment events have been removed.
+        $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
+        $this->assertEmpty($eventcount);
+    }
 }
