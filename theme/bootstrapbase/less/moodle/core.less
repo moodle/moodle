@@ -1911,9 +1911,17 @@ div.badge .expireimage {
     margin: 0;
 }
 
+/** Action menu component styles **/
 .moodle-actionmenu,
-.moodle-actionmenu .secondary {
+.moodle-actionmenu > ul,
+.moodle-actionmenu > ul > li {
     display: inline-block;
+}
+
+.moodle-actionmenu ul {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
 }
 
 .moodle-actionmenu .toggle-display,
@@ -1927,26 +1935,20 @@ div.badge .expireimage {
     }
     .moodle-actionmenu {
         display: block;
-        .secondary {
+        .menu {
             display:none;
-            margin-top: 4px;
         }
-    }
-    .moodle-actionmenu[data-enhanced].show .secondary {
-        display:block;
-    }
-
-    .moodle-actionmenu .toggle-display {
-        display: inline; /** JS is enabled, we'll be using it so return display to normal **/
-        cursor:auto;
-        .opacity(50);
-    }
-    .moodle-actionmenu[data-enhanced] {
         .toggle-display {
-            .opacity(100);
+            display: inline; /** JS is enabled, we'll be using it so return display to normal **/
+            .opacity(50);
         }
-        .menu-action-text  {
-            display:inline;
+        &[data-enhanced] {
+            .toggle-display {
+                .opacity(100);
+            }
+            .menu-action-text  {
+                display:inline;
+            }
         }
     }
 }
@@ -1955,12 +1957,10 @@ div.badge .expireimage {
 
     position: relative;
 
-    .secondary {
+    .menu {
 
+        display:block;
         position: absolute;
-        top: 100%;
-        right: 0;
-        left: auto;
         background-color: #fff;
         border: 1px solid #ccc;
         z-index:1000;
@@ -1992,6 +1992,30 @@ div.badge .expireimage {
         .iconsmall {
             margin-right:8px;
         }
+        > li {
+            display:block;
+        }
+
+        /** bottom left of button **/
+        &.align-tl-bl {top: 100%;left:0;margin-top: 4px;}
+        &.align-tr-bl {top: 100%;right: 100%;}
+        &.align-bl-bl {bottom: 100%;left:0;}
+        &.align-br-bl {bottom: 100%;right: 100%;}
+        /** bottom right of button **/
+        &.align-tl-br {top: 100%;left:100%;}
+        &.align-tr-br {top: 100%;right: 0;margin-top: 4px;}
+        &.align-bl-br {bottom: 100%;left:100%;}
+        &.align-br-br {bottom: 100%;right: 0;}
+        /** top left of button **/
+        &.align-tl-tl {top: 0;left:0;}
+        &.align-tr-tl {top: 0;right: 100%;margin-right: 4px;}
+        &.align-bl-tl {bottom: 100%;left:0;margin-bottom: 4px;}
+        &.align-br-tl {bottom: 100%;right: 100%;}
+        /** top right of button **/
+        &.align-tl-tr {top: 0;left:100%;margin-left: 4px;}
+        &.align-tr-tr {top: 0;right: 0;}
+        &.align-bl-tr {bottom: 100%;left:100%;}
+        &.align-br-tr {bottom: 100%;right: 0;margin-bottom: 4px;}
     }
 }
 
@@ -2005,13 +2029,34 @@ div.badge .expireimage {
 
 .dir-rtl {
     .moodle-actionmenu[data-enhanced].show  {
-        .secondary {
+        .menu {
             left: 0;
             right: auto;
             .iconsmall {
                 margin-right:0;
                 margin-left:8px;
             }
+
+            /** bottom left of button **/
+            &.align-tl-bl {left: auto; right: 0;}
+            &.align-tr-bl {right: auto; left: 100%;}
+            &.align-bl-bl {left: auto; right: 0;}
+            &.align-br-bl {right: auto; left: 100%;}
+            /** bottom right of button **/
+            &.align-tl-br {left: auto; right: 100%;}
+            &.align-tr-br {right: auto; left: 0;}
+            &.align-bl-br {left: auto; right: 100%;}
+            &.align-br-br {right: auto; left: 0;}
+            /** top left of button **/
+            &.align-tl-tl {left: auto; right: 0;}
+            &.align-tr-tl {right: auto; left: 100%;}
+            &.align-bl-tl {left: auto; right: 0;}
+            &.align-br-tl {right: auto; left: 100%;}
+            /** top right of button **/
+            &.align-tl-tr {left: auto; right: 100%;}
+            &.align-tr-tr {right: auto; left: 0;}
+            &.align-bl-tr {left: auto; right: 100%;}
+            &.align-br-tr {right: auto; left: 0;}
         }
     }
     .block .moodle-actionmenu {

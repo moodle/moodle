@@ -349,8 +349,10 @@ class core_course_renderer extends plugin_renderer_base {
 
         $menu = new action_menu();
         $menu->set_owner_selector($ownerselector);
+        $menu->set_contraint('.course-content');
+        $menu->set_alignment(action_menu::TL, action_menu::TR);
         foreach ($actions as $action) {
-            if ($action instanceof action_menu_action) {
+            if ($action instanceof action_menu_link) {
                 $action->add_class('cm-edit-action');
             }
             $menu->add($action);

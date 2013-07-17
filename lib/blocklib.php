@@ -1038,7 +1038,7 @@ class block_manager {
         if ($this->page->user_can_edit_blocks()) {
             // Move icon.
             $str = new lang_string('moveblock', 'block', $blocktitle);
-            $controls[] = new action_menu_primary_action(
+            $controls[] = new action_menu_link_primary(
                 new moodle_url($actionurl, array('bui_moveid' => $block->instance->id)),
                 new pix_icon('t/move', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str,
@@ -1050,7 +1050,7 @@ class block_manager {
         if ($this->page->user_can_edit_blocks() || $block->user_can_edit()) {
             // Edit config icon - always show - needed for positioning UI.
             $str = new lang_string('configureblock', 'block', $blocktitle);
-            $controls[] = new action_menu_primary_action(
+            $controls[] = new action_menu_link_primary(
                 new moodle_url($actionurl, array('bui_editid' => $block->instance->id)),
                 new pix_icon('t/edit', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str,
@@ -1062,7 +1062,7 @@ class block_manager {
         if ($this->user_can_delete_block($block)) {
             // Delete icon.
             $str = new lang_string('deleteblock', 'block', $blocktitle);
-            $controls[] = new action_menu_secondary_action(
+            $controls[] = new action_menu_link_secondary(
                 new moodle_url($actionurl, array('bui_deleteid' => $block->instance->id)),
                 new pix_icon('t/delete', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str,
@@ -1083,7 +1083,7 @@ class block_manager {
                 $icon = new pix_icon('t/show', $str, 'moodle', array('class' => 'iconsmall', 'title' => ''));
                 $attributes = array('class' => 'editing_show');
             }
-            $controls[] = new action_menu_primary_action($url, $icon, $str, $attributes);
+            $controls[] = new action_menu_link_primary($url, $icon, $str, $attributes);
         }
 
         // Assign roles icon.
@@ -1098,7 +1098,7 @@ class block_manager {
                                                                          'returnurl'=>$return));
             // Delete icon.
             $str = new lang_string('assignrolesinblock', 'block', $blocktitle);
-            $controls[] = new action_menu_secondary_action(
+            $controls[] = new action_menu_link_secondary(
                 $rolesurl,
                 new pix_icon('t/assignroles', $str, 'moodle', array('class' => 'iconsmall', 'title' => '')),
                 $str,

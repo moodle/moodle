@@ -1047,6 +1047,10 @@ class core_renderer extends renderer_base {
     /**
      * Renders an action menu component.
      *
+     * ARIA references:
+     *   - http://www.w3.org/WAI/GL/wiki/Using_ARIA_menus
+     *   - http://stackoverflow.com/questions/12279113/recommended-wai-aria-implementation-for-navigation-bar-menu
+     *
      * @param action_menu $menu
      * @return string HTML
      */
@@ -1054,31 +1058,41 @@ class core_renderer extends renderer_base {
         $menu->initialise_js($this->page);
 
         $output = html_writer::start_tag('div', $menu->attributes);
-        $output .= html_writer::start_tag('span', $menu->attributesprimary);
+        $output .= html_writer::start_tag('ul', $menu->attributesprimary);
         foreach ($menu->get_primary_actions($this) as $action) {
             if ($action instanceof renderable) {
-                $output .= $this->render($action);
+                $content = $this->render($action);
+                $role = 'presentation';
             } else {
-                $output .= $action;
+                $content = $action;
+                $role = 'menuitem';
             }
+            $output .= html_writer::tag('li', $content, array('role' => $role));
         }
-        $output .= html_writer::end_tag('span');
-        $output .= html_writer::start_tag('div', $menu->attributessecondary);
+        $output .= html_writer::end_tag('ul');
+        $output .= html_writer::start_tag('ul', $menu->attributessecondary);
         foreach ($menu->get_secondary_actions() as $action) {
-            $output .= $this->render($action);
+            if ($action instanceof renderable) {
+                $content = $this->render($action);
+                $role = 'presentation';
+            } else {
+                $content = $action;
+                $role = 'menuitem';
+            }
+            $output .= html_writer::tag('li', $content, array('role' => $role));
         }
-        $output .= html_writer::end_tag('div');
+        $output .= html_writer::end_tag('ul');
         $output .= html_writer::end_tag('div');
         return $output;
     }
 
     /**
-     * Renders an action_menu_action item.
+     * Renders an action_menu_link item.
      *
-     * @param action_menu_action $action
+     * @param action_menu_link $action
      * @return string HTML fragment
      */
-    protected function render_action_menu_action(action_menu_action $action) {
+    protected function render_action_menu_link(action_menu_link $action) {
 
         $iconrendered = false;
 
@@ -1102,10 +1116,10 @@ class core_renderer extends renderer_base {
             $text .= html_writer::end_tag('span');
         }
 
-        // A disabled link is rendered as formatted text
+        // A disabled link is rendered as formatted text.
         if (!empty($action->attributes['disabled'])) {
-            // do not use div here due to nesting restriction in xhtml strict
-            return html_writer::tag('span', $text, array('class'=>'currentlink'));
+            // Do not use div here due to nesting restriction in xhtml strict.
+            return html_writer::tag('span', $text, array('class'=>'currentlink', 'role' => 'menuitem'));
         }
 
         $attributes = $action->attributes;
@@ -1116,23 +1130,23 @@ class core_renderer extends renderer_base {
     }
 
     /**
-     * Renders a primary action_menu_action item.
+     * Renders a primary action_menu_link item.
      *
-     * @param action_menu_primary_action $action
+     * @param action_menu_link_primary $action
      * @return string HTML fragment
      */
-    protected function render_action_menu_primary_action(action_menu_primary_action $action) {
-        return $this->render_action_menu_action($action);
+    protected function render_action_menu_link_primary(action_menu_link_primary $action) {
+        return $this->render_action_menu_link($action);
     }
 
     /**
-     * Renders a secondary action_menu_action item.
+     * Renders a secondary action_menu_link item.
      *
-     * @param action_menu_secondary_action $action
+     * @param action_menu_link_secondary $action
      * @return string HTML fragment
      */
-    protected function render_action_menu_secondary_action(action_menu_secondary_action $action) {
-        return $this->render_action_menu_action($action);
+    protected function render_action_menu_link_secondary(action_menu_link_secondary $action) {
+        return $this->render_action_menu_link($action);
     }
 
     /**

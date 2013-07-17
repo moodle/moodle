@@ -721,7 +721,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 status = 'show'
             }
             if (visible != shouldbevisible) {
-                this.handle_resource_dim(buttonnode, buttonnode.get('activity'), status);
+                this.handle_resource_dim(buttonnode, buttonnode.getData('activity'), status);
             }
         }
     }, {

@@ -3044,6 +3044,30 @@ class tabtree extends tabobject {
  */
 class action_menu implements renderable {
 
+    /**
+     * Top right alignment.
+     */
+    const TL = 1;
+
+    /**
+     * Top right alignment.
+     */
+    const TR = 2;
+
+    /**
+     * Top right alignment.
+     */
+    const BL = 3;
+
+    /**
+     * Top right alignment.
+     */
+    const BR = 4;
+
+    /**
+     * The instance number. This is unique to this instance of the action menu.
+     * @var int
+     */
     protected $instance = 0;
 
     /**
@@ -3093,14 +3117,16 @@ class action_menu implements renderable {
             'data-enhance' => 'moodle-core-actionmenu'
         );
         $this->attributesprimary = array(
-            'id' => 'action-menu-'.$this->instance.'-primary',
-            'class' => 'primary'
+            'id' => 'action-menu-'.$this->instance.'-menubar',
+            'class' => 'menubar',
+            'role' => 'menubar'
         );
         $this->attributessecondary = array(
-            'id' => 'action-menu-'.$this->instance.'-secondary',
-            'class' => 'secondary',
+            'id' => 'action-menu-'.$this->instance.'-menu',
+            'class' => 'menu',
             'data-rel' => 'menu-content',
             'aria-labelledby' => 'action-menu-toggle-'.$this->instance,
+            'role' => 'menu'
         );
         foreach ($actions as $action) {
             $this->add($action);
@@ -3127,7 +3153,7 @@ class action_menu implements renderable {
      * @param $action
      */
     public function add($action) {
-        if ($action instanceof action_menu_action) {
+        if ($action instanceof action_menu_link) {
             if ($action->primary) {
                 $this->add_primary_action($action);
             } else {
@@ -3143,18 +3169,24 @@ class action_menu implements renderable {
     /**
      * Adds a primary action to the action menu.
      *
-     * @param action_link|string $action
+     * @param action_menu_link|action_link|pix_icon|string $action
      */
     public function add_primary_action($action) {
+        if ($action instanceof action_link || $action instanceof pix_icon) {
+            $action->attributes['role'] = 'menuitem';
+        }
         $this->primaryactions[] = $action;
     }
 
     /**
      * Adds a secondary action to the action menu.
      *
-     * @param action_link|string $action
+     * @param action_link|pix_icon|string $action
      */
     public function add_secondary_action($action) {
+        if ($action instanceof action_link || $action instanceof pix_icon) {
+            $action->attributes['role'] = 'menuitem';
+        }
         $this->secondaryactions[] = $action;
     }
 
@@ -3174,14 +3206,15 @@ class action_menu implements renderable {
             't/contextmenu',
             $title,
             'moodle',
-            array('class' => 'iconsmall')
+            array('class' => 'iconsmall', 'title' => '')
         );
 
         $actions = $this->primaryactions;
         $attributes = array(
             'class' => 'toggle-display',
             'title' => $title,
-            'id' => 'action-menu-toggle-'.$this->instance
+            'id' => 'action-menu-toggle-'.$this->instance,
+            'role' => 'menuitem'
         );
         $actions[] = html_writer::link('#', $pixicon, $attributes);
         return $actions;
@@ -3202,6 +3235,45 @@ class action_menu implements renderable {
     public function set_owner_selector($selector) {
         $this->attributes['data-owner'] = $selector;
     }
+
+    /**
+     * Sets the alignment of the dialogue in relation to button used to toggle it.
+     *
+     * @param int $dialogue One of action_menu::TL, action_menu::TR, action_menu::BL, action_menu::BR.
+     * @param int $button One of action_menu::TL, action_menu::TR, action_menu::BL, action_menu::BR.
+     */
+    public function set_alignment($dialogue, $button) {
+        $align = $this->get_align_string($dialogue) . '-' . $this->get_align_string($button);
+        $this->attributessecondary['data-align'] = $align;
+    }
+
+    /**
+     * Returns a string to describe the alignment.
+     *
+     * @param int $align One of action_menu::TL, action_menu::TR, action_menu::BL, action_menu::BR.
+     * @return string
+     */
+    protected function get_align_string($align) {
+        switch ($align) {
+            case self::TL : return 'tl';
+            case self::TR : return 'tr';
+            case self::BL : return 'bl';
+            case self::BR : return 'br';
+            default : return 'tl';
+        }
+    }
+
+    /**
+     * Sets a constraint for the dialogue.
+     *
+     * The constraint is applied when the dialogue is shown and limits the display of the dialogue to within the
+     * element the constraint identifies.
+     *
+     * @param string $ancestorselector A snippet of CSS used to identify the ancestor to contrain the dialogue to.
+     */
+    public function set_contraint($ancestorselector) {
+        $this->attributessecondary['data-constraint'] = $ancestorselector;
+    }
 }
 
 /**
@@ -3212,37 +3284,13 @@ class action_menu implements renderable {
  * @copyright 2013 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_menu_action implements renderable {
+class action_menu_link extends action_link implements renderable {
 
     /**
      * True if this is a primary action. False if not.
      * @var bool
      */
     public $primary = true;
-
-    /**
-     * The URL for the action.
-     * @var moodle_url
-     */
-    public $url;
-
-    /**
-     * The icon to represent the action.
-     * @var pix_icon
-     */
-    public $icon;
-
-    /**
-     * The text describing the action.
-     * @var string
-     */
-    public $text;
-
-    /**
-     * An array of attributes for the action.
-     * @var array
-     */
-    public $attributes;
 
     /**
      * Constructs the object.
@@ -3254,35 +3302,11 @@ class action_menu_action implements renderable {
      * @param array $attributes Any attribtues associated with the action.
      */
     public function __construct(moodle_url $url, pix_icon $icon, $text, $primary = true, array $attributes = array()) {
-        $this->url = clone($url);
-        $this->icon = $icon;
-        $this->text = $text;
+        parent::__construct($url, $text, null, $attributes, $icon);
         $this->primary = (bool)$primary;
-        $this->attributes = $attributes;
         $this->add_class('menu-action');
+        $this->attributes['role'] = 'menuitem';
     }
-
-    /**
-     * Adds a CSS class to this action link object
-     * @param string $class
-     */
-    public function add_class($class) {
-        if (empty($this->attributes['class'])) {
-            $this->attributes['class'] = $class;
-        } else {
-            $this->attributes['class'] .= ' ' . $class;
-        }
-    }
-
-    /**
-     * Returns true if the specified class has been added to this link.
-     * @param string $class
-     * @return bool
-     */
-    public function has_class($class) {
-        return strpos(' ' . $this->attributes['class'] . ' ', ' ' . $class . ' ') !== false;
-    }
-
 }
 
 /**
@@ -3293,7 +3317,7 @@ class action_menu_action implements renderable {
  * @copyright 2013 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_menu_primary_action extends action_menu_action {
+class action_menu_link_primary extends action_menu_link {
     /**
      * Constructs the object.
      *
@@ -3315,7 +3339,7 @@ class action_menu_primary_action extends action_menu_action {
  * @copyright 2013 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class action_menu_secondary_action extends action_menu_action {
+class action_menu_link_secondary extends action_menu_link {
     /**
      * Constructs the object.
      *
