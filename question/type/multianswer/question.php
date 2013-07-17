@@ -140,6 +140,17 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
         return $right;
     }
 
+    public function prepare_simulated_post_data($simulatedresponse) {
+        $postdata = array();
+        foreach ($this->subquestions as $i => $subq) {
+            $substep = $this->get_substep(null, $i);
+            foreach ($subq->prepare_simulated_post_data($simulatedresponse[$i]) as $name => $value) {
+                $postdata[$substep->add_prefix($name)] = $value;
+            }
+        }
+        return $postdata;
+    }
+
     public function is_complete_response(array $response) {
         foreach ($this->subquestions as $i => $subq) {
             $substep = $this->get_substep(null, $i);
