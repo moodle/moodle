@@ -177,8 +177,6 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         }
 
     /// Let's get them all set up.
-        add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
-                   $user->id, 0, $user->id);
         complete_user_login($user);
 
         // sets the username cookie
