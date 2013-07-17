@@ -118,6 +118,9 @@ abstract class base implements \IteratorAggregate {
         $event->restored = false;
         $event->dispatched = false;
 
+        // Set static event data specific for child class.
+        $event->init();
+
         // Set automatic data.
         $event->data['timecreated'] = time();
 
@@ -135,9 +138,6 @@ abstract class base implements \IteratorAggregate {
         }
         $event->data['target'] = substr($parts[2], 0, $pos);
         $event->data['action'] = substr($parts[2], $pos+1);
-
-        // Set static event data specific for child class.
-        $event->init();
 
         // Set optional data or use defaults.
         $event->data['objectid'] = isset($data['objectid']) ? $data['objectid'] : null;
