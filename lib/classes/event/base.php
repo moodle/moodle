@@ -459,7 +459,7 @@ abstract class base implements \IteratorAggregate {
 
         $this->triggered = true;
 
-        if (!empty($CFG->loglifetime)) {
+        if (isset($CFG->loglifetime) and $CFG->loglifetime != -1) {
             if ($data = $this->get_legacy_logdata()) {
                 call_user_func_array('add_to_log', $data);
             }

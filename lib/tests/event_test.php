@@ -29,6 +29,17 @@ require_once(__DIR__.'/fixtures/event_fixtures.php');
 
 class core_event_testcase extends advanced_testcase {
 
+    protected function setUp() {
+        global $CFG;
+        // No need to always modify log table here.
+        $CFG->loglifetime = '-1';
+    }
+
+    protected function tearDown() {
+        global $CFG;
+        $CFG->loglifetime = '0';
+    }
+
     public function test_event_properties() {
         global $USER;
 
