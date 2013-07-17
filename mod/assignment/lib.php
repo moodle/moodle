@@ -3170,7 +3170,8 @@ function assignment_scale_used_anywhere($scaleid) {
  * @return boolean Always returns true
  */
 function assignment_refresh_events($courseid = 0) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/calendar/lib.php');
 
     if ($courseid == 0) {
         if (! $assignments = $DB->get_records("assignment")) {
@@ -3184,15 +3185,15 @@ function assignment_refresh_events($courseid = 0) {
     $moduleid = $DB->get_field('modules', 'id', array('name'=>'assignment'));
 
     foreach ($assignments as $assignment) {
-        $cm = get_coursemodule_from_id('assignment', $assignment->id);
+        $cm = get_coursemodule_from_instance('assignment', $assignment->id, $courseid, false, MUST_EXIST);
         $event = new stdClass();
         $event->name        = $assignment->name;
         $event->description = format_module_intro('assignment', $assignment, $cm->id);
         $event->timestart   = $assignment->timedue;
 
         if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
-            update_event($event);
-
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->update($event);
         } else {
             $event->courseid    = $assignment->course;
             $event->groupid     = 0;
@@ -3202,7 +3203,7 @@ function assignment_refresh_events($courseid = 0) {
             $event->eventtype   = 'due';
             $event->timeduration = 0;
             $event->visible     = $DB->get_field('course_modules', 'visible', array('module'=>$moduleid, 'instance'=>$assignment->id));
-            add_event($event);
+            calendar_event::create($event);
         }
 
     }
