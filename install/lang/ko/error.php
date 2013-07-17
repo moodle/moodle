@@ -39,6 +39,7 @@ $string['cannotsavemd5file'] = 'md5 파일을 저장할 수 없음';
 $string['cannotsavezipfile'] = 'ZIP 파일을 저장할 수 없음';
 $string['cannotunzipfile'] = '압축된 파일을 풀 수 없음';
 $string['componentisuptodate'] = '구성 요소가 최신임';
+$string['dmlexceptiononinstall'] = '<p>데이터베이스 오류가 발생하였습니다. [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = '내려받은 파일 점검 실패';
 $string['invalidmd5'] = '변수 점검 오류 - 재시도 할 것';
 $string['missingrequiredfield'] = '필요한 항목이 빠져 있음';
