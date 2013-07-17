@@ -326,8 +326,9 @@ class quiz_statistics_report extends quiz_default_report {
     protected function render_question_text($question) {
         global $OUTPUT;
 
-        $text = question_rewrite_questiontext_preview_urls($question->questiontext,
-                $this->context->id, 'quiz_statistics', $question->id);
+        $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                $question->contextid, 'question', 'questiontext', $question->id,
+                $this->context->id, 'quiz_statistics');
 
         return $OUTPUT->box(format_text($text, $question->questiontextformat,
                 array('noclean' => true, 'para' => false, 'overflowdiv' => true)),
