@@ -1404,6 +1404,7 @@ function set_coursemodule_idnumber($id, $idnumber) {
 function set_coursemodule_visible($id, $visible) {
     global $DB, $CFG;
     require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->dirroot.'/calendar/lib.php');
 
     // Trigger developer's attention when using the previously removed argument.
     if (func_num_args() > 2) {
@@ -1470,6 +1471,7 @@ function course_delete_module($cmid) {
 
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/blog/lib.php');
+    require_once($CFG->dirroot.'/calendar/lib.php');
 
     // Get the course module.
     if (!$cm = $DB->get_record('course_modules', array('id' => $cmid))) {
@@ -1514,7 +1516,8 @@ function course_delete_module($cmid) {
     // Delete events from calendar.
     if ($events = $DB->get_records('event', array('instance' => $cm->instance, 'modulename' => $modulename))) {
         foreach($events as $event) {
-            delete_event($event->id);
+            $calendarevent = calendar_event::load($event->id);
+            $calendarevent->delete();
         }
     }
 
