@@ -86,7 +86,7 @@ Options:
 
 
 Example:
-\$sudo -u www-data /usr/bin/php admin/tool/uploadcourse/cli/uploadcourse.php --action=createnew \\
+\$sudo -u www-data /usr/bin/php admin/tool/uploadcourse/cli/uploadcourse.php --mode=createnew \\
        --updatemode=dataonly --file=./courses.csv --delimiter=comma
 ";
 
