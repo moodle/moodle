@@ -502,7 +502,7 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $event = $events[0];
         $this->assertInstanceOf('\core\event\role_assigned', $event);
-        $this->assertEquals('role', $event->object);
+        $this->assertEquals('role', $event->target);
         $this->assertEquals('role', $event->objecttable);
         $this->assertEquals($role->id, $event->objectid);
         $this->assertEquals($context->id, $event->contextid);
@@ -550,7 +550,7 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $event = $events[0];
         $this->assertInstanceOf('\core\event\role_unassigned', $event);
-        $this->assertEquals('role', $event->object);
+        $this->assertEquals('role', $event->target);
         $this->assertEquals('role', $event->objecttable);
         $this->assertEquals($role->id, $event->objectid);
         $this->assertEquals($context->id, $event->contextid);
