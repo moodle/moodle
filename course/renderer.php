@@ -334,6 +334,8 @@ class core_course_renderer extends plugin_renderer_base {
      * @return string
      */
     public function course_section_cm_edit_actions($actions, cm_info $mod = null, $displayoptions = array()) {
+        global $CFG;
+
         if (empty($actions)) {
             return '';
         }
@@ -351,6 +353,9 @@ class core_course_renderer extends plugin_renderer_base {
         $menu->set_owner_selector($ownerselector);
         $menu->set_contraint('.course-content');
         $menu->set_alignment(action_menu::TL, action_menu::TR);
+        if (isset($CFG->modeditingmenu) && !$CFG->modeditingmenu) {
+            $menu->do_not_enhance();
+        }
         foreach ($actions as $action) {
             if ($action instanceof action_menu_link) {
                 $action->add_class('cm-edit-action');

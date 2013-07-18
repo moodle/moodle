@@ -1378,16 +1378,19 @@ div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
 .moodle-actionmenu > ul,
 .moodle-actionmenu > ul > li {display: inline-block;}
 .moodle-actionmenu ul {padding: 0;margin: 0;list-style-type: none;}
+.moodle-actionmenu a.hidden {display: none;}
 .moodle-actionmenu .toggle-display,
 .moodle-actionmenu .menu-action-text {display: none;}
+
 .jsenabled .block .editing_move {display: none;}
-.jsenabled .moodle-actionmenu {display: block;}
-.jsenabled .moodle-actionmenu .menu {display: none;}
-.jsenabled .moodle-actionmenu .toggle-display {display: inline;opacity: 0.5;filter: alpha(opacity=50);}
+.jsenabled .moodle-actionmenu[data-enhance] {display: block;}
+.jsenabled .moodle-actionmenu[data-enhance] .menu {display: none;}
+.jsenabled .moodle-actionmenu[data-enhance] .toggle-display {display: inline;opacity: 0.5;filter: alpha(opacity=50);}
 .jsenabled .moodle-actionmenu[data-enhanced] .toggle-display {opacity: 1;filter: alpha(opacity=100);}
 .jsenabled .moodle-actionmenu[data-enhanced] .menu-action-text {display: inline;}
+
 .moodle-actionmenu[data-enhanced].show {position: relative;}
-.moodle-actionmenu[data-enhanced].show .menu {position: absolute;z-index: 1000;display: block;background-color: #fff;border: 1px solid #ccc;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;-webkit-box-shadow: 5px 5px 20px 0 #666666;-moz-box-shadow: 5px 5px 20px 0 #666666;box-shadow: 5px 5px 20px 0 #666666;}
+.moodle-actionmenu[data-enhanced].show .menu {position: absolute;text-align:left;z-index: 1000;display: block;background-color: #fff;border: 1px solid #ccc;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;-webkit-box-shadow: 5px 5px 20px 0 #666666;-moz-box-shadow: 5px 5px 20px 0 #666666;box-shadow: 5px 5px 20px 0 #666666;}
 .moodle-actionmenu[data-enhanced].show .menu a {display: block;padding: 2px 1em 2px 0.5em;color: #333333;}
 .moodle-actionmenu[data-enhanced].show .menu a:hover,
 .moodle-actionmenu[data-enhanced].show .menu a:focus {color: #ffffff;background-color: #0088cc;}
@@ -1401,7 +1404,7 @@ div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
 .block .moodle-actionmenu {text-align: right;}
 
 .dir-rtl .block .moodle-actionmenu {text-align: right;}
-.dir-rtl .moodle-actionmenu[data-enhanced].show .menu {right: auto;left: 0;}
+.dir-rtl .moodle-actionmenu[data-enhanced].show .menu {text-align: right;right: auto;left: 0;}
 .dir-rtl .moodle-actionmenu[data-enhanced].show .menu .iconsmall {margin-right: 0;margin-left: 8px;}
 
 .menu.align-tl-bl {top: 100%;left: 0;margin-top: 4px;}

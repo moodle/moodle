@@ -263,7 +263,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             }
 
             // From the anchor we can get both the activity (added during initialisation) and the action being
-            // performed (added by the UI as a data attribute)
+            // performed (added by the UI as a data attribute).
             var action = node.getData('action'),
                 activity = node.getData('activity');
             if (!node.test('a') || !action || !activity) {
@@ -344,12 +344,12 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'field' : 'indent',
                 'value' : newindent,
                 'id'    : this.get_element_id(activity)
-                },
-                commands = activity.one(SELECTOR.COMMANDSPAN),
-                spinner = M.util.add_spinner(Y, commands).setStyles({
-                    position: 'absolute',
-                    top: 0
-                });
+            };
+            var commands = activity.one(SELECTOR.COMMANDSPAN);
+            var spinner = M.util.add_spinner(Y, commands).setStyles({
+                position: 'absolute',
+                top: 0
+            });
             if (BODY.hasClass('dir-ltr')) {
                 spinner.setStyle('left', '100%');
             }  else {
@@ -361,7 +361,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             if (newindent == 0) {
                 button.addClass('hidden');
             } else if (newindent == 1 && oldindent == 0) {
-                button.ancestor().one('> [data-action=moveleft]').removeClass('hidden');
+                button.ancestor('.menu').one('[data-action=moveleft]').removeClass('hidden');
             }
 
             // Handle massive indentation to match non-ajax display
@@ -458,7 +458,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         },
 
         /**
-         * Handles the UI aspect of dimming the activity or resource
+         * Handles the UI aspect of dimming the activity or resource.
          *
          * @protected
          * @method handle_resource_dim
@@ -581,7 +581,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 oldtitle = currenttitle.get('data'),
                 titletext = oldtitle,
                 thisevent,
-                anchor = instancename.ancestor('a'), // Grab the anchor so that we can swap it with the edit form
+                anchor = instancename.ancestor('a'),// Grab the anchor so that we can swap it with the edit form.
                 data = {
                     'class'   : 'resource',
                     'field'   : 'gettitle',
@@ -620,13 +620,13 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // Focus and select the editor text
             editor.focus().select();
 
-            // Cancel the edit if we lose focus or the escape key is pressed
+            // Cancel the edit if we lose focus or the escape key is pressed.
             thisevent = editor.on('blur', this.edit_title_cancel, this, activity, false);
             this.edittitleevents.push(thisevent);
             thisevent = editor.on('key', this.edit_title_cancel, 'esc', this, activity, true);
             this.edittitleevents.push(thisevent);
 
-            // Handle form submission
+            // Handle form submission.
             thisevent = editform.on('submit', this.edit_title_submit, this, activity, oldtitle);
             this.edittitleevents.push(thisevent);
         },

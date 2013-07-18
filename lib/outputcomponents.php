@@ -3274,6 +3274,15 @@ class action_menu implements renderable {
     public function set_contraint($ancestorselector) {
         $this->attributessecondary['data-constraint'] = $ancestorselector;
     }
+
+    /**
+     * If you call this method the action menu will be displayed but will not be enhanced.
+     *
+     * By not displaying the menu enhanced all items will be displayed in a single row.
+     */
+    public function do_not_enhance() {
+        unset($this->attributes['data-enhance']);
+    }
 }
 
 /**

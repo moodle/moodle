@@ -1033,6 +1033,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function block_controls($actions, $blockid = null) {
+        global $CFG;
         if (empty($actions)) {
             return '';
         }
@@ -1041,6 +1042,9 @@ class core_renderer extends renderer_base {
             $menu->set_owner_selector('#'.$blockid);
         }
         $menu->attributes['class'] .= ' block-control-actions commands';
+        if (isset($CFG->blockeditingmenu) && !$CFG->blockeditingmenu) {
+            $menu->do_not_enhance();
+        }
         return $this->render($menu);
     }
 
