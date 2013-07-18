@@ -1333,12 +1333,12 @@ class quiz_attempt {
      * @param int $timestamp the timestamp that should be stored as the modifed
      * time in the database for these actions. If null, will use the current time.
      */
-    public function process_submitted_actions($timestamp, $becomingoverdue = false) {
+    public function process_submitted_actions($timestamp, $becomingoverdue = false, $postdata = null) {
         global $DB;
 
         $transaction = $DB->start_delegated_transaction();
 
-        $this->quba->process_all_actions($timestamp);
+        $this->quba->process_all_actions($timestamp, $postdata);
         question_engine::save_questions_usage_by_activity($this->quba);
 
         $this->attempt->timemodified = $timestamp;
