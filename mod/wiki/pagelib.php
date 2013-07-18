@@ -2165,16 +2165,23 @@ class page_wiki_confirmrestore extends page_wiki_save {
 
 class page_wiki_prettyview extends page_wiki {
 
-    function print_header() {
-        global $CFG, $PAGE, $OUTPUT;
+    function __construct($wiki, $subwiki, $cm) {
+        global $PAGE;
         $PAGE->set_pagelayout('embedded');
+        parent::__construct($wiki, $subwiki, $cm);
+    }
+
+    function print_header() {
+        global $OUTPUT;
+        $this->set_url();
+
         echo $OUTPUT->header();
         // Print dialog link.
         $printtext = get_string('print', 'wiki');
         $printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'printicon');
         $printiconlink = html_writer::link('#', $printtext, $printlinkatt);
         echo html_writer::tag('div', $printiconlink, array('class' => 'displayprinticon'));
-        echo '<h1 id="wiki_printable_title">' . format_string($this->title) . '</h1>';
+        echo html_writer::tag('h1', format_string($this->title), array('id' => 'wiki_printable_title'));
     }
 
     function print_content() {
