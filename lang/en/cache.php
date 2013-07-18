@@ -141,6 +141,7 @@ $string['storename_help'] = 'This sets the store name. It is used to identify th
 $string['storenamealreadyused'] = 'You must choose a unique name for this store.';
 $string['storenameinvalid'] = 'Invalid store name. You can only use a-z A-Z 0-9 -_ and spaces.';
 $string['storeperformance'] = 'Cache store performance reporting - {$a} unique requests per operation.';
+$string['storeprefixinvalid'] = 'Invalid store prefix. You can only use a-z A-Z 0-9 -_ and spaces.';
 $string['storeready'] = 'Ready';
 $string['storenotready'] = 'Store not ready';
 $string['storerequiresattention'] = 'Requires attention.';
