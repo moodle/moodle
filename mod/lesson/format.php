@@ -328,7 +328,7 @@ class qformat_default {
             $addquestionontop = true;
             $updatelessonpage = $DB->get_record('lesson_pages', array('lessonid' => $lesson->id, 'prevpageid' => 0));
         } else {
-            $updatelessonpage = $DB->get_record('lesson_pages', array('id' => $pageid));
+            $updatelessonpage = $DB->get_record('lesson_pages', array('lessonid' => $lesson->id, 'id' => $pageid));
         }
 
         $unsupportedquestions = 0;
@@ -432,11 +432,13 @@ class qformat_default {
                     break;
             }
         }
-        // update the prev links
-        if ($addquestionontop) {
-            $DB->set_field("lesson_pages", "prevpageid", $pageid, array("id" => $updatelessonpage->id));
-        } else {
-            $DB->set_field("lesson_pages", "prevpageid", $pageid, array("id" => $updatelessonpage->nextpageid));
+        // Update the prev links if there were existing pages.
+        if (!empty($updatelessonpage)) {
+            if ($addquestionontop) {
+                $DB->set_field("lesson_pages", "prevpageid", $pageid, array("id" => $updatelessonpage->id));
+            } else {
+                $DB->set_field("lesson_pages", "prevpageid", $pageid, array("id" => $updatelessonpage->nextpageid));
+            }
         }
         if ($unsupportedquestions) {
             echo $OUTPUT->notification(get_string('unknownqtypesnotimported', 'lesson', $unsupportedquestions));
