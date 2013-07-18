@@ -128,7 +128,8 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
         foreach ($this->tests as $test) {
             $qs = $this->load_csv_data_file('questions', $test);
             $steps = $this->load_csv_data_file('steps', $test);
-            $dataset[] = array($qs, $steps);
+            $results = $this->load_csv_data_file('results', $test);
+            $dataset[] = array($qs, $steps, $results);
         }
         return $dataset;
     }
@@ -157,19 +158,47 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
     }
 
     /**
+     * Break down row of csv data into sub arrays, according to column names.
+     *
+     * @param array $row from csv file with field names with parts separate by '.'.
+     * @return array the row with each part of the field name following a '.' being a separate sub array's index.
+     */
+    protected function explode_dot_separated_keys_to_make_subindexs(array $row) {
+        $parts = array();
+        foreach ($row as $columnkey => $value) {
+            $newkeys = explode('.', trim($columnkey));
+            $placetoputvalue =& $parts;
+            foreach ($newkeys as $newkeydepth => $newkey) {
+                if ($newkeydepth + 1 === count($newkeys)) {
+                    $placetoputvalue[$newkey] = $value;
+                } else {
+                    // Going deeper down.
+                    if (!isset($placetoputvalue[$newkey])) {
+                        $placetoputvalue[$newkey] = array();
+                    }
+                    $placetoputvalue =& $placetoputvalue[$newkey];
+                }
+            }
+        }
+        return $parts;
+    }
+
+    /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
      *
      * @param PHPUnit_Extensions_Database_DataSet_ITable $qs questions to add to quiz, read from csv file "questionsXX.csv".
      * @param PHPUnit_Extensions_Database_DataSet_ITable $steps steps to simulate, read from csv file "stepsXX.csv".
+     * @param PHPUnit_Extensions_Database_DataSet_ITable $results results expected, read from csv file "resultsXX.csv".
      * @dataProvider get_data_for_walkthrough
      */
-    public function test_walkthrough_from_csv($qs, $steps) {
+    public function test_walkthrough_from_csv($qs, $steps, $results) {
         global $DB;
         $this->resetAfterTest(true);
         question_bank::get_qtype('random')->clear_caches_before_testing();
 
         $this->create_quiz($qs);
 
+        $attemptids = array();
         for ($rowno = 0; $rowno < $steps->getRowCount(); $rowno++) {
 
             $step = $this->explode_dot_separated_keys_to_make_subindexs($steps->getRow($rowno));
@@ -203,6 +232,8 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
             quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow, $step['randqs'], $step['variants']);
             quiz_attempt_save_started($quizobj, $quba, $attempt);
 
+            $attemptids[$step['quizattempt']] = $attempt->id;
+
             // Process some responses from the student.
             $attemptobj = quiz_attempt::create($attempt->id);
             $attemptobj->process_submitted_actions($timenow, false, $step['responses']);
@@ -211,51 +242,73 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
             $attemptobj = quiz_attempt::create($attempt->id);
             $attemptobj->process_finish($timenow, false);
 
+
+        }
+
+        for ($rowno = 0; $rowno < $results->getRowCount(); $rowno++) {
+            $result = $this->explode_dot_separated_keys_to_make_subindexs($results->getRow($rowno));
             // Re-load quiz attempt data.
-            $attemptobj = quiz_attempt::create($attempt->id);
+            $attemptobj = quiz_attempt::create($attemptids[$result['quizattempt']]);
+            $this->check_attempt_results($result, $attemptobj);
 
-            // Check that results are stored as expected.
-            $this->assertEquals(1, $attemptobj->get_attempt_number());
-            $this->assertEquals(true, $attemptobj->is_finished());
-            $this->assertEquals($timenow, $attemptobj->get_submitted_date());
-            $this->assertEquals($user->id, $attemptobj->get_userid());
-
-            // Check quiz grades.
-            $grades = quiz_get_user_grades($this->quiz, $user->id);
-            $grade = array_shift($grades);
-            $this->assertEquals(100.0, $grade->rawgrade);
-
-            // Check grade book.
-            $gradebookgrades = grade_get_grades($attemptobj->get_courseid(), 'mod', 'quiz', $this->quiz->id, $user->id);
-            $gradebookitem = array_shift($gradebookgrades->items);
-            $gradebookgrade = array_shift($gradebookitem->grades);
-            $this->assertEquals(100, $gradebookgrade->grade);
         }
     }
 
     /**
-     * Break down row of csv data into sub arrays, according to column names.
+     * Check that attempt results are as specified in $result.
      *
-     * @param array $row from csv file with field names with parts separate by '.'.
-     * @return array the row with each part of the field name following a '.' being a separate sub array's index.
+     * @param array        $result             row of data read from csv file.
+     * @param quiz_attempt $attemptobj         the attempt object loaded from db.
+     * @throws coding_exception
      */
-    protected function explode_dot_separated_keys_to_make_subindexs(array $row) {
-        $parts = array();
-        foreach ($row as $columnkey => $value) {
-            $newkeys = explode('.', trim($columnkey));
-            $placetoputvalue =& $parts;
-            foreach ($newkeys as $newkeydepth => $newkey) {
-                if ($newkeydepth + 1 === count($newkeys)) {
-                    $placetoputvalue[$newkey] = $value;
-                } else {
-                    // Going deeper down.
-                    if (!isset($placetoputvalue[$newkey])) {
-                        $placetoputvalue[$newkey] = array();
+    protected function check_attempt_results($result, $attemptobj) {
+        foreach ($result as $fieldname => $value) {
+            switch ($fieldname) {
+                case 'quizattempt' :
+                    break;
+                case 'attemptnumber' :
+                    $this->assertEquals($value, $attemptobj->get_attempt_number());
+                    break;
+                case 'slots' :
+                    foreach ($value as $slotno => $slottests) {
+                        foreach ($slottests as $slotfieldname => $slotvalue) {
+                            switch ($slotfieldname) {
+                                case 'mark' :
+                                    $this->assertEquals(round($slotvalue, 2), $attemptobj->get_question_mark($slotno),
+                                                        "Mark for slot $slotno of attempt {$result['quizattempt']}.");
+                                    break;
+                                default :
+                                    throw new coding_exception('Unknown slots sub field column in csv file '
+                                                                   .s($slotfieldname));
+                            }
+                        }
                     }
-                    $placetoputvalue =& $placetoputvalue[$newkey];
-                }
+                    break;
+                case 'finished' :
+                    $this->assertEquals($value, $attemptobj->is_finished());
+                    break;
+                case 'summarks' :
+                    $this->assertEquals($value, $attemptobj->get_sum_marks(), "Sum of marks of attempt {$result['quizattempt']}.");
+                    break;
+                case 'quizgrade' :
+                    // Check quiz grades.
+                    $grades = quiz_get_user_grades($attemptobj->get_quiz(), $attemptobj->get_userid());
+                    $grade = array_shift($grades);
+                    $this->assertEquals($value, $grade->rawgrade, "Quiz grade for attempt {$result['quizattempt']}.");
+                    break;
+                case 'gradebookgrade' :
+                    // Check grade book.
+                    $gradebookgrades = grade_get_grades($attemptobj->get_courseid(),
+                                                        'mod', 'quiz',
+                                                        $attemptobj->get_quizid(),
+                                                        $attemptobj->get_userid());
+                    $gradebookitem = array_shift($gradebookgrades->items);
+                    $gradebookgrade = array_shift($gradebookitem->grades);
+                    $this->assertEquals($value, $gradebookgrade->grade, "Gradebook grade for attempt {$result['quizattempt']}.");
+                    break;
+                default :
+                    throw new coding_exception('Unknown column in csv file '.s($fieldname));
             }
         }
-        return $parts;
     }
 }
