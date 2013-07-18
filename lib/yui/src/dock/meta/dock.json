@@ -7,10 +7,10 @@
         "event-mouseenter",
         "event-resize",
         "escape",
-        "moodle-core-dockloader"
+        "moodle-core-dock-loader"
     ]
   },
-  "moodle-core-dockloader": {
+  "moodle-core-dock-loader": {
       "requires": [
           "escape"
       ]
