@@ -49,7 +49,8 @@ class cachestore_memcache_addinstance_form extends cachestore_addinstance_form {
         $form->addElement('text', 'prefix', get_string('prefix', 'cachestore_memcache'),
                 array('maxlength' => 5, 'size' => 5));
         $form->addHelpButton('prefix', 'prefix', 'cachestore_memcache');
-        $form->setType('prefix', PARAM_ALPHAEXT);
+        $form->addRule('prefix', get_string('storeprefixinvalid', 'cache'), 'regex', '#^[a-zA-Z0-9\-_ ]+$#');
+        $form->setType('prefix', PARAM_TEXT);
         $form->setDefault('prefix', 'mdl_');
     }
 }
