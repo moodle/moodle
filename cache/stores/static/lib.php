@@ -279,12 +279,16 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
      * @return bool True if the operation was a success false otherwise.
      */
     public function set($key, $data, $testmaxsize = true) {
+        $testmaxsize = ($testmaxsize && $this->maxsize !== false);
+        if ($testmaxsize) {
+            $increment = (!isset($this->store[$key]));
+        }
         if ($this->ttl == 0) {
             $this->store[$key][0] = $data;
         } else {
             $this->store[$key] = array($data, cache::now());
         }
-        if ($testmaxsize && $this->maxsize !== false) {
+        if ($testmaxsize && $increment) {
             $this->storecount++;
             if ($this->storecount > $this->maxsize) {
                 $this->reduce_for_maxsize();
@@ -425,6 +429,13 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
 
     /**
      * Reduces the size of the array if maxsize has been hit.
+     *
+     * This function reduces the size of the store reducing it by 10% of its maxsize.
+     * It removes the oldest items in the store when doing this.
+     * The reason it does this an doesn't use a least recently used system is purely the overhead such a system
+     * requires. The current approach is focused on speed, MUC already adds enough overhead to static/session caches
+     * and avoiding more is of benefit.
+     *
      * @return int
      */
     protected function reduce_for_maxsize() {
@@ -432,6 +443,8 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
         if ($diff < 1) {
             return 0;
         }
+        // Reduce it by an extra 10% to avoid calling this repetitively if we are in a loop.
+        $diff += floor($this->maxsize / 10);
         $this->store = array_slice($this->store, $diff, null, true);
         $this->storecount -= $diff;
         return $diff;

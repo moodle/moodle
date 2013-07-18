@@ -1,5 +1,5 @@
 <?php
-// This static is part of Moodle - http://moodle.org/
+// This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -91,6 +91,13 @@ class cachestore_static_test extends cachestore_tests {
         $this->assertTrue($instance->delete('key6'));
         $this->assertTrue($instance->set('key7', 'value7'));
         $this->assertEquals('value4', $instance->get('key4'));
+
+        // Set the same key three times to make sure it doesn't count overrides.
+        for ($i = 0; $i < 3; $i++) {
+            $this->assertTrue($instance->set('key8', 'value8'));
+        }
+
+        $this->assertEquals('value7', $instance->get('key7'), 'Overrides are incorrectly incrementing size');
 
         // Test adding many.
         $this->assertEquals(3, $instance->set_many(array(
