@@ -1378,8 +1378,8 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
     global $CFG, $DB, $PAGE, $OUTPUT;
 
     $modestr = '';
-    if ($mode == 'browse') {
-        $modestr = '&amp;mode='.$mode;
+    if ($mode != 'normal') {
+        $modestr = '&mode='.$mode;
     }
 
     $result = array();
@@ -1791,8 +1791,8 @@ function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
         $tocmenu = scorm_format_toc_for_droplist($scorm, $scoes['scoes'][0]->children, $scoes['usertracks'], $currentorg, $organizationsco);
 
         $modestr = '';
-        if ($mode == 'browse') {
-            $modestr = '&amp;mode='.$mode;
+        if ($mode != 'normal') {
+            $modestr = '&mode='.$mode;
         }
 
         $url = new moodle_url('/mod/scorm/player.php?a='.$scorm->id.'&currentorg='.$currentorg.$modestr);
