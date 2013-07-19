@@ -1033,11 +1033,14 @@ function forum_cron() {
                             }
                         }
                     }
+                    $footerlinks = array();
                     if ($canunsubscribe) {
-                        $posthtml .= "\n<div class='mdl-right'><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></div>";
+                        $footerlinks[] = "<a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">" . get_string("unsubscribe", "forum") . "</a>";
                     } else {
-                        $posthtml .= "\n<div class='mdl-right'><font size=\"1\">".get_string("everyoneissubscribed", "forum")."</font></div>";
+                        $footerlinks[] = get_string("everyoneissubscribed", "forum");
                     }
+                    $footerlinks[] = "<a href='{$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}'>" . get_string("digestmailpost", "forum") . '</a>';
+                    $posthtml .= "\n<div class='mdl-right'><font size=\"1\">" . implode('&nbsp;', $footerlinks) . '</font></div>';
                     $posthtml .= '<hr size="1" noshade="noshade" /></p>';
                 }
                 $posthtml .= '</body>';
@@ -1171,6 +1174,10 @@ function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfro
         $posttext .= ": $CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\n";
     }
 
+    $posttext .= "\n---------------------------------------------------------------------\n";
+    $posttext .= get_string("digestmailpost", "forum");
+    $posttext .= ": {$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}\n";
+
     return $posttext;
 }
 
@@ -1224,11 +1231,13 @@ function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfro
     }
     $posthtml .= forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
 
+    $footerlinks = array();
     if ($canunsubscribe) {
-        $posthtml .= '<hr /><div class="mdl-align unsubscribelink">
-                      <a href="'.$CFG->wwwroot.'/mod/forum/subscribe.php?id='.$forum->id.'">'.get_string('unsubscribe', 'forum').'</a>&nbsp;
-                      <a href="'.$CFG->wwwroot.'/mod/forum/unsubscribeall.php">'.get_string('unsubscribeall', 'forum').'</a></div>';
+        $footerlinks[] = '<a href="' . $CFG->wwwroot . '/mod/forum/subscribe.php?id=' . $forum->id . '">' . get_string('unsubscribe', 'forum') . '</a>';
+        $footerlinks[] = '<a href="' . $CFG->wwwroot . '/mod/forum/unsubscribeall.php">' . get_string('unsubscribeall', 'forum') . '</a>';
     }
+    $footerlinks[] = "<a href='{$CFG->wwwroot}/mod/forum/index.php?id={$forum->course}'>" . get_string('digestmailpost', 'forum') . '</a>';
+    $posthtml .= '<hr /><div class="mdl-align unsubscribelink">' . implode('&nbsp;', $footerlinks) . '</div>';
 
     $posthtml .= '</body>';
 
