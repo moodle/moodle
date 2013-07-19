@@ -100,13 +100,17 @@ class block_recent_activity extends block_base {
     }
 
     /**
-     * Returns all recent enrollments
+     * Returns all recent enrolments.
+     *
+     * This function previously used get_recent_enrolments located in lib/deprecatedlib.php which would
+     * return an empty array which was identified in MDL-36993. The use of this function outside the
+     * deprecated lib was removed in MDL-40649.
      *
      * @todo MDL-36993 this function always return empty array
      * @return array array of entries from {user} table
      */
     protected function get_recent_enrolments() {
-        return get_recent_enrolments($this->page->course->id, $this->get_timestart());
+        return array();
     }
 
     /**

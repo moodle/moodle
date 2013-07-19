@@ -455,9 +455,6 @@ function is_course_participant($userid, $courseid) {
  *
  * used to print recent activity
  *
- * @todo MDL-36993 this function is still used in block_recent_activity, deprecate properly
- * @global object
- * @uses CONTEXT_COURSE
  * @param int $courseid The course in question.
  * @param int $timestart The date to check forward of
  * @return object|false  {@link $USER} records or false if error.
@@ -465,8 +462,9 @@ function is_course_participant($userid, $courseid) {
 function get_recent_enrolments($courseid, $timestart) {
     global $DB;
 
-    $context = context_course::instance($courseid);
+    debugging('get_recent_enrolments() is deprecated as it returned inaccurate results.', DEBUG_DEVELOPER);
 
+    $context = context_course::instance($courseid);
     $sql = "SELECT u.id, u.firstname, u.lastname, MAX(l.time)
               FROM {user} u, {role_assignments} ra, {log} l
              WHERE l.time > ?
