@@ -84,7 +84,7 @@ abstract class base implements \IteratorAggregate {
         'timecreated');
 
     /** @var array simple record cache */
-    protected $recordsnapshots = array();
+    private $recordsnapshots = array();
 
     /**
      * Private constructor, use create() or restore() methods instead.
@@ -518,7 +518,7 @@ abstract class base implements \IteratorAggregate {
      *
      * @throws \coding_exception if used after ::trigger()
      */
-    public function add_record_snapshot($tablename, $record) {
+    public final function add_record_snapshot($tablename, $record) {
         global $DB;
 
         if ($this->triggered) {
@@ -544,7 +544,7 @@ abstract class base implements \IteratorAggregate {
      *
      * @throws \coding_exception if used after ::restore()
      */
-    public function get_record_snapshot($tablename, $id) {
+    public final function get_record_snapshot($tablename, $id) {
         global $DB;
 
         if ($this->restored) {
