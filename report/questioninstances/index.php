@@ -94,6 +94,7 @@ if ($requestedqtype) {
             JOIN {question_categories} qc ON q.category = qc.id
             JOIN {context} con ON con.id = qc.contextid
             $sqlqtypetest
+            AND (q.parent = 0 OR q.parent = q.id)
             GROUP BY qc.contextid, $ctxgroupby
             ORDER BY numquestions DESC, numhidden ASC, con.contextlevel ASC, con.id ASC", $params);
 
