@@ -65,7 +65,7 @@ class role_assigned extends base {
      *
      * @return null|string legacy event name
      */
-    public function get_legacy_eventname() {
+    protected function get_legacy_eventname() {
         return 'role_assigned';
     }
 
@@ -74,7 +74,7 @@ class role_assigned extends base {
      *
      * @return mixed
      */
-    public function get_legacy_eventdata() {
+    protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('role_assignments', $this->data['other']['id']);
     }
 }

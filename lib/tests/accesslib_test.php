@@ -511,9 +511,6 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertEquals($raid, $event->other['id']);
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
-
-        $this->assertSame($event->get_record_snapshot('role_assignments', $event->other['id']), $event->get_legacy_eventdata());
-        $this->assertSame('role_assigned', $event->get_legacy_eventname());
     }
 
     /**
@@ -558,9 +555,6 @@ class accesslib_testcase extends advanced_testcase {
         $this->assertCount(3, $event->other);
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
-
-        $this->assertSame($event->get_record_snapshot('role_assignments', $event->other['id']), $event->get_legacy_eventdata());
-        $this->assertSame('role_unassigned', $event->get_legacy_eventname());
     }
 
     /**

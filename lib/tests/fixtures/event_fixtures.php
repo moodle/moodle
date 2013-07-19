@@ -48,15 +48,15 @@ class unittest_executed extends \core\event\base {
         return new moodle_url('/somepath/somefile.php', array('id'=>$this->data['other']['sample']));
     }
 
-    public function get_legacy_eventname() {
+    protected function get_legacy_eventname() {
         return 'test_legacy';
     }
 
-    public function get_legacy_eventdata() {
+    protected function get_legacy_eventdata() {
         return array($this->data['courseid'], $this->data['other']['sample']);
     }
 
-    public function get_legacy_logdata() {
+    protected function get_legacy_logdata() {
         return array($this->data['courseid'], 'core_unittest', 'view', 'unittest.php?id='.$this->data['other']['sample']);
     }
 }

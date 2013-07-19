@@ -361,27 +361,33 @@ abstract class base implements \IteratorAggregate {
     /**
      * Does this event replace legacy event?
      *
+     * Note: do not use directly!
+     *
      * @return null|string legacy event name
      */
-    public function get_legacy_eventname() {
+    protected function get_legacy_eventname() {
         return null;
     }
 
     /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
+     * Note: do not use directly!
+     *
      * @return mixed
      */
-    public function get_legacy_eventdata() {
+    protected function get_legacy_eventdata() {
         return null;
     }
 
     /**
      * Doest this event replace add_to_log() statement?
      *
+     * Note: do not use directly!
+     *
      * @return null|array of parameters to be passed to legacy add_to_log() function.
      */
-    public function get_legacy_logdata() {
+    protected function get_legacy_logdata() {
         return null;
     }
 
