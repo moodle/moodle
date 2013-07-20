@@ -392,7 +392,7 @@ $CFG->admin = 'admin';
 // memory limit to something higher.
 // The value for the settings should be a valid PHP memory value. e.g. 512M, 1G
 //
-//     $CFG->extramemorylimit = '1G';
+//     $CFG->extramemorylimit = '1024M';
 //
 // Moodle 2.4 introduced a new cache API.
 // The cache API stores a configuration file within the Moodle data directory and

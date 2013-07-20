@@ -182,7 +182,8 @@ $temp->add(new admin_setting_configselect('extramemorylimit', new lang_string('e
                                                  '128M' => '128M',
                                                  '256M' => '256M',
                                                  '512M' => '512M',
-                                                 '1024M' => '1024M'
+                                                 '1024M' => '1024M',
+                                                 '2048M' => '2048M',
                                              )));
 $temp->add(new admin_setting_configtext('curlcache', new lang_string('curlcache', 'admin'),
                                         new lang_string('configcurlcache', 'admin'), 120, PARAM_INT));
