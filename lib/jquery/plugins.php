@@ -37,8 +37,8 @@
  */
 
 $plugins = array(
-    'jquery'  => array('files' => array('jquery-1.9.1.min.js')),
-    'migrate' => array('files' => array('jquery-migrate-1.1.1.min.js')),
-    'ui'      => array('files' => array('ui-1.10.2/jquery-ui.min.js')),
-    'ui-css'  => array('files' => array('ui-1.10.2/css/base/jquery-ui.min.css')),
+    'jquery'  => array('files' => array('jquery-1.10.2.min.js')),
+    'migrate' => array('files' => array('jquery-migrate-1.2.1.min.js')),
+    'ui'      => array('files' => array('ui-1.10.3/jquery-ui.min.js')),
+    'ui-css'  => array('files' => array('ui-1.10.3/css/base/jquery-ui.min.css')),
 );
