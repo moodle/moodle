@@ -957,6 +957,8 @@
           <ON_ERROR message="ziprequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="zlib" level="optional">
+      </PHP_EXTENSION>
       <PHP_EXTENSION name="gd" level="required">
         <FEEDBACK>
           <ON_ERROR message="gdrequired" />
