@@ -1110,9 +1110,6 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
 
     if (isset($rowcols['city'])) {
         $rowcols['city'] = trim($rowcols['city']);
-        if (empty($rowcols['city'])) {
-            $rowcols['status'][] = get_string('fieldrequired', 'error', 'city');
-        }
     }
     // Check if rowcols have custom profile field with correct data and update error state.
     $noerror = uu_check_custom_profile_data($rowcols) && $noerror;
