@@ -1016,7 +1016,7 @@ class theme_config {
      */
     public function post_process($css) {
         // now resolve all image locations
-        if (preg_match_all('/\[\[pix:([a-z_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all('/\[\[pix:([a-z0-9_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
             $replaced = array();
             foreach ($matches as $match) {
                 if (isset($replaced[$match[0]])) {
@@ -1033,7 +1033,7 @@ class theme_config {
         }
 
         // Now resolve all font locations.
-        if (preg_match_all('/\[\[font:([a-z_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all('/\[\[font:([a-z0-9_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
             $replaced = array();
             foreach ($matches as $match) {
                 if (isset($replaced[$match[0]])) {
