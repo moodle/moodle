@@ -87,7 +87,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     font_not_found();
 }
 
-$candidatelocation = "$CFG->cachedir/theme/$rev/$themename/fonts/$component";
+$candidatelocation = "$CFG->localcachedir/theme/$rev/$themename/fonts/$component";
 $etag = sha1("$rev/$themename/$component/$font");
 
 if ($rev > 0) {
@@ -133,7 +133,7 @@ if ($themerev <= 0 or $rev != $themerev) {
     send_uncached_font($fontfile, $font, $mimetype);
 }
 
-make_cache_directory('theme', false);
+make_localcache_directory('theme', false);
 
 if (empty($fontfile) or !is_readable($fontfile)) {
     if (!file_exists($candidatelocation)) {
