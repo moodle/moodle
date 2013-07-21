@@ -283,6 +283,10 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQL extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.';
 $string['mysqli'] = 'Improved MySQL (mysqli)';
 $string['mysqliextensionisnotpresentinphp'] = 'PHP has not been properly configured with the MySQLi extension so that it can communicate with MySQL.  Please check your php.ini file or recompile PHP.  MySQLi extension is not available for PHP 4.';
+$string['nativemariadb'] = 'MariaDB (native/mariadb)';
+$string['nativemariadbhelp'] = 'Now you need to configure the database where most Moodle data will be stored.
+Database may be created if database user has needed permissions, username and password must already exist. Table prefix is optional.
+This driver is not compatible with legacy MyISAM engine.';
 $string['nativemysqli'] = 'Improved MySQL (native/mysqli)';
 $string['nativemysqlihelp'] = 'Now you need to configure the database where most Moodle data will be stored.
 Database may be created if database user has needed permissions, username and password must already exist. Table prefix is optional.';

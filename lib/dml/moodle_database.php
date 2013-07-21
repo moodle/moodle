@@ -185,6 +185,15 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns the database vendor.
+     * Note: can be used before connect()
+     * @return string The db vendor name, usually the same as db family name.
+     */
+    public function get_dbvendor() {
+        return $this->get_dbfamily();
+    }
+
+    /**
      * Returns the database family type. (This sort of describes the SQL 'dialect')
      * Note: can be used before connect()
      * @return string The db family name (mysql, postgres, mssql, oracle, etc.)
