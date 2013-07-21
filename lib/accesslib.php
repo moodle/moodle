@@ -546,6 +546,62 @@ function has_all_capabilities(array $capabilities, context $context, $user = nul
 }
 
 /**
+ * Is course creator going to have capability in a new course?
+ *
+ * This is intended to be used in enrolment plugins before or during course creation,
+ * do not use after the course is fully created.
+ *
+ * @category access
+ *
+ * @param string $capability the name of the capability to check.
+ * @param context $context course or category context where is course going to be created
+ * @param integer|stdClass $user A user id or object. By default (null) checks the permissions of the current user.
+ * @return boolean true if the user will have this capability.
+ *
+ * @throws coding_exception if different type of course submitted
+ */
+function will_have_course_capability($capability, context $context, $user = null) {
+    global $CFG;
+
+    if ($context->contextlevel != CONTEXT_COURSE and $context->contextlevel != CONTEXT_COURSECAT) {
+        throw new coding_exception('Only course or course category context expected');
+    }
+
+    if (has_capability($capability, $context, $user)) {
+        // User already has the capability, it could be only removed if CAP_PROHIBIT
+        // was involved here, but we ignore that.
+        return true;
+    }
+
+    if (!has_capability('moodle/course:create', $context, $user)) {
+        return false;
+    }
+
+    if (!enrol_is_enabled('manual')) {
+        return false;
+    }
+
+    if (empty($CFG->creatornewroleid)) {
+        return false;
+    }
+
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        if (is_viewing($context, $user, 'moodle/role:assign') or is_enrolled($context, $user, 'moodle/role:assign')) {
+            return false;
+        }
+    } else {
+        if (has_capability('moodle/course:view', $context, $user) and has_capability('moodle/role:assign', $context, $user)) {
+            return false;
+        }
+    }
+
+    // Most likely they will be enrolled after the course creation is finished,
+    // does the new role have the required capability?
+    list($neededroles, $forbiddenroles) = get_roles_with_cap_in_context($context, $capability);
+    return isset($neededroles[$CFG->creatornewroleid]);
+}
+
+/**
  * Check if the user is an admin at the site level.
  *
  * Please note that use of proper capabilities is always encouraged,
