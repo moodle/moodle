@@ -231,9 +231,13 @@ abstract class moodle_database {
     /**
      * Returns the localised database description
      * Note: can be used before connect()
+     * @deprecated since 2.6
      * @return string
      */
-    public abstract function get_configuration_hints();
+    public function get_configuration_hints() {
+        debugging('$DB->get_configuration_hints() method is deprecated, use $DB->get_configuration_help() instead');
+        return $this->get_configuration_help();
+    }
 
     /**
      * Returns the db related part of config.php
