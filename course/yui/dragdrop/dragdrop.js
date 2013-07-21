@@ -73,7 +73,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
         setup_for_section : function(baseselector) {
             Y.Node.all(baseselector).each(function(sectionnode) {
                 // Determine the section ID
-                var sectionid = this.get_section_id(sectionnode);
+                var sectionid = Y.Moodle.core_course.util.section.getId(sectionnode);
 
                 // We skip the top section as it is not draggable
                 if (sectionid > 0) {
@@ -98,10 +98,6 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                     }
                 }
             }, this);
-        },
-
-        get_section_id : function(node) {
-            return Number(node.get('id').replace(/section-/i, ''));
         },
 
         /*
@@ -135,8 +131,8 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             var dragnode = drag.get('node');
             var dropnode = e.drop.get('node');
             // Prepare some variables
-            var dragnodeid = Number(this.get_section_id(dragnode));
-            var dropnodeid = Number(this.get_section_id(dropnode));
+            var dragnodeid = Number(Y.Moodle.core_course.util.section.getId(dragnode));
+            var dropnodeid = Number(Y.Moodle.core_course.util.section.getId(dropnode));
 
             var loopstart = dragnodeid;
             var loopend = dropnodeid;
@@ -195,7 +191,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                         do {
                             var swapped = false;
                             for (var i = loopstart; i <= loopend; i++) {
-                                if (this.get_section_id(sectionlist.item(i-1)) > this.get_section_id(sectionlist.item(i))) {
+                                if (Y.Moodle.core_course.util.section.getId(sectionlist.item(i-1)) > Y.Moodle.core_course.util.section.getId(sectionlist.item(i))) {
                                     // Swap section id
                                     var sectionid = sectionlist.item(i-1).get('id');
                                     sectionlist.item(i-1).set('id', sectionlist.item(i).get('id'));
@@ -323,14 +319,6 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             }, this);
         },
 
-        get_section_id : function(node) {
-            return Number(node.get('id').replace(/section-/i, ''));
-        },
-
-        get_resource_id : function(node) {
-            return Number(node.get('id').replace(/module-/i, ''));
-        },
-
         drag_start : function(e) {
             // Get our drag object
             var drag = e.target;
@@ -367,11 +355,11 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             params.courseId = this.get('courseid');
             params['class'] = 'resource';
             params.field = 'move';
-            params.id = Number(this.get_resource_id(dragnode));
-            params.sectionId = this.get_section_id(dropnode.ancestor(M.course.format.get_section_wrapper(Y), true));
+            params.id = Number(Y.Moodle.core_course.util.cm.getId(dragnode));
+            params.sectionId = Y.Moodle.core_course.util.section.getId(dropnode.ancestor(M.course.format.get_section_wrapper(Y), true));
 
             if (dragnode.next()) {
-                params.beforeId = Number(this.get_resource_id(dragnode.next()));
+                params.beforeId = Number(Y.Moodle.core_course.util.cm.getId(dragnode.next()));
             }
 
             // Do AJAX request
@@ -426,4 +414,4 @@ YUI.add('moodle-course-dragdrop', function(Y) {
     M.course.init_section_dragdrop = function(params) {
         new DRAGSECTION(params);
     }
-}, '@VERSION@', {requires:['base', 'node', 'io', 'dom', 'dd', 'dd-scroll', 'moodle-core-dragdrop', 'moodle-core-notification', 'moodle-course-coursebase']});
+}, '@VERSION@', {requires:['base', 'node', 'io', 'dom', 'dd', 'dd-scroll', 'moodle-core-dragdrop', 'moodle-core-notification', 'moodle-course-coursebase', 'moodle-course-util']});
