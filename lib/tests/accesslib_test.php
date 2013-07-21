@@ -1612,7 +1612,7 @@ class accesslib_testcase extends advanced_testcase {
 
         try {
             will_have_course_capability('moodle/course:visibility', $syscontext, $creator);
-            $this->fail('Exception expected when non course/category contet passed to will_have_course_capability()');
+            $this->fail('Exception expected when non course/category context passed to will_have_course_capability()');
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
