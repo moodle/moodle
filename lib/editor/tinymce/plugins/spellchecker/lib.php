@@ -36,6 +36,12 @@ class tinymce_spellchecker extends editor_tinymce_plugin {
             return;
         }
 
+        // Check some speller is configured.
+        $engine = $this->get_config('spellengine', '');
+        if (!$engine or $engine === 'GoogleSpell') {
+            return;
+        }
+
         // Check at least one language is supported.
         $spelllanguagelist = $this->get_config('spelllanguagelist', '');
         if ($spelllanguagelist !== '') {
