@@ -131,6 +131,10 @@ if (!defined('BEHAT_SITE_RUNNING') && !empty($CFG->behat_dataroot) &&
         // actions like reset the site or use data generators.
         define('BEHAT_SITE_RUNNING', true);
 
+        // Clean extra config.php settings.
+        require_once(__DIR__ . '/../lib/behat/lib.php');
+        behat_clean_init_config();
+
         $CFG->wwwroot = $CFG->behat_wwwroot;
         $CFG->passwordsaltmain = 'moodle';
         $CFG->prefix = $CFG->behat_prefix;
