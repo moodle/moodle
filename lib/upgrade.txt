@@ -41,6 +41,7 @@ Accesslib:
     * get_role_context_caps()       ->  (no replacement)
     * load_temp_role()              ->  (no replacement)
     * remove_temp_roles()           ->  (no replacement)
+    * get_related_contexts_string() ->  $context->get_parent_context_ids(true)
 
 Enrollment:
     * get_course_participants()     -> get_enrolled_users()

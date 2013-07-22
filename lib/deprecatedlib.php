@@ -4337,3 +4337,20 @@ function context_instance_preload_sql($joinon, $contextlevel, $tablealias) {
     $join = "LEFT JOIN {context} $tablealias ON ($tablealias.instanceid = $joinon AND $tablealias.contextlevel = $contextlevel)";
     return array($select, $join);
 }
+
+/**
+ * Gets a string for sql calls, searching for stuff in this context or above.
+ *
+ * @deprecated since 2.2
+ * @see context::get_parent_context_ids()
+ * @param context $context
+ * @return string
+ */
+function get_related_contexts_string(context $context) {
+    debugging('get_related_contexts_string() is deprecated, please use $context->get_parent_context_ids(true) instead.', DEBUG_DEVELOPER);
+    if ($parents = $context->get_parent_context_ids()) {
+        return (' IN ('.$context->id.','.implode(',', $parents).')');
+    } else {
+        return (' ='.$context->id);
+    }
+}
