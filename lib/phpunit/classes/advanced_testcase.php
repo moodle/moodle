@@ -320,6 +320,19 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Starts event redirection.
+     *
+     * You can verify if events were triggered or not by inspecting the events
+     * array in the returned event sink instance. The redirection
+     * can be stopped by calling $sink->close();
+     *
+     * @return phpunit_event_sink
+     */
+    public function redirectEvents() {
+        return phpunit_util::start_event_redirection();
+    }
+
+    /**
      * Cleanup after all tests are executed.
      *
      * Note: do not forget to call this if overridden...

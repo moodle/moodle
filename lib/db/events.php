@@ -33,23 +33,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/* List of handlers */
+/* List of legacy event handlers */
 
 $handlers = array(
 
-/*
- * portfolio queued event - for non interactive file transfers
- * NOTE: this is a HACK, please do not add any more things like this here
- *       (it is just abusing cron to do very time consuming things which is wrong any way)
- *
- * TODO: this has to be moved into separate queueing framework....
- */
-    'portfolio_send' => array (
-        'handlerfile'      => '/lib/portfolio.php',
-        'handlerfunction'  => 'portfolio_handle_event',    // argument to call_user_func(), could be an array
-        'schedule'         => 'cron',
-        'internal'         => 0,
-    ),
     'course_completed' => array (
         'handlerfile'      => '/lib/badgeslib.php',
         'handlerfunction'  => 'badges_award_handle_course_criteria_review',
@@ -67,6 +54,20 @@ $handlers = array(
         'handlerfunction'  => 'badges_award_handle_profile_criteria_review',
         'schedule'         => 'instant',
         'internal'         => 1,
+    ),
+
+/*
+ * portfolio queued event - for non interactive file transfers
+ * NOTE: this is a HACK, please do not add any more things like this here
+ *       (it is just abusing cron to do very time consuming things which is wrong any way)
+ *
+ * TODO: this has to be moved into separate queueing framework....
+ */
+    'portfolio_send' => array (
+        'handlerfile'      => '/lib/portfolio.php',
+        'handlerfunction'  => 'portfolio_handle_event',    // argument to call_user_func(), could be an array
+        'schedule'         => 'cron',
+        'internal'         => 0,
     ),
 
 /* no more here please, core should not consume any events!!!!!!! */
