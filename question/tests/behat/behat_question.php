@@ -51,16 +51,18 @@ class behat_question extends behat_base {
      */
     public function i_add_a_question_filling_the_form_with($questiontypename, TableNode $questiondata) {
 
-        $questiontypexpath = "//span[@class='qtypename'][.='" . $questiontypename . "']" .
+        // Using xpath literal to avoid quotes problems.
+        $questiontypename = $this->getSession()->getSelectorsHandler()->xpathLiteral($questiontypename);
+        $questiontypexpath = "//span[@class='qtypename'][normalize-space(.)=$questiontypename]" .
             "/ancestor::div[@class='qtypeoption']/descendant::input";
 
         return array(
             new Given('I follow "' . get_string('questionbank', 'question') . '"'),
             new Given('I press "' . get_string('createnewquestion', 'question') . '"'),
-            new Given('I click on "' . $questiontypexpath . '" "xpath_element"'),
+            new Given('I click on "' . $this->escape($questiontypexpath) . '" "xpath_element"'),
             new Given('I click on "Next" "button" in the "#qtypechoicecontainer" "css_element"'),
             new Given('I fill the moodle form with:', $questiondata),
-            new Given('I press "Save changes"')
+            new Given('I press "' . get_string('savechanges') . '"')
         );
     }
 
@@ -75,14 +77,18 @@ class behat_question extends behat_base {
      */
     public function the_state_of_question_is_shown_as($questiondescription, $state) {
 
+        // Using xpath literal to avoid quotes problems.
+        $questiondescriptionliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($questiondescription);
+        $stateliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($state);
+
         // Split in two checkings to give more feedback in case of exception.
         $exception = new ElementNotFoundException($this->getSession(), 'Question "' . $questiondescription . '" ');
-        $questionxpath = "//div[contains(concat(' ', @class, ' '), ' qtext ')][contains(., '" . $questiondescription . "')]";
+        $questionxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' qtext ')][contains(., $questiondescriptionliteral)]";
         $this->find('xpath', $questionxpath, $exception);
 
         $exception = new ExpectationException('Question "' . $questiondescription . '" state is not "' . $state . '"', $this->getSession());
-        $xpath = $questionxpath . "/ancestor::div[contains(concat(' ', @class, ' '), ' que ')]" .
-            "/descendant::div[@class='state'][contains(., '" . $state . "')]";
+        $xpath = $questionxpath . "/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]" .
+            "/descendant::div[@class='state'][contains(., $stateliteral)]";
         $this->find('xpath', $xpath, $exception);
     }
 

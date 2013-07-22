@@ -58,10 +58,13 @@ class behat_form_select extends behat_form_field {
 
             // Single select needs an extra click in the option.
             if (!$this->field->hasAttribute('multiple')) {
+
+                $value = $this->session->getSelectorsHandler()->xpathLiteral($value);
+
                 // Using the driver direcly because Element methods are messy when dealing
                 // with elements inside containers.
                 $optionxpath = $this->field->getXpath() .
-                    "/descendant::option[(./@value = '" . $value . "' or contains(normalize-space(string(.)), '" . $value . "'))]";
+                    "/descendant::option[(./@value=$value or normalize-space(.)=$value)]";
                 $optionnodes = $this->session->getDriver()->find($optionxpath);
                 if ($optionnodes) {
                     current($optionnodes)->click();

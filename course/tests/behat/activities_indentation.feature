@@ -26,7 +26,7 @@ Feature: Indent items on the course page
     When I indent right "Test glossary name" activity
     Then "#section-1 li.glossary div.mod-indent-1" "css_element" should exists
     And I indent right "Test glossary name" activity
-    And "//*[@id='section-1']/descendant::li[contains(concat(' ', @class, ' '), ' glossary ')]/descendant::a[@title='Move left']" "xpath_element" should exists
+    And "//li[@id='section-1']/descendant::li[contains(concat(' ', @class, ' '), ' glossary ')]/descendant::a[@title='Move left']" "xpath_element" should exists
     And "#section-1 li.glossary div.mod-indent-2" "css_element" should exists
     And I reload the page
     And "#section-1 li.glossary div.mod-indent-2" "css_element" should exists
@@ -34,4 +34,4 @@ Feature: Indent items on the course page
     And I indent left "Test glossary name" activity
     And "#section-1 li.glossary div.mod-indent-2" "css_element" should not exists
     And "#section-1 li.glossary div.mod-indent-1" "css_element" should not exists
-    And "//*[@id='section-1']/descendant::li[contains(concat(' ', @class, ' '), ' glossary ')]/descendant::a[@title='Move left']" "xpath_element" should not exists
+    And "//li[@id='section-1']/descendant::li[contains(concat(' ', @class, ' '), ' glossary ')]/descendant::a[@title='Move left']" "xpath_element" should not exists

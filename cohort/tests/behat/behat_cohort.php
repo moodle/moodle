@@ -54,10 +54,10 @@ class behat_cohort extends behat_base {
         $userid = $DB->get_field('user', 'id', array('username' => $username));
 
         $steps = array(
-            new Given('I click on "Assign" "link" in the "//table[@id=\'cohorts\']//tr[contains(., \'' . $cohortidnumber . '\')]" "xpath_element"'),
-            new Given('I select "' . $userid . '" from "Potential users"'),
-            new Given('I press "Add"'),
-            new Given('I press "Back to cohorts"')
+            new Given('I click on "' . get_string('assign', 'cohort') . '" "link" in the "' . $this->escape($cohortidnumber) . '" table row'),
+            new Given('I select "' . $userid . '" from "' . get_string('potusers', 'cohort') . '"'),
+            new Given('I press "' . get_string('add') . '"'),
+            new Given('I press "' . get_string('backtocohorts', 'cohort') . '"')
         );
 
         // If we are not in the cohorts management we should move there before anything else.
@@ -65,11 +65,11 @@ class behat_cohort extends behat_base {
             $steps = array_merge(
                 array(
                     new Given('I am on homepage'),
-                    new Given('I collapse "Front page settings" node'),
-                    new Given('I expand "Site administration" node'),
-                    new Given('I expand "Users" node'),
-                    new Given('I expand "Accounts" node'),
-                    new Given('I follow "Cohorts"')
+                    new Given('I collapse "' . get_string('frontpagesettings', 'admin') . '" node'),
+                    new Given('I expand "' . get_string('administrationsite') . '" node'),
+                    new Given('I expand "' . get_string('users', 'admin') . '" node'),
+                    new Given('I expand "' . get_string('accounts', 'admin') . '" node'),
+                    new Given('I follow "' . get_string('cohorts', 'cohort') . '"')
                 ),
                 $steps
             );

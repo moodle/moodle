@@ -50,7 +50,7 @@ class behat_mod_glossary extends behat_base {
         return array(
             new Given('I press "' . get_string('addentry', 'mod_glossary') . '"'),
             new Given('I fill the moodle form with:', $data),
-            new Given('I press "Save changes"')
+            new Given('I press "' . get_string('savechanges') . '"')
         );
     }
 
@@ -65,8 +65,8 @@ class behat_mod_glossary extends behat_base {
         return array(
             new Given('I follow "' . get_string('categoryview', 'mod_glossary') . '"'),
             new Given('I press "' . get_string('editcategories', 'mod_glossary') . '"'),
-            new Given('I press "Add Category"'),
-            new Given('I fill in "name" with "' . $categoryname . '"'),
+            new Given('I press "' . get_string('add').' '.get_string('category', 'glossary') . '"'),
+            new Given('I fill in "name" with "' . $this->escape($categoryname) . '"'),
             new Given('I press "' . get_string('savechanges') . '"'),
             new Given('I press "' . get_string('back', 'mod_glossary') . '"')
         );
