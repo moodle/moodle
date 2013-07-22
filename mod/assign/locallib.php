@@ -3624,7 +3624,7 @@ class assign {
                 // Only show the grade if it is not hidden in gradebook.
                 if (!empty($gradebookgrade->grade) && ($cangrade || !$gradebookgrade->hidden)) {
                     if ($controller = $gradingmanager->get_active_controller()) {
-                        $controller->set_grade_range(make_grades_menu($this->get_instance()->grade));
+                        $controller->set_grade_range(make_grades_menu($this->get_instance()->grade), $this->get_instance()->grade > 0);
                         $gradefordisplay = $controller->render_grade($PAGE,
                                                                      $grade->id,
                                                                      $gradingitem,
@@ -3721,7 +3721,7 @@ class assign {
 
             // Now get the gradefordisplay.
             if ($controller) {
-                $controller->set_grade_range(make_grades_menu($this->get_instance()->grade));
+                $controller->set_grade_range(make_grades_menu($this->get_instance()->grade), $this->get_instance()->grade > 0);
                 $grade->gradefordisplay = $controller->render_grade($PAGE,
                                                                      $grade->id,
                                                                      $gradingitem,
@@ -5182,6 +5182,7 @@ class assign {
         global $CFG, $USER;
 
         $grademenu = make_grades_menu($this->get_instance()->grade);
+        $allowgradedecimals = $this->get_instance()->grade > 0;
 
         $advancedgradingwarning = false;
         $gradingmanager = get_grading_manager($this->context, 'mod_assign', 'submissions');
@@ -5206,7 +5207,7 @@ class assign {
             }
         }
         if ($gradinginstance) {
-            $gradinginstance->get_controller()->set_grade_range($grademenu);
+            $gradinginstance->get_controller()->set_grade_range($grademenu, $allowgradedecimals);
         }
         return $gradinginstance;
     }

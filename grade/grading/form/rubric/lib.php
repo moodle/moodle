@@ -814,10 +814,9 @@ class gradingform_rubric_instance extends gradingform_instance {
     /**
      * Calculates the grade to be pushed to the gradebook
      *
-     * @return int the valid grade from $this->get_controller()->get_grade_range()
+     * @return float|int the valid grade from $this->get_controller()->get_grade_range()
      */
     public function get_grade() {
-        global $DB, $USER;
         $grade = $this->get_rubric_filling();
 
         if (!($scores = $this->get_controller()->get_min_max_score()) || $scores['maxscore'] <= $scores['minscore']) {
@@ -836,7 +835,11 @@ class gradingform_rubric_instance extends gradingform_instance {
         foreach ($grade['criteria'] as $id => $record) {
             $curscore += $this->get_controller()->get_definition()->rubric_criteria[$id]['levels'][$record['levelid']]['score'];
         }
-        return round(($curscore-$scores['minscore'])/($scores['maxscore']-$scores['minscore'])*($maxgrade-$mingrade), 0) + $mingrade;
+        $gradeoffset = ($curscore-$scores['minscore'])/($scores['maxscore']-$scores['minscore'])*($maxgrade-$mingrade);
+        if ($this->get_controller()->get_allow_grade_decimals()) {
+            return $gradeoffset + $mingrade;
+        }
+        return round($gradeoffset, 0) + $mingrade;
     }
 
     /**
