@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -24,10 +23,14 @@
 require_once($CFG->libdir.'/formslib.php');
 
 class backup_files_edit_form extends moodleform {
-    function definition() {
+
+    /**
+     * Form definition.
+     */
+    public function definition() {
         $mform =& $this->_form;
-        $contextid = $this->_customdata['contextid'];
-        $options = array('subdirs'=>0, 'maxfiles'=>-1, 'accepted_types'=>'*', 'return_types'=>FILE_INTERNAL | FILE_REFERENCE);
+
+        $options = array('subdirs' => 0, 'maxfiles' => -1, 'accepted_types' => '*', 'return_types' => FILE_INTERNAL | FILE_REFERENCE);
 
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
 
