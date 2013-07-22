@@ -631,6 +631,11 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_restart_browser_after = 7200;     // Restarts the browser session after 2 hours
 //
+// All this page's extra Moodle settings are compared against a white list of allowed settings
+// (the basic and behat_* ones) to avoid problems with production environments. This setting can be
+// used to expand the default white list with an array of extra settings.
+// Example:
+//   $CFG->behat_extraallowedsettings = array('logsql', 'dblogerror');
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
