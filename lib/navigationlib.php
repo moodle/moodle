@@ -1266,7 +1266,8 @@ class global_navigation extends navigation_node {
         // Remove any empty root nodes
         foreach ($this->rootnodes as $node) {
             // Dont remove the home node
-            if ($node->key !== 'home' && !$node->has_children()) {
+            /** @var navigation_node $node */
+            if ($node->key !== 'home' && !$node->has_children() && !$node->isactive) {
                 $node->remove();
             }
         }
