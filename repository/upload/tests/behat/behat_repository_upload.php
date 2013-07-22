@@ -65,10 +65,10 @@ class behat_repository_upload extends behat_files {
         $noformexception = new ExpectationException('The upload file form is not ready', $this->getSession());
         $this->find(
             'xpath',
-            "//div[contains(concat(' ', @class, ' '), ' file-picker ')]" .
-                "[contains(concat(' ', @class, ' '), ' repository_upload ')]" .
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' file-picker ')]" .
+                "[contains(concat(' ', normalize-space(@class), ' '), ' repository_upload ')]" .
                 "/descendant::div[@class='fp-content']" .
-                "/descendant::div[contains(concat(' ', @class, ' '), ' fp-upload-form ')]" .
+                "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-upload-form ')]" .
                 "/descendant::form",
             $noformexception
         );

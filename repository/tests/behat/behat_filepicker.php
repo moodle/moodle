@@ -63,7 +63,7 @@ class behat_filepicker extends behat_files {
         $dialoginput = $this->find('css', '.fp-mkdir-dlg-text input');
         $dialoginput->setValue($foldername);
 
-        $this->getSession()->getPage()->pressButton('Create folder');
+        $this->getSession()->getPage()->pressButton(get_string('makeafolder'));
 
         // Wait until the process finished and modal windows are hidden.
         $this->wait_until_return_to_form();
@@ -92,6 +92,8 @@ class behat_filepicker extends behat_files {
         // Just in case there is any contents refresh in progress.
         $this->wait_until_contents_are_updated($fieldnode);
 
+        $folderliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($foldername);
+
         // We look both in the pathbar and in the contents.
         try {
 
@@ -99,8 +101,8 @@ class behat_filepicker extends behat_files {
             $folder = $this->find(
                 'xpath',
                 "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-folder ')]" .
-                    "/descendant::div[contains(concat(' ', @class, ' '), ' fp-filename ')]" .
-                    "[normalize-space(.)='" . $foldername . "']",
+                    "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-filename ')]" .
+                    "[normalize-space(.)=$folderliteral]",
                 $exception,
                 $fieldnode
             );
@@ -110,7 +112,7 @@ class behat_filepicker extends behat_files {
             $folder = $this->find(
                 'xpath',
                 "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-path-folder-name ')]" .
-                    "[normalize-space(.)='" . $foldername . "']",
+                    "[normalize-space(.)=$folderliteral]",
                 $exception,
                 $fieldnode
             );

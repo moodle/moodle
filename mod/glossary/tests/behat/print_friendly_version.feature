@@ -34,7 +34,7 @@ Feature: A teacher can choose whether to provide a printer-friendly glossary ent
       | Concept | Just a test concept |
       | Definition | Concept definition |
     Then "Printer-friendly version" "link" should exists
-    And "//*[contains(concat(' ', @class, ' '), ' printicon ')]/descendant::a[contains(@href, 'print.php')]" "xpath_element" should exists
+    And "//span[contains(concat(' ', normalize-space(@class), ' '), ' printicon ')]/descendant::a[contains(@href, 'print.php')]" "xpath_element" should exists
     And I follow "Printer-friendly version"
     And I should see "Just a test concept"
 
@@ -51,4 +51,4 @@ Feature: A teacher can choose whether to provide a printer-friendly glossary ent
       | Concept | Just a test concept |
       | Definition | Concept definition |
     Then "Printer-friendly version" "link" should not exists
-    And "//*[contains(concat(' ', @class, ' '), ' printicon ')]/descendant::a[contains(@href, 'print.php')]" "xpath_element" should not exists
+    And "//span[contains(concat(' ', normalize-space(@class), ' '), ' printicon ')]/descendant::a[contains(@href, 'print.php')]" "xpath_element" should not exists
