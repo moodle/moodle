@@ -65,6 +65,10 @@ li.feedback_item_radio_v_right{
 	display:block;
 }
 
+div.feedback_items label{
+    display: inline;
+}
+
 div.feedback_item_captcha_text_left,
 div.feedback_item_captcha_img_left {
 	display:inline;
