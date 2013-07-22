@@ -1744,7 +1744,6 @@ class YUI_config {
  */
 function js_reset_all_caches() {
     global $CFG;
-    require_once("$CFG->libdir/filelib.php");
 
     $next = time();
     if (isset($CFG->jsrev) and $next <= $CFG->jsrev and $CFG->jsrev - $next < 60*60) {
@@ -1755,5 +1754,4 @@ function js_reset_all_caches() {
     }
 
     set_config('jsrev', $next);
-    fulldelete("$CFG->cachedir/js");
 }

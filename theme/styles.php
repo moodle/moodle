@@ -87,7 +87,7 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     die('Theme was not found, sorry.');
 }
 
-$candidatedir = "$CFG->cachedir/theme/$rev/$themename/css";
+$candidatedir = "$CFG->localcachedir/theme/$rev/$themename/css";
 $etag = "$rev/$themename/$type";
 $candidatename = $type;
 if (!$usesvg) {
@@ -148,7 +148,7 @@ if ($themerev <= 0 or $themerev != $rev) {
     $etag = sha1($etag);
 }
 
-make_cache_directory('theme', false);
+make_localcache_directory('theme', false);
 
 if ($type === 'editor') {
     $cssfiles = $theme->editor_css_files();

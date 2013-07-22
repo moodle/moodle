@@ -1467,12 +1467,17 @@ function install_core($version, $verbose) {
     global $CFG, $DB;
 
     // We can not call purge_all_caches() yet, make sure the temp and cache dirs exist and are empty.
-    make_cache_directory('', true);
     remove_dir($CFG->cachedir.'', true);
-    make_temp_directory('', true);
+    make_cache_directory('', true);
+
+    remove_dir($CFG->localcachedir.'', true);
+    make_localcache_directory('', true);
+
     remove_dir($CFG->tempdir.'', true);
-    make_writable_directory($CFG->dataroot.'/muc', true);
+    make_temp_directory('', true);
+
     remove_dir($CFG->dataroot.'/muc', true);
+    make_writable_directory($CFG->dataroot.'/muc', true);
 
     try {
         set_time_limit(600);

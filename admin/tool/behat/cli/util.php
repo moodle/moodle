@@ -154,6 +154,7 @@ $CFG->jsrev = 1;
 
 // Unset cache and temp directories to reset them again with the new $CFG->dataroot.
 unset($CFG->cachedir);
+unset($CFG->localcachedir);
 unset($CFG->tempdir);
 
 // Continues setup.

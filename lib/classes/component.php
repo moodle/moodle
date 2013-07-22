@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class core_component {
     /** @var array list of ignored directories - watch out for auth/db exception */
-    protected static $ignoreddirs = array('CVS'=>true, '_vti_cnf'=>true, 'simpletest'=>true, 'db'=>true, 'yui'=>true, 'tests'=>true, 'classes'=>true);
+    protected static $ignoreddirs = array('CVS'=>true, '_vti_cnf'=>true, 'simpletest'=>true, 'db'=>true, 'yui'=>true, 'tests'=>true, 'classes'=>true, 'fonts'=>true);
     /** @var array list plugin types that support subplugins, do not add more here unless absolutely necessary */
     protected static $supportsubplugins = array('mod', 'editor', 'local');
 
