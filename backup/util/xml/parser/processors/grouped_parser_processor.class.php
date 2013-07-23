@@ -42,7 +42,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
 
     protected $groupedpaths; // Paths we are requesting grouped
     protected $currentdata;  // Where we'll be acummulating data
-    
+
     /**
      * Keep cache of parent directory paths for XML parsing.
      * @var array
@@ -189,7 +189,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
                 // are grouped near each other. eg; /question_bank/question_category/question/element. After keeping
                 // question_bank paths in the cache when we move to another area and the question_bank cache is not
                 // useful any longer.
-                $this->parentcache = array_slice($this->parentcache, 200, null, true); 
+                $this->parentcache = array_slice($this->parentcache, 200, null, true);
                 $this->parentcacheavailablesize += 200;
             }
         }
