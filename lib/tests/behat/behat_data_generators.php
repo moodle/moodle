@@ -94,8 +94,13 @@ class behat_data_generators extends behat_base {
 
         ),
         'system role assigns' => array(
-            'datagenerator' => 'role_assign',
+            'datagenerator' => 'system_role_assign',
             'required' => array('user', 'role'),
+            'switchids' => array('user' => 'userid', 'role' => 'roleid')
+        ),
+        'role assigns' => array(
+            'datagenerator' => 'role_assign',
+            'required' => array('user', 'role', 'contextlevel', 'reference'),
             'switchids' => array('user' => 'userid', 'role' => 'roleid')
         ),
         'group members' => array(
@@ -238,12 +243,17 @@ class behat_data_generators extends behat_base {
     }
 
     /**
-     * Assigns a role to a user at system level.
+     * Assigns a role to a user at system context
+     *
+     * Used by "system role assigns" can be deleted when
+     * system role assign will be deprecated in favour of
+     * "role assigns"
+     *
      * @throws Exception
      * @param array $data
      * @return void
      */
-    protected function process_role_assign($data) {
+    protected function process_system_role_assign($data) {
 
         if (empty($data['roleid'])) {
             throw new Exception('\'system role assigns\' requires the field \'role\' to be specified');
@@ -254,7 +264,39 @@ class behat_data_generators extends behat_base {
         }
 
         $context = context_system::instance();
-        role_assign($data['roleid'], $data['userid'], $context->id);
+
+        $this->datagenerator->role_assign($data['roleid'], $data['userid'], $context->id);
+    }
+
+    /**
+     * Assigns a role to a user at the specified context
+     *
+     * @throws Exception
+     * @param array $data
+     * @return void
+     */
+    protected function process_role_assign($data) {
+
+        if (empty($data['roleid'])) {
+            throw new Exception('\'role assigns\' requires the field \'role\' to be specified');
+        }
+
+        if (!isset($data['userid'])) {
+            throw new Exception('\'role assigns\' requires the field \'user\' to be specified');
+        }
+
+        if (empty($data['contextlevel'])) {
+            throw new Exception('\'role assigns\' requires the field \'contextlevel\' to be specified');
+        }
+
+        if (!isset($data['reference'])) {
+            throw new Exception('\'role assigns\' requires the field \'reference\' to be specified');
+        }
+
+        // Getting the context id.
+        $context = $this->get_context($data['contextlevel'], $data['reference']);
+
+        $this->datagenerator->role_assign($data['roleid'], $data['userid'], $context->id);
     }
 
     /**
@@ -353,4 +395,67 @@ class behat_data_generators extends behat_base {
         }
         return $id;
     }
+
+    /**
+     * Gets the internal context id from the context reference.
+     *
+     * The context reference changes depending on the context
+     * level, it can be the system, a user, a category, a course or
+     * a module.
+     *
+     * @throws Exception
+     * @param string $levelname The context level string introduced by the test writer
+     * @param string $contextref The context reference introduced by the test writer
+     * @return context
+     */
+    protected function get_context($levelname, $contextref) {
+        global $DB;
+
+        // Getting context levels and names (we will be using the English ones as it is the test site language).
+        $contextlevels = context_helper::get_all_levels();
+        $contextnames = array();
+        foreach ($contextlevels as $level => $classname) {
+            $contextnames[context_helper::get_level_name($level)] = $level;
+        }
+
+        if (empty($contextnames[$levelname])) {
+            throw new Exception('The specified "' . $levelname . '" context level does not exist');
+        }
+        $contextlevel = $contextnames[$levelname];
+
+        // Return it, we don't need to look for other internal ids.
+        if ($contextlevel == CONTEXT_SYSTEM) {
+            return context_system::instance();
+        }
+
+        switch ($contextlevel) {
+
+            case CONTEXT_USER:
+                $instanceid = $DB->get_field('user', 'id', array('username' => $contextref));
+                break;
+
+            case CONTEXT_COURSECAT:
+                $instanceid = $DB->get_field('course_categories', 'id', array('idnumber' => $contextref));
+                break;
+
+            case CONTEXT_COURSE:
+                $instanceid = $DB->get_field('course', 'id', array('shortname' => $contextref));
+                break;
+
+            case CONTEXT_MODULE:
+                $instanceid = $DB->get_field('course_modules', 'id', array('idnumber' => $contextref));
+                break;
+
+            default:
+                break;
+        }
+
+        $contextclass = $contextlevels[$contextlevel];
+        if (!$context = $contextclass::instance($instanceid, IGNORE_MISSING)) {
+            throw new Exception('The specified "' . $contextref . '" context reference does not exist');
+        }
+
+        return $context;
+    }
+
 }

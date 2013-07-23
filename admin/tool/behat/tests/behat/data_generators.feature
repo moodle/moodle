@@ -79,6 +79,34 @@ Feature: Set up contextual data for tests
     And I follow "Course 1"
     Then I should see "Topic 1"
 
+  Scenario: Add role assigns
+    Given the following "users" exists:
+      | username | firstname | lastname | email |
+      | user1 | User | 1 | user1@moodlemoodle.com |
+      | user2 | User | 2 | user2@moodlemoodle.com |
+      | user3 | User | 3 | user3@moodlemoodle.com |
+    And the following "categories" exists:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+    And the following "courses" exists:
+      | fullname | shortname | category |
+      | Course 1 | C1 | CAT1 |
+    And the following "role assigns" exists:
+      | user  | role           | contextlevel | reference |
+      | user1 | manager        | System       |           |
+      | user2 | editingteacher | Category     | CAT1      |
+      | user3 | editingteacher | Course       | C1        |
+    When I log in as "user1"
+    Then I should see "Front page settings"
+    And I log out
+    And I log in as "user2"
+    And I follow "Course 1"
+    And I should see "Turn editing on"
+    And I log out
+    And I log in as "user3"
+    And I follow "Course 1"
+    And I should see "Turn editing on"
+
   @javascript
   Scenario: Add relations between users and groups
     Given the following "users" exists:
