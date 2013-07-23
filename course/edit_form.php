@@ -99,11 +99,14 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'visible', get_string('visible'), $choices);
         $mform->addHelpButton('visible', 'visible');
         $mform->setDefault('visible', $courseconfig->visible);
-        if (!has_capability('moodle/course:visibility', $context)) {
-            $mform->hardFreeze('visible');
-            if (!empty($course->id)) {
+        if (!empty($course->id)) {
+            if (!has_capability('moodle/course:visibility', $coursecontext)) {
+                $mform->hardFreeze('visible');
                 $mform->setConstant('visible', $course->visible);
-            } else {
+            }
+        } else {
+            if (!guess_if_creator_will_have_course_capability('moodle/course:visibility', $categorycontext)) {
+                $mform->hardFreeze('visible');
                 $mform->setConstant('visible', $courseconfig->visible);
             }
         }
