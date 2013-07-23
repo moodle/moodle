@@ -150,6 +150,12 @@ input#id_externalurl {
 .mform .fitem div.fitemtitle {
     .form-horizontal .control-label
 }
+.dir-rtl {
+    .form-item .form-label,
+    .mform .fitem div.fitemtitle {
+        float:right;
+    }
+}
 .form-defaultinfo,
 .form-label .form-shortname {
     .muted;
@@ -340,6 +346,9 @@ input[type="checkbox"] {
 }
 .form-item .form-label label {
     margin-bottom: 0;
+}
+.dir-rtl .form-item .form-label label {
+     text-align:left;
 }
 .felement.ffilepicker {
     margin-top: 5px;
