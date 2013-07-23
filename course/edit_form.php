@@ -105,7 +105,7 @@ class course_edit_form extends moodleform {
                 $mform->setConstant('visible', $course->visible);
             }
         } else {
-            if (!will_have_course_capability('moodle/course:visibility', $categorycontext)) {
+            if (!guess_if_creator_will_have_course_capability('moodle/course:visibility', $categorycontext)) {
                 $mform->hardFreeze('visible');
                 $mform->setConstant('visible', $courseconfig->visible);
             }

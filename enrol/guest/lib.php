@@ -184,7 +184,7 @@ class enrol_guest_plugin extends enrol_plugin {
 
         $header = $this->get_instance_name($instance);
         if (!$i) {
-            $config = will_have_course_capability('enrol/guest:config', $context);
+            $config = guess_if_creator_will_have_course_capability('enrol/guest:config', $context);
         } else {
             $config = has_capability('enrol/guest:config', $context);
         }

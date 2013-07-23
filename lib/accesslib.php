@@ -560,7 +560,7 @@ function has_all_capabilities(array $capabilities, context $context, $user = nul
  *
  * @throws coding_exception if different type of course submitted
  */
-function will_have_course_capability($capability, context $context, $user = null) {
+function guess_if_creator_will_have_course_capability($capability, context $context, $user = null) {
     global $CFG;
 
     if ($context->contextlevel != CONTEXT_COURSE and $context->contextlevel != CONTEXT_COURSECAT) {
