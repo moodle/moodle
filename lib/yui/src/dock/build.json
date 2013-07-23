@@ -11,9 +11,9 @@
         "dockeditem.js"
       ]
     },
-    "moodle-core-dockloader": {
+    "moodle-core-dock-loader": {
         "jsfiles": [
-            "dockloader.js"
+            "loader.js"
         ]
     }
   }
