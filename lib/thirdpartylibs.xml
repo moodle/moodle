@@ -207,21 +207,21 @@
     <location>jquery</location>
     <name>jQuery</name>
     <license>MIT</license>
-    <version>1.9.1</version>
+    <version>1.10.2</version>
     <licenseversion></licenseversion>
   </library>
   <library>
     <location>jquery</location>
     <name>jQuery Migrate</name>
     <license>MIT</license>
-    <version>1.1.1</version>
+    <version>1.2.1</version>
     <licenseversion></licenseversion>
   </library>
   <library>
     <location>jquery</location>
     <name>jQuery UI</name>
     <license>MIT</license>
-    <version>1.10.2</version>
+    <version>1.10.3</version>
     <licenseversion></licenseversion>
   </library>
   <library>
