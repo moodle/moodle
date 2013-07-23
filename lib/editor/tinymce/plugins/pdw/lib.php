@@ -34,10 +34,10 @@ class tinymce_pdw extends editor_tinymce_plugin {
     protected function update_init_params(array &$params, context $context,
             array $options = null) {
 
-        $rowsnumber = $this->count_rows($params);
+        $rowsnumber = $this->count_button_rows($params);
         if ($rowsnumber > 1) {
             // Add button before 'undo' in advancedbuttons1.
-            $this->add_button_before($params, 1, ' | ', '');
+            $this->add_button_before($params, 1, '|', '');
             $this->add_button_before($params, 1, 'pdw_toggle', '');
             $params['pdw_toggle_on'] = 1;
             $params['pdw_toggle_toolbars'] = join(',', range(2, $rowsnumber));
@@ -48,19 +48,11 @@ class tinymce_pdw extends editor_tinymce_plugin {
     }
 
     /**
-     * Counts the number of rows in TinyMCE editor
+     * Gets the order in which to run this plugin
      *
-     * @param array $params TinyMCE init parameters array
-     * @return int the maximum existing row number
+     * We need pdw plugin to be added the last, so nothing is added before the button.
      */
-    private function count_rows(array &$params) {
-        for($i = 10; $i >= 1; $i--) {
-            $field = 'theme_advanced_buttons' . $i;
-            if (isset($params[$field])) {
-                return $i;
-            }
-        }
-        // This should not happen.
-        return 1;
+    protected function get_sort_order() {
+        return 100000;
     }
 }
