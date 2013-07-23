@@ -1253,11 +1253,11 @@ class question_type extends default_questiontype {
         static $addScript = true;
 
         if (empty($question->options)) {
-            return;
+            return; // shouldn't happen !!
         }
 
         if (empty($question->options->answers)) {
-            return ''; // shouldn't happen !!
+            return; // shouldn't happen !!
         }
 
         if ($question->options->studentsee==0) { // all items
