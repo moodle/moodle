@@ -57,7 +57,7 @@ class cachestore_memcached_addinstance_form extends cachestore_addinstance_form 
         $form->addElement('select', 'serialiser', get_string('useserialiser', 'cachestore_memcached'), $serialiseroptions);
         $form->addHelpButton('serialiser', 'useserialiser', 'cachestore_memcached');
         $form->setDefault('serialiser', Memcached::SERIALIZER_PHP);
-        $form->setType('serialiser', PARAM_NUMBER);
+        $form->setType('serialiser', PARAM_INT);
 
         $form->addElement('text', 'prefix', get_string('prefix', 'cachestore_memcached'), array('size' => 16));
         $form->setType('prefix', PARAM_ALPHANUM);
