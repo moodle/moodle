@@ -444,7 +444,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * Generates an instance of the cache store that can be used for testing.
      *
      * @param cache_definition $definition
-     * @return false
+     * @return cachestore_memcached|false
      */
     public static function initialise_test_instance(cache_definition $definition) {
 
