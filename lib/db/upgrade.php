@@ -2306,5 +2306,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013071500.02);
     }
 
+    if ($oldversion < 2013072600.01) {
+        upgrade_mssql_nvarcharmax();
+        upgrade_mssql_varbinarymax();
+
+        upgrade_main_savepoint(true, 2013072600.01);
+    }
+
     return true;
 }

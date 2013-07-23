@@ -221,10 +221,10 @@ class mssql_sql_generator extends sql_generator {
                 $dbtype .= '(' . $xmldb_length . ')';
                 break;
             case XMLDB_TYPE_TEXT:
-                $dbtype = 'NTEXT';
+                $dbtype = 'NVARCHAR(MAX)';
                 break;
             case XMLDB_TYPE_BINARY:
-                $dbtype = 'IMAGE';
+                $dbtype = 'VARBINARY(MAX)';
                 break;
             case XMLDB_TYPE_DATETIME:
                 $dbtype = 'DATETIME';
