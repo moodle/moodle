@@ -558,7 +558,7 @@ function has_all_capabilities(array $capabilities, context $context, $user = nul
  * @param integer|stdClass $user A user id or object. By default (null) checks the permissions of the current user.
  * @return boolean true if the user will have this capability.
  *
- * @throws coding_exception if different type of course submitted
+ * @throws coding_exception if different type of context submitted
  */
 function guess_if_creator_will_have_course_capability($capability, context $context, $user = null) {
     global $CFG;
