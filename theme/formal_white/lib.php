@@ -150,9 +150,13 @@ function formal_white_set_trendcolor($css, $trendcolor) {
     $tag = urlencode('__setting_trendcolor__'); // urlencode is useless but it is correct to put it here
     $css = str_replace($tag, $trendcolor, $css);
 
-    // of the basis of the general choosed trend, I need the right background color.
+    // of the basis of the general choosed trend, I need some colour definition.
     switch ($trendcolor) {
         case 'blueberry':
+            // .courses .coursebox
+            $tag = '[[setting:hovercolor]]';
+            $css = str_replace($tag, '#CEE5FD', $css);
+
             // page background
             $tag = '[[setting:pagebackground]]';
             $css = str_replace($tag, '#DAF1FF', $css);
@@ -162,6 +166,10 @@ function formal_white_set_trendcolor($css, $trendcolor) {
             $css = str_replace($tag, '#CDE2F3', $css);
             break;
         case 'lemon':
+            // .courses .coursebox
+            $tag = '[[setting:hovercolor]]';
+            $css = str_replace($tag, '#FFEA68', $css);
+
             // page background
             $tag = '[[setting:pagebackground]]';
             $css = str_replace($tag, '#FFEB9A', $css);
@@ -171,6 +179,10 @@ function formal_white_set_trendcolor($css, $trendcolor) {
             $css = str_replace($tag, '#F7DA41', $css);
             break;
         case 'lime':
+            // .courses .coursebox
+            $tag = '[[setting:hovercolor]]';
+            $css = str_replace($tag, '#EBEDB1', $css);
+
             // page background
             $tag = '[[setting:pagebackground]]';
             $css = str_replace($tag, '#F0F5BB', $css);
@@ -180,6 +192,10 @@ function formal_white_set_trendcolor($css, $trendcolor) {
             $css = str_replace($tag, '#E2E499', $css);
             break;
         case 'mink':
+            // .courses .coursebox
+            $tag = '[[setting:hovercolor]]';
+            $css = str_replace($tag, '#E3DFD4', $css);
+
             // page background
             $tag = '[[setting:pagebackground]]';
             $css = str_replace($tag, '#EFEFEF', $css);
@@ -189,6 +205,10 @@ function formal_white_set_trendcolor($css, $trendcolor) {
             $css = str_replace($tag, '#E3DFD4', $css);
             break;
         case 'orange':
+            // .courses .coursebox
+            $tag = '[[setting:hovercolor]]';
+            $css = str_replace($tag, '#FFCF88', $css);
+
             // page background
             $tag = '[[setting:pagebackground]]';
             $css = str_replace($tag, '#FFD46C', $css);
@@ -198,6 +218,10 @@ function formal_white_set_trendcolor($css, $trendcolor) {
             $css = str_replace($tag, '#FDC06D', $css);
             break;
         case 'peach':
+            // .courses .coursebox
+            $tag = '[[setting:hovercolor]]';
+            $css = str_replace($tag, '#FFCEB8', $css);
+
             // page background
             $tag = '[[setting:pagebackground]]';
             $css = str_replace($tag, '#FCD3BC', $css);
@@ -207,6 +231,10 @@ function formal_white_set_trendcolor($css, $trendcolor) {
             $css = str_replace($tag, '#F7C099', $css);
             break;
         case 'silver':
+            // .courses .coursebox
+            $tag = '[[setting:hovercolor]]';
+            $css = str_replace($tag, '#E0DFDD', $css);
+
             // page background
             $tag = '[[setting:pagebackground]]';
             $css = str_replace($tag, '#EFF0F2', $css);
