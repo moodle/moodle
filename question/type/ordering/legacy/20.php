@@ -1241,38 +1241,171 @@ class question_type extends default_questiontype {
     }
 
     /**
-    * Prints the main content of the question including any interactions
-    *
-    * This function prints the main content of the question including the
-    * interactions for the question in the state given. The last graded responses
-    * are printed or indicated and the current responses are selected or filled in.
-    * Any names (eg. for any form elements) are prefixed with $question->name_prefix.
-    * This method is called from the print_question method.
-    * @param object $question The question to be rendered. Question type
-    *                         specific information is included. The name
-    *                         prefix for any named elements is in ->name_prefix.
-    * @param object $state    The state to render the question in. The grading
-    *                         information is in ->grade, ->raw_grade and
-    *                         ->penalty. The current responses are in
-    *                         ->responses. This is an associative array (or the
-    *                         empty string or null in the case of no responses
-    *                         submitted). The last graded state is in
-    *                         ->last_graded (hence the most recently graded
-    *                         responses are in ->last_graded->responses). The
-    *                         question type specific information is also
-    *                         included.
-    *                         The state is passed by reference because some adaptive
-    *                         questions may want to update it during rendering
-    * @param object $cmoptions
-    * @param object $options  An object describing the rendering options.
-    */
+     * print_question_formulation_and_controls
+     *
+     * this is only for Moodle 2.0, Moodle >= 2.1 uses "formulation_and_controls()" method
+     * of "qtype_ordering_renderer" class in /question/type/ordering/renderer.php
+     **/
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
-        /* This default implementation prints an error and must be overridden
-        by all question type implementations, unless the default implementation
-        of print_question has been overridden. */
-        global $OUTPUT;
-        echo $OUTPUT->notification('Error: Question formulation and input controls has not'
-               .'  been implemented for question type '.$this->name());
+        global $CFG, $DB;
+
+        static $addStyle = true;
+        static $addScript = true;
+
+        if (empty($question->options)) {
+            return;
+        }
+
+        if (empty($question->options->answers)) {
+            return ''; // shouldn't happen !!
+        }
+
+        if ($question->options->studentsee==0) { // all items
+            $question->options->studentsee = count($question->options->answers);
+        } else {
+            // a nasty hack so that "studentsee" is the same
+            // as what is displayed by edit_ordering_form.php
+            $question->options->studentsee += 2;
+        }
+
+        switch ($question->options->logical) {
+
+            case 0: // all
+                $answerids = array_keys($question->options->answers);
+                break;
+
+            case 1: // random subset
+                $answerids = array_rand($question->options->answers, $question->options->studentsee);
+                break;
+
+            case 2: // contiguous subset
+                if (count($question->options->answers) > $question->options->studentsee) {
+                    $offset = mt_rand(0, count($question->options->answers) - $question->options->studentsee);
+                    $question->options->answers = array_slice($question->options->answers, $offset, $question->options->studentsee, true);
+                }
+                $answerids = array_keys($question->options->answers);
+                break;
+        }
+        shuffle($answerids);
+
+        $formatoptions = (object)array('noclean' => true, 'para' => true);
+        $questiontext = format_text($question->questiontext, $question->questiontextformat, $formatoptions, $cmoptions->course);
+
+        $output = '';
+        $output .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery.js'));
+        $output .= html_writer::tag('script', '', array('type'=>'text/javascript', 'src'=>$CFG->wwwroot.'/question/type/ordering/js/jquery-ui.js'));
+
+        $style = "\n";
+        $style .= "ul.sortable".$question->id." li {\n";
+        $style .= "    position: relative;\n";
+        $style .= "}\n";
+        if ($addStyle) {
+            $addStyle = false; // only add style once
+            $style .= "ul.boxy {\n";
+            $style .= "    border: 1px solid #ccc;\n";
+            $style .= "    float: left;\n";
+            $style .= "    font-family: Arial, sans-serif;\n";
+            $style .= "    font-size: 13px;\n";
+            $style .= "    list-style-type: none;\n";
+            $style .= "    margin: 0px;\n";
+            $style .= "    margin-left: 5px;\n";
+            $style .= "    padding: 4px 4px 0 4px;\n";
+            $style .= "    width: 360px;\n";
+            $style .= "}\n";
+            $style .= "ul.boxy li {\n";
+            $style .= "    background-color: #eeeeee;\n";
+            $style .= "    border: 1px solid #cccccc;\n";
+            $style .= "    border-image: initial;\n";
+            $style .= "    cursor: move;\n";
+            $style .= "    list-style-type: none;\n";
+            $style .= "    margin-bottom: 1px;\n";
+            $style .= "    min-height: 20px;\n";
+            $style .= "    padding: 8px 2px;\n";
+            $style .= "}\n";
+        }
+        $output .= html_writer::tag('style', $style, array('type' => 'text/css'));
+
+        $script = "\n";
+        $script .= "//<![CDATA[\n";
+        $script .= "$(function() {\n";
+        $script .= "    $('#sortable".$question->id."').sortable({\n";
+        $script .= "        update: function(event, ui) {\n";
+        $script .= "            var ItemsOrder = $(this).sortable('toArray').toString();\n";
+        $script .= "            $('#q".$question->id."').attr('value', ItemsOrder);\n";
+        $script .= "        }\n";
+        $script .= "    });\n";
+        $script .= "    $('#sortable".$question->id."').disableSelection();\n";
+        $script .= "});\n";
+        $script .= "$(document).ready(function() {\n";
+        $script .= "    var ItemsOrder = $('#sortable".$question->id."').sortable('toArray').toString();\n";
+        $script .= "    $('#q".$question->id."').attr('value', ItemsOrder);\n";
+        $script .= "});\n";
+        $script .= "//]]>\n";
+        $output .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
+
+        $output .= html_writer::tag('div', stripslashes($questiontext), array('class' => 'qtext'));
+        $output .= html_writer::start_tag('div', array('class' => 'ablock'));
+        $output .= html_writer::start_tag('div', array('class' => 'answer'));
+        $output .= html_writer::start_tag('ul', array('class' => 'boxy', 'id' => 'sortable'.$question->id));
+
+        // generate ordering items
+        foreach ($answerids as $i => $answerid) {
+            // the original "id" revealed the correct order of the answers
+            // because $answer->fraction holds the correct order number
+            // $id = 'ordering_item_'.$answerid.'_'.intval($question->options->answers[$answerid]->fraction);
+            $id = 'ordering_item_'.md5($CFG->passwordsaltmain.$question->options->answers[$answerid]->answer);
+            $params = array('class' => 'ui-state-default', 'id' => $id);
+            $output .= html_writer::tag('li', $question->options->answers[$answerid]->answer, $params);
+        }
+
+        $output .= html_writer::end_tag('ul');
+        $output .= html_writer::end_tag('div'); // answer
+        $output .= html_writer::end_tag('div'); // ablock
+
+        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'q'.$question->id, 'id' => 'q'.$question->id, 'value' => '9'));
+        $output .= html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'answer', 'value' => ''));
+
+        $output .= html_writer::tag('div', '', array('style' => 'clear:both;'));
+
+        $script = "\n";
+        $script .= "//<![CDATA[\n";
+        if ($addScript) {
+            $addScript = false; // only add these functions once
+            $script .= "function orderingTouchHandler(event) {\n";
+            $script .= "    var touch = event.changedTouches[0];\n";
+            $script .= "    switch (event.type) {\n";
+            $script .= "        case 'touchstart': var type = 'mousedown'; break;\n";
+            $script .= "        case 'touchmove': var type = 'mousemove'; event.preventDefault(); break;\n";
+            $script .= "        case 'touchend': var type = 'mouseup'; break;\n";
+            $script .= "        default: return;\n";
+            $script .= "    }\n";
+            $script .= "    var simulatedEvent = document.createEvent('MouseEvent');\n";
+            $script .= "    // initMouseEvent(type, canBubble, cancelable, view, clickCount, screenX, screenY, clientX, clientY, ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget)\n";
+            $script .= "    simulatedEvent.initMouseEvent(type, true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0, null);\n";
+            $script .= "    touch.target.dispatchEvent(simulatedEvent);\n";
+            $script .= "    event.preventDefault();\n";
+            $script .= "}\n";
+            $script .= "function orderingInit(sortableid) {\n";
+            $script .= "    var obj = document.getElementById(sortableid);\n";
+            $script .= "    if (obj) {\n";
+            $script .= "        for (var i=0; i<obj.childNodes.length; i++) {\n";
+            $script .= "            obj.childNodes.item(i).addEventListener('touchstart', orderingTouchHandler, false);\n";
+            $script .= "            obj.childNodes.item(i).addEventListener('touchmove', orderingTouchHandler, false);\n";
+            $script .= "            obj.childNodes.item(i).addEventListener('touchend', orderingTouchHandler, false);\n";
+            $script .= "            obj.childNodes.item(i).addEventListener('touchcancel', orderingTouchHandler, false);\n";
+            $script .= "        }\n";
+            $script .= "        obj = null;\n";
+            $script .= "    } else {\n";
+            $script .= "        // try again in 1/2 a second - shouldn't be necessary !!\n";
+            $script .= "        setTimeout(new Function('orderingInit(".'"'."'+sortableid+'".'"'.")'), 500);\n";
+            $script .= "    }\n";
+            $script .= "}\n";
+        }
+        $script .= "orderingInit('sortable".$question->id."');\n";
+        $script .= "//]]>\n";
+        $output .= html_writer::tag('script', $script, array('type' => 'text/javascript'));
+
+        echo $output;
     }
 
     function check_file_access($question, $state, $options, $contextid, $component,
