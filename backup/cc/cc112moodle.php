@@ -66,7 +66,7 @@ class cc112moodle extends cc2moodle {
         $cdir = static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'course_files';
 
         if (!file_exists($cdir)) {
-            mkdir($cdir);
+            mkdir($cdir, $CFG->directorypermissions, true);
         }
 
         $sheet_base = static::loadsheet(SHEET_BASE);

@@ -141,7 +141,7 @@ class imscc11_backup_convert extends backup_execution_step {
 
         $tempdir = $CFG->dataroot . '/temp/backup/' . uniqid('', true);
 
-        if (mkdir($tempdir, 0777, true)) {
+        if (mkdir($tempdir, $CFG->directorypermissions, true)) {
 
             cc_convert_moodle2::convert($basepath, $tempdir);
             //Switch the directories

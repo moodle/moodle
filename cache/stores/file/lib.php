@@ -720,6 +720,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
 
         // Finally rename the temp file to the desired file, returning the true|false result.
         $result = rename($tempfile, $file);
+        @chmod($file, $this->cfg->filepermissions);
         if (!$result) {
             // Failed to rename, don't leave files lying around.
             @unlink($tempfile);

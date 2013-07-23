@@ -626,6 +626,7 @@ function is_dataroot_insecure($fetchtest=false) {
     $testfile = $CFG->dataroot.'/diag/public.txt';
     if (!file_exists($testfile)) {
         file_put_contents($testfile, 'test file, do not delete');
+        @chmod($testfile, $CFG->filepermissions);
     }
     $teststr = trim(file_get_contents($testfile));
     if (empty($teststr)) {

@@ -266,7 +266,7 @@ class entities {
             $fpath = $dpath . DIRECTORY_SEPARATOR . $rfpath;
 
             if (!file_exists($dpath)) {
-                mkdir($dpath);
+                mkdir($dpath, $CFG->directorypermissions, true);
             }
             //copy the folder.gif file
             $folder_gif = "{$CFG->dirroot}/pix/i/files.gif";
