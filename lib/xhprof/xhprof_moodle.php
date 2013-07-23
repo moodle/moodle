@@ -263,7 +263,14 @@ function profiling_urls($report, $runid, $runid2 = null) {
     return $url;
 }
 
-function profiling_print_run($run, $prevrunid = null) {
+/**
+ * Generate the output to print a profiling run including further actions you can then take.
+ *
+ * @param object $run The profiling run object we are going to display.
+ * @param array $prevreferences A list of run objects to list as comparison targets.
+ * @return string The output to display on the screen for this run.
+ */
+function profiling_print_run($run, $prevreferences = null) {
     global $CFG, $OUTPUT;
 
     $output = '';
@@ -297,13 +304,28 @@ function profiling_print_run($run, $prevrunid = null) {
     // Add link to details
     $strviewdetails = get_string('viewdetails', 'tool_profiling');
     $url = profiling_urls('run', $run->runid);
-    $output.=$OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');' .
-                              'return false;"' . ' title="">' . $strviewdetails . '</a>', 3, 'main profilinglink');
-    // If there is one previous run marked as reference, add link to diff
-    if ($prevrunid) {
-        $strviewdiff = get_string('viewdiff', 'tool_profiling');
-        $url = 'index.php?runid=' . $run->runid . '&amp;runid2=' . $prevrunid . '&amp;listurl=' . urlencode($run->url);
-        $output.=$OUTPUT->heading('<a href="' . $url . '" title="">' . $strviewdiff . '</a>', 3, 'main profilinglink');
+    $output .= $OUTPUT->heading('<a href="' . $url . '" onclick="javascript:window.open(' . "'" . $url . "'" . ');' .
+                                'return false;"' . ' title="">' . $strviewdetails . '</a>', 3, 'main profilinglink');
+
+    // If there are previous run(s) marked as reference, add link to diff.
+    if ($prevreferences) {
+        $table = new html_table();
+        $table->align = array('left', 'left');
+        $table->head = array(get_string('date'), get_string('runid', 'tool_profiling'), get_string('comment', 'tool_profiling'));
+        $table->tablealign = 'center';
+        $table->attributes['class'] = 'flexible generaltable generalbox';
+        $table->colclasses = array('value', 'value', 'value');
+        $table->data = array();
+
+        $output .= $OUTPUT->heading(get_string('viewdiff', 'tool_profiling'), 3, 'main profilinglink');
+
+        foreach ($prevreferences as $reference) {
+            $url = 'index.php?runid=' . $run->runid . '&amp;runid2=' . $reference->runid . '&amp;listurl=' . urlencode($run->url);
+            $row = array(userdate($reference->timecreated), '<a href="' . $url . '" title="">'.$reference->runid.'</a>', $reference->runcomment);
+            $table->data[] = $row;
+        }
+        $output .= $OUTPUT->box(html_writer::table($table), 'profilingrunbox', 'profiling_diffs', true);
+
     }
     // Add link to export this run.
     $strexport = get_string('exportthis', 'tool_profiling');
