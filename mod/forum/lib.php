@@ -1521,10 +1521,6 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
                     continue;
                 }
 
-                if (is_null($modinfo->groups)) {
-                    $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
-                }
-
                 if (!in_array($post->groupid, $modinfo->get_groups($cm->groupingid))) {
                     continue;
                 }
@@ -1910,9 +1906,6 @@ function forum_get_readable_forums($userid, $courseid=0) {
     foreach ($courses as $course) {
 
         $modinfo = get_fast_modinfo($course);
-        if (is_null($modinfo->groups)) {
-            $modinfo->groups = groups_get_user_groups($course->id, $userid);
-        }
 
         if (empty($modinfo->instances['forum'])) {
             // hmm, no forums?
@@ -1936,15 +1929,9 @@ function forum_get_readable_forums($userid, $courseid=0) {
 
          /// group access
             if (groups_get_activity_groupmode($cm, $course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
-                if (is_null($modinfo->groups)) {
-                    $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
-                }
-                if (isset($modinfo->groups[$cm->groupingid])) {
-                    $forum->onlygroups = $modinfo->groups[$cm->groupingid];
-                    $forum->onlygroups[] = -1;
-                } else {
-                    $forum->onlygroups = array(-1);
-                }
+
+                $forum->onlygroups = $modinfo->get_groups($cm->groupingid);
+                $forum->onlygroups[] = -1;
             }
 
         /// hidden timed discussions
@@ -2505,22 +2492,11 @@ function forum_count_discussions($forum, $cm, $course) {
     require_once($CFG->dirroot.'/course/lib.php');
 
     $modinfo = get_fast_modinfo($course);
-    if (is_null($modinfo->groups)) {
-        $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
-    }
 
-    if (array_key_exists($cm->groupingid, $modinfo->groups)) {
-        $mygroups = $modinfo->groups[$cm->groupingid];
-    } else {
-        $mygroups = false; // Will be set below
-    }
+    $mygroups = $modinfo->get_groups($cm->groupingid);
 
     // add all groups posts
-    if (empty($mygroups)) {
-        $mygroups = array(-1=>-1);
-    } else {
-        $mygroups[-1] = -1;
-    }
+    $mygroups[-1] = -1;
 
     list($mygroups_sql, $params) = $DB->get_in_or_equal($mygroups);
     $params[] = $forum->id;
@@ -6074,10 +6050,6 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
     $viewhiddentimed = has_capability('mod/forum:viewhiddentimedposts', $cm_context);
     $accessallgroups = has_capability('moodle/site:accessallgroups', $cm_context);
 
-    if (is_null($modinfo->groups)) {
-        $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
-    }
-
     $printposts = array();
     foreach ($posts as $post) {
 
@@ -6775,22 +6747,11 @@ function forum_tp_count_forum_unread_posts($cm, $course) {
     require_once($CFG->dirroot.'/course/lib.php');
 
     $modinfo = get_fast_modinfo($course);
-    if (is_null($modinfo->groups)) {
-        $modinfo->groups = groups_get_user_groups($course->id, $USER->id);
-    }
 
-    if (array_key_exists($cm->groupingid, $modinfo->groups)) {
-        $mygroups = $modinfo->groups[$cm->groupingid];
-    } else {
-        $mygroups = false; // Will be set below
-    }
+    $mygroups = $modinfo->get_groups($cm->groupingid);
 
     // add all groups posts
-    if (empty($mygroups)) {
-        $mygroups = array(-1=>-1);
-    } else {
-        $mygroups[-1] = -1;
-    }
+    $mygroups[-1] = -1;
 
     list ($groups_sql, $groups_params) = $DB->get_in_or_equal($mygroups);
 
