@@ -53,12 +53,15 @@ class tinymce_managefiles extends editor_tinymce_plugin {
             }
         }
 
-        // Add button after moodlemedia button in advancedbuttons3.
-        $added = $this->add_button_after($params, 3, 'managefiles', 'moodlemedia', false);
-
-        // So, if no moodlemedia, add after 'image'.
-        if (!$added) {
-            $this->add_button_after($params, 3, 'managefiles', 'image');
+        if ($row = $this->find_button($params, 'moodlemedia')) {
+            // Add button after 'moodlemedia' button.
+            $this->add_button_after($params, $row, 'managefiles', 'moodlemedia');
+        } else if ($row = $this->find_button($params, 'image')) {
+            // If 'moodlemedia' is not found add after 'image'.
+            $this->add_button_after($params, $row, 'managefiles', 'image');
+        } else {
+            // OTherwise add button in the end of the last row.
+            $this->add_button_after($params, $this->count_button_rows($params), 'managefiles');
         }
 
         // Add JS file, which uses default name.
