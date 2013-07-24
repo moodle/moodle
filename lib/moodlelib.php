@@ -1220,6 +1220,8 @@ function fix_utf8($value) {
             // Shortcut.
             return $value;
         }
+        // No null bytes expected in our data, so let's remove it.
+        $value = str_replace("\0", '', $value);
 
         // Lower error reporting because glibc throws bogus notices.
         $olderror = error_reporting();
