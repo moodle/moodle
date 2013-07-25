@@ -314,7 +314,9 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
             return $this->path . '/' . $key . '.cache';
         } else {
             // We are using a single subdirectory to achieve 1 level.
-            $subdir = substr($key, 0, 3);
+           // We suffix the subdir so it does not clash with any windows
+           // reserved filenames like 'con'.
+            $subdir = substr($key, 0, 3) . '-cache';
             $dir = $this->path . '/' . $subdir;
             if ($create) {
                 // Create the directory. This function does it recursivily!
