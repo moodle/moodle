@@ -37,15 +37,11 @@ M.mod_chat_ajax.init = function(Y, cfg) {
         init : function(cfg) {
             this.cfg = cfg;
             this.cfg.req_count = this.cfg.req_count || 0;
-            participantswidth = 180;
-            if (Y.one('#input-message').get('docWidth') < 640) {
-                participantswidth = 120;
-            }
             this.layout = new Y.YUI2.widget.Layout({
                 units : [
-                     {position: 'right', width: participantswidth, resize: true, gutter: '1px', scroll: true, body: 'chat-userlist', animate: false},
-                     {position: 'bottom', height: 42, resize: false, body: 'chat-input-area', gutter: '1px', collapse: false, resize: false},
-                     {position: 'center', body: 'chat-messages', gutter: '0px', scroll: true}
+                     {position: 'right', width: 180, resize: true, gutter: '5px', scroll: true, body: 'chat-userlist', animate: false},
+                     {position: 'bottom', height: 42, resize: false, body: 'chat-input-area', gutter: '5px', collapse: false, resize: false},
+                     {position: 'center', body: 'chat-messages', gutter: '5px', scroll: true}
                 ]
             });
 

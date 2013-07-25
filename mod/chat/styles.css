@@ -5,7 +5,6 @@
 .path-mod-chat #messages-list,
 .path-mod-chat #users-list {list-style-type:none;padding:0;margin:0}
 .path-mod-chat #chat-header {overflow: hidden;}
-.path-mod-chat #chat-input-area table.generaltable td.cell {padding:1px;}
 
 /** styles for view.php **/
 #page-mod-chat-view .chatcurrentusers .chatuserdetails {vertical-align: middle;}
@@ -25,8 +24,8 @@
 
 /** YUI Overrides **/
 .path-mod-chat .yui-layout-unit-top {background: #FFE39D;}
-.path-mod-chat .yui-layout-unit-right {background: #FFD46B;}
-.path-mod-chat .yui-layout-unit-bottom {background: #FFCB44;}
+.path-mod-chat .yui-layout-unit-right {border-top: 5px solid white;background: #FFD46B;}
+.path-mod-chat .yui-layout-unit-bottom {border-top: 5px solid white;background: #FFCB44;}
 .path-mod-chat .yui-layout .yui-layout-hd {border:0;}
 .path-mod-chat .yui-layout .yui-layout-unit div.yui-layout-bd {border:0;background: transparent;}
 .path-mod-chat .yui-layout .yui-layout-unit div.yui-layout-unit-right {background: white;}
