@@ -73,7 +73,6 @@ class block_site_main_menu extends block_list {
             $strcancel= get_string('cancel');
             $stractivityclipboard = $USER->activitycopyname;
         }
-        // Casting $course->modinfo to string prevents one notice when the field is null.
         $editbuttons = '';
 
         if ($ismoving) {

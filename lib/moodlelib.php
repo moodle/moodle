@@ -5046,7 +5046,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $oldcourse = new stdClass();
     $oldcourse->id               = $course->id;
     $oldcourse->summary          = '';
-    $oldcourse->modinfo          = null;
+    $oldcourse->cacherev         = 0;
     $oldcourse->legacyfiles      = 0;
     $oldcourse->enablecompletion = 0;
     if (!empty($options['keep_groups_and_groupings'])) {

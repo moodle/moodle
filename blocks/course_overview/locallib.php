@@ -134,7 +134,7 @@ function block_course_overview_get_sorted_courses() {
 
     $limit = block_course_overview_get_max_user_courses();
 
-    $courses = enrol_get_my_courses('id, shortname, fullname, modinfo, sectioncache');
+    $courses = enrol_get_my_courses();
     $site = get_site();
 
     if (array_key_exists($site->id,$courses)) {

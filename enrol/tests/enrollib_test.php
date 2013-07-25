@@ -144,9 +144,9 @@ class core_enrollib_testcase extends advanced_testcase {
         $course = (array)$course;
         $this->assertEquals($basefields, array_keys($course), '', 0, 10, true);
 
-        $courses = enrol_get_all_users_courses($user2->id, false, 'modinfo');
+        $courses = enrol_get_all_users_courses($user2->id, false, 'timecreated');
         $course = reset($courses);
-        $this->assertTrue(property_exists($course, 'modinfo'));
+        $this->assertTrue(property_exists($course, 'timecreated'));
 
         $courses = enrol_get_all_users_courses($user2->id, false, null, 'id DESC');
         $this->assertEquals(array($course3->id, $course2->id, $course1->id), array_keys($courses));

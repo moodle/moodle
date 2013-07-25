@@ -641,7 +641,7 @@ class core_course_courselib_testcase extends advanced_testcase {
                     'numsections' => 5),
                 array('createsections' => true));
 
-        // Ensure all 6 (0-5) sections were created and modinfo/sectioninfo cache works properly
+        // Ensure all 6 (0-5) sections were created and course content cache works properly
         $sectionscreated = array_keys(get_fast_modinfo($course)->get_section_info_all());
         $this->assertEquals(range(0, $course->numsections), $sectionscreated);
 
@@ -731,13 +731,14 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($cmids[0], $sequence);
 
         // Add a second, this time using courseid variant of parameters.
+        $coursecacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
         course_add_cm_to_section($course->id, $cmids[1], 1);
         $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 1));
         $this->assertEquals($cmids[0] . ',' . $cmids[1], $sequence);
 
-        // Check modinfo was not rebuilt (important for performance if calling
-        // repeatedly).
-        $this->assertNull($DB->get_field('course', 'modinfo', array('id' => $course->id)));
+        // Check that modinfo cache was reset but not rebuilt (important for performance if calling repeatedly).
+        $this->assertGreaterThan($coursecacherev, $DB->get_field('course', 'cacherev', array('id' => $course->id)));
+        $this->assertEmpty(cache::make('core', 'coursemodinfo')->get($course->id));
 
         // Add one to section that doesn't exist (this might rebuild modinfo).
         course_add_cm_to_section($course, $cmids[2], 2);

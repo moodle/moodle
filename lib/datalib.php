@@ -810,8 +810,7 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
     $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
     $params['contextlevel'] = CONTEXT_COURSE;
 
-    $fields = array_diff(array_keys($DB->get_columns('course')), array('modinfo', 'sectioncache'));
-    $sql = "SELECT c.".join(',c.',$fields)." $ccselect
+    $sql = "SELECT c.* $ccselect
               FROM {course} c
            $ccjoin
              WHERE $searchcond AND c.id <> ".SITEID."
