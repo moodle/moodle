@@ -524,7 +524,7 @@ function assign_print_recent_activity($course, $viewfullnames, $timestart) {
     $show    = array();
     $grader  = array();
 
-    $showrecentsubmissions = get_config('mod_assign', 'showrecentsubmissions');
+    $showrecentsubmissions = get_config('assign', 'showrecentsubmissions');
 
     foreach ($submissions as $submission) {
         if (!array_key_exists($submission->cmid, $modinfo->get_cms())) {
@@ -677,7 +677,7 @@ function assign_get_recent_mod_activity(&$activities,
         $modinfo->groups = groups_get_user_groups($course->id);
     }
 
-    $showrecentsubmissions = get_config('mod_assign', 'showrecentsubmissions');
+    $showrecentsubmissions = get_config('assign', 'showrecentsubmissions');
     $show = array();
     $usersgroups = groups_get_all_groups($course->id, $USER->id, $cm->groupingid);
     if (is_array($usersgroups)) {
