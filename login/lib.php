@@ -32,10 +32,6 @@ function forgotpw_process_request() {
         if ($user and !empty($user->confirmed)) {
 
             $userauth = get_auth_plugin($user->auth);
-            if (has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
-                // send email
-            }
-
             if ($userauth->can_reset_password() and is_enabled_auth($user->auth)
               and has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
                 // send reset password confirmation
