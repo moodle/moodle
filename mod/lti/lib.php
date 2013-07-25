@@ -169,7 +169,7 @@ function lti_delete_instance($id) {
  * For this module we just need to support external urls as
  * activity icons
  *
- * @param cm_info $coursemodule
+ * @param stdClass $coursemodule
  * @return cached_cm_info info
  */
 function lti_get_coursemodule_info($coursemodule) {
@@ -177,7 +177,7 @@ function lti_get_coursemodule_info($coursemodule) {
     require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
     if (!$lti = $DB->get_record('lti', array('id' => $coursemodule->instance),
-            'icon, secureicon, intro, introformat, name')) {
+            'icon, secureicon, intro, introformat, name, toolurl, launchcontainer')) {
         return null;
     }
 
@@ -194,6 +194,19 @@ function lti_get_coursemodule_info($coursemodule) {
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
         $info->content = format_module_intro('lti', $lti, $coursemodule->id, false);
+    }
+
+    // Does the link open in a new window?
+    $tool = lti_get_tool_by_url_match($lti->toolurl);
+    if ($tool) {
+        $toolconfig = lti_get_type_config($tool->id);
+    } else {
+        $toolconfig = array();
+    }
+    $launchcontainer = lti_get_launch_container($lti, $toolconfig);
+    if ($launchcontainer == LTI_LAUNCH_CONTAINER_WINDOW) {
+        $launchurl = new moodle_url('/mod/lti/launch.php', array('id' => $coursemodule->id));
+        $info->onclick = "window.open('" . $launchurl->out(false) . "', 'lti'); return false;";
     }
 
     $info->name = $lti->name;
