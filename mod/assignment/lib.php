@@ -3595,7 +3595,7 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
  * Given a course_module object, this function returns any "extra" information that may be needed
  * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
  *
- * @param $coursemodule object The coursemodule object (record).
+ * @param stdClass $coursemodule object The coursemodule object (record).
  * @return cached_cm_info An object on information that the courses will know about (most noticeably, an icon).
  */
 function assignment_get_coursemodule_info($coursemodule) {
