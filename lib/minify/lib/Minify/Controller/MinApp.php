@@ -4,8 +4,6 @@
  * @package Minify
  */
 
-require_once 'Minify/Controller/Base.php';
-
 /**
  * Controller class for requests to /min/index.php
  * 
@@ -22,6 +20,13 @@ class Minify_Controller_MinApp extends Minify_Controller_Base {
      * @return array Minify options
      */
     public function setupSources($options) {
+        // PHP insecure by default: realpath() and other FS functions can't handle null bytes.
+        foreach (array('g', 'b', 'f') as $key) {
+            if (isset($_GET[$key])) {
+                $_GET[$key] = str_replace("\x00", '', (string)$_GET[$key]);
+            }
+        }
+
         // filter controller options
         $cOptions = array_merge(
             array(
@@ -36,7 +41,6 @@ class Minify_Controller_MinApp extends Minify_Controller_Base {
         $sources = array();
         $this->selectionId = '';
         $firstMissingResource = null;
-        
         if (isset($_GET['g'])) {
             // add group(s)
             $this->selectionId .= 'g=' . $_GET['g'];
@@ -195,9 +199,12 @@ class Minify_Controller_MinApp extends Minify_Controller_Base {
     protected function _getFileSource($file, $cOptions)
     {
         $spec['filepath'] = $file;
-        if ($cOptions['noMinPattern']
-            && preg_match($cOptions['noMinPattern'], basename($file))) {
-            $spec['minifier'] = '';
+        if ($cOptions['noMinPattern'] && preg_match($cOptions['noMinPattern'], basename($file))) {
+            if (preg_match('~\.css$~i', $file)) {
+                $spec['minifyOptions']['compress'] = false;
+            } else {
+                $spec['minifier'] = '';
+            }
         }
         return new Minify_Source($spec);
     }

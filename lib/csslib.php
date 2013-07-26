@@ -317,8 +317,8 @@ function css_minify_css($files) {
     unset($_SERVER['HTTP_IF_NONE_MATCH']);
     unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
 
-    set_include_path($CFG->libdir . '/minify/lib' . PATH_SEPARATOR . get_include_path());
-    require_once('Minify.php');
+    require_once("$CFG->libdir/minify/lib/Minify/Loader.php");
+    Minify_Loader::register();
 
     if (0 === stripos(PHP_OS, 'win')) {
         Minify::setDocRoot(); // IIS may need help

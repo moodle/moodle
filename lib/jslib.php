@@ -99,14 +99,14 @@ function js_send_unmodified($lastmodified, $etag) {
  * @return string
  */
 function js_minify($files) {
-    // setup include path
-    set_include_path(__DIR__ . '/minify/lib' . PATH_SEPARATOR . get_include_path());
-    require_once('Minify.php');
+    global $CFG;
 
     if (empty($files)) {
         return '';
     }
 
+    require_once("$CFG->libdir/minify/lib/Minify/Loader.php");
+    Minify_Loader::register();
     if (0 === stripos(PHP_OS, 'win')) {
         Minify::setDocRoot(); // IIS may need help
     }

@@ -1,22 +1,26 @@
 <?php
 /**
- * Class Minify_HTML  
+ * Class Minify_HTML
  * @package Minify
  */
 
 /**
  * Compress HTML
  *
- * This is a heavy regex-based removal of whitespace, unnecessary comments and 
+ * This is a heavy regex-based removal of whitespace, unnecessary comments and
  * tokens. IE conditional comments are preserved. There are also options to have
- * STYLE and SCRIPT blocks compressed by callback functions. 
- * 
+ * STYLE and SCRIPT blocks compressed by callback functions.
+ *
  * A test suite is available.
- * 
+ *
  * @package Minify
  * @author Stephen Clay <steve@mrclay.org>
  */
 class Minify_HTML {
+    /**
+     * @var boolean
+     */
+    protected $_jsCleanComments = true;
 
     /**
      * "Minify" an HTML page
@@ -27,21 +31,21 @@ class Minify_HTML {
      *
      * 'cssMinifier' : (optional) callback function to process content of STYLE
      * elements.
-     * 
+     *
      * 'jsMinifier' : (optional) callback function to process content of SCRIPT
      * elements. Note: the type attribute is ignored.
-     * 
+     *
      * 'xhtml' : (optional boolean) should content be treated as XHTML1.0? If
      * unset, minify will sniff for an XHTML doctype.
-     * 
+     *
      * @return string
      */
     public static function minify($html, $options = array()) {
-        $min = new Minify_HTML($html, $options);
+        $min = new self($html, $options);
         return $min->process();
     }
-    
-    
+
+
     /**
      * Create a minifier object
      *
@@ -51,13 +55,15 @@ class Minify_HTML {
      *
      * 'cssMinifier' : (optional) callback function to process content of STYLE
      * elements.
-     * 
+     *
      * 'jsMinifier' : (optional) callback function to process content of SCRIPT
      * elements. Note: the type attribute is ignored.
-     * 
+     *
+     * 'jsCleanComments' : (optional) whether to remove HTML comments beginning and end of script block
+     *
      * 'xhtml' : (optional boolean) should content be treated as XHTML1.0? If
      * unset, minify will sniff for an XHTML doctype.
-     * 
+     *
      * @return null
      */
     public function __construct($html, $options = array())
@@ -72,9 +78,12 @@ class Minify_HTML {
         if (isset($options['jsMinifier'])) {
             $this->_jsMinifier = $options['jsMinifier'];
         }
+        if (isset($options['jsCleanComments'])) {
+            $this->_jsCleanComments = (bool)$options['jsCleanComments'];
+        }
     }
-    
-    
+
+
     /**
      * Minify the markeup given in the constructor
      * 
@@ -213,17 +222,19 @@ class Minify_HTML {
         // whitespace surrounding? preserve at least one space
         $ws1 = ($m[1] === '') ? '' : ' ';
         $ws2 = ($m[4] === '') ? '' : ' ';
- 
+
         // remove HTML comments (and ending "//" if present)
-        $js = preg_replace('/(?:^\\s*<!--\\s*|\\s*(?:\\/\\/)?\\s*-->\\s*$)/', '', $js);
-            
+        if ($this->_jsCleanComments) {
+            $js = preg_replace('/(?:^\\s*<!--\\s*|\\s*(?:\\/\\/)?\\s*-->\\s*$)/', '', $js);
+        }
+
         // remove CDATA section markers
         $js = $this->_removeCdata($js);
         
         // minify
         $minifier = $this->_jsMinifier
             ? $this->_jsMinifier
-            : 'trim'; 
+            : 'trim';
         $js = call_user_func($minifier, $js);
         
         return $this->_reservePlace($this->_needsCdata($js)
