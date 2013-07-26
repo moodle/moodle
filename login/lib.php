@@ -71,11 +71,14 @@ function forgotpw_process_request() {
             // Print general (non-commital) message
             notice(get_string('emailpasswordconfirmmaybesent'), $CFG->wwwroot.'/index.php');
             die; // never reached
-        } elseif (empty($user) || empty($user->email)) {
-            // Protect usernames is off, and we either couldn't find the user, or they don't have an email set.
-            // Still print non-commital message
-            // This is a big usability problem - need to tell users when we couldn't find the details they requested.
-            notice(get_string('emailpasswordconfirmmaybesent'), $CFG->wwwroot.'/index.php');
+        } elseif (empty($user)) {
+            // Protect usernames is off, and we couldn't find the user with details specified.
+            // Print failure advice:
+            notice(get_string('emailpasswordconfirmnotsent'), $CFG->wwwroot.'/forgot_password.php');
+            die; // never reached
+        } elseif (empty($user->email)) {
+            // User doesn't have an email set - can't send a password change confimation email.
+            notice(get_string('emailpasswordconfirmnoemail'), $CFG->wwwroot.'/index.php');
             die; // never reached
         } elseif ($pwresetstatus == PWRESET_STATUS_NOEMAILSENT) {
             // User found, protectusernames is off, but user is not confirmed
