@@ -331,7 +331,7 @@ class course_modinfo extends stdClass {
             }
 
             // Construct info for this module
-            $cm = new cm_info($this, $course, $mod, $info);
+            $cm = new cm_info($this, null, $mod, null);
 
             // Store module in instances and cms array
             if (!isset($this->instances[$cm->modname])) {
@@ -352,14 +352,6 @@ class course_modinfo extends stdClass {
         foreach ($sectioncache as $number => $data) {
             $this->sectioninfo[$number] = new section_info($data, $number, null, null,
                     $this, null);
-        }
-
-        // We need at least 'dynamic' data from each course-module (this is basically the remaining
-        // data which was always present in previous version of get_fast_modinfo, so it's required
-        // for BC). Creating it in a second pass is necessary because obtain_dynamic_data sometimes
-        // needs to be able to refer to a 'complete' (with basic data) modinfo.
-        foreach ($this->cms as $cm) {
-            $cm->obtain_dynamic_data();
         }
     }
 
@@ -407,25 +399,167 @@ class course_modinfo extends stdClass {
  * Data about a single module on a course. This contains most of the fields in the course_modules
  * table, plus additional data when required.
  *
- * This object has many public fields; code should treat all these fields as read-only and set
- * data only using the supplied set functions. Setting the fields directly is not supported
- * and may cause problems later.
+ * The object can be accessed by core or any plugin (i.e. course format, block, filter, etc.) as
+ * get_fast_modinfo($courseorid)->cms[$coursemoduleid]
+ * or
+ * get_fast_modinfo($courseorid)->instances[$moduletype][$instanceid]
+ *
+ * There are three stages when activity module can add/modify data in this object:
+ *
+ * <b>Stage 1 - during building the cache.</b>
+ * Allows to add to the course cache static user-independent information about the module.
+ * Modules should try to include only absolutely necessary information that may be required
+ * when displaying course view page. The information is stored in application-level cache
+ * and reset when {@link rebuild_course_cache()} is called or cache is purged by admin.
+ *
+ * Modules can implement callback XXX_get_coursemodule_info() returning instance of object
+ * {@link cached_cm_info}
+ *
+ * <b>Stage 2 - dynamic data.</b>
+ * Dynamic data is user-dependend, it is stored in request-level cache. To reset this cache
+ * {@link get_fast_modinfo()} with $reset argument may be called.
+ *
+ * Dynamic data is obtained when any of the following properties/methods is requested:
+ * - {@link cm_info::$url}
+ * - {@link cm_info::$name}
+ * - {@link cm_info::$onclick}
+ * - {@link cm_info::get_icon_url()}
+ * - {@link cm_info::$uservisible}
+ * - {@link cm_info::$available}
+ * - {@link cm_info::$showavailability}
+ * - {@link cm_info::$availableinfo}
+ * - plus any of the properties listed in Stage 3.
+ *
+ * Modules can implement callback <b>XXX_cm_info_dynamic()</b> and inside this callback they
+ * are allowed to use any of the following set methods:
+ * - {@link cm_info::set_available()}
+ * - {@link cm_info::set_name()}
+ * - {@link cm_info::set_no_view_link()}
+ * - {@link cm_info::set_user_visible()}
+ * - {@link cm_info::set_on_click()}
+ * - {@link cm_info::set_icon_url()}
+ * Any methods affecting view elements can also be set in this callback.
+ *
+ * <b>Stage 3 (view data).</b>
+ * Also user-dependend data stored in request-level cache. Second stage is created
+ * because populating the view data can be expensive as it may access much more
+ * Moodle APIs such as filters, user information, output renderers and we
+ * don't want to request it until necessary.
+ * View data is obtained when any of the following properties/methods is requested:
+ * - {@link cm_info::$afterediticons}
+ * - {@link cm_info::$content}
+ * - {@link cm_info::get_formatted_content()}
+ * - {@link cm_info::$extraclasses}
+ * - {@link cm_info::$afterlink}
+ *
+ * Modules can implement callback <b>XXX_cm_info_view()</b> and inside this callback they
+ * are allowed to use any of the following set methods:
+ * - {@link cm_info::set_after_edit_icons()}
+ * - {@link cm_info::set_after_link()}
+ * - {@link cm_info::set_content()}
+ * - {@link cm_info::set_extra_classes()}
+ *
+ * @property-read int $id Course-module ID - from course_modules table
+ * @property-read int $instance Module instance (ID within module table) - from course_modules table
+ * @property-read int $course Course ID - from course_modules table
+ * @property-read string $idnumber 'ID number' from course-modules table (arbitrary text set by user) - from
+ *    course_modules table
+ * @property-read int $added Time that this course-module was added (unix time) - from course_modules table
+ * @property-read int $visible Visible setting (0 or 1; if this is 0, students cannot see/access the activity) - from
+ *    course_modules table
+ * @property-read int $visibleold Old visible setting (if the entire section is hidden, the previous value for
+ *    visible is stored in this field) - from course_modules table
+ * @property-read int $groupmode Group mode (one of the constants NONE, SEPARATEGROUPS, or VISIBLEGROUPS) - from
+ *    course_modules table
+ * @property-read int $groupingid Grouping ID (0 = all groupings)
+ * @property-read int $groupmembersonly Group members only (if set to 1, only members of a suitable group see this link on the
+ *    course page; 0 = everyone sees it even if they don't belong to a suitable group) - from
+ *    course_modules table
+ * @property-read bool $coursegroupmodeforce Indicates whether the course containing the module has forced the groupmode
+ *    This means that cm_info::$groupmode should be ignored and cm_info::$coursegroupmode be used instead
+ * @property-read int $coursegroupmode Group mode (one of the constants NONE, SEPARATEGROUPS, or VISIBLEGROUPS) - from
+ *    course table - as specified for the course containing the module
+ *    Effective only if {@link cm_info::$coursegroupmodeforce} is set
+ * @property-read int $indent Indent level on course page (0 = no indent) - from course_modules table
+ * @property-read int $completion Activity completion setting for this activity, COMPLETION_TRACKING_xx constant - from
+ *    course_modules table
+ * @property-read mixed $completiongradeitemnumber Set to the item number (usually 0) if completion depends on a particular
+ *    grade of this activity, or null if completion does not depend on a grade - from course_modules table
+ * @property-read int $completionview 1 if 'on view' completion is enabled, 0 otherwise - from course_modules table
+ * @property-read int $completionexpected Set to a unix time if completion of this activity is expected at a
+ *    particular time, 0 if no time set - from course_modules table
+ * @property-read int $availablefrom Available date for this activity (0 if not set, or set to seconds since epoch; before this
+ *    date, activity does not display to students) - from course_modules table
+ * @property-read int $availableuntil Available until date for this activity (0 if not set, or set to seconds since epoch; from
+ *    this date, activity does not display to students) - from course_modules table
+ * @property-read int $showavailability When activity is unavailable, this field controls whether it is shown to students (0 =
+ *    hide completely, 1 = show greyed out with information about when it will be available) -
+ *    from course_modules table
+ * @property-read int $showdescription Controls whether the description of the activity displays on the course main page (in
+ *    addition to anywhere it might display within the activity itself). 0 = do not show
+ *    on main page, 1 = show on main page.
+ * @property-read string $extra (deprecated) Extra HTML that is put in an unhelpful part of the HTML when displaying this module in
+ *    course page - from cached data in modinfo field. Deprecated, replaced by ->extraclasses and ->onclick
+ * @property-read string $icon Name of icon to use - from cached data in modinfo field
+ * @property-read string $iconcomponent Component that contains icon - from cached data in modinfo field
+ * @property-read string $modname Name of module e.g. 'forum' (this is the same name as the module's main database
+ *    table) - from cached data in modinfo field
+ * @property-read int $module ID of module type - from course_modules table
+ * @property-read string $name Name of module instance for display on page e.g. 'General discussion forum' - from cached
+ *    data in modinfo field
+ * @property-read int $sectionnum Section number that this course-module is in (section 0 = above the calendar, section 1
+ *    = week/topic 1, etc) - from cached data in modinfo field
+ * @property-read int $section Section id - from course_modules table
+ * @property-read array $conditionscompletion Availability conditions for this course-module based on the completion of other
+ *    course-modules (array from other course-module id to required completion state for that
+ *    module) - from cached data in modinfo field
+ * @property-read array $conditionsgrade Availability conditions for this course-module based on course grades (array from
+ *    grade item id to object with ->min, ->max fields) - from cached data in modinfo field
+ * @property-read array $conditionsfield Availability conditions for this course-module based on user fields
+ * @property-read bool $available True if this course-module is available to students i.e. if all availability conditions
+ *    are met - obtained dynamically
+ * @property-read string $availableinfo If course-module is not available to students, this string gives information about
+ *    availability which can be displayed to students and/or staff (e.g. 'Available from 3
+ *    January 2010') for display on main page - obtained dynamically
+ * @property-read bool $uservisible True if this course-module is available to the CURRENT user (for example, if current user
+ *    has viewhiddenactivities capability, they can access the course-module even if it is not
+ *    visible or not available, so this would be true in that case)
+ * @property-read context_module $context Module context
+ * @property-read string $modfullname Returns a localised human-readable name of the module type - calculated on request
+ * @property-read string $modplural Returns a localised human-readable name of the module type in plural form - calculated on request
+ * @property-read string $content Content to display on main (view) page - calculated on request
+ * @property-read moodle_url $url URL to link to for this module, or null if it doesn't have a view page - calculated on request
+ * @property-read string $extraclasses Extra CSS classes to add to html output for this activity on main page - calculated on request
+ * @property-read string $onclick Content of HTML on-click attribute already escaped - calculated on request
+ * @property-read mixed $customdata Optional custom data stored in modinfo cache for this activity, or null if none
+ * @property-read string $afterlink Extra HTML code to display after link - calculated on request
+ * @property-read string $afterediticons Extra HTML code to display after editing icons (e.g. more icons) - calculated on request
  */
-class cm_info extends stdClass {
+class cm_info implements IteratorAggregate {
     /**
      * State: Only basic data from modinfo cache is available.
      */
     const STATE_BASIC = 0;
 
     /**
+     * State: In the process of building dynamic data (to avoid recursive calls to obtain_dynamic_data())
+     */
+    const STATE_BUILDING_DYNAMIC = 1;
+
+    /**
      * State: Dynamic data is available too.
      */
-    const STATE_DYNAMIC = 1;
+    const STATE_DYNAMIC = 2;
+
+    /**
+     * State: In the process of building view data (to avoid recursive calls to obtain_view_data())
+     */
+    const STATE_BUILDING_VIEW = 3;
 
     /**
      * State: View data (for course page) is available.
      */
-    const STATE_VIEW = 2;
+    const STATE_VIEW = 4;
 
     /**
      * Parent object
@@ -439,39 +573,30 @@ class cm_info extends stdClass {
      */
     private $state;
 
-    // Existing data fields
-    ///////////////////////
-
     /**
      * Course-module ID - from course_modules table
      * @var int
      */
-    public $id;
+    private $id;
 
     /**
      * Module instance (ID within module table) - from course_modules table
      * @var int
      */
-    public $instance;
-
-    /**
-     * Course ID - from course_modules table
-     * @var int
-     */
-    public $course;
+    private $instance;
 
     /**
      * 'ID number' from course-modules table (arbitrary text set by user) - from
      * course_modules table
      * @var string
      */
-    public $idnumber;
+    private $idnumber;
 
     /**
      * Time that this course-module was added (unix time) - from course_modules table
      * @var int
      */
-    public $added;
+    private $added;
 
     /**
      * This variable is not used and is included here only so it can be documented.
@@ -480,34 +605,34 @@ class cm_info extends stdClass {
      * @var int
      * @deprecated Do not use this variable
      */
-    public $score;
+    private $score;
 
     /**
      * Visible setting (0 or 1; if this is 0, students cannot see/access the activity) - from
      * course_modules table
      * @var int
      */
-    public $visible;
+    private $visible;
 
     /**
      * Old visible setting (if the entire section is hidden, the previous value for
      * visible is stored in this field) - from course_modules table
      * @var int
      */
-    public $visibleold;
+    private $visibleold;
 
     /**
      * Group mode (one of the constants NONE, SEPARATEGROUPS, or VISIBLEGROUPS) - from
      * course_modules table
      * @var int
      */
-    public $groupmode;
+    private $groupmode;
 
     /**
      * Grouping ID (0 = all groupings)
      * @var int
      */
-    public $groupingid;
+    private $groupingid;
 
     /**
      * Group members only (if set to 1, only members of a suitable group see this link on the
@@ -515,36 +640,20 @@ class cm_info extends stdClass {
      * course_modules table
      * @var int
      */
-    public $groupmembersonly;
-
-    /**
-     * Indicates whether the course containing the module has forced the groupmode
-     * This means that cm_info::$groupmode should be ignored and cm_info::$coursegroupmode be
-     * used instead
-     * @var bool
-     */
-    public $coursegroupmodeforce;
-
-    /**
-     * Group mode (one of the constants NONE, SEPARATEGROUPS, or VISIBLEGROUPS) - from
-     * course table - as specified for the course containing the module
-     * Effective only if cm_info::$coursegroupmodeforce is set
-     * @var int
-     */
-    public $coursegroupmode;
+    private $groupmembersonly;
 
     /**
      * Indent level on course page (0 = no indent) - from course_modules table
      * @var int
      */
-    public $indent;
+    private $indent;
 
     /**
      * Activity completion setting for this activity, COMPLETION_TRACKING_xx constant - from
      * course_modules table
      * @var int
      */
-    public $completion;
+    private $completion;
 
     /**
      * Set to the item number (usually 0) if completion depends on a particular
@@ -552,34 +661,34 @@ class cm_info extends stdClass {
      * course_modules table
      * @var mixed
      */
-    public $completiongradeitemnumber;
+    private $completiongradeitemnumber;
 
     /**
      * 1 if 'on view' completion is enabled, 0 otherwise - from course_modules table
      * @var int
      */
-    public $completionview;
+    private $completionview;
 
     /**
      * Set to a unix time if completion of this activity is expected at a
      * particular time, 0 if no time set - from course_modules table
      * @var int
      */
-    public $completionexpected;
+    private $completionexpected;
 
     /**
      * Available date for this activity (0 if not set, or set to seconds since epoch; before this
      * date, activity does not display to students) - from course_modules table
      * @var int
      */
-    public $availablefrom;
+    private $availablefrom;
 
     /**
      * Available until date for this activity (0 if not set, or set to seconds since epoch; from
      * this date, activity does not display to students) - from course_modules table
      * @var int
      */
-    public $availableuntil;
+    private $availableuntil;
 
     /**
      * When activity is unavailable, this field controls whether it is shown to students (0 =
@@ -587,7 +696,7 @@ class cm_info extends stdClass {
      * from course_modules table
      * @var int
      */
-    public $showavailability;
+    private $showavailability;
 
     /**
      * Controls whether the description of the activity displays on the course main page (in
@@ -595,7 +704,7 @@ class cm_info extends stdClass {
      * on main page, 1 = show on main page.
      * @var int
      */
-    public $showdescription;
+    private $showdescription;
 
     /**
      * Extra HTML that is put in an unhelpful part of the HTML when displaying this module in
@@ -603,52 +712,52 @@ class cm_info extends stdClass {
      * @deprecated This is crazy, don't use it. Replaced by ->extraclasses and ->onclick
      * @var string
      */
-    public $extra;
+    private $extra;
 
     /**
      * Name of icon to use - from cached data in modinfo field
      * @var string
      */
-    public $icon;
+    private $icon;
 
     /**
      * Component that contains icon - from cached data in modinfo field
      * @var string
      */
-    public $iconcomponent;
+    private $iconcomponent;
 
     /**
      * Name of module e.g. 'forum' (this is the same name as the module's main database
      * table) - from cached data in modinfo field
      * @var string
      */
-    public $modname;
+    private $modname;
 
     /**
      * ID of module - from course_modules table
      * @var int
      */
-    public $module;
+    private $module;
 
     /**
      * Name of module instance for display on page e.g. 'General discussion forum' - from cached
      * data in modinfo field
      * @var string
      */
-    public $name;
+    private $name;
 
     /**
      * Section number that this course-module is in (section 0 = above the calendar, section 1
      * = week/topic 1, etc) - from cached data in modinfo field
-     * @var string
+     * @var int
      */
-    public $sectionnum;
+    private $sectionnum;
 
     /**
      * Section id - from course_modules table
      * @var int
      */
-    public $section;
+    private $section;
 
     /**
      * Availability conditions for this course-module based on the completion of other
@@ -656,27 +765,27 @@ class cm_info extends stdClass {
      * module) - from cached data in modinfo field
      * @var array
      */
-    public $conditionscompletion;
+    private $conditionscompletion;
 
     /**
      * Availability conditions for this course-module based on course grades (array from
      * grade item id to object with ->min, ->max fields) - from cached data in modinfo field
      * @var array
      */
-    public $conditionsgrade;
+    private $conditionsgrade;
 
     /**
      * Availability conditions for this course-module based on user fields
      * @var array
      */
-    public $conditionsfield;
+    private $conditionsfield;
 
     /**
      * True if this course-module is available to students i.e. if all availability conditions
      * are met - obtained dynamically
      * @var bool
      */
-    public $available;
+    private $available;
 
     /**
      * If course-module is not available to students, this string gives information about
@@ -684,7 +793,7 @@ class cm_info extends stdClass {
      * January 2010') for display on main page - obtained dynamically
      * @var string
      */
-    public $availableinfo;
+    private $availableinfo;
 
     /**
      * True if this course-module is available to the CURRENT user (for example, if current user
@@ -692,18 +801,7 @@ class cm_info extends stdClass {
      * visible or not available, so this would be true in that case)
      * @var bool
      */
-    public $uservisible;
-
-    /**
-     * Module context - hacky shortcut
-     * @deprecated
-     * @var stdClass
-     */
-    public $context;
-
-
-    // New data available only via functions
-    ////////////////////////////////////////
+    private $uservisible;
 
     /**
      * @var moodle_url
@@ -746,21 +844,173 @@ class cm_info extends stdClass {
     private $afterediticons;
 
     /**
+     * List of class read-only properties and their getter methods.
+     * Used by magic functions __get(), __isset(), __empty()
+     * @var array
+     */
+    private static $standardproperties = array(
+        'url' => 'get_url',
+        'content' => 'get_content',
+        'extraclasses' => 'get_extra_classes',
+        'onclick' => 'get_on_click',
+        'customdata' => 'get_custom_data',
+        'afterlink' => 'get_after_link',
+        'afterediticons' => 'get_after_edit_icons',
+        'modfullname' => 'get_module_type_name',
+        'modplural' => 'get_module_type_name_plural',
+        'id' => false,
+        'added' => false,
+        'available' => 'get_available',
+        'availablefrom' => false,
+        'availableinfo' => 'get_available_info',
+        'availableuntil' => false,
+        'completion' => false,
+        'completionexpected' => false,
+        'completiongradeitemnumber' => false,
+        'completionview' => false,
+        'conditionscompletion' => false,
+        'conditionsfield' => false,
+        'conditionsgrade' => false,
+        'context' => 'get_context',
+        'course' => 'get_course_id',
+        'coursegroupmode' => 'get_course_groupmode',
+        'coursegroupmodeforce' => 'get_course_groupmodeforce',
+        'extra' => false,
+        'groupingid' => false,
+        'groupmembersonly' => false,
+        'groupmode' => false,
+        'icon' => false,
+        'iconcomponent' => false,
+        'idnumber' => false,
+        'indent' => false,
+        'instance' => false,
+        'modname' => false,
+        'module' => false,
+        'name' => 'get_name',
+        'score' => false,
+        'section' => false,
+        'sectionnum' => false,
+        'showavailability' => 'get_show_availability',
+        'showdescription' => false,
+        'uservisible' => 'get_user_visible',
+        'visible' => false,
+        'visibleold' => false,
+    );
+
+    /**
+     * List of methods with no arguments that were public prior to Moodle 2.6.
+     *
+     * They can still be accessed publicly via magic __call() function with no warnings
+     * but are not listed in the class methods list.
+     * For the consistency of the code it is better to use corresponding properties.
+     *
+     * These methods be deprecated completely in later versions.
+     *
+     * @var array $standardmethods
+     */
+    private static $standardmethods = array(
+        // Following methods are not recommended to use because there have associated read-only properties.
+        'get_url',
+        'get_content',
+        'get_extra_classes',
+        'get_on_click',
+        'get_custom_data',
+        'get_after_link',
+        'get_after_edit_icons',
+        // Method obtain_dynamic_data() should not be called from outside of this class but it was public before Moodle 2.6.
+        'obtain_dynamic_data',
+    );
+
+    /**
+     * Magic method to call functions that are now declared as private now but
+     * were public in Moodle before 2.6. Developers can access them without
+     * any warnings but they are not listed in the class methods list.
+     *
+     * @param string $name
+     * @param array $arguments
+     * @return mixed
+     */
+    public function __call($name, $arguments) {
+        if (in_array($name, self::$standardmethods)) {
+            // All standard methods do not have arguments anyway.
+            return $this->$name();
+        }
+        throw new coding_exception("Method cm_info::{$name}() does not exist");
+    }
+
+    /**
      * Magic method getter
      *
      * @param string $name
      * @return mixed
      */
     public function __get($name) {
-        switch ($name) {
-            case 'modplural':
-                return $this->get_module_type_name(true);
-            case 'modfullname':
-                return $this->get_module_type_name();
-            default:
-                debugging('Invalid cm_info property accessed: '.$name);
-                return null;
+        if (isset(self::$standardproperties[$name])) {
+            if ($method = self::$standardproperties[$name]) {
+                return $this->$method();
+            } else {
+                return $this->$name;
+            }
+        } else {
+            debugging('Invalid cm_info property accessed: '.$name);
+            return null;
         }
+    }
+
+    /**
+     * Implementation of IteratorAggregate::getIterator(), allows to cycle through properties
+     * and use {@link convert_to_array()}
+     *
+     * @return ArrayIterator
+     */
+    public function getIterator() {
+        // Make sure dynamic properties are retrieved prior to view properties.
+        $this->obtain_dynamic_data();
+        $ret = array();
+        foreach (self::$standardproperties as $key => $unused) {
+            $ret[$key] = $this->__get($key);
+        }
+        return new ArrayIterator($ret);
+    }
+
+    /**
+     * Magic method for function isset()
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name) {
+        if (isset(self::$standardproperties[$name])) {
+            $value = $this->__get($name);
+            return isset($value);
+        }
+        return false;
+    }
+
+    /**
+     * Magic method for function empty()
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __empty($name) {
+        if (isset(self::$standardproperties[$name])) {
+            $value = $this->__get($name);
+            return empty($value);
+        }
+        return true;
+    }
+
+    /**
+     * Magic method setter
+     *
+     * Will display the developer warning when trying to set/overwrite property.
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value) {
+        debugging("It is not allowed to set the property cm_info::\${$name}", DEBUG_DEVELOPER);
     }
 
     /**
@@ -775,7 +1025,8 @@ class cm_info extends stdClass {
     /**
      * @return moodle_url URL to link to for this module, or null if it doesn't have a view page
      */
-    public function get_url() {
+    private function get_url() {
+        $this->obtain_dynamic_data();
         return $this->url;
     }
 
@@ -784,7 +1035,7 @@ class cm_info extends stdClass {
      * Note: Will collect view data, if not already obtained.
      * @return string Content to display on main page below link, or empty string if none
      */
-    public function get_content() {
+    private function get_content() {
         $this->obtain_view_data();
         return $this->content;
     }
@@ -809,9 +1060,18 @@ class cm_info extends stdClass {
 
         $options = (array)$options;
         if (!isset($options['context'])) {
-            $options['context'] = context_module::instance($this->id);
+            $options['context'] = $this->get_context();
         }
         return format_text($this->content, FORMAT_HTML, $options);
+    }
+
+    /**
+     * Getter method for property $name, ensures that dynamic data is obtained.
+     * @return string
+     */
+    private function get_name() {
+        $this->obtain_dynamic_data();
+        return $this->name;
     }
 
     /**
@@ -825,16 +1085,16 @@ class cm_info extends stdClass {
     public function get_formatted_name($options = array()) {
         $options = (array)$options;
         if (!isset($options['context'])) {
-            $options['context'] = context_module::instance($this->id);
+            $options['context'] = $this->get_context();
         }
-        return format_string($this->name, true,  $options);
+        return format_string($this->get_name(), true,  $options);
     }
 
     /**
      * Note: Will collect view data, if not already obtained.
      * @return string Extra CSS classes to add to html output for this activity on main page
      */
-    public function get_extra_classes() {
+    private function get_extra_classes() {
         $this->obtain_view_data();
         return $this->extraclasses;
     }
@@ -843,14 +1103,15 @@ class cm_info extends stdClass {
      * @return string Content of HTML on-click attribute. This string will be used literally
      * as a string so should be pre-escaped.
      */
-    public function get_on_click() {
+    private function get_on_click() {
         // Does not need view data; may be used by navigation
+        $this->obtain_dynamic_data();
         return $this->onclick;
     }
     /**
      * @return mixed Optional custom data stored in modinfo cache for this activity, or null if none
      */
-    public function get_custom_data() {
+    private function get_custom_data() {
         return $this->customdata;
     }
 
@@ -858,7 +1119,7 @@ class cm_info extends stdClass {
      * Note: Will collect view data, if not already obtained.
      * @return string Extra HTML code to display after link
      */
-    public function get_after_link() {
+    private function get_after_link() {
         $this->obtain_view_data();
         return $this->afterlink;
     }
@@ -867,7 +1128,7 @@ class cm_info extends stdClass {
      * Note: Will collect view data, if not already obtained.
      * @return string Extra HTML code to display after editing icons (e.g. more icons)
      */
-    public function get_after_edit_icons() {
+    private function get_after_edit_icons() {
         $this->obtain_view_data();
         return $this->afterediticons;
     }
@@ -878,6 +1139,7 @@ class cm_info extends stdClass {
      */
     public function get_icon_url($output = null) {
         global $OUTPUT;
+        $this->obtain_dynamic_data();
         if (!$output) {
             $output = $OUTPUT;
         }
@@ -921,6 +1183,15 @@ class cm_info extends stdClass {
     }
 
     /**
+     * Returns a localised human-readable name of the module type in plural form - calculated on request
+     *
+     * @return string
+     */
+    private function get_module_type_name_plural() {
+        return $this->get_module_type_name(true);
+    }
+
+    /**
      * @return course_modinfo Modinfo object that this came from
      */
     public function get_modinfo() {
@@ -932,6 +1203,40 @@ class cm_info extends stdClass {
      */
     public function get_course() {
         return $this->modinfo->get_course();
+    }
+
+    /**
+     * Returns course id for which the modinfo was generated.
+     *
+     * @return int
+     */
+    private function get_course_id() {
+        return $this->modinfo->get_course_id();
+    }
+
+    /**
+     * Returns group mode used for the course containing the module
+     *
+     * @return int one of constants NOGROUPS, SEPARATEGROUPS, VISIBLEGROUPS
+     */
+    private function get_course_groupmode() {
+        return $this->modinfo->get_course()->groupmode;
+    }
+
+    /**
+     * Returns whether group mode is forced for the course containing the module
+     *
+     * @return bool
+     */
+    private function get_course_groupmodeforce() {
+        return $this->modinfo->get_course()->groupmodeforce;
+    }
+
+    /**
+     * @return context_module Current module context
+     */
+    private function get_context() {
+        return context_module::instance($this->id);
     }
 
     // Set functions
@@ -1004,7 +1309,9 @@ class cm_info extends stdClass {
      * @return void
      */
     public function set_name($name) {
-        $this->update_user_visible();
+        if ($this->state < self::STATE_BUILDING_DYNAMIC) {
+            $this->update_user_visible();
+        }
         $this->name = $name;
     }
 
@@ -1070,19 +1377,18 @@ class cm_info extends stdClass {
     }
 
     /**
-     * Constructor should not be called directly; use get_fast_modinfo.
+     * Constructor should not be called directly; use {@link get_fast_modinfo()}
+     *
      * @param course_modinfo $modinfo Parent object
-     * @param object $course Course row
-     * @param object $mod Module object from the modinfo field of course table
-     * @param object $info Entire object from modinfo field of course table
+     * @param stdClass $notused1 Argument not used
+     * @param stdClass $mod Module object from the modinfo field of course table
+     * @param stdClass $notused2 Argument not used
      */
-    public function __construct(course_modinfo $modinfo, $course, $mod, $info) {
-        global $CFG;
+    public function __construct(course_modinfo $modinfo, $notused1, $mod, $notused2) {
         $this->modinfo = $modinfo;
 
         $this->id               = $mod->cm;
         $this->instance         = $mod->id;
-        $this->course           = $course->id;
         $this->modname          = $mod->mod;
         $this->idnumber         = isset($mod->idnumber) ? $mod->idnumber : '';
         $this->name             = $mod->name;
@@ -1091,8 +1397,6 @@ class cm_info extends stdClass {
         $this->groupmode        = isset($mod->groupmode) ? $mod->groupmode : 0;
         $this->groupingid       = isset($mod->groupingid) ? $mod->groupingid : 0;
         $this->groupmembersonly = isset($mod->groupmembersonly) ? $mod->groupmembersonly : 0;
-        $this->coursegroupmodeforce = $course->groupmodeforce;
-        $this->coursegroupmode  = $course->groupmode;
         $this->indent           = isset($mod->indent) ? $mod->indent : 0;
         $this->extra            = isset($mod->extra) ? $mod->extra : '';
         $this->extraclasses     = isset($mod->extraclasses) ? $mod->extraclasses : '';
@@ -1103,7 +1407,6 @@ class cm_info extends stdClass {
         $this->icon             = isset($mod->icon) ? $mod->icon : '';
         $this->iconcomponent    = isset($mod->iconcomponent) ? $mod->iconcomponent : '';
         $this->customdata       = isset($mod->customdata) ? $mod->customdata : '';
-        $this->context          = context_module::instance($mod->cm);
         $this->showdescription  = isset($mod->showdescription) ? $mod->showdescription : 0;
         $this->state = self::STATE_BASIC;
 
@@ -1136,7 +1439,7 @@ class cm_info extends stdClass {
         $this->conditionsfield = isset($mod->conditionsfield)
                 ? $mod->conditionsfield : array();
 
-        static $modviews;
+        static $modviews = array();
         if (!isset($modviews[$this->modname])) {
             $modviews[$this->modname] = !plugin_supports('mod', $this->modname,
                     FEATURE_NO_VIEW_LINK);
@@ -1149,8 +1452,8 @@ class cm_info extends stdClass {
     /**
      * If dynamic data for this course-module is not yet available, gets it.
      *
-     * This function is automatically called when constructing course_modinfo, so users don't
-     * need to call it.
+     * This function is automatically called when requesting any course_modinfo property
+     * that can be modified by modules (have a set_xxx method).
      *
      * Dynamic data is data which does not come directly from the cache but is calculated at
      * runtime based on the current user. Primarily this concerns whether the user can access
@@ -1160,11 +1463,12 @@ class cm_info extends stdClass {
      * be called (if it exists).
      * @return void
      */
-    public function obtain_dynamic_data() {
+    private function obtain_dynamic_data() {
         global $CFG;
-        if ($this->state >= self::STATE_DYNAMIC) {
+        if ($this->state >= self::STATE_BUILDING_DYNAMIC) {
             return;
         }
+        $this->state = self::STATE_BUILDING_DYNAMIC;
         $userid = $this->modinfo->get_user_id();
 
         if (!empty($CFG->enableavailability)) {
@@ -1172,9 +1476,7 @@ class cm_info extends stdClass {
             // Get availability information
             $ci = new condition_info($this);
             // Note that the modinfo currently available only includes minimal details (basic data)
-            // so passing it to this function is a bit dangerous as it would cause infinite
-            // recursion if it tried to get dynamic data, however we know that this function only
-            // uses basic data.
+            // but we know that this function does not need anything more than basic data.
             $this->available = $ci->is_available($this->availableinfo, true,
                     $userid, $this->modinfo);
 
@@ -1199,6 +1501,42 @@ class cm_info extends stdClass {
     }
 
     /**
+     * Getter method for property $uservisible, ensures that dynamic data is retrieved.
+     * @return bool
+     */
+    private function get_user_visible() {
+        $this->obtain_dynamic_data();
+        return $this->uservisible;
+    }
+
+    /**
+     * Getter method for property $available, ensures that dynamic data is retrieved
+     * @return bool
+     */
+    private function get_available() {
+        $this->obtain_dynamic_data();
+        return $this->available;
+    }
+
+    /**
+     * Getter method for property $showavailability, ensures that dynamic data is retrieved
+     * @return int
+     */
+    private function get_show_availability() {
+        $this->obtain_dynamic_data();
+        return $this->showavailability;
+    }
+
+    /**
+     * Getter method for property $availableinfo, ensures that dynamic data is retrieved
+     * @return type
+     */
+    private function get_available_info() {
+        $this->obtain_dynamic_data();
+        return $this->availableinfo;
+    }
+
+    /**
      * Works out whether activity is available to the current user
      *
      * If the activity is unavailable, additional checks are required to determine if its hidden or greyed out
@@ -1208,15 +1546,13 @@ class cm_info extends stdClass {
      * @return void
      */
     private function update_user_visible() {
-        global $CFG;
-        $modcontext = context_module::instance($this->id);
         $userid = $this->modinfo->get_user_id();
         $this->uservisible = true;
 
         // If the user cannot access the activity set the uservisible flag to false.
         // Additional checks are required to determine whether the activity is entirely hidden or just greyed out.
-        if ((!$this->visible or !$this->available) and
-                !has_capability('moodle/course:viewhiddenactivities', $modcontext, $userid)) {
+        if ((!$this->visible or !$this->get_available()) and
+                !has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)) {
 
             $this->uservisible = false;
         }
@@ -1240,9 +1576,8 @@ class cm_info extends stdClass {
         global $CFG;
 
         if (!empty($CFG->enablegroupmembersonly) and !empty($this->groupmembersonly)) {
-            $modcontext = context_module::instance($this->id);
             $userid = $this->modinfo->get_user_id();
-            if (!has_capability('moodle/site:accessallgroups', $modcontext, $userid)) {
+            if (!has_capability('moodle/site:accessallgroups', $this->get_context(), $userid)) {
                 // If the activity has 'group members only' and you don't have accessallgroups...
                 $groups = $this->modinfo->get_groups($this->groupingid);
                 if (empty($groups)) {
@@ -1269,7 +1604,7 @@ class cm_info extends stdClass {
 
         // You are blocked if you don't have the capability.
         $userid = $this->modinfo->get_user_id();
-        return !has_capability($capability, context_module::instance($this->id), $userid);
+        return !has_capability($capability, $this->get_context(), $userid);
     }
 
     /**
@@ -1287,19 +1622,18 @@ class cm_info extends stdClass {
         require_once($CFG->libdir. '/conditionlib.php');
 
         // If module will always be visible anyway (but greyed out), don't bother checking anything else
-        if ($this->showavailability == CONDITION_STUDENTVIEW_SHOW) {
+        if ($this->get_show_availability() == CONDITION_STUDENTVIEW_SHOW) {
             return false;
         }
 
         // Can the user see hidden modules?
-        $modcontext = context_module::instance($this->id);
         $userid = $this->modinfo->get_user_id();
-        if (has_capability('moodle/course:viewhiddenactivities', $modcontext, $userid)) {
+        if (has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)) {
             return false;
         }
 
         // Is the module hidden due to unmet conditions?
-        if (!$this->available) {
+        if (!$this->get_available()) {
             return true;
         }
 
@@ -1344,9 +1678,11 @@ class cm_info extends stdClass {
      * @return void
      */
     private function obtain_view_data() {
-        if ($this->state >= self::STATE_VIEW) {
+        if ($this->state >= self::STATE_BUILDING_VIEW) {
             return;
         }
+        $this->obtain_dynamic_data();
+        $this->state = self::STATE_BUILDING_VIEW;
 
         // Let module make changes at this point
         $this->call_mod_function('cm_info_view');
