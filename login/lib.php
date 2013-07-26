@@ -1,4 +1,7 @@
 <?php
+define('PWRESET_STATUS_NOEMAILSENT', 1);
+define('PWRESET_STATUS_TOKENSENT', 2);
+define('PWRESET_STATUS_OTHEREMAILSENT', 3);
 
 /*  This function processes a user's request to set a new password in the event they forgot the old one.
     If no user identifier has been supplied, it displays a form where they can submit their identifier.
@@ -13,13 +16,15 @@ function forgotpw_process_request() {
         redirect(get_login_url());
 
     } else if ($data = $mform->get_data()) {
-        // User has submitted form data. Find the user in the database and mail info.
-        // First try the username.
+        // Requesting user has submitted form data.
+        // Find the user account in the database which the requesting user claims to own:
         if (!empty($data->username)) {
+            // Username has been specified - load the user record based on that.
             $username = core_text::strtolower($data->username); // mimic the login page process, if they forget username they need to use email for reset
             $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id, 'deleted'=>0, 'suspended'=>0));
 
         } else {
+            // Try to load the user record based on email address:
             // this is tricky because
             // 1/ the email is not guaranteed to be unique - TODO: send email with all usernames to select the correct account for pw reset
             // 2/ mailbox may be case sensitive, the email domain is case insensitive - let's pretend it is all case-insensitive
@@ -29,8 +34,10 @@ function forgotpw_process_request() {
             $user = $DB->get_record_select('user', $select, $params, '*', IGNORE_MULTIPLE);
         }
 
+        // Target user details have now been identified, or we know that there is no such account.
+        // Send email address to account's email address if appropriate:
+        $pwresetstatus = PWRESET_STATUS_NOEMAILSENT;
         if ($user and !empty($user->confirmed)) {
-
             $userauth = get_auth_plugin($user->auth);
             if ($userauth->can_reset_password() and is_enabled_auth($user->auth)
               and has_capability('moodle/user:changeownpassword', $systemcontext, $user->id)) {
@@ -40,30 +47,52 @@ function forgotpw_process_request() {
                 $user->secret = random_string(15);
                 $DB->set_field('user', 'secret', $user->secret, array('id'=>$user->id));
 
-                if (!send_password_change_confirmation_email($user)) {
+                if (send_password_change_confirmation_email($user)) {
+                    $pwresetstatus = PWRESET_STATUS_TOKENSENT;
+                } else {
                     print_error('cannotmailconfirm');
                 }
 
             } else {
-                if (!send_password_change_info($user)) {
+                if (send_password_change_info($user)) {
+                    $pwresetstatus = PWRESET_STATUS_OTHEREMAILSENT;
+                } else {
                     print_error('cannotmailconfirm');
                 }
             }
         }
 
+        // Any email has now been sent.
+        // Next display results to requesting user if settings permit:
         echo $OUTPUT->header();
 
-        if (empty($user->email) or !empty($CFG->protectusernames)) {
-            // Print general confirmation message
+        if (!empty($CFG->protectusernames)) {
+            // Neither confirm, nor deny existance of any username or email address in database.
+            // Print general (non-commital) message
             notice(get_string('emailpasswordconfirmmaybesent'), $CFG->wwwroot.'/index.php');
-
-        } else {
-            // Confirm email sent
+            die; // never reached
+        } elseif (empty($user) || empty($user->email)) {
+            // Protect usernames is off, and we either couldn't find the user, or they don't have an email set.
+            // Still print non-commital message
+            // This is a big usability problem - need to tell users when we couldn't find the details they requested.
+            notice(get_string('emailpasswordconfirmmaybesent'), $CFG->wwwroot.'/index.php');
+            die; // never reached
+        } elseif ($pwresetstatus == PWRESET_STATUS_NOEMAILSENT) {
+            // User found, protectusernames is off, but user is not confirmed
+            // Pretend we sent them an email
+            // This is a big usability problem - need to tell users why we didn't send them an email
             $protectedemail = preg_replace('/([^@]*)@(.*)/', '******@$2', $user->email); // obfuscate the email address to protect privacy
             $stremailpasswordconfirmsent = get_string('emailpasswordconfirmsent', '', $protectedemail);
             notice($stremailpasswordconfirmsent, $CFG->wwwroot.'/index.php');
+            die; // never reached
+        } else {
+            // Confirm email sent
+            $protectedemail = preg_replace('/([^@]*)@(.*)/', '******@$2', $user->email); // obfuscate the email address to protect privacy
+            // This is a small usability problem - may be obfuscating the email address which the user has just supplied.
+            $stremailpasswordconfirmsent = get_string('emailpasswordconfirmsent', '', $protectedemail);
+            notice($stremailpasswordconfirmsent, $CFG->wwwroot.'/index.php');
+            die; // never reached
         }
-
         die; // never reached
     }
 
