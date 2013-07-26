@@ -473,18 +473,15 @@ function events_cron($eventname='') {
     return $processed;
 }
 
-
 /**
- * Function to call all event handlers when triggering an event
+ * Do not call directly, this is intended to be used from new event base only.
  *
- * @access public Part of the public API.
- * @category event
+ * @private
  * @param string $eventname name of the event
- * @param string $eventdata event data object. This should contain any data the
- *     event wants to share and should really be documented by the event publisher
+ * @param mixed $eventdata event data object
  * @return int number of failed events
  */
-function events_trigger($eventname, $eventdata) {
+function events_trigger_legacy($eventname, $eventdata) {
     global $CFG, $USER, $DB;
 
     $failedcount = 0; // number of failed events.
