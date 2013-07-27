@@ -44,7 +44,7 @@ class core_component_testcase extends advanced_testcase {
         $this->assertCount(self::SUBSYSTEMCOUNT, $subsystems, 'Oh, somebody added or removed a core subsystem, think twice before doing that!');
 
         // Make sure all paths are full/null, exist and are inside dirroot.
-        foreach($subsystems as $subsystem => $fulldir) {
+        foreach ($subsystems as $subsystem => $fulldir) {
             $this->assertFalse(strpos($subsystem, '_'), 'Core subsystems must be one work without underscores');
             if ($fulldir === null) {
                 if ($subsystem === 'filepicker' or $subsystem === 'help') {
@@ -116,7 +116,7 @@ class core_component_testcase extends advanced_testcase {
 
         $plugintypes = core_component::get_plugin_types();
 
-        foreach($plugintypes as $plugintype => $fulldir) {
+        foreach ($plugintypes as $plugintype => $fulldir) {
             $this->assertStringStartsWith("$CFG->dirroot/", $fulldir);
         }
     }
@@ -132,7 +132,7 @@ class core_component_testcase extends advanced_testcase {
         $realplugintypes = get_plugin_types(false);
         $this->assertDebuggingCalled();
 
-        foreach($plugintypes as $plugintype => $fulldir) {
+        foreach ($plugintypes as $plugintype => $fulldir) {
             $this->assertSame($fulldir, $CFG->dirroot.'/'.$realplugintypes[$plugintype]);
         }
     }
@@ -144,7 +144,7 @@ class core_component_testcase extends advanced_testcase {
 
         foreach ($plugintypes as $plugintype => $fulldir) {
             $plugins = core_component::get_plugin_list($plugintype);
-            foreach($plugins as $pluginname => $plugindir) {
+            foreach ($plugins as $pluginname => $plugindir) {
                 $this->assertStringStartsWith("$CFG->dirroot/", $plugindir);
             }
             if ($plugintype !== 'auth') {
@@ -172,7 +172,7 @@ class core_component_testcase extends advanced_testcase {
 
         foreach ($plugintypes as $plugintype => $fulldir) {
             $plugins = core_component::get_plugin_list($plugintype);
-            foreach($plugins as $pluginname => $plugindir) {
+            foreach ($plugins as $pluginname => $plugindir) {
                 $this->assertSame($plugindir, core_component::get_plugin_directory($plugintype, $pluginname));
             }
         }
@@ -183,7 +183,7 @@ class core_component_testcase extends advanced_testcase {
 
         foreach ($plugintypes as $plugintype => $fulldir) {
             $plugins = core_component::get_plugin_list($plugintype);
-            foreach($plugins as $pluginname => $plugindir) {
+            foreach ($plugins as $pluginname => $plugindir) {
                 $this->assertSame(core_component::get_plugin_directory($plugintype, $pluginname), get_plugin_directory($plugintype, $pluginname));
             }
         }
@@ -218,8 +218,6 @@ class core_component_testcase extends advanced_testcase {
     }
 
     public function test_normalize_component() {
-        global $CFG;
-
         // Moodle core.
         $this->assertSame(array('core', null), core_component::normalize_component('core'));
         $this->assertSame(array('core', null), core_component::normalize_component('moodle'));
@@ -258,8 +256,6 @@ class core_component_testcase extends advanced_testcase {
     }
 
     public function test_deprecated_normalize_component() {
-        global $CFG;
-
         // Moodle core.
         $this->assertSame(array('core', null), normalize_component('core'));
         $this->assertSame(array('core', null), normalize_component(''));
@@ -297,18 +293,17 @@ class core_component_testcase extends advanced_testcase {
             normalize_component('whothefuck_would_come_withsuchastupidnameofcomponent'));
     }
 
-
     public function test_get_component_directory() {
         $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $fulldir) {
             $plugins = core_component::get_plugin_list($plugintype);
-            foreach($plugins as $pluginname => $plugindir) {
+            foreach ($plugins as $pluginname => $plugindir) {
                 $this->assertSame($plugindir, core_component::get_component_directory(($plugintype.'_'.$pluginname)));
             }
         }
 
         $subsystems = core_component::get_core_subsystems();
-        foreach($subsystems as $subsystem => $fulldir) {
+        foreach ($subsystems as $subsystem => $fulldir) {
             $this->assertSame($fulldir, core_component::get_component_directory(('core_'.$subsystem)));
         }
     }
@@ -317,13 +312,13 @@ class core_component_testcase extends advanced_testcase {
         $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $fulldir) {
             $plugins = core_component::get_plugin_list($plugintype);
-            foreach($plugins as $pluginname => $plugindir) {
+            foreach ($plugins as $pluginname => $plugindir) {
                 $this->assertSame($plugindir, get_component_directory(($plugintype.'_'.$pluginname)));
             }
         }
 
         $subsystems = core_component::get_core_subsystems();
-        foreach($subsystems as $subsystem => $fulldir) {
+        foreach ($subsystems as $subsystem => $fulldir) {
             $this->assertSame($fulldir, get_component_directory(('core_'.$subsystem)));
         }
     }
@@ -333,7 +328,7 @@ class core_component_testcase extends advanced_testcase {
 
         $types = core_component::get_plugin_types_with_subplugins();
 
-        // Hardcode it here to detect if anybody hacks the code to include more types.
+        // Hardcode it here to detect if anybody hacks the code to include more subplugin types.
         $expected = array(
             'mod' => "$CFG->dirroot/mod",
             'editor' => "$CFG->dirroot/lib/editor",
