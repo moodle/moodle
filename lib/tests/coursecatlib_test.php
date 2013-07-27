@@ -29,17 +29,15 @@ global $CFG;
 require_once($CFG->libdir . '/coursecatlib.php');
 
 /**
- * Functional test for accesslib.php
- *
- * Note: execution may take many minutes especially on slower servers.
+ * Functional test for coursecatlib.php
  */
-class coursecatlib_testcase extends advanced_testcase {
+class core_coursecatlib_testcase extends advanced_testcase {
 
-    var $roles;
+    protected $roles;
 
-    public function setUp() {
+    protected function setUp() {
         parent::setUp();
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
     }
@@ -77,7 +75,7 @@ class coursecatlib_testcase extends advanced_testcase {
     }
 
     public function test_create_coursecat() {
-        // Create the category
+        // Create the category.
         $data = new stdClass();
         $data->name = 'aaa';
         $data->description = 'aaa';
@@ -85,14 +83,14 @@ class coursecatlib_testcase extends advanced_testcase {
 
         $category1 = coursecat::create($data);
 
-        // Initially confirm that base data was inserted correctly
-        $this->assertEquals($data->name, $category1->name);
-        $this->assertEquals($data->description, $category1->description);
-        $this->assertEquals($data->idnumber, $category1->idnumber);
+        // Initially confirm that base data was inserted correctly.
+        $this->assertSame($data->name, $category1->name);
+        $this->assertSame($data->description, $category1->description);
+        $this->assertSame($data->idnumber, $category1->idnumber);
 
         $this->assertGreaterThanOrEqual(1, $category1->sortorder);
 
-        // Create two more categories and test the sortorder worked correctly
+        // Create two more categories and test the sortorder worked correctly.
         $data->name = 'ccc';
         $category2 = coursecat::create($data);
 
@@ -108,23 +106,27 @@ class coursecatlib_testcase extends advanced_testcase {
             coursecat::create(array('name' => ''));
             $this->fail('Missing category name exception expected in coursecat::create');
         } catch (moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
         }
         $cat1 = coursecat::create(array('name' => 'Cat1', 'idnumber' => '1'));
         try {
             $cat1->update(array('name' => ''));
             $this->fail('Missing category name exception expected in coursecat::update');
         } catch (moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
         }
         try {
             coursecat::create(array('name' => 'Cat2', 'idnumber' => '1'));
             $this->fail('Duplicate idnumber exception expected in coursecat::create');
         } catch (moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
         }
         $cat2 = coursecat::create(array('name' => 'Cat2', 'idnumber' => '2'));
         try {
             $cat2->update(array('idnumber' => '1'));
             $this->fail('Duplicate idnumber exception expected in coursecat::update');
         } catch (moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
         }
     }
 
@@ -132,65 +134,65 @@ class coursecatlib_testcase extends advanced_testcase {
         $this->assign_capability('moodle/category:viewhiddencategories');
         $this->assign_capability('moodle/category:manage');
 
-        // create category 1 initially hidden
+        // Create category 1 initially hidden.
         $category1 = coursecat::create(array('name' => 'Cat1', 'visible' => 0));
         $this->assertEquals(0, $category1->visible);
         $this->assertEquals(0, $category1->visibleold);
 
-        // create category 2 initially hidden as a child of hidden category 1
+        // Create category 2 initially hidden as a child of hidden category 1.
         $category2 = coursecat::create(array('name' => 'Cat2', 'visible' => 0, 'parent' => $category1->id));
         $this->assertEquals(0, $category2->visible);
         $this->assertEquals(0, $category2->visibleold);
 
-        // create category 3 initially visible as a child of hidden category 1
+        // Create category 3 initially visible as a child of hidden category 1.
         $category3 = coursecat::create(array('name' => 'Cat3', 'visible' => 1, 'parent' => $category1->id));
         $this->assertEquals(0, $category3->visible);
         $this->assertEquals(1, $category3->visibleold);
 
-        // show category 1 and make sure that category 2 is hidden and category 3 is visible
+        // Show category 1 and make sure that category 2 is hidden and category 3 is visible.
         $category1->show();
         $this->assertEquals(1, coursecat::get($category1->id)->visible);
         $this->assertEquals(0, coursecat::get($category2->id)->visible);
         $this->assertEquals(1, coursecat::get($category3->id)->visible);
 
-        // create visible category 4
+        // Create visible category 4.
         $category4 = coursecat::create(array('name' => 'Cat4'));
         $this->assertEquals(1, $category4->visible);
         $this->assertEquals(1, $category4->visibleold);
 
-        // create visible category 5 as a child of visible category 4
+        // Create visible category 5 as a child of visible category 4.
         $category5 = coursecat::create(array('name' => 'Cat5', 'parent' => $category4->id));
         $this->assertEquals(1, $category5->visible);
         $this->assertEquals(1, $category5->visibleold);
 
-        // hide category 4 and make sure category 5 is hidden too
+        // Hide category 4 and make sure category 5 is hidden too.
         $category4->hide();
         $this->assertEquals(0, $category4->visible);
         $this->assertEquals(0, $category4->visibleold);
-        $category5 = coursecat::get($category5->id); // we have to re-read from DB
+        $category5 = coursecat::get($category5->id); // We have to re-read from DB.
         $this->assertEquals(0, $category5->visible);
         $this->assertEquals(1, $category5->visibleold);
 
-        // show category 4 and make sure category 5 is visible too
+        // Show category 4 and make sure category 5 is visible too.
         $category4->show();
         $this->assertEquals(1, $category4->visible);
         $this->assertEquals(1, $category4->visibleold);
-        $category5 = coursecat::get($category5->id); // we have to re-read from DB
+        $category5 = coursecat::get($category5->id); // We have to re-read from DB.
         $this->assertEquals(1, $category5->visible);
         $this->assertEquals(1, $category5->visibleold);
 
-        // move category 5 under hidden category 2 and make sure it became hidden
+        // Move category 5 under hidden category 2 and make sure it became hidden.
         $category5->change_parent($category2->id);
         $this->assertEquals(0, $category5->visible);
         $this->assertEquals(1, $category5->visibleold);
 
-        // re-read object for category 5 from DB and check again
+        // Re-read object for category 5 from DB and check again.
         $category5 = coursecat::get($category5->id);
         $this->assertEquals(0, $category5->visible);
         $this->assertEquals(1, $category5->visibleold);
 
-        // tricky one! Move hidden category 5 under visible category ("Top") and make sure it is still hidden
-        // WHY? Well, different people may expect different behaviour here. So better keep it hidden
+        // Rricky one! Move hidden category 5 under visible category ("Top") and make sure it is still hidden-
+        // WHY? Well, different people may expect different behaviour here. So better keep it hidden.
         $category5->change_parent(0);
         $this->assertEquals(0, $category5->visible);
         $this->assertEquals(1, $category5->visibleold);
@@ -205,21 +207,22 @@ class coursecatlib_testcase extends advanced_testcase {
         $category3 = coursecat::create(array('name' => 'Cat3', 'parent' => $category1->id));
         $category4 = coursecat::create(array('name' => 'Cat4', 'parent' => $category2->id));
 
-        // check function get_children()
+        // Check function get_children().
         $this->assertEquals(array($category2->id, $category3->id), array_keys($category1->get_children()));
-        // check function get_parents()
+        // Check function get_parents().
         $this->assertEquals(array($category1->id, $category2->id), $category4->get_parents());
 
-        // can not move category to itself or to it's children
+        // Can not move category to itself or to it's children.
         $this->assertFalse($category1->can_change_parent($category2->id));
         $this->assertFalse($category2->can_change_parent($category2->id));
-        // can move category to grandparent
+        // Can move category to grandparent.
         $this->assertTrue($category4->can_change_parent($category1->id));
 
         try {
             $category2->change_parent($category4->id);
             $this->fail('Exception expected - can not move category');
         } catch (moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
         }
 
         $category4->change_parent(0);
@@ -231,17 +234,17 @@ class coursecatlib_testcase extends advanced_testcase {
     public function test_update() {
         $category1 = coursecat::create(array('name' => 'Cat1'));
         $timecreated = $category1->timemodified;
-        $this->assertEquals('Cat1', $category1->name);
+        $this->assertSame('Cat1', $category1->name);
         $this->assertTrue(empty($category1->description));
         sleep(2);
         $testdescription = 'This is cat 1 а также русский текст';
         $category1->update(array('description' => $testdescription));
-        $this->assertEquals($testdescription, $category1->description);
+        $this->assertSame($testdescription, $category1->description);
         $category1 = coursecat::get($category1->id);
-        $this->assertEquals($testdescription, $category1->description);
+        $this->assertSame($testdescription, $category1->description);
         cache_helper::purge_by_event('changesincoursecat');
         $category1 = coursecat::get($category1->id);
-        $this->assertEquals($testdescription, $category1->description);
+        $this->assertSame($testdescription, $category1->description);
 
         $this->assertGreaterThan($timecreated, $category1->timemodified);
     }
@@ -273,16 +276,17 @@ class coursecatlib_testcase extends advanced_testcase {
         //      $course1
         //   $course4
         // $category3
+        // structure.
 
-        // Login as another user to test course:delete capability (user who created course can delete it within 24h even without cap)
+        // Login as another user to test course:delete capability (user who created course can delete it within 24h even without cap).
         $this->setUser($this->getDataGenerator()->create_user());
 
-        // Delete category 2 and move content to category 3
-        $this->assertFalse($category2->can_move_content_to($category3->id)); // no luck!
-        // add necessary capabilities
+        // Delete category 2 and move content to category 3.
+        $this->assertFalse($category2->can_move_content_to($category3->id)); // No luck!
+        // Add necessary capabilities.
         $this->assign_capability('moodle/course:create', CAP_ALLOW, context_coursecat::instance($category3->id));
         $this->assign_capability('moodle/category:manage');
-        $this->assertTrue($category2->can_move_content_to($category3->id)); // hurray!
+        $this->assertTrue($category2->can_move_content_to($category3->id)); // Hurray!
         $category2->delete_move($category3->id);
 
         // Make sure we have:
@@ -293,6 +297,7 @@ class coursecatlib_testcase extends advanced_testcase {
         //      $course2
         //      $course3
         //    $course1
+        // structure.
 
         $this->assertNull(coursecat::get($category2->id, IGNORE_MISSING, true));
         $this->assertEquals(array(), $category1->get_children());
@@ -301,18 +306,19 @@ class coursecatlib_testcase extends advanced_testcase {
         $this->assertEquals($category4->id, $DB->get_field('course', 'category', array('id' => $course3->id)));
         $this->assertEquals($category3->id, $DB->get_field('course', 'category', array('id' => $course1->id)));
 
-        // Delete category 3 completely
-        $this->assertFalse($category3->can_delete_full()); // no luck!
-        // add necessary capabilities
+        // Delete category 3 completely.
+        $this->assertFalse($category3->can_delete_full()); // No luck!
+        // Add necessary capabilities.
         $this->assign_capability('moodle/course:delete', CAP_ALLOW, context_coursecat::instance($category3->id));
-        $this->assertTrue($category3->can_delete_full()); // hurray!
+        $this->assertTrue($category3->can_delete_full()); // Hurray!
         $category3->delete_full();
 
         // Make sure we have:
         // $category1
         //   $course4
+        // structure.
 
-        // Note that we also have default 'Miscellaneous' category and default 'site' course
+        // Note that we also have default 'Miscellaneous' category and default 'site' course.
         $this->assertEquals(1, $DB->get_field_sql('SELECT count(*) FROM {course_categories} WHERE id > ?', array($initialcatid)));
         $this->assertEquals($category1->id, $DB->get_field_sql('SELECT max(id) FROM {course_categories}'));
         $this->assertEquals(1, $DB->get_field_sql('SELECT count(*) FROM {course} WHERE id <> ?', array(SITEID)));
@@ -330,8 +336,8 @@ class coursecatlib_testcase extends advanced_testcase {
         $category7 = coursecat::create(array('name' => 'Cat0', 'parent' => $category1->id));
 
         $children = $category1->get_children();
-        // user does not have the capability to view hidden categories, so the list should be
-        // 2,4,6,7
+        // User does not have the capability to view hidden categories, so the list should be
+        // 2, 4, 6, 7.
         $this->assertEquals(array($category2->id, $category4->id, $category6->id, $category7->id), array_keys($children));
         $this->assertEquals(4, $category1->get_children_count());
 
@@ -346,14 +352,14 @@ class coursecatlib_testcase extends advanced_testcase {
         $this->assertEquals(array($category4->id, $category6->id), array_keys($children));
 
         $children = $category1->get_children(array('sort' => array('name' => 1)));
-        // must be 7,2,4,6
+        // Must be 7, 2, 4, 6.
         $this->assertEquals(array($category7->id, $category2->id, $category4->id, $category6->id), array_keys($children));
 
         $children = $category1->get_children(array('sort' => array('idnumber' => 1, 'name' => -1)));
-        // must be 2,7,6,4
+        // Must be 2, 7, 6, 4.
         $this->assertEquals(array($category2->id, $category7->id, $category6->id, $category4->id), array_keys($children));
 
-        // check that everything is all right after purging the caches
+        // Check that everything is all right after purging the caches.
         cache_helper::purge_by_event('changesincoursecat');
         $children = $category1->get_children();
         $this->assertEquals(array($category2->id, $category4->id, $category6->id, $category7->id), array_keys($children));
@@ -373,55 +379,55 @@ class coursecatlib_testcase extends advanced_testcase {
         $c7 = $this->getDataGenerator()->create_course(array('category' => $cat2->id, 'fullname' => 'Test 7', 'summary' => ' ', 'visible' => 0));
         $c8 = $this->getDataGenerator()->create_course(array('category' => $cat2->id, 'fullname' => 'Test 8', 'summary' => ' '));
 
-        // get courses in category 1 (returned visible only because user is not enrolled)        global $DB;
+        // Get courses in category 1 (returned visible only because user is not enrolled).
         $res = $cat1->get_courses(array('sortorder' => 1));
-        $this->assertEquals(array($c4->id, $c3->id, $c1->id), array_keys($res)); // courses are added in reverse order
+        $this->assertEquals(array($c4->id, $c3->id, $c1->id), array_keys($res)); // Courses are added in reverse order.
         $this->assertEquals(3, $cat1->get_courses_count());
 
-        // get courses in category 1 recursively (returned visible only because user is not enrolled)
+        // Get courses in category 1 recursively (returned visible only because user is not enrolled).
         $res = $cat1->get_courses(array('recursive' => 1));
         $this->assertEquals(array($c4->id, $c3->id, $c1->id, $c8->id, $c6->id, $c5->id), array_keys($res));
         $this->assertEquals(6, $cat1->get_courses_count(array('recursive' => 1)));
 
-        // get courses sorted by fullname
+        // Get courses sorted by fullname.
         $res = $cat1->get_courses(array('sort' => array('fullname' => 1)));
         $this->assertEquals(array($c1->id, $c4->id, $c3->id), array_keys($res));
         $this->assertEquals(3, $cat1->get_courses_count(array('sort' => array('fullname' => 1))));
 
-        // get courses sorted by fullname recursively
+        // Get courses sorted by fullname recursively.
         $res = $cat1->get_courses(array('recursive' => 1, 'sort' => array('fullname' => 1)));
         $this->assertEquals(array($c1->id, $c4->id, $c5->id, $c8->id, $c6->id, $c3->id), array_keys($res));
         $this->assertEquals(6, $cat1->get_courses_count(array('recursive' => 1, 'sort' => array('fullname' => 1))));
 
-        // get courses sorted by fullname recursively, use offset and limit
+        // Get courses sorted by fullname recursively, use offset and limit.
         $res = $cat1->get_courses(array('recursive' => 1, 'offset' => 1, 'limit' => 2, 'sort' => array('fullname' => -1)));
         $this->assertEquals(array($c6->id, $c8->id), array_keys($res));
-        // offset and limit do not affect get_courses_count()
+        // Offset and limit do not affect get_courses_count().
         $this->assertEquals(6, $cat1->get_courses_count(array('recursive' => 1, 'offset' => 1, 'limit' => 2, 'sort' => array('fullname' => 1))));
 
-        // calling get_courses_count without prior call to get_courses()
+        // Calling get_courses_count without prior call to get_courses().
         $this->assertEquals(3, $cat2->get_courses_count(array('recursive' => 1, 'sort' => array('idnumber' => 1))));
 
-        // search courses
+        // Search courses.
 
-        // search by text
+        // Search by text.
         $res = coursecat::search_courses(array('search' => 'Test'));
         $this->assertEquals(array($c4->id, $c3->id, $c1->id, $c8->id, $c5->id), array_keys($res));
         $this->assertEquals(5, coursecat::search_courses_count(array('search' => 'Test')));
 
-        // search by text with specified offset and limit
+        // Search by text with specified offset and limit.
         $options = array('sort' => array('fullname' => 1), 'offset' => 1, 'limit' => 2);
         $res = coursecat::search_courses(array('search' => 'Test'), $options);
         $this->assertEquals(array($c4->id, $c5->id), array_keys($res));
         $this->assertEquals(5, coursecat::search_courses_count(array('search' => 'Test'), $options));
 
         // IMPORTANT: the tests below may fail on some databases
-        // case-insensitive search
+        // case-insensitive search.
         $res = coursecat::search_courses(array('search' => 'test'));
         $this->assertEquals(array($c4->id, $c3->id, $c1->id, $c8->id, $c5->id), array_keys($res));
         $this->assertEquals(5, coursecat::search_courses_count(array('search' => 'test')));
 
-        // non-latin language search
+        // Non-latin language search.
         $res = coursecat::search_courses(array('search' => 'Математика'));
         $this->assertEquals(array($c3->id, $c6->id), array_keys($res));
         $this->assertEquals(2, coursecat::search_courses_count(array('search' => 'Математика'), array()));
@@ -436,7 +442,7 @@ class coursecatlib_testcase extends advanced_testcase {
 
         $CFG->coursecontact = $managerrole->id. ','. $teacherrole->id;
 
-        /**
+        /*
          * User is listed in course contacts for the course if he has one of the
          * "course contact" roles ($CFG->coursecontact) AND is enrolled in the course.
          * If the user has several roles only the highest is displayed.
@@ -462,14 +468,14 @@ class coursecatlib_testcase extends advanced_testcase {
         $category[2] = coursecat::create(array('name' => 'Cat2', 'parent' => $category[1]))->id;
         $category[3] = coursecat::create(array('name' => 'Cat3', 'parent' => $category[1]))->id;
         $category[4] = coursecat::create(array('name' => 'Cat4', 'parent' => $category[2]))->id;
-        foreach (array(1,2,3,4) as $catid) {
-            foreach (array(1,2) as $courseid) {
+        foreach (array(1, 2, 3, 4) as $catid) {
+            foreach (array(1, 2) as $courseid) {
                 $course[$catid][$courseid] = $this->getDataGenerator()->create_course(array('idnumber' => 'id'.$catid.$courseid,
                     'category' => $category[$catid]))->id;
                 $enrol[$catid][$courseid] = $DB->get_record('enrol', array('courseid'=>$course[$catid][$courseid], 'enrol'=>'manual'), '*', MUST_EXIST);
             }
         }
-        foreach (array(1,2,3,4,5) as $userid) {
+        foreach (array(1, 2, 3, 4, 5) as $userid) {
             $user[$userid] = $this->getDataGenerator()->create_user(array('firstname' => 'F'.$userid, 'lastname' => 'L'.$userid))->id;
         }
 
@@ -500,10 +506,10 @@ class coursecatlib_testcase extends advanced_testcase {
         $manual->enrol_user($enrol[1][2], $user[4], $teacherrole->id, 0, 0, ENROL_USER_SUSPENDED);
 
         $allcourses = coursecat::get(0)->get_courses(array('recursive' => true, 'coursecontacts' => true, 'sort' => array('idnumber' => 1)));
-        // Simplify the list of contacts for each course (similar as renderer would do)
+        // Simplify the list of contacts for each course (similar as renderer would do).
         $contacts = array();
-        foreach (array(1,2,3,4) as $catid) {
-            foreach (array(1,2) as $courseid) {
+        foreach (array(1, 2, 3, 4) as $catid) {
+            foreach (array(1, 2) as $courseid) {
                 $tmp = array();
                 foreach ($allcourses[$course[$catid][$courseid]]->get_course_contacts() as $contact) {
                     $tmp[] = $contact['rolename']. ': '. $contact['username'];
@@ -514,21 +520,21 @@ class coursecatlib_testcase extends advanced_testcase {
 
         // Assert:
         //     -- course21 (user2 is enrolled as manager) | Manager: F2 L2
-        $this->assertEquals('Manager: F2 L2', $contacts[2][1]);
+        $this->assertSame('Manager: F2 L2', $contacts[2][1]);
         //     -- course22 (user2 is enrolled as student) | Teacher: F2 L2
-        $this->assertEquals('Teacher: F2 L2', $contacts[2][2]);
+        $this->assertSame('Teacher: F2 L2', $contacts[2][2]);
         //       -- course41 (user4 is enrolled as teacher, user5 is enrolled as manager) | Manager: F5 L5, Teacher: F4 L4
-        $this->assertEquals('Manager: F5 L5, Teacher: F4 L4', $contacts[4][1]);
+        $this->assertSame('Manager: F5 L5, Teacher: F4 L4', $contacts[4][1]);
         //       -- course42 (user2 is enrolled as teacher) | [Expected] Manager: F2 L2
-        $this->assertEquals('Manager: F2 L2', $contacts[4][2]);
+        $this->assertSame('Manager: F2 L2', $contacts[4][2]);
         //     -- course31 (user3 is enrolled as student) | Manager: F3 L3
-        $this->assertEquals('Manager: F3 L3', $contacts[3][1]);
+        $this->assertSame('Manager: F3 L3', $contacts[3][1]);
         //     -- course32                                |
-        $this->assertEquals('', $contacts[3][2]);
+        $this->assertSame('', $contacts[3][2]);
         //   -- course11 (user1 is enrolled as teacher)   | Teacher: F1 L1
-        $this->assertEquals('Teacher: F1 L1', $contacts[1][1]);
+        $this->assertSame('Teacher: F1 L1', $contacts[1][1]);
         //   -- course12 (user1 has teacher role)         |
-        $this->assertEquals('', $contacts[1][2]);
+        $this->assertSame('', $contacts[1][2]);
 
         $CFG->coursecontact = $oldcoursecontact;
     }
