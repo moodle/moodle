@@ -26,9 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Unit tests for our utf-8 aware collator.
- *
- * Used for sorting.
+ * Unit tests for our utf-8 aware collator which is used for sorting.
  *
  * @package    core
  * @category   phpunit
@@ -43,20 +41,19 @@ class core_collator_testcase extends basic_testcase {
     protected $initiallang = null;
 
     /**
-     * @var string The last error that has occured
+     * @var string The last error that has occurred
      */
     protected $error = null;
 
     /**
-     * Prepares things for this test case
-     * @return void
+     * Prepares things for this test case.
      */
     protected function setUp() {
         global $SESSION;
         if (isset($SESSION->lang)) {
             $this->initiallang = $SESSION->lang;
         }
-        $SESSION->lang = 'en'; // make sure we test en language to get consistent results, hopefully all systems have this locale
+        $SESSION->lang = 'en'; // Make sure we test en language to get consistent results, hopefully all systems have this locale.
         if (extension_loaded('intl')) {
             $this->error = 'Collation aware sorting not supported';
         } else {
@@ -66,8 +63,7 @@ class core_collator_testcase extends basic_testcase {
     }
 
     /**
-     * Cleans things up after this test case has run
-     * @return void
+     * Cleans things up after this test case has run.
      */
     protected function tearDown() {
         global $SESSION;
@@ -81,38 +77,37 @@ class core_collator_testcase extends basic_testcase {
     }
 
     /**
-     * Tests the static asort method
-     * @return void
+     * Tests the static asort method.
      */
     public function test_asort() {
         $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
         $result = core_collator::asort($arr);
-        $this->assertSame(array_values($arr), array('aa', 'ab', 'cc'));
-        $this->assertSame(array_keys($arr), array(1, 'b', 0));
+        $this->assertSame(array('aa', 'ab', 'cc'), array_values($arr));
+        $this->assertSame(array(1, 'b', 0), array_keys($arr));
         $this->assertTrue($result);
 
         $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
         $result = core_collator::asort($arr, core_collator::SORT_STRING);
-        $this->assertSame(array_values($arr), array('aa', 'ab', 'cc'));
-        $this->assertSame(array_keys($arr), array(1, 'b', 0));
+        $this->assertSame(array('aa', 'ab', 'cc'), array_values($arr));
+        $this->assertSame(array(1, 'b', 0), array_keys($arr));
         $this->assertTrue($result);
 
         $arr = array('b' => 'aac', 1 => 'Aac', 0 => 'cc');
         $result = core_collator::asort($arr, (core_collator::SORT_STRING | core_collator::CASE_SENSITIVE));
-        $this->assertSame(array_values($arr), array('Aac', 'aac', 'cc'));
-        $this->assertSame(array_keys($arr), array(1, 'b', 0));
+        $this->assertSame(array('Aac', 'aac', 'cc'), array_values($arr));
+        $this->assertSame(array(1, 'b', 0), array_keys($arr));
         $this->assertTrue($result);
 
         $arr = array('b' => 'a1', 1 => 'a10', 0 => 'a3b');
         $result = core_collator::asort($arr);
-        $this->assertSame(array_values($arr), array('a1', 'a10', 'a3b'));
-        $this->assertSame(array_keys($arr), array('b', 1, 0));
+        $this->assertSame(array('a1', 'a10', 'a3b'), array_values($arr));
+        $this->assertSame(array('b', 1, 0), array_keys($arr));
         $this->assertTrue($result);
 
         $arr = array('b' => 'a1', 1 => 'a10', 0 => 'a3b');
         $result = core_collator::asort($arr, core_collator::SORT_NATURAL);
-        $this->assertSame(array_values($arr), array('a1', 'a3b', 'a10'));
-        $this->assertSame(array_keys($arr), array('b', 0, 1));
+        $this->assertSame(array('a1', 'a3b', 'a10'), array_values($arr));
+        $this->assertSame(array('b', 0, 1), array_keys($arr));
         $this->assertTrue($result);
 
         $arr = array('b' => '1.1.1', 1 => '1.2', 0 => '1.20.2');
@@ -123,26 +118,26 @@ class core_collator_testcase extends basic_testcase {
 
         $arr = array('b' => '-1', 1 => 1000, 0 => -1.2, 3 => 1, 4 => false);
         $result = core_collator::asort($arr, core_collator::SORT_NUMERIC);
-        $this->assertSame(array_values($arr), array(-1.2, '-1', false, 1, 1000));
-        $this->assertSame(array_keys($arr), array(0, 'b', 4, 3, 1));
+        $this->assertSame(array(-1.2, '-1', false, 1, 1000), array_values($arr));
+        $this->assertSame(array(0, 'b', 4, 3, 1), array_keys($arr));
         $this->assertTrue($result);
 
         $arr = array('b' => array(1), 1 => array(2, 3), 0 => 1);
         $result = core_collator::asort($arr, core_collator::SORT_REGULAR);
-        $this->assertSame(array_values($arr), array(1, array(1), array(2, 3)));
-        $this->assertSame(array_keys($arr), array(0, 'b', 1));
+        $this->assertSame(array(1, array(1), array(2, 3)), array_values($arr));
+        $this->assertSame(array(0, 'b', 1), array_keys($arr));
         $this->assertTrue($result);
 
-        // test sorting of array of arrays - first element should be used for actual comparison
+        // Test sorting of array of arrays - first element should be used for actual comparison.
         $arr = array(0=>array('bb', 'z'), 1=>array('ab', 'a'), 2=>array('zz', 'x'));
         $result = core_collator::asort($arr, core_collator::SORT_REGULAR);
-        $this->assertSame(array_keys($arr), array(1, 0, 2));
+        $this->assertSame(array(1, 0, 2), array_keys($arr));
         $this->assertTrue($result);
 
-        $arr = array('a' => 'áb', 'b' => 'ab', 1 => 'aa', 0=>'cc', 'x' => 'Áb',);
+        $arr = array('a' => 'áb', 'b' => 'ab', 1 => 'aa', 0=>'cc', 'x' => 'Áb');
         $result = core_collator::asort($arr);
-        $this->assertSame(array_values($arr), array('aa', 'ab', 'áb', 'Áb', 'cc'), $this->error);
-        $this->assertSame(array_keys($arr), array(1, 'b', 'a', 'x', 0), $this->error);
+        $this->assertSame(array('aa', 'ab', 'áb', 'Áb', 'cc'), array_values($arr), $this->error);
+        $this->assertSame(array(1, 'b', 'a', 'x', 0), array_keys($arr), $this->error);
         $this->assertTrue($result);
 
         $a = array(2=>'b', 1=>'c');
@@ -154,8 +149,7 @@ class core_collator_testcase extends basic_testcase {
     }
 
     /**
-     * Tests the static asort_objects_by_method method
-     * @return void
+     * Tests the static asort_objects_by_method method.
      */
     public function test_asort_objects_by_method() {
         $objects = array(
@@ -164,8 +158,8 @@ class core_collator_testcase extends basic_testcase {
             0 => new string_test_class('cc')
         );
         $result = core_collator::asort_objects_by_method($objects, 'get_protected_name');
-        $this->assertSame(array_keys($objects), array(1, 'b', 0));
-        $this->assertSame($this->get_ordered_names($objects, 'get_protected_name'), array('aa', 'ab', 'cc'));
+        $this->assertSame(array(1, 'b', 0), array_keys($objects));
+        $this->assertSame(array('aa', 'ab', 'cc'), $this->get_ordered_names($objects, 'get_protected_name'));
         $this->assertTrue($result);
 
         $objects = array(
@@ -174,14 +168,13 @@ class core_collator_testcase extends basic_testcase {
             0 => new string_test_class('a100')
         );
         $result = core_collator::asort_objects_by_method($objects, 'get_protected_name', core_collator::SORT_NATURAL);
-        $this->assertSame(array_keys($objects), array(1, 'b', 0));
-        $this->assertSame($this->get_ordered_names($objects, 'get_protected_name'), array('a1', 'a20', 'a100'));
+        $this->assertSame(array(1, 'b', 0), array_keys($objects));
+        $this->assertSame(array('a1', 'a20', 'a100'), $this->get_ordered_names($objects, 'get_protected_name'));
         $this->assertTrue($result);
     }
 
     /**
-     * Tests the static asort_objects_by_method method
-     * @return void
+     * Tests the static asort_objects_by_method method.
      */
     public function test_asort_objects_by_property() {
         $objects = array(
@@ -190,8 +183,8 @@ class core_collator_testcase extends basic_testcase {
             0 => new string_test_class('cc')
         );
         $result = core_collator::asort_objects_by_property($objects, 'publicname');
-        $this->assertSame(array_keys($objects), array(1, 'b', 0));
-        $this->assertSame($this->get_ordered_names($objects, 'publicname'), array('aa', 'ab', 'cc'));
+        $this->assertSame(array(1, 'b', 0), array_keys($objects));
+        $this->assertSame(array('aa', 'ab', 'cc'), $this->get_ordered_names($objects, 'publicname'));
         $this->assertTrue($result);
 
         $objects = array(
@@ -200,16 +193,16 @@ class core_collator_testcase extends basic_testcase {
             0 => new string_test_class('a100')
         );
         $result = core_collator::asort_objects_by_property($objects, 'publicname', core_collator::SORT_NATURAL);
-        $this->assertSame(array_keys($objects), array(1, 'b', 0));
-        $this->assertSame($this->get_ordered_names($objects, 'publicname'), array('a1', 'a20', 'a100'));
+        $this->assertSame(array(1, 'b', 0), array_keys($objects));
+        $this->assertSame(array('a1', 'a20', 'a100'), $this->get_ordered_names($objects, 'publicname'));
         $this->assertTrue($result);
     }
 
     /**
-     * Returns an array of sorted names
+     * Returns an array of sorted names.
      * @param array $objects
      * @param string $methodproperty
-     * @return type
+     * @return array
      */
     protected function get_ordered_names($objects, $methodproperty = 'get_protected_name') {
         $return = array();
@@ -224,21 +217,20 @@ class core_collator_testcase extends basic_testcase {
     }
 
     /**
-     * Tests the static ksort method
-     * @return void
+     * Tests the static ksort method.
      */
     public function test_ksort() {
         $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
         $result = core_collator::ksort($arr);
-        $this->assertSame(array_keys($arr), array(0, 1, 'b'));
-        $this->assertSame(array_values($arr), array('cc', 'aa', 'ab'));
+        $this->assertSame(array(0, 1, 'b'), array_keys($arr));
+        $this->assertSame(array('cc', 'aa', 'ab'), array_values($arr));
         $this->assertTrue($result);
 
         $obj = new stdClass();
         $arr = array('1.1.1'=>array(), '1.2'=>$obj, '1.20.2'=>null);
         $result = core_collator::ksort($arr, core_collator::SORT_NATURAL);
-        $this->assertSame(array_keys($arr), array('1.1.1', '1.2', '1.20.2'));
-        $this->assertSame(array_values($arr), array(array(), $obj, null));
+        $this->assertSame(array('1.1.1', '1.2', '1.20.2'), array_keys($arr));
+        $this->assertSame(array(array(), $obj, null), array_values($arr));
         $this->assertTrue($result);
 
         $a = array(2=>'b', 1=>'c');
@@ -252,8 +244,8 @@ class core_collator_testcase extends basic_testcase {
     public function test_legacy_collatorlib() {
         $arr = array('b' => 'ab', 1 => 'aa', 0 => 'cc');
         $result = collatorlib::asort($arr);
-        $this->assertSame(array_values($arr), array('aa', 'ab', 'cc'));
-        $this->assertSame(array_keys($arr), array(1, 'b', 0));
+        $this->assertSame(array('aa', 'ab', 'cc'), array_values($arr));
+        $this->assertSame(array(1, 'b', 0), array_keys($arr));
         $this->assertTrue($result);
     }
 }
@@ -281,7 +273,7 @@ class string_test_class extends stdClass {
      */
     private $privatename;
     /**
-     * Constructs the test instance
+     * Constructs the test instance.
      * @param string $name
      */
     public function __construct($name) {
@@ -290,14 +282,14 @@ class string_test_class extends stdClass {
         $this->privatename = $name;
     }
     /**
-     * Returns the protected property
+     * Returns the protected property.
      * @return string
      */
     public function get_protected_name() {
         return $this->protectedname;
     }
     /**
-     * Returns the protected property
+     * Returns the protected property.
      * @return string
      */
     public function get_private_name() {
