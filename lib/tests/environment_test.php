@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Do standard environment.xml tests.
  */
-class environment_testcase extends advanced_testcase {
+class core_environment_testcase extends advanced_testcase {
 
     public function test_environment() {
         global $CFG;
