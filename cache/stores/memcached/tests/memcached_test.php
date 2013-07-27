@@ -59,4 +59,35 @@ class cachestore_memcached_test extends cachestore_tests {
     protected function get_class_name() {
         return 'cachestore_memcached';
     }
+
+    /**
+     * Tests the valid keys to ensure they work.
+     */
+    public function test_valid_keys() {
+        $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_memcached', 'phpunit_test');
+        $instance = cachestore_memcached::initialise_test_instance($definition);
+
+        if (!$instance) { // Something prevented memcached store to be inited (extension, TEST_CACHESTORE_MEMCACHED_TESTSERVERS...).
+            $this->markTestSkipped();
+        }
+
+        $keys = array(
+            // Alphanumeric.
+            'abc', 'ABC', '123', 'aB1', '1aB',
+            // Hyphens.
+            'a-1', '1-a', '-a1', 'a1-',
+            // Underscores.
+            'a_1', '1_a', '_a1', 'a1_'
+        );
+        foreach ($keys as $key) {
+            $this->assertTrue($instance->set($key, $key), "Failed to set key `$key`");
+        }
+        foreach ($keys as $key) {
+            $this->assertEquals($key, $instance->get($key), "Failed to get key `$key`");
+        }
+        $values = $instance->get_many($keys);
+        foreach ($values as $key => $value) {
+            $this->assertEquals($key, $value);
+        }
+    }
 }

@@ -40,7 +40,7 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | id_jumpto_1 | Next page |
     And I press "Save page"
     And I follow "Expanded"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', @class, ' '), ' addlinks ')][3]" "xpath_element"
+    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][3]" "xpath_element"
     And I select "Numerical" from "Select a question type"
     And I press "Add a question page"
     And I fill the moodle form with:

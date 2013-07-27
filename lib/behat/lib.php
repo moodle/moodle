@@ -141,3 +141,29 @@ function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
     // Also use the internal error handler so we keep the usual behaviour.
     return false;
 }
+
+/**
+ * Restrict the config.php settings allowed.
+ *
+ * When running the behat features the config.php
+ * settings should not affect the results.
+ *
+ * @return void
+ */
+function behat_clean_init_config() {
+    global $CFG;
+
+    $allowed = array_flip(array(
+        'wwwroot', 'dataroot', 'dirroot', 'admin', 'directorypermissions', 'filepermissions',
+        'dbtype', 'dblibrary', 'dbhost', 'dbname', 'dbuser', 'dbpass', 'prefix', 'dboptions',
+        'proxyhost', 'proxyport', 'proxytype', 'proxyuser', 'proxypassword', 'proxybypass'
+    ));
+
+    // Also allowing behat_ prefixed attributes.
+    foreach ($CFG as $key => $value) {
+        if (!isset($allowed[$key]) && strpos($key, 'behat_') !== 0) {
+            unset($CFG->{$key});
+        }
+    }
+
+}

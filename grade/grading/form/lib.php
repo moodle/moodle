@@ -73,6 +73,9 @@ abstract class gradingform_controller {
     /** @var array graderange array of valid grades for this area. Use set_grade_range and get_grade_range to access this */
     private $graderange = null;
 
+    /** @var bool if decimal values are allowed as grades. */
+    private $allowgradedecimals = false;
+
     /** @var boolean|null cached result of function has_active_instances() */
     protected $hasactiveinstances = null;
 
@@ -622,13 +625,23 @@ abstract class gradingform_controller {
 
     /**
      * Sets the range of grades used in this area. This is usually either range like 0-100
-     * or the scale where keys start from 1. Typical use:
-     * $controller->set_grade_range(make_grades_menu($gradingtype));
+     * or the scale where keys start from 1.
      *
-     * @param array $graderange
+     * Typically modules will call it:
+     * $controller->set_grade_range(make_grades_menu($gradingtype), $gradingtype > 0);
+     * Negative $gradingtype means that scale is used and the grade must be rounded
+     * to the nearest int. Positive $gradingtype means that range 0..$gradingtype
+     * is used for the grades and in this case grade does not have to be rounded.
+     *
+     * Sometimes modules always expect grade to be rounded (like mod_assignment does).
+     *
+     * @param array $graderange array where first _key_ is the minimum grade and the
+     *     last key is the maximum grade.
+     * @param bool $allowgradedecimals if decimal values are allowed as grades.
      */
-    public final function set_grade_range(array $graderange) {
+    public final function set_grade_range(array $graderange, $allowgradedecimals = false) {
         $this->graderange = $graderange;
+        $this->allowgradedecimals = $allowgradedecimals;
     }
 
     /**
@@ -641,6 +654,15 @@ abstract class gradingform_controller {
             return array();
         }
         return $this->graderange;
+    }
+
+    /**
+     * Returns if decimal values are allowed as grades
+     *
+     * @return bool
+     */
+    public final function get_allow_grade_decimals() {
+        return $this->allowgradedecimals;
     }
 
     /**
@@ -866,7 +888,11 @@ abstract class gradingform_instance {
     /**
      * Calculates the grade to be pushed to the gradebook
      *
-     * @return int the valid grade from $this->get_controller()->get_grade_range()
+     * Returned grade must be in range $this->get_controller()->get_grade_range()
+     * Plugins must returned grade converted to int unless
+     * $this->get_controller()->get_allow_grade_decimals() is true.
+     *
+     * @return float|int
      */
     abstract public function get_grade();
 

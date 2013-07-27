@@ -11,11 +11,15 @@
 #input-message {background:#FFFFFF url(input.png) repeat-x scroll 0 0;padding:0 9px;border: 1px solid #999;border-radius: 9px;-moz-border-radius: 9px;}
 .mdl-chat-entry,
 .mdl-chat-my-entry {clear:both;}
+.dir-rtl .mdl-chat-entry,
+.dir-rtl .mdl-chat-my-entry {height: 90px;}
 
 .chat-message .chat-message-meta {padding-top:15px;}
 .chat-message .picture {vertical-align:middle;}
 .chat-message .right {text-align:right;}
 .chat-message .left {text-align:left;}
+.dir-rtl .chat-message .right,
+.dir-rtl .chat-message .left  {direction:ltr;}
 
 #chat-input-area,
 #chat-input-area table.generaltable,

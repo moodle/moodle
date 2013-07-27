@@ -244,7 +244,26 @@ class behat_hooks extends behat_base {
         try {
 
             // Exceptions.
-            if ($errormsg = $this->getSession()->getPage()->find('css', '.errorbox p.errormessage')) {
+            $exceptionsxpath = "//*[contains(concat(' ', normalize-space(@class), ' '), ' errorbox ')]" .
+                "/descendant::p[contains(concat(' ', normalize-space(@class), ' '), ' errormessage ')]";
+            // Debugging messages.
+            $debuggingxpath = "//*[contains(concat(' ', normalize-space(@class), ' '), ' debuggingmessage ')]";
+            // PHP debug messages.
+            $phperrorxpath = "//*[contains(concat(' ', normalize-space(@class), ' '), ' phpdebugmessage ')]";
+            // Any other backtrace.
+            $othersxpath = "(//*[contains(., ': call to ')])[1]";
+
+            $xpaths = array($exceptionsxpath, $debuggingxpath, $phperrorxpath, $othersxpath);
+            $joinedxpath = implode(' | ', $xpaths);
+
+            // Joined xpath expression. Most of the time there will be no exceptions, so this pre-check
+            // is faster than to send the 4 xpath queries for each step.
+            if (!$this->getSession()->getDriver()->find($joinedxpath)) {
+                return;
+            }
+
+            // Exceptions.
+            if ($errormsg = $this->getSession()->getPage()->find('xpath', $exceptionsxpath)) {
 
                 // Getting the debugging info and the backtrace.
                 $errorinfoboxes = $this->getSession()->getPage()->findAll('css', 'div.notifytiny');
@@ -256,7 +275,7 @@ class behat_hooks extends behat_base {
             }
 
             // Debugging messages.
-            if ($debuggingmessages = $this->getSession()->getPage()->findAll('css', '.debuggingmessage')) {
+            if ($debuggingmessages = $this->getSession()->getPage()->findAll('xpath', $debuggingxpath)) {
                 $msgs = array();
                 foreach ($debuggingmessages as $debuggingmessage) {
                     $msgs[] = $this->get_debug_text($debuggingmessage->getHtml());
@@ -266,7 +285,7 @@ class behat_hooks extends behat_base {
             }
 
             // PHP debug messages.
-            if ($phpmessages = $this->getSession()->getPage()->findAll('css', '.phpdebugmessage')) {
+            if ($phpmessages = $this->getSession()->getPage()->findAll('xpath', $phperrorxpath)) {
 
                 $msgs = array();
                 foreach ($phpmessages as $phpmessage) {
@@ -279,7 +298,7 @@ class behat_hooks extends behat_base {
             // Any other backtrace.
             // First looking through xpath as it is faster than get and parse the whole page contents,
             // we get the contents and look for matches once we found something to suspect that there is a backtrace.
-            if ($this->getSession()->getDriver()->find("(//html/descendant::*[contains(., ': call to ')])[1]")) {
+            if ($this->getSession()->getDriver()->find($othersxpath)) {
                 $backtracespattern = '/(line [0-9]* of [^:]*: call to [\->&;:a-zA-Z_\x7f-\xff][\->&;:a-zA-Z0-9_\x7f-\xff]*)/';
                 if (preg_match_all($backtracespattern, $this->getSession()->getPage()->getContent(), $backtraces)) {
                     $msgs = array();

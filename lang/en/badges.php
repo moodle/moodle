@@ -198,6 +198,7 @@ $string['donotaward'] = 'Currently, this badge is not active, so it cannot be aw
 $string['editsettings'] = 'Edit settings';
 $string['enablebadges'] = 'Enable badges';
 $string['error:backpacknotavailable'] = 'Your site is not accessible from the Internet, so any badges issued from this site cannot be verified by external backpack services.';
+$string['error:backpackproblem'] = 'There was a problem connecting to your backpack service provider. Please try again later.';
 $string['error:cannotact'] = 'Cannot activate the badge. ';
 $string['error:cannotawardbadge'] = 'Cannot award badge to a user.';
 $string['error:clone'] = 'Cannot clone the badge.';

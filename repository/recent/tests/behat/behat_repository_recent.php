@@ -56,7 +56,7 @@ class behat_repository_recent extends behat_files {
         // Opening the specified file contextual menu from the modal window.
         $this->open_element_contextual_menu($filename);
 
-        $this->find_button('Select this file')->click();
+        $this->find_button(get_string('getfile', 'repository'))->click();
 
         // Ensure the file has been selected and we returned to the form page.
         $this->wait_until_return_to_form();

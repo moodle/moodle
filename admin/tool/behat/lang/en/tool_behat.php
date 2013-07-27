@@ -41,6 +41,5 @@ $string['theninfo'] = 'Then. Checkings to ensure the outcomes are the expected o
 $string['viewsteps'] = 'Filter';
 $string['wheninfo'] = 'When. Actions that provokes an event';
 $string['wrongbehatsetup'] = 'Something is wrong with behat setup, ensure:<ul>
-<li>You ran "curl http://getcomposer.org/installer | php"</li>
-<li>You ran "php composer.phar install --dev"</li>
+<li>You ran "php admin/tool/behat/cli/init.php" from your moodle root directory</li>
 <li>vendor/bin/behat file has execution permissions</li></ul>';
