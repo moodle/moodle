@@ -156,6 +156,7 @@ function pathDiff($path1, $path2) {
   */
  function copyr($source, $dest)
  {
+     global $CFG;
      // Simple copy for a file
      if (is_file($source)) {
          return copy($source, $dest);
@@ -163,7 +164,7 @@ function pathDiff($path1, $path2) {
 
      // Make destination directory
      if (!is_dir($dest)) {
-         mkdir($dest);
+         mkdir($dest, $CFG->directorypermissions, true);
      }
 
      // Loop through the folder

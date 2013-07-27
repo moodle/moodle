@@ -425,11 +425,5 @@ if (isloggedin() && has_capability('moodle/site:sendmessage', $context)
     echo '</div>';
 }
 
-if ($CFG->debugdisplay && debugging('', DEBUG_DEVELOPER) && $currentuser) {  // Show user object
-    echo '<br /><br /><hr />';
-    echo $OUTPUT->heading('DEBUG MODE:  User session variables');
-    print_object($USER);
-}
-
 echo '</div>';  // userprofile class
 echo $OUTPUT->footer();

@@ -2544,6 +2544,7 @@ function put_records_csv($file, $records, $table = NULL) {
     }
 
     fclose($fp);
+    @chmod($CFG->tempdir.'/'.$file, $CFG->filepermissions);
     return true;
 }
 
@@ -3714,6 +3715,7 @@ class curl_cache {
         $fp = fopen($this->dir.$filename, 'w');
         fwrite($fp, serialize($val));
         fclose($fp);
+        @chmod($this->dir.$filename, $CFG->filepermissions);
     }
 
     /**

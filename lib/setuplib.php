@@ -529,7 +529,7 @@ function get_exception_info($ex) {
     // Remove some absolute paths from message and debugging info.
     $searches = array();
     $replaces = array();
-    $cfgnames = array('tempdir', 'cachedir', 'themedir',
+    $cfgnames = array('tempdir', 'cachedir', 'localcachedir', 'themedir',
         'langmenucachefile', 'langcacheroot', 'dataroot', 'dirroot');
     foreach ($cfgnames as $cfgname) {
         if (property_exists($CFG, $cfgname)) {
@@ -1165,7 +1165,7 @@ function disable_output_buffering() {
  */
 function redirect_if_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2013071600.00;
+    $lastmajordbchanges = 2013072400.00;
     if (empty($CFG->version) or (float)$CFG->version < $lastmajordbchanges or
             during_initial_install() or !empty($CFG->adminsetuppending)) {
         try {
@@ -1224,7 +1224,7 @@ function upgrade_ensure_not_running($warningonly = false) {
 function check_dir_exists($dir, $create = true, $recursive = true) {
     global $CFG;
 
-    umask(0000); // just in case some evil code changed it
+    umask($CFG->umaskpermissions);
 
     if (is_dir($dir)) {
         return true;
@@ -1256,7 +1256,7 @@ function make_writable_directory($dir, $exceptiononerror = true) {
         }
     }
 
-    umask(0000); // just in case some evil code changed it
+    umask($CFG->umaskpermissions);
 
     if (!file_exists($dir)) {
         if (!mkdir($dir, $CFG->directorypermissions, true)) {
@@ -1287,11 +1287,13 @@ function make_writable_directory($dir, $exceptiononerror = true) {
  * @param string $dir  the full path of the directory to be protected
  */
 function protect_directory($dir) {
+    global $CFG;
     // Make sure a .htaccess file is here, JUST IN CASE the files area is in the open and .htaccess is supported
     if (!file_exists("$dir/.htaccess")) {
         if ($handle = fopen("$dir/.htaccess", 'w')) {   // For safety
             @fwrite($handle, "deny from all\r\nAllowOverride None\r\nNote: this file is broken intentionally, we do not want anybody to undo it in subdirectory!\r\n");
             @fclose($handle);
+            @chmod("$dir/.htaccess", $CFG->filepermissions);
         }
     }
 }
@@ -1311,7 +1313,10 @@ function make_upload_directory($directory, $exceptiononerror = true) {
         debugging('Use make_temp_directory() for creation of temporary directory and $CFG->tempdir to get the location.');
 
     } else if (strpos($directory, 'cache/') === 0 or $directory === 'cache') {
-        debugging('Use make_cache_directory() for creation of chache directory and $CFG->cachedir to get the location.');
+        debugging('Use make_cache_directory() for creation of cache directory and $CFG->cachedir to get the location.');
+
+    } else if (strpos($directory, 'localcache/') === 0 or $directory === 'localcache') {
+        debugging('Use make_localcache_directory() for creation of local cache directory and $CFG->localcachedir to get the location.');
     }
 
     protect_directory($CFG->dataroot);
@@ -1340,6 +1345,8 @@ function make_temp_directory($directory, $exceptiononerror = true) {
 /**
  * Create a directory under cachedir and make sure it is writable.
  *
+ * Note: this cache directory is shared by all cluster nodes.
+ *
  * @param string $directory  the full path of the directory to be created under $CFG->cachedir
  * @param bool $exceptiononerror throw exception if error encountered
  * @return string|false Returns full path to directory if successful, false if not; may throw exception
@@ -1353,6 +1360,58 @@ function make_cache_directory($directory, $exceptiononerror = true) {
         protect_directory($CFG->dataroot);
     }
     return make_writable_directory("$CFG->cachedir/$directory", $exceptiononerror);
+}
+
+/**
+ * Create a directory under localcachedir and make sure it is writable.
+ * The files in this directory MUST NOT change, use revisions or content hashes to
+ * work around this limitation - this means you can only add new files here.
+ *
+ * The content of this directory gets purged automatically on all cluster nodes
+ * after calling purge_all_caches() before new data is written to this directory.
+ *
+ * Note: this local cache directory does not need to be shared by cluster nodes.
+ *
+ * @param string $directory the relative path of the directory to be created under $CFG->localcachedir
+ * @param bool $exceptiononerror throw exception if error encountered
+ * @return string|false Returns full path to directory if successful, false if not; may throw exception
+ */
+function make_localcache_directory($directory, $exceptiononerror = true) {
+    global $CFG;
+
+    make_writable_directory($CFG->localcachedir, $exceptiononerror);
+
+    if ($CFG->localcachedir !== "$CFG->dataroot/localcache") {
+        protect_directory($CFG->localcachedir);
+    } else {
+        protect_directory($CFG->dataroot);
+    }
+
+    if (!isset($CFG->localcachedirpurged)) {
+        $CFG->localcachedirpurged = 0;
+    }
+    $timestampfile = "$CFG->localcachedir/.lastpurged";
+
+    if (!file_exists($timestampfile)) {
+        touch($timestampfile);
+        @chmod($timestampfile, $CFG->filepermissions);
+
+    } else if (filemtime($timestampfile) <  $CFG->localcachedirpurged) {
+        // This means our local cached dir was not purged yet.
+        remove_dir($CFG->localcachedir, true);
+        if ($CFG->localcachedir !== "$CFG->dataroot/localcache") {
+            protect_directory($CFG->localcachedir);
+        }
+        touch($timestampfile);
+        @chmod($timestampfile, $CFG->filepermissions);
+        clearstatcache();
+    }
+
+    if ($directory === '') {
+        return $CFG->localcachedir;
+    }
+
+    return make_writable_directory("$CFG->localcachedir/$directory", $exceptiononerror);
 }
 
 /**

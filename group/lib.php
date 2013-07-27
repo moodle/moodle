@@ -684,16 +684,16 @@ function groups_get_potential_members($courseid, $roleid = null, $cohortid = nul
 
     $context = context_course::instance($courseid);
 
-    // we are looking for all users with this role assigned in this context or higher
-    $listofcontexts = get_related_contexts_string($context);
-
     list($esql, $params) = get_enrolled_sql($context);
 
     if ($roleid) {
-        $params['roleid'] = $roleid;
+        // We are looking for all users with this role assigned in this context or higher.
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+
+        $params = array_merge($params, $relatedctxparams, array('roleid' => $roleid));
         $where = "WHERE u.id IN (SELECT userid
                                    FROM {role_assignments}
-                                  WHERE roleid = :roleid AND contextid $listofcontexts)";
+                                  WHERE roleid = :roleid AND contextid $relatedctxsql)";
     } else {
         $where = "";
     }
@@ -812,11 +812,14 @@ function groups_unassign_grouping($groupingid, $groupid, $invalidatecache = true
  */
 function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
         $sort=null, $extrawheretest='', $whereorsortparams=array()) {
-    global $CFG, $DB;
+    global $DB;
 
     // Retrieve information about all users and their roles on the course or
     // parent ('related') contexts
     $context = context_course::instance($courseid);
+
+    // We are looking for all users with this role assigned in this context or higher.
+    list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
 
     if ($extrawheretest) {
         $extrawheretest = ' AND ' . $extrawheretest;
@@ -830,12 +833,12 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*',
     $sql = "SELECT r.id AS roleid, u.id AS userid, $fields
               FROM {groups_members} gm
               JOIN {user} u ON u.id = gm.userid
-         LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid ".get_related_contexts_string($context).")
+         LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid $relatedctxsql)
          LEFT JOIN {role} r ON r.id = ra.roleid
              WHERE gm.groupid=:mgroupid
                    ".$extrawheretest."
           ORDER BY r.sortorder, $sort";
-    $whereorsortparams['mgroupid'] = $groupid;
+    $whereorsortparams = array_merge($whereorsortparams, $relatedctxparams, array('mgroupid' => $groupid));
     $rs = $DB->get_recordset_sql($sql, $whereorsortparams);
 
     return groups_calculate_role_people($rs, $context);

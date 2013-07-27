@@ -43,6 +43,9 @@ class phpunit_util extends testing_util {
     /** @var phpunit_message_sink alternative target for moodle messaging */
     protected static $messagesink = null;
 
+    /** @var phpunit_message_sink alternative target for moodle messaging */
+    protected static $eventsink = null;
+
     /**
      * @var array Files to skip when resetting dataroot folder
      */
@@ -94,6 +97,9 @@ class phpunit_util extends testing_util {
 
         // Stop any message redirection.
         phpunit_util::stop_message_redirection();
+
+        // Stop any message redirection.
+        phpunit_util::stop_event_redirection();
 
         // Release memory and indirectly call destroy() methods to release resource handles, etc.
         gc_collect_cycles();
@@ -182,6 +188,7 @@ class phpunit_util extends testing_util {
         session_set_user($user);
 
         // reset all static caches
+        \core\event\manager::phpunit_reset();
         accesslib_clear_all_caches(true);
         get_string_manager()->reset_caches(true);
         reset_text_filters_cache(true);
@@ -658,6 +665,59 @@ class phpunit_util extends testing_util {
     public static function message_sent($message) {
         if (self::$messagesink) {
             self::$messagesink->add_message($message);
+        }
+    }
+
+    /**
+     * Start event redirection.
+     *
+     * @private
+     * Note: Do not call directly from tests,
+     *       use $sink = $this->redirectEvents() instead.
+     *
+     * @return phpunit_event_sink
+     */
+    public static function start_event_redirection() {
+        if (self::$eventsink) {
+            self::stop_event_redirection();
+        }
+        self::$eventsink = new phpunit_event_sink();
+        return self::$eventsink;
+    }
+
+    /**
+     * End event redirection.
+     *
+     * @private
+     * Note: Do not call directly from tests,
+     *       use $sink->close() instead.
+     */
+    public static function stop_event_redirection() {
+        self::$eventsink = null;
+    }
+
+    /**
+     * Are events redirected to some sink?
+     *
+     * Note: to be called from \core\event\base only!
+     *
+     * @private
+     * @return bool
+     */
+    public static function is_redirecting_events() {
+        return !empty(self::$eventsink);
+    }
+
+    /**
+     * To be called from \core\event\base only!
+     *
+     * @private
+     * @param \core\event\base $event record from event_read table
+     * @return bool true means send event, false means event "sent" to sink.
+     */
+    public static function event_triggered(\core\event\base $event) {
+        if (self::$eventsink) {
+            self::$eventsink->add_event($event);
         }
     }
 }

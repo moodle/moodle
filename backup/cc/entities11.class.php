@@ -65,7 +65,7 @@ class entities11 extends entities {
             $rfpath = 'files.gif';
             $fpath = $dpath . DIRECTORY_SEPARATOR . 'files.gif';
             if (!file_exists($dpath)) {
-                mkdir($dpath);
+                mkdir($dpath, $CFG->directorypermissions, true);
             }
             //copy the folder.gif file
             $folder_gif = "{$CFG->dirroot}/pix/i/files.gif";

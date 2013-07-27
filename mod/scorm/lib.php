@@ -1014,6 +1014,7 @@ function scorm_debug_log_filename($type, $scoid) {
  * @param integer $scoid - scoid of object this log entry is for.
  */
 function scorm_debug_log_write($type, $text, $scoid) {
+    global $CFG;
 
     $debugenablelog = get_config('scorm', 'allowapidebug');
     if (!$debugenablelog || empty($text)) {
@@ -1022,6 +1023,7 @@ function scorm_debug_log_write($type, $text, $scoid) {
     if (make_temp_directory('scormlogs/')) {
         $logfile = scorm_debug_log_filename($type, $scoid);
         @file_put_contents($logfile, date('Y/m/d H:i:s O')." DEBUG $text\r\n", FILE_APPEND);
+        @chmod($logfile, $CFG->filepermissions);
     }
 }
 

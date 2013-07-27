@@ -10,6 +10,7 @@ information provided here is intended especially for developers.
   core_component::get_plugin_list() does not accept empty parameter any more.
 * Use core_text::* instead of textlib:: and also core_collator::* instead of collatorlib::*.
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests (backported).
+* New $CFG->localcachedir setting useful for cluster nodes. Admins have to update X-Sendfile aliases if used.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
@@ -41,6 +42,8 @@ Accesslib:
     * get_role_context_caps()       ->  (no replacement)
     * load_temp_role()              ->  (no replacement)
     * remove_temp_roles()           ->  (no replacement)
+    * get_related_contexts_string() ->  $context->get_parent_context_ids(true)
+    * get_recent_enrolments()       ->  (no replacement)
 
 Enrollment:
     * get_course_participants()     -> get_enrolled_users()

@@ -143,6 +143,9 @@ foreach ($vars as $var) {
     $CFG->{$var} = $CFG->{'behat_' . $var};
 }
 
+// Clean $CFG extra values before performing any action.
+behat_clean_init_config();
+
 $CFG->noemailever = true;
 $CFG->passwordsaltmain = 'moodle';
 
@@ -151,6 +154,7 @@ $CFG->jsrev = 1;
 
 // Unset cache and temp directories to reset them again with the new $CFG->dataroot.
 unset($CFG->cachedir);
+unset($CFG->localcachedir);
 unset($CFG->tempdir);
 
 // Continues setup.

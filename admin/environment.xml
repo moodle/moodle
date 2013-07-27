@@ -899,6 +899,7 @@
       </FEEDBACK>
     </UNICODE>
     <DATABASE level="required">
+      <VENDOR name="mariadb" version="5.3.5" />
       <VENDOR name="mysql" version="5.1.33" />
       <VENDOR name="postgres" version="8.3" />
       <VENDOR name="mssql" version="9.0" />
@@ -956,6 +957,8 @@
         <FEEDBACK>
           <ON_ERROR message="ziprequired" />
         </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="zlib" level="optional">
       </PHP_EXTENSION>
       <PHP_EXTENSION name="gd" level="required">
         <FEEDBACK>

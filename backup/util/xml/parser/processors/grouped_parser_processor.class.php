@@ -43,6 +43,18 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
     protected $groupedpaths; // Paths we are requesting grouped
     protected $currentdata;  // Where we'll be acummulating data
 
+    /**
+     * Keep cache of parent directory paths for XML parsing.
+     * @var array
+     */
+    protected $parentcache = array();
+
+    /**
+     * Remaining space for parent directory paths.
+     * @var integer
+     */
+    protected $parentcacheavailablesize = 2048;
+
     public function __construct(array $paths = array()) {
         $this->groupedpaths = array();
         $this->currentdata = null;
@@ -65,7 +77,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
                 $a->child = $found;
                 throw new progressive_parser_exception('xml_grouped_child_found', $a);
             }
-            $this->groupedpaths[] = $path;
+            $this->groupedpaths[$path] = true;
         }
         parent::add_path($path);
     }
@@ -141,7 +153,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
     }
 
     protected function path_is_grouped($path) {
-        return in_array($path, $this->groupedpaths);
+        return isset($this->groupedpaths[$path]);
     }
 
     /**
@@ -150,15 +162,40 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
      * false if not
      */
     protected function grouped_parent_exists($path) {
-        $parentpath = progressive_parser::dirname($path);
+        $parentpath = $this->get_parent_path($path);
+
         while ($parentpath != '/') {
             if ($this->path_is_grouped($parentpath)) {
                 return $parentpath;
             }
-            $parentpath = progressive_parser::dirname($parentpath);
+            $parentpath = $this->get_parent_path($parentpath);
         }
         return false;
     }
+
+    /**
+     * Get the parent path using a local cache for performance.
+     *
+     * @param $path string The pathname you wish to obtain the parent name for.
+     * @return string The parent pathname.
+     */
+    protected function get_parent_path($path) {
+        if (!isset($this->parentcache[$path])) {
+            $this->parentcache[$path] = progressive_parser::dirname($path);
+            $this->parentcacheavailablesize--;
+            if ($this->parentcacheavailablesize < 0) {
+                // Older first is cheaper than LRU.  We use 10% as items are grouped together and the large quiz
+                // restore from MDL-40585 used only 600 parent paths. This is an XML heirarchy, so common paths
+                // are grouped near each other. eg; /question_bank/question_category/question/element. After keeping
+                // question_bank paths in the cache when we move to another area and the question_bank cache is not
+                // useful any longer.
+                $this->parentcache = array_slice($this->parentcache, 200, null, true);
+                $this->parentcacheavailablesize += 200;
+            }
+        }
+        return $this->parentcache[$path];
+    }
+
 
     /**
      * Function that will look for any grouped
@@ -167,7 +204,7 @@ abstract class grouped_parser_processor extends simplified_parser_processor {
      */
     protected function grouped_child_exists($path) {
         $childpath = $path . '/';
-        foreach ($this->groupedpaths as $groupedpath) {
+        foreach ($this->groupedpaths as $groupedpath => $set) {
             if (strpos($groupedpath, $childpath) === 0) {
                 return $groupedpath;
             }

@@ -31,8 +31,8 @@
 
 /* if a duration exists... in the calendartable */
 /* take care: it is not needed because I might have more than one duration
- * this is why the cell must not be equipped with a border-bottom
- * but events need to to drown inside
+ * this is why the cell must not be displayed with a border-bottom
+ * but events need to to drawn inside
  */
 
 .path-calendar .maincalendar .calendarmonth th,

@@ -103,15 +103,6 @@ class pgsql_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns localised database description
-     * Note: can be used before connect()
-     * @return string
-     */
-    public function get_configuration_hints() {
-        return get_string('databasesettingssub_postgres7', 'install');
-    }
-
-    /**
      * Connect to db
      * Must be called before other methods.
      * @param string $dbhost The database host.

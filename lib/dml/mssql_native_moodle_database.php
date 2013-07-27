@@ -99,21 +99,6 @@ class mssql_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns localised database description
-     * Note: can be used before connect()
-     * @return string
-     */
-    public function get_configuration_hints() {
-        $str = get_string('databasesettingssub_mssql', 'install');
-        $str .= "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
-        $str .= "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
-        $str .= ">";
-        $str .= '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
-        $str .= get_string('moodledocslink', 'install') . '</a></p>';
-        return $str;
-    }
-
-    /**
      * Connect to db
      * Must be called before other methods.
      * @param string $dbhost The database host.

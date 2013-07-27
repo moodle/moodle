@@ -52,7 +52,7 @@ class behat_mod_choice extends behat_base {
         return array(
             new Given('I follow "' . $this->escape($choiceactivity) . '"'),
             new Given('I select "' . $this->escape($option) . '" radio button'),
-            new Given('I press "Save my choice"')
+            new Given('I press "' . get_string('savemychoice', 'choice') . '"')
         );
     }
 

@@ -110,34 +110,31 @@ class behat_forms extends behat_base {
         // behat_base::find() throws an exception if there are no elements, we should not fail a test because of this.
         try {
 
-            // Expand fieldsets.
-            $fieldsets = $this->find_all('css', 'fieldset.collapsed a.fheader');
-
-            // We are supposed to have fieldsets here, otherwise exception.
-
-            // Funny thing about this, with find_all() we specify a pattern and each element matching the pattern is added to the array
-            // with of xpaths with a [0], [1]... sufix, but when we click on an element it does not matches the specified xpath
-            // anymore (is not collapsed) so [1] becomes [0], that's why we always click on the first XPath match, will be always the next one.
-            $iterations = count($fieldsets);
-            for ($i = 0; $i < $iterations; $i++) {
-                $fieldsets[0]->click();
-            }
+            // Expand fieldsets link.
+            $collapseexpandlink = $this->find('xpath', "//div[@class='collapsible-actions']" .
+                "/descendant::a[contains(concat(' ', @class, ' '), ' collapseexpand ')]" .
+                "[not(contains(concat(' ', @class, ' '), ' collapse-all '))]"
+            );
+            $collapseexpandlink->click();
 
         } catch (ElementNotFoundException $e) {
-            // We continue if there are not expanded fields.
+            // We continue if there are not expandable fields.
         }
 
         // Different try & catch as we can have expanded fieldsets with advanced fields on them.
         try {
 
-            // Show all fields.
-            $showmorestr = get_string('showmore', 'form');
-            $showmores = $this->find_all('xpath', "//a[contains(concat(' ', normalize-space(.), ' '), '" . $showmorestr . "')]" .
-                "[contains(concat(' ', normalize-space(@class), ' '), ' moreless-toggler')]");
+            // Expand all fields xpath.
+            $showmorexpath = "//a[normalize-space(.)='" . get_string('showmore', 'form') . "']" .
+                "[contains(concat(' ', normalize-space(@class), ' '), ' moreless-toggler')]";
 
-            // We are supposed to have 'show more's here, otherwise exception.
+            // We don't wait here as we already waited when getting the expand fieldsets links.
+            $showmores = $this->getSession()->getPage()->findAll('xpath', $showmorexpath);
 
-            // Same funny case, after clicking on the element the [1] showmore link becomes the [0].
+            // Funny thing about this, with findAll() we specify a pattern and each element matching the pattern is added to the array
+            // with of xpaths with a [0], [1]... sufix, but when we click on an element it does not matches the specified xpath
+            // anymore (now is a "Show less..." link) so [1] becomes [0], that's why we always click on the first XPath match,
+            // will be always the next one.
             $iterations = count($showmores);
             for ($i = 0; $i < $iterations; $i++) {
                 $showmores[0]->click();
@@ -186,9 +183,12 @@ class behat_forms extends behat_base {
                 return;
             }
 
+            // Single select needs an extra click in the option.
             if (!$selectnode->hasAttribute('multiple')) {
-                // Single select needs an extra click in the option.
-                $xpath = ".//option[(./@value = '" . $option . "' or contains(normalize-space(string(.)), '" . $option . "'))]";
+
+                // Avoid quotes problems.
+                $option = $this->getSession()->getSelectorsHandler()->xpathLiteral($option);
+                $xpath = "//option[(./@value=$option or normalize-space(.)=$option)]";
                 $optionnode = $this->find('xpath', $xpath, false, $selectnode);
                 $optionnode->click();
             } else {

@@ -12,6 +12,32 @@ table.flexible,
 .generaltable {
     .table-striped;
 }
+
+.dir-rtl {
+    table#explaincaps,
+    table#defineroletable,
+    table.grading-report,
+    table#listdirectories,
+    table.rolecaps,
+    table.userenrolment,
+    table#form,
+    form#movecourses table,
+    .forumheaderlist,
+    table.flexible,
+    .generaltable,
+    .generaltable thead:first-child tr:first-child {
+        td , th {
+            text-align:right;
+        }
+    }
+}
+
+#page-admin-course-index.dir-rtl .editcourse {
+    td , th {
+        text-align:right;
+    }
+}
+
 #page-report-loglive-index .generaltable,
 #page-admin-report-log-index .generaltable,
 #page-report-log-user .generaltable,

@@ -323,6 +323,7 @@ EOF
             fwrite($f, ";\n");
         }
         fclose($f);
+        @chmod($filepath, $CFG->filepermissions);
     }
 
     /**

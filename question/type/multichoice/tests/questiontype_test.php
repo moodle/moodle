@@ -102,12 +102,19 @@ class qtype_multichoice_test extends advanced_testcase {
         ), $this->qtype->get_possible_responses($q));
     }
 
-    public function test_question_saving_two_of_four() {
+    public function get_question_saving_which() {
+        return array(array('two_of_four'), array('one_of_four'));
+    }
+
+    /**
+     * @dataProvider get_question_saving_which
+     */
+    public function test_question_saving_two_of_four($which) {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $questiondata = test_question_maker::get_question_data('multichoice');
-        $formdata = test_question_maker::get_question_form_data('multichoice');
+        $questiondata = test_question_maker::get_question_data('multichoice', $which);
+        $formdata = test_question_maker::get_question_form_data('multichoice', $which);
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category(array());

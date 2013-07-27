@@ -370,9 +370,6 @@
                 ));
     $table->setup();
 
-    // we are looking for all users with this role assigned in this context or higher
-    $contextlist = get_related_contexts_string($context);
-
     list($esql, $params) = get_enrolled_sql($context, NULL, $currentgroup, true);
     $joins = array("FROM {user} u");
     $wheres = array();
@@ -410,8 +407,11 @@
 
     // limit list to users with some role only
     if ($roleid) {
-        $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $contextlist)";
-        $params['roleid'] = $roleid;
+        // We want to query both the current context and parent contexts.
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+
+        $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $relatedctxsql)";
+        $params = array_merge($params, array('roleid' => $roleid), $relatedctxparams);
     }
 
     $from = implode("\n", $joins);

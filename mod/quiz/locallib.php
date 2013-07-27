@@ -140,15 +140,21 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
 /**
  * Start a normal, new, quiz attempt.
  *
- * @param quiz                          $quizobj            the quiz object to start an attempt for.
- * @param question_usage_by_activity    $quba
- * @param object                        $attempt
- * @param integer                       $attemptnumber      starting from 1
- * @param integer                       $timenow            the attempt start time
- * @return object                       modified attempt object
- * @throws moodle_exception             if a random question exhausts the available questions
+ * @param quiz      $quizobj            the quiz object to start an attempt for.
+ * @param question_usage_by_activity $quba
+ * @param object    $attempt
+ * @param integer   $attemptnumber      starting from 1
+ * @param integer   $timenow            the attempt start time
+ * @param array     $questionids        slot number => question id. Used for random questions, to force the choice
+ *                                        of a particular actual question. Intended for testing purposes only.
+ * @param array     $forcedvariantsbyslot slot number => variant. Used for questions with variants,
+ *                                          to force the choice of a particular variant. Intended for testing
+ *                                          purposes only.
+ * @throws moodle_exception
+ * @return object   modified attempt object
  */
-function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow) {
+function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow,
+                                $questionids = array(), $forcedvariantsbyslot = array()) {
     // Fully load all the questions in this quiz.
     $quizobj->preload_questions();
     $quizobj->load_questions();
@@ -164,8 +170,14 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
             $question = question_bank::make_question($questiondata);
 
         } else {
+            if (!isset($questionids[$quba->next_slot_number()])) {
+                $forcequestionid = null;
+            } else {
+                $forcequestionid = $questionids[$quba->next_slot_number()];
+            }
+
             $question = question_bank::get_qtype('random')->choose_other_question(
-                $questiondata, $questionsinuse, $quizobj->get_quiz()->shuffleanswers);
+                $questiondata, $questionsinuse, $quizobj->get_quiz()->shuffleanswers, $forcequestionid);
             if (is_null($question)) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
                                            $quizobj->view_url(), $questiondata);
@@ -182,8 +194,16 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
     } else {
         $variantoffset = $attemptnumber;
     }
-    $quba->start_all_questions(
-        new question_variant_pseudorandom_no_repeats_strategy($variantoffset), $timenow);
+    $variantstrategy = new question_variant_pseudorandom_no_repeats_strategy($variantoffset);
+
+    if (!empty($forcedvariantsbyslot)) {
+        $forcedvariantsbyseed = question_variant_forced_choices_selection_strategy::prepare_forced_choices_array(
+            $forcedvariantsbyslot, $quba);
+        $variantstrategy = new question_variant_forced_choices_selection_strategy(
+            $forcedvariantsbyseed, $variantstrategy);
+    }
+
+    $quba->start_all_questions($variantstrategy, $timenow);
 
     // Update attempt layout.
     $newlayout = array();

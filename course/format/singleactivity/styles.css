@@ -1,0 +1,10 @@
+/* Hide confusing form elements "Display description on course page" and
+"Save and return to course" from module edit form because they
+are not applicable in single activity course format */
+body.format-singleactivity.path-mod.pagelayout-admin form.mform #fitem_id_showdescription,
+body.format-singleactivity.path-mod.pagelayout-admin form.mform .fitem_actionbuttons#fgroup_id_buttonar #id_submitbutton {display:none;}
+
+/* In mod_quiz hide "Back to course" button */
+body.format-singleactivity.path-mod-quiz .quizattempt .continuebutton {display:none;}
+
+body.format-singleactivity .tree_item.orphaned a {color:red;}

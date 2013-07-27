@@ -6,6 +6,9 @@ information provided here is intended especially for developers.
 * Enrolment plugin which supports self enrolment should implement can_self_enrol()
 * Enrolment plugin should implement get_enrol_info() to expose instance information
   with webservice or external interface.
+* Webservice core_enrol_get_enrolled_users_with_capability was incorrectly specifing
+  float as the return type for user id. int is the actual returned type and is now
+  reported as such.
 
 === 2.5 ===
 

@@ -50,11 +50,11 @@ class behat_enrol extends behat_base {
     public function i_add_enrolment_method_with($enrolmethod, TableNode $table) {
 
         return array(
-            new Given('I expand "Users" node'),
-            new Given('I follow "Enrolment methods"'),
-            new Given('I select "' . $enrolmethod . '" from "Add method"'),
+            new Given('I expand "' . get_string('users', 'admin') . '" node'),
+            new Given('I follow "' . get_string('type_enrol_plural', 'plugin') . '"'),
+            new Given('I select "' . $this->escape($enrolmethod) . '" from "' . get_string('addinstance', 'enrol') . '"'),
             new Given('I fill the moodle form with:', $table),
-            new Given('I press "Add method"')
+            new Given('I press "' . get_string('addinstance', 'enrol') . '"')
         );
     }
 

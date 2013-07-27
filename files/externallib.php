@@ -263,6 +263,7 @@ class core_files_external extends external_api {
         }
 
         file_put_contents($savedfilepath, base64_decode($fileinfo['filecontent']));
+        @chmod($savedfilepath, $CFG->filepermissions);
         unset($fileinfo['filecontent']);
 
         if (!empty($fileinfo['filepath'])) {

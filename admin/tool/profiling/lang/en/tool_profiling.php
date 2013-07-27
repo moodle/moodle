@@ -51,5 +51,5 @@ $string['referencerun'] = 'Reference run/comment';
 $string['runid'] = 'Run ID';
 $string['summaryof'] = 'Summary of {$a}';
 $string['viewdetails'] = 'View profiling details';
-$string['viewdiff'] = 'View profiling differences with last reference run';
+$string['viewdiff'] = 'View profiling differences with:';
 $string['viewdiffdetails'] = 'View profiling diff details';

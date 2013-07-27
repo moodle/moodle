@@ -670,7 +670,6 @@ class core_course_renderer extends plugin_renderer_base {
 
         //Accessibility: for files get description via icon, this is very ugly hack!
         $instancename = $mod->get_formatted_name();
-        $altname = '';
         $altname = $mod->modfullname;
         // Avoid unnecessary duplication: if e.g. a forum name already
         // includes the word forum (or Forum, etc) then it is unhelpful
@@ -706,7 +705,7 @@ class core_course_renderer extends plugin_renderer_base {
             }
             if ($mod->uservisible) {
                 // show accessibility note only if user can access the module himself
-                $accesstext = get_accesshide(get_string('hiddenfromstudents').': ');
+                $accesstext = get_accesshide(get_string('hiddenfromstudents').':'. $mod->modfullname);
             }
         }
 
@@ -723,7 +722,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         // Display link itself.
         $activitylink = html_writer::empty_tag('img', array('src' => $mod->get_icon_url(),
-                'class' => 'iconlarge activityicon', 'alt' => $mod->modfullname)) . $accesstext .
+                'class' => 'iconlarge activityicon', 'alt' => ' ', 'role' => 'presentation')) . $accesstext .
                 html_writer::tag('span', $instancename . $altname, array('class' => 'instancename'));
         if ($mod->uservisible) {
             $output .= html_writer::link($url, $activitylink, array('class' => $linkclasses, 'onclick' => $onclick)) .

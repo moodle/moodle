@@ -170,6 +170,7 @@ $CFG->httpswwwroot         = $CFG->wwwroot;
 $CFG->dataroot             = $config->dataroot;
 $CFG->tempdir              = $CFG->dataroot.'/temp';
 $CFG->cachedir             = $CFG->dataroot.'/cache';
+$CFG->localcachedir        = $CFG->dataroot.'/localcache';
 $CFG->admin                = $config->admin;
 $CFG->docroot              = 'http://docs.moodle.org';
 $CFG->langotherroot        = $CFG->dataroot.'/lang';
@@ -468,6 +469,7 @@ if ($config->stage == INSTALL_DATABASETYPE) {
                                   get_string('databasetypesub', 'install'));
 
     $databases = array('mysqli' => moodle_database::get_driver_instance('mysqli', 'native'),
+                       'mariadb'=> moodle_database::get_driver_instance('mariadb', 'native'),
                        'pgsql'  => moodle_database::get_driver_instance('pgsql',  'native'),
                        'oci'    => moodle_database::get_driver_instance('oci',    'native'),
                        'sqlsrv' => moodle_database::get_driver_instance('sqlsrv', 'native'), // MS SQL*Server PHP driver

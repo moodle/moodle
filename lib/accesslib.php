@@ -546,6 +546,62 @@ function has_all_capabilities(array $capabilities, context $context, $user = nul
 }
 
 /**
+ * Is course creator going to have capability in a new course?
+ *
+ * This is intended to be used in enrolment plugins before or during course creation,
+ * do not use after the course is fully created.
+ *
+ * @category access
+ *
+ * @param string $capability the name of the capability to check.
+ * @param context $context course or category context where is course going to be created
+ * @param integer|stdClass $user A user id or object. By default (null) checks the permissions of the current user.
+ * @return boolean true if the user will have this capability.
+ *
+ * @throws coding_exception if different type of context submitted
+ */
+function guess_if_creator_will_have_course_capability($capability, context $context, $user = null) {
+    global $CFG;
+
+    if ($context->contextlevel != CONTEXT_COURSE and $context->contextlevel != CONTEXT_COURSECAT) {
+        throw new coding_exception('Only course or course category context expected');
+    }
+
+    if (has_capability($capability, $context, $user)) {
+        // User already has the capability, it could be only removed if CAP_PROHIBIT
+        // was involved here, but we ignore that.
+        return true;
+    }
+
+    if (!has_capability('moodle/course:create', $context, $user)) {
+        return false;
+    }
+
+    if (!enrol_is_enabled('manual')) {
+        return false;
+    }
+
+    if (empty($CFG->creatornewroleid)) {
+        return false;
+    }
+
+    if ($context->contextlevel == CONTEXT_COURSE) {
+        if (is_viewing($context, $user, 'moodle/role:assign') or is_enrolled($context, $user, 'moodle/role:assign')) {
+            return false;
+        }
+    } else {
+        if (has_capability('moodle/course:view', $context, $user) and has_capability('moodle/role:assign', $context, $user)) {
+            return false;
+        }
+    }
+
+    // Most likely they will be enrolled after the course creation is finished,
+    // does the new role have the required capability?
+    list($neededroles, $forbiddenroles) = get_roles_with_cap_in_context($context, $capability);
+    return isset($neededroles[$CFG->creatornewroleid]);
+}
+
+/**
  * Check if the user is an admin at the site level.
  *
  * Please note that use of proper capabilities is always encouraged,
@@ -1685,7 +1741,11 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
         reload_all_capabilities();
     }
 
-    events_trigger('role_assigned', $ra);
+    $event = \core\event\role_assigned::create(
+        array('context'=>$context, 'objectid'=>$ra->roleid, 'relateduserid'=>$ra->userid,
+            'other'=>array('id'=>$ra->id, 'component'=>$ra->component, 'itemid'=>$ra->itemid)));
+    $event->add_record_snapshot('role_assignments', $ra);
+    $event->trigger();
 
     return $ra->id;
 }
@@ -1769,8 +1829,12 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
             if (!empty($USER->id) && $USER->id == $ra->userid) {
                 reload_all_capabilities();
             }
+            $event = \core\event\role_unassigned::create(
+                array('context'=>$context, 'objectid'=>$ra->roleid, 'relateduserid'=>$ra->userid,
+                    'other'=>array('id'=>$ra->id, 'component'=>$ra->component, 'itemid'=>$ra->itemid)));
+            $event->add_record_snapshot('role_assignments', $ra);
+            $event->trigger();
         }
-        events_trigger('role_unassigned', $ra);
     }
     unset($ras);
 
@@ -1796,7 +1860,11 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
                     if (!empty($USER->id) && $USER->id == $ra->userid) {
                         reload_all_capabilities();
                     }
-                    events_trigger('role_unassigned', $ra);
+                    $event = \core\event\role_unassigned::create(
+                        array('context'=>$context, 'objectid'=>$ra->roleid, 'relateduserid'=>$ra->userid,
+                            'other'=>array('id'=>$ra->id, 'component'=>$ra->component, 'itemid'=>$ra->itemid)));
+                    $event->add_record_snapshot('role_assignments', $ra);
+                    $event->trigger();
                 }
             }
         }
@@ -6901,7 +6969,7 @@ class context_module extends context {
      * Is this context part of any course? If yes return course context.
      *
      * @param bool $strict true means throw exception if not found, false means return false if not found
-     * @return course_context context of the enclosing course, null if not found or exception
+     * @return context_course context of the enclosing course, null if not found or exception
      */
     public function get_course_context($strict = true) {
         return $this->get_parent_context();
@@ -7262,24 +7330,6 @@ function get_sorted_contexts($select, $params = array()) {
            $select
           ORDER BY ctx.contextlevel, bi.defaultregion, COALESCE(cat.sortorder, c.sortorder, cm.section, bi.defaultweight), u.lastname, u.firstname, cm.id
             ", $params);
-}
-
-/**
- * Gets a string for sql calls, searching for stuff in this context or above
- *
- * NOTE: use $DB->get_in_or_equal($context->get_parent_context_ids()...
- *
- * @deprecated since 2.2, $context->use get_parent_context_ids() instead
- * @param context $context
- * @return string
- */
-function get_related_contexts_string(context $context) {
-
-    if ($parents = $context->get_parent_context_ids()) {
-        return (' IN ('.$context->id.','.implode(',', $parents).')');
-    } else {
-        return (' ='.$context->id);
-    }
 }
 
 /**

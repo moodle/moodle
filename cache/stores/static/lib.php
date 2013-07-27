@@ -113,6 +113,18 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
     protected $ttl = 0;
 
     /**
+     * The maximum size for the store, or false if there isn't one.
+     * @var bool
+     */
+    protected $maxsize = false;
+
+    /**
+     * The number of items currently being stored.
+     * @var int
+     */
+    protected $storecount = 0;
+
+    /**
      * Constructs the store instance.
      *
      * Noting that this function is not an initialisation. It is used to prepare the store for use.
@@ -188,6 +200,12 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
         $this->storeid = $definition->generate_definition_hash();
         $this->store = &self::register_store_id($this->storeid);
         $this->ttl = $definition->get_ttl();
+        $maxsize = $definition->get_maxsize();
+        if ($maxsize !== null) {
+            // Must be a positive int.
+            $this->maxsize = abs((int)$maxsize);
+            $this->storecount = count($this->store);
+        }
     }
 
     /**
@@ -257,13 +275,24 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
      *
      * @param string $key The key to use.
      * @param mixed $data The data to set.
+     * @param bool $testmaxsize If set to true then we test the maxsize arg and reduce if required.
      * @return bool True if the operation was a success false otherwise.
      */
-    public function set($key, $data) {
+    public function set($key, $data, $testmaxsize = true) {
+        $testmaxsize = ($testmaxsize && $this->maxsize !== false);
+        if ($testmaxsize) {
+            $increment = (!isset($this->store[$key]));
+        }
         if ($this->ttl == 0) {
             $this->store[$key][0] = $data;
         } else {
             $this->store[$key] = array($data, cache::now());
+        }
+        if ($testmaxsize && $increment) {
+            $this->storecount++;
+            if ($this->storecount > $this->maxsize) {
+                $this->reduce_for_maxsize();
+            }
         }
         return true;
     }
@@ -279,8 +308,15 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
     public function set_many(array $keyvaluearray) {
         $count = 0;
         foreach ($keyvaluearray as $pair) {
-            $this->set($pair['key'], $pair['value']);
+            // Don't test the maxsize here. We'll do it once when we are done.
+            $this->set($pair['key'], $pair['value'], false);
             $count++;
+        }
+        if ($this->maxsize !== false) {
+            $this->storecount += $count;
+            if ($this->storecount > $this->maxsize) {
+                $this->reduce_for_maxsize();
+            }
         }
         return $count;
     }
@@ -352,6 +388,9 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
     public function delete($key) {
         $result = isset($this->store[$key]);
         unset($this->store[$key]);
+        if ($this->maxsize !== false) {
+            $this->storecount--;
+        }
         return $result;
     }
 
@@ -369,6 +408,9 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
             }
             unset($this->store[$key]);
         }
+        if ($this->maxsize !== false) {
+            $this->storecount -= $count;
+        }
         return $count;
     }
 
@@ -380,7 +422,32 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
     public function purge() {
         $this->flush_store_by_id($this->storeid);
         $this->store = &self::register_store_id($this->storeid);
+        // Don't worry about checking if we're using max size just set it as thats as fast as the check.
+        $this->storecount = 0;
         return true;
+    }
+
+    /**
+     * Reduces the size of the array if maxsize has been hit.
+     *
+     * This function reduces the size of the store reducing it by 10% of its maxsize.
+     * It removes the oldest items in the store when doing this.
+     * The reason it does this an doesn't use a least recently used system is purely the overhead such a system
+     * requires. The current approach is focused on speed, MUC already adds enough overhead to static/session caches
+     * and avoiding more is of benefit.
+     *
+     * @return int
+     */
+    protected function reduce_for_maxsize() {
+        $diff = $this->storecount - $this->maxsize;
+        if ($diff < 1) {
+            return 0;
+        }
+        // Reduce it by an extra 10% to avoid calling this repetitively if we are in a loop.
+        $diff += floor($this->maxsize / 10);
+        $this->store = array_slice($this->store, $diff, null, true);
+        $this->storecount -= $diff;
+        return $diff;
     }
 
     /**
@@ -403,7 +470,7 @@ class cachestore_static extends static_data_store implements cache_is_key_aware,
      * Generates an instance of the cache store that can be used for testing.
      *
      * @param cache_definition $definition
-     * @return false
+     * @return cachestore_static
      */
     public static function initialise_test_instance(cache_definition $definition) {
         // Do something here perhaps.

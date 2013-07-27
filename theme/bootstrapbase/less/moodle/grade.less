@@ -548,7 +548,12 @@ table#user-grades tr.controls td,
 .path-grade-report-grader table td.userfield {
     text-align:left;
 }
-
+.path-grade-report-grader.dir-rtl {
+    table th.user,
+    table td.userfield {
+        text-align:right;
+    }
+}
 .path-grade-report-grader .usersuspended a:link,
 .path-grade-report-grader .usersuspended a:visited {
     .muted
@@ -591,4 +596,13 @@ table#user-grades tr.controls td,
 
 .path-grade-report-grader #hiddentooltiproot, .tooltipDiv {
   display: none;
+}
+
+.gradingform_rubric.editor .criteria .definition textarea,
+.gradingform_rubric.editor .criteria .scorevalue input {
+    width: auto;
+}
+
+.gradingform_rubric.editor .criteria .scorevalue input {
+    float: left;
 }

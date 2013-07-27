@@ -7,7 +7,7 @@
 .block .header .title {background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);background-color:[[setting:blockheaderbackground]];background-repeat:repeat-x;clear:both;line-height:2em;}
 .block .header .title .commands {padding-left:0.3em;text-align:right;}
 .block .content {background-color:[[setting:blockcontentbgc]];}
-.block img.icon {padding-right:5px}
+.block img.icon {padding-right:0.2em}
 
 /* block login */
 .block_login .btn {margin-top:0.5em;text-align:center;}

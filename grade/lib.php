@@ -138,18 +138,17 @@ class graded_users_iterator {
         export_verify_grades($this->course->id);
         $course_item = grade_item::fetch_course_item($this->course->id);
         if ($course_item->needsupdate) {
-            // can not calculate all final grades - sorry
+            // Can not calculate all final grades - sorry.
             return false;
         }
 
         $coursecontext = context_course::instance($this->course->id);
-        $relatedcontexts = get_related_contexts_string($coursecontext);
 
-        list($gradebookroles_sql, $params) =
-            $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr');
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($coursecontext->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+        list($gradebookroles_sql, $params) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr');
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($coursecontext, '', 0, $this->onlyactive);
 
-        $params = array_merge($params, $enrolledparams);
+        $params = array_merge($params, $enrolledparams, $relatedctxparams);
 
         if ($this->groupid) {
             $groupsql = "INNER JOIN {groups_members} gm ON gm.userid = u.id";
@@ -162,7 +161,7 @@ class graded_users_iterator {
         }
 
         if (empty($this->sortfield1)) {
-            // we must do some sorting even if not specified
+            // We must do some sorting even if not specified.
             $ofields = ", u.id AS usrt";
             $order   = "usrt ASC";
 
@@ -174,8 +173,8 @@ class graded_users_iterator {
                 $order   .= ", usrt2 $this->sortorder2";
             }
             if ($this->sortfield1 != 'id' and $this->sortfield2 != 'id') {
-                // user order MUST be the same in both queries,
-                // must include the only unique user->id if not already present
+                // User order MUST be the same in both queries,
+                // must include the only unique user->id if not already present.
                 $ofields .= ", u.id AS usrt";
                 $order   .= ", usrt ASC";
             }
@@ -199,7 +198,6 @@ class graded_users_iterator {
             }
         }
 
-        // $params contents: gradebookroles and groupid (for $groupwheresql)
         $users_sql = "SELECT $userfields $ofields
                         FROM {user} u
                         JOIN ($enrolledsql) je ON je.id = u.id
@@ -208,7 +206,7 @@ class graded_users_iterator {
                                   SELECT DISTINCT ra.userid
                                     FROM {role_assignments} ra
                                    WHERE ra.roleid $gradebookroles_sql
-                                     AND ra.contextid $relatedcontexts
+                                     AND ra.contextid $relatedctxsql
                              ) rainner ON rainner.userid = u.id
                          WHERE u.deleted = 0
                              $groupwheresql
@@ -226,7 +224,6 @@ class graded_users_iterator {
             $itemids = array_keys($this->grade_items);
             list($itemidsql, $grades_params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED, 'items');
             $params = array_merge($params, $grades_params);
-            // $params contents: gradebookroles, enrolledparams, groupid (for $groupwheresql) and itemids
 
             $grades_sql = "SELECT g.* $ofields
                              FROM {grade_grades} g
@@ -237,7 +234,7 @@ class graded_users_iterator {
                                       SELECT DISTINCT ra.userid
                                         FROM {role_assignments} ra
                                        WHERE ra.roleid $gradebookroles_sql
-                                         AND ra.contextid $relatedcontexts
+                                         AND ra.contextid $relatedctxsql
                                   ) rainner ON rainner.userid = u.id
                               WHERE u.deleted = 0
                               AND g.itemid $itemidsql
@@ -418,7 +415,7 @@ function print_graded_users_selector($course, $actionpage, $userid=0, $groupid=0
 }
 
 function grade_get_graded_users_select($report, $course, $userid, $groupid, $includeall) {
-    global $USER;
+    global $USER, $CFG;
 
     if (is_null($userid)) {
         $userid = $USER->id;

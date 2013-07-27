@@ -129,15 +129,6 @@ abstract class pdo_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns localised database description
-     * Note: can be used before connect()
-     * @return string
-     */
-    public function get_configuration_hints() {
-        return get_string('databasesettingssub_' . $this->get_dbtype() . '_pdo', 'install');
-    }
-
-    /**
      * Returns database server info array
      * @return array Array containing 'description' and 'version' info
      */

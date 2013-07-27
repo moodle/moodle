@@ -728,7 +728,7 @@ class plugin_manager {
             ),
 
             'format' => array(
-                'scorm', 'social', 'topics', 'weeks'
+                'scorm', 'singleactivity', 'social', 'topics', 'weeks'
             ),
 
             'gradeexport' => array(
@@ -810,7 +810,7 @@ class plugin_manager {
             ),
 
             'repository' => array(
-                'alfresco', 'boxnet', 'coursefiles', 'dropbox', 'equella', 'filesystem',
+                'alfresco', 'areafiles', 'boxnet', 'coursefiles', 'dropbox', 'equella', 'filesystem',
                 'flickr', 'flickr_public', 'googledocs', 'local', 'merlot',
                 'picasa', 'recent', 'skydrive', 's3', 'upload', 'url', 'user', 'webdav',
                 'wikimedia', 'youtube'
@@ -824,8 +824,8 @@ class plugin_manager {
             ),
 
             'tinymce' => array(
-                'ctrlhelp', 'dragmath', 'moodleemoticon', 'moodleimage', 'moodlemedia', 'moodlenolink', 'spellchecker',
-                'pdw', 'wrap'
+                'ctrlhelp', 'dragmath', 'managefiles', 'moodleemoticon', 'moodleimage',
+                'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap'
             ),
 
             'theme' => array(
@@ -2205,6 +2205,7 @@ class available_update_deployer {
 
             if (!file_exists($filepath)) {
                 $success = file_put_contents($filepath, $password . PHP_EOL . $now . PHP_EOL, LOCK_EX);
+                chmod($filepath, $CFG->filepermissions);
             }
         }
 
