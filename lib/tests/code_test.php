@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class code_testcase extends advanced_testcase {
+class core_code_testcase extends basic_testcase {
     protected $badstrings;
     protected $extensions_to_ignore = array('exe', 'gif', 'ico', 'jpg', 'png', 'ttf', 'log');
     protected $ignore_folders = array();
@@ -35,7 +35,7 @@ class code_testcase extends advanced_testcase {
         global $CFG;
 
         if ($CFG->ostype === 'UNIX') {
-            // try it the faster way
+            // Try it the faster way.
             $oldcwd = getcwd();
             chdir($CFG->dirroot);
             $output = null;
@@ -46,9 +46,9 @@ class code_testcase extends advanced_testcase {
             $exclude = implode(' ', $exclude);
             exec('grep -r '.$exclude.' DONOT'.'COMMIT .', $output, $code);
             chdir($oldcwd);
-            // return code 0 means found, return code 1 means NOT found, 127 is grep not found
+            // Return code 0 means found, return code 1 means NOT found, 127 is grep not found.
             if ($code == 1) {
-                // executed only if no file failed the test
+                // Executed only if no file failed the test.
                 $this->assertTrue(true);
                 return;
             }
@@ -62,7 +62,7 @@ class code_testcase extends advanced_testcase {
             $this->allok[$description] = true;
         }
         $this->recurseFolders($CFG->dirroot, 'search_file_for_dnc', $regexp, true);
-        $this->assertTrue(true); // executed only if no file failed the test
+        $this->assertTrue(true); // Executed only if no file failed the test.
     }
 
     protected function search_file_for_dnc($filepath) {
@@ -74,4 +74,3 @@ class code_testcase extends advanced_testcase {
         }
     }
 }
-
