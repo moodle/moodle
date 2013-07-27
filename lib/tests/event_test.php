@@ -54,7 +54,7 @@ class core_event_testcase extends advanced_testcase {
         $this->assertSame('u', $event->crud);
         $this->assertSame(10, $event->level);
 
-        $this->assertSame($system, $event->get_context());
+        $this->assertEquals($system, $event->get_context());
         $this->assertSame($system->id, $event->contextid);
         $this->assertSame($system->contextlevel, $event->contextlevel);
         $this->assertSame($system->instanceid, $event->contextinstanceid);
@@ -86,7 +86,7 @@ class core_event_testcase extends advanced_testcase {
         }
 
         $event2 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'contextid'=>$system->id, 'objectid'=>5, 'other'=>array('sample'=>null, 'xx'=>10)));
-        $this->assertSame($event->get_context(), $event2->get_context());
+        $this->assertEquals($event->get_context(), $event2->get_context());
     }
 
     public function test_observers_parsing() {
@@ -171,7 +171,6 @@ class core_event_testcase extends advanced_testcase {
 
         $this->assertEquals($expected, $result['*']);
 
-
         // Now test broken stuff...
 
         $observers = array(
@@ -229,7 +228,7 @@ class core_event_testcase extends advanced_testcase {
         $observers = array(
             array(
                 'eventname'   => '\core_tests\event\unittest_executed',
-                'callback'    => '', // empty callable
+                'callback'    => '', // Empty callable.
                 'includefile' => 'lib/tests/fixtures/event_fixtures.php',
             ),
         );
@@ -415,6 +414,7 @@ class core_event_testcase extends advanced_testcase {
             $trans->rollback(new \moodle_exception('xxx'));
             $this->fail('Expecting exception');
         } catch (\moodle_exception $e) {
+            $this->assertInstanceOf('moodle_exception', $e);
         }
 
         $this->assertSame(
@@ -458,7 +458,6 @@ class core_event_testcase extends advanced_testcase {
         $event2->nest = true;
         $event2->trigger();
 
-
         $this->assertSame(
             array('observe_all-1', 'observe_one-1', 'legacy_handler-1', 'observe_all-nesting-2', 'legacy_handler-3', 'observe_one-2', 'observe_all-3', 'observe_one-3', 'legacy_handler-2'),
             \core_tests\event\unittest_observer::$info);
@@ -466,7 +465,6 @@ class core_event_testcase extends advanced_testcase {
         $this->assertSame($event1, \core_tests\event\unittest_observer::$event[0]);
         $this->assertSame($event1, \core_tests\event\unittest_observer::$event[1]);
         $this->assertSame(array(1, 5), \core_tests\event\unittest_observer::$event[2]);
-
 
         $logs = $DB->get_records('log', array(), 'id ASC');
         $this->assertCount(3, $logs);
@@ -527,7 +525,7 @@ class core_event_testcase extends advanced_testcase {
         try {
             $event->trigger();
             $this->fail('Exception expected on double trigger');
-        } catch (Exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
@@ -556,7 +554,7 @@ class core_event_testcase extends advanced_testcase {
         try {
             $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'other'=>array('sample'=>5, 'xx'=>10)));
             $this->fail('Exception expected when context and contextid missing');
-        } catch (Exception $e) {
+        } catch (\moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
 
