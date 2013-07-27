@@ -156,6 +156,14 @@ table.quizreviewsummary td.cell {padding: 1px 1em 1px 0.5em;text-align: left;bac
 #page-mod-quiz-report .gradetheselink {font-size: 0.8em;}
 #page-mod-quiz-report .mform fieldset {margin: 0;}
 #page-mod-quiz-report fieldset.felement.fgroup {margin: 0;}
+#page-mod-quiz-report table th {
+    white-space: normal;
+}
+#page-mod-quiz-report table#attempts td,
+#page-mod-quiz-report table.quizresponseanalysis td {
+    word-wrap: break-word;
+    max-width: 20em;
+}
 #page-mod-quiz-report table.titlesleft td.c0 {font-weight: bold;}
 #page-mod-quiz-report table .numcol {text-align: center;vertical-align : middle !important;}
 

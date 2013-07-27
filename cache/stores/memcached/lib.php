@@ -339,7 +339,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             $options[Memcached::SERIALIZER_JSON] = get_string('serialiser_json', 'cachestore_memcached');
         }
         if (Memcached::HAVE_IGBINARY) {
-            $options[Memcached::SERIALIZER_IGBINARY] = get_string('serialiser_php', 'cachestore_memcached');
+            $options[Memcached::SERIALIZER_IGBINARY] = get_string('serialiser_igbinary', 'cachestore_memcached');
         }
         return $options;
     }
@@ -444,7 +444,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
      * Generates an instance of the cache store that can be used for testing.
      *
      * @param cache_definition $definition
-     * @return false
+     * @return cachestore_memcached|false
      */
     public static function initialise_test_instance(cache_definition $definition) {
 
