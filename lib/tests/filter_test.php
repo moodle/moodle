@@ -18,6 +18,9 @@
  * Tests for the parts of ../filterlib.php that involve loading the configuration
  * from, and saving the configuration to, the database.
  *
+ * TODO: this needs to be merged to one testcase class or split to separate files,
+ *       it is also missing properly defined dependencies and proper class names.
+ *
  * @package   core_filter
  * @category  phpunit
  * @copyright 2009 Tim Hunt
@@ -62,7 +65,7 @@ class filter_active_global_testcase extends advanced_testcase {
             array('contextid' => context_system::instance()->id), 'sortorder', 'sortorder,filter');
         $testarray = array();
         $index = 1;
-        foreach($filters as $filter) {
+        foreach ($filters as $filter) {
             $testarray[$index++] = $filter;
         }
         $this->assertEquals($testarray, $sortedfilters);
@@ -94,7 +97,6 @@ class filter_active_global_testcase extends advanced_testcase {
 
     /**
      * @expectedException coding_exception
-     * @return void
      */
     public function test_global_config_exception_on_invalid_state() {
         filter_set_global_state('name', 0);
@@ -536,14 +538,14 @@ class filter_preload_activities_testcase extends advanced_testcase {
         $FILTERLIB_PRIVATE = new stdClass();
         filter_preload_activities($modinfo);
 
-        // Get data and check no queries are made
+        // Get data and check no queries are made.
         $before = $DB->perf_get_reads();
         $plfilters1 = filter_get_active_in_context(self::$activity1context);
         $plfilters2 = filter_get_active_in_context(self::$activity2context);
         $after = $DB->perf_get_reads();
         $this->assertEquals($before, $after);
 
-        // Repeat without cache and check it makes queries now
+        // Repeat without cache and check it makes queries now.
         $FILTERLIB_PRIVATE = new stdClass;
         $before = $DB->perf_get_reads();
         $filters1 = filter_get_active_in_context(self::$activity1context);
@@ -551,58 +553,58 @@ class filter_preload_activities_testcase extends advanced_testcase {
         $after = $DB->perf_get_reads();
         $this->assertTrue($after > $before);
 
-        // Check they match
+        // Check they match.
         $this->assertEquals($plfilters1, $filters1);
         $this->assertEquals($plfilters2, $filters2);
     }
 
     public function test_preload() {
-        // Get course and modinfo
+        // Get course and modinfo.
         $modinfo = new course_modinfo(self::$course, 2);
 
         // Note: All the tests in this function check that the result from the
         // preloaded cache is the same as the result from calling the standard
         // function without preloading.
 
-        // Initially, check with no filters enabled
+        // Initially, check with no filters enabled.
         $this->assert_matches($modinfo);
 
-        // Enable filter globally, check
+        // Enable filter globally, check.
         filter_set_global_state('name', TEXTFILTER_ON);
         $this->assert_matches($modinfo);
 
-        // Disable for activity 2
+        // Disable for activity 2.
         filter_set_local_state('name', self::$activity2context->id, TEXTFILTER_OFF);
         $this->assert_matches($modinfo);
 
-        // Disable at category
+        // Disable at category.
         filter_set_local_state('name', self::$catcontext->id, TEXTFILTER_OFF);
         $this->assert_matches($modinfo);
 
-        // Enable for activity 1
+        // Enable for activity 1.
         filter_set_local_state('name', self::$activity1context->id, TEXTFILTER_ON);
         $this->assert_matches($modinfo);
 
-        // Disable globally
+        // Disable globally.
         filter_set_global_state('name', TEXTFILTER_DISABLED);
         $this->assert_matches($modinfo);
 
-        // Add another 2 filters
+        // Add another 2 filters.
         filter_set_global_state('frog', TEXTFILTER_ON);
         filter_set_global_state('zombie', TEXTFILTER_ON);
         $this->assert_matches($modinfo);
 
-        // Disable random one of these in each context
+        // Disable random one of these in each context.
         filter_set_local_state('zombie', self::$activity1context->id, TEXTFILTER_OFF);
         filter_set_local_state('frog', self::$activity2context->id, TEXTFILTER_OFF);
         $this->assert_matches($modinfo);
 
-        // Now do some filter options
+        // Now do some filter options.
         filter_set_local_config('name', self::$activity1context->id, 'a', 'x');
         filter_set_local_config('zombie', self::$activity1context->id, 'a', 'y');
         filter_set_local_config('frog', self::$activity1context->id, 'a', 'z');
         // These last two don't do anything as they are not at final level but I
-        // thought it would be good to have that verified in test
+        // thought it would be good to have that verified in test.
         filter_set_local_config('frog', self::$coursecontext->id, 'q', 'x');
         filter_set_local_config('frog', self::$catcontext->id, 'q', 'z');
         $this->assert_matches($modinfo);
@@ -674,7 +676,7 @@ class filter_filter_set_applies_to_strings extends advanced_testcase {
         $DB->delete_records('filter_config', array());
         $this->resetAfterTest(false);
 
-        // Store original $CFG;
+        // Store original $CFG.
         $this->origcfgstringfilters = $CFG->stringfilters;
         $this->origcfgfilterall = $CFG->filterall;
     }
