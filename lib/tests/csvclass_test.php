@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests csv import and export functions
+ * Tests csv import and export functions.
  *
  * @package    core
  * @category   phpunit
@@ -28,17 +28,17 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/lib/csvlib.class.php');
 
-class csvclass_testcase extends advanced_testcase {
+class core_csvclass_testcase extends advanced_testcase {
 
-    var $testdata = array();
-    var $teststring = '';
-    var $teststring2 = '';
-    var $teststring3 = '';
-    var $teststring4 = '';
+    protected $testdata = array();
+    protected $teststring = '';
+    protected $teststring2 = '';
+    protected $teststring3 = '';
+    protected $teststring4 = '';
 
-    protected function setUp(){
+    protected function setUp() {
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         $csvdata = array();
         $csvdata[0][] = 'fullname';
@@ -62,12 +62,12 @@ class csvclass_testcase extends advanced_testcase {
 <p>and also contains ""double quotes""</p>",Yebisu
 ';
 
-    $this->teststring2 = 'fullname,"description of things",beer
+        $this->teststring2 = 'fullname,"description of things",beer
 "Fred Flint","<p>Find the stone inside the box</p>",Asahi,"A fourth column"
 "Sarah Smith","<p>How are the people next door?</p>,Yebisu,"Forget the next"
 ';
 
-    $this->teststring4 = 'fullname,"description of things",beer
+        $this->teststring4 = 'fullname,"description of things",beer
 "Douglas Dirk","<p>I am fine, thankyou.</p>",Becks
 
 "Addelyn Francis","<p>Thanks for the cake</p>",Becks
@@ -86,10 +86,10 @@ class csvclass_testcase extends advanced_testcase {
             $csvexport->add_data($data);
         }
         $csvoutput = $csvexport->print_csv_data(true);
-        $this->assertEquals($csvoutput, $this->teststring);
+        $this->assertSame($csvoutput, $this->teststring);
 
         $test_data = csv_export_writer::print_array($this->testdata, 'comma', '"', true);
-        $this->assertEquals($test_data, $this->teststring);
+        $this->assertSame($test_data, $this->teststring);
 
         // Testing that the content is imported correctly.
         $iid = csv_import_reader::get_new_iid('lib');
@@ -103,7 +103,7 @@ class csvclass_testcase extends advanced_testcase {
         }
         $csvimport->cleanup();
         $csvimport->close();
-        $this->assertEquals($dataset, $this->testdata);
+        $this->assertSame($dataset, $this->testdata);
 
         // Testing for the wrong count of columns.
         $errortext = get_string('csvweirdcolumns', 'error');
@@ -113,9 +113,9 @@ class csvclass_testcase extends advanced_testcase {
         $importerror = $csvimport->get_error();
         $csvimport->cleanup();
         $csvimport->close();
-        $this->assertEquals($importerror, $errortext);
+        $this->assertSame($importerror, $errortext);
 
-        // Testing for empty content
+        // Testing for empty content.
         $errortext = get_string('csvemptyfile', 'error');
 
         $iid = csv_import_reader::get_new_iid('lib');
@@ -124,7 +124,7 @@ class csvclass_testcase extends advanced_testcase {
         $importerror = $csvimport->get_error();
         $csvimport->cleanup();
         $csvimport->close();
-        $this->assertEquals($importerror, $errortext);
+        $this->assertSame($importerror, $errortext);
 
         // Testing for a tab separated file.
         // The tab separated file has a trailing tab and extra blank lines at the end of the file.
