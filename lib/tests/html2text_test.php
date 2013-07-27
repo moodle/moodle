@@ -29,13 +29,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-class html2text_testcase extends basic_testcase {
+class core_html2text_testcase extends basic_testcase {
 
     /**
-     * ALT as image replacements
+     * ALT as image replacements.
      */
     public function test_images() {
-        $this->assertEquals('[edit]', html_to_text('<img src="edit.png" alt="edit" />'));
+        $this->assertSame('[edit]', html_to_text('<img src="edit.png" alt="edit" />'));
 
         $text = 'xx<img src="gif.gif" alt="some gif" />xx';
         $result = html_to_text($text, null, false, false);
@@ -43,10 +43,10 @@ class html2text_testcase extends basic_testcase {
     }
 
     /**
-     * No magic quotes messing
+     * No magic quotes messing.
      */
     public function test_no_strip_slashes() {
-        $this->assertEquals('[\edit]', html_to_text('<img src="edit.png" alt="\edit" />'));
+        $this->assertSame('[\edit]', html_to_text('<img src="edit.png" alt="\edit" />'));
 
         $text = '\\magic\\quotes\\are\\\\horrible';
         $result = html_to_text($text, null, false, false);
@@ -54,7 +54,7 @@ class html2text_testcase extends basic_testcase {
     }
 
     /**
-     * Textlib integration
+     * Textlib integration.
      */
     public function test_textlib() {
         $text = '<strong>Žluťoučký koníček</strong>';
@@ -63,7 +63,7 @@ class html2text_testcase extends basic_testcase {
     }
 
     /**
-     * Protect 0
+     * Protect 0.
      */
     public function test_zero() {
         $text = '0';
@@ -98,10 +98,8 @@ have been fixed <strong><a href="http://third.url/view.php">last week</a></stron
         $this->assertSame(false, strpos($result, '[4]'));
     }
 
-    // ======= Standard html2text conversion features =======
-
     /**
-     * Various invalid HTML typed by users that ignore html strict
+     * Various invalid HTML typed by users that ignore html strict.
      **/
     public function test_invalid_html() {
         $text = 'Gin & Tonic';
@@ -121,31 +119,31 @@ have been fixed <strong><a href="http://third.url/view.php">last week</a></stron
      * Basic text formatting.
      */
     public function test_simple() {
-        $this->assertEquals("_Hello_ WORLD!", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
-        $this->assertEquals("All the WORLD’S a stage.\n\n-- William Shakespeare", html_to_text('<p>All the <strong>world’s</strong> a stage.</p><p>-- William Shakespeare</p>'));
-        $this->assertEquals("HELLO WORLD!\n\n", html_to_text('<h1>Hello world!</h1>'));
-        $this->assertEquals("Hello\nworld!", html_to_text('Hello<br />world!'));
+        $this->assertSame("_Hello_ WORLD!", html_to_text('<p><i>Hello</i> <b>world</b>!</p>'));
+        $this->assertSame("All the WORLD’S a stage.\n\n-- William Shakespeare", html_to_text('<p>All the <strong>world’s</strong> a stage.</p><p>-- William Shakespeare</p>'));
+        $this->assertSame("HELLO WORLD!\n\n", html_to_text('<h1>Hello world!</h1>'));
+        $this->assertSame("Hello\nworld!", html_to_text('Hello<br />world!'));
     }
 
     /**
-     * Test line wrapping
+     * Test line wrapping.
      */
     public function test_text_nowrap() {
         $long = "Here is a long string, more than 75 characters long, since by default html_to_text wraps text at 75 chars.";
         $wrapped = "Here is a long string, more than 75 characters long, since by default\nhtml_to_text wraps text at 75 chars.";
-        $this->assertEquals($long, html_to_text($long, 0));
-        $this->assertEquals($wrapped, html_to_text($long));
+        $this->assertSame($long, html_to_text($long, 0));
+        $this->assertSame($wrapped, html_to_text($long));
     }
 
     /**
-     * Whitespace removal
+     * Whitespace removal.
      */
     public function test_trailing_whitespace() {
-        $this->assertEquals('With trailing whitespace and some more text', html_to_text("With trailing whitespace   \nand some   more text", 0));
+        $this->assertSame('With trailing whitespace and some more text', html_to_text("With trailing whitespace   \nand some   more text", 0));
     }
 
     /**
-     * PRE parsing
+     * PRE parsing.
      */
     public function test_html_to_text_pre_parsing_problem() {
         $strorig = 'Consider the following function:<br /><pre><span style="color: rgb(153, 51, 102);">void FillMeUp(char* in_string) {'.
@@ -168,4 +166,3 @@ What would happen if a non-terminated string were input to this function?
         $this->assertSame($strconv, html_to_text($strorig));
     }
 }
-
