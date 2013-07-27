@@ -15,11 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Completion tests
+ * Completion tests.
  *
  * @package    core_completion
  * @category   phpunit
  * @copyright  2008 Sam Marshall
+ * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,48 +29,28 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir.'/completionlib.php');
 
+class core_completionlib_testcase extends advanced_testcase {
+    protected function mock_setup() {
+        global $DB, $CFG, $USER;
 
-class completionlib_testcase extends basic_testcase {
+        $this->resetAfterTest();
 
-    var $realdb, $realcfg, $realsession, $realuser;
-
-    protected function setUp() {
-        global $DB, $CFG, $SESSION, $USER;
-        parent::setUp();
-
-        $this->realdb = $DB;
-        $this->realcfg = $CFG;
-        $this->realsession = $SESSION;
-        $this->prevuser = $USER;
-
-        $DB =  $this->getMock(get_class($DB));
-        $CFG = clone($this->realcfg);
-        $CFG->prefix = 'test_';
+        $DB = $this->getMock(get_class($DB));
         $CFG->enablecompletion = COMPLETION_ENABLED;
-        $SESSION = new stdClass();
         $USER = (object)array('id' =>314159);
     }
 
-    protected function tearDown() {
-        global $DB,$CFG,$SESSION,$USER;
-        $DB = $this->realdb;
-        $CFG = $this->realcfg;
-        $SESSION = $this->realsession;
-        $USER = $this->prevuser;
-
-        parent::tearDown();
-    }
-
-    function test_is_enabled() {
+    public function test_is_enabled() {
         global $CFG;
+        $this->mock_setup();
 
-        // Config alone
+        // Config alone.
         $CFG->enablecompletion = COMPLETION_DISABLED;
         $this->assertEquals(COMPLETION_DISABLED, completion_info::is_enabled_for_site());
         $CFG->enablecompletion = COMPLETION_ENABLED;
         $this->assertEquals(COMPLETION_ENABLED, completion_info::is_enabled_for_site());
 
-        // Course
+        // Course.
         $course = (object)array('id' =>13);
         $c = new completion_info($course);
         $course->enablecompletion = COMPLETION_DISABLED;
@@ -79,7 +60,7 @@ class completionlib_testcase extends basic_testcase {
         $CFG->enablecompletion = COMPLETION_DISABLED;
         $this->assertEquals(COMPLETION_DISABLED, $c->is_enabled());
 
-        // Course and CM
+        // Course and CM.
         $cm = new stdClass();
         $cm->completion = COMPLETION_TRACKING_MANUAL;
         $this->assertEquals(COMPLETION_DISABLED, $c->is_enabled($cm));
@@ -94,19 +75,20 @@ class completionlib_testcase extends basic_testcase {
         $this->assertEquals(COMPLETION_TRACKING_AUTOMATIC, $c->is_enabled($cm));
     }
 
-    function test_update_state() {
+    public function test_update_state() {
+        $this->mock_setup();
 
-        $c = $this->getMock('completion_info', array('is_enabled','get_data','internal_get_state','internal_set_data'), array((object)array('id'=>42)));
+        $c = $this->getMock('completion_info', array('is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'), array((object)array('id'=>42)));
         $cm = (object)array('id'=>13, 'course'=>42);
 
-        // Not enabled, should do nothing
+        // Not enabled, should do nothing.
         $c->expects($this->at(0))
             ->method('is_enabled')
             ->with($cm)
             ->will($this->returnValue(false));
         $c->update_state($cm);
 
-        // Enabled, but current state is same as possible result, do nothing
+        // Enabled, but current state is same as possible result, do nothing.
         $current = (object)array('completionstate'=>COMPLETION_COMPLETE);
         $c->expects($this->at(0))
             ->method('is_enabled')
@@ -119,7 +101,7 @@ class completionlib_testcase extends basic_testcase {
         $c->update_state($cm, COMPLETION_COMPLETE);
 
         // Enabled, but current state is a specific one and new state is just
-        // complete, so do nothing
+        // complete, so do nothing.
         $current->completionstate = COMPLETION_COMPLETE_PASS;
         $c->expects($this->at(0))
             ->method('is_enabled')
@@ -131,8 +113,8 @@ class completionlib_testcase extends basic_testcase {
             ->will($this->returnValue($current));
         $c->update_state($cm, COMPLETION_COMPLETE);
 
-        // Manual, change state (no change)
-        $cm = (object)array('id'=>13,'course'=>42, 'completion'=>COMPLETION_TRACKING_MANUAL);
+        // Manual, change state (no change).
+        $cm = (object)array('id'=>13, 'course'=>42, 'completion'=>COMPLETION_TRACKING_MANUAL);
         $current->completionstate=COMPLETION_COMPLETE;
         $c->expects($this->at(0))
             ->method('is_enabled')
@@ -144,7 +126,7 @@ class completionlib_testcase extends basic_testcase {
             ->will($this->returnValue($current));
         $c->update_state($cm, COMPLETION_COMPLETE);
 
-        // Manual, change state (change)
+        // Manual, change state (change).
         $c->expects($this->at(0))
             ->method('is_enabled')
             ->with($cm)
@@ -161,8 +143,8 @@ class completionlib_testcase extends basic_testcase {
             ->with($cm, $changed);
         $c->update_state($cm, COMPLETION_INCOMPLETE);
 
-        // Auto, change state
-        $cm = (object)array('id'=>13,'course'=>42, 'completion'=>COMPLETION_TRACKING_AUTOMATIC);
+        // Auto, change state.
+        $cm = (object)array('id'=>13, 'course'=>42, 'completion'=>COMPLETION_TRACKING_AUTOMATIC);
         $current = (object)array('completionstate'=>COMPLETION_COMPLETE);
         $c->expects($this->at(0))
             ->method('is_enabled')
@@ -184,25 +166,26 @@ class completionlib_testcase extends basic_testcase {
         $c->update_state($cm, COMPLETION_COMPLETE_PASS);
     }
 
-    function test_internal_get_state() {
+    public function test_internal_get_state() {
         global $DB;
+        $this->mock_setup();
 
         $c = $this->getMock('completion_info', array('internal_get_grade_state'), array((object)array('id'=>42)));
         $cm = (object)array('id'=>13, 'course'=>42, 'completiongradeitemnumber'=>null);
 
-        // If view is required, but they haven't viewed it yet
+        // If view is required, but they haven't viewed it yet.
         $cm->completionview = COMPLETION_VIEW_REQUIRED;
         $current = (object)array('viewed'=>COMPLETION_NOT_VIEWED);
         $this->assertEquals(COMPLETION_INCOMPLETE, $c->internal_get_state($cm, 123, $current));
 
-        // OK set view not required
+        // OK set view not required.
         $cm->completionview = COMPLETION_VIEW_NOT_REQUIRED;
 
-        // Test not getting module name
+        // Test not getting module name.
         $cm->modname='label';
         $this->assertEquals(COMPLETION_COMPLETE, $c->internal_get_state($cm, 123, $current));
 
-        // Test getting module name
+        // Test getting module name.
         $cm->module = 13;
         unset($cm->modname);
         /** @var $DB PHPUnit_Framework_MockObject_MockObject */
@@ -212,24 +195,24 @@ class completionlib_testcase extends basic_testcase {
             ->will($this->returnValue('lable'));
         $this->assertEquals(COMPLETION_COMPLETE, $c->internal_get_state($cm, 123, $current));
 
-        // Note: This function is not fully tested (including kind of the main
-        // part) because:
-        // * the grade_item/grade_grade calls are static and can't be mocked
-        // * the plugin_supports call is static and can't be mocked
+        // Note: This function is not fully tested (including kind of the main part) because:
+        // * the grade_item/grade_grade calls are static and can't be mocked,
+        // * the plugin_supports call is static and can't be mocked.
     }
 
-    function test_set_module_viewed() {
+    public function test_set_module_viewed() {
+        $this->mock_setup();
 
         $c = $this->getMock('completion_info',
             array('delete_all_state', 'get_tracked_users', 'update_state', 'internal_get_grade_state', 'is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'),
             array((object)array('id'=>42)));
         $cm = (object)array('id'=>13, 'course'=>42);
 
-        // Not tracking completion, should do nothing
+        // Not tracking completion, should do nothing.
         $cm->completionview = COMPLETION_VIEW_NOT_REQUIRED;
         $c->set_module_viewed($cm);
 
-        // Tracking completion but completion is disabled, should do nothing
+        // Tracking completion but completion is disabled, should do nothing.
         $cm->completionview = COMPLETION_VIEW_REQUIRED;
         $c->expects($this->at(0))
             ->method('is_enabled')
@@ -238,7 +221,7 @@ class completionlib_testcase extends basic_testcase {
         $c->set_module_viewed($cm);
 
         // Now it's enabled, we expect it to get data. If data already has
-        // viewed, still do nothing
+        // viewed, still do nothing.
         $c->expects($this->at(0))
             ->method('is_enabled')
             ->with($cm)
@@ -250,7 +233,7 @@ class completionlib_testcase extends basic_testcase {
         $c->set_module_viewed($cm);
 
         // OK finally one that hasn't been viewed, now it should set it viewed
-        // and update state
+        // and update state.
         $c->expects($this->at(0))
             ->method('is_enabled')
             ->with($cm)
@@ -268,8 +251,9 @@ class completionlib_testcase extends basic_testcase {
         $c->set_module_viewed($cm, 1337);
     }
 
-    function test_count_user_data() {
+    public function test_count_user_data() {
         global $DB;
+        $this->mock_setup();
 
         $course = (object)array('id'=>13);
         $cm = (object)array('id'=>42);
@@ -279,27 +263,19 @@ class completionlib_testcase extends basic_testcase {
             ->method('get_field_sql')
             ->will($this->returnValue(666));
 
-/*
-        $DB->expectOnce('get_field_sql',array(new IgnoreWhitespaceExpectation("SELECT
-    COUNT(1)
-FROM
-    {course_modules_completion}
-WHERE
-    coursemoduleid=? AND completionstate<>0"),array(42)));
-*/
-
         $c = new completion_info($course);
         $this->assertEquals(666, $c->count_user_data($cm));
     }
 
-    function test_delete_all_state() {
+    public function test_delete_all_state() {
         global $DB, $SESSION;
+        $this->mock_setup();
 
         $course = (object)array('id'=>13);
-        $cm = (object)array('id'=>42,'course'=>13);
+        $cm = (object)array('id'=>42, 'course'=>13);
         $c = new completion_info($course);
 
-        // Check it works ok without data in session
+        // Check it works ok without data in session.
         /** @var $DB PHPUnit_Framework_MockObject_MockObject */
         $DB->expects($this->at(0))
             ->method('delete_records')
@@ -308,13 +284,13 @@ WHERE
         $c->delete_all_state($cm);
 
         // Build up a session to check it deletes the right bits from it
-        // (and not other bits)
-        $SESSION->completioncache=array();
-        $SESSION->completioncache[13]=array();
-        $SESSION->completioncache[13][42]='foo';
-        $SESSION->completioncache[13][43]='foo';
-        $SESSION->completioncache[14]=array();
-        $SESSION->completioncache[14][42]='foo';
+        // (and not other bits).
+        $SESSION->completioncache = array();
+        $SESSION->completioncache[13] = array();
+        $SESSION->completioncache[13][42] = 'foo';
+        $SESSION->completioncache[13][43] = 'foo';
+        $SESSION->completioncache[14] = array();
+        $SESSION->completioncache[14][42] = 'foo';
         $DB->expects($this->at(0))
             ->method('delete_records')
             ->with('course_modules_completion', array('coursemoduleid'=>42))
@@ -323,11 +299,12 @@ WHERE
         $this->assertEquals(array(13=>array(43=>'foo'), 14=>array(42=>'foo')), $SESSION->completioncache);
     }
 
-    function test_reset_all_state() {
+    public function test_reset_all_state() {
         global $DB;
+        $this->mock_setup();
 
         $c = $this->getMock('completion_info',
-            array('delete_all_state', 'get_tracked_users','update_state', 'internal_get_grade_state', 'is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'),
+            array('delete_all_state', 'get_tracked_users', 'update_state', 'internal_get_grade_state', 'is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'),
             array((object)array('id'=>42)));
 
         $cm = (object)array('id'=>13, 'course'=>42, 'completion'=>COMPLETION_TRACKING_AUTOMATIC);
@@ -336,7 +313,7 @@ WHERE
         $DB->expects($this->at(0))
             ->method('get_recordset')
             ->will($this->returnValue(
-                new completion_test_fake_recordset(array((object)array('id'=>1, 'userid'=>100),(object)array('id'=>2, 'userid'=>101)))));
+                new core_completionlib_fake_recordset(array((object)array('id'=>1, 'userid'=>100), (object)array('id'=>2, 'userid'=>101)))));
 
         $c->expects($this->at(0))
             ->method('delete_all_state')
@@ -345,113 +322,103 @@ WHERE
         $c->expects($this->at(1))
             ->method('get_tracked_users')
             ->will($this->returnValue(array(
-            (object)array('id'=>100,'firstname'=>'Woot','lastname'=>'Plugh'),
-            (object)array('id'=>201,'firstname'=>'Vroom','lastname'=>'Xyzzy'))));
+            (object)array('id'=>100, 'firstname'=>'Woot', 'lastname'=>'Plugh'),
+            (object)array('id'=>201, 'firstname'=>'Vroom', 'lastname'=>'Xyzzy'))));
 
         $c->expects($this->at(2))
             ->method('update_state')
-            ->with($cm,COMPLETION_UNKNOWN, 100);
+            ->with($cm, COMPLETION_UNKNOWN, 100);
         $c->expects($this->at(3))
             ->method('update_state')
-            ->with($cm,COMPLETION_UNKNOWN, 101);
+            ->with($cm, COMPLETION_UNKNOWN, 101);
         $c->expects($this->at(4))
             ->method('update_state')
-            ->with($cm,COMPLETION_UNKNOWN, 201);
+            ->with($cm, COMPLETION_UNKNOWN, 201);
 
         $c->reset_all_state($cm);
     }
 
-    function test_get_data() {
+    public function test_get_data() {
         global $DB, $SESSION;
+        $this->mock_setup();
 
         $c = new completion_info((object)array('id'=>42));
         $cm = (object)array('id'=>13, 'course'=>42);
 
-        // 1. Not current user, record exists
+        // 1. Not current user, record exists.
         $sillyrecord = (object)array('frog'=>'kermit');
 
         /** @var $DB PHPUnit_Framework_MockObject_MockObject */
         $DB->expects($this->at(0))
             ->method('get_record')
-            ->with('course_modules_completion', array('coursemoduleid'=>13,'userid'=>123))
+            ->with('course_modules_completion', array('coursemoduleid'=>13, 'userid'=>123))
             ->will($this->returnValue($sillyrecord));
-        $result = $c->get_data($cm,false,123);
+        $result = $c->get_data($cm, false, 123);
         $this->assertEquals($sillyrecord, $result);
-        $this->assertTrue(empty($SESSION->completioncache));
+        $this->assertFalse(isset($SESSION->completioncache));
 
-        // 2. Not current user, default record, wholecourse (ignored)
+        // 2. Not current user, default record, whole course (ignored).
         $DB->expects($this->at(0))
             ->method('get_record')
-            ->with('course_modules_completion', array('coursemoduleid'=>13,'userid'=>123))
+            ->with('course_modules_completion', array('coursemoduleid'=>13, 'userid'=>123))
             ->will($this->returnValue(false));
-        $result=$c->get_data($cm,true,123);
+        $result=$c->get_data($cm, true, 123);
         $this->assertEquals((object)array(
-            'id'=>'0','coursemoduleid'=>13,'userid'=>123,'completionstate'=>0,
-            'viewed'=>0,'timemodified'=>0),$result);
-        $this->assertTrue(empty($SESSION->completioncache));
+            'id'=>'0', 'coursemoduleid'=>13, 'userid'=>123, 'completionstate'=>0,
+            'viewed'=>0, 'timemodified'=>0), $result);
+        $this->assertFalse(isset($SESSION->completioncache));
 
-        // 3. Current user, single record, not from cache
+        // 3. Current user, single record, not from cache.
         $DB->expects($this->at(0))
             ->method('get_record')
-            ->with('course_modules_completion', array('coursemoduleid'=>13,'userid'=>314159))
+            ->with('course_modules_completion', array('coursemoduleid'=>13, 'userid'=>314159))
             ->will($this->returnValue($sillyrecord));
         $result = $c->get_data($cm);
         $this->assertEquals($sillyrecord, $result);
         $this->assertEquals($sillyrecord, $SESSION->completioncache[42][13]);
-        // When checking time(), allow for second overlaps
+        // When checking time(), allow for second overlaps.
         $this->assertTrue(time()-$SESSION->completioncache[42]['updated']<2);
 
-        // 4. Current user, 'whole course', but from cache
+        // 4. Current user, 'whole course', but from cache.
         $result = $c->get_data($cm, true);
         $this->assertEquals($sillyrecord, $result);
 
         // 5. Current user, single record, cache expired
-        $SESSION->completioncache[42]['updated']=37; // Quite a long time ago
+        $SESSION->completioncache[42]['updated']=37; // Quite a long time ago.
         $now = time();
         $SESSION->completioncache[17]['updated']=$now;
-        $SESSION->completioncache[39]['updated']=72; // Also a long time ago
+        $SESSION->completioncache[39]['updated']=72; // Also a long time ago.
         $DB->expects($this->at(0))
             ->method('get_record')
-            ->with('course_modules_completion', array('coursemoduleid'=>13,'userid'=>314159))
+            ->with('course_modules_completion', array('coursemoduleid'=>13, 'userid'=>314159))
             ->will($this->returnValue($sillyrecord));
         $result = $c->get_data($cm, false);
         $this->assertEquals($sillyrecord, $result);
 
-        // Check that updated value is right, then fudge it to make next compare
-        // work
+        // Check that updated value is right, then fudge it to make next compare work.
         $this->assertTrue(time()-$SESSION->completioncache[42]['updated']<2);
         $SESSION->completioncache[42]['updated']=$now;
-        // Check things got expired from cache
+        // Check things got expired from cache.
         $this->assertEquals(array(42=>array(13=>$sillyrecord, 'updated'=>$now), 17=>array('updated'=>$now)), $SESSION->completioncache);
 
-        // 6. Current user, 'whole course' and record not in cache
+        // 6. Current user, 'whole course' and record not in cache.
         unset($SESSION->completioncache);
 
-        // Scenario: Completion data exists for one CMid
+        // Scenario: Completion data exists for one CMid.
         $basicrecord = (object)array('coursemoduleid'=>13);
         $DB->expects($this->at(0))
             ->method('get_records_sql')
             ->will($this->returnValue(array('1'=>$basicrecord)));
 
-/*
-        $DB->expectAt(0,'get_records_sql',array(new IgnoreWhitespaceExpectation("
-SELECT
-    cmc.*
-FROM
-    {course_modules} cm
-    INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.id
-WHERE
-    cm.course=? AND cmc.userid=?"),array(42,314159)));
-*/
-        // There are two CMids in total, the one we had data for and another one
+        // There are two CMids in total, the one we had data for and another one.
         $modinfo = new stdClass();
         $modinfo->cms = array((object)array('id'=>13), (object)array('id'=>14));
         $result = $c->get_data($cm, true, 0, $modinfo);
 
-        // Check result
+        // Check result.
         $this->assertEquals($basicrecord, $result);
 
-        // Check the cache contents
+        // Check the cache contents.
         $this->assertTrue(time()-$SESSION->completioncache[42]['updated']<2);
         $SESSION->completioncache[42]['updated'] = $now;
         $this->assertEquals(array(42=>array(13=>$basicrecord, 14=>(object)array(
@@ -459,13 +426,14 @@ WHERE
             'viewed'=>0, 'timemodified'=>0), 'updated'=>$now)), $SESSION->completioncache);
     }
 
-    function test_internal_set_data() {
+    public function test_internal_set_data() {
         global $DB, $SESSION;
+        $this->mock_setup();
 
-        $cm = (object)array('course' => 42,'id' => 13);
+        $cm = (object)array('course' => 42, 'id' => 13);
         $c = new completion_info((object)array('id' => 42));
 
-        // 1) Test with new data
+        // 1) Test with new data.
         $data = (object)array('id'=>0, 'userid' => 314159, 'coursemoduleid' => 99);
         $DB->expects($this->at(0))
             ->method('start_delegated_transaction')
@@ -484,7 +452,7 @@ WHERE
         $this->assertEquals(4, $data->id);
         $this->assertEquals(array(42 => array(13 => $data)), $SESSION->completioncache);
 
-        // 2) Test with existing data and for different user (not cached)
+        // 2) Test with existing data and for different user (not cached).
         unset($SESSION->completioncache);
         $d2 = (object)array('id' => 7, 'userid' => 17, 'coursemoduleid' => 66);
         $DB->expects($this->at(0))
@@ -497,8 +465,8 @@ WHERE
         $this->assertFalse(isset($SESSION->completioncache));
 
         // 3) Test where it THINKS the data is new (from cache) but actually
-        // in the database it has been set since
-        // 1) Test with new data
+        //    in the database it has been set since.
+        // 1) Test with new data.
         $data = (object)array('id'=>0, 'userid' => 314159, 'coursemoduleid' => 99);
         $d3 = (object)array('id' => 13, 'userid' => 314159, 'coursemoduleid' => 99);
         $DB->expects($this->at(0))
@@ -514,17 +482,15 @@ WHERE
         $c->internal_set_data($cm, $data);
     }
 
-    // get_tracked_users() cannot easily be tested because it uses
-    // get_role_users, so skipping that
-
-    function test_get_progress_all() {
+    public function test_get_progress_all() {
         global $DB;
+        $this->mock_setup();
 
         $c = $this->getMock('completion_info',
             array('delete_all_state', 'get_tracked_users', 'update_state', 'internal_get_grade_state', 'is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'),
             array((object)array('id'=>42)));
 
-        // 1) Basic usage
+        // 1) Basic usage.
         $c->expects($this->at(0))
             ->method('get_tracked_users')
             ->with(false,  array(),  0,  '',  '',  '',  null)
@@ -539,18 +505,7 @@ WHERE
         $progress2 = (object)array('userid'=>201, 'coursemoduleid'=>14);
         $DB->expects($this->at(1))
             ->method('get_recordset_sql')
-            ->will($this->returnValue(new completion_test_fake_recordset(array($progress1, $progress2))));
-
-/*
-        $DB->expectAt(0, 'get_recordset_sql', array(new IgnoreWhitespaceExpectation("
-SELECT
-    cmc.*
-FROM
-    {course_modules} cm
-    INNER JOIN {course_modules_completion} cmc ON cm.id = cmc.coursemoduleid
-WHERE
-    cm.course = ? AND cmc.userid IN (100, 201)"), array(42)));
-*/
+            ->will($this->returnValue(new core_completionlib_fake_recordset(array($progress1, $progress2))));
 
         $this->assertEquals(array(
                 100 => (object)array('id'=>100, 'firstname'=>'Woot', 'lastname'=>'Plugh',
@@ -559,11 +514,11 @@ WHERE
                     'progress'=>array(14=>$progress2)),
             ), $c->get_progress_all(false));
 
-        // 2) With more than 1, 000 results
+        // 2) With more than 1, 000 results.
         $tracked = array();
         $ids = array();
         $progress = array();
-        for($i = 100;$i<2000;$i++) {
+        for ($i = 100; $i<2000; $i++) {
             $tracked[] = (object)array('id'=>$i, 'firstname'=>'frog', 'lastname'=>$i);
             $ids[] = $i;
             $progress[] = (object)array('userid'=>$i, 'coursemoduleid'=>13);
@@ -579,18 +534,7 @@ WHERE
             ->will($this->returnValue(array(' IN whatever', array())));
         $DB->expects($this->at(1))
             ->method('get_recordset_sql')
-            ->will($this->returnValue(new completion_test_fake_recordset(array_slice($progress, 0, 1000))));
-
-/*
-        $DB->expectAt(1, 'get_recordset_sql', array(new IgnoreWhitespaceExpectation("
-SELECT
-    cmc.*
-FROM
-    {course_modules} cm
-    INNER JOIN {course_modules_completion} cmc ON cm.id = cmc.coursemoduleid
-WHERE
-    cm.course = ? AND cmc.userid IN whatever"), array(42)));
-*/
+            ->will($this->returnValue(new core_completionlib_fake_recordset(array_slice($progress, 0, 1000))));
 
         $DB->expects($this->at(2))
             ->method('get_in_or_equal')
@@ -598,13 +542,13 @@ WHERE
             ->will($this->returnValue(array(' IN whatever2', array())));
         $DB->expects($this->at(3))
             ->method('get_recordset_sql')
-            ->will($this->returnValue(new completion_test_fake_recordset(array_slice($progress, 1000))));
+            ->will($this->returnValue(new core_completionlib_fake_recordset(array_slice($progress, 1000))));
 
         $result = $c->get_progress_all(true, 3);
         $resultok = true;
         $resultok  =  $resultok && ($ids == array_keys($result));
 
-        foreach($result as $userid => $data) {
+        foreach ($result as $userid => $data) {
             $resultok  =  $resultok && $data->firstname == 'frog';
             $resultok  =  $resultok && $data->lastname == $userid;
             $resultok  =  $resultok && $data->id == $userid;
@@ -616,7 +560,9 @@ WHERE
         $this->assertTrue($resultok);
     }
 
-    function test_inform_grade_changed() {
+    public function test_inform_grade_changed() {
+        $this->mock_setup();
+
         $c = $this->getMock('completion_info',
             array('delete_all_state', 'get_tracked_users', 'update_state', 'internal_get_grade_state', 'is_enabled', 'get_data', 'internal_get_state', 'internal_set_data'),
             array((object)array('id'=>42)));
@@ -625,21 +571,21 @@ WHERE
         $item = (object)array('itemnumber'=>3,  'gradepass'=>1,  'hidden'=>0);
         $grade = (object)array('userid'=>31337,  'finalgrade'=>0,  'rawgrade'=>0);
 
-        // Not enabled (should do nothing)
+        // Not enabled (should do nothing).
         $c->expects($this->at(0))
             ->method('is_enabled')
             ->with($cm)
             ->will($this->returnValue(false));
         $c->inform_grade_changed($cm, $item, $grade, false);
 
-        // Enabled but still no grade completion required,  should still do nothing
+        // Enabled but still no grade completion required,  should still do nothing.
         $c->expects($this->at(0))
             ->method('is_enabled')
             ->with($cm)
             ->will($this->returnValue(true));
         $c->inform_grade_changed($cm, $item, $grade, false);
 
-        // Enabled and completion required but item number is wrong,  does nothing
+        // Enabled and completion required but item number is wrong,  does nothing.
         $cm = (object)array('course'=>42, 'id'=>13, 'completion'=>0, 'completiongradeitemnumber'=>7);
         $c->expects($this->at(0))
             ->method('is_enabled')
@@ -663,7 +609,7 @@ WHERE
         $c->inform_grade_changed($cm, $item, $grade, false);
 
         // Same as above but marked deleted. It is supposed to call update_state
-        // with new potential state being COMPLETION_INCOMPLETE
+        // with new potential state being COMPLETION_INCOMPLETE.
         $cm = (object)array('course'=>42, 'id'=>13, 'completion'=>0, 'completiongradeitemnumber'=>3);
         $grade = (object)array('userid'=>31337,  'finalgrade'=>1,  'rawgrade'=>0);
         $c->expects($this->at(0))
@@ -677,7 +623,9 @@ WHERE
         $c->inform_grade_changed($cm, $item, $grade, true);
     }
 
-    function test_internal_get_grade_state() {
+    public function test_internal_get_grade_state() {
+        $this->mock_setup();
+
         $item = new stdClass;
         $grade = new stdClass;
 
@@ -686,73 +634,128 @@ WHERE
         $grade->rawgrade = 4.0;
         $grade->finalgrade = null;
 
-        // Grade has pass mark and is not hidden,  user passes
+        // Grade has pass mark and is not hidden,  user passes.
         $this->assertEquals(
             COMPLETION_COMPLETE_PASS,
             completion_info::internal_get_grade_state($item, $grade));
 
-        // Same but user fails
+        // Same but user fails.
         $grade->rawgrade = 3.9;
         $this->assertEquals(
             COMPLETION_COMPLETE_FAIL,
             completion_info::internal_get_grade_state($item, $grade));
 
-        // User fails on raw grade but passes on final
+        // User fails on raw grade but passes on final.
         $grade->finalgrade = 4.0;
         $this->assertEquals(
             COMPLETION_COMPLETE_PASS,
             completion_info::internal_get_grade_state($item, $grade));
 
-        // Item is hidden
+        // Item is hidden.
         $item->hidden = 1;
         $this->assertEquals(
             COMPLETION_COMPLETE,
             completion_info::internal_get_grade_state($item, $grade));
 
-        // Item isn't hidden but has no pass mark
+        // Item isn't hidden but has no pass mark.
         $item->hidden = 0;
         $item->gradepass = 0;
         $this->assertEquals(
             COMPLETION_COMPLETE,
             completion_info::internal_get_grade_state($item, $grade));
     }
+
+    public function test_get_activities() {
+        $this->resetAfterTest();
+
+        // Create a course with mixed auto completion data.
+        $course = $this->getDataGenerator()->create_course();
+        $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $completionmanual = array('completion' => COMPLETION_TRACKING_MANUAL);
+        $completionnone = array('completion' => COMPLETION_TRACKING_NONE);
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id), $completionauto);
+        $page = $this->getDataGenerator()->create_module('page', array('course' => $course->id), $completionauto);
+        $data = $this->getDataGenerator()->create_module('data', array('course' => $course->id), $completionmanual);
+
+        $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $course->id), $completionnone);
+        $page2 = $this->getDataGenerator()->create_module('page', array('course' => $course->id), $completionnone);
+        $data2 = $this->getDataGenerator()->create_module('data', array('course' => $course->id), $completionnone);
+
+        // Create data in another course to make sure it's not considered.
+        $course2 = $this->getDataGenerator()->create_course();
+        $c2forum = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id), $completionauto);
+        $c2page = $this->getDataGenerator()->create_module('page', array('course' => $course2->id), $completionmanual);
+        $c2data = $this->getDataGenerator()->create_module('data', array('course' => $course2->id), $completionnone);
+
+        $c = new completion_info($course);
+        $activities = $c->get_activities();
+        $this->assertCount(3, $activities);
+        $this->assertTrue(isset($activities[$forum->cmid]));
+        $this->assertSame($forum->name, $activities[$forum->cmid]->name);
+        $this->assertTrue(isset($activities[$page->cmid]));
+        $this->assertSame($page->name, $activities[$page->cmid]->name);
+        $this->assertTrue(isset($activities[$data->cmid]));
+        $this->assertSame($data->name, $activities[$data->cmid]->name);
+
+        $this->assertFalse(isset($activities[$forum2->cmid]));
+        $this->assertFalse(isset($activities[$page2->cmid]));
+        $this->assertFalse(isset($activities[$data2->cmid]));
+    }
+
+    public function test_has_activities() {
+        $this->resetAfterTest();
+
+        // Create a course with mixed auto completion data.
+        $course = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $completionnone = array('completion' => COMPLETION_TRACKING_NONE);
+        $c1forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id), $completionauto);
+        $c2forum = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id), $completionnone);
+
+        $c1 = new completion_info($course);
+        $c2 = new completion_info($course2);
+
+        $this->assertTrue($c1->has_activities());
+        $this->assertFalse($c2->has_activities());
+    }
 }
 
 
-class completion_test_fake_recordset implements Iterator {
-    var $closed;
-    var $values, $index;
+class core_completionlib_fake_recordset implements Iterator {
+    protected $closed;
+    protected $values, $index;
 
-    function __construct($values) {
+    public function __construct($values) {
         $this->values = $values;
         $this->index = 0;
     }
 
-    function current() {
+    public function current() {
         return $this->values[$this->index];
     }
 
-    function key() {
+    public function key() {
         return $this->values[$this->index];
     }
 
-    function next() {
+    public function next() {
         $this->index++;
     }
 
-    function rewind() {
+    public function rewind() {
         $this->index = 0;
     }
 
-    function valid() {
+    public function valid() {
         return count($this->values) > $this->index;
     }
 
-    function close() {
+    public function close() {
         $this->closed = true;
     }
 
-    function was_closed() {
+    public function was_closed() {
         return $this->closed;
     }
 }
