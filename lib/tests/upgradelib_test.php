@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for the lib/upgradelib.php library
+ * Unit tests for the lib/upgradelib.php library.
  *
  * @package   core
  * @category  phpunit
@@ -30,9 +30,9 @@ require_once($CFG->libdir.'/upgradelib.php');
 
 
 /**
- * Tests various classes and functions in upgradelib.php library
+ * Tests various classes and functions in upgradelib.php library.
  */
-class upgradelib_test extends advanced_testcase {
+class core_upgradelib_testcase extends advanced_testcase {
 
     /**
      * Test the {@link upgrade_stale_php_files_present() function
