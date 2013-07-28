@@ -1657,6 +1657,7 @@ class YUI_config {
         $cache = cache::make('core', 'yuimodules');
         if (!isset($CFG->jsrev) || $CFG->jsrev == -1) {
             $metadata = array();
+            $metadata = $this->get_moodle_metadata();
             $cache->delete('metadata');
         } else {
             // Attempt to get the metadata from the cache.
