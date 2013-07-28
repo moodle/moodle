@@ -70,7 +70,7 @@ class core_navigationlib_testcase extends advanced_testcase {
             'shorttext' => 'A very silly extra long short text string, more than 25 characters',
             'key' => 'key',
             'type' => 'navigation_node::TYPE_COURSE',
-            'action' => 'http://www.moodle.org/');
+            'action' => new moodle_url('http://www.moodle.org/'));
 
         $node = new navigation_node($fakeproperties);
         $this->assertSame($fakeproperties['text'], $node->text);
