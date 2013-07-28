@@ -62,7 +62,8 @@ class block_social_activities extends block_list {
         }
 
 
-/// slow & hacky editing mode
+        // Slow & hacky editing mode.
+        /** @var core_course_renderer $courserenderer */
         $courserenderer = $this->page->get_renderer('core', 'course');
         $ismoving = ismoving($course->id);
         $modinfo = get_fast_modinfo($course);
@@ -74,7 +75,7 @@ class block_social_activities extends block_list {
             $strcancel= get_string('cancel');
             $stractivityclipboard = $USER->activitycopyname;
         }
-    /// Casting $course->modinfo to string prevents one notice when the field is null
+        // Casting $course->modinfo to string prevents one notice when the field is null.
         $editbuttons = '';
 
         if ($ismoving) {
@@ -92,7 +93,7 @@ class block_social_activities extends block_list {
                 if (!$ismoving) {
                     $actions = course_get_cm_edit_actions($mod, -1);
                     $editbuttons = '<br />'.
-                            $courserenderer->course_section_cm_edit_actions($actions);
+                            $courserenderer->course_section_cm_edit_actions($actions, $mod);
                 } else {
                     $editbuttons = '';
                 }

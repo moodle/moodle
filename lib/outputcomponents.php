@@ -919,27 +919,27 @@ class action_link implements renderable {
     /**
      * @var moodle_url Href url
      */
-    var $url;
+    public $url;
 
     /**
      * @var string Link text HTML fragment
      */
-    var $text;
+    public $text;
 
     /**
      * @var array HTML attributes
      */
-    var $attributes;
+    public $attributes;
 
     /**
      * @var array List of actions attached to link
      */
-    var $actions;
+    public $actions;
 
     /**
      * @var pix_icon Optional pix icon to render with the link
      */
-    var $icon;
+    public $icon;
 
     /**
      * Constructor
@@ -3071,13 +3071,13 @@ class action_menu implements renderable {
     protected $instance = 0;
 
     /**
-     * An array of primary actions. Please use {@see action_menu::add_primary_action()} to add actions.
+     * An array of primary actions. Please use {@link action_menu::add_primary_action()} to add actions.
      * @var array
      */
     protected $primaryactions = array();
 
     /**
-     * An array of secondary actions. Please use {@see action_menu::add_secondary_action()} to add actions.
+     * An array of secondary actions. Please use {@link action_menu::add_secondary_action()} to add actions.
      * @var array
      */
     protected $secondaryactions = array();
@@ -3128,6 +3128,7 @@ class action_menu implements renderable {
             'aria-labelledby' => 'action-menu-toggle-'.$this->instance,
             'role' => 'menu'
         );
+        $this->set_alignment(self::TR, self::BR);
         foreach ($actions as $action) {
             $this->add($action);
         }
@@ -3150,7 +3151,7 @@ class action_menu implements renderable {
     /**
      * Adds an action to this action menu.
      *
-     * @param $action
+     * @param action_menu_link|pix_icon|string $action
      */
     public function add($action) {
         if ($action instanceof action_menu_link) {
@@ -3243,8 +3244,15 @@ class action_menu implements renderable {
      * @param int $button One of action_menu::TL, action_menu::TR, action_menu::BL, action_menu::BR.
      */
     public function set_alignment($dialogue, $button) {
+        if (isset($this->attributessecondary['data-align'])) {
+            // We've already got one set, lets remove the old class so as to avoid troubles.
+            $class = $this->attributessecondary['class'];
+            $search = 'align-'.$this->attributessecondary['data-align'];
+            $this->attributessecondary['class'] = str_replace($search, '', $class);
+        }
         $align = $this->get_align_string($dialogue) . '-' . $this->get_align_string($button);
         $this->attributessecondary['data-align'] = $align;
+        $this->attributessecondary['class'] .= ' align-'.$align;
     }
 
     /**
@@ -3255,11 +3263,16 @@ class action_menu implements renderable {
      */
     protected function get_align_string($align) {
         switch ($align) {
-            case self::TL : return 'tl';
-            case self::TR : return 'tr';
-            case self::BL : return 'bl';
-            case self::BR : return 'br';
-            default : return 'tl';
+            case self::TL :
+                return 'tl';
+            case self::TR :
+                return 'tr';
+            case self::BL :
+                return 'bl';
+            case self::BR :
+                return 'br';
+            default :
+                return 'tl';
         }
     }
 

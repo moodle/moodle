@@ -1098,39 +1098,42 @@ class core_renderer extends renderer_base {
      */
     protected function render_action_menu_link(action_menu_link $action) {
 
-        $iconrendered = false;
-
+        $comparetoalt = '';
         $text = '';
-        if ($action->icon) {
-            $icon = $action->icon;
-            if ($action->primary) {
-                $action->attributes['title'] = $action->text;
-            }
-            $text .= $this->render($icon);
-            $iconrendered = true;
-        }
-
-        if (!$iconrendered || $action->primary === false) {
+        if (!$action->icon || $action->primary === false) {
             $text .= html_writer::start_tag('span', array('class'=>'menu-action-text'));
             if ($action->text instanceof renderable) {
                 $text .= $this->render($action->text);
             } else {
                 $text .= $action->text;
+                $comparetoalt = $action->text;
             }
             $text .= html_writer::end_tag('span');
+        }
+
+        $icon = '';
+        if ($action->icon) {
+            $icon = $action->icon;
+            if ($action->primary) {
+                $action->attributes['title'] = $action->text;
+            }
+            if ($icon->attributes['alt'] === $comparetoalt) {
+                $icon->attributes['alt'] = ' ';
+            }
+            $icon = $this->render($icon);
         }
 
         // A disabled link is rendered as formatted text.
         if (!empty($action->attributes['disabled'])) {
             // Do not use div here due to nesting restriction in xhtml strict.
-            return html_writer::tag('span', $text, array('class'=>'currentlink', 'role' => 'menuitem'));
+            return html_writer::tag('span', $icon.$text, array('class'=>'currentlink', 'role' => 'menuitem'));
         }
 
         $attributes = $action->attributes;
         unset($action->attributes['disabled']);
         $attributes['href'] = $action->url;
 
-        return html_writer::tag('a', $text, $attributes);
+        return html_writer::tag('a', $icon.$text, $attributes);
     }
 
     /**

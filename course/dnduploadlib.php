@@ -744,11 +744,11 @@ class dndupload_ajax_processor {
         $resp->content = $mod->get_content();
         $resp->elementid = 'module-'.$mod->id;
         $actions = course_get_cm_edit_actions($mod, 0, $mod->sectionnum);
-        $resp->commands = ' '. $courserenderer->course_section_cm_edit_actions($actions);
+        $resp->commands = ' '. $courserenderer->course_section_cm_edit_actions($actions, $mod);
         $resp->onclick = $mod->get_on_click();
         $resp->visible = $mod->visible;
 
-        // if using groupings, then display grouping name
+        // If using groupings, then display grouping name.
         if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', $this->context)) {
             $groupings = groups_get_all_groupings($this->course->id);
             $resp->groupingname = format_string($groupings[$mod->groupingid]->name);
