@@ -18,9 +18,6 @@
  * Tests for the parts of ../filterlib.php that involve loading the configuration
  * from, and saving the configuration to, the database.
  *
- * TODO: this needs to be merged to one testcase class or split to separate files,
- *       it is also missing properly defined dependencies and proper class names.
- *
  * @package   core_filter
  * @category  phpunit
  * @copyright 2009 Tim Hunt
@@ -33,15 +30,25 @@ global $CFG;
 require_once($CFG->libdir . '/filterlib.php');
 
 /**
- * Test functions that affect filter_active table with contextid = $syscontextid.
+ * Test filters.
  */
-class filter_active_global_testcase extends advanced_testcase {
+class core_filterlib_testcase extends advanced_testcase {
+    private $syscontext;
+    private $childcontext;
+    private $childcontext2;
+    private $catcontext;
+    private $coursecontext;
+    private $course;
+    private $activity1context;
+    private $activity2context;
 
     protected function setUp() {
         global $DB;
         parent::setUp();
+
+        $this->resetAfterTest();
         $DB->delete_records('filter_active', array());
-        $this->resetAfterTest(false);
+        $DB->delete_records('filter_config', array());
     }
 
     private function assert_only_one_filter_globally($filter, $state) {
@@ -188,20 +195,6 @@ class filter_active_global_testcase extends advanced_testcase {
             'three' => (object) array('filter' => 'three', 'active' => TEXTFILTER_DISABLED, 'sortorder' => 3)
         ), $filters);
     }
-}
-
-
-/**
- * Test functions that affect filter_active table with contextid = $syscontextid.
- */
-class filter_active_local_testcase extends advanced_testcase {
-
-    protected function setUp() {
-        global $DB;
-        parent::setUp();
-        $DB->delete_records('filter_active', array());
-        $this->resetAfterTest(false);
-    }
 
     private function assert_only_one_local_setting($filter, $contextid, $state) {
         global $DB;
@@ -245,7 +238,6 @@ class filter_active_local_testcase extends advanced_testcase {
 
     /**
      * @expectedException coding_exception
-     * @return void
      */
     public function test_local_invalid_state_throws_exception() {
         // Exercise SUT.
@@ -254,7 +246,6 @@ class filter_active_local_testcase extends advanced_testcase {
 
     /**
      * @expectedException coding_exception
-     * @return void
      */
     public function test_throws_exception_when_setting_global() {
         // Exercise SUT.
@@ -268,20 +259,6 @@ class filter_active_local_testcase extends advanced_testcase {
         filter_set_local_state('name', 123, TEXTFILTER_INHERIT);
         // Validate.
         $this->assert_no_local_setting();
-    }
-}
-
-
-/**
- * Test functions that use just the filter_config table.
- */
-class filter_config_testcase extends advanced_testcase {
-
-    protected function setUp() {
-        global $DB;
-        parent::setUp();
-        $DB->delete_records('filter_config', array());
-        $this->resetAfterTest(false);
     }
 
     private function assert_only_one_config($filter, $context, $name, $value) {
@@ -325,42 +302,26 @@ class filter_config_testcase extends advanced_testcase {
         // Validate.
         $this->assertEquals(array('setting1' => 'An arbitrary value', 'setting2' => 'Another arbitrary value'), $config);
     }
-}
 
+    protected function setup_available_in_context_tests() {
+        $course = $this->getDataGenerator()->create_course(array('category'=>1));
 
-class filter_get_active_available_in_context_testcase extends advanced_testcase {
-    private static $syscontext;
-    private static $childcontext;
-    private static $childcontext2;
-
-    public static function setUpBeforeClass() {
-        parent::setUpBeforeClass();
-
-        $course = self::getDataGenerator()->create_course(array('category'=>1));
-
-        self::$childcontext = context_coursecat::instance(1);
-        self::$childcontext2 = context_course::instance($course->id);
-        self::$syscontext = context_system::instance();
-    }
-
-    protected function setUp() {
-        global $DB;
-        parent::setUp();
-
-        $DB->delete_records('filter_active', array());
-        $DB->delete_records('filter_config', array());
-        $this->resetAfterTest(false);
+        $this->childcontext = context_coursecat::instance(1);
+        $this->childcontext2 = context_course::instance($course->id);
+        $this->syscontext = context_system::instance();
     }
 
     private function assert_filter_list($expectedfilters, $filters) {
+        $this->setup_available_in_context_tests();
         $this->assertEquals($expectedfilters, array_keys($filters), '', 0, 10, true);
     }
 
     public function test_globally_on_is_returned() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_ON);
         // Exercise SUT.
-        $filters = filter_get_active_in_context(self::$syscontext);
+        $filters = filter_get_active_in_context($this->syscontext);
         // Validate.
         $this->assert_filter_list(array('name'), $filters);
         // Check no config returned correctly.
@@ -368,88 +329,97 @@ class filter_get_active_available_in_context_testcase extends advanced_testcase 
     }
 
     public function test_globally_off_not_returned() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_OFF);
         // Exercise SUT.
-        $filters = filter_get_active_in_context(self::$childcontext2);
+        $filters = filter_get_active_in_context($this->childcontext2);
         // Validate.
         $this->assert_filter_list(array(), $filters);
     }
 
     public function test_globally_off_overridden() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_OFF);
-        filter_set_local_state('name', self::$childcontext->id, TEXTFILTER_ON);
+        filter_set_local_state('name', $this->childcontext->id, TEXTFILTER_ON);
         // Exercise SUT.
-        $filters = filter_get_active_in_context(self::$childcontext2);
+        $filters = filter_get_active_in_context($this->childcontext2);
         // Validate.
         $this->assert_filter_list(array('name'), $filters);
     }
 
     public function test_globally_on_overridden() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_ON);
-        filter_set_local_state('name', self::$childcontext->id, TEXTFILTER_OFF);
+        filter_set_local_state('name', $this->childcontext->id, TEXTFILTER_OFF);
         // Exercise SUT.
-        $filters = filter_get_active_in_context(self::$childcontext2);
+        $filters = filter_get_active_in_context($this->childcontext2);
         // Validate.
         $this->assert_filter_list(array(), $filters);
     }
 
     public function test_globally_disabled_not_overridden() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_DISABLED);
-        filter_set_local_state('name', self::$childcontext->id, TEXTFILTER_ON);
+        filter_set_local_state('name', $this->childcontext->id, TEXTFILTER_ON);
         // Exercise SUT.
-        $filters = filter_get_active_in_context(self::$syscontext);
+        $filters = filter_get_active_in_context($this->syscontext);
         // Validate.
         $this->assert_filter_list(array(), $filters);
     }
 
     public function test_single_config_returned() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_ON);
-        filter_set_local_config('name', self::$childcontext->id, 'settingname', 'A value');
+        filter_set_local_config('name', $this->childcontext->id, 'settingname', 'A value');
         // Exercise SUT.
-        $filters = filter_get_active_in_context(self::$childcontext);
+        $filters = filter_get_active_in_context($this->childcontext);
         // Validate.
         $this->assertEquals(array('settingname' => 'A value'), $filters['name']);
     }
 
     public function test_multi_config_returned() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_ON);
-        filter_set_local_config('name', self::$childcontext->id, 'settingname', 'A value');
-        filter_set_local_config('name', self::$childcontext->id, 'anothersettingname', 'Another value');
+        filter_set_local_config('name', $this->childcontext->id, 'settingname', 'A value');
+        filter_set_local_config('name', $this->childcontext->id, 'anothersettingname', 'Another value');
         // Exercise SUT.
-        $filters = filter_get_active_in_context(self::$childcontext);
+        $filters = filter_get_active_in_context($this->childcontext);
         // Validate.
         $this->assertEquals(array('settingname' => 'A value', 'anothersettingname' => 'Another value'), $filters['name']);
     }
 
     public function test_config_from_other_context_not_returned() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_ON);
-        filter_set_local_config('name', self::$childcontext->id, 'settingname', 'A value');
-        filter_set_local_config('name', self::$childcontext2->id, 'anothersettingname', 'Another value');
+        filter_set_local_config('name', $this->childcontext->id, 'settingname', 'A value');
+        filter_set_local_config('name', $this->childcontext2->id, 'anothersettingname', 'Another value');
         // Exercise SUT.
-        $filters = filter_get_active_in_context(self::$childcontext2);
+        $filters = filter_get_active_in_context($this->childcontext2);
         // Validate.
         $this->assertEquals(array('anothersettingname' => 'Another value'), $filters['name']);
     }
 
     public function test_config_from_other_filter_not_returned() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_ON);
-        filter_set_local_config('name', self::$childcontext->id, 'settingname', 'A value');
-        filter_set_local_config('other', self::$childcontext->id, 'anothersettingname', 'Another value');
+        filter_set_local_config('name', $this->childcontext->id, 'settingname', 'A value');
+        filter_set_local_config('other', $this->childcontext->id, 'anothersettingname', 'Another value');
         // Exercise SUT.
-        $filters = filter_get_active_in_context(self::$childcontext);
+        $filters = filter_get_active_in_context($this->childcontext);
         // Validate.
         $this->assertEquals(array('settingname' => 'A value'), $filters['name']);
     }
 
     protected function assert_one_available_filter($filter, $localstate, $inheritedstate, $filters) {
+        $this->setup_available_in_context_tests();
         $this->assertEquals(1, count($filters), 'More than one record returned %s.');
         $rec = $filters[$filter];
         unset($rec->id);
@@ -461,74 +431,56 @@ class filter_get_active_available_in_context_testcase extends advanced_testcase 
     }
 
     public function test_available_in_context_localoverride() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_ON);
-        filter_set_local_state('name', self::$childcontext->id, TEXTFILTER_OFF);
+        filter_set_local_state('name', $this->childcontext->id, TEXTFILTER_OFF);
         // Exercise SUT.
-        $filters = filter_get_available_in_context(self::$childcontext);
+        $filters = filter_get_available_in_context($this->childcontext);
         // Validate.
         $this->assert_one_available_filter('name', TEXTFILTER_OFF, TEXTFILTER_ON, $filters);
     }
 
     public function test_available_in_context_nolocaloverride() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_ON);
-        filter_set_local_state('name', self::$childcontext->id, TEXTFILTER_OFF);
+        filter_set_local_state('name', $this->childcontext->id, TEXTFILTER_OFF);
         // Exercise SUT.
-        $filters = filter_get_available_in_context(self::$childcontext2);
+        $filters = filter_get_available_in_context($this->childcontext2);
         // Validate.
         $this->assert_one_available_filter('name', TEXTFILTER_INHERIT, TEXTFILTER_OFF, $filters);
     }
 
     public function test_available_in_context_disabled_not_returned() {
+        $this->setup_available_in_context_tests();
         // Setup fixture.
         filter_set_global_state('name', TEXTFILTER_DISABLED);
-        filter_set_local_state('name', self::$childcontext->id, TEXTFILTER_ON);
+        filter_set_local_state('name', $this->childcontext->id, TEXTFILTER_ON);
         // Exercise SUT.
-        $filters = filter_get_available_in_context(self::$childcontext);
+        $filters = filter_get_available_in_context($this->childcontext);
         // Validate.
         $this->assertEquals(array(), $filters);
     }
 
     /**
      * @expectedException coding_exception
-     * @return void
      */
     public function test_available_in_context_exception_with_syscontext() {
+        $this->setup_available_in_context_tests();
         // Exercise SUT.
-        filter_get_available_in_context(self::$syscontext);
-    }
-}
-
-
-class filter_preload_activities_testcase extends advanced_testcase {
-    private static $syscontext;
-    private static $catcontext;
-    private static $coursecontext;
-    private static $course;
-    private static $activity1context;
-    private static $activity2context;
-
-    public static function setUpBeforeClass() {
-        parent::setUpBeforeClass();
-
-        self::$syscontext = context_system::instance();
-        self::$catcontext = context_coursecat::instance(1);
-        self::$course = self::getDataGenerator()->create_course(array('category'=>1));
-        self::$coursecontext = context_course::instance(self::$course->id);
-        $page1 =  self::getDataGenerator()->create_module('page', array('course'=>self::$course->id));
-        self::$activity1context = context_module::instance($page1->cmid);
-        $page2 =  self::getDataGenerator()->create_module('page', array('course'=>self::$course->id));
-        self::$activity2context = context_module::instance($page2->cmid);
+        filter_get_available_in_context($this->syscontext);
     }
 
-    protected function setUp() {
-        global $DB;
-        parent::setUp();
-
-        $DB->delete_records('filter_active', array());
-        $DB->delete_records('filter_config', array());
-        $this->resetAfterTest(false);
+    protected function setup_preload_activities_test() {
+        $this->syscontext = context_system::instance();
+        $this->catcontext = context_coursecat::instance(1);
+        $this->course = $this->getDataGenerator()->create_course(array('category'=>1));
+        $this->coursecontext = context_course::instance($this->course->id);
+        $page1 =  $this->getDataGenerator()->create_module('page', array('course'=>$this->course->id));
+        $this->activity1context = context_module::instance($page1->cmid);
+        $page2 =  $this->getDataGenerator()->create_module('page', array('course'=>$this->course->id));
+        $this->activity2context = context_module::instance($page2->cmid);
     }
 
     private function assert_matches($modinfo) {
@@ -540,16 +492,16 @@ class filter_preload_activities_testcase extends advanced_testcase {
 
         // Get data and check no queries are made.
         $before = $DB->perf_get_reads();
-        $plfilters1 = filter_get_active_in_context(self::$activity1context);
-        $plfilters2 = filter_get_active_in_context(self::$activity2context);
+        $plfilters1 = filter_get_active_in_context($this->activity1context);
+        $plfilters2 = filter_get_active_in_context($this->activity2context);
         $after = $DB->perf_get_reads();
         $this->assertEquals($before, $after);
 
         // Repeat without cache and check it makes queries now.
         $FILTERLIB_PRIVATE = new stdClass;
         $before = $DB->perf_get_reads();
-        $filters1 = filter_get_active_in_context(self::$activity1context);
-        $filters2 = filter_get_active_in_context(self::$activity2context);
+        $filters1 = filter_get_active_in_context($this->activity1context);
+        $filters2 = filter_get_active_in_context($this->activity2context);
         $after = $DB->perf_get_reads();
         $this->assertTrue($after > $before);
 
@@ -559,8 +511,9 @@ class filter_preload_activities_testcase extends advanced_testcase {
     }
 
     public function test_preload() {
+        $this->setup_preload_activities_test();
         // Get course and modinfo.
-        $modinfo = new course_modinfo(self::$course, 2);
+        $modinfo = new course_modinfo($this->course, 2);
 
         // Note: All the tests in this function check that the result from the
         // preloaded cache is the same as the result from calling the standard
@@ -574,15 +527,15 @@ class filter_preload_activities_testcase extends advanced_testcase {
         $this->assert_matches($modinfo);
 
         // Disable for activity 2.
-        filter_set_local_state('name', self::$activity2context->id, TEXTFILTER_OFF);
+        filter_set_local_state('name', $this->activity2context->id, TEXTFILTER_OFF);
         $this->assert_matches($modinfo);
 
         // Disable at category.
-        filter_set_local_state('name', self::$catcontext->id, TEXTFILTER_OFF);
+        filter_set_local_state('name', $this->catcontext->id, TEXTFILTER_OFF);
         $this->assert_matches($modinfo);
 
         // Enable for activity 1.
-        filter_set_local_state('name', self::$activity1context->id, TEXTFILTER_ON);
+        filter_set_local_state('name', $this->activity1context->id, TEXTFILTER_ON);
         $this->assert_matches($modinfo);
 
         // Disable globally.
@@ -595,31 +548,19 @@ class filter_preload_activities_testcase extends advanced_testcase {
         $this->assert_matches($modinfo);
 
         // Disable random one of these in each context.
-        filter_set_local_state('zombie', self::$activity1context->id, TEXTFILTER_OFF);
-        filter_set_local_state('frog', self::$activity2context->id, TEXTFILTER_OFF);
+        filter_set_local_state('zombie', $this->activity1context->id, TEXTFILTER_OFF);
+        filter_set_local_state('frog', $this->activity2context->id, TEXTFILTER_OFF);
         $this->assert_matches($modinfo);
 
         // Now do some filter options.
-        filter_set_local_config('name', self::$activity1context->id, 'a', 'x');
-        filter_set_local_config('zombie', self::$activity1context->id, 'a', 'y');
-        filter_set_local_config('frog', self::$activity1context->id, 'a', 'z');
+        filter_set_local_config('name', $this->activity1context->id, 'a', 'x');
+        filter_set_local_config('zombie', $this->activity1context->id, 'a', 'y');
+        filter_set_local_config('frog', $this->activity1context->id, 'a', 'z');
         // These last two don't do anything as they are not at final level but I
         // thought it would be good to have that verified in test.
-        filter_set_local_config('frog', self::$coursecontext->id, 'q', 'x');
-        filter_set_local_config('frog', self::$catcontext->id, 'q', 'z');
+        filter_set_local_config('frog', $this->coursecontext->id, 'q', 'x');
+        filter_set_local_config('frog', $this->catcontext->id, 'q', 'z');
         $this->assert_matches($modinfo);
-    }
-}
-
-
-class filter_delete_config_testcase extends advanced_testcase {
-    protected function setUp() {
-        global $DB;
-        parent::setUp();
-
-        $DB->delete_records('filter_active', array());
-        $DB->delete_records('filter_config', array());
-        $this->resetAfterTest(false);
     }
 
     public function test_filter_delete_all_for_filter() {
@@ -661,32 +602,6 @@ class filter_delete_config_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('filter_active', array('contextid' => context_system::instance()->id)));
         $this->assertEquals(1, $DB->count_records('filter_config'));
         $this->assertTrue($DB->record_exists('filter_config', array('filter' => 'other')));
-    }
-}
-
-class filter_filter_set_applies_to_strings extends advanced_testcase {
-    protected $origcfgstringfilters;
-    protected $origcfgfilterall;
-
-    protected function setUp() {
-        global $DB, $CFG;
-        parent::setUp();
-
-        $DB->delete_records('filter_active', array());
-        $DB->delete_records('filter_config', array());
-        $this->resetAfterTest(false);
-
-        // Store original $CFG.
-        $this->origcfgstringfilters = $CFG->stringfilters;
-        $this->origcfgfilterall = $CFG->filterall;
-    }
-
-    protected function tearDown() {
-        global $CFG;
-        $CFG->stringfilters = $this->origcfgstringfilters;
-        $CFG->filterall = $this->origcfgfilterall;
-
-        parent::tearDown();
     }
 
     public function test_set() {
