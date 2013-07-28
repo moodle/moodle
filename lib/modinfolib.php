@@ -1203,7 +1203,8 @@ class cm_info extends stdClass {
         }
 
         // Check group membership.
-        if ($this->is_user_access_restricted_by_group()) {
+        if ($this->is_user_access_restricted_by_group() ||
+                $this->is_user_access_restricted_by_capability()) {
 
              $this->uservisible = false;
             // Ensure activity is completely hidden from the user.
@@ -1232,6 +1233,23 @@ class cm_info extends stdClass {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks whether mod/...:view capability restricts the current user's access.
+     *
+     * @return bool True if the user access is restricted.
+     */
+    public function is_user_access_restricted_by_capability() {
+        $capability = 'mod/' . $this->modname . ':view';
+        $capabilityinfo = get_capability_info($capability);
+        if (!$capabilityinfo) {
+            // Capability does not exist, no one is prevented from seeing the activity.
+            return false;
+        }
+
+        // You are blocked if you don't have the capability.
+        return !has_capability($capability, context_module::instance($this->id));
     }
 
     /**

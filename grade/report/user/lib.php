@@ -365,7 +365,8 @@ class grade_report_user extends grade_report {
                     $cm = $instances[$grade_object->iteminstance];
                     if (!$cm->uservisible) {
                         // Further checks are required to determine whether the activity is entirely hidden or just greyed out.
-                        if ($cm->is_user_access_restricted_by_group() || $cm->is_user_access_restricted_by_conditional_access()) {
+                        if ($cm->is_user_access_restricted_by_group() || $cm->is_user_access_restricted_by_conditional_access() ||
+                                $cm->is_user_access_restricted_by_capability()) {
                             $hide = true;
                         }
                     }
