@@ -592,4 +592,72 @@ class grouplib_testcase extends advanced_testcase {
         $result = groups_group_visible($group1->id, $course, $cm, $user1->id);
         $this->assertTrue($result); // Cm with visible groups.
     }
+
+    function test_groups_get_groupmode() {
+        global $DB;
+        $generator = $this->getDataGenerator();
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create a course with no groups forcing.
+        $course1 = $generator->create_course();
+
+        // Create cm1 with no groups, cm1 with visible groups, cm2 with separate groups and cm3 with visible groups.
+        $assign1 = $generator->create_module("assign", array('course' => $course1->id));
+        $assign2 = $generator->create_module("assign", array('course' => $course1->id),
+                array('groupmode' => SEPARATEGROUPS));
+        $assign3 = $generator->create_module("assign", array('course' => $course1->id),
+                array('groupmode' => VISIBLEGROUPS));
+
+        // Request data for tests.
+        $cm1 = get_coursemodule_from_instance("assign", $assign1->id);
+        $cm2 = get_coursemodule_from_instance("assign", $assign2->id);
+        $cm3 = get_coursemodule_from_instance("assign", $assign3->id);
+        $modinfo = get_fast_modinfo($course1->id);
+
+        // Assert that any method of getting activity groupmode returns the correct result.
+        $this->assertEquals(NOGROUPS, groups_get_activity_groupmode($cm1));
+        $this->assertEquals(NOGROUPS, groups_get_activity_groupmode($cm1, $course1));
+        $this->assertEquals(NOGROUPS, groups_get_activity_groupmode($modinfo->cms[$cm1->id]));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm2));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm2, $course1));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($modinfo->cms[$cm2->id]));
+        $this->assertEquals(VISIBLEGROUPS, groups_get_activity_groupmode($cm3));
+        $this->assertEquals(VISIBLEGROUPS, groups_get_activity_groupmode($cm3, $course1));
+        $this->assertEquals(VISIBLEGROUPS, groups_get_activity_groupmode($modinfo->cms[$cm3->id]));
+
+        // Update the course set the groupmode SEPARATEGROUPS but not forced.
+        update_course((object)array('id' => $course1->id, 'groupmode' => SEPARATEGROUPS));
+        // Re-request the data from DB.
+        $course1 = $DB->get_record('course', array('id' => $course1->id));
+        $modinfo = get_fast_modinfo($course1->id);
+
+        // Existing activities are not changed.
+        $this->assertEquals(NOGROUPS, groups_get_activity_groupmode($cm1));
+        $this->assertEquals(NOGROUPS, groups_get_activity_groupmode($cm1, $course1));
+        $this->assertEquals(NOGROUPS, groups_get_activity_groupmode($modinfo->cms[$cm1->id]));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm2));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm2, $course1));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($modinfo->cms[$cm2->id]));
+        $this->assertEquals(VISIBLEGROUPS, groups_get_activity_groupmode($cm3));
+        $this->assertEquals(VISIBLEGROUPS, groups_get_activity_groupmode($cm3, $course1));
+        $this->assertEquals(VISIBLEGROUPS, groups_get_activity_groupmode($modinfo->cms[$cm3->id]));
+
+        // Update the course set the groupmode SEPARATEGROUPS and forced.
+        update_course((object)array('id' => $course1->id, 'groupmode' => SEPARATEGROUPS, 'groupmodeforce' => true));
+        // Re-request the data from DB.
+        $course1 = $DB->get_record('course', array('id' => $course1->id));
+        $modinfo = get_fast_modinfo($course1->id);
+
+        // Make sure all activities have separate groups mode now.
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm1));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm1, $course1));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($modinfo->cms[$cm1->id]));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm2));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm2, $course1));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($modinfo->cms[$cm2->id]));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm3));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($cm3, $course1));
+        $this->assertEquals(SEPARATEGROUPS, groups_get_activity_groupmode($modinfo->cms[$cm3->id]));
+    }
 }
