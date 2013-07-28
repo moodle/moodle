@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,7 +18,7 @@
  * Unit tests for localization support in lib/moodlelib.php
  *
  * @package     core
- * @category    test
+ * @category    phpunit
  * @copyright   2013 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,24 +29,22 @@ global $CFG;
 require_once($CFG->libdir.'/moodlelib.php');
 
 /**
- * Tests for the API of the string_manager
+ * Tests for the API of the string_manager.
  *
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class string_manager_test extends advanced_testcase {
+class core_string_manager_testcase extends advanced_testcase {
 
     public function test_string_manager_instance() {
-        global $CFG;
         $this->resetAfterTest();
 
         $otherroot = dirname(__FILE__).'/fixtures/langtest';
         $stringman = testable_core_string_manager::instance($otherroot);
-        $this->assertTrue(in_array('string_manager', class_implements($stringman)));
+        $this->assertContains('string_manager', class_implements($stringman));
     }
 
     public function test_get_language_dependencies() {
-        global $CFG;
         $this->resetAfterTest();
 
         $otherroot = dirname(__FILE__).'/fixtures/langtest';
