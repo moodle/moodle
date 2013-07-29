@@ -72,7 +72,7 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
 
         return true;
     }
-    
+
     public function test_sync() {
         global $CFG, $DB;
 
@@ -80,7 +80,6 @@ class enrol_meta_plugin_testcase extends advanced_testcase {
 
         $metalplugin = enrol_get_plugin('meta');
         $manplugin = enrol_get_plugin('manual');
-        
 
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
