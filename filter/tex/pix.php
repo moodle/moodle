@@ -32,7 +32,8 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
     }
 
     if (!file_exists($pathname)) {
-        $md5 = str_replace(".{$CFG->filter_tex_convertformat}",'',$image);
+        $convertformat = get_config('filter_tex', 'convertformat');
+        $md5 = str_replace(".{$convertformat}", '', $image);
         if ($texcache = $DB->get_record('cache_filters', array('filter'=>'tex', 'md5key'=>$md5))) {
             if (!file_exists($CFG->dataroot.'/filter/tex')) {
                 make_upload_directory('filter/tex');
@@ -40,8 +41,8 @@ define('NO_MOODLE_COOKIES', true); // Because it interferes with caching
 
             // try and render with latex first
             $latex = new latex();
-            $density = $CFG->filter_tex_density;
-            $background = $CFG->filter_tex_latexbackground;
+            $density = get_config('filter_tex', 'density');
+            $background = get_config('filter_tex', 'latexbackground');
             $texexp = $texcache->rawtext; // the entities are now decoded before inserting to DB
             $latex_path = $latex->render($texexp, $md5, 12, $density, $background);
             if ($latex_path) {

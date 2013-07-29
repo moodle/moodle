@@ -23,5 +23,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['configconvertformat'] = 'If <i>latex</i>, <i>dvips</i> and <i>convert</i> are available, the images are created using the specified format. If it is not, mimeTeX will be used and it will create GIF images.';
+$string['convertformat'] = '<i>Convert</i> output format';
+$string['latexpreamble'] = 'LaTeX preamble';
+$string['latexsettings'] = 'LaTeX renderer Settings';
 $string['filtername'] = 'TeX notation';
+$string['pathconvert'] = 'Path of <i>convert</i> binary';
+$string['pathdvips'] = 'Path of <i>dvips</i> binary';
+$string['pathlatex'] = 'Path of <i>latex</i> binary';
+$string['pathmimetex'] = 'Path of <i>mimetex</i> binary';
+$string['pathmimetexdesc'] = 'Moodle will use its own mimetex binary unless another valid path is specified.';
 $string['source'] = 'TeX source';
