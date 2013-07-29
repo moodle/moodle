@@ -47,6 +47,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
 
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
+        $this->check_output_contains_lang_string('notyetanswered', 'question');
         $this->check_current_mark(null);
         $this->check_current_output($this->get_contains_question_text_expectation($tf),
                 $this->get_does_not_contain_feedback_expectation());
@@ -60,6 +61,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
         $this->process_submission(array('answer' => 1));
 
         $this->check_current_state(question_state::$complete);
+        $this->check_output_contains_lang_string('answersaved', 'question');
         $this->check_current_mark(null);
         $this->check_current_output($this->get_contains_tf_true_radio_expectation(true, true),
                 $this->get_does_not_contain_correctness_expectation(),
@@ -121,6 +123,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
         $rightindex = $this->get_mc_right_answer_index($mc);
 
         $this->check_current_state(question_state::$todo);
+        $this->check_output_contains_lang_string('notyetanswered', 'question');
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_question_text_expectation($mc),
@@ -134,6 +137,7 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
 
         // Verify.
         $this->check_current_state(question_state::$complete);
+        $this->check_output_contains_lang_string('answersaved', 'question');
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_mc_radio_expectation($rightindex, true, true),
@@ -173,6 +177,10 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
         $this->start_attempt_at_question($mc, 'deferredfeedback', 3);
         $rightindex = $this->get_mc_right_answer_index($mc);
         $wrongindex = ($rightindex + 1) % 3;
+
+        $this->check_current_state(question_state::$todo);
+        $this->check_output_contains_lang_string('notyetanswered', 'question');
+        $this->check_current_mark(null);
         $this->process_submission(array('answer' => $wrongindex));
         $this->quba->finish_all_questions();
 
@@ -193,7 +201,94 @@ class qbehaviour_deferredfeedback_walkthrough_test extends qbehaviour_walkthroug
         $this->quba->start_question_based_on($this->slot, $oldqa);
 
         // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_output_contains_lang_string('notchanged', 'question');
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_mc_radio_expectation($wrongindex, true, true),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_correctness_expectation());
+
+        // Now get it right.
+        $this->process_submission(array('answer' => $rightindex));
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedright);
+        $this->check_current_mark(3);
+        $this->check_current_output(
+                $this->get_contains_mc_radio_expectation($rightindex, false, true),
+                $this->get_contains_correct_expectation());
+    }
+
+    public function test_deferredfeedback_resume_multichoice_single_emptyanswer_first() {
+
+        // Create a multiple-choice question.
+        $mc = test_question_maker::make_a_multichoice_single_question();
+
+        // Attempt it and submit empty.
+        $this->start_attempt_at_question($mc, 'deferredfeedback', 3);
+        $rightindex = $this->get_mc_right_answer_index($mc);
+        $wrongindex = ($rightindex + 1) % 3;
+
         $this->check_current_state(question_state::$todo);
+        $this->check_output_contains_lang_string('notyetanswered', 'question');
+        $this->check_current_mark(null);
+        $this->process_submission(array('-submit' => 1));
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$gaveup);
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_mc_radio_expectation(0, false, false),
+                $this->get_contains_mc_radio_expectation(1, false, false),
+                $this->get_contains_mc_radio_expectation(2, false, false),
+                $this->get_contains_general_feedback_expectation($mc));
+
+        // Save the old attempt.
+        $oldqa = $this->quba->get_question_attempt($this->slot);
+
+        // Reinitialise.
+        $this->setUp();
+        $this->quba->set_preferred_behaviour('deferredfeedback');
+        $this->slot = $this->quba->add_question($mc, 3);
+        $this->quba->start_question_based_on($this->slot, $oldqa);
+
+        // Verify.
+        $this->check_current_state(question_state::$todo);
+        $this->check_output_contains_lang_string('notyetanswered', 'question');
+        $this->check_current_mark(null);
+        $this->check_current_output(
+                $this->get_contains_mc_radio_expectation(0, true, false),
+                $this->get_contains_mc_radio_expectation(1, true, false),
+                $this->get_contains_mc_radio_expectation(2, true, false),
+                $this->get_does_not_contain_feedback_expectation(),
+                $this->get_does_not_contain_correctness_expectation());
+
+        // Now get it wrong.
+        $this->process_submission(array('answer' => $wrongindex));
+        $this->quba->finish_all_questions();
+
+        // Verify.
+        $this->check_current_state(question_state::$gradedwrong);
+        $this->check_current_mark(-1);
+        $this->check_current_output(
+                $this->get_contains_mc_radio_expectation($wrongindex, false, true),
+                $this->get_contains_incorrect_expectation());
+
+        // Save the old attempt.
+        $oldqa = $this->quba->get_question_attempt($this->slot);
+
+        // Reinitialise.
+        $this->setUp();
+        $this->quba->set_preferred_behaviour('deferredfeedback');
+        $this->slot = $this->quba->add_question($mc, 3);
+        $this->quba->start_question_based_on($this->slot, $oldqa);
+
+        // Verify.
+        $this->check_current_state(question_state::$complete);
+        $this->check_output_contains_lang_string('notchanged', 'question');
         $this->check_current_mark(null);
         $this->check_current_output(
                 $this->get_contains_mc_radio_expectation($wrongindex, true, true),

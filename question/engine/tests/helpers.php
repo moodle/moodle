@@ -824,6 +824,13 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
                 'Looking for a hidden input with attributes ' . html_writer::attributes($attributes) . ' in ' . $this->currentoutput);
     }
 
+    protected function check_output_contains_lang_string($identifier, $component = '', $a = null) {
+        $this->render();
+        $string = get_string($identifier, $component, $a);
+        $this->assertContains($string, $this->currentoutput,
+                'Expected string ' . $string . ' not found in ' . $this->currentoutput);
+    }
+
     protected function get_tag_matcher($tag, $attributes) {
         return array(
             'tag' => $tag,
