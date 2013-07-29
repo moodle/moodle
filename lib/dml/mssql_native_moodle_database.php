@@ -464,9 +464,15 @@ class mssql_native_moodle_database extends moodle_database {
             // id columns being auto_incremnt are PK by definition
             $info->primary_key = ($info->name == 'id' && $info->meta_type == 'R' && $info->auto_increment);
 
-            // Put correct length for character and LOB types
-            $info->max_length = $info->meta_type == 'C' ? $rawcolumn->char_max_length : $rawcolumn->max_length;
-            $info->max_length = ($info->meta_type == 'X' || $info->meta_type == 'B') ? -1 : $info->max_length;
+            if ($info->meta_type === 'C' and $rawcolumn->char_max_length == -1) {
+                // This is NVARCHAR(MAX), not a normal NVARCHAR.
+                $info->max_length = -1;
+                $info->meta_type = 'X';
+            } else {
+                // Put correct length for character and LOB types
+                $info->max_length = $info->meta_type == 'C' ? $rawcolumn->char_max_length : $rawcolumn->max_length;
+                $info->max_length = ($info->meta_type == 'X' || $info->meta_type == 'B') ? -1 : $info->max_length;
+            }
 
             // Scale
             $info->scale = $rawcolumn->scale ? $rawcolumn->scale : false;
@@ -573,6 +579,7 @@ class mssql_native_moodle_database extends moodle_database {
                 $type = 'X';
                 break;
             case 'IMAGE':
+            case 'VARBINARY':
             case 'VARBINARY(MAX)':
                 $type = 'B';
                 break;
