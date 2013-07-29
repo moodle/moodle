@@ -37,10 +37,10 @@ require_once $CFG->dirroot.'/tag/locallib.php';
  * @param    string   $tagtype  (optional) The type of tag, empty string returns all types. Currently (Moodle 2.2) there are two
  *                              types of tags which are used within Moodle, they are 'official' and 'default'.
  * @param    int      $numtags  (optional) number of tags to display, default of 80 is set in the block, 0 returns all
- * @param    string   $sort     (optional) selected sorting, default is alpha sort (name) also timemodified or popularity
+ * @param    string   $unused   (optional) was selected sorting, moved to tag_print_cloud()
  * @return   array
  */
-function coursetag_get_tags($courseid, $userid=0, $tagtype='', $numtags=0, $sort='name') {
+function coursetag_get_tags($courseid, $userid=0, $tagtype='', $numtags=0, $unused = '') {
 
     global $CFG, $DB;
 
@@ -96,11 +96,6 @@ function coursetag_get_tags($courseid, $userid=0, $tagtype='', $numtags=0, $sort
     // prepare the return
     $return = array();
     if ($tags) {
-        // sort the tag display order
-        if ($sort != 'popularity') {
-            $CFG->tagsort = $sort;
-            usort($tags, "coursetag_sort");
-        }
         // avoid print_tag_cloud()'s ksort upsetting ordering by setting the key here
         foreach ($tags as $value) {
             $return[] = $value;
@@ -117,11 +112,11 @@ function coursetag_get_tags($courseid, $userid=0, $tagtype='', $numtags=0, $sort
  *
  * @package  core_tag
  * @category tag
- * @param    string $sort    (optional) selected sorting, default is alpha sort (name) also timemodified or popularity
+ * @param    string $unused (optional) was selected sorting - moved to tag_print_cloud()
  * @param    int    $numtags (optional) number of tags to display, default of 20 is set in the block, 0 returns all
  * @return   array
  */
-function coursetag_get_all_tags($sort='name', $numtags=0) {
+function coursetag_get_all_tags($unused='', $numtags=0) {
 
     global $CFG, $DB;
 
@@ -145,53 +140,12 @@ function coursetag_get_all_tags($sort='name', $numtags=0) {
 
     $return = array();
     if ($tags) {
-        if ($sort != 'popularity') {
-            $CFG->tagsort = $sort;
-            usort($tags, "coursetag_sort");
-        }
         foreach ($tags as $value) {
             $return[] = $value;
         }
     }
 
     return $return;
-}
-
-/**
- * Sorting callback function for coursetag_get_tags() and coursetag_get_all_tags() only
- *
- * This function does a comparision on a field withing two variables, $a and $b. The field used is specified by
- * $CFG->tagsort or we just use the 'name' field if $CFG->tagsort is empty. The comparison works as follows:
- * If $a->$tagsort is greater than $b->$tagsort, 1 is returned.
- * If $a->$tagsort is equal to $b->$tagsort, 0 is returned.
- * If $a->$tagsort is less than $b->$tagsort, -1 is returned.
- *
- * Also if $a->$tagsort is not numeric or a string, 0 is returned.
- *
- * @package core_tag
- * @access  private
- * @param   int|string|mixed $a Variable to compare against $b
- * @param   int|string|mixed $b Variable to compare against $a
- * @return  int                 The result of the comparison/validation 1, 0 or -1
- */
-function coursetag_sort($a, $b) {
-    // originally from block_blog_tags
-    global $CFG;
-
-    // set up the variable $tagsort as either 'name' or 'timemodified' only, 'popularity' does not need sorting
-    if (empty($CFG->tagsort)) {
-        $tagsort = 'name';
-    } else {
-        $tagsort = $CFG->tagsort;
-    }
-
-    if (is_numeric($a->$tagsort)) {
-        return ($a->$tagsort == $b->$tagsort) ? 0 : ($a->$tagsort > $b->$tagsort) ? 1 : -1;
-    } else if (is_string($a->$tagsort)) {
-        return strcmp($a->$tagsort, $b->$tagsort);
-    } else {
-        return 0;
-    }
 }
 
 /**

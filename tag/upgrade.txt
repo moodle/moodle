@@ -1,6 +1,14 @@
 This files describes API changes in tagging, information provided
 here is intended especially for developers.
 
+=== 2.6 ===
+
+More cleanup was done to tag cloud sorting which involved some API changes, see MDL_39800
+* tag_print_cloud() arguments were changed.
+* coursetag_get_tags() arguments were changed.
+* coursetag_get_all_tags() arguments were changed.
+* coursetag_sort() was removed.
+
 === 2.4 ===
 
 Significant cleanup was done to course tags which involved some API
