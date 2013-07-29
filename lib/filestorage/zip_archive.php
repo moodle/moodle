@@ -318,10 +318,9 @@ class zip_archive extends file_archive {
         }
         if (substr($fileinfo->pathname, -9) === 'Thumbs.db') {
             $stream = $this->za->getStream($fileinfo->pathname);
-            $info = unpack('Nsiga/Nsigb', fread($stream, 8));
-            $signature = fread($stream, 8);
+            $info = base64_encode(fread($stream, 8));
             fclose($stream);
-            if ($info['siga'] === 0xd0cf11e0 && $info['sigb'] === 0xa1b11ae1) {
+            if ($info === '0M8R4KGxGuE=') {
                 // It's an OLE Compound File - so it's almost certainly a Windows thumbnail cache.
                 return true;
             }
