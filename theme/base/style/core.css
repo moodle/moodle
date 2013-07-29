@@ -1239,6 +1239,7 @@ html[dir=rtl] .configphp {direction:ltr;text-align:left;}
 
 table.flexible .r0, table.generaltable .r0 {background-color: #F0F0F0;}
 table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
+table.flexible .emptyrow {display: none;}
 
 /* Form element: listing */
 .formlistingradio {padding-bottom: 25px; padding-right: 10px;}
