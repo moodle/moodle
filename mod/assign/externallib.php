@@ -279,7 +279,8 @@ class mod_assign_external extends external_api {
         $extrafields='m.id as assignmentid, m.course, m.nosubmissions, m.submissiondrafts, m.sendnotifications, '.
                      'm.sendlatenotifications, m.duedate, m.allowsubmissionsfromdate, m.grade, m.timemodified, '.
                      'm.completionsubmit, m.cutoffdate, m.teamsubmission, m.requireallteammemberssubmit, '.
-                     'm.teamsubmissiongroupingid, m.blindmarking, m.revealidentities, m.requiresubmissionstatement';
+                     'm.teamsubmissiongroupingid, m.blindmarking, m.revealidentities, m.attemptreopenmethod, '.
+                     'm.maxattempts, m.markingworkflow, m.markingallocation, m.requiresubmissionstatement';
         $coursearray = array();
         foreach ($courses as $id => $course) {
             $assignmentarray = array();
@@ -333,6 +334,10 @@ class mod_assign_external extends external_api {
                         'teamsubmissiongroupingid' => $module->teamsubmissiongroupingid,
                         'blindmarking' => $module->blindmarking,
                         'revealidentities' => $module->revealidentities,
+                        'attemptreopenmethod' => $module->attemptreopenmethod,
+                        'maxattempts' => $module->maxattempts,
+                        'markingworkflow' => $module->markingworkflow,
+                        'markingallocation' => $module->markingallocation,
                         'requiresubmissionstatement' => $module->requiresubmissionstatement,
                         'configs' => $configarray
                     );
@@ -364,6 +369,7 @@ class mod_assign_external extends external_api {
         return new external_single_structure(
             array(
                 'id' => new external_value(PARAM_INT, 'assignment id'),
+                'cmid' => new external_value(PARAM_INT, 'course module id'),
                 'course' => new external_value(PARAM_INT, 'course id'),
                 'name' => new external_value(PARAM_TEXT, 'assignment name'),
                 'nosubmissions' => new external_value(PARAM_INT, 'no submissions'),
@@ -381,6 +387,10 @@ class mod_assign_external extends external_api {
                 'teamsubmissiongroupingid' => new external_value(PARAM_INT, 'the grouping id for the team submission groups'),
                 'blindmarking' => new external_value(PARAM_INT, 'if enabled, hide identities until reveal identities actioned'),
                 'revealidentities' => new external_value(PARAM_INT, 'show identities for a blind marking assignment'),
+                'attemptreopenmethod' => new external_value(PARAM_TEXT, 'method used to control opening new attempts'),
+                'maxattempts' => new external_value(PARAM_INT, 'maximum number of attempts allowed'),
+                'markingworkflow' => new external_value(PARAM_INT, 'enable marking workflow'),
+                'markingallocation' => new external_value(PARAM_INT, 'enable marking allocation'),
                 'requiresubmissionstatement' => new external_value(PARAM_INT, 'student must accept submission statement'),
                 'configs' => new external_multiple_structure(self::get_assignments_config_structure(), 'configuration settings')
             ), 'assignment information object');
