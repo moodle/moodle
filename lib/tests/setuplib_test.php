@@ -17,7 +17,8 @@
 /**
  * Unit tests for setuplib.php
  *
- * @package   core_phpunit
+ * @package   core
+ * @category  phpunit
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -68,7 +69,7 @@ class core_setuplib_testcase extends advanced_testcase {
      */
     public function test_get_docs_url_wwwroot() {
         global $CFG;
-        $this->assertEquals($CFG->wwwroot . '/lib/tests/setuplib_test.php',
+        $this->assertSame($CFG->wwwroot . '/lib/tests/setuplib_test.php',
                 get_docs_url('%%WWWROOT%%/lib/tests/setuplib_test.php'));
     }
 
@@ -83,29 +84,29 @@ class core_setuplib_testcase extends advanced_testcase {
             'Mozilla/5.0 (iPad; U; CPU OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5',
         );
         $crawlers = array(
-            // Google
+            // Google.
             'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
             'Googlebot/2.1 (+http://www.googlebot.com/bot.html)',
             'Googlebot-Image/1.0',
-            // Yahoo
+            // Yahoo.
             'Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)',
-            // Bing
+            // Bing.
             'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
             'Mozilla/5.0 (compatible; bingbot/2.0 +http://www.bing.com/bingbot.htm)',
-            // MSN
+            // MSN.
             'msnbot/2.1',
-            // Yandex
+            // Yandex.
             'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)',
             'Mozilla/5.0 (compatible; YandexImages/3.0; +http://yandex.com/bots)',
-            // AltaVista
+            // AltaVista.
             'AltaVista V2.0B crawler@evreka.com',
-            // ZoomSpider
+            // ZoomSpider.
             'ZoomSpider - wrensoft.com [ZSEBOT]',
-            // Baidu
+            // Baidu.
             'Baiduspider+(+http://www.baidu.com/search/spider_jp.html)',
             'Baiduspider+(+http://www.baidu.com/search/spider.htm)',
             'BaiDuSpider',
-            // Ask.com
+            // Ask.com.
             'User-Agent: Mozilla/2.0 (compatible; Ask Jeeves/Teoma)',
         );
 
@@ -120,7 +121,7 @@ class core_setuplib_testcase extends advanced_testcase {
     }
 
     /**
-     * Test if get_exception_info() removes file system paths
+     * Test if get_exception_info() removes file system paths.
      */
     public function test_exception_info_removes_serverpaths() {
         global $CFG;
@@ -184,7 +185,6 @@ class core_setuplib_testcase extends advanced_testcase {
         $dir = make_localcache_directory('pokus', false);
         $this->assertSame("$CFG->localcachedir/pokus", $dir);
         $this->assertSame($prevtime, filemtime($timestampfile));
-
 
         // Test purging.
         $testfile = "$CFG->localcachedir/test/test.txt";

@@ -29,18 +29,18 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Test for various bits of datalib.php.
  *
- * @package core_css
- * @category css
- * @copyright 2012 Sam Hemelryk
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core
+ * @category  phpunit
+ * @copyright 2012 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class datalib_testcase extends advanced_testcase {
+class core_datalib_testcase extends advanced_testcase {
     protected function normalise_sql($sort) {
         return preg_replace('~\s+~', ' ', $sort);
     }
 
     protected function assert_same_sql($expected, $actual) {
-        $this->assertEquals($this->normalise_sql($expected), $this->normalise_sql($actual));
+        $this->assertSame($this->normalise_sql($expected), $this->normalise_sql($actual));
     }
 
     /**
@@ -48,9 +48,9 @@ class datalib_testcase extends advanced_testcase {
      */
     public function test_users_search_sql() {
         global $DB;
+        $this->resetAfterTest();
 
         // Set up test users.
-        $this->resetAfterTest(true);
         $user1 = array(
             'username' => 'usernametest1',
             'idnumber' => 'idnumbertest1',
@@ -122,10 +122,10 @@ class datalib_testcase extends advanced_testcase {
         // Search by extra fields included or not (address).
         list($sql, $params) = users_search_sql('Test Street', '', true);
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
-        $this->assertEquals(0, count($results));
+        $this->assertCount(0, $results);
         list($sql, $params) = users_search_sql('Test Street', '', true, array('address'));
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
-        $this->assertEquals(2, count($results));
+        $this->assertCount(2, $results);
 
         // Exclude user.
         list($sql, $params) = users_search_sql('User Test', '', true, array(), array($user1->id));
@@ -144,17 +144,14 @@ class datalib_testcase extends advanced_testcase {
         set_user_preference('amphibian', 'salamander', $user2);
         list($sql, $params) = users_search_sql('User Test 1', 'qq');
         $results = $DB->get_records_sql("
-                SELECT
-                    up.id, up.value
-                FROM
-                    {user} qq
-                    JOIN {user_preferences} up ON up.userid = qq.id
-                WHERE
-                    up.name = :prefname
-                    AND $sql", array_merge(array('prefname' => 'amphibian'), $params));
+                SELECT up.id, up.value
+                  FROM {user} qq
+                  JOIN {user_preferences} up ON up.userid = qq.id
+                 WHERE up.name = :prefname
+                       AND $sql", array_merge(array('prefname' => 'amphibian'), $params));
         $this->assertEquals(1, count($results));
         foreach ($results as $record) {
-            $this->assertEquals('frog', $record->value);
+            $this->assertSame('frog', $record->value);
         }
     }
 
@@ -172,8 +169,9 @@ class datalib_testcase extends advanced_testcase {
 
     public function test_users_order_by_sql_search_no_extra_fields() {
         global $CFG, $DB;
-        $CFG->showuseridentity = '';
         $this->resetAfterTest(true);
+
+        $CFG->showuseridentity = '';
 
         list($sort, $params) = users_order_by_sql('', 'search', context_system::instance());
         $this->assert_same_sql('CASE WHEN
@@ -187,9 +185,10 @@ class datalib_testcase extends advanced_testcase {
 
     public function test_users_order_by_sql_search_with_extra_fields_and_prefix() {
         global $CFG, $DB;
+        $this->resetAfterTest();
+
         $CFG->showuseridentity = 'email,idnumber';
         $this->setAdminUser();
-        $this->resetAfterTest(true);
 
         list($sort, $params) = users_order_by_sql('u', 'search', context_system::instance());
         $this->assert_same_sql('CASE WHEN
@@ -205,7 +204,6 @@ class datalib_testcase extends advanced_testcase {
 
     public function test_get_admin() {
         global $CFG, $DB;
-
         $this->resetAfterTest();
 
         $this->assertSame('2', $CFG->siteadmins); // Admin always has id 2 in new installs.
@@ -238,7 +236,6 @@ class datalib_testcase extends advanced_testcase {
 
     public function test_get_admins() {
         global $CFG, $DB;
-
         $this->resetAfterTest();
 
         $this->assertSame('2', $CFG->siteadmins); // Admin always has id 2 in new installs.
@@ -249,7 +246,7 @@ class datalib_testcase extends advanced_testcase {
         $user4 = $this->getDataGenerator()->create_user();
 
         $admins = get_admins();
-        $this->assertEquals(1, count($admins));
+        $this->assertCount(1, $admins);
         $admin = reset($admins);
         $this->assertTrue(isset($admins[$admin->id]));
         $this->assertEquals(2, $admin->id);
@@ -270,8 +267,7 @@ class datalib_testcase extends advanced_testcase {
 
     public function test_get_course() {
         global $DB, $PAGE, $SITE;
-
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         // First test course will be current course ($COURSE).
         $course1obj = $this->getDataGenerator()->create_course(array('shortname' => 'FROGS'));
@@ -280,17 +276,17 @@ class datalib_testcase extends advanced_testcase {
         // Second test course is not current course.
         $course2obj = $this->getDataGenerator()->create_course(array('shortname' => 'ZOMBIES'));
 
-        // Check it does not make any queries when requesting the $COURSE/$SITE
+        // Check it does not make any queries when requesting the $COURSE/$SITE.
         $before = $DB->perf_get_queries();
         $result = get_course($course1obj->id);
         $this->assertEquals($before, $DB->perf_get_queries());
-        $this->assertEquals('FROGS', $result->shortname);
+        $this->assertSame('FROGS', $result->shortname);
         $result = get_course($SITE->id);
         $this->assertEquals($before, $DB->perf_get_queries());
 
         // Check it makes 1 query to request other courses.
         $result = get_course($course2obj->id);
-        $this->assertEquals('ZOMBIES', $result->shortname);
+        $this->assertSame('ZOMBIES', $result->shortname);
         $this->assertEquals($before + 1, $DB->perf_get_queries());
     }
 }

@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests events subsystems
+ * Tests groups subsystems.
  *
- * @package    core
- * @subpackage group
+ * @package    core_group
+ * @category   phpunit
  * @copyright  2007 onwards Martin Dougiamas (http://dougiamas.com)
  * @author     Andrew Nicols
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,78 +26,78 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class grouplib_testcase extends advanced_testcase {
+class core_grouplib_testcase extends advanced_testcase {
 
     public function test_groups_get_group_by_idnumber() {
         $this->resetAfterTest(true);
 
         $generator = $this->getDataGenerator();
 
-        // Create a course category and course
+        // Create a course category and course.
         $cat = $generator->create_category(array('parent' => 0));
         $course = $generator->create_course(array('category' => $cat->id));
 
         $idnumber1 = 'idnumber1';
         $idnumber2 = 'idnumber2';
 
-        /**
-         * Test with an empty and a null idnumber
+        /*
+         * Test with an empty and a null idnumber.
          */
-        // An empty idnumber should always return a false value
+        // An empty idnumber should always return a false value.
         $this->assertFalse(groups_get_group_by_idnumber($course->id, ''));
         $this->assertFalse(groups_get_group_by_idnumber($course->id, null));
 
-        // Even when a group exists which also has an empty idnumber
+        // Even when a group exists which also has an empty idnumber.
         $generator->create_group(array('courseid' => $course->id));
         $this->assertFalse(groups_get_group_by_idnumber($course->id, ''));
         $this->assertFalse(groups_get_group_by_idnumber($course->id, null));
 
-        /**
-         * Test with a valid idnumber
+        /*
+         * Test with a valid idnumber.
          */
-        // There is no matching idnumber at present
+        // There is no matching idnumber at present.
         $this->assertFalse(groups_get_group_by_idnumber($course->id, $idnumber1));
 
-        // We should now have a valid group returned by the idnumber search
+        // We should now have a valid group returned by the idnumber search.
         $group = $generator->create_group(array('courseid' => $course->id, 'idnumber' => $idnumber1));
-        $this->assertEquals(groups_get_group_by_idnumber($course->id, $idnumber1), $group);
+        $this->assertEquals($group, groups_get_group_by_idnumber($course->id, $idnumber1));
 
-        // An empty idnumber should still return false
+        // An empty idnumber should still return false.
         $this->assertFalse(groups_get_group_by_idnumber($course->id, ''));
         $this->assertFalse(groups_get_group_by_idnumber($course->id, null));
 
-        /**
-         * Test with another idnumber
+        /*
+         * Test with another idnumber.
          */
-        // There is no matching idnumber at present
+        // There is no matching idnumber at present.
         $this->assertFalse(groups_get_group_by_idnumber($course->id, $idnumber2));
 
-        // We should now have a valid group returned by the idnumber search
+        // We should now have a valid group returned by the idnumber search.
         $group = $generator->create_group(array('courseid' => $course->id, 'idnumber' => $idnumber2));
-        $this->assertEquals(groups_get_group_by_idnumber($course->id, $idnumber2), $group);
+        $this->assertEquals($group, groups_get_group_by_idnumber($course->id, $idnumber2));
 
-        /**
+        /*
          * Group idnumbers are unique within a course so test that we don't
-         * retrieve groups for the first course
+         * retrieve groups for the first course.
          */
 
-        // Create a second course
+        // Create a second course.
         $course = $generator->create_course(array('category' => $cat->id));
 
-        // An empty idnumber should always return a false value
+        // An empty idnumber should always return a false value.
         $this->assertFalse(groups_get_group_by_idnumber($course->id, ''));
         $this->assertFalse(groups_get_group_by_idnumber($course->id, null));
 
-        // Our existing idnumbers shouldn't be returned here as we're in a different course
+        // Our existing idnumbers shouldn't be returned here as we're in a different course.
         $this->assertFalse(groups_get_group_by_idnumber($course->id, $idnumber1));
         $this->assertFalse(groups_get_group_by_idnumber($course->id, $idnumber2));
 
-        // We should be able to reuse the idnumbers again since this is a different course
+        // We should be able to reuse the idnumbers again since this is a different course.
         $group = $generator->create_group(array('courseid' => $course->id, 'idnumber' => $idnumber1));
-        $this->assertEquals(groups_get_group_by_idnumber($course->id, $idnumber1), $group);
+        $this->assertEquals($group, groups_get_group_by_idnumber($course->id, $idnumber1));
 
         $group = $generator->create_group(array('courseid' => $course->id, 'idnumber' => $idnumber2));
-        $this->assertEquals(groups_get_group_by_idnumber($course->id, $idnumber2), $group);
+        $this->assertEquals($group, groups_get_group_by_idnumber($course->id, $idnumber2));
     }
 
     public function test_groups_get_grouping_by_idnumber() {
@@ -105,71 +105,71 @@ class grouplib_testcase extends advanced_testcase {
 
         $generator = $this->getDataGenerator();
 
-        // Create a course category and course
+        // Create a course category and course.
         $cat = $generator->create_category(array('parent' => 0));
         $course = $generator->create_course(array('category' => $cat->id));
 
         $idnumber1 = 'idnumber1';
         $idnumber2 = 'idnumber2';
 
-        /**
-         * Test with an empty and a null idnumber
+        /*
+         * Test with an empty and a null idnumber.
          */
-        // An empty idnumber should always return a false value
+        // An empty idnumber should always return a false value.
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, ''));
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, null));
 
-        // Even when a grouping exists which also has an empty idnumber
+        // Even when a grouping exists which also has an empty idnumber.
         $generator->create_grouping(array('courseid' => $course->id));
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, ''));
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, null));
 
-        /**
+        /*
          * Test with a valid idnumber
          */
-        // There is no matching idnumber at present
+        // There is no matching idnumber at present.
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, $idnumber1));
 
-        // We should now have a valid group returned by the idnumber search
+        // We should now have a valid group returned by the idnumber search.
         $grouping = $generator->create_grouping(array('courseid' => $course->id, 'idnumber' => $idnumber1));
-        $this->assertEquals(groups_get_grouping_by_idnumber($course->id, $idnumber1), $grouping);
+        $this->assertEquals($grouping, groups_get_grouping_by_idnumber($course->id, $idnumber1));
 
-        // An empty idnumber should still return false
+        // An empty idnumber should still return false.
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, ''));
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, null));
 
-        /**
-         * Test with another idnumber
+        /*
+         * Test with another idnumber.
          */
-        // There is no matching idnumber at present
+        // There is no matching idnumber at present.
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, $idnumber2));
 
-        // We should now have a valid grouping returned by the idnumber search
+        // We should now have a valid grouping returned by the idnumber search.
         $grouping = $generator->create_grouping(array('courseid' => $course->id, 'idnumber' => $idnumber2));
-        $this->assertEquals(groups_get_grouping_by_idnumber($course->id, $idnumber2), $grouping);
+        $this->assertEquals($grouping, groups_get_grouping_by_idnumber($course->id, $idnumber2));
 
-        /**
+        /*
          * Grouping idnumbers are unique within a course so test that we don't
-         * retrieve groupings for the first course
+         * retrieve groupings for the first course.
          */
 
-        // Create a second course
+        // Create a second course.
         $course = $generator->create_course(array('category' => $cat->id));
 
-        // An empty idnumber should always return a false value
+        // An empty idnumber should always return a false value.
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, ''));
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, null));
 
-        // Our existing idnumbers shouldn't be returned here as we're in a different course
+        // Our existing idnumbers shouldn't be returned here as we're in a different course.
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, $idnumber1));
         $this->assertFalse(groups_get_grouping_by_idnumber($course->id, $idnumber2));
 
-        // We should be able to reuse the idnumbers again since this is a different course
+        // We should be able to reuse the idnumbers again since this is a different course.
         $grouping = $generator->create_grouping(array('courseid' => $course->id, 'idnumber' => $idnumber1));
-        $this->assertEquals(groups_get_grouping_by_idnumber($course->id, $idnumber1), $grouping);
+        $this->assertEquals($grouping, groups_get_grouping_by_idnumber($course->id, $idnumber1));
 
         $grouping = $generator->create_grouping(array('courseid' => $course->id, 'idnumber' => $idnumber2));
-        $this->assertEquals(groups_get_grouping_by_idnumber($course->id, $idnumber2), $grouping);
+        $this->assertEquals($grouping, groups_get_grouping_by_idnumber($course->id, $idnumber2));
     }
 
     public function test_groups_get_group_by_name() {
@@ -177,14 +177,14 @@ class grouplib_testcase extends advanced_testcase {
 
         $generator = $this->getDataGenerator();
 
-        // Create a course category and course
+        // Create a course category and course.
         $cat = $generator->create_category(array('parent' => 0));
         $course = $generator->create_course(array('category' => $cat->id));
 
         $name1 = 'Name 1';
         $name2 = 'Name 2';
 
-        // Test with an empty and a null idnumber
+        // Test with an empty and a null idnumber.
         $this->assertFalse(groups_get_group_by_name($course->id, ''));
         $this->assertFalse(groups_get_group_by_name($course->id, null));
 
@@ -199,41 +199,41 @@ class grouplib_testcase extends advanced_testcase {
 
         // We should now have a valid group returned by the name search.
         $group1 = $generator->create_group(array('courseid' => $course->id, 'name' => $name1));
-        $this->assertEquals(groups_get_group_by_name($course->id, $name1), $group1->id);
+        $this->assertEquals($group1->id, groups_get_group_by_name($course->id, $name1));
         $this->assertFalse(groups_get_group_by_name($course->id, $name2));
 
         // We should now have a two valid groups returned by the name search.
         $group2 = $generator->create_group(array('courseid' => $course->id, 'name' => $name2));
-        $this->assertEquals(groups_get_group_by_name($course->id, $name1), $group1->id);
-        $this->assertEquals(groups_get_group_by_name($course->id, $name2), $group2->id);
+        $this->assertEquals($group1->id, groups_get_group_by_name($course->id, $name1));
+        $this->assertEquals($group2->id, groups_get_group_by_name($course->id, $name2));
 
         // Delete a group.
         $this->assertTrue(groups_delete_group($group1));
         $this->assertFalse(groups_get_group_by_name($course->id, $name1));
-        $this->assertEquals(groups_get_group_by_name($course->id, $name2), $group2->id);
+        $this->assertEquals($group2->id, groups_get_group_by_name($course->id, $name2));
 
-        /**
+        /*
          * Group idnumbers are unique within a course so test that we don't
-         * retrieve groups for the first course
+         * retrieve groups for the first course.
          */
 
-        // Create a second course
+        // Create a second course.
         $course = $generator->create_course(array('category' => $cat->id));
 
-        // An empty name should always return a false value
+        // An empty name should always return a false value.
         $this->assertFalse(groups_get_group_by_name($course->id, ''));
         $this->assertFalse(groups_get_group_by_name($course->id, null));
 
-        // Our existing names shouldn't be returned here as we're in a different course
+        // Our existing names shouldn't be returned here as we're in a different course.
         $this->assertFalse(groups_get_group_by_name($course->id, $name1));
         $this->assertFalse(groups_get_group_by_name($course->id, $name2));
 
-        // We should be able to reuse the idnumbers again since this is a different course
+        // We should be able to reuse the idnumbers again since this is a different course.
         $group1 = $generator->create_group(array('courseid' => $course->id, 'name' => $name1));
-        $this->assertEquals(groups_get_group_by_name($course->id, $name1), $group1->id);
+        $this->assertEquals($group1->id, groups_get_group_by_name($course->id, $name1));
 
         $group2 = $generator->create_group(array('courseid' => $course->id, 'name' => $name2));
-        $this->assertEquals(groups_get_group_by_name($course->id, $name2), $group2->id);
+        $this->assertEquals($group2->id, groups_get_group_by_name($course->id, $name2));
     }
 
     public function test_groups_get_grouping() {
@@ -241,14 +241,14 @@ class grouplib_testcase extends advanced_testcase {
 
         $generator = $this->getDataGenerator();
 
-        // Create a course category and course
+        // Create a course category and course.
         $cat = $generator->create_category(array('parent' => 0));
         $course = $generator->create_course(array('category' => $cat->id));
 
         $name1 = 'Grouping 1';
         $name2 = 'Grouping 2';
 
-        // Test with an empty and a null idnumber
+        // Test with an empty and a null idnumber.
         $this->assertFalse(groups_get_grouping_by_name($course->id, ''));
         $this->assertFalse(groups_get_grouping_by_name($course->id, null));
 
@@ -263,41 +263,41 @@ class grouplib_testcase extends advanced_testcase {
 
         // We should now have a valid group returned by the name search.
         $group1 = $generator->create_grouping(array('courseid' => $course->id, 'name' => $name1));
-        $this->assertEquals(groups_get_grouping_by_name($course->id, $name1), $group1->id);
+        $this->assertEquals($group1->id, groups_get_grouping_by_name($course->id, $name1));
         $this->assertFalse(groups_get_grouping_by_name($course->id, $name2));
 
         // We should now have a two valid groups returned by the name search.
         $group2 = $generator->create_grouping(array('courseid' => $course->id, 'name' => $name2));
-        $this->assertEquals(groups_get_grouping_by_name($course->id, $name1), $group1->id);
-        $this->assertEquals(groups_get_grouping_by_name($course->id, $name2), $group2->id);
+        $this->assertEquals($group1->id, groups_get_grouping_by_name($course->id, $name1));
+        $this->assertEquals($group2->id, groups_get_grouping_by_name($course->id, $name2));
 
         // Delete a group.
         $this->assertTrue(groups_delete_grouping($group1));
         $this->assertFalse(groups_get_grouping_by_name($course->id, $name1));
-        $this->assertEquals(groups_get_grouping_by_name($course->id, $name2), $group2->id);
+        $this->assertEquals($group2->id, groups_get_grouping_by_name($course->id, $name2));
 
-        /**
+        /*
          * Group idnumbers are unique within a course so test that we don't
-         * retrieve groups for the first course
+         * retrieve groups for the first course.
          */
 
-        // Create a second course
+        // Create a second course.
         $course = $generator->create_course(array('category' => $cat->id));
 
-        // An empty name should always return a false value
+        // An empty name should always return a false value.
         $this->assertFalse(groups_get_grouping_by_name($course->id, ''));
         $this->assertFalse(groups_get_grouping_by_name($course->id, null));
 
-        // Our existing names shouldn't be returned here as we're in a different course
+        // Our existing names shouldn't be returned here as we're in a different course.
         $this->assertFalse(groups_get_grouping_by_name($course->id, $name1));
         $this->assertFalse(groups_get_grouping_by_name($course->id, $name2));
 
-        // We should be able to reuse the idnumbers again since this is a different course
+        // We should be able to reuse the idnumbers again since this is a different course.
         $group1 = $generator->create_grouping(array('courseid' => $course->id, 'name' => $name1));
-        $this->assertEquals(groups_get_grouping_by_name($course->id, $name1), $group1->id);
+        $this->assertEquals($group1->id, groups_get_grouping_by_name($course->id, $name1));
 
         $group2 = $generator->create_grouping(array('courseid' => $course->id, 'name' => $name2));
-        $this->assertEquals(groups_get_grouping_by_name($course->id, $name2), $group2->id);
+        $this->assertEquals($group2->id, groups_get_grouping_by_name($course->id, $name2));
     }
 
     public function test_groups_get_course_data() {
@@ -305,7 +305,7 @@ class grouplib_testcase extends advanced_testcase {
 
         $generator = $this->getDataGenerator();
 
-        // Create a course category and course
+        // Create a course category and course.
         $cat = $generator->create_category(array('parent' => 0));
         $course = $generator->create_course(array('category' => $cat->id));
         $grouping1 = $generator->create_grouping(array('courseid' => $course->id, 'name' => 'Grouping 1'));
@@ -334,13 +334,13 @@ class grouplib_testcase extends advanced_testcase {
         $this->assertCount(4, $data->mappings);
 
         // Check we have the expected groups.
-        $this->assertContains($group1->id, array_keys($data->groups));
-        $this->assertContains($group2->id, array_keys($data->groups));
-        $this->assertContains($group3->id, array_keys($data->groups));
-        $this->assertContains($group4->id, array_keys($data->groups));
+        $this->assertArrayHasKey($group1->id, $data->groups);
+        $this->assertArrayHasKey($group2->id, $data->groups);
+        $this->assertArrayHasKey($group3->id, $data->groups);
+        $this->assertArrayHasKey($group4->id, $data->groups);
 
         // Test a group-id is mapped correctly.
-        $this->assertEquals($group3->name, $data->groups[$group3->id]->name);
+        $this->assertSame($group3->name, $data->groups[$group3->id]->name);
 
         // Check we have the expected number of groupings.
         $this->assertContains($grouping1->id, array_keys($data->groupings));

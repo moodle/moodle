@@ -15,11 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for (some of) ../outputlib.php.
+ * Tests the theme config class.
  *
  * @package   core
  * @category  phpunit
- * @copyright 2009 Tim Hunt
+ * @copyright 2012 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later (5)
  */
 
@@ -28,119 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/outputlib.php');
 
-
-/**
- * Unit tests for the xhtml_container_stack class.
- *
- * These tests assume that developer debug mode is on which is enforced by our phpunit integration.
- *
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class xhtml_container_stack_testcase extends advanced_testcase {
-    public function test_push_then_pop() {
-        // Set up.
-        $stack = new xhtml_container_stack();
-        // Exercise SUT.
-        $stack->push('testtype', '</div>');
-        $html = $stack->pop('testtype');
-        // Verify outcome
-        $this->assertEquals('</div>', $html);
-        $this->assertDebuggingNotCalled();
-    }
-
-    public function test_mismatched_pop_prints_warning() {
-        // Set up.
-        $stack = new xhtml_container_stack();
-        $stack->push('testtype', '</div>');
-        // Exercise SUT.
-        $html = $stack->pop('mismatch');
-        // Verify outcome
-        $this->assertEquals('</div>', $html);
-        $this->assertDebuggingCalled();
-    }
-
-    public function test_pop_when_empty_prints_warning() {
-        // Set up.
-        $stack = new xhtml_container_stack();
-        // Exercise SUT.
-        $html = $stack->pop('testtype');
-        // Verify outcome
-        $this->assertEquals('', $html);
-        $this->assertDebuggingCalled();
-    }
-
-    public function test_correct_nesting() {
-        // Set up.
-        $stack = new xhtml_container_stack();
-        // Exercise SUT.
-        $stack->push('testdiv', '</div>');
-        $stack->push('testp', '</p>');
-        $html2 = $stack->pop('testp');
-        $html1 = $stack->pop('testdiv');
-        // Verify outcome
-        $this->assertEquals('</p>', $html2);
-        $this->assertEquals('</div>', $html1);
-        $this->assertDebuggingNotCalled();
-    }
-
-    public function test_pop_all_but_last() {
-        // Set up.
-        $stack = new xhtml_container_stack();
-        $stack->push('test1', '</h1>');
-        $stack->push('test2', '</h2>');
-        $stack->push('test3', '</h3>');
-        // Exercise SUT.
-        $html = $stack->pop_all_but_last();
-        // Verify outcome
-        $this->assertEquals('</h3></h2>', $html);
-        $this->assertDebuggingNotCalled();
-        // Tear down.
-        $stack->discard();
-    }
-
-    public function test_pop_all_but_last_only_one() {
-        // Set up.
-        $stack = new xhtml_container_stack();
-        $stack->push('test1', '</h1>');
-        // Exercise SUT.
-        $html = $stack->pop_all_but_last();
-        // Verify outcome
-        $this->assertEquals('', $html);
-        $this->assertDebuggingNotCalled();
-        // Tear down.
-        $stack->discard();
-    }
-
-    public function test_pop_all_but_last_empty() {
-        // Set up.
-        $stack = new xhtml_container_stack();
-        // Exercise SUT.
-        $html = $stack->pop_all_but_last();
-        // Verify outcome
-        $this->assertEquals('', $html);
-        $this->assertDebuggingNotCalled();
-    }
-
-    public function test_discard() {
-        // Set up.
-        $stack = new xhtml_container_stack();
-        $stack->push('test1', '</somethingdistinctive>');
-        $stack->discard();
-        // Exercise SUT.
-        $stack = null;
-        // Verify outcome
-        $this->assertDebuggingNotCalled();
-    }
-}
-
 /**
  * Tests the theme config class.
  *
  * @copyright 2012 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class theme_config_testcase extends advanced_testcase {
+class core_theme_config_testcase extends advanced_testcase {
     /**
      * This function will test directives used to serve SVG images to make sure
      * this are making the right decisions.
@@ -150,12 +44,6 @@ class theme_config_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        if (isset($_SERVER['HTTP_USER_AGENT'])) {
-            $ua = $_SERVER['HTTP_USER_AGENT'];
-        } else {
-            $ua = null;
-        }
-
         // The two required tests.
         $this->assertTrue(file_exists($CFG->dirroot.'/pix/i/test.svg'));
         $this->assertTrue(file_exists($CFG->dirroot.'/pix/i/test.png'));
@@ -164,21 +52,21 @@ class theme_config_testcase extends advanced_testcase {
 
         // First up test the forced setting.
         $imagefile = $theme->resolve_image_location('i/test', 'moodle', true);
-        $this->assertEquals('test.svg', basename($imagefile));
+        $this->assertSame('test.svg', basename($imagefile));
         $imagefile = $theme->resolve_image_location('i/test', 'moodle', false);
-        $this->assertEquals('test.png', basename($imagefile));
+        $this->assertSame('test.png', basename($imagefile));
 
         // Now test the use of the svgicons config setting.
         // We need to clone the theme as usesvg property is calculated only once.
         $testtheme = clone $theme;
         $CFG->svgicons = true;
         $imagefile = $testtheme->resolve_image_location('i/test', 'moodle', null);
-        $this->assertEquals('test.svg', basename($imagefile));
+        $this->assertSame('test.svg', basename($imagefile));
         $CFG->svgicons = false;
         // We need to clone the theme as usesvg property is calculated only once.
         $testtheme = clone $theme;
         $imagefile = $testtheme->resolve_image_location('i/test', 'moodle', null);
-        $this->assertEquals('test.png', basename($imagefile));
+        $this->assertSame('test.png', basename($imagefile));
         unset($CFG->svgicons);
 
         // Finally test a few user agents.
@@ -187,7 +75,7 @@ class theme_config_testcase extends advanced_testcase {
             'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)' => false,
             // IE8 on Vista.
             'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0)' => false,
-            // IE8 on Vista in compatability mode.
+            // IE8 on Vista in compatibility mode.
             'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Trident/4.0)' => false,
             // IE8 on Windows 7.
             'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0)' => false,
@@ -209,11 +97,11 @@ class theme_config_testcase extends advanced_testcase {
             'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1' => true,
             // Opera 12.02 on Ubuntu.
             'Opera/9.80 (X11; Linux x86_64; U; en) Presto/2.10.289 Version/12.02' => false,
-            // Android browser pre 1.0
+            // Android browser pre 1.0.
             'Mozilla/5.0 (Linux; U; Android 0.5; en-us) AppleWebKit/522+ (KHTML, like Gecko) Safari/419.3' => false,
-            // Android browser 2.3 (HTC)
+            // Android browser 2.3 (HTC).
             'Mozilla/5.0 (Linux; U; Android 2.3.5; en-us; HTC Vision Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1' => false,
-            // Android browser 3.0 (Motorola)
+            // Android browser 3.0 (Motorola).
             'Mozilla/5.0 (Linux; U; Android 3.0; en-us; Xoom Build/HRI39) AppleWebKit/534.13 (KHTML, like Gecko) Version/4.0 Safari/534.13' => true
         );
         foreach ($useragents as $agent => $expected) {
@@ -221,12 +109,11 @@ class theme_config_testcase extends advanced_testcase {
             // We need to clone the theme as usesvg property is calculated only once.
             $testtheme = clone $theme;
             $imagefile = $testtheme->resolve_image_location('i/test', 'moodle', null);
-            $this->assertEquals($expected ? 'test.svg' : 'test.png', basename($imagefile),
-                    'Incorrect image returned for user agent `'.$agent.'`');
-        }
-
-        if ($ua !== null) {
-            $_SERVER['HTTP_USER_AGENT'] = $ua;
+            if ($expected) {
+                $this->assertSame('test.svg', basename($imagefile), 'Incorrect image returned for user agent `'.$agent.'`');
+            } else {
+                $this->assertSame('test.png', basename($imagefile), 'Incorrect image returned for user agent `'.$agent.'`');
+            }
         }
     }
 }

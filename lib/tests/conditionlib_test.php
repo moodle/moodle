@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tests for conditional activities
+ * Tests for conditional activities.
  *
  * @package    core
  * @category   phpunit
@@ -30,14 +30,13 @@ global $CFG;
 require_once($CFG->dirroot . '/lib/conditionlib.php');
 
 
-class conditionlib_testcase extends advanced_testcase {
-    private $oldcfg, $olduser;
+class core_conditionlib_testcase extends advanced_testcase {
 
     protected function setUp() {
-        global $CFG, $USER, $DB;
+        global $CFG;
         parent::setUp();
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         $CFG->enableavailability = 1;
         $CFG->enablecompletion = 1;
@@ -45,67 +44,68 @@ class conditionlib_testcase extends advanced_testcase {
         $this->setUser($user);
     }
 
-    function test_constructor() {
-        global $DB,$CFG;
-        $cm=new stdClass;
+    public function test_constructor() {
+        global $DB;
+        $cm = new stdClass;
 
-        // Test records
-        $id=$DB->insert_record('course_modules',(object)array(
-            'showavailability'=>1,'availablefrom'=>17,'availableuntil'=>398,'course'=>64));
+        // Test records.
+        $id = $DB->insert_record('course_modules', (object)array(
+            'showavailability'=>1, 'availablefrom'=>17, 'availableuntil'=>398, 'course'=>64));
 
-        // no ID
+        // No ID.
         try {
-            $test=new condition_info($cm);
+            $test = new condition_info($cm);
             $this->fail();
-        } catch(coding_exception $e) {
+        } catch (coding_exception $e) {
+            // Do nothing.
         }
 
-        // no other data
-        $cm->id=$id;
-        $test=new condition_info($cm,CONDITION_MISSING_EVERYTHING);
+        // No other data.
+        $cm->id = $id;
+        $test = new condition_info($cm, CONDITION_MISSING_EVERYTHING);
         $this->assertEquals(
-            (object)array('id'=>$id,'showavailability'=>1,
-                'availablefrom'=>17,'availableuntil'=>398,'course'=>64,
+            (object)array('id'=>$id, 'showavailability'=>1,
+                'availablefrom'=>17, 'availableuntil'=>398, 'course'=>64,
                 'conditionsgrade'=>array(), 'conditionscompletion'=>array(),
                 'visible' => 1, 'conditionsfield' => array()),
             $test->get_full_course_module());
 
-        // just the course_modules stuff; check it doesn't request that from db
-        $cm->showavailability=0;
-        $cm->availablefrom=2;
-        $cm->availableuntil=74;
-        $cm->course=38;
+        // Just the course_modules stuff, check it doesn't request that from db.
+        $cm->showavailability = 0;
+        $cm->availablefrom = 2;
+        $cm->availableuntil = 74;
+        $cm->course = 38;
         $cm->visible = 1;
-        $test=new condition_info($cm,CONDITION_MISSING_EXTRATABLE);
+        $test = new condition_info($cm, CONDITION_MISSING_EXTRATABLE);
         $this->assertEquals(
-            (object)array('id'=>$id,'showavailability'=>0,
-                'availablefrom'=>2,'availableuntil'=>74,'course'=>38,
+            (object)array('id'=>$id, 'showavailability'=>0,
+                'availablefrom'=>2, 'availableuntil'=>74, 'course'=>38,
                 'conditionsgrade' => array(), 'conditionscompletion' => array(),
                 'visible' => 1, 'conditionsfield' => array()),
             $test->get_full_course_module());
 
-        // Now let's add some actual grade/completion conditions
-        $DB->insert_record('course_modules_availability',(object)array(
+        // Now let's add some actual grade/completion conditions.
+        $DB->insert_record('course_modules_availability', (object)array(
             'coursemoduleid'=>$id,
             'sourcecmid'=>42,
             'requiredcompletion'=>2
         ));
-        $DB->insert_record('course_modules_availability',(object)array(
+        $DB->insert_record('course_modules_availability', (object)array(
             'coursemoduleid'=>$id,
             'sourcecmid'=>666,
             'requiredcompletion'=>1
         ));
-        $DB->insert_record('course_modules_availability',(object)array(
+        $DB->insert_record('course_modules_availability', (object)array(
             'coursemoduleid'=>$id,
             'gradeitemid'=>37,
             'grademin'=>5.5
         ));
 
-        $cm=(object)array('id'=>$id);
-        $test=new condition_info($cm,CONDITION_MISSING_EVERYTHING);
-        $fullcm=$test->get_full_course_module();
-        $this->assertEquals(array(42=>2,666=>1),$fullcm->conditionscompletion);
-        $this->assertEquals(array(37=>(object)array('min'=>5.5,'max'=>null,'name'=>'!missing')),
+        $cm = (object)array('id'=>$id);
+        $test = new condition_info($cm, CONDITION_MISSING_EVERYTHING);
+        $fullcm = $test->get_full_course_module();
+        $this->assertEquals(array(42=>2, 666=>1), $fullcm->conditionscompletion);
+        $this->assertEquals(array(37=>(object)array('min'=>5.5, 'max'=>null, 'name'=>'!missing')),
             $fullcm->conditionsgrade);
     }
 
@@ -115,21 +115,21 @@ class conditionlib_testcase extends advanced_testcase {
     public function test_section_constructor() {
         global $DB, $CFG;
 
-        // Test records
+        // Test records.
         $id = $DB->insert_record('course_sections', (object)array(
                 'showavailability' => 1, 'availablefrom' => 17,
                 'availableuntil' => 398, 'course' => 64, 'groupingid' => 13));
 
-        // No ID
+        // No ID.
         $section = new stdClass;
         try {
             $test = new condition_info_section($section);
             $this->fail();
         } catch (coding_exception $e) {
-            // Do nothing
+            // Do nothing.
         }
 
-        // No other data
+        // No other data.
         $section->id = $id;
         $test = new condition_info_section($section, CONDITION_MISSING_EVERYTHING);
         $this->assertEquals(
@@ -140,7 +140,7 @@ class conditionlib_testcase extends advanced_testcase {
                 $test->get_full_section());
 
         // Just the course_sections stuff; check it doesn't request that from db
-        // (by using fake values and ensuring it still has those)
+        // (by using fake values and ensuring it still has those).
         $section->showavailability = 0;
         $section->availablefrom = 2;
         $section->availableuntil = 74;
@@ -155,7 +155,7 @@ class conditionlib_testcase extends advanced_testcase {
                     'visible' => 1, 'conditionsfield' => array()),
                 $test->get_full_section());
 
-        // Now let's add some actual grade/completion conditions
+        // Now let's add some actual grade/completion conditions.
         $DB->insert_record('course_sections_availability', (object)array(
                 'coursesectionid' => $id,
                 'sourcecmid' => 42,
@@ -191,26 +191,24 @@ class conditionlib_testcase extends advanced_testcase {
         return $course->id;
     }
 
-    private function make_course_module($courseid,$params=array()) {
+    private function make_course_module($courseid, $params = array()) {
         global $DB;
-        static $moduleid=0;
-        if(!$moduleid) {
-            $moduleid=$DB->get_field('modules','id',array('name'=>'resource'));
-        }
 
-        $rid=$DB->insert_record('resource',(object)array('course'=>$courseid,
-            'name'=>'xxx','alltext'=>'','popup'=>''));
-        $settings=(object)array(
-            'course'=>$courseid,'module'=>$moduleid,'instance'=>$rid);
-        foreach($params as $name=>$value) {
-            $settings->{$name}=$value;
+        $moduleid = $DB->get_field('modules', 'id', array('name'=>'resource'));
+
+        $rid = $DB->insert_record('resource', (object)array('course'=>$courseid,
+            'name'=>'xxx', 'alltext'=>'', 'popup'=>''));
+        $settings = (object)array(
+            'course'=>$courseid, 'module'=>$moduleid, 'instance'=>$rid);
+        foreach ($params as $name => $value) {
+            $settings->{$name} = $value;
         }
         $cmid = $DB->insert_record('course_modules', $settings);
         rebuild_course_cache($courseid, true);
         return $cmid;
     }
 
-    private function make_section($courseid, $cmids, $sectionnum=0, $params=array()) {
+    private function make_section($courseid, $cmids, $sectionnum = 0, $params = array()) {
         global $DB;
         $record = (object)array(
             'course' => $courseid,
@@ -231,7 +229,7 @@ class conditionlib_testcase extends advanced_testcase {
                 'name' => $name));
     }
 
-    private function make_group($courseid, $name, $groupingid=0) {
+    private function make_group($courseid, $name, $groupingid = 0) {
         global $CFG;
         require_once($CFG->dirroot . '/group/lib.php');
         $groupid = groups_create_group((object)array('courseid' => $courseid,
@@ -242,74 +240,74 @@ class conditionlib_testcase extends advanced_testcase {
         return $groupid;
     }
 
-    function test_modinfo() {
+    public function test_modinfo() {
         global $DB;
 
-        // Let's make a course
-        $courseid=$this->make_course();
+        // Let's make a course.
+        $courseid = $this->make_course();
 
-        // Now let's make a couple modules on that course
-        $cmid1=$this->make_course_module($courseid,array(
-            'showavailability'=>1,'availablefrom'=>17,'availableuntil'=>398,
+        // Now let's make a couple modules on that course.
+        $cmid1 = $this->make_course_module($courseid, array(
+            'showavailability'=>1, 'availablefrom'=>17, 'availableuntil'=>398,
             'completion'=>COMPLETION_TRACKING_MANUAL));
-        $cmid2=$this->make_course_module($courseid,array(
-            'showavailability'=>0,'availablefrom'=>0,'availableuntil'=>0));
+        $cmid2 = $this->make_course_module($courseid, array(
+            'showavailability'=>0, 'availablefrom'=>0, 'availableuntil'=>0));
         $this->make_section($courseid, array($cmid1, $cmid2), 1);
 
-        // Add a fake grade item
-        $gradeitemid=$DB->insert_record('grade_items',(object)array(
-            'courseid'=>$courseid,'itemname'=>'frog'));
+        // Add a fake grade item.
+        $gradeitemid = $DB->insert_record('grade_items', (object)array(
+            'courseid'=>$courseid, 'itemname'=>'frog'));
 
-        // One of the modules has grade and completion conditions, other doesn't
-        $DB->insert_record('course_modules_availability',(object)array(
+        // One of the modules has grade and completion conditions, other doesn't.
+        $DB->insert_record('course_modules_availability', (object)array(
             'coursemoduleid'=>$cmid2,
             'sourcecmid'=>$cmid1,
             'requiredcompletion'=>1
         ));
-        $DB->insert_record('course_modules_availability',(object)array(
+        $DB->insert_record('course_modules_availability', (object)array(
             'coursemoduleid'=>$cmid2,
             'gradeitemid'=>$gradeitemid,
             'grademin'=>5.5
         ));
 
-        // Okay sweet, now get modinfo
-        $modinfo=get_fast_modinfo($courseid);
+        // Okay sweet, now get modinfo.
+        $modinfo = get_fast_modinfo($courseid);
 
-        // Test basic data
-        $this->assertEquals(1,$modinfo->cms[$cmid1]->showavailability);
-        $this->assertEquals(17,$modinfo->cms[$cmid1]->availablefrom);
-        $this->assertEquals(398,$modinfo->cms[$cmid1]->availableuntil);
-        $this->assertEquals(0,$modinfo->cms[$cmid2]->showavailability);
-        $this->assertEquals(0,$modinfo->cms[$cmid2]->availablefrom);
-        $this->assertEquals(0,$modinfo->cms[$cmid2]->availableuntil);
+        // Test basic data.
+        $this->assertEquals(1, $modinfo->cms[$cmid1]->showavailability);
+        $this->assertEquals(17, $modinfo->cms[$cmid1]->availablefrom);
+        $this->assertEquals(398, $modinfo->cms[$cmid1]->availableuntil);
+        $this->assertEquals(0, $modinfo->cms[$cmid2]->showavailability);
+        $this->assertEquals(0, $modinfo->cms[$cmid2]->availablefrom);
+        $this->assertEquals(0, $modinfo->cms[$cmid2]->availableuntil);
 
-        // Test condition arrays
-        $this->assertEquals(array(),$modinfo->cms[$cmid1]->conditionscompletion);
-        $this->assertEquals(array(),$modinfo->cms[$cmid1]->conditionsgrade);
+        // Test condition arrays.
+        $this->assertEquals(array(), $modinfo->cms[$cmid1]->conditionscompletion);
+        $this->assertEquals(array(), $modinfo->cms[$cmid1]->conditionsgrade);
         $this->assertEquals(array($cmid1=>1),
             $modinfo->cms[$cmid2]->conditionscompletion);
-        $this->assertEquals(array($gradeitemid=>(object)array('min'=>5.5,'max'=>null,'name'=>'frog')),
+        $this->assertEquals(array($gradeitemid=>(object)array('min'=>5.5, 'max'=>null, 'name'=>'frog')),
             $modinfo->cms[$cmid2]->conditionsgrade);
     }
 
     public function test_section_modinfo() {
         global $DB;
 
-        // Let's make a course
+        // Let's make a course.
         $courseid = $this->make_course();
 
-        // Now let's make a couple sections on that course, one of which has a cm
+        // Now let's make a couple sections on that course, one of which has a cm.
         $cmid = $this->make_course_module($courseid);
         $sectionid1 = $this->make_section($courseid, array($cmid), 1, array(
                 'showavailability' => 1, 'availablefrom' => 17,
                 'availableuntil' => 398, 'groupingid' => 13));
         $sectionid2 = $this->make_section($courseid, array(), 2);
 
-        // Add a fake grade item
+        // Add a fake grade item.
         $gradeitemid = $DB->insert_record('grade_items', (object)array(
                 'courseid' => $courseid, 'itemname' => 'frog'));
 
-        // One of the sections has grade and completion conditions, other doesn't
+        // One of the sections has grade and completion conditions, other doesn't.
         $DB->insert_record('course_sections_availability', (object)array(
             'coursesectionid' => $sectionid2,
             'sourcecmid' => $cmid,
@@ -322,10 +320,10 @@ class conditionlib_testcase extends advanced_testcase {
         ));
 
         rebuild_course_cache($courseid, true);
-        // Okay sweet, now get modinfo
+        // Okay sweet, now get modinfo.
         $modinfo = get_fast_modinfo($courseid);
 
-        // Test basic data
+        // Test basic data.
         $section1 = $modinfo->get_section_info(1);
         $this->assertEquals(1, $section1->showavailability);
         $this->assertEquals(17, $section1->availablefrom);
@@ -337,7 +335,7 @@ class conditionlib_testcase extends advanced_testcase {
         $this->assertEquals(0, $section2->availableuntil);
         $this->assertEquals(0, $section2->groupingid);
 
-        // Test condition arrays
+        // Test condition arrays.
         $this->assertEquals(array(), $section1->conditionscompletion);
         $this->assertEquals(array(), $section1->conditionsgrade);
         $this->assertEquals(array($cmid => 1),
@@ -346,72 +344,72 @@ class conditionlib_testcase extends advanced_testcase {
                 $section2->conditionsgrade);
     }
 
-    function test_add_and_remove() {
+    public function test_add_and_remove() {
         global $DB;
-        // Make course and module
-        $courseid=$this->make_course();
-        $cmid=$this->make_course_module($courseid,array(
-            'showavailability'=>0,'availablefrom'=>0,'availableuntil'=>0));
+        // Make course and module.
+        $courseid = $this->make_course();
+        $cmid = $this->make_course_module($courseid, array(
+            'showavailability'=>0, 'availablefrom'=>0, 'availableuntil'=>0));
         $this->make_section($courseid, array($cmid), 1);
 
-        // Check it has no conditions
-        $test1=new condition_info((object)array('id'=>$cmid),
+        // Check it has no conditions.
+        $test1 = new condition_info((object)array('id'=>$cmid),
             CONDITION_MISSING_EVERYTHING);
-        $cm=$test1->get_full_course_module();
-        $this->assertEquals(array(),$cm->conditionscompletion);
-        $this->assertEquals(array(),$cm->conditionsgrade);
+        $cm = $test1->get_full_course_module();
+        $this->assertEquals(array(), $cm->conditionscompletion);
+        $this->assertEquals(array(), $cm->conditionsgrade);
 
-        // Add conditions of each type
-        $test1->add_completion_condition(13,3);
-        $this->assertEquals(array(13=>3),$cm->conditionscompletion);
-        $test1->add_grade_condition(666,0.4,null,true);
-        $this->assertEquals(array(666=>(object)array('min'=>0.4,'max'=>null,'name'=>'!missing')),
+        // Add conditions of each type.
+        $test1->add_completion_condition(13, 3);
+        $this->assertEquals(array(13=>3), $cm->conditionscompletion);
+        $test1->add_grade_condition(666, 0.4, null, true);
+        $this->assertEquals(array(666=>(object)array('min'=>0.4, 'max'=>null, 'name'=>'!missing')),
             $cm->conditionsgrade);
 
-        // Check they were really added in db
-        $test2=new condition_info((object)array('id'=>$cmid),
+        // Check they were really added in db.
+        $test2 = new condition_info((object)array('id'=>$cmid),
             CONDITION_MISSING_EVERYTHING);
-        $cm=$test2->get_full_course_module();
-        $this->assertEquals(array(13=>3),$cm->conditionscompletion);
-        $this->assertEquals(array(666=>(object)array('min'=>0.4,'max'=>null,'name'=>'!missing')),
+        $cm = $test2->get_full_course_module();
+        $this->assertEquals(array(13=>3), $cm->conditionscompletion);
+        $this->assertEquals(array(666=>(object)array('min'=>0.4, 'max'=>null, 'name'=>'!missing')),
             $cm->conditionsgrade);
 
-        // Wipe conditions
+        // Wipe conditions.
         $test2->wipe_conditions();
-        $this->assertEquals(array(),$cm->conditionscompletion);
-        $this->assertEquals(array(),$cm->conditionsgrade);
+        $this->assertEquals(array(), $cm->conditionscompletion);
+        $this->assertEquals(array(), $cm->conditionsgrade);
 
-        // Check they were really wiped
-        $test3=new condition_info((object)array('id'=>$cmid),
+        // Check they were really wiped.
+        $test3 = new condition_info((object)array('id'=>$cmid),
             CONDITION_MISSING_EVERYTHING);
-        $cm=$test3->get_full_course_module();
-        $this->assertEquals(array(),$cm->conditionscompletion);
-        $this->assertEquals(array(),$cm->conditionsgrade);
+        $cm = $test3->get_full_course_module();
+        $this->assertEquals(array(), $cm->conditionscompletion);
+        $this->assertEquals(array(), $cm->conditionsgrade);
     }
 
     public function test_section_add_and_remove() {
         global $DB;
 
-        // Make course and module
+        // Make course and module.
         $courseid = $this->make_course();
         $cmid = $this->make_course_module($courseid);
         $sectionid = $this->make_section($courseid, array($cmid), 1);
 
-        // Check it has no conditions
+        // Check it has no conditions.
         $test1 = new condition_info_section((object)array('id'=>$sectionid),
                 CONDITION_MISSING_EVERYTHING);
         $section = $test1->get_full_section();
         $this->assertEquals(array(), $section->conditionscompletion);
         $this->assertEquals(array(), $section->conditionsgrade);
 
-        // Add conditions of each type
+        // Add conditions of each type.
         $test1->add_completion_condition(13, 3);
         $this->assertEquals(array(13 => 3), $section->conditionscompletion);
         $test1->add_grade_condition(666, 0.4, null, true);
         $this->assertEquals(array(666 => (object)array('min' => 0.4, 'max' => null, 'name' => '!missing')),
                 $section->conditionsgrade);
 
-        // Check they were really added in db
+        // Check they were really added in db.
         $test2 = new condition_info_section((object)array('id' => $sectionid),
                 CONDITION_MISSING_EVERYTHING);
         $section = $test2->get_full_section();
@@ -419,12 +417,12 @@ class conditionlib_testcase extends advanced_testcase {
         $this->assertEquals(array(666 => (object)array('min' => 0.4, 'max' => null, 'name' => '!missing')),
                 $section->conditionsgrade);
 
-        // Wipe conditions
+        // Wipe conditions.
         $test2->wipe_conditions();
         $this->assertEquals(array(), $section->conditionscompletion);
         $this->assertEquals(array(), $section->conditionsgrade);
 
-        // Check they were really wiped
+        // Check they were really wiped.
         $test3 = new condition_info_section((object)array('id' => $cmid),
                 CONDITION_MISSING_EVERYTHING);
         $section = $test3->get_full_section();
@@ -432,144 +430,144 @@ class conditionlib_testcase extends advanced_testcase {
         $this->assertEquals(array(), $section->conditionsgrade);
     }
 
-    function test_is_available() {
-        global $DB,$USER;
-        $courseid=$this->make_course();
+    public function test_is_available() {
+        global $DB, $USER;
+        $courseid = $this->make_course();
 
-        // No conditions
-        $cmid=$this->make_course_module($courseid);
-        $ci=new condition_info((object)array('id'=>$cmid),
+        // No conditions.
+        $cmid = $this->make_course_module($courseid);
+        $ci = new condition_info((object)array('id'=>$cmid),
             CONDITION_MISSING_EVERYTHING);
-        $this->assertTrue($ci->is_available($text,false,0));
-        $this->assertEquals('',$text);
+        $this->assertTrue($ci->is_available($text, false, 0));
+        $this->assertEquals('', $text);
 
-        // Time (from)
-        $time=time()+100;
-        $cmid=$this->make_course_module($courseid,array('availablefrom'=>$time));
-        $ci=new condition_info((object)array('id'=>$cmid),
+        // Time (from).
+        $time = time()+100;
+        $cmid = $this->make_course_module($courseid, array('availablefrom'=>$time));
+        $ci = new condition_info((object)array('id'=>$cmid),
             CONDITION_MISSING_EVERYTHING);
         $this->assertFalse($ci->is_available($text));
-        $this->assertRegExp('/'.preg_quote(userdate($time,get_string('strftimedate','langconfig'))).'/',$text);
+        $this->assertRegExp('/'.preg_quote(userdate($time, get_string('strftimedate', 'langconfig'))).'/', $text);
 
-        $time=time()-100;
-        $cmid=$this->make_course_module($courseid,array('availablefrom'=>$time));
-        $ci=new condition_info((object)array('id'=>$cmid),
+        $time = time()-100;
+        $cmid = $this->make_course_module($courseid, array('availablefrom'=>$time));
+        $ci = new condition_info((object)array('id'=>$cmid),
             CONDITION_MISSING_EVERYTHING);
         $this->assertTrue($ci->is_available($text));
-        $this->assertEquals('',$text);
-        $this->assertRegExp('/'.preg_quote(userdate($time,get_string('strftimedate','langconfig'))).'/',$ci->get_full_information());
+        $this->assertEquals('', $text);
+        $this->assertRegExp('/'.preg_quote(userdate($time, get_string('strftimedate', 'langconfig'))).'/', $ci->get_full_information());
 
-        // Time (until)
-        $cmid=$this->make_course_module($courseid,array('availableuntil'=>time()-100));
-        $ci=new condition_info((object)array('id'=>$cmid),
+        // Time (until).
+        $cmid = $this->make_course_module($courseid, array('availableuntil'=>time()-100));
+        $ci = new condition_info((object)array('id'=>$cmid),
             CONDITION_MISSING_EVERYTHING);
         $this->assertFalse($ci->is_available($text));
-        $this->assertEquals('',$text);
+        $this->assertEquals('', $text);
 
-        // Completion
-        $oldid=$cmid;
-        $cmid=$this->make_course_module($courseid);
+        // Completion.
+        $oldid = $cmid;
+        $cmid = $this->make_course_module($courseid);
         $this->make_section($courseid, array($oldid, $cmid), 1);
-        $oldcm=$DB->get_record('course_modules',array('id'=>$oldid));
-        $oldcm->completion=COMPLETION_TRACKING_MANUAL;
-        $DB->update_record('course_modules',$oldcm);
+        $oldcm = $DB->get_record('course_modules', array('id'=>$oldid));
+        $oldcm->completion = COMPLETION_TRACKING_MANUAL;
+        $DB->update_record('course_modules', $oldcm);
 
-        // Need to reset modinfo after changing the options
+        // Need to reset modinfo after changing the options.
         rebuild_course_cache($courseid);
 
-        $ci=new condition_info((object)array('id'=>$cmid),CONDITION_MISSING_EVERYTHING);
-        $ci->add_completion_condition($oldid,COMPLETION_COMPLETE);
+        $ci = new condition_info((object)array('id'=>$cmid), CONDITION_MISSING_EVERYTHING);
+        $ci->add_completion_condition($oldid, COMPLETION_COMPLETE);
         condition_info::wipe_session_cache();
 
-        $this->assertFalse($ci->is_available($text,false));
-        $this->assertEquals(get_string('requires_completion_1','condition','xxx'),$text);
+        $this->assertFalse($ci->is_available($text, false));
+        $this->assertEquals(get_string('requires_completion_1', 'condition', 'xxx'), $text);
         completion_info::wipe_session_cache();
-        $completion=new completion_info($DB->get_record('course',array('id'=>$courseid)));
-        $completion->update_state($oldcm,COMPLETION_COMPLETE);
+        $completion = new completion_info($DB->get_record('course', array('id'=>$courseid)));
+        $completion->update_state($oldcm, COMPLETION_COMPLETE);
         completion_info::wipe_session_cache();
         condition_info::wipe_session_cache();
 
         $this->assertTrue($ci->is_available($text));
-        $this->assertFalse($ci->is_available($text,false,$USER->id+1));
+        $this->assertFalse($ci->is_available($text, false, $USER->id+1));
         completion_info::wipe_session_cache();
         condition_info::wipe_session_cache();
-        $completion=new completion_info($DB->get_record('course',array('id'=>$courseid)));
-        $completion->update_state($oldcm,COMPLETION_INCOMPLETE);
+        $completion = new completion_info($DB->get_record('course', array('id'=>$courseid)));
+        $completion->update_state($oldcm, COMPLETION_INCOMPLETE);
         $this->assertFalse($ci->is_available($text));
 
         $ci->wipe_conditions();
-        $ci->add_completion_condition($oldid,COMPLETION_INCOMPLETE);
+        $ci->add_completion_condition($oldid, COMPLETION_INCOMPLETE);
         condition_info::wipe_session_cache();
         $this->assertTrue($ci->is_available($text));
-        $this->assertTrue($ci->is_available($text,false,$USER->id+1));
+        $this->assertTrue($ci->is_available($text, false, $USER->id+1));
 
         condition_info::wipe_session_cache();
-        $this->assertTrue($ci->is_available($text,true));
+        $this->assertTrue($ci->is_available($text, true));
 
-        // Grade
+        // Grade.
         $ci->wipe_conditions();
-        // Add a fake grade item
-        $gradeitemid=$DB->insert_record('grade_items',(object)array(
-            'courseid'=>$courseid,'itemname'=>'frog'));
+        // Add a fake grade item.
+        $gradeitemid = $DB->insert_record('grade_items', (object)array(
+            'courseid'=>$courseid, 'itemname'=>'frog'));
         // Add a condition on a value existing...
-        $ci->add_grade_condition($gradeitemid,null,null,true);
+        $ci->add_grade_condition($gradeitemid, null, null, true);
         $this->assertFalse($ci->is_available($text));
-        $this->assertEquals(get_string('requires_grade_any','condition','frog'),$text);
+        $this->assertEquals(get_string('requires_grade_any', 'condition', 'frog'), $text);
 
-        // Fake it existing
-        $DB->insert_record('grade_grades',(object)array(
-            'itemid'=>$gradeitemid,'userid'=>$USER->id,'finalgrade'=>3.78));
+        // Fake it existing.
+        $DB->insert_record('grade_grades', (object)array(
+            'itemid'=>$gradeitemid, 'userid'=>$USER->id, 'finalgrade'=>3.78));
         condition_info::wipe_session_cache();
         $this->assertTrue($ci->is_available($text));
 
         condition_info::wipe_session_cache();
-        $this->assertTrue($ci->is_available($text,true));
+        $this->assertTrue($ci->is_available($text, true));
 
-        // Now require that user gets more than 3.78001
+        // Now require that user gets more than 3.78001.
         $ci->wipe_conditions();
-        $ci->add_grade_condition($gradeitemid,3.78001,null,true);
+        $ci->add_grade_condition($gradeitemid, 3.78001, null, true);
         condition_info::wipe_session_cache();
         $this->assertFalse($ci->is_available($text));
-        $this->assertEquals(get_string('requires_grade_min','condition','frog'),$text);
+        $this->assertEquals(get_string('requires_grade_min', 'condition', 'frog'), $text);
 
         // ...just on 3.78...
         $ci->wipe_conditions();
-        $ci->add_grade_condition($gradeitemid,3.78,null,true);
+        $ci->add_grade_condition($gradeitemid, 3.78, null, true);
         condition_info::wipe_session_cache();
         $this->assertTrue($ci->is_available($text));
 
-        // ...less than 3.78
+        // ...less than 3.78.
         $ci->wipe_conditions();
-        $ci->add_grade_condition($gradeitemid,null,3.78,true);
+        $ci->add_grade_condition($gradeitemid, null, 3.78, true);
         condition_info::wipe_session_cache();
         $this->assertFalse($ci->is_available($text));
-        $this->assertEquals(get_string('requires_grade_max','condition','frog'),$text);
+        $this->assertEquals(get_string('requires_grade_max', 'condition', 'frog'), $text);
 
-        // ...less than 3.78001
+        // ...less than 3.78001.
         $ci->wipe_conditions();
-        $ci->add_grade_condition($gradeitemid,null,3.78001,true);
+        $ci->add_grade_condition($gradeitemid, null, 3.78001, true);
         condition_info::wipe_session_cache();
         $this->assertTrue($ci->is_available($text));
 
-        // ...in a range that includes it
+        // ...in a range that includes it.
         $ci->wipe_conditions();
-        $ci->add_grade_condition($gradeitemid,3,4,true);
+        $ci->add_grade_condition($gradeitemid, 3, 4, true);
         condition_info::wipe_session_cache();
         $this->assertTrue($ci->is_available($text));
 
-        // ...in a range that doesn't include it
+        // ...in a range that doesn't include it.
         $ci->wipe_conditions();
-        $ci->add_grade_condition($gradeitemid,4,5,true);
+        $ci->add_grade_condition($gradeitemid, 4, 5, true);
         condition_info::wipe_session_cache();
         $this->assertFalse($ci->is_available($text));
-        $this->assertEquals(get_string('requires_grade_range','condition','frog'),$text);
+        $this->assertEquals(get_string('requires_grade_range', 'condition', 'frog'), $text);
     }
 
     public function test_section_is_available() {
         global $DB, $USER;
         $courseid = $this->make_course();
 
-        // Enrol user (needed for groups)
+        // Enrol user (needed for groups).
         $enrolplugin = enrol_get_plugin('manual');
         $course = $DB->get_record('course', array('id' => $courseid));
         $enrolplugin->add_instance($course);
@@ -581,17 +579,17 @@ class conditionlib_testcase extends advanced_testcase {
         }
         $enrolplugin->enrol_user($enrolinstance, $USER->id);
 
-        // Module for conditions later
+        // Module for conditions later.
         $cmid = $this->make_course_module($courseid);
 
-        // No conditions
+        // No conditions.
         $sectionid = $this->make_section($courseid, array($cmid), 1);
         $ci = new condition_info_section((object)array('id' => $sectionid),
                 CONDITION_MISSING_EVERYTHING);
         $this->assertTrue($ci->is_available($text, false, 0));
         $this->assertEquals('', $text);
 
-        // Time (from)
+        // Time (from).
         $time = time() + 100;
         $sectionid = $this->make_section($courseid, array(), 2, array('availablefrom' => $time));
         $ci = new condition_info_section((object)array('id' => $sectionid),
@@ -600,7 +598,7 @@ class conditionlib_testcase extends advanced_testcase {
         $timetext = userdate($time, get_string('strftimedate', 'langconfig'));
         $this->assertRegExp('~' . preg_quote($timetext) . '~', $text);
 
-        $time=time()-100;
+        $time = time()-100;
         $sectionid = $this->make_section($courseid, array(), 3, array('availablefrom' => $time));
         $ci = new condition_info_section((object)array('id' => $sectionid),
                 CONDITION_MISSING_EVERYTHING);
@@ -609,29 +607,29 @@ class conditionlib_testcase extends advanced_testcase {
         $timetext = userdate($time, get_string('strftimedate', 'langconfig'));
         $this->assertRegExp('~' . preg_quote($timetext) . '~', $ci->get_full_information());
 
-        // Time (until)
+        // Time (until).
         $sectionid = $this->make_section($courseid, array(), 4, array('availableuntil' => time() - 100));
         $ci = new condition_info_section((object)array('id' => $sectionid),
             CONDITION_MISSING_EVERYTHING);
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals('', $text);
 
-        // Completion: first set up cm
+        // Completion: first set up cm.
         $sectionid = $this->make_section($courseid, array(), 5);
         $cm = $DB->get_record('course_modules', array('id' => $cmid));
         $cm->completion = COMPLETION_TRACKING_MANUAL;
         $DB->update_record('course_modules', $cm);
 
-        // Completion: Reset modinfo after changing the options
+        // Completion: Reset modinfo after changing the options.
         rebuild_course_cache($courseid);
 
-        // Completion: Add condition
+        // Completion: Add condition.
         $ci = new condition_info_section((object)array('id' => $sectionid),
                 CONDITION_MISSING_EVERYTHING);
         $ci->add_completion_condition($cmid, COMPLETION_COMPLETE);
         condition_info_section::wipe_session_cache();
 
-        // Completion: Check
+        // Completion: Check.
         $this->assertFalse($ci->is_available($text, false));
         $this->assertEquals(get_string('requires_completion_1', 'condition', 'xxx'), $text);
         completion_info::wipe_session_cache();
@@ -642,14 +640,14 @@ class conditionlib_testcase extends advanced_testcase {
         $this->assertTrue($ci->is_available($text));
         $this->assertFalse($ci->is_available($text, false, $USER->id + 1));
 
-        // Completion: Uncheck
+        // Completion: Uncheck.
         completion_info::wipe_session_cache();
         condition_info_section::wipe_session_cache();
         $completion = new completion_info($DB->get_record('course', array('id' => $courseid)));
         $completion->update_state($cm, COMPLETION_INCOMPLETE);
         $this->assertFalse($ci->is_available($text));
 
-        // Completion: Incomplete condition
+        // Completion: Incomplete condition.
         $ci->wipe_conditions();
         $ci->add_completion_condition($cmid, COMPLETION_INCOMPLETE);
         condition_info_section::wipe_session_cache();
@@ -658,17 +656,17 @@ class conditionlib_testcase extends advanced_testcase {
         condition_info_section::wipe_session_cache();
         $this->assertTrue($ci->is_available($text, true));
 
-        // Grade: Add a fake grade item
+        // Grade: Add a fake grade item.
         $gradeitemid = $DB->insert_record('grade_items', (object)array(
             'courseid' => $courseid, 'itemname' => 'frog'));
 
-        // Grade: Add a condition on a value existing
+        // Grade: Add a condition on a value existing.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, null, null, true);
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(get_string('requires_grade_any', 'condition', 'frog'), $text);
 
-        // Grade: Fake it existing
+        // Grade: Fake it existing.
         $DB->insert_record('grade_grades', (object)array(
             'itemid' => $gradeitemid, 'userid' => $USER->id, 'finalgrade' => 3.78));
         condition_info_section::wipe_session_cache();
@@ -676,7 +674,7 @@ class conditionlib_testcase extends advanced_testcase {
         condition_info_section::wipe_session_cache();
         $this->assertTrue($ci->is_available($text, true));
 
-        // Grade: Now require that user gets more than 3.78001
+        // Grade: Now require that user gets more than 3.78001.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 3.78001, null, true);
         condition_info_section::wipe_session_cache();
@@ -689,33 +687,33 @@ class conditionlib_testcase extends advanced_testcase {
         condition_info_section::wipe_session_cache();
         $this->assertTrue($ci->is_available($text));
 
-        // Grade: ...less than 3.78
+        // Grade: ...less than 3.78.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, null, 3.78, true);
         condition_info_section::wipe_session_cache();
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(get_string('requires_grade_max', 'condition', 'frog'), $text);
 
-        // Grade: ...less than 3.78001
+        // Grade: ...less than 3.78001.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, null, 3.78001, true);
         condition_info_section::wipe_session_cache();
         $this->assertTrue($ci->is_available($text));
 
-        // Grade: ...in a range that includes it
+        // Grade: ...in a range that includes it.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 3, 4, true);
         condition_info_section::wipe_session_cache();
         $this->assertTrue($ci->is_available($text));
 
-        // Grade: ...in a range that doesn't include it
+        // Grade: ...in a range that doesn't include it.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 4, 5, true);
         condition_info_section::wipe_session_cache();
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(get_string('requires_grade_range', 'condition', 'frog'), $text);
 
-        // Grouping: Not member
+        // Grouping: Not member.
         $groupingid = $this->make_grouping($courseid, 'Grouping');
         $groupid = $this->make_group($courseid, 'Group', $groupingid);
         $sectionid = $this->make_section($courseid, array(), 6, array('groupingid' => $groupingid));
@@ -724,7 +722,7 @@ class conditionlib_testcase extends advanced_testcase {
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(trim(get_string('groupingnoaccess', 'condition')), $text);
 
-        // Grouping: Member
+        // Grouping: Member.
         $this->assertTrue(groups_add_member($groupid, $USER->id));
 
         condition_info_section::init_global_cache();
@@ -732,7 +730,7 @@ class conditionlib_testcase extends advanced_testcase {
         $this->assertEquals('', $text);
         $this->assertTrue($ci->is_available($text, true));
 
-        // Grouping: Somebody else
+        // Grouping: Somebody else.
         $this->assertFalse($ci->is_available($text, false, $USER->id + 1));
         $this->assertFalse($ci->is_available($text, true, $USER->id + 1));
     }
@@ -774,7 +772,7 @@ class conditionlib_testcase extends advanced_testcase {
         foreach ($fields as $fieldid => $name) {
             // Not checking the result, just that it's possible to get it
             // without error.
-            $ci->get_cached_user_profile_field($USER->id, $fieldid);
+            $ci->inspect_get_cached_user_profile_field($USER->id, $fieldid);
         }
 
         // Change to not logged in user.
@@ -782,9 +780,8 @@ class conditionlib_testcase extends advanced_testcase {
 
         foreach ($fields as $fieldid => $name) {
             // Should get false always when not logged in.
-            $this->assertEquals(false, $ci->get_cached_user_profile_field($USER->id, $fieldid));
+            $this->assertEquals(false, $ci->inspect_get_cached_user_profile_field($USER->id, $fieldid));
         }
-
     }
 }
 
@@ -794,7 +791,7 @@ class conditionlib_testcase extends advanced_testcase {
  * tested.
  */
 class condition_info_testwrapper extends condition_info {
-    public function get_cached_user_profile_field($userid, $fieldid) {
+    public function inspect_get_cached_user_profile_field($userid, $fieldid) {
         return parent::get_cached_user_profile_field($userid, $fieldid);
     }
 }

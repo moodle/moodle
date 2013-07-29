@@ -34,11 +34,11 @@ require_once($CFG->libdir.'/pluginlib.php');
 
 
 /**
- * Tests of the basic API of the plugin manager
+ * Tests of the basic API of the plugin manager.
  *
  * @group core_plugin
  */
-class plugin_manager_test extends advanced_testcase {
+class core_plugin_manager_testcase extends advanced_testcase {
 
     public function setUp() {
         $this->resetAfterTest();
@@ -46,29 +46,29 @@ class plugin_manager_test extends advanced_testcase {
 
     public function test_plugin_manager_instance() {
         $pluginman = testable_plugin_manager::instance();
-        $this->assertTrue($pluginman instanceof testable_plugin_manager);
+        $this->assertInstanceOf('testable_plugin_manager', $pluginman);
     }
 
     public function test_get_plugins_of_type() {
         $pluginman = testable_plugin_manager::instance();
         $mods = $pluginman->get_plugins_of_type('mod');
-        $this->assertEquals('array', gettype($mods));
-        $this->assertEquals(5, count($mods));
-        $this->assertTrue($mods['foo'] instanceof testable_plugininfo_mod);
-        $this->assertTrue($mods['bar'] instanceof testable_plugininfo_mod);
-        $this->assertTrue($mods['baz'] instanceof testable_plugininfo_mod);
-        $this->assertTrue($mods['qux'] instanceof testable_plugininfo_mod);
-        $this->assertTrue($mods['new'] instanceof testable_plugininfo_mod);
+        $this->assertSame('array', gettype($mods));
+        $this->assertCount(5, $mods);
+        $this->assertInstanceOf('testable_plugininfo_mod', $mods['foo']);
+        $this->assertInstanceOf('testable_plugininfo_mod', $mods['bar']);
+        $this->assertInstanceOf('testable_plugininfo_mod', $mods['baz']);
+        $this->assertInstanceOf('testable_plugininfo_mod', $mods['qux']);
+        $this->assertInstanceOf('testable_plugininfo_mod', $mods['new']);
         $foolishes = $pluginman->get_plugins_of_type('foolish');
-        $this->assertEquals(2, count($foolishes));
-        $this->assertTrue($foolishes['frog'] instanceof testable_pluginfo_foolish);
-        $this->assertTrue($foolishes['hippo'] instanceof testable_pluginfo_foolish);
+        $this->assertCount(2, $foolishes);
+        $this->assertInstanceOf('testable_pluginfo_foolish', $foolishes['frog']);
+        $this->assertInstanceOf('testable_pluginfo_foolish', $foolishes['hippo']);
         $bazmegs = $pluginman->get_plugins_of_type('bazmeg');
-        $this->assertEquals(1, count($bazmegs));
-        $this->assertTrue($bazmegs['one'] instanceof testable_pluginfo_bazmeg);
+        $this->assertCount(1, $bazmegs);
+        $this->assertInstanceOf('testable_pluginfo_bazmeg', $bazmegs['one']);
         $quxcats = $pluginman->get_plugins_of_type('quxcat');
-        $this->assertEquals(1, count($quxcats));
-        $this->assertTrue($quxcats['one'] instanceof testable_pluginfo_quxcat);
+        $this->assertCount(1, $quxcats);
+        $this->assertInstanceOf('testable_pluginfo_quxcat', $quxcats['one']);
         $unknown = $pluginman->get_plugins_of_type('muhehe');
         $this->assertSame(array(), $unknown);
     }
@@ -76,21 +76,21 @@ class plugin_manager_test extends advanced_testcase {
     public function test_get_plugins() {
         $pluginman = testable_plugin_manager::instance();
         $plugins = $pluginman->get_plugins();
-        $this->assertEquals('array', gettype($plugins));
+        $this->assertSame('array', gettype($plugins));
         $this->assertTrue(isset($plugins['mod']['foo']));
         $this->assertTrue(isset($plugins['mod']['bar']));
         $this->assertTrue(isset($plugins['mod']['baz']));
         $this->assertTrue(isset($plugins['mod']['new']));
         $this->assertTrue(isset($plugins['foolish']['frog']));
         $this->assertTrue(isset($plugins['foolish']['hippo']));
-        $this->assertTrue($plugins['mod']['foo'] instanceof testable_plugininfo_mod);
-        $this->assertTrue($plugins['mod']['bar'] instanceof testable_plugininfo_mod);
-        $this->assertTrue($plugins['mod']['baz'] instanceof testable_plugininfo_mod);
-        $this->assertTrue($plugins['mod']['new'] instanceof testable_plugininfo_mod);
-        $this->assertTrue($plugins['foolish']['frog'] instanceof testable_pluginfo_foolish);
-        $this->assertTrue($plugins['foolish']['hippo'] instanceof testable_pluginfo_foolish);
-        $this->assertTrue($plugins['bazmeg']['one'] instanceof testable_pluginfo_bazmeg);
-        $this->assertTrue($plugins['quxcat']['one'] instanceof testable_pluginfo_quxcat);
+        $this->assertInstanceOf('testable_plugininfo_mod', $plugins['mod']['foo']);
+        $this->assertInstanceOf('testable_plugininfo_mod', $plugins['mod']['bar']);
+        $this->assertInstanceOf('testable_plugininfo_mod', $plugins['mod']['baz']);
+        $this->assertInstanceOf('testable_plugininfo_mod', $plugins['mod']['new']);
+        $this->assertInstanceOf('testable_pluginfo_foolish', $plugins['foolish']['frog']);
+        $this->assertInstanceOf('testable_pluginfo_foolish', $plugins['foolish']['hippo']);
+        $this->assertInstanceOf('testable_pluginfo_bazmeg', $plugins['bazmeg']['one']);
+        $this->assertInstanceOf('testable_pluginfo_quxcat', $plugins['quxcat']['one']);
     }
 
     public function test_get_subplugins_of_plugin() {
@@ -98,18 +98,18 @@ class plugin_manager_test extends advanced_testcase {
         $this->assertSame(array(), $pluginman->get_subplugins_of_plugin('mod_missing'));
         $this->assertSame(array(), $pluginman->get_subplugins_of_plugin('mod_bar'));
         $foosubs = $pluginman->get_subplugins_of_plugin('mod_foo');
-        $this->assertEquals('array', gettype($foosubs));
-        $this->assertEquals(2, count($foosubs));
-        $this->assertTrue($foosubs['foolish_frog'] instanceof testable_pluginfo_foolish);
-        $this->assertTrue($foosubs['foolish_hippo'] instanceof testable_pluginfo_foolish);
+        $this->assertSame('array', gettype($foosubs));
+        $this->assertCount(2, $foosubs);
+        $this->assertInstanceOf('testable_pluginfo_foolish', $foosubs['foolish_frog']);
+        $this->assertInstanceOf('testable_pluginfo_foolish', $foosubs['foolish_hippo']);
         $bazsubs = $pluginman->get_subplugins_of_plugin('mod_baz');
-        $this->assertEquals('array', gettype($bazsubs));
-        $this->assertEquals(1, count($bazsubs));
-        $this->assertTrue($bazsubs['bazmeg_one'] instanceof testable_pluginfo_bazmeg);
+        $this->assertSame('array', gettype($bazsubs));
+        $this->assertCount(1, $bazsubs);
+        $this->assertInstanceOf('testable_pluginfo_bazmeg', $bazsubs['bazmeg_one']);
         $quxsubs = $pluginman->get_subplugins_of_plugin('mod_qux');
-        $this->assertEquals('array', gettype($quxsubs));
-        $this->assertEquals(1, count($quxsubs));
-        $this->assertTrue($quxsubs['quxcat_one'] instanceof testable_pluginfo_quxcat);
+        $this->assertSame('array', gettype($quxsubs));
+        $this->assertCount(1, $quxsubs);
+        $this->assertInstanceOf('testable_pluginfo_quxcat', $quxsubs['quxcat_one']);
     }
 
     public function test_get_subplugins() {
@@ -122,40 +122,40 @@ class plugin_manager_test extends advanced_testcase {
 
     public function test_get_parent_of_subplugin() {
         $pluginman = testable_plugin_manager::instance();
-        $this->assertEquals('mod_foo', $pluginman->get_parent_of_subplugin('foolish'));
-        $this->assertEquals('mod_baz', $pluginman->get_parent_of_subplugin('bazmeg'));
-        $this->assertEquals('mod_qux', $pluginman->get_parent_of_subplugin('quxcat'));
-        $this->assertSame(false, $pluginman->get_parent_of_subplugin('mod'));
-        $this->assertSame(false, $pluginman->get_parent_of_subplugin('unknown'));
+        $this->assertSame('mod_foo', $pluginman->get_parent_of_subplugin('foolish'));
+        $this->assertSame('mod_baz', $pluginman->get_parent_of_subplugin('bazmeg'));
+        $this->assertSame('mod_qux', $pluginman->get_parent_of_subplugin('quxcat'));
+        $this->assertFalse($pluginman->get_parent_of_subplugin('mod'));
+        $this->assertFalse($pluginman->get_parent_of_subplugin('unknown'));
         $plugins = $pluginman->get_plugins();
         $this->assertFalse($plugins['mod']['foo']->is_subplugin());
-        $this->assertSame(false, $plugins['mod']['foo']->get_parent_plugin());
+        $this->assertFalse($plugins['mod']['foo']->get_parent_plugin());
         $this->assertTrue($plugins['foolish']['frog']->is_subplugin());
-        $this->assertEquals('mod_foo', $plugins['foolish']['frog']->get_parent_plugin());
+        $this->assertSame('mod_foo', $plugins['foolish']['frog']->get_parent_plugin());
     }
 
     public function test_plugin_name() {
         $pluginman = testable_plugin_manager::instance();
-        $this->assertEquals('Foo', $pluginman->plugin_name('mod_foo'));
-        $this->assertEquals('Bar', $pluginman->plugin_name('mod_bar'));
-        $this->assertEquals('Frog', $pluginman->plugin_name('foolish_frog'));
-        $this->assertEquals('Hippo', $pluginman->plugin_name('foolish_hippo'));
-        $this->assertEquals('One', $pluginman->plugin_name('bazmeg_one'));
-        $this->assertEquals('One', $pluginman->plugin_name('quxcat_one'));
+        $this->assertSame('Foo', $pluginman->plugin_name('mod_foo'));
+        $this->assertSame('Bar', $pluginman->plugin_name('mod_bar'));
+        $this->assertSame('Frog', $pluginman->plugin_name('foolish_frog'));
+        $this->assertSame('Hippo', $pluginman->plugin_name('foolish_hippo'));
+        $this->assertSame('One', $pluginman->plugin_name('bazmeg_one'));
+        $this->assertSame('One', $pluginman->plugin_name('quxcat_one'));
     }
 
     public function test_get_plugin_info() {
         $pluginman = testable_plugin_manager::instance();
-        $this->assertTrue($pluginman->get_plugin_info('mod_foo') instanceof testable_plugininfo_mod);
-        $this->assertTrue($pluginman->get_plugin_info('foolish_frog') instanceof testable_pluginfo_foolish);
+        $this->assertInstanceOf('testable_plugininfo_mod', $pluginman->get_plugin_info('mod_foo'));
+        $this->assertInstanceOf('testable_pluginfo_foolish', $pluginman->get_plugin_info('foolish_frog'));
     }
 
     public function test_other_plugins_that_require() {
         $pluginman = testable_plugin_manager::instance();
         $this->assertEquals(array('foolish_frog'), $pluginman->other_plugins_that_require('mod_foo'));
-        $this->assertEquals(2, count($pluginman->other_plugins_that_require('foolish_frog')));
-        $this->assertTrue(in_array('foolish_hippo', $pluginman->other_plugins_that_require('foolish_frog')));
-        $this->assertTrue(in_array('mod_foo', $pluginman->other_plugins_that_require('foolish_frog')));
+        $this->assertCount(2, $pluginman->other_plugins_that_require('foolish_frog'));
+        $this->assertContains('foolish_hippo', $pluginman->other_plugins_that_require('foolish_frog'));
+        $this->assertContains('mod_foo', $pluginman->other_plugins_that_require('foolish_frog'));
         $this->assertEquals(array(), $pluginman->other_plugins_that_require('foolish_hippo'));
         $this->assertEquals(array('mod_foo'), $pluginman->other_plugins_that_require('mod_bar'));
         $this->assertEquals(array('mod_foo'), $pluginman->other_plugins_that_require('mod_missing'));
@@ -184,24 +184,24 @@ class plugin_manager_test extends advanced_testcase {
         $pluginman = testable_plugin_manager::instance();
         $failedplugins = array();
         $this->assertFalse($pluginman->all_plugins_ok(2013010100, $failedplugins));
-        $this->assertTrue(in_array('mod_foo', $failedplugins)); // Requires mod_missing
-        $this->assertFalse(in_array('mod_bar', $failedplugins));
-        $this->assertFalse(in_array('foolish_frog', $failedplugins));
-        $this->assertFalse(in_array('foolish_hippo', $failedplugins));
+        $this->assertContains('mod_foo', $failedplugins); // Requires mod_missing.
+        $this->assertNotContains('mod_bar', $failedplugins);
+        $this->assertNotContains('foolish_frog', $failedplugins);
+        $this->assertNotContains('foolish_hippo', $failedplugins);
 
         $failedplugins = array();
         $this->assertFalse($pluginman->all_plugins_ok(2012010100, $failedplugins));
-        $this->assertTrue(in_array('mod_foo', $failedplugins)); // Requires mod_missing
-        $this->assertFalse(in_array('mod_bar', $failedplugins));
-        $this->assertTrue(in_array('foolish_frog', $failedplugins)); // Requires Moodle 2013010100
-        $this->assertFalse(in_array('foolish_hippo', $failedplugins));
+        $this->assertContains('mod_foo', $failedplugins); // Requires mod_missing.
+        $this->assertNotContains('mod_bar', $failedplugins);
+        $this->assertContains('foolish_frog', $failedplugins); // Requires Moodle 2013010100.
+        $this->assertNotContains('foolish_hippo', $failedplugins);
 
         $failedplugins = array();
         $this->assertFalse($pluginman->all_plugins_ok(2011010100, $failedplugins));
-        $this->assertTrue(in_array('mod_foo', $failedplugins)); // Requires mod_missing and Moodle 2012010100
-        $this->assertTrue(in_array('mod_bar', $failedplugins)); // Requires Moodle 2012010100
-        $this->assertTrue(in_array('foolish_frog', $failedplugins)); // Requires Moodle 2013010100
-        $this->assertTrue(in_array('foolish_hippo', $failedplugins)); // Requires Moodle 2012010100
+        $this->assertContains('mod_foo', $failedplugins); // Requires mod_missing and Moodle 2012010100.
+        $this->assertContains('mod_bar', $failedplugins); // Requires Moodle 2012010100.
+        $this->assertContains('foolish_frog', $failedplugins); // Requires Moodle 2013010100.
+        $this->assertContains('foolish_hippo', $failedplugins); // Requires Moodle 2012010100.
     }
 
     public function test_some_plugins_updatable() {
@@ -229,7 +229,7 @@ class plugin_manager_test extends advanced_testcase {
         $pluginman = testable_plugin_manager::instance();
         $plugins = $pluginman->get_plugins();
         $this->assertNull($plugins['mod']['bar']->available_updates());
-        $this->assertEquals('array', gettype($plugins['mod']['foo']->available_updates()));
+        $this->assertSame('array', gettype($plugins['mod']['foo']->available_updates()));
         foreach ($plugins['mod']['foo']->available_updates() as $availableupdate) {
             $this->assertInstanceOf('available_update_info', $availableupdate);
         }
@@ -253,7 +253,7 @@ class plugin_manager_test extends advanced_testcase {
         $pluginman = testable_plugin_manager::instance();
         foreach ($pluginman->get_plugins() as $plugintype => $plugininfos) {
             foreach ($plugininfos as $plugininfo) {
-                $this->assertTrue($plugininfo->get_uninstall_url() instanceof moodle_url);
+                $this->assertInstanceOf('moodle_url', $plugininfo->get_uninstall_url());
             }
         }
     }
@@ -261,23 +261,23 @@ class plugin_manager_test extends advanced_testcase {
 
 
 /**
- * Tests of the basic API of the available update checker
+ * Tests of the basic API of the available update checker.
  *
  * @group core_plugin
  */
-class available_update_checker_test extends advanced_testcase {
+class core_available_update_checker_testcase extends advanced_testcase {
 
     public function test_core_available_update() {
         $provider = testable_available_update_checker::instance();
-        $this->assertTrue($provider instanceof available_update_checker);
+        $this->assertInstanceOf('available_update_checker', $provider);
 
         $provider->fake_current_environment(2012060102.00, '2.3.2 (Build: 20121012)', '2.3', array());
         $updates = $provider->get_update_info('core');
-        $this->assertEquals(count($updates), 2);
+        $this->assertCount(2, $updates);
 
         $provider->fake_current_environment(2012060103.00, '2.3.3 (Build: 20121212)', '2.3', array());
         $updates = $provider->get_update_info('core');
-        $this->assertEquals(count($updates), 1);
+        $this->assertCount(1, $updates);
 
         $provider->fake_current_environment(2012060103.00, '2.3.3 (Build: 20121212)', '2.3', array());
         $updates = $provider->get_update_info('core', array('minmaturity' => MATURITY_STABLE));
@@ -285,7 +285,7 @@ class available_update_checker_test extends advanced_testcase {
     }
 
     /**
-     * If there are no fetched data yet, the first cron should fetch them
+     * If there are no fetched data yet, the first cron should fetch them.
      */
     public function test_cron_initial_fetch() {
         $provider = testable_available_update_checker::instance();
@@ -296,29 +296,29 @@ class available_update_checker_test extends advanced_testcase {
     }
 
     /**
-     * If there is a fresh fetch available, no cron execution is expected
+     * If there is a fresh fetch available, no cron execution is expected.
      */
     public function test_cron_has_fresh_fetch() {
         $provider = testable_available_update_checker::instance();
-        $provider->fakerecentfetch = time() - 23 * HOURSECS; // fetched 23 hours ago
+        $provider->fakerecentfetch = time() - 23 * HOURSECS; // Fetched 23 hours ago.
         $provider->fakecurrenttimestamp = -1;
         $provider->cron();
-        $this->assertTrue(true); // we should get here with no exception thrown
+        $this->assertTrue(true); // We should get here with no exception thrown.
     }
 
     /**
-     * If there is an outdated fetch, the cron execution is expected
+     * If there is an outdated fetch, the cron execution is expected.
      */
     public function test_cron_has_outdated_fetch() {
         $provider = testable_available_update_checker::instance();
-        $provider->fakerecentfetch = time() - 49 * HOURSECS; // fetched 49 hours ago
+        $provider->fakerecentfetch = time() - 49 * HOURSECS; // Fetched 49 hours ago.
         $provider->fakecurrenttimestamp = -1;
         $this->setExpectedException('testable_available_update_checker_cron_executed');
         $provider->cron();
     }
 
     /**
-     * The first cron after 01:42 AM today should fetch the data
+     * The first cron after 01:42 AM today should fetch the data.
      *
      * @see testable_available_update_checker::cron_execution_offset()
      */
@@ -327,7 +327,7 @@ class available_update_checker_test extends advanced_testcase {
         $provider->fakecurrenttimestamp = mktime(1, 40, 02); // 01:40:02 AM today
         $provider->fakerecentfetch = $provider->fakecurrenttimestamp - 24 * HOURSECS;
         $provider->cron();
-        $this->assertTrue(true); // we should get here with no exception thrown
+        $this->assertTrue(true); // We should get here with no exception thrown.
     }
 
     /**
@@ -339,7 +339,7 @@ class available_update_checker_test extends advanced_testcase {
     public function test_cron_offset_execution() {
         $provider = testable_available_update_checker::instance();
 
-        // the cron at 01:45 should fetch the data
+        // The cron at 01:45 should fetch the data.
         $provider->fakecurrenttimestamp = mktime(1, 45, 02); // 01:45:02 AM today
         $provider->fakerecentfetch = $provider->fakecurrenttimestamp - 24 * HOURSECS - 1;
         $executed = false;
@@ -350,7 +350,7 @@ class available_update_checker_test extends advanced_testcase {
         }
         $this->assertTrue($executed, 'Cron should be executed at 01:45:02 but it was not.');
 
-        // another cron at 06:45 should still consider data as fresh enough
+        // Another cron at 06:45 should still consider data as fresh enough.
         $provider->fakerecentfetch = $provider->fakecurrenttimestamp;
         $provider->fakecurrenttimestamp = mktime(6, 45, 03); // 06:45:03 AM
         $executed = false;
@@ -361,7 +361,7 @@ class available_update_checker_test extends advanced_testcase {
         }
         $this->assertFalse($executed, 'Cron should not be executed at 06:45:03 but it was.');
 
-        // the next scheduled execution should happen the next day
+        // The next scheduled execution should happen the next day.
         $provider->fakecurrenttimestamp = $provider->fakerecentfetch + 24 * HOURSECS + 1;
         $executed = false;
         try {
@@ -377,8 +377,8 @@ class available_update_checker_test extends advanced_testcase {
         $old = array();
         $new = array();
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertEquals('array', gettype($cmp));
-        $this->assertTrue(empty($cmp));
+        $this->assertSame('array', gettype($cmp));
+        $this->assertEmpty($cmp);
     }
 
     public function test_compare_responses_old_empty() {
@@ -394,10 +394,10 @@ class available_update_checker_test extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertEquals('array', gettype($cmp));
-        $this->assertFalse(empty($cmp));
+        $this->assertSame('array', gettype($cmp));
+        $this->assertNotEmpty($cmp);
         $this->assertTrue(isset($cmp['core'][0]['version']));
-        $this->assertEquals($cmp['core'][0]['version'], 2012060103);
+        $this->assertEquals(2012060103, $cmp['core'][0]['version']);
     }
 
     public function test_compare_responses_no_change() {
@@ -420,8 +420,8 @@ class available_update_checker_test extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertEquals('array', gettype($cmp));
-        $this->assertTrue(empty($cmp));
+        $this->assertSame('array', gettype($cmp));
+        $this->assertEmpty($cmp);
     }
 
     public function test_compare_responses_new_and_missing_update() {
@@ -453,11 +453,11 @@ class available_update_checker_test extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertEquals('array', gettype($cmp));
-        $this->assertFalse(empty($cmp));
-        $this->assertEquals(count($cmp), 1);
-        $this->assertEquals(count($cmp['core']), 1);
-        $this->assertEquals($cmp['core'][0]['version'], 2012120100);
+        $this->assertSame('array', gettype($cmp));
+        $this->assertNotEmpty($cmp);
+        $this->assertCount(1, $cmp);
+        $this->assertCount(1, $cmp['core']);
+        $this->assertEquals(2012120100, $cmp['core'][0]['version']);
     }
 
     public function test_compare_responses_modified_update() {
@@ -481,17 +481,17 @@ class available_update_checker_test extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertEquals('array', gettype($cmp));
-        $this->assertFalse(empty($cmp));
-        $this->assertEquals(count($cmp), 1);
-        $this->assertEquals(count($cmp['mod_foo']), 1);
-        $this->assertEquals($cmp['mod_foo'][0]['version'], 2011010102);
+        $this->assertSame('array', gettype($cmp));
+        $this->assertNotEmpty($cmp);
+        $this->assertCount(1, $cmp);
+        $this->assertCount(1, $cmp['mod_foo']);
+        $this->assertEquals(2011010102, $cmp['mod_foo'][0]['version']);
     }
 
     public function test_compare_responses_invalid_format() {
         $provider = testable_available_update_checker::instance();
         $broken = array(
-            'status' => 'ERROR' // no 'updates' key here
+            'status' => 'ERROR' // No 'updates' key here.
         );
         $this->setExpectedException('available_update_checker_exception');
         $cmp = $provider->compare_responses($broken, $broken);
@@ -505,7 +505,7 @@ class available_update_checker_test extends advanced_testcase {
         $this->assertFalse($provider->is_same_release('2.3dev', '2.3 dev'));
         $this->assertFalse($provider->is_same_release('2.3.1', '2.3'));
         $this->assertFalse($provider->is_same_release('2.3.1', '2.3.2'));
-        $this->assertTrue($provider->is_same_release('2.3.2+', '2.3.2')); // yes, really
+        $this->assertTrue($provider->is_same_release('2.3.2+', '2.3.2')); // Yes, really!
         $this->assertTrue($provider->is_same_release('2.3.2 (Build: 123456)', '2.3.2+ (Build: 123457)'));
         $this->assertFalse($provider->is_same_release('3.0 Community Edition', '3.0 Enterprise Edition'));
         $this->assertTrue($provider->is_same_release('3.0 Community Edition', '3.0 Community Edition (Build: 20290101)'));
@@ -534,7 +534,7 @@ class testable_plugininfo_base extends plugininfo_base {
 
 
 /**
- * Modified {@link plugininfo_mod} suitable for testing purposes
+ * Modified {@link plugininfo_mod} suitable for testing purposes.
  */
 class testable_plugininfo_mod extends plugininfo_mod {
 
@@ -567,7 +567,7 @@ class testable_plugininfo_mod extends plugininfo_mod {
 
 
 /**
- * Testable class representing subplugins of testable mod_foo
+ * Testable class representing subplugins of testable mod_foo.
  */
 class testable_pluginfo_foolish extends testable_plugininfo_base {
 
@@ -586,7 +586,7 @@ class testable_pluginfo_foolish extends testable_plugininfo_base {
 
 
 /**
- * Testable class representing subplugins of testable mod_baz
+ * Testable class representing subplugins of testable mod_baz.
  */
 class testable_pluginfo_bazmeg extends testable_plugininfo_base {
 
@@ -605,7 +605,7 @@ class testable_pluginfo_bazmeg extends testable_plugininfo_base {
 
 
 /**
- * Testable class representing subplugins of testable mod_qux
+ * Testable class representing subplugins of testable mod_qux.
  */
 class testable_pluginfo_quxcat extends testable_plugininfo_base {
 
@@ -653,7 +653,7 @@ class testable_plugin_manager extends plugin_manager {
      * @param bool $disablecache ignored in this class
      * @return array
      */
-    public function get_plugins($disablecache=false) {
+    public function get_plugins($disablecache = false) {
 
         $dirroot = dirname(__FILE__).'/fixtures/mockplugins';
 
@@ -707,7 +707,7 @@ class testable_plugin_manager extends plugin_manager {
      * @param bool $disablecache ignored in this class
      * @return array
      */
-    public function get_subplugins($disablecache=false) {
+    public function get_subplugins($disablecache = false) {
 
         $this->subpluginsinfo = array(
             'mod_foo' => array(
@@ -755,7 +755,7 @@ class testable_plugin_manager extends plugin_manager {
     }
 
     public function plugintype_name_plural($type) {
-        return ucfirst($type).'s'; // Simple, isn't it? ;-)
+        return ucfirst($type).'s'; // Simple, isn't it? ;-).
     }
 
     public function plugin_external_source($component) {
@@ -768,7 +768,7 @@ class testable_plugin_manager extends plugin_manager {
 
 
 /**
- * Modified version of {@link available_update_checker} suitable for testing
+ * Modified version of {@link available_update_checker} suitable for testing.
  */
 class testable_available_update_checker extends available_update_checker {
 
@@ -780,7 +780,7 @@ class testable_available_update_checker extends available_update_checker {
     public $fakecurrenttimestamp = -1;
 
     /**
-     * Factory method for this class
+     * Factory method for this class.
      *
      * @return testable_available_update_checker the singleton instance
      */
@@ -896,7 +896,7 @@ class testable_available_update_checker extends available_update_checker {
     }
 
     protected function cron_execution_offset() {
-        // autofetch should run by the first cron after 01:42 AM
+        // Autofetch should run by the first cron after 01:42 AM.
         return 42 * MINSECS;
     }
 
@@ -907,27 +907,25 @@ class testable_available_update_checker extends available_update_checker {
 
 
 /**
- * Exception used to detect {@link available_update_checker::cron_execute()} calls
+ * Exception used to detect {@link available_update_checker::cron_execute()} calls.
  */
 class testable_available_update_checker_cron_executed extends Exception {
-
 }
 
 
 /**
- * Modified {@link available_update_deployer} suitable for testing purposes
+ * Modified {@link available_update_deployer} suitable for testing purposes.
  */
 class testable_available_update_deployer extends available_update_deployer {
-
 }
 
 
 /**
- * Test cases for {@link available_update_deployer} class
+ * Test cases for {@link available_update_deployer} class.
  *
  * @group core_plugin
  */
-class available_update_deployer_test extends advanced_testcase {
+class core_available_update_deployer_testcase extends advanced_testcase {
 
     public function test_magic_setters() {
         $deployer = testable_available_update_deployer::instance();
@@ -944,9 +942,9 @@ class available_update_deployer_test extends advanced_testcase {
         $filename = $CFG->phpunit_dataroot.'/mdeploy/auth/'.$passfile;
         $this->assertFileExists($filename);
         $stored = file($filename, FILE_IGNORE_NEW_LINES);
-        $this->assertEquals(count($stored), 2);
+        $this->assertCount(2, $stored);
         $this->assertGreaterThan(23, strlen($stored[0]));
         $this->assertSame($stored[0], $password);
-        $this->assertTrue(time() - (int)$stored[1] < 60);
+        $this->assertLessThan(60, time() - (int)$stored[1]);
     }
 }

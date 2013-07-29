@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,7 +19,7 @@
  * functionality.
  *
  * @package     core
- * @category    test
+ * @category    phpunit
  * @copyright   2013 David Mudrak <david@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,10 +32,10 @@ require_once($CFG->libdir.'/adminlib.php');
 /**
  * Provides the unit tests for admin tree functionality.
  */
-class admintree_testcase extends advanced_testcase {
+class core_admintree_testcase extends advanced_testcase {
 
     /**
-     * Adding nodes into the admin tree
+     * Adding nodes into the admin tree.
      */
     public function test_add_nodes() {
 
@@ -72,7 +71,7 @@ class admintree_testcase extends advanced_testcase {
         }
         $this->assertEquals(array('one', 'two', 'three', 'four', 'five'), $map);
 
-        // Insert a node into the middle of the subcategory
+        // Insert a node into the middle of the subcategory.
         $tree->add('one', new admin_category('one-two', 'One-two'), 'one-three');
         $map = array();
         foreach ($one->children as $child) {
