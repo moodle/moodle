@@ -17,8 +17,7 @@
 /**
  * Web CT question importer.
  *
- * @package    qformat
- * @subpackage webct
+ * @package    qformat_webct
  * @copyright  2004 ASP Consulting http://www.asp-consulting.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,11 +30,11 @@ defined('MOODLE_INTERNAL') || die();
  * @param string $string
  * @return string
  */
-function unhtmlentities($string){
-    $search = array ("'<script[?>]*?>.*?</script>'si",  // remove javascript
-                 "'<[\/\!]*?[^<?>]*?>'si",  // remove HTML tags
-                 "'([\r\n])[\s]+'",  // remove spaces
-                 "'&(quot|#34);'i",  // remove HTML entites
+function unhtmlentities($string) {
+    $search = array ("'<script[?>]*?>.*?</script>'si",  // Remove javascript.
+                 "'<[\/\!]*?[^<?>]*?>'si",  // Remove HTML tags.
+                 "'([\r\n])[\s]+'",  // Remove spaces.
+                 "'&(quot|#34);'i",  // Remove HTML entites.
                  "'&(amp|#38);'i",
                  "'&(lt|#60);'i",
                  "'&(gt|#62);'i",
@@ -44,7 +43,7 @@ function unhtmlentities($string){
                  "'&(cent|#162);'i",
                  "'&(pound|#163);'i",
                  "'&(copy|#169);'i",
-                 "'&#(\d+);'e");  // Evaluate like PHP
+                 "'&#(\d+);'e");  // Evaluate like PHP.
     $replace = array ("",
                   "",
                   "\\1",
@@ -67,43 +66,43 @@ function unhtmlentities($string){
  */
 function qformat_webct_convert_formula($formula) {
 
-    // Remove empty space, as it would cause problems otherwise:
+    // Remove empty space, as it would cause problems otherwise.
     $formula = str_replace(' ', '', $formula);
 
-    // Remove paranthesis after e,E and *10**:
+    // Remove paranthesis after e,E and *10**.
     while (preg_match('~[0-9.](e|E|\\*10\\*\\*)\\([+-]?[0-9]+\\)~', $formula, $regs)) {
         $formula = str_replace(
                 $regs[0], preg_replace('/[)(]/', '', $regs[0]), $formula);
     }
 
-    // Replace *10** with e where possible
+    // Replace *10** with e where possible.
     while (preg_match('~(^[+-]?|[^eE][+-]|[^0-9eE+-])[0-9.]+\\*10\\*\\*[+-]?[0-9]+([^0-9.eE]|$)~',
             $formula, $regs)) {
         $formula = str_replace(
                 $regs[0], str_replace('*10**', 'e', $regs[0]), $formula);
     }
 
-    // Replace other 10** with 1e where possible
+    // Replace other 10** with 1e where possible.
     while (preg_match('~(^|[^0-9.eE])10\\*\\*[+-]?[0-9]+([^0-9.eE]|$)~', $formula, $regs)) {
         $formula = str_replace(
                 $regs[0], str_replace('10**', '1e', $regs[0]), $formula);
     }
 
     // Replace all other base**exp with the PHP equivalent function pow(base,exp)
-    // (Pretty tricky to exchange an operator with a function)
+    // (Pretty tricky to exchange an operator with a function).
     while (2 == count($splits = explode('**', $formula, 2))) {
 
-        // Find $base
+        // Find $base.
         if (preg_match('~^(.*[^0-9.eE])?(([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?|\\{[^}]*\\})$~',
                 $splits[0], $regs)) {
-            // The simple cases
+            // The simple cases.
             $base = $regs[2];
             $splits[0] = $regs[1];
 
         } else if (preg_match('~\\)$~', $splits[0])) {
-            // Find the start of this parenthesis
+            // Find the start of this parenthesis.
             $deep = 1;
-            for ($i = 1 ; $deep ; ++$i) {
+            for ($i = 1; $deep; ++$i) {
                 if (!preg_match('~^(.*[^[:alnum:]_])?([[:alnum:]_]*([)(])([^)(]*[)(]){'.$i.'})$~',
                         $splits[0], $regs)) {
                     print_error("parenthesisinproperstart", 'question', '', $splits[0]);
@@ -123,17 +122,17 @@ function qformat_webct_convert_formula($formula) {
             print_error('badbase', 'question', '', $splits[0]);
         }
 
-        // Find $exp (similar to above but a little easier)
+        // Find $exp (similar to above but a little easier).
         if (preg_match('~^([+-]?(\\{[^}]\\}|([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?))(.*)~',
                 $splits[1], $regs)) {
-            // The simple case
+            // The simple case.
             $exp = $regs[1];
             $splits[1] = $regs[6];
 
         } else if (preg_match('~^[+-]?[[:alnum:]_]*\\(~', $splits[1])) {
-            // Find the end of the parenthesis
+            // Find the end of the parenthesis.
             $deep = 1;
-            for ($i = 1 ; $deep ; ++$i) {
+            for ($i = 1; $deep; ++$i) {
                 if (!preg_match('~^([+-]?[[:alnum:]_]*([)(][^)(]*){'.$i.'}([)(]))(.*)~',
                         $splits[1], $regs)) {
                     print_error("parenthesisinproperclose", 'question', '', $splits[1]);
@@ -154,7 +153,7 @@ function qformat_webct_convert_formula($formula) {
         $formula = "$splits[0]pow($base,$exp)$splits[1]";
     }
 
-    // Nothing more is known to need to be converted
+    // Nothing more is known to need to be converted.
 
     return $formula;
 }
@@ -168,8 +167,8 @@ function qformat_webct_convert_formula($formula) {
  */
 class qformat_webct extends qformat_default {
 
-    function provide_import() {
-      return true;
+    public function provide_import() {
+        return true;
     }
 
     protected function readquestions($lines) {
@@ -179,73 +178,68 @@ class qformat_webct extends qformat_default {
         $questions = array();
         $errors = array();
         $warnings = array();
-        $webct_options = array();
+        $webctoptions = array();
 
-        $ignore_rest_of_question = FALSE;
+        $ignorerestofquestion = false;
 
-        $nLineCounter = 0;
-        $nQuestionStartLine = 0;
-        $bIsHTMLText = FALSE;
-        $lines[] = ":EOF:";    // for an easiest processing of the last line
-    //    $question = $this->defaultquestion();
+        $nlinecounter = 0;
+        $nquestionstartline = 0;
+        $bishtmltext = false;
+        $lines[] = ":EOF:";    // For an easiest processing of the last line.
+        // We don't call defaultquestion() here, it will be called later.
 
         foreach ($lines as $line) {
-            $nLineCounter++;
-            $line = iconv("Windows-1252","UTF-8",$line);
-            // Processing multiples lines strings
+            $nlinecounter++;
+            $line = iconv("Windows-1252", "UTF-8", $line);
+            // Processing multiples lines strings.
 
             if (isset($questiontext) and is_string($questiontext)) {
-                if (preg_match("~^:~",$line)) {
+                if (preg_match("~^:~", $line)) {
                     $question->questiontext = trim($questiontext);
                     unset($questiontext);
-                }
-                 else {
+                } else {
                     $questiontext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
 
             if (isset($answertext) and is_string($answertext)) {
-                if (preg_match("~^:~",$line)) {
+                if (preg_match("~^:~", $line)) {
                     $answertext = trim($answertext);
                     $question->answer[$currentchoice] = $answertext;
                     $question->subanswers[$currentchoice] = $answertext;
                     unset($answertext);
-                }
-                 else {
+                } else {
                     $answertext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
 
             if (isset($responsetext) and is_string($responsetext)) {
-                if (preg_match("~^:~",$line)) {
+                if (preg_match("~^:~", $line)) {
                     $question->subquestions[$currentchoice] = trim($responsetext);
                     unset($responsetext);
-                }
-                 else {
+                } else {
                     $responsetext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
 
             if (isset($feedbacktext) and is_string($feedbacktext)) {
-                if (preg_match("~^:~",$line)) {
-                   $question->feedback[$currentchoice] = trim($feedbacktext);
+                if (preg_match("~^:~", $line)) {
+                    $question->feedback[$currentchoice] = trim($feedbacktext);
                     unset($feedbacktext);
-                }
-                 else {
+                } else {
                     $feedbacktext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
 
             if (isset($generalfeedbacktext) and is_string($generalfeedbacktext)) {
-                if (preg_match("~^:~",$line)) {
-                   $question->tempgeneralfeedback= trim($generalfeedbacktext);
+                if (preg_match("~^:~", $line)) {
+                    $question->tempgeneralfeedback= trim($generalfeedbacktext);
                     unset($generalfeedbacktext);
-                }
-                 else {
+                } else {
                     $generalfeedbacktext .= str_replace('\:', ':', $line);
                     continue;
                 }
@@ -253,11 +247,11 @@ class qformat_webct extends qformat_default {
 
             $line = trim($line);
 
-            if (preg_match("~^:(TYPE|EOF):~i",$line)) {
-                // New Question or End of File
-                if (isset($question)) {            // if previous question exists, complete, check and save it
+            if (preg_match("~^:(TYPE|EOF):~i", $line)) {
+                // New Question or End of File.
+                if (isset($question)) {            // If previous question exists, complete, check and save it.
 
-                    // Setup default value of missing fields
+                    // Setup default value of missing fields.
                     if (!isset($question->name)) {
                         $question->name = $this->create_default_question_name(
                                 $question->questiontext, get_string('questionname', 'question'));
@@ -269,32 +263,32 @@ class qformat_webct extends qformat_default {
                         $question->image = "";
                     }
 
-                    // Perform sanity checks
-                    $QuestionOK = TRUE;
+                    // Perform sanity checks.
+                    $questionok = true;
                     if (strlen($question->questiontext) == 0) {
-                        $warnings[] = get_string("missingquestion", "qformat_webct", $nQuestionStartLine);
-                        $QuestionOK = FALSE;
+                        $warnings[] = get_string('missingquestion', 'qformat_webct', $nquestionstartline);
+                        $questionok = false;
                     }
-                    if (sizeof($question->answer) < 1) {  // a question must have at least 1 answer
-                       $errors[] = get_string("missinganswer", "qformat_webct", $nQuestionStartLine);
-                       $QuestionOK = FALSE;
-                    }
-                    else {
-                        // Create empty feedback array
+                    if (count($question->answer) < 1) {  // A question must have at least 1 answer.
+                        $errors[] = get_string('missinganswer', 'qformat_webct', $nquestionstartline);
+                        $questionok = false;
+                    } else {
+                        // Create empty feedback array.
                         foreach ($question->answer as $key => $dataanswer) {
-                            if(!isset( $question->feedback[$key])){
+                            if (!isset($question->feedback[$key])) {
                                 $question->feedback[$key] = '';
                             }
                         }
-                        // this tempgeneralfeedback allows the code to work with versions from 1.6 to 1.9
-                        // when question->generalfeedback is undefined, the webct feedback is added to each answer feedback
-                        if (isset($question->tempgeneralfeedback)){
+                        // This tempgeneralfeedback allows the code to work with versions from 1.6 to 1.9.
+                        // When question->generalfeedback is undefined, the webct feedback is added to each answer feedback.
+                        if (isset($question->tempgeneralfeedback)) {
                             if (isset($question->generalfeedback)) {
                                 $question->generalfeedback = $question->tempgeneralfeedback;
                             } else {
                                 foreach ($question->answer as $key => $dataanswer) {
-                                    if ($question->tempgeneralfeedback !=''){
-                                        $question->feedback[$key] = $question->tempgeneralfeedback.'<br/>'.$question->feedback[$key];
+                                    if ($question->tempgeneralfeedback !='') {
+                                        $question->feedback[$key] = $question->tempgeneralfeedback
+                                                .'<br/>'.$question->feedback[$key];
                                     }
                                 }
                             }
@@ -302,7 +296,7 @@ class qformat_webct extends qformat_default {
                         }
                         $maxfraction = -1;
                         $totalfraction = 0;
-                        foreach($question->fraction as $fraction) {
+                        foreach ($question->fraction as $fraction) {
                             if ($fraction > 0) {
                                 $totalfraction += $fraction;
                             }
@@ -314,8 +308,9 @@ class qformat_webct extends qformat_default {
                             case 'shortanswer':
                                 if ($maxfraction != 1) {
                                     $maxfraction = $maxfraction * 100;
-                                    $errors[] = "'$question->name': ".get_string("wronggrade", "qformat_webct", $nLineCounter).' '.get_string("fractionsnomax", "question", $maxfraction);
-                                    $QuestionOK = FALSE;
+                                    $errors[] = "'$question->name': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
+                                            .' '.get_string('fractionsnomax', 'question', $maxfraction);
+                                    $questionok = false;
                                 }
                                 break;
 
@@ -323,15 +318,17 @@ class qformat_webct extends qformat_default {
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
                                         $maxfraction = $maxfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string("wronggrade", "qformat_webct", $nLineCounter).' '.get_string("fractionsnomax", "question", $maxfraction);
-                                        $QuestionOK = FALSE;
+                                        $errors[] = "'$question->name': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
+                                                .' '.get_string('fractionsnomax', 'question', $maxfraction);
+                                        $questionok = false;
                                     }
                                 } else {
-                                    $totalfraction = round($totalfraction,2);
+                                    $totalfraction = round($totalfraction, 2);
                                     if ($totalfraction != 1) {
                                         $totalfraction = $totalfraction * 100;
-                                        $errors[] = "'$question->name': ".get_string("wronggrade", "qformat_webct", $nLineCounter).' '.get_string("fractionsaddwrong", "question", $totalfraction);
-                                        $QuestionOK = FALSE;
+                                        $errors[] = "'$question->name': ".get_string('wronggrade', 'qformat_webct', $nlinecounter)
+                                                .' '.get_string('fractionsaddwrong', 'question', $totalfraction);
+                                        $questionok = false;
                                     }
                                 }
                                 break;
@@ -340,151 +337,150 @@ class qformat_webct extends qformat_default {
                                 foreach ($question->answers as $answer) {
                                     if ($formulaerror = qtype_calculated_find_formula_errors($answer)) {
                                         $warnings[] = "'$question->name': ". $formulaerror;
-                                        $QuestionOK = FALSE;
+                                        $questionok = false;
                                     }
                                 }
                                 foreach ($question->dataset as $dataset) {
                                     $dataset->itemcount=count($dataset->datasetitem);
                                 }
-                                $question->import_process=TRUE ;
-                                unset($question->answer); //not used in calculated question
+                                $question->import_process = true;
+                                unset($question->answer); // Not used in calculated question.
                                 break;
                             case 'match':
                                 // MDL-10680:
-                                // switch subquestions and subanswers
-                                foreach ($question->subquestions as $id=>$subquestion) {
+                                // Switch subquestions and subanswers.
+                                foreach ($question->subquestions as $id => $subquestion) {
                                     $temp = $question->subquestions[$id];
                                     $question->subquestions[$id] = $question->subanswers[$id];
                                     $question->subanswers[$id] = $temp;
                                 }
-                                if (count($question->answer) < 3){
-                                    // add a dummy missing question
-                                    $question->name = 'Dummy question added '.$question->name ;
+                                if (count($question->answer) < 3) {
+                                    // Add a dummy missing question.
+                                    $question->name = 'Dummy question added '.$question->name;
                                     $question->answer[] = 'dummy';
                                     $question->subanswers[] = 'dummy';
                                     $question->subquestions[] = 'dummy';
                                     $question->fraction[] = '0.0';
                                     $question->feedback[] = '';
-                                 }
-                                 break;
+                                }
+                                break;
                             default:
-                                // No problemo
+                                // No problemo.
                         }
                     }
 
-                    if ($QuestionOK) {
-                       // echo "<pre>"; print_r ($question);
-                        $questions[] = $question;    // store it
-                        unset($question);            // and prepare a new one
+                    if ($questionok) {
+                        $questions[] = $question;    // Store it.
+                        unset($question);            // And prepare a new one.
                         $question = $this->defaultquestion();
                     }
                 }
-                $nQuestionStartLine = $nLineCounter;
+                $nquestionstartline = $nlinecounter;
             }
 
-            // Processing Question Header
+            // Processing Question Header.
 
-            if (preg_match("~^:TYPE:MC:1(.*)~i",$line,$webct_options)) {
-                // Multiple Choice Question with only one good answer
+            if (preg_match("~^:TYPE:MC:1(.*)~i", $line, $webctoptions)) {
+                // Multiple Choice Question with only one good answer.
                 $question = $this->defaultquestion();
                 $question->feedback = array();
                 $question->qtype = 'multichoice';
-                $question->single = 1;        // Only one answer is allowed
-                $ignore_rest_of_question = FALSE;
+                $question->single = 1;        // Only one answer is allowed.
+                $ignorerestofquestion = false;
                 continue;
             }
 
-            if (preg_match("~^:TYPE:MC:N(.*)~i",$line,$webct_options)) {
-                // Multiple Choice Question with several good answers
+            if (preg_match("~^:TYPE:MC:N(.*)~i", $line, $webctoptions)) {
+                // Multiple Choice Question with several good answers.
                 $question = $this->defaultquestion();
                 $question->feedback = array();
                 $question->qtype = 'multichoice';
-                $question->single = 0;        // Many answers allowed
-                $ignore_rest_of_question = FALSE;
+                $question->single = 0;        // Many answers allowed.
+                $ignorerestofquestion = false;
                 continue;
             }
 
-            if (preg_match("~^:TYPE:S~i",$line)) {
-                // Short Answer Question
+            if (preg_match("~^:TYPE:S~i", $line)) {
+                // Short Answer Question.
                 $question = $this->defaultquestion();
                 $question->feedback = array();
                 $question->qtype = 'shortanswer';
-                $question->usecase = 0;       // Ignore case
-                $ignore_rest_of_question = FALSE;
+                $question->usecase = 0;       // Ignore case.
+                $ignorerestofquestion = false;
                 continue;
             }
 
-            if (preg_match("~^:TYPE:C~i",$line)) {
-                // Calculated Question
+            if (preg_match("~^:TYPE:C~i", $line)) {
+                // Calculated Question.
                 $question = $this->defaultquestion();
                 $question->qtype = 'calculated';
-                $question->answers = array(); // No problem as they go as :FORMULA: from webct
+                $question->answers = array(); // No problem as they go as :FORMULA: from webct.
                 $question->units = array();
                 $question->dataset = array();
 
-                // To make us pass the end-of-question sanity checks
+                // To make us pass the end-of-question sanity checks.
                 $question->answer = array('dummy');
                 $question->fraction = array('1.0');
                 $question->feedback = array();
 
                 $currentchoice = -1;
-                $ignore_rest_of_question = FALSE;
+                $ignorerestofquestion = false;
                 continue;
             }
 
-            if (preg_match("~^:TYPE:M~i",$line)) {
-                // Match Question
+            if (preg_match("~^:TYPE:M~i", $line)) {
+                // Match Question.
                 $question = $this->defaultquestion();
                 $question->qtype = 'match';
                 $question->feedback = array();
-                $ignore_rest_of_question = FALSE;         // match question processing is not debugged
+                $ignorerestofquestion = false;         // Match question processing is not debugged.
                 continue;
             }
 
-            if (preg_match("~^:TYPE:P~i",$line)) {
-                // Paragraph Question
-                $warnings[] = get_string("paragraphquestion", "qformat_webct", $nLineCounter);
+            if (preg_match("~^:TYPE:P~i", $line)) {
+                // Paragraph question (essay).
+                $warnings[] = get_string("paragraphquestion", "qformat_webct", $nlinecounter);
                 unset($question);
-                $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
+                $ignorerestofquestion = true;         // Question Type not handled by Moodle.
                 continue;
             }
 
-            if (preg_match("~^:TYPE:~i",$line)) {
-                // Unknow Question
-                $warnings[] = get_string("unknowntype", "qformat_webct", $nLineCounter);
+            if (preg_match("~^:TYPE:~i", $line)) {
+                // Unknow question type.
+                $warnings[] = get_string('unknowntype', 'qformat_webct', $nlinecounter);
                 unset($question);
-                $ignore_rest_of_question = TRUE;         // Question Type not handled by Moodle
+                $ignorerestofquestion = true;         // Question Type not handled by Moodle.
                 continue;
             }
 
-            if ($ignore_rest_of_question) {
+            if ($ignorerestofquestion) {
                 continue;
             }
 
-            if (preg_match("~^:TITLE:(.*)~i",$line,$webct_options)) {
-                $name = trim($webct_options[1]);
+            if (preg_match("~^:TITLE:(.*)~i", $line, $webctoptions)) {
+                $name = trim($webctoptions[1]);
                 $question->name = $this->clean_question_name($name);
                 continue;
             }
 
-            if (preg_match("~^:IMAGE:(.*)~i",$line,$webct_options)) {
-                $filename = trim($webct_options[1]);
-                if (preg_match("~^http://~i",$filename)) {
+            if (preg_match("~^:IMAGE:(.*)~i", $line, $webctoptions)) {
+                $filename = trim($webctoptions[1]);
+                if (preg_match("~^http://~i", $filename)) {
                     $question->image = $filename;
                 }
                 continue;
             }
 
             // Need to put the parsing of calculated items here to avoid ambitiuosness:
-            // if question isn't defined yet there is nothing to do here (avoid notices)
+            // if question isn't defined yet there is nothing to do here (avoid notices).
             if (!isset($question)) {
                 continue;
             }
             if (isset($question->qtype ) && 'calculated' == $question->qtype && preg_match(
-                    "~^:([[:lower:]].*|::.*)-(MIN|MAX|DEC|VAL([0-9]+))::?:?($webctnumberregex)~", $line, $webct_options)) {
-                $datasetname = preg_replace('/^::/', '', $webct_options[1]);
-                $datasetvalue = qformat_webct_convert_formula($webct_options[4]);
-                switch ($webct_options[2]) {
+                    "~^:([[:lower:]].*|::.*)-(MIN|MAX|DEC|VAL([0-9]+))::?:?($webctnumberregex)~", $line, $webctoptions)) {
+                $datasetname = preg_replace('/^::/', '', $webctoptions[1]);
+                $datasetvalue = qformat_webct_convert_formula($webctoptions[4]);
+                switch ($webctoptions[2]) {
                     case 'MIN':
                         $question->dataset[$datasetname]->min = $datasetvalue;
                         break;
@@ -492,123 +488,124 @@ class qformat_webct extends qformat_default {
                         $question->dataset[$datasetname]->max = $datasetvalue;
                         break;
                     case 'DEC':
-                        $datasetvalue = floor($datasetvalue); // int only!
+                        $datasetvalue = floor($datasetvalue); // Int only!
                         $question->dataset[$datasetname]->length = max(0, $datasetvalue);
                         break;
                     default:
-                        // The VAL case:
-                        $question->dataset[$datasetname]->datasetitem[$webct_options[3]] = new stdClass();
-                        $question->dataset[$datasetname]->datasetitem[$webct_options[3]]->itemnumber = $webct_options[3];
-                        $question->dataset[$datasetname]->datasetitem[$webct_options[3]]->value  = $datasetvalue;
+                        // The VAL case.
+                        $question->dataset[$datasetname]->datasetitem[$webctoptions[3]] = new stdClass();
+                        $question->dataset[$datasetname]->datasetitem[$webctoptions[3]]->itemnumber = $webctoptions[3];
+                        $question->dataset[$datasetname]->datasetitem[$webctoptions[3]]->value  = $datasetvalue;
                         break;
                 }
                 continue;
             }
 
-
-            $bIsHTMLText = preg_match("~:H$~i",$line);  // True if next lines are coded in HTML
-            if (preg_match("~^:QUESTION~i",$line)) {
-                $questiontext="";               // Start gathering next lines
+            $bishtmltext = preg_match("~:H$~i", $line);  // True if next lines are coded in HTML.
+            if (preg_match("~^:QUESTION~i", $line)) {
+                $questiontext='';               // Start gathering next lines.
                 continue;
             }
 
-            if (preg_match("~^:ANSWER([0-9]+):([^:]+):([0-9\.\-]+):(.*)~i",$line,$webct_options)) { // Shortanswer.
-                $currentchoice=$webct_options[1];
-                $answertext=$webct_options[2];            // Start gathering next lines
-                $question->fraction[$currentchoice]=($webct_options[3]/100);
+            if (preg_match("~^:ANSWER([0-9]+):([^:]+):([0-9\.\-]+):(.*)~i", $line, $webctoptions)) { // Shortanswer.
+                $currentchoice=$webctoptions[1];
+                $answertext=$webctoptions[2];            // Start gathering next lines.
+                $question->fraction[$currentchoice]=($webctoptions[3]/100);
                 continue;
             }
 
-            if (preg_match("~^:ANSWER([0-9]+):([0-9\.\-]+)~i",$line,$webct_options)) {
-                $answertext="";                 // Start gathering next lines
-                $currentchoice=$webct_options[1];
-                $question->fraction[$currentchoice]=($webct_options[2]/100);
+            if (preg_match("~^:ANSWER([0-9]+):([0-9\.\-]+)~i", $line, $webctoptions)) {
+                $answertext='';                 // Start gathering next lines.
+                $currentchoice=$webctoptions[1];
+                $question->fraction[$currentchoice]=($webctoptions[2]/100);
                 continue;
             }
 
-            if (preg_match('~^:FORMULA:(.*)~i', $line, $webct_options)) {
-                // Answer for a calculated question
+            if (preg_match('~^:FORMULA:(.*)~i', $line, $webctoptions)) {
+                // Answer for a calculated question.
                 ++$currentchoice;
                 $question->answers[$currentchoice] =
-                        qformat_webct_convert_formula($webct_options[1]);
+                        qformat_webct_convert_formula($webctoptions[1]);
 
-                // Default settings:
+                // Default settings.
                 $question->fraction[$currentchoice] = 1.0;
                 $question->tolerance[$currentchoice] = 0.0;
-                $question->tolerancetype[$currentchoice] = 2; // nominal (units in webct)
+                $question->tolerancetype[$currentchoice] = 2; // Nominal (units in webct).
                 $question->feedback[$currentchoice] = '';
                 $question->correctanswerlength[$currentchoice] = 4;
 
-                $datasetnames = question_bank::get_qtype('calculated')->
-                        find_dataset_names($webct_options[1]);
+                $datasetnames =
+                        question_bank::get_qtype('calculated')->find_dataset_names($webctoptions[1]);
                 foreach ($datasetnames as $datasetname) {
                     $question->dataset[$datasetname] = new stdClass();
                     $question->dataset[$datasetname]->datasetitem = array();
-                    $question->dataset[$datasetname]->name = $datasetname ;
+                    $question->dataset[$datasetname]->name = $datasetname;
                     $question->dataset[$datasetname]->distribution = 'uniform';
-                    $question->dataset[$datasetname]->status ='private';
+                    $question->dataset[$datasetname]->status = 'private';
                 }
                 continue;
             }
 
-            if (preg_match("~^:L([0-9]+)~i",$line,$webct_options)) {
-                $answertext="";                 // Start gathering next lines
-                $currentchoice=$webct_options[1];
+            if (preg_match("~^:L([0-9]+)~i", $line, $webctoptions)) {
+                $answertext='';                 // Start gathering next lines.
+                $currentchoice=$webctoptions[1];
                 $question->fraction[$currentchoice]=1;
                 continue;
             }
 
-            if (preg_match("~^:R([0-9]+)~i",$line,$webct_options)) {
-                $responsetext="";                // Start gathering next lines
-                $currentchoice=$webct_options[1];
+            if (preg_match("~^:R([0-9]+)~i", $line, $webctoptions)) {
+                $responsetext='';                // Start gathering next lines.
+                $currentchoice=$webctoptions[1];
                 continue;
             }
 
-            if (preg_match("~^:REASON([0-9]+):?~i",$line,$webct_options)) {
-                $feedbacktext="";               // Start gathering next lines
-                $currentchoice=$webct_options[1];
+            if (preg_match("~^:REASON([0-9]+):?~i", $line, $webctoptions)) {
+                $feedbacktext='';               // Start gathering next lines.
+                $currentchoice=$webctoptions[1];
                 continue;
             }
-            if (preg_match("~^:FEEDBACK([0-9]+):?~i",$line,$webct_options)) {
-                $generalfeedbacktext="";               // Start gathering next lines
-                $currentchoice=$webct_options[1];
+            if (preg_match("~^:FEEDBACK([0-9]+):?~i", $line, $webctoptions)) {
+                $generalfeedbacktext='';               // Start gathering next lines.
+                $currentchoice=$webctoptions[1];
                 continue;
             }
-            if (preg_match('~^:FEEDBACK:(.*)~i',$line,$webct_options)) {
-                $generalfeedbacktext="";               // Start gathering next lines
+            if (preg_match('~^:FEEDBACK:(.*)~i', $line, $webctoptions)) {
+                $generalfeedbacktext='';               // Start gathering next lines.
                 continue;
             }
-            if (preg_match('~^:LAYOUT:(.*)~i',$line,$webct_options)) {
-            //    ignore  since layout in question_multichoice  is no more used in moodle
-            //    $webct_options[1] contains either vertical or horizontal ;
-                continue;
-            }
-
-            if (isset($question->qtype ) && 'calculated' == $question->qtype && preg_match('~^:ANS-DEC:([1-9][0-9]*)~i', $line, $webct_options)) {
-                // We can but hope that this always appear before the ANSTYPE property
-                $question->correctanswerlength[$currentchoice] = $webct_options[1];
+            if (preg_match('~^:LAYOUT:(.*)~i', $line, $webctoptions)) {
+                // Ignore  since layout in question_multichoice  is no more used in Moodle.
+                // $webctoptions[1] contains either vertical or horizontal.
                 continue;
             }
 
-            if (isset($question->qtype )&& 'calculated' == $question->qtype && preg_match("~^:TOL:($webctnumberregex)~i", $line, $webct_options)) {
-                // We can but hope that this always appear before the TOL property
+            if (isset($question->qtype ) && 'calculated' == $question->qtype
+                    && preg_match('~^:ANS-DEC:([1-9][0-9]*)~i', $line, $webctoptions)) {
+                // We can but hope that this always appear before the ANSTYPE property.
+                $question->correctanswerlength[$currentchoice] = $webctoptions[1];
+                continue;
+            }
+
+            if (isset($question->qtype )&& 'calculated' == $question->qtype
+                    && preg_match("~^:TOL:($webctnumberregex)~i", $line, $webctoptions)) {
+                // We can but hope that this always appear before the TOL property.
                 $question->tolerance[$currentchoice] =
-                        qformat_webct_convert_formula($webct_options[1]);
+                        qformat_webct_convert_formula($webctoptions[1]);
                 continue;
             }
 
             if (isset($question->qtype )&& 'calculated' == $question->qtype && preg_match('~^:TOLTYPE:percent~i', $line)) {
-                // Percentage case is handled as relative in Moodle:
+                // Percentage case is handled as relative in Moodle.
                 $question->tolerance[$currentchoice]  /= 100;
-                $question->tolerancetype[$currentchoice] = 1; // Relative
+                $question->tolerancetype[$currentchoice] = 1; // Relative.
                 continue;
             }
 
-            if (preg_match('~^:UNITS:(.+)~i', $line, $webct_options)
-                    and $webctunits = trim($webct_options[1])) {
+            if (preg_match('~^:UNITS:(.+)~i', $line, $webctoptions)
+                    and $webctunits = trim($webctoptions[1])) {
                 // This is a guess - I really do not know how different webct units are separated...
                 $webctunits = explode(':', $webctunits);
-                $unitrec->multiplier = 1.0; // Webct does not seem to support this
+                $unitrec->multiplier = 1.0; // Webct does not seem to support this.
                 foreach ($webctunits as $webctunit) {
                     $unitrec->unit = trim($webctunit);
                     $question->units[] = $unitrec;
@@ -616,10 +613,10 @@ class qformat_webct extends qformat_default {
                 continue;
             }
 
-            if (!empty($question->units) && preg_match('~^:UNITREQ:(.*)~i', $line, $webct_options)
-                    && !$webct_options[1]) {
-                // There are units but units are not required so add the no unit alternative
-                // We can but hope that the UNITS property always appear before this property
+            if (!empty($question->units) && preg_match('~^:UNITREQ:(.*)~i', $line, $webctoptions)
+                    && !$webctoptions[1]) {
+                // There are units but units are not required so add the no unit alternative.
+                // We can but hope that the UNITS property always appear before this property.
                 $unitrec->unit = '';
                 $unitrec->multiplier = 1.0;
                 $question->units[] = $unitrec;
@@ -628,7 +625,7 @@ class qformat_webct extends qformat_default {
 
             if (!empty($question->units) && preg_match('~^:UNITCASE:~i', $line)) {
                 // This could be important but I was not able to figure out how
-                // it works so I ignore it for now
+                // it works so I ignore it for now.
                 continue;
             }
 
@@ -642,24 +639,22 @@ class qformat_webct extends qformat_default {
             }
         }
 
-        if (sizeof($errors) > 0) {
-            echo "<p>".get_string("errorsdetected", "qformat_webct", sizeof($errors))."</p><ul>";
-            foreach($errors as $error) {
+        if (count($errors) > 0) {
+            echo '<p>'.get_string('errorsdetected', 'qformat_webct', count($errors)).'</p><ul>';
+            foreach ($errors as $error) {
                 echo "<li>$error</li>";
             }
-            echo "</ul>";
-            unset($questions);     // no questions imported
+            echo '</ul>';
+            unset($questions);     // No questions imported.
         }
 
-        if (sizeof($warnings) > 0) {
-            echo "<p>".get_string("warningsdetected", "qformat_webct", sizeof($warnings))."</p><ul>";
-            foreach($warnings as $warning) {
+        if (count($warnings) > 0) {
+            echo '<p>'.get_string('warningsdetected', 'qformat_webct', count($warnings)).'</p><ul>';
+            foreach ($warnings as $warning) {
                 echo "<li>$warning</li>";
             }
-            echo "</ul>";
+            echo '</ul>';
         }
         return $questions;
     }
 }
-
-?>

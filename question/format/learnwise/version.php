@@ -17,8 +17,7 @@
 /**
  * Version information for the calculated question type.
  *
- * @package    qformat
- * @subpackage learnwise
+ * @package    qformat_learnwise
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -17,8 +17,7 @@
 /**
  * Unit tests for the Moodle XML format.
  *
- * @package    qformat
- * @subpackage xml
+ * @package    qformat_xml
  * @copyright  2010 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -91,7 +90,7 @@ class qformat_xml_test extends question_testcase {
     protected function itemid_to_files($var) {
         if (is_object($var)) {
             $newvar = new stdClass();
-            foreach(get_object_vars($var) as $field => $value) {
+            foreach (get_object_vars($var) as $field => $value) {
                 $newvar->$field = $this->itemid_to_files($value);
             }
 
@@ -1314,7 +1313,8 @@ END;
         $expectedqa->name = 'Simple multianswer';
         $expectedqa->qtype = 'multianswer';
         $expectedqa->questiontext = 'Complete this opening line of verse: "The {#1} and the {#2} went to sea".';
-        $expectedqa->generalfeedback = 'General feedback: It\'s from "The Owl and the Pussy-cat" by Lear: "The owl and the pussycat went to sea".';
+        $expectedqa->generalfeedback =
+                'General feedback: It\'s from "The Owl and the Pussy-cat" by Lear: "The owl and the pussycat went to sea".';
         $expectedqa->defaultmark = 2;
         $expectedqa->penalty = 0.5;
 

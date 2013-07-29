@@ -51,7 +51,7 @@ class qformat_examview extends qformat_based_on_xml {
         'sa' => 'shortanswer',
     );
 
-    public $matching_questions = array();
+    public $matchingquestions = array();
 
     public function provide_import() {
         return true;
@@ -87,19 +87,19 @@ class qformat_examview extends qformat_based_on_xml {
         return $text;
     }
 
-    public function parse_matching_groups($matching_groups) {
-        if (empty($matching_groups)) {
+    public function parse_matching_groups($matchinggroups) {
+        if (empty($matchinggroups)) {
             return;
         }
-        foreach ($matching_groups as $match_group) {
+        foreach ($matchinggroups as $matchgroup) {
             $newgroup = new stdClass();
-            $groupname = trim($match_group['@']['name']);
-            $questiontext = $this->unxmlise($match_group['#']['text'][0]['#']);
+            $groupname = trim($matchgroup['@']['name']);
+            $questiontext = $this->unxmlise($matchgroup['#']['text'][0]['#']);
             $newgroup->questiontext = trim($questiontext);
             $newgroup->subchoices = array();
             $newgroup->subquestions = array();
             $newgroup->subanswers = array();
-            $choices = $match_group['#']['choices']['0']['#'];
+            $choices = $matchgroup['#']['choices']['0']['#'];
             foreach ($choices as $key => $value) {
                 if (strpos(trim($key), 'choice-') !== false) {
                     $key = strtoupper(trim(str_replace('choice-', '', $key)));
@@ -111,12 +111,12 @@ class qformat_examview extends qformat_based_on_xml {
     }
 
     protected function parse_ma($qrec, $groupname) {
-        $match_group = $this->matching_questions[$groupname];
+        $matchgroup = $this->matching_questions[$groupname];
         $phrase = trim($this->unxmlise($qrec['text']['0']['#']));
         $answer = trim($this->unxmlise($qrec['answer']['0']['#']));
         $answer = strip_tags( $answer );
-        $match_group->mappings[$phrase] = $match_group->subchoices[$answer];
-        $this->matching_questions[$groupname] = $match_group;
+        $matchgroup->mappings[$phrase] = $matchgroup->subchoices[$answer];
+        $this->matching_questions[$groupname] = $matchgroup;
         return null;
     }
 
@@ -125,9 +125,9 @@ class qformat_examview extends qformat_based_on_xml {
             return;
         }
 
-        foreach ($this->matching_questions as $match_group) {
+        foreach ($this->matching_questions as $matchgroup) {
             $question = $this->defaultquestion();
-            $htmltext = s($match_group->questiontext);
+            $htmltext = s($matchgroup->questiontext);
             $question->questiontext = $htmltext;
             $question->questiontextformat = FORMAT_HTML;
             $question->questiontextfiles = array();
@@ -136,8 +136,8 @@ class qformat_examview extends qformat_based_on_xml {
             $question = $this->add_blank_combined_feedback($question);
             $question->subquestions = array();
             $question->subanswers = array();
-            foreach ($match_group->subchoices as $subchoice) {
-                $fiber = array_keys ($match_group->mappings, $subchoice);
+            foreach ($matchgroup->subchoices as $subchoice) {
+                $fiber = array_keys ($matchgroup->mappings, $subchoice);
                 $subquestion = '';
                 foreach ($fiber as $subquestion) {
                     $question->subquestions[] = $this->text_field($subquestion);
