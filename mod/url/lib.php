@@ -243,7 +243,7 @@ function url_user_complete($course, $user, $mod, $url) {
  * See {@link get_array_of_activities()} in course/lib.php
  *
  * @param object $coursemodule
- * @return object info
+ * @return cached_cm_info info
  */
 function url_get_coursemodule_info($coursemodule) {
     global $CFG, $DB;
