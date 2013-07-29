@@ -347,8 +347,8 @@ abstract class question_behaviour {
      * Initialise the first step in a question attempt when a new
      * {@link question_attempt} is being started.
      *
-     * This method must call $this->question->start_attempt($step), and may
-     * perform additional processing if the model requries it.
+     * This method must call $this->question->start_attempt($step, $variant), and may
+     * perform additional processing if the behaviour requries it.
      *
      * @param question_attempt_step $step the first step of the
      *      question_attempt being started.
@@ -356,6 +356,23 @@ abstract class question_behaviour {
      */
     public function init_first_step(question_attempt_step $step, $variant) {
         $this->question->start_attempt($step, $variant);
+        $step->set_state(question_state::$todo);
+    }
+
+    /**
+     * When an attempt is started based on a previous attempt (see
+     * {@link question_attempt::start_based_on}) this method is called to setup
+     * the new attempt.
+     *
+     * This method must call $this->question->apply_attempt_state($step), and may
+     * perform additional processing if the behaviour requries it.
+     *
+     * @param question_attempt_step The first step of the {@link question_attempt}
+     *      being loaded.
+     */
+    public function apply_attempt_state(question_attempt_step $step) {
+        $this->question->apply_attempt_state($step);
+        $step->set_state(question_state::$todo);
     }
 
     /**
@@ -544,6 +561,13 @@ abstract class question_behaviour {
 abstract class question_behaviour_with_save extends question_behaviour {
     public function required_question_definition_type() {
         return 'question_manually_gradable';
+    }
+
+    public function apply_attempt_state(question_attempt_step $step) {
+        parent::apply_attempt_state($step);
+        if ($this->question->is_complete_response($step->get_qt_data())) {
+            $step->set_state(question_state::$complete);
+        }
     }
 
     /**

@@ -363,6 +363,7 @@ $string['notflagged'] = 'Not flagged';
 $string['notgraded'] = 'Not graded';
 $string['notshown'] = 'Not shown';
 $string['notyetanswered'] = 'Not yet answered';
+$string['notchanged'] = 'Not changed since last attempt';
 $string['notyourpreview'] = 'This preview does not belong to you';
 $string['options'] = 'Options';
 $string['parent'] = 'Parent';
