@@ -238,7 +238,7 @@ function page_user_complete($course, $user, $mod, $page) {
  *
  * See {@link get_array_of_activities()} in course/lib.php
  *
- * @param cm_info $coursemodule
+ * @param stdClass $coursemodule
  * @return cached_cm_info Info to customise main page display
  */
 function page_get_coursemodule_info($coursemodule) {
