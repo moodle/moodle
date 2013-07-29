@@ -321,8 +321,8 @@ function uu_process_template_callback($username, $firstname, $lastname, $block) 
  * @return array type=>name
  */
 function uu_supported_auths() {
-    // only following plugins are guaranteed to work properly
-    $whitelist = array('manual', 'nologin', 'none', 'email');
+    // Only the following plugins are guaranteed to work properly.
+    $whitelist = array('email', 'ldap', 'manual', 'nologin', 'none');
     $plugins = get_enabled_auth_plugins();
     $choices = array();
     foreach ($plugins as $plugin) {
