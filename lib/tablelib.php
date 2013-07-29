@@ -75,6 +75,7 @@ class flexible_table {
     var $pagesize    = 30;
     var $currpage    = 0;
     var $totalrows   = 0;
+    var $currentrow  = 0;
     var $sort_default_column = NULL;
     var $sort_default_order  = SORT_ASC;
 
@@ -978,15 +979,16 @@ class flexible_table {
      */
     function print_row($row, $classname = '') {
         static $suppress_lastrow = NULL;
-        static $oddeven = 1;
+        $oddeven = $this->currentrow % 2;
         $rowclasses = array('r' . $oddeven);
-        $oddeven = $oddeven ? 0 : 1;
 
         if ($classname) {
             $rowclasses[] = $classname;
         }
 
-        echo html_writer::start_tag('tr', array('class' => implode(' ', $rowclasses)));
+        $rowid = $this->uniqueid . '_r' . $this->currentrow;
+
+        echo html_writer::start_tag('tr', array('class' => implode(' ', $rowclasses), 'id' => $rowid));
 
         // If we have a separator, print it
         if ($row === NULL) {
@@ -1011,6 +1013,7 @@ class flexible_table {
 
                 echo html_writer::tag('td', $content, array(
                         'class' => 'cell c' . $index . $this->column_class[$column],
+                        'id' => $rowid . '_c' . $index,
                         'style' => $this->make_styles_string($this->column_style[$column])));
             }
         }
@@ -1021,6 +1024,7 @@ class flexible_table {
         if ($suppress_enabled) {
             $suppress_lastrow = $row;
         }
+        $this->currentrow++;
     }
 
     /**
@@ -1033,6 +1037,14 @@ class flexible_table {
             $this->print_nothing_to_display();
 
         } else {
+            // Print empty rows to fill the table to the current pagesize.
+            // This is done so the header aria-controls attributes do not point to
+            // non existant elements.
+            $emptyrow = array_fill(0, count($this->columns) - 1, '');
+            while ($this->currentrow < $this->pagesize) {
+                $this->print_row($emptyrow, 'emptyrow');
+            }
+
             echo html_writer::end_tag('tbody');
             echo html_writer::end_tag('table');
             echo html_writer::end_tag('div');
@@ -1063,15 +1075,28 @@ class flexible_table {
         // Some headers contain <br /> tags, do not include in title, hence the
         // strip tags.
 
+        $ariacontrols = '';
+        for ($i = 0; $i < $this->pagesize; $i++) {
+            $ariacontrols .= $this->uniqueid . '_r' . $i . '_c' . $index . ' ';
+        }
+
+        $ariacontrols = trim($ariacontrols);
+
         if (!empty($this->sess->collapse[$column])) {
+            $linkattributes = array('title' => get_string('show') . ' ' . strip_tags($this->headers[$index]),
+                                    'aria-expanded' => 'false',
+                                    'aria-controls' => $ariacontrols);
             return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_SHOW] => $column)),
                     html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/switch_plus'), 'alt' => get_string('show'))),
-                    array('title' => get_string('show') . ' ' . strip_tags($this->headers[$index])));
+                    $linkattributes);
 
         } else if ($this->headers[$index] !== NULL) {
+            $linkattributes = array('title' => get_string('hide') . ' ' . strip_tags($this->headers[$index]),
+                                    'aria-expanded' => 'true',
+                                    'aria-controls' => $ariacontrols);
             return html_writer::link($this->baseurl->out(false, array($this->request[TABLE_VAR_HIDE] => $column)),
                     html_writer::empty_tag('img', array('src' => $OUTPUT->pix_url('t/switch_minus'), 'alt' => get_string('hide'))),
-                    array('title' => get_string('hide') . ' ' . strip_tags($this->headers[$index])));
+                    $linkattributes);
         }
     }
 
@@ -1473,7 +1498,7 @@ class table_default_export_format_parent {
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class table_spreadsheet_export_format_parent extends table_default_export_format_parent {
-    var $rownum;
+    var $currentrow;
     var $workbook;
     var $worksheet;
     /**
@@ -1512,30 +1537,30 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
 
     function start_table($sheettitle) {
         $this->worksheet = $this->workbook->add_worksheet($sheettitle);
-        $this->rownum=0;
+        $this->currentrow=0;
     }
 
     function output_headers($headers) {
         $colnum = 0;
         foreach ($headers as $item) {
-            $this->worksheet->write($this->rownum,$colnum,$item,$this->formatheaders);
+            $this->worksheet->write($this->currentrow,$colnum,$item,$this->formatheaders);
             $colnum++;
         }
-        $this->rownum++;
+        $this->currentrow++;
     }
 
     function add_data($row) {
         $colnum = 0;
         foreach ($row as $item) {
-            $this->worksheet->write($this->rownum,$colnum,$item,$this->formatnormal);
+            $this->worksheet->write($this->currentrow,$colnum,$item,$this->formatnormal);
             $colnum++;
         }
-        $this->rownum++;
+        $this->currentrow++;
         return true;
     }
 
     function add_seperator() {
-        $this->rownum++;
+        $this->currentrow++;
         return true;
     }
 
