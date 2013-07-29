@@ -665,7 +665,7 @@ function format_backtrace($callers, $plaintext = false) {
         return '';
     }
 
-    $from = $plaintext ? '' : '<ul style="text-align: left">';
+    $from = $plaintext ? '' : '<ul style="text-align: left" data-rel="backtrace">';
     foreach ($callers as $caller) {
         if (!isset($caller['line'])) {
             $caller['line'] = '?'; // probably call_user_func()

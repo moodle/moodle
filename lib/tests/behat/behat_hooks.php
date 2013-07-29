@@ -244,14 +244,13 @@ class behat_hooks extends behat_base {
         try {
 
             // Exceptions.
-            $exceptionsxpath = "//*[contains(concat(' ', normalize-space(@class), ' '), ' errorbox ')]" .
-                "/descendant::p[contains(concat(' ', normalize-space(@class), ' '), ' errormessage ')]";
+            $exceptionsxpath = "//div[@data-rel='fatalerror']";
             // Debugging messages.
-            $debuggingxpath = "//*[contains(concat(' ', normalize-space(@class), ' '), ' debuggingmessage ')]";
+            $debuggingxpath = "//div[@data-rel='debugging']";
             // PHP debug messages.
-            $phperrorxpath = "//*[contains(concat(' ', normalize-space(@class), ' '), ' phpdebugmessage ')]";
+            $phperrorxpath = "//div[@data-rel='phpdebugmessage']";
             // Any other backtrace.
-            $othersxpath = "(//*[contains(., ': call to ')])[1]";
+            $othersxpath = "//ul[@data-rel='backtrace']";
 
             $xpaths = array($exceptionsxpath, $debuggingxpath, $phperrorxpath, $othersxpath);
             $joinedxpath = implode(' | ', $xpaths);

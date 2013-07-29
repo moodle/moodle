@@ -134,7 +134,7 @@ function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
     }
 
     // Wrapping the output.
-    echo '<div class="phpdebugmessage">' . PHP_EOL;
+    echo '<div class="phpdebugmessage" data-rel="phpdebugmessage">' . PHP_EOL;
     echo "$errnostr: $errstr in $errfile on line $errline" . PHP_EOL;
     echo '</div>';
 

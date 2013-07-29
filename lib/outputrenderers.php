@@ -2405,7 +2405,7 @@ EOD;
             $message .= '<p class="errormessage">' . get_string('installproblem', 'error') . '</p>';
             //It is usually not possible to recover from errors triggered during installation, you may need to create a new database or use a different database prefix for new installation.
         }
-        $output .= $this->box($message, 'errorbox');
+        $output .= $this->box($message, 'errorbox', array('data-rel' => 'fatalerror'));
 
         if (debugging('', DEBUG_DEVELOPER)) {
             if (!empty($debuginfo)) {
@@ -2552,10 +2552,11 @@ EOD;
      * @param string $contents The contents of the box
      * @param string $classes A space-separated list of CSS classes
      * @param string $id An optional ID
+     * @param array $attributes An array of other attributes to give the box.
      * @return string the HTML to output.
      */
-    public function box($contents, $classes = 'generalbox', $id = null) {
-        return $this->box_start($classes, $id) . $contents . $this->box_end();
+    public function box($contents, $classes = 'generalbox', $id = null, $attributes = array()) {
+        return $this->box_start($classes, $id, $attributes) . $contents . $this->box_end();
     }
 
     /**
@@ -2563,12 +2564,14 @@ EOD;
      *
      * @param string $classes A space-separated list of CSS classes
      * @param string $id An optional ID
+     * @param array $attributes An array of other attributes to give the box.
      * @return string the HTML to output.
      */
-    public function box_start($classes = 'generalbox', $id = null) {
+    public function box_start($classes = 'generalbox', $id = null, $attributes = array()) {
         $this->opencontainers->push('box', html_writer::end_tag('div'));
-        return html_writer::start_tag('div', array('id' => $id,
-                'class' => 'box ' . renderer_base::prepare_classes($classes)));
+        $attributes['id'] = $id;
+        $attributes['class'] = 'box ' . renderer_base::prepare_classes($classes);
+        return html_writer::start_tag('div', $attributes);
     }
 
     /**
