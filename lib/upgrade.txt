@@ -83,6 +83,16 @@ Misc:
     * detect_munged_arguments()     -> clean_param([...], PARAM_FILE)
     * mygroupid()                   -> groups_get_all_groups()
 
+YUI:
+    * moodle-core-notification has been deprecated with a recommendation of
+      using its subclasses instead. This is to allow for reduced page
+      transport costs. Current subclasses include:
+      * dialogue
+      * alert
+      * confirm
+      * exception
+      * ajaxexception
+
 === 2.5.1 ===
 
 * New get_course() function for use when obtaining the course record from database. Will
