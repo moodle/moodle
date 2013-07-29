@@ -464,22 +464,19 @@ function groups_get_course_groupmode($course) {
  * overrides activity setting if groupmodeforce enabled.
  *
  * @category group
- * @param cm_info $cm the course module object. Only the ->course and ->groupmode need to be set.
+ * @param cm_info|stdClass $cm the course module object. Only the ->course and ->groupmode need to be set.
  * @param stdClass $course object optional course object to improve perf
  * @return int group mode
  */
 function groups_get_activity_groupmode($cm, $course=null) {
-    global $COURSE, $DB;
-
-    // get course object (reuse COURSE if possible)
     if (isset($course->id) and $course->id == $cm->course) {
         //ok
-    } else if ($cm->course == $COURSE->id) {
-        $course = $COURSE;
+    } else if (isset($cm->coursegroupmode) && isset($cm->coursegroupmodeforce)) {
+        // This is an instance of cm_info (or clone) and already has the necessary course fields in it.
+        return empty($cm->coursegroupmodeforce) ? $cm->groupmode : $cm->coursegroupmode;
     } else {
-        if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
-            print_error('invalidcourseid');
-        }
+        // Get course object (reuse $COURSE if possible).
+        $course = get_course($cm->course, false);
     }
 
     return empty($course->groupmodeforce) ? $cm->groupmode : $course->groupmode;
