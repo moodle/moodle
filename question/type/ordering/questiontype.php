@@ -30,7 +30,7 @@ if (class_exists('question_type')) {
     $register_questiontype = false;
 } else {
     $register_questiontype = true; // Moodle 2.0
-    require_once(__DIR__.'/legacy/20.php');
+    require_once(dirname(__FILE__).'/legacy/20.php');
 }
 
 /**
