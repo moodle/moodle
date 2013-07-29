@@ -920,4 +920,47 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertArrayHasKey('courseshortnameincremented', $co->get_statuses());
     }
 
+    public function test_mess_with_frontpage() {
+        global $SITE;
+        $this->resetAfterTest(true);
+
+        // Updating the front page.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $SITE->shortname, 'idnumber' => 'NewIDN');
+        $importoptions = array();
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotupdatefrontpage', $co->get_errors());
+
+        // Updating the front page.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $SITE->shortname, 'idnumber' => 'NewIDN');
+        $importoptions = array();
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotupdatefrontpage', $co->get_errors());
+
+        // Generating a shortname should not be allowed in update mode, and so we cannot update the front page.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('idnumber' => 'NewIDN', 'fullname' => 'FN', 'category' => 1);
+        $importoptions = array('shortnametemplate' => $SITE->shortname);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotgenerateshortnameupdatemode', $co->get_errors());
+
+        // Renaming to the front page should not be allowed.
+        $c1 = $this->getDataGenerator()->create_course();
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname, 'fullname' => 'FN', 'idnumber' => 'NewIDN', 'rename' => $SITE->shortname);
+        $importoptions = array('canrename' => true);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotrenameshortnamealreadyinuse', $co->get_errors());
+
+    }
+
 }
