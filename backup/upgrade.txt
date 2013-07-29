@@ -7,6 +7,12 @@ information provided here is intended especially for developers.
   method is not available anymore. Temp tables must be created
   inline always.
 
+* Using the info field from backup_ids_temp or backup_files_temp
+  must now go via backup_controller_dbops::decode_backup_temp_info() and
+  backup_controller_dbops::encode_backup_temp_info(). The implementation
+  of the encoding has changed.  These new functions encapsulate any future
+  changes to the encoding.
+
 === 2.5 ===
 
 * New optional param $sortby in backup set_source_table() allows to

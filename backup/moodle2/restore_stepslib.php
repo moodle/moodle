@@ -510,11 +510,11 @@ class restore_review_pending_block_positions extends restore_execution_step {
 
         // Get all the block_position objects pending to match
         $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'block_position');
-        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid');
+        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid, info');
         // Process block positions, creating them or accumulating for final step
         foreach($rs as $posrec) {
-            // Get the complete position object (stored as info)
-            $position = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'block_position', $posrec->itemid)->info;
+            // Get the complete position object out of the info field.
+            $position = backup_controller_dbops::decode_backup_temp_info($posrec->info);
             // If position is for one already mapped (known) contextid
             // process it now, creating the position, else nothing to
             // do, position finally discarded
@@ -546,12 +546,12 @@ class restore_process_course_modules_availability extends restore_execution_step
 
         // Get all the module_availability objects to process
         $params = array('backupid' => $this->get_restoreid(), 'itemname' => 'module_availability');
-        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid');
+        $rs = $DB->get_recordset('backup_ids_temp', $params, '', 'itemid, info');
         // Process availabilities, creating them if everything matches ok
         foreach($rs as $availrec) {
             $allmatchesok = true;
             // Get the complete availabilityobject
-            $availability = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'module_availability', $availrec->itemid)->info;
+            $availability = backup_controller_dbops::decode_backup_temp_info($availrec->info);
             // Map the sourcecmid if needed and possible
             if (!empty($availability->sourcecmid)) {
                 $newcm = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'course_module', $availability->sourcecmid);
@@ -3624,7 +3624,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
 
         // Iterate over aliases in the queue.
         foreach ($rs as $record) {
-            $info = unserialize(base64_decode($record->info));
+            $info = restore_dbops::decode_backup_temp_info($record->info);
 
             // Try to pick a repository instance that should serve the alias.
             $repository = $this->choose_repository($info);
@@ -3657,7 +3657,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
                 $source = null;
 
                 foreach ($candidates as $candidate) {
-                    $candidateinfo = unserialize(base64_decode($candidate->info));
+                    $candidateinfo = backup_controller_dbops::decode_backup_temp_info($candidate->info);
                     if ($candidateinfo->filename === $reference['filename']
                             and $candidateinfo->filepath === $reference['filepath']
                             and !is_null($candidate->newcontextid)

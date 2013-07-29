@@ -155,6 +155,44 @@ abstract class backup_controller_dbops extends backup_dbops {
     }
 
     /**
+     * Decode the info field from backup_ids_temp or backup_files_temp.
+     *
+     * @param mixed $info The info field data to decode, may be an object or a simple integer.
+     * @return mixed The decoded information.  For simple types it returns, for complex ones we decode.
+     */
+    public static function decode_backup_temp_info($info) {
+        // We encode all data except null.
+        if ($info != null) {
+            if (extension_loaded('zlib')) {
+                return unserialize(gzuncompress(base64_decode($info)));
+            } else {
+                return unserialize(base64_decode($info));
+            }
+        }
+        return $info;
+    }
+
+    /**
+     * Encode the info field for backup_ids_temp or backup_files_temp.
+     *
+     * @param mixed $info string The info field data to encode.
+     * @return string An encoded string of data or null if the input is null.
+     */
+    public static function encode_backup_temp_info($info) {
+        // We encode if there is any information to keep the translations simpler.
+        if ($info != null) {
+            // We compress if possible. It reduces db, network and memory storage. The saving is greater than CPU compression cost.
+            // Compression level 1 is chosen has it produces good compression with the smallest possible overhead, see MDL-40618.
+            if (extension_loaded('zlib')) {
+                return base64_encode(gzcompress(serialize($info), 1));
+            } else {
+                return base64_encode(serialize($info));
+            }
+        }
+        return $info;
+    }
+
+    /**
      * Given one type and id from controller, return the corresponding courseid
      */
     public static function get_courseid_from_type_id($type, $id) {
