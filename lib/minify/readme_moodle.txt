@@ -1,13 +1,11 @@
-Description of Minify 2.1.5 import into Moodle
+Description of Minify 2.1.7 import into Moodle
 
 Notes:
- * Uses are required to add minify/lib to the include path
- * We ever actually use things within minify/lib/*
+ * Do not use things within minify/lib/*
 
 Usage:
- * /lib/javascript.php
- * /theme/javascript.php
- * /theme/styles.php
+ * js_minify() from /lib/jslib.php
+ * css_minify_css() from /lib/csslib.php
 
 Changes:
  * Removed index.php - Is an unused entry point program and could potentially

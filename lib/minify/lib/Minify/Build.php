@@ -4,8 +4,6 @@
  * @package Minify
  */
 
-require_once 'Minify/Source.php';
-
 /**
  * Maintain a single last modification time for a group of Minify sources to
  * allow use of far off Expires headers in Minify.
