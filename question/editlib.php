@@ -852,8 +852,9 @@ class question_bank_question_text_row extends question_bank_row_base {
     }
 
     protected function display_content($question, $rowclasses) {
-        $text = question_rewrite_questiontext_preview_urls($question->questiontext,
-                $question->contextid, 'question', $question->id);
+        $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                $question->contextid, 'question', 'questiontext', $question->id,
+                $question->contextid, 'core_question');
         $text = format_text($text, $question->questiontextformat,
                 $this->formatoptions);
         if ($text == '') {
