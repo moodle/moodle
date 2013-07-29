@@ -197,7 +197,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
             $sd->messageformat = $forumrec->introformat;
             $sd->messagetrust  = true;
             $sd->mailnow  = false;
-            $sdid = forum_add_discussion($sd, null, $sillybyrefvar, $this->task->get_userid());
+            $sdid = forum_add_discussion($sd, null, null, $this->task->get_userid());
             // Mark the post as mailed
             $DB->set_field ('forum_posts','mailed', '1', array('discussion' => $sdid));
             // Copy all the files from mod_foum/intro to mod_forum/post
