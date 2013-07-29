@@ -1519,7 +1519,7 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
                     $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
                 }
 
-                if (!array_key_exists($post->groupid, $modinfo->groups[0])) {
+                if (!in_array($post->groupid, $modinfo->get_groups($cm->groupingid))) {
                     continue;
                 }
             }
@@ -6029,12 +6029,10 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
     }
 
     if ($groupid) {
-        $groupselect = "AND gm.groupid = ?";
-        $groupjoin   = "JOIN {groups_members} gm ON  gm.userid=u.id";
+        $groupselect = "AND d.groupid = ?";
         $params[] = $groupid;
     } else {
         $groupselect = "";
-        $groupjoin   = "";
     }
 
     if (!$posts = $DB->get_records_sql("SELECT p.*, f.type AS forumtype, d.forum, d.groupid,
@@ -6044,7 +6042,6 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
                                               JOIN {forum_discussions} d ON d.id = p.discussion
                                               JOIN {forum} f             ON f.id = d.forum
                                               JOIN {user} u              ON u.id = p.userid
-                                              $groupjoin
                                         WHERE p.created > ? AND f.id = ?
                                               $userselect $groupselect
                                      ORDER BY p.id ASC", $params)) { // order by initial posting date
@@ -6080,7 +6077,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
                     continue;
                 }
 
-                if (!array_key_exists($post->groupid, $modinfo->groups[0])) {
+                if (!in_array($post->groupid, $modinfo->get_groups($cm->groupingid))) {
                     continue;
                 }
             }
