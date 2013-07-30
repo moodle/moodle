@@ -969,47 +969,6 @@ function badges_award_handle_course_criteria_review(stdClass $eventdata) {
 }
 
 /**
- * Triggered when 'activity_completed' event happens.
- *
- * @param   object $eventdata
- * @return  boolean
- */
-function badges_award_handle_activity_criteria_review(stdClass $eventdata) {
-    global $DB, $CFG;
-
-    if (!empty($CFG->enablebadges)) {
-        $userid = $eventdata->userid;
-        $mod = $eventdata->coursemoduleid;
-
-        if ($eventdata->completionstate == COMPLETION_COMPLETE
-            || $eventdata->completionstate == COMPLETION_COMPLETE_PASS
-            || $eventdata->completionstate == COMPLETION_COMPLETE_FAIL) {
-            // Need to take into account that there can be more than one badge with the same activity in its criteria.
-            if ($rs = $DB->get_records('badge_criteria_param', array('name' => 'module_' . $mod, 'value' => $mod))) {
-                foreach ($rs as $r) {
-                    $bid = $DB->get_field('badge_criteria', 'badgeid', array('id' => $r->critid), MUST_EXIST);
-                    $badge = new badge($bid);
-                    if (!$badge->is_active() || $badge->is_issued($userid)) {
-                        continue;
-                    }
-
-                    if ($badge->criteria[BADGE_CRITERIA_TYPE_ACTIVITY]->review($userid)) {
-                        $badge->criteria[BADGE_CRITERIA_TYPE_ACTIVITY]->mark_complete($userid);
-
-                        if ($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->review($userid)) {
-                            $badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($userid);
-                            $badge->issue($userid);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-/**
  * Triggered when 'user_updated' event happens.
  *
  * @param   object $eventdata Holds all information about a user.
