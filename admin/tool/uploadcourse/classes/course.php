@@ -715,6 +715,7 @@ class tool_uploadcourse_course {
                 $this->error('errorwhilerestoringcourse', new lang_string('errorwhilerestoringthecourse', 'tool_uploadcourse'));
             }
             $rc->destroy();
+            unset($rc); // File logging is a mess, we can only try to rely on gc to close handles.
         }
 
         // Proceed with enrolment data.
