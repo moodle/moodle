@@ -325,20 +325,45 @@ class core_course_renderer extends plugin_renderer_base {
      *
      * @see course_get_cm_edit_actions()
      *
-     * @param array $actions array of action_link or pix_icon objects
+     * @param action_link[] $actions Array of action_link objects
+     * @param cm_info $mod The module we are displaying actions for.
+     * @param array $displayoptions additional display options:
+     *     ownerselector => A JS/CSS selector that can be used to find an cm node.
+     *         If specified the owning node will be given the class 'action-menu-shown' when the action
+     *         menu is being displayed.
      * @return string
      */
-    public function course_section_cm_edit_actions($actions) {
-        $output = html_writer::start_tag('span', array('class' => 'commands'));
-        foreach ($actions as $action) {
-            if ($action instanceof renderable) {
-                $output .= $this->output->render($action);
-            } else {
-                $output .= $action;
-            }
+    public function course_section_cm_edit_actions($actions, cm_info $mod = null, $displayoptions = array()) {
+        global $CFG;
+
+        if (empty($actions)) {
+            return '';
         }
-        $output .= html_writer::end_tag('span');
-        return $output;
+
+        if (isset($displayoptions['ownerselector'])) {
+            $ownerselector = $displayoptions['ownerselector'];
+        } else if ($mod) {
+            $ownerselector = '#module-'.$mod->id;
+        } else {
+            debugging('You should upgrade your call to '.__FUNCTION__.' and provide $mod', DEBUG_DEVELOPER);
+            $ownerselector = 'li.activity';
+        }
+
+        $menu = new action_menu();
+        $menu->set_owner_selector($ownerselector);
+        $menu->set_contraint('.course-content');
+        $menu->set_alignment(action_menu::TL, action_menu::TR);
+        if (isset($CFG->modeditingmenu) && !$CFG->modeditingmenu) {
+            $menu->do_not_enhance();
+        }
+        foreach ($actions as $action) {
+            if ($action instanceof action_menu_link) {
+                $action->add_class('cm-edit-action');
+            }
+            $menu->add($action);
+        }
+        $menu->attributes['class'] .= ' section-cm-edit-actions commands';
+        return $this->render($menu);
     }
 
     /**
@@ -895,7 +920,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         if ($this->page->user_is_editing()) {
             $editactions = course_get_cm_edit_actions($mod, $mod->indent, $sectionreturn);
-            $output .= ' '. $this->course_section_cm_edit_actions($editactions);
+            $output .= ' '. $this->course_section_cm_edit_actions($editactions, $mod, $displayoptions);
             $output .= $mod->get_after_edit_icons();
         }
 

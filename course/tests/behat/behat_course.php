@@ -485,8 +485,10 @@ class behat_course extends behat_base {
         }
 
         // Adding chr(10) to save changes.
+        $activity = $this->escape($activityname);
         return array(
-            new Given('I click on "' . get_string('edittitle') . '" "link" in the "' . $this->escape($activityname) .'" activity'),
+            new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity'),
+            new Given('I click on "' . get_string('edittitle') . '" "link" in the "' . $activity .'" activity'),
             new Given('I fill in "title" with "' . $this->escape($newactivityname) . chr(10) . '"'),
             new Given('I wait "2" seconds')
         );
@@ -500,9 +502,12 @@ class behat_course extends behat_base {
      */
     public function i_indent_right_activity($activityname) {
 
-        $steps = array(
-            new Given('I click on "' . get_string('moveright') . '" "link" in the "' . $this->escape($activityname) . '" activity')
-        );
+        $steps = array();
+        $activity = $this->escape($activityname);
+        if ($this->running_javascript()) {
+            $steps[] = new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity');
+        }
+        $steps[] = new Given('I click on "' . get_string('moveright') . '" "link" in the "' . $activity . '" activity');
 
         if ($this->running_javascript()) {
             $steps[] = new Given('I wait "2" seconds');
@@ -519,9 +524,12 @@ class behat_course extends behat_base {
      */
     public function i_indent_left_activity($activityname) {
 
-        $steps = array(
-            new Given('I click on "' . get_string('moveleft') . '" "link" in the "' . $this->escape($activityname) . '" activity')
-        );
+        $steps = array();
+        $activity = $this->escape($activityname);
+        if ($this->running_javascript()) {
+            $steps[] = new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity');
+        }
+        $steps[] = new Given('I click on "' . get_string('moveleft') . '" "link" in the "' . $activity . '" activity');
 
         if ($this->running_javascript()) {
             $steps[] = new Given('I wait "2" seconds');
@@ -572,11 +580,15 @@ class behat_course extends behat_base {
      * @param string $activityname
      */
     public function i_duplicate_activity($activityname) {
-        return array(
-            new Given('I click on "' . get_string('duplicate') . '" "link" in the "' . $this->escape($activityname) . '" activity'),
-            new Given('I press "' . get_string('continue') .'"'),
-            new Given('I press "' . get_string('duplicatecontcourse') .'"')
-        );
+        $steps = array();
+        $activity = $this->escape($activityname);
+        if ($this->running_javascript()) {
+            $steps[] = new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity');
+        }
+        $steps[] = new Given('I click on "' . get_string('duplicate') . '" "link" in the "' . $activity . '" activity');
+        $steps[] = new Given('I press "' . get_string('continue') .'"');
+        $steps[] = new Given('I press "' . get_string('duplicatecontcourse') .'"');
+        return $steps;
     }
 
     /**
@@ -587,13 +599,17 @@ class behat_course extends behat_base {
      * @param TableNode $data
      */
     public function i_duplicate_activity_editing_the_new_copy_with($activityname, TableNode $data) {
-        return array(
-            new Given('I click on "' . get_string('duplicate') . '" "link" in the "' . $this->escape($activityname) . '" activity'),
-            new Given('I press "' . get_string('continue') .'"'),
-            new Given('I press "' . get_string('duplicatecontedit') . '"'),
-            new Given('I fill the moodle form with:', $data),
-            new Given('I press "' . get_string('savechangesandreturntocourse') . '"')
-        );
+        $steps = array();
+        $activity = $this->escape($activityname);
+        if ($this->running_javascript()) {
+            $steps[] = new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity');
+        }
+        $steps[] = new Given('I click on "' . get_string('duplicate') . '" "link" in the "' . $activity . '" activity');
+        $steps[] = new Given('I press "' . get_string('continue') .'"');
+        $steps[] = new Given('I press "' . get_string('duplicatecontedit') . '"');
+        $steps[] = new Given('I fill the moodle form with:', $data);
+        $steps[] = new Given('I press "' . get_string('savechangesandreturntocourse') . '"');
+        return $steps;
     }
 
     /**

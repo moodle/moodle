@@ -2,7 +2,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
     var CSS = {
         ACTIVITY : 'activity',
-        COMMANDSPAN : 'span.commands',
+        COMMANDSPAN : '.commands',
         CONTENT : 'content',
         COURSECONTENT : 'course-content',
         EDITINGMOVE : 'editing_move',

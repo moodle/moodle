@@ -1,0 +1,8 @@
+{
+  "moodle-core-actionmenu": {
+    "requires": [
+        "base",
+        "event"
+    ]
+  }
+}

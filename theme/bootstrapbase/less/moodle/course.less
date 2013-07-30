@@ -95,7 +95,8 @@
 .section .activity .contentafterlink p {
     margin: .5em 0;
 }
-.editing .section .activity:hover {
+.editing .section .activity:hover,
+.editing .section .activity.action-menu-shown {
     background-color: @grayLighter;
 }
 .course-content .current {
@@ -593,4 +594,13 @@ span.editinstructions {
 #page-course-index-category .categorypicker {
     text-align: center;
     margin: 10px 0 20px;
+}
+
+.section .activity .moodle-actionmenu .iconsmall {
+    max-width: none !important; /** reset sets 100% !important which breaks on IE8 without this !important */
+    width:16px;
+    height:16px;
+    width:1rem;
+    height:1rem;
+    padding:0.3em;
 }

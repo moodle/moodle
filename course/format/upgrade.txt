@@ -2,6 +2,11 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 2.6 ===
+
+* core_course_renderer::course_section_cm_edit_actions has two new optional arguments and now uses and action_menu component.
+* core_course_renderer::course_section_cm has been altered to call core_course_renderer::course_section_cm_edit_actions with the two new arguments
+
 === 2.5 ===
 
 * Functions responsible for output in course/lib.php are deprecated, the code is moved to
