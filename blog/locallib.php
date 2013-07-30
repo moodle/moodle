@@ -239,7 +239,6 @@ class blog_entry implements renderable {
     /**
      * Inserts this entry in the database. Access control checks must be done by calling code.
      * TODO Set the publishstate correctly
-     * @param mform $form Used for attachments
      * @return void
      */
     public function add() {
@@ -259,11 +258,17 @@ class blog_entry implements renderable {
 
         if (!empty($CFG->useblogassociations)) {
             $this->add_associations();
-            add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$this->userid.'&entryid='.$this->id, $this->subject);
         }
 
         tag_set('post', $this->id, $this->tags);
-        events_trigger('blog_entry_added', $this);
+
+        // Trigger an event for the new entry.
+        $event = \core\event\blog_entry_created::create(array('objectid' => $this->id,
+                                                            'userid'   => $this->userid,
+                                                            'other'    => array ("subject" => $this->subject)
+                                                      ));
+        $event->set_custom_data($this);
+        $event->trigger();
     }
 
     /**
