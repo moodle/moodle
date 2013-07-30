@@ -153,19 +153,16 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                                      'id',
                                      false);
 
-        // Let Moodle know that an assessable content was uploaded (eg for plagiarism detection).
-        $eventdata = new stdClass();
-        $eventdata->modulename = 'assign';
-        $eventdata->cmid = $this->assignment->get_course_module()->id;
-        $eventdata->itemid = $submission->id;
-        $eventdata->courseid = $this->assignment->get_course()->id;
-        $eventdata->userid = $USER->id;
-        $eventdata->content = trim($text);
-
-        if ($files) {
-            $eventdata->pathnamehashes = array_keys($files);
-        }
-        events_trigger('assessable_content_uploaded', $eventdata);
+        $params = array(
+            'context' => context_module::instance($this->assignment->get_course_module()->id),
+            'objectid' => $submission->id,
+            'other' => array(
+                'pathnamehashes' => array_keys($files),
+                'content' => trim($text)
+            )
+        );
+        $event = \assignsubmission_onlinetext\event\assessable_uploaded::create($params);
+        $event->trigger();
 
         if ($onlinetextsubmission) {
 
