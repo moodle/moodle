@@ -3037,7 +3037,7 @@ EOD;
      */
     protected function theme_switch_links() {
 
-        $actualdevice = get_device_type();
+        $actualdevice = core_useragent::get_device_type();
         $currentdevice = $this->page->devicetypeinuse;
         $switched = ($actualdevice != $currentdevice);
 

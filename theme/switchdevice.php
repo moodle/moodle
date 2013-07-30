@@ -31,6 +31,6 @@ $newdevice = required_param('device', PARAM_TEXT);
 
 require_sesskey();
 
-set_user_device_type($newdevice);
+core_useragent::set_user_device_type($newdevice);
 
 redirect($url);
