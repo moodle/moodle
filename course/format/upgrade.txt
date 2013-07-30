@@ -2,6 +2,12 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 2.6 ===
+
+* An additional course renderer function has been created which allows you to
+  specify the wrapper for a course module within a section (e.g. the <li>).  This can be
+  found in core_course_renderer::course_section_cm_list_item().
+
 === 2.5 ===
 
 * Functions responsible for output in course/lib.php are deprecated, the code is moved to
