@@ -66,7 +66,7 @@ background: #E2E2E2;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 /*
  * Tools, Path & View on fp-navbar (File Picker and File Manager)
  */
-.fp-toolbar {display: table-row;line-height: 22px;float:left;}
+.fp-toolbar {display: table-row;line-height: 22px;float:left; max-width: 70%;}
 
 .dir-rtl .fp-toolbar {float: right;}
 
