@@ -17,19 +17,19 @@
 /**
  * User login event.
  *
- * @package    core_auth
+ * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core_auth\event;
+namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
  * User login event class.
  *
- * @package    core_auth
+ * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -64,7 +64,7 @@ class user_loggedin extends \core\event\base {
     }
 
     /**
-     * Get URL related to the action
+     * Get URL related to the action.
      *
      * @return \moodle_url
      */
