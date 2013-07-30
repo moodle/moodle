@@ -963,32 +963,31 @@ class core_course_renderer extends plugin_renderer_base {
             }
         }
 
+        $sectionoutput = '';
         if (!empty($moduleshtml) || $ismoving) {
-
-            $output .= html_writer::start_tag('ul', array('class' => 'section img-text'));
-
             foreach ($moduleshtml as $modnumber => $modulehtml) {
                 if ($ismoving) {
                     $movingurl = new moodle_url('/course/mod.php', array('moveto' => $modnumber, 'sesskey' => sesskey()));
-                    $output .= html_writer::tag('li', html_writer::link($movingurl, $this->output->render($movingpix)),
+                    $sectionoutput .= html_writer::tag('li', html_writer::link($movingurl, $this->output->render($movingpix)),
                             array('class' => 'movehere', 'title' => $strmovefull));
                 }
 
                 $mod = $modinfo->cms[$modnumber];
                 $modclasses = 'activity '. $mod->modname. ' modtype_'.$mod->modname. ' '. $mod->get_extra_classes();
-                $output .= html_writer::start_tag('li', array('class' => $modclasses, 'id' => 'module-'. $mod->id));
-                $output .= $modulehtml;
-                $output .= html_writer::end_tag('li');
+                $sectionoutput .= html_writer::start_tag('li', array('class' => $modclasses, 'id' => 'module-' . $mod->id));
+                $sectionoutput .= $modulehtml;
+                $sectionoutput .= html_writer::end_tag('li');
             }
 
             if ($ismoving) {
                 $movingurl = new moodle_url('/course/mod.php', array('movetosection' => $section->id, 'sesskey' => sesskey()));
-                $output .= html_writer::tag('li', html_writer::link($movingurl, $this->output->render($movingpix)),
+                $sectionoutput .= html_writer::tag('li', html_writer::link($movingurl, $this->output->render($movingpix)),
                         array('class' => 'movehere', 'title' => $strmovefull));
             }
-
-            $output .= html_writer::end_tag('ul'); // .section
         }
+
+        // Always output the section module list.
+        $output .= html_writer::tag('ul', $sectionoutput, array('class' => 'section img-text'));
 
         return $output;
     }
