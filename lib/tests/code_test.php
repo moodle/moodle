@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class core_code_testcase extends basic_testcase {
+class core_code_testcase extends advanced_testcase {
     protected $badstrings;
     protected $extensions_to_ignore = array('exe', 'gif', 'ico', 'jpg', 'png', 'ttf', 'log');
     protected $ignore_folders = array();
