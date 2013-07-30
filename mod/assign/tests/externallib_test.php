@@ -148,7 +148,9 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create the assignment module.
         $assign1 = self::getDataGenerator()->create_module('assign', array(
             'course' => $course1->id,
-            'name' => 'lightwork assignment'
+            'name' => 'lightwork assignment',
+            'markingworkflow' => 1,
+            'markingallocation' => 1
         ));
 
         // Create manual enrolment record.
@@ -185,6 +187,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
         $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertEquals(1, $assignment['markingworkflow']);
+        $this->assertEquals(1, $assignment['markingallocation']);
 
         $result = mod_assign_external::get_assignments(array($course1->id));
 
@@ -199,6 +203,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
         $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertEquals(1, $assignment['markingworkflow']);
+        $this->assertEquals(1, $assignment['markingallocation']);
 
         $result = mod_assign_external::get_assignments(array($course2->id));
 
