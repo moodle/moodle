@@ -1006,6 +1006,11 @@
           <ON_CHECK message="settingfileuploads" />
         </FEEDBACK>
       </PHP_SETTING>
+      <PHP_SETTING name="opcache.enable" value="1" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="opcacherecommended" />
+        </FEEDBACK>
+      </PHP_SETTING>
     </PHP_SETTINGS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>

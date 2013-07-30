@@ -774,6 +774,7 @@ $string['notifyloginthreshold'] = 'Threshold for email notifications';
 $string['notloggedinroleid'] = 'Role for visitors';
 $string['numberofmissingstrings'] = 'Number of missing strings: {$a}';
 $string['numberofstrings'] = 'Total number of strings: {$a->strings}<br />Missing: {$a->missing} ({$a->missingpercent}&nbsp;%)';
+$string['opcacherecommended'] = 'PHP opcode caching improves performance and lowers memory requirements, OPcache extension is recommended and fully supported.';
 $string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
 $string['opentogoogle'] = 'Open to Google';
 $string['optionalmaintenancemessage'] = 'Optional maintenance message';
