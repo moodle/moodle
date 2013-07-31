@@ -1396,8 +1396,10 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
     if (count($cache) > MAX_MODINFO_CACHE_SIZE) {
         reset($cache);
         $key = key($cache);
-        unset($cache[$key]->instances);
-        unset($cache[$key]->cms);
+        // Unsetting static variable in PHP is percular, it removes the reference,
+        // but data remain in memory. Prior to unsetting, the varable needs to be
+        // set to empty to remove its remains from memory.
+        $cache[$key] = '';
         unset($cache[$key]);
     }
 
