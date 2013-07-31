@@ -1754,8 +1754,9 @@ function question_rewrite_questiontext_preview_urls($questiontext, $contextid,
               JOIN {question_categories} qc ON qc.id = q.category
              WHERE q.id = :id', array('id' => $questionid), MUST_EXIST);
 
-    return question_rewrite_question_preview_urls($questiontext, $questioncontextid,
-            'question', 'questiontext', $contextid, $component, $questionid, $options);
+    return question_rewrite_question_preview_urls($questiontext, $questionid,
+            $questioncontextid, 'question', 'questiontext', $questionid,
+            $contextid, $component, $options);
 }
 
 /**
@@ -1808,6 +1809,10 @@ function question_send_questiontext_file($questionid, $args, $forcedownload, $op
 
     $fs = get_file_storage();
     $fullpath = "/$question->contextid/question/questiontext/$question->id/" . implode('/', $args);
+
+    // Get rid of the redundant questionid.
+    $fullpath = str_replace("/{$questionid}/{$questionid}/", "/{$questionid}/", $fullpath);
+
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         send_file_not_found();
     }
