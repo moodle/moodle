@@ -169,4 +169,35 @@ function forgotpw_process_pwset($token, $username) {
 
     die; //never reached
 }
+
+/*  Determine where a user should be redirected after they have been logged in
+*/
+function get_postlogin_redirection() {
+    global $CFG, $SESSION, $USER;
+    /// Prepare redirection
+    if (user_not_fully_set_up($USER)) {
+        $urltogo = $CFG->wwwroot.'/user/edit.php';
+        // We don't delete $SESSION->wantsurl yet, so we get there later
+
+    } else if (isset($SESSION->wantsurl) and (strpos($SESSION->wantsurl, $CFG->wwwroot) === 0 or strpos($SESSION->wantsurl, str_replace('http://', 'https://', $CFG->wwwroot)) === 0)) {
+        $urltogo = $SESSION->wantsurl;    /// Because it's an address in this site
+        unset($SESSION->wantsurl);
+    } else {
+        // no wantsurl stored or external - go to homepage
+        $urltogo = $CFG->wwwroot.'/';
+        unset($SESSION->wantsurl);
+    }
+
+    // If the url to go to is the same as the site page, check for default homepage.
+    if ($urltogo == ($CFG->wwwroot . '/')) {
+        $home_page = get_home_page();
+        // Go to my-moodle page instead of site homepage if defaulthomepage set to homepage_my
+        if ($home_page == HOMEPAGE_MY && !is_siteadmin() && !isguestuser()) {
+            if ($urltogo == $CFG->wwwroot or $urltogo == $CFG->wwwroot.'/' or $urltogo == $CFG->wwwroot.'/index.php') {
+                $urltogo = $CFG->wwwroot.'/my/';
+            }
+        }
+    }
+    return $urltogo;
+}
 ?>
