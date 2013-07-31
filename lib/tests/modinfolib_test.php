@@ -153,7 +153,7 @@ class core_modinfolib_testcase extends advanced_testcase {
 
         // Switch to a student and reload the context info.
         $this->setUser($student);
-        $cm_info = $this->refresh_cm_info($course, $assign);
+        $cm_info = get_fast_modinfo($course)->instances['assign'][$assign->id];
 
         // Create up a teacher.
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
@@ -174,26 +174,33 @@ class core_modinfolib_testcase extends advanced_testcase {
         $CFG->enablegroupmembersonly = false;
         $this->assertFalse($cm_info->is_user_access_restricted_by_group());
 
-        // If groups are on but "group members only" is off, the activity isn't restricted.
+        // Turn groups setting on.
         $CFG->enablegroupmembersonly = true;
-        $cm_info->groupmembersonly = NOGROUPS;
+        // Create a mod_assign instance with "group members only", the activity should not be restricted.
+        $assignnogroups = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id),
+            array('groupmembersonly' => NOGROUPS));
+        $cm_info = get_fast_modinfo($course->id)->instances['assign'][$assignnogroups->id];
         $this->assertFalse($cm_info->is_user_access_restricted_by_group());
 
         // If "group members only" is on but user is in the wrong group, the activity is restricted.
-        $cm_info->groupmembersonly = SEPARATEGROUPS;
-        $cm_info->groupingid = $grouping1->id;
+        $assignsepgroups = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id),
+            array('groupmembersonly' => SEPARATEGROUPS, 'groupingid' => $grouping1->id));
         $this->assertTrue(groups_add_member($group2, $USER));
+        get_fast_modinfo($course->id, 0, true);
+        $cm_info = get_fast_modinfo($course->id)->instances['assign'][$assignsepgroups->id];
+        $this->assertEquals($grouping1->id, $cm_info->groupingid);
         $this->assertTrue($cm_info->is_user_access_restricted_by_group());
 
         // If the user is in the required group, the activity isn't restricted.
         groups_remove_member($group2, $USER);
         $this->assertTrue(groups_add_member($group1, $USER));
-        $cm_info = $this->refresh_cm_info($course, $assign);
+        get_fast_modinfo($course->id, 0, true);
+        $cm_info = get_fast_modinfo($course->id)->instances['assign'][$assignsepgroups->id];
         $this->assertFalse($cm_info->is_user_access_restricted_by_group());
 
         // Switch to a teacher and reload the context info.
         $this->setUser($teacher);
-        $cm_info = $this->refresh_cm_info($course, $assign);
+        $cm_info = get_fast_modinfo($course->id)->instances['assign'][$assignsepgroups->id];
 
         // If the user isn't in the required group but has 'moodle/site:accessallgroups', the activity isn't restricted.
         $this->assertTrue(has_capability('moodle/site:accessallgroups', $coursecontext));
@@ -210,10 +217,16 @@ class core_modinfolib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // Create a course and a mod_assign instance.
+        // Create a course.
         $course = $this->getDataGenerator()->create_course();
-        $assign = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
-        $cm_info = get_fast_modinfo($course)->instances['assign'][$assign->id];
+        // 1. Create an activity that is currently unavailable and hidden entirely (for students).
+        $assign1 = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id),
+                array('availablefrom' => time() + 10000, 'showavailability' => CONDITION_STUDENTVIEW_HIDE));
+        // 2. Create an activity that is currently available.
+        $assign2 = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
+        // 3. Create an activity that is currently unavailable and set to be greyed out.
+        $assign3 = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id),
+                array('availablefrom' => time() + 10000, 'showavailability' => CONDITION_STUDENTVIEW_SHOW));
 
         // Set up a teacher.
         $coursecontext = context_course::instance($course->id);
@@ -221,38 +234,38 @@ class core_modinfolib_testcase extends advanced_testcase {
         $teacher = $this->getDataGenerator()->create_user();
         role_assign($teacherrole->id, $teacher->id, $coursecontext);
 
-        // Mark the activity as unavailable (due to unmet conditions).
-        // Testing of the code that normally turns this flag on and off is done in conditionlib_test.php.
-        $cm_info->available = false;
-        // Set the activity to be hidden entirely if it is unavailable to the user.
-        $cm_info->showavailability = CONDITION_STUDENTVIEW_HIDE;
-
         // If conditional availability is disabled the activity will always be unrestricted.
         $CFG->enableavailability = false;
+        $cm_info = get_fast_modinfo($course)->instances['assign'][$assign1->id];
         $this->assertFalse($cm_info->is_user_access_restricted_by_conditional_access());
 
-        // Turn on conditional availability.
+        // Turn on conditional availability and reset the get_fast_modinfo cache.
         $CFG->enableavailability = true;
+        get_fast_modinfo($course, 0, true);
 
         // The unavailable, hidden entirely activity should now be restricted.
+        $cm_info = get_fast_modinfo($course)->instances['assign'][$assign1->id];
+        $this->assertFalse($cm_info->available);
+        $this->assertEquals(CONDITION_STUDENTVIEW_HIDE, $cm_info->showavailability);
         $this->assertTrue($cm_info->is_user_access_restricted_by_conditional_access());
 
         // If the activity is available it should not be restricted.
-        $cm_info->available = true;
+        $cm_info = get_fast_modinfo($course)->instances['assign'][$assign2->id];
+        $this->assertTrue($cm_info->available);
         $this->assertFalse($cm_info->is_user_access_restricted_by_conditional_access());
 
         // If the activity is unavailable and set to be greyed out it should not be restricted.
-        $cm_info->available = false;
-        $cm_info->showavailability = CONDITION_STUDENTVIEW_SHOW;
+        $cm_info = get_fast_modinfo($course)->instances['assign'][$assign3->id];
+        $this->assertFalse($cm_info->available);
+        $this->assertEquals(CONDITION_STUDENTVIEW_SHOW, $cm_info->showavailability);
         $this->assertFalse($cm_info->is_user_access_restricted_by_conditional_access());
 
         // If the activity is unavailable and set to be hidden entirely its restricted unless user has 'moodle/course:viewhiddenactivities'.
-        $cm_info->available = false;
-        $cm_info->showavailability = CONDITION_STUDENTVIEW_HIDE;
-
         // Switch to a teacher and reload the context info.
         $this->setUser($teacher);
-        $cm_info = $this->refresh_cm_info($course, $assign);
+        $cm_info = get_fast_modinfo($course)->instances['assign'][$assign1->id];
+        $this->assertFalse($cm_info->available);
+        $this->assertEquals(CONDITION_STUDENTVIEW_HIDE, $cm_info->showavailability);
 
         $this->assertTrue(has_capability('moodle/course:viewhiddenactivities', $coursecontext));
         $this->assertFalse($cm_info->is_user_access_restricted_by_conditional_access());
@@ -311,10 +324,5 @@ class core_modinfolib_testcase extends advanced_testcase {
         $cm = get_fast_modinfo($course->id, $student->id)->instances['assign'][$assign->id];
         $this->assertFalse($cm->uservisible);
         $this->assertTrue($cm->is_user_access_restricted_by_capability());
-    }
-
-    private function refresh_cm_info($course, $assign) {
-        get_fast_modinfo(0, 0, true);
-        return get_fast_modinfo($course)->instances['assign'][$assign->id];
     }
 }
