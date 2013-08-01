@@ -77,15 +77,10 @@ defined('MOODLE_INTERNAL') || die();
  *     + datasourcefile
  *          [string] Suplements the above setting indicated the file containing the class to be used. This file is included when
  *          required.
- *     + persistent
- *          [bool] This setting does two important things. First it tells the cache API to only instantiate the cache structure for
- *          this definition once, further requests will be given the original instance.
- *          Second the cache loader will keep an array of the items set and retrieved to the cache during the request.
- *          This has several advantages including better performance without needing to start passing the cache instance between
- *          function calls, the downside is that the cache instance + the items used stay within memory.
- *          Consider using this setting when you know that there are going to be many calls to the cache for the same information
- *          or when you are converting existing code to the cache and need to access the cache within functions but don't want
- *          to add it as an argument to the function.
+ *     + persistentdata
+ *          The cache loader will keep an array of the items set and retrieved to the cache during the request.
+ *          Consider using this setting when you know that there are going to be many calls to the cache for the same information.
+ *          Requests for data in this array will be ultra fast, but it will cost memory.
  *     + persistentmaxsize
  *          [int] This supplements the above setting by limiting the number of items in the caches persistent array of items.
  *          Tweaking this setting lower will allow you to minimise the memory implications above while hopefully still managing to
@@ -253,10 +248,10 @@ class cache_definition {
     protected $datasourceaggregate = null;
 
     /**
-     * Set to true if the definitions cache should be persistent
+     * Set to true if the cache should hold onto items passing through it to speed up subsequent requests.
      * @var bool
      */
-    protected $persistent = false;
+    protected $persistentdata = false;
 
     /**
      * The persistent item array max size.
@@ -363,7 +358,7 @@ class cache_definition {
         $overrideclassfile = null;
         $datasource = null;
         $datasourcefile = null;
-        $persistent = false;
+        $persistentdata = false;
         $persistentmaxsize = false;
         $ttl = 0;
         $mappingsonly = false;
@@ -419,7 +414,11 @@ class cache_definition {
         }
 
         if (array_key_exists('persistent', $definition)) {
-            $persistent = (bool)$definition['persistent'];
+            // Ahhh this is the legacy persistent option.
+            $persistentdata = (bool)$definition['persistent'];
+        }
+        if (array_key_exists('persistentdata', $definition)) {
+            $persistentdata = (bool)$definition['persistentdata'];
         }
         if (array_key_exists('persistentmaxsize', $definition)) {
             $persistentmaxsize = (int)$definition['persistentmaxsize'];
@@ -518,7 +517,7 @@ class cache_definition {
         $cachedefinition->datasource = $datasource;
         $cachedefinition->datasourcefile = $datasourcefile;
         $cachedefinition->datasourceaggregate = $datasourceaggregate;
-        $cachedefinition->persistent = $persistent;
+        $cachedefinition->persistentdata = $persistentdata;
         $cachedefinition->persistentmaxsize = $persistentmaxsize;
         $cachedefinition->ttl = $ttl;
         $cachedefinition->mappingsonly = $mappingsonly;
@@ -543,7 +542,8 @@ class cache_definition {
      *   - simplekeys : Set to true if the keys you will use are a-zA-Z0-9_
      *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
      *   - overrideclass : The class to use as the loader.
-     *   - persistent : If set to true the cache will persist construction requests.
+     *   - persistentdata : If set to true the cache will hold onto data passing through it.
+     *   - persistentmaxsize : Set it to an int to limit the size of the persistentdata cache.
      * @return cache_application|cache_session|cache_request
      */
     public static function load_adhoc($mode, $component, $area, array $options = array()) {
@@ -560,7 +560,14 @@ class cache_definition {
             $definition['simpledata'] = $options['simpledata'];
         }
         if (!empty($options['persistent'])) {
-            $definition['persistent'] = $options['persistent'];
+            // Ahhh this is the legacy persistent option.
+            $definition['persistentdata'] = (bool)$options['persistent'];
+        }
+        if (!empty($options['persistentdata'])) {
+            $definition['persistentdata'] = (bool)$options['persistentdata'];
+        }
+        if (!empty($options['persistentmaxsize'])) {
+            $definition['persistentmaxsize'] = (int)$options['persistentmaxsize'];
         }
         if (!empty($options['overrideclass'])) {
             $definition['overrideclass'] = $options['overrideclass'];
@@ -788,10 +795,26 @@ class cache_definition {
 
     /**
      * Returns true if this definitions cache should be made persistent.
+     *
+     * Please call data_should_be_persistent instead.
+     *
+     * @deprecated since 2.6
      * @return bool
      */
     public function should_be_persistent() {
-        return $this->persistent || $this->mode === cache_store::MODE_SESSION;
+        return $this->data_should_be_persistent();
+    }
+
+    /**
+     * Returns true if the cache loader for this definition should be persistent.
+     * @return bool
+     */
+    public function data_should_be_persistent() {
+        if ($this->mode === cache_store::MODE_REQUEST) {
+            // Request caches should never use persistent data - it just doesn't make sense.
+            return false;
+        }
+        return $this->persistentdata || $this->mode === cache_store::MODE_SESSION;
     }
 
     /**

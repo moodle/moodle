@@ -150,14 +150,24 @@ class cache_factory {
      */
     public static function reset() {
         $factory = self::instance();
-        $factory->cachesfromdefinitions = array();
-        $factory->cachesfromparams = array();
-        $factory->stores = array();
+        $factory->reset_cache_instances();
         $factory->configs = array();
         $factory->definitions = array();
         $factory->lockplugins = array(); // MUST be null in order to force its regeneration.
         // Reset the state to uninitialised.
         $factory->state = self::STATE_UNINITIALISED;
+    }
+
+    /**
+     * Resets the stores, clearing the array of created stores.
+     *
+     * Cache objects still held onto by the code that initialised them will remain as is
+     * however all future requests for a cache/store will lead to a new instance being re-initialised.
+     */
+    public function reset_cache_instances() {
+        $this->cachesfromdefinitions = array();
+        $this->cachesfromparams = array();
+        $this->stores = array();
     }
 
     /**
@@ -181,9 +191,8 @@ class cache_factory {
         $definition = $this->create_definition($component, $area, $aggregate);
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition, $identifiers);
-        if ($definition->should_be_persistent()) {
-            $this->cachesfromdefinitions[$definitionname] = $cache;
-        }
+        // Loaders are always held onto to speed up subsequent requests.
+        $this->cachesfromdefinitions[$definitionname] = $cache;
         return $cache;
     }
 
@@ -210,9 +219,7 @@ class cache_factory {
         $definition = cache_definition::load_adhoc($mode, $component, $area, $options);
         $definition->set_identifiers($identifiers);
         $cache = $this->create_cache($definition, $identifiers);
-        if ($definition->should_be_persistent()) {
-            $this->cachesfromparams[$key] = $cache;
-        }
+        $this->cachesfromparams[$key] = $cache;
         return $cache;
     }
 
@@ -585,7 +592,9 @@ class cache_factory {
      * </code>
      */
     public static function disable_stores() {
+        // First reset to clear any persistent caches.
         $factory = self::instance();
+        $factory->reset_cache_instances();
         $factory->set_state(self::STATE_STORES_DISABLED);
     }
 }

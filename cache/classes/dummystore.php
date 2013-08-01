@@ -112,7 +112,7 @@ class cachestore_dummy extends cache_store {
         //     store things in its persistent cache.
         //   - If the definition is not persistent then the cache loader won't try to store anything
         //     and we will need to store it here in order to make sure it is accessible.
-        $this->persist = !$definition->should_be_persistent();
+        $this->persist = !$definition->data_should_be_persistent();
     }
 
     /**

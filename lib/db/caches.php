@@ -35,7 +35,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 30
     ),
 
@@ -48,7 +48,7 @@ $definitions = array(
         'requireidentifiers' => array(
             'dbfamily'
         ),
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 15
     ),
 
@@ -61,7 +61,7 @@ $definitions = array(
     // cache will likely be used either lots or never.
     'eventinvalidation' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
+        'persistentdata' => true,
         'requiredataguarantee' => true,
         'simpledata' => true,
     ),
@@ -92,7 +92,7 @@ $definitions = array(
     // Persistence is used because normally several settings within a script.
     'config' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
+        'persistentdata' => true,
         'simpledata' => true
     ),
 
@@ -103,7 +103,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true, // The course id the groupings exist for.
         'simpledata' => true, // Array of stdClass objects containing only strings.
-        'persistent' => true, // Likely there will be a couple of calls to this.
+        'persistentdata' => true, // Likely there will be a couple of calls to this.
         'persistmaxsize' => 2, // The original cache used 1, we've increased that to two.
     ),
 
@@ -112,7 +112,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
     ),
 
     // YUI Module cache.
@@ -140,7 +140,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 2,
     ),
 
@@ -149,7 +149,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 2,
     ),
 
@@ -158,7 +158,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 1,
     ),
 
@@ -167,7 +167,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 1,
     ),
 
@@ -176,7 +176,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 1,
     ),
 
@@ -185,7 +185,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 1,
     ),
 
@@ -194,47 +194,45 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 1,
     ),
 
-    // Used to store the full tree of course categories
+    // Used to store the full tree of course categories.
     'coursecattree' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
+        'persistentdata' => true,
         'invalidationevents' => array(
             'changesincoursecat',
         )
     ),
-    // Used to store data for course categories visible to current user. Helps to browse list of categories
+    // Used to store data for course categories visible to current user. Helps to browse list of categories.
     'coursecat' => array(
         'mode' => cache_store::MODE_SESSION,
-        'persistent' => true,
+        'persistentdata' => true,
         'invalidationevents' => array(
             'changesincoursecat',
             'changesincourse',
         ),
         'ttl' => 600,
     ),
-    // Used to store data for course categories visible to current user. Helps to browse list of categories
+    // Used to store data for course categories visible to current user. Helps to browse list of categories.
     'coursecatrecords' => array(
         'mode' => cache_store::MODE_REQUEST,
         'simplekeys' => true,
-        'persistent' => true,
         'invalidationevents' => array(
             'changesincoursecat',
         ),
     ),
-    // Cache course contacts for the courses
+    // Cache course contacts for the courses.
     'coursecontacts' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
+        'persistentdata' => true,
         'simplekeys' => true,
     ),
-    // Used to store data for repositories to avoid repetitive DB queries within one request
+    // Used to store data for repositories to avoid repetitive DB queries within one request.
     'repositories' => array(
         'mode' => cache_store::MODE_REQUEST,
-        'persistent' => true,
     ),
     // Used to store external badges.
     'externalbadges' => array(
