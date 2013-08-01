@@ -331,6 +331,9 @@ class core_course_renderer extends plugin_renderer_base {
      *     ownerselector => A JS/CSS selector that can be used to find an cm node.
      *         If specified the owning node will be given the class 'action-menu-shown' when the action
      *         menu is being displayed.
+     *     constraintselector => A JS/CSS selector that can be used to find the parent node for which to constrain
+     *         the action menu to when it is being displayed.
+     *     donotenhance => If set to true the action menu that gets displayed won't be enhanced by JS.
      * @return string
      */
     public function course_section_cm_edit_actions($actions, cm_info $mod = null, $displayoptions = array()) {
@@ -349,11 +352,17 @@ class core_course_renderer extends plugin_renderer_base {
             $ownerselector = 'li.activity';
         }
 
+        if (isset($displayoptions['constraintselector'])) {
+            $constraint = $displayoptions['constraintselector'];
+        } else {
+            $constraint = '.course-content';
+        }
+
         $menu = new action_menu();
         $menu->set_owner_selector($ownerselector);
-        $menu->set_contraint('.course-content');
+        $menu->set_contraint($constraint);
         $menu->set_alignment(action_menu::TL, action_menu::TR);
-        if (isset($CFG->modeditingmenu) && !$CFG->modeditingmenu) {
+        if (isset($CFG->modeditingmenu) && !$CFG->modeditingmenu || !empty($displayoptions['donotenhance'])) {
             $menu->do_not_enhance();
         }
         foreach ($actions as $action) {

@@ -1114,10 +1114,10 @@ class core_renderer extends renderer_base {
         $icon = '';
         if ($action->icon) {
             $icon = $action->icon;
-            if ($action->primary) {
+            if ($action->primary || !$action->actionmenu->will_be_enhanced()) {
                 $action->attributes['title'] = $action->text;
             }
-            if ($icon->attributes['alt'] === $comparetoalt) {
+            if ($icon->attributes['alt'] === $comparetoalt && $action->actionmenu->will_be_enhanced()) {
                 $icon->attributes['alt'] = ' ';
             }
             $icon = $this->render($icon);

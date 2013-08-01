@@ -91,8 +91,9 @@ class block_site_main_menu extends block_list {
                 if (!$ismoving) {
                     $actions = course_get_cm_edit_actions($mod, -1);
                     $editbuttons = html_writer::tag('div',
-                            $courserenderer->course_section_cm_edit_actions($actions, $mod),
-                            array('class' => 'buttons'));
+                        $courserenderer->course_section_cm_edit_actions($actions, $mod, array('donotenhance' => true)),
+                        array('class' => 'buttons')
+                    );
                 } else {
                     $editbuttons = '';
                 }

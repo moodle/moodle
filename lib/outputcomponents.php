@@ -3175,6 +3175,9 @@ class action_menu implements renderable {
     public function add_primary_action($action) {
         if ($action instanceof action_link || $action instanceof pix_icon) {
             $action->attributes['role'] = 'menuitem';
+            if ($action instanceof action_menu_link) {
+                $action->actionmenu = $this;
+            }
         }
         $this->primaryactions[] = $action;
     }
@@ -3187,6 +3190,9 @@ class action_menu implements renderable {
     public function add_secondary_action($action) {
         if ($action instanceof action_link || $action instanceof pix_icon) {
             $action->attributes['role'] = 'menuitem';
+            if ($action instanceof action_menu_link) {
+                $action->actionmenu = $this;
+            }
         }
         $this->secondaryactions[] = $action;
     }
@@ -3296,6 +3302,15 @@ class action_menu implements renderable {
     public function do_not_enhance() {
         unset($this->attributes['data-enhance']);
     }
+
+    /**
+     * Returns true if this action menu will be enhanced.
+     *
+     * @return bool
+     */
+    public function will_be_enhanced() {
+        return isset($this->attributes['data-enhance']);
+    }
 }
 
 /**
@@ -3313,6 +3328,12 @@ class action_menu_link extends action_link implements renderable {
      * @var bool
      */
     public $primary = true;
+
+    /**
+     * The action menu this link has been added to.
+     * @var action_menu
+     */
+    public $actionmenu = null;
 
     /**
      * Constructs the object.

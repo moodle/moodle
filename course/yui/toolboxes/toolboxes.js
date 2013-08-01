@@ -896,14 +896,27 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     });
 
     M.course = M.course || {};
-
+    M.course.resource_toolbox = null;
     M.course.init_resource_toolbox = function(config) {
-        return new RESOURCETOOLBOX(config);
+        M.course.resource_toolbox = new RESOURCETOOLBOX(config);
+        return M.course.resource_toolbox;
     };
 
     M.course.init_section_toolbox = function(config) {
         return new SECTIONTOOLBOX(config);
     };
+
+    M.course.register_new_module = function(module) {
+        if (typeof module === 'string') {
+            module = Y.one(module);
+        }
+        if (M.course.resource_toolbox !== null) {
+            module.setData('toolbox', M.course.resource_toolbox);
+            module.all(SELECTOR.COMMANDSPAN+ ' ' + SELECTOR.ACTIVITYACTION).each(function(){
+                this.setData('activity', module);
+            });
+        }
+    }
 
 },
 '@VERSION@', {

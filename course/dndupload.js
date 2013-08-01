@@ -1053,8 +1053,12 @@ M.course_dndupload = {
      * @param sectionnumber the number of the selected course section
      */
     add_editing: function(elementid) {
+        var node = Y.one('#' + elementid);
         YUI().use('moodle-course-coursebase', function(Y) {
-            M.course.coursebase.invoke_function('setup_for_resource', '#' + elementid);
+            M.course.register_new_module(node);
         });
+        if (M.core.actionmenu && M.core.actionmenu.newDOMNode) {
+            M.core.actionmenu.newDOMNode(node);
+        }
     }
 };
