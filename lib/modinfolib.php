@@ -1723,11 +1723,11 @@ class cm_info implements IteratorAggregate {
      */
     private function obtain_dynamic_data() {
         global $CFG;
-        if ($this->state >= self::STATE_BUILDING_DYNAMIC) {
+        $userid = $this->modinfo->get_user_id();
+        if ($this->state >= self::STATE_BUILDING_DYNAMIC || $userid == -1) {
             return;
         }
         $this->state = self::STATE_BUILDING_DYNAMIC;
-        $userid = $this->modinfo->get_user_id();
 
         if (!empty($CFG->enableavailability)) {
             require_once($CFG->libdir. '/conditionlib.php');
@@ -1805,6 +1805,9 @@ class cm_info implements IteratorAggregate {
      */
     private function update_user_visible() {
         $userid = $this->modinfo->get_user_id();
+        if ($userid == -1) {
+            return null;
+        }
         $this->uservisible = true;
 
         // If the user cannot access the activity set the uservisible flag to false.
@@ -1835,6 +1838,9 @@ class cm_info implements IteratorAggregate {
 
         if (!empty($CFG->enablegroupmembersonly) and !empty($this->groupmembersonly)) {
             $userid = $this->modinfo->get_user_id();
+            if ($userid == -1) {
+                return null;
+            }
             if (!has_capability('moodle/site:accessallgroups', $this->get_context(), $userid)) {
                 // If the activity has 'group members only' and you don't have accessallgroups...
                 $groups = $this->modinfo->get_groups($this->groupingid);
@@ -1853,6 +1859,10 @@ class cm_info implements IteratorAggregate {
      * @return bool True if the user access is restricted.
      */
     public function is_user_access_restricted_by_capability() {
+        $userid = $this->modinfo->get_user_id();
+        if ($userid == -1) {
+            return null;
+        }
         $capability = 'mod/' . $this->modname . ':view';
         $capabilityinfo = get_capability_info($capability);
         if (!$capabilityinfo) {
@@ -1861,7 +1871,6 @@ class cm_info implements IteratorAggregate {
         }
 
         // You are blocked if you don't have the capability.
-        $userid = $this->modinfo->get_user_id();
         return !has_capability($capability, $this->get_context(), $userid);
     }
 
@@ -1877,7 +1886,10 @@ class cm_info implements IteratorAggregate {
             return false;
         }
 
-        require_once($CFG->libdir. '/conditionlib.php');
+        $userid = $this->modinfo->get_user_id();
+        if ($userid == -1) {
+            return null;
+        }
 
         // If module will always be visible anyway (but greyed out), don't bother checking anything else
         if ($this->get_show_availability() == CONDITION_STUDENTVIEW_SHOW) {
@@ -1885,7 +1897,6 @@ class cm_info implements IteratorAggregate {
         }
 
         // Can the user see hidden modules?
-        $userid = $this->modinfo->get_user_id();
         if (has_capability('moodle/course:viewhiddenactivities', $this->get_context(), $userid)) {
             return false;
         }
@@ -1936,7 +1947,7 @@ class cm_info implements IteratorAggregate {
      * @return void
      */
     private function obtain_view_data() {
-        if ($this->state >= self::STATE_BUILDING_VIEW) {
+        if ($this->state >= self::STATE_BUILDING_VIEW || $this->modinfo->get_user_id() == -1) {
             return;
         }
         $this->obtain_dynamic_data();
@@ -1963,8 +1974,8 @@ class cm_info implements IteratorAggregate {
  *     and recommended to have field 'cacherev') or just a course id. Just course id
  *     is enough when calling get_fast_modinfo() for current course or site or when
  *     calling for any other course for the second time.
- * @param int $userid User id to populate 'uservisible' attributes of modules and sections.
- *     Set to 0 for current user (default)
+ * @param int $userid User id to populate 'availble' and 'uservisible' attributes of modules and sections.
+ *     Set to 0 for current user (default). Set to -1 to avoid calculation of dynamic user-depended data.
  * @param bool $resetonly whether we want to get modinfo or just reset the cache
  * @return course_modinfo|null Module information for course, or null if resetting
  * @throws moodle_exception when course is not found (nothing is thrown if resetting)
@@ -2457,8 +2468,9 @@ class section_info implements IteratorAggregate {
      */
     private function get_available() {
         global $CFG;
-        if ($this->_available !== null) {
-            // Has already been calculated.
+        $userid = $this->modinfo->get_user_id();
+        if ($this->_available !== null || $userid == -1) {
+            // Has already been calculated or does not need calculation.
             return $this->_available;
         }
         if (!empty($CFG->enableavailability)) {
@@ -2466,7 +2478,7 @@ class section_info implements IteratorAggregate {
             // Get availability information
             $ci = new condition_info_section($this);
             $this->_available = $ci->is_available($this->_availableinfo, true,
-                    $this->modinfo->get_user_id(), $this->modinfo);
+                    $userid, $this->modinfo);
             if ($this->_availableinfo === '' && $this->_groupingid) {
                 // Still may have some extra text in availableinfo because of groupping.
                 // Set as undefined so the next call to get_availabeinfo() calculates it.
@@ -2487,8 +2499,9 @@ class section_info implements IteratorAggregate {
     private function get_availableinfo() {
         // Make sure $this->_available has been calculated, it may also fill the _availableinfo property.
         $this->get_available();
-        if ($this->_availableinfo !== null) {
-            // It has been already calculated.
+        $userid = $this->modinfo->get_user_id();
+        if ($this->_availableinfo !== null || $userid == -1) {
+            // It has been already calculated or does not need calculation.
             return $this->_availableinfo;
         }
         $this->_availableinfo = '';
@@ -2497,7 +2510,6 @@ class section_info implements IteratorAggregate {
         // for people with managegroups - same logic/class as grouping label
         // on individual activities.
         $context = context_course::instance($this->get_course());
-        $userid = $this->modinfo->get_user_id();
         if ($this->_groupingid && has_capability('moodle/course:managegroups', $context, $userid)) {
             $groupings = groups_get_all_groupings($this->get_course());
             $this->_availableinfo = html_writer::tag('span', '(' . format_string(
@@ -2537,14 +2549,14 @@ class section_info implements IteratorAggregate {
      * @return bool
      */
     private function get_uservisible() {
-        if ($this->_uservisible !== null) {
-            // Has already been calculated.
+        $userid = $this->modinfo->get_user_id();
+        if ($this->_uservisible !== null || $userid == -1) {
+            // Has already been calculated or does not need calculation.
             return $this->_uservisible;
         }
         $this->_uservisible = true;
         if (!$this->_visible || !$this->get_available()) {
             $coursecontext = context_course::instance($this->get_course());
-            $userid = $this->modinfo->get_user_id();
             if (!has_capability('moodle/course:viewhiddensections', $coursecontext, $userid)) {
                 $this->_uservisible = false;
             }
