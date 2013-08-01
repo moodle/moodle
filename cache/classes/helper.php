@@ -244,7 +244,8 @@ class cache_helper {
                 // OK at this point we know that the definition has information to invalidate on the event.
                 // There are two routes, either its an application cache in which case we can invalidate it now.
                 // or it is a persistent cache that also needs to be invalidated now.
-                if ($definition->get_mode() === cache_store::MODE_APPLICATION || $definition->should_be_persistent()) {
+                $applicationcache = $definition->get_mode() === cache_store::MODE_APPLICATION;
+                if ($applicationcache || $definition->data_should_be_persistent()) {
                     $cache = $factory->create_cache_from_definition($definition->get_component(), $definition->get_area());
                     $cache->delete_many($keys);
                 }
@@ -315,8 +316,8 @@ class cache_helper {
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
             if ($definition->invalidates_on_event($event)) {
-                // Check if this definition would result in a persistent loader being in use.
-                if ($definition->should_be_persistent()) {
+                // Check if this definition would result in a loader with persistent data being in use.
+                if ($definition->data_should_be_persistent()) {
                     // There may be a persistent cache loader. Lets purge that first so that any persistent data is removed.
                     $cache = $factory->create_cache_from_definition($definition->get_component(), $definition->get_area());
                     $cache->purge();

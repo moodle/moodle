@@ -149,7 +149,7 @@ class core_cache_testcase extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'test_default_application_cache',
-            'persistent' => true,
+            'persistentdata' => true,
             'persistentmaxsize' => 1
         ));
         $cache = cache::make('phpunit', 'test_default_application_cache');
@@ -189,7 +189,7 @@ class core_cache_testcase extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'nostoretest2',
-            'persistent' => true
+            'persistentdata' => true
         ));
         $instance->phpunit_remove_stores();
 
@@ -924,11 +924,11 @@ class core_cache_testcase extends advanced_testcase {
                 'crazyevent'
             )
         ));
-        $instance->phpunit_add_definition('phpunit/eventpurgetestpersistent', array(
+        $instance->phpunit_add_definition('phpunit/eventpurgetestpersistentapp', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
-            'area' => 'eventpurgetestpersistent',
-            'persistent' => true,
+            'area' => 'eventpurgetestpersistentapp',
+            'persistentdata' => true,
             'invalidationevents' => array(
                 'crazyevent'
             )
@@ -948,7 +948,7 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertFalse($cache->get('testkey2'));
 
         // Now test the persistent cache.
-        $cache = cache::make('phpunit', 'eventpurgetestpersistent');
+        $cache = cache::make('phpunit', 'eventpurgetestpersistentapp');
         $this->assertTrue($cache->set('testkey1', 'test data 1'));
         $this->assertEquals('test data 1', $cache->get('testkey1'));
         $this->assertTrue($cache->set('testkey2', 'test data 2'));
@@ -979,7 +979,7 @@ class core_cache_testcase extends advanced_testcase {
             'mode' => cache_store::MODE_SESSION,
             'component' => 'phpunit',
             'area' => 'eventpurgetestpersistent',
-            'persistent' => true,
+            'persistentdata' => true,
             'invalidationevents' => array(
                 'crazyevent'
             )
@@ -1400,7 +1400,7 @@ class core_cache_testcase extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'test_application_locking',
-            'persistent' => true,
+            'persistentdata' => true,
             'persistentmaxsize' => 1,
             'requirelockingread' => true,
             'requirelockingwrite' => true
