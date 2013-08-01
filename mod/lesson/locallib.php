@@ -575,7 +575,12 @@ function lesson_add_header_buttons($cm, $context, $extraeditbuttons=false, $less
             print_error('invalidpageid', 'lesson');
         }
         if (!empty($lessonpageid) && $lessonpageid != LESSON_EOL) {
-            $url = new moodle_url('/mod/lesson/editpage.php', array('id'=>$cm->id, 'pageid'=>$lessonpageid, 'edit'=>1));
+            $url = new moodle_url('/mod/lesson/editpage.php', array(
+                'id'       => $cm->id,
+                'pageid'   => $lessonpageid,
+                'edit'     => 1,
+                'returnto' => $PAGE->url->out(false)
+            ));
             $PAGE->set_button($OUTPUT->single_button($url, get_string('editpagecontent', 'lesson')));
         }
     }
@@ -697,6 +702,11 @@ abstract class lesson_add_page_form_base extends moodleform {
         $editoroptions = $this->_customdata['editoroptions'];
 
         $mform->addElement('header', 'qtypeheading', get_string('createaquestionpage', 'lesson', get_string($this->qtypestring, 'lesson')));
+
+        if (!empty($this->_customdata['returnto'])) {
+            $mform->addElement('hidden', 'returnto', $this->_customdata['returnto']);
+            $mform->setType('returnto', PARAM_URL);
+        }
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);

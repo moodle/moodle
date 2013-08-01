@@ -224,7 +224,12 @@ class mod_lesson_renderer extends plugin_renderer_base {
         while ($pageid != 0) {
             $page = $lesson->load_page($pageid);
             $data = array();
-            $data[] = "<a href=\"$CFG->wwwroot/mod/lesson/edit.php?id=".$this->page->cm->id."&amp;mode=single&amp;pageid=".$page->id."\">".format_string($page->title,true).'</a>';
+            $url = new moodle_url('/mod/lesson/edit.php', array(
+                'id'     => $this->page->cm->id,
+                'mode'   => 'single',
+                'pageid' => $page->id
+            ));
+            $data[] = html_writer::link($url, format_string($page->title, true), array('id' => 'lesson-' . $page->id));
             $data[] = $qtypes[$page->qtype];
             $data[] = implode("<br />\n", $page->jumps);
             if ($canedit) {
@@ -274,6 +279,7 @@ class mod_lesson_renderer extends plugin_renderer_base {
             $pagetable->cellspacing = 0;
             $pagetable->cellpadding = '5px';
             $pagetable->data = array();
+            $pagetable->id = 'lesson-' . $pageid;
 
             $pageheading = new html_table_cell();
 
