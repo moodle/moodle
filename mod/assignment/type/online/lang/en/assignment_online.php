@@ -23,4 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['event_assessable_uploaded'] = 'An online text has been uploaded.';
+$string['event_assessable_uploaded_desc'] = 'User {$a->userid} has saved an online text in submission {$a->objectid}.';
 $string['pluginname'] = 'Online';
