@@ -31,6 +31,32 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Minify JavaScript files.
+ *
+ * @deprecated since 2.6
+ *
+ * @param array $files
+ * @return string
+ */
+function js_minify($files) {
+    debugging('js_minify() is deprecated, use core_minify::js_files() or core_minify::js() instead.');
+    return core_minify::js_files($files);
+}
+
+/**
+ * Minify CSS files.
+ *
+ * @deprecated since 2.6
+ *
+ * @param array $files
+ * @return string
+ */
+function css_minify_css($files) {
+    debugging('css_minify_css() is deprecated, use core_minify::css_files() or core_minify::css() instead.');
+    return core_minify::css_files($files);
+}
+
+/**
  * List all core subsystems and their location
  *
  * This is a whitelist of components that are part of the core and their

@@ -1571,7 +1571,7 @@ class YUI_config {
             $configfn = $cache->get($keyname);
             if ($configfn === false) {
                 require_once($CFG->libdir . '/jslib.php');
-                $configfn = js_minify($fullpath);
+                $configfn = core_minify::js_files(array($fullpath));
                 $cache->set($keyname, $configfn);
             }
         }
