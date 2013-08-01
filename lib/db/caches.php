@@ -35,7 +35,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 30
     ),
 
@@ -48,7 +48,7 @@ $definitions = array(
         'requireidentifiers' => array(
             'dbfamily'
         ),
-        'persistent' => true,
+        'persistentdata' => true,
         'persistentmaxsize' => 15
     ),
 
@@ -61,7 +61,7 @@ $definitions = array(
     // cache will likely be used either lots or never.
     'eventinvalidation' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
+        'persistentdata' => true,
         'requiredataguarantee' => true,
         'simpledata' => true,
     ),

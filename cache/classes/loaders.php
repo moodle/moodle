@@ -99,7 +99,7 @@ class cache implements cache_loader {
      * There are several other variables to control how this persist cache works.
      * @var bool
      */
-    private $persist = false;
+    private $persistdata = false;
 
     /**
      * The persist cache itself.
@@ -218,8 +218,8 @@ class cache implements cache_loader {
             $this->datasource = $loader;
         }
         $this->definition->generate_definition_hash();
-        $this->persist = $this->definition->should_be_persistent();
-        if ($this->persist) {
+        $this->persistdata = $this->definition->data_should_be_persistent();
+        if ($this->persistdata) {
             $this->persistmaxsize = $this->definition->get_persistent_max_size();
         }
         $this->hasattl = ($this->definition->get_ttl() > 0);
@@ -239,12 +239,12 @@ class cache implements cache_loader {
         if ($setting) {
             $this->subloader = true;
             // Subloaders should not keep persistent data.
-            $this->persist = false;
+            $this->persistdata = false;
             $this->persistmaxsize = false;
         } else {
             $this->subloader = true;
-            $this->persist = $this->definition->should_be_persistent();
-            if ($this->persist) {
+            $this->persistdata = $this->definition->data_should_be_persistent();
+            if ($this->persistdata) {
                 $this->persistmaxsize = $this->definition->get_persistent_max_size();
             }
         }
@@ -913,7 +913,7 @@ class cache implements cache_loader {
      * @return bool
      */
     protected function is_using_persist_cache() {
-        return $this->persist;
+        return $this->persistdata;
     }
 
     /**
@@ -929,7 +929,7 @@ class cache implements cache_loader {
         }
         // This could be written as a single line, however it has been split because the ttl check is faster than the instanceof
         // and has_expired calls.
-        if (!$this->persist || !array_key_exists($key, $this->persistcache)) {
+        if (!$this->persistdata || !array_key_exists($key, $this->persistcache)) {
             return false;
         }
         if ($this->has_a_ttl() && $this->store_supports_native_ttl()) {
@@ -953,7 +953,7 @@ class cache implements cache_loader {
         // for null values, meaning null values will come from backing store not
         // the persist cache. We think this okay because null usage should be
         // very rare (see comment in MDL-39472).
-        if (!$this->persist || !isset($this->persistcache[$key])) {
+        if (!$this->persistdata || !isset($this->persistcache[$key])) {
             $result = false;
         } else {
             $data = $this->persistcache[$key];
