@@ -184,3 +184,13 @@ class problematic_event3 extends \core\event\base {
         }
     }
 }
+
+class noname_event extends \core\event\base {
+
+    protected function init() {
+        $this->data['crud'] = 'c';
+        $this->data['level'] = 10;
+        $this->context = \context_system::instance();
+    }
+}
+

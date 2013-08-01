@@ -676,6 +676,11 @@ class core_event_testcase extends advanced_testcase {
         }
     }
 
+    public function test_get_name() {
+        $event = \core_tests\event\noname_event::create(array('courseid' => 1, 'other' => array('sample' => 1, 'xx' => 10)));
+        $this->assertEquals("core_tests: noname event", $event->get_name());
+    }
+
     public function test_iteration() {
         $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)));
 
