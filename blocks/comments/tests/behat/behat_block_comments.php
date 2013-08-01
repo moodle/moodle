@@ -103,10 +103,6 @@ class behat_block_comments extends behat_base {
         $deleteicon = $this->find('css', '.comment-delete a img', $deleteexception, $commentnode);
         $deleteicon->click();
 
-        // Yes confirm.
-        $confirmnode = $this->find('xpath', "//div[@class='comment-delete-confirm']/descendant::a[contains(., '" . get_string('yes') . "')]");
-        $confirmnode->click();
-
         // Wait for the AJAX request.
         $this->getSession()->wait(4 * 1000, false);
     }

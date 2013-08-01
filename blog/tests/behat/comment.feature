@@ -55,7 +55,6 @@ Feature: Comment on a blog entry
     And I follow "Save comment"
     And I wait "4" seconds
     When I click on ".comment-delete a" "css_element"
-    And I click on "Yes" "link"
     And I wait "4" seconds
     Then I should not see "$My own >nasty< \"string\"!"
     And I follow "Blog post from user 1"
