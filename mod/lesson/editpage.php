@@ -32,6 +32,11 @@ $pageid = required_param('pageid', PARAM_INT);
 $id     = required_param('id', PARAM_INT);         // Course Module ID
 $qtype  = optional_param('qtype', 0, PARAM_INT);
 $edit   = optional_param('edit', false, PARAM_BOOL);
+$returnto = optional_param('returnto', null, PARAM_URL);
+if (empty($returnto)) {
+    $returnto = new moodle_url('/mod/lesson/edit.php', array('id' => $id));
+    $returnto->set_anchor('lesson-' . $pageid);
+}
 
 $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -66,17 +71,31 @@ $editoroptions = array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'max
 // the Question type selection was cancelled. For this reason, a dummy form
 // is created here solely to check whether the selection was cancelled.
 if ($qtype) {
-    $mformdummy = $manager->get_page_form(0, array('editoroptions'=>$editoroptions, 'jumpto'=>$jumpto, 'lesson'=>$lesson, 'edit'=>$edit, 'maxbytes'=>$PAGE->course->maxbytes));
+    $mformdummy = $manager->get_page_form(0, array(
+        'editoroptions' => $editoroptions,
+        'jumpto'        => $jumpto,
+        'lesson'        => $lesson,
+        'edit'          => $edit,
+        'maxbytes'      => $PAGE->course->maxbytes,
+        'returnto'      => $returnto
+    ));
     if ($mformdummy->is_cancelled()) {
-        redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$id");
+        redirect($returnto);
         exit;
     }
 }
 
-$mform = $manager->get_page_form($qtype, array('editoroptions'=>$editoroptions, 'jumpto'=>$jumpto, 'lesson'=>$lesson, 'edit'=>$edit, 'maxbytes'=>$PAGE->course->maxbytes));
+$mform = $manager->get_page_form($qtype, array(
+    'editoroptions' => $editoroptions,
+    'jumpto'        => $jumpto,
+    'lesson'        => $lesson,
+    'edit'          => $edit,
+    'maxbytes'      => $PAGE->course->maxbytes,
+    'returnto'      => $returnto
+));
 
 if ($mform->is_cancelled()) {
-    redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$id");
+    redirect($returnto);
     exit;
 }
 
@@ -121,7 +140,7 @@ if ($data = $mform->get_data()) {
     } else {
         $editpage = lesson_page::create($data, $lesson, $context, $PAGE->course->maxbytes);
     }
-    redirect(new moodle_url('/mod/lesson/edit.php', array('id'=>$cm->id)));
+    redirect($returnto);
 }
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
