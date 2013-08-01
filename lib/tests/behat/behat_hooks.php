@@ -250,7 +250,7 @@ class behat_hooks extends behat_base {
             // PHP debug messages.
             $phperrorxpath = "//div[@data-rel='phpdebugmessage']";
             // Any other backtrace.
-            $othersxpath = "//ul[@data-rel='backtrace']";
+            $othersxpath = "//*[contains(., ': call to ')])[1]";
 
             $xpaths = array($exceptionsxpath, $debuggingxpath, $phperrorxpath, $othersxpath);
             $joinedxpath = implode(' | ', $xpaths);
