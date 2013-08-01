@@ -29,6 +29,7 @@
 .sitetopic .section .activity .commands,
 .course-content .section .activity .commands { white-space: nowrap; display: inline-block; }
 .section .activity .moodle-actionmenu .menubar > li > * {display:inline-block;min-height:16px;padding: 0.2em;}
+.section .activity .moodle-actionmenu .menubar > li > img {margin: 0.2em;vertical-align: text-bottom;padding:0 3px 0 0;}
 .section .activity .moodle-actionmenu .iconsmall {vertical-align: baseline;width:16px;height:16px;}
 
 .sitetopic .section li.activity,
