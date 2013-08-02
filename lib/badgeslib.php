@@ -932,43 +932,6 @@ function badges_add_course_navigation(navigation_node $coursenode, stdClass $cou
 }
 
 /**
- * Triggered when 'course_completed' event happens.
- *
- * @param   object $eventdata
- * @return  boolean
- */
-function badges_award_handle_course_criteria_review(stdClass $eventdata) {
-    global $DB, $CFG;
-
-    if (!empty($CFG->enablebadges)) {
-        $userid = $eventdata->userid;
-        $courseid = $eventdata->course;
-
-        // Need to take into account that course can be a part of course_completion and courseset_completion criteria.
-        if ($rs = $DB->get_records('badge_criteria_param', array('name' => 'course_' . $courseid, 'value' => $courseid))) {
-            foreach ($rs as $r) {
-                $crit = $DB->get_record('badge_criteria', array('id' => $r->critid), 'badgeid, criteriatype', MUST_EXIST);
-                $badge = new badge($crit->badgeid);
-                if (!$badge->is_active() || $badge->is_issued($userid)) {
-                    continue;
-                }
-
-                if ($badge->criteria[$crit->criteriatype]->review($userid)) {
-                    $badge->criteria[$crit->criteriatype]->mark_complete($userid);
-
-                    if ($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->review($userid)) {
-                        $badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($userid);
-                        $badge->issue($userid);
-                    }
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-/**
  * Triggered when 'user_updated' event happens.
  *
  * @param   object $eventdata Holds all information about a user.

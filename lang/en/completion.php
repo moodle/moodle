@@ -123,6 +123,7 @@ $string['err_noroles'] = 'There are no roles with the capability moodle/course:m
 $string['err_nousers'] = 'There are no students on this course or group for whom completion information is displayed. (By default, completion information is displayed only for students, so if there are no students, you will see this error. Administrators can alter this option via the admin screens.)';
 $string['err_settingslocked'] = 'One or more students have already completed a criteria so the settings have been locked. Unlocking the completion criteria settings will delete any existing user data and may cause confusion.';
 $string['err_system'] = 'An internal error occurred in the completion system. (System administrators can enable debugging information to see more detail.)';
+$string['eventcoursecompleted'] = 'Course completed';
 $string['eventcoursemodulecompletionupdated'] = 'Course module completion updated';
 $string['excelcsvdownload'] = 'Download in Excel-compatible format (.csv)';
 $string['fraction'] = 'Fraction';

@@ -69,4 +69,40 @@ class core_badges_observer {
         }
     }
 
+    /**
+     * Triggered when 'course_completed' event is triggered.
+     *
+     * @param   \core\event\course_completed $event
+     */
+    public static function course_criteria_review(\core\event\course_completed $event) {
+        global $DB, $CFG;
+
+        if (!empty($CFG->enablebadges)) {
+            require_once($CFG->dirroot.'/lib/badgeslib.php');
+
+            $eventdata = $event->get_record_snapshot('course_completions', $event->objectid);
+            $userid = $event->other['relateduserid'];
+            $courseid = $event->courseid;
+
+            // Need to take into account that course can be a part of course_completion and courseset_completion criteria.
+            if ($rs = $DB->get_records('badge_criteria_param', array('name' => 'course_' . $courseid, 'value' => $courseid))) {
+                foreach ($rs as $r) {
+                    $crit = $DB->get_record('badge_criteria', array('id' => $r->critid), 'badgeid, criteriatype', MUST_EXIST);
+                    $badge = new badge($crit->badgeid);
+                    if (!$badge->is_active() || $badge->is_issued($userid)) {
+                        continue;
+                    }
+
+                    if ($badge->criteria[$crit->criteriatype]->review($userid)) {
+                        $badge->criteria[$crit->criteriatype]->mark_complete($userid);
+
+                        if ($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->review($userid)) {
+                            $badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($userid);
+                            $badge->issue($userid);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
