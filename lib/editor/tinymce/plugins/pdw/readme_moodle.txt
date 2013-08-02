@@ -12,6 +12,6 @@ Upgrade procedure:
 2/ bump up version.php
 3/ update lib/thirdpartylibs.xml
 4/ reimplement patch in MDL-23646
-5/ add in "DOM.setStyle(ifr, 'width',DOM.getSize(ifrcon).w); // Resize iframe" (without quotes)
+5/ reimplement patch in MDL-40668
+6/ add in "DOM.setStyle(ifr, 'width',DOM.getSize(ifrcon).w); // Resize iframe" (without quotes)
    after "DOM.setStyle(ifr, 'height',DOM.getSize(ifr).h + dy); // Resize iframe"
-5/ reminify the js manually (I used uglifyjs)
