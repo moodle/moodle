@@ -1544,6 +1544,10 @@ class grade_structure {
     public function get_hiding_icon($element, $gpr) {
         global $CFG, $OUTPUT;
 
+        if (!$element['object']->can_control_visibility()) {
+            return '';
+        }
+
         if (!has_capability('moodle/grade:manage', $this->context) and
             !has_capability('moodle/grade:hide', $this->context)) {
             return '';

@@ -62,6 +62,9 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
+            if (!$object->can_control_visibility()) {
+                print_error('componentcontrolsvisibility', 'grades', $returnurl);
+            }
             $object->set_hidden(1, true);
         }
         break;
@@ -73,6 +76,9 @@ switch ($action) {
             }
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
+            }
+            if (!$object->can_control_visibility()) {
+                print_error('componentcontrolsvisibility', 'grades', $returnurl);
             }
             $object->set_hidden(0, true);
         }
