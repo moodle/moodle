@@ -301,6 +301,7 @@ M.core_comment = {
                                 scope.dodelete(commentid[1]);
                             }
                         }, '13,32');
+                        // 13 and 32 are the keycodes for space and enter.
                     }
                 );
             },
