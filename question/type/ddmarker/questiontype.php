@@ -331,7 +331,7 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
                                                     $format->getpath($data, array('#'), array()));
 
         $filexml = $format->getpath($data, array('#', 'file'), array());
-        $question->bgimage = $this->import_files_to_draft_file_area($format, $filexml);
+        $question->bgimage = $format->import_files_as_draft($filexml);
         $drags = $data['#']['drag'];
         $question->drags = array();
 

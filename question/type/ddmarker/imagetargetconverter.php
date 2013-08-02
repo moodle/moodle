@@ -80,7 +80,7 @@ $confirm = optional_param('confirm', 0, PARAM_INT);
 
 // Check the user is logged in.
 require_login();
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_capability('moodle/question:config', $context);
 
 admin_externalpage_setup('qtypeddmarkerfromimagetarget');
@@ -96,7 +96,7 @@ $from = 'FROM {question_categories} cat, {question} q';
 $where = ' WHERE q.qtype = \'imagetarget\' AND q.category =  cat.id ';
 
 if ($qcontextid) {
-    $qcontext = get_context_instance_by_id($qcontextid, MUST_EXIST);
+    $qcontext = context::instance_by_id($qcontextid);
     $from  .= ', {context} context';
     $where .= 'AND cat.contextid = context.id AND (context.path LIKE :path OR context.id = :id) ';
     $params['path'] = $qcontext->path.'/%';
