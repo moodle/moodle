@@ -234,25 +234,21 @@ abstract class base implements \IteratorAggregate {
      *
      * Override in subclass, we can not make it static and abstract at the same time.
      *
-     * TODO: MDL-37658
-     *
-     * @return string|\lang_string
+     * @return string
      */
     public static function get_name() {
         // Override in subclass with real lang string.
         $parts = explode('\\', __CLASS__);
         if (count($parts) !== 3) {
-            return 'unknown event';
+            return get_string('unknownevent', 'error');
         }
         return $parts[0].': '.str_replace('_', ' ', $parts[2]);
     }
 
     /**
-     * Returns localised description of what happened.
+     * Returns non-localised event description with id's for admin use only.
      *
-     * TODO: MDL-37658
-     *
-     * @return string|\lang_string
+     * @return string
      */
     public function get_description() {
         return null;
