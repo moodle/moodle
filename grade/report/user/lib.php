@@ -573,7 +573,10 @@ class grade_report_user extends grade_report {
 
         /// Build table structure
         $html = "
-            <table cellspacing='0' cellpadding='0' summary='{$this->get_lang_string('tablesummary', 'gradereport_user')}' class='boxaligncenter generaltable user-grade'>
+            <table cellspacing='0'
+                   cellpadding='0'
+                   summary='" . $this->get_lang_string('tablesummary', 'gradereport_user') . "'
+                   class='boxaligncenter generaltable user-grade'>
             <thead>
                 <tr>
                     <th id='".$this->tablecolumns[0]."' class=\"header\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
