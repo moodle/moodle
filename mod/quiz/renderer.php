@@ -302,7 +302,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output = '';
         $userpicture = $panel->user_picture();
         if ($userpicture) {
-            $output .= html_writer::tag('div', $this->render($userpicture),
+            $fullname = fullname($userpicture->user);
+            if ($userpicture->size === true) {
+                $fullname = html_writer::div($fullname);
+            }
+            $output .= html_writer::tag('div', $this->render($userpicture) . $fullname,
                     array('id' => 'user-picture', 'class' => 'clearfix'));
         }
         $output .= $panel->render_before_button_bits($this);
