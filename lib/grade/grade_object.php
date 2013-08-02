@@ -438,4 +438,13 @@ abstract class grade_object {
         $this->hidden = $hidden;
         $this->update();
     }
+
+    /**
+     * Returns whether the grade object can control the visibility of the grades.
+     *
+     * @return bool
+     */
+    public function can_control_visibility() {
+        return true;
+    }
 }

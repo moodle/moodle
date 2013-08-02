@@ -719,6 +719,13 @@ function quiz_grade_item_update($quiz, $grades = null) {
         $params['hidden'] = 0;
     }
 
+    if (!$params['hidden']) {
+        // If the grade item is not hidden by the quiz logic, then we need to
+        // hide it if the quiz is hidden from students.
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        $params['hidden'] = !$cm->visible;
+    }
+
     if ($grades  === 'reset') {
         $params['reset'] = true;
         $grades = null;
