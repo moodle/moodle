@@ -1219,11 +1219,6 @@ function question_categorylist($categoryid) {
     return $categorylist;
 }
 
-function to_plain_text($text, $format, $options) {
-    $text = str_replace('@@PLUGINFILE@@/', 'http://example.com/', $text);
-    return html_to_text(format_text($text, $format, $options), 0, false);
-}
-
 //===========================
 // Import/Export Functions
 //===========================

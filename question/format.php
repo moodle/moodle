@@ -933,11 +933,8 @@ class qformat_default {
      * during import to let the user see roughly what is going on.
      */
     protected function format_question_text($question) {
-        global $DB;
-        $formatoptions = new stdClass();
-        $formatoptions->noclean = true;
-        return to_plain_text($question->questiontext,
-                $question->questiontextformat, $formatoptions);
+        return question_utils::to_plain_text($question->questiontext,
+                $question->questiontextformat);
     }
 }
 

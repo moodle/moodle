@@ -333,7 +333,7 @@ abstract class question_definition {
      * @return string the equivalent plain text.
      */
     public function html_to_text($text, $format) {
-        return to_plain_text($text, $format, array('noclean' => true));
+        return question_utils::to_plain_text($text, $format);
     }
 
     /** @return the result of applying {@link format_text()} to the question text. */
