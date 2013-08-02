@@ -64,6 +64,7 @@ class grade_item_testcase extends grade_base_testcase {
         $this->sub_test_grade_item_get_calculation();
         $this->sub_test_grade_item_compute();
         $this->sub_test_update_final_grade();
+        $this->sub_test_grade_item_can_control_visibility();
     }
 
     protected function sub_test_grade_item_construct() {
@@ -99,7 +100,7 @@ class grade_item_testcase extends grade_base_testcase {
         $last_grade_item = end($this->grade_items);
 
         $this->assertEquals($grade_item->id, $last_grade_item->id + 1);
-        $this->assertEquals(11, $grade_item->sortorder);
+        $this->assertEquals(12, $grade_item->sortorder);
 
         //keep our reference collection the same as what is in the database
         $this->grade_items[] = $grade_item;
@@ -587,5 +588,15 @@ class grade_item_testcase extends grade_base_testcase {
         $grade_grade = grade_grade::fetch(array('userid'=>$this->user[1]->id, 'itemid'=>$grade_item->id));
         $this->assertEquals($min, $grade_grade->rawgrademin);
         $this->assertEquals($max, $grade_grade->rawgrademax);
+    }
+
+    protected function sub_test_grade_item_can_control_visibility() {
+        // Grade item 0 == Course module 0 == Assignment.
+        $grade_item = new grade_item($this->grade_items[0], false);
+        $this->assertTrue($grade_item->can_control_visibility());
+
+        // Grade item  == Course module 7 == Quiz.
+        $grade_item = new grade_item($this->grade_items[11], false);
+        $this->assertFalse($grade_item->can_control_visibility());
     }
 }

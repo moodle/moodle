@@ -60,6 +60,7 @@ class grade_category_testcase extends grade_base_testcase {
         $this->sub_test_grade_category_set_locked();
         $this->sub_test_grade_category_is_hidden();
         $this->sub_test_grade_category_set_hidden();
+        $this->sub_test_grade_category_can_control_visibility();
 
         //this won't work until MDL-11837 is complete
         //$this->sub_test_grade_category_generate_grades();
@@ -691,6 +692,11 @@ class grade_category_testcase extends grade_base_testcase {
         $category->set_hidden(1);
         $category->load_grade_item();
         $this->assertEquals(true, $category->grade_item->is_hidden());
+    }
+
+    protected function sub_test_grade_category_can_control_visibility() {
+        $category = new grade_category($this->grade_categories[0]);
+        $this->assertTrue($category->can_control_visibility());
     }
 
     //beware: adding a duplicate course category messes up the data in a way that's hard to recover from

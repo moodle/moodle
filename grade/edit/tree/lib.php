@@ -26,7 +26,7 @@ class grade_edit_tree {
     public $columns = array();
 
     /**
-     * @var object $gtree          @see grade/lib.php
+     * @var grade_tree $gtree   @see grade/lib.php
      */
     public $gtree;
 
