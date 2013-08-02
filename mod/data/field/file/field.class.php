@@ -98,7 +98,7 @@ class data_field_file extends data_field_base {
                 array('invalidjson', 'repository'), array('popupblockeddownload', 'repository'),
                 array('unknownoriginal', 'repository'), array('confirmdeletefolder', 'repository'),
                 array('confirmdeletefilewithhref', 'repository'), array('confirmrenamefolder', 'repository'),
-                array('confirmrenamefile', 'repository')
+                array('confirmrenamefile', 'repository'), array('edit', 'moodle')
             )
         );
 
