@@ -236,7 +236,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
                                                     $format->getpath($data, array('#'), array()));
 
         $filexml = $format->getpath($data, array('#', 'file'), array());
-        $question->bgimage = $this->import_files_to_draft_file_area($format, $filexml);
+        $question->bgimage = $format->import_files_as_draft($filexml);
         $drags = $data['#']['drag'];
         $question->drags = array();
 
@@ -250,8 +250,7 @@ class qtype_ddimageortext extends qtype_ddtoimage_base {
             $question->drags[$dragindex]['draggroup'] =
                         $format->getpath($dragxml, array('#', 'draggroup', 0, '#'), 1);
             $filexml = $format->getpath($dragxml, array('#', 'file'), array());
-            $question->dragitem[$dragindex] =
-                                        $this->import_files_to_draft_file_area($format, $filexml);
+            $question->dragitem[$dragindex] = $format->import_files_as_draft($filexml);
             if (count($filexml)) {
                 $question->drags[$dragindex]['dragitemtype'] = 'image';
             } else {

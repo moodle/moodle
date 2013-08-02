@@ -93,7 +93,7 @@ class qtype_ddtoimage_base extends question_type {
 
     public static function constrain_image_size_in_draft_area($draftitemid, $maxwidth, $maxheight) {
         global $USER;
-        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+        $usercontext = context_user::instance($USER->id);
         $fs = get_file_storage();
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id');
         if ($draftfiles) {
@@ -133,33 +133,6 @@ class qtype_ddtoimage_base extends question_type {
                 }
             }
         }
-    }
-
-
-
-    /**
-     * Create a draft files area, import files into it and return the draft item id.
-     * @param qformat_xml $format
-     * @param array $xml an array of <file> nodes from the the parsed XML.
-     * @return integer draftitemid
-     */
-    public function import_files_to_draft_file_area($format, $xml) {
-        global $USER;
-        $fs = get_file_storage();
-        $files = $format->import_files($xml);
-        $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-        $draftitemid = file_get_unused_draft_itemid();
-        foreach ($files as $file) {
-            $record = new stdClass();
-            $record->contextid = $usercontext->id;
-            $record->component = 'user';
-            $record->filearea  = 'draft';
-            $record->itemid    = $draftitemid;
-            $record->filename  = $file->name;
-            $record->filepath  = '/';
-            $fs->create_file_from_string($record, $this->decode_file($file));
-        }
-        return $draftitemid;
     }
 
     /**
