@@ -35,20 +35,18 @@ class role_assigned extends base {
     /**
      * Returns localised general event name.
      *
-     * @return string|\lang_string
+     * @return string
      */
     public static function get_name() {
-        //TODO: MDL-37658 localise
-        return 'Role assigned';
+        return get_string('eventroleassigned', 'role');
     }
 
     /**
-     * Returns localised description of what happened.
+     * Returns non-localised event description with id's for admin use only.
      *
-     * @return string|\lang_string
+     * @return string
      */
     public function get_description() {
-        //TODO: MDL-37658 localise
         return 'Role '.$this->objectid.' was assigned to user '.$this->relateduserid.' in context '.$this->contextid;
     }
 

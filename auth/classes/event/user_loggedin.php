@@ -36,12 +36,12 @@ defined('MOODLE_INTERNAL') || die();
 class user_loggedin extends \core\event\base {
 
     /**
-     * Returns localised description of what happened.
+     * Returns non-localised event description with id's for admin use only.
      *
-     * @return \lang_string.
+     * @return string
      */
     public function get_description() {
-        return new \lang_string('event_user_loggedin_desc', '', $this->get_username());
+        return 'Userid ' . $this->userid . ' has logged in';
     }
 
     /**
@@ -57,10 +57,10 @@ class user_loggedin extends \core\event\base {
     /**
      * Return localised event name.
      *
-     * @return \lang_string
+     * @return string
      */
     public static function get_name() {
-        return new \lang_string('event_user_loggedin');
+        return new get_string('event_user_loggedin', 'auth');
     }
 
     /**

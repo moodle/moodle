@@ -82,7 +82,6 @@ $string['errorminpasswordnonalphanum'] = 'Passwords must have at least {$a} non-
 $string['errorminpasswordupper'] = 'Passwords must have at least {$a} upper case letter(s).';
 $string['errorpasswordupdate'] = 'Error updating password, password not changed';
 $string['event_user_loggedin'] = 'User has logged in';
-$string['event_user_loggedin_desc'] = 'User {$a} has logged in';
 $string['forcechangepassword'] = 'Force change password';
 $string['forcechangepasswordfirst_help'] = 'Force users to change password on their first login to Moodle.';
 $string['forcechangepassword_help'] = 'Force users to change password on their next login to Moodle.';
