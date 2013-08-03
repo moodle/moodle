@@ -46,6 +46,7 @@ $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
 $string['cachedef_groupdata'] = 'Course group information';
 $string['cachedef_htmlpurifier'] = 'HTML Purifier - cleaned content';
+$string['cachedef_langmenu'] = 'List of available languages';
 $string['cachedef_locking'] = 'Locking';
 $string['cachedef_observers'] = 'Event observers';
 $string['cachedef_plugininfo_base'] = 'Plugin info - base';

@@ -107,7 +107,6 @@ class core_string_manager_install implements core_string_manager {
                 if (isset($string['parentlanguage'])) {
                     $parent = $string['parentlanguage'];
                 }
-                unset($string);
             }
         }
 

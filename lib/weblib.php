@@ -3452,11 +3452,8 @@ function get_formatted_help_string($identifier, $component, $ajax = false) {
     global $CFG, $OUTPUT;
     $sm = get_string_manager();
 
-    if (!$sm->string_exists($identifier, $component) ||
-        !$sm->string_exists($identifier . '_help', $component)) {
-        // Strings in the on-disk cache may be dirty - try to rebuild it and check again.
-        $sm->load_component_strings($component, current_language(), true);
-    }
+    // Do not rebuild caches here!
+    // Devs need to learn to purge all caches after any change or disable $CFG->langstringcache.
 
     $data = new stdClass();
 

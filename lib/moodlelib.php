@@ -6635,14 +6635,7 @@ function get_string_manager($forcereload=false) {
                 $translist = explode(',', $CFG->langlist);
             }
 
-            if (empty($CFG->langmenucachefile)) {
-                $langmenucache = $CFG->cachedir . '/languages';
-            } else {
-                $langmenucache = $CFG->langmenucachefile;
-            }
-
-            $singleton = new core_string_manager_standard($CFG->langotherroot, $CFG->langlocalroot,
-                !empty($CFG->langstringcache), $translist, $langmenucache);
+            $singleton = new core_string_manager_standard($CFG->langotherroot, $CFG->langlocalroot, $translist);
 
         } else {
             $singleton = new core_string_manager_install();

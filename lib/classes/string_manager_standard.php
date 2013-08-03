@@ -44,31 +44,30 @@ class core_string_manager_standard implements core_string_manager {
     /** @var int get_string() counter */
     protected $countgetstring = 0;
     /** @var bool use disk cache */
-    protected $usecache;
-    /** @var array limit list of translations */
     protected $translist;
-    /** @var string location of a file that caches the list of available translations */
+    /** @var cache stores list of available translations */
     protected $menucache;
 
     /**
      * Create new instance of string manager
      *
-     * @param string $otherroot location of downlaoded lang packs - usually $CFG->dataroot/lang
+     * @param string $otherroot location of downloaded lang packs - usually $CFG->dataroot/lang
      * @param string $localroot usually the same as $otherroot
-     * @param bool $usecache use disk cache
      * @param array $translist limit list of visible translations
-     * @param string $menucache the location of a file that caches the list of available translations
      */
-    public function __construct($otherroot, $localroot, $usecache, $translist, $menucache) {
+    public function __construct($otherroot, $localroot, $translist) {
         $this->otherroot    = $otherroot;
         $this->localroot    = $localroot;
-        $this->usecache     = $usecache;
-        $this->translist    = $translist;
-        $this->menucache    = $menucache;
+        if ($translist) {
+            $this->translist = array_combine($translist, $translist);
+        } else {
+            $this->translist = array();
+        }
 
-        if ($this->usecache) {
+        if ($this->get_revision() > 0) {
             // We can use a proper cache, establish the cache using the 'String cache' definition.
             $this->cache = cache::make('core', 'string');
+            $this->menucache = cache::make('core', 'langmenu');
         } else {
             // We only want a cache for the length of the request, create a static cache.
             $options = array(
@@ -76,6 +75,7 @@ class core_string_manager_standard implements core_string_manager {
                 'simpledata' => true
             );
             $this->cache = cache::make_from_params(cache_store::MODE_REQUEST, 'core', 'string', array(), $options);
+            $this->menucache = cache::make_from_params(cache_store::MODE_REQUEST, 'core', 'langmenu', array(), $options);
         }
     }
 
@@ -103,22 +103,22 @@ class core_string_manager_standard implements core_string_manager {
      * @param bool $disablelocal Do not use customized strings in xx_local language packs
      * @return array of all string for given component and lang
      */
-    public function load_component_strings($component, $lang, $disablecache=false, $disablelocal=false) {
+    public function load_component_strings($component, $lang, $disablecache = false, $disablelocal = false) {
         global $CFG;
 
         list($plugintype, $pluginname) = core_component::normalize_component($component);
-        if ($plugintype == 'core' and is_null($pluginname)) {
+        if ($plugintype === 'core' and is_null($pluginname)) {
             $component = 'core';
         } else {
             $component = $plugintype . '_' . $pluginname;
         }
 
-        $cachekey = $lang.'_'.$component;
+        $cachekey = $lang.'_'.$component.'_'.$this->get_key_suffix();
 
+        $cachedstring = $this->cache->get($cachekey);
         if (!$disablecache and !$disablelocal) {
-            $string = $this->cache->get($cachekey);
-            if ($string) {
-                return $string;
+            if ($cachedstring !== false) {
+                return $cachedstring;
             }
         }
 
@@ -134,8 +134,7 @@ class core_string_manager_standard implements core_string_manager {
                 return array();
             }
             include("$CFG->dirroot/lang/en/$file.php");
-            $originalkeys = array_keys($string);
-            $originalkeys = array_flip($originalkeys);
+            $enstring = $string;
 
             // And then corresponding local if present and allowed.
             if (!$disablelocal and file_exists("$this->localroot/en_local/$file.php")) {
@@ -170,8 +169,7 @@ class core_string_manager_standard implements core_string_manager {
                 return array();
             }
             include("$location/lang/en/$file.php");
-            $originalkeys = array_keys($string);
-            $originalkeys = array_flip($originalkeys);
+            $enstring = $string;
             // And then corresponding local english if present.
             if (!$disablelocal and file_exists("$this->localroot/en_local/$file.php")) {
                 include("$this->localroot/en_local/$file.php");
@@ -196,12 +194,14 @@ class core_string_manager_standard implements core_string_manager {
         }
 
         // We do not want any extra strings from other languages - everything must be in en lang pack.
-        $string = array_intersect_key($string, $originalkeys);
+        $string = array_intersect_key($string, $enstring);
 
         if (!$disablelocal) {
-            // Now we have a list of strings from all possible sources. put it into both in-memory and on-disk
-            // caches so we do not need to do all this merging and dependencies resolving again.
-            $this->cache->set($cachekey, $string);
+            // Now we have a list of strings from all possible sources,
+            // cache it in MUC cache if not already there.
+            if ($cachedstring === false) {
+                $this->cache->set($cachekey, $string);
+            }
         }
         return $string;
     }
@@ -235,7 +235,7 @@ class core_string_manager_standard implements core_string_manager {
      */
     public function get_string($identifier, $component = '', $a = null, $lang = null) {
         $this->countgetstring++;
-        // There are very many uses of these time formating strings without the 'langconfig' component,
+        // There are very many uses of these time formatting strings without the 'langconfig' component,
         // it would not be reasonable to expect that all of them would be converted during 2.0 migration.
         static $langconfigstrs = array(
             'strftimedate' => 1,
@@ -275,26 +275,23 @@ class core_string_manager_standard implements core_string_manager {
                 // Identifier parentlanguage is a special string, undefined means use English if not defined.
                 return 'en';
             }
-            if ($this->usecache) {
-                // Maybe the on-disk cache is dirty - let the last attempt be to find the string in original sources,
-                // do NOT write the results to disk cache because it may end up in race conditions see MDL-31904.
-                $this->usecache = false;
-                $string = $this->load_component_strings($component, $lang, true);
-                $this->usecache = true;
-            }
+            // Do not rebuild caches here!
+            // Devs need to learn to purge all caches after any change or disable $CFG->langstringcache.
             if (!isset($string[$identifier])) {
                 // The string is still missing - should be fixed by developer.
-                list($plugintype, $pluginname) = core_component::normalize_component($component);
-                if ($plugintype == 'core') {
-                    $file = "lang/en/{$component}.php";
-                } else if ($plugintype == 'mod') {
-                    $file = "mod/{$pluginname}/lang/en/{$pluginname}.php";
-                } else {
-                    $path = core_component::get_plugin_directory($plugintype, $pluginname);
-                    $file = "{$path}/lang/en/{$plugintype}_{$pluginname}.php";
+                if (debugging('', DEBUG_DEVELOPER)) {
+                    list($plugintype, $pluginname) = core_component::normalize_component($component);
+                    if ($plugintype === 'core') {
+                        $file = "lang/en/{$component}.php";
+                    } else if ($plugintype == 'mod') {
+                        $file = "mod/{$pluginname}/lang/en/{$pluginname}.php";
+                    } else {
+                        $path = core_component::get_plugin_directory($plugintype, $pluginname);
+                        $file = "{$path}/lang/en/{$plugintype}_{$pluginname}.php";
+                    }
+                    debugging("Invalid get_string() identifier: '{$identifier}' or component '{$component}'. " .
+                    "Perhaps you are missing \$string['{$identifier}'] = ''; in {$file}?", DEBUG_DEVELOPER);
                 }
-                debugging("Invalid get_string() identifier: '{$identifier}' or component '{$component}'. " .
-                "Perhaps you are missing \$string['{$identifier}'] = ''; in {$file}?", DEBUG_DEVELOPER);
                 return "[[$identifier]]";
             }
         }
@@ -331,7 +328,7 @@ class core_string_manager_standard implements core_string_manager {
     }
 
     /**
-     * Returns information about the string_manager performance.
+     * Returns information about the core_string_manager performance.
      *
      * @return array
      */
@@ -379,7 +376,7 @@ class core_string_manager_standard implements core_string_manager {
      * @param string $lang moodle translation language, null means use current
      * @param string $standard language list standard
      *    - iso6392: three-letter language code (ISO 639-2/T) => translated name
-     *    - iso6391: two-letter langauge code (ISO 639-1) => translated name
+     *    - iso6391: two-letter language code (ISO 639-1) => translated name
      * @return array language code => translated name
      */
     public function get_list_of_languages($lang = null, $standard = 'iso6391') {
@@ -433,21 +430,8 @@ class core_string_manager_standard implements core_string_manager {
      * @return bool true if exists
      */
     public function translation_exists($lang, $includeall = true) {
-
-        if (strpos($lang, '_local') !== false) {
-            // Local packs are not real translations.
-            return false;
-        }
-        if (!$includeall and !empty($this->translist)) {
-            if (!in_array($lang, $this->translist)) {
-                return false;
-            }
-        }
-        if ($lang === 'en') {
-            // Part of distribution.
-            return true;
-        }
-        return file_exists("$this->otherroot/$lang/langconfig.php");
+        $translations = $this->get_list_of_translations($includeall);
+        return isset($translations[$lang]);
     }
 
     /**
@@ -461,83 +445,64 @@ class core_string_manager_standard implements core_string_manager {
 
         $languages = array();
 
-        if (!empty($CFG->langcache) and is_readable($this->menucache)) {
-            // Try to re-use the cached list of all available languages.
-            $cachedlist = json_decode(file_get_contents($this->menucache), true);
-
-            if (is_array($cachedlist) and !empty($cachedlist)) {
-                // The cache file is restored correctly.
-
-                if (!$returnall and !empty($this->translist)) {
-                    // Return just enabled translations.
-                    foreach ($cachedlist as $langcode => $langname) {
-                        if (in_array($langcode, $this->translist)) {
-                            $languages[$langcode] = $langname;
-                        }
-                    }
-                    return $languages;
-
-                } else {
-                    // Return all translations.
-                    return $cachedlist;
+        $cachekey = 'list_'.$this->get_key_suffix();
+        $cachedlist = $this->menucache->get($cachekey);
+        if ($cachedlist !== false) {
+            // The cache content is invalid.
+            if ($returnall or empty($this->translist)) {
+                return $cachedlist;
+            }
+            // Return only enabled translations.
+            foreach ($cachedlist as $langcode => $langname) {
+                if (isset($this->translist[$langcode])) {
+                    $languages[$langcode] = $langname;
                 }
             }
+            return $languages;
         }
 
-        // The cached list of languages is not available, let us populate the list.
-        if (!$returnall and !empty($this->translist)) {
-            // Return only some translations.
-            foreach ($this->translist as $lang) {
-                $lang = trim($lang);   // Just trim spaces to be a bit more permissive.
-                if (strstr($lang, '_local') !== false) {
-                    continue;
-                }
-                if (strstr($lang, '_utf8') !== false) {
-                    continue;
-                }
-                if ($lang !== 'en' and !file_exists("$this->otherroot/$lang/langconfig.php")) {
-                    // Some broken or missing lang - can not switch to it anyway.
-                    continue;
-                }
-                $string = $this->load_component_strings('langconfig', $lang);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
-                }
-                unset($string);
+        // Get all languages available in system.
+        $langdirs = get_list_of_plugins('', 'en', $this->otherroot);
+        $langdirs["$CFG->dirroot/lang/en"] = 'en';
+
+        // Loop through all langs and get info.
+        foreach ($langdirs as $lang) {
+            if (strrpos($lang, '_local') !== false) {
+                // Just a local tweak of some other lang pack.
+                continue;
             }
-
-        } else {
-            // Return all languages available in system.
-            $langdirs = get_list_of_plugins('', '', $this->otherroot);
-
-            $langdirs = array_merge($langdirs, array("$CFG->dirroot/lang/en" => 'en'));
-            // Sort all.
-
-            // Loop through all langs and get info.
-            foreach ($langdirs as $lang) {
-                if (strstr($lang, '_local') !== false) {
-                    continue;
-                }
-                if (strstr($lang, '_utf8') !== false) {
-                    continue;
-                }
-                $string = $this->load_component_strings('langconfig', $lang);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
-                }
-                unset($string);
+            if (strrpos($lang, '_utf8') !== false) {
+                // Legacy 1.x lang pack.
+                continue;
             }
-
-            if (!empty($CFG->langcache) and !empty($this->menucache)) {
-                // Cache the list so that it can be used next time.
-                core_collator::asort($languages);
-                check_dir_exists(dirname($this->menucache), true, true);
-                file_put_contents($this->menucache, json_encode($languages));
-                @chmod($this->menucache, $CFG->filepermissions);
+            if ($lang !== clean_param($lang, PARAM_SAFEDIR)) {
+                // Invalid lang pack name!
+                continue;
+            }
+            $string = $this->load_component_strings('langconfig', $lang);
+            if (!empty($string['thislanguage'])) {
+                $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
             }
         }
 
         core_collator::asort($languages);
+
+        // Cache the list so that it can be used next time.
+        $this->menucache->set($cachekey, $languages);
+
+        if ($returnall or empty($this->translist)) {
+            return $languages;
+        }
+
+        $cachedlist = $languages;
+
+        // Return only enabled translations.
+        $languages = array();
+        foreach ($cachedlist as $langcode => $langname) {
+            if (isset($this->translist[$langcode])) {
+                $languages[$langcode] = $langname;
+            }
+        }
 
         return $languages;
     }
@@ -564,11 +529,9 @@ class core_string_manager_standard implements core_string_manager {
      * @param bool $phpunitreset true means called from our PHPUnit integration test reset
      */
     public function reset_caches($phpunitreset = false) {
-        global $CFG;
-        require_once("$CFG->libdir/filelib.php");
-
         // Clear the on-disk disk with aggregated string files.
         $this->cache->purge();
+        $this->menucache->purge();
 
         if (!$phpunitreset) {
             // Increment the revision counter.
@@ -583,15 +546,26 @@ class core_string_manager_standard implements core_string_manager {
             set_config('langrev', $next);
         }
 
-        // Clear the cache containing the list of available translations
-        // and re-populate it again.
-        fulldelete($this->menucache);
-        $this->get_list_of_translations(true);
-
         // Lang packs use PHP files in dataroot, it is better to invalidate opcode caches.
         if (function_exists('opcache_reset')) {
             opcache_reset();
         }
+    }
+
+    /**
+     * Returns cache key suffix, this enables us to store string + lang menu
+     * caches in local caches on cluster nodes. We can not use prefix because
+     * it would cause problems when creating subdirs in cache file store.
+     * @return string
+     */
+    protected function get_key_suffix() {
+        $rev = $this->get_revision();
+        if ($rev < 0) {
+            // Simple keys do not like minus char.
+            $rev = 0;
+        }
+
+        return $rev;
     }
 
     /**
@@ -600,14 +574,15 @@ class core_string_manager_standard implements core_string_manager {
      */
     public function get_revision() {
         global $CFG;
+        if (empty($CFG->langstringcache)) {
+            return -1;
+        }
         if (isset($CFG->langrev)) {
             return (int)$CFG->langrev;
         } else {
             return -1;
         }
     }
-
-    // End of external API.
 
     /**
      * Helper method that recursively loads all parents of the given language.
@@ -637,13 +612,11 @@ class core_string_manager_standard implements core_string_manager {
         include("$this->otherroot/$lang/langconfig.php");
 
         if (empty($string['parentlanguage']) or $string['parentlanguage'] === 'en') {
-            unset($string);
             return array_merge(array($lang), $stack);
 
-        } else {
-            $parentlang = $string['parentlanguage'];
-            unset($string);
-            return $this->populate_parent_languages($parentlang, array_merge(array($lang), $stack));
         }
+
+        $parentlang = $string['parentlanguage'];
+        return $this->populate_parent_languages($parentlang, array_merge(array($lang), $stack));
     }
 }
