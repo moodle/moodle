@@ -198,6 +198,9 @@ if (!empty($memlimit) and $memlimit != -1) {
 
 // Continue with lib loading
 require_once($CFG->libdir.'/classes/text.php');
+require_once($CFG->libdir.'/classes/string_manager.php');
+require_once($CFG->libdir.'/classes/string_manager_install.php');
+require_once($CFG->libdir.'/classes/string_manager_standard.php');
 require_once($CFG->libdir.'/weblib.php');
 require_once($CFG->libdir.'/outputlib.php');
 require_once($CFG->libdir.'/dmllib.php');
