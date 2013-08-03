@@ -1596,10 +1596,6 @@ function purge_all_caches() {
     // Make sure cache dir is writable, throws exception if not.
     make_cache_directory('');
 
-    // Hack: this script may get called after the purifier was initialised,
-    // but we do not want to verify repeatedly this exists in each call.
-    make_cache_directory('htmlpurifier');
-
     // This is the only place where we purge local caches, we are only adding files there.
     // The $CFG->localcachedirpurged flag forces local directories to be purged on cluster nodes.
     remove_dir($CFG->localcachedir, true);

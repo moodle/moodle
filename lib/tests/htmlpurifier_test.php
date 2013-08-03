@@ -124,6 +124,37 @@ class core_htmlpurifier_testcase extends basic_testcase {
         $this->assertSame('<div id="example">Frog</div>', $result);
     }
 
+    public function test_allowobjectembed() {
+        global $CFG;
+
+        $this->assertSame('0', $CFG->allowobjectembed);
+
+        $text = '<object width="425" height="350">
+<param name="movie" value="http://www.youtube.com/v/AyPzM5WK8ys" />
+<param name="wmode" value="transparent" />
+<embed src="http://www.youtube.com/v/AyPzM5WK8ys" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350" />
+</object>hmmm';
+        $result = purify_html($text, array());
+        $this->assertSame('hmmm', trim($result));
+
+        $CFG->allowobjectembed = '1';
+
+        $expected = '<object width="425" height="350" data="http://www.youtube.com/v/AyPzM5WK8ys" type="application/x-shockwave-flash">
+<param name="allowScriptAccess" value="never" />
+<param name="allowNetworking" value="internal" />
+<param name="movie" value="http://www.youtube.com/v/AyPzM5WK8ys" />
+<param name="wmode" value="transparent" />
+<embed src="http://www.youtube.com/v/AyPzM5WK8ys" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350" allowscriptaccess="never" allownetworking="internal" />
+</object>hmmm';
+        $result = purify_html($text, array());
+        $this->assertSame(str_replace("\n", '', $expected), str_replace("\n", '', $result));
+
+        $CFG->allowobjectembed = '0';
+
+        $result = purify_html($text, array());
+        $this->assertSame('hmmm', trim($result));
+    }
+
     /**
      * Test if linebreaks kept unchanged.
      */
