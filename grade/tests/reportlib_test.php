@@ -61,7 +61,7 @@ class grade_report_test extends grade_report {
 /**
  * Tests grade_report, the parent class for all grade reports.
  */
-class gradereportlib_testcase extends advanced_testcase {
+class core_grade_reportlib_testcase extends advanced_testcase {
 
     /**
      * Tests grade_report::blank_hidden_total()

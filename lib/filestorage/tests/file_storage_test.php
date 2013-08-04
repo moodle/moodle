@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/filestorage/stored_file.php');
 
-class filestoragelib_testcase extends advanced_testcase {
+class core_files_file_storage_testcase extends advanced_testcase {
 
     /**
      * Files can be created from strings.

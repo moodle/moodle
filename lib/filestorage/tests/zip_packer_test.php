@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-class zip_packer_testcase extends advanced_testcase {
+class core_files_zip_packer_testcase extends advanced_testcase {
     protected $testfile;
     protected $files;
 

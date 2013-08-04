@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class ddl_testcase extends database_driver_testcase {
+class core_ddl_testcase extends database_driver_testcase {
     private $tables = array();
     private $records= array();
 

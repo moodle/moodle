@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/grade/edit/tree/lib.php');
 /**
  * Tests grade_edit_tree (deals with the data on the categories and items page in the gradebook)
  */
-class gradeedittreelib_testcase extends basic_testcase {
+class core_grade_edittreelib_testcase extends basic_testcase {
     var $courseid = 1;
     var $context = null;
     var $grade_edit_tree = null;

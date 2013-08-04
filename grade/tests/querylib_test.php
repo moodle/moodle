@@ -30,7 +30,7 @@ require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/grade/querylib.php');
 
 
-class grade_querylib_testcase extends advanced_testcase {
+class core_grade_querylib_testcase extends advanced_testcase {
 
     public function test_grade_get_gradable_activities() {
         $this->resetAfterTest(true);

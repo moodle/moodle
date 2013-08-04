@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot.'/course/lib.php');
 
-class courserequest_testcase extends advanced_testcase {
+class core_course_courserequest_testcase extends advanced_testcase {
 
     public function test_create_request() {
         global $DB, $USER;

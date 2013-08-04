@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/group/externallib.php');
 require_once($CFG->dirroot . '/group/lib.php');
 
-class core_group_external_testcase extends externallib_advanced_testcase {
+class core_group_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test create_groups

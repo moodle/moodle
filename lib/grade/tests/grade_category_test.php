@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__.'/fixtures/lib.php');
 
 
-class grade_category_testcase extends grade_base_testcase {
+class core_grade_category_testcase extends grade_base_testcase {
 
     public function test_grade_category() {
         $this->sub_test_grade_category_construct();

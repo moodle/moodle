@@ -32,7 +32,7 @@ require_once($CFG->dirroot.'/grade/report/grader/lib.php');
 /**
  * Tests grade_report_grader (the grader report)
  */
-class grade_report_graderlib_testcase extends advanced_testcase {
+class core_grade_report_graderlib_testcase extends advanced_testcase {
 
     /**
      * Tests grade_report_grader::process_data()

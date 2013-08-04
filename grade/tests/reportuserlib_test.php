@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/grade/report/user/lib.php');
 /**
  * Tests grade_report_user (the gradebook's user report)
  */
-class gradereportuserlib_testcase extends advanced_testcase {
+class core_grade_reportuserlib_testcase extends advanced_testcase {
 
     /**
      * Tests grade_report_user::inject_rowspans()

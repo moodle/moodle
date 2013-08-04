@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot.'/course/lib.php');
 
-class courselib_testcase extends advanced_testcase {
+class core_course_courselib_testcase extends advanced_testcase {
 
     /**
      * Set forum specific test values for calling create_module().

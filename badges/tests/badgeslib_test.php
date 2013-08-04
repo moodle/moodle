@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/badgeslib.php');
 
-class badges_testcase extends advanced_testcase {
+class core_badgeslib_testcase extends advanced_testcase {
     protected $badgeid;
 
     protected function setUp() {

@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_enrol_testcase extends advanced_testcase {
+class core_enrollib_testcase extends advanced_testcase {
 
     public function test_enrol_get_all_users_courses() {
         global $DB, $CFG;

@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-class dml_testcase extends database_driver_testcase {
+class core_dml_testcase extends database_driver_testcase {
 
     protected function setUp() {
         parent::setUp();
