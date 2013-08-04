@@ -3574,22 +3574,6 @@ function set_bounce_count($user, $reset=false) {
 }
 
 /**
- * Determines if the currently logged in user is in editing mode.
- *
- * Note: originally this function had $userid parameter - it was not usable anyway
- *
- * @deprecated since Moodle 2.0 - use $PAGE->user_is_editing() instead.
- * @todo Deprecated function remove when ready
- *
- * @return bool
- */
-function isediting() {
-    global $PAGE;
-    debugging('call to deprecated function isediting(). Please use $PAGE->user_is_editing() instead', DEBUG_DEVELOPER);
-    return $PAGE->user_is_editing();
-}
-
-/**
  * Determines if the logged in user is currently moving an activity
  *
  * @param int $courseid The id of the course being tested

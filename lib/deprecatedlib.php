@@ -4352,3 +4352,11 @@ function get_related_contexts_string(context $context) {
         return (' ='.$context->id);
     }
 }
+
+/**
+ * @deprecated since Moodle 2.0 - use $PAGE->user_is_editing() instead.
+ * @see moodle_page->user_is_editing()
+ */
+function isediting() {
+    throw new coding_exception('isediting() can not be used any more, please use $PAGE->user_is_editing() instead.');
+}
