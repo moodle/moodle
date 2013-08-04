@@ -1898,37 +1898,37 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $yes = get_string('yes');
         $yesexpected = 'Yes';
-        $this->assertSame('string', gettype($yes));
+        $this->assertInternalType('string', $yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', 'moodle');
-        $this->assertSame('string', gettype($yes));
+        $this->assertInternalType('string', $yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', 'core');
-        $this->assertSame('string', gettype($yes));
+        $this->assertInternalType('string', $yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', '');
-        $this->assertSame('string', gettype($yes));
+        $this->assertInternalType('string', $yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', null);
-        $this->assertSame('string', gettype($yes));
+        $this->assertInternalType('string', $yes);
         $this->assertSame($yesexpected, $yes);
 
         $yes = get_string('yes', null, 1);
-        $this->assertSame('string', gettype($yes));
+        $this->assertInternalType('string', $yes);
         $this->assertSame($yesexpected, $yes);
 
         $days = 1;
         $numdays = get_string('numdays', 'core', '1');
         $numdaysexpected = $days.' days';
-        $this->assertSame('string', gettype($numdays));
+        $this->assertInternalType('string', $numdays);
         $this->assertSame($numdaysexpected, $numdays);
 
         $yes = get_string('yes', null, null, true);
-        $this->assertSame('lang_string', get_class($yes));
+        $this->assertInstanceOf('lang_string', $yes);
         $this->assertSame($yesexpected, (string)$yes);
 
         // Test using a lang_string object as the $a argument for a normal
@@ -1936,7 +1936,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $test = new lang_string('yes', null, null, true);
         $testexpected = get_string('numdays', 'core', get_string('yes'));
         $testresult = get_string('numdays', null, $test);
-        $this->assertSame('string', gettype($testresult));
+        $this->assertInternalType('string', $testresult);
         $this->assertSame($testexpected, $testresult);
 
         // Test using a lang_string object as the $a argument for an object
@@ -1944,7 +1944,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $test = new lang_string('yes', null, null, true);
         $testexpected = get_string('numdays', 'core', get_string('yes'));
         $testresult = get_string('numdays', null, $test, true);
-        $this->assertSame('lang_string', get_class($testresult));
+        $this->assertInstanceOf('lang_string', $testresult);
         $this->assertSame($testexpected, "$testresult");
 
         // Make sure that object properties that can't be converted don't cause

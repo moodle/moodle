@@ -52,7 +52,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
     public function test_get_plugins_of_type() {
         $pluginman = testable_plugin_manager::instance();
         $mods = $pluginman->get_plugins_of_type('mod');
-        $this->assertSame('array', gettype($mods));
+        $this->assertInternalType('array', $mods);
         $this->assertCount(5, $mods);
         $this->assertInstanceOf('testable_plugininfo_mod', $mods['foo']);
         $this->assertInstanceOf('testable_plugininfo_mod', $mods['bar']);
@@ -76,7 +76,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
     public function test_get_plugins() {
         $pluginman = testable_plugin_manager::instance();
         $plugins = $pluginman->get_plugins();
-        $this->assertSame('array', gettype($plugins));
+        $this->assertInternalType('array', $plugins);
         $this->assertTrue(isset($plugins['mod']['foo']));
         $this->assertTrue(isset($plugins['mod']['bar']));
         $this->assertTrue(isset($plugins['mod']['baz']));
@@ -98,16 +98,16 @@ class core_plugin_manager_testcase extends advanced_testcase {
         $this->assertSame(array(), $pluginman->get_subplugins_of_plugin('mod_missing'));
         $this->assertSame(array(), $pluginman->get_subplugins_of_plugin('mod_bar'));
         $foosubs = $pluginman->get_subplugins_of_plugin('mod_foo');
-        $this->assertSame('array', gettype($foosubs));
+        $this->assertInternalType('array', $foosubs);
         $this->assertCount(2, $foosubs);
         $this->assertInstanceOf('testable_pluginfo_foolish', $foosubs['foolish_frog']);
         $this->assertInstanceOf('testable_pluginfo_foolish', $foosubs['foolish_hippo']);
         $bazsubs = $pluginman->get_subplugins_of_plugin('mod_baz');
-        $this->assertSame('array', gettype($bazsubs));
+        $this->assertInternalType('array', $bazsubs);
         $this->assertCount(1, $bazsubs);
         $this->assertInstanceOf('testable_pluginfo_bazmeg', $bazsubs['bazmeg_one']);
         $quxsubs = $pluginman->get_subplugins_of_plugin('mod_qux');
-        $this->assertSame('array', gettype($quxsubs));
+        $this->assertInternalType('array', $quxsubs);
         $this->assertCount(1, $quxsubs);
         $this->assertInstanceOf('testable_pluginfo_quxcat', $quxsubs['quxcat_one']);
     }
@@ -229,7 +229,7 @@ class core_plugin_manager_testcase extends advanced_testcase {
         $pluginman = testable_plugin_manager::instance();
         $plugins = $pluginman->get_plugins();
         $this->assertNull($plugins['mod']['bar']->available_updates());
-        $this->assertSame('array', gettype($plugins['mod']['foo']->available_updates()));
+        $this->assertInternalType('array', $plugins['mod']['foo']->available_updates());
         foreach ($plugins['mod']['foo']->available_updates() as $availableupdate) {
             $this->assertInstanceOf('available_update_info', $availableupdate);
         }
@@ -377,7 +377,7 @@ class core_available_update_checker_testcase extends advanced_testcase {
         $old = array();
         $new = array();
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertSame('array', gettype($cmp));
+        $this->assertInternalType('array', $cmp);
         $this->assertEmpty($cmp);
     }
 
@@ -394,7 +394,7 @@ class core_available_update_checker_testcase extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertSame('array', gettype($cmp));
+        $this->assertInternalType('array', $cmp);
         $this->assertNotEmpty($cmp);
         $this->assertTrue(isset($cmp['core'][0]['version']));
         $this->assertEquals(2012060103, $cmp['core'][0]['version']);
@@ -420,7 +420,7 @@ class core_available_update_checker_testcase extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertSame('array', gettype($cmp));
+        $this->assertInternalType('array', $cmp);
         $this->assertEmpty($cmp);
     }
 
@@ -453,7 +453,7 @@ class core_available_update_checker_testcase extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertSame('array', gettype($cmp));
+        $this->assertInternalType('array', $cmp);
         $this->assertNotEmpty($cmp);
         $this->assertCount(1, $cmp);
         $this->assertCount(1, $cmp['core']);
@@ -481,7 +481,7 @@ class core_available_update_checker_testcase extends advanced_testcase {
             )
         );
         $cmp = $provider->compare_responses($old, $new);
-        $this->assertSame('array', gettype($cmp));
+        $this->assertInternalType('array', $cmp);
         $this->assertNotEmpty($cmp);
         $this->assertCount(1, $cmp);
         $this->assertCount(1, $cmp['mod_foo']);
