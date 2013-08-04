@@ -309,6 +309,8 @@ if ($interactive) {
     }
 }
 $CFG->directorypermissions = $chmod;
+$CFG->filepermissions      = ($CFG->directorypermissions & 0666);
+$CFG->umaskpermissions     = (($CFG->directorypermissions & 0777) ^ 0777);
 
 //We need wwwroot before we test dataroot
 $wwwroot = clean_param($options['wwwroot'], PARAM_URL);
