@@ -44,6 +44,7 @@
  */
 class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
     public function load($suiteClassName, $suiteClassFile = '') {
+        global $CFG;
 
         // Let's guess what user entered on the commandline...
         if ($suiteClassFile) {
@@ -94,6 +95,7 @@ class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
                 } else {
                     $component = $component . '_' . array_shift($parts);
                 }
+                // Try standard plugin and core subsystem locations.
                 if ($fulldir = core_component::get_component_directory($component)) {
                     $testfile = implode('_', $parts);
                     $fullpath = "{$fulldir}/tests/{$testfile}_test.php";
@@ -102,6 +104,51 @@ class phpunit_autoloader implements PHPUnit_Runner_TestSuiteLoader {
                         if (class_exists($suiteClassName, false)) {
                             $class = new ReflectionClass($suiteClassName);
                             return $class;
+                        }
+                    }
+                }
+            }
+            // The last option is testsuite directories in main phpunit.xml file.
+            $xmlfile = "$CFG->dirroot/phpunit.xml";
+            if (is_readable($xmlfile) and $xml = file_get_contents($xmlfile)) {
+                $dom = new DOMDocument();
+                $dom->loadXML($xml);
+                $nodes = $dom->getElementsByTagName('testsuite');
+                foreach ($nodes as $node) {
+                    /** @var DOMNode $node */
+                    $suitename = trim($node->attributes->getNamedItem('name')->nodeValue);
+                    if (strpos($suitename, 'core') !== 0 or strpos($suitename, ' ') !== false) {
+                        continue;
+                    }
+                    // This is a nasty hack: testsuit names are sometimes used as prefix for testcases
+                    // in non-standard core subsystem locations.
+                    if (strpos($suiteClassName, $suitename) !== 0) {
+                        continue;
+                    }
+                    foreach ($node->childNodes as $dirnode) {
+                        /** @var DOMNode $dirnode */
+                        $dir = trim($dirnode->textContent);
+                        if (!$dir) {
+                            continue;
+                        }
+                        $dir = $CFG->dirroot.'/'.$dir;
+                        $parts = explode('_', $suitename);
+                        $prefix = '';
+                        while ($parts) {
+                            if ($prefix) {
+                                $prefix = $prefix.'_'.array_shift($parts);
+                            } else {
+                                $prefix = array_shift($parts);
+                            }
+                            $filename = substr($suiteClassName, strlen($prefix)+1);
+                            $filename = preg_replace('/testcase$/', 'test', $filename);
+                            if (is_readable("$dir/$filename.php")) {
+                                include_once("$dir/$filename.php");
+                                if (class_exists($suiteClassName, false)) {
+                                    $class = new ReflectionClass($suiteClassName);
+                                    return $class;
+                                }
+                            }
                         }
                     }
                 }
