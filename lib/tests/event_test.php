@@ -93,6 +93,10 @@ class core_event_testcase extends advanced_testcase {
 
         $observers = array(
             array(
+                'eventname'   => '*',
+                'callback'    => array('\core_tests\event\unittest_observer', 'observe_all_alt'),
+            ),
+            array(
                 'eventname'   => '\core_tests\event\unittest_executed',
                 'callback'    => '\core_tests\event\unittest_observer::observe_one',
                 'includefile' => 'lib/tests/fixtures/event_fixtures.php',
@@ -102,7 +106,7 @@ class core_event_testcase extends advanced_testcase {
                 'callback'    => array('\core_tests\event\unittest_observer', 'observe_all'),
                 'includefile' => null,
                 'internal'    => 1,
-                'priority'    => 9999,
+                'priority'    => 10,
             ),
             array(
                 'eventname'   => '\core\event\unknown_executed',
@@ -118,58 +122,49 @@ class core_event_testcase extends advanced_testcase {
         );
 
         $result = \core\event\manager::phpunit_replace_observers($observers);
-
         $this->assertCount(3, $result);
-        end($result);
-        $this->assertSame('*', key($result));
 
         $expected = array();
-        $observer = new stdClass();
-        $observer->callable = array('\core_tests\event\unittest_observer', 'observe_all');
-        $observer->priority = 9999;
-        $observer->internal = true;
-        $observer->includefile = null;
-        $expected[0] = $observer;
         $observer = new stdClass();
         $observer->callable = '\core_tests\event\unittest_observer::external_observer';
         $observer->priority = 200;
         $observer->internal = false;
         $observer->includefile = null;
-        $expected[1] = $observer;
+        $expected[0] = $observer;
         $observer = new stdClass();
         $observer->callable = '\core_tests\event\unittest_observer::observe_one';
         $observer->priority = 0;
         $observer->internal = true;
         $observer->includefile = 'lib/tests/fixtures/event_fixtures.php';
-        $expected[2] = $observer;
+        $expected[1] = $observer;
 
         $this->assertEquals($expected, $result['\core_tests\event\unittest_executed']);
 
         $expected = array();
         $observer = new stdClass();
-        $observer->callable = array('\core_tests\event\unittest_observer', 'observe_all');
-        $observer->priority = 9999;
-        $observer->internal = true;
-        $observer->includefile = null;
-        $expected[0] = $observer;
-        $observer = new stdClass();
         $observer->callable = '\core_tests\event\unittest_observer::broken_observer';
         $observer->priority = 100;
         $observer->internal = true;
         $observer->includefile = null;
-        $expected[1] = $observer;
+        $expected[0] = $observer;
 
         $this->assertEquals($expected, $result['\core\event\unknown_executed']);
 
         $expected = array();
         $observer = new stdClass();
         $observer->callable = array('\core_tests\event\unittest_observer', 'observe_all');
-        $observer->priority = 9999;
+        $observer->priority = 10;
         $observer->internal = true;
         $observer->includefile = null;
         $expected[0] = $observer;
+        $observer = new stdClass();
+        $observer->callable = array('\core_tests\event\unittest_observer', 'observe_all_alt');
+        $observer->priority = 0;
+        $observer->internal = true;
+        $observer->includefile = null;
+        $expected[1] = $observer;
 
-        $this->assertEquals($expected, $result['*']);
+        $this->assertEquals($expected, $result['\core\event\base']);
 
         // Now test broken stuff...
 
