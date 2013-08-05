@@ -167,7 +167,7 @@ abstract class base implements \IteratorAggregate {
 
         if (!isset($event->data['courseid'])) {
             if ($coursecontext = $event->context->get_course_context(false)) {
-                $event->data['courseid'] = $coursecontext->id;
+                $event->data['courseid'] = $coursecontext->instanceid;
             } else {
                 $event->data['courseid'] = 0;
             }
