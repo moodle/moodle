@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * External assign API
+ * External grading API
  *
- * @package    core_grade
+ * @package    core_grading
  * @since      Moodle 2.5
  * @copyright  2013 Paul Charsley
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -29,9 +29,9 @@ require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->dirroot/grade/grading/lib.php");
 
 /**
- * core grade functions
+ * core grading functions
  */
-class core_grade_external extends external_api {
+class core_grading_external extends external_api {
 
     /**
      * Describes the parameters for get_definitions
@@ -288,6 +288,179 @@ class core_grade_external extends external_api {
     private static function get_grading_methods() {
         $methods = array_keys(grading_manager::available_methods(false));
         return $methods;
+    }
+
+    /**
+     * Describes the parameters for get_gradingform_instances
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.6
+     */
+    public static function get_gradingform_instances_parameters () {
+        return new external_function_parameters(
+            array(
+                'definitionid' => new external_value(PARAM_INT, 'definition id'),
+                'since' => new external_value(PARAM_INT, 'submitted since', VALUE_DEFAULT, 0)
+            )
+        );
+    }
+
+    /**
+     * Returns the instances and fillings for the requested definition id
+     *
+     * @param int $definitionid
+     * @param int $since only return instances with timemodified >= since
+     * @return array of grading instances with fillings for the definition id
+     * @since Moodle 2.6
+     */
+    public static function get_gradingform_instances ($definitionid, $since = 0) {
+        global $DB, $CFG;
+        require_once("$CFG->dirroot/grade/grading/form/lib.php");
+        $params = self::validate_parameters(self::get_gradingform_instances_parameters(),
+                      array('definitionid' => $definitionid,
+                            'since' => $since));
+        $instances = array();
+        $warnings = array();
+
+        $definition = $DB->get_record('grading_definitions',
+                                      array('id' => $params['definitionid']),
+                                      'areaid,method', MUST_EXIST);
+        $area = $DB->get_record('grading_areas',
+                                 array('id' => $definition->areaid),
+                                 'contextid,component', MUST_EXIST);
+
+        $context = context::instance_by_id($area->contextid);
+        require_capability('moodle/grade:managegradingforms', $context);
+
+        $gradingmanager = get_grading_manager($definition->areaid);
+        $controller = $gradingmanager->get_controller($definition->method);
+        $activeinstances = $controller->get_all_active_instances ($params['since']);
+        $details = $controller->get_external_instance_filling_details();
+        if ($details == null) {
+            $warnings[] = array(
+                'item' => 'definition',
+                'itemid' => $params['definitionid'],
+                'message' => 'Fillings unavailable because get_external_instance_filling_details is not defined',
+                'warningcode' => '1'
+            );
+        }
+        $getfilling = null;
+        if (method_exists('gradingform_'.$definition->method.'_instance', 'get_'.$definition->method.'_filling')) {
+            $getfilling = 'get_'.$definition->method.'_filling';
+        } else {
+            $warnings[] = array(
+                'item' => 'definition',
+                'itemid' => $params['definitionid'],
+                'message' => 'Fillings unavailable because get_'.$definition->method.'_filling is not defined',
+                'warningcode' => '1'
+            );
+        }
+        foreach ($activeinstances as $activeinstance) {
+            $instance = array();
+            $instance['id'] = $activeinstance->get_id();
+            $instance['raterid'] = $activeinstance->get_data('raterid');
+            $instance['itemid'] = $activeinstance->get_data('itemid');
+            $instance['rawgrade'] = $activeinstance->get_data('rawgrade');
+            $instance['status'] = $activeinstance->get_data('status');
+            $instance['feedback'] = $activeinstance->get_data('feedback');
+            $instance['feedbackformat'] = $activeinstance->get_data('feedbackformat');
+            // Format the feedback text field.
+            $formattedtext = external_format_text($activeinstance->get_data('feedback'),
+                                                  $activeinstance->get_data('feedbackformat'),
+                                                  $context->id,
+                                                  $area->component,
+                                                  'feedback',
+                                                  $params['definitionid']);
+            $instance['feedback'] = $formattedtext[0];
+            $instance['feedbackformat'] = $formattedtext[1];
+            $instance['timemodified'] = $activeinstance->get_data('timemodified');
+
+            if ($details != null && $getfilling != null) {
+                $fillingdata = $activeinstance->$getfilling();
+                $filling = array();
+                foreach ($details as $key => $value) {
+                    $filling[$key] = self::format_text($fillingdata[$key],
+                                                       $context->id,
+                                                       $area->component,
+                                                       $params['definitionid']);
+                }
+                $instance[$definition->method] = $filling;
+            }
+            $instances[] = $instance;
+        }
+        $result = array(
+            'instances' => $instances,
+            'warnings' => $warnings
+        );
+        return $result;
+    }
+
+    /**
+     * Creates a grading instance
+     *
+     * @return external_single_structure
+     * @since  Moodle 2.6
+     */
+    private static function grading_instance() {
+        global $CFG;
+        $instance = array();
+        $instance['id']                = new external_value(PARAM_INT, 'instance id');
+        $instance['raterid']           = new external_value(PARAM_INT, 'rater id');
+        $instance['itemid']            = new external_value(PARAM_INT, 'item id');
+        $instance['rawgrade']          = new external_value(PARAM_TEXT, 'raw grade', VALUE_OPTIONAL);
+        $instance['status']            = new external_value(PARAM_INT, 'status');
+        $instance['feedback']          = new external_value(PARAM_RAW, 'feedback', VALUE_OPTIONAL);
+        $instance['feedbackformat']    = new external_format_value('feedback', VALUE_OPTIONAL);
+        $instance['timemodified']      = new external_value(PARAM_INT, 'modified time');
+        foreach (self::get_grading_methods() as $method) {
+            require_once($CFG->dirroot.'/grade/grading/form/'.$method.'/lib.php');
+            $details  = call_user_func('gradingform_'.$method.'_controller::get_external_instance_filling_details');
+            if ($details != null) {
+                $items = array();
+                foreach ($details as $key => $value) {
+                    $details[$key]->required = VALUE_OPTIONAL;
+                    $items[$key] = $value;
+                }
+                $instance[$method] = new external_single_structure($items, 'items', VALUE_OPTIONAL);
+            }
+        }
+        return new external_single_structure($instance);
+    }
+
+    /**
+     * Describes the get_gradingform_instances return value
+     *
+     * @return external_single_structure
+     * @since Moodle 2.6
+     */
+    public static function get_gradingform_instances_returns () {
+        return new external_single_structure(
+            array(
+                'instances' => new external_multiple_structure(self::grading_instance(), 'list of grading instances'),
+                'warnings' => new external_warnings()
+            )
+        );
+    }
+
+}
+
+/**
+ * @since Moodle 2.6
+ * @deprecated See MDL-30085. Please do not use this class any more.
+ * @see core_grading_external
+ */
+class core_grade_external extends external_api {
+
+    public static function get_definitions_parameters () {
+        return core_grading_external::get_definitions_parameters();
+    }
+
+    public static function get_definitions ($cmids, $areaname, $activeonly = false) {
+        return core_grading_external::get_definitions($cmids, $areaname, $activeonly = false);
+    }
+
+    public static function get_definitions_returns() {
+        return core_grading_external::get_definitions_returns();
     }
 
 }
