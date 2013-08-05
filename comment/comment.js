@@ -59,11 +59,6 @@ M.core_comment = {
                     }, this);
                 }
                 scope.toggle_textarea(false);
-                CommentHelper.confirmoverlay = new Y.Overlay({
-bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-'+this.client_id+'">'+M.str.moodle.yes+'</a> <a href="#" id="canceldelete-'+this.client_id+'">'+M.str.moodle.no+'</a></div>',
-                                        visible: false
-                                        });
-                CommentHelper.confirmoverlay.render(document.body);
             },
             post: function() {
                 var ta = Y.one('#dlg-content-'+this.client_id);
@@ -238,7 +233,6 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
             dodelete: function(id) { // note: delete is a reserved word in javascript, chrome and safary do not like it at all here!
                 var scope = this;
                 var params = {'commentid': id};
-                scope.cancel_delete();
                 function remove_dom(type, anim, cmt) {
                     cmt.remove();
                 }
@@ -294,36 +288,22 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                         if (commentid[1]) {
                             Y.Event.purgeElement('#'+theid, false, 'click');
                         }
-                        node.on('click', function(e, node) {
+                        node.on('click', function(e) {
                             e.preventDefault();
-                            var width = CommentHelper.confirmoverlay.bodyNode.getStyle('width');
-                            var re = new RegExp("(\\d+).*", "i");
-                            var result = width.match(re);
-                            if (result[1]) {
-                                width = Number(result[1]);
-                            } else {
-                                width = 0;
+                            if (commentid[1]) {
+                                scope.dodelete(commentid[1]);
                             }
-                            //CommentHelper.confirmoverlay.set('xy', [e.pageX-(width/2), e.pageY]);
-                            CommentHelper.confirmoverlay.set('xy', [e.pageX-width-5, e.pageY]);
-                            CommentHelper.confirmoverlay.set('visible', true);
-                            Y.one('#canceldelete-'+scope.client_id).on('click', function(e) {
-                                e.preventDefault();
-                                scope.cancel_delete();
-                                });
-                            Y.Event.purgeElement('#confirmdelete-'+scope.client_id, false, 'click');
-                            Y.one('#confirmdelete-'+scope.client_id).on('click', function(e) {
-                                e.preventDefault();
-                                if (commentid[1]) {
-                                    scope.dodelete(commentid[1]);
-                                }
-                            });
-                        }, scope, node);
+                        });
+                        // Also handle space/enter key.
+                        node.on('key', function(e) {
+                            e.preventDefault();
+                            if (commentid[1]) {
+                                scope.dodelete(commentid[1]);
+                            }
+                        }, '13,32');
+                        // 13 and 32 are the keycodes for space and enter.
                     }
                 );
-            },
-            cancel_delete: function() {
-                CommentHelper.confirmoverlay.set('visible', false);
             },
             register_pagination: function() {
                 var scope = this;
@@ -374,7 +354,7 @@ bodyContent: '<div class="comment-delete-confirm"><a href="#" id="confirmdelete-
                 if (ta) {
                     //toggle_textarea.apply(ta, [false]);
                     //// reset textarea size
-                    ta.on('click', function() {
+                    ta.on('focus', function() {
                         this.toggle_textarea(true);
                     }, this);
                     //ta.onkeypress = function() {
