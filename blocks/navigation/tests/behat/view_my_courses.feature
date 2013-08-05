@@ -57,12 +57,15 @@ Feature: View my courses in navigation block
     Then I should see "cat1" in the "div.block_navigation .type_system" "css_element"
     And I should see "cat3" in the "div.block_navigation .type_system" "css_element"
     And I should not see "cat2" in the "div.block_navigation .type_system" "css_element"
-    When I expand "cat3" node
-    Then I should see "cat31" in the "div.block_navigation .type_system" "css_element"
+    And I expand "cat3" node
+    And I wait "2" seconds
+    And I should see "cat31" in the "div.block_navigation .type_system" "css_element"
     And I should see "cat33" in the "div.block_navigation .type_system" "css_element"
     And I should not see "cat32" in the "div.block_navigation .type_system" "css_element"
-    When I expand "cat31" node
-    Then I should see "c31" in the "div.block_navigation .type_system" "css_element"
-    When I expand "cat33" node
+    And I expand "cat31" node
+    And I wait "2" seconds
+    And I should see "c31" in the "div.block_navigation .type_system" "css_element"
+    And I expand "cat33" node
+    And I wait "2" seconds
     And I should see "c331" in the "div.block_navigation .type_system" "css_element"
     And I should not see "c332" in the "div.block_navigation .type_system" "css_element"
