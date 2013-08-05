@@ -30,8 +30,10 @@ class user_filter_date extends user_filter_type {
     function setupForm(&$mform) {
         $objs = array();
 
+        $objs[] =& $mform->createElement('static', $this->_name.'_sck', null, get_string('isafter', 'filters'));
         $objs[] =& $mform->createElement('date_selector', $this->_name.'_sdt', null, array('optional' => true));
         $objs[] =& $mform->createElement('static', $this->_name.'_break', null, '<br/>');
+        $objs[] =& $mform->createElement('static', $this->_name.'_edk', null, get_string('isbefore', 'filters'));
         $objs[] =& $mform->createElement('date_selector', $this->_name.'_edt', null, array('optional' => true));
 
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
