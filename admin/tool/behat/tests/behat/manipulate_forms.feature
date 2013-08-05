@@ -32,5 +32,5 @@ Feature: Forms manipulation
     Then I should see "Close the quiz"
     And I should see "Group mode"
     And I should see "Grouping"
-    And I should not see "Show more..." in the "region-main-box" "region"
+    And I should not see "Show more..." in the "region-main" "region"
     And I should see "Show less..."
