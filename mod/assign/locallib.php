@@ -5687,7 +5687,15 @@ class assign {
         $logmessage = get_string('locksubmissionforstudent',
                                  'assign',
                                  array('id'=>$user->id, 'fullname'=>fullname($user)));
-        $this->add_to_log('lock submission', $logmessage);
+        $addtolog = $this->add_to_log('lock submission', $logmessage, '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $flags->assignment,
+            'relateduserid' => $user->id
+        );
+        $event = \mod_assign\event\submission_locked::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
 

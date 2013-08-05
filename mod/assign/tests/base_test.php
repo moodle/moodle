@@ -255,6 +255,10 @@ class testable_assign extends assign {
         return parent::process_add_attempt($userid);
     }
 
+    public function testable_process_lock($userid = 0) {
+        return parent::process_lock($userid);
+    }
+
     public function testable_submissions_open($userid = 0) {
         return parent::submissions_open($userid);
     }

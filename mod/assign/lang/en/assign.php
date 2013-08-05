@@ -143,6 +143,7 @@ $string['editaction'] = 'Actions...';
 $string['event_assessable_submitted'] = 'A submission has been submitted.';
 $string['event_all_submissions_downloaded'] = 'All the submissions are being downloaded.';
 $string['event_extension_granted'] = 'An extension has been granted.';
+$string['event_submission_locked'] = 'The submissions have been locked for a user.';
 $string['extensionduedate'] = 'Extension due date';
 $string['extensionnotafterduedate'] = 'Extension date must be after the due date';
 $string['extensionnotafterfromdate'] = 'Extension date must be after the allow submissions from date';
