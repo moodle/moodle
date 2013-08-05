@@ -158,10 +158,23 @@ abstract class base_plan implements checksumable, executable {
         if (!$this->built) {
             throw new base_plan_exception('base_plan_not_built');
         }
+
+        // Calculate the total weight of all tasks and start progress tracking.
+        $progress = $this->get_progress();
+        $totalweight = 0;
+        foreach ($this->tasks as $task) {
+            $totalweight += $task->get_weight();
+        }
+        $progress->start_progress($this->get_name(), $totalweight);
+
+        // Build and execute all tasks.
         foreach ($this->tasks as $task) {
             $task->build();
             $task->execute();
         }
+
+        // Finish progress tracking.
+        $progress->end_progress();
     }
 
     /**

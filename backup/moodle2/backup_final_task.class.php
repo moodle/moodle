@@ -157,6 +157,11 @@ class backup_final_task extends backup_task {
         $this->built = true;
     }
 
+    public function get_weight() {
+        // The final task takes ages, so give it 20 times the weight of a normal task.
+        return 20;
+    }
+
 // Protected API starts here
 
     /**
