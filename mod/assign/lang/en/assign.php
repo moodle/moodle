@@ -155,6 +155,7 @@ $string['graded'] = 'Graded';
 $string['gradedon'] = 'Graded on';
 $string['gradebelowzero'] = 'Grade must be greater than or equal to zero.';
 $string['gradeabovemaximum'] = 'Grade must be less than or equal to {$a}.';
+$string['gradelocked'] = 'This grade is locked or overridden in the gradebook.';
 $string['gradeoutof'] = 'Grade out of {$a}';
 $string['gradeoutofhelp'] = 'Grade';
 $string['gradeoutofhelp_help'] = 'Enter the grade for the student\'s submission here. You may include decimals.';
