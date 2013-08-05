@@ -238,4 +238,26 @@ class core_badgeslib_testcase extends advanced_testcase {
         $this->assertDebuggingCalled('Error baking badge image!');
         $this->assertTrue($badge->is_issued($this->user->id));
     }
+
+    /**
+     * Test badges observer when course_completed event is fired.
+     */
+    public function test_badges_observer_course_criteria_review() {
+        $badge = new badge($this->coursebadge);
+        $this->assertFalse($badge->is_issued($this->user->id));
+
+        $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
+        $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY));
+        $criteria_overall1 = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_COURSE, 'badgeid' => $badge->id));
+        $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY, 'course_'.$this->course->id => $this->course->id));
+
+        $ccompletion = new completion_completion(array('course' => $this->course->id, 'userid' => $this->user->id));
+
+        // Mark course as complete.
+        $ccompletion->mark_complete();
+
+        // Check if badge is awarded.
+        $this->assertDebuggingCalled('Error baking badge image!');
+        $this->assertTrue($badge->is_issued($this->user->id));
+    }
 }

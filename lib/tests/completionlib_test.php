@@ -782,6 +782,33 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($current, $event);
     }
 
+    /**
+     * Test course completed event.
+     */
+    public function test_course_completed_event() {
+        global $USER;
+
+        $this->setup_data();
+        $this->setAdminUser();
+
+        $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $ccompletion = new completion_completion(array('course' => $this->course->id, 'userid' => $this->user->id));
+
+        // Mark course as complete and get triggered event.
+        $sink = $this->redirectEvents();
+        $ccompletion->mark_complete();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        $this->assertInstanceOf('\core\event\course_completed', $event);
+        $this->assertEquals($this->course->id, $event->get_record_snapshot('course_completions', $event->objectid)->course);
+        $this->assertEquals($this->course->id, $event->courseid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals($this->user->id, $event->other['relateduserid']);
+        $this->assertEquals(context_course::instance($this->course->id), $event->get_context());
+        $data = $ccompletion->get_record_data();
+        $this->assertEventLegacyData($data, $event);
+    }
 }
 
 
