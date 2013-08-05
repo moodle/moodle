@@ -30,6 +30,7 @@ define('NO_DEBUG_DISPLAY', true);
 define('ABORT_AFTER_CONFIG', true);
 require('../config.php'); // this stops immediately at the beginning of lib/setup.php
 require_once("$CFG->dirroot/lib/jslib.php");
+require_once("$CFG->dirroot/lib/classes/minify.php");
 
 if ($slashargument = min_get_slash_argument()) {
     $slashargument = ltrim($slashargument, '/');
@@ -90,7 +91,7 @@ if ($rev > 0 and $rev < (time() + 60*60)) {
         js_send_cached($candidate, $etag);
 
     } else {
-        js_write_cache_file_content($candidate, js_minify($jsfiles));
+        js_write_cache_file_content($candidate, core_minify::js_files($jsfiles));
         // verify nothing failed in cache file creation
         clearstatcache();
         if (file_exists($candidate)) {

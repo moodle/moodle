@@ -95,7 +95,7 @@ if ($themerev <= 0 or $rev != $themerev) {
 
 make_localcache_directory('theme', false);
 
-js_write_cache_file_content($candidate, js_minify($theme->javascript_files($type)));
+js_write_cache_file_content($candidate, core_minify::js_files($theme->javascript_files($type)));
 // Verify nothing failed in cache file creation.
 clearstatcache();
 if (file_exists($candidate)) {

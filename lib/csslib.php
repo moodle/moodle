@@ -25,7 +25,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-// NOTE: do not verify MOODLE_INTERNAL here, this is used from themes too
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Stores CSS in a file at the given path.
@@ -43,6 +43,11 @@
 function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = false, $chunkurl = null) {
     global $CFG;
 
+    $css = '';
+    foreach ($cssfiles as $file) {
+        $css .= file_get_contents($file)."\n";
+    }
+
     // Check if both the CSS optimiser is enabled and the theme supports it.
     if (!empty($CFG->enablecssoptimiser) && $theme->supportscssoptimisation) {
         // This is an experimental feature introduced in Moodle 2.3
@@ -51,10 +56,6 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = 
         // the CSS before it is cached removing excess styles and rules and stripping
         // out any extraneous content such as comments and empty rules.
         $optimiser = new css_optimiser;
-        $css = '';
-        foreach ($cssfiles as $file) {
-            $css .= file_get_contents($file)."\n";
-        }
         $css = $theme->post_process($css);
         $css = $optimiser->process($css);
 
@@ -73,7 +74,8 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = 
         // However it has the distinct disadvantage of having to minify the CSS
         // before running the post process functions. Potentially things may break
         // here if theme designers try to push things with CSS post processing.
-        $css = $theme->post_process(css_minify_css($cssfiles));
+        $css = $theme->post_process($css);
+        $css = core_minify::css($css);
     }
 
     clearstatcache();
@@ -292,80 +294,6 @@ function css_send_unmodified($lastmodified, $etag) {
 function css_send_css_not_found() {
     header('HTTP/1.0 404 not found');
     die('CSS was not found, sorry.');
-}
-
-/**
- * Uses the minify library to compress CSS.
- *
- * This is used if $CFG->enablecssoptimiser has been turned off. This was
- * the original CSS optimisation library.
- * It removes whitespace and shrinks things but does no apparent optimisation.
- * Note the minify library is still being used for JavaScript.
- *
- * @param array $files An array of files to minify
- * @return string The minified CSS
- */
-function css_minify_css($files) {
-    global $CFG;
-
-    if (empty($files)) {
-        return '';
-    }
-
-    // We do not really want any 304 here!
-    // There does not seem to be any better way to prevent them here.
-    unset($_SERVER['HTTP_IF_NONE_MATCH']);
-    unset($_SERVER['HTTP_IF_MODIFIED_SINCE']);
-
-    require_once("$CFG->libdir/minify/lib/Minify/Loader.php");
-    Minify_Loader::register();
-
-    if (0 === stripos(PHP_OS, 'win')) {
-        Minify::setDocRoot(); // IIS may need help
-    }
-    // disable all caching, we do it in moodle
-    Minify::setCache(null, false);
-
-    $options = array(
-        // JSMin is not GNU GPL compatible, use the plus version instead.
-        'minifiers' => array(Minify::TYPE_JS => array('JSMinPlus', 'minify')),
-        'bubbleCssImports' => false,
-        // Don't gzip content we just want text for storage
-        'encodeOutput' => false,
-        // Maximum age to cache, not used but required
-        'maxAge' => (60*60*24*20),
-        // The files to minify
-        'files' => $files,
-        // Turn orr URI rewriting
-        'rewriteCssUris' => false,
-        // This returns the CSS rather than echoing it for display
-        'quiet' => true
-    );
-
-    $error = 'unknown';
-    try {
-        $result = Minify::serve('Files', $options);
-        if ($result['success'] and $result['statusCode'] == 200) {
-            return $result['content'];
-        }
-    } catch (Exception $e) {
-        $error = $e->getMessage();
-        $error = str_replace("\r", ' ', $error);
-        $error = str_replace("\n", ' ', $error);
-    }
-
-    // minification failed - try to inform the theme developer and include the non-minified version
-    $css = <<<EOD
-/* Error: $error */
-/* Problem detected during theme CSS minimisation, please review the following code */
-/* ================================================================================ */
-
-
-EOD;
-    foreach ($files as $cssfile) {
-        $css .= file_get_contents($cssfile)."\n";
-    }
-    return $css;
 }
 
 /**
