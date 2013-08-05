@@ -304,9 +304,9 @@ class core_files_renderer extends plugin_renderer_base {
      */
     private function fm_js_template_mkdir() {
         $rv = '
-<div class="filemanager fp-mkdir-dlg">
+<div class="filemanager fp-mkdir-dlg" role="dialog" aria-live="assertive" aria-labelledby="fp-mkdir-dlg-title">
     <div class="fp-mkdir-dlg-text">
-        <label>' . get_string('newfoldername', 'repository') . '</label><br/>
+        <label id="fp-mkdir-dlg-title">' . get_string('newfoldername', 'repository') . '</label><br/>
         <input type="text" />
     </div>
     <button class="{!}fp-dlg-butcreate">'.get_string('makeafolder').'</button>
