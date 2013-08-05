@@ -337,6 +337,9 @@ class grade_report_user extends grade_report {
 
         /// Process those items that have scores associated
         if ($type == 'item' or $type == 'categoryitem' or $type == 'courseitem') {
+            $header_row = "row_{$eid}_{$this->user->id}";
+            $header_cat = "cat_{$grade_object->categoryid}_{$this->user->id}";
+
             if (! $grade_grade = grade_grade::fetch(array('itemid'=>$grade_object->id,'userid'=>$this->user->id))) {
                 $grade_grade = new grade_grade();
                 $grade_grade->userid = $this->user->id;
@@ -387,11 +390,16 @@ class grade_report_user extends grade_report {
                 } else {
                    $class .= ($type == 'categoryitem' or $type == 'courseitem') ? " ".$alter."d$depth baggb" : " item b1b";
                 }
+                if ($type == 'categoryitem' or $type == 'courseitem') {
+                    $header_cat = "cat_{$grade_object->iteminstance}_{$this->user->id}";
+                }
 
                 /// Name
                 $data['itemname']['content'] = $fullname;
                 $data['itemname']['class'] = $class;
                 $data['itemname']['colspan'] = ($this->maxdepth - $depth);
+                $data['itemname']['celltype'] = 'th';
+                $data['itemname']['id'] = $header_row;
 
                 /// Actual Grade
                 $gradeval = $grade_grade->finalgrade;
@@ -404,6 +412,7 @@ class grade_report_user extends grade_report {
                 if ($this->showweight) {
                     $data['weight']['class'] = $class;
                     $data['weight']['content'] = '-';
+                    $data['weight']['headers'] = "$header_cat $header_row weight";
                     // has a weight assigned, might be extra credit
                     if ($grade_object->aggregationcoef > 0 && $type <> 'courseitem') {
                         $data['weight']['content'] = number_format($grade_object->aggregationcoef,2).'%';
@@ -429,12 +438,14 @@ class grade_report_user extends grade_report {
                         $gradeval = $this->blank_hidden_total($this->courseid, $grade_grade->grade_item, $gradeval);
                         $data['grade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true);
                     }
+                    $data['grade']['headers'] = "$header_cat $header_row grade";
                 }
 
                 // Range
                 if ($this->showrange) {
                     $data['range']['class'] = $class;
                     $data['range']['content'] = $grade_grade->grade_item->get_formatted_range(GRADE_DISPLAY_TYPE_REAL, $this->rangedecimals);
+                    $data['range']['headers'] = "$header_cat $header_row range";
                 }
 
                 // Percentage
@@ -449,6 +460,7 @@ class grade_report_user extends grade_report {
                         $data['percentage']['class'] = $class;
                         $data['percentage']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
                     }
+                    $data['percentage']['headers'] = "$header_cat $header_row percentage";
                 }
 
                 // Lettergrade
@@ -467,6 +479,7 @@ class grade_report_user extends grade_report {
                         $data['lettergrade']['class'] = $class;
                         $data['lettergrade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_LETTER);
                     }
+                    $data['lettergrade']['headers'] = "$header_cat $header_row lettergrade";
                 }
 
                 // Rank
@@ -494,6 +507,7 @@ class grade_report_user extends grade_report {
                         $data['rank']['class'] = $class;
                         $data['rank']['content'] = "$rank/".$this->get_numusers(false); // total course users
                     }
+                    $data['rank']['headers'] = "$header_cat $header_row rank";
                 }
 
                 // Average
@@ -504,6 +518,7 @@ class grade_report_user extends grade_report {
                     } else {
                         $data['average']['content'] = '-';
                     }
+                    $data['average']['headers'] = "$header_cat $header_row average";
                 }
 
                 // Feedback
@@ -518,6 +533,7 @@ class grade_report_user extends grade_report {
                         $data['feedback']['class'] = $classfeedback.' feedbacktext';
                         $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
                     }
+                    $data['feedback']['headers'] = "$header_cat $header_row feedback";
                 }
             }
         }
@@ -534,6 +550,8 @@ class grade_report_user extends grade_report {
             }
             $data['itemname']['colspan'] = ($this->maxdepth - $depth + count($this->tablecolumns) - 1);
             $data['itemname']['content'] = $fullname;
+            $data['itemname']['celltype'] = 'th';
+            $data['itemname']['id'] = "cat_{$grade_object->id}_{$this->user->id}";
         }
 
         /// Add this row to the overall system
@@ -557,13 +575,16 @@ class grade_report_user extends grade_report {
 
         /// Build table structure
         $html = "
-            <table cellspacing='0' cellpadding='0' class='boxaligncenter generaltable user-grade'>
+            <table cellspacing='0'
+                   cellpadding='0'
+                   summary='" . s($this->get_lang_string('tablesummary', 'gradereport_user')) . "'
+                   class='boxaligncenter generaltable user-grade'>
             <thead>
                 <tr>
-                    <th class=\"header\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
+                    <th id='".$this->tablecolumns[0]."' class=\"header\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
 
         for ($i = 1; $i < count($this->tableheaders); $i++) {
-            $html .= "<th class=\"header\">".$this->tableheaders[$i]."</th>\n";
+            $html .= "<th id='".$this->tablecolumns[$i]."' class=\"header\">".$this->tableheaders[$i]."</th>\n";
         }
 
         $html .= "
@@ -584,8 +605,11 @@ class grade_report_user extends grade_report {
                 $class = (isset($this->tabledata[$i][$name]['class'])) ? $this->tabledata[$i][$name]['class'] : '';
                 $colspan = (isset($this->tabledata[$i][$name]['colspan'])) ? "colspan='".$this->tabledata[$i][$name]['colspan']."'" : '';
                 $content = (isset($this->tabledata[$i][$name]['content'])) ? $this->tabledata[$i][$name]['content'] : null;
+                $celltype = (isset($this->tabledata[$i][$name]['celltype'])) ? $this->tabledata[$i][$name]['celltype'] : 'td';
+                $id = (isset($this->tabledata[$i][$name]['id'])) ? "id='{$this->tabledata[$i][$name]['id']}'" : '';
+                $headers = (isset($this->tabledata[$i][$name]['headers'])) ? "headers='{$this->tabledata[$i][$name]['headers']}'" : '';
                 if (isset($content)) {
-                    $html .= "<td class='$class' $colspan>$content</td>\n";
+                    $html .= "<$celltype $id $headers class='$class' $colspan>$content</$celltype>\n";
                 }
             }
             $html .= "</tr>\n";
