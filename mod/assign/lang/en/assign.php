@@ -141,6 +141,7 @@ $string['editsubmission_help'] = 'Make changes to your submission';
 $string['editingstatus'] = 'Editing status';
 $string['editaction'] = 'Actions...';
 $string['event_assessable_submitted'] = 'A submission has been submitted.';
+$string['event_all_submissions_downloaded'] = 'All the submissions are being downloaded.';
 $string['extensionduedate'] = 'Extension due date';
 $string['extensionnotafterduedate'] = 'Extension date must be after the due date';
 $string['extensionnotafterfromdate'] = 'Extension date must be after the allow submissions from date';

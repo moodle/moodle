@@ -2389,7 +2389,14 @@ class assign {
             $result .= $this->get_renderer()->continue_button($url);
             $result .= $this->view_footer();
         } else if ($zipfile = $this->pack_files($filesforzipping)) {
-            $this->add_to_log('download all submissions', get_string('downloadall', 'assign'));
+            $addtolog = $this->add_to_log('download all submissions', get_string('downloadall', 'assign'), '', true);
+            $params = array(
+                'context' => $this->context,
+                'objectid' => $this->get_instance()->id
+            );
+            $event = \mod_assign\event\all_submissions_downloaded::create($params);
+            $event->set_legacy_logdata($addtolog);
+            $event->trigger();
             // Send file and delete after sending.
             send_temp_file($zipfile, $filename);
             // We will not get here - send_temp_file calls exit.
