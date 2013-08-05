@@ -751,11 +751,20 @@ class core_course_renderer extends plugin_renderer_base {
             return $output;
         }
         $content = $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
-        $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
-        $accessiblebutdim = !$mod->visible || $conditionalhidden;
+        if ($this->page->user_is_editing()) {
+            // In editing mode, when an item is conditionally hidden from some users
+            // we show it as greyed out.
+            $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
+            $dim = !$mod->visible || $conditionalhidden;
+        } else {
+            // When not in editing mode, we only show item as hidden if it is
+            // actually not available to the user
+            $conditionalhidden = false;
+            $dim = !$mod->uservisible;
+        }
         $textclasses = '';
         $accesstext = '';
-        if ($accessiblebutdim) {
+        if ($dim) {
             $textclasses .= ' dimmed_text';
             if ($conditionalhidden) {
                 $textclasses .= ' conditionalhidden';
