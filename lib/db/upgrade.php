@@ -2575,6 +2575,5 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013092700.02);
     }
 
-
     return true;
 }

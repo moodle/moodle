@@ -194,7 +194,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
             set_moodle_cookie($USER->username);
         }
 
-        $urltogo = get_postlogin_redirection();
+        $urltogo = core_login_get_return_url();
 
     /// check if user password has expired
     /// Currently supported only for ldap-authentication module

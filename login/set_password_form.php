@@ -25,11 +25,23 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once $CFG->libdir.'/formslib.php';
+require_once($CFG->libdir.'/formslib.php');
 
+/**
+ * Set forgotten password form definition.
+ *
+ * @package    core
+ * @subpackage auth
+ * @copyright  2006 Petr Skoda {@link http://skodak.org}
+ * @copyright  2013 Peter Bulmer
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class login_set_password_form extends moodleform {
 
-    function definition() {
+    /**
+     * Define the set password form.
+     */
+    public function definition() {
         global $USER, $CFG;
 
         $mform = $this->_form;
@@ -37,44 +49,48 @@ class login_set_password_form extends moodleform {
         $mform->addElement('header', 'setpassword', get_string('setpassword'), '');
 
         // Include the username in the form so browsers will recognise that a password is being set.
-        $mform->addElement('text', 'username','','style="display: none;" autocomplete="on"');
+        $mform->addElement('text', 'username', '', 'style="display: none;" autocomplete="on"');
         $mform->setType('username', PARAM_RAW);
         // Token gives authority to change password.
         $mform->addElement('hidden', 'token', '');
         $mform->setType('token', PARAM_ALPHANUM);
 
-        // visible elements
+        // Visible elements.
         $mform->addElement('static', 'username2', get_string('username'));
 
-        if (!empty($CFG->passwordpolicy)){
+        if (!empty($CFG->passwordpolicy)) {
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }
         $mform->addElement('password', 'password', get_string('newpassword'), 'autocomplete="on"');
         $mform->addRule('password', get_string('required'), 'required', null, 'client');
         $mform->setType('password', PARAM_RAW);
 
-        $mform->addElement('password', 'password2', get_string('newpassword').' ('.get_String('again').')', 'autocomplete="on"');
+        $strpasswordagain = get_string('newpassword') . ' (' . get_string('again') . ')';
+        $mform->addElement('password', 'password2', $strpasswordagain, 'autocomplete="on"');
         $mform->addRule('password2', get_string('required'), 'required', null, 'client');
         $mform->setType('password2', PARAM_RAW);
 
-        // buttons
         $this->add_action_buttons(true);
     }
 
-    // perform extra password change validation
-    function validation($data, $files) {
+    /**
+     * Perform extra password change validation.
+     * @param array $data submitted form fields.
+     * @param array $files submitted with the form.
+     * @return array errors occuring during validation.
+     */
+    public function validation($data, $files) {
         global $USER;
         $errors = parent::validation($data, $files);
 
         // Ignore submitted username.
-        // TODO: Validate submitted token.
-        if ($data['password'] <> $data['password2']) {
+        if ($data['password'] !== $data['password2']) {
             $errors['password'] = get_string('passwordsdiffer');
             $errors['password2'] = get_string('passwordsdiffer');
             return $errors;
         }
 
-        $errmsg = '';//prevents eclipse warnings
+        $errmsg = ''; // Prevents eclipse warnings.
         if (!check_password_policy($data['password'], $errmsg)) {
             $errors['password'] = $errmsg;
             $errors['password2'] = $errmsg;

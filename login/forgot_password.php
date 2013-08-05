@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -32,7 +31,7 @@ require_once(__DIR__ . '/lib.php');
 require_once('forgot_password_form.php');
 require_once('set_password_form.php');
 
-$token = optional_param('token', false, PARAM_RAW);
+$token = optional_param('token', false, PARAM_ALPHANUM);
 
 //HTTPS is required in this page when $CFG->loginhttps enabled
 $PAGE->https_required();
@@ -62,10 +61,10 @@ if (isloggedin() and !isguestuser()) {
 
 if (empty($token)) {
     // This is a new password reset request.
-    // Process the request; identify the user & send confirmation email:
-    forgotpw_process_request();
+    // Process the request; identify the user & send confirmation email.
+    core_login_process_password_reset_request();
 } else {
     // User clicked on confirmation link in email message
     // validate the token & set new password
-    forgotpw_process_pwset($token);
+    core_login_process_password_set($token);
 }

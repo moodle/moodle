@@ -71,13 +71,13 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configtext('minpasswordnonalphanum', new lang_string('minpasswordnonalphanum', 'admin'), new lang_string('configminpasswordnonalphanum', 'admin'), 1, PARAM_INT));
     $temp->add(new admin_setting_configtext('maxconsecutiveidentchars', new lang_string('maxconsecutiveidentchars', 'admin'), new lang_string('configmaxconsecutiveidentchars', 'admin'), 0, PARAM_INT));
     $pwresetoptions = array(
-            300 => new lang_string('numminutes', '', 5),
-            900 => new lang_string('numminutes', '', 15),
-            1800 => new lang_string('numminutes', '', 30),
-            2700 => new lang_string('numminutes', '', 45),
-            3600 => new lang_string('numminutes', '', 60),
-            7200 => new lang_string('numminutes', '', 120),
-            14400 => new lang_string('numminutes', '', 240)
+        300 => new lang_string('numminutes', '', 5),
+        900 => new lang_string('numminutes', '', 15),
+        1800 => new lang_string('numminutes', '', 30),
+        2700 => new lang_string('numminutes', '', 45),
+        3600 => new lang_string('numminutes', '', 60),
+        7200 => new lang_string('numminutes', '', 120),
+        14400 => new lang_string('numminutes', '', 240)
     );
     $adminsetting = new admin_setting_configselect(
             'pwresettime',
