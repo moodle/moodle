@@ -11,7 +11,6 @@ YUI.add('moodle-mod_assign-history', function (Y) {
         TOGGLE = function() {
             var id = this.get('for'),
                 panel = Y.one('#' + id);
-            console.log(this);
             if (this.hasClass(CSS.OPEN)) {
                 this.removeClass(CSS.OPEN);
                 this.addClass(CSS.CLOSED);
