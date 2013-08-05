@@ -64,6 +64,11 @@ class backup_controller extends backup implements loggable {
     protected $destination; // Destination chain object (fs_moodle, fs_os, db, email...)
     protected $logger;      // Logging chain object (moodle, inline, fs, db, syslog)
 
+    /**
+     * @var core_backup_progress Progress reporting object.
+     */
+    protected $progress;
+
     protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
 
     /**
@@ -108,6 +113,10 @@ class backup_controller extends backup implements loggable {
 
         // Default logger chain (based on interactive/execution)
         $this->logger = backup_factory::get_logger_chain($this->interactive, $this->execution, $this->backupid);
+
+        // By default there is no progress reporter. Interfaces that wish to
+        // display progress must set it.
+        $this->progress = new core_backup_null_progress();
 
         // Instantiate the output_controller singleton and active it if interactive and inmediate
         $oc = output_controller::get_instance();
@@ -300,6 +309,25 @@ class backup_controller extends backup implements loggable {
 
     public function get_logger() {
         return $this->logger;
+    }
+
+    /**
+     * Gets the progress reporter, which can be used to report progress within
+     * the backup or restore process.
+     *
+     * @return core_backup_progress Progress reporting object
+     */
+    public function get_progress() {
+        return $this->progress;
+    }
+
+    /**
+     * Sets the progress reporter.
+     *
+     * @param core_backup_progress $progress Progress reporting object
+     */
+    public function set_progress(core_backup_progress $progress) {
+        $this->progress = $progress;
     }
 
     /**

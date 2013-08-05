@@ -165,6 +165,14 @@ abstract class base_plan implements checksumable, executable {
     }
 
     /**
+     * Gets the progress reporter, which can be used to report progress within
+     * the backup or restore process.
+     *
+     * @return core_backup_progress Progress reporting object
+     */
+    public abstract function get_progress();
+
+    /**
      * Destroy all circular references. It helps PHP 5.2 a lot!
      */
     public function destroy() {
