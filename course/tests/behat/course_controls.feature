@@ -134,7 +134,7 @@ Feature: Course activity controls works as expected
     And "#section-2" "css_element" <should_see_other_sections> exists
     And I delete "Test forum name 1" activity
     And "#section-2" "css_element" <should_see_other_sections> exists
-    And I should not see "Test forum name 1" in the ".region-content" "css_element"
+    And I should not see "Test forum name 1" in the "#region-main" "css_element"
     And I duplicate "Test forum name 2" activity editing the new copy with:
       | Forum name | Edited test forum name 2 |
     And "#section-2" "css_element" <should_see_other_sections> exists

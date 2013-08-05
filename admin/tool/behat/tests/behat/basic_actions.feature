@@ -18,12 +18,12 @@ Feature: Page contents assertions
     When I follow "Overview"
     And I wait until the page is ready
     And I wait "2" seconds
-    And I hover ".region-content .generaltable td span" "css_element"
+    And I hover "#region-main .generaltable td span" "css_element"
     Then I should see "I'm the description"
     And I should see "Filter groups by"
     And I should not see "Filter groupssss by"
-    And I should see "Group members" in the ".region-content table th.c1" "css_element"
-    And I should not see "Group membersssss" in the ".region-content table th.c1" "css_element"
+    And I should see "Group members" in the "#region-main table th.c1" "css_element"
+    And I should not see "Group membersssss" in the "#region-main table th.c1" "css_element"
     And I follow "Groups"
     And the "#groupeditform #showcreateorphangroupform" "css_element" should be enabled
     And the "#groupeditform #showeditgroupsettingsform" "css_element" should be disabled
