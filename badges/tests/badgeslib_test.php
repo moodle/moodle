@@ -31,9 +31,13 @@ require_once($CFG->libdir . '/badgeslib.php');
 
 class core_badgeslib_testcase extends advanced_testcase {
     protected $badgeid;
+    protected $course;
+    protected $user;
+    protected $module;
+    protected $coursebadge;
 
     protected function setUp() {
-        global $DB;
+        global $DB, $CFG;
         $this->resetAfterTest(true);
 
         $user = $this->getDataGenerator()->create_user();
@@ -59,6 +63,29 @@ class core_badgeslib_testcase extends advanced_testcase {
         $fordb->status = BADGE_STATUS_INACTIVE;
 
         $this->badgeid = $DB->insert_record('badge', $fordb, true);
+
+        // Create a course with activity and auto completion tracking.
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->assertNotEmpty($studentrole);
+
+        // Get manual enrolment plugin and enrol user.
+        require_once($CFG->dirroot.'/enrol/manual/locallib.php');
+        $manplugin = enrol_get_plugin('manual');
+        $maninstance = $DB->get_record('enrol', array('courseid' => $this->course->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+        $manplugin->enrol_user($maninstance, $this->user->id, $studentrole->id);
+        $this->assertEquals(1, $DB->count_records('user_enrolments'));
+
+        $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $this->module = $this->getDataGenerator()->create_module('forum', array('course' => $this->course->id), $completionauto);
+
+        // Build badge and criteria.
+        $fordb->type = BADGE_TYPE_COURSE;
+        $fordb->courseid = $this->course->id;
+        $fordb->status = BADGE_STATUS_ACTIVE;
+
+        $this->coursebadge = $DB->insert_record('badge', $fordb, true);
     }
 
     public function test_create_badge() {
@@ -185,72 +212,30 @@ class core_badgeslib_testcase extends advanced_testcase {
 
     /**
      * Test badges observer when course module completion event id fired.
-     *
      */
-    public function test_bagdes_observer_course_module_criteria_review() {
-        global $DB, $CFG;
-
-        $this->resetAfterTest();
-
-        // Create a course with mixed auto completion data.
-        $course = $this->getDataGenerator()->create_course();
-        $user = $this->getDataGenerator()->create_user();
-        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
-        $this->assertNotEmpty($studentrole);
-
-        // Get manual enrolment plugin and enrol user.
-        require_once($CFG->dirroot.'/enrol/manual/locallib.php');
-        $manplugin = enrol_get_plugin('manual');
-        $maninstance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', MUST_EXIST);
-        $manplugin->enrol_user($maninstance, $user->id, $studentrole->id);
-        $this->assertEquals(1, $DB->count_records('user_enrolments'));
-
-        $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
-        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id), $completionauto);
-
-        // Build badge and criteria.
-        $fordb = new stdClass();
-        $fordb->id = null;
-        $fordb->name = "Test badge";
-        $fordb->description = "Testing badges";
-        $fordb->timecreated = time();
-        $fordb->timemodified = time();
-        $fordb->usercreated = $user->id;
-        $fordb->usermodified = $user->id;
-        $fordb->issuername = "Test issuer";
-        $fordb->issuerurl = "http://issuer-url.domain.co.nz";
-        $fordb->expiredate = null;
-        $fordb->expireperiod = null;
-        $fordb->type = BADGE_TYPE_COURSE;
-        $fordb->courseid = $course->id;
-        $fordb->messagesubject = "Test message subject";
-        $fordb->message = "Test message body";
-        $fordb->attachment = 1;
-        $fordb->notification = 0;
-        $fordb->status = BADGE_STATUS_ACTIVE;
-
-        $badgeid = $DB->insert_record('badge', $fordb, true);
-        $badge = new badge($badgeid);
+    public function test_badges_observer_course_module_criteria_review() {
+        $badge = new badge($this->coursebadge);
+        $this->assertFalse($badge->is_issued($this->user->id));
 
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $badge->id));
         $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY));
         $criteria_overall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_ACTIVITY, 'badgeid' => $badge->id));
-        $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY, 'module_'.$forum->id => $forum->id));
+        $criteria_overall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ANY, 'module_'.$this->module->id => $this->module->id));
 
         // Set completion for forum activity.
-        $c = new completion_info($course);
+        $c = new completion_info($this->course);
         $activities = $c->get_activities();
         $this->assertEquals(1, count($activities));
-        $this->assertTrue(isset($activities[$forum->cmid]));
-        $this->assertEquals($activities[$forum->cmid]->name, $forum->name);
+        $this->assertTrue(isset($activities[$this->module->cmid]));
+        $this->assertEquals($activities[$this->module->cmid]->name, $this->module->name);
 
-        $current = $c->get_data($activities[$forum->cmid], false, $user->id);
+        $current = $c->get_data($activities[$this->module->cmid], false, $this->user->id);
         $current->completionstate = COMPLETION_COMPLETE;
         $current->timemodified = time();
-        $c->internal_set_data($activities[$forum->cmid], $current);
+        $c->internal_set_data($activities[$this->module->cmid], $current);
 
         // Check if badge is awarded.
         $this->assertDebuggingCalled('Error baking badge image!');
-        $this->assertTrue($badge->is_issued($user->id));
+        $this->assertTrue($badge->is_issued($this->user->id));
     }
 }

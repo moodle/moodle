@@ -30,6 +30,11 @@ global $CFG;
 require_once($CFG->libdir.'/completionlib.php');
 
 class core_completionlib_testcase extends advanced_testcase {
+    protected $course;
+    protected $user;
+    protected $module1;
+    protected $module2;
+
     protected function mock_setup() {
         global $DB, $CFG, $USER;
 
@@ -38,6 +43,31 @@ class core_completionlib_testcase extends advanced_testcase {
         $DB = $this->getMock(get_class($DB));
         $CFG->enablecompletion = COMPLETION_ENABLED;
         $USER = (object)array('id' =>314159);
+    }
+
+    /**
+     * Create course with user and activities.
+     */
+    protected function setup_data() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        // Create a course with activities.
+        $this->course = $this->getDataGenerator()->create_course();
+        $this->user = $this->getDataGenerator()->create_user();
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        $this->assertNotEmpty($studentrole);
+
+        // Get manual enrolment plugin and enrol user.
+        require_once($CFG->dirroot.'/enrol/manual/locallib.php');
+        $manplugin = enrol_get_plugin('manual');
+        $maninstance = $DB->get_record('enrol', array('courseid' => $this->course->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+        $manplugin->enrol_user($maninstance, $this->user->id, $studentrole->id);
+        $this->assertEquals(1, $DB->count_records('user_enrolments'));
+
+        $this->module1 = $this->getDataGenerator()->create_module('forum', array('course' => $this->course->id));
+        $this->module2 = $this->getDataGenerator()->create_module('forum', array('course' => $this->course->id));
     }
 
     public function test_is_enabled() {
@@ -428,57 +458,55 @@ class core_completionlib_testcase extends advanced_testcase {
 
     public function test_internal_set_data() {
         global $DB, $SESSION;
-        $this->mock_setup();
+        $this->setup_data();
 
-        $cm = (object)array('course' => 42, 'id' => 13);
-        $c = new completion_info((object)array('id' => 42));
+        $this->setUser($this->user);
+        $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $this->course->id), $completionauto);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
+        $c = new completion_info($this->course);
 
         // 1) Test with new data.
-        $data = (object)array('id'=>0, 'userid' => 314159, 'coursemoduleid' => 99);
-        $DB->expects($this->at(0))
-            ->method('start_delegated_transaction')
-            ->will($this->returnValue($this->getMock('moodle_transaction', array(), array($DB))));
-
-        $DB->expects($this->at(1))
-            ->method('get_field')
-            ->with('course_modules_completion', 'id', array('coursemoduleid'=>99, 'userid'=>314159))
-            ->will($this->returnValue(false));
-
-        $DB->expects($this->at(2))
-            ->method('insert_record')
-            ->will($this->returnValue(4));
+        $data = new stdClass();
+        $data->id = 0;
+        $data->userid = $this->user->id;
+        $data->coursemoduleid = $cm->id;
+        $data->completionstate = COMPLETION_COMPLETE;
+        $data->timemodified = time();
 
         $c->internal_set_data($cm, $data);
-        $this->assertEquals(4, $data->id);
-        $this->assertEquals(array(42 => array(13 => $data)), $SESSION->completioncache);
+        $d1 = $DB->get_field('course_modules_completion', 'id', array('coursemoduleid' => $cm->id));
+        $this->assertEquals($d1, $data->id);
+        $this->assertEquals(array($this->course->id => array($cm->id => $data)), $SESSION->completioncache);
 
         // 2) Test with existing data and for different user (not cached).
         unset($SESSION->completioncache);
-        $d2 = (object)array('id' => 7, 'userid' => 17, 'coursemoduleid' => 66);
-        $DB->expects($this->at(0))
-            ->method('start_delegated_transaction')
-            ->will($this->returnValue($this->getMock('moodle_transaction', array(), array($DB))));
-        $DB->expects($this->at(1))
-            ->method('update_record')
-            ->with('course_modules_completion', $d2);
-        $c->internal_set_data($cm, $d2);
+        $forum2 = $this->getDataGenerator()->create_module('forum', array('course' => $this->course->id), $completionauto);
+        $cm2 = get_coursemodule_from_instance('forum', $forum2->id);
+        $newuser = $this->getDataGenerator()->create_user();
+
+        $d2 = new stdClass();
+        $d2->id = 7;
+        $d2->userid = $newuser->id;
+        $d2->coursemoduleid = $cm2->id;
+        $d2->completionstate = COMPLETION_COMPLETE;
+        $d2->timemodified = time();
+        $c->internal_set_data($cm2, $d2);
         $this->assertFalse(isset($SESSION->completioncache));
 
         // 3) Test where it THINKS the data is new (from cache) but actually
         //    in the database it has been set since.
         // 1) Test with new data.
-        $data = (object)array('id'=>0, 'userid' => 314159, 'coursemoduleid' => 99);
-        $d3 = (object)array('id' => 13, 'userid' => 314159, 'coursemoduleid' => 99);
-        $DB->expects($this->at(0))
-            ->method('start_delegated_transaction')
-            ->will($this->returnValue($this->getMock('moodle_transaction', array(), array($DB))));
-        $DB->expects($this->at(1))
-            ->method('get_field')
-            ->with('course_modules_completion', 'id', array('coursemoduleid' => 99, 'userid' => 314159))
-            ->will($this->returnValue(13));
-        $DB->expects($this->at(2))
-            ->method('update_record')
-            ->with('course_modules_completion', $d3);
+        $forum3 = $this->getDataGenerator()->create_module('forum', array('course' => $this->course->id), $completionauto);
+        $cm3 = get_coursemodule_from_instance('forum', $forum3->id);
+        $newuser2 = $this->getDataGenerator()->create_user();
+        $d3 = new stdClass();
+        $d3->id = 13;
+        $d3->userid = $newuser2->id;
+        $d3->coursemoduleid = $cm3->id;
+        $d3->completionstate = COMPLETION_COMPLETE;
+        $d3->timemodified = time();
+        $DB->insert_record('course_modules_completion', $d3);
         $c->internal_set_data($cm, $data);
     }
 
@@ -719,6 +747,41 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertTrue($c1->has_activities());
         $this->assertFalse($c2->has_activities());
     }
+
+    /**
+     * Test course module completion update event.
+     */
+    public function test_course_module_completion_updated_event() {
+        global $USER;
+
+        $this->setup_data();
+        $this->setAdminUser();
+
+        $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $this->course->id), $completionauto);
+
+        $c = new completion_info($this->course);
+        $activities = $c->get_activities();
+        $this->assertEquals(1, count($activities));
+        $this->assertTrue(isset($activities[$forum->cmid]));
+        $this->assertEquals($activities[$forum->cmid]->name, $forum->name);
+
+        $current = $c->get_data($activities[$forum->cmid], false, $this->user->id);
+        $current->completionstate = COMPLETION_COMPLETE;
+        $current->timemodified = time();
+        $sink = $this->redirectEvents();
+        $c->internal_set_data($activities[$forum->cmid], $current);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $this->assertInstanceOf('\core\event\course_module_completion_updated', $event);
+        $this->assertEquals($forum->cmid, $event->get_record_snapshot('course_modules_completion', $event->objectid)->coursemoduleid);
+        $this->assertEquals($current, $event->get_record_snapshot('course_modules_completion', $event->objectid));
+        $this->assertEquals(context_module::instance($forum->id), $event->get_context());
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals($this->user->id, $event->other['relateduserid']);
+        $this->assertEventLegacyData($current, $event);
+    }
+
 }
 
 
