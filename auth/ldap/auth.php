@@ -510,6 +510,15 @@ class auth_plugin_ldap extends auth_plugin_base {
     }
 
     /**
+     * Returns true if plugin can be manually set.
+     *
+     * @return bool
+     */
+    function can_be_manually_set() {
+        return true;
+    }
+
+    /**
      * Returns true if plugin allows signup and user creation.
      *
      * @return bool

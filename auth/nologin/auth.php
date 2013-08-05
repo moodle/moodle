@@ -85,6 +85,14 @@ class auth_plugin_nologin extends auth_plugin_base {
         return false;
     }
 
+    /**
+     * Returns true if plugin can be manually set.
+     *
+     * @return bool
+     */
+    function can_be_manually_set() {
+        return true;
+    }
 }
 
 

@@ -124,7 +124,6 @@ class auth_plugin_base {
     var $customfields = null;
 
     /**
-
      * This is the primary method that is used by the authenticate_user_login()
      * function in moodlelib.php.
      *
@@ -510,6 +509,21 @@ class auth_plugin_base {
     }
 
     /**
+     * Returns whether or not this authentication plugin can be manually set
+     * for users, for example, when bulk uploading users.
+     *
+     * This should be overriden by authentication plugins where setting the
+     * authentication method manually is allowed.
+     *
+     * @return bool
+     * @since 2.6
+     */
+    function can_be_manually_set() {
+        // Override if needed.
+        return false;
+    }
+
+    /**
      * Returns a list of potential IdPs that this authentication plugin supports.
      * This is used to provide links on the login page.
      *
@@ -550,7 +564,6 @@ class auth_plugin_base {
 
         return $this->customfields;
     }
-
 }
 
 /**
