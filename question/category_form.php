@@ -59,14 +59,27 @@ class question_category_edit_form extends moodleform {
         $mform->addRule('name', get_string('categorynamecantbeblank', 'question'), 'required', null, 'client');
         $mform->setType('name', PARAM_TEXT);
 
-        $mform->addElement('textarea', 'info', get_string('categoryinfo', 'question'), array('rows'=> '10', 'cols'=>'45'));
+        $mform->addElement('editor', 'info', get_string('categoryinfo', 'question'),
+                array('rows' => 10), array('noclean' => 1));
         $mform->setDefault('info', '');
-        $mform->setType('info', PARAM_TEXT);
+        $mform->setType('info', PARAM_RAW);
 
         $this->add_action_buttons(false, get_string('addcategory', 'question'));
 
         $mform->addElement('hidden', 'id', 0);
         $mform->setType('id', PARAM_INT);
     }
-}
 
+    public function set_data($current) {
+        if (is_object($current)) {
+            $current = (array) $current;
+        }
+        if (!empty($current['info'])) {
+            $current['info'] = array('text' => $current['info'],
+                    'infoformat' => $current['infoformat']);
+        } else {
+            $current['info'] = array('text' => '', 'infoformat' => FORMAT_HTML);
+        }
+        parent::set_data($current);
+    }
+}
