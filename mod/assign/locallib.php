@@ -4552,7 +4552,15 @@ class assign {
         $result = $this->update_user_flags($flags);
 
         if ($result) {
-            $this->add_to_log('grant extension', $userid);
+            $addtolog = $this->add_to_log('grant extension', $userid, '', true);
+            $params = array(
+                'context' => $this->context,
+                'objectid' => $flags->assignment,
+                'relateduserid' => $userid
+            );
+            $event = \mod_assign\event\extension_granted::create($params);
+            $event->set_legacy_logdata($addtolog);
+            $event->trigger();
         }
         return $result;
     }

@@ -940,5 +940,37 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $output = $assign->get_renderer()->render($gradingtable);
         $this->assertNotEquals(true, strpos($output, $this->students[0]->lastname));
     }
+
+    public function test_extension_granted_event() {
+        $this->setUser($this->editingteachers[0]);
+
+        $tomorrow = time() + 24*60*60;
+        $yesterday = time() - 24*60*60;
+
+        $assign = $this->create_instance(array('duedate' => $yesterday, 'cutoffdate' => $yesterday));
+        $sink = $this->redirectEvents();
+
+        $assign->testable_save_user_extension($this->students[0]->id, $tomorrow);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\extension_granted', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($assign->get_instance()->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->relateduserid);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'grant extension',
+            'view.php?id=' . $assign->get_course_module()->id,
+            $this->students[0]->id,
+            $assign->get_course_module()->id,
+            $this->editingteachers[0]->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+    }
+
 }
 
