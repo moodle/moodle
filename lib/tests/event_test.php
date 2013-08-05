@@ -89,6 +89,39 @@ class core_event_testcase extends advanced_testcase {
         $this->assertEquals($event->get_context(), $event2->get_context());
     }
 
+    public function test_event_properties_guessing() {
+        global $USER;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $context = context_module::instance($forum->cmid);
+        $event = \core_tests\event\unittest_executed::create(array('context' => $context, 'objectid' => 5));
+
+        // Check guessed course ID, and default properties.
+        $this->assertSame('\core_tests\event\unittest_executed', $event->eventname);
+        $this->assertSame('core_tests', $event->component);
+        $this->assertSame('executed', $event->action);
+        $this->assertSame('unittest', $event->target);
+        $this->assertSame(5, $event->objectid);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertSame($USER->id, $event->userid);
+        $this->assertNull($event->relateduserid);
+
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+        $event = \core_tests\event\unittest_executed::create(array('contextid' => $context->id, 'objectid' => 5));
+
+        // Check guessing on contextid, and user context level.
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEquals($context->id, $event->contextid);
+        $this->assertEquals($context->contextlevel, $event->contextlevel);
+        $this->assertSame(0, $event->courseid);
+        $this->assertSame($USER->id, $event->userid);
+        $this->assertSame($user->id, $event->relateduserid);
+    }
+
     public function test_observers_parsing() {
 
         $observers = array(
