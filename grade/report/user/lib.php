@@ -390,7 +390,9 @@ class grade_report_user extends grade_report {
                 } else {
                    $class .= ($type == 'categoryitem' or $type == 'courseitem') ? " ".$alter."d$depth baggb" : " item b1b";
                 }
-                if ($type == 'categoryitem' or $type == 'courseitem') { $header_cat = "cat_{$grade_object->iteminstance}_{$this->user->id}"; }
+                if ($type == 'categoryitem' or $type == 'courseitem') {
+                    $header_cat = "cat_{$grade_object->iteminstance}_{$this->user->id}";
+                }
 
                 /// Name
                 $data['itemname']['content'] = $fullname;
@@ -575,7 +577,7 @@ class grade_report_user extends grade_report {
         $html = "
             <table cellspacing='0'
                    cellpadding='0'
-                   summary='" . $this->get_lang_string('tablesummary', 'gradereport_user') . "'
+                   summary='" . s($this->get_lang_string('tablesummary', 'gradereport_user')) . "'
                    class='boxaligncenter generaltable user-grade'>
             <thead>
                 <tr>
