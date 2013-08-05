@@ -81,6 +81,7 @@ $definitions = array(
     // This caches the html purifier cleaned text. This is done because the text is usually cleaned once for every user
     // and context combo. Text caching handles caching for the combination, this cache is responsible for caching the
     // cleaned text which is shareable.
+    // NOTE: this data may be safely stored in local caches on cluster nodes.
     'htmlpurifier' => array(
         'mode' => cache_store::MODE_APPLICATION,
     ),

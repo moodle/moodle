@@ -1615,27 +1615,47 @@ function is_purify_html_necessary($text) {
 function purify_html($text, $options = array()) {
     global $CFG;
 
+    $text = (string)$text;
+
     static $purifiers = array();
     static $caches = array();
 
-    $type = !empty($options['allowid']) ? 'allowid' : 'normal';
+    // Purifier code can change only during major version upgrade.
+    $version = empty($CFG->version) ? 0 : $CFG->version;
+    $cachedir = "$CFG->localcachedir/htmlpurifier/$version";
+    if (!file_exists($cachedir)) {
+        // Purging of caches may remove the cache dir at any time,
+        // luckily file_exists() results should be cached for all existing directories.
+        $purifiers = array();
+        $caches = array();
+        gc_collect_cycles();
+
+        make_localcache_directory('htmlpurifier', false);
+        check_dir_exists($cachedir);
+    }
+
+    $allowid = empty($options['allowid']) ? 0 : 1;
+    $allowobjectembed = empty($CFG->allowobjectembed) ? 0 : 1;
+
+    $type = 'type_'.$allowid.'_'.$allowobjectembed;
 
     if (!array_key_exists($type, $caches)) {
         $caches[$type] = cache::make('core', 'htmlpurifier', array('type' => $type));
     }
     $cache = $caches[$type];
 
-    $filteredtext = $cache->get($text);
-    if ($filteredtext !== false) {
+    // Add revision number and all options to the text key so that it is compatible with local cluster node caches.
+    $key = "|$version|$allowobjectembed|$allowid|$text";
+    $filteredtext = $cache->get($key);
+
+    if ($filteredtext === true) {
+        // The filtering did not change the text last time, no need to filter anything again.
+        return $text;
+    } else if ($filteredtext !== false) {
         return $filteredtext;
     }
 
     if (empty($purifiers[$type])) {
-
-        // make sure the serializer dir exists, it should be fine if it disappears later during cache reset
-        $cachedir = $CFG->cachedir.'/htmlpurifier';
-        check_dir_exists($cachedir);
-
         require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.safe-includes.php';
         require_once $CFG->libdir.'/htmlpurifier/locallib.php';
         $config = HTMLPurifier_Config::createDefault();
@@ -1651,22 +1671,22 @@ function purify_html($text, $options = array()) {
         $config->set('URI.AllowedSchemes', array('http'=>true, 'https'=>true, 'ftp'=>true, 'irc'=>true, 'nntp'=>true, 'news'=>true, 'rtsp'=>true, 'teamspeak'=>true, 'gopher'=>true, 'mms'=>true, 'mailto'=>true));
         $config->set('Attr.AllowedFrameTargets', array('_blank'));
 
-        if (!empty($CFG->allowobjectembed)) {
+        if ($allowobjectembed) {
             $config->set('HTML.SafeObject', true);
             $config->set('Output.FlashCompat', true);
             $config->set('HTML.SafeEmbed', true);
         }
 
-        if ($type === 'allowid') {
+        if ($allowid) {
             $config->set('Attr.EnableID', true);
         }
 
         if ($def = $config->maybeGetRawHTMLDefinition()) {
-            $def->addElement('nolink', 'Block', 'Flow', array());                       // skip our filters inside
-            $def->addElement('tex', 'Inline', 'Inline', array());                       // tex syntax, equivalent to $$xx$$
-            $def->addElement('algebra', 'Inline', 'Inline', array());                   // algebra syntax, equivalent to @@xx@@
-            $def->addElement('lang', 'Block', 'Flow', array(), array('lang'=>'CDATA')); // old and future style multilang - only our hacked lang attribute
-            $def->addAttribute('span', 'xxxlang', 'CDATA');                             // current problematic multilang
+            $def->addElement('nolink', 'Block', 'Flow', array());                       // Skip our filters inside.
+            $def->addElement('tex', 'Inline', 'Inline', array());                       // Tex syntax, equivalent to $$xx$$.
+            $def->addElement('algebra', 'Inline', 'Inline', array());                   // Algebra syntax, equivalent to @@xx@@.
+            $def->addElement('lang', 'Block', 'Flow', array(), array('lang'=>'CDATA')); // Original multilang style - only our hacked lang attribute.
+            $def->addAttribute('span', 'xxxlang', 'CDATA');                             // Current very problematic multilang.
         }
 
         $purifier = new HTMLPurifier($config);
@@ -1681,11 +1701,18 @@ function purify_html($text, $options = array()) {
     if ($multilang) {
         $filteredtext = preg_replace('/<span(\s+lang="([a-zA-Z0-9_-]+)"|\s+class="multilang"){2}\s*>/', '<span xxxlang="${2}">', $filteredtext);
     }
-    $filteredtext = $purifier->purify($filteredtext);
+    $filteredtext = (string)$purifier->purify($filteredtext);
     if ($multilang) {
         $filteredtext = preg_replace('/<span xxxlang="([a-zA-Z0-9_-]+)">/', '<span lang="${1}" class="multilang">', $filteredtext);
     }
-    $cache->set($text, $filteredtext);
+
+    if ($text === $filteredtext) {
+        // No need to store the filtered text, next time we will just return unfiltered text
+        // because it was not changed by purifying.
+        $cache->set($key, true);
+    } else {
+        $cache->set($key, $filteredtext);
+    }
 
     return $filteredtext;
 }
