@@ -76,25 +76,35 @@ class unittest_observer {
         self::$event[] = $event;
     }
 
-    public static function external_observer(\core\event\base $event) {
+    public static function external_observer(unittest_executed $event) {
         self::$info[] = 'external_observer-'.$event->courseid;
         self::$event[] = $event;
     }
 
-    public static function broken_observer(\core\event\base $event) {
+    public static function broken_observer(unittest_executed $event) {
         self::$info[] = 'broken_observer-'.$event->courseid;
         self::$event[] = $event;
         throw new \Exception('someerror');
     }
 
-    public static function observe_all(unittest_executed $event) {
+    public static function observe_all(\core\event\base $event) {
+        if (!($event instanceof unittest_executed)) {
+            self::$info[] = 'observe_all-unknown';
+            self::$event[] = $event;
+            return;
+        }
         self::$event[] = $event;
-        if ($event->nest) {
+        if (!empty($event->nest)) {
             self::$info[] = 'observe_all-nesting-'.$event->courseid;
             unittest_executed::create(array('courseid'=>3, 'context'=>\context_system::instance(), 'other'=>array('sample'=>666, 'xx'=>666)))->trigger();
         } else {
             self::$info[] = 'observe_all-'.$event->courseid;
         }
+    }
+
+    public static function observe_all_alt(\core\event\base $event) {
+        self::$info[] = 'observe_all_alt';
+        self::$event[] = $event;
     }
 
     public static function legacy_handler($data) {

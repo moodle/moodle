@@ -97,6 +97,7 @@ class manager {
 
     protected static function process_buffers() {
         global $DB, $CFG;
+        self::init_all_observers();
 
         while (self::$buffer or self::$extbuffer) {
 
@@ -116,45 +117,49 @@ class manager {
                 return;
             }
 
-            $observers = self::get_event_observers('\\'.get_class($event));
-
-            foreach ($observers as $observer) {
-                if ($observer->internal) {
-                    if ($fromextbuffer) {
-                        // Do not send buffered external events to internal handlers,
-                        // they processed them already.
-                        continue;
-                    }
-                } else {
-                    if ($DB->is_transaction_started()) {
+            $observingclasses = self::get_observing_classes($event);
+            foreach ($observingclasses as $observingclass) {
+                if (!isset(self::$allobservers[$observingclass])) {
+                    continue;
+                }
+                foreach (self::$allobservers[$observingclass] as $observer) {
+                    if ($observer->internal) {
                         if ($fromextbuffer) {
-                            // Weird!
+                            // Do not send buffered external events to internal handlers,
+                            // they processed them already.
                             continue;
                         }
-                        // Do not notify external observers while in DB transaction.
-                        if (!$addedtoextbuffer) {
-                            self::$extbuffer[] = $event;
-                            $addedtoextbuffer = true;
+                    } else {
+                        if ($DB->is_transaction_started()) {
+                            if ($fromextbuffer) {
+                                // Weird!
+                                continue;
+                            }
+                            // Do not notify external observers while in DB transaction.
+                            if (!$addedtoextbuffer) {
+                                self::$extbuffer[] = $event;
+                                $addedtoextbuffer = true;
+                            }
+                            continue;
                         }
-                        continue;
                     }
-                }
 
-                if (isset($observer->includefile) and file_exists($observer->includefile)) {
-                    include_once($observer->includefile);
-                }
-                if (is_callable($observer->callable)) {
-                    try {
-                        call_user_func($observer->callable, $event);
-                    } catch (\Exception $e) {
-                        // Observers are notified before installation and upgrade, this may throw errors.
-                        if (empty($CFG->upgraderunning)) {
-                            // Ignore errors during upgrade, otherwise warn developers.
-                            debugging("Exception encountered in event observer '$observer->callable': ".$e->getMessage(), DEBUG_DEVELOPER, $e->getTrace());
-                        }
+                    if (isset($observer->includefile) and file_exists($observer->includefile)) {
+                        include_once($observer->includefile);
                     }
-                } else {
-                    debugging("Can not execute event observer '$observer->callable'");
+                    if (is_callable($observer->callable)) {
+                        try {
+                            call_user_func($observer->callable, $event);
+                        } catch (\Exception $e) {
+                            // Observers are notified before installation and upgrade, this may throw errors.
+                            if (empty($CFG->upgraderunning)) {
+                                // Ignore errors during upgrade, otherwise warn developers.
+                                debugging("Exception encountered in event observer '$observer->callable': ".$e->getMessage(), DEBUG_DEVELOPER, $e->getTrace());
+                            }
+                        }
+                    } else {
+                        debugging("Can not execute event observer '$observer->callable'");
+                    }
                 }
             }
 
@@ -163,22 +168,25 @@ class manager {
     }
 
     /**
-     * Returns list of event observers.
-     * @param string $classname
+     * Returns list of classes related to this event.
+     * @param \core\event\base $event
      * @return array
      */
-    protected static function get_event_observers($classname) {
-        self::init_all_observers();
+    protected static function get_observing_classes(\core\event\base $event) {
+        $observers = array('\core\event\base', '\\'.get_class($event));
+        return $observers;
 
-        if (isset(self::$allobservers[$classname])) {
-            return self::$allobservers[$classname];
+        // Note if we ever decide to observe events by parent class name use the following code instead.
+        /*
+        $classname = get_class($event);
+        $observers = array('\\'.$classname);
+        while ($classname = get_parent_class($classname)) {
+            $observers[] = '\\'.$classname;
         }
+        $observers = array_reverse($observers, false);
 
-        if (isset(self::$allobservers['*'])) {
-            return self::$allobservers['*'];
-        }
-
-        return array();
+        return $observers;
+        */
     }
 
     /**
@@ -246,7 +254,10 @@ class manager {
                 debugging("Invalid 'eventname' detected in $file observer definition", DEBUG_DEVELOPER);
                 continue;
             }
-            if ($observer['eventname'] !== '*' and strpos($observer['eventname'], '\\') !== 0) {
+            if ($observer['eventname'] === '*') {
+                $observer['eventname'] = '\core\event\base';
+            }
+            if (strpos($observer['eventname'], '\\') !== 0) {
                 $observer['eventname'] = '\\'.$observer['eventname'];
             }
             if (empty($observer['callback'])) {
@@ -285,22 +296,7 @@ class manager {
      * Reorder observers to allow quick lookup of observer for each event.
      */
     protected static function order_all_observers() {
-        $catchall = array();
-        if (isset(self::$allobservers['*'])) {
-            $catchall = self::$allobservers['*'];
-            unset(self::$allobservers['*']); // Move it to the end.
-            \core_collator::asort_objects_by_property($catchall, 'priority', \core_collator::SORT_NUMERIC);
-            $catchall = array_reverse($catchall);
-            self::$allobservers['*'] = $catchall;
-        }
         foreach (self::$allobservers as $classname => $observers) {
-            if ($classname === '*') {
-                continue;
-            }
-            if ($catchall) {
-                $observers = array_merge($observers, $catchall);
-            }
-
             \core_collator::asort_objects_by_property($observers, 'priority', \core_collator::SORT_NUMERIC);
             self::$allobservers[$classname] = array_reverse($observers);
         }
