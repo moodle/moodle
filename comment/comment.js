@@ -354,7 +354,7 @@ M.core_comment = {
                 if (ta) {
                     //toggle_textarea.apply(ta, [false]);
                     //// reset textarea size
-                    ta.on('click', function() {
+                    ta.on('focus', function() {
                         this.toggle_textarea(true);
                     }, this);
                     //ta.onkeypress = function() {
