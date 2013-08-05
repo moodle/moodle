@@ -87,12 +87,12 @@ class qtype_essay_question extends question_with_responses {
 
     public function is_same_response(array $prevresponse, array $newresponse) {
         if (array_key_exists('answer', $prevresponse) && $prevresponse['answer'] !== $this->responsetemplate) {
-            $value1 = $prevresponse['answer'];
+            $value1 = (string) $prevresponse['answer'];
         } else {
             $value1 = '';
         }
         if (array_key_exists('answer', $newresponse) && $newresponse['answer'] !== $this->responsetemplate) {
-            $value2 = $newresponse['answer'];
+            $value2 = (string) $newresponse['answer'];
         } else {
             $value2 = '';
         }

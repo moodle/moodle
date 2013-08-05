@@ -1379,6 +1379,35 @@ class question_file_loader implements question_response_files {
     public function get_files() {
         return $this->step->get_qt_files($this->name, $this->contextid);
     }
+
+    /**
+     * Copy these files into a draft area, and return the corresponding
+     * {@link question_file_saver} that can save them again.
+     *
+     * This is used by {@link question_attempt::start_based_on()}, which is used
+     * (for example) by the quizzes 'Each attempt builds on last' feature.
+     *
+     * @return question_file_saver that can re-save these files again.
+     */
+    public function get_question_file_saver() {
+
+        // Value will be either a plain MD5 hash, or some real content, followed
+        // by an MD5 hash in a HTML comment. We only want the value in the latter case.
+        if (preg_match('/\s*<!-- File hash: [0-9a-zA-Z]{32} -->\s*$/', $this->value)) {
+            $value = preg_replace('/\s*<!-- File hash: [0-9a-zA-Z]{32} -->\s*$/', '', $this->value);
+
+        } else if (preg_match('/^[0-9a-zA-Z]{32}$/', $this->value)) {
+            $value = null;
+
+        } else {
+            throw new coding_exception('$value passed to question_file_loader::get_question_file_saver' .
+                    ' was not of the expected form.');
+        }
+
+        list($draftid, $text) = $this->step->prepare_response_files_draft_itemid_with_text(
+                $this->name, $this->contextid, $value);
+        return new question_file_saver($draftid, 'question', 'response_' . $this->name, $text);
+    }
 }
 
 
