@@ -4842,7 +4842,14 @@ class assign {
             $this->gradebook_item_update(null, $grade);
         }
 
-        $this->add_to_log('reveal identities', get_string('revealidentities', 'assign'));
+        $addtolog = $this->add_to_log('reveal identities', get_string('revealidentities', 'assign'), '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $update->id
+        );
+        $event = \mod_assign\event\identities_revealed::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
 

@@ -1005,5 +1005,36 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->editingteachers[0]->ignoresesskey = false;
     }
 
+    public function test_identities_revealed_event() {
+        $this->editingteachers[0]->ignoresesskey = true;
+        $this->setUser($this->editingteachers[0]);
+
+        $assign = $this->create_instance(array('blindmarking'=>1));
+        $sink = $this->redirectEvents();
+
+        $assign->testable_process_reveal_identities();
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\identities_revealed', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($assign->get_instance()->id, $event->objectid);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'reveal identities',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('revealidentities', 'assign'),
+            $assign->get_course_module()->id,
+            $this->editingteachers[0]->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+
+        // Revert to defaults.
+        $this->editingteachers[0]->ignoresesskey = false;
+    }
+
 }
 
