@@ -54,6 +54,10 @@ class auth_testcase extends advanced_testcase {
         $this->assertEquals('2', $event->objectid);
         $this->assertEquals(context_system::instance()->id, $event->contextid);
         $this->assertEquals($user, $event->get_record_snapshot('user', 2));
+
+        $this->assertEventLegacyData(null, $event);
+        $expectedlog = array(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID, $user->id, 0, $user->id);
+        $this->assertEventLegacyLogData($expectedlog, $event);
     }
 
     public function test_user_loggedin_event_exceptions() {
