@@ -654,7 +654,7 @@ class page_requirements_manager {
                                                         array('nofilesavailable', 'repository'), array('norepositoriesavailable', 'repository'),
                                                         array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),
                                                         array('fileexistsdialog_filemanager', 'repository'), array('renameto', 'repository'),
-                                                        array('referencesexist', 'repository')
+                                                        array('referencesexist', 'repository'), array('edit', 'moodle')
                                                     ));
                     break;
                 case 'core_comment':
