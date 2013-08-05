@@ -30,7 +30,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/message/externallib.php');
 
-class core_message_external_testcase extends externallib_advanced_testcase {
+class core_message_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Send a fake message.

@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 /*
  * controller tests (all)
  */
-class backup_controller_testcase extends advanced_testcase {
+class core_backup_controller_testcase extends advanced_testcase {
 
     protected $moduleid;  // course_modules id used for testing
     protected $sectionid; // course_sections id used for testing

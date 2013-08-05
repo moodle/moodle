@@ -49,7 +49,7 @@ class testable_grading_manager extends grading_manager {
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class grading_manager_testcase extends advanced_testcase {
+class core_grade_grading_manager_testcase extends advanced_testcase {
     public function test_basic_instantiation() {
         $manager1 = get_grading_manager();
 

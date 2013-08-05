@@ -666,7 +666,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         $allroles = get_all_roles();
-        $this->assertEquals('array', gettype($allroles));
+        $this->assertInternalType('array', $allroles);
         $this->assertCount(8, $allroles); // There are 8 roles is standard install.
 
         $role = reset($allroles);
@@ -689,7 +689,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $renames = $DB->get_records_menu('role_names', array('contextid'=>$coursecontext->id), '', 'roleid, name');
 
         $allroles = get_all_roles($coursecontext);
-        $this->assertEquals('array', gettype($allroles));
+        $this->assertInternalType('array', $allroles);
         $this->assertCount(9, $allroles);
         $role = reset($allroles);
         $role = (array)$role;
@@ -849,13 +849,13 @@ class core_accesslib_testcase extends advanced_testcase {
         foreach ($archetypes as $archetype) {
 
             $result = get_default_role_archetype_allows('assign', $archetype);
-            $this->assertEquals('array', gettype($result));
+            $this->assertInternalType('array', $result);
 
             $result = get_default_role_archetype_allows('override', $archetype);
-            $this->assertEquals('array', gettype($result));
+            $this->assertInternalType('array', $result);
 
             $result = get_default_role_archetype_allows('switch', $archetype);
-            $this->assertEquals('array', gettype($result));
+            $this->assertInternalType('array', $result);
         }
 
         $result = get_default_role_archetype_allows('assign', '');
@@ -1194,7 +1194,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $alllevels = context_helper::get_all_levels();
         foreach ($archetypes as $archetype) {
             $defaults = get_default_contextlevels($archetype);
-            $this->assertEquals('array', gettype($defaults));
+            $this->assertInternalType('array', $defaults);
             foreach ($defaults as $level) {
                 $this->assertTrue(isset($alllevels[$level]));
             }

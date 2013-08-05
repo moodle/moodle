@@ -31,7 +31,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/files/externallib.php');
 
-class test_external_files extends advanced_testcase {
+class core_files_externallib_testcase extends advanced_testcase {
 
     /*
      * Test core_files_external::upload().

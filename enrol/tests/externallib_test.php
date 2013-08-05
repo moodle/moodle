@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/enrol/externallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.4
  */
-class core_enrol_external_testcase extends externallib_advanced_testcase {
+class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test get_enrolled_users

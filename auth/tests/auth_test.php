@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/authlib.php');
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class auth_testcase extends advanced_testcase {
+class core_auth_testcase extends advanced_testcase {
 
     public function test_user_loggedin_event() {
         global $USER;

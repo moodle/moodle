@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once("$CFG->dirroot/repository/lib.php");
 
-class repositorylib_testcase extends advanced_testcase {
+class core_repositorylib_testcase extends advanced_testcase {
 
     /**
      * Installing repository tests

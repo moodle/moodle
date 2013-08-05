@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 Frédéric Massart
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class repository_generator_testcase extends advanced_testcase {
+class core_repository_generator_testcase extends advanced_testcase {
 
     /**
      * Basic test of creation of repository types.

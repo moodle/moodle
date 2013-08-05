@@ -31,7 +31,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/user/externallib.php');
 
-class core_user_external_testcase extends externallib_advanced_testcase {
+class core_user_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test get_users

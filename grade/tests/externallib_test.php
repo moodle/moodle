@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright 2013 Paul Charsley
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_grade_external_testcase extends externallib_advanced_testcase {
+class core_grade_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Tests set up

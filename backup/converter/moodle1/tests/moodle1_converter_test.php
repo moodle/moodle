@@ -30,7 +30,7 @@ global $CFG;
 require_once($CFG->dirroot . '/backup/converter/moodle1/lib.php');
 
 
-class moodle1_converter_testcase extends advanced_testcase {
+class core_backup_moodle1_converter_testcase extends advanced_testcase {
 
     /** @var string the name of the directory containing the unpacked Moodle 1.9 backup */
     protected $tempdir;
