@@ -1142,5 +1142,40 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         // Revert to defaults.
         $this->editingteachers[0]->ignoresesskey = false;
     }
+
+    public function test_submission_duplicated_event() {
+        $this->setUser($this->students[0]);
+
+        $assign = $this->create_instance();
+        $submission1 = $assign->get_user_submission($this->students[0]->id, true, 0);
+        $submission2 = $assign->get_user_submission($this->students[0]->id, true, 1);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_REOPENED;
+        $assign->testable_update_submission($submission2, $this->students[0]->id, time(), $assign->get_instance()->teamsubmission);
+
+        $sink = $this->redirectEvents();
+        $notices = null;
+        $assign->testable_process_copy_previous_attempt($notices);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\submission_duplicated', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($submission2->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->userid);
+        $submission2->status = ASSIGN_SUBMISSION_STATUS_DRAFT;
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'submissioncopied',
+            'view.php?id=' . $assign->get_course_module()->id,
+            $assign->testable_format_submission_for_log($submission2),
+            $assign->get_course_module()->id,
+            $this->students[0]->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+    }
+
 }
 

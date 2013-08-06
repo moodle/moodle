@@ -239,6 +239,10 @@ class testable_assign extends assign {
         return parent::apply_grade_to_user($formdata, $userid, $attemptnumber);
     }
 
+    public function testable_format_submission_for_log(stdClass $submission) {
+        return parent::format_submission_for_log($submission);
+    }
+
     public function testable_get_grading_userid_list() {
         return parent::get_grading_userid_list();
     }
@@ -257,6 +261,10 @@ class testable_assign extends assign {
 
     public function testable_process_lock($userid = 0) {
         return parent::process_lock($userid);
+    }
+
+    public function testable_process_copy_previous_attempt(&$notices) {
+        return parent::process_copy_previous_attempt($notices);
     }
 
     public function testable_process_revert_to_draft($userid = 0) {
