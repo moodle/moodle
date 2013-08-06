@@ -3567,6 +3567,10 @@ function ismoving($courseid) {
 function fullname($user, $override=false) {
     global $CFG, $SESSION;
 
+    if (!isset($user->firstname) and !isset($user->lastname)) {
+        return '';
+    }
+
     // Get all of the name fields.
     $allnames = get_all_user_name_fields();
     if ($CFG->debugdeveloper) {
@@ -3578,10 +3582,6 @@ function fullname($user, $override=false) {
                 break;
             }
         }
-    }
-
-    if (!isset($user->firstname) and !isset($user->lastname)) {
-        return '';
     }
 
     if (!$override) {
