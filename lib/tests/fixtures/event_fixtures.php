@@ -211,3 +211,12 @@ class noname_event extends \core\event\base {
         $this->context = \context_system::instance();
     }
 }
+
+/**
+ * Class content_viewed.
+ *
+ * Wrapper for testing \core\event\content_viewed .
+ */
+class content_viewed extends \core\event\content_viewed {
+}
+
