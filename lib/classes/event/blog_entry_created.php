@@ -61,22 +61,19 @@ class blog_entry_created extends \core\event\base {
     /**
      * Returns localised general event name.
      *
-     * @return \lang_string
+     * @return string
      */
     public static function get_name() {
-        return new \lang_string("evententryadded", "core_blog");
+        return get_string("evententryadded", "core_blog");
     }
 
     /**
-     * Returns localised description of what happened.
+     * Returns non-localised event description with id's for admin use only.
      *
-     * @return \lang_string
+     * @return string
      */
     public function get_description() {
-        $a = new \stdClass();
-        $a->subject = $this->other['subject'];
-        $a->userid = $this->userid;
-        return new \lang_string("evententryaddeddesc", "core_blog", $a);
+        return 'Blog entry "'. $this->other['subject']. '" was created by user with id '. $this->userid;
     }
 
     /**
