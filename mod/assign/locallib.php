@@ -4514,7 +4514,14 @@ class assign {
                     $logmessage = get_string('submissionstatementacceptedlog',
                                              'mod_assign',
                                              fullname($USER));
-                    $this->add_to_log('submission statement accepted', $logmessage);
+                    $addtolog = $this->add_to_log('submission statement accepted', $logmessage, '', true);
+                    $params = array(
+                        'context' => $this->context,
+                        'objectid' => $submission->id
+                    );
+                    $event = \mod_assign\event\statement_accepted::create($params);
+                    $event->set_legacy_logdata($addtolog);
+                    $event->trigger();
                 }
                 $logdata = $this->add_to_log('submit for grading', $this->format_submission_for_log($submission), '', true);
                 $this->notify_graders($submission);
@@ -5149,7 +5156,14 @@ class assign {
                 $logmessage = get_string('submissionstatementacceptedlog',
                                          'mod_assign',
                                          fullname($USER));
-                $this->add_to_log('submission statement accepted', $logmessage);
+                $addtolog = $this->add_to_log('submission statement accepted', $logmessage, '', true);
+                $params = array(
+                    'context' => $this->context,
+                    'objectid' => $submission->id
+                );
+                $event = \mod_assign\event\statement_accepted::create($params);
+                $event->set_legacy_logdata($addtolog);
+                $event->trigger();
             }
             $this->add_to_log('submit', $this->format_submission_for_log($submission));
 
