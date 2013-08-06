@@ -150,4 +150,33 @@ class core_bloglib_testcase extends advanced_testcase {
         $blog_headers = blog_get_headers($this->courseid);
         $this->assertNotEquals($blog_headers['heading'], '');
     }
+
+    /**
+     * Test various blog related events.
+     */
+    public function test_blog_entry_events() {
+        global $USER;
+
+        $this->setAdminUser();
+        $this->resetAfterTest();
+
+        // Create a blog entry.
+        $blog = new blog_entry();
+        $blog->summary = "This is summary of blog";
+        $blog->subject = "Subject of blog";
+        $states = blog_entry::get_applicable_publish_states();
+        $blog->publishstate = reset($states);
+        $sink = $this->redirectEvents();
+        $blog->add();
+        $events = $sink->get_events();
+        $event = reset($events);
+        $sitecontext = context_system::instance();
+
+        // Validate event data.
+        $this->assertInstanceOf('\core\event\blog_entry_created', $event);
+        $this->assertEquals($sitecontext->id, $event->contextid);
+        $this->assertEquals($blog->id, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals("post", $event->objecttable);
+    }
 }
