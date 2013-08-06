@@ -263,6 +263,10 @@ class testable_assign extends assign {
         return parent::process_lock($userid);
     }
 
+    public function testable_process_unlock($userid = 0) {
+        return parent::process_unlock($userid);
+    }
+
     public function testable_process_copy_previous_attempt(&$notices) {
         return parent::process_copy_previous_attempt($notices);
     }

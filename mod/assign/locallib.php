@@ -5886,7 +5886,15 @@ class assign {
         $logmessage = get_string('unlocksubmissionforstudent',
                                  'assign',
                                  array('id'=>$user->id, 'fullname'=>fullname($user)));
-        $this->add_to_log('unlock submission', $logmessage);
+        $addtolog = $this->add_to_log('unlock submission', $logmessage, '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $flags->assignment,
+            'relateduserid' => $user->id
+        );
+        $event = \mod_assign\event\submission_unlocked::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
     /**

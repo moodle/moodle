@@ -1177,5 +1177,38 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $sink->close();
     }
 
+    public function test_submission_unlocked_event() {
+        $this->editingteachers[0]->ignoresesskey = true;
+        $this->setUser($this->editingteachers[0]);
+
+        $assign = $this->create_instance();
+        $sink = $this->redirectEvents();
+
+        $assign->testable_process_unlock($this->students[0]->id);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\submission_unlocked', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($assign->get_instance()->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->relateduserid);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'unlock submission',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('unlocksubmissionforstudent', 'assign', array('id' => $this->students[0]->id,
+                'fullname' => fullname($this->students[0]))),
+            $assign->get_course_module()->id,
+            $this->editingteachers[0]->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+
+        // Revert to defaults.
+        $this->editingteachers[0]->ignoresesskey = false;
+    }
+
 }
 
