@@ -503,6 +503,7 @@ $string['unknowncourse'] = 'Unknown course named "{$a}"';
 $string['unknowncourseidnumber'] = 'Unknown course ID "{$a}"';
 $string['unknowncoursesection'] = 'Unknown course section in course "{$a}"';
 $string['unknowncourserequest'] = 'Unknown course request';
+$string['unknownevent'] = 'Unknown event';
 $string['unknownfiletype'] = 'Error unknown filtertype';
 $string['unknowngroup'] = 'Unknown group "{$a}"';
 $string['unknownhelp'] = 'Unknown help topic {$a}';
