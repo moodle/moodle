@@ -618,8 +618,7 @@ function login_is_lockedout($user) {
 function login_attempt_valid($user) {
     global $CFG;
 
-    $event = \core_auth\event\user_loggedin::create(array('objectid' => $user->id,
-        'other' => array('username' => $user->username)));
+    $event = \core\event\user_loggedin::create(array('objectid' => $user->id, 'other' => array('username' => $user->username)));
     $event->add_record_snapshot('user', $user);
     $event->trigger();
 
