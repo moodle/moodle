@@ -240,7 +240,7 @@ abstract class base implements \IteratorAggregate {
      */
     public static function get_name() {
         // Override in subclass with real lang string.
-        $parts = explode('\\', __CLASS__);
+        $parts = explode('\\', get_called_class());
         if (count($parts) !== 3) {
             return 'unknown event';
         }
