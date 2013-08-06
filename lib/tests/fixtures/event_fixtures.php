@@ -203,4 +203,3 @@ class noname_event extends \core\event\base {
         $this->context = \context_system::instance();
     }
 }
-
