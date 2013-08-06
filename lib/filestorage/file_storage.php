@@ -647,8 +647,10 @@ class file_storage {
     protected function sort_area_tree($tree) {
         foreach ($tree as $key => &$value) {
             if ($key == 'subdirs') {
-                $value = $this->sort_area_tree($value);
                 core_collator::ksort($value, core_collator::SORT_NATURAL);
+                foreach ($value as $subdirname => &$subtree) {
+                    $subtree = $this->sort_area_tree($subtree);
+                }
             } else if ($key == 'files') {
                 core_collator::ksort($value, core_collator::SORT_NATURAL);
             }
