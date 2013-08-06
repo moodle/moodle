@@ -75,8 +75,8 @@ class check_oracle_semantics extends XMLDBCheckAction {
                 // Get current semantic from dictionary, we only will process B (BYTE) ones
                 // suplying the SQL code to change them to C (CHAR) semantic
                 $params = array(
-                    'table_name' => textlib::strtoupper($DB->get_prefix() . $xmldb_table->getName()),
-                    'column_name' => textlib::strtoupper($xmldb_field->getName()),
+                    'table_name' => core_text::strtoupper($DB->get_prefix() . $xmldb_table->getName()),
+                    'column_name' => core_text::strtoupper($xmldb_field->getName()),
                     'data_type' => 'VARCHAR2');
                 $currentsemantic = $DB->get_field_sql('
                     SELECT char_used

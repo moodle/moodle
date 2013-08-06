@@ -204,7 +204,7 @@ abstract class backup_plan_dbops extends backup_dbops {
         global $DB;
 
         // Calculate backup word
-        $backupword = str_replace(' ', '_', textlib::strtolower(get_string('backupfilename')));
+        $backupword = str_replace(' ', '_', core_text::strtolower(get_string('backupfilename')));
         $backupword = trim(clean_filename($backupword), '_');
 
         // Not $useidonly, lets fetch the name
@@ -228,7 +228,7 @@ abstract class backup_plan_dbops extends backup_dbops {
                     break;
             }
             $shortname = str_replace(' ', '_', $shortname);
-            $shortname = textlib::strtolower(trim(clean_filename($shortname), '_'));
+            $shortname = core_text::strtolower(trim(clean_filename($shortname), '_'));
         }
 
         // The name will always contain the ID, but we append the course short name if requested.
@@ -240,7 +240,7 @@ abstract class backup_plan_dbops extends backup_dbops {
         // Calculate date
         $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));
         $date = userdate(time(), $backupdateformat, 99, false);
-        $date = textlib::strtolower(trim(clean_filename($date), '_'));
+        $date = core_text::strtolower(trim(clean_filename($date), '_'));
 
         // Calculate info
         $info = '';

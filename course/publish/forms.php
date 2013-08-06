@@ -248,7 +248,7 @@ class course_publication_form extends moodleform {
         $mform->addHelpButton('description', 'description', 'hub');
 
         $languages = get_string_manager()->get_list_of_languages();
-        collatorlib::asort($languages);
+        core_collator::asort($languages);
         $mform->addElement('select', 'language', get_string('language'), $languages);
         $mform->setDefault('language', $defaultlanguage);
         $mform->addHelpButton('language', 'language', 'hub');

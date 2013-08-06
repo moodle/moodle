@@ -141,7 +141,7 @@ class core_collator {
      * @return string string with normalised numbers
      */
     protected static function naturalise($string) {
-        return preg_replace_callback('/[0-9]+/', array('collatorlib', 'callback_naturalise'), $string);
+        return preg_replace_callback('/[0-9]+/', array('core_collator', 'callback_naturalise'), $string);
     }
 
     /**
@@ -158,11 +158,11 @@ class core_collator {
      * Locale aware sorting, the key associations are kept, values are sorted alphabetically.
      *
      * @param array $arr array to be sorted (reference)
-     * @param int $sortflag One of collatorlib::SORT_NUMERIC, collatorlib::SORT_STRING, collatorlib::SORT_NATURAL, collatorlib::SORT_REGULAR
-     *      optionally "|" collatorlib::CASE_SENSITIVE
+     * @param int $sortflag One of core_collator::SORT_NUMERIC, core_collator::SORT_STRING, core_collator::SORT_NATURAL, core_collator::SORT_REGULAR
+     *      optionally "|" core_collator::CASE_SENSITIVE
      * @return bool True on success
      */
-    public static function asort(array &$arr, $sortflag = collatorlib::SORT_STRING) {
+    public static function asort(array &$arr, $sortflag = core_collator::SORT_STRING) {
         if (empty($arr)) {
             // nothing to do
             return true;
@@ -170,26 +170,26 @@ class core_collator {
 
         $original = null;
 
-        $casesensitive = (bool)($sortflag & collatorlib::CASE_SENSITIVE);
-        $sortflag = ($sortflag & ~collatorlib::CASE_SENSITIVE);
-        if ($sortflag != collatorlib::SORT_NATURAL and $sortflag != collatorlib::SORT_STRING) {
+        $casesensitive = (bool)($sortflag & core_collator::CASE_SENSITIVE);
+        $sortflag = ($sortflag & ~core_collator::CASE_SENSITIVE);
+        if ($sortflag != core_collator::SORT_NATURAL and $sortflag != core_collator::SORT_STRING) {
             $casesensitive = false;
         }
 
         if (self::ensure_collator_available()) {
-            if ($sortflag == collatorlib::SORT_NUMERIC) {
+            if ($sortflag == core_collator::SORT_NUMERIC) {
                 $flag = Collator::SORT_NUMERIC;
 
-            } else if ($sortflag == collatorlib::SORT_REGULAR) {
+            } else if ($sortflag == core_collator::SORT_REGULAR) {
                 $flag = Collator::SORT_REGULAR;
 
             } else {
                 $flag = Collator::SORT_STRING;
             }
 
-            if ($sortflag == collatorlib::SORT_NATURAL) {
+            if ($sortflag == core_collator::SORT_NATURAL) {
                 $original = $arr;
-                if ($sortflag == collatorlib::SORT_NATURAL) {
+                if ($sortflag == core_collator::SORT_NATURAL) {
                     foreach ($arr as $key => $value) {
                         $arr[$key] = self::naturalise((string)$value);
                     }
@@ -209,21 +209,21 @@ class core_collator {
 
         // try some fallback that works at least for English
 
-        if ($sortflag == collatorlib::SORT_NUMERIC) {
+        if ($sortflag == core_collator::SORT_NUMERIC) {
             return asort($arr, SORT_NUMERIC);
 
-        } else if ($sortflag == collatorlib::SORT_REGULAR) {
+        } else if ($sortflag == core_collator::SORT_REGULAR) {
             return asort($arr, SORT_REGULAR);
         }
 
         if (!$casesensitive) {
             $original = $arr;
             foreach ($arr as $key => $value) {
-                $arr[$key] = textlib::strtolower($value);
+                $arr[$key] = core_text::strtolower($value);
             }
         }
 
-        if ($sortflag == collatorlib::SORT_NATURAL) {
+        if ($sortflag == core_collator::SORT_NATURAL) {
             $result = natsort($arr);
 
         } else {
@@ -242,11 +242,11 @@ class core_collator {
      *
      * @param array $objects An array of objects to sort (handled by reference)
      * @param string $property The property to use for comparison
-     * @param int $sortflag One of collatorlib::SORT_NUMERIC, collatorlib::SORT_STRING, collatorlib::SORT_NATURAL, collatorlib::SORT_REGULAR
-     *      optionally "|" collatorlib::CASE_SENSITIVE
+     * @param int $sortflag One of core_collator::SORT_NUMERIC, core_collator::SORT_STRING, core_collator::SORT_NATURAL, core_collator::SORT_REGULAR
+     *      optionally "|" core_collator::CASE_SENSITIVE
      * @return bool True on success
      */
-    public static function asort_objects_by_property(array &$objects, $property, $sortflag = collatorlib::SORT_STRING) {
+    public static function asort_objects_by_property(array &$objects, $property, $sortflag = core_collator::SORT_STRING) {
         $original = $objects;
         foreach ($objects as $key => $object) {
             $objects[$key] = $object->$property;
@@ -261,11 +261,11 @@ class core_collator {
      *
      * @param array $objects An array of objects to sort (handled by reference)
      * @param string $method The method to call to generate a value for comparison
-     * @param int $sortflag One of collatorlib::SORT_NUMERIC, collatorlib::SORT_STRING, collatorlib::SORT_NATURAL, collatorlib::SORT_REGULAR
-     *      optionally "|" collatorlib::CASE_SENSITIVE
+     * @param int $sortflag One of core_collator::SORT_NUMERIC, core_collator::SORT_STRING, core_collator::SORT_NATURAL, core_collator::SORT_REGULAR
+     *      optionally "|" core_collator::CASE_SENSITIVE
      * @return bool True on success
      */
-    public static function asort_objects_by_method(array &$objects, $method, $sortflag = collatorlib::SORT_STRING) {
+    public static function asort_objects_by_method(array &$objects, $method, $sortflag = core_collator::SORT_STRING) {
         $original = $objects;
         foreach ($objects as $key => $object) {
             $objects[$key] = $object->{$method}();
@@ -279,11 +279,11 @@ class core_collator {
      * Locale aware sorting, the key associations are kept, keys are sorted alphabetically.
      *
      * @param array $arr array to be sorted (reference)
-     * @param int $sortflag One of collatorlib::SORT_NUMERIC, collatorlib::SORT_STRING, collatorlib::SORT_NATURAL, collatorlib::SORT_REGULAR
-     *      optionally "|" collatorlib::CASE_SENSITIVE
+     * @param int $sortflag One of core_collator::SORT_NUMERIC, core_collator::SORT_STRING, core_collator::SORT_NATURAL, core_collator::SORT_REGULAR
+     *      optionally "|" core_collator::CASE_SENSITIVE
      * @return bool True on success
      */
-    public static function ksort(array &$arr, $sortflag = collatorlib::SORT_STRING) {
+    public static function ksort(array &$arr, $sortflag = core_collator::SORT_STRING) {
         $keys = array_keys($arr);
         if (!self::asort($keys, $sortflag)) {
             return false;

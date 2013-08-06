@@ -2549,8 +2549,8 @@ abstract class repository implements cacheable_object {
      * @return string short filename
      */
     public function get_short_filename($str, $maxlength) {
-        if (textlib::strlen($str) >= $maxlength) {
-            return trim(textlib::substr($str, 0, $maxlength)).'...';
+        if (core_text::strlen($str) >= $maxlength) {
+            return trim(core_text::substr($str, 0, $maxlength)).'...';
         } else {
             return $str;
         }

@@ -99,8 +99,8 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         $shortname = optional_param('shortname', null, PARAM_RAW);
         if (!is_null($shortname)) {
             $this->role->shortname = $shortname;
-            $this->role->shortname = textlib::specialtoascii($this->role->shortname);
-            $this->role->shortname = textlib::strtolower(clean_param($this->role->shortname, PARAM_ALPHANUMEXT));
+            $this->role->shortname = core_text::specialtoascii($this->role->shortname);
+            $this->role->shortname = core_text::strtolower(clean_param($this->role->shortname, PARAM_ALPHANUMEXT));
             if (empty($this->role->shortname)) {
                 $this->errors['shortname'] = get_string('errorbadroleshortname', 'core_role');
             }

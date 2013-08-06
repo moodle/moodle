@@ -1233,7 +1233,7 @@ class moodle1_file_manager implements loggable {
         }
         $filepath = clean_param($filepath, PARAM_PATH);
 
-        if (textlib::strlen($filepath) > 255) {
+        if (core_text::strlen($filepath) > 255) {
             throw new moodle1_convert_exception('file_path_longer_than_255_chars');
         }
 

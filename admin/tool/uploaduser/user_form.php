@@ -53,7 +53,7 @@ class admin_uploaduser_form1 extends moodleform {
             $mform->setDefault('delimiter_name', 'comma');
         }
 
-        $choices = textlib::get_encodings();
+        $choices = core_text::get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'tool_uploaduser'), $choices);
         $mform->setDefault('encoding', 'UTF-8');
 

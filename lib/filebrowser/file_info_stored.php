@@ -368,7 +368,7 @@ class file_info_stored extends file_info {
         $storedfiles = $fs->get_directory_files($this->context->id, $this->lf->get_component(), $this->lf->get_filearea(), $this->lf->get_itemid(),
                                                 $this->lf->get_filepath(), false, true, "filepath, filename");
         foreach ($storedfiles as $file) {
-            $extension = textlib::strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
+            $extension = core_text::strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
             if ($file->is_directory() || $extensions === '*' || (!empty($extension) && in_array('.'.$extension, $extensions))) {
                 $fileinfo = new file_info_stored($this->browser, $this->context, $file, $this->urlbase, $this->topvisiblename,
                                                  $this->itemidused, $this->readaccess, $this->writeaccess, false);
@@ -396,7 +396,7 @@ class file_info_stored extends file_info {
         }
 
         $filepath = $this->lf->get_filepath();
-        $length = textlib::strlen($filepath);
+        $length = core_text::strlen($filepath);
         $sql = "SELECT filepath, filename
                   FROM {files} f
                  WHERE f.contextid = :contextid AND f.component = :component AND f.filearea = :filearea AND f.itemid = :itemid
@@ -415,7 +415,7 @@ class file_info_stored extends file_info {
             if ($record->filepath === $filepath) {
                 $children[] = $record->filename;
             } else {
-                $path = explode('/', textlib::substr($record->filepath, $length));
+                $path = explode('/', core_text::substr($record->filepath, $length));
                 if (!in_array($path[0], $children)) {
                     $children[] = $path[0];
                 }

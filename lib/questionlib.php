@@ -1250,7 +1250,7 @@ function get_import_export_formats($type) {
         }
     }
 
-    collatorlib::asort($fileformatnames);
+    core_collator::asort($fileformatnames);
     return $fileformatnames;
 }
 

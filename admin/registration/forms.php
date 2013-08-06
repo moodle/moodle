@@ -137,8 +137,8 @@ class hub_selector_form extends moodleform {
         $options = array();
         foreach ($hubs as $hub) {
             //to not display a name longer than 100 character (too big)
-            if (textlib::strlen($hub['name']) > 100) {
-                $hubname = textlib::substr($hub['name'], 0, 100);
+            if (core_text::strlen($hub['name']) > 100) {
+                $hubname = core_text::substr($hub['name'], 0, 100);
                 $hubname = $hubname . "...";
             } else {
                 $hubname = $hub['name'];
@@ -287,7 +287,7 @@ class site_registration_form extends moodleform {
         $mform->addHelpButton('description', 'sitedesc', 'hub');
 
         $languages = get_string_manager()->get_list_of_languages();
-        collatorlib::asort($languages);
+        core_collator::asort($languages);
         $mform->addElement('select', 'language', get_string('sitelang', 'hub'),
                 $languages);
         $mform->setType('language', PARAM_ALPHANUMEXT);

@@ -390,8 +390,8 @@ function tag_print_user_box($user, $return=false) {
     }
 
     //truncate name if it's too big
-    if (textlib::strlen($fullname) > 26) {
-        $fullname = textlib::substr($fullname, 0, 26) .'...';
+    if (core_text::strlen($fullname) > 26) {
+        $fullname = core_text::substr($fullname, 0, 26) .'...';
     }
 
     $output .= '<strong>'. $fullname .'</strong>';

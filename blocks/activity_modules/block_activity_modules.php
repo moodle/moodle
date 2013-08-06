@@ -49,7 +49,7 @@ class block_activity_modules extends block_list {
             }
         }
 
-        collatorlib::asort($modfullnames);
+        core_collator::asort($modfullnames);
 
         foreach ($modfullnames as $modname => $modfullname) {
             if ($modname === 'resources') {

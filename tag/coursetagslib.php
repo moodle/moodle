@@ -284,7 +284,7 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
                 //add tag if does not exist
                 if (!$tagid = tag_get_id($tag)) {
                     $tag_id_array = tag_add(array($tag), $tagtype);
-                    $tagid = $tag_id_array[textlib::strtolower($tag)];
+                    $tagid = $tag_id_array[core_text::strtolower($tag)];
                 }
                 //ordering
                 $ordering = 0;

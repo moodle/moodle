@@ -210,12 +210,12 @@ if (empty($completions)) {
                 $agg = $info->get_aggregation_method($row['type']);
                 echo '('. html_writer::start_tag('i');
                 if ($agg == COMPLETION_AGGREGATION_ALL) {
-                    echo textlib::strtolower(get_string('all', 'completion'));
+                    echo core_text::strtolower(get_string('all', 'completion'));
                 } else {
-                    echo textlib::strtolower(get_string('any', 'completion'));
+                    echo core_text::strtolower(get_string('any', 'completion'));
                 }
 
-                echo html_writer::end_tag('i') .textlib::strtolower(get_string('required')).')';
+                echo html_writer::end_tag('i') .core_text::strtolower(get_string('required')).')';
                 $agg_type = false;
             }
         }

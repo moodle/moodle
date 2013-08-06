@@ -56,7 +56,7 @@ define('RFC2445_TYPE_UTC_OFFSET',  13);
 
 
 function rfc2445_fold($string) {
-    if(textlib::strlen($string, 'utf-8') <= RFC2445_FOLDED_LINE_LENGTH) {
+    if(core_text::strlen($string, 'utf-8') <= RFC2445_FOLDED_LINE_LENGTH) {
         return $string;
     }
 
@@ -66,15 +66,15 @@ function rfc2445_fold($string) {
     $len_count=0;
 
     //multi-byte string, get the correct length
-    $section_len = textlib::strlen($string, 'utf-8');
+    $section_len = core_text::strlen($string, 'utf-8');
 
     while($len_count<$section_len) {
         
         //get the current portion of the line
-        $section = textlib::substr($string, ($i * RFC2445_FOLDED_LINE_LENGTH), (RFC2445_FOLDED_LINE_LENGTH), 'utf-8');
+        $section = core_text::substr($string, ($i * RFC2445_FOLDED_LINE_LENGTH), (RFC2445_FOLDED_LINE_LENGTH), 'utf-8');
 
         //increment the length we've processed by the length of the new portion
-        $len_count += textlib::strlen($section, 'utf-8');
+        $len_count += core_text::strlen($section, 'utf-8');
         
         /* Add the portion to the return value, terminating with CRLF.HTAB
            As per RFC 2445, CRLF.HTAB will be replaced by the processor of the 

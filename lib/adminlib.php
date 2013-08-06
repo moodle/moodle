@@ -1235,7 +1235,7 @@ class admin_externalpage implements part_of_admin_tree {
         $found = false;
         if (strpos(strtolower($this->name), $query) !== false) {
             $found = true;
-        } else if (strpos(textlib::strtolower($this->visiblename), $query) !== false) {
+        } else if (strpos(core_text::strtolower($this->visiblename), $query) !== false) {
                 $found = true;
             }
         if ($found) {
@@ -1382,7 +1382,7 @@ class admin_settingpage implements part_of_admin_tree {
         $found = false;
         if (strpos(strtolower($this->name), $query) !== false) {
             $found = true;
-        } else if (strpos(textlib::strtolower($this->visiblename), $query) !== false) {
+        } else if (strpos(core_text::strtolower($this->visiblename), $query) !== false) {
                 $found = true;
             }
         if ($found) {
@@ -1827,16 +1827,16 @@ abstract class admin_setting {
         if (strpos(strtolower($this->name), $query) !== false) {
             return true;
         }
-        if (strpos(textlib::strtolower($this->visiblename), $query) !== false) {
+        if (strpos(core_text::strtolower($this->visiblename), $query) !== false) {
             return true;
         }
-        if (strpos(textlib::strtolower($this->description), $query) !== false) {
+        if (strpos(core_text::strtolower($this->description), $query) !== false) {
             return true;
         }
         $current = $this->get_setting();
         if (!is_null($current)) {
             if (is_string($current)) {
-                if (strpos(textlib::strtolower($current), $query) !== false) {
+                if (strpos(core_text::strtolower($current), $query) !== false) {
                     return true;
                 }
             }
@@ -1844,7 +1844,7 @@ abstract class admin_setting {
         $default = $this->get_defaultsetting();
         if (!is_null($default)) {
             if (is_string($default)) {
-                if (strpos(textlib::strtolower($default), $query) !== false) {
+                if (strpos(core_text::strtolower($default), $query) !== false) {
                     return true;
                 }
             }
@@ -2602,7 +2602,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
         }
 
         foreach ($this->choices as $desc) {
-            if (strpos(textlib::strtolower($desc), $query) !== false) {
+            if (strpos(core_text::strtolower($desc), $query) !== false) {
                 return true;
             }
         }
@@ -2831,10 +2831,10 @@ class admin_setting_configselect extends admin_setting {
             return false;
         }
         foreach ($this->choices as $key=>$value) {
-            if (strpos(textlib::strtolower($key), $query) !== false) {
+            if (strpos(core_text::strtolower($key), $query) !== false) {
                 return true;
             }
-            if (strpos(textlib::strtolower($value), $query) !== false) {
+            if (strpos(core_text::strtolower($value), $query) !== false) {
                 return true;
             }
         }
@@ -3014,7 +3014,7 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
         }
 
         foreach ($this->choices as $desc) {
-            if (strpos(textlib::strtolower($desc), $query) !== false) {
+            if (strpos(core_text::strtolower($desc), $query) !== false) {
                 return true;
             }
         }
@@ -5027,7 +5027,7 @@ class admin_page_managemods extends admin_externalpage {
                     break;
                 }
                 $strmodulename = get_string('modulename', $module->name);
-                if (strpos(textlib::strtolower($strmodulename), $query) !== false) {
+                if (strpos(core_text::strtolower($strmodulename), $query) !== false) {
                     $found = true;
                     break;
                 }
@@ -5099,14 +5099,14 @@ class admin_setting_manageenrols extends admin_setting {
             return true;
         }
 
-        $query = textlib::strtolower($query);
+        $query = core_text::strtolower($query);
         $enrols = enrol_get_plugins(false);
         foreach ($enrols as $name=>$enrol) {
             $localised = get_string('pluginname', 'enrol_'.$name);
-            if (strpos(textlib::strtolower($name), $query) !== false) {
+            if (strpos(core_text::strtolower($name), $query) !== false) {
                 return true;
             }
-            if (strpos(textlib::strtolower($localised), $query) !== false) {
+            if (strpos(core_text::strtolower($localised), $query) !== false) {
                 return true;
             }
         }
@@ -5295,7 +5295,7 @@ class admin_page_manageblocks extends admin_externalpage {
                     break;
                 }
                 $strblockname = get_string('pluginname', 'block_'.$block->name);
-                if (strpos(textlib::strtolower($strblockname), $query) !== false) {
+                if (strpos(core_text::strtolower($strblockname), $query) !== false) {
                     $found = true;
                     break;
                 }
@@ -5349,7 +5349,7 @@ class admin_page_managemessageoutputs extends admin_externalpage {
                     break;
                 }
                 $strprocessorname = get_string('pluginname', 'message_'.$processor->name);
-                if (strpos(textlib::strtolower($strprocessorname), $query) !== false) {
+                if (strpos(core_text::strtolower($strprocessorname), $query) !== false) {
                     $found = true;
                     break;
                 }
@@ -5413,7 +5413,7 @@ class admin_page_manageqbehaviours extends admin_externalpage {
         $found = false;
         require_once($CFG->dirroot . '/question/engine/lib.php');
         foreach (core_component::get_plugin_list('qbehaviour') as $behaviour => $notused) {
-            if (strpos(textlib::strtolower(question_engine::get_behaviour_name($behaviour)),
+            if (strpos(core_text::strtolower(question_engine::get_behaviour_name($behaviour)),
                     $query) !== false) {
                 $found = true;
                 break;
@@ -5461,7 +5461,7 @@ class admin_page_manageqtypes extends admin_externalpage {
         $found = false;
         require_once($CFG->dirroot . '/question/engine/bank.php');
         foreach (question_bank::get_all_qtypes() as $qtype) {
-            if (strpos(textlib::strtolower($qtype->local_name()), $query) !== false) {
+            if (strpos(core_text::strtolower($qtype->local_name()), $query) !== false) {
                 $found = true;
                 break;
             }
@@ -5510,7 +5510,7 @@ class admin_page_manageportfolios extends admin_externalpage {
         if (!$found) {
             foreach (portfolio_instances(false, false) as $instance) {
                 $title = $instance->get('name');
-                if (strpos(textlib::strtolower($title), $query) !== false) {
+                if (strpos(core_text::strtolower($title), $query) !== false) {
                     $found = true;
                     break;
                 }
@@ -5561,7 +5561,7 @@ class admin_page_managerepositories extends admin_externalpage {
         if (!$found) {
             foreach (repository::get_types() as $instance) {
                 $title = $instance->get_typename();
-                if (strpos(textlib::strtolower($title), $query) !== false) {
+                if (strpos(core_text::strtolower($title), $query) !== false) {
                     $found = true;
                     break;
                 }
@@ -5640,7 +5640,7 @@ class admin_setting_manageauths extends admin_setting {
             }
             $authplugin = get_auth_plugin($auth);
             $authtitle = $authplugin->get_title();
-            if (strpos(textlib::strtolower($authtitle), $query) !== false) {
+            if (strpos(core_text::strtolower($authtitle), $query) !== false) {
                 return true;
             }
         }
@@ -5841,7 +5841,7 @@ class admin_setting_manageeditors extends admin_setting {
             if (strpos($editor, $query) !== false) {
                 return true;
             }
-            if (strpos(textlib::strtolower($editorstr), $query) !== false) {
+            if (strpos(core_text::strtolower($editorstr), $query) !== false) {
                 return true;
             }
         }
@@ -6107,7 +6107,7 @@ class admin_setting_manageformats extends admin_setting {
         $formats = plugin_manager::instance()->get_plugins_of_type('format');
         foreach ($formats as $format) {
             if (strpos($format->component, $query) !== false ||
-                    strpos(textlib::strtolower($format->displayname), $query) !== false) {
+                    strpos(core_text::strtolower($format->displayname), $query) !== false) {
                 return true;
             }
         }
@@ -6222,7 +6222,7 @@ class admin_page_managefilters extends admin_externalpage {
         $found = false;
         $filternames = filter_get_all_installed();
         foreach ($filternames as $path => $strfiltername) {
-            if (strpos(textlib::strtolower($strfiltername), $query) !== false) {
+            if (strpos(core_text::strtolower($strfiltername), $query) !== false) {
                 $found = true;
                 break;
             }
@@ -6536,10 +6536,10 @@ function admin_find_write_settings($node, $data) {
 function admin_search_settings_html($query) {
     global $CFG, $OUTPUT;
 
-    if (textlib::strlen($query) < 2) {
+    if (core_text::strlen($query) < 2) {
         return '';
     }
-    $query = textlib::strtolower($query);
+    $query = core_text::strtolower($query);
 
     $adminroot = admin_get_root();
     $findings = $adminroot->search($query);
@@ -6884,7 +6884,7 @@ class admin_setting_managerepository extends admin_setting {
         }
         foreach (repository::get_types() as $instance) {
             $title = $instance->get_typename();
-            if (strpos(textlib::strtolower($title), $query) !== false) {
+            if (strpos(core_text::strtolower($title), $query) !== false) {
                 return true;
             }
         }
@@ -7319,7 +7319,7 @@ class admin_setting_manageexternalservices extends admin_setting {
 
         $services = $DB->get_records('external_services', array(), 'id, name');
         foreach ($services as $service) {
-            if (strpos(textlib::strtolower($service->name), $query) !== false) {
+            if (strpos(core_text::strtolower($service->name), $query) !== false) {
                 return true;
             }
         }
@@ -7791,7 +7791,7 @@ class admin_setting_managewebserviceprotocols extends admin_setting {
                 return true;
             }
             $protocolstr = get_string('pluginname', 'webservice_'.$protocol);
-            if (strpos(textlib::strtolower($protocolstr), $query) !== false) {
+            if (strpos(core_text::strtolower($protocolstr), $query) !== false) {
                 return true;
             }
         }

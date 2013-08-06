@@ -183,7 +183,7 @@ abstract class question_bank {
         }
 
         ksort($sortorder);
-        collatorlib::asort($otherqtypes);
+        core_collator::asort($otherqtypes);
 
         $sortedqtypes = array();
         foreach ($sortorder as $name) {

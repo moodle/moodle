@@ -145,7 +145,7 @@ if (!file_exists($options['file'])) {
 }
 
 // Encoding.
-$encodings = textlib::get_encodings();
+$encodings = core_text::get_encodings();
 if (!isset($encodings[$options['encoding']])) {
     echo get_string('invalidencoding', 'tool_uploadcourse')."\n";
     echo $help;

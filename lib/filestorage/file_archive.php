@@ -131,17 +131,17 @@ abstract class file_archive implements Iterator {
             return $localname;
         }
 
-        $converted = textlib::convert($localname, 'utf-8', $this->encoding);
-        $original  = textlib::convert($converted, $this->encoding, 'utf-8');
+        $converted = core_text::convert($localname, 'utf-8', $this->encoding);
+        $original  = core_text::convert($converted, $this->encoding, 'utf-8');
 
         if ($original === $localname) {
             $result = $converted;
 
         } else {
             // try ascii conversion
-            $converted2 = textlib::specialtoascii($localname);
-            $converted2 = textlib::convert($converted2, 'utf-8', $this->encoding);
-            $original2  = textlib::convert($converted, $this->encoding, 'utf-8');
+            $converted2 = core_text::specialtoascii($localname);
+            $converted2 = core_text::convert($converted2, 'utf-8', $this->encoding);
+            $original2  = core_text::convert($converted, $this->encoding, 'utf-8');
 
             if ($original2 === $localname) {
                 //this looks much better
@@ -175,7 +175,7 @@ abstract class file_archive implements Iterator {
         $result = ltrim($result, '/');                // no leading /
 
         if ($this->encoding !== 'utf-8') {
-            $result = textlib::convert($result, $this->encoding, 'utf-8');
+            $result = core_text::convert($result, $this->encoding, 'utf-8');
         }
 
         return clean_param($result, PARAM_PATH);

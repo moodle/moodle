@@ -63,10 +63,9 @@ class assign_admin_page_manage_assign_plugins extends admin_externalpage {
         }
 
         $found = false;
-        $textlib = new textlib();
 
         foreach (core_component::get_plugin_list($this->subtype) as $name => $notused) {
-            if (strpos($textlib::strtolower(get_string('pluginname', $this->subtype . '_' . $name)),
+            if (strpos(core_text::strtolower(get_string('pluginname', $this->subtype . '_' . $name)),
                     $query) !== false) {
                 $found = true;
                 break;

@@ -143,7 +143,7 @@ abstract class file_info {
                 $nonemptylist[] = $fileinfo;
             } else {
                 $filename = $fileinfo->get_visible_name();
-                $extension = textlib::strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                $extension = core_text::strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                 if (!empty($extension) && in_array('.' . $extension, $extensions)) {
                     $nonemptylist[] = $fileinfo;
                 }
@@ -177,7 +177,7 @@ abstract class file_info {
             if (!$fileinfo->is_directory()) {
                 if ($extensions !== '*') {
                     $filename = $fileinfo->get_visible_name();
-                    $extension = textlib::strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                    $extension = core_text::strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                     if (empty($extension) || !in_array('.' . $extension, $extensions)) {
                         continue;
                     }

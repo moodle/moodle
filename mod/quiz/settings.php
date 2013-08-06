@@ -38,7 +38,7 @@ foreach ($reports as $report => $reportdir) {
     $strreportname = get_string($report . 'report', 'quiz_'.$report);
     $reportsbyname[$strreportname] = $report;
 }
-collatorlib::ksort($reportsbyname);
+core_collator::ksort($reportsbyname);
 
 // First get a list of quiz reports with there own settings pages. If there none,
 // we use a simpler overall menu structure.
@@ -48,7 +48,7 @@ foreach ($rules as $rule => $ruledir) {
     $strrulename = get_string('pluginname', 'quizaccess_' . $rule);
     $rulesbyname[$strrulename] = $rule;
 }
-collatorlib::ksort($rulesbyname);
+core_collator::ksort($rulesbyname);
 
 // Create the quiz settings page.
 if (empty($reportsbyname) && empty($rulesbyname)) {

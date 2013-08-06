@@ -1222,7 +1222,7 @@ class moodle1_question_bank_handler extends moodle1_xml_handler {
 
         // replay the upgrade step 2010080901 - updating question image
         if (!empty($data['image'])) {
-            if (textlib::substr(textlib::strtolower($data['image']), 0, 7) == 'http://') {
+            if (core_text::substr(core_text::strtolower($data['image']), 0, 7) == 'http://') {
                 // it is a link, appending to existing question text
                 $data['questiontext'] .= ' <img src="' . $data['image'] . '" />';
 

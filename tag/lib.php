@@ -286,7 +286,7 @@ function tag_get($field, $value, $returnfields='id, name, rawname') {
     global $DB;
 
     if ($field == 'name') {
-        $value = textlib::strtolower($value);   // To cope with input that might just be wrong case
+        $value = core_text::strtolower($value);   // To cope with input that might just be wrong case
     }
     return $DB->get_record('tag', array($field=>$value), $returnfields);
 }
@@ -446,7 +446,7 @@ function tag_get_id($tags, $return_value=null) {
 
     //TODO MDL-31152 test this and see if it helps performance without breaking anything
     //foreach($tags as $key => $tag) {
-    //    $clean_tag = textlib::strtolower($tag);
+    //    $clean_tag = core_text::strtolower($tag);
     //    if ( array_key_exists($clean_tag), $tag_id_cache) ) {
     //        $result[$clean_tag] = $tag_id_cache[$clean_tag];
     //        $tags[$key] = ''; // prevent further processing for this one.
@@ -455,8 +455,8 @@ function tag_get_id($tags, $return_value=null) {
 
     $tags = array_values(tag_normalize($tags));
     foreach($tags as $key => $tag) {
-        $tags[$key] = textlib::strtolower($tag);
-        $result[textlib::strtolower($tag)] = null; // key must exists : no value for a key means the tag wasn't found.
+        $tags[$key] = core_text::strtolower($tag);
+        $result[core_text::strtolower($tag)] = null; // key must exists : no value for a key means the tag wasn't found.
     }
 
     if (empty($tags)) {
@@ -563,7 +563,7 @@ function tag_rename($tagid, $newrawname) {
         return false;
     }
 
-    if (! $newname_clean = textlib::strtolower($newrawname_clean)) {
+    if (! $newname_clean = core_text::strtolower($newrawname_clean)) {
         return false;
     }
 
@@ -674,7 +674,7 @@ function tag_display_name($tagobject, $html=TAG_RETURN_HTML) {
 
     if (empty($CFG->keeptagnamecase)) {
         //this is the normalized tag name
-        $tagname = textlib::strtotitle($tagobject->name);
+        $tagname = core_text::strtotitle($tagobject->name);
     } else {
         //original casing of the tag name
         $tagname = $tagobject->rawname;
@@ -760,7 +760,7 @@ function tag_add($tags, $type="default") {
             // note that the difference between rawname and name is only
             // capitalization : the rawname is NOT the same at the rawtag.
             $tag_object->rawname = $tag;
-            $tag_name_lc         = textlib::strtolower($tag);
+            $tag_name_lc         = core_text::strtolower($tag);
             $tag_object->name    = $tag_name_lc;
             //var_dump($tag_object);
             $tags_ids[$tag_name_lc] = $DB->insert_record('tag', $tag_object);
@@ -813,7 +813,7 @@ function tag_autocomplete($text) {
     global $DB;
     return $DB->get_records_sql("SELECT tg.id, tg.name, tg.rawname
                                    FROM {tag} tg
-                                  WHERE tg.name LIKE ?", array(textlib::strtolower($text)."%"));
+                                  WHERE tg.name LIKE ?", array(core_text::strtolower($text)."%"));
 }
 
 /**
@@ -1124,7 +1124,7 @@ function tag_normalize($rawtags, $case = TAG_CASE_LOWER) {
             continue;
         }
         if ( !array_key_exists($rawtag, $cleaned_tags_lc) ) {
-            $cleaned_tags_lc[$rawtag] = textlib::strtolower( clean_param($rawtag, PARAM_TAG) );
+            $cleaned_tags_lc[$rawtag] = core_text::strtolower( clean_param($rawtag, PARAM_TAG) );
             $cleaned_tags_mc[$rawtag] = clean_param($rawtag, PARAM_TAG);
         }
         if ( $case == TAG_CASE_LOWER ) {

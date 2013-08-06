@@ -205,8 +205,8 @@ function blog_sync_external_entries($externalblog) {
         $newentry->subject = clean_param($entry->get_title(), PARAM_TEXT);
         // Observe 128 max chars in DB
         // TODO: +1 to raise this to 255
-        if (textlib::strlen($newentry->subject) > 128) {
-            $newentry->subject = textlib::substr($newentry->subject, 0, 125) . '...';
+        if (core_text::strlen($newentry->subject) > 128) {
+            $newentry->subject = core_text::substr($newentry->subject, 0, 125) . '...';
         }
         $newentry->summary = $entry->get_description();
 
@@ -241,7 +241,7 @@ function blog_sync_external_entries($externalblog) {
             $oldesttimestamp = $timestamp;
         }
 
-        if (textlib::strlen($newentry->uniquehash) > 255) {
+        if (core_text::strlen($newentry->uniquehash) > 255) {
             // The URL for this item is too long for the field. Rather than add
             // the entry without the link we will skip straight over it.
             // RSS spec says recommended length 500, we use 255.

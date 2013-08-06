@@ -80,8 +80,8 @@ class qformat_learnwise extends qformat_default {
         preg_match("/<question type=[\"\']([^\"\']+)[\"\']>/i", $text, $matches);
         $type = strtolower($matches[1]); // Multichoice or multianswerchoice.
 
-        $questiontext = textlib::entities_to_utf8($this->stringbetween($text, '<text>', '</text>'));
-        $questionhint = textlib::entities_to_utf8($this->stringbetween($text, '<hint>', '</hint>'));
+        $questiontext = core_text::entities_to_utf8($this->stringbetween($text, '<text>', '</text>'));
+        $questionhint = core_text::entities_to_utf8($this->stringbetween($text, '<hint>', '</hint>'));
         $questionaward = $this->stringbetween($text, '<award>', '</award>');
         $optionlist = $this->stringbetween($text, '<answer>', '</answer>');
 
@@ -100,7 +100,7 @@ class qformat_learnwise extends qformat_default {
                 $correct = $this->stringbetween($option, ' correct="', '">');
                 $answer = $this->stringbetween($option, '">', '</option>');
                 $optionscorrect[$n] = $correct;
-                $optionstext[$n] = textlib::entities_to_utf8($answer);
+                $optionstext[$n] = core_text::entities_to_utf8($answer);
                 ++$n;
             }
         } else if ($type == 'multianswerchoice') {
@@ -126,7 +126,7 @@ class qformat_learnwise extends qformat_default {
                 $answer = $this->stringbetween($option, '">', '</option>');
 
                 $optionscorrect[$n] = $correct;
-                $optionstext[$n] = textlib::entities_to_utf8($answer);
+                $optionstext[$n] = core_text::entities_to_utf8($answer);
                 $optionsaward[$n] = $award;
                 ++$n;
             }

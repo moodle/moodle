@@ -2028,23 +2028,23 @@ function show_event($event) {
 }
 
 /**
- * @deprecated Use textlib::strtolower($text) instead.
+ * @deprecated Use core_text::strtolower($text) instead.
  */
 function moodle_strtolower($string, $encoding='') {
-    throw new coding_exception('moodle_strtolower() cannot be used any more. Please use textlib::strtolower() instead.');
+    throw new coding_exception('moodle_strtolower() cannot be used any more. Please use core_text::strtolower() instead.');
 }
 
 /**
  * Original singleton helper function, please use static methods instead,
- * ex: textlib::convert()
+ * ex: core_text::convert()
  *
- * @deprecated since Moodle 2.2 use textlib::xxxx() instead
+ * @deprecated since Moodle 2.2 use core_text::xxxx() instead
  * @see textlib
  * @return textlib instance
  */
 function textlib_get_instance() {
 
-    debugging('textlib_get_instance() is deprecated. Please use static calling textlib::functioname() instead.', DEBUG_DEVELOPER);
+    debugging('textlib_get_instance() is deprecated. Please use static calling core_text::functioname() instead.', DEBUG_DEVELOPER);
 
     return new textlib();
 }

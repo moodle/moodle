@@ -566,7 +566,7 @@ class file_info_area_course_legacy extends file_info_stored {
         $storedfiles = $fs->get_directory_files($this->context->id, 'course', 'legacy', 0,
                                                 $this->lf->get_filepath(), false, true, "filepath, filename");
         foreach ($storedfiles as $file) {
-            $extension = textlib::strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
+            $extension = core_text::strtolower(pathinfo($file->get_filename(), PATHINFO_EXTENSION));
             if ($file->is_directory() || $extensions === '*' || (!empty($extension) && in_array('.'.$extension, $extensions))) {
                 $fileinfo = new file_info_area_course_legacy($this->browser, $this->context, $file, $this->urlbase, $this->topvisiblename,
                                                  $this->itemidused, $this->readaccess, $this->writeaccess, false);

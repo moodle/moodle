@@ -1642,14 +1642,14 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     // database so that it doesn't cause a DB error. Log a warning so that
     // developers can avoid doing things which are likely to cause this on a
     // routine basis.
-    if(!empty($info) && textlib::strlen($info)>255) {
-        $info = textlib::substr($info,0,252).'...';
+    if(!empty($info) && core_text::strlen($info)>255) {
+        $info = core_text::substr($info,0,252).'...';
         debugging('Warning: logged very long info',DEBUG_DEVELOPER);
     }
 
     // If the 100 field size is changed, also need to alter print_log in course/lib.php
-    if(!empty($url) && textlib::strlen($url)>100) {
-        $url = textlib::substr($url,0,97).'...';
+    if(!empty($url) && core_text::strlen($url)>100) {
+        $url = core_text::substr($url,0,97).'...';
         debugging('Warning: logged very long URL',DEBUG_DEVELOPER);
     }
 

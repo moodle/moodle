@@ -1624,9 +1624,9 @@ class page_wiki_map extends page_wiki {
         foreach ($pages as $page) {
             // We need to format the title here to account for any filtering
             $letter = format_string($page->title, true, array('context' => $this->modcontext));
-            $letter = textlib::substr($letter, 0, 1);
+            $letter = core_text::substr($letter, 0, 1);
             if (preg_match('/^[a-zA-Z]$/', $letter)) {
-                $letter = textlib::strtoupper($letter);
+                $letter = core_text::strtoupper($letter);
                 $stdaux->{$letter}[] = wiki_parser_link($page);
             } else {
                 $stdaux->{$strspecial}[] = wiki_parser_link($page);

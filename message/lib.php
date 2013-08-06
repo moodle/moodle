@@ -499,8 +499,8 @@ function message_print_usergroup_selector($viewing, $courses, $coursecontexts, $
             if (has_capability('moodle/course:viewparticipants', $coursecontexts[$course->id])) {
                 //Not using short_text() as we want the end of the course name. Not the beginning.
                 $shortname = format_string($course->shortname, true, array('context' => $coursecontexts[$course->id]));
-                if (textlib::strlen($shortname) > MESSAGE_MAX_COURSE_NAME_LENGTH) {
-                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = '...'.textlib::substr($shortname, -MESSAGE_MAX_COURSE_NAME_LENGTH);
+                if (core_text::strlen($shortname) > MESSAGE_MAX_COURSE_NAME_LENGTH) {
+                    $courses_options[MESSAGE_VIEW_COURSE.$course->id] = '...'.core_text::substr($shortname, -MESSAGE_MAX_COURSE_NAME_LENGTH);
                 } else {
                     $courses_options[MESSAGE_VIEW_COURSE.$course->id] = $shortname;
                 }
@@ -766,7 +766,7 @@ function message_get_recent_conversations($user, $limitfrom=0, $limitto=100) {
     // Sort the conversations by $conversation->timecreated, newest to oldest
     // There may be multiple conversations with the same timecreated
     // The conversations array contains both read and unread messages (different tables) so sorting by ID won't work
-    $result = collatorlib::asort_objects_by_property($conversations, 'timecreated', collatorlib::SORT_NUMERIC);
+    $result = core_collator::asort_objects_by_property($conversations, 'timecreated', core_collator::SORT_NUMERIC);
     $conversations = array_reverse($conversations);
 
     return $conversations;
@@ -1844,7 +1844,7 @@ function message_get_history($user1, $user2, $limitnum=0, $viewingnewmessages=fa
         }
     }
 
-    $result = collatorlib::asort_objects_by_property($messages, 'timecreated', collatorlib::SORT_NUMERIC);
+    $result = core_collator::asort_objects_by_property($messages, 'timecreated', core_collator::SORT_NUMERIC);
 
     //if we only want the last $limitnum messages
     $messagecount = count($messages);
