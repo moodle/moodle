@@ -361,7 +361,7 @@ abstract class base implements \IteratorAggregate {
      *
      * @return null|string legacy event name
      */
-    protected function get_legacy_eventname() {
+    public static function get_legacy_eventname() {
         return null;
     }
 
@@ -477,7 +477,7 @@ abstract class base implements \IteratorAggregate {
 
         $this->dispatched = true;
 
-        if ($legacyeventname = $this->get_legacy_eventname()) {
+        if ($legacyeventname = static::get_legacy_eventname()) {
             events_trigger_legacy($legacyeventname, $this->get_legacy_eventdata());
         }
     }

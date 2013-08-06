@@ -48,7 +48,7 @@ class unittest_executed extends \core\event\base {
         return new moodle_url('/somepath/somefile.php', array('id'=>$this->data['other']['sample']));
     }
 
-    protected function get_legacy_eventname() {
+    public static function get_legacy_eventname() {
         return 'test_legacy';
     }
 

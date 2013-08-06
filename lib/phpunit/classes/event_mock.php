@@ -39,14 +39,6 @@ abstract class phpunit_event_mock extends \core\event\base {
      * Returns the log data of the event.
      * @return array
      */
-    public static function testable_get_legacy_eventname($event) {
-        return $event->get_legacy_eventname();
-    }
-
-    /**
-     * Returns the log data of the event.
-     * @return array
-     */
     public static function testable_get_legacy_eventdata($event) {
         return $event->get_legacy_eventdata();
     }

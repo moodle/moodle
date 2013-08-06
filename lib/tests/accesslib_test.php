@@ -486,7 +486,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertEquals($raid, $event->other['id']);
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
-        $this->assertEventLegacyName('role_assigned', $event);
+        $this->assertSame('role_assigned', $event::get_legacy_eventname());
     }
 
     /**

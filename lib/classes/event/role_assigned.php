@@ -63,7 +63,7 @@ class role_assigned extends base {
      *
      * @return null|string legacy event name
      */
-    protected function get_legacy_eventname() {
+    public static function get_legacy_eventname() {
         return 'role_assigned';
     }
 
