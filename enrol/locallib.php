@@ -913,7 +913,7 @@ class course_enrolment_manager {
                     if (strpos($userrole->component, 'enrol_') === 0) {
                         $plugin = substr($userrole->component, 6);
                         if (isset($plugins[$plugin])) {
-                            $changeable = !$plugin[$plugin]->roles_protected();
+                            $changeable = !$plugins[$plugin]->roles_protected();
                         }
                     }
                 }
