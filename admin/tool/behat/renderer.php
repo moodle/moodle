@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir . '/behat/classes/behat_command.php');
+require_once($CFG->libdir . '/behat/classes/behat_selectors.php');
 
 /**
  * Renderer for behat tool web features
@@ -92,7 +92,7 @@ class tool_behat_renderer extends plugin_renderer_base {
             // Replace text selector type arguments with a user-friendly select.
             $stepsdefinitions = preg_replace_callback('/(TEXT_SELECTOR\d?_STRING)/',
                 function ($matches) {
-                    return html_writer::select(behat_command::$allowedtextselectors, uniqid());
+                    return html_writer::select(behat_selectors::get_allowed_text_selectors(), uniqid());
                 },
                 $stepsdefinitions
             );
@@ -100,7 +100,7 @@ class tool_behat_renderer extends plugin_renderer_base {
             // Replace selector type arguments with a user-friendly select.
             $stepsdefinitions = preg_replace_callback('/(SELECTOR\d?_STRING)/',
                 function ($matches) {
-                    return html_writer::select(behat_command::$allowedselectors, uniqid());
+                    return html_writer::select(behat_selectors::get_allowed_selectors(), uniqid());
                 },
                 $stepsdefinitions
             );
