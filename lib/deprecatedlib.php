@@ -57,6 +57,21 @@ function css_minify_css($files) {
 }
 
 /**
+ * Function to call all event handlers when triggering an event
+ *
+ * @deprecated since 2.6
+ *
+ * @param string $eventname name of the event
+ * @param mixed $eventdata event data object
+ * @return int number of failed events
+ */
+function events_trigger($eventname, $eventdata) {
+    // TODO: uncomment after conversion of all events in standard distribution
+    // debugging('events_trigger() is deprecated, please use new events instead', DEBUG_DEVELOPER);
+    return events_trigger_legacy($eventname, $eventdata);
+}
+
+/**
  * List all core subsystems and their location
  *
  * This is a whitelist of components that are part of the core and their

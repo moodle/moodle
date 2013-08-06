@@ -95,6 +95,11 @@ YUI:
       * exception
       * ajaxexception
 
+Event triggering and event handlers:
+    * All existing events and event handlers should be replaced by new
+      event classes and matching new event observers.
+    * See http://docs.moodle.org/dev/Event_2 for more information.
+
 === 2.5.1 ===
 
 * New get_course() function for use when obtaining the course record from database. Will
