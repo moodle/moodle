@@ -144,6 +144,7 @@ $string['event_assessable_submitted'] = 'A submission has been submitted.';
 $string['event_all_submissions_downloaded'] = 'All the submissions are being downloaded.';
 $string['event_extension_granted'] = 'An extension has been granted.';
 $string['event_identities_revealed'] = 'The identities have been revealed.';
+$string['event_marker_updated'] = 'The allocated marker has been updated.';
 $string['event_submission_locked'] = 'The submissions have been locked for a user.';
 $string['event_submission_status_updated'] = 'The status of the submission has been updated.';
 $string['extensionduedate'] = 'Extension due date';

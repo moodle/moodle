@@ -1073,5 +1073,40 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->editingteachers[0]->ignoresesskey = false;
     }
 
+    public function test_marker_updated_event() {
+        $this->editingteachers[0]->ignoresesskey = true;
+        $this->setUser($this->editingteachers[0]);
+
+        $assign = $this->create_instance();
+
+        $sink = $this->redirectEvents();
+        $assign->testable_process_set_batch_marking_allocation($this->students[0]->id, $this->teachers[0]->id);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\marker_updated', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($assign->get_instance()->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->relateduserid);
+        $this->assertEquals($this->editingteachers[0]->id, $event->userid);
+        $this->assertEquals($this->teachers[0]->id, $event->other['markerid']);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'set marking allocation',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('setmarkerallocationforlog', 'assign', array('id' => $this->students[0]->id,
+                'fullname' => fullname($this->students[0]), 'marker' => fullname($this->teachers[0]))),
+            $assign->get_course_module()->id,
+            $this->editingteachers[0]->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+
+        // Revert to defaults.
+        $this->editingteachers[0]->ignoresesskey = false;
+    }
+
 }
 

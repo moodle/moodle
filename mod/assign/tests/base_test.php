@@ -263,6 +263,14 @@ class testable_assign extends assign {
         return parent::process_revert_to_draft($userid);
     }
 
+    public function testable_process_set_batch_marking_allocation($selectedusers, $markerid) {
+        // Ugly hack to get something into the method.
+        global $_POST;
+        $_POST['selectedusers'] = $selectedusers;
+        $_POST['allocatedmarker'] = $markerid;
+        return parent::process_set_batch_marking_allocation();
+    }
+
     public function testable_submissions_open($userid = 0) {
         return parent::submissions_open($userid);
     }

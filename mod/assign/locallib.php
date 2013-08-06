@@ -5763,7 +5763,7 @@ class assign {
      *
      * @return void
      */
-    private function process_set_batch_marking_allocation() {
+    protected function process_set_batch_marking_allocation() {
         global $DB;
 
         require_sesskey();
@@ -5795,7 +5795,18 @@ class assign {
                     'fullname'=>fullname($user),
                     'marker'=>fullname($marker));
                 $message = get_string('setmarkerallocationforlog', 'assign', $params);
-                $this->add_to_log('set marking allocation', $message);
+                $addtolog = $this->add_to_log('set marking allocation', $message, '', true);
+                $params = array(
+                    'context' => $this->context,
+                    'objectid' => $this->get_instance()->id,
+                    'relateduserid' => $userid,
+                    'other' => array(
+                        'markerid' => $marker->id
+                    )
+                );
+                $event = \mod_assign\event\marker_updated::create($params);
+                $event->set_legacy_logdata($addtolog);
+                $event->trigger();
             }
         }
     }
