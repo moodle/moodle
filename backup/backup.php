@@ -89,11 +89,6 @@ if (!($bc = backup_ui::load_controller($backupid))) {
 }
 $backup = new backup_ui($bc);
 $backup->process();
-if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
-    $backup->execute();
-} else {
-    $backup->save_controller();
-}
 
 $PAGE->set_title($heading.': '.$backup->get_stage_name());
 $PAGE->set_heading($heading);
@@ -104,6 +99,19 @@ echo $OUTPUT->header();
 if ($backup->enforce_changed_dependencies()) {
     debugging('Your settings have been altered due to unmet dependencies', DEBUG_DEVELOPER);
 }
+
+if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
+    // Display an extra progress bar so that we can show the progress first.
+    echo html_writer::start_div('', array('id' => 'executionprogress'));
+    echo $renderer->progress_bar($backup->get_progress_bar());
+    $backup->get_controller()->set_progress(new core_backup_display_progress());
+    $backup->execute();
+    echo html_writer::end_div();
+    echo html_writer::script('document.getElementById("executionprogress").style.display = "none";');
+} else {
+    $backup->save_controller();
+}
+
 echo $renderer->progress_bar($backup->get_progress_bar());
 echo $backup->display($renderer);
 $backup->destroy();
