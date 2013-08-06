@@ -644,7 +644,13 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('role_allow_override', array('roleid'=>$role->id)));
         $this->assertTrue($DB->record_exists('role_allow_override', array('allowoverride'=>$role->id)));
 
+        // Delete role and get event.
+        $sink = $this->redirectEvents();
         $result = delete_role($role->id);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
         $this->assertTrue($result);
         $this->assertFalse($DB->record_exists('role', array('id'=>$role->id)));
         $this->assertFalse($DB->record_exists('role_assignments', array('roleid'=>$role->id)));
@@ -655,6 +661,21 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('role_allow_assign', array('allowassign'=>$role->id)));
         $this->assertFalse($DB->record_exists('role_allow_override', array('roleid'=>$role->id)));
         $this->assertFalse($DB->record_exists('role_allow_override', array('allowoverride'=>$role->id)));
+
+        // Test triggered event.
+        $this->assertInstanceOf('\core\event\role_deleted', $event);
+        $this->assertSame('role', $event->target);
+        $this->assertSame('role', $event->objecttable);
+        $this->assertSame($role->id, $event->objectid);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $this->assertSame($role->name, $event->other['name']);
+        $this->assertSame($role->shortname, $event->other['shortname']);
+        $this->assertSame($role->description, $event->other['description']);
+        $this->assertSame($role->archetype, $event->other['archetype']);
+
+        $expectedlegacylog = array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid='.$role->id,
+                                   $role->shortname, '');
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**

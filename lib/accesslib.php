@@ -1515,13 +1515,28 @@ function delete_role($roleid) {
     $DB->delete_records('role_names',          array('roleid'=>$roleid));
     $DB->delete_records('role_context_levels', array('roleid'=>$roleid));
 
-    // finally delete the role itself
-    // get this before the name is gone for logging
-    $rolename = $DB->get_field('role', 'name', array('id'=>$roleid));
+    // Get role record before it's deleted.
+    $role = $DB->get_record('role', array('id'=>$roleid));
 
+    // Finally delete the role itself.
     $DB->delete_records('role', array('id'=>$roleid));
 
-    add_to_log(SITEID, 'role', 'delete', 'admin/roles/action=delete&roleid='.$roleid, $rolename, '');
+    // Trigger event.
+    $event = \core\event\role_deleted::create(
+        array(
+            'context' => context_system::instance(),
+            'objectid' => $roleid,
+            'other' =>
+                array(
+                    'name' => $role->name,
+                    'shortname' => $role->shortname,
+                    'description' => $role->description,
+                    'archetype' => $role->archetype
+                )
+            )
+        );
+    $event->add_record_snapshot('role', $role);
+    $event->trigger();
 
     return true;
 }

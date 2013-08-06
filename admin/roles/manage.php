@@ -90,7 +90,6 @@ switch ($action) {
         }
         // Deleted a role sitewide...
         $systemcontext->mark_dirty();
-        add_to_log(SITEID, 'role', 'delete', 'admin/roles/manage.php', $roles[$roleid]->localname, '', $USER->id);
         redirect($baseurl);
         break;
 
