@@ -338,21 +338,6 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $legacydata, $message);
     }
 
-    /**
-     * Assert that an event legacy name is equal to the expected value.
-     *
-     * @param mixed $expected expected name.
-     * @param \core\event\base $event the event object.
-     * @param string $message
-     * @return void
-     */
-    public function assertEventLegacyName($expected, \core\event\base $event, $message = '') {
-        $legacydata = phpunit_event_mock::testable_get_legacy_eventname($event);
-        if ($message === '') {
-            $message = 'Event legacy name does not match expected value.';
-        }
-        $this->assertEquals($expected, $legacydata, $message);
-    }
 
     /**
      * Starts message redirection.
