@@ -390,13 +390,13 @@ function lti_get_tool_table($tools, $id) {
             $updateurl = clone($baseurl);
             $updateurl->param('action', 'update');
             $updatehtml = $OUTPUT->action_icon($updateurl,
-                    new pix_icon('t/edit', $accept, '', array('class' => 'iconsmall')), null,
+                    new pix_icon('t/edit', $update, '', array('class' => 'iconsmall')), null,
                     array('title' => $update, 'class' => 'editing_update'));
 
             $deleteurl = clone($baseurl);
             $deleteurl->param('action', $deleteaction);
             $deletehtml = $OUTPUT->action_icon($deleteurl,
-                    new pix_icon('t/delete', $accept, '', array('class' => 'iconsmall')), null,
+                    new pix_icon('t/delete', $delete, '', array('class' => 'iconsmall')), null,
                     array('title' => $delete, 'class' => 'editing_delete'));
             $html .= "
             <tr>
