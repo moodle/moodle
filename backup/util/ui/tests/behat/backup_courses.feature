@@ -13,8 +13,9 @@ Feature: Backup Moodle courses
   @javascript
   Scenario: Backup a course providing options
     When I backup "Course 1" course using this options:
+      | Filename | test_backup.mbz |
     Then I should see "Restore"
-    And I click on "Restore" "link" in the ".backup-files-table" "css_element"
+    And I click on "Restore" "link" in the "test_backup.mbz" "table_row"
     And I should see "URL of backup"
     And I should see "Anonymize user information"
 
@@ -27,11 +28,11 @@ Feature: Backup Moodle courses
       | setting_section_section_5_userinfo | 0 |
       | setting_section_section_5_included | 0 |
     Then I should see "Restore"
-    And I click on "Restore" "link" in the ".backup-files-table" "css_element"
+    And I click on "Restore" "link" in the "test_backup.mbz" "table_row"
     And I should not see "Section 3"
     And I press "Continue"
     And I click on "Continue" "button" in the ".bcs-current-course" "css_element"
     And "//div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')][contains(., 'Include calendar events')]/descendant::img" "xpath_element" should exists
     And I check "Include course logs"
     And I press "Cancel"
-    And I click on "Cancel" "button" in the ".confirmation-dialogue" "css_element"
+    And I click on "Cancel" "button" in the "Cancel backup" "dialogue"
