@@ -149,6 +149,7 @@ $string['event_statement_accepted'] = 'The user has accepted the statement of th
 $string['event_submission_duplicated'] = 'The user duplicated his submission.';
 $string['event_submission_locked'] = 'The submissions have been locked for a user.';
 $string['event_submission_status_updated'] = 'The status of the submission has been updated.';
+$string['event_submission_updated'] = 'The user has saved a submission.';
 $string['event_workflow_state_updated'] = 'The state of the workflow has been updated.';
 $string['extensionduedate'] = 'Extension due date';
 $string['extensionnotafterduedate'] = 'Extension date must be after the due date';

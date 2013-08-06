@@ -5165,7 +5165,15 @@ class assign {
                 $event->set_legacy_logdata($addtolog);
                 $event->trigger();
             }
-            $this->add_to_log('submit', $this->format_submission_for_log($submission));
+
+            $addtolog = $this->add_to_log('submit', $this->format_submission_for_log($submission), '', true);
+            $params = array(
+                'context' => $this->context,
+                'objectid' => $submission->id
+            );
+            $event = \mod_assign\event\submission_updated::create($params);
+            $event->set_legacy_logdata($addtolog);
+            $event->trigger();
 
             $complete = COMPLETION_INCOMPLETE;
             if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
