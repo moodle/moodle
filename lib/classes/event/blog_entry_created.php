@@ -24,11 +24,23 @@ namespace core\event;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Class blog_entry_created
+ *
+ * Class for event to be triggered when a blog entry is created.
+ *
+ * @package    core_blog
+ * @copyright  2013 Ankit Agarwal
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class blog_entry_created extends \core\event\base {
 
     /** @var  \blog_entry A reference to the active blog_entry object. */
     protected $customobject;
 
+    /**
+     * Set basic properties for the event.
+     */
     protected function init() {
         $this->context = \context_system::instance();
         $this->data['objecttable'] = 'post';
