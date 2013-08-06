@@ -367,22 +367,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     protected function transform_selector($selectortype, $element) {
 
-        // Here we don't know if a $allowedtextselector is used.
-        if (!isset(behat_command::$allowedselectors[$selectortype])) {
+        // Here we don't know if an allowed text selector is being used.
+        $selectors = behat_selectors::get_allowed_selectors();
+        if (!isset($selectors[$selectortype])) {
             throw new ExpectationException('The "' . $selectortype . '" selector type does not exist', $this->getSession());
         }
 
-        // CSS and XPath selectors locator is one single argument.
-        if ($selectortype == 'css_element' || $selectortype == 'xpath_element') {
-            $selector = str_replace('_element', '', $selectortype);
-            $locator = $element;
-        } else {
-            // Named selectors uses arrays as locators including the type of named selector.
-            $locator = array($selectortype, $this->getSession()->getSelectorsHandler()->xpathLiteral($element));
-            $selector = 'named';
-        }
-
-        return array($selector, $locator);
+        return behat_selectors::get_behat_selector($selectortype, $element, $this->getSession());
     }
 
     /**
@@ -398,7 +389,8 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      */
     protected function transform_text_selector($selectortype, $element) {
 
-        if ($selectortype != 'css_element' && $selectortype != 'xpath_element') {
+        $selectors = behat_selectors::get_allowed_text_selectors();
+        if (empty($selectors[$selectortype])) {
             throw new ExpectationException('The "' . $selectortype . '" selector can not be used to select text nodes', $this->getSession());
         }
 
