@@ -4091,15 +4091,12 @@ function update_user_record($username) {
 }
 
 /**
- * Will truncate userinfo as it comes from auth_get_userinfo (from external auth)
- * which may have large fields
- *
- * @todo Add vartype handling to ensure $info is an array
+ * Will truncate userinfo as it comes from auth_get_userinfo (from external auth) which may have large fields.
  *
  * @param array $info Array of user properties to truncate if needed
  * @return array The now truncated information that was passed in
  */
-function truncate_userinfo($info) {
+function truncate_userinfo(array $info) {
     // Define the limits.
     $limit = array(
         'username'    => 100,
