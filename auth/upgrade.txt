@@ -1,6 +1,11 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 2.5.2 ===
+
+* can_be_manually_set() - This function was introduced in the base class and returns false by default. If overriden by
+  an authentication plugin to return true, the authentication plugin will be able to be manually set for users. For example,
+  when bulk uploading users you will be able to select it as the authentication method they use.
 
 === 2.4 ===
 
