@@ -6,6 +6,9 @@ Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
 * core_course_renderer::course_section_cm_edit_actions has two new optional arguments and now uses and action_menu component.
 * core_course_renderer::course_section_cm has been altered to call core_course_renderer::course_section_cm_edit_actions with the two new arguments
+* An additional course renderer function has been created which allows you to
+  specify the wrapper for a course module within a section (e.g. the <li>).  This can be
+  found in core_course_renderer::course_section_cm_list_item().
 
 === 2.5 ===
 

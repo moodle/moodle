@@ -864,6 +864,28 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
+     * Renders HTML to display one course module for display within a section.
+     *
+     * This function calls:
+     * {@link core_course_renderer::course_section_cm()}
+     *
+     * @param stdClass $course
+     * @param completion_info $completioninfo
+     * @param cm_info $mod
+     * @param int|null $sectionreturn
+     * @param array $displayoptions
+     * @return String
+     */
+    public function course_section_cm_list_item($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = array()) {
+        $output = '';
+        if ($modulehtml = $this->course_section_cm($course, $completioninfo, $mod, $sectionreturn, $displayoptions)) {
+            $modclasses = 'activity ' . $mod->modname . ' modtype_' . $mod->modname . ' ' . $mod->get_extra_classes();
+            $output .= html_writer::tag('li', $modulehtml, array('class' => $modclasses, 'id' => 'module-' . $mod->id));
+        }
+        return $output;
+    }
+
+    /**
      * Renders HTML to display one course module in a course section
      *
      * This includes link, content, availability, completion info and additional information
@@ -999,7 +1021,7 @@ class core_course_renderer extends plugin_renderer_base {
                     continue;
                 }
 
-                if ($modulehtml = $this->course_section_cm($course,
+                if ($modulehtml = $this->course_section_cm_list_item($course,
                         $completioninfo, $mod, $sectionreturn, $displayoptions)) {
                     $moduleshtml[$modnumber] = $modulehtml;
                 }
@@ -1015,11 +1037,7 @@ class core_course_renderer extends plugin_renderer_base {
                             array('class' => 'movehere', 'title' => $strmovefull));
                 }
 
-                $mod = $modinfo->cms[$modnumber];
-                $modclasses = 'activity '. $mod->modname. ' modtype_'.$mod->modname. ' '. $mod->get_extra_classes();
-                $sectionoutput .= html_writer::start_tag('li', array('class' => $modclasses, 'id' => 'module-' . $mod->id));
                 $sectionoutput .= $modulehtml;
-                $sectionoutput .= html_writer::end_tag('li');
             }
 
             if ($ismoving) {
