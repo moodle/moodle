@@ -5722,7 +5722,7 @@ class assign {
      *
      * @return void
      */
-    private function process_set_batch_marking_workflow_state() {
+    protected function process_set_batch_marking_workflow_state() {
         global $DB;
 
         require_sesskey();
@@ -5753,7 +5753,18 @@ class assign {
                                 'fullname'=>fullname($user),
                                 'state'=>$state);
                 $message = get_string('setmarkingworkflowstateforlog', 'assign', $params);
-                $this->add_to_log('set marking workflow state', $message);
+                $addtolog = $this->add_to_log('set marking workflow state', $message, '', true);
+                $params = array(
+                    'context' => $this->context,
+                    'objectid' => $this->get_instance()->id,
+                    'relateduserid' => $userid,
+                    'other' => array(
+                        'newstate' => $state
+                    )
+                );
+                $event = \mod_assign\event\workflow_state_updated::create($params);
+                $event->set_legacy_logdata($addtolog);
+                $event->trigger();
             }
         }
     }

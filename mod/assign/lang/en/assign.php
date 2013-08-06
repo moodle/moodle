@@ -147,6 +147,7 @@ $string['event_identities_revealed'] = 'The identities have been revealed.';
 $string['event_marker_updated'] = 'The allocated marker has been updated.';
 $string['event_submission_locked'] = 'The submissions have been locked for a user.';
 $string['event_submission_status_updated'] = 'The status of the submission has been updated.';
+$string['event_workflow_state_updated'] = 'The state of the workflow has been updated.';
 $string['extensionduedate'] = 'Extension due date';
 $string['extensionnotafterduedate'] = 'Extension date must be after the due date';
 $string['extensionnotafterfromdate'] = 'Extension date must be after the allow submissions from date';
