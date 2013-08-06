@@ -438,8 +438,8 @@ function lti_split_custom_parameters($customstr) {
         if ( $pos === false || $pos < 1 ) {
             continue;
         }
-        $key = trim(textlib::substr($line, 0, $pos));
-        $val = trim(textlib::substr($line, $pos+1, strlen($line)));
+        $key = trim(core_text::substr($line, 0, $pos));
+        $val = trim(core_text::substr($line, $pos+1, strlen($line)));
         $key = lti_map_keyname($key);
         $retval['custom_'.$key] = $val;
     }
@@ -455,7 +455,7 @@ function lti_split_custom_parameters($customstr) {
  */
 function lti_map_keyname($key) {
     $newkey = "";
-    $key = textlib::strtolower(trim($key));
+    $key = core_text::strtolower(trim($key));
     foreach (str_split($key) as $ch) {
         if ( ($ch >= 'a' && $ch <= 'z') || ($ch >= '0' && $ch <= '9') ) {
             $newkey .= $ch;

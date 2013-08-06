@@ -36,8 +36,8 @@ define("LABEL_MAX_NAME_LENGTH", 50);
  */
 function get_label_name($label) {
     $name = strip_tags(format_string($label->intro,true));
-    if (textlib::strlen($name) > LABEL_MAX_NAME_LENGTH) {
-        $name = textlib::substr($name, 0, LABEL_MAX_NAME_LENGTH)."...";
+    if (core_text::strlen($name) > LABEL_MAX_NAME_LENGTH) {
+        $name = core_text::substr($name, 0, LABEL_MAX_NAME_LENGTH)."...";
     }
 
     if (empty($name)) {

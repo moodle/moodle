@@ -518,7 +518,7 @@ function filter_get_all_installed() {
             $filternames[$filter] = filter_get_name($filter);
         }
     }
-    collatorlib::asort($filternames);
+    core_collator::asort($filternames);
     return $filternames;
 }
 
@@ -636,11 +636,11 @@ function filter_set_global_state($filtername, $state, $move = 0) {
             }
         }
 
-        collatorlib::asort_objects_by_property($on, 'newsortorder', collatorlib::SORT_NUMERIC);
+        core_collator::asort_objects_by_property($on, 'newsortorder', core_collator::SORT_NUMERIC);
     }
 
     // Inactive are sorted by filter name.
-    collatorlib::asort_objects_by_property($off, 'filter', collatorlib::SORT_NATURAL);
+    core_collator::asort_objects_by_property($off, 'filter', core_collator::SORT_NATURAL);
 
     // Update records if necessary.
     $i = 1;
@@ -1379,13 +1379,13 @@ function filter_remove_duplicates($linkarray) {
         if ($filterobject->casesensitive) {
             $exists = in_array($filterobject->phrase, $concepts);
         } else {
-            $exists = in_array(textlib::strtolower($filterobject->phrase), $lconcepts);
+            $exists = in_array(core_text::strtolower($filterobject->phrase), $lconcepts);
         }
 
         if (!$exists) {
             $cleanlinks[] = $filterobject;
             $concepts[] = $filterobject->phrase;
-            $lconcepts[] = textlib::strtolower($filterobject->phrase);
+            $lconcepts[] = core_text::strtolower($filterobject->phrase);
         }
     }
 

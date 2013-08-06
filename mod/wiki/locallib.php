@@ -1303,8 +1303,8 @@ function wiki_print_page_content($page, $context, $subwikiid) {
  */
 function wiki_trim_string($text, $limit = 25) {
 
-    if (textlib::strlen($text) > $limit) {
-        $text = textlib::substr($text, 0, $limit) . '...';
+    if (core_text::strlen($text) > $limit) {
+        $text = core_text::substr($text, 0, $limit) . '...';
     }
 
     return $text;

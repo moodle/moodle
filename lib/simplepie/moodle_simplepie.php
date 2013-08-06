@@ -214,7 +214,7 @@ class moodle_simplepie_sanitize extends SimplePie_Sanitize {
         }
 
         if ($this->output_encoding !== 'UTF-8') {
-            textlib::convert($data, 'UTF-8', $this->output_encoding);
+            core_text::convert($data, 'UTF-8', $this->output_encoding);
         }
 
         return $data;

@@ -223,7 +223,7 @@
 
         if(empty($title)){
             // no title present, use portion of description
-            $title = textlib::substr(strip_tags($description), 0, 20) . '...';
+            $title = core_text::substr(strip_tags($description), 0, 20) . '...';
         }else{
             $title = break_up_long_words($title, 30);
         }
@@ -272,10 +272,10 @@
      */
     function format_title($title,$max=64) {
 
-        if (textlib::strlen($title) <= $max) {
+        if (core_text::strlen($title) <= $max) {
             return s($title);
         } else {
-            return s(textlib::substr($title,0,$max-3).'...');
+            return s(core_text::substr($title,0,$max-3).'...');
         }
     }
 

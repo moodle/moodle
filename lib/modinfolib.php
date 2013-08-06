@@ -172,7 +172,7 @@ class course_modinfo extends stdClass {
                 $modnamesused[$mod->modname] = $modnames[$mod->modname];
             }
         }
-        collatorlib::asort($modnamesused);
+        core_collator::asort($modnamesused);
         return $modnamesused;
     }
 

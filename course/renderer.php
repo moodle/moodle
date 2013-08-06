@@ -708,8 +708,8 @@ class core_course_renderer extends plugin_renderer_base {
         // Avoid unnecessary duplication: if e.g. a forum name already
         // includes the word forum (or Forum, etc) then it is unhelpful
         // to include that in the accessible description that is added.
-        if (false !== strpos(textlib::strtolower($instancename),
-                textlib::strtolower($altname))) {
+        if (false !== strpos(core_text::strtolower($instancename),
+                core_text::strtolower($altname))) {
             $altname = '';
         }
         // File type after name, for alphabetic lists (screen reader).

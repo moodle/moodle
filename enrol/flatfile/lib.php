@@ -252,7 +252,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
 
             $rolemap = $this->get_role_map($trace);
 
-            $content = textlib::convert($content, $this->get_config('encoding', 'utf-8'), 'utf-8');
+            $content = core_text::convert($content, $this->get_config('encoding', 'utf-8'), 'utf-8');
             $content = str_replace("\r", '', $content);
             $content = explode("\n", $content);
 
@@ -278,8 +278,8 @@ class enrol_flatfile_plugin extends enrol_plugin {
                     continue;
                 }
 
-                $fields[0] = trim(textlib::strtolower($fields[0]));
-                $fields[1] = trim(textlib::strtolower($fields[1]));
+                $fields[0] = trim(core_text::strtolower($fields[0]));
+                $fields[1] = trim(core_text::strtolower($fields[1]));
                 $fields[2] = trim($fields[2]);
                 $fields[3] = trim($fields[3]);
                 $fields[4] = isset($fields[4]) ? (int)trim($fields[4]) : 0;
@@ -664,7 +664,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
         $roles = $DB->get_records('role', null, '', 'id, name, shortname');
         foreach ($roles as $id=>$role) {
             $alias = $this->get_config('map_'.$id, $role->shortname, '');
-            $alias = trim(textlib::strtolower($alias));
+            $alias = trim(core_text::strtolower($alias));
             if ($alias === '') {
                 // Either not configured yet or somebody wants to skip these intentionally.
                 continue;

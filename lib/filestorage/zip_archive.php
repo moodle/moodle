@@ -170,7 +170,7 @@ class zip_archive extends file_archive {
             $name = $localname;
             // This should not happen.
             if (!empty($this->encoding) and $this->encoding !== 'utf-8') {
-                $name = @textlib::convert($name, $this->encoding, 'utf-8');
+                $name = @core_text::convert($name, $this->encoding, 'utf-8');
             }
             $name = str_replace('\\', '/', $name);   // no MS \ separators
             $name = clean_param($name, PARAM_PATH);  // only safe chars
@@ -596,8 +596,8 @@ class zip_archive extends file_archive {
                 }
                 if (!$found and !empty($this->encoding) and $this->encoding !== 'utf-8') {
                     // Try the encoding from open().
-                    $newname = @textlib::convert($name, $this->encoding, 'utf-8');
-                    $original  = textlib::convert($newname, 'utf-8', $this->encoding);
+                    $newname = @core_text::convert($name, $this->encoding, 'utf-8');
+                    $original  = core_text::convert($newname, 'utf-8', $this->encoding);
                     if ($original === $name) {
                         $found = true;
                         $name = $newname;
@@ -649,8 +649,8 @@ class zip_archive extends file_archive {
                                 break;
                         }
                     }
-                    $newname = @textlib::convert($name, $encoding, 'utf-8');
-                    $original  = textlib::convert($newname, 'utf-8', $encoding);
+                    $newname = @core_text::convert($name, $encoding, 'utf-8');
+                    $original  = core_text::convert($newname, 'utf-8', $encoding);
 
                     if ($original === $name) {
                         $name = $newname;

@@ -168,8 +168,8 @@ class auth_plugin_ldap extends auth_plugin_base {
             return false;
         }
 
-        $extusername = textlib::convert($username, 'utf-8', $this->config->ldapencoding);
-        $extpassword = textlib::convert($password, 'utf-8', $this->config->ldapencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->ldapencoding);
+        $extpassword = core_text::convert($password, 'utf-8', $this->config->ldapencoding);
 
         // Before we connect to LDAP, check if this is an AD SSO login
         // if we succeed in this block, we'll return success early.
@@ -250,7 +250,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      * @return mixed array with no magic quotes or false on error
      */
     function get_userinfo($username) {
-        $extusername = textlib::convert($username, 'utf-8', $this->config->ldapencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->ldapencoding);
 
         $ldapconnection = $this->ldap_connect();
         if(!($user_dn = $this->ldap_find_userdn($ldapconnection, $extusername))) {
@@ -298,9 +298,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                     continue; // wrong data mapping!
                 }
                 if (is_array($entry[$value])) {
-                    $newval = textlib::convert($entry[$value][0], $this->config->ldapencoding, 'utf-8');
+                    $newval = core_text::convert($entry[$value][0], $this->config->ldapencoding, 'utf-8');
                 } else {
-                    $newval = textlib::convert($entry[$value], $this->config->ldapencoding, 'utf-8');
+                    $newval = core_text::convert($entry[$value], $this->config->ldapencoding, 'utf-8');
                 }
                 if (!empty($newval)) { // favour ldap entries that are set
                     $ldapval = $newval;
@@ -351,7 +351,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      * @param string $username
      */
     function user_exists($username) {
-        $extusername = textlib::convert($username, 'utf-8', $this->config->ldapencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->ldapencoding);
 
         // Returns true if given username exists on ldap
         $users = $this->ldap_get_userlist('('.$this->config->user_attribute.'='.ldap_filter_addslashes($extusername).')');
@@ -367,8 +367,8 @@ class auth_plugin_ldap extends auth_plugin_base {
      * @param mixed $plainpass   Plaintext password
      */
     function user_create($userobject, $plainpass) {
-        $extusername = textlib::convert($userobject->username, 'utf-8', $this->config->ldapencoding);
-        $extpassword = textlib::convert($plainpass, 'utf-8', $this->config->ldapencoding);
+        $extusername = core_text::convert($userobject->username, 'utf-8', $this->config->ldapencoding);
+        $extpassword = core_text::convert($plainpass, 'utf-8', $this->config->ldapencoding);
 
         switch ($this->config->passtype) {
             case 'md5':
@@ -393,7 +393,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             }
             foreach ($values as $value) {
                 if (!empty($userobject->$key) ) {
-                    $newuser[$value] = textlib::convert($userobject->$key, 'utf-8', $this->config->ldapencoding);
+                    $newuser[$value] = core_text::convert($userobject->$key, 'utf-8', $this->config->ldapencoding);
                 }
             }
         }
@@ -637,7 +637,7 @@ class auth_plugin_ldap extends auth_plugin_base {
     function password_expire($username) {
         $result = 0;
 
-        $extusername = textlib::convert($username, 'utf-8', $this->config->ldapencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->ldapencoding);
 
         $ldapconnection = $this->ldap_connect();
         $user_dn = $this->ldap_find_userdn($ldapconnection, $extusername);
@@ -735,7 +735,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if ($entry = @ldap_first_entry($ldapconnection, $ldap_result)) {
                     do {
                         $value = ldap_get_values_len($ldapconnection, $entry, $this->config->user_attribute);
-                        $value = textlib::convert($value[0], $this->config->ldapencoding, 'utf-8');
+                        $value = core_text::convert($value[0], $this->config->ldapencoding, 'utf-8');
                         $this->ldap_bulk_insert($value);
                     } while ($entry = ldap_next_entry($ldapconnection, $entry));
                 }
@@ -945,7 +945,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $user->mnethostid = $CFG->mnet_localhost_id;
                 // get_userinfo_asobj() might have replaced $user->username with the value
                 // from the LDAP server (which can be mixed-case). Make sure it's lowercase
-                $user->username = trim(textlib::strtolower($user->username));
+                $user->username = trim(core_text::strtolower($user->username));
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
@@ -991,7 +991,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         global $CFG, $DB;
 
         // Just in case check text case
-        $username = trim(textlib::strtolower($username));
+        $username = trim(core_text::strtolower($username));
 
         // Get the current user record
         $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id));
@@ -1040,7 +1040,7 @@ class auth_plugin_ldap extends auth_plugin_base {
     function ldap_bulk_insert($username) {
         global $DB, $CFG;
 
-        $username = textlib::strtolower($username); // usernames are __always__ lowercase.
+        $username = core_text::strtolower($username); // usernames are __always__ lowercase.
         $DB->insert_record_raw('tmp_extuser', array('username'=>$username,
                                                     'mnethostid'=>$CFG->mnet_localhost_id), false, true);
         echo '.';
@@ -1053,7 +1053,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      * @return boolean result
      */
     function user_activate($username) {
-        $extusername = textlib::convert($username, 'utf-8', $this->config->ldapencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->ldapencoding);
 
         $ldapconnection = $this->ldap_connect();
 
@@ -1103,7 +1103,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             return null;
         }
 
-        $extusername = textlib::convert($username, 'utf-8', $this->config->ldapencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->ldapencoding);
 
         $ldapconnection = $this->ldap_connect();
 
@@ -1161,7 +1161,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             return true;
         }
 
-        $extoldusername = textlib::convert($olduser->username, 'utf-8', $this->config->ldapencoding);
+        $extoldusername = core_text::convert($olduser->username, 'utf-8', $this->config->ldapencoding);
 
         $ldapconnection = $this->ldap_connect();
 
@@ -1223,9 +1223,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                         $ambiguous = false;
                     }
 
-                    $nuvalue = textlib::convert($newuser->$profilefield, 'utf-8', $this->config->ldapencoding);
+                    $nuvalue = core_text::convert($newuser->$profilefield, 'utf-8', $this->config->ldapencoding);
                     empty($nuvalue) ? $nuvalue = array() : $nuvalue;
-                    $ouvalue = textlib::convert($olduser->$profilefield, 'utf-8', $this->config->ldapencoding);
+                    $ouvalue = core_text::convert($olduser->$profilefield, 'utf-8', $this->config->ldapencoding);
 
                     foreach ($ldapkeys as $ldapkey) {
                         $ldapkey   = $ldapkey;
@@ -1321,8 +1321,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         $result = false;
         $username = $user->username;
 
-        $extusername = textlib::convert($username, 'utf-8', $this->config->ldapencoding);
-        $extpassword = textlib::convert($newpassword, 'utf-8', $this->config->ldapencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->ldapencoding);
+        $extpassword = core_text::convert($newpassword, 'utf-8', $this->config->ldapencoding);
 
         switch ($this->config->passtype) {
             case 'md5':
@@ -1498,13 +1498,13 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         foreach ($userfields as $field) {
             if (!empty($this->config->{"field_map_$field"})) {
-                $moodleattributes[$field] = textlib::strtolower(trim($this->config->{"field_map_$field"}));
+                $moodleattributes[$field] = core_text::strtolower(trim($this->config->{"field_map_$field"}));
                 if (preg_match('/,/', $moodleattributes[$field])) {
                     $moodleattributes[$field] = explode(',', $moodleattributes[$field]); // split ?
                 }
             }
         }
-        $moodleattributes['username'] = textlib::strtolower(trim($this->config->user_attribute));
+        $moodleattributes['username'] = core_text::strtolower(trim($this->config->user_attribute));
         return $moodleattributes;
     }
 
@@ -1555,7 +1555,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $users = ldap_get_entries_moodle($ldapconnection, $ldap_result);
                 // Add found users to list.
                 for ($i = 0; $i < count($users); $i++) {
-                    $extuser = textlib::convert($users[$i][$this->config->user_attribute][0],
+                    $extuser = core_text::convert($users[$i][$this->config->user_attribute][0],
                                                 $this->config->ldapencoding, 'utf-8');
                     array_push($fresult, $extuser);
                 }
@@ -1696,7 +1696,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             // (according to my reading of RFC-1945, RFC-2616 and RFC-2617 and
             // my local tests), so we need to convert the REMOTE_USER value
             // (i.e., what we got from the HTTP WWW-Authenticate header) into UTF-8
-            $username = textlib::convert($_SERVER['REMOTE_USER'], 'iso-8859-1', 'utf-8');
+            $username = core_text::convert($_SERVER['REMOTE_USER'], 'iso-8859-1', 'utf-8');
 
             switch ($this->config->ntlmsso_type) {
                 case 'ntlm':
@@ -1715,7 +1715,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     return false; // Should never happen!
             }
 
-            $username = textlib::strtolower($username); // Compatibility hack
+            $username = core_text::strtolower($username); // Compatibility hack
             set_cache_flag($this->pluginconfig.'/ntlmsess', $sesskey, $username, AUTH_NTLMTIMEOUT);
             return true;
         }
@@ -1924,7 +1924,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         // Try to remove duplicates before storing the contexts (to avoid problems in sync_users()).
         $config->contexts = explode(';', $config->contexts);
-        $config->contexts = array_map(create_function('$x', 'return textlib::strtolower(trim($x));'),
+        $config->contexts = array_map(create_function('$x', 'return core_text::strtolower(trim($x));'),
                                       $config->contexts);
         $config->contexts = implode(';', array_unique($config->contexts));
 
@@ -1934,8 +1934,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('ldapencoding', trim($config->ldapencoding), $this->pluginconfig);
         set_config('pagesize', (int)trim($config->pagesize), $this->pluginconfig);
         set_config('contexts', $config->contexts, $this->pluginconfig);
-        set_config('user_type', textlib::strtolower(trim($config->user_type)), $this->pluginconfig);
-        set_config('user_attribute', textlib::strtolower(trim($config->user_attribute)), $this->pluginconfig);
+        set_config('user_type', core_text::strtolower(trim($config->user_type)), $this->pluginconfig);
+        set_config('user_attribute', core_text::strtolower(trim($config->user_attribute)), $this->pluginconfig);
         set_config('search_sub', $config->search_sub, $this->pluginconfig);
         set_config('opt_deref', $config->opt_deref, $this->pluginconfig);
         set_config('preventpassindb', $config->preventpassindb, $this->pluginconfig);
@@ -1943,15 +1943,15 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('bind_pw', $config->bind_pw, $this->pluginconfig);
         set_config('ldap_version', $config->ldap_version, $this->pluginconfig);
         set_config('objectclass', trim($config->objectclass), $this->pluginconfig);
-        set_config('memberattribute', textlib::strtolower(trim($config->memberattribute)), $this->pluginconfig);
+        set_config('memberattribute', core_text::strtolower(trim($config->memberattribute)), $this->pluginconfig);
         set_config('memberattribute_isdn', $config->memberattribute_isdn, $this->pluginconfig);
         set_config('creators', trim($config->creators), $this->pluginconfig);
         set_config('create_context', trim($config->create_context), $this->pluginconfig);
         set_config('expiration', $config->expiration, $this->pluginconfig);
         set_config('expiration_warning', trim($config->expiration_warning), $this->pluginconfig);
-        set_config('expireattr', textlib::strtolower(trim($config->expireattr)), $this->pluginconfig);
+        set_config('expireattr', core_text::strtolower(trim($config->expireattr)), $this->pluginconfig);
         set_config('gracelogins', $config->gracelogins, $this->pluginconfig);
-        set_config('graceattr', textlib::strtolower(trim($config->graceattr)), $this->pluginconfig);
+        set_config('graceattr', core_text::strtolower(trim($config->graceattr)), $this->pluginconfig);
         set_config('auth_user_create', $config->auth_user_create, $this->pluginconfig);
         set_config('forcechangepassword', $config->forcechangepassword, $this->pluginconfig);
         set_config('stdchangepassword', $config->stdchangepassword, $this->pluginconfig);

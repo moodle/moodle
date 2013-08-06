@@ -1679,8 +1679,8 @@ class core_moodlelib_testcase extends advanced_testcase {
             $actualoutput = userdate($vals['time'], '%A, %d %B %Y, %I:%M %p', $vals['timezone']);
 
             // On different systems case of AM PM changes so compare case insensitive.
-            $vals['expectedoutput'] = textlib::strtolower($vals['expectedoutput']);
-            $actualoutput = textlib::strtolower($actualoutput);
+            $vals['expectedoutput'] = core_text::strtolower($vals['expectedoutput']);
+            $actualoutput = core_text::strtolower($actualoutput);
 
             $this->assertSame($vals['expectedoutput'], $actualoutput,
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
@@ -1864,8 +1864,8 @@ class core_moodlelib_testcase extends advanced_testcase {
             );
 
             // On different systems case of AM PM changes so compare case insensitive.
-            $vals['expectedoutput'] = textlib::strtolower($vals['expectedoutput']);
-            $actualoutput = textlib::strtolower($actualoutput);
+            $vals['expectedoutput'] = core_text::strtolower($vals['expectedoutput']);
+            $actualoutput = core_text::strtolower($actualoutput);
 
             $this->assertSame($vals['expectedoutput'], $actualoutput,
                 "Expected: {$vals['expectedoutput']} => Actual: {$actualoutput},
@@ -2280,7 +2280,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         // On different systems case of AM PM changes so compare case insensitive.
         foreach ($tests as $test) {
             $str = date_format_string(1293876000, $test['str'], $test['tz']);
-            $this->assertSame(textlib::strtolower($test['expected']), textlib::strtolower($str));
+            $this->assertSame(core_text::strtolower($test['expected']), core_text::strtolower($str));
         }
 
         // Restore system default values.

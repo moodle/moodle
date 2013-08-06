@@ -57,7 +57,7 @@ foreach (core_component::get_plugin_list('tool') as $plugin => $plugindir) {
     }
     $plugins[$plugin] = $strpluginname;
 }
-collatorlib::asort($plugins);
+core_collator::asort($plugins);
 
 $like = $DB->sql_like('plugin', '?', true, true, false, '|');
 $params = array('tool|_%');

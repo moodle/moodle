@@ -864,11 +864,11 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 
     // Process the string adding the cut when necessary.
     $output = '';
-    $length = textlib::strlen($string);
+    $length = core_text::strlen($string);
     $wordlength = 0;
 
     for ($i=0; $i<$length; $i++) {
-        $char = textlib::substr($string, $i, 1);
+        $char = core_text::substr($string, $i, 1);
         if ($char == ' ' or $char == "\t" or $char == "\n" or $char == "\r" or $char == "<" or $char == ">") {
             $wordlength = 0;
         } else {
@@ -1437,7 +1437,7 @@ function format_text_email($text, $format) {
         case FORMAT_WIKI:
             // There should not be any of these any more!
             $text = wikify_links($text);
-            return textlib::entities_to_utf8(strip_tags($text), true);
+            return core_text::entities_to_utf8(strip_tags($text), true);
             break;
 
         case FORMAT_HTML:
@@ -1448,7 +1448,7 @@ function format_text_email($text, $format) {
         case FORMAT_MARKDOWN:
         default:
             $text = wikify_links($text);
-            return textlib::entities_to_utf8(strip_tags($text), true);
+            return core_text::entities_to_utf8(strip_tags($text), true);
             break;
     }
 }
@@ -1900,7 +1900,7 @@ function highlightfast($needle, $haystack) {
         return $haystack;
     }
 
-    $parts = explode(textlib::strtolower($needle), textlib::strtolower($haystack));
+    $parts = explode(core_text::strtolower($needle), core_text::strtolower($haystack));
 
     if (count($parts) === 1) {
         return $haystack;
@@ -2338,10 +2338,10 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
                     $item = $strsection ." ". $mod->sectionnum;
                 } else {
-                    if (textlib::strlen($thissection->summary) < ($width-3)) {
+                    if (core_text::strlen($thissection->summary) < ($width-3)) {
                         $item = $thissection->summary;
                     } else {
-                        $item = textlib::substr($thissection->summary, 0, $width).'...';
+                        $item = core_text::substr($thissection->summary, 0, $width).'...';
                     }
                 }
                 $menu[] = '<li class="section"><span>'.$item.'</span>';
@@ -2356,9 +2356,9 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
         }
 
         $url = $mod->modname .'/view.php?id='. $mod->id;
-        $mod->name = strip_tags(format_string($mod->name , true));
-        if (textlib::strlen($mod->name) > ($width+5)) {
-            $mod->name = textlib::substr($mod->name, 0, $width).'...';
+        $mod->name = strip_tags(format_string($mod->name ,true));
+        if (core_text::strlen($mod->name) > ($width+5)) {
+            $mod->name = core_text::substr($mod->name, 0, $width).'...';
         }
         if (!$mod->visible) {
             $mod->name = '('.$mod->name.')';
@@ -2641,13 +2641,13 @@ function obfuscate_email($email) {
  * @return string The obfuscated text
  */
 function obfuscate_text($plaintext) {
-    $i = 0;
-    $length = textlib::strlen($plaintext);
-    $obfuscated = '';
+    $i=0;
+    $length = core_text::strlen($plaintext);
+    $obfuscated='';
     $prevobfuscated = false;
     while ($i < $length) {
-        $char = textlib::substr($plaintext, $i, 1);
-        $ord = textlib::utf8ord($char);
+        $char = core_text::substr($plaintext, $i, 1);
+        $ord = core_text::utf8ord($char);
         $numerical = ($ord >= ord('0')) && ($ord <= ord('9'));
         if ($prevobfuscated and $numerical ) {
             $obfuscated.='&#'.$ord.';';

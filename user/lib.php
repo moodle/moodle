@@ -40,7 +40,7 @@ function user_create_user($user) {
     }
 
     //check username
-    if ($user->username !== textlib::strtolower($user->username)) {
+    if ($user->username !== core_text::strtolower($user->username)) {
         throw new moodle_exception('usernamelowercase');
     } else {
         if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {
@@ -102,7 +102,7 @@ function user_update_user($user) {
 
     //check username
     if (isset($user->username)) {
-        if ($user->username !== textlib::strtolower($user->username)) {
+        if ($user->username !== core_text::strtolower($user->username)) {
             throw new moodle_exception('usernamelowercase');
         } else {
             if ($user->username !== clean_param($user->username, PARAM_USERNAME)) {

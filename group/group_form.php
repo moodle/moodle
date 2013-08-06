@@ -101,7 +101,7 @@ class group_form extends moodleform {
             $idnumber = '';
         }
         if ($data['id'] and $group = $DB->get_record('groups', array('id'=>$data['id']))) {
-            if (textlib::strtolower($group->name) != textlib::strtolower($name)) {
+            if (core_text::strtolower($group->name) != core_text::strtolower($name)) {
                 if (groups_get_group_by_name($COURSE->id,  $name)) {
                     $errors['name'] = get_string('groupnameexists', 'group', $name);
                 }

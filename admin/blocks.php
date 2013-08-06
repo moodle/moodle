@@ -115,7 +115,7 @@
             $blocknames[$blockid] = $blockname;
         }
     }
-    collatorlib::asort($blocknames);
+    core_collator::asort($blocknames);
 
     foreach ($blocknames as $blockid=>$strblockname) {
         $block = $blocks[$blockid];

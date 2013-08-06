@@ -405,7 +405,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
         // If $log->url has been trimmed short by the db size restriction
         // code in add_to_log, keep a note so we don't add a link to a broken url
-        $brokenurl=(textlib::strlen($log->url)==100 && textlib::substr($log->url,97)=='...');
+        $brokenurl=(core_text::strlen($log->url)==100 && core_text::substr($log->url,97)=='...');
 
         $row = array();
         if ($course->id == SITEID) {
@@ -1039,8 +1039,8 @@ function get_module_types_names($plural = false) {
                     $modnames[1][$mod->name] = get_string("modulenameplural", "$mod->name");
                 }
             }
-            collatorlib::asort($modnames[0]);
-            collatorlib::asort($modnames[1]);
+            core_collator::asort($modnames[0]);
+            core_collator::asort($modnames[1]);
         }
     }
     return $modnames[(int)$plural];
@@ -1966,11 +1966,11 @@ function course_format_name ($course,$max=100) {
     $shortname = format_string($course->shortname, true, array('context' => $context));
     $fullname = format_string($course->fullname, true, array('context' => context_course::instance($course->id)));
     $str = $shortname.': '. $fullname;
-    if (textlib::strlen($str) <= $max) {
+    if (core_text::strlen($str) <= $max) {
         return $str;
     }
     else {
-        return textlib::substr($str,0,$max-3).'...';
+        return core_text::substr($str,0,$max-3).'...';
     }
 }
 

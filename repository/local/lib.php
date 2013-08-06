@@ -82,7 +82,7 @@ class repository_local extends repository {
             if (!is_array($extensions)) {
                 $extensions = array($extensions);
             }
-            $extensions = array_map('textlib::strtolower', $extensions);
+            $extensions = array_map('core_text::strtolower', $extensions);
         }
 
         // build file tree

@@ -101,7 +101,7 @@ class enrol_self_enrol_form extends moodleform {
                 } else {
                     $plugin = enrol_get_plugin('self');
                     if ($plugin->get_config('showhint')) {
-                        $hint = textlib::substr($instance->password, 0, 1);
+                        $hint = core_text::substr($instance->password, 0, 1);
                         $errors['enrolpassword'] = get_string('passwordinvalidhint', 'enrol_self', $hint);
                     } else {
                         $errors['enrolpassword'] = get_string('passwordinvalid', 'enrol_self');

@@ -210,7 +210,7 @@ if ($xml = glossary_read_imported_file($result)) {
                     $dupentry = $DB->record_exists_select('glossary_entries',
                                     'glossaryid = :glossaryid AND LOWER(concept) = :concept', array(
                                         'glossaryid' => $glossary->id,
-                                        'concept'    => textlib::strtolower($newentry->concept)));
+                                        'concept'    => core_text::strtolower($newentry->concept)));
                 }
                 if ($dupentry) {
                     $permissiongranted = 0;

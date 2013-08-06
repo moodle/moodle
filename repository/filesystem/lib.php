@@ -110,8 +110,8 @@ class repository_filesystem extends repository {
                 }
             }
         }
-        collatorlib::asort($fileslist, collatorlib::SORT_STRING);
-        collatorlib::asort($dirslist, collatorlib::SORT_STRING);
+        core_collator::asort($fileslist, core_collator::SORT_STRING);
+        core_collator::asort($dirslist, core_collator::SORT_STRING);
         // fill the $list['list']
         foreach ($dirslist as $file) {
             if (!empty($path)) {

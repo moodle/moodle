@@ -189,12 +189,12 @@ if ( $allentries ) {
 
         // Setting the pivot for the current entry
         $pivot = $entry->glossarypivot;
-        $upperpivot = textlib::strtoupper($pivot);
-        $pivottoshow = textlib::strtoupper(format_string($pivot, true, $fmtoptions));
+        $upperpivot = core_text::strtoupper($pivot);
+        $pivottoshow = core_text::strtoupper(format_string($pivot, true, $fmtoptions));
         // Reduce pivot to 1cc if necessary
         if ( !$fullpivot ) {
-            $upperpivot = textlib::substr($upperpivot, 0, 1);
-            $pivottoshow = textlib::substr($pivottoshow, 0, 1);
+            $upperpivot = core_text::substr($upperpivot, 0, 1);
+            $pivottoshow = core_text::substr($pivottoshow, 0, 1);
         }
 
         // If there's  group break

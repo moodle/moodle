@@ -167,7 +167,7 @@ class enrol_flatfile_testcase extends advanced_testcase {
         // Test encoding.
 
         $data = "add;student;čtvrtý;c3";
-        $data = textlib::convert($data, 'utf-8', 'iso-8859-2');
+        $data = core_text::convert($data, 'utf-8', 'iso-8859-2');
         file_put_contents($file, $data);
         $flatfileplugin->set_config('encoding', 'iso-8859-2');
 

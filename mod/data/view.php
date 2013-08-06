@@ -230,7 +230,7 @@
         $search = '';
     }
 
-    if (textlib::strlen($search) < 2) {
+    if (core_text::strlen($search) < 2) {
         $search = '';
     }
     $SESSION->dataprefs[$data->id]['search'] = $search;   // Make it sticky

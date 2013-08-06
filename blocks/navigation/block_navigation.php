@@ -255,31 +255,31 @@ class block_navigation extends block_base {
     public function trim(navigation_node $node, $mode=1, $long=50, $short=25, $recurse=true) {
         switch ($mode) {
             case self::TRIM_RIGHT :
-                if (textlib::strlen($node->text)>($long+3)) {
+                if (core_text::strlen($node->text)>($long+3)) {
                     // Truncate the text to $long characters
                     $node->text = $this->trim_right($node->text, $long);
                 }
-                if (is_string($node->shorttext) && textlib::strlen($node->shorttext)>($short+3)) {
+                if (is_string($node->shorttext) && core_text::strlen($node->shorttext)>($short+3)) {
                     // Truncate the shorttext
                     $node->shorttext = $this->trim_right($node->shorttext, $short);
                 }
                 break;
             case self::TRIM_LEFT :
-                if (textlib::strlen($node->text)>($long+3)) {
+                if (core_text::strlen($node->text)>($long+3)) {
                     // Truncate the text to $long characters
                     $node->text = $this->trim_left($node->text, $long);
                 }
-                if (is_string($node->shorttext) && textlib::strlen($node->shorttext)>($short+3)) {
+                if (is_string($node->shorttext) && core_text::strlen($node->shorttext)>($short+3)) {
                     // Truncate the shorttext
                     $node->shorttext = $this->trim_left($node->shorttext, $short);
                 }
                 break;
             case self::TRIM_CENTER :
-                if (textlib::strlen($node->text)>($long+3)) {
+                if (core_text::strlen($node->text)>($long+3)) {
                     // Truncate the text to $long characters
                     $node->text = $this->trim_center($node->text, $long);
                 }
-                if (is_string($node->shorttext) && textlib::strlen($node->shorttext)>($short+3)) {
+                if (is_string($node->shorttext) && core_text::strlen($node->shorttext)>($short+3)) {
                     // Truncate the shorttext
                     $node->shorttext = $this->trim_center($node->shorttext, $short);
                 }
@@ -298,7 +298,7 @@ class block_navigation extends block_base {
      * @return string The truncated string
      */
     protected function trim_left($string, $length) {
-        return '...'.textlib::substr($string, textlib::strlen($string)-$length, $length);
+        return '...'.core_text::substr($string, core_text::strlen($string)-$length, $length);
     }
     /**
      * Truncate a string from the right
@@ -307,7 +307,7 @@ class block_navigation extends block_base {
      * @return string The truncated string
      */
     protected function trim_right($string, $length) {
-        return textlib::substr($string, 0, $length).'...';
+        return core_text::substr($string, 0, $length).'...';
     }
     /**
      * Truncate a string in the center
@@ -317,8 +317,8 @@ class block_navigation extends block_base {
      */
     protected function trim_center($string, $length) {
         $trimlength = ceil($length/2);
-        $start = textlib::substr($string, 0, $trimlength);
-        $end = textlib::substr($string, textlib::strlen($string)-$trimlength);
+        $start = core_text::substr($string, 0, $trimlength);
+        $end = core_text::substr($string, core_text::strlen($string)-$trimlength);
         $string = $start.'...'.$end;
         return $string;
     }

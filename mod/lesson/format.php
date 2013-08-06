@@ -551,7 +551,7 @@ class qformat_default {
         $name = clean_param($name, PARAM_TEXT); // Matches what the question editing form does.
         $name = trim($name);
         $trimlength = 251;
-        while (textlib::strlen($name) > 255 && $trimlength > 0) {
+        while (core_text::strlen($name) > 255 && $trimlength > 0) {
             $name = shorten_text($name, $trimlength);
             $trimlength -= 10;
         }
@@ -640,8 +640,8 @@ class qformat_based_on_xml extends qformat_default {
             "&#8212;" => "-",
         );
         $str = strtr($str, $html_code_list);
-        // Use textlib entities_to_utf8 function to convert only numerical entities.
-        $str = textlib::entities_to_utf8($str, false);
+        // Use core_text entities_to_utf8 function to convert only numerical entities.
+        $str = core_text::entities_to_utf8($str, false);
         return $str;
     }
 

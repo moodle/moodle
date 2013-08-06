@@ -1094,7 +1094,7 @@ function clean_param($param, $type) {
             $param = preg_replace('~[[:cntrl:]]|[<>`]~u', '', $param);
             // Convert many whitespace chars into one.
             $param = preg_replace('/\s+/', ' ', $param);
-            $param = textlib::substr(trim($param), 0, TAG_MAX_LENGTH);
+            $param = core_text::substr(trim($param), 0, TAG_MAX_LENGTH);
             return $param;
 
         case PARAM_TAGLIST:
@@ -1164,7 +1164,7 @@ function clean_param($param, $type) {
             $param = fix_utf8($param);
             $param = str_replace(" " , "", $param);
             // Convert uppercase to lowercase MDL-16919.
-            $param = textlib::strtolower($param);
+            $param = core_text::strtolower($param);
             if (empty($CFG->extendedusernamechars)) {
                 // Regular expression, eliminate all chars EXCEPT:
                 // alphanum, dash (-), underscore (_), at sign (@) and period (.) characters.
@@ -1586,7 +1586,7 @@ function purge_all_caches() {
     js_reset_all_caches();
     theme_reset_all_caches();
     get_string_manager()->reset_caches();
-    textlib::reset_caches();
+    core_text::reset_caches();
 
     cache_helper::purge_all();
 
@@ -1825,7 +1825,7 @@ function set_user_preference($name, $value, $user = null) {
     }
     // Value column maximum length is 1333 characters.
     $value = (string)$value;
-    if (textlib::strlen($value) > 1333) {
+    if (core_text::strlen($value) > 1333) {
         throw new coding_exception('Invalid value in set_user_preference() call, value is is too long for the value column');
     }
 
@@ -2243,17 +2243,17 @@ function date_format_string($date, $format, $tz = 99) {
     global $CFG;
     if (abs($tz) > 13) {
         if ($CFG->ostype == 'WINDOWS' and $localewincharset = get_string('localewincharset', 'langconfig')) {
-            $format = textlib::convert($format, 'utf-8', $localewincharset);
+            $format = core_text::convert($format, 'utf-8', $localewincharset);
             $datestring = strftime($format, $date);
-            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
+            $datestring = core_text::convert($datestring, $localewincharset, 'utf-8');
         } else {
             $datestring = strftime($format, $date);
         }
     } else {
         if ($CFG->ostype == 'WINDOWS' and $localewincharset = get_string('localewincharset', 'langconfig')) {
-            $format = textlib::convert($format, 'utf-8', $localewincharset);
+            $format = core_text::convert($format, 'utf-8', $localewincharset);
             $datestring = gmstrftime($format, $date);
-            $datestring = textlib::convert($datestring, $localewincharset, 'utf-8');
+            $datestring = core_text::convert($datestring, $localewincharset, 'utf-8');
         } else {
             $datestring = gmstrftime($format, $date);
         }
@@ -3967,7 +3967,7 @@ function create_user_record($username, $password, $auth = 'manual') {
     global $CFG, $DB;
     require_once($CFG->dirroot."/user/profile/lib.php");
     // Just in case check text case.
-    $username = trim(textlib::strtolower($username));
+    $username = trim(core_text::strtolower($username));
 
     $authplugin = get_auth_plugin($auth);
     $customfields = $authplugin->get_custom_user_profile_fields();
@@ -4035,7 +4035,7 @@ function update_user_record($username) {
     global $DB, $CFG;
     require_once($CFG->dirroot."/user/profile/lib.php");
     // Just in case check text case.
-    $username = trim(textlib::strtolower($username));
+    $username = trim(core_text::strtolower($username));
 
     $oldinfo = $DB->get_record('user', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id), '*', MUST_EXIST);
     $newuser = array();
@@ -4118,7 +4118,7 @@ function truncate_userinfo(array $info) {
     // Apply where needed.
     foreach (array_keys($info) as $key) {
         if (!empty($limit[$key])) {
-            $info[$key] = trim(textlib::substr($info[$key], 0, $limit[$key]));
+            $info[$key] = trim(core_text::substr($info[$key], 0, $limit[$key]));
         }
     }
 
@@ -4775,7 +4775,7 @@ function check_password_policy($password, &$errmsg) {
     }
 
     $errmsg = '';
-    if (textlib::strlen($password) < $CFG->minpasswordlength) {
+    if (core_text::strlen($password) < $CFG->minpasswordlength) {
         $errmsg .= '<div>'. get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength) .'</div>';
 
     }
@@ -5779,16 +5779,16 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         unset($charsets['UTF-8']);
         if (in_array($charset, $charsets)) {
             $mail->CharSet  = $charset;
-            $mail->FromName = textlib::convert($mail->FromName, 'utf-8', strtolower($charset));
-            $mail->Subject  = textlib::convert($mail->Subject, 'utf-8', strtolower($charset));
-            $mail->Body     = textlib::convert($mail->Body, 'utf-8', strtolower($charset));
-            $mail->AltBody  = textlib::convert($mail->AltBody, 'utf-8', strtolower($charset));
+            $mail->FromName = core_text::convert($mail->FromName, 'utf-8', strtolower($charset));
+            $mail->Subject  = core_text::convert($mail->Subject, 'utf-8', strtolower($charset));
+            $mail->Body     = core_text::convert($mail->Body, 'utf-8', strtolower($charset));
+            $mail->AltBody  = core_text::convert($mail->AltBody, 'utf-8', strtolower($charset));
 
             foreach ($temprecipients as $key => $values) {
-                $temprecipients[$key][1] = textlib::convert($values[1], 'utf-8', strtolower($charset));
+                $temprecipients[$key][1] = core_text::convert($values[1], 'utf-8', strtolower($charset));
             }
             foreach ($tempreplyto as $key => $values) {
-                $tempreplyto[$key][1] = textlib::convert($values[1], 'utf-8', strtolower($charset));
+                $tempreplyto[$key][1] = core_text::convert($values[1], 'utf-8', strtolower($charset));
             }
         }
     }
@@ -7091,7 +7091,7 @@ class core_string_manager implements string_manager {
         }
 
         $countries = $this->load_component_strings('core_countries', $lang);
-        collatorlib::asort($countries);
+        core_collator::asort($countries);
         if (!$returnall and !empty($CFG->allcountrycodes)) {
             $enabled = explode(',', $CFG->allcountrycodes);
             $return = array();
@@ -7263,14 +7263,14 @@ class core_string_manager implements string_manager {
 
             if (!empty($CFG->langcache) and !empty($this->menucache)) {
                 // Cache the list so that it can be used next time.
-                collatorlib::asort($languages);
+                core_collator::asort($languages);
                 check_dir_exists(dirname($this->menucache), true, true);
                 file_put_contents($this->menucache, json_encode($languages));
                 @chmod($this->menucache, $CFG->filepermissions);
             }
         }
 
-        collatorlib::asort($languages);
+        core_collator::asort($languages);
 
         return $languages;
     }
@@ -7821,7 +7821,7 @@ function get_list_of_themes() {
         $themes[$themename] = $theme;
     }
 
-    collatorlib::asort_objects_by_method($themes, 'get_theme_name');
+    core_collator::asort_objects_by_method($themes, 'get_theme_name');
 
     return $themes;
 }
@@ -9092,11 +9092,10 @@ function count_words($string) {
  * @return int The count of letters in the specified text.
  */
 function count_letters($string) {
-    // Loading the textlib singleton instance. We are going to need it.
     $string = strip_tags($string); // Tags are out now.
     $string = preg_replace('/[[:space:]]*/', '', $string); // Whitespace are out now.
 
-    return textlib::strlen($string);
+    return core_text::strlen($string);
 }
 
 /**
@@ -9155,7 +9154,7 @@ function complex_random_string($length=null) {
  */
 function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
     // If the plain text is shorter than the maximum length, return the whole text.
-    if (textlib::strlen(preg_replace('/<.*?>/', '', $text)) <= $ideal) {
+    if (core_text::strlen(preg_replace('/<.*?>/', '', $text)) <= $ideal) {
         return $text;
     }
 
@@ -9163,7 +9162,7 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
     // and only tag in its 'line'.
     preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
 
-    $totallength = textlib::strlen($ending);
+    $totallength = core_text::strlen($ending);
     $truncate = '';
 
     // This array stores information about open and close tags and their position
@@ -9181,16 +9180,16 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
                     // Record closing tag.
                     $tagdetails[] = (object) array(
                             'open' => false,
-                            'tag'  => textlib::strtolower($tagmatchings[1]),
-                            'pos'  => textlib::strlen($truncate),
+                            'tag'  => core_text::strtolower($tagmatchings[1]),
+                            'pos'  => core_text::strlen($truncate),
                         );
 
                 } else if (preg_match('/^<\s*([^\s>!]+).*?>$/s', $linematchings[1], $tagmatchings)) {
                     // Record opening tag.
                     $tagdetails[] = (object) array(
                             'open' => true,
-                            'tag'  => textlib::strtolower($tagmatchings[1]),
-                            'pos'  => textlib::strlen($truncate),
+                            'tag'  => core_text::strtolower($tagmatchings[1]),
+                            'pos'  => core_text::strlen($truncate),
                         );
                 }
             }
@@ -9199,7 +9198,7 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
         }
 
         // Calculate the length of the plain text part of the line; handle entities as one character.
-        $contentlength = textlib::strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $linematchings[2]));
+        $contentlength = core_text::strlen(preg_replace('/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i', ' ', $linematchings[2]));
         if ($totallength + $contentlength > $ideal) {
             // The number of characters which are left.
             $left = $ideal - $totallength;
@@ -9210,7 +9209,7 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
                 foreach ($entities[0] as $entity) {
                     if ($entity[1]+1-$entitieslength <= $left) {
                         $left--;
-                        $entitieslength += textlib::strlen($entity[0]);
+                        $entitieslength += core_text::strlen($entity[0]);
                     } else {
                         // No more characters left.
                         break;
@@ -9223,7 +9222,7 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
             if (!$exact) {
                 // Search the last occurence of a space.
                 for (; $breakpos > 0; $breakpos--) {
-                    if ($char = textlib::substr($linematchings[2], $breakpos, 1)) {
+                    if ($char = core_text::substr($linematchings[2], $breakpos, 1)) {
                         if ($char === '.' or $char === ' ') {
                             $breakpos += 1;
                             break;
@@ -9243,7 +9242,7 @@ function shorten_text($text, $ideal=30, $exact = false, $ending='...') {
                 $breakpos = $left + $entitieslength;
             }
 
-            $truncate .= textlib::substr($linematchings[2], 0, $breakpos);
+            $truncate .= core_text::substr($linematchings[2], 0, $breakpos);
             // Maximum length is reached, so get off the loop.
             break;
         } else {
@@ -10212,8 +10211,8 @@ function message_popup_window() {
             if (!empty($messageusers->smallmessage)) {
                 // Display the first 200 chars of the message in the popup.
                 $smallmessage = null;
-                if (textlib::strlen($messageusers->smallmessage) > 200) {
-                    $smallmessage = textlib::substr($messageusers->smallmessage, 0, 200).'...';
+                if (core_text::strlen($messageusers->smallmessage) > 200) {
+                    $smallmessage = core_text::substr($messageusers->smallmessage, 0, 200).'...';
                 } else {
                     $smallmessage = $messageusers->smallmessage;
                 }

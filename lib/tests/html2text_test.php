@@ -54,9 +54,9 @@ class core_html2text_testcase extends basic_testcase {
     }
 
     /**
-     * Textlib integration.
+     * core_text integration.
      */
-    public function test_textlib() {
+    public function test_core_text() {
         $text = '<strong>Žluťoučký koníček</strong>';
         $result = html_to_text($text, null, false, false);
         $this->assertSame($result, 'ŽLUŤOUČKÝ KONÍČEK');

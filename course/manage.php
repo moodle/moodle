@@ -194,7 +194,7 @@ if ((!empty($moveupcat) or !empty($movedowncat)) and confirm_sesskey()) {
 if ($coursecat->id && $canmanage && $resort && confirm_sesskey()) {
     // Resort the category.
     if ($courses = get_courses($coursecat->id, '', 'c.id,c.fullname,c.sortorder')) {
-        collatorlib::asort_objects_by_property($courses, 'fullname', collatorlib::SORT_NATURAL);
+        core_collator::asort_objects_by_property($courses, 'fullname', core_collator::SORT_NATURAL);
         $i = 1;
         foreach ($courses as $course) {
             $DB->set_field('course', 'sortorder', $coursecat->sortorder + $i, array('id' => $course->id));

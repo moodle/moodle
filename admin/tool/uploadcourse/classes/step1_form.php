@@ -57,7 +57,7 @@ class tool_uploadcourse_step1_form extends tool_uploadcourse_base_form {
             $mform->setDefault('delimiter_name', 'comma');
         }
 
-        $choices = textlib::get_encodings();
+        $choices = core_text::get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'tool_uploadcourse'), $choices);
         $mform->setDefault('encoding', 'UTF-8');
 

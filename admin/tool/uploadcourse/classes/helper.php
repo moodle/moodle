@@ -117,18 +117,18 @@ class tool_uploadcourse_helper {
 
         switch ($block[1]) {
             case '+':
-                $repl = textlib::strtoupper($repl);
+                $repl = core_text::strtoupper($repl);
                 break;
             case '-':
-                $repl = textlib::strtolower($repl);
+                $repl = core_text::strtolower($repl);
                 break;
             case '~':
-                $repl = textlib::strtotitle($repl);
+                $repl = core_text::strtotitle($repl);
                 break;
         }
 
         if (!empty($block[2])) {
-            $repl = textlib::substr($repl, 0, $block[2]);
+            $repl = core_text::substr($repl, 0, $block[2]);
         }
 
         return $repl;

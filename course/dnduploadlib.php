@@ -588,9 +588,9 @@ class dndupload_ajax_processor {
      * @return string the display name to use
      */
     protected function display_name_from_file($filename) {
-        $pos = textlib::strrpos($filename, '.');
+        $pos = core_text::strrpos($filename, '.');
         if ($pos) { // Want to skip if $pos === 0 OR $pos === false.
-            $filename = textlib::substr($filename, 0, $pos);
+            $filename = core_text::substr($filename, 0, $pos);
         }
         return str_replace('_', ' ', $filename);
     }

@@ -1981,7 +1981,7 @@ function upgrade_rename_old_backup_files_using_shortname() {
     }
 
     require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');
-    $backupword = str_replace(' ', '_', textlib::strtolower(get_string('backupfilename')));
+    $backupword = str_replace(' ', '_', core_text::strtolower(get_string('backupfilename')));
     $backupword = trim(clean_filename($backupword), '_');
     $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-';
     $regex = '#^'.preg_quote($filename, '#').'.*\.mbz$#';
@@ -2032,13 +2032,13 @@ function upgrade_rename_old_backup_files_using_shortname() {
         $newname = $filename . $bcinfo->original_course_id . '-';
         if ($useshortname) {
             $shortname = str_replace(' ', '_', $bcinfo->original_course_shortname);
-            $shortname = textlib::strtolower(trim(clean_filename($shortname), '_'));
+            $shortname = core_text::strtolower(trim(clean_filename($shortname), '_'));
             $newname .= $shortname . '-';
         }
 
         $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));
         $date = userdate($bcinfo->backup_date, $backupdateformat, 99, false);
-        $date = textlib::strtolower(trim(clean_filename($date), '_'));
+        $date = core_text::strtolower(trim(clean_filename($date), '_'));
         $newname .= $date;
 
         if (isset($bcinfo->root_settings['users']) && !$bcinfo->root_settings['users']) {

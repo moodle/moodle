@@ -55,7 +55,7 @@ foreach (core_component::get_plugin_list('local') as $plugin => $plugindir) {
     }
     $plugins[$plugin] = $strpluginname;
 }
-collatorlib::asort($plugins);
+core_collator::asort($plugins);
 
 foreach ($plugins as $plugin => $name) {
     $uninstall = '';

@@ -142,7 +142,7 @@ class tiynce_subplugins_settings extends admin_setting {
             }
 
             $namestr = get_string('pluginname', 'tinymce_'.$name);
-            if (strpos(textlib::strtolower($namestr), textlib::strtolower($query)) !== false) {
+            if (strpos(core_text::strtolower($namestr), core_text::strtolower($query)) !== false) {
                 return true;
             }
         }

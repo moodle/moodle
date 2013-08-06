@@ -118,7 +118,7 @@ class mod_glossary_entry_form extends moodleform {
                 if ($DB->record_exists_select('glossary_entries',
                         'glossaryid = :glossaryid AND LOWER(concept) = :concept AND id != :id', array(
                             'glossaryid' => $glossary->id,
-                            'concept'    => textlib::strtolower($data['concept']),
+                            'concept'    => core_text::strtolower($data['concept']),
                             'id'         => $id))) {
                     $errors['concept'] = get_string('errconceptalreadyexists', 'glossary');
                 }
@@ -129,7 +129,7 @@ class mod_glossary_entry_form extends moodleform {
                 if ($DB->record_exists_select('glossary_entries',
                         'glossaryid = :glossaryid AND LOWER(concept) = :concept', array(
                             'glossaryid' => $glossary->id,
-                            'concept'    => textlib::strtolower($data['concept'])))) {
+                            'concept'    => core_text::strtolower($data['concept'])))) {
                     $errors['concept'] = get_string('errconceptalreadyexists', 'glossary');
                 }
             }

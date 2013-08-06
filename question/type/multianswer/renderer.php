@@ -189,9 +189,9 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
         }
 
         // Work out a good input field size.
-        $size = max(1, textlib::strlen(trim($response)) + 1);
+        $size = max(1, core_text::strlen(trim($response)) + 1);
         foreach ($subq->answers as $ans) {
-            $size = max($size, textlib::strlen(trim($ans->answer)));
+            $size = max($size, core_text::strlen(trim($ans->answer)));
         }
         $size = min(60, round($size + rand(0, $size*0.15)));
         // The rand bit is to make guessing harder.
