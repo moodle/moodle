@@ -27,14 +27,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$handlers = array(
-
-    // The workshop main page is displayed to the user
-    'workshop_viewed' => array(
-        'handlerfile'       => '/mod/workshop/allocation/scheduled/lib.php',
-        'handlerfunction'   => 'workshopallocation_scheduled_workshop_viewed',
-        'schedule'          => 'instant',
-        'internal'          => 1,
-    ),
-
+$observers = array(
+    array(
+        'eventname' => '\mod_workshop\event\course_module_viewed',
+        'callback'  => '\workshopallocation_scheduled\observer::workshop_viewed',
+    )
 );
