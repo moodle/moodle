@@ -107,6 +107,7 @@ class lesson_page_type_endofbranch extends lesson_page {
         if (empty($properties->qoption)) {
             $properties->qoption = '0';
         }
+        $properties->timemodified = time();
         $properties = file_postupdate_standard_editor($properties, 'contents', array('noclean'=>true, 'maxfiles'=>EDITOR_UNLIMITED_FILES, 'maxbytes'=>$PAGE->course->maxbytes), context_module::instance($PAGE->cm->id), 'mod_lesson', 'page_contents', $properties->id);
         $DB->update_record("lesson_pages", $properties);
 
