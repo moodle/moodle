@@ -5655,7 +5655,18 @@ class assign {
         $logmessage = get_string('reverttodraftforstudent',
                                  'assign',
                                  array('id'=>$user->id, 'fullname'=>fullname($user)));
-        $this->add_to_log('revert submission to draft', $logmessage);
+        $addtolog = $this->add_to_log('revert submission to draft', $logmessage, '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $submission->id,
+            'relateduserid' => ($this->get_instance()->teamsubmission) ? null : $userid,
+            'other' => array(
+                'newstatus' => $submission->status
+            )
+        );
+        $event = \mod_assign\event\submission_status_updated::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
     /**

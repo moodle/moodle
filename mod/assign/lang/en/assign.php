@@ -145,6 +145,7 @@ $string['event_all_submissions_downloaded'] = 'All the submissions are being dow
 $string['event_extension_granted'] = 'An extension has been granted.';
 $string['event_identities_revealed'] = 'The identities have been revealed.';
 $string['event_submission_locked'] = 'The submissions have been locked for a user.';
+$string['event_submission_status_updated'] = 'The status of the submission has been updated.';
 $string['extensionduedate'] = 'Extension due date';
 $string['extensionnotafterduedate'] = 'Extension date must be after the due date';
 $string['extensionnotafterfromdate'] = 'Extension date must be after the allow submissions from date';

@@ -1036,5 +1036,42 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->editingteachers[0]->ignoresesskey = false;
     }
 
+    public function test_submission_status_updated_event() {
+        $this->editingteachers[0]->ignoresesskey = true;
+        $this->setUser($this->editingteachers[0]);
+
+        $assign = $this->create_instance();
+        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $submission->status = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
+        $assign->testable_update_submission($submission, $this->students[0]->id, true, false);
+
+        $sink = $this->redirectEvents();
+        $assign->testable_process_revert_to_draft($this->students[0]->id);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\submission_status_updated', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($submission->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->relateduserid);
+        $this->assertEquals(ASSIGN_SUBMISSION_STATUS_DRAFT, $event->other['newstatus']);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'revert submission to draft',
+            'view.php?id=' . $assign->get_course_module()->id,
+            get_string('reverttodraftforstudent', 'assign', array('id' => $this->students[0]->id,
+                'fullname' => fullname($this->students[0]))),
+            $assign->get_course_module()->id,
+            $this->editingteachers[0]->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+
+        // Revert to defaults.
+        $this->editingteachers[0]->ignoresesskey = false;
+    }
+
 }
 
