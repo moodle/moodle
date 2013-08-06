@@ -399,7 +399,7 @@ class tool_uploadcourse_course {
      * @return bool false is any error occured.
      */
     public function prepare() {
-        global $DB;
+        global $DB, $SITE;
         $this->prepared = true;
 
         // Validate the shortname.
@@ -432,6 +432,12 @@ class tool_uploadcourse_course {
                 $this->error('courseexistsanduploadnotallowed',
                     new lang_string('courseexistsanduploadnotallowed', 'tool_uploadcourse'));
                 return false;
+            } else if ($this->can_update()) {
+                // We can never allow for any front page changes!
+                if ($this->shortname == $SITE->shortname) {
+                    $this->error('cannotupdatefrontpage', new lang_string('cannotupdatefrontpage', 'tool_uploadcourse'));
+                    return false;
+                }
             }
         } else {
             if (!$this->can_create()) {
@@ -608,6 +614,13 @@ class tool_uploadcourse_course {
         if ($exists) {
             $missingonly = ($updatemode === tool_uploadcourse_processor::UPDATE_MISSING_WITH_DATA_OR_DEFAUTLS);
             $coursedata = $this->get_final_update_data($coursedata, $usedefaults, $missingonly);
+
+            // Make sure we are not trying to mess with the front page, though we should never get here!
+            if ($coursedata['id'] == $SITE->id) {
+                $this->error('cannotupdatefrontpage', new lang_string('cannotupdatefrontpage', 'tool_uploadcourse'));
+                return false;
+            }
+
             $this->do = self::DO_UPDATE;
         } else {
             $coursedata = $this->get_final_create_data($coursedata);

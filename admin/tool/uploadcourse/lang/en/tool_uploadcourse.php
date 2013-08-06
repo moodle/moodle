@@ -32,6 +32,7 @@ $string['cannotreadbackupfile'] = 'Cannot read the backup file';
 $string['cannotrenamecoursenotexist'] = 'Cannot rename a course that does not exist';
 $string['cannotrenameidnumberconflict'] = 'Cannot rename the course, the ID number conflicts with an existing course';
 $string['cannotrenameshortnamealreadyinuse'] = 'Cannot rename the course, the shortname is already used';
+$string['cannotupdatefrontpage'] = 'It is forbidden to modify the front page';
 $string['canonlyrenameinupdatemode'] = 'Can only rename a course when update is allowed';
 $string['canonlyresetcourseinupdatemode'] = 'Can only reset a course in update mode';
 $string['couldnotresolvecatgorybyid'] = 'Could not resolve category by ID';

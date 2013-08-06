@@ -768,6 +768,7 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
     }
 
     public function test_create_bad_category() {
+        global $DB;
         $this->resetAfterTest(true);
 
         // Ensure fails when category cannot be resolved upon creation.
@@ -778,6 +779,14 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertFalse($co->prepare());
         $this->assertArrayHasKey('couldnotresolvecatgorybyid', $co->get_errors());
 
+        // Ensure fails when category is 0 on create.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => 'c1', 'summary' => 'summary', 'fullname' => 'FN', 'category' => '0');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('missingmandatoryfields', $co->get_errors());
+
         // Ensure fails when category cannot be resolved upon update.
         $c1 = $this->getDataGenerator()->create_course();
         $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
@@ -786,6 +795,31 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $co = new tool_uploadcourse_course($mode, $updatemode, $data);
         $this->assertFalse($co->prepare());
         $this->assertArrayHasKey('couldnotresolvecatgorybyid', $co->get_errors());
+
+        // Ensure does not update the category when it is 0.
+        $c1 = $this->getDataGenerator()->create_course();
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname, 'category' => '0');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $this->assertEmpty($co->get_errors());
+        $this->assertEmpty($co->get_statuses());
+        $co->proceed();
+        $this->assertEquals($c1->category, $DB->get_field('course', 'category', array('id' => $c1->id)));
+
+        // Ensure does not update the category when it is set to 0 in the defaults.
+        $c1 = $this->getDataGenerator()->create_course();
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_OR_DEFAUTLS;
+        $data = array('shortname' => $c1->shortname);
+        $defaults = array('category' => '0');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, $defaults);
+        $this->assertTrue($co->prepare());
+        $this->assertEmpty($co->get_errors());
+        $this->assertEmpty($co->get_statuses());
+        $co->proceed();
+        $this->assertEquals($c1->category, $DB->get_field('course', 'category', array('id' => $c1->id)));
     }
 
     public function test_enrolment_data() {
@@ -918,6 +952,49 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertTrue($co->prepare());
         $this->assertArrayHasKey('courseshortnamegenerated', $co->get_statuses());
         $this->assertArrayHasKey('courseshortnameincremented', $co->get_statuses());
+    }
+
+    public function test_mess_with_frontpage() {
+        global $SITE;
+        $this->resetAfterTest(true);
+
+        // Updating the front page.
+        $mode = tool_uploadcourse_processor::MODE_UPDATE_ONLY;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $SITE->shortname, 'idnumber' => 'NewIDN');
+        $importoptions = array();
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotupdatefrontpage', $co->get_errors());
+
+        // Updating the front page.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $SITE->shortname, 'idnumber' => 'NewIDN');
+        $importoptions = array();
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotupdatefrontpage', $co->get_errors());
+
+        // Generating a shortname should not be allowed in update mode, and so we cannot update the front page.
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('idnumber' => 'NewIDN', 'fullname' => 'FN', 'category' => 1);
+        $importoptions = array('shortnametemplate' => $SITE->shortname);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotgenerateshortnameupdatemode', $co->get_errors());
+
+        // Renaming to the front page should not be allowed.
+        $c1 = $this->getDataGenerator()->create_course();
+        $mode = tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE;
+        $updatemode = tool_uploadcourse_processor::UPDATE_ALL_WITH_DATA_ONLY;
+        $data = array('shortname' => $c1->shortname, 'fullname' => 'FN', 'idnumber' => 'NewIDN', 'rename' => $SITE->shortname);
+        $importoptions = array('canrename' => true);
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data, array(), $importoptions);
+        $this->assertFalse($co->prepare());
+        $this->assertArrayHasKey('cannotrenameshortnamealreadyinuse', $co->get_errors());
+
     }
 
 }
