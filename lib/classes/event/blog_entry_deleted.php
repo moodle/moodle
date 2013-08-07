@@ -13,10 +13,18 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
+/**
+ * Event for when a new blog entry is deleted.
+ *
+ * @package    core_blog
+ * @copyright  2013 Ankit Agarwal
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace core\event;
 
 /**
+ * class blog_entry_deleted
+ *
  * Event for when a new blog entry is deleted.
  *
  * @package    core_blog
@@ -29,6 +37,9 @@ class blog_entry_deleted extends \core\event\base {
     /** @var  \blog_entry A reference to the active blog_entry object. */
     protected $customobject;
 
+    /**
+     * Set basic event properties.
+     */
     protected function init() {
         $this->context = \context_system::instance();
         $this->data['objecttable'] = 'post';
@@ -40,10 +51,10 @@ class blog_entry_deleted extends \core\event\base {
     /**
      * Returns localised general event name.
      *
-     * @return \lang_string
+     * @return string
      */
     public static function get_name() {
-        return new \lang_string("evententrydeleted", "core_blog");
+        return get_string("evententrydeleted", "core_blog");
     }
 
     /**
@@ -56,15 +67,12 @@ class blog_entry_deleted extends \core\event\base {
     }
 
     /**
-     * Returns localised description of what happened.
+     * Returns non-localised description of what happened.
      *
-     * @return \lang_string
+     * @return string
      */
     public function get_description() {
-        $a = new \stdClass();
-        $a->subject = $this->other['record']['subject'];
-        $a->userid = $this->userid;
-        return new \lang_string("evententrydeleteddesc", "core_blog", $a);
+        return "Blog entry ".$this->other['record']['subject']." was deleted by user with id ".$this->userid;
     }
 
     /**
