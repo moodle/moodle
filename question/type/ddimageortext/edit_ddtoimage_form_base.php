@@ -122,8 +122,8 @@ abstract class qtype_ddtoimage_edit_form_base extends question_edit_form {
         $itemrepeatsatstart = $countimages;
 
         $imagerepeats = optional_param('noitems', $itemrepeatsatstart, PARAM_INT);
-        $addfields = optional_param('additems', '', PARAM_TEXT);
-        if (!empty($addfields)) {
+        $addfields = optional_param('additems', false, PARAM_BOOL);
+        if ($addfields) {
             $imagerepeats += self::ADD_NUM_ITEMS;
         }
         return array($itemrepeatsatstart, $imagerepeats);
