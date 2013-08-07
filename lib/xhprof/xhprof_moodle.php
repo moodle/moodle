@@ -300,7 +300,7 @@ function profiling_print_run($run, $prevreferences = null) {
        array(get_string('calls', 'tool_profiling'), $run->totalcalls),
        array(get_string('memory', 'tool_profiling'), format_float($run->totalmemory / 1024, 0) . ' KB'),
        array(get_string('markreferencerun', 'tool_profiling'), $referenceform));
-    $output = $OUTPUT->box(html_writer::table($table), 'generalbox boxwidthwide boxaligncenter profilingrunbox', 'profiling_summary', true);
+    $output = $OUTPUT->box(html_writer::table($table), 'generalbox boxwidthwide boxaligncenter profilingrunbox', 'profiling_summary');
     // Add link to details
     $strviewdetails = get_string('viewdetails', 'tool_profiling');
     $url = profiling_urls('run', $run->runid);
@@ -324,7 +324,7 @@ function profiling_print_run($run, $prevreferences = null) {
             $row = array(userdate($reference->timecreated), '<a href="' . $url . '" title="">'.$reference->runid.'</a>', $reference->runcomment);
             $table->data[] = $row;
         }
-        $output .= $OUTPUT->box(html_writer::table($table), 'profilingrunbox', 'profiling_diffs', true);
+        $output .= $OUTPUT->box(html_writer::table($table), 'profilingrunbox', 'profiling_diffs');
 
     }
     // Add link to export this run.
@@ -375,7 +375,7 @@ function profiling_print_rundiff($run1, $run2) {
            format_float($run1->totalmemory / 1024, 0) . ' KB',
            format_float($run2->totalmemory / 1024, 0) . ' KB ' . $diffmemory),
        array(get_string('referencerun', 'tool_profiling'), $referencetext1, $referencetext2));
-    $output = $OUTPUT->box(html_writer::table($table), 'generalbox boxwidthwide boxaligncenter profilingrunbox', 'profiling_summary', true);
+    $output = $OUTPUT->box(html_writer::table($table), 'generalbox boxwidthwide boxaligncenter profilingrunbox', 'profiling_summary');
     // Add link to details
     $strviewdetails = get_string('viewdiffdetails', 'tool_profiling');
     $url = profiling_urls('diff', $run1->runid, $run2->runid);
