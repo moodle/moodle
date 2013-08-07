@@ -2039,7 +2039,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new moodle_url($baseurl, array('duplicate' => $mod->id)),
             new pix_icon('t/copy', $str->duplicate, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->duplicate,
-            array('class' => 'editing_duplicate', 'data-action' => 'duplicate')
+            array('class' => 'editing_duplicate', 'data-action' => 'duplicate', 'data-sr' => $sr)
         );
     }
 
@@ -3378,6 +3378,111 @@ function update_module($moduleinfo) {
     list($cm, $moduleinfo) = update_moduleinfo($cm, $moduleinfo, $course, null);
 
     return $moduleinfo;
+}
+
+/**
+ * Duplicate a module on the course.
+ *
+ * @param object $course The course
+ * @param object $cm The course module to duplicate
+ * @throws moodle_exception if the plugin doesn't support duplication
+ * @return Object containing:
+ * - fullcontent: The HTML markup for the created CM
+ * - cmid: The CMID of the newly created CM
+ * - redirect: Whether to trigger a redirect following this change
+ */
+function mod_duplicate_activity($course, $cm, $sr = null) {
+    global $CFG, $USER, $PAGE, $DB;
+
+    require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+    require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+    require_once($CFG->libdir . '/filelib.php');
+
+    $a          = new stdClass();
+    $a->modtype = get_string('modulename', $cm->modname);
+    $a->modname = format_string($cm->name);
+
+    if (!plugin_supports('mod', $cm->modname, FEATURE_BACKUP_MOODLE2)) {
+        throw new moodle_exception('duplicatenosupport', 'error');
+    }
+
+    // backup the activity
+
+    $bc = new backup_controller(backup::TYPE_1ACTIVITY, $cm->id, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id);
+
+    $backupid       = $bc->get_backupid();
+    $backupbasepath = $bc->get_plan()->get_basepath();
+
+    $bc->execute_plan();
+
+    $bc->destroy();
+
+    // restore the backup immediately
+
+    $rc = new restore_controller($backupid, $course->id,
+            backup::INTERACTIVE_NO, backup::MODE_IMPORT, $USER->id, backup::TARGET_CURRENT_ADDING);
+
+    $cmcontext = context_module::instance($cm->id);
+    if (!$rc->execute_precheck()) {
+        $precheckresults = $rc->get_precheck_results();
+        if (is_array($precheckresults) && !empty($precheckresults['errors'])) {
+            if (empty($CFG->keeptempdirectoriesonbackup)) {
+                fulldelete($backupbasepath);
+            }
+        }
+    }
+
+    $rc->execute_plan();
+
+    // now a bit hacky part follows - we try to get the cmid of the newly
+    // restored copy of the module
+    $newcmid = null;
+    $tasks = $rc->get_plan()->get_tasks();
+    foreach ($tasks as $task) {
+        error_log("Looking at a task");
+        if (is_subclass_of($task, 'restore_activity_task')) {
+            error_log("Looking at a restore_activity_task task");
+            if ($task->get_old_contextid() == $cmcontext->id) {
+                error_log("Contexts match");
+                $newcmid = $task->get_moduleid();
+                break;
+            }
+        }
+    }
+
+    // if we know the cmid of the new course module, let us move it
+    // right below the original one. otherwise it will stay at the
+    // end of the section
+    if ($newcmid) {
+        $info = get_fast_modinfo($course);
+        $newcm = $info->get_cm($newcmid);
+        $section = $DB->get_record('course_sections', array('id' => $cm->section, 'course' => $cm->course));
+        moveto_module($newcm, $section, $cm);
+        moveto_module($cm, $section, $newcm);
+    }
+    rebuild_course_cache($cm->course);
+
+    $rc->destroy();
+
+    if (empty($CFG->keeptempdirectoriesonbackup)) {
+        fulldelete($backupbasepath);
+    }
+
+    $resp = new stdClass();
+    if ($newcm) {
+        $courserenderer = $PAGE->get_renderer('core', 'course');
+        $completioninfo = new completion_info($course);
+        $modulehtml = $courserenderer->course_section_cm($course, $completioninfo,
+                $newcm, null, array());
+
+        $resp->fullcontent = $courserenderer->course_section_cm_list_item($course, $completioninfo, $newcm, $sr);
+        $resp->cmid = $newcm->id;
+    } else {
+        // Trigger a redirect
+        $resp->redirect = true;
+    }
+    return $resp;
 }
 
 /**

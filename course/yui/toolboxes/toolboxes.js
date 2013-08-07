@@ -265,6 +265,10 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                     // The user is deleting the activity.
                     this.delete_with_confirmation(ev, node, activity, action);
                     break;
+                case 'duplicate' :
+                    // The user is duplicating the activity.
+                    this.duplicate(ev, node, activity, action);
+                    break;
                 case 'hide' :
                 case 'show' :
                     // The user is changing the visibility of the activity.
@@ -414,6 +418,48 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             if (M.core.actionmenu && M.core.actionmenu.instance) {
                 M.core.actionmenu.instance.hideMenu();
             }
+        },
+
+        /**
+         * Duplicates the activity
+         *
+         * @protected
+         * @method duplicate
+         * @param {EventFacade} ev The event that was fired.
+         * @param {Node} button The button that triggered this action.
+         * @param {Node} activity The activity node that this action will be performed on.
+         * @return Boolean
+         */
+        duplicate : function(ev, button, activity) {
+            // Prevent the default button action
+            ev.preventDefault();
+
+            // Get the element we're working on
+            var element = activity;
+
+            // Add the lightbox.
+            var section = activity.ancestor(M.course.format.get_section_selector(Y)),
+                lightbox = M.util.add_lightbox(Y, section).show();
+
+            // Build and send the request.
+            var data = {
+                'class' : 'resource',
+                'field' : 'duplicate',
+                'id'    : Y.Moodle.core_course.util.cm.getId(element),
+                'sr'    : button.getData('sr')
+            };
+            this.send_request(data, lightbox, function(response) {
+                var newcm = Y.Node.create(response.fullcontent);
+
+                // Append to the section?
+                activity.insert(newcm, 'after');
+                Y.use('moodle-course-coursebase', function() {
+                    M.course.coursebase.invoke_function('setup_for_resource', newcm);
+                });
+                if (M.core.actionmenu && M.core.actionmenu.newDOMNode) {
+                    M.core.actionmenu.newDOMNode(newcm);
+                }
+            });
         },
 
         /**
