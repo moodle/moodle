@@ -301,6 +301,26 @@ class qformat_default {
         $this->importcontext = $context;
     }
 
+    /**
+     * Handle parsing error
+     *
+     * @param string $message information about error
+     * @param string $text imported text that triggered the error
+     * @param string $questionname imported question name
+     */
+    protected function error($message, $text='', $questionname='') {
+        $importerrorquestion = get_string('importerrorquestion', 'question');
+
+        echo "<div class=\"importerror\">\n";
+        echo "<strong>$importerrorquestion $questionname</strong>";
+        if (!empty($text)) {
+            $text = s($text);
+            echo "<blockquote>$text</blockquote>\n";
+        }
+        echo "<strong>$message</strong>\n";
+        echo "</div>";
+    }
+
     function importpreprocess() {
         // Does any pre-processing that may be desired
         return true;
