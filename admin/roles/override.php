@@ -125,7 +125,25 @@ $overridestable->read_submitted_permissions();
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $overridestable->save_changes();
     $rolename = $overridableroles[$roleid];
-    add_to_log($course->id, 'role', 'override', 'admin/roles/override.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
+    // Trigger event.
+    $event = \core\event\role_capabilities_updated::create(
+        array(
+            'context' => $context,
+            'objectid' => $roleid,
+            'courseid' => $courseid,
+            'other' => array('name' => $rolename)
+        )
+    );
+
+    $event->set_legacy_logdata(
+        array(
+            $course->id, 'role', 'override', 'admin/roles/override.php?contextid=' . $context->id . '&roleid=' . $roleid,
+            $rolename, '', $USER->id
+        )
+    );
+    $event->add_record_snapshot('role', $role);
+    $event->trigger();
+
     redirect($returnurl);
 }
 

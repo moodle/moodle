@@ -398,6 +398,27 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertTrue($result);
         $permission = $DB->get_record('role_capabilities', array('contextid'=>$frontcontext->id, 'roleid'=>$student->id, 'capability'=>'moodle/backup:backupcourse'));
         $this->assertEmpty($permission);
+
+        // Test event trigger.
+        $rolecapabilityevent = \core\event\role_capabilities_updated::create(array('context' => $syscontext,
+                                                                                  'objectid' => $student->id,
+                                                                                  'other' => array('name' => $student->shortname)
+                                                                                 ));
+        $expectedlegacylog = array(SITEID, 'role', 'view', 'admin/roles/define.php?action=view&roleid=' . $student->id,
+                            $student->shortname, '', $user->id);
+        $rolecapabilityevent->set_legacy_logdata($expectedlegacylog);
+        $rolecapabilityevent->add_record_snapshot('role', $student);
+
+        $sink = $this->redirectEvents();
+        $rolecapabilityevent->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertInstanceOf('\core\event\role_capabilities_updated', $event);
+        $expectedurl = new moodle_url('admin/roles/define.php', array('action' => 'view', 'roleid' => $student->id));
+        $this->assertEquals($expectedurl, $event->get_url());
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**

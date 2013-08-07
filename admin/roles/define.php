@@ -196,8 +196,22 @@ if (optional_param('cancel', false, PARAM_BOOL)) {
 // Process submission in necessary.
 if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey() && $definitiontable->is_submission_valid()) {
     $definitiontable->save_changes();
-    add_to_log(SITEID, 'role', $action, 'admin/roles/define.php?action=view&roleid=' .
-            $definitiontable->get_role_id(), $definitiontable->get_role_name(), '', $USER->id);
+    $tableroleid = $definitiontable->get_role_id();
+    // Trigger event.
+    $event = \core\event\role_capabilities_updated::create(
+        array(
+            'context' => $systemcontext,
+            'objectid' => $roleid,
+            'other' => array('name' => $definitiontable->get_role_name())
+        )
+    );
+    $event->set_legacy_logdata(array(SITEID, 'role', $action, 'admin/roles/define.php?action=view&roleid=' . $tableroleid,
+        $definitiontable->get_role_name(), '', $USER->id));
+    if (!empty($role)) {
+        $event->add_record_snapshot('role', $role);
+    }
+    $event->trigger();
+
     if ($action === 'add') {
         redirect(new moodle_url('/admin/roles/define.php', array('action'=>'view', 'roleid'=>$definitiontable->get_role_id())));
     } else {

@@ -182,6 +182,7 @@ $string['errorbadroleshortname'] = 'Incorrect role short name';
 $string['errorexistsrolename'] = 'Role name already exists';
 $string['errorexistsroleshortname'] = 'Role name already exists';
 $string['eventroleassigned'] = 'Role assigned';
+$string['eventrolecapabilitiesupdated'] = 'Role capabilities updated';
 $string['eventroledeleted'] = 'Role deleted';
 $string['eventroleunassigned'] = 'Role unassigned';
 $string['existingadmins'] = 'Current site administrators';
