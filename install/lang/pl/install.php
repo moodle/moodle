@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Katalog admin';
 $string['availablelangs'] = 'Dostępne paczki językowe';
 $string['chooselanguagehead'] = 'Wybierz język';
-$string['chooselanguagesub'] = 'Proszę wybrać język do instalacji. Ten język będą również użyty jako domyślny język witryny, przy czym może być później zmieniony.';
+$string['chooselanguagesub'] = 'Proszę wybrać język do instalacji. Ten język będzie również użyty jako domyślny język witryny, przy czym może być później zmieniony.';
 $string['clialreadyconfigured'] = 'Plik config.php już istnieje, użyj admin/cli/install_database.php jeśli chcesz zainstalować tę witrynę.';
 $string['clialreadyinstalled'] = 'Plik config.php już istnieje, użyj admin/cli/upgrade.php, jeśli chcesz uaktualnić witrynę.';
 $string['cliinstallheader'] = 'Program instalacyjny Moodle {$a} z linii poleceń';
