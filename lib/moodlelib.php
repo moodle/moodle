@@ -4893,6 +4893,7 @@ function delete_course($courseorid, $showfeedback = true) {
  */
 function remove_course_contents($courseid, $showfeedback = true, array $options = null) {
     global $CFG, $DB, $OUTPUT;
+
     require_once($CFG->libdir.'/badgeslib.php');
     require_once($CFG->libdir.'/completionlib.php');
     require_once($CFG->libdir.'/questionlib.php');
@@ -5132,10 +5133,16 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     // also some non-standard unsupported plugins may try to store something there.
     fulldelete($CFG->dataroot.'/'.$course->id);
 
-    // Finally trigger the event.
-    $course->context = $coursecontext; // You can not access context in cron event later after course is deleted.
-    $course->options = $options;       // Not empty if we used any crazy hack.
-    events_trigger('course_content_removed', $course);
+    // Trigger a course content deleted event.
+    $event = \core\event\course_content_deleted::create(array(
+        'objectid' => $course->id,
+        'context' => $coursecontext,
+        'other' => array('shortname' => $course->shortname,
+                         'fullname' => $course->fullname,
+                         'options' => $options) // Passing this for legacy reasons.
+    ));
+    $event->add_record_snapshot('course', $course);
+    $event->trigger();
 
     return true;
 }
