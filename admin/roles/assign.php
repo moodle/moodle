@@ -110,8 +110,6 @@ if ($roleid) {
             $potentialuserselector->invalidate_selected_users();
             $currentuserselector->invalidate_selected_users();
 
-            $rolename = $assignableroles[$roleid];
-            add_to_log($course->id, 'role', 'assign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
             // Counts have changed, so reload.
             list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
         }
@@ -130,8 +128,6 @@ if ($roleid) {
             $potentialuserselector->invalidate_selected_users();
             $currentuserselector->invalidate_selected_users();
 
-            $rolename = $assignableroles[$roleid];
-            add_to_log($course->id, 'role', 'unassign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
             // Counts have changed, so reload.
             list($assignableroles, $assigncounts, $nameswithcounts) = get_assignable_roles($context, ROLENAME_BOTH, true);
         }

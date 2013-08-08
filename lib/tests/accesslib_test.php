@@ -508,13 +508,18 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
         $this->assertSame('role_assigned', $event::get_legacy_eventname());
+        $roles = get_all_roles();
+        $rolenames = role_fix_names($roles, $context, ROLENAME_ORIGINAL, true);
+        $expectedlegacylog = array($course->id, 'role', 'assign',
+            'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$role->id, $rolenames[$role->id], '', $USER->id);
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
      * Test role unassigning.
      */
     public function test_role_unassign() {
-        global $DB;
+        global $DB, $USER;
 
         $this->resetAfterTest();
 
@@ -551,6 +556,11 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertCount(3, $event->other);
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
+        $roles = get_all_roles();
+        $rolenames = role_fix_names($roles, $context, ROLENAME_ORIGINAL, true);
+        $expectedlegacylog = array($course->id, 'role', 'unassign',
+            'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$role->id, $rolenames[$role->id], '', $USER->id);
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
