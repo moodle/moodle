@@ -72,7 +72,7 @@ class phpunit_util extends testing_util {
             initialise_cfg();
             return;
         }
-        if ($dbhash !== self::get_version_hash()) {
+        if ($dbhash !== core_component::get_all_versions_hash()) {
             // do not set CFG - the only way forward is to drop and reinstall
             return;
         }
