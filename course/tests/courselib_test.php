@@ -1556,4 +1556,76 @@ class core_course_courselib_testcase extends advanced_testcase {
         $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category2->name . '(ID ' . $category2->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
     }
+
+    /**
+     * Test that triggering a course_restored event works as expected.
+     */
+    public function test_course_restored_event() {
+        global $CFG;
+
+        // Get the necessary files to perform backup and restore.
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
+        $this->resetAfterTest();
+
+        // Set to admin user.
+        $this->setAdminUser();
+
+        // The user id is going to be 2 since we are the admin user.
+        $userid = 2;
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create backup file and save it to the backup location.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $userid);
+        $bc->execute_plan();
+        $results = $bc->get_results();
+        $file = $results['backup_destination'];
+        $fp = get_file_packer();
+        $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
+        $file->extract_to_pathname($fp, $filepath);
+        $bc->destroy();
+        unset($bc);
+
+        // Now we want to catch the restore course event.
+        $sink = $this->redirectEvents();
+
+        // Now restore the course to trigger the event.
+        $rc = new restore_controller('test-restore-course-event', $course->id, backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL, $userid, backup::TARGET_NEW_COURSE);
+        $rc->execute_precheck();
+        $rc->execute_plan();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_restored', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($rc->get_courseid(), $event->objectid);
+        $this->assertEquals(context_course::instance($rc->get_courseid())->id, $event->contextid);
+        $this->assertEquals('course_restored', $event->get_legacy_eventname());
+        $legacydata = (object) array(
+            'courseid' => $rc->get_courseid(),
+            'userid' => $rc->get_userid(),
+            'type' => $rc->get_type(),
+            'target' => $rc->get_target(),
+            'mode' => $rc->get_mode(),
+            'operation' => $rc->get_operation(),
+            'samesite' => $rc->is_samesite()
+        );
+        $this->assertEventLegacyData($legacydata, $event);
+
+        // Destroy the resource controller since we are done using it.
+        $rc->destroy();
+        unset($rc);
+
+        // Clear the time limit, otherwise PHPUnit complains.
+        set_time_limit(0);
+    }
 }
