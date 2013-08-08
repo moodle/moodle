@@ -33,8 +33,6 @@ class core_environment_testcase extends advanced_testcase {
 
     /**
      * Test the environment.
-     *
-     * @todo MDL-40952 will introduce a way to output something to the user to inform them this has failed.
      */
     public function test_environment() {
         global $CFG;
@@ -44,11 +42,12 @@ class core_environment_testcase extends advanced_testcase {
 
         $this->assertNotEmpty($envstatus);
         foreach ($environment_results as $environment_result) {
-            if ($environment_result->getLevel() === 'optional' && $environment_result->getStatus() === false) {
-                // An optional environment test has failed, we don't want to fail unit tests because of this.
-                // This was first detected with the opcache notice, see the to do in the phpdoc.
-                // We are going to fake the assertion count here so that people get consistent numbers.
-                $this->addToAssertionCount(1);
+            if ($environment_result->part === 'php_setting'
+                and $environment_result->info === 'opcache.enable'
+                and $environment_result->getLevel() === 'optional'
+                and $environment_result->getStatus() === false
+            ) {
+                $this->markTestSkipped('OPCache extension is not necessary for unit testing.');
                 continue;
             }
             $this->assertTrue($environment_result->getStatus(), "Problem detected in environment ($environment_result->part:$environment_result->info), fix all warnings and errors!");
