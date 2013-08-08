@@ -926,7 +926,7 @@ class core_accesslib_testcase extends advanced_testcase {
      * Test allowing of role assignments.
      */
     public function test_allow_assign() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest();
 
@@ -936,13 +936,26 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('role_allow_assign', array('roleid'=>$otherid, 'allowassign'=>$student->id)));
         allow_assign($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_assign', array('roleid'=>$otherid, 'allowassign'=>$student->id)));
+
+        // Test event trigger.
+        $allowroleassignevent = \core\event\role_allow_assign_updated::create(array('context' => context_system::instance()));
+        $sink = $this->redirectEvents();
+        $allowroleassignevent->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\role_allow_assign_updated', $event);
+        $mode = 'assign';
+        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
+        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
      * Test allowing of role overrides.
      */
     public function test_allow_override() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest();
 
@@ -952,13 +965,26 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('role_allow_override', array('roleid'=>$otherid, 'allowoverride'=>$student->id)));
         allow_override($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_override', array('roleid'=>$otherid, 'allowoverride'=>$student->id)));
+
+        // Test event trigger.
+        $allowroleassignevent = \core\event\role_allow_override_updated::create(array('context' => context_system::instance()));
+        $sink = $this->redirectEvents();
+        $allowroleassignevent->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\role_allow_override_updated', $event);
+        $mode = 'override';
+        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
+        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
      * Test allowing of role switching.
      */
     public function test_allow_switch() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest();
 
@@ -968,6 +994,19 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('role_allow_switch', array('roleid'=>$otherid, 'allowswitch'=>$student->id)));
         allow_switch($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_switch', array('roleid'=>$otherid, 'allowswitch'=>$student->id)));
+
+        // Test event trigger.
+        $allowroleassignevent = \core\event\role_allow_switch_updated::create(array('context' => context_system::instance()));
+        $sink = $this->redirectEvents();
+        $allowroleassignevent->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\role_allow_switch_updated', $event);
+        $mode = 'switch';
+        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
+        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**

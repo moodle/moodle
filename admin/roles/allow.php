@@ -46,7 +46,22 @@ $controller = new $classformode[$mode]();
 if (optional_param('submit', false, PARAM_BOOL) && data_submitted() && confirm_sesskey()) {
     $controller->process_submission();
     $syscontext->mark_dirty();
-    add_to_log(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl), '', '', $USER->id);
+    $event = null;
+    // Create event depending on mode.
+    switch ($mode) {
+        case 'assign':
+            $event = \core\event\role_allow_assign_updated::create(array('context' => $syscontext));
+            break;
+        case 'override':
+            $event = \core\event\role_allow_override_updated::create(array('context' => $syscontext));
+            break;
+        case 'switch':
+            $event = \core\event\role_allow_switch_updated::create(array('context' => $syscontext));
+            break;
+    }
+    if ($event) {
+        $event->trigger();
+    }
     redirect($baseurl);
 }
 
