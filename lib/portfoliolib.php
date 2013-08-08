@@ -534,6 +534,16 @@ function portfolio_instances($visibleonly=true, $useronly=true) {
 }
 
 /**
+ * Return whether there are visible instances in portfolio.
+ *
+ * @return bool true when there are some visible instances.
+ */
+function portfolio_has_visible_instances() {
+    global $DB;
+    return $DB->record_exists('portfolio_instance', array('visible' => 1));
+}
+
+/**
  * Supported formats currently in use.
  * Canonical place for a list of all formats
  * that portfolio plugins and callers
