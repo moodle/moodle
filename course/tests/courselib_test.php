@@ -1334,4 +1334,33 @@ class core_course_courselib_testcase extends advanced_testcase {
         $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
         $this->assertEmpty($eventcount);
     }
+
+    /**
+     * Test that triggering a course_created event works as expected.
+     */
+    public function test_course_created_event() {
+        $this->resetAfterTest();
+
+        // Catch the events.
+        $sink = $this->redirectEvents();
+
+        // Create the course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_created', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($course->id, $event->objectid);
+        $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
+        $this->assertEquals($course, $event->get_record_snapshot('course', $course->id));
+        $this->assertEquals('course_created', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($course, $event);
+        $expectedlog = array(SITEID, 'course', 'new', 'view.php?id=' . $course->id, $course->fullname . ' (ID ' . $course->id . ')');
+        $this->assertEventLegacyLogData($expectedlog, $event);
+    }
 }
