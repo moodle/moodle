@@ -2944,6 +2944,8 @@ class navbar extends navigation_node {
     public $children = array();
     /** @var bool A switch for whether we want to include the root node in the navbar */
     public $includesettingsbase = false;
+    /** @var navigation_node[] $prependchildren */
+    protected $prependchildren = array();
     /**
      * The almighty constructor
      *
@@ -2979,7 +2981,7 @@ class navbar extends navigation_node {
         $activenodefound = ($this->page->navigation->contains_active_node() ||
                             $this->page->settingsnav->contains_active_node());
 
-        $outcome = (count($this->children)>0 || (!$this->ignoreactive && $activenodefound));
+        $outcome = (count($this->children) > 0 || count($this->prependchildren) || (!$this->ignoreactive && $activenodefound));
         $this->hasitems = $outcome;
         return $outcome;
     }
@@ -3002,6 +3004,11 @@ class navbar extends navigation_node {
      */
     public function get($key, $type = null) {
         foreach ($this->children as &$child) {
+            if ($child->key === $key && ($type == null || $type == $child->type)) {
+                return $child;
+            }
+        }
+        foreach ($this->prependchildren as &$child) {
             if ($child->key === $key && ($type == null || $type == $child->type)) {
                 return $child;
             }
@@ -3089,6 +3096,11 @@ class navbar extends navigation_node {
             'action'=>$this->page->navigation->action
         ));
 
+        if (count($this->prependchildren) > 0) {
+            // Add the custom children
+            $items = array_merge($items, array_reverse($this->prependchildren));
+        }
+
         $this->items = array_reverse($items);
         return $this->items;
     }
@@ -3174,6 +3186,51 @@ class navbar extends navigation_node {
         $itemarray['parent'] = $this;
         // Add the child using the navigation_node_collections add method
         $this->children[] = new navigation_node($itemarray);
+        return $this;
+    }
+
+    /**
+     * Prepends a new navigation_node to the start of the navbar
+     *
+     * @param string $text
+     * @param string|moodle_url|action_link $action An action to associate with this node.
+     * @param int $type One of navigation_node::TYPE_*
+     * @param string $shorttext
+     * @param string|int $key A key to identify this node with. Key + type is unique to a parent.
+     * @param pix_icon $icon An optional icon to use for this node.
+     * @return navigation_node
+     */
+    public function prepend($text, $action=null, $type=self::TYPE_CUSTOM, $shorttext=null, $key=null, pix_icon $icon=null) {
+        if ($this->content !== null) {
+            debugging('Nav bar items must be printed before $OUTPUT->header() has been called', DEBUG_DEVELOPER);
+        }
+        // Properties array used when creating the new navigation node
+        $itemarray = array(
+            'text' => $text,
+            'type' => $type
+        );
+        // Set the action if one was provided
+        if ($action!==null) {
+            $itemarray['action'] = $action;
+        }
+        // Set the shorttext if one was provided
+        if ($shorttext!==null) {
+            $itemarray['shorttext'] = $shorttext;
+        }
+        // Set the icon if one was provided
+        if ($icon!==null) {
+            $itemarray['icon'] = $icon;
+        }
+        // Default the key to the number of children if not provided
+        if ($key === null) {
+            $key = count($this->children);
+        }
+        // Set the key
+        $itemarray['key'] = $key;
+        // Set the parent to this node
+        $itemarray['parent'] = $this;
+        // Add the child node to the prepend list.
+        $this->prependchildren[] = new navigation_node($itemarray);
         return $this;
     }
 }
