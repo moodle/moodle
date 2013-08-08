@@ -1495,4 +1495,65 @@ class core_course_courselib_testcase extends advanced_testcase {
         $course->options = array();
         $this->assertEventLegacyData($course, $event);
     }
+
+    /**
+     * Test that triggering a course_category_deleted event works as expected.
+     */
+    public function test_course_category_deleted_event() {
+        $this->resetAfterTest();
+
+        // Create a category.
+        $category = $this->getDataGenerator()->create_category();
+
+        // Save the context before it is deleted.
+        $categorycontext = context_coursecat::instance($category->id);
+
+        // Catch the update event.
+        $sink = $this->redirectEvents();
+
+        // Delete the category.
+        $category->delete_full();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_category_deleted', $event);
+        $this->assertEquals('course_categories', $event->objecttable);
+        $this->assertEquals($category->id, $event->objectid);
+        $this->assertEquals($categorycontext->id, $event->contextid);
+        $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($category, $event);
+        $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category->name . '(ID ' . $category->id . ')');
+        $this->assertEventLegacyLogData($expectedlog, $event);
+
+        // Create two categories.
+        $category = $this->getDataGenerator()->create_category();
+        $category2 = $this->getDataGenerator()->create_category();
+
+        // Save the context before it is moved and then deleted.
+        $category2context = context_coursecat::instance($category2->id);
+
+        // Catch the update event.
+        $sink = $this->redirectEvents();
+
+        // Move the category.
+        $category2->delete_move($category->id);
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_category_deleted', $event);
+        $this->assertEquals('course_categories', $event->objecttable);
+        $this->assertEquals($category2->id, $event->objectid);
+        $this->assertEquals($category2context->id, $event->contextid);
+        $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
+        $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category2->name . '(ID ' . $category2->id . ')');
+        $this->assertEventLegacyLogData($expectedlog, $event);
+    }
 }
