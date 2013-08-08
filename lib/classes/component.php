@@ -41,6 +41,10 @@ class core_component {
     protected static $subsystems = null;
     /** @var null list of all known classes that can be autoloaded */
     protected static $classmap = null;
+    /** @var null list of some known files that can be included. */
+    protected static $filemap = null;
+    /** @var array list of the files to map. */
+    protected static $filestomap = array('lib.php', 'settings.php');
 
     /**
      * Class loader for Frankenstyle named classes in standard locations.
@@ -105,6 +109,7 @@ class core_component {
                 self::$plugins     = $cache['plugins'];
                 self::$subsystems  = $cache['subsystems'];
                 self::$classmap    = $cache['classmap'];
+                self::$filemap     = $cache['filemap'];
                 return;
             }
 
@@ -138,6 +143,7 @@ class core_component {
                     self::$plugins     = $cache['plugins'];
                     self::$subsystems  = $cache['subsystems'];
                     self::$classmap    = $cache['classmap'];
+                    self::$filemap     = $cache['filemap'];
                     return;
                 }
                 // Note: we do not verify $CFG->admin here intentionally,
@@ -223,6 +229,7 @@ class core_component {
             'plugintypes' => self::$plugintypes,
             'plugins'     => self::$plugins,
             'classmap'    => self::$classmap,
+            'filemap'     => self::$filemap,
         );
 
         return '<?php
@@ -244,6 +251,7 @@ $cache = '.var_export($cache, true).';
         }
 
         self::fill_classmap_cache();
+        self::fill_filemap_cache();
     }
 
     /**
@@ -508,6 +516,35 @@ $cache = '.var_export($cache, true).';
         self::$classmap['collatorlib'] = "$CFG->dirroot/lib/classes/collator.php";
     }
 
+
+    /**
+     * Fills up the cache defining what plugins have certain files.
+     *
+     * @see self::get_plugin_list_with_file
+     * @return void
+     */
+    protected static function fill_filemap_cache() {
+        global $CFG;
+
+        self::$filemap = array();
+
+        foreach (self::$filestomap as $file) {
+            if (!isset(self::$filemap[$file])) {
+                self::$filemap[$file] = array();
+            }
+            foreach (self::$plugins as $plugintype => $plugins) {
+                if (!isset(self::$filemap[$file][$plugintype])) {
+                    self::$filemap[$file][$plugintype] = array();
+                }
+                foreach ($plugins as $pluginname => $fulldir) {
+                    if (file_exists("$fulldir/$file")) {
+                        self::$filemap[$file][$plugintype][$pluginname] = "$fulldir/$file";
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Find classes in directory and recurse to subdirs.
      * @param string $component
@@ -645,6 +682,45 @@ $cache = '.var_export($cache, true).';
         }
 
         return $pluginclasses;
+    }
+
+    /**
+     * Get a list of all the plugins of a given type that contain a particular file.
+     *
+     * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
+     * @param string $file the name of file that must be present in the plugin.
+     *                     (e.g. 'view.php', 'db/install.xml').
+     * @param bool $include if true (default false), the file will be include_once-ed if found.
+     * @return array with plugin name as keys (e.g. 'forum', 'courselist') and the path
+     *               to the file relative to dirroot as value (e.g. "$CFG->dirroot/mod/forum/view.php").
+     */
+    public static function get_plugin_list_with_file($plugintype, $file, $include = false) {
+        global $CFG; // Necessary in case it is referenced by included PHP scripts.
+        $pluginfiles = array();
+
+        if (isset(self::$filemap[$file])) {
+            // If the file was supposed to be mapped, then it should have been set in the array.
+            if (isset(self::$filemap[$file][$plugintype])) {
+                $pluginfiles = self::$filemap[$file][$plugintype];
+            }
+        } else {
+            // Old-style search for non-cached files.
+            $plugins = self::get_plugin_list($plugintype);
+            foreach ($plugins as $plugin => $fulldir) {
+                $path = $fulldir . '/' . $file;
+                if (file_exists($path)) {
+                    $pluginfiles[$plugin] = $path;
+                }
+            }
+        }
+
+        if ($include) {
+            foreach ($pluginfiles as $path) {
+                include_once($path);
+            }
+        }
+
+        return $pluginfiles;
     }
 
     /**

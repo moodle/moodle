@@ -8165,21 +8165,7 @@ function is_valid_plugin_name($name) {
  *      to the file relative to dirroot as value (e.g. "$CFG->dirroot/mod/forum/view.php").
  */
 function get_plugin_list_with_file($plugintype, $file, $include = false) {
-    global $CFG; // Necessary in case it is referenced by include()d PHP scripts.
-
-    $plugins = array();
-
-    foreach (core_component::get_plugin_list($plugintype) as $plugin => $dir) {
-        $path = $dir . '/' . $file;
-        if (file_exists($path)) {
-            if ($include) {
-                include_once($path);
-            }
-            $plugins[$plugin] = $path;
-        }
-    }
-
-    return $plugins;
+    return core_component::get_plugin_list_with_file($plugintype, $file, $include);
 }
 
 /**
