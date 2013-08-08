@@ -95,6 +95,7 @@ class restore_glossary_activity_task extends restore_activity_task {
         $rules[] = new restore_log_rule('glossary', 'update entry', 'view.php?id={course_module}&mode=entry&hook={glossary_entry}', '{glossary_entry}');
         $rules[] = new restore_log_rule('glossary', 'delete entry', 'view.php?id={course_module}&mode=entry&hook={glossary_entry}', '{glossary_entry}');
         $rules[] = new restore_log_rule('glossary', 'approve entry', 'showentry.php?id={course_module}&eid={glossary_entry}', '{glossary_entry}');
+        $rules[] = new restore_log_rule('glossary', 'disapprove entry', 'showentry.php?id={course_module}&eid={glossary_entry}', '{glossary_entry}');
         $rules[] = new restore_log_rule('glossary', 'view entry', 'showentry.php?eid={glossary_entry}', '{glossary_entry}');
 
         return $rules;

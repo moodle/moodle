@@ -246,6 +246,7 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
         echo '<option value="##edit##">' .get_string('edit', 'data'). ' - ##edit##</option>';
         echo '<option value="##delete##">' .get_string('delete', 'data'). ' - ##delete##</option>';
         echo '<option value="##approve##">' .get_string('approve', 'data'). ' - ##approve##</option>';
+        echo '<option value="##disapprove##">' .get_string('disapprove', 'data'). ' - ##disapprove##</option>';
         if ($mode != 'rsstemplate') {
             echo '<option value="##export##">' .get_string('export', 'data'). ' - ##export##</option>';
         }
