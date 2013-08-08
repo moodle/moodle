@@ -758,8 +758,11 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
         $output->html  = '<table class="chat-event"><tr'.$rowclass.'><td class="picture">'.$message->picture.'</td><td class="text">';
         $output->html .= '<span class="event">'.$output->text.'</span></td></tr></table>';
-        $output->basic = '<dl><dt class="event">'.$message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender)).'</dt></dl>';
-
+        $output->basic = '<tr class="r1">
+                            <th scope="row" class="cell c1 title"></th>
+                            <td class="cell c2 text">' . get_string('message'.$message->message, 'chat', fullname($sender)) . '</td>
+                            <td class="cell c3">' . $message->strtime . '</td>
+                          </tr>';
         if($message->message == 'exit' or $message->message == 'enter') {
             $output->refreshusers = true; //force user panel refresh ASAP
         }
@@ -784,13 +787,16 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $beepwho = trim(substr($text, 5));
 
         if ($beepwho == 'all') {   // everyone
-            $outinfo = $message->strtime.': '.get_string('messagebeepseveryone', 'chat', fullname($sender));
+            $outinfobasic = get_string('messagebeepseveryone', 'chat', fullname($sender));
+            $outinfo = $message->strtime . ': ' . $outinfobasic;
             $outmain = '';
+
             $output->beep = true;  // (eventually this should be set to
                                    //  to a filename uploaded by the user)
 
         } else if ($beepwho == $currentuser->id) {  // current user
-            $outinfo = $message->strtime.': '.get_string('messagebeepsyou', 'chat', fullname($sender));
+            $outinfobasic = get_string('messagebeepsyou', 'chat', fullname($sender));
+            $outinfo = $message->strtime . ': ' . $outinfobasic;
             $outmain = '';
             $output->beep = true;
 
@@ -839,9 +845,17 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
     $output->html .= "<span class=\"title\">$outinfo</span>";
     if ($outmain) {
         $output->html .= ": $outmain";
-        $output->basic = '<dl><dt class="title">'.$outinfo.':</dt><dd class="text">'.$outmain.'</dd></dl>';
+        $output->basic = '<tr class="r0">
+                            <th scope="row" class="cell c1 title">' . $sender->firstname . '</th>
+                            <td class="cell c2 text">' . $outmain . '</td>
+                            <td class="cell c3">' . $message->strtime . '</td>
+                          </tr>';
     } else {
-        $output->basic = '<dl><dt class="title">'.$outinfo.'</dt></dl>';
+        $output->basic = '<tr class="r1">
+                            <th scope="row" class="cell c1 title"></th>
+                            <td class="cell c2 text">' . $outinfobasic . '</td>
+                            <td class="cell c3">' . $message->strtime . '</td>
+                          </tr>';
     }
     $output->html .= "</td></tr></table>";
     return $output;
