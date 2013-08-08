@@ -4859,10 +4859,15 @@ function delete_course($courseorid, $showfeedback = true) {
     $DB->delete_records("course", array("id" => $courseid));
     $DB->delete_records("course_format_options", array("courseid" => $courseid));
 
-    // Trigger events.
-    $course->context = $context;
-    // You can not fetch context in the event because it was already deleted.
-    events_trigger('course_deleted', $course);
+    // Trigger a course deleted event.
+    $event = \core\event\course_deleted::create(array(
+        'objectid' => $course->id,
+        'context' => $context,
+        'other' => array('shortname' => $course->shortname,
+                         'fullname' => $course->fullname)
+    ));
+    $event->add_record_snapshot('course', $course);
+    $event->trigger();
 
     return true;
 }
