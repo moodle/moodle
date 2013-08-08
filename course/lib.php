@@ -2328,7 +2328,7 @@ function create_course($data, $editoroptions = NULL) {
  * @return void
  */
 function update_course($data, $editoroptions = NULL) {
-    global $CFG, $DB;
+    global $DB;
 
     $data->timemodified = time();
 
@@ -2398,10 +2398,15 @@ function update_course($data, $editoroptions = NULL) {
     // update enrol settings
     enrol_course_updated(false, $course, $data);
 
-    add_to_log($course->id, "course", "update", "edit.php?id=$course->id", $course->id);
-
-    // Trigger events
-    events_trigger('course_updated', $course);
+    // Trigger a course updated event.
+    $event = \core\event\course_updated::create(array(
+        'objectid' => $course->id,
+        'context' => $context,
+        'other' => array('shortname' => $course->shortname,
+                         'fullname' => $course->fullname)
+    ));
+    $event->add_record_snapshot('course', $course);
+    $event->trigger();
 
     if ($oldcourse->format !== $course->format) {
         // Remove all options stored for the previous format
