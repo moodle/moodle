@@ -134,8 +134,14 @@ if ($form->is_cancelled()){
     $aggregation->setMethod($data->role_aggregation);
     $aggregation->save();
 
-    // Log changes.
-    add_to_log($course->id, 'course', 'completion updated', 'completion.php?id='.$course->id);
+    // Trigger an event for course module completion changed.
+    $event = \core\event\course_completion_updated::create(
+            array(
+                'courseid' => $course->id,
+                'context' => context_course::instance($course->id)
+                )
+            );
+    $event->trigger();
 
     // Redirect to the course main page.
     $url = new moodle_url('/course/view.php', array('id' => $course->id));
