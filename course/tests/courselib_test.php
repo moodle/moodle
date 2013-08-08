@@ -1436,7 +1436,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sink->close();
 
         // Validate the event.
-        $event = $events[0];
+        $event = $events[1];
         $this->assertInstanceOf('\core\event\course_deleted', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($course->id, $event->objectid);
@@ -1448,5 +1448,51 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($course, $event);
         $expectedlog = array(SITEID, 'course', 'delete', 'view.php?id=' . $course->id, $course->fullname . '(ID ' . $course->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
+    }
+
+    /**
+     * Test that triggering a course_content_deleted event works as expected.
+     */
+    public function test_course_content_deleted_event() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Get the course from the DB. The data generator adds some extra properties, such as
+        // numsections, to the course object which will fail the assertions later on.
+        $course = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+
+        // Save the course context before we delete the course.
+        $coursecontext = context_course::instance($course->id);
+
+        // Catch the update event.
+        $sink = $this->redirectEvents();
+
+        // Call remove_course_contents() which will trigger the course_content_deleted event.
+        // This function prints out data to the screen, which we do not want during a PHPUnit
+        // test, so use ob_start and ob_end_clean to prevent this.
+        ob_start();
+        remove_course_contents($course->id);
+        ob_end_clean();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_content_deleted', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($course->id, $event->objectid);
+        $this->assertEquals($coursecontext->id, $event->contextid);
+        $this->assertEquals($course, $event->get_record_snapshot('course', $course->id));
+        $this->assertEquals('course_content_removed', $event->get_legacy_eventname());
+        // The legacy data also passed the context and options in the course object.
+        $course->context = $coursecontext;
+        $course->options = array();
+        $this->assertEventLegacyData($course, $event);
     }
 }
