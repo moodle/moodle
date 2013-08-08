@@ -1363,4 +1363,49 @@ class core_course_courselib_testcase extends advanced_testcase {
         $expectedlog = array(SITEID, 'course', 'new', 'view.php?id=' . $course->id, $course->fullname . ' (ID ' . $course->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
     }
+
+    /**
+     * Test that triggering a course_updated event works as expected.
+     */
+    public function test_course_updated_event() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Catch the update event.
+        $sink = $this->redirectEvents();
+
+        // Keep track of the old sortorder.
+        $sortorder = $course->sortorder;
+
+        // Call update_course which will trigger the course_updated event.
+        update_course($course);
+
+        // Return the updated course information from the DB.
+        $course = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+
+        // Now we want to set the sortorder back to what it was. The reason for this is because update_course()
+        // calls fix_course_sortorder() which alters the sort order in the DB, but it does not then set the
+        // value of sortorder for the course object which was passed to the legacy event.
+        $course->sortorder = $sortorder;
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_updated', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($course->id, $event->objectid);
+        $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
+        $this->assertEquals($course, $event->get_record_snapshot('course', $course->id));
+        $this->assertEquals('course_updated', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($course, $event);
+        $expectedlog = array($course->id, 'course', 'update', 'edit.php?id=' . $course->id, $course->id);
+        $this->assertEventLegacyLogData($expectedlog, $event);
+    }
 }
