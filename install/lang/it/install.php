@@ -37,14 +37,14 @@ $string['chooselanguagesub'] = 'Scegli la lingua da usare durante l\'installazio
 $string['clialreadyconfigured'] = 'Il file config.php esiste già, per favore utilizza admin/cli/install_database.php se desideri installare questo sito.';
 $string['clialreadyinstalled'] = 'Il file config.php è già presente, se desideri aggiornare il sito per favore utilizza admin/cli/upgrade.php.';
 $string['cliinstallheader'] = 'Programma di installazione Moodle {$a} via linea di comando';
-$string['databasehost'] = 'Database host:';
-$string['databasename'] = 'Nome del Database';
+$string['databasehost'] = 'Host database';
+$string['databasename'] = 'Nome database';
 $string['databasetypehead'] = 'Scegli un database driver';
-$string['dataroot'] = 'Cartella dei dati';
-$string['datarootpermission'] = 'Permessi cartella dei dati';
+$string['dataroot'] = 'Cartella dati';
+$string['datarootpermission'] = 'Permessi cartella dati';
 $string['dbprefix'] = 'Prefisso tabelle';
 $string['dirroot'] = 'Cartella di Moodle';
-$string['environmenthead'] = 'Verifica del vostro ambiente...';
+$string['environmenthead'] = 'Verifica dell\'ambiente...';
 $string['environmentsub2'] = 'Ciascuna release di Moodle prevede come requisito minimo una data versione del PHP ed una serie di estensioni. Prima di una installazione o di un aggiornamento viene eseguita la verifica dei requisiti minimi. Se non sai come installare nuove versioni del PHP o le sue estensioni, contatta l\'amministratore del tuo server.';
 $string['errorsinenvironment'] = 'Ci sono problemi nel vostro ambiente';
 $string['installation'] = 'Installazione';
@@ -65,8 +65,8 @@ Questo consentirà a Moodle di impostare in autonomia il limite di memoria.</li>
 $string['paths'] = 'Percorsi';
 $string['pathserrcreatedataroot'] = 'Lo script di installazione non ha potuto creare la Cartella dei dati ({$a->dataroot}).';
 $string['pathshead'] = 'Conferma percorsi';
-$string['pathsrodataroot'] = 'La Cartella dei dati non è scrivibile.';
-$string['pathsroparentdataroot'] = 'La cartella superiore ({$a->parent}) non è scrivibile. Lo script di installazione non può creare la Cartella dei dati ({$a->dataroot}).';
+$string['pathsrodataroot'] = 'Non è possibile scrivere nella  Cartella dati.';
+$string['pathsroparentdataroot'] = 'La cartella genitore ({$a->parent}) non è scrivibile. Lo script di installazione non può creare la Cartella dati ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Alcuni web host utilizzano la cartella /admin come URL di accesso a pannelli di controllo od altre funzioni particolari. Tuttavia questo nome coincide con il nome della cartella che Moodle utilizza per i propri file di amministrazione. Per evitare conflitti, è possibile specificare un nome alternativo per la cartella Admin di Moodle. Ad esempio:<p><b>moodleadmin</b></p>
 Tutti i link che puntano ai file di amministrazione di Moodle terranno conto di questa variazione.';
 $string['pathssubdataroot'] = 'E\' necessario specificare una cartella dove Moodle inserirà i file caricati dagli utenti. Il web server (in genere \'nobody\' o \'apache\') DEVE avere i permessi di lettura e di scrittura su questa cartella. In aggiunta, la cartella dei dati NON DEVE essere direttamente accessibile via web. Se la Cartella dei dati non esiste, lo script di installazione tenterà di crearla.';
@@ -74,7 +74,7 @@ $string['pathssubdirroot'] = 'Percorso assoluto della cartella di installazione 
 $string['pathssubwwwroot'] = 'Indirizzo web per accedere a Moodle. Non è possibile accedere alla stessa installazione Moodle usando più di un indirizzi web. Se il tuo sito usa più indirizzi web, devi configurare dei re-indirizzamenti permanenti per tutti gli altri indirizzi.
 Se il tuo sito è raggiungibile sia dalla Internet che dalla Intranet, allora usa l\'indirizzo Internet pubblico ed imposta il DNS in modo che anche gli utenti della Intranet possano accedere usando l\'indirizzo pubblico.
 Se l\'indirizzo è errato per favore correggilo nella barra degli indirizzi del browser per avviare nuovamente l\'installazione.';
-$string['pathsunsecuredataroot'] = 'La posizione della Cartella dei dati non è sicura';
+$string['pathsunsecuredataroot'] = 'La posizione della Cartella dati non è sicura';
 $string['pathswrongadmindir'] = 'La cartella Admin non esiste';
 $string['phpextension'] = '{$a} estensioni PHP';
 $string['phpversion'] = 'Versione PHP';
@@ -88,5 +88,5 @@ $string['welcomep30'] = 'La release di <strong>{$a->installername}</strong> incl
 $string['welcomep40'] = 'Il pacchetto include anche <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'L\'utilizzo delle applicazioni incluse in questo pacchetto è regolato dalle rispettive licenze. L\'intero pacchetto <strong>{$a->installername}</strong> è <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> ed è distribuito in accordo alla licenza <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a>.';
 $string['welcomep60'] = 'Le prossime pagine ti guideranno attraverso semplici passi per installare e configurare <strong>Moodle</strong> nel tuo computer. Puoi utilizzare le impostazioni di default oppure modificarle per adeguarle alle tue esigenze.';
-$string['welcomep70'] = 'Fate click sul pulsante "Avanti" per continuare l\'installazione di <strong>Moodle</strong>.';
+$string['welcomep70'] = 'Fai click sul pulsante "Avanti" per continuare l\'installazione di <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Indirizzo web';
