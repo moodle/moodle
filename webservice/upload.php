@@ -131,17 +131,17 @@ if ($filearea == 'private') {
     if (!has_capability('moodle/user:ignoreuserquota', $context)) {
         $maxareabytes = $CFG->userquota;
     }
-}
 
-// Count the size of all existing files in this area.
-if ($maxareabytes > 0) {
-    $usedspace = 0;
-    $existingfiles = $fs->get_area_files($context->id, 'user', $filearea, false, 'id', false);
-    foreach ($existingfiles as $file) {
-        $usedspace += $file->get_filesize();
-    }
-    if ($totalsize > ($maxareabytes - $usedspace)) {
-        throw new file_exception('userquotalimit');
+    // Count the size of all existing files in this area.
+    if ($maxareabytes > 0) {
+        $usedspace = 0;
+        $existingfiles = $fs->get_area_files($context->id, 'user', $filearea, false, 'id', false);
+        foreach ($existingfiles as $file) {
+            $usedspace += $file->get_filesize();
+        }
+        if ($totalsize > ($maxareabytes - $usedspace)) {
+            throw new file_exception('userquotalimit');
+        }
     }
 }
 
