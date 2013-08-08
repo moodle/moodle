@@ -272,11 +272,24 @@ class core_files_external extends external_api {
             $filepath = '/';
         }
 
+        // Only allow uploads to draft or private areas (private is deprecated but still supported)
+        if (!($fileinfo['component'] == 'user' and in_array($fileinfo['filearea'], array('private', 'draft')))) {
+            throw new coding_exception('File can be uploaded to user private or draft areas only');
+        } else {
+            $component = 'user';
+            $filearea = $fileinfo['filearea'];
+        }
+
+        $itemid = 0;
         if (isset($fileinfo['itemid'])) {
+            $itemid = $fileinfo['itemid'];
+        }
+        if ($filearea == 'draft' && $itemid <= 0) {
+            // Generate a draft area for the files.
+            $itemid = file_get_unused_draft_itemid();
+        } else if ($filearea == 'private') {
             // TODO MDL-31116 in user private area, itemid is always 0.
             $itemid = 0;
-        } else {
-            throw new coding_exception('itemid cannot be empty');
         }
 
         // We need to preserve backword compatibility. Context id is no more a required.
@@ -287,13 +300,8 @@ class core_files_external extends external_api {
         // Get and validate context.
         $context = self::get_context_from_params($fileinfo);
         self::validate_context($context);
-
-        if (!($fileinfo['component'] == 'user' and $fileinfo['filearea'] == 'private')) {
-            throw new coding_exception('File can be uploaded to user private area only');
-        } else {
-            // TODO MDL-31116 hard-coded to use user_private area.
-            $component = 'user';
-            $filearea = 'private';
+        if (($fileinfo['component'] == 'user' and $fileinfo['filearea'] == 'private')) {
+            debugging('Uploading directly to user private files area is deprecated. Upload to a draft area and then move the files with core_user::add_files_to_private_files');
         }
 
         $browser = get_file_browser();

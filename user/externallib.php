@@ -926,6 +926,68 @@ class core_user_external extends external_api {
         return new external_single_structure($userfields);
     }
 
+    /**
+     * Returns description of method parameters
+     *
+     * @return external_function_parameters
+     * @since Moodle 2.6
+     */
+    public static function add_user_private_files_parameters() {
+        return new external_function_parameters(
+            array(
+                'draftid' => new external_value(PARAM_INT, 'draft area id')
+            )
+        );
+    }
+
+    /**
+     * Copy files from a draft area to users private files area.
+     *
+     * @param int $draftid Id of a draft area containing files.
+     * @return array An array of warnings
+     * @since Moodle 2.6
+     */
+    public static function add_user_private_files($draftid) {
+        global $CFG, $USER, $DB;
+
+        require_once($CFG->dirroot . "/user/lib.php");
+        $params = self::validate_parameters(self::add_user_private_files_parameters(), array('draftid'=>$draftid));
+
+        if (isguestuser()) {
+            throw new invalid_parameter_exception('Guest users cannot upload files');
+        }
+
+        $context = context_user::instance($USER->id);
+        require_capability('moodle/user:manageownfiles', $context);
+
+        $maxbytes = $CFG->userquota;
+        $maxareabytes = $CFG->userquota;
+        if (has_capability('moodle/user:ignoreuserquota', $context)) {
+            $maxbytes = USER_CAN_IGNORE_FILE_SIZE_LIMITS;
+            $maxareabytes = FILE_AREA_MAX_BYTES_UNLIMITED;
+        }
+
+        $options = array('subdirs' => 1,
+                         'maxbytes' => $maxbytes,
+                         'maxfiles' => -1,
+                         'accepted_types' => '*',
+                         'areamaxbytes' => $maxareabytes);
+
+        file_save_draft_area_files($draftid, $context->id, 'user', 'private', 0, $options);
+
+        return null;
+    }
+
+    /**
+     * Returns description of method result value
+     *
+     * @return external_description
+     * @since Moodle 2.2
+     */
+    public static function add_user_private_files_returns() {
+        return null;
+    }
+
 }
 
  /**
