@@ -1408,4 +1408,45 @@ class core_course_courselib_testcase extends advanced_testcase {
         $expectedlog = array($course->id, 'course', 'update', 'edit.php?id=' . $course->id, $course->id);
         $this->assertEventLegacyLogData($expectedlog, $event);
     }
+
+    /**
+     * Test that triggering a course_deleted event works as expected.
+     */
+    public function test_course_deleted_event() {
+        $this->resetAfterTest();
+
+        // Create the course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Save the course context before we delete the course.
+        $coursecontext = context_course::instance($course->id);
+
+        // Catch the update event.
+        $sink = $this->redirectEvents();
+
+        // Call delete_course() which will trigger the course_deleted event and the course_content_deleted
+        // event. This function prints out data to the screen, which we do not want during a PHPUnit test,
+        // so use ob_start and ob_end_clean to prevent this.
+        ob_start();
+        delete_course($course);
+        ob_end_clean();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_deleted', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($course->id, $event->objectid);
+        $this->assertEquals($coursecontext->id, $event->contextid);
+        $this->assertEquals($course, $event->get_record_snapshot('course', $course->id));
+        $this->assertEquals('course_deleted', $event->get_legacy_eventname());
+        // The legacy data also passed the context in the course object.
+        $course->context = $coursecontext;
+        $this->assertEventLegacyData($course, $event);
+        $expectedlog = array(SITEID, 'course', 'delete', 'view.php?id=' . $course->id, $course->fullname . '(ID ' . $course->id . ')');
+        $this->assertEventLegacyLogData($expectedlog, $event);
+    }
 }
