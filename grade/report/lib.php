@@ -318,7 +318,7 @@ abstract class grade_report {
             $params        = array_merge($params, $this->groupwheresql_params);
         }
 
-        $countsql = "SELECT COUNT(DISTINCT u.id)
+        $sql = "SELECT DISTINCT u.id
                        FROM {user} u
                        JOIN ($enrolledsql) je
                             ON je.id = u.id
@@ -330,7 +330,38 @@ abstract class grade_report {
                             $userwheresql
                             $groupwheresql
                             AND ra.contextid $relatedctxsql";
-        return $DB->count_records_sql($countsql, $params);
+        $selectedusers = $DB->get_records_sql($sql, $params);
+
+        $count = 0;
+        if (!empty($selectedusers)) {
+            list($usql, $uparams) = $DB->get_in_or_equal(array_keys($selectedusers), SQL_PARAMS_NAMED, 'usid0');
+            $this->userselect = "AND g.userid $usql";
+            $this->userselect_params = $uparams;
+
+            // Check if user's enrolment is active.
+            $sql = "SELECT ue.userid
+                      FROM {user_enrolments} ue
+                      JOIN {enrol} e ON e.id = ue.enrolid
+                     WHERE ue.userid $usql
+                           AND ue.status = :uestatus
+                           AND e.status = :estatus
+                           AND e.courseid = :courseid
+                  GROUP BY ue.userid";
+            $coursecontext = $this->context->get_course_context(true);
+            $params = array_merge($uparams, array('estatus' => ENROL_INSTANCE_ENABLED, 'uestatus' => ENROL_USER_ACTIVE, 'courseid' => $coursecontext->instanceid));
+            $useractiveenrolments = $DB->get_records_sql($sql, $params);
+
+            $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+            $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+            $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $coursecontext);
+
+            foreach ($selectedusers as $id => $value) {
+                if (!$showonlyactiveenrol || ($showonlyactiveenrol && array_key_exists($id, $useractiveenrolments))) {
+                    $count++;
+                }
+            }
+        }  
+        return $count;
     }
 
     /**
