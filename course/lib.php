@@ -2406,6 +2406,7 @@ function update_course($data, $editoroptions = NULL) {
                          'fullname' => $course->fullname)
     ));
     $event->add_record_snapshot('course', $course);
+    $event->set_legacy_logdata(array($course->id, 'course', 'update', 'edit.php?id=' . $course->id, $course->id));
     $event->trigger();
 
     if ($oldcourse->format !== $course->format) {
