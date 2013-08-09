@@ -263,6 +263,13 @@ class testable_assign extends assign {
         return parent::process_lock($userid);
     }
 
+    public function testable_process_save_quick_grades($postdata) {
+        // Ugly hack to get something into the method.
+        global $_POST;
+        $_POST = $postdata;
+        return parent::process_save_quick_grades();
+    }
+
     public function testable_process_unlock($userid = 0) {
         return parent::process_unlock($userid);
     }

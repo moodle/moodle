@@ -4800,7 +4800,15 @@ class assign {
                 }
             }
 
-            $this->add_to_log('grade submission', $this->format_grade_for_log($grade));
+            $addtolog = $this->add_to_log('grade submission', $this->format_grade_for_log($grade), '', true);
+            $params = array(
+                'context' => $this->context,
+                'objectid' => $grade->id,
+                'relateduserid' => $userid
+            );
+            $event = \mod_assign\event\submission_graded::create($params);
+            $event->set_legacy_logdata($addtolog);
+            $event->trigger();
         }
 
         return get_string('quickgradingchangessaved', 'assign');
@@ -5949,9 +5957,16 @@ class assign {
         }
         $this->update_grade($grade);
         $this->notify_grade_modified($grade);
-        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
-        $this->add_to_log('grade submission', $this->format_grade_for_log($grade));
+        $addtolog = $this->add_to_log('grade submission', $this->format_grade_for_log($grade), '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $grade->id,
+            'relateduserid' => $userid
+        );
+        $event = \mod_assign\event\submission_graded::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
 

@@ -1210,5 +1210,67 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->editingteachers[0]->ignoresesskey = false;
     }
 
+    public function test_submission_graded_event() {
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance();
+
+        // Test apply_grade_to_user.
+        $sink = $this->redirectEvents();
+
+        $data = new stdClass();
+        $data->grade = '50.0';
+        $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+        $grade = $assign->get_user_grade($this->students[0]->id, false, 0);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\submission_graded', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($grade->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->relateduserid);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'grade submission',
+            'view.php?id=' . $assign->get_course_module()->id,
+            $assign->format_grade_for_log($grade),
+            $assign->get_course_module()->id,
+            $this->editingteachers[0]->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+
+        // Test process_save_quick_grades.
+        $sink = $this->redirectEvents();
+
+        $data = array(
+            'grademodified_' . $this->students[0]->id => time(),
+            'quickgrade_' . $this->students[0]->id => '60.0'
+        );
+        $assign->testable_process_save_quick_grades($data);
+        $grade = $assign->get_user_grade($this->students[0]->id, false);
+        $this->assertEquals('60.0', $grade->grade);
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_assign\event\submission_graded', $event);
+        $this->assertEquals($assign->get_context(), $event->get_context());
+        $this->assertEquals($grade->id, $event->objectid);
+        $this->assertEquals($this->students[0]->id, $event->relateduserid);
+        $expected = array(
+            $assign->get_course()->id,
+            'assign',
+            'grade submission',
+            'view.php?id=' . $assign->get_course_module()->id,
+            $assign->format_grade_for_log($grade),
+            $assign->get_course_module()->id,
+            $this->editingteachers[0]->id
+        );
+        $this->assertEventLegacyLogData($expected, $event);
+        $sink->close();
+    }
+
 }
 

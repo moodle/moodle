@@ -147,6 +147,7 @@ $string['event_identities_revealed'] = 'The identities have been revealed.';
 $string['event_marker_updated'] = 'The allocated marker has been updated.';
 $string['event_statement_accepted'] = 'The user has accepted the statement of the submission.';
 $string['event_submission_duplicated'] = 'The user duplicated his submission.';
+$string['event_submission_graded'] = 'The submission has been graded.';
 $string['event_submission_locked'] = 'The submissions have been locked for a user.';
 $string['event_submission_status_updated'] = 'The status of the submission has been updated.';
 $string['event_submission_unlocked'] = 'The submissions have been unlocked for a user.';
