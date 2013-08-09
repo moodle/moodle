@@ -666,6 +666,12 @@ class plugin_manager {
                 'comments', 'file', 'offline'
             ),
 
+            'atto' => array(
+                'bold', 'clear', 'html', 'image', 'indent', 'italic', 'link',
+                'media', 'orderedlist', 'outdent', 'strike', 'title',
+                'underline', 'unlink', 'unorderedlist'
+            ),
+
             'auth' => array(
                 'cas', 'db', 'email', 'fc', 'imap', 'ldap', 'manual', 'mnet',
                 'nntp', 'nologin', 'none', 'pam', 'pop3', 'radius',
@@ -712,7 +718,7 @@ class plugin_manager {
             ),
 
             'editor' => array(
-                'textarea', 'tinymce'
+                'textarea', 'tinymce', 'atto'
             ),
 
             'enrol' => array(

@@ -114,7 +114,7 @@ function editors_get_enabled() {
     global $CFG;
 
     if (empty($CFG->texteditors)) {
-        $CFG->texteditors = 'tinymce,textarea';
+        $CFG->texteditors = 'tinymce,atto,textarea';
     }
     $active = array();
     foreach(explode(',', $CFG->texteditors) as $e) {
