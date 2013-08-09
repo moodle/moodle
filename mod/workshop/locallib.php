@@ -304,7 +304,7 @@ class workshop {
      */
     public static function available_evaluators_list() {
         $evals = array();
-        foreach (get_plugin_list_with_file('workshopeval', 'lib.php', false) as $eval => $evalpath) {
+        foreach (core_component::get_plugin_list_with_file('workshopeval', 'lib.php', false) as $eval => $evalpath) {
             $evals[$eval] = get_string('pluginname', 'workshopeval_' . $eval);
         }
         return $evals;

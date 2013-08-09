@@ -8155,20 +8155,6 @@ function is_valid_plugin_name($name) {
 }
 
 /**
- * Get a list of all the plugins of a given type that contain a particular file.
- *
- * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
- * @param string $file the name of file that must be present in the plugin.
- *      (e.g. 'view.php', 'db/install.xml').
- * @param bool $include if true (default false), the file will be include_once-ed if found.
- * @return array with plugin name as keys (e.g. 'forum', 'courselist') and the path
- *      to the file relative to dirroot as value (e.g. "$CFG->dirroot/mod/forum/view.php").
- */
-function get_plugin_list_with_file($plugintype, $file, $include = false) {
-    return core_component::get_plugin_list_with_file($plugintype, $file, $include);
-}
-
-/**
  * Get a list of all the plugins of a given type that define a certain API function
  * in a certain file. The plugin component names and function names are returned.
  *
@@ -8183,7 +8169,8 @@ function get_plugin_list_with_file($plugintype, $file, $include = false) {
  */
 function get_plugin_list_with_function($plugintype, $function, $file = 'lib.php') {
     $pluginfunctions = array();
-    foreach (get_plugin_list_with_file($plugintype, $file, true) as $plugin => $notused) {
+    $pluginswithfile = core_component::get_plugin_list_with_file($plugintype, $file, true);
+    foreach ($pluginswithfile as $plugin => $notused) {
         $fullfunction = $plugintype . '_' . $plugin . '_' . $function;
 
         if (function_exists($fullfunction)) {

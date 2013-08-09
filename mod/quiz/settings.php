@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 // First get a list of quiz reports with there own settings pages. If there none,
 // we use a simpler overall menu structure.
-$reports = get_plugin_list_with_file('quiz', 'settings.php', false);
+$reports = core_component::get_plugin_list_with_file('quiz', 'settings.php', false);
 $reportsbyname = array();
 foreach ($reports as $report => $reportdir) {
     $strreportname = get_string($report . 'report', 'quiz_'.$report);
@@ -42,7 +42,7 @@ core_collator::ksort($reportsbyname);
 
 // First get a list of quiz reports with there own settings pages. If there none,
 // we use a simpler overall menu structure.
-$rules = get_plugin_list_with_file('quizaccess', 'settings.php', false);
+$rules = core_component::get_plugin_list_with_file('quizaccess', 'settings.php', false);
 $rulesbyname = array();
 foreach ($rules as $rule => $ruledir) {
     $strrulename = get_string('pluginname', 'quizaccess_' . $rule);

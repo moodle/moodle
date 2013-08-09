@@ -1250,7 +1250,7 @@ class global_navigation extends navigation_node {
         }
 
         // Give the local plugins a chance to include some navigation if they want.
-        foreach (get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $file) {
+        foreach (core_component::get_plugin_list_with_file('local', 'lib.php', true) as $plugin => $file) {
             $function = "local_{$plugin}_extends_navigation";
             $oldfunction = "{$plugin}_extends_navigation";
             if (function_exists($function)) {

@@ -4401,3 +4401,21 @@ function get_related_contexts_string(context $context) {
 function isediting() {
     throw new coding_exception('isediting() can not be used any more, please use $PAGE->user_is_editing() instead.');
 }
+
+/**
+ * Get a list of all the plugins of a given type that contain a particular file.
+ *
+ * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
+ * @param string $file the name of file that must be present in the plugin.
+ *      (e.g. 'view.php', 'db/install.xml').
+ * @param bool $include if true (default false), the file will be include_once-ed if found.
+ * @return array with plugin name as keys (e.g. 'forum', 'courselist') and the path
+ *      to the file relative to dirroot as value (e.g. "$CFG->dirroot/mod/forum/view.php").
+ * @deprecated since 2.6
+ * @see core_component::get_plugin_list_with_file()
+ */
+function get_plugin_list_with_file($plugintype, $file, $include = false) {
+    debugging('get_plugin_list_with_file() is deprecated, please use core_component::get_plugin_list_with_file() instead.',
+        DEBUG_DEVELOPER);
+    return core_component::get_plugin_list_with_file($plugintype, $file, $include);
+}
