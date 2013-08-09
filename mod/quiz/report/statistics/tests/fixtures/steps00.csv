@@ -1,0 +1,26 @@
+quizattempt,firstname,lastname,randqs.1,responses.1.answer,variants.2,responses.2.answer,responses.3.0,responses.3.1,responses.3.2,responses.4.answer,responses.5.0,responses.5.1,responses.5.2,responses.5.3,responses.6.answer,responses.7.1.answer,responses.7.2.answer
+1,John,Jones,numerical,3.14,1,9.9,amphibian,mammal,amphibian,1,1,0,1,0,1,Owl,2
+2,John,Smith,shortanswer,frog,1,9.9,amphibian,mammal,amphibian,1,0,1,1,0,0,Dog,0
+3,John,Vicars,numerical,3.14,6,9.4,amphibian,mammal,amphibian,1,0,0,1,1,1,Owl,2
+4,John,Pacino,shortanswer,butterfly,6,-0.1,amphibian,mammal,amphibian,1,1,0,1,0,3,Dog,0
+5,John,Deniro,numerical,3.14,4,0,amphibian,mammal,amphibian,0,0,1,0,1,0,Dog,2
+6,John,Banks,numerical,3.14,1,9.9,amphibian,mammal,amphibian,1,1,0,0,1,1,Owl,1
+7,John,Asimov,numerical,3.142,7,9.1,amphibian,mammal,amphibian,1,0,0,1,1,0,Owl,1
+8,John,Chomsky,numerical,3.14,4,19.4,amphibian,mammal,amphibian,0,0,0,1,1,0,Owl,1
+9,John,Yamaguchi,shortanswer,frog,1,-0.7,amphibian,mammal,amphibian,1,1,0,1,0,0,Owl,2
+10,John,Robbins,numerical,3.1,5,14.2,amphibian,mammal,amphibian,0,0,1,1,0,0,Owl,0
+11,Joe,Jones,shortanswer,toad,6,-0.2,amphibian,mammal,amphibian,1,1,1,0,0,0,Owl,0
+12,Joe,Smith,shortanswer,frog,8,5.7,amphibian,mammal,amphibian,0,0,0,1,1,0,Owl,2
+13,Joe,Vicars,numerical,3.14,8,-0.2,amphibian,mammal,amphibian,1,1,0,0,1,0,wfz9p,2
+14,Joe,Pacino,shortanswer,frog,1,-0.2,amphibian,mammal,amphibian,1,1,0,1,0,1,Owl,0
+15,Joe,Deniro,numerical,3.1,7,-0.9,amphibian,mammal,amphibian,1,0,1,0,1,0,Owl,2
+16,Joe,Banks,shortanswer,frog,10,-0.7,amphibian,mammal,amphibian,0,1,0,0,1,0,Owl,2
+17,Joe,Asimov,shortanswer,toad,4,-0.4,amphibian,mammal,amphibian,1,0,1,1,0,2,Owl,2
+18,Joe,Chomsky,shortanswer,frog,6,-1,amphibian,mammal,amphibian,1,0,1,0,1,0,Pussy-cat,2
+19,Joe,Yamaguchi,numerical,3.14,8,-0.5,amphibian,mammal,amphibian,1,1,1,0,0,1,Owl,0
+20,Joe,Robbins,shortanswer,butterfly,4,19.4,amphibian,mammal,amphibian,0,0,1,1,0,0,"Wiggly worm",0
+21,Roberto,Jones,shortanswer,frog,8,5.7,amphibian,amphibian,mammal,1,0,1,1,0,2,RjUpn,2
+22,Roberto,Smith,shortanswer,frog,5,14.2,amphibian,mammal,amphibian,0,1,0,0,1,1,Dog,2
+23,Roberto,Vicars,shortanswer,frog,5,14.2,amphibian,mammal,amphibian,1,0,1,0,1,0,"Wiggly worm",2
+24,Roberto,Pacino,numerical,3.1,1,-1,amphibian,mammal,amphibian,0,1,1,0,0,0,Owl,2
+25,Roberto,Deniro,numerical,3.1,8,-0.1,amphibian,mammal,amphibian,1,1,0,1,0,0,Owl,2
