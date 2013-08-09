@@ -75,7 +75,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      *
      * @return string
      */
-    protected function get_legacy_eventname() {
+    public static function get_legacy_eventname() {
         return 'assessable_content_uploaded';
     }
 

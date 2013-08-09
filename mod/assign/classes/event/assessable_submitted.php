@@ -72,7 +72,7 @@ class assessable_submitted extends \core\event\assessable_submitted {
      *
      * @return string
      */
-    protected function get_legacy_eventname() {
+    public static function get_legacy_eventname() {
         return 'assessable_submitted';
     }
 
