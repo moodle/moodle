@@ -277,7 +277,20 @@ if ((!empty($moveup) or !empty($movedown)) && confirm_sesskey()) {
         $DB->set_field('course', 'sortorder', $swapcourse->sortorder, array('id' => $movecourse->id));
         $DB->set_field('course', 'sortorder', $movecourse->sortorder, array('id' => $swapcourse->id));
         cache_helper::purge_by_event('changesincourse');
-        add_to_log($movecourse->id, "course", "move", "edit.php?id=$movecourse->id", $movecourse->id);
+
+        // Update $movecourse's sortorder.
+        $movecourse->sortorder = $swapcourse->sortorder;
+
+        // Trigger a course updated event.
+        $event = \core\event\course_updated::create(array(
+            'objectid' => $movecourse->id,
+            'context' => context_course::instance($movecourse->id),
+            'other' => array('shortname' => $movecourse->shortname,
+                             'fullname' => $movecourse->fullname)
+        ));
+        $event->add_record_snapshot('course', $movecourse);
+        $event->set_legacy_logdata(array($movecourse->id, 'course', 'move', 'edit.php?id=' . $movecourse->id, $movecourse->id));
+        $event->trigger();
     }
 }
 

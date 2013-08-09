@@ -2026,14 +2026,14 @@ function course_allowed_module($course, $modname) {
  * @return bool success
  */
 function move_courses($courseids, $categoryid) {
-    global $CFG, $DB, $OUTPUT;
+    global $DB;
 
     if (empty($courseids)) {
-        // nothing to do
+        // Nothing to do.
         return;
     }
 
-    if (!$category = $DB->get_record('course_categories', array('id'=>$categoryid))) {
+    if (!$category = $DB->get_record('course_categories', array('id' => $categoryid))) {
         return false;
     }
 
@@ -2042,21 +2042,37 @@ function move_courses($courseids, $categoryid) {
     $i = 1;
 
     foreach ($courseids as $courseid) {
-        if ($course = $DB->get_record('course', array('id'=>$courseid), 'id, category')) {
+        if ($dbcourse = $DB->get_record('course', array('id' => $courseid))) {
             $course = new stdClass();
             $course->id = $courseid;
             $course->category  = $category->id;
             $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
             if ($category->visible == 0) {
-                // hide the course when moving into hidden category,
-                // do not update the visibleold flag - we want to get to previous state if somebody unhides the category
+                // Hide the course when moving into hidden category, do not update the visibleold flag - we want to get
+                // to previous state if somebody unhides the category.
                 $course->visible = 0;
             }
 
             $DB->update_record('course', $course);
-            add_to_log($course->id, "course", "move", "edit.php?id=$course->id", $course->id);
 
-            $context   = context_course::instance($course->id);
+            // Store the context.
+            $context = context_course::instance($course->id);
+
+            // Update the course object we are passing to the event.
+            $dbcourse->category = $course->category;
+            $dbcourse->sortorder = $course->sortorder;
+
+            // Trigger a course updated event.
+            $event = \core\event\course_updated::create(array(
+                'objectid' => $course->id,
+                'context' => $context,
+                'other' => array('shortname' => $dbcourse->shortname,
+                                 'fullname' => $dbcourse->fullname)
+            ));
+            $event->add_record_snapshot('course', $dbcourse);
+            $event->set_legacy_logdata(array($course->id, 'course', 'move', 'edit.php?id=' . $course->id, $course->id));
+            $event->trigger();
+
             $context->update_moved($newparent);
         }
     }
