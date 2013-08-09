@@ -148,7 +148,6 @@ $string['erroremptysubject'] = 'Post subject cannot be empty.';
 $string['errorenrolmentrequired'] = 'You must be enrolled in this course to access this content';
 $string['errorwhiledelete'] = 'An error occurred while deleting record.';
 $string['event_assessable_uploaded'] = 'Some content has been posted.';
-$string['event_assessable_uploaded_desc'] = 'User {$a->userid} has posted some content in the forum post {$a->objectid}.';
 $string['everyonecanchoose'] = 'Everyone can choose to be subscribed';
 $string['everyonecannowchoose'] = 'Everyone can now choose to be subscribed';
 $string['everyoneisnowsubscribed'] = 'Everyone is now subscribed to this forum';

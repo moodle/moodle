@@ -24,7 +24,5 @@
  */
 
 $string['event_assessable_submitted'] = 'An upload submission has been submitted.';
-$string['event_assessable_submitted_desc'] = 'User {$a->userid} has submitted the upload submission {$a->objectid}.';
 $string['event_assessable_uploaded'] = 'A file has been uploaded.';
-$string['event_assessable_uploaded_desc'] = 'User {$a->userid} has uploaded a file in submission {$a->objectid}.';
 $string['pluginname'] = 'Upload';

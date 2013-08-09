@@ -30,7 +30,6 @@ $string['default_help'] = 'If set, this submission method will be enabled by def
 $string['enabled'] = 'File submissions';
 $string['enabled_help'] = 'If enabled, students are able to upload one or more files as their submission.';
 $string['event_assessable_uploaded'] = 'A file has been uploaded.';
-$string['event_assessable_uploaded_desc'] = 'User {$a->userid} has uploaded a file in submission {$a->objectid}.';
 $string['file'] = 'File submissions';
 $string['maxbytes'] = 'Maximum file size';
 $string['maxfilessubmission'] = 'Maximum number of uploaded files';

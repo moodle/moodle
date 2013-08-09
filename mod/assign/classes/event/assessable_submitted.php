@@ -43,12 +43,12 @@ class assessable_submitted extends \core\event\assessable_submitted {
     protected $legacylogdata;
 
     /**
-     * Returns localised description of what happened.
+     * Returns description of what happened.
      *
-     * @return \lang_string
+     * @return string
      */
     public function get_description() {
-        return new \lang_string('event_assessable_submitted_desc', 'mod_assign', $this->get_data());
+        return "User {$this->userid} has submitted the submission {$this->objectid}.";
     }
 
     /**

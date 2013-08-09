@@ -43,12 +43,12 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
     protected $legacyfiles = array();
 
     /**
-     * Returns localised description of what happened.
+     * Returns description of what happened.
      *
-     * @return \lang_string
+     * @return string
      */
     public function get_description() {
-        return new \lang_string('event_assessable_uploaded_desc', 'assignsubmission_file', $this->get_data());
+        return "User {$this->userid} has uploaded a file in submission {$this->objectid}.";
     }
 
     /**

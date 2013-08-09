@@ -36,12 +36,12 @@ defined('MOODLE_INTERNAL') || die();
 class assessable_uploaded extends \core\event\assessable_uploaded {
 
     /**
-     * Returns localised description of what happened.
+     * Returns description of what happened.
      *
-     * @return \lang_string
+     * @return string
      */
     public function get_description() {
-        return new \lang_string('event_assessable_uploaded_desc', 'assignment_online', $this->get_data());
+        return "User {$this->userid} has saved an online text in submission {$this->objectid}.";
     }
 
     /**
