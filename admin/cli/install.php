@@ -162,6 +162,9 @@ $CFG->running_installer    = true;
 $CFG->early_install_lang   = true;
 $CFG->ostype               = (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) ? 'WINDOWS' : 'UNIX';
 $CFG->dboptions            = array();
+$CFG->debug                = (E_ALL | E_STRICT);
+$CFG->debugdisplay         = true;
+$CFG->debugdeveloper       = true;
 
 $parts = explode('/', str_replace('\\', '/', dirname(dirname(__FILE__))));
 $CFG->admin                = array_pop($parts);

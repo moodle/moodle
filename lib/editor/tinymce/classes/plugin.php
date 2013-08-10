@@ -360,7 +360,7 @@ abstract class editor_tinymce_plugin {
         // Version number comes from plugin version.php, except in developer
         // mode where the special string 'dev' is used (prevents cacheing and
         // serves unminified JS).
-        if (debugging('', DEBUG_DEVELOPER)) {
+        if ($CFG->debugdeveloper) {
             $version = '-1';
         } else {
             $version = $this->get_version();

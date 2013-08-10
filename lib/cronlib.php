@@ -46,8 +46,7 @@ function cron_run() {
         $DB->set_debug(true);
     }
     if (!empty($CFG->showcrondebugging)) {
-        $CFG->debug = DEBUG_DEVELOPER;
-        $CFG->debugdisplay = true;
+        set_debugging(DEBUG_DEVELOPER, true);
     }
 
     set_time_limit(0);

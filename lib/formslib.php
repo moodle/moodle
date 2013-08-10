@@ -61,7 +61,7 @@ function pear_handle_error($error){
     print_object($error->backtrace);
 }
 
-if (!empty($CFG->debug) and ($CFG->debug >= DEBUG_ALL or $CFG->debug == -1)){
+if ($CFG->debugdeveloper) {
     //TODO: this is a wrong place to init PEAR!
     $GLOBALS['_PEAR_default_error_mode'] = PEAR_ERROR_CALLBACK;
     $GLOBALS['_PEAR_default_error_options'] = 'pear_handle_error';
@@ -1261,7 +1261,9 @@ abstract class moodleform {
      * @return void
      */
     private function detectMissingSetType() {
-        if (!debugging('', DEBUG_DEVELOPER)) {
+        global $CFG;
+
+        if (!$CFG->debugdeveloper) {
             // Only for devs.
             return;
         }

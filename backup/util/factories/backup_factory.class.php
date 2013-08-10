@@ -40,7 +40,7 @@ abstract class backup_factory {
         global $CFG;
 
         $dfltloglevel = backup::LOG_WARNING; // Default logging level
-        if (debugging('', DEBUG_DEVELOPER)) { // Debug developer raises default logging level
+        if ($CFG->debugdeveloper) { // Debug developer raises default logging level
             $dfltloglevel = backup::LOG_DEBUG;
         }
 

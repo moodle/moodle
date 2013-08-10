@@ -637,10 +637,10 @@ class core_event_testcase extends advanced_testcase {
         $event2 = \core_tests\event\problematic_event1::create(array('xxx'=>0, 'context'=>\context_system::instance()));
         $this->assertDebuggingCalled();
 
-        $CFG->debug = 0;
+        set_debugging(DEBUG_NONE);
         $event3 = \core_tests\event\problematic_event1::create(array('xxx'=>0, 'context'=>\context_system::instance()));
         $this->assertDebuggingNotCalled();
-        $CFG->debug = E_ALL | E_STRICT;
+        set_debugging(DEBUG_DEVELOPER);
 
         $event4 = \core_tests\event\problematic_event1::create(array('context'=>\context_system::instance(), 'other'=>array('a'=>1)));
         $event4->trigger();

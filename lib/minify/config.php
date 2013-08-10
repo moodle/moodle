@@ -14,7 +14,7 @@ defined('MOODLE_INTERNAL') || die(); // start of moodle modification
 
 $min_enableBuilder = false;
 $min_errorLogger = false;
-$min_allowDebugFlag = debugging('', DEBUG_DEVELOPER);
+$min_allowDebugFlag = $CFG->debugdeveloper;
 $min_cachePath = $CFG->tempdir;
 $min_documentRoot = $CFG->dirroot.'/lib/minify';
 $min_cacheFileLocking = empty($CFG->preventfilelocking);

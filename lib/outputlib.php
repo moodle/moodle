@@ -1678,7 +1678,8 @@ class xhtml_container_stack {
      * Constructor
      */
     public function __construct() {
-        $this->isdebugging = debugging('', DEBUG_DEVELOPER);
+        global $CFG;
+        $this->isdebugging = $CFG->debugdeveloper;
     }
 
     /**

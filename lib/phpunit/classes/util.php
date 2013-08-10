@@ -594,6 +594,7 @@ class phpunit_util extends testing_util {
      */
     public static function reset_debugging() {
         self::$debuggings = array();
+        set_debugging(DEBUG_DEVELOPER);
     }
 
     /**

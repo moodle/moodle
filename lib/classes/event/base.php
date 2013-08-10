@@ -108,7 +108,7 @@ abstract class base implements \IteratorAggregate {
      * @throws \coding_exception
      */
     public static final function create(array $data = null) {
-        global $PAGE, $USER;
+        global $PAGE, $USER, $CFG;
 
         $data = (array)$data;
 
@@ -178,7 +178,7 @@ abstract class base implements \IteratorAggregate {
         }
 
         // Warn developers if they do something wrong.
-        if (debugging('', DEBUG_DEVELOPER)) { // This should be replaced by new $CFG->slowdebug flag if introduced.
+        if ($CFG->debugdeveloper) {
             static $automatickeys = array('eventname', 'component', 'action', 'target', 'contextlevel', 'contextinstanceid', 'timecreated');
             static $initkeys = array('crud', 'level', 'objecttable');
 
@@ -187,10 +187,10 @@ abstract class base implements \IteratorAggregate {
                     continue;
 
                 } else if (in_array($key, $automatickeys)) {
-                    debugging("Data key '$key' is not allowed in \\core\\event\\base::create() method, it is set automatically");
+                    debugging("Data key '$key' is not allowed in \\core\\event\\base::create() method, it is set automatically", DEBUG_DEVELOPER);
 
                 } else if (in_array($key, $initkeys)) {
-                    debugging("Data key '$key' is not allowed in \\core\\event\\base::create() method, you need to set it in init() method");
+                    debugging("Data key '$key' is not allowed in \\core\\event\\base::create() method, you need to set it in init() method", DEBUG_DEVELOPER);
 
                 } else if (!in_array($key, self::$fields)) {
                     debugging("Data key '$key' does not exist in \\core\\event\\base");
@@ -395,7 +395,7 @@ abstract class base implements \IteratorAggregate {
      * @throws \coding_exception
      */
     protected final function validate_before_trigger() {
-        global $DB;
+        global $DB, $CFG;
 
         if (empty($this->data['crud'])) {
             throw new \coding_exception('crud must be specified in init() method of each method');
@@ -407,38 +407,38 @@ abstract class base implements \IteratorAggregate {
             throw new \coding_exception('objecttable must be specified in init() method if objectid present');
         }
 
-        if (debugging('', DEBUG_DEVELOPER)) { // This should be replaced by new $CFG->slowdebug flag if introduced.
+        if ($CFG->debugdeveloper) {
             // Ideally these should be coding exceptions, but we need to skip these for performance reasons
             // on production servers.
 
             if (!in_array($this->data['crud'], array('c', 'r', 'u', 'd'), true)) {
-                debugging("Invalid event crud value specified.");
+                debugging("Invalid event crud value specified.", DEBUG_DEVELOPER);
             }
             if (!is_number($this->data['level'])) {
-                debugging('Event property level must be a number');
+                debugging('Event property level must be a number', DEBUG_DEVELOPER);
             }
             if (self::$fields !== array_keys($this->data)) {
-                debugging('Number of event data fields must not be changed in event classes');
+                debugging('Number of event data fields must not be changed in event classes', DEBUG_DEVELOPER);
             }
             $encoded = json_encode($this->data['other']);
             if ($encoded === false or $this->data['other'] !== json_decode($encoded, true)) {
-                debugging('other event data must be compatible with json encoding');
+                debugging('other event data must be compatible with json encoding', DEBUG_DEVELOPER);
             }
             if ($this->data['userid'] and !is_number($this->data['userid'])) {
-                debugging('Event property userid must be a number');
+                debugging('Event property userid must be a number', DEBUG_DEVELOPER);
             }
             if ($this->data['courseid'] and !is_number($this->data['courseid'])) {
-                debugging('Event property courseid must be a number');
+                debugging('Event property courseid must be a number', DEBUG_DEVELOPER);
             }
             if ($this->data['objectid'] and !is_number($this->data['objectid'])) {
-                debugging('Event property objectid must be a number');
+                debugging('Event property objectid must be a number', DEBUG_DEVELOPER);
             }
             if ($this->data['relateduserid'] and !is_number($this->data['relateduserid'])) {
-                debugging('Event property relateduserid must be a number');
+                debugging('Event property relateduserid must be a number', DEBUG_DEVELOPER);
             }
             if ($this->data['objecttable']) {
                 if (!$DB->get_manager()->table_exists($this->data['objecttable'])) {
-                    debugging('Unknown table specified in objecttable field');
+                    debugging('Unknown table specified in objecttable field', DEBUG_DEVELOPER);
                 }
             }
         }
@@ -521,7 +521,7 @@ abstract class base implements \IteratorAggregate {
      * @throws \coding_exception if used after ::trigger()
      */
     public final function add_record_snapshot($tablename, $record) {
-        global $DB;
+        global $DB, $CFG;
 
         if ($this->triggered) {
             throw new \coding_exception('It is not possible to add snapshots after triggering of events');
@@ -529,9 +529,9 @@ abstract class base implements \IteratorAggregate {
 
         // NOTE: this might use some kind of MUC cache,
         //       hopefully we will not run out of memory here...
-        if (debugging('', DEBUG_DEVELOPER)) { // This should be replaced by new $CFG->slowdebug flag if introduced.
+        if ($CFG->debugdeveloper) {
             if (!$DB->get_manager()->table_exists($tablename)) {
-                debugging("Invalid table name '$tablename' specified, database table does not exist.");
+                debugging("Invalid table name '$tablename' specified, database table does not exist.", DEBUG_DEVELOPER);
             }
         }
         $this->recordsnapshots[$tablename][$record->id] = $record;

@@ -46,7 +46,7 @@ require(__DIR__.'/../../../config.php');
 require_once("$CFG->libdir/clilib.php");
 
 // Ensure errors are well explained.
-$CFG->debug = DEBUG_DEVELOPER;
+set_debugging(DEBUG_DEVELOPER, true);
 
 if (!enrol_is_enabled('ldap')) {
     cli_error(get_string('pluginnotenabled', 'enrol_ldap'), 2);

@@ -1624,6 +1624,8 @@ class file_storage {
      * @return array (contenthash, filesize, newfile)
      */
     public function add_file_to_pool($pathname, $contenthash = NULL) {
+        global $CFG;
+
         if (!is_readable($pathname)) {
             throw new file_exception('storedfilecannotread', '', $pathname);
         }
@@ -1635,14 +1637,14 @@ class file_storage {
 
         if (is_null($contenthash)) {
             $contenthash = sha1_file($pathname);
-        } else if (debugging('', DEBUG_DEVELOPER)) {
+        } else if ($CFG->debugdeveloper) {
             $filehash = sha1_file($pathname);
             if ($filehash === false) {
                 throw new file_exception('storedfilecannotread', '', $pathname);
             }
             if ($filehash !== $contenthash) {
                 // Hopefully this never happens, if yes we need to fix calling code.
-                debugging("Invalid contenthash submitted for file $pathname");
+                debugging("Invalid contenthash submitted for file $pathname", DEBUG_DEVELOPER);
                 $contenthash = $filehash;
             }
         }

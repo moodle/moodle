@@ -248,7 +248,8 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Clear all previous debugging messages in current test.
+     * Clear all previous debugging messages in current test
+     * and revert to default DEVELOPER_DEBUG level.
      */
     public function resetDebugging() {
         phpunit_util::reset_debugging();

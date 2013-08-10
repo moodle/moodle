@@ -299,24 +299,22 @@ class core_statslib_testcase extends advanced_testcase {
      * Test progress output when debug is on.
      */
     public function test_statslib_progress_debug() {
-        global $CFG;
-
-        $CFG->debug = DEBUG_ALL;
+        set_debugging(DEBUG_ALL);
         $this->expectOutputString('1:0 ');
         stats_progress('init');
         stats_progress('1');
+        $this->resetDebugging();
     }
 
     /**
      * Test progress output when debug is off.
      */
     public function test_statslib_progress_no_debug() {
-        global $CFG;
-
-        $CFG->debug = DEBUG_NONE;
+        set_debugging(DEBUG_NONE);
         $this->expectOutputString('.');
         stats_progress('init');
         stats_progress('1');
+        $this->resetDebugging();
     }
 
     /**

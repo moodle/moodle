@@ -424,6 +424,7 @@ function install_cli_database(array $options, $interactive) {
     @ini_set('display_errors', '1');
     $CFG->debug = (E_ALL | E_STRICT);
     $CFG->debugdisplay = true;
+    $CFG->debugdeveloper = true;
 
     $CFG->version = '';
     $CFG->release = '';
