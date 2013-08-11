@@ -1616,7 +1616,9 @@ class grade_category extends grade_object {
             if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
 
                 foreach ($children as $child) {
-                    $child->set_hidden($hidden, $cascade);
+                    if ($child->can_control_visibility()) {
+                        $child->set_hidden($hidden, $cascade);
+                    }
                 }
             }
 

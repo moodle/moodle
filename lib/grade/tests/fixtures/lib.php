@@ -105,6 +105,9 @@ abstract class grade_base_testcase extends advanced_testcase {
 
         $this->activities[6] = $this->getDataGenerator()->create_module('forum', array('course'=>$this->course->id));
         $this->course_module[6] = get_coursemodule_from_instance('forum', $this->activities[6]->id);
+
+        $this->activities[7] = $this->getDataGenerator()->create_module('quiz', array('course'=>$this->course->id));
+        $this->course_module[7] = get_coursemodule_from_instance('quiz', $this->activities[7]->id);
     }
 
     private function load_scales() {
@@ -494,6 +497,29 @@ abstract class grade_base_testcase extends advanced_testcase {
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
         $this->grade_items[10] = $grade_item;
+
+        // Quiz grade_item (course_module = 7).
+        // id = 11
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->course->id;
+        $grade_item->categoryid = $course_category->id;
+        $grade_item->itemname = 'Quiz grade item';
+        $grade_item->itemtype = 'mod';
+        $grade_item->itemmodule = $this->course_module[7]->modname;
+        $grade_item->iteminstance = $this->course_module[7]->instance;
+        $grade_item->itemnumber = 0;
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
+        $grade_item->locked = 0;
+        $grade_item->iteminfo = 'Quiz grade item used for unit testing';
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
+        $grade_item->sortorder = 11;
+
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[11] = $grade_item;
     }
 
     /**
@@ -772,5 +798,3 @@ abstract class grade_base_testcase extends advanced_testcase {
         $this->grade_outcomes[] = $grade_outcome;
     }
 }
-
-
