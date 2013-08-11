@@ -18,7 +18,7 @@
  * Data generators tests
  *
  * @package    core
- * @category   test
+ * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  * Test data generator
  *
  * @package    core
- * @category   test
+ * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -205,12 +205,10 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$maninstance3->id, 'userid'=>$user1->id)));
         $this->assertFalse($DB->record_exists('role_assignments', array('contextid'=>$context3->id, 'userid'=>$user1->id)));
 
-
         $result = $this->getDataGenerator()->enrol_user($user2->id, $course1->id, null, 'self');
         $this->assertTrue($result);
         $this->assertTrue($DB->record_exists('user_enrolments', array('enrolid'=>$instance1->id, 'userid'=>$user2->id)));
         $this->assertTrue($DB->record_exists('role_assignments', array('contextid'=>$context1->id, 'userid'=>$user2->id, 'roleid'=>$studentrole->id)));
-
 
         $selfplugin->add_instance($course2, array('status'=>ENROL_INSTANCE_ENABLED, 'roleid'=>$teacherrole->id));
         $result = $this->getDataGenerator()->enrol_user($user2->id, $course2->id, null, 'self');
@@ -219,6 +217,5 @@ class core_test_generator_testcase extends advanced_testcase {
         $DB->delete_records('enrol', array('enrol'=>'self', 'courseid'=>$course3->id));
         $result = $this->getDataGenerator()->enrol_user($user2->id, $course3->id, null, 'self');
         $this->assertFalse($result);
-
     }
 }
