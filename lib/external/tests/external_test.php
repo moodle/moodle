@@ -24,7 +24,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * External library functions unit tests
  *
  * @package    core
- * @category   external
+ * @category   phpunit
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -49,7 +49,7 @@ class core_external_testcase extends externallib_advanced_testcase {
         $returnedstring = external_api::clean_returnvalue(core_external::get_string_returns(), $returnedstring);
 
         $corestring = get_string('addservice', 'webservice', $service);
-        $this->assertEquals($corestring, $returnedstring);
+        $this->assertSame($corestring, $returnedstring);
 
         // String with one parameter.
         $acapname = 'A capability name';
@@ -60,7 +60,7 @@ class core_external_testcase extends externallib_advanced_testcase {
         $returnedstring = external_api::clean_returnvalue(core_external::get_string_returns(), $returnedstring);
 
         $corestring = get_string('missingrequiredcapability', 'webservice', $acapname);
-        $this->assertEquals($corestring, $returnedstring);
+        $this->assertSame($corestring, $returnedstring);
 
         // String without parameters.
         $returnedstring = core_external::get_string('missingpassword', 'webservice');
@@ -69,7 +69,7 @@ class core_external_testcase extends externallib_advanced_testcase {
         $returnedstring = external_api::clean_returnvalue(core_external::get_string_returns(), $returnedstring);
 
         $corestring = get_string('missingpassword', 'webservice');
-        $this->assertEquals($corestring, $returnedstring);
+        $this->assertSame($corestring, $returnedstring);
 
         // String with two parameter but one is invalid (not named).
         $this->setExpectedException('moodle_exception');
@@ -104,7 +104,7 @@ class core_external_testcase extends externallib_advanced_testcase {
 
         foreach($returnedstrings as $returnedstring) {
             $corestring = get_string($returnedstring['stringid'], $returnedstring['component'], $service);
-            $this->assertEquals($corestring, $returnedstring['string']);
+            $this->assertSame($corestring, $returnedstring['string']);
         }
     }
 
@@ -126,7 +126,7 @@ class core_external_testcase extends externallib_advanced_testcase {
 
         $this->assertEquals(count($componentstrings), count($wsstrings));
         foreach($componentstrings as $string) {
-            $this->assertEquals($string['string'], $wsstrings[$string['stringid']]);
+            $this->assertSame($string['string'], $wsstrings[$string['stringid']]);
         }
     }
 }
