@@ -3,13 +3,13 @@
   <TABLES>
     <TABLE NAME="test_table1" COMMENT="Just a test table">
       <FIELDS>
-        <FIELD NAME="id" LENGTH="10" NOTNULL="true" SEQUENCE="true" NEXT="incorrect_next_field"/> <!-- missing TYPE -->
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
-        <FIELD NAME="name" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" DEFAULT="Moodle" PREVIOUS="course" NEXT="secondname"/>
-        <FIELD NAME="secondname" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="intro"/>
-        <FIELD NAME="intro" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" PREVIOUS="secondname" NEXT="avatar"/>
-        <FIELD NAME="avatar" TYPE="binary" LENGTH="medium" NOTNULL="false" SEQUENCE="false" PREVIOUS="intro" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="20" DECIMALS="10" NOTNULL="false" SEQUENCE="false" PREVIOUS="avatar"/>
+        <FIELD NAME="id" LENGTH="10" NOTNULL="true" SEQUENCE="true"/> <!-- missing TYPE -->
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" DEFAULT="Moodle"/>
+        <FIELD NAME="secondname" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="intro" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="avatar" TYPE="binary" LENGTH="medium" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="grade" TYPE="number" LENGTH="20" DECIMALS="10" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" />
