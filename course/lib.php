@@ -1236,9 +1236,10 @@ function get_category_or_system_context($categoryid) {
 function make_categories_options() {
     global $CFG;
     require_once($CFG->libdir. '/coursecatlib.php');
-    $cats = coursecat::make_categories_list();
+    $cats = coursecat::make_categories_list('', 0, ' / ');
     foreach ($cats as $key => $value) {
-        $cats[$key] = str_repeat('&nbsp;', coursecat::get($key)->depth - 1). $value;
+        // Prefix the value with the number of spaces equal to category depth (number of separators in the value).
+        $cats[$key] = str_repeat('&nbsp;', substr_count($value, ' / ')). $value;
     }
     return $cats;
 }
