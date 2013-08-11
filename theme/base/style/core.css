@@ -269,6 +269,9 @@ a.skip:active {position: static;display: block;}
 .mform .fpassword .unmask {display:inline;margin-left:0.5em;}
 .mform .ftextarea #id_alltext {width: 100%;}
 .mform ul.file-list {padding:0;margin:0;list-style:none;}
+.mform label { display: inline-block; }
+.mform .iconhelp { margin-left: 4px; }
+.dir-rtl .mform .iconhelp { margin-right: 4px; }
 .mform label .req,
 .mform label .adv {cursor: help;}
 .mform .fcheckbox input {margin-left: 0;}
