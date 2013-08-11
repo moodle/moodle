@@ -52,7 +52,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         debugging('b', DEBUG_MINIMAL);
         debugging('c', DEBUG_DEVELOPER);
         $debuggings = $this->getDebuggingMessages();
-        $this->assertEquals(3, count($debuggings));
+        $this->assertCount(3, $debuggings);
         $this->assertSame('a', $debuggings[0]->message);
         $this->assertSame(DEBUG_NORMAL, $debuggings[0]->level);
         $this->assertSame('b', $debuggings[1]->message);
@@ -63,7 +63,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->resetDebugging();
         $this->assertDebuggingNotCalled();
         $debuggings = $this->getDebuggingMessages();
-        $this->assertEquals(0, count($debuggings));
+        $this->assertCount(0, $debuggings);
 
         set_debugging(DEBUG_NONE);
         debugging('hokus');
@@ -108,7 +108,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
     public function test_set_admin_user() {
         global $USER;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         $this->setAdminUser();
         $this->assertEquals($USER->id, 2);
@@ -118,7 +118,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
     public function test_set_guest_user() {
         global $USER;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         $this->setGuestUser();
         $this->assertEquals($USER->id, 1);
@@ -128,13 +128,13 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
     public function test_database_reset() {
         global $DB;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         $this->preventResetByRollback();
 
-        $this->assertEquals(1, $DB->count_records('course')); // only frontpage in new site
+        $this->assertEquals(1, $DB->count_records('course')); // Only frontpage in new site.
 
-        // this is weird table - id is NOT a sequence here
+        // This is weird table - id is NOT a sequence here.
         $this->assertEquals(0, $DB->count_records('context_temp'));
         $DB->import_record('context_temp', array('id'=>5, 'path'=>'/1/2', 'depth'=>2));
         $record = $DB->get_record('context_temp', array());
@@ -151,12 +151,10 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $DB->delete_records('user', array('id'=>1));
         $this->assertEquals(1, $DB->count_records('user'));
 
-        //=========
-
         $this->resetAllData();
 
-        $this->assertEquals(1, $DB->count_records('course')); // only frontpage in new site
-        $this->assertEquals(0, $DB->count_records('context_temp')); // only frontpage in new site
+        $this->assertEquals(1, $DB->count_records('course')); // Only frontpage in new site.
+        $this->assertEquals(0, $DB->count_records('context_temp')); // Only frontpage in new site.
         $course = $this->getDataGenerator()->create_course();
         $this->assertEquals(2, $course->id);
 
@@ -168,8 +166,6 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->assertEquals(3, $user->id);
 
-        // =========
-
         $this->resetAllData();
 
         $course = $this->getDataGenerator()->create_course();
@@ -177,8 +173,6 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $this->assertEquals(2, $DB->count_records('user'));
         $DB->delete_records('user', array('id'=>2));
-
-        //==========
 
         $this->resetAllData();
 
@@ -194,7 +188,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->preventResetByRollback();
         phpunit_util::reset_all_data(true);
 
-        // database change
+        // Database change.
         $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
         $DB->set_field('user', 'confirmed', 0, array('id'=>2));
         try {
@@ -204,7 +198,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         }
         $this->assertEquals(1, $DB->get_field('user', 'confirmed', array('id'=>2)));
 
-        // config change
+        // Config change.
         $CFG->xx = 'yy';
         unset($CFG->admin);
         $CFG->rolesactive = 0;
@@ -226,7 +220,6 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
 
         $this->assertEquals(array(), $_GET);
 
-
         // _POST change.
         $_POST['__somethingthatwillnotnormallybepresent2__'] = 'yy';
         phpunit_util::reset_all_data(true);
@@ -242,12 +235,12 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         phpunit_util::reset_all_data(true);
         $this->assertEquals(array(), $_REQUEST);
 
-        //silent changes
+        // Silent changes.
         $_SERVER['xx'] = 'yy';
         phpunit_util::reset_all_data(true);
         $this->assertFalse(isset($_SERVER['xx']));
 
-        // COURSE
+        // COURSE change.
         $SITE->id = 10;
         $COURSE = new stdClass();
         $COURSE->id = 7;
@@ -260,7 +253,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
             $this->assertSame($SITE, $COURSE);
         }
 
-        // USER change
+        // USER change.
         $this->setUser(2);
         try {
             phpunit_util::reset_all_data(true);
@@ -281,25 +274,25 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             $DB->get_record('pokus', array());
             $this->fail('Exception expected when accessing non existent table');
-        } catch (dml_exception $e) {
-            $this->assertTrue(true);
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('dml_exception', $e);
         }
         $DB = $this->getMock(get_class($DB));
         $this->assertNull($DB->get_record('pokus', array()));
-        // test continues after reset
+        // Rest continues after reset.
     }
 
     public function test_database_mock2() {
         global $DB;
 
-        // now the database should be back to normal
+        // Now the database should be back to normal.
         $this->assertFalse($DB->get_record('user', array('id'=>9999)));
     }
 
     public function test_load_dataset() {
         global $DB;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         $this->assertFalse($DB->record_exists('user', array('id'=>5)));
         $this->assertFalse($DB->record_exists('user', array('id'=>7)));
@@ -309,8 +302,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('user', array('id'=>7)));
         $user5 = $DB->get_record('user', array('id'=>5));
         $user7 = $DB->get_record('user', array('id'=>7));
-        $this->assertEquals('john.doe', $user5->username);
-        $this->assertEquals('jane.doe', $user7->username);
+        $this->assertSame('john.doe', $user5->username);
+        $this->assertSame('jane.doe', $user7->username);
 
         $dataset = $this->createCsvDataSet(array('user'=>__DIR__.'/fixtures/sample_dataset.csv'));
         $this->loadDataSet($dataset);
@@ -342,8 +335,6 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
     }
 
     public function test_message_redirection() {
-        global $DB;
-
         $this->preventResetByRollback(); // Messaging is not compatible with transactions...
         $this->resetAfterTest(false);
 
@@ -377,7 +368,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         message_send($message1);
         $this->assertDebuggingCalled(null, null, 'message_send() must print debug message that messaging is disabled in phpunit tests.');
 
-        // Sink should catch messages;
+        // Sink should catch messages.
         $sink = $this->redirectMessages();
         $mid1 = message_send($message1);
         $mid2 = message_send($message2);
@@ -388,8 +379,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertGreaterThanOrEqual($mid1, $mid2);
 
         $messages = $sink->get_messages();
-        $this->assertTrue(is_array($messages));
-        $this->assertEquals(2, count($messages));
+        $this->assertInternalType('array', $messages);
+        $this->assertCount(2, $messages);
         $this->assertEquals($mid1, $messages[0]->id);
         $this->assertEquals($message1->userto->id, $messages[0]->useridto);
         $this->assertEquals($message1->userfrom->id, $messages[0]->useridfrom);
@@ -402,19 +393,19 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         // Test resetting.
         $sink->clear();
         $messages = $sink->get_messages();
-        $this->assertTrue(is_array($messages));
-        $this->assertEquals(0, count($messages));
+        $this->assertInternalType('array', $messages);
+        $this->assertCount(0, $messages);
 
         message_send($message1);
         $messages = $sink->get_messages();
-        $this->assertTrue(is_array($messages));
-        $this->assertEquals(1, count($messages));
+        $this->assertInternalType('array', $messages);
+        $this->assertCount(1, $messages);
 
         // Test closing.
         $sink->close();
         $messages = $sink->get_messages();
-        $this->assertTrue(is_array($messages));
-        $this->assertEquals(1, count($messages), 'Messages in sink are supposed to stay there after close');
+        $this->assertInternalType('array', $messages);
+        $this->assertCount(1, $messages, 'Messages in sink are supposed to stay there after close');
 
         // Test debugging is enabled again.
         message_send($message1);
@@ -438,8 +429,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             message_send($message3);
             $this->fail('coding expcetion expected if invalid component specified');
-        } catch (coding_exception $e) {
-            $this->assertTrue(true);
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
         }
 
         $message3->component = 'moodle';
@@ -447,8 +438,8 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         try {
             message_send($message3);
             $this->fail('coding expcetion expected if invalid name specified');
-        } catch (coding_exception $e) {
-            $this->assertTrue(true);
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
         }
 
         message_send($message1);
@@ -464,7 +455,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
      */
     public function test_message_redirection_noreset($sink) {
         $this->preventResetByRollback(); // Messaging is not compatible with transactions...
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         $this->assertTrue(phpunit_util::is_redirecting_messages());
         $this->assertEquals(1, $sink->count());
