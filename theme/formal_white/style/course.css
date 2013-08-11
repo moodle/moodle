@@ -104,10 +104,11 @@
 .course_category_tree .category > .info {background-image:url([[pix:theme|trend/__setting_trendcolor__/hgradient]]);background-repeat:repeat-x;border:1px solid #ddd;}
 .course_category_tree.frontpage-category-names .category > .info {background:none;border:none;}
 .course_category_tree .category > .info {margin: 5px 0;}
-.course_category_tree .category > .info .name {margin:5px;padding-left:16px;}
+.course_category_tree .category > .info .name {margin:5px 5px 4px 5px;padding-left:16px;}
 .dir-rtl .course_category_tree .category > .info .name {padding-left:0;padding-right:16px;}
 .course_category_tree .courses > .paging,
 .course_category_tree .subcategories > .paging {padding:5px;}
+.course_category_tree .subcategories .name {line-height: 1em;}
 
 /* Publication */
 #page-course-publish-metadata .metadatatext {width:400px;}
