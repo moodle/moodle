@@ -26,7 +26,6 @@
 
 require_once($CFG->libdir . '/badgeslib.php');
 require_once($CFG->libdir . '/tablelib.php');
-require_once($CFG->dirroot . '/user/filters/lib.php');
 
 /**
  * Standard HTML output renderer for badges
