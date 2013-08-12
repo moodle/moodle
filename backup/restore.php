@@ -17,6 +17,10 @@ $PAGE->set_pagelayout('standard');
 require_login($course, null, $cm);
 require_capability('moodle/restore:restorecourse', $context);
 
+// Restore of large courses requires extra memory. Use the amount configured
+// in admin settings.
+raise_memory_limit(MEMORY_EXTRA);
+
 if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
     $restore = restore_ui::engage_independent_stage($stage, $contextid);
 } else {

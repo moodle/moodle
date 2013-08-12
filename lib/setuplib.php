@@ -1025,7 +1025,14 @@ function raise_memory_limit($newlimit) {
         }
 
     } else if ($newlimit == MEMORY_HUGE) {
+        // MEMORY_HUGE uses 2G or MEMORY_EXTRA, whichever is bigger.
         $newlimit = get_real_size('2G');
+        if (!empty($CFG->extramemorylimit)) {
+            $extra = get_real_size($CFG->extramemorylimit);
+            if ($extra > $newlimit) {
+                $newlimit = $extra;
+            }
+        }
 
     } else {
         $newlimit = get_real_size($newlimit);
