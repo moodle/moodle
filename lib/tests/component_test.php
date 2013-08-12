@@ -336,5 +336,30 @@ class core_component_testcase extends advanced_testcase {
         );
 
         $this->assertSame($expected, $types);
+
+    }
+
+    public function test_get_plugin_list_with_file() {
+        // Force the cache reset.
+        phpunit_util::reset_all_data();
+        $this->resetAfterTest(true);
+
+        $expected = array('completion', 'log', 'loglive', 'outline', 'participation', 'progress', 'stats');
+
+        // Test cold.
+        $list = core_component::get_plugin_list_with_file('report', 'lib.php', false);
+        $this->assertEquals($expected, array_keys($list));
+
+        // Test hot.
+        $list = core_component::get_plugin_list_with_file('report', 'lib.php', false);
+        $this->assertEquals($expected, array_keys($list));
+
+        // Test with include.
+        $list = core_component::get_plugin_list_with_file('report', 'lib.php', true);
+        $this->assertEquals($expected, array_keys($list));
+
+        // Test missing.
+        $list = core_component::get_plugin_list_with_file('report', 'idontexist.php', true);
+        $this->assertEquals(array(), array_keys($list));
     }
 }

@@ -57,7 +57,7 @@ $struntestable = new lang_string('untestable', 'cache');
 $strtested = new lang_string('tested', 'cache');
 $strnotready = new lang_string('storenotready', 'cache');
 
-foreach (get_plugin_list_with_file('cachestore', 'lib.php', true) as $plugin => $path) {
+foreach (core_component::get_plugin_list_with_file('cachestore', 'lib.php', true) as $plugin => $path) {
 
     $class = 'cachestore_'.$plugin;
     $plugin = get_string('pluginname', 'cachestore_'.$plugin);
