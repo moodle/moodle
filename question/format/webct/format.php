@@ -105,7 +105,7 @@ function qformat_webct_convert_formula($formula) {
             for ($i = 1; $deep; ++$i) {
                 if (!preg_match('~^(.*[^[:alnum:]_])?([[:alnum:]_]*([)(])([^)(]*[)(]){'.$i.'})$~',
                         $splits[0], $regs)) {
-                    print_error("parenthesisinproperstart", 'question', '', $splits[0]);
+                    print_error('parenthesisinproperstart', 'question', '', $splits[0]);
                 }
                 if ('(' == $regs[3]) {
                     --$deep;
@@ -135,14 +135,14 @@ function qformat_webct_convert_formula($formula) {
             for ($i = 1; $deep; ++$i) {
                 if (!preg_match('~^([+-]?[[:alnum:]_]*([)(][^)(]*){'.$i.'}([)(]))(.*)~',
                         $splits[1], $regs)) {
-                    print_error("parenthesisinproperclose", 'question', '', $splits[1]);
+                    print_error('parenthesisinproperclose', 'question', '', $splits[1]);
                 }
                 if (')' == $regs[3]) {
                     --$deep;
                 } else if ('(' == $regs[3]) {
                     ++$deep;
                 } else {
-                    print_error("impossiblechar", 'question');
+                    print_error('impossiblechar', 'question');
                 }
             }
             $exp = $regs[1];
@@ -166,12 +166,173 @@ function qformat_webct_convert_formula($formula) {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qformat_webct extends qformat_default {
+    /** @var string path to the temporary directory. */
+    public $tempdir = '';
 
+    /**
+     * This plugin provide import
+     * @return bool true
+     */
     public function provide_import() {
         return true;
     }
 
-    protected function readquestions($lines) {
+    public function can_import_file($file) {
+        $mimetypes = array(
+            mimeinfo('type', '.txt'),
+            mimeinfo('type', '.zip')
+        );
+        return in_array($file->get_mimetype(), $mimetypes);
+    }
+
+    public function mime_type() {
+        return mimeinfo('type', '.zip');
+    }
+
+    /**
+     * Store an image file in a draft filearea
+     * @param array $text, if itemid element don't exists it will be created
+     * @param string tempdir path to root of image tree
+     * @param string filepathinsidetempdir path to image in the tree
+     * @param string filename image's name
+     * @return string new name of the image as it was stored
+     */
+    protected function store_file_for_text_field(&$text, $tempdir, $filepathinsidetempdir, $filename) {
+        global $USER;
+        $fs = get_file_storage();
+        if (empty($text['itemid'])) {
+            $text['itemid'] = file_get_unused_draft_itemid();
+        }
+        // As question file areas don't support subdirs,
+        // convert path to filename.
+        // So that images with same name can be imported.
+        $newfilename = clean_param(str_replace('/', '__', $filepathinsidetempdir . '__' . $filename), PARAM_FILE);
+        $filerecord = array(
+            'contextid' => context_user::instance($USER->id)->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $text['itemid'],
+            'filepath'  => '/',
+            'filename'  => $newfilename,
+        );
+        $fs->create_file_from_pathname($filerecord, $tempdir . '/' . $filepathinsidetempdir . '/' . $filename);
+        return $newfilename;
+    }
+
+    /**
+     * Given an HTML text with references to images files,
+     * store all images in a draft filearea,
+     * and return an array with all urls in text recoded,
+     * format set to FORMAT_HTML, and itemid set to filearea itemid
+     * @param string text text to parse and recode
+     * @return array with keys text, format, itemid.
+     */
+    public function text_field($text) {
+        $data = array();
+        // Step one, find all file refs then add to array.
+        preg_match_all('|<img[^>]+src="([^"]*)"|i', $text, $out); // Find all src refs.
+
+        $filepaths = array();
+        foreach ($out[1] as $path) {
+            $fullpath = $this->tempdir . '/' . $path;
+            if (is_readable($fullpath) && !in_array($path, $filepaths)) {
+                $dirpath = dirname($path);
+                $filename = basename($path);
+                $newfilename = $this->store_file_for_text_field($data, $this->tempdir, $dirpath, $filename);
+                $text = preg_replace("|$path|", "@@PLUGINFILE@@/" . $newfilename, $text);
+                $filepaths[] = $path;
+            }
+
+        }
+        $data['text'] = $text;
+        $data['format'] = FORMAT_HTML;
+        return $data;
+    }
+
+    /**
+     * Does any post-processing that may be desired
+     * Clean the temporary directory if a zip file was imported
+     * @return bool success
+     */
+    public function importpostprocess() {
+        if ($this->tempdir != '') {
+            fulldelete($this->tempdir);
+        }
+        return true;
+    }
+
+    /**
+     * Return content of all files containing questions,
+     * as an array one element for each file found,
+     * For each file, the corresponding element is an array of lines.
+     * @param string filename name of file
+     * @return mixed contents array or false on failure
+     */
+    public function readdata($filename) {
+
+        // Find if we are importing a .txt file.
+        if (strtolower(pathinfo($filename, PATHINFO_EXTENSION)) == 'txt') {
+            if (!is_readable($filename)) {
+                $this->error(get_string('filenotreadable', 'error'));
+                return false;
+            }
+            return file($filename);
+        }
+        // We are importing a zip file.
+        // Create name for temporary directory.
+        $uniquecode = time();
+        $this->tempdir = make_temp_directory('webct_import/' . $uniquecode);
+        if (is_readable($filename)) {
+            if (!copy($filename, $this->tempdir . '/webct.zip')) {
+                $this->error(get_string('cannotcopybackup', 'question'));
+                fulldelete($this->tempdir);
+                return false;
+            }
+            if (unzip_file($this->tempdir . '/webct.zip', '', false)) {
+                $dir = $this->tempdir;
+                if ((($handle = opendir($dir))) == false) {
+                    // The directory could not be opened.
+                    fulldelete($this->tempdir);
+                    return false;
+                }
+                // Create arrays to store files and directories.
+                $dirfiles = array();
+                $dirsubdirs = array();
+                $slash = '/';
+
+                // Loop through all directory entries, and construct two temporary arrays containing files and sub directories.
+                while (false !== ($entry = readdir($handle))) {
+                    if (is_dir($dir. $slash .$entry) && $entry != '..' && $entry != '.') {
+                        $dirsubdirs[] = $dir. $slash .$entry;
+                    } else if ($entry != '..' && $entry != '.') {
+                        $dirfiles[] = $dir. $slash .$entry;
+                    }
+                }
+                if ((($handle = opendir($dirsubdirs[0]))) == false) {
+                    // The directory could not be opened.
+                    fulldelete($this->tempdir);
+                    return false;
+                }
+                while (false !== ($entry = readdir($handle))) {
+                    if (is_dir($dirsubdirs[0]. $slash .$entry) && $entry != '..' && $entry != '.') {
+                        $dirsubdirs[] = $dirsubdirs[0]. $slash .$entry;
+                    } else if ($entry != '..' && $entry != '.') {
+                        $dirfiles[] = $dirsubdirs[0]. $slash .$entry;
+                    }
+                }
+                return file($dirfiles[1]);
+            } else {
+                $this->error(get_string('cannotunzip', 'question'));
+                fulldelete($this->temp_dir);
+            }
+        } else {
+            $this->error(get_string('cannotreaduploadfile', 'error'));
+            fulldelete($this->tempdir);
+        }
+        return false;
+    }
+
+    public function readquestions ($lines) {
         $webctnumberregex =
                 '[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)((e|E|\\*10\\*\\*)([+-]?[0-9]+|\\([+-]?[0-9]+\\)))?';
 
@@ -190,12 +351,17 @@ class qformat_webct extends qformat_default {
 
         foreach ($lines as $line) {
             $nlinecounter++;
-            $line = iconv("Windows-1252", "UTF-8", $line);
+            $line = textlib::convert($line, 'windows-1252', 'utf-8');
             // Processing multiples lines strings.
 
             if (isset($questiontext) and is_string($questiontext)) {
                 if (preg_match("~^:~", $line)) {
-                    $question->questiontext = trim($questiontext);
+                    $questiontext = $this->text_field(trim($questiontext));
+                    $question->questiontext = $questiontext['text'];
+                    $question->questiontextformat = $questiontext['format'];
+                    if (isset($questiontext['itemid'])) {
+                        $question->questiontextitemid = $questiontext['itemid'];
+                    }
                     unset($questiontext);
                 } else {
                     $questiontext .= str_replace('\:', ':', $line);
@@ -206,8 +372,14 @@ class qformat_webct extends qformat_default {
             if (isset($answertext) and is_string($answertext)) {
                 if (preg_match("~^:~", $line)) {
                     $answertext = trim($answertext);
-                    $question->answer[$currentchoice] = $answertext;
-                    $question->subanswers[$currentchoice] = $answertext;
+                    if ($question->qtype == 'multichoice' || $question->qtype == 'match' ) {
+                        $question->answer[$currentchoice] = $this->text_field($answertext);
+                        $question->subanswers[$currentchoice] = $question->answer[$currentchoice];
+
+                    } else {
+                        $question->answer[$currentchoice] = $answertext;
+                        $question->subanswers[$currentchoice] = $answertext;
+                    }
                     unset($answertext);
                 } else {
                     $answertext .= str_replace('\:', ':', $line);
@@ -227,7 +399,7 @@ class qformat_webct extends qformat_default {
 
             if (isset($feedbacktext) and is_string($feedbacktext)) {
                 if (preg_match("~^:~", $line)) {
-                    $question->feedback[$currentchoice] = trim($feedbacktext);
+                    $question->feedback[$currentchoice] = $this->text_field(trim($feedbacktext));
                     unset($feedbacktext);
                 } else {
                     $feedbacktext .= str_replace('\:', ':', $line);
@@ -237,10 +409,21 @@ class qformat_webct extends qformat_default {
 
             if (isset($generalfeedbacktext) and is_string($generalfeedbacktext)) {
                 if (preg_match("~^:~", $line)) {
-                    $question->tempgeneralfeedback= trim($generalfeedbacktext);
+                    $question->tempgeneralfeedback = trim($generalfeedbacktext);
                     unset($generalfeedbacktext);
                 } else {
                     $generalfeedbacktext .= str_replace('\:', ':', $line);
+                    continue;
+                }
+            }
+
+            if (isset($graderinfo) and is_string($graderinfo)) {
+                if (preg_match("~^:~", $line)) {
+                    $question->graderinfo['text'] = trim($graderinfo);
+                    $question->graderinfo['format'] = FORMAT_HTML;
+                    unset($graderinfo);
+                } else {
+                    $graderinfo .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
@@ -260,7 +443,7 @@ class qformat_webct extends qformat_default {
                         $question->defaultmark = 1;
                     }
                     if (!isset($question->image)) {
-                        $question->image = "";
+                        $question->image = '';
                     }
 
                     // Perform sanity checks.
@@ -276,19 +459,25 @@ class qformat_webct extends qformat_default {
                         // Create empty feedback array.
                         foreach ($question->answer as $key => $dataanswer) {
                             if (!isset($question->feedback[$key])) {
-                                $question->feedback[$key] = '';
+                                $question->feedback[$key]['text'] = '';
+                                $question->feedback[$key]['format'] = FORMAT_HTML;
                             }
                         }
                         // This tempgeneralfeedback allows the code to work with versions from 1.6 to 1.9.
                         // When question->generalfeedback is undefined, the webct feedback is added to each answer feedback.
                         if (isset($question->tempgeneralfeedback)) {
                             if (isset($question->generalfeedback)) {
-                                $question->generalfeedback = $question->tempgeneralfeedback;
+                                $generalfeedback = $this->text_field($question->tempgeneralfeedback);
+                                $question->generalfeedback = $generalfeedback['text'];
+                                $question->generalfeedbackformat = $generalfeedback['format'];
+                                if (isset($generalfeedback['itemid'])) {
+                                    $question->genralfeedbackitemid = $generalfeedback['itemid'];
+                                }
                             } else {
                                 foreach ($question->answer as $key => $dataanswer) {
-                                    if ($question->tempgeneralfeedback !='') {
-                                        $question->feedback[$key] = $question->tempgeneralfeedback
-                                                .'<br/>'.$question->feedback[$key];
+                                    if ($question->tempgeneralfeedback != '') {
+                                        $question->feedback[$key]['text'] = $question->tempgeneralfeedback
+                                                .'<br/>'.$question->feedback[$key]['text'];
                                     }
                                 }
                             }
@@ -315,6 +504,8 @@ class qformat_webct extends qformat_default {
                                 break;
 
                             case 'multichoice':
+                                $question = $this->add_blank_combined_feedback($question);
+
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
                                         $maxfraction = $maxfraction * 100;
@@ -341,7 +532,7 @@ class qformat_webct extends qformat_default {
                                     }
                                 }
                                 foreach ($question->dataset as $dataset) {
-                                    $dataset->itemcount=count($dataset->datasetitem);
+                                    $dataset->itemcount = count($dataset->datasetitem);
                                 }
                                 $question->import_process = true;
                                 unset($question->answer); // Not used in calculated question.
@@ -349,6 +540,7 @@ class qformat_webct extends qformat_default {
                             case 'match':
                                 // MDL-10680:
                                 // Switch subquestions and subanswers.
+                                $question = $this->add_blank_combined_feedback($question);
                                 foreach ($question->subquestions as $id => $subquestion) {
                                     $temp = $question->subquestions[$id];
                                     $question->subquestions[$id] = $question->subanswers[$id];
@@ -438,10 +630,26 @@ class qformat_webct extends qformat_default {
             }
 
             if (preg_match("~^:TYPE:P~i", $line)) {
-                // Paragraph question (essay).
-                $warnings[] = get_string("paragraphquestion", "qformat_webct", $nlinecounter);
-                unset($question);
-                $ignorerestofquestion = true;         // Question Type not handled by Moodle.
+                // Paragraph Question.
+                $question = $this->defaultquestion();
+                $question->qtype = 'essay';
+                $question->responseformat = 'editor';
+                $question->responsefieldlines = 15;
+                $question->attachments = 0;
+                $question->graderinfo = array(
+                        'text' => '',
+                        'format' => FORMAT_HTML,
+                    );
+                $question->feedback = array();
+                $question->generalfeedback = '';
+                $question->generalfeedbackformat = FORMAT_HTML;
+                $question->generalfeedbackfiles = array();
+                $question->responsetemplate = $this->text_field('');
+                $question->questiontextformat = FORMAT_HTML;
+                $ignorerestofquestion = false;
+                // To make us pass the end-of-question sanity checks.
+                $question->answer = array('dummy');
+                $question->fraction = array('1.0');
                 continue;
             }
 
@@ -503,21 +711,26 @@ class qformat_webct extends qformat_default {
 
             $bishtmltext = preg_match("~:H$~i", $line);  // True if next lines are coded in HTML.
             if (preg_match("~^:QUESTION~i", $line)) {
-                $questiontext='';               // Start gathering next lines.
+                $questiontext = '';               // Start gathering next lines.
                 continue;
             }
 
             if (preg_match("~^:ANSWER([0-9]+):([^:]+):([0-9\.\-]+):(.*)~i", $line, $webctoptions)) { // Shortanswer.
-                $currentchoice=$webctoptions[1];
-                $answertext=$webctoptions[2];            // Start gathering next lines.
-                $question->fraction[$currentchoice]=($webctoptions[3]/100);
+                $currentchoice = $webctoptions[1];
+                $answertext = $webctoptions[2];            // Start gathering next lines.
+                $question->fraction[$currentchoice] = ($webctoptions[3]/100);
                 continue;
             }
 
             if (preg_match("~^:ANSWER([0-9]+):([0-9\.\-]+)~i", $line, $webctoptions)) {
-                $answertext='';                 // Start gathering next lines.
-                $currentchoice=$webctoptions[1];
-                $question->fraction[$currentchoice]=($webctoptions[2]/100);
+                $answertext = '';                 // Start gathering next lines.
+                $currentchoice = $webctoptions[1];
+                $question->fraction[$currentchoice] = ($webctoptions[2]/100);
+                continue;
+            }
+
+            if (preg_match('~^:ANSWER:~i', $line)) { // Essay.
+                $graderinfo  = '';      // Start gathering next lines.
                 continue;
             }
 
@@ -531,7 +744,8 @@ class qformat_webct extends qformat_default {
                 $question->fraction[$currentchoice] = 1.0;
                 $question->tolerance[$currentchoice] = 0.0;
                 $question->tolerancetype[$currentchoice] = 2; // Nominal (units in webct).
-                $question->feedback[$currentchoice] = '';
+                $question->feedback[$currentchoice]['text'] = '';
+                $question->feedback[$currentchoice]['format'] = FORMAT_HTML;
                 $question->correctanswerlength[$currentchoice] = 4;
 
                 $datasetnames =
@@ -547,30 +761,30 @@ class qformat_webct extends qformat_default {
             }
 
             if (preg_match("~^:L([0-9]+)~i", $line, $webctoptions)) {
-                $answertext='';                 // Start gathering next lines.
-                $currentchoice=$webctoptions[1];
-                $question->fraction[$currentchoice]=1;
+                $answertext = '';                 // Start gathering next lines.
+                $currentchoice = $webctoptions[1];
+                $question->fraction[$currentchoice] = 1;
                 continue;
             }
 
             if (preg_match("~^:R([0-9]+)~i", $line, $webctoptions)) {
-                $responsetext='';                // Start gathering next lines.
-                $currentchoice=$webctoptions[1];
+                $responsetext = '';                // Start gathering next lines.
+                $currentchoice = $webctoptions[1];
                 continue;
             }
 
             if (preg_match("~^:REASON([0-9]+):?~i", $line, $webctoptions)) {
-                $feedbacktext='';               // Start gathering next lines.
-                $currentchoice=$webctoptions[1];
+                $feedbacktext = '';               // Start gathering next lines.
+                $currentchoice = $webctoptions[1];
                 continue;
             }
             if (preg_match("~^:FEEDBACK([0-9]+):?~i", $line, $webctoptions)) {
-                $generalfeedbacktext='';               // Start gathering next lines.
-                $currentchoice=$webctoptions[1];
+                $generalfeedbacktext = '';               // Start gathering next lines.
+                $currentchoice = $webctoptions[1];
                 continue;
             }
             if (preg_match('~^:FEEDBACK:(.*)~i', $line, $webctoptions)) {
-                $generalfeedbacktext='';               // Start gathering next lines.
+                $generalfeedbacktext = '';               // Start gathering next lines.
                 continue;
             }
             if (preg_match('~^:LAYOUT:(.*)~i', $line, $webctoptions)) {
@@ -630,11 +844,11 @@ class qformat_webct extends qformat_default {
             }
 
             if (isset($question->qtype )&& 'calculated' == $question->qtype && preg_match('~^:ANSTYPE:dec~i', $line)) {
-                $question->correctanswerformat[$currentchoice]='1';
+                $question->correctanswerformat[$currentchoice] = '1';
                 continue;
             }
             if (isset($question->qtype )&& 'calculated' == $question->qtype && preg_match('~^:ANSTYPE:sig~i', $line)) {
-                $question->correctanswerformat[$currentchoice]='2';
+                $question->correctanswerformat[$currentchoice] = '2';
                 continue;
             }
         }
