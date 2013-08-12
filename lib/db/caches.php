@@ -29,14 +29,24 @@
 $definitions = array(
 
     // Used to store processed lang files.
-    // The keys used are the component of the string file.
+    // The keys used are the revision, lang and component of the string file.
     // The persistent max size has been based upon student access of the site.
+    // NOTE: this data may be safely stored in local caches on cluster nodes.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
         'persistent' => true,
         'persistentmaxsize' => 30
+    ),
+
+    // Used to store cache of all available translations.
+    // NOTE: this data may be safely stored in local caches on cluster nodes.
+    'langmenu' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'persistent' => true,
     ),
 
     // Used to store database meta information.

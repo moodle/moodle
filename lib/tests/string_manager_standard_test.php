@@ -34,14 +34,14 @@ require_once($CFG->libdir.'/moodlelib.php');
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_string_manager_testcase extends advanced_testcase {
+class core_string_manager_standard_testcase extends advanced_testcase {
 
     public function test_string_manager_instance() {
         $this->resetAfterTest();
 
         $otherroot = dirname(__FILE__).'/fixtures/langtest';
         $stringman = testable_core_string_manager::instance($otherroot);
-        $this->assertContains('string_manager', class_implements($stringman));
+        $this->assertInstanceOf('core_string_manager', $stringman);
     }
 
     public function test_get_language_dependencies() {
@@ -76,7 +76,7 @@ class core_string_manager_testcase extends advanced_testcase {
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class testable_core_string_manager extends core_string_manager {
+class testable_core_string_manager extends core_string_manager_standard {
 
     /**
      * Factory method
