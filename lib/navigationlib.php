@@ -4049,7 +4049,7 @@ class settings_navigation extends navigation_node {
         // Portfolio
         if ($currentuser && !empty($CFG->enableportfolios) && has_capability('moodle/portfolio:export', $systemcontext)) {
             require_once($CFG->libdir . '/portfoliolib.php');
-            if (portfolio_instances(true, false)) {
+            if (portfolio_has_visible_instances()) {
                 $portfolio = $usersetting->add(get_string('portfolios', 'portfolio'), null, self::TYPE_SETTING);
 
                 $url = new moodle_url('/user/portfolio.php', array('courseid'=>$course->id));
