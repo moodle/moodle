@@ -17,28 +17,31 @@
 namespace core\event;
 
 /**
- * Role unassigned event.
+ * Role assigned event.
  *
- * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @package    core_event
+ * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class role_unassigned extends base {
+class role_deleted extends base {
+    /**
+     * Initialise event parameters.
+     */
     protected function init() {
         $this->data['objecttable'] = 'role';
         $this->data['crud'] = 'd';
-        // TODO: MDL-37658 set level
+        // TODO: MDL-41040 set level.
         $this->data['level'] = 50;
     }
 
     /**
-     * Returns localised general event name.
+     * Returns localised event name.
      *
      * @return string
      */
     public static function get_name() {
-        return get_string('eventroleunassigned', 'role');
+        return get_string('eventroledeleted', 'role');
     }
 
     /**
@@ -47,33 +50,16 @@ class role_unassigned extends base {
      * @return string
      */
     public function get_description() {
-        return 'Role '.$this->objectid.' was unassigned from user '.$this->relateduserid.' in context '.$this->contextid;
+        return 'Role ' . $this->objectid . ' is deleted by user ' . $this->userid;
     }
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {
-        return new moodle_url('/admin/roles/assign.php', array('contextid'=>$this->contextid, 'roleid'=>$this->objectid));
-    }
-
-    /**
-     * Does this event replace legacy event?
-     *
-     * @return null|string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'role_unassigned';
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return mixed
-     */
-    protected function get_legacy_eventdata() {
-        return $this->get_record_snapshot('role_assignments', $this->data['other']['id']);
+        return new \moodle_url('/admin/roles/manage.php');
     }
 
     /**
@@ -82,9 +68,6 @@ class role_unassigned extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $roles = get_all_roles();
-        $rolenames = role_fix_names($roles, $this->get_context(), ROLENAME_ORIGINAL, true);
-        return array($this->courseid, 'role', 'unassign', 'admin/roles/assign.php?contextid='.$this->contextid.'&roleid='.$this->objectid,
-                $rolenames[$this->objectid], '', $this->userid);
+        return array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid='.$this->objectid, $this->other['shortname'], '');
     }
 }

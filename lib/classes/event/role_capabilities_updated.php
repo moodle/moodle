@@ -17,28 +17,34 @@
 namespace core\event;
 
 /**
- * Role unassigned event.
+ * Role updated event.
  *
- * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @package    core_event
+ * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class role_unassigned extends base {
+class role_capabilities_updated extends base {
+    /** @var array Legacy log data */
+    protected $legacylogdata = null;
+
+    /**
+     * Initialise event parameters.
+     */
     protected function init() {
         $this->data['objecttable'] = 'role';
-        $this->data['crud'] = 'd';
-        // TODO: MDL-37658 set level
+        $this->data['crud'] = 'u';
+        // TODO: MDL-41040 set level.
         $this->data['level'] = 50;
     }
 
     /**
-     * Returns localised general event name.
+     * Returns localised event name.
      *
      * @return string
      */
     public static function get_name() {
-        return get_string('eventroleunassigned', 'role');
+        return get_string('eventrolecapabilitiesupdated', 'role');
     }
 
     /**
@@ -47,44 +53,38 @@ class role_unassigned extends base {
      * @return string
      */
     public function get_description() {
-        return 'Role '.$this->objectid.' was unassigned from user '.$this->relateduserid.' in context '.$this->contextid;
+        return 'Capabilities for role ' . $this->objectid . ' are updated by user ' . $this->userid;
     }
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {
-        return new moodle_url('/admin/roles/assign.php', array('contextid'=>$this->contextid, 'roleid'=>$this->objectid));
+        if ($this->contextlevel === CONTEXT_SYSTEM) {
+            return new \moodle_url('admin/roles/define.php', array('action' => 'view', 'roleid' => $this->objectid));
+        } else {
+            return new \moodle_url('/admin/roles/override.php', array('contextid' => $this->contextid, 'roleid' => $this->objectid));
+        }
     }
 
     /**
-     * Does this event replace legacy event?
+     * Sets legacy log data.
      *
-     * @return null|string legacy event name
+     * @param array $legacylogdata
+     * @return void
      */
-    public static function get_legacy_eventname() {
-        return 'role_unassigned';
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return mixed
-     */
-    protected function get_legacy_eventdata() {
-        return $this->get_record_snapshot('role_assignments', $this->data['other']['id']);
+    public function set_legacy_logdata($legacylogdata) {
+        $this->legacylogdata = $legacylogdata;
     }
 
     /**
      * Returns array of parameters to be passed to legacy add_to_log() function.
      *
-     * @return array
+     * @return null|array
      */
     protected function get_legacy_logdata() {
-        $roles = get_all_roles();
-        $rolenames = role_fix_names($roles, $this->get_context(), ROLENAME_ORIGINAL, true);
-        return array($this->courseid, 'role', 'unassign', 'admin/roles/assign.php?contextid='.$this->contextid.'&roleid='.$this->objectid,
-                $rolenames[$this->objectid], '', $this->userid);
+        return $this->legacylogdata;
     }
 }

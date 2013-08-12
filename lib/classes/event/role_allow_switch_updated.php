@@ -17,28 +17,30 @@
 namespace core\event;
 
 /**
- * Role unassigned event.
+ * Event when role allow switch is updated.
  *
- * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @package    core_event
+ * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-class role_unassigned extends base {
+class role_allow_switch_updated extends base {
+    /**
+     * Initialise event parameters.
+     */
     protected function init() {
-        $this->data['objecttable'] = 'role';
-        $this->data['crud'] = 'd';
-        // TODO: MDL-37658 set level
+        $this->data['crud'] = 'u';
+        // TODO: MDL-41040 set level.
         $this->data['level'] = 50;
     }
 
     /**
-     * Returns localised general event name.
+     * Returns localised event name.
      *
      * @return string
      */
     public static function get_name() {
-        return get_string('eventroleunassigned', 'role');
+        return get_string('eventroleallowswitchupdated', 'role');
     }
 
     /**
@@ -47,33 +49,16 @@ class role_unassigned extends base {
      * @return string
      */
     public function get_description() {
-        return 'Role '.$this->objectid.' was unassigned from user '.$this->relateduserid.' in context '.$this->contextid;
+        return 'Allow role switch updated by user ' . $this->userid;
     }
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {
-        return new moodle_url('/admin/roles/assign.php', array('contextid'=>$this->contextid, 'roleid'=>$this->objectid));
-    }
-
-    /**
-     * Does this event replace legacy event?
-     *
-     * @return null|string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'role_unassigned';
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return mixed
-     */
-    protected function get_legacy_eventdata() {
-        return $this->get_record_snapshot('role_assignments', $this->data['other']['id']);
+        return new \moodle_url('/admin/roles/allow.php', array('mode' => 'switch'));
     }
 
     /**
@@ -82,9 +67,6 @@ class role_unassigned extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        $roles = get_all_roles();
-        $rolenames = role_fix_names($roles, $this->get_context(), ROLENAME_ORIGINAL, true);
-        return array($this->courseid, 'role', 'unassign', 'admin/roles/assign.php?contextid='.$this->contextid.'&roleid='.$this->objectid,
-                $rolenames[$this->objectid], '', $this->userid);
+        return array(SITEID, 'role', 'edit allow switch', 'admin/roles/allow.php?mode=switch');
     }
 }

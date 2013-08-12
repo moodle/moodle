@@ -398,6 +398,27 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertTrue($result);
         $permission = $DB->get_record('role_capabilities', array('contextid'=>$frontcontext->id, 'roleid'=>$student->id, 'capability'=>'moodle/backup:backupcourse'));
         $this->assertEmpty($permission);
+
+        // Test event trigger.
+        $rolecapabilityevent = \core\event\role_capabilities_updated::create(array('context' => $syscontext,
+                                                                                  'objectid' => $student->id,
+                                                                                  'other' => array('name' => $student->shortname)
+                                                                                 ));
+        $expectedlegacylog = array(SITEID, 'role', 'view', 'admin/roles/define.php?action=view&roleid=' . $student->id,
+                            $student->shortname, '', $user->id);
+        $rolecapabilityevent->set_legacy_logdata($expectedlegacylog);
+        $rolecapabilityevent->add_record_snapshot('role', $student);
+
+        $sink = $this->redirectEvents();
+        $rolecapabilityevent->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertInstanceOf('\core\event\role_capabilities_updated', $event);
+        $expectedurl = new moodle_url('admin/roles/define.php', array('action' => 'view', 'roleid' => $student->id));
+        $this->assertEquals($expectedurl, $event->get_url());
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -487,13 +508,18 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
         $this->assertSame('role_assigned', $event::get_legacy_eventname());
+        $roles = get_all_roles();
+        $rolenames = role_fix_names($roles, $context, ROLENAME_ORIGINAL, true);
+        $expectedlegacylog = array($course->id, 'role', 'assign',
+            'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$role->id, $rolenames[$role->id], '', $USER->id);
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
      * Test role unassigning.
      */
     public function test_role_unassign() {
-        global $DB;
+        global $DB, $USER;
 
         $this->resetAfterTest();
 
@@ -530,6 +556,11 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertCount(3, $event->other);
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
+        $roles = get_all_roles();
+        $rolenames = role_fix_names($roles, $context, ROLENAME_ORIGINAL, true);
+        $expectedlegacylog = array($course->id, 'role', 'unassign',
+            'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$role->id, $rolenames[$role->id], '', $USER->id);
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -644,7 +675,13 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('role_allow_override', array('roleid'=>$role->id)));
         $this->assertTrue($DB->record_exists('role_allow_override', array('allowoverride'=>$role->id)));
 
+        // Delete role and get event.
+        $sink = $this->redirectEvents();
         $result = delete_role($role->id);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
         $this->assertTrue($result);
         $this->assertFalse($DB->record_exists('role', array('id'=>$role->id)));
         $this->assertFalse($DB->record_exists('role_assignments', array('roleid'=>$role->id)));
@@ -655,6 +692,21 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('role_allow_assign', array('allowassign'=>$role->id)));
         $this->assertFalse($DB->record_exists('role_allow_override', array('roleid'=>$role->id)));
         $this->assertFalse($DB->record_exists('role_allow_override', array('allowoverride'=>$role->id)));
+
+        // Test triggered event.
+        $this->assertInstanceOf('\core\event\role_deleted', $event);
+        $this->assertSame('role', $event->target);
+        $this->assertSame('role', $event->objecttable);
+        $this->assertSame($role->id, $event->objectid);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $this->assertSame($role->name, $event->other['name']);
+        $this->assertSame($role->shortname, $event->other['shortname']);
+        $this->assertSame($role->description, $event->other['description']);
+        $this->assertSame($role->archetype, $event->other['archetype']);
+
+        $expectedlegacylog = array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid='.$role->id,
+                                   $role->shortname, '');
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -884,7 +936,7 @@ class core_accesslib_testcase extends advanced_testcase {
      * Test allowing of role assignments.
      */
     public function test_allow_assign() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest();
 
@@ -894,13 +946,26 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('role_allow_assign', array('roleid'=>$otherid, 'allowassign'=>$student->id)));
         allow_assign($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_assign', array('roleid'=>$otherid, 'allowassign'=>$student->id)));
+
+        // Test event trigger.
+        $allowroleassignevent = \core\event\role_allow_assign_updated::create(array('context' => context_system::instance()));
+        $sink = $this->redirectEvents();
+        $allowroleassignevent->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\role_allow_assign_updated', $event);
+        $mode = 'assign';
+        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
+        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
      * Test allowing of role overrides.
      */
     public function test_allow_override() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest();
 
@@ -910,13 +975,26 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('role_allow_override', array('roleid'=>$otherid, 'allowoverride'=>$student->id)));
         allow_override($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_override', array('roleid'=>$otherid, 'allowoverride'=>$student->id)));
+
+        // Test event trigger.
+        $allowroleassignevent = \core\event\role_allow_override_updated::create(array('context' => context_system::instance()));
+        $sink = $this->redirectEvents();
+        $allowroleassignevent->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\role_allow_override_updated', $event);
+        $mode = 'override';
+        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
+        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
      * Test allowing of role switching.
      */
     public function test_allow_switch() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest();
 
@@ -926,6 +1004,19 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertFalse($DB->record_exists('role_allow_switch', array('roleid'=>$otherid, 'allowswitch'=>$student->id)));
         allow_switch($otherid, $student->id);
         $this->assertTrue($DB->record_exists('role_allow_switch', array('roleid'=>$otherid, 'allowswitch'=>$student->id)));
+
+        // Test event trigger.
+        $allowroleassignevent = \core\event\role_allow_switch_updated::create(array('context' => context_system::instance()));
+        $sink = $this->redirectEvents();
+        $allowroleassignevent->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $this->assertInstanceOf('\core\event\role_allow_switch_updated', $event);
+        $mode = 'switch';
+        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
+        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
