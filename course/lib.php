@@ -1329,6 +1329,10 @@ function course_create_sections_if_missing($courseorid, $sections) {
  *
  * Updates both tables {course_sections} and {course_modules}
  *
+ * Note: This function does not use modinfo PROVIDED that the section you are
+ * adding the module to already exists. If the section does not exist, it will
+ * build modinfo if necessary and create the section.
+ *
  * @param int|stdClass $courseorid course id or course object
  * @param int $cmid id of the module already existing in course_modules table
  * @param int $sectionnum relative number of the section (field course_sections.section)
@@ -1348,9 +1352,16 @@ function course_add_cm_to_section($courseorid, $cmid, $sectionnum, $beforemod = 
     } else {
         $courseid = $courseorid;
     }
-    course_create_sections_if_missing($courseorid, $sectionnum);
     // Do not try to use modinfo here, there is no guarantee it is valid!
-    $section = $DB->get_record('course_sections', array('course'=>$courseid, 'section'=>$sectionnum), '*', MUST_EXIST);
+    $section = $DB->get_record('course_sections',
+            array('course' => $courseid, 'section' => $sectionnum), '*', IGNORE_MISSING);
+    if (!$section) {
+        // This function call requires modinfo.
+        course_create_sections_if_missing($courseorid, $sectionnum);
+        $section = $DB->get_record('course_sections',
+                array('course' => $courseid, 'section' => $sectionnum), '*', MUST_EXIST);
+    }
+
     $modarray = explode(",", trim($section->sequence));
     if (empty($section->sequence)) {
         $newsequence = "$cmid";
