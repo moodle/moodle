@@ -45,7 +45,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         $context = context_user::instance($USER->id);
         $contextid = $context->id;
         $component = "user";
-        $filearea = "private";
+        $filearea = "draft";
         $itemid = 0;
         $filepath = "/";
         $filename = "Simple.txt";
@@ -59,15 +59,16 @@ class core_files_externallib_testcase extends advanced_testcase {
         $this->assertEmpty($file);
 
         // Call the api to create a file.
-        core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
+        $fileinfo = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
                 $filename, $filecontent, $contextlevel, $instanceid);
+        // Get the created draft item id.
+        $itemid = $fileinfo['itemid'];
 
         // Make sure the file was created.
         $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
         $this->assertNotEmpty($file);
 
         // Make sure no file exists.
-        $itemid = 2;
         $filename = "Simple2.txt";
         $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
         $this->assertEmpty($file);
@@ -75,12 +76,10 @@ class core_files_externallib_testcase extends advanced_testcase {
         // Call the api to create a file.
         $fileinfo = core_files_external::upload($contextid, $component, $filearea, $itemid,
                 $filepath, $filename, $filecontent, $contextlevel, $instanceid);
-
-        // Make sure itemid is always set to 0.
-        $this->assertEquals(0, $fileinfo['itemid']);
+        $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
+        $this->assertNotEmpty($file);
 
         // Let us try creating a file using contextlevel and instance id.
-        $itemid = 0;
         $filename = "Simple5.txt";
         $contextid = 0;
         $contextlevel = "user";
@@ -89,7 +88,8 @@ class core_files_externallib_testcase extends advanced_testcase {
         $this->assertEmpty($file);
         $fileinfo = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
                 $filename, $filecontent, $contextlevel, $instanceid);
-        $this->assertEmpty($file);
+        $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
+        $this->assertNotEmpty($file);
 
         // Make sure the same file cannot be created again.
         $this->setExpectedException("moodle_exception");
@@ -123,7 +123,7 @@ class core_files_externallib_testcase extends advanced_testcase {
     }
 
     /*
-     * Make sure only private area is allowed in  core_files_external::upload().
+     * Make sure only private or draft areas are allowed in  core_files_external::upload().
      */
     public function test_upload_param_area() {
         global $USER;
@@ -134,17 +134,18 @@ class core_files_externallib_testcase extends advanced_testcase {
         $contextid = $context->id;
         $component = "user";
         $filearea = "draft";
-        $itemid = 0;
+        $itemid = file_get_unused_draft_itemid();
         $filepath = "/";
         $filename = "Simple4.txt";
         $filecontent = base64_encode("Let us create a nice simple file");
         $contextlevel = null;
         $instanceid = null;
 
-        // Make sure exception is thrown.
-        $this->setExpectedException("coding_exception");
-        core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
-                $filename, $filecontent, $contextlevel, $instanceid);
+        // Make sure the file is created.
+        @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+        $browser = get_file_browser();
+        $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
+        $this->assertNotEmpty($file);
     }
 
     /*
@@ -164,8 +165,12 @@ class core_files_externallib_testcase extends advanced_testcase {
         $filename = "Simple4.txt";
         $filecontent = base64_encode("Let us create a nice simple file");
 
-        // Make sure the file is created.
         @core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent);
+
+        // Assert debugging called (deprecation warning).
+        $this->assertDebuggingCalled();
+
+        // Make sure the file is created.
         $browser = get_file_browser();
         $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
         $this->assertNotEmpty($file);
