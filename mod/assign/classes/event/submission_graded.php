@@ -63,10 +63,10 @@ class submission_graded extends \core\event\base {
     /**
      * Return localised event name.
      *
-     * @return \lang_string
+     * @return string
      */
     public static function get_name() {
-        return new \lang_string('event_submission_graded', 'mod_assign');
+        return get_string('event_submission_graded', 'mod_assign');
     }
 
     /**

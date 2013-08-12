@@ -88,10 +88,10 @@ class assessable_submitted extends \core\event\assessable_submitted {
     /**
      * Return localised event name.
      *
-     * @return \lang_string
+     * @return string
      */
     public static function get_name() {
-        return new \lang_string('event_assessable_submitted', 'mod_assign');
+        return get_string('event_assessable_submitted', 'mod_assign');
     }
 
     /**

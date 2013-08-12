@@ -63,10 +63,10 @@ class workflow_state_updated extends \core\event\base {
     /**
      * Return localised event name.
      *
-     * @return \lang_string
+     * @return string
      */
     public static function get_name() {
-        return new \lang_string('event_workflow_state_updated', 'mod_assign');
+        return get_string('event_workflow_state_updated', 'mod_assign');
     }
 
     /**
