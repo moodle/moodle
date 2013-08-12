@@ -463,7 +463,10 @@ class core_renderer extends renderer_base {
                 $link= '<a title="' . $title . '" href="' . $url . '">' . $txt . '</a>';
                 $output .= '<div class="profilingfooter">' . $link . '</div>';
             }
-            $output .= '<div class="purgecaches"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/purgecaches.php?confirm=1&amp;sesskey='.sesskey().'">'.get_string('purgecaches', 'admin').'</a></div>';
+            $purgeurl = new moodle_url('/admin/purgecaches.php', array('confirm' => 1,
+                'sesskey' => sesskey(), 'returnurl' => $this->page->url->out_as_local_url(false)));
+            $output .= '<div class="purgecaches">' .
+                    html_writer::link($purgeurl, get_string('purgecaches', 'admin')) . '</div>';
         }
         if (!empty($CFG->debugvalidators)) {
             // NOTE: this is not a nice hack, $PAGE->url is not always accurate and $FULLME neither, it is not a bug if it fails. --skodak
