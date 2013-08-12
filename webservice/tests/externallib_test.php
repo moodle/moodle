@@ -62,6 +62,7 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $webservice->component = 'moodle';
         $webservice->timecreated = time();
         $webservice->downloadfiles = true;
+        $webservice->uploadfiles = true;
         $externalserviceid = $DB->insert_record('external_services', $webservice);
 
         // Add a function to the service
@@ -97,6 +98,8 @@ class core_webservice_externallib_testcase extends externallib_advanced_testcase
         $function = array_pop($siteinfo['functions']);
         $this->assertEquals($function['name'], 'core_course_get_contents');
         $this->assertEquals($function['version'], $siteinfo['version']);
+        $this->assertEquals(1, $siteinfo['downloadfiles']);
+        $this->assertEquals(1, $siteinfo['uploadfiles']);
     }
 
 }

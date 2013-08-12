@@ -883,6 +883,7 @@ $services = array(
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,
-        'downloadfiles' => 1
+        'downloadfiles' => 1,
+        'uploadfiles' => 1
     ),
 );
