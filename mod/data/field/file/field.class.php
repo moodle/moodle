@@ -86,7 +86,6 @@ class data_field_file extends data_field_base {
 
         $module = array('name'=>'data_filepicker', 'fullpath'=>'/mod/data/data.js', 'requires'=>array('core_filepicker'));
         $PAGE->requires->js_init_call('M.data_filepicker.init', array($fp->options), true, $module);
-
         return $html;
     }
 
