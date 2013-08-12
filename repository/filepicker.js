@@ -1551,7 +1551,7 @@ M.core_filepicker.init = function(Y, options) {
             }
         },
         display_response: function(id, obj, args) {
-            var scope = args.scope
+            var scope = args.scope;
             // highlight the current repository in repositories list
             scope.fpnode.all('.fp-repo.active').removeClass('active');
             scope.fpnode.all('#fp-repo-'+scope.options.client_id+'-'+obj.repo_id).addClass('active')
@@ -1562,6 +1562,8 @@ M.core_filepicker.init = function(Y, options) {
             if (obj.repo_id && scope.options.repositories[obj.repo_id]) {
                 scope.fpnode.addClass('repository_'+scope.options.repositories[obj.repo_id].type)
             }
+            Y.one('.file-picker .fp-repo-items').focus();
+            
             // display response
             if (obj.login) {
                 scope.viewbar_set_enabled(false);
