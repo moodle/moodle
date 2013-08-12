@@ -9,6 +9,6 @@
 	 xml:space="preserve">
 <defs>
 </defs>
-<path style="fill:#999999;" d="M11.3,11.2l1.5,4.8H3.2l1.5-4.8H11.3z M5.6,8h4.7L8.9,3.2H7.1L5.6,8z M10.8,0l4.8,16H16V0H10.8z M0,0
-	v16h0.4L5.2,0H0z"/>
+<path style="fill:#999999;" d="M5,6h2v2H5V6z M8,6h2v2H8V6z M11,6h2v2h-2V6z M2,12h2v2H2V12z M5,12h2v2H5V12z M8,12h2v2H8V12z M5,9
+	h2v2H5V9z M8,9h2v2H8V9z M11,9h2v2h-2V9z M2,9h2v2H2V9z M13,0v1h-2V0H4v1H2V0H0v16h15V0H13z M14,15H1V4h13V15z"/>
 </svg>
