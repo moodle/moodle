@@ -8878,14 +8878,9 @@ function moodle_needs_upgrading() {
         return true;
     }
 
-    // We have to purge plugin related caches now to be sure we have fresh data
-    // and new plugins can be detected.
-    cache::make('core', 'plugininfo_base')->purge();
-    cache::make('core', 'plugininfo_mod')->purge();
-    cache::make('core', 'plugininfo_block')->purge();
-    cache::make('core', 'plugininfo_filter')->purge();
-    cache::make('core', 'plugininfo_repository')->purge();
-    cache::make('core', 'plugininfo_portfolio')->purge();
+    // There is no need to purge plugininfo caches here because
+    // these caches are not used during upgrade and they are purged after
+    // every upgrade.
 
     // Check the main version first.
     $version = null;
