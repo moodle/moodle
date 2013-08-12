@@ -57,7 +57,7 @@ body.jsenabled .questionflagcheckbox {
 .path-mod-quiz #user-picture img {
     width: auto;
     height: auto;
-    float: left;
+    vertical-align: bottom;
 }
 
 .path-mod-quiz .qnbutton {
