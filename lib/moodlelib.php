@@ -8864,15 +8864,15 @@ function get_browser_version_classes() {
 }
 
 /**
- * Determine if moodle installation requires update
+ * Determine if moodle installation requires update.
  *
- * Checks version numbers of main code and all modules to see
- * if there are any mismatches
+ * Checks version numbers of main code and all plugins to see
+ * if there are any mismatches.
  *
  * @return bool
  */
 function moodle_needs_upgrading() {
-    global $CFG, $DB;
+    global $CFG;
 
     if (empty($CFG->version)) {
         return true;
@@ -8882,88 +8882,13 @@ function moodle_needs_upgrading() {
     // these caches are not used during upgrade and they are purged after
     // every upgrade.
 
-    // Check the main version first.
-    $version = null;
-    include($CFG->dirroot.'/version.php');  // Defines $version and upgrades.
-    if ($version > $CFG->version) {
+    if (empty($CFG->allversionshash)) {
         return true;
     }
 
-    // Modules.
-    $mods = core_component::get_plugin_list('mod');
-    $installed = $DB->get_records('modules', array(), '', 'name, version');
-    foreach ($mods as $mod => $fullmod) {
-        if ($mod === 'NEWMODULE') {   // Someone has unzipped the template, ignore it.
-            continue;
-        }
-        $module = new stdClass();
-        $plugin = new stdClass();
-        if (!is_readable($fullmod.'/version.php')) {
-            continue;
-        }
-        include($fullmod.'/version.php');  // Defines $module with version etc.
-        if (!isset($module->version) and isset($plugin->version)) {
-            $module = $plugin;
-        }
-        if (empty($installed[$mod])) {
-            return true;
-        } else if ($module->version > $installed[$mod]->version) {
-            return true;
-        }
-    }
-    unset($installed);
+    $hash = core_component::get_all_versions_hash();
 
-    // Blocks.
-    $blocks = core_component::get_plugin_list('block');
-    $installed = $DB->get_records('block', array(), '', 'name, version');
-    require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
-    foreach ($blocks as $blockname => $fullblock) {
-        if ($blockname === 'NEWBLOCK') {   // Someone has unzipped the template, ignore it.
-            continue;
-        }
-        if (!is_readable($fullblock.'/version.php')) {
-            continue;
-        }
-        $plugin = new stdClass();
-        $plugin->version = null;
-        include($fullblock.'/version.php');
-        if (empty($installed[$blockname])) {
-            return true;
-        } else if ($plugin->version > $installed[$blockname]->version) {
-            return true;
-        }
-    }
-    unset($installed);
-
-    // Now the rest of plugins.
-    $plugintypes = core_component::get_plugin_types();
-    unset($plugintypes['mod']);
-    unset($plugintypes['block']);
-
-    $versions = $DB->get_records_menu('config_plugins', array('name' => 'version'), 'plugin', 'plugin, value');
-    foreach ($plugintypes as $type => $unused) {
-        $plugs = core_component::get_plugin_list($type);
-        foreach ($plugs as $plug => $fullplug) {
-            $component = $type.'_'.$plug;
-            if (!is_readable($fullplug.'/version.php')) {
-                continue;
-            }
-            $plugin = new stdClass();
-            include($fullplug.'/version.php');  // Defines $plugin with version etc.
-            if (array_key_exists($component, $versions)) {
-                $installedversion = $versions[$component];
-            } else {
-                $installedversion = get_config($component, 'version');
-            }
-            if (empty($installedversion)) { // New installation.
-                return true;
-            } else if ($installedversion < $plugin->version) { // Upgrade.
-                return true;
-            }
-        }
-    }
-
-    return false;
+    return ($hash !== $CFG->allversionshash);
 }
 
 /**

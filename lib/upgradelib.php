@@ -1600,6 +1600,8 @@ function upgrade_noncore($verbose) {
         }
         // Update cache definitions. Involves scanning each plugin for any changes.
         cache_helper::update_definitions();
+        // Mark the site as upgraded.
+        set_config('allversionshash', core_component::get_all_versions_hash());
     } catch (Exception $ex) {
         upgrade_handle_exception($ex);
     }

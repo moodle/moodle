@@ -780,6 +780,58 @@ $cache = '.var_export($cache, true).';
     }
 
     /**
+     * Returns hash of all versions including core and all plugins.
+     *
+     * This is relatively slow and not fully cached, use with care!
+     *
+     * @return string sha1 hash
+     */
+    public static function get_all_versions_hash() {
+        global $CFG;
+
+        self::init();
+
+        $versions = array();
+
+        // Main version first.
+        $version = null;
+        include($CFG->dirroot.'/version.php');
+        $versions['core'] = $version;
+
+        // The problem here is tha the component cache might be stable,
+        // we want this to work also on frontpage without resetting the component cache.
+        $usecache = false;
+        if (CACHE_DISABLE_ALL or (defined('IGNORE_COMPONENT_CACHE') and IGNORE_COMPONENT_CACHE)) {
+            $usecache = true;
+        }
+
+        // Now all plugins.
+        $plugintypes = core_component::get_plugin_types();
+        foreach ($plugintypes as $type => $typedir) {
+            if ($usecache) {
+                $plugs = core_component::get_plugin_list($type);
+            } else {
+                $plugs = self::fetch_plugins($type, $typedir);
+            }
+            foreach ($plugs as $plug => $fullplug) {
+                if ($type === 'mod') {
+                    $module = new stdClass();
+                    $module->version = null;
+                    include($fullplug.'/version.php');
+                    $versions[$plug] = $module->version;
+                } else {
+                    $plugin = new stdClass();
+                    $plugin->version = null;
+                    @include($fullplug.'/version.php');
+                    $versions[$plug] = $plugin->version;
+                }
+            }
+        }
+
+        return sha1(serialize($versions));
+    }
+
+    /**
      * Invalidate opcode cache for given file, this is intended for
      * php files that are stored in dataroot.
      *
