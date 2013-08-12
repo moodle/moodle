@@ -1563,7 +1563,7 @@ M.core_filepicker.init = function(Y, options) {
                 scope.fpnode.addClass('repository_'+scope.options.repositories[obj.repo_id].type)
             }
             Y.one('.file-picker .fp-repo-items').focus();
-            
+
             // display response
             if (obj.login) {
                 scope.viewbar_set_enabled(false);
