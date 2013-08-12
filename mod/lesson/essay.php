@@ -163,7 +163,7 @@ switch ($mode) {
                            SELECT DISTINCT userid
                              FROM {lesson_attempts}
                             WHERE lessonid = :lessonid
-                       ) ui ON u.id = ui.id", $params)) {
+                       ) ui ON u.id = ui.userid", $params)) {
                 print_error('cannotfinduser', 'lesson');
             }
         }
