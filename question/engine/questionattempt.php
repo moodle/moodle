@@ -957,7 +957,7 @@ class question_attempt {
      * that it is valid or cleaning it in any way.
      * @return array name => value.
      */
-    protected function get_all_submitted_qt_vars($postdata) {
+    public function get_all_submitted_qt_vars($postdata) {
         if (is_null($postdata)) {
             $postdata = $_POST;
         }
@@ -966,7 +966,7 @@ class question_attempt {
         $prefixlen = strlen($this->get_field_prefix());
 
         $submitteddata = array();
-        foreach ($_POST as $name => $value) {
+        foreach ($postdata as $name => $value) {
             if (preg_match($pattern, $name)) {
                 $submitteddata[substr($name, $prefixlen)] = $value;
             }
