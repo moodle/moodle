@@ -1444,3 +1444,6 @@ div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
 .dir-rtl .menu.align-tr-tr {right: auto;left: 0;}
 .dir-rtl .menu.align-bl-tr {right: 100%;left: auto;}
 .dir-rtl .menu.align-br-tr {right: auto;left: 0;}
+
+ul.dragdrop-keyboard-drag li { list-style-type: none; }
+.block-control-actions .moodle-core-dragdrop-draghandle img { width: 12px; height: 12px; }
