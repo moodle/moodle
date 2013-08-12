@@ -97,6 +97,55 @@ class courselib_testcase extends advanced_testcase {
         $this->assertEquals(range(0, $course->numsections + 1), $sectionscreated);
     }
 
+    public function test_course_add_cm_to_section() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create course with 1 section.
+        $course = $this->getDataGenerator()->create_course(
+                array('shortname' => 'GrowingCourse',
+                    'fullname' => 'Growing Course',
+                    'numsections' => 1),
+                array('createsections' => true));
+
+        // Trash modinfo.
+        rebuild_course_cache($course->id, true);
+
+        // Create some cms for testing.
+        $cmids = array();
+        for ($i=0; $i<4; $i++) {
+            $cmids[$i] = $DB->insert_record('course_modules', array('course' => $course->id));
+        }
+
+        // Add it to section that exists.
+        course_add_cm_to_section($course, $cmids[0], 1);
+
+        // Check it got added to sequence.
+        $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 1));
+        $this->assertEquals($cmids[0], $sequence);
+
+        // Add a second, this time using courseid variant of parameters.
+        course_add_cm_to_section($course->id, $cmids[1], 1);
+        $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 1));
+        $this->assertEquals($cmids[0] . ',' . $cmids[1], $sequence);
+
+        // Check modinfo was not rebuilt (important for performance if calling
+        // repeatedly).
+        $this->assertNull($DB->get_field('course', 'modinfo', array('id' => $course->id)));
+
+        // Add one to section that doesn't exist (this might rebuild modinfo).
+        course_add_cm_to_section($course, $cmids[2], 2);
+        $this->assertEquals(3, $DB->count_records('course_sections', array('course' => $course->id)));
+        $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 2));
+        $this->assertEquals($cmids[2], $sequence);
+
+        // Add using the 'before' option.
+        course_add_cm_to_section($course, $cmids[3], 2, $cmids[2]);
+        $this->assertEquals(3, $DB->count_records('course_sections', array('course' => $course->id)));
+        $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 2));
+        $this->assertEquals($cmids[3] . ',' . $cmids[2], $sequence);
+    }
+
     public function test_reorder_sections() {
         global $DB;
         $this->resetAfterTest(true);
