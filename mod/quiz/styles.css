@@ -25,8 +25,14 @@ body.jsenabled .questionflagcheckbox {display: none;}
 #quiznojswarning {font-size: 0.7em;line-height: 1.1;}
 .jsenabled #quiznojswarning {display: none;}
 
-.path-mod-quiz #user-picture {margin: 0.5em 0;}
-.path-mod-quiz #user-picture img {width: auto;height: auto;float: left;}
+.path-mod-quiz #user-picture {
+    margin: 0.5em 0;
+}
+.path-mod-quiz #user-picture img {
+    width: auto;
+    height: auto;
+    vertical-align: bottom;
+}
 
 .path-mod-quiz .qnbutton {display: block; position: relative; float: left; width: 1.5em; height: 1.5em; overflow: hidden; margin: 0.3em 0.3em 0.3em 0; padding: 0; border: 1px solid #bbb; background: #ddd; text-align: center; vertical-align: middle;line-height: 1.5em !important; font-weight: bold; text-decoration: none;}
 .path-mod-quiz.dir-rtl  .qnbutton {float: right;}
