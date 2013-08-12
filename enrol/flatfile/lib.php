@@ -311,8 +311,8 @@ class enrol_flatfile_plugin extends enrol_plugin {
                 }
                 $roleid = $rolemap[$fields[1]];
 
-                if (empty($fields[2]) or !$user = $DB->get_record("user", array("idnumber"=>$fields[2]))) {
-                    $trace->output("Unknown user idnumber in field 3 - ignoring line $line", 1);
+                if (empty($fields[2]) or !$user = $DB->get_record("user", array("idnumber"=>$fields[2], 'deleted'=>0))) {
+                    $trace->output("Unknown user idnumber or deleted user in field 3 - ignoring line $line", 1);
                     continue;
                 }
 
