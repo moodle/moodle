@@ -360,8 +360,9 @@ function SCORMapi1_3() {
                     // trigger TOC update
                     var sURL = "<?php echo $CFG->wwwroot; ?>" + "/mod/scorm/prereqs.php?a=<?php echo $scorm->id ?>&scoid=<?php echo $scoid ?>&attempt=<?php echo $attempt ?>&mode=<?php echo $mode ?>&currentorg=<?php echo $currentorg ?>&sesskey=<?php echo sesskey(); ?>";
                     var callback = M.mod_scorm.connectPrereqCallback;
-                    YUI().use('yui2-connection', function(Y) {
-                        Y.YUI2.util.Connect.asyncRequest('GET', sURL, callback, null);
+                    YUI().use('io-base', function(Y) {
+                        Y.on('io:complete', callback.success, Y);
+                        Y.io(sURL);
                     });
                 } else {
                     diagnostic = "Failure calling the Terminate remote callback: the server replied with HTTP Status " + AJAXResult;
