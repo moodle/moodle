@@ -33,6 +33,16 @@
 abstract class backup_controller_dbops extends backup_dbops {
 
     /**
+     * @var string Backup id for cached backup_includes_files result.
+     */
+    protected static $includesfilescachebackupid;
+
+    /**
+     * @var int Cached backup_includes_files result
+     */
+    protected static $includesfilescache;
+
+    /**
      * Send one backup controller to DB
      *
      * @param backup_controller $controller controller to send to DB
@@ -441,9 +451,20 @@ abstract class backup_controller_dbops extends backup_dbops {
      * @return int Indicates whether files should be included in backups.
      */
     public static function backup_includes_files($backupid) {
-        // Load controller
+        // This function is called repeatedly in a backup with many files.
+        // Loading the controller is a nontrivial operation (in a large test
+        // backup it took 0.3 seconds), so we do a temporary cache of it within
+        // this request.
+        if (self::$includesfilescachebackupid === $backupid) {
+            return self::$includesfilescache;
+        }
+
+        // Load controller, get value, then destroy controller and return result.
+        self::$includesfilescachebackupid = $backupid;
         $bc = self::load_controller($backupid);
-        return $bc->get_include_files();
+        self::$includesfilescache = $bc->get_include_files();
+        $bc->destroy();
+        return self::$includesfilescache;
     }
 
     /**
