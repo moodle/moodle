@@ -316,11 +316,18 @@ class blog_entry implements renderable {
         $this->delete_attachments();
         $this->remove_associations();
 
+        // Get record to pass onto the event.
+        $record = $DB->get_record('post', array('id' => $this->id));
         $DB->delete_records('post', array('id' => $this->id));
         tag_set('post', $this->id, array());
 
-        add_to_log(SITEID, 'blog', 'delete', 'index.php?userid='. $this->userid, 'deleted blog entry with entry id# '. $this->id);
-        events_trigger('blog_entry_deleted', $this);
+        $event = \core\event\blog_entry_deleted::create(array('objectid' => $this->id,
+                                                            'userid'   => $this->userid,
+                                                            'other'   => array("record" => (array)$record)
+                                                      ));
+        $event->add_record_snapshot("post", $record);
+        $event->set_custom_data($this);
+        $event->trigger();
     }
 
     /**

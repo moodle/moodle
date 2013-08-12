@@ -155,7 +155,7 @@ class core_bloglib_testcase extends advanced_testcase {
      * Test various blog related events.
      */
     public function test_blog_entry_events() {
-        global $USER;
+        global $USER, $DB;
 
         $this->setAdminUser();
         $this->resetAfterTest();
@@ -178,5 +178,21 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEquals($blog->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals("post", $event->objecttable);
+
+        // Delete a blog entry.
+        $record = $DB->get_record('post', array('id' => $blog->id));
+        $blog->delete();
+        $events = $sink->get_events();
+        $event = array_pop($events);
+
+        // Validate event data.
+        $this->assertInstanceOf('\core\event\blog_entry_deleted', $event);
+        $this->assertEquals(context_system::instance()->id, $event->contextid);
+        $this->assertEquals($blog->id, $event->objectid);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals("post", $event->objecttable);
+        $this->assertEquals($record, $event->get_record_snapshot("post", $blog->id));
+        $this->assertSame('blog_entry_deleted', $event->get_legacy_eventname());
+
     }
 }

@@ -88,6 +88,7 @@ $string['entrysaved'] = 'Your entry has been saved';
 $string['entrytitle'] = 'Entry title';
 $string['entryupdated'] = 'Blog entry updated';
 $string['evententryadded'] = 'Blog entry added';
+$string['evententrydeleted'] = 'Blog entry deleted';
 $string['externalblogcrontime'] = 'External blog cron schedule';
 $string['externalblogdeleteconfirm'] = 'Unregister this external blog?';
 $string['externalblogdeleted'] = 'External blog unregistered';
