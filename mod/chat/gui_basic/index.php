@@ -181,7 +181,12 @@ if ($messages) {
         $allmessages[] = chat_format_message($message, $course->id, $USER);
     }
 }
-
+echo '<table class="generaltable"><tbody>';
+echo '<tr>
+        <th scope="col" class="cell">' . get_string('from') . '</th>
+        <th scope="col" class="cell">' . get_string('message', 'message') . '</th>
+        <th scope="col" class="cell">' . get_string('time') . '</th>
+      </tr>';
 if (empty($allmessages)) {
     echo get_string('nomessagesfound', 'message');
 } else {
@@ -189,7 +194,7 @@ if (empty($allmessages)) {
         echo $message->basic;
     }
 }
-
+echo '</tbody></table>';
 echo '</div>';
 echo $OUTPUT->container_end();
 echo $OUTPUT->footer();
