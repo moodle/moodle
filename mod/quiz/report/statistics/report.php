@@ -122,21 +122,7 @@ class quiz_statistics_report extends quiz_default_report {
         $filename = quiz_report_download_filename($report, $courseshortname, $quiz->name);
         $this->table->is_downloading($download, $filename,
                 get_string('quizstructureanalysis', 'quiz_statistics'));
-
-        // Load the questions.
-        $questions = quiz_report_get_significant_questions($quiz);
-        $questionids = array();
-        foreach ($questions as $question) {
-            $questionids[] = $question->id;
-        }
-        $fullquestions = question_load_questions($questionids);
-        foreach ($questions as $qno => $question) {
-            $q = $fullquestions[$question->id];
-            $q->maxmark = $question->maxmark;
-            $q->slot = $qno;
-            $q->number = $question->number;
-            $questions[$qno] = $q;
-        }
+        $questions = $this->load_and_initialise_questions_for_calculations($quiz);
 
         // Get the data to be displayed.
         list($quizstats, $questions, $subquestions, $s) =
@@ -607,7 +593,7 @@ class quiz_statistics_report extends quiz_default_report {
     /**
      * Compute the quiz statistics.
      *
-     * @param object $quizid the quiz id.
+     * @param int $quizid the quiz id.
      * @param int $currentgroup the current group. 0 for none.
      * @param bool $nostudentsingroup true if there a no students.
      * @param bool $useallattempts use all attempts, or just first attempts.
@@ -1056,6 +1042,28 @@ class quiz_statistics_report extends quiz_default_report {
         } else {
             return get_string('firstattempts', 'quiz_statistics');
         }
+    }
+
+    /**
+     * @param object $quiz the quiz.
+     * @return array of questions for this quiz.
+     */
+    public function load_and_initialise_questions_for_calculations($quiz) {
+        // Load the questions.
+        $questions = quiz_report_get_significant_questions($quiz);
+        $questionids = array();
+        foreach ($questions as $question) {
+            $questionids[] = $question->id;
+        }
+        $fullquestions = question_load_questions($questionids);
+        foreach ($questions as $qno => $question) {
+            $q = $fullquestions[$question->id];
+            $q->maxmark = $question->maxmark;
+            $q->slot = $qno;
+            $q->number = $question->number;
+            $questions[$qno] = $q;
+        }
+        return $questions;
     }
 }
 
