@@ -68,10 +68,8 @@ class qtype_essay_question extends question_with_responses {
 
     public function summarise_response(array $response) {
         if (isset($response['answer'])) {
-            $formatoptions = new stdClass();
-            $formatoptions->para = false;
-            return html_to_text(format_text(
-                    $response['answer'], FORMAT_HTML, $formatoptions), 0, false);
+            return question_utils::to_plain_text($response['answer'],
+                    $response['answerformat'], array('para' => false));
         } else {
             return null;
         }
