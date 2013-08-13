@@ -15,6 +15,7 @@ information provided here is intended especially for developers.
   this change should be fully transparent and it should help significantly with add-on compatibility.
 * The string manager classes were renamed. Note that they should not be modified or used directly,
   always use get_string_manager() to get instance of the string manager.
+* The ability to use an 'insecure' rc4encrypt/rc4decrypt key has been removed.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
