@@ -104,6 +104,8 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals('cohort', $event->objecttable);
         $this->assertEquals($id, $event->objectid);
         $this->assertEquals($cohort->contextid, $event->contextid);
+        $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $id));
+        $this->assertEventLegacyData($cohort, $event);
     }
 
     public function test_cohort_update_cohort() {
@@ -172,6 +174,8 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals('cohort', $event->objecttable);
         $this->assertEquals($updatedcohort->id, $event->objectid);
         $this->assertEquals($updatedcohort->contextid, $event->contextid);
+        $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $id));
+        $this->assertEventLegacyData($cohort, $event);
     }
 
     public function test_cohort_delete_cohort() {
@@ -207,6 +211,8 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\cohort_deleted', $event);
         $this->assertEquals('cohort', $event->objecttable);
         $this->assertEquals($cohort->id, $event->objectid);
+        $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $cohort->id));
+        $this->assertEventLegacyData($cohort, $event);
     }
 
     public function test_cohort_delete_category() {
@@ -240,9 +246,9 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
 
     public function test_cohort_add_member_event() {
         global $USER;
+        $this->resetAfterTest();
 
         // Setup the data.
-        $this->resetAfterTest();
         $cohort = $this->getDataGenerator()->create_cohort();
         $user = $this->getDataGenerator()->create_user();
 
@@ -263,6 +269,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($cohort->id, $event->objectid);
         $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals($USER->id, $event->userid);
+        $this->assertEventLegacyData((object) array('cohortid' => $cohort->id, 'userid' => $user->id), $event);
     }
 
     public function test_cohort_remove_member() {
@@ -282,9 +289,9 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
 
     public function test_cohort_remove_member_event() {
         global $USER;
+        $this->resetAfterTest();
 
         // Setup the data.
-        $this->resetAfterTest();
         $cohort = $this->getDataGenerator()->create_cohort();
         $user = $this->getDataGenerator()->create_user();
         cohort_add_member($cohort->id, $user->id);
@@ -305,6 +312,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($cohort->id, $event->objectid);
         $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals($USER->id, $event->userid);
+        $this->assertEventLegacyData((object) array('cohortid' => $cohort->id, 'userid' => $user->id), $event);
     }
 
     public function test_cohort_is_member() {

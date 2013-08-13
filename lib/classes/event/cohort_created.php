@@ -14,19 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\event;
-
 /**
- * Cohort created event.
+ * Cohort updated event.
  *
  * @package    core
  * @copyright  2013 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core\event;
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Cohort created event class.
+ *
+ * @package    core
+ * @copyright  2013 Dan Poltawski <dan@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class cohort_created extends base {
+
+    /**
+     * Init method.
+     *
+     * @return void
+     */
     protected function init() {
         $this->data['crud'] = 'c';
+        // TODO MDL-41040.
         $this->data['level'] = 50;
         $this->data['objecttable'] = 'cohort';
     }
@@ -34,25 +49,24 @@ class cohort_created extends base {
     /**
      * Returns localised general event name.
      *
-     * @return string|\lang_string
+     * @return string
      */
     public static function get_name() {
-        //TODO: localise
-        return 'Cohort created';
+        return get_string('event_cohort_created', 'core_cohort');
     }
 
     /**
-     * Returns localised description of what happened.
+     * Returns description of what happened.
      *
-     * @return string|\lang_string
+     * @return string
      */
     public function get_description() {
-        //TODO: localise
         return 'Cohort '.$this->objectid.' was created by '.$this->userid.' at context '.$this->contextid;
     }
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {
@@ -60,20 +74,20 @@ class cohort_created extends base {
     }
 
     /**
-     * Does this event replace legacy event?
+     * Return legacy event name.
      *
-     * @return null|string legacy event name
+     * @return string legacy event name
      */
-    public function get_legacy_eventname() {
+    public static function get_legacy_eventname() {
         return 'cohort_added';
     }
 
     /**
-     * Legacy event data if get_legacy_eventname() is not empty.
+     * Return legacy event data.
      *
-     * @return mixed
+     * @return stdClass
      */
-    public function get_legacy_eventdata() {
+    protected function get_legacy_eventdata() {
         return $this->get_record_snapshot('cohort', $this->objectid);
     }
 }
