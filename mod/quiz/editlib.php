@@ -1013,12 +1013,8 @@ function quiz_question_tostring($question, $showicon = false,
     }
     $result .= shorten_text(format_string($question->name), 200) . '</span>';
     if ($showquestiontext) {
-        $formatoptions = new stdClass();
-        $formatoptions->noclean = true;
-        $formatoptions->para = false;
-        $questiontext = strip_tags(format_text($question->questiontext,
-                $question->questiontextformat,
-                $formatoptions, $COURSE->id));
+        $questiontext = question_utils::to_plain_text($question->questiontext,
+                $question->questiontextformat, array('noclean' => true, 'para' => false));
         $questiontext = shorten_text($questiontext, 200);
         $result .= '<span class="questiontext">';
         if (!empty($questiontext)) {

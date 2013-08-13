@@ -66,9 +66,12 @@ class qformat_xhtml extends qformat_default {
         // add header
         $expout .= "<h3>$question->name</h3>\n";
 
-        // Format and add the question text
-        $expout .= '<p class="questiontext">' . format_text($question->questiontext,
-                $question->questiontextformat) . "</p>\n";
+        // Format and add the question text.
+        $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                $question->contextid, 'question', 'questiontext', $question->id,
+                $question->contextid, 'qformat_xhtml');
+        $expout .= '<p class="questiontext">' . format_text($text,
+                $question->questiontextformat, array('noclean' => true)) . "</p>\n";
 
         // selection depends on question type
         switch($question->qtype) {
