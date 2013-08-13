@@ -4620,19 +4620,18 @@ function forum_trigger_content_uploaded_event($post, $cm, $name) {
     $context = context_module::instance($cm->id);
     $fs = get_file_storage();
     $files = $fs->get_area_files($context->id, 'mod_forum', 'attachment', $post->id, "timemodified", false);
-    $eventdata = new stdClass();
-    $eventdata->modulename   = 'forum';
-    $eventdata->name         = $name;
-    $eventdata->cmid         = $cm->id;
-    $eventdata->itemid       = $post->id;
-    $eventdata->courseid     = $post->course;
-    $eventdata->userid       = $post->userid;
-    $eventdata->content      = $post->message;
-    if ($files) {
-        $eventdata->pathnamehashes = array_keys($files);
-    }
-    events_trigger('assessable_content_uploaded', $eventdata);
-
+    $params = array(
+        'context' => $context,
+        'objectid' => $post->id,
+        'other' => array(
+            'content' => $post->message,
+            'discussionid' => $post->discussion,
+            'pathnamehashes' => array_keys($files),
+            'triggeredfrom' => $name,
+        )
+    );
+    $event = \mod_forum\event\assessable_uploaded::create($params);
+    $event->trigger();
     return true;
 }
 

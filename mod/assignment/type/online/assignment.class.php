@@ -201,19 +201,20 @@ class assignment_online extends assignment_base {
         $this->update_grade($submission);
         $fs = get_file_storage();
         $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id);
+
         // Let Moodle know that an assessable content was uploaded (eg for plagiarism detection)
-        $eventdata = new stdClass();
-        $eventdata->modulename   = 'assignment';
-        $eventdata->name         = 'update_submission';
-        $eventdata->cmid         = $this->cm->id;
-        $eventdata->itemid       = $update->id;
-        $eventdata->courseid     = $this->course->id;
-        $eventdata->userid       = $USER->id;
-        $eventdata->content      = trim(format_text($update->data1, $update->data2));
-        if ($files) {
-            $eventdata->pathnamehashes = array_keys($files);
-        }
-        events_trigger('assessable_content_uploaded', $eventdata);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $submission->id,
+            'other' => array(
+                'content' => trim(format_text($update->data1, $update->data2)),
+                'pathnamehashes' => array_keys($files),
+                'triggeredfrom' => 'update_submission'
+            )
+        );
+        $event = \assignment_online\event\assessable_uploaded::create($params);
+        $event->trigger();
+
         return $submission;
     }
 

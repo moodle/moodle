@@ -1510,8 +1510,10 @@ class workshop {
      * @param string $action to be logged
      * @param moodle_url $url absolute url as returned by {@see workshop::submission_url()} and friends
      * @param mixed $info additional info, usually id in a table
+     * @param bool $return true to return the arguments for add_to_log.
+     * @return void|array array of arguments for add_to_log if $return is true
      */
-    public function log($action, moodle_url $url = null, $info = null) {
+    public function log($action, moodle_url $url = null, $info = null, $return = false) {
 
         if (is_null($url)) {
             $url = $this->view_url();
@@ -1522,7 +1524,11 @@ class workshop {
         }
 
         $logurl = $this->log_convert_url($url);
-        add_to_log($this->course->id, 'workshop', $action, $logurl, $info, $this->cm->id);
+        $args = array($this->course->id, 'workshop', $action, $logurl, $info, $this->cm->id);
+        if ($return) {
+            return $args;
+        }
+        call_user_func_array('add_to_log', $args);
     }
 
     /**

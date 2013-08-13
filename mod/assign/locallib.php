@@ -2403,9 +2403,11 @@ class assign {
      * @param string $action The current action
      * @param string $info A detailed description of the change. But no more than 255 characters.
      * @param string $url The url to the assign module instance.
-     * @return void
+     * @param bool $return If true, returns the arguments, else adds to log. The purpose of this is to
+     *                     retrieve the arguments to use them with the new event system (Event 2).
+     * @return void|array
      */
-    public function add_to_log($action = '', $info = '', $url='') {
+    public function add_to_log($action = '', $info = '', $url='', $return = false) {
         global $USER;
 
         $fullurl = 'view.php?id=' . $this->get_course_module()->id;
@@ -2413,13 +2415,20 @@ class assign {
             $fullurl .= '&' . $url;
         }
 
-        add_to_log($this->get_course()->id,
-                   'assign',
-                   $action,
-                   $fullurl,
-                   $info,
-                   $this->get_course_module()->id,
-                   $USER->id);
+        $args = array(
+            $this->get_course()->id,
+            'assign',
+            $action,
+            $fullurl,
+            $info,
+            $this->get_course_module()->id,
+            $USER->id
+        );
+
+        if ($return) {
+            return $args;
+        }
+        call_user_func_array('add_to_log', $args);
     }
 
     /**
@@ -4500,19 +4509,21 @@ class assign {
                                              fullname($USER));
                     $this->add_to_log('submission statement accepted', $logmessage);
                 }
-                $this->add_to_log('submit for grading', $this->format_submission_for_log($submission));
+                $logdata = $this->add_to_log('submit for grading', $this->format_submission_for_log($submission), '', true);
                 $this->notify_graders($submission);
                 $this->notify_student_submission_receipt($submission);
 
                 // Trigger assessable_submitted event on submission.
-                $eventdata = new stdClass();
-                $eventdata->modulename   = 'assign';
-                $eventdata->cmid         = $this->get_course_module()->id;
-                $eventdata->itemid       = $submission->id;
-                $eventdata->courseid     = $this->get_course()->id;
-                $eventdata->userid       = $USER->id;
-                $eventdata->params       = array( 'submission_editable' => false);
-                events_trigger('assessable_submitted', $eventdata);
+                $params = array(
+                    'context' => context_module::instance($this->get_course_module()->id),
+                    'objectid' => $submission->id,
+                    'other' => array(
+                        'submission_editable' => false
+                    )
+                );
+                $event = \mod_assign\event\assessable_submitted::create($params);
+                $event->set_legacy_logdata($logdata);
+                $event->trigger();
             }
         }
         return true;
@@ -5025,16 +5036,15 @@ class assign {
             // The same logic applies here - we could not notify teachers,
             // but then they would wonder why there are submitted assignments
             // and they haven't been notified.
-            $eventdata = new stdClass();
-            $eventdata->modulename   = 'assign';
-            $eventdata->cmid         = $this->get_course_module()->id;
-            $eventdata->itemid       = $submission->id;
-            $eventdata->courseid     = $this->get_course()->id;
-            $eventdata->userid       = $USER->id;
-            $eventdata->params       = array(
-                'submission_editable' => true,
+            $params = array(
+                'context' => context_module::instance($this->get_course_module()->id),
+                'objectid' => $submission->id,
+                'other' => array(
+                    'submission_editable' => true
+                )
             );
-            events_trigger('assessable_submitted', $eventdata);
+            $event = \mod_assign\event\assessable_submitted::create($params);
+            $event->trigger();
         }
         return true;
     }
@@ -5127,16 +5137,15 @@ class assign {
                 $this->notify_student_submission_receipt($submission);
                 $this->notify_graders($submission);
                 // Trigger assessable_submitted event on submission.
-                $eventdata = new stdClass();
-                $eventdata->modulename   = 'assign';
-                $eventdata->cmid         = $this->get_course_module()->id;
-                $eventdata->itemid       = $submission->id;
-                $eventdata->courseid     = $this->get_course()->id;
-                $eventdata->userid       = $USER->id;
-                $eventdata->params       = array(
-                    'submission_editable' => true,
+                $params = array(
+                    'context' => context_module::instance($this->get_course_module()->id),
+                    'objectid' => $submission->id,
+                    'other' => array(
+                        'submission_editable' => true
+                    )
                 );
-                events_trigger('assessable_submitted', $eventdata);
+                $event = \mod_assign\event\assessable_submitted::create($params);
+                $event->trigger();
             }
             return true;
         }
