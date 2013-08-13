@@ -607,6 +607,29 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     return $output;
 }
 
+
+/**
+ * Get a HTML link to a course 
+ *
+ * @param int $courseid the course id
+ * @return string a link to the course (as HTML); empty if the course id is invalid
+ */
+function calendar_get_courselink($courseid) {
+
+    if (!$courseid) {
+        return '';
+    }
+
+    calendar_get_course_cached($coursecache, $courseid);    
+    $context = context_course::instance($courseid);
+    $fullname = format_string($coursecache[$courseid]->fullname, true, array('context' => $context));
+    $url = new moodle_url('/course/view.php', array('id' => $courseid));
+    $link = html_writer::link($url, $fullname);
+
+    return $link;
+}
+
+
 /**
  * Add calendar event metadata
  *
@@ -638,29 +661,21 @@ function calendar_add_event_metadata($event) {
         }
         $icon = $OUTPUT->pix_url('icon', $event->modulename) . '';
 
-        $context = context_course::instance($module->course);
-        $fullname = format_string($coursecache[$module->course]->fullname, true, array('context' => $context));
-
         $event->icon = '<img src="'.$icon.'" alt="'.$eventtype.'" title="'.$modulename.'" class="icon" />';
         $event->referer = '<a href="'.$CFG->wwwroot.'/mod/'.$event->modulename.'/view.php?id='.$module->id.'">'.$event->name.'</a>';
-        $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$module->course.'">'.$fullname.'</a>';
+        $event->courselink = calendar_get_courselink($module->course);
         $event->cmid = $module->id;
-
 
     } else if($event->courseid == SITEID) {                              // Site event
         $event->icon = '<img src="'.$OUTPUT->pix_url('i/siteevent') . '" alt="'.get_string('globalevent', 'calendar').'" class="icon" />';
         $event->cssclass = 'calendar_event_global';
     } else if($event->courseid != 0 && $event->courseid != SITEID && $event->groupid == 0) {          // Course event
-        calendar_get_course_cached($coursecache, $event->courseid);
-
-        $context = context_course::instance($event->courseid);
-        $fullname = format_string($coursecache[$event->courseid]->fullname, true, array('context' => $context));
-
         $event->icon = '<img src="'.$OUTPUT->pix_url('i/courseevent') . '" alt="'.get_string('courseevent', 'calendar').'" class="icon" />';
-        $event->courselink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$event->courseid.'">'.$fullname.'</a>';
+        $event->courselink = calendar_get_courselink($event->courseid);
         $event->cssclass = 'calendar_event_course';
     } else if ($event->groupid) {                                    // Group event
         $event->icon = '<img src="'.$OUTPUT->pix_url('i/groupevent') . '" alt="'.get_string('groupevent', 'calendar').'" class="icon" />';
+        $event->courselink = calendar_get_courselink($event->courseid);
         $event->cssclass = 'calendar_event_group';
     } else if($event->userid) {                                      // User event
         $event->icon = '<img src="'.$OUTPUT->pix_url('i/userevent') . '" alt="'.get_string('userevent', 'calendar').'" class="icon" />';
@@ -1193,9 +1208,10 @@ function calendar_days_in_month($month, $year) {
  *
  * @param array $events list of events
  * @param moodle_url|string $linkhref link to event referer
+ * @param boolean $showcourselink whether links to courses should be shown
  * @return string|null $content html block content
  */
-function calendar_get_block_upcoming($events, $linkhref = NULL) {
+function calendar_get_block_upcoming($events, $linkhref = NULL, $showcourselink = false) {
     $content = '';
     $lines = count($events);
     if (!$lines) {
@@ -1223,6 +1239,9 @@ function calendar_get_block_upcoming($events, $linkhref = NULL) {
             }
         }
         $events[$i]->time = str_replace('&raquo;', '<br />&raquo;', $events[$i]->time);
+        if ($showcourselink && !empty($events[$i]->courselink)) {
+            $content .= html_writer::div($events[$i]->courselink, 'course');
+        }
         $content .= '<div class="date">'.$events[$i]->time.'</div></div>';
         if ($i < $lines - 1) $content .= '<hr />';
     }
