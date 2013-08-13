@@ -1,5 +1,9 @@
 This files describes API changes for question type plugins.
 
+=== 2.6 ===
+  + The changes in MDL-32750 were reverted in favour of the new pdw toggle toolbars
+    plugin for TinyMCE. The get_non_collapsible_editor_options method has been deprecated.
+
 === 2.5 ===
 
 * There have been some tweaks to the helper class that is used to write
