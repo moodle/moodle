@@ -47,7 +47,7 @@ class qtype_essay_question_test extends advanced_testcase {
         $longstring = str_repeat('0123456789', 50);
         $essay = test_question_maker::make_an_essay_question();
         $this->assertEquals($longstring,
-                $essay->summarise_response(array('answer' => $longstring)));
+                $essay->summarise_response(array('answer' => $longstring, 'answerformat' => FORMAT_PLAIN)));
     }
 
     public function test_is_complete_response() {
