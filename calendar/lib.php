@@ -609,7 +609,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
 
 
 /**
- * Get a HTML link to a course 
+ * Get a HTML link to a course.
  *
  * @param int $courseid the course id
  * @return string a link to the course (as HTML); empty if the course id is invalid
@@ -620,7 +620,7 @@ function calendar_get_courselink($courseid) {
         return '';
     }
 
-    calendar_get_course_cached($coursecache, $courseid);    
+    calendar_get_course_cached($coursecache, $courseid);
     $context = context_course::instance($courseid);
     $fullname = format_string($coursecache[$courseid]->fullname, true, array('context' => $context));
     $url = new moodle_url('/course/view.php', array('id' => $courseid));
