@@ -129,7 +129,7 @@ class repository_filesystem extends repository {
                 );
         }
         foreach ($fileslist as $file) {
-            $list['list'][] = array(
+            $node = array(
                 'title' => $file,
                 'source' => $path.'/'.$file,
                 'size' => filesize($this->root_path.$file),
@@ -138,10 +138,20 @@ class repository_filesystem extends repository {
                 'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file, 90))->out(false),
                 'icon' => $OUTPUT->pix_url(file_extension_icon($file, 24))->out(false)
             );
+            if (file_extension_in_typegroup($file, 'image') && ($imageinfo = @getimagesize($this->root_path. $file))) {
+                // This means it is an image and we can return dimensions and try to generate thumbnail/icon.
+                $token = $node['datemodified']. $node['size']; // To prevent caching by browser.
+                $node['realthumbnail'] = $this->get_thumbnail_url($path. '/'. $file, 'thumb', $token)->out(false);
+                $node['realicon'] = $this->get_thumbnail_url($path. '/'. $file, 'icon', $token)->out(false);
+                $node['image_width'] = $imageinfo[0];
+                $node['image_height'] = $imageinfo[1];
+            }
+            $list['list'][] = $node;
         }
         $list['list'] = array_filter($list['list'], array($this, 'filter'));
         return $list;
     }
+
     public function check_login() {
         return true;
     }
@@ -347,5 +357,189 @@ class repository_filesystem extends repository {
      */
     public function contains_private_data() {
         return false;
+    }
+
+    /**
+     * Returns url of thumbnail file.
+     *
+     * @param string $filepath current path in repository (dir and filename)
+     * @param string $thumbsize 'thumb' or 'icon'
+     * @param string $token identifier of the file contents - to prevent browser from caching changed file
+     * @return moodle_url
+     */
+    protected function get_thumbnail_url($filepath, $thumbsize, $token) {
+        return moodle_url::make_pluginfile_url($this->context->id, 'repository_filesystem', $thumbsize, $this->id,
+                '/'. trim($filepath, '/'). '/', $token);
+    }
+
+    /**
+     * Returns the stored thumbnail file, generates it if not present.
+     *
+     * @param string $filepath current path in repository (dir and filename)
+     * @param string $thumbsize 'thumb' or 'icon'
+     * @return null|stored_file
+     */
+    public function get_thumbnail($filepath, $thumbsize) {
+        global $CFG;
+
+        $filepath = trim($filepath, '/');
+        $origfile = $this->root_path. $filepath;
+        // As thumbnail filename we use original file content hash.
+        if (!($filecontents = @file_get_contents($origfile))) {
+            // File is not found or is not readable.
+            return null;
+        }
+        $filename = sha1($filecontents);
+        unset($filecontents);
+
+        // Try to get generated thumbnail for this file.
+        $fs = get_file_storage();
+        if (!($file = $fs->get_file(SYSCONTEXTID, 'repository_filesystem', $thumbsize, $this->id, '/'. $filepath. '/', $filename))) {
+            // Thumbnail not found. Generate and store thumbnail.
+            require_once($CFG->libdir. '/gdlib.php');
+            if ($thumbsize === 'thumb') {
+                $size = 90;
+            } else {
+                $size = 24;
+            }
+            if (!$data = @generate_image_thumbnail($origfile, $size, $size)) {
+                // Generation failed.
+                return null;
+            }
+            $record = array(
+                'contextid' => SYSCONTEXTID,
+                'component' => 'repository_filesystem',
+                'filearea' => $thumbsize,
+                'itemid' => $this->id,
+                'filepath' => '/'. $filepath. '/',
+                'filename' => $filename,
+            );
+            $file = $fs->create_file_from_string($record, $data);
+        }
+        return $file;
+    }
+
+    /**
+     * Cron for particular repository instance. Removes thumbnails for deleted/modified files.
+     */
+    public function cron() {
+        global $DB;
+        // Get all records for generated thumbnails (we don't use files api because we don't
+        // need creating instances of stored_file unless file is to be deleted).
+        $sql = "SELECT id, contextid, component, filearea, itemid, filepath, filename, contenthash
+                FROM {files} f WHERE f.contextid = :contextid
+                           AND f.component = :component
+                           AND (f.filearea = :filearea1 OR f.filearea = :filearea2)
+                           AND itemid = :itemid";
+        $filesraw = $DB->get_records_sql($sql, array(
+            'contextid' => SYSCONTEXTID,
+            'component' => 'repository_filesystem',
+            'filearea1' => 'thumb',
+            'filearea2' => 'icon',
+            'itemid' => $this->id,
+        ));
+        // Group found files by filepath ('filepath' in Moodle file storage is dir+name in filesystem repository).
+        $files = array();
+        foreach ($filesraw as $filerecord) {
+            if (!isset($files[$filerecord->filepath])) {
+                $files[$filerecord->filepath] = array();
+            }
+            $files[$filerecord->filepath][] = $filerecord;
+        }
+        $filesraw = null;
+
+        // Loop through all files and make sure the original exists and has the same contenthash.
+        $deletedcount = 0;
+        foreach ($files as $filepath => $filerecords) {
+            if ($filecontents = @file_get_contents($this->root_path. trim($filepath, '/'))) {
+                // 'filename' in Moodle file storage is contenthash of the file in filesystem repository.
+                $filename = sha1($filecontents);
+                foreach ($filerecords as $filerecord) {
+                    if ($filerecord->filename !== $filename && $filerecord->filename !== '.') {
+                        // Contenthash does not match, this is an old thumbnail.
+                        $deletedcount++;
+                        get_file_storage()->get_file_instance($filerecord)->delete();
+                    }
+                }
+            } else {
+                // Thumbnail exist but file not.
+                foreach ($filerecords as $filerecord) {
+                    if ($filerecord->filename !== '.') {
+                        $deletedcount++;
+                    }
+                    get_file_storage()->get_file_instance($filerecord)->delete();
+                }
+            }
+        }
+        if ($deletedcount) {
+            mtrace(" instance {$this->id}: deleted $deletedcount thumbnails");
+        }
+    }
+}
+
+/**
+ * Generates and sends the thumbnail for an image in filesystem.
+ *
+ * @param stdClass $course course object
+ * @param stdClass $cm course module object
+ * @param stdClass $context context object
+ * @param string $filearea file area
+ * @param array $args extra arguments
+ * @param bool $forcedownload whether or not force download
+ * @param array $options additional options affecting the file serving
+ * @return bool
+ */
+function repository_filesystem_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+    global $OUTPUT;
+    // Allowed filearea is either thumb or icon - size of the thumbnail.
+    if ($filearea !== 'thumb' && $filearea !== 'icon') {
+        return false;
+    }
+
+    // As itemid we pass repository instance id.
+    $itemid = array_shift($args);
+    // Filename is some token that we can ignore (used only to make sure browser does not serve cached copy when file is changed).
+    array_pop($args);
+    // As filepath we use full filepath (dir+name) of the file in this instance of filesystem repository.
+    $filepath = implode('/', $args);
+
+    // Make sure file exists in the repository and is accessible.
+    $repo = repository::get_repository_by_id($itemid, $context);
+    $repo->check_capability();
+    // Find stored or generated thumbnail.
+    if (!($file = $repo->get_thumbnail($filepath, $filearea))) {
+        // Generation failed, redirect to default icon for file extension.
+        redirect($OUTPUT->pix_url(file_extension_icon($file, 90)));
+    }
+    send_stored_file($file, 360, 0, $forcedownload, $options);
+}
+
+/**
+ * Cron callback for repository_filesystem. Deletes the thumbnails for deleted or changed files.
+ */
+function repository_filesystem_cron() {
+    global $DB;
+    // Find all repository instances ids that have generated thumbnails.
+    $sql = "SELECT DISTINCT itemid FROM {files} f WHERE f.contextid = :contextid
+                       AND f.component = :component
+                       AND (f.filearea = :filearea1 OR f.filearea = :filearea2)";
+    $itemids = $DB->get_fieldset_sql($sql, array(
+        'contextid' => SYSCONTEXTID,
+        'component' => 'repository_filesystem',
+        'filearea1' => 'thumb',
+        'filearea2' => 'icon'
+    ));
+    $instances = repository::get_instances(array('type' => 'filesystem'));
+    foreach ($itemids as $itemid) {
+        if (!isset($instances[$itemid])) {
+            // Instance was deleted.
+            $fs = get_file_storage();
+            $fs->delete_area_files(SYSCONTEXTID, 'repository_filesystem', 'thumb', $itemid);
+            $fs->delete_area_files(SYSCONTEXTID, 'repository_filesystem', 'icon', $itemid);
+            mtrace(" instance $itemid does not exist: deleted all thumbnails");
+        } else {
+            // Instance has some generated thumbnails, check that they are not outdated.
+            $instances[$itemid]->cron();
+        }
     }
 }
