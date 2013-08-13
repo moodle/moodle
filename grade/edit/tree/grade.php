@@ -107,21 +107,17 @@ $mform = new edit_grade_form(null, array('grade_item'=>$grade_item, 'gpr'=>$gpr)
 if ($grade = $DB->get_record('grade_grades', array('itemid' => $grade_item->id, 'userid' => $userid))) {
 
     // always clean existing feedback - grading should not have XSS risk
-    if (can_use_html_editor()) {
-        if (empty($grade->feedback)) {
-            $grade->feedback  = '';
-        } else {
-            $options = new stdClass();
-            $options->smiley  = false;
-            $options->filter  = false;
-            $options->noclean = false;
-            $options->para    = false;
-            $grade->feedback  = format_text($grade->feedback, $grade->feedbackformat, $options);
-        }
-        $grade->feedbackformat = FORMAT_HTML;
+    if (empty($grade->feedback)) {
+        $grade->feedback  = '';
     } else {
-        $grade->feedback       = clean_text($grade->feedback, $grade->feedbackformat);
+        $options = new stdClass();
+        $options->smiley  = false;
+        $options->filter  = false;
+        $options->noclean = false;
+        $options->para    = false;
+        $grade->feedback  = format_text($grade->feedback, $grade->feedbackformat, $options);
     }
+    $grade->feedbackformat = FORMAT_HTML;
 
     $grade->locked      = $grade->locked     > 0 ? 1:0;
     $grade->overridden  = $grade->overridden > 0 ? 1:0;

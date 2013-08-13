@@ -37,7 +37,14 @@ function editors_get_preferred_editor($format = NULL) {
 
     $enabled = editors_get_enabled();
 
-    $preventhtml = (count($enabled) > 1 and empty($USER->htmleditor));
+    $preference = get_user_preferences('htmleditor', '', $USER);
+
+    if (isset($enabled[$preference])) {
+        // Edit the list of editors so the users preferred editor is first in the list.
+        $editor = $enabled[$preference];
+        unset($enabled[$preference]);
+        array_unshift($enabled, $editor);
+    }
 
     // now find some plugin that supports format and is available
     $editor = false;
@@ -46,27 +53,11 @@ function editors_get_preferred_editor($format = NULL) {
             // bad luck, this editor is not compatible
             continue;
         }
-        if ($preventhtml and $format == FORMAT_HTML and $e->get_preferred_format() == FORMAT_HTML) {
-            // this is really not what we want but we could use it if nothing better found
-            $editor = $e;
-            continue;
-        }
         if (!$supports = $e->get_supported_formats()) {
             // buggy editor!
             continue;
         }
-        if (is_null($format)) {
-            // format does not matter
-            if ($preventhtml and $e->get_preferred_format() == FORMAT_HTML) {
-                // this is really not what we want but we could use it if nothing better found
-                $editor = $e;
-                continue;
-            } else {
-                $editor = $e;
-                break;
-            }
-        }
-        if (in_array($format, $supports)) {
+        if (is_null($format) || in_array($format, $supports)) {
             // editor supports this format, yay!
             $editor = $e;
             break;
@@ -87,22 +78,7 @@ function editors_get_preferred_editor($format = NULL) {
 function editors_get_preferred_format() {
     global $USER;
 
-    $editors = editors_get_enabled();
-    if (count($editors) == 1) {
-        $editor = reset($editors);
-        return $editor->get_preferred_format();
-    }
-
-    foreach ($editors as $editor) {
-        if (empty($USER->htmleditor) and $editor->get_preferred_format() == FORMAT_HTML) {
-            // we do not prefer this one
-            continue;
-        }
-        return $editor->get_preferred_format();
-    }
-
-    // user did not want html editor, but there is no other choice, sorry
-    $editor = reset($editors);
+    $editor = editors_get_preferred_editor();
     return $editor->get_preferred_format();
 }
 
@@ -172,7 +148,7 @@ function editors_head_setup() {
     global $CFG;
 
     if (empty($CFG->texteditors)) {
-        $CFG->texteditors = 'tinymce,textarea';
+        $CFG->texteditors = 'tinymce,atto,textarea';
     }
     $active = explode(',', $CFG->texteditors);
 
@@ -235,30 +211,4 @@ abstract class texteditor {
      */
     public function head_setup() {
     }
-}
-
-//=== TO BE DEPRECATED in 2.1 =====================
-
-/**
- * Does the user want and can edit using rich text html editor?
- * @todo Deprecate: eradicate completely, replace with something else in the future
- * @return bool
- */
-function can_use_html_editor() {
-    global $USER;
-
-    $editors = editors_get_enabled();
-    if (count($editors) > 1) {
-        if (empty($USER->htmleditor)) {
-            return false;
-        }
-    }
-
-    foreach ($editors as $editor) {
-        if ($editor->get_preferred_format() == FORMAT_HTML) {
-            return true;
-        }
-    }
-
-    return false;
 }

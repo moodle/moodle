@@ -42,11 +42,8 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
     /** @var string defines the type of editor */
     var $_type;
 
-    /** @var bool Does the user want and can edit using rich text html editor */
-    var $_canUseHtmlEditor;
-
     /** @var array default options for html editor, which can be overridden */
-    var $_options=array('canUseHtmlEditor'=>'detect','rows'=>10, 'cols'=>45, 'width'=>0,'height'=>0);
+    var $_options=array('rows'=>10, 'cols'=>45, 'width'=>0,'height'=>0);
 
     /**
      * Constructor
@@ -71,16 +68,7 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
                 }
             }
         }
-        if ($this->_options['canUseHtmlEditor']=='detect'){
-            $this->_options['canUseHtmlEditor']=can_use_html_editor();
-        }
-        if ($this->_options['canUseHtmlEditor']){
-            $this->_type='htmleditor';
-            //$this->_elementTemplateType='wide';
-        }else{
-            $this->_type='textarea';
-        }
-        $this->_canUseHtmlEditor = $this->_options['canUseHtmlEditor'];
+        $this->_type='htmleditor';
 
         editors_head_setup();
     }
@@ -91,16 +79,11 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
      * @return string
      */
     function toHtml(){
-        //if ($this->_canUseHtmlEditor && !$this->_flagFrozen){
-        //    $script = '';
-        //} else {
-        //    $script='';
-        //}
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         } else {
             return $this->_getTabs() .
-                    print_textarea($this->_canUseHtmlEditor,
+                    print_textarea(true,
                                     $this->_options['rows'],
                                     $this->_options['cols'],
                                     $this->_options['width'],

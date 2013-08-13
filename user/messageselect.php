@@ -174,7 +174,6 @@ if ((!empty($send) || !empty($preview) || !empty($edit)) && (empty($messagebody)
 
 if (count($SESSION->emailto[$id])) {
     require_sesskey();
-    $usehtmleditor = can_use_html_editor();
     require("message.html");
 }
 

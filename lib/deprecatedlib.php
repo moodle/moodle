@@ -1483,7 +1483,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
  * When using this function, you should
  *
  * @global object
- * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
+ * @param bool $unused No longer used.
  * @param int $rows Number of rows to display  (minimum of 10 when $height is non-null)
  * @param int $cols Number of columns to display (minimum of 65 when $width is non-null)
  * @param null $width (Deprecated) Width of the element; if a value is passed, the minimum value for $cols will be 65. Value is otherwise ignored.
@@ -1495,7 +1495,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
  * @param string $id CSS ID to add to the textarea element.
  * @return string|void depending on the value of $return
  */
-function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $obsolete=0, $return=false, $id='') {
+function print_textarea($unused, $rows, $cols, $width, $height, $name, $value='', $obsolete=0, $return=false, $id='') {
     /// $width and height are legacy fields and no longer used as pixels like they used to be.
     /// However, you can set them to zero to override the mincols and minrows values below.
 
@@ -1512,29 +1512,19 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         $id = 'edit-'.$name;
     }
 
-    if ($usehtmleditor) {
-        if ($height && ($rows < $minrows)) {
-            $rows = $minrows;
-        }
-        if ($width && ($cols < $mincols)) {
-            $cols = $mincols;
-        }
+    if ($height && ($rows < $minrows)) {
+        $rows = $minrows;
+    }
+    if ($width && ($cols < $mincols)) {
+        $cols = $mincols;
     }
 
-    if ($usehtmleditor) {
-        editors_head_setup();
-        $editor = editors_get_preferred_editor(FORMAT_HTML);
-        $editor->use_editor($id, array('legacy'=>true));
-    } else {
-        $editorclass = '';
-    }
+    editors_head_setup();
+    $editor = editors_get_preferred_editor(FORMAT_HTML);
+    $editor->use_editor($id, array('legacy'=>true));
 
     $str .= "\n".'<textarea class="form-textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'" spellcheck="true">'."\n";
-    if ($usehtmleditor) {
-        $str .= htmlspecialchars($value); // needed for editing of cleaned text!
-    } else {
-        $str .= s($value);
-    }
+    $str .= htmlspecialchars($value); // needed for editing of cleaned text!
     $str .= '</textarea>'."\n";
 
     if ($return) {
@@ -4691,4 +4681,16 @@ function badges_get_issued_badge_info($hash) {
     debugging('Function badges_get_issued_badge_info() is deprecated. Please use core_badges_assertion class and methods to generate badge assertion.', DEBUG_DEVELOPER);
     $assertion = new core_badges_assertion($hash);
     return $assertion->get_badge_assertion();
+}
+
+/**
+ * Does the user want and can edit using rich text html editor?
+ * This function does not make sense anymore because a user can directly choose their preferred editor.
+ *
+ * @deprecated since 2.6
+ * @return bool
+ */
+function can_use_html_editor() {
+    debugging('can_use_html_editor has been deprecated please update your code to assume it returns true.', DEBUG_DEVELOPER);
+    return true;
 }

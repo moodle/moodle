@@ -2579,5 +2579,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013092700.01);
     }
 
+    if ($oldversion < 2013100100.00) {
+        $sql = "INSERT INTO {user_preferences}(userid, name, value)
+                SELECT id, 'htmleditor', 'textarea' FROM {user} u where u.htmleditor = 0";
+        $DB->execute($sql);
+
+        // Define field htmleditor to be dropped from user
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('htmleditor');
+
+        // Conditionally launch drop field requested
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013100100.00);
+    }
+
     return true;
 }
