@@ -559,6 +559,13 @@ $string['emailconfirmsent'] = '<p>An email should have been sent to your address
    <p>It contains easy instructions to complete your registration.</p>
    <p>If you continue to have difficulty, contact the site administrator.</p>';
 $string['emaildigest'] = 'Email digest type';
+$string['emaildigest_help'] = 'This is the daily digest setting that forums will use by default.
+
+* No digest - you will receive one e-mail per forum post;
+* Digest - complete posts - you will receive one digest e-mail per day containing the complete contents of each forum post;
+* Digest - subjects only - you will receive one digest e-mail per day containing just the subject of each forum post.
+
+You can also choose a different setting for each forum if you wish.';
 $string['emaildigestcomplete'] = 'Complete (daily email with full posts)';
 $string['emaildigestoff'] = 'No digest (single email per forum post)';
 $string['emaildigestsubjects'] = 'Subjects (daily email with subjects only)';

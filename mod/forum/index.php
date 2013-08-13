@@ -68,9 +68,21 @@ $strunsubscribe  = get_string('unsubscribe', 'forum');
 $stryes          = get_string('yes');
 $strno           = get_string('no');
 $strrss          = get_string('rss');
+$stremaildigest  = get_string('emaildigest');
 
 $searchform = forum_search_form($course);
 
+// Retrieve the list of forum digest options for later.
+$digestoptions = forum_get_user_digest_options();
+$digestoptions_selector = new single_select(new moodle_url('/mod/forum/maildigest.php',
+    array(
+        'backtoindex' => 1,
+    )),
+    'maildigest',
+    $digestoptions,
+    null,
+    '');
+$digestoptions_selector->method = 'post';
 
 // Start of the table for General Forums
 
@@ -94,6 +106,9 @@ $can_subscribe = is_enrolled($coursecontext);
 if ($can_subscribe) {
     $generaltable->head[] = $strsubscribed;
     $generaltable->align[] = 'center';
+
+    $generaltable->head[] = $stremaildigest . ' ' . $OUTPUT->help_icon('emaildigesttype', 'mod_forum');
+    $generaltable->align[] = 'center';
 }
 
 if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
@@ -111,7 +126,13 @@ $table = new html_table();
 // some special ones are not.  These get placed in the general forums
 // category with the forums in section 0.
 
-$forums = $DB->get_records('forum', array('course' => $course->id));
+$forums = $DB->get_records_sql("
+    SELECT f.*,
+           d.maildigest
+      FROM {forum} f
+ LEFT JOIN {forum_digests} d ON d.forum = f.id AND d.userid = ?
+     WHERE f.course = ?
+    ", array($USER->id, $course->id));
 
 $generalforums  = array();
 $learningforums = array();
@@ -252,6 +273,14 @@ if ($generalforums) {
             } else {
                 $row[] = '-';
             }
+
+            $digestoptions_selector->url->param('id', $forum->id);
+            if ($forum->maildigest === null) {
+                $digestoptions_selector->selected = -1;
+            } else {
+                $digestoptions_selector->selected = $forum->maildigest;
+            }
+            $row[] = $OUTPUT->render($digestoptions_selector);
         }
 
         //If this forum has RSS activated, calculate it
@@ -296,6 +325,9 @@ if ($usetracking) {
 
 if ($can_subscribe) {
     $learningtable->head[] = $strsubscribed;
+    $learningtable->align[] = 'center';
+
+    $learningtable->head[] = $stremaildigest . ' ' . $OUTPUT->help_icon('emaildigesttype', 'mod_forum');
     $learningtable->align[] = 'center';
 }
 
@@ -390,6 +422,14 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                 } else {
                     $row[] = '-';
                 }
+
+                $digestoptions_selector->url->param('id', $forum->id);
+                if ($forum->maildigest === null) {
+                    $digestoptions_selector->selected = -1;
+                } else {
+                    $digestoptions_selector->selected = $forum->maildigest;
+                }
+                $row[] = $OUTPUT->render($digestoptions_selector);
             }
 
             //If this forum has RSS activated, calculate it

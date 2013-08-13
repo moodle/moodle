@@ -208,6 +208,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $choices['2'] = get_string('emaildigestsubjects');
     $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
     $mform->setDefault('maildigest', 0);
+    $mform->addHelpButton('maildigest', 'emaildigest');
 
     $choices = array();
     $choices['1'] = get_string('autosubscribeyes');
