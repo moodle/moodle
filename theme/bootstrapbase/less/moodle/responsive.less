@@ -53,6 +53,45 @@
 
 }
 
+@media (max-width: 873px) {
+    .file-picker .fp-repo-area {
+        width: 100%;
+        height: auto;
+        max-height: 220px;
+        y-scroll: auto;
+        float: none;
+        border: 0px;
+    }
+    .file-picker .fp-repo-items {
+        width: 100%;
+        float: none;
+    }
+    .file-picker .fp-login-form .fp-login-input label {
+        text-align: left;
+    }
+    .dir-rtl .file-picker .fp-login-form .fp-login-input label {
+        text-align: right;
+    }
+    .file-picker .fp-content form td {
+        display: block;
+        width: 100%;
+        text-align: left;
+    }
+    .dir-rtl .file-picker .fp-content form td {
+        text-align: right;
+    }
+    .fp-content .mdl-right {
+        text-align: left;
+    }
+    .dir-rtl .fp-content .mdl-right {
+        text-align: right;
+    }
+
+    .fp-repo-items .fp-navbar {
+        border-top: 1px solid rgb(187, 187, 187);
+    }
+}
+
 // login page
 @media (min-width: 1200px) {
     .loginbox.twocolumns .loginpanel {
@@ -169,38 +208,9 @@
         border-color: #ddd;
         z-index: 2;
     }
-    .file-picker .fp-repo-items,
-    .file-picker .fp-repo-area {
-        position: relative;
-        display: block;
-        width: auto;
-        top: 0;
-        bottom: 0;
-        border: none;
-        margin: 0;
-    }
-    .file-picker .fp-content {
-        width: 100%;
-        height: 100%;
-    }
     .fp-content-center {
         display: block;
         vertical-align: top;
-    }
-    .fp-upload-form td.mdl-right,
-    .fp-upload-form td.mdl-left,
-    .fp-login-form .input,
-    .file-picker .fp-login-form .fp-login-input label,
-    .file-picker td.label {
-        display: block;
-        text-align: left;
-    }
-    .file-picker .fp-login-form table,
-    .file-picker td,
-    .file-picker td.label,
-    .file-picker .fp-upload-form table {
-            margin: 0;
-            padding: 0;
     }
     .course-content ul.topics li.section,
     .course-content ul.topics li.section .content,

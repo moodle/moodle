@@ -107,7 +107,7 @@ class core_files_renderer extends plugin_renderer_base {
         $module = array(
             'name'=>'form_filemanager',
             'fullpath'=>'/lib/form/filemanager.js',
-            'requires' => array('core_filepicker', 'base', 'io-base', 'node', 'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin'),
+            'requires' => array('moodle-core-notification-dialogue', 'core_filepicker', 'base', 'io-base', 'node', 'json', 'core_dndupload', 'panel', 'resize-plugin', 'dd-plugin'),
             'strings' => array(
                 array('error', 'moodle'), array('info', 'moodle'), array('confirmdeletefile', 'repository'),
                 array('draftareanofiles', 'repository'), array('entername', 'repository'), array('enternewname', 'repository'),
