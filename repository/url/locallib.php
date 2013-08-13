@@ -40,6 +40,8 @@
  * See:  http://www.opensource.org/licenses/bsd-license.php
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Combine a base URL and a relative URL to produce a new
  * absolute URL.  The base URL is often the URL of a page,
@@ -79,9 +81,9 @@ function url_to_absolute( $baseUrl, $relativeUrl )
 	if ( $b === FALSE || empty( $b['scheme'] ) || empty( $b['host'] ) )
 		return FALSE;
 	$r['scheme'] = $b['scheme'];
-    if (empty($b['path'])) {
-        $b['path'] = '';
-    }
+	if (empty($b['path'])) {
+		$b['path'] = '';
+	}
 
 	// If relative URL has an authority, clean path and return.
 	if ( isset( $r['host'] ) )
@@ -110,15 +112,16 @@ function url_to_absolute( $baseUrl, $relativeUrl )
 		return join_url( $r );
 	}
 
-	// If relative URL path doesn't start with /, merge with base path
-	if ( $r['path'][0] != '/' )
-	{
-		$base = mb_strrchr( $b['path'], '/', TRUE, 'UTF-8' );
-		if ( $base === FALSE ) $base = '';
+	// If relative URL path doesn't start with /, merge with base path.
+	if ($r['path'][0] != '/') {
+		$base = textlib::strrchr($b['path'], '/', TRUE);
+		if ($base === FALSE) {
+			$base = '';
+		}
 		$r['path'] = $base . '/' . $r['path'];
 	}
-	$r['path'] = url_remove_dot_segments( $r['path'] );
-	return join_url( $r );
+	$r['path'] = url_remove_dot_segments($r['path']);
+	return join_url($r);
 }
 
 /**
@@ -152,12 +155,15 @@ function url_remove_dot_segments( $path )
 			array_push( $outSegs, $seg );
 	}
 	$outPath = implode( '/', $outSegs );
-	if ( $path[0] == '/' )
+
+	if ($path[0] == '/') {
 		$outPath = '/' . $outPath;
-	// compare last multi-byte character against '/'
-	if ( $outPath != '/' &&
-		(mb_strlen($path)-1) == mb_strrpos( $path, '/', 'UTF-8' ) )
+	}
+
+	// Compare last multi-byte character against '/'.
+	if ($outPath != '/' && (textlib::strlen($path) - 1) == textlib::strrpos($path, '/', 'UTF-8')) {
 		$outPath .= '/';
+	}
 	return $outPath;
 }
 
