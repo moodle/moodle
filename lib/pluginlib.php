@@ -652,6 +652,7 @@ class plugin_manager {
      * @return false|array array of standard plugins or false if the type is unknown
      */
     public static function standard_plugins_list($type) {
+
         $standard_plugins = array(
 
             'assignment' => array(
@@ -702,6 +703,10 @@ class plugin_manager {
 
             'cachestore' => array(
                 'file', 'memcache', 'memcached', 'mongodb', 'session', 'static'
+            ),
+
+            'calendartype' => array(
+                'gregorian'
             ),
 
             'coursereport' => array(
