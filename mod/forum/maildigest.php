@@ -38,7 +38,7 @@ $course  = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EX
 $cm      = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 $context = context_module::instance($cm->id);
 
-require_course_login($course);
+require_login($course, false, $cm);
 
 $url = new moodle_url('/mod/forum/maildigest.php', array(
     'id' => $id,
