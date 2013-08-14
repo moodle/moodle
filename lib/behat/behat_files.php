@@ -209,9 +209,7 @@ class behat_files extends behat_base {
 
         $this->find(
             'xpath',
-            "//div[@id='filesskin']" .
-                "/descendant::div[contains(concat(' ', @class, ' '), ' yui3-widget-mask ')]" .
-                "[contains(concat(' ', @style, ' '), ' display: none; ')]",
+            "//div[contains(@class, 'filepicker') and contains(@class, 'moodle-dialogue-hidden')]",
             $exception
         );
     }
