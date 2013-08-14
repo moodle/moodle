@@ -218,7 +218,7 @@ if ($edit) {
             'objectid' => $submission->id,
             'other' => array(
                 'content' => $formdata->content,
-                'files' => array_keys($files)
+                'pathnamehashes' => array_keys($files)
             )
         );
         $event = \mod_workshop\event\assessable_uploaded::create($params);

@@ -63,8 +63,8 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
         $eventdata->itemid       = $this->objectid;
         $eventdata->courseid     = $this->courseid;
         $eventdata->userid       = $this->userid;
-        if ($this->get_legacy_files()) {
-            $eventdata->files    = $this->get_legacy_files(); // This is depreceated - please use pathnamehashes instead!
+        if ($this->legacyfiles) {
+            $eventdata->files    = $this->legacyfiles; // This is depreceated - please use pathnamehashes instead!
         }
         $eventdata->pathnamehashes = $this->other['pathnamehashes'];
         return $eventdata;
@@ -127,16 +127,4 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
         $this->legacyfiles = $files;
     }
 
-    /**
-     * Custom validation
-     *
-     * @throws coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        parent::validate_data();
-        if (!isset($this->other['triggeredfrom'])) {
-            throw new coding_exception('triggeredfrom must be set in $other');
-        }
-    }
 }

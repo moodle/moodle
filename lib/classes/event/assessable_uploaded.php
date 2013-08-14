@@ -55,16 +55,16 @@ abstract class assessable_uploaded extends \core\event\base {
     /**
      * Validation that should be shared among child classes.
      *
-     * @throws coding_exception when validation fails.
+     * @throws \coding_exception when validation fails.
      * @return void
      */
     protected function validate_data() {
         if (!$this->context->contextlevel === CONTEXT_MODULE) {
-            throw new coding_exception('Content level must be CONTEXT_MODULE.');
+            throw new \coding_exception('Content level must be CONTEXT_MODULE.');
         } else if (!isset($this->other['pathnamehashes']) || !is_array($this->other['pathnamehashes'])) {
-            throw new coding_exception('pathnamehashes must be set in $other and must be an array.');
+            throw new \coding_exception('pathnamehashes must be set in $other and must be an array.');
         } else if (!isset($this->other['content']) || !is_string($this->other['content'])) {
-            throw new coding_exception('content must be set in $other and must be a string.');
+            throw new \coding_exception('content must be set in $other and must be a string.');
         }
     }
 

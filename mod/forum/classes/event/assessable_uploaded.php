@@ -104,15 +104,15 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
     /**
      * Custom validation.
      *
-     * @throws coding_exception
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['discussionid'])) {
-            throw new coding_exception('discussionid must be set in $other.');
+            throw new \coding_exception('discussionid must be set in $other.');
         } else if (!isset($this->other['triggeredfrom'])) {
-            throw new coding_exception('triggeredfrom must be set in $other');
+            throw new \coding_exception('triggeredfrom must be set in $other');
         }
     }
 }

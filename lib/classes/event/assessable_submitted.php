@@ -55,12 +55,12 @@ abstract class assessable_submitted extends \core\event\base {
     /**
      * Custom validation.
      *
-     * @throws coding_exception on error.
+     * @throws \coding_exception on error.
      * @return void
      */
     protected function validate_data() {
         if (!$this->context->contextlevel === CONTEXT_MODULE) {
-            throw new coding_exception('Content level must be CONTEXT_MODULE.');
+            throw new \coding_exception('Content level must be CONTEXT_MODULE.');
         }
     }
 
