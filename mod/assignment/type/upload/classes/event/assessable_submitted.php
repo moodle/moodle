@@ -109,13 +109,13 @@ class assessable_submitted extends \core\event\assessable_submitted {
     /**
      * Custom validation
      *
-     * @throws coding_exception
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
         parent::validate_data();
         if (!isset($this->other['submission_editable'])) {
-            throw new coding_exception('Other must contain the key submission_editable.');
+            throw new \coding_exception('Other must contain the key submission_editable.');
         }
     }
 }
