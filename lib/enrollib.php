@@ -298,7 +298,7 @@ function enrol_get_shared_courses($user1, $user2, $preloadcontexts = false, $che
     } else {
         $courses = $DB->get_records_sql($sql, $params);
         if ($preloadcontexts) {
-            array_map('context_instance_preload', $courses);
+            array_map('context_helper::preload_from_record', $courses);
         }
         return $courses;
     }
