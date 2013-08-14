@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Calendar type system unit tests.
+ * This file contains the class that handles testing the calendar type system.
  *
  * @package core_calendar
  * @copyright 2013 Mark Nelson <markn@moodle.com>

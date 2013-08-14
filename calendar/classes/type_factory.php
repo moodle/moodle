@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,6 +20,10 @@ namespace core_calendar;
  * Class \core_calendar\type_factory.
  *
  * Factory class producing required subclasses of {@link \core_calendar\type_base}.
+ *
+ * @package core_calendar
+ * @copyright 2008 onwards Foodle Group {@link http://foodle.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class type_factory {
 
@@ -28,10 +31,10 @@ class type_factory {
      * Returns an instance of the currently used calendar type.
      *
      * @param string|null $type the calendar type to use, if none provided use logic to determine
-     * @return calendar_type_plugin_* the created calendar_type class
+     * @return calendartype_* the created calendar_type class
      * @throws coding_exception if the calendar type file could not be loaded
      */
-    static function factory($type = null) {
+    public static function factory($type = null) {
         if (is_null($type)) {
             $type = self::get_calendar_type();
         }
@@ -45,7 +48,7 @@ class type_factory {
      *
      * @return array the list of calendar types
      */
-    static function get_list_of_calendar_types() {
+    public static function get_list_of_calendar_types() {
         $calendars = array();
         $calendardirs = \core_component::get_plugin_list('calendartype');
 
@@ -61,7 +64,7 @@ class type_factory {
      *
      * @return string the current calendar type being used
      */
-    static function get_calendar_type() {
+    public static function get_calendar_type() {
         global $CFG, $USER, $SESSION, $COURSE;
 
         if (!empty($COURSE->id) and $COURSE->id != SITEID and !empty($COURSE->calendartype)) { // Course calendartype can override all other settings for this page.

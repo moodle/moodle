@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,7 +24,7 @@ use \core_calendar\type_base;
  * in the future of the Gregorian calendar.
  *
  * @package core_calendar
- * @copyright Mark Nelson <markn@moodle.com>
+ * @copyright 2013 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class structure extends type_base {
@@ -60,7 +59,7 @@ class structure extends type_base {
     public function get_months() {
         $months = array();
 
-        for ($i=1; $i<=12; $i++) {
+        for ($i = 1; $i <= 12; $i++) {
             $months[$i] = $i;
         }
 
@@ -99,7 +98,7 @@ class structure extends type_base {
      * @return string the formatted date/time
      */
     public function timestamp_to_date_string($date, $format, $timezone, $fixday, $fixhour) {
-        return "";
+        return '';
     }
 
     /**
@@ -114,12 +113,12 @@ class structure extends type_base {
     public function timestamp_to_date_array($time, $timezone) {
         $gregoriancalendar = \core_calendar\type_factory::factory('gregorian');
         $date = $gregoriancalendar->timestamp_to_date_array($time, $timezone);
-        $newdate = $this->convert_from_gregorian($date["year"], $date["mon"], $date["mday"],
+        $newdate = $this->convert_from_gregorian($date['year'], $date['mon'], $date['mday'],
             $date['hours'], $date['minutes']);
 
-        $date["year"] = $newdate['year'];
-        $date["mon"] = $newdate['month'];
-        $date["mday"] = $newdate['day'];
+        $date['year'] = $newdate['year'];
+        $date['mon'] = $newdate['month'];
+        $date['mday'] = $newdate['day'];
         $date['hours'] = $newdate['hour'];
         $date['minutes']  = $newdate['minute'];
 
