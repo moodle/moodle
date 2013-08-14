@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace assignment_submitted\event;
+namespace assignment_upload\event;
 
 defined('MOODLE_INTERNAL') || die();
 
