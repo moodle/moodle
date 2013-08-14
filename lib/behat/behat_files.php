@@ -91,7 +91,7 @@ class behat_files extends behat_base {
 
         // Finds the button inside the DOM, is a modal window, so should be unique.
         $classname = 'fp-file-' . $action;
-        $button = $this->find('css', '.yui3-panel-focused button.' . $classname, $exception);
+        $button = $this->find('css', '.moodle-dialogue-focused button.' . $classname, $exception);
 
         $button->click();
     }
@@ -207,11 +207,11 @@ class behat_files extends behat_base {
 
         $exception = new ExpectationException('The file manager is taking too much time to finish the current action', $this->getSession());
 
-        $this->find(
-            'xpath',
-            "//div[contains(@class, 'filepicker') and contains(@class, 'moodle-dialogue-hidden')]",
-            $exception
-        );
+         $this->find(
+             'xpath',
+             "//div[contains(concat(' ', @class, ' '), ' moodle-dialogue-lightbox ')][contains(@style, 'display: none;')]",
+             $exception
+         );
     }
 
     /**
