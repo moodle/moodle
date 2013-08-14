@@ -856,8 +856,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Perform the move
         moveto_module($cm, $newsection);
 
-        // reset of get_fast_modinfo is usually called the code calling moveto_module so call it here
-        get_fast_modinfo(0, 0, true);
         $cms = get_fast_modinfo($course)->get_cms();
         $cm = reset($cms);
 
@@ -886,8 +884,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         $result = moveto_module($cm, $newsection);
         $this->assertTrue($result);
 
-        // reset of get_fast_modinfo is usually called the code calling moveto_module so call it here
-        get_fast_modinfo(0, 0, true);
         $cms = get_fast_modinfo($course)->get_cms();
         $cm = reset($cms);
 
@@ -1201,9 +1197,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         moveto_module($forumcm, $hiddensection);
         moveto_module($pagecm, $hiddensection);
 
-        // Reset modinfo cache.
-        get_fast_modinfo(0, 0, true);
-
         $modinfo = get_fast_modinfo($course);
 
         // Verify that forum and page have been moved to the hidden section and quiz has not.
@@ -1232,8 +1225,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         moveto_module($forumcm, $visiblesection);
         moveto_module($pagecm, $visiblesection);
 
-        // Reset modinfo cache.
-        get_fast_modinfo(0, 0, true);
         $modinfo = get_fast_modinfo($course);
 
         // Verify that forum has been made visible.
@@ -1246,9 +1237,6 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Move the page in the same section (this is what mod duplicate does_
         moveto_module($pagecm, $visiblesection, $forumcm);
-
-        // Reset modinfo cache.
-        get_fast_modinfo(0, 0, true);
 
         // Verify that the the page is still hidden
         $modinfo = get_fast_modinfo($course);
@@ -1290,9 +1278,6 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Move the forum and the page to a hidden section.
         moveto_module($pagecm, $section, $forumcm);
-
-        // Reset modinfo cache.
-        get_fast_modinfo(0, 0, true);
 
         // Verify that the the page is still hidden
         $modinfo = get_fast_modinfo($course);
