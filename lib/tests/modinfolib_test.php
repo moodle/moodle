@@ -176,6 +176,61 @@ class modinfolib_testcase extends advanced_testcase {
         $this->assertFalse($cm_info->is_user_access_restricted_by_conditional_access());
     }
 
+    public function test_is_user_access_restricted_by_capability() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a course and a mod_assign instance.
+        $course = $this->getDataGenerator()->create_course();
+        $assign = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
+
+        // Create and enrol a student.
+        $coursecontext = context_course::instance($course->id);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $student = $this->getDataGenerator()->create_user();
+        role_assign($studentrole->id, $student->id, $coursecontext);
+        $enrolplugin = enrol_get_plugin('manual');
+        $enrolinstance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'));
+        $enrolplugin->enrol_user($enrolinstance, $student->id);
+        $this->setUser($student);
+
+        // Make sure student can see the module.
+        $cm = get_fast_modinfo($course->id)->instances['assign'][$assign->id];
+        $this->assertTrue($cm->uservisible);
+        $this->assertFalse($cm->is_user_access_restricted_by_capability());
+
+        // Prohibit student to view mod_assign for the course.
+        role_change_permission($studentrole->id, $coursecontext, 'mod/assign:view', CAP_PROHIBIT);
+        get_fast_modinfo($course->id, 0, true);
+        $cm = get_fast_modinfo($course->id)->instances['assign'][$assign->id];
+        $this->assertFalse($cm->uservisible);
+        $this->assertTrue($cm->is_user_access_restricted_by_capability());
+
+        // Restore permission to student to view mod_assign for the course.
+        role_change_permission($studentrole->id, $coursecontext, 'mod/assign:view', CAP_INHERIT);
+        get_fast_modinfo($course->id, 0, true);
+        $cm = get_fast_modinfo($course->id)->instances['assign'][$assign->id];
+        $this->assertTrue($cm->uservisible);
+        $this->assertFalse($cm->is_user_access_restricted_by_capability());
+
+        // Prohibit student to view mod_assign for the particular module.
+        role_change_permission($studentrole->id, context_module::instance($cm->id), 'mod/assign:view', CAP_PROHIBIT);
+        get_fast_modinfo($course->id, 0, true);
+        $cm = get_fast_modinfo($course->id)->instances['assign'][$assign->id];
+        $this->assertFalse($cm->uservisible);
+        $this->assertTrue($cm->is_user_access_restricted_by_capability());
+
+        // Check calling get_fast_modinfo() for different user:
+        $this->setAdminUser();
+        $cm = get_fast_modinfo($course->id)->instances['assign'][$assign->id];
+        $this->assertTrue($cm->uservisible);
+        $this->assertFalse($cm->is_user_access_restricted_by_capability());
+        $cm = get_fast_modinfo($course->id, $student->id)->instances['assign'][$assign->id];
+        $this->assertFalse($cm->uservisible);
+        $this->assertTrue($cm->is_user_access_restricted_by_capability());
+    }
+
     private function refresh_cm_info($course, $assign) {
         get_fast_modinfo(0, 0, true);
         return get_fast_modinfo($course)->instances['assign'][$assign->id];
