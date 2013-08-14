@@ -1274,7 +1274,8 @@ class cm_info extends stdClass {
         }
 
         // You are blocked if you don't have the capability.
-        return !has_capability($capability, context_module::instance($this->id));
+        $userid = $this->modinfo->get_user_id();
+        return !has_capability($capability, context_module::instance($this->id), $userid);
     }
 
     /**
@@ -1283,7 +1284,7 @@ class cm_info extends stdClass {
      * @return bool True if the user cannot see the module. False if the activity is either available or should be greyed out.
      */
     public function is_user_access_restricted_by_conditional_access() {
-        global $CFG, $USER;
+        global $CFG;
 
         if (empty($CFG->enableavailability)) {
             return false;
