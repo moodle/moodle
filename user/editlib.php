@@ -263,7 +263,11 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->setDefault('lang', $CFG->lang);
 
     // Multi-Calendar Support - see MDL-18375.
-    $mform->addElement('select', 'calendartype', get_string('preferredcalendar', 'calendar'), \core_calendar\type_factory::get_list_of_calendar_types());
+    $calendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
+    // We do not want to show this option unless there is more than one calendar type to display.
+    if (count($calendartypes) > 1) {
+        $mform->addElement('select', 'calendartype', get_string('preferredcalendar', 'calendar'), $calendartypes);
+    }
 
     if (!empty($CFG->allowuserthemes)) {
         $choices = array();
