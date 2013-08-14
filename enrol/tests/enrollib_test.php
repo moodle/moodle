@@ -250,4 +250,33 @@ class core_enrol_testcase extends advanced_testcase {
         $this->assertTrue(enrol_user_sees_own_courses());
         $this->assertEquals($reads, $DB->perf_get_reads());
     }
+
+    public function test_enrol_get_shared_courses() {
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course1->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course1->id);
+
+        $course2 = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id);
+
+        // Test that user1 and user2 have courses in common.
+        $this->assertTrue(enrol_get_shared_courses($user1, $user2, false, true));
+        // Test that user1 and user3 have no courses in common.
+        $this->assertFalse(enrol_get_shared_courses($user1, $user3, false, true));
+
+        // Test retrieving the courses in common.
+        $sharedcourses = enrol_get_shared_courses($user1, $user2, true);
+
+        // Only should be one shared course.
+        $this->assertCount(1, $sharedcourses);
+        $sharedcourse = array_shift($sharedcourses);
+        // It should be course 1.
+        $this->assertEquals($sharedcourse->id, $course1->id);
+    }
 }
