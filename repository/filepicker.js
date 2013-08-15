@@ -1062,7 +1062,13 @@ M.core_filepicker.init = function(Y, options) {
             }, false);
         },
         select_file: function(args) {
-            Y.one('#fp-file_label_'+this.options.client_id).setContent(Y.Escape.html(M.str.moodle.edit+' '+args.title));
+            var argstitle = args.title;
+            // Limit the string length so it fits nicely on mobile devices
+            var titlelength = 30;
+            if (argstitle.length > titlelength) {
+                argstitle = argstitle.substring(0, titlelength) + '...';
+            }
+            Y.one('#fp-file_label_'+this.options.client_id).setContent(Y.Escape.html(M.str.repository.select+' '+argstitle));
             this.selectui.show();
             Y.one('#'+this.selectnode.get('id')).focus();
             var client_id = this.options.client_id;
@@ -1306,7 +1312,7 @@ M.core_filepicker.init = function(Y, options) {
 
             var fplabel = 'fp-file_label_'+ client_id;
             this.selectui = new M.core.dialogue({
-                headerContent: '<span id="' + fplabel +'">'+M.str.moodle.edit+'</span>',
+                headerContent: '<span id="' + fplabel +'">'+M.str.repository.select+'</span>',
                 draggable    : true,
                 width        : '450px',
                 bodyContent  : this.selectnode,
