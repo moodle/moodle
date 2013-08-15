@@ -115,6 +115,7 @@ $string['administratorsandteachers'] = 'Administrators and teachers';
 $string['advanced'] = 'Advanced';
 $string['advancedfilter'] = 'Advanced search';
 $string['advancedsettings'] = 'Advanced settings';
+$string['aftercontent'] = 'After {$a}';
 $string['again'] = 'again';
 $string['aimid'] = 'AIM ID';
 $string['ajaxuse'] = 'AJAX and Javascript';
@@ -645,6 +646,7 @@ $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
 An email containing your new password has been sent to your address at<br /><b>{$a->email}</b>.<br />
 The new password was automatically generated - you might like to
 <a href="{$a->link}">change your password</a> to something easier to remember.';
+$string['emptydragdropregion'] = 'empty region';
 $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
 $string['english'] = 'English';
@@ -1080,6 +1082,7 @@ $string['moreinformation'] = 'More information about this error';
 $string['moreprofileinfoneeded'] = 'Please tell us more about yourself';
 $string['mostrecently'] = 'most recently';
 $string['move'] = 'Move';
+$string['movecontent'] = 'Move {$a}';
 $string['movecategorycontentto'] = 'Move into';
 $string['movecategoryto'] = 'Move category to:';
 $string['movecontentstoanothercategory'] = 'Move contents to another category';
