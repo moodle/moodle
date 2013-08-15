@@ -329,65 +329,54 @@ class core_navigationlib_testcase extends advanced_testcase {
         $this->assertFalse($node->exposed_module_extends_navigation('test1'));
     }
 
-    public function test_navbar_add() {
-        global $PAGE, $SITE;
-        $this->resetAfterTest(false);
-
+    public function test_navbar_prepend_and_add() {
+        global $PAGE;
+        // Unfortunate hack needed because people use global $PAGE around the place.
         $PAGE->set_url('/');
-        $PAGE->set_course($SITE);
 
-        $tempnode = new exposed_global_navigation();
-        // Create an initial tree structure to work with.
-        $cat1 = $tempnode->add('category 1', null, navigation_node::TYPE_CATEGORY, null, 'cat1');
-        $cat2 = $tempnode->add('category 2', null, navigation_node::TYPE_CATEGORY, null, 'cat2');
-        $cat3 = $tempnode->add('category 3', null, navigation_node::TYPE_CATEGORY, null, 'cat3');
-        $sub1 = $cat2->add('sub category 1', null, navigation_node::TYPE_CATEGORY, null, 'sub1');
-        $sub2 = $cat2->add('sub category 2', null, navigation_node::TYPE_CATEGORY, null, 'sub2');
-        $sub3 = $cat2->add('sub category 3', null, navigation_node::TYPE_CATEGORY, null, 'sub3');
-        $course1 = $sub2->add('course 1', null, navigation_node::TYPE_COURSE, null, 'course1');
-        $course2 = $sub2->add('course 2', null, navigation_node::TYPE_COURSE, null, 'course2');
-        $course3 = $sub2->add('course 3', null, navigation_node::TYPE_COURSE, null, 'course3');
-        $section1 = $course2->add('section 1', null, navigation_node::TYPE_SECTION, null, 'sec1');
-        $section2 = $course2->add('section 2', null, navigation_node::TYPE_SECTION, null, 'sec2');
-        $section3 = $course2->add('section 3', null, navigation_node::TYPE_SECTION, null, 'sec3');
-        $act1 = $section2->add('activity 1', null, navigation_node::TYPE_ACTIVITY, null, 'act1');
-        $act2 = $section2->add('activity 2', null, navigation_node::TYPE_ACTIVITY, null, 'act2');
-        $act3 = $section2->add('activity 3', null, navigation_node::TYPE_ACTIVITY, null, 'act3');
-        $res1 = $section2->add('resource 1', null, navigation_node::TYPE_RESOURCE, null, 'res1');
-        $res2 = $section2->add('resource 2', null, navigation_node::TYPE_RESOURCE, null, 'res2');
-        $res3 = $section2->add('resource 3', null, navigation_node::TYPE_RESOURCE, null, 'res3');
-        $tempnode->find('course2', navigation_node::TYPE_COURSE)->make_active();
+        // We need to reset after this test because we using the generator.
+        $this->resetAfterTest();
 
-        $page = new navigation_exposed_moodle_page();
-        $page->set_url($PAGE->url);
-        $page->set_context($PAGE->context);
+        $generator = self::getDataGenerator();
+        $cat1 = $generator->create_category();
+        $cat2 = $generator->create_category(array('parent' => $cat1->id));
+        $course = $generator->create_course(array('category' => $cat2->id));
 
-        $navigation = new exposed_global_navigation($page);
-        $navigation->children = $tempnode->children;
-        $navigation->set_initialised();
-        $page->set_navigation($navigation);
+        $page = new moodle_page();
+        $page->set_course($course);
+        $page->set_url(new moodle_url('/course/view.php', array('id' => $course->id)));
+        $page->navbar->prepend('test 1');
+        $page->navbar->prepend('test 2');
+        $page->navbar->add('test 3');
+        $page->navbar->add('test 4');
 
-        $cache = new navigation_cache('unittest_nav');
-        $node = new exposed_navbar($page);
+        $items = $page->navbar->get_items();
+        foreach ($items as $item) {
+            $this->assertInstanceOf('navigation_node', $item);
+        }
 
-        // Add a node with all args set.
-        $node->add('test_add_1', 'http://www.moodle.org/', navigation_node::TYPE_COURSE, 'testadd1', 'testadd1', new pix_icon('i/course', ''));
-        // Add a node with the minimum args required.
-        $node->add('test_add_2', 'http://www.moodle.org/', navigation_node::TYPE_COURSE, 'testadd2', 'testadd2', new pix_icon('i/course', ''));
-        $this->assertInstanceOf('navigation_node', $node->get('testadd1'));
-        $this->assertInstanceOf('navigation_node', $node->get('testadd2'));
+        $i = 0;
+        $this->assertSame('test 1', $items[$i++]->text);
+        $this->assertSame('test 2', $items[$i++]->text);
+        $this->assertSame('home', $items[$i++]->key);
+        $this->assertSame('courses', $items[$i++]->key);
+        $this->assertSame($cat1->id, $items[$i++]->key);
+        $this->assertSame($cat2->id, $items[$i++]->key);
+        $this->assertSame($course->id, $items[$i++]->key);
+        $this->assertSame('test 3', $items[$i++]->text);
+        $this->assertSame('test 4', $items[$i++]->text);
 
-        return $node;
+        return $page;
     }
 
     /**
-     * @depends test_navbar_add
+     * @depends test_navbar_prepend_and_add
      * @param $node
      */
-    public function test_navbar_has_items($node) {
+    public function test_navbar_has_items(moodle_page $page) {
         $this->resetAfterTest();
 
-        $this->assertTrue($node->has_items());
+        $this->assertTrue($page->navbar->has_items());
     }
 
     public function test_cache__get() {
