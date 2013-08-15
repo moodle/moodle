@@ -239,7 +239,6 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 /*
  * Select Dialogue (File Picker and File Manager)
  */
-.file-picker.fp-select {width:420px;}
 .fp-select form {padding: 20px 20px 0;}
 .fp-select .fp-select-loading {text-align: center;margin-top: 20px;}
 .fp-select .fp-hr {clear: both;height: 1px; background-color: #FFFFFF;border-bottom: 1px solid #BBBBBB;width: auto; margin: 10px 0;}

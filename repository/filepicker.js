@@ -717,7 +717,7 @@ M.core_filepicker.init = function(Y, options) {
                 node.generateID();
                 this.process_dlg = new M.core.dialogue({
                     draggable    : true,
-                    bodyContent  : this.fpnode,
+                    bodyContent  : node,
                     headerContent: M.str.repository.fileexistsdialogheader,
                     centered     : true,
                     modal        : true,
@@ -1308,6 +1308,7 @@ M.core_filepicker.init = function(Y, options) {
             this.selectui = new M.core.dialogue({
                 headerContent: '<span id="' + fplabel +'">'+M.str.moodle.edit+'</span>',
                 draggable    : true,
+                width        : '450px',
                 bodyContent  : this.selectnode,
                 centered     : true,
                 modal        : true,
