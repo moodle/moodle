@@ -40,6 +40,13 @@ class type_factory {
         }
 
         $class = "\\calendartype_$type\\structure";
+
+        // Ensure the calendar type exists. It may occur that a user has selected a calendar type, which was then
+        // deleted. If this happens we want to fall back on the Gregorian calendar type.
+        if (!class_exists($class)) {
+            $class = "\\calendartype_gregorian\\structure";
+        }
+
         return new $class();
     }
 
