@@ -55,6 +55,7 @@ $string['course_summary_key'] = 'Summary';
 $string['createcourseextid'] = 'CREATE User enrolled to a nonexistant course \'{$a->courseextid}\'';
 $string['createnotcourseextid'] = 'User enrolled to a nonexistant course \'{$a->courseextid}\'';
 $string['creatingcourse'] =  'Creating course \'{$a}\'...';
+$string['duplicateshortname'] = "Course creation failed. Duplicate short name. Skipping course with idnumber '{\$a->idnumber}'...";
 $string['editlock'] = 'Lock value';
 $string['emptyenrolment'] = "Empty enrolment for role '{\$a->role_shortname}' in course '{\$a->course_shortname}'\n";
 $string['enrolname'] = 'LDAP';
