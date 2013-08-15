@@ -223,8 +223,6 @@ class tool_uploadcourse_processor {
 
         $tracker->finish();
         $tracker->results($total, $created, $updated, $deleted, $errors);
-
-        $this->remove_restore_content();
     }
 
     /**
@@ -349,18 +347,8 @@ class tool_uploadcourse_processor {
         }
 
         $tracker->finish();
-        $this->remove_restore_content();
 
         return $preview;
-    }
-
-    /**
-     * Delete the restore object.
-     *
-     * @return void
-     */
-    protected function remove_restore_content() {
-        tool_uploadcourse_helper::clean_restore_content();
     }
 
     /**

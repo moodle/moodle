@@ -38,31 +38,6 @@ require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 class tool_uploadcourse_helper {
 
     /**
-     * Remove the restore content from disk and cache.
-     *
-     * @return void
-     */
-    public static function clean_restore_content() {
-        global $CFG;
-
-        // There are some sloppy unclosed file handles in backup/restore code,
-        // let's hope somebody unset all controllers before calling this
-        // and destroy magic will close all remaining open file handles,
-        // otherwise Windows will fail deleting the directory.
-        gc_collect_cycles();
-
-        if (!empty($CFG->keeptempdirectoriesonbackup)) {
-            $cache = cache::make('tool_uploadcourse', 'helper');
-            $backupids = (array) $cache->get('backupids');
-            foreach ($backupids as $cachekey => $backupid) {
-                $cache->delete($cachekey);
-                fulldelete("$CFG->tempdir/backup/$backupid/");
-            }
-            $cache->delete('backupids');
-        }
-    }
-
-    /**
      * Generate a shortname based on a template.
      *
      * @param array|object $data course data.
@@ -216,7 +191,9 @@ class tool_uploadcourse_helper {
      * Get the restore content tempdir.
      *
      * The tempdir is the sub directory in which the backup has been extracted.
-     * This caches the result for better performance.
+     *
+     * This caches the result for better performance, but $CFG->keeptempdirectoriesonbackup
+     * needs to be enabled, otherwise the cache is ignored.
      *
      * @param string $backupfile path to a backup file.
      * @param string $shortname shortname of a course.
@@ -229,6 +206,10 @@ class tool_uploadcourse_helper {
         $cachekey = null;
         if (!empty($backupfile)) {
             $backupfile = realpath($backupfile);
+            if (empty($backupfile) || !is_readable($backupfile)) {
+                $errors['cannotreadbackupfile'] = new lang_string('cannotreadbackupfile', 'tool_uploadcourse');
+                return false;
+            }
             $cachekey = 'backup_path:' . $backupfile;
         } else if (!empty($shortname) || is_numeric($shortname)) {
             $cachekey = 'backup_sn:' . $shortname;
@@ -238,23 +219,27 @@ class tool_uploadcourse_helper {
             return false;
         }
 
-        $cache = cache::make('tool_uploadcourse', 'helper');
-        if (($backupid = $cache->get($cachekey)) === false) {
-            // Use false instead of null because it would consider that the cache
-            // key has not been set.
-            $backupid = false;
+        // If $CFG->keeptempdirectoriesonbackup is not set to true, any restore happening would
+        // automatically delete the backup directory... causing the cache to return an unexisting directory.
+        $usecache = !empty($CFG->keeptempdirectoriesonbackup);
+        if ($usecache) {
+            $cache = cache::make('tool_uploadcourse', 'helper');
+        }
+
+        // If we don't use the cache, or if we do and not set, or the directory doesn't exist any more.
+        if (!$usecache || (($backupid = $cache->get($cachekey)) === false || !is_dir("$CFG->tempdir/backup/$backupid"))) {
+
+            // Use null instead of false because it would consider that the cache key has not been set.
+            $backupid = null;
+
             if (!empty($backupfile)) {
-                if (!is_readable($backupfile)) {
-                    $errors['cannotreadbackupfile'] = new lang_string('cannotreadbackupfile', 'tool_uploadcourse');
-                } else {
-                    // Extracting the backup file.
-                    $packer = get_file_packer('application/vnd.moodle.backup');
-                    $backupid = restore_controller::get_tempdir_name(SITEID, $USER->id);
-                    $path = "$CFG->tempdir/backup/$backupid/";
-                    $result = $packer->extract_to_pathname($backupfile, $path);
-                    if (!$result) {
-                        $errors['invalidbackupfile'] = new lang_string('invalidbackupfile', 'tool_uploadcourse');
-                    }
+                // Extracting the backup file.
+                $packer = get_file_packer('application/vnd.moodle.backup');
+                $backupid = restore_controller::get_tempdir_name(SITEID, $USER->id);
+                $path = "$CFG->tempdir/backup/$backupid/";
+                $result = $packer->extract_to_pathname($backupfile, $path);
+                if (!$result) {
+                    $errors['invalidbackupfile'] = new lang_string('invalidbackupfile', 'tool_uploadcourse');
                 }
             } else if (!empty($shortname) || is_numeric($shortname)) {
                 // Creating restore from an existing course.
@@ -270,14 +255,15 @@ class tool_uploadcourse_helper {
                         new lang_string('coursetorestorefromdoesnotexist', 'tool_uploadcourse');
                 }
             }
-            $cache->set($cachekey, $backupid);
 
-            // Store all the directories to be able to remove them in self::clean_restore_content().
-            $backupids = (array) $cache->get('backupids');
-            $backupids[$cachekey] = $backupid;
-            $cache->set('backupids', $backupids);
+            if ($usecache) {
+                $cache->set($cachekey, $backupid);
+            }
         }
 
+        if ($backupid === null) {
+            $backupid = false;
+        }
         return $backupid;
     }
 

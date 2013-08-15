@@ -141,6 +141,9 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $bc->destroy();
         unset($bc); // File logging is a mess, we can only try to rely on gc to close handles.
 
+        $oldcfg = isset($CFG->keeptempdirectoriesonbackup) ? $CFG->keeptempdirectoriesonbackup : false;
+        $CFG->keeptempdirectoriesonbackup = true;
+
         // Checking restore dir.
         $dir = tool_uploadcourse_helper::get_restore_content_dir($c1backupfile, null);
         $bcinfo = backup_general_helper::get_backup_information($dir);
@@ -179,18 +182,26 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $this->assertFalse($dir);
         $this->assertArrayHasKey('coursetorestorefromdoesnotexist', $errors);
 
-        // Cleaning content directories.
-        $oldcfg = isset($CFG->keeptempdirectoriesonbackup) ? $CFG->keeptempdirectoriesonbackup : false;
-        $dir = "$CFG->tempdir/backup/$dir";
-        $this->assertTrue(file_exists($dir));
-
+        // Trying again without caching. $CFG->keeptempdirectoriesonbackup is required for caching.
         $CFG->keeptempdirectoriesonbackup = false;
-        tool_uploadcourse_helper::clean_restore_content();
-        $this->assertTrue(file_exists($dir));
 
-        $CFG->keeptempdirectoriesonbackup = true;
-        tool_uploadcourse_helper::clean_restore_content();
-        $this->assertFalse(file_exists($dir));
+        // Checking restore dir.
+        $dir = tool_uploadcourse_helper::get_restore_content_dir($c1backupfile, null);
+        $dir2 = tool_uploadcourse_helper::get_restore_content_dir($c1backupfile, null);
+        $this->assertNotEquals($dir, $dir2);
+
+        // Checking with a shortname.
+        $dir = tool_uploadcourse_helper::get_restore_content_dir(null, $c1->shortname);
+        $dir2 = tool_uploadcourse_helper::get_restore_content_dir(null, $c1->shortname);
+        $this->assertNotEquals($dir, $dir2);
+
+        // Get a course that does not exist.
+        $errors = array();
+        $dir = tool_uploadcourse_helper::get_restore_content_dir(null, 'DoesNotExist', $errors);
+        $this->assertFalse($dir);
+        $this->assertArrayHasKey('coursetorestorefromdoesnotexist', $errors);
+        $dir2 = tool_uploadcourse_helper::get_restore_content_dir(null, 'DoesNotExist', $errors);
+        $this->assertEquals($dir, $dir2);
 
         $CFG->keeptempdirectoriesonbackup = $oldcfg;
 
