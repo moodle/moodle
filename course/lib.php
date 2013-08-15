@@ -2977,9 +2977,6 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'markedthistopic',
             'move',
             'movesection',
-            'movecontent',
-            'aftercontent',
-            'emptydragdropregion'
         ), 'moodle');
 
     // Include format-specific strings

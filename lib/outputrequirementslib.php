@@ -300,11 +300,6 @@ class page_requirements_manager {
             if (!empty($page->cm->id)) {
                 $params['cmid'] = $page->cm->id;
             }
-            // Strings for drag and drop.
-            $this->strings_for_js(array('movecontent',
-                                        'aftercontent',
-                                        'emptydragdropregion'),
-                                  'moodle');
             $page->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', array($params), null, true);
         }
     }
