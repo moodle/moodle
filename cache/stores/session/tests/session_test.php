@@ -49,60 +49,66 @@ class cachestore_session_test extends cachestore_tests {
      * Test the maxsize option.
      */
     public function test_maxsize() {
-        $defid = 'phpunit/testmaxsize';
         $config = cache_config_phpunittest::instance();
-        $config->phpunit_add_definition($defid, array(
+        $config->phpunit_add_definition('phpunit/one', array(
             'mode' => cache_store::MODE_SESSION,
             'component' => 'phpunit',
-            'area' => 'testmaxsize',
+            'area' => 'one',
             'maxsize' => 3
         ));
-        $definition = cache_definition::load($defid, $config->get_definition_by_id($defid));
-        $instance = cachestore_session::initialise_test_instance($definition);
 
-        $this->assertTrue($instance->set('key1', 'value1'));
-        $this->assertTrue($instance->set('key2', 'value2'));
-        $this->assertTrue($instance->set('key3', 'value3'));
+        $config->phpunit_add_definition('phpunit/two', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'two',
+            'maxsize' => 3
+        ));
 
-        $this->assertTrue($instance->has('key1'));
-        $this->assertTrue($instance->has('key2'));
-        $this->assertTrue($instance->has('key3'));
+        $cacheone = cache::make('phpunit', 'one');
 
-        $this->assertTrue($instance->set('key4', 'value4'));
-        $this->assertTrue($instance->set('key5', 'value5'));
+        $this->assertTrue($cacheone->set('key1', 'value1'));
+        $this->assertTrue($cacheone->set('key2', 'value2'));
+        $this->assertTrue($cacheone->set('key3', 'value3'));
 
-        $this->assertFalse($instance->has('key1'));
-        $this->assertFalse($instance->has('key2'));
-        $this->assertTrue($instance->has('key3'));
-        $this->assertTrue($instance->has('key4'));
-        $this->assertTrue($instance->has('key5'));
+        $this->assertTrue($cacheone->has('key1'));
+        $this->assertTrue($cacheone->has('key2'));
+        $this->assertTrue($cacheone->has('key3'));
 
-        $this->assertFalse($instance->get('key1'));
-        $this->assertFalse($instance->get('key2'));
-        $this->assertEquals('value3', $instance->get('key3'));
-        $this->assertEquals('value4', $instance->get('key4'));
-        $this->assertEquals('value5', $instance->get('key5'));
+        $this->assertTrue($cacheone->set('key4', 'value4'));
+        $this->assertTrue($cacheone->set('key5', 'value5'));
+
+        $this->assertFalse($cacheone->has('key1'));
+        $this->assertFalse($cacheone->has('key2'));
+        $this->assertTrue($cacheone->has('key3'));
+        $this->assertTrue($cacheone->has('key4'));
+        $this->assertTrue($cacheone->has('key5'));
+
+        $this->assertFalse($cacheone->get('key1'));
+        $this->assertFalse($cacheone->get('key2'));
+        $this->assertEquals('value3', $cacheone->get('key3'));
+        $this->assertEquals('value4', $cacheone->get('key4'));
+        $this->assertEquals('value5', $cacheone->get('key5'));
 
         // Test adding one more.
-        $this->assertTrue($instance->set('key6', 'value6'));
-        $this->assertFalse($instance->get('key3'));
+        $this->assertTrue($cacheone->set('key6', 'value6'));
+        $this->assertFalse($cacheone->get('key3'));
 
         // Test reducing and then adding to make sure we don't lost one.
-        $this->assertTrue($instance->delete('key6'));
-        $this->assertTrue($instance->set('key7', 'value7'));
-        $this->assertEquals('value4', $instance->get('key4'));
+        $this->assertTrue($cacheone->delete('key6'));
+        $this->assertTrue($cacheone->set('key7', 'value7'));
+        $this->assertEquals('value4', $cacheone->get('key4'));
 
         // Set the same key three times to make sure it doesn't count overrides.
         for ($i = 0; $i < 3; $i++) {
-            $this->assertTrue($instance->set('key8', 'value8'));
+            $this->assertTrue($cacheone->set('key8', 'value8'));
         }
-        $this->assertEquals('value7', $instance->get('key7'), 'Overrides are incorrectly incrementing size');
+        $this->assertEquals('value7', $cacheone->get('key7'), 'Overrides are incorrectly incrementing size');
 
         // Test adding many.
-        $this->assertEquals(3, $instance->set_many(array(
-            array('key' => 'keyA', 'value' => 'valueA'),
-            array('key' => 'keyB', 'value' => 'valueB'),
-            array('key' => 'keyC', 'value' => 'valueC')
+        $this->assertEquals(3, $cacheone->set_many(array(
+            'keyA' => 'valueA',
+            'keyB' => 'valueB',
+            'keyC' => 'valueC'
         )));
         $this->assertEquals(array(
             'key4' => false,
@@ -112,8 +118,40 @@ class cachestore_session_test extends cachestore_tests {
             'keyA' => 'valueA',
             'keyB' => 'valueB',
             'keyC' => 'valueC'
-        ), $instance->get_many(array(
+        ), $cacheone->get_many(array(
             'key4', 'key5', 'key6', 'key7', 'keyA', 'keyB', 'keyC'
         )));
+
+        $cachetwo = cache::make('phpunit', 'two');
+
+        // Test adding many.
+        $this->assertEquals(3, $cacheone->set_many(array(
+            'keyA' => 'valueA',
+            'keyB' => 'valueB',
+            'keyC' => 'valueC'
+        )));
+
+        $this->assertEquals(3, $cachetwo->set_many(array(
+            'key1' => 'value1',
+            'key2' => 'value2',
+            'key3' => 'value3'
+        )));
+
+        $this->assertEquals(array(
+            'keyA' => 'valueA',
+            'keyB' => 'valueB',
+            'keyC' => 'valueC'
+        ), $cacheone->get_many(array(
+            'keyA', 'keyB', 'keyC'
+        )));
+
+        $this->assertEquals(array(
+            'key1' => 'value1',
+            'key2' => 'value2',
+            'key3' => 'value3'
+        ), $cachetwo->get_many(array(
+            'key1', 'key2', 'key3'
+        )));
+
     }
 }

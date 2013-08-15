@@ -237,7 +237,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function get($key) {
         if (isset($this->store[$key])) {
-            if ($this->ttl == 0) {
+            if ($this->ttl === 0) {
                 return $this->store[$key][0];
             } else if ($this->store[$key][1] >= (cache::now() - $this->ttl)) {
                 return $this->store[$key][0];
@@ -257,6 +257,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function get_many($keys) {
         $return = array();
+        $maxtime = 0;
         if ($this->ttl != 0) {
             $maxtime = cache::now() - $this->ttl;
         }
@@ -284,11 +285,9 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function set($key, $data, $testmaxsize = true) {
         $testmaxsize = ($testmaxsize && $this->maxsize !== false);
-        if ($testmaxsize) {
-            $increment = (!isset($this->store[$key]));
-        }
-        if ($this->ttl == 0) {
-            $this->store[$key][0] = $data;
+        $increment = ($testmaxsize && !isset($this->store[$key]));
+        if ($this->ttl === 0) {
+            $this->store[$key] = array($data, 0);
         } else {
             $this->store[$key] = array($data, cache::now());
         }
@@ -311,12 +310,22 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function set_many(array $keyvaluearray) {
         $count = 0;
+        $increment = 0;
         foreach ($keyvaluearray as $pair) {
-            $this->set($pair['key'], $pair['value'], false);
+            $key = $pair['key'];
+            $data = $pair['value'];
             $count++;
+            if (!isset($this->store[$key])) {
+                $increment++;
+            }
+            if ($this->ttl === 0) {
+                $this->store[$key] = array($data, 0);
+            } else {
+                $this->store[$key] = array($data, cache::now());
+            }
         }
         if ($this->maxsize !== false) {
-            $this->storecount += $count;
+            $this->storecount += $increment;
             if ($this->storecount > $this->maxsize) {
                 $this->reduce_for_maxsize();
             }
@@ -348,6 +357,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * @return bool
      */
     public function has_all(array $keys) {
+        $maxtime = 0;
         if ($this->ttl != 0) {
             $maxtime = cache::now() - $this->ttl;
         }
@@ -370,6 +380,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * @return bool
      */
     public function has_any(array $keys) {
+        $maxtime = 0;
         if ($this->ttl != 0) {
             $maxtime = cache::now() - $this->ttl;
         }
@@ -502,6 +513,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * Finds all of the keys whose keys start with the given prefix.
      *
      * @param string $prefix
+     * @return array An array of keys.
      */
     public function find_by_prefix($prefix) {
         $return = array();
