@@ -302,7 +302,7 @@ class page_requirements_manager {
             }
             // Strings for drag and drop.
             $this->strings_for_js(array('movecontent',
-                                        'aftercontent',
+                                        'tocontent',
                                         'emptydragdropregion'),
                                   'moodle');
             $page->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', array($params), null, true);

@@ -2978,7 +2978,7 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'move',
             'movesection',
             'movecontent',
-            'aftercontent',
+            'tocontent',
             'emptydragdropregion'
         ), 'moodle');
 
