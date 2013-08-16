@@ -43,7 +43,7 @@ abstract class restore_prechecks_helper {
      *
      * Returns empty array or warnings/errors array
      */
-    public static function execute_prechecks($controller, $droptemptablesafter = false) {
+    public static function execute_prechecks(restore_controller $controller, $droptemptablesafter = false) {
         global $CFG;
 
         $errors = array();
@@ -57,16 +57,31 @@ abstract class restore_prechecks_helper {
         $courseid = $controller->get_courseid();
         $userid = $controller->get_userid();
         $rolemappings = $controller->get_info()->role_mappings;
+        $progress = $controller->get_progress();
+
+        // Start tracking progress. There are currently 8 major steps, corresponding
+        // to $majorstep++ lines in this code; we keep track of the total so as to
+        // verify that it's still correct. If you add a major step, you need to change
+        // the total here.
+        $majorstep = 1;
+        $majorsteps = 8;
+        $progress->start_progress('Carrying out pre-restore checks', $majorsteps);
+
         // Load all the included tasks to look for inforef.xml files
         $inforeffiles = array();
         $tasks = restore_dbops::get_included_tasks($restoreid);
+        $progress->start_progress('Listing inforef files', count($tasks));
+        $minorstep = 1;
         foreach ($tasks as $task) {
             // Add the inforef.xml file if exists
             $inforefpath = $task->get_taskbasepath() . '/inforef.xml';
             if (file_exists($inforefpath)) {
                 $inforeffiles[] = $inforefpath;
             }
+            $progress->progress($minorstep++);
         }
+        $progress->end_progress();
+        $progress->progress($majorstep++);
 
         // Create temp tables
         restore_controller_dbops::create_restore_temp_tables($controller->get_restoreid());
@@ -108,18 +123,31 @@ abstract class restore_prechecks_helper {
         }
 
         // Load all the inforef files, we are going to need them
+        $progress->start_progress('Loading temporary IDs', count($inforeffiles));
+        $minorstep = 1;
         foreach ($inforeffiles as $inforeffile) {
-            restore_dbops::load_inforef_to_tempids($restoreid, $inforeffile); // Load each inforef file to temp_ids
+            // Load each inforef file to temp_ids.
+            restore_dbops::load_inforef_to_tempids($restoreid, $inforeffile, $progress);
+            $progress->progress($minorstep++);
         }
+        $progress->end_progress();
+        $progress->progress($majorstep++);
 
         // If restoring users, check we are able to create all them
         if ($restoreusers) {
             $file = $controller->get_plan()->get_basepath() . '/users.xml';
-            restore_dbops::load_users_to_tempids($restoreid, $file); // Load needed users to temp_ids
-            if ($problems = restore_dbops::precheck_included_users($restoreid, $courseid, $userid, $samesite)) {
+             // Load needed users to temp_ids.
+            restore_dbops::load_users_to_tempids($restoreid, $file, $progress);
+            $progress->progress($majorstep++);
+            if ($problems = restore_dbops::precheck_included_users($restoreid, $courseid, $userid, $samesite, $progress)) {
                 $errors = array_merge($errors, $problems);
             }
+        } else {
+            // To ensure consistent number of steps in progress tracking,
+            // mark progress even though we didn't do anything.
+            $progress->progress($majorstep++);
         }
+        $progress->progress($majorstep++);
 
         // Note: restore won't create roles at all. Only mapping/skip!
         $file = $controller->get_plan()->get_basepath() . '/roles.xml';
@@ -128,6 +156,7 @@ abstract class restore_prechecks_helper {
             $errors = array_key_exists('errors', $problems) ? array_merge($errors, $problems['errors']) : $errors;
             $warnings = array_key_exists('warnings', $problems) ? array_merge($warnings, $problems['warnings']) : $warnings;
         }
+        $progress->progress($majorstep++);
 
         // Check we are able to restore and the categories and questions
         $file = $controller->get_plan()->get_basepath() . '/questions.xml';
@@ -136,8 +165,9 @@ abstract class restore_prechecks_helper {
             $errors = array_key_exists('errors', $problems) ? array_merge($errors, $problems['errors']) : $errors;
             $warnings = array_key_exists('warnings', $problems) ? array_merge($warnings, $problems['warnings']) : $warnings;
         }
+        $progress->progress($majorstep++);
 
-        // Prepare results and return
+        // Prepare results.
         $results = array();
         if (!empty($errors)) {
             $results['errors'] = $errors;
@@ -149,6 +179,14 @@ abstract class restore_prechecks_helper {
         if (!empty($results) || $droptemptablesafter) {
             restore_controller_dbops::drop_restore_temp_tables($controller->get_restoreid());
         }
+
+        // Finish progress and check we got the initial number of steps right.
+        $progress->progress($majorstep++);
+        if ($majorstep != $majorsteps) {
+            throw new coding_exception('Progress step count wrong: ' . $majorstep);
+        }
+        $progress->end_progress();
+
         return $results;
     }
 }
