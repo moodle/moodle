@@ -28,8 +28,7 @@ class role_assigned extends base {
     protected function init() {
         $this->data['objecttable'] = 'role';
         $this->data['crud'] = 'c';
-        // TODO: MDL-37658 set level
-        $this->data['level'] = 50;
+        $this->data['level'] = self::LEVEL_OTHER;
     }
 
     /**

@@ -31,8 +31,7 @@ class role_deleted extends base {
     protected function init() {
         $this->data['objecttable'] = 'role';
         $this->data['crud'] = 'd';
-        // TODO: MDL-41040 set level.
-        $this->data['level'] = 50;
+        $this->data['level'] = self::LEVEL_OTHER;
     }
 
     /**

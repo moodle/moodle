@@ -50,6 +50,27 @@ namespace core\event;
  * @property-read int $timecreated
  */
 abstract class base implements \IteratorAggregate {
+
+    /**
+     * Other level.
+     */
+    const LEVEL_OTHER = 0;
+
+    /**
+     * Teaching level.
+     *
+     * Any event that is performed by someone (typically a teacher) and has a teaching value,
+     * anything that is affecting the learning experience/environment of the students.
+     */
+    const LEVEL_TEACHING = 1;
+
+    /**
+     * Participating level.
+     *
+     * Any event that is performed by a user, and is related (or could be related) to his learning experience.
+     */
+    const LEVEL_PARTICIPATING = 2;
+
     /** @var array event data */
     protected $data;
 
@@ -208,8 +229,8 @@ abstract class base implements \IteratorAggregate {
      * Override in subclass.
      *
      * Set all required data properties:
-     *  1/ crud - letter [crud]     TODO: MDL-37658
-     *  2/ level - number 1...100   TODO: MDL-37658
+     *  1/ crud - letter [crud]
+     *  2/ level - using a constant self::LEVEL_*.
      *  3/ objecttable - name of database table if objectid specified
      *
      * Optionally it can set:
@@ -346,7 +367,7 @@ abstract class base implements \IteratorAggregate {
     /**
      * Return auxiliary data that was stored in logs.
      *
-     * TODO: MDL-37658
+     * TODO MDL-41331: Properly define this method once logging is finalised.
      *
      * @return array the format is standardised by logging API
      */
@@ -400,7 +421,7 @@ abstract class base implements \IteratorAggregate {
         if (empty($this->data['crud'])) {
             throw new \coding_exception('crud must be specified in init() method of each method');
         }
-        if (empty($this->data['level'])) {
+        if (!isset($this->data['level'])) {
             throw new \coding_exception('level must be specified in init() method of each method');
         }
         if (!empty($this->data['objectid']) and empty($this->data['objecttable'])) {
@@ -414,8 +435,9 @@ abstract class base implements \IteratorAggregate {
             if (!in_array($this->data['crud'], array('c', 'r', 'u', 'd'), true)) {
                 debugging("Invalid event crud value specified.", DEBUG_DEVELOPER);
             }
-            if (!is_number($this->data['level'])) {
-                debugging('Event property level must be a number', DEBUG_DEVELOPER);
+            if (!in_array($this->data['level'], array(self::LEVEL_OTHER, self::LEVEL_TEACHING, self::LEVEL_PARTICIPATING))) {
+                // Bitwise combination of levels is not allowed at this stage.
+                debugging('Event property level must a constant value, see event_base::LEVEL_*', DEBUG_DEVELOPER);
             }
             if (self::$fields !== array_keys($this->data)) {
                 debugging('Number of event data fields must not be changed in event classes', DEBUG_DEVELOPER);

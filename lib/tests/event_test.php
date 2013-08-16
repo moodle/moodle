@@ -52,7 +52,7 @@ class core_event_testcase extends advanced_testcase {
         $this->assertSame('unittest', $event->target);
         $this->assertSame(5, $event->objectid);
         $this->assertSame('u', $event->crud);
-        $this->assertSame(10, $event->level);
+        $this->assertSame(\core\event\base::LEVEL_PARTICIPATING, $event->level);
 
         $this->assertEquals($system, $event->get_context());
         $this->assertSame($system->id, $event->contextid);
@@ -601,6 +601,10 @@ class core_event_testcase extends advanced_testcase {
         } catch (\moodle_exception $e) {
             $this->assertInstanceOf('\coding_exception', $e);
         }
+
+        $event = \core_tests\event\bad_event2b::create(array('context'=>\context_system::instance()));
+        @$event->trigger();
+        $this->assertDebuggingCalled();
 
         $event = \core_tests\event\bad_event3::create(array('context'=>\context_system::instance()));
         @$event->trigger();

@@ -41,8 +41,7 @@ class cohort_member_added extends base {
      */
     protected function init() {
         $this->data['crud'] = 'c';
-        // TODO MDL-41040.
-        $this->data['level'] = 50;
+        $this->data['level'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'cohort';
     }
 

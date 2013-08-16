@@ -43,8 +43,7 @@ class course_section_updated extends base {
     protected function init() {
         $this->data['objecttable'] = 'course_sections';
         $this->data['crud'] = 'u';
-        // TODO MDL-41040 set level.
-        $this->data['level'] = 50;
+        $this->data['level'] = self::LEVEL_TEACHING;
     }
 
     /**
