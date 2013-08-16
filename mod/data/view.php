@@ -792,6 +792,16 @@ if ($showactivity) {
         $records = array();
     }
 
+    if ($mode != 'single' && $canmanageentries) {
+        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'value' => get_string('selectall')));
+        echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checknone', 'value' => get_string('deselectall')));
+        echo html_writer::empty_tag('input', array('class' => 'form-submit', 'type' => 'submit', 'value' => get_string('deleteselected')));
+
+        $module = array('name'=>'mod_data', 'fullpath'=>'/mod/data/module.js');
+        $PAGE->requires->js_init_call('M.mod_data.init_view', null, false, $module);
+    }
+    echo html_writer::end_tag('form');
+
     if ($mode == '' && !empty($CFG->enableportfolios) && !empty($records)) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $button = new portfolio_add_button();
@@ -802,20 +812,8 @@ if ($showactivity) {
         echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
     }
 
-
     //Advanced search form doesn't make sense for single (redirects list view)
     if (($maxcount || $mode == 'asearch') && $mode != 'single') {
-        if ($canmanageentries) {
-            echo html_writer::start_tag('div', array('class' => 'form-buttons'));
-            echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'value' => get_string('selectall')));
-            echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checknone', 'value' => get_string('deselectall')));
-            echo html_writer::empty_tag('input', array('class' => 'form-submit', 'type' => 'submit', 'value' => get_string('deleteselected')));
-            echo html_writer::end_tag('div');
-
-            $module = array('name'=>'mod_data', 'fullpath'=>'/mod/data/module.js');
-            $PAGE->requires->js_init_call('M.mod_data.init_view', null, false, $module);
-        }
-        echo html_writer::end_tag('form');
         data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
     }
 }
