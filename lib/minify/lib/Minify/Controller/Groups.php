@@ -4,8 +4,6 @@
  * @package Minify
  */
 
-require_once 'Minify/Controller/Base.php';
-
 /**
  * Controller class for serving predetermined groups of minimized sets, selected
  * by PATH_INFO

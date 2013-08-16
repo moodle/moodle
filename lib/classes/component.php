@@ -22,12 +22,14 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Collection of components related methods.
  */
 class core_component {
     /** @var array list of ignored directories - watch out for auth/db exception */
-    protected static $ignoreddirs = array('CVS'=>true, '_vti_cnf'=>true, 'simpletest'=>true, 'db'=>true, 'yui'=>true, 'tests'=>true, 'classes'=>true);
+    protected static $ignoreddirs = array('CVS'=>true, '_vti_cnf'=>true, 'simpletest'=>true, 'db'=>true, 'yui'=>true, 'tests'=>true, 'classes'=>true, 'fonts'=>true);
     /** @var array list plugin types that support subplugins, do not add more here unless absolutely necessary */
     protected static $supportsubplugins = array('mod', 'editor', 'local');
 
@@ -39,6 +41,10 @@ class core_component {
     protected static $subsystems = null;
     /** @var null list of all known classes that can be autoloaded */
     protected static $classmap = null;
+    /** @var null list of some known files that can be included. */
+    protected static $filemap = null;
+    /** @var array list of the files to map. */
+    protected static $filestomap = array('lib.php', 'settings.php');
 
     /**
      * Class loader for Frankenstyle named classes in standard locations.
@@ -79,20 +85,45 @@ class core_component {
             return;
         }
 
-        if (PHPUNIT_TEST or !empty($CFG->early_install_lang) or
-                (defined('BEHAT_UTIL') and BEHAT_UTIL) or
-                (defined('BEHAT_TEST') and BEHAT_TEST)) {
-            // 1/ Do not bother storing the file for unit tests,
-            //    we need fresh copy for each execution and
-            //    later we keep it in memory.
-            // 2/ We can not write to dataroot in installer yet.
+        if (defined('IGNORE_COMPONENT_CACHE') and IGNORE_COMPONENT_CACHE) {
             self::fill_all_caches();
             return;
         }
 
-        // Note: cachedir MUST be shared by all servers in a cluster, sorry guys...
-        //       MUC should use classloading, we can not depend on it here.
-        $cachefile = "$CFG->cachedir/core_component.php";
+        if (!empty($CFG->alternative_component_cache)) {
+            // Hack for heavily clustered sites that want to manage component cache invalidation manually.
+            $cachefile = $CFG->alternative_component_cache;
+
+            if (file_exists($cachefile)) {
+                if (CACHE_DISABLE_ALL) {
+                    // Verify the cache state only on upgrade pages.
+                    $content = self::get_cache_content();
+                    if (sha1_file($cachefile) !== sha1($content)) {
+                        die('Outdated component cache file defined in $CFG->alternative_component_cache, can not continue');
+                    }
+                    return;
+                }
+                $cache = array();
+                include($cachefile);
+                self::$plugintypes = $cache['plugintypes'];
+                self::$plugins     = $cache['plugins'];
+                self::$subsystems  = $cache['subsystems'];
+                self::$classmap    = $cache['classmap'];
+                self::$filemap     = $cache['filemap'];
+                return;
+            }
+
+            if (!is_writable(dirname($cachefile))) {
+                die('Can not create alternative component cache file defined in $CFG->alternative_component_cache, can not continue');
+            }
+
+            // Lets try to create the file, it might be in some writable directory or a local cache dir.
+
+        } else {
+            // Note: $CFG->cachedir MUST be shared by all servers in a cluster,
+            //       use $CFG->alternative_component_cache if you do not like it.
+            $cachefile = "$CFG->cachedir/core_component.php";
+        }
 
         if (!CACHE_DISABLE_ALL and !self::is_developer()) {
             // 1/ Use the cache only outside of install and upgrade.
@@ -105,26 +136,22 @@ class core_component {
                 } else if (!isset($cache['plugintypes']) or !isset($cache['plugins']) or !isset($cache['subsystems']) or !isset($cache['classmap'])) {
                     // Something is very wrong.
                 } else if ($cache['plugintypes']['mod'] !== "$CFG->dirroot/mod") {
-                    // Dirroot was changed.
+                    // $CFG->dirroot was changed.
                 } else {
                     // The cache looks ok, let's use it.
                     self::$plugintypes = $cache['plugintypes'];
                     self::$plugins     = $cache['plugins'];
                     self::$subsystems  = $cache['subsystems'];
                     self::$classmap    = $cache['classmap'];
+                    self::$filemap     = $cache['filemap'];
                     return;
                 }
+                // Note: we do not verify $CFG->admin here intentionally,
+                //       they must visit admin/index.php after any change.
             }
         }
 
-        $cachedir = dirname($cachefile);
-        if (!is_dir($cachedir)) {
-            mkdir($cachedir, $CFG->directorypermissions, true);
-        }
-
         if (!isset(self::$plugintypes)) {
-            self::fill_all_caches();
-
             // This needs to be atomic and self-fixing as much as possible.
 
             $content = self::get_cache_content();
@@ -132,16 +159,28 @@ class core_component {
                 if (sha1_file($cachefile) === sha1($content)) {
                     return;
                 }
+                // Stale cache detected!
                 unlink($cachefile);
+            }
+
+            // Permissions might not be setup properly in installers.
+            $dirpermissions = !isset($CFG->directorypermissions) ? 02777 : $CFG->directorypermissions;
+            $filepermissions = !isset($CFG->filepermissions) ? ($dirpermissions & 0666) : $CFG->filepermissions;
+
+            clearstatcache();
+            $cachedir = dirname($cachefile);
+            if (!is_dir($cachedir)) {
+                mkdir($cachedir, $dirpermissions, true);
             }
 
             if ($fp = @fopen($cachefile.'.tmp', 'xb')) {
                 fwrite($fp, $content);
                 fclose($fp);
                 @rename($cachefile.'.tmp', $cachefile);
-                @chmod($cachefile, $CFG->filepermissions);
+                @chmod($cachefile, $filepermissions);
             }
             @unlink($cachefile.'.tmp'); // Just in case anything fails (race condition).
+            self::invalidate_opcode_php_cache($cachefile);
         }
     }
 
@@ -156,11 +195,16 @@ class core_component {
     protected static function is_developer() {
         global $CFG;
 
-        if (!isset($CFG->config_php_settings['debug'])) {
+        if (isset($CFG->config_php_settings['debug'])) {
+            // Standard moodle script.
+            $debug = (int)$CFG->config_php_settings['debug'];
+        } else if (isset($CFG->debug)) {
+            // Usually script with ABORT_AFTER_CONFIG.
+            $debug = (int)$CFG->debug;
+        } else {
             return false;
         }
 
-        $debug = (int)$CFG->config_php_settings['debug'];
         if ($debug & E_ALL and $debug & E_STRICT) {
             return true;
         }
@@ -171,14 +215,21 @@ class core_component {
     /**
      * Create cache file content.
      *
+     * @private this is intended for $CFG->alternative_component_cache only.
+     *
      * @return string
      */
-    protected static function get_cache_content() {
+    public static function get_cache_content() {
+        if (!isset(self::$plugintypes)) {
+            self::fill_all_caches();
+        }
+
         $cache = array(
             'subsystems'  => self::$subsystems,
             'plugintypes' => self::$plugintypes,
             'plugins'     => self::$plugins,
             'classmap'    => self::$classmap,
+            'filemap'     => self::$filemap,
         );
 
         return '<?php
@@ -200,6 +251,7 @@ $cache = '.var_export($cache, true).';
         }
 
         self::fill_classmap_cache();
+        self::fill_filemap_cache();
     }
 
     /**
@@ -230,7 +282,6 @@ $cache = '.var_export($cache, true).';
             'currencies'  => null,
             'dbtransfer'  => null,
             'debug'       => null,
-            'dock'        => null,
             'editor'      => $CFG->dirroot.'/lib/editor',
             'edufields'   => null,
             'enrol'       => $CFG->dirroot.'/enrol',
@@ -465,6 +516,35 @@ $cache = '.var_export($cache, true).';
         self::$classmap['collatorlib'] = "$CFG->dirroot/lib/classes/collator.php";
     }
 
+
+    /**
+     * Fills up the cache defining what plugins have certain files.
+     *
+     * @see self::get_plugin_list_with_file
+     * @return void
+     */
+    protected static function fill_filemap_cache() {
+        global $CFG;
+
+        self::$filemap = array();
+
+        foreach (self::$filestomap as $file) {
+            if (!isset(self::$filemap[$file])) {
+                self::$filemap[$file] = array();
+            }
+            foreach (self::$plugins as $plugintype => $plugins) {
+                if (!isset(self::$filemap[$file][$plugintype])) {
+                    self::$filemap[$file][$plugintype] = array();
+                }
+                foreach ($plugins as $pluginname => $fulldir) {
+                    if (file_exists("$fulldir/$file")) {
+                        self::$filemap[$file][$plugintype][$pluginname] = "$fulldir/$file";
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Find classes in directory and recurse to subdirs.
      * @param string $component
@@ -605,6 +685,45 @@ $cache = '.var_export($cache, true).';
     }
 
     /**
+     * Get a list of all the plugins of a given type that contain a particular file.
+     *
+     * @param string $plugintype the type of plugin, e.g. 'mod' or 'report'.
+     * @param string $file the name of file that must be present in the plugin.
+     *                     (e.g. 'view.php', 'db/install.xml').
+     * @param bool $include if true (default false), the file will be include_once-ed if found.
+     * @return array with plugin name as keys (e.g. 'forum', 'courselist') and the path
+     *               to the file relative to dirroot as value (e.g. "$CFG->dirroot/mod/forum/view.php").
+     */
+    public static function get_plugin_list_with_file($plugintype, $file, $include = false) {
+        global $CFG; // Necessary in case it is referenced by included PHP scripts.
+        $pluginfiles = array();
+
+        if (isset(self::$filemap[$file])) {
+            // If the file was supposed to be mapped, then it should have been set in the array.
+            if (isset(self::$filemap[$file][$plugintype])) {
+                $pluginfiles = self::$filemap[$file][$plugintype];
+            }
+        } else {
+            // Old-style search for non-cached files.
+            $plugins = self::get_plugin_list($plugintype);
+            foreach ($plugins as $plugin => $fulldir) {
+                $path = $fulldir . '/' . $file;
+                if (file_exists($path)) {
+                    $pluginfiles[$plugin] = $path;
+                }
+            }
+        }
+
+        if ($include) {
+            foreach ($pluginfiles as $path) {
+                include_once($path);
+            }
+        }
+
+        return $pluginfiles;
+    }
+
+    /**
      * Returns the exact absolute path to plugin directory.
      *
      * @param string $plugintype type of plugin
@@ -734,5 +853,74 @@ $cache = '.var_export($cache, true).';
             $return[$type] = self::$plugintypes[$type];
         }
         return $return;
+    }
+
+    /**
+     * Returns hash of all versions including core and all plugins.
+     *
+     * This is relatively slow and not fully cached, use with care!
+     *
+     * @return string sha1 hash
+     */
+    public static function get_all_versions_hash() {
+        global $CFG;
+
+        self::init();
+
+        $versions = array();
+
+        // Main version first.
+        $version = null;
+        include($CFG->dirroot.'/version.php');
+        $versions['core'] = $version;
+
+        // The problem here is tha the component cache might be stable,
+        // we want this to work also on frontpage without resetting the component cache.
+        $usecache = false;
+        if (CACHE_DISABLE_ALL or (defined('IGNORE_COMPONENT_CACHE') and IGNORE_COMPONENT_CACHE)) {
+            $usecache = true;
+        }
+
+        // Now all plugins.
+        $plugintypes = core_component::get_plugin_types();
+        foreach ($plugintypes as $type => $typedir) {
+            if ($usecache) {
+                $plugs = core_component::get_plugin_list($type);
+            } else {
+                $plugs = self::fetch_plugins($type, $typedir);
+            }
+            foreach ($plugs as $plug => $fullplug) {
+                if ($type === 'mod') {
+                    $module = new stdClass();
+                    $module->version = null;
+                    include($fullplug.'/version.php');
+                    $versions[$plug] = $module->version;
+                } else {
+                    $plugin = new stdClass();
+                    $plugin->version = null;
+                    @include($fullplug.'/version.php');
+                    $versions[$plug] = $plugin->version;
+                }
+            }
+        }
+
+        return sha1(serialize($versions));
+    }
+
+    /**
+     * Invalidate opcode cache for given file, this is intended for
+     * php files that are stored in dataroot.
+     *
+     * Note: we need it here because this class must be self-contained.
+     *
+     * @param string $file
+     */
+    public static function invalidate_opcode_php_cache($file) {
+        if (function_exists('opcache_invalidate')) {
+            if (!file_exists($file)) {
+                return;
+            }
+            opcache_invalidate($file, true);
+        }
     }
 }

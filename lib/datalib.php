@@ -177,14 +177,17 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
 
         } else {
             $context = context_course::instance($courseid);
-            $contextlists = get_related_contexts_string($context);
+
+            // We want to query both the current context and parent contexts.
+            list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
 
             $sql = "SELECT u.id, u.firstname, u.lastname, u.email
                       FROM {user} u
                       JOIN {role_assignments} ra ON ra.userid = u.id
-                     WHERE $select AND ra.contextid $contextlists
+                     WHERE $select AND ra.contextid $relatedctxsql
                            $except
                     $order";
+            $params = array_merge($params, $relatedctxparams);
             return $DB->get_records_sql($sql, $params);
         }
     }
@@ -507,10 +510,11 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
                 array('id', 'username', 'email', 'firstname', 'lastname', 'city', 'country',
                 'lastaccess', 'confirmed', 'mnethostid'));
     }
+    $namefields = get_all_user_name_fields(true);
+    $extrafields = "$extrafields, $namefields";
 
     // warning: will return UNCONFIRMED USERS
-    return $DB->get_records_sql("SELECT id, username, email, firstname, lastname, city, country,
-                                        lastaccess, confirmed, mnethostid, suspended $extrafields
+    return $DB->get_records_sql("SELECT id, username, email, city, country, lastaccess, confirmed, mnethostid, suspended $extrafields
                                    FROM {user}
                                   WHERE $select
                                   $sort", $params, $page, $recordsperpage);
@@ -618,7 +622,9 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 
     $visiblecourses = array();
 
-    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+    $params['contextlevel'] = CONTEXT_COURSE;
 
     $sql = "SELECT $fields $ccselect
               FROM {course} c
@@ -631,7 +637,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 
         // loop throught them
         foreach ($courses as $course) {
-            context_instance_preload($course);
+            context_helper::preload_from_record($course);
             if (isset($course->visible) && $course->visible <= 0) {
                 // for hidden courses, require visibility check
                 if (has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
@@ -680,7 +686,9 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
         $categoryselect = "";
     }
 
-    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+    $params['contextlevel'] = CONTEXT_COURSE;
 
     $totalcount = 0;
     if (!$limitfrom) {
@@ -698,7 +706,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
     $rs = $DB->get_recordset_sql($sql, $params);
     // iteration will have to be done inside loop to keep track of the limitfrom and limitnum
     foreach($rs as $course) {
-        context_instance_preload($course);
+        context_helper::preload_from_record($course);
         if ($course->visible <= 0) {
             // for hidden courses, require visibility check
             if (has_capability('moodle/course:viewhiddencourses', context_course::instance($course->id))) {
@@ -798,7 +806,10 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
     $limitfrom = $page * $recordsperpage;
     $limitto   = $limitfrom + $recordsperpage;
 
-    list($ccselect, $ccjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
+    $params['contextlevel'] = CONTEXT_COURSE;
+
     $fields = array_diff(array_keys($DB->get_columns('course')), array('modinfo', 'sectioncache'));
     $sql = "SELECT c.".join(',c.',$fields)." $ccselect
               FROM {course} c
@@ -810,7 +821,7 @@ function get_courses_search($searchterms, $sort, $page, $recordsperpage, &$total
     foreach($rs as $course) {
         if (!$course->visible) {
             // preload contexts only for hidden courses or courses we need to return
-            context_instance_preload($course);
+            context_helper::preload_from_record($course);
             $coursecontext = context_course::instance($course->id);
             if (!has_capability('moodle/course:viewhiddencourses', $coursecontext)) {
                 continue;
@@ -1631,14 +1642,14 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     // database so that it doesn't cause a DB error. Log a warning so that
     // developers can avoid doing things which are likely to cause this on a
     // routine basis.
-    if(!empty($info) && textlib::strlen($info)>255) {
-        $info = textlib::substr($info,0,252).'...';
+    if(!empty($info) && core_text::strlen($info)>255) {
+        $info = core_text::substr($info,0,252).'...';
         debugging('Warning: logged very long info',DEBUG_DEVELOPER);
     }
 
     // If the 100 field size is changed, also need to alter print_log in course/lib.php
-    if(!empty($url) && textlib::strlen($url)>100) {
-        $url = textlib::substr($url,0,97).'...';
+    if(!empty($url) && core_text::strlen($url)>100) {
+        $url = core_text::substr($url,0,97).'...';
         debugging('Warning: logged very long URL',DEBUG_DEVELOPER);
     }
 
@@ -1781,8 +1792,8 @@ function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom=
            $select";
 
     $totalcount = $DB->count_records_sql($sql, $params);
-
-    $sql = "SELECT l.*, u.firstname, u.lastname, u.picture
+    $allnames = get_all_user_name_fields(true, 'u');
+    $sql = "SELECT l.*, $allnames, u.picture
               FROM {log} l
               LEFT JOIN {user} u ON l.userid = u.id
            $select

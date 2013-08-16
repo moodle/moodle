@@ -229,7 +229,7 @@ function book_get_view_actions() {
 
     $return = array('view', 'view all');
 
-    $plugins = get_plugin_list('booktool');
+    $plugins = core_component::get_plugin_list('booktool');
     foreach ($plugins as $plugin => $dir) {
         if (file_exists("$dir/lib.php")) {
             require_once("$dir/lib.php");
@@ -254,7 +254,7 @@ function book_get_post_actions() {
 
     $return = array('update');
 
-    $plugins = get_plugin_list('booktool');
+    $plugins = core_component::get_plugin_list('booktool');
     foreach ($plugins as $plugin => $dir) {
         if (file_exists("$dir/lib.php")) {
             require_once("$dir/lib.php");
@@ -303,7 +303,7 @@ function book_supports($feature) {
 function book_extend_settings_navigation(settings_navigation $settingsnav, navigation_node $booknode) {
     global $USER, $PAGE;
 
-    $plugins = get_plugin_list('booktool');
+    $plugins = core_component::get_plugin_list('booktool');
     foreach ($plugins as $plugin => $dir) {
         if (file_exists("$dir/lib.php")) {
             require_once("$dir/lib.php");

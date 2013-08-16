@@ -4,8 +4,6 @@
  * @package Minify
  */
 
-require_once 'Minify/Controller/Base.php';
-
 /**
  * Controller class for serving a single HTML page
  * 
@@ -59,29 +57,12 @@ class Minify_Controller_Page extends Minify_Controller_Base {
                 'cssMinifier' => array('Minify_CSS', 'minify')
                 ,'jsMinifier' => array('JSMin', 'minify')
             );
-            $this->_loadCssJsMinifiers = true;
             unset($options['minifyAll']);
         }
         $this->sources[] = new Minify_Source($sourceSpec);
         
         $options['contentType'] = Minify::TYPE_HTML;
         return $options;
-    }
-    
-    protected $_loadCssJsMinifiers = false;
-    
-    /**
-     * @see Minify_Controller_Base::loadMinifier()
-     */
-    public function loadMinifier($minifierCallback)
-    {
-        if ($this->_loadCssJsMinifiers) {
-            // Minify will not call for these so we must manually load
-            // them when Minify/HTML.php is called for.
-            require_once 'Minify/CSS.php';
-            require_once 'JSMin.php';
-        }
-        parent::loadMinifier($minifierCallback); // load Minify/HTML.php
     }
 }
 

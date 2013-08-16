@@ -77,7 +77,7 @@ class qtype_shortanswer_test_helper extends question_test_helper {
         $qdata->generalfeedback = 'Generalfeedback: frog or toad would have been OK.';
 
         $qdata->options = new stdClass();
-        $qdata->options->usecase = false;
+        $qdata->options->usecase = 0;
         $qdata->options->answers = array(
             13 => new question_answer(13, 'frog', 1.0, 'Frog is a very good answer.', FORMAT_HTML),
             14 => new question_answer(14, 'toad', 0.8, 'Toad is an OK good answer.', FORMAT_HTML),
@@ -88,29 +88,28 @@ class qtype_shortanswer_test_helper extends question_test_helper {
     }
 
     /**
-     * Gets the question data for a shortanswer question with with correct
-     * ansewer 'frog', partially correct answer 'toad' and defaultmark 1.
+     * Gets the question form data for a shortanswer question with with correct
+     * answer 'frog', partially correct answer 'toad' and defaultmark 1.
      * This question also has a '*' match anything answer.
      * @return stdClass
      */
     public function get_shortanswer_question_form_data_frogtoad() {
-        $fromform = new stdClass();
-        test_question_maker::initialise_question_form_data($fromform);
+        $form = new stdClass();
 
-        $fromform->qtype = 'shortanswer';
-        $fromform->name = 'Short answer question';
-        $fromform->questiontext = array('text' => 'Name an amphibian: __________', 'format' => FORMAT_HTML);
-        $fromform->generalfeedback = array('text' => 'Generalfeedback: frog or toad would have been OK.', 'format' => FORMAT_HTML);
-        $fromform->usecase = false;
-        $fromform->answer = array('frog', 'toad', '*');
-        $fromform->fraction = array(1.0, 0.8, 0.0);
-        $fromform->feedback = array(
+        $form->name = 'Short answer question';
+        $form->questiontext = array('text' => 'Name an amphibian: __________', 'format' => FORMAT_HTML);
+        $form->defaultmark = 1.0;
+        $form->generalfeedback = array('text' => 'Generalfeedback: frog or toad would have been OK.', 'format' => FORMAT_HTML);
+        $form->usecase = false;
+        $form->answer = array('frog', 'toad', '*');
+        $form->fraction = array('1.0', '0.8', '0.0');
+        $form->feedback = array(
             array('text' => 'Frog is a very good answer.', 'format' => FORMAT_HTML),
             array('text' => 'Toad is an OK good answer.', 'format' => FORMAT_HTML),
             array('text' => 'That is a bad answer.', 'format' => FORMAT_HTML),
         );
 
-        return $fromform;
+        return $form;
     }
 
     /**

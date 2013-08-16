@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for /lib/filelib.php.
  *
@@ -30,29 +29,29 @@ global $CFG;
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 
-class filelib_testcase extends advanced_testcase {
+class core_filelib_testcase extends advanced_testcase {
     public function test_format_postdata_for_curlcall() {
 
-        //POST params with just simple types
-        $postdatatoconvert =array( 'userid' => 1, 'roleid' => 22, 'name' => 'john');
+        // POST params with just simple types.
+        $postdatatoconvert = array( 'userid' => 1, 'roleid' => 22, 'name' => 'john');
         $expectedresult = "userid=1&roleid=22&name=john";
         $postdata = format_postdata_for_curlcall($postdatatoconvert);
-        $this->assertEquals($postdata, $expectedresult);
+        $this->assertEquals($expectedresult, $postdata);
 
-        //POST params with a string containing & character
-        $postdatatoconvert =array( 'name' => 'john&emilie', 'roleid' => 22);
-        $expectedresult = "name=john%26emilie&roleid=22"; //urlencode: '%26' => '&'
+        // POST params with a string containing & character.
+        $postdatatoconvert = array( 'name' => 'john&emilie', 'roleid' => 22);
+        $expectedresult = "name=john%26emilie&roleid=22"; // Urlencode: '%26' => '&'.
         $postdata = format_postdata_for_curlcall($postdatatoconvert);
-        $this->assertEquals($postdata, $expectedresult);
+        $this->assertEquals($expectedresult, $postdata);
 
-        //POST params with an empty value
-        $postdatatoconvert =array( 'name' => null, 'roleid' => 22);
+        // POST params with an empty value.
+        $postdatatoconvert = array( 'name' => null, 'roleid' => 22);
         $expectedresult = "name=&roleid=22";
         $postdata = format_postdata_for_curlcall($postdatatoconvert);
-        $this->assertEquals($postdata, $expectedresult);
+        $this->assertEquals($expectedresult, $postdata);
 
-        //POST params with complex types
-        $postdatatoconvert =array( 'users' => array(
+        // POST params with complex types.
+        $postdatatoconvert = array( 'users' => array(
             array(
                 'id' => 2,
                 'customfields' => array(
@@ -67,9 +66,9 @@ class filelib_testcase extends advanced_testcase {
         );
         $expectedresult = "users[0][id]=2&users[0][customfields][0][type]=Color&users[0][customfields][0][value]=violet";
         $postdata = format_postdata_for_curlcall($postdatatoconvert);
-        $this->assertEquals($postdata, $expectedresult);
+        $this->assertEquals($expectedresult, $postdata);
 
-        //POST params with other complex types
+        // POST params with other complex types.
         $postdatatoconvert = array ('members' =>
         array(
             array('groupid' => 1, 'userid' => 1)
@@ -78,7 +77,7 @@ class filelib_testcase extends advanced_testcase {
         );
         $expectedresult = "members[0][groupid]=1&members[0][userid]=1&members[1][groupid]=1&members[1][userid]=2";
         $postdata = format_postdata_for_curlcall($postdatatoconvert);
-        $this->assertEquals($postdata, $expectedresult);
+        $this->assertEquals($expectedresult, $postdata);
     }
 
     public function test_download_file_content() {
@@ -95,7 +94,7 @@ class filelib_testcase extends advanced_testcase {
         $result = download_file_content($testhtml, null, null, false, 300, 20, false, $tofile);
         $this->assertTrue($result);
         $this->assertFileExists($tofile);
-        $this->assertSame($contents, file_get_contents($tofile));
+        $this->assertSame(file_get_contents($tofile), $contents);
         @unlink($tofile);
 
         $result = download_file_content($testhtml, null, null, false, 300, 20, false, null, true);
@@ -109,7 +108,6 @@ class filelib_testcase extends advanced_testcase {
         $this->assertSame($contents, $response->results);
         $this->assertSame('', $response->error);
 
-
         // Test https success.
         $testhtml = "https://download.moodle.org/unittest/test.html";
 
@@ -118,7 +116,6 @@ class filelib_testcase extends advanced_testcase {
 
         $contents = download_file_content($testhtml);
         $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
-
 
         // Now 404.
         $testhtml = "http://download.moodle.org/unittest/test.html_nonexistent";
@@ -135,13 +132,11 @@ class filelib_testcase extends advanced_testcase {
         $this->assertStringStartsWith('<!DOCTYPE', $response->results);
         $this->assertSame('', $response->error);
 
-
         // Invalid url.
         $testhtml = "ftp://download.moodle.org/unittest/test.html";
 
         $contents = download_file_content($testhtml);
         $this->assertFalse($contents);
-
 
         // Test standard redirects.
         $testurl = 'http://download.moodle.org/unittest/test_redir.php';
@@ -157,7 +152,7 @@ class filelib_testcase extends advanced_testcase {
         $this->assertSame('done', $response->results);
         $this->assertSame('', $response->error);
 
-/*
+        /*
         // Commented out for performance reasons.
 
         $contents = download_file_content("$testurl?redir=6");
@@ -170,7 +165,7 @@ class filelib_testcase extends advanced_testcase {
         $this->assertTrue(is_array($response->headers));
         $this->assertFalse($response->results);
         $this->assertNotEmpty($response->error);
-*/
+        */
 
         // Test relative redirects.
         $testurl = 'http://download.moodle.org/unittest/test_relative_redir.php';
@@ -298,7 +293,6 @@ class filelib_testcase extends advanced_testcase {
         $this->assertSame('done', file_get_contents($tofile));
         @unlink($tofile);
 
-
         // Test relative location redirects.
         $testurl = 'http://download.moodle.org/unittest/test_relative_redir.php';
 
@@ -314,7 +308,6 @@ class filelib_testcase extends advanced_testcase {
         $this->assertSame(0, $curl->get_errno());
         $this->assertSame(1, $curl->info['redirect_count']);
         $this->assertSame('done', $contents);
-
 
         // Test different redirect types.
         $testurl = 'http://download.moodle.org/unittest/test_relative_redir.php';
@@ -383,7 +376,6 @@ class filelib_testcase extends advanced_testcase {
         $this->assertSame(0, $curl->get_errno());
         $this->assertSame(1, $curl->info['redirect_count']);
         $this->assertSame('done', $contents);
-
     }
 
     /**
@@ -434,7 +426,7 @@ class filelib_testcase extends advanced_testcase {
         $fileid = $originalfile->get_id();
         $this->assertInstanceOf('stored_file', $originalfile);
 
-        // create a user private file
+        // Create a user private file.
         $userfilerecord = new stdClass;
         $userfilerecord->contextid = $usercontext->id;
         $userfilerecord->component = 'user';
@@ -448,11 +440,12 @@ class filelib_testcase extends advanced_testcase {
 
         $filerefrecord = clone((object)$filerecord);
         $filerefrecord->filename = 'testref.txt';
-        // create a file reference
+
+        // Create a file reference.
         $fileref = $fs->create_file_from_reference($filerefrecord, $userrepository->id, $userfileref);
         $this->assertInstanceOf('stored_file', $fileref);
         $this->assertEquals($userrepository->id, $fileref->get_repository_id());
-        $this->assertEquals($userfile->get_contenthash(), $fileref->get_contenthash());
+        $this->assertSame($userfile->get_contenthash(), $fileref->get_contenthash());
         $this->assertEquals($userfile->get_filesize(), $fileref->get_filesize());
         $this->assertRegExp('#' . $userfile->get_filename(). '$#', $fileref->get_reference_details());
 
@@ -460,44 +453,44 @@ class filelib_testcase extends advanced_testcase {
         file_prepare_draft_area($draftitemid, $syscontext->id, $component, $filearea, $itemid);
 
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid);
-        $this->assertEquals(3, count($draftfiles));
+        $this->assertCount(3, $draftfiles);
 
         $draftfile = $fs->get_file($usercontext->id, 'user', 'draft', $draftitemid, $filepath, $filename);
         $source = unserialize($draftfile->get_source());
-        $this->assertEquals($ref, $source->original);
-        $this->assertEquals($sourcefield, $source->source);
+        $this->assertSame($ref, $source->original);
+        $this->assertSame($sourcefield, $source->source);
 
         $draftfileref = $fs->get_file($usercontext->id, 'user', 'draft', $draftitemid, $filepath, $filerefrecord->filename);
         $this->assertInstanceOf('stored_file', $draftfileref);
-        $this->assertEquals(true, $draftfileref->is_external_file());
+        $this->assertTrue($draftfileref->is_external_file());
 
-        // change some information
+        // Change some information.
         $author = 'Dongsheng Cai';
         $draftfile->set_author($author);
         $newsourcefield = 'Get from Flickr';
         $license = 'GPLv3';
         $draftfile->set_license($license);
-        // if you want to really just change source field, do this:
+        // If you want to really just change source field, do this.
         $source = unserialize($draftfile->get_source());
         $newsourcefield = 'From flickr';
         $source->source = $newsourcefield;
         $draftfile->set_source(serialize($source));
 
-        // Save changed file
+        // Save changed file.
         file_save_draft_area_files($draftitemid, $syscontext->id, $component, $filearea, $itemid);
 
         $file = $fs->get_file($syscontext->id, $component, $filearea, $itemid, $filepath, $filename);
 
-        // Make sure it's the original file id
+        // Make sure it's the original file id.
         $this->assertEquals($fileid, $file->get_id());
         $this->assertInstanceOf('stored_file', $file);
-        $this->assertEquals($author, $file->get_author());
-        $this->assertEquals($license, $file->get_license());
+        $this->assertSame($author, $file->get_author());
+        $this->assertSame($license, $file->get_license());
         $this->assertEquals($newsourcefield, $file->get_source());
     }
 
     /**
-     * Testing deleting original files
+     * Testing deleting original files.
      *
      * @copyright 2012 Dongsheng Cai {@link http://dongsheng.org}
      * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -525,7 +518,7 @@ class filelib_testcase extends advanced_testcase {
 
         $filecontent = 'User file content';
 
-        // create a user private file
+        // Create a user private file.
         $userfilerecord = new stdClass;
         $userfilerecord->contextid = $usercontext->id;
         $userfilerecord->component = 'user';
@@ -546,27 +539,27 @@ class filelib_testcase extends advanced_testcase {
             'filepath'  => '/',
             'filename'  => 'test.txt',
         );
-        // create a file reference
+        // Create a file reference.
         $fileref = $fs->create_file_from_reference($filerecord, $userrepository->id, $userfileref);
         $this->assertInstanceOf('stored_file', $fileref);
         $this->assertEquals($userrepository->id, $fileref->get_repository_id());
-        $this->assertEquals($userfile->get_contenthash(), $fileref->get_contenthash());
+        $this->assertSame($userfile->get_contenthash(), $fileref->get_contenthash());
         $this->assertEquals($userfile->get_filesize(), $fileref->get_filesize());
         $this->assertRegExp('#' . $userfile->get_filename(). '$#', $fileref->get_reference_details());
 
         $draftitemid = 0;
         file_prepare_draft_area($draftitemid, $usercontext->id, 'user', 'private', 0);
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid);
-        $this->assertEquals(2, count($draftfiles));
+        $this->assertCount(2, $draftfiles);
         $draftfile = $fs->get_file($usercontext->id, 'user', 'draft', $draftitemid, $userfilerecord->filepath, $userfilerecord->filename);
         $draftfile->delete();
-        // Save changed file
+        // Save changed file.
         file_save_draft_area_files($draftitemid, $usercontext->id, 'user', 'private', 0);
 
-        // The file reference should be a regular moodle file now
+        // The file reference should be a regular moodle file now.
         $fileref = $fs->get_file($syscontext->id, 'core', 'phpunit', 0, '/', 'test.txt');
-        $this->assertEquals(false, $fileref->is_external_file());
-        $this->assertEquals($contenthash, $fileref->get_contenthash());
+        $this->assertFalse($fileref->is_external_file());
+        $this->assertSame($contenthash, $fileref->get_contenthash());
         $this->assertEquals($filecontent, $fileref->get_content());
     }
 
@@ -624,9 +617,9 @@ EOF;
         $mdl30648expected = preg_replace("~(?!<\r)\n~", "\r\n", $mdl30648expected);
 
         // Test stripping works OK.
-        $this->assertEquals($mdl30648expected, curl::strip_double_headers($mdl30648example));
+        $this->assertSame($mdl30648expected, curl::strip_double_headers($mdl30648example));
         // Test it does nothing to the 'plain' data.
-        $this->assertEquals($mdl30648expected, curl::strip_double_headers($mdl30648expected));
+        $this->assertSame($mdl30648expected, curl::strip_double_headers($mdl30648expected));
 
         // Example from OU proxy.
         $httpsexample = <<<EOF
@@ -662,8 +655,8 @@ EOF;
         $httpsexpected = preg_replace("~(?!<\r)\n~", "\r\n", $httpsexpected);
 
         // Test stripping works OK.
-        $this->assertEquals($httpsexpected, curl::strip_double_headers($httpsexample));
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexample));
         // Test it does nothing to the 'plain' data.
-        $this->assertEquals($httpsexpected, curl::strip_double_headers($httpsexpected));
+        $this->assertSame($httpsexpected, curl::strip_double_headers($httpsexpected));
     }
 }

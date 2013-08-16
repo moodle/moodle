@@ -287,6 +287,22 @@ abstract class question_definition {
      */
     public abstract function get_correct_response();
 
+
+    /**
+     * Passed an array of data representing a student response this function transforms the array to a response array as would be
+     * returned from the html form for this question instance.
+     *
+     * In most cases the array will just be returned as is. Some question types will need to transform the keys of the array in
+     * as the meaning of the keys in the html form is deliberately obfuscated so that someone looking at the html does not get an
+     * advantage.
+     *
+     * @param array $simulatedresponse an array of data representing a student response
+     * @return array a response array as would be returned from the html form (but without prefixes)
+     */
+    public function prepare_simulated_post_data($simulatedresponse) {
+        return $simulatedresponse;
+    }
+
     /**
      * Apply {@link format_text()} to some content with appropriate settings for
      * this question.
@@ -317,7 +333,7 @@ abstract class question_definition {
      * @return string the equivalent plain text.
      */
     public function html_to_text($text, $format) {
-        return html_to_text(format_text($text, $format, array('noclean' => true)), 0, false);
+        return question_utils::to_plain_text($text, $format);
     }
 
     /** @return the result of applying {@link format_text()} to the question text. */
@@ -768,7 +784,6 @@ class question_answer {
      * Constructor.
      * @param int $id the answer.
      * @param string $answer the answer.
-     * @param int $answerformat the format of the answer.
      * @param number $fraction the fraction this answer is worth.
      * @param string $feedback the feedback for this answer.
      * @param int $feedbackformat the format of the feedback.

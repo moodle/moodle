@@ -80,7 +80,6 @@ if ($form->is_cancelled()) {
     $fordb->timemodified = $now;
     $fordb->usercreated = $USER->id;
     $fordb->usermodified = $USER->id;
-    $fordb->image = 0;
     $fordb->issuername = $data->issuername;
     $fordb->issuerurl = $data->issuerurl;
     $fordb->issuercontact = $data->issuercontact;

@@ -42,7 +42,7 @@ require_once(dirname(__FILE__) . '/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_attempt_test extends advanced_testcase {
+class question_attempt_testcase extends advanced_testcase {
     private $question;
     private $usageid;
     private $qa;
@@ -137,5 +137,16 @@ class question_attempt_test extends advanced_testcase {
     public function test_get_submitted_var_param_mark_invalid() {
         $this->assertSame(0.0, $this->qa->get_submitted_var(
                 'name', question_attempt::PARAM_MARK, array('name' => 'frog')));
+    }
+
+    public function test_get_all_submitted_qt_vars() {
+        $this->qa->set_usage_id('MDOgzdhS4W');
+        $this->qa->set_slot(1);
+        $this->assertEquals(array('omval_response1' => 1, 'omval_response2' => 666, 'omact_gen_14' => 'Check'),
+                $this->qa->get_all_submitted_qt_vars(array(
+                    'qMDOgzdhS4W:1_omval_response1' => 1,
+                    'qMDOgzdhS4W:1_omval_response2' => 666,
+                    'qMDOgzdhS4W:1_omact_gen_14' => 'Check',
+                )));
     }
 }

@@ -2,6 +2,8 @@
 
 namespace MrClay\Cli;
 
+use BadMethodCallException;
+
 /**
  * An argument for a CLI app. This specifies the argument, what values it expects and
  * how it's treated during validation.
@@ -150,7 +152,7 @@ class Arg {
      * @param string $name
      * @param array $args
      * @return Arg
-     * @throws \BadMethodCallException
+     * @throws BadMethodCallException
      */
     public function __call($name, array $args = array())
     {
@@ -160,7 +162,7 @@ class Arg {
                 $this->spec['mustHaveValue'] = true;
             }
         } else {
-            throw new \BadMethodCallException('Method does not exist');
+            throw new BadMethodCallException('Method does not exist');
         }
         return $this;
     }

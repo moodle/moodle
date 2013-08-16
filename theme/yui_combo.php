@@ -87,12 +87,6 @@ foreach ($parts as $part) {
             $content .= "\n// Incorrect moodle module inclusion. Not enough component information in {$part}.\n";
             continue;
         }
-        if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
-            define('ABORT_AFTER_CONFIG_CANCEL', true);
-            define('NO_UPGRADE_CHECK', true);
-            define('NO_MOODLE_COOKIES', true);
-            require($CFG->libdir.'/setup.php');
-        }
         $revision = (int)array_shift($bits);
         if ($revision === -1) {
             // Revision -1 says please don't cache the JS
@@ -101,23 +95,28 @@ foreach ($parts as $part) {
         $frankenstyle = array_shift($bits);
         $filename = array_pop($bits);
         $modulename = $bits[0];
-        $dir = get_component_directory($frankenstyle);
+        $dir = core_component::get_component_directory($frankenstyle);
 
         // For shifted YUI modules, we need the YUI module name in frankenstyle format.
         $frankenstylemodulename = join('-', array($version, $frankenstyle, $modulename));
         $frankenstylefilename = preg_replace('/' . $modulename . '/', $frankenstylemodulename, $filename);
 
+        // Submodules are stored in a directory with the full submodule name.
+        // We need to remove the -debug.js, -min.js, and .js from the file name to calculate that directory name.
+        $frankenstyledirectoryname = str_replace(array('-min.js', '-debug.js', '.js'), '', $frankenstylefilename);
+
         // By default, try and use the /yui/build directory.
+        $contentfile = $dir . '/yui/build/' . $frankenstyledirectoryname;
         if ($mimetype == 'text/css') {
             // CSS assets are in a slightly different place to the JS.
-            $contentfile = $dir . '/yui/build/' . $frankenstylemodulename . '/assets/skins/sam/' . $frankenstylefilename;
+            $contentfile = $contentfile . '/assets/skins/sam/' . $frankenstylefilename;
 
             // Add the path to the bits to handle fallback for non-shifted assets.
             $bits[] = 'assets';
             $bits[] = 'skins';
             $bits[] = 'sam';
         } else {
-            $contentfile = $dir . '/yui/build/' . $frankenstylemodulename . '/' . $frankenstylefilename;
+            $contentfile = $contentfile . '/' . $frankenstylefilename;
         }
 
         // If the shifted versions don't exist, fall back to the non-shifted file.

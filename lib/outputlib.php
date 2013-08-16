@@ -44,7 +44,6 @@ require_once($CFG->libdir.'/outputrequirementslib.php');
  */
 function theme_reset_all_caches() {
     global $CFG, $PAGE;
-    require_once("$CFG->libdir/filelib.php");
 
     $next = time();
     if (isset($CFG->themerev) and $next <= $CFG->themerev and $CFG->themerev - $next < 60*60) {
@@ -55,7 +54,6 @@ function theme_reset_all_caches() {
     }
 
     set_config('themerev', $next); // time is unique even when you reset/switch database
-    fulldelete("$CFG->cachedir/theme");
 
     if ($PAGE) {
         $PAGE->reload_theme();
@@ -609,7 +607,7 @@ class theme_config {
         $files = array();
 
         // first editor plugins
-        $plugins = get_plugin_list('editor');
+        $plugins = core_component::get_plugin_list('editor');
         foreach ($plugins as $plugin=>$fulldir) {
             $sheetfile = "$fulldir/editor_styles.css";
             if (is_readable($sheetfile)) {
@@ -774,11 +772,11 @@ class theme_config {
         // get all plugin sheets
         $excludes = $this->resolve_excludes('plugins_exclude_sheets');
         if ($excludes !== true) {
-            foreach (get_plugin_types() as $type=>$unused) {
+            foreach (core_component::get_plugin_types() as $type=>$unused) {
                 if ($type === 'theme' || (!empty($excludes[$type]) and $excludes[$type] === true)) {
                     continue;
                 }
-                $plugins = get_plugin_list($type);
+                $plugins = core_component::get_plugin_list($type);
                 foreach ($plugins as $plugin=>$fulldir) {
                     if (!empty($excludes[$type]) and is_array($excludes[$type])
                         and in_array($plugin, $excludes[$type])) {
@@ -1016,7 +1014,7 @@ class theme_config {
      */
     public function post_process($css) {
         // now resolve all image locations
-        if (preg_match_all('/\[\[pix:([a-z_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all('/\[\[pix:([a-z0-9_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
             $replaced = array();
             foreach ($matches as $match) {
                 if (isset($replaced[$match[0]])) {
@@ -1029,6 +1027,23 @@ class theme_config {
                  // we do not need full url because the image.php is always in the same dir
                 $imageurl = preg_replace('|^http.?://[^/]+|', '', $imageurl);
                 $css = str_replace($match[0], $imageurl, $css);
+            }
+        }
+
+        // Now resolve all font locations.
+        if (preg_match_all('/\[\[font:([a-z0-9_]+\|)?([^\]]+)\]\]/', $css, $matches, PREG_SET_ORDER)) {
+            $replaced = array();
+            foreach ($matches as $match) {
+                if (isset($replaced[$match[0]])) {
+                    continue;
+                }
+                $replaced[$match[0]] = true;
+                $fontname = $match[2];
+                $component = rtrim($match[1], '|');
+                $fonturl = $this->font_url($fontname, $component)->out(false);
+                // We do not need full url because the font.php is always in the same dir.
+                $fonturl = preg_replace('|^http.?://[^/]+|', '', $fonturl);
+                $css = str_replace($match[0], $fonturl, $css);
             }
         }
 
@@ -1082,6 +1097,42 @@ class theme_config {
                 // We do this because all modern browsers support SVG and this param will one day be removed.
                 $params['svg'] = '0';
             }
+            $url->params($params);
+        }
+
+        return $url;
+    }
+
+    /**
+     * Return the URL for a font
+     *
+     * @param string $font the name of the font (including extension).
+     * @param string $component specification of one plugin like in get_string()
+     * @return moodle_url
+     */
+    public function font_url($font, $component) {
+        global $CFG;
+
+        $params = array('theme'=>$this->name);
+
+        if (empty($component) or $component === 'moodle' or $component === 'core') {
+            $params['component'] = 'core';
+        } else {
+            $params['component'] = $component;
+        }
+
+        $rev = theme_get_revision();
+        if ($rev != -1) {
+            $params['rev'] = $rev;
+        }
+
+        $params['font'] = $font;
+
+        $url = new moodle_url("$CFG->httpswwwroot/theme/font.php");
+        if (!empty($CFG->slasharguments) and $rev > 0) {
+            $path = '/'.$params['theme'].'/'.$params['component'].'/'.$params['rev'].'/'.$params['font'];
+            $url->set_slashargument($path, 'noparam', true);
+        } else {
             $url->params($params);
         }
 
@@ -1228,9 +1279,72 @@ class theme_config {
             if ($imagefile = $this->image_exists("$CFG->dataroot/pix_plugins/$type/$plugin/$image", $svg)) {
                 return $imagefile;
             }
-            $dir = get_plugin_directory($type, $plugin);
+            $dir = core_component::get_plugin_directory($type, $plugin);
             if ($imagefile = $this->image_exists("$dir/pix/$image", $svg)) {
                 return $imagefile;
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Resolves the real font location.
+     *
+     * @param string $font name of font file
+     * @param string $component
+     * @return string full file path
+     */
+    public function resolve_font_location($font, $component) {
+        global $CFG;
+
+        if ($component === 'moodle' or $component === 'core' or empty($component)) {
+            if (file_exists("$this->dir/fonts_core/$font")) {
+                return "$this->dir/fonts_core/$font";
+            }
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // Base first, the immediate parent last.
+                if (file_exists("$parent_config->dir/fonts_core/$font")) {
+                    return "$parent_config->dir/fonts_core/$font";
+                }
+            }
+            if (file_exists("$CFG->dataroot/fonts/$font")) {
+                return "$CFG->dataroot/fonts/$font";
+            }
+            if (file_exists("$CFG->dirroot/lib/fonts/$font")) {
+                return "$CFG->dirroot/lib/fonts/$font";
+            }
+            return null;
+
+        } else if ($component === 'theme') { // Exception.
+            if (file_exists("$this->dir/fonts/$font")) {
+                return "$this->dir/fonts/$font";
+            }
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // Base first, the immediate parent last.
+                if (file_exists("$parent_config->dir/fonts/$font")) {
+                    return "$parent_config->dir/fonts/$font";
+                }
+            }
+            return null;
+
+        } else {
+            if (strpos($component, '_') === false) {
+                $component = 'mod_'.$component;
+            }
+            list($type, $plugin) = explode('_', $component, 2);
+
+            if (file_exists("$this->dir/fonts_plugins/$type/$plugin/$font")) {
+                return "$this->dir/fonts_plugins/$type/$plugin/$font";
+            }
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // Base first, the immediate parent last.
+                if (file_exists("$parent_config->dir/fonts_plugins/$type/$plugin/$font")) {
+                    return "$parent_config->dir/fonts_plugins/$type/$plugin/$font";
+                }
+            }
+            if (file_exists("$CFG->dataroot/fonts_plugins/$type/$plugin/$font")) {
+                return "$CFG->dataroot/fonts_plugins/$type/$plugin/$font";
+            }
+            $dir = core_component::get_plugin_directory($type, $plugin);
+            if (file_exists("$dir/fonts/$font")) {
+                return "$dir/fonts/$font";
             }
             return null;
         }

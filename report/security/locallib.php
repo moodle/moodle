@@ -822,7 +822,7 @@ function report_security_check_riskbackup($detailed=false) {
                 $role->name = $role->localname;
                 $context = context::instance_by_id($role->contextid);
                 $role->name = role_get_name($role, $context, ROLENAME_BOTH);
-                $role->contextname = print_context_name($context);
+                $role->contextname = $context->get_context_name();
                 $role->url = "$CFG->wwwroot/$CFG->admin/roles/override.php?contextid=$role->contextid&amp;roleid=$role->id";
                 $links[] = '<li>'.get_string('check_riskbackup_editoverride', 'report_security', $role).'</li>';
             }
@@ -841,7 +841,7 @@ function report_security_check_riskbackup($detailed=false) {
             $context = context::instance_by_id($user->contextid);
             $url = "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=$user->contextid&amp;roleid=$user->roleid";
             $a = (object)array('fullname'=>fullname($user), 'url'=>$url, 'email'=>$user->email,
-                               'contextname'=>print_context_name($context));
+                               'contextname'=>$context->get_context_name());
             $users[] = '<li>'.get_string('check_riskbackup_unassign', 'report_security', $a).'</li>';
         }
         if (!empty($users)) {

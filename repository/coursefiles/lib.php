@@ -183,7 +183,7 @@ class repository_coursefiles extends repository {
     public function get_name() {
         list($context, $course, $cm) = get_context_info_array($this->context->id);
         if (!empty($course)) {
-            return get_string('courselegacyfiles') . format_string($course->shortname, true, array('context' => get_course_context($context)));
+            return get_string('courselegacyfiles') . format_string($course->shortname, true, array('context' => $context->get_course_context(true)));
         } else {
             return get_string('courselegacyfiles');
         }

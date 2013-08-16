@@ -899,6 +899,7 @@
       </FEEDBACK>
     </UNICODE>
     <DATABASE level="required">
+      <VENDOR name="mariadb" version="5.3.5" />
       <VENDOR name="mysql" version="5.1.33" />
       <VENDOR name="postgres" version="8.3" />
       <VENDOR name="mssql" version="9.0" />
@@ -957,6 +958,8 @@
           <ON_ERROR message="ziprequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="zlib" level="optional">
+      </PHP_EXTENSION>
       <PHP_EXTENSION name="gd" level="required">
         <FEEDBACK>
           <ON_ERROR message="gdrequired" />
@@ -1001,6 +1004,11 @@
       <PHP_SETTING name="file_uploads" value="1" level="optional">
         <FEEDBACK>
           <ON_CHECK message="settingfileuploads" />
+        </FEEDBACK>
+      </PHP_SETTING>
+      <PHP_SETTING name="opcache.enable" value="1" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="opcacherecommended" />
         </FEEDBACK>
       </PHP_SETTING>
     </PHP_SETTINGS>

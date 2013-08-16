@@ -1,0 +1,18 @@
+{
+  "moodle-core-dock": {
+    "requires": [
+        "base",
+        "node",
+        "event-custom",
+        "event-mouseenter",
+        "event-resize",
+        "escape",
+        "moodle-core-dock-loader"
+    ]
+  },
+  "moodle-core-dock-loader": {
+      "requires": [
+          "escape"
+      ]
+  }
+}

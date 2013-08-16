@@ -39,7 +39,7 @@ echo $OUTPUT->header();
 $txt = get_strings(array('settings', 'name', 'version'));
 $txt->uninstall = get_string('uninstallplugin', 'core_admin');
 
-$plagiarismplugins = get_plugin_list('plagiarism');
+$plagiarismplugins = core_component::get_plugin_list('plagiarism');
 if (empty($plagiarismplugins)) {
     echo $OUTPUT->notification(get_string('nopluginsinstalled', 'plagiarism'));
     echo $OUTPUT->footer();

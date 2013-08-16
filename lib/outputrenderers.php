@@ -499,7 +499,10 @@ class core_renderer extends renderer_base {
                 $link= '<a title="' . $title . '" href="' . $url . '">' . $txt . '</a>';
                 $output .= '<div class="profilingfooter">' . $link . '</div>';
             }
-            $output .= '<div class="purgecaches"><a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/purgecaches.php?confirm=1&amp;sesskey='.sesskey().'">'.get_string('purgecaches', 'admin').'</a></div>';
+            $purgeurl = new moodle_url('/admin/purgecaches.php', array('confirm' => 1,
+                'sesskey' => sesskey(), 'returnurl' => $this->page->url->out_as_local_url(false)));
+            $output .= '<div class="purgecaches">' .
+                    html_writer::link($purgeurl, get_string('purgecaches', 'admin')) . '</div>';
         }
         if (!empty($CFG->debugvalidators)) {
             // NOTE: this is not a nice hack, $PAGE->url is not always accurate and $FULLME neither, it is not a bug if it fails. --skodak
@@ -1029,19 +1032,131 @@ class core_renderer extends renderer_base {
      * Output the row of editing icons for a block, as defined by the controls array.
      *
      * @param array $controls an array like {@link block_contents::$controls}.
+     * @param string $blockid The ID given to the block.
      * @return string HTML fragment.
      */
-    public function block_controls($controls) {
-        if (empty($controls)) {
+    public function block_controls($actions, $blockid = null) {
+        global $CFG;
+        if (empty($actions)) {
             return '';
         }
-        $controlshtml = array();
-        foreach ($controls as $control) {
-            $controlshtml[] = html_writer::tag('a',
-                    html_writer::empty_tag('img',  array('src' => $this->pix_url($control['icon'])->out(false), 'alt' => $control['caption'])),
-                    array('class' => 'icon ' . $control['class'],'title' => $control['caption'], 'href' => $control['url']));
+        $menu = new action_menu($actions);
+        if ($blockid !== null) {
+            $menu->set_owner_selector('#'.$blockid);
         }
-        return html_writer::tag('div', implode('', $controlshtml), array('class' => 'commands'));
+        $menu->attributes['class'] .= ' block-control-actions commands';
+        if (isset($CFG->blockeditingmenu) && !$CFG->blockeditingmenu) {
+            $menu->do_not_enhance();
+        }
+        return $this->render($menu);
+    }
+
+    /**
+     * Renders an action menu component.
+     *
+     * ARIA references:
+     *   - http://www.w3.org/WAI/GL/wiki/Using_ARIA_menus
+     *   - http://stackoverflow.com/questions/12279113/recommended-wai-aria-implementation-for-navigation-bar-menu
+     *
+     * @param action_menu $menu
+     * @return string HTML
+     */
+    public function render_action_menu(action_menu $menu) {
+        $menu->initialise_js($this->page);
+
+        $output = html_writer::start_tag('div', $menu->attributes);
+        $output .= html_writer::start_tag('ul', $menu->attributesprimary);
+        foreach ($menu->get_primary_actions($this) as $action) {
+            if ($action instanceof renderable) {
+                $content = $this->render($action);
+                $role = 'presentation';
+            } else {
+                $content = $action;
+                $role = 'menuitem';
+            }
+            $output .= html_writer::tag('li', $content, array('role' => $role));
+        }
+        $output .= html_writer::end_tag('ul');
+        $output .= html_writer::start_tag('ul', $menu->attributessecondary);
+        foreach ($menu->get_secondary_actions() as $action) {
+            if ($action instanceof renderable) {
+                $content = $this->render($action);
+                $role = 'presentation';
+            } else {
+                $content = $action;
+                $role = 'menuitem';
+            }
+            $output .= html_writer::tag('li', $content, array('role' => $role));
+        }
+        $output .= html_writer::end_tag('ul');
+        $output .= html_writer::end_tag('div');
+        return $output;
+    }
+
+    /**
+     * Renders an action_menu_link item.
+     *
+     * @param action_menu_link $action
+     * @return string HTML fragment
+     */
+    protected function render_action_menu_link(action_menu_link $action) {
+
+        $comparetoalt = '';
+        $text = '';
+        if (!$action->icon || $action->primary === false) {
+            $text .= html_writer::start_tag('span', array('class'=>'menu-action-text'));
+            if ($action->text instanceof renderable) {
+                $text .= $this->render($action->text);
+            } else {
+                $text .= $action->text;
+                $comparetoalt = $action->text;
+            }
+            $text .= html_writer::end_tag('span');
+        }
+
+        $icon = '';
+        if ($action->icon) {
+            $icon = $action->icon;
+            if ($action->primary || !$action->actionmenu->will_be_enhanced()) {
+                $action->attributes['title'] = $action->text;
+            }
+            if ($icon->attributes['alt'] === $comparetoalt && $action->actionmenu->will_be_enhanced()) {
+                $icon->attributes['alt'] = ' ';
+            }
+            $icon = $this->render($icon);
+        }
+
+        // A disabled link is rendered as formatted text.
+        if (!empty($action->attributes['disabled'])) {
+            // Do not use div here due to nesting restriction in xhtml strict.
+            return html_writer::tag('span', $icon.$text, array('class'=>'currentlink', 'role' => 'menuitem'));
+        }
+
+        $attributes = $action->attributes;
+        unset($action->attributes['disabled']);
+        $attributes['href'] = $action->url;
+
+        return html_writer::tag('a', $icon.$text, $attributes);
+    }
+
+    /**
+     * Renders a primary action_menu_link item.
+     *
+     * @param action_menu_link_primary $action
+     * @return string HTML fragment
+     */
+    protected function render_action_menu_link_primary(action_menu_link_primary $action) {
+        return $this->render_action_menu_link($action);
+    }
+
+    /**
+     * Renders a secondary action_menu_link item.
+     *
+     * @param action_menu_link_secondary $action
+     * @return string HTML fragment
+     */
+    protected function render_action_menu_link_secondary(action_menu_link_secondary $action) {
+        return $this->render_action_menu_link($action);
     }
 
     /**
@@ -1070,11 +1185,17 @@ class core_renderer extends renderer_base {
         if (empty($bc->blockinstanceid) || !strip_tags($bc->title)) {
             $bc->collapsible = block_contents::NOT_HIDEABLE;
         }
+        if (!empty($bc->blockinstanceid)) {
+            $bc->attributes['data-instanceid'] = $bc->blockinstanceid;
+        }
         $skiptitle = strip_tags($bc->title);
         if ($bc->blockinstanceid && !empty($skiptitle)) {
             $bc->attributes['aria-labelledby'] = 'instance-'.$bc->blockinstanceid.'-header';
         } else if (!empty($bc->arialabel)) {
             $bc->attributes['aria-label'] = $bc->arialabel;
+        }
+        if ($bc->dockable) {
+            $bc->attributes['data-dockable'] = 1;
         }
         if ($bc->collapsible == block_contents::HIDDEN) {
             $bc->add_class('hidden');
@@ -1124,7 +1245,11 @@ class core_renderer extends renderer_base {
             $title = html_writer::tag('h2', $bc->title, $attributes);
         }
 
-        $controlshtml = $this->block_controls($bc->controls);
+        $blockid = null;
+        if (isset($bc->attributes['id'])) {
+            $blockid = $bc->attributes['id'];
+        }
+        $controlshtml = $this->block_controls($bc->controls, $blockid);
 
         $output = '';
         if ($title || $controlshtml) {
@@ -1278,13 +1403,14 @@ class core_renderer extends renderer_base {
      * @param string $text HTML fragment
      * @param component_action $action
      * @param array $attributes associative array of html link attributes + disabled
+     * @param pix_icon optional pix icon to render with the link
      * @return string HTML fragment
      */
-    public function action_link($url, $text, component_action $action = null, array $attributes=null) {
+    public function action_link($url, $text, component_action $action = null, array $attributes = null, $icon = null) {
         if (!($url instanceof moodle_url)) {
             $url = new moodle_url($url);
         }
-        $link = new action_link($url, $text, $action, $attributes);
+        $link = new action_link($url, $text, $action, $attributes, $icon);
 
         return $this->render($link);
     }
@@ -1301,10 +1427,15 @@ class core_renderer extends renderer_base {
     protected function render_action_link(action_link $link) {
         global $CFG;
 
+        $text = '';
+        if ($link->icon) {
+            $text .= $this->render($link->icon);
+        }
+
         if ($link->text instanceof renderable) {
-            $text = $this->render($link->text);
+            $text .= $this->render($link->text);
         } else {
-            $text = $link->text;
+            $text .= $link->text;
         }
 
         // A disabled link is rendered as formatted text
@@ -2399,7 +2530,7 @@ EOD;
             $message .= '<p class="errormessage">' . get_string('installproblem', 'error') . '</p>';
             //It is usually not possible to recover from errors triggered during installation, you may need to create a new database or use a different database prefix for new installation.
         }
-        $output .= $this->box($message, 'errorbox');
+        $output .= $this->box($message, 'errorbox', null, array('data-rel' => 'fatalerror'));
 
         if (debugging('', DEBUG_DEVELOPER)) {
             if (!empty($debuginfo)) {
@@ -2546,10 +2677,11 @@ EOD;
      * @param string $contents The contents of the box
      * @param string $classes A space-separated list of CSS classes
      * @param string $id An optional ID
+     * @param array $attributes An array of other attributes to give the box.
      * @return string the HTML to output.
      */
-    public function box($contents, $classes = 'generalbox', $id = null) {
-        return $this->box_start($classes, $id) . $contents . $this->box_end();
+    public function box($contents, $classes = 'generalbox', $id = null, $attributes = array()) {
+        return $this->box_start($classes, $id, $attributes) . $contents . $this->box_end();
     }
 
     /**
@@ -2557,12 +2689,14 @@ EOD;
      *
      * @param string $classes A space-separated list of CSS classes
      * @param string $id An optional ID
+     * @param array $attributes An array of other attributes to give the box.
      * @return string the HTML to output.
      */
-    public function box_start($classes = 'generalbox', $id = null) {
+    public function box_start($classes = 'generalbox', $id = null, $attributes = array()) {
         $this->opencontainers->push('box', html_writer::end_tag('div'));
-        return html_writer::start_tag('div', array('id' => $id,
-                'class' => 'box ' . renderer_base::prepare_classes($classes)));
+        $attributes['id'] = $id;
+        $attributes['class'] = 'box ' . renderer_base::prepare_classes($classes);
+        return html_writer::start_tag('div', $attributes);
     }
 
     /**

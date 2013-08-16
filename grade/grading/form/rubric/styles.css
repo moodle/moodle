@@ -80,7 +80,7 @@
 
 .gradingform_rubric .plainvalue.empty {font-style: italic; color: #AAA;}
 
-.gradingform_rubric.editor .criterion .levels .level .delete {position:absolute;right:0;bottom:0;}
+.gradingform_rubric.editor .criterion .levels .level .delete {position:absolute;right:0;}
 .gradingform_rubric .criterion .levels .level .score {font-style:italic;color:#575;font-weight: bold;margin-top:5px;white-space:nowrap;}
 .gradingform_rubric .criterion .levels .level .score .scorevalue {padding-right:5px;}
 
@@ -106,7 +106,7 @@
 .gradingform_rubric.editor .addcriterion input,
 .gradingform_rubric.editor .addlevel input {background: transparent url([[pix:t/add]]) no-repeat top left ;display:block;color:#555555;font-weight:bold;text-decoration:none;}
 .gradingform_rubric.editor .addcriterion input {background-position: 5px 8px;height:30px;line-height:29px;margin-bottom:14px;padding-left:20px;padding-right:10px;}
-.gradingform_rubric.editor .addlevel input {background-position: 5px 5px;height:25px;line-height:24px;margin-bottom:10px;padding-left:18px;padding-right:8px;}
+.gradingform_rubric.editor .addlevel input {background-position: 5px 5px;height:25px;line-height:24px;margin-bottom:45px;padding-left:18px;padding-right:8px;}
 
 .gradingform_rubric .options .optionsheading {font-weight:bold;font-size:1.1em;padding-bottom:5px;}
 .gradingform_rubric .options .option {padding-bottom:2px;}

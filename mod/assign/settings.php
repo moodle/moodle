@@ -35,13 +35,12 @@ $ADMIN->add('assignmentplugins', new admin_category('assignfeedbackplugins',
                 new lang_string('feedbackplugins', 'assign'), $module->is_enabled() === false));
 $ADMIN->add('assignfeedbackplugins', new assign_admin_page_manage_assign_plugins('assignfeedback'));
 
-
 assign_plugin_manager::add_admin_assign_plugin_settings('assignsubmission', $ADMIN, $settings, $module);
 assign_plugin_manager::add_admin_assign_plugin_settings('assignfeedback', $ADMIN, $settings, $module);
 
 if ($ADMIN->fulltree) {
     $menu = array();
-    foreach (get_plugin_list('assignfeedback') as $type => $notused) {
+    foreach (core_component::get_plugin_list('assignfeedback') as $type => $notused) {
         $visible = !get_config('assignfeedback_' . $type, 'disabled');
         if ($visible) {
             $menu['assignfeedback_' . $type] = new lang_string('pluginname', 'assignfeedback_' . $type);
@@ -143,7 +142,7 @@ if ($ADMIN->fulltree) {
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
-    // Constants from locallib.php
+    // Constants from "locallib.php".
     $options = array(
         'none' => get_string('attemptreopenmethod_none', 'mod_assign'),
         'manual' => get_string('attemptreopenmethod_manual', 'mod_assign'),
@@ -160,7 +159,7 @@ if ($ADMIN->fulltree) {
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
-    // Constants from locallib.php
+    // Constants from "locallib.php".
     $options = array(-1 => get_string('unlimitedattempts', 'mod_assign'));
     $options += array_combine(range(1, 30), range(1, 30));
     $name = new lang_string('maxattempts', 'mod_assign');

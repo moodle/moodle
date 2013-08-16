@@ -251,7 +251,7 @@ class repository_type implements cacheable_object {
                     // for it
                     $instanceoptions['name'] = $this->_options['pluginname'];
                 }
-                repository::static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
+                repository::static_function($this->_typename, 'create', $this->_typename, 0, context_system::instance(), $instanceoptions);
             }
             //run plugin_init function
             if (!repository::static_function($this->_typename, 'plugin_init')) {
@@ -958,7 +958,7 @@ abstract class repository implements cacheable_object {
     public static function get_editable_types($context = null) {
 
         if (empty($context)) {
-            $context = get_system_context();
+            $context = context_system::instance();
         }
 
         $types= repository::get_types(true);
@@ -2078,6 +2078,32 @@ abstract class repository implements cacheable_object {
     }
 
     /**
+     * Delete all the instances associated to a context.
+     *
+     * This method is intended to be a callback when deleting
+     * a course or a user to delete all the instances associated
+     * to their context. The usual way to delete a single instance
+     * is to use {@link self::delete()}.
+     *
+     * @param int $contextid context ID.
+     * @param boolean $downloadcontents true to convert references to hard copies.
+     * @return void
+     */
+    final public static function delete_all_for_context($contextid, $downloadcontents = true) {
+        global $DB;
+        $repoids = $DB->get_fieldset_select('repository_instances', 'id', 'contextid = :contextid', array('contextid' => $contextid));
+        if ($downloadcontents) {
+            foreach ($repoids as $repoid) {
+                $repo = repository::get_repository_by_id($repoid, $contextid);
+                $repo->convert_references_to_local();
+            }
+        }
+        cache::make('core', 'repositories')->purge();
+        $DB->delete_records_list('repository_instances', 'id', $repoids);
+        $DB->delete_records_list('repository_instance_config', 'instanceid', $repoids);
+    }
+
+    /**
      * Hide/Show a repository
      *
      * @param string $hide
@@ -2137,10 +2163,11 @@ abstract class repository implements cacheable_object {
     }
 
     /**
-     * Get settings for repository instance
+     * Get settings for repository instance.
      *
-     * @param string $config
-     * @return array Settings
+     * @param string $config a specific option to get.
+     * @return mixed returns an array of options. If $config is not empty, then it returns that option,
+     *               or null if the option does not exist.
      */
     public function get_option($config = '') {
         global $DB;
@@ -2149,13 +2176,12 @@ abstract class repository implements cacheable_object {
             $entries = $DB->get_records('repository_instance_config', array('instanceid' => $this->id));
             $cache->set('ops:'. $this->id, $entries);
         }
+
         $ret = array();
-        if (empty($entries)) {
-            return $ret;
-        }
         foreach($entries as $entry) {
             $ret[$entry->name] = $entry->value;
         }
+
         if (!empty($config)) {
             if (isset($ret[$config])) {
                 return $ret[$config];
@@ -2523,8 +2549,8 @@ abstract class repository implements cacheable_object {
      * @return string short filename
      */
     public function get_short_filename($str, $maxlength) {
-        if (textlib::strlen($str) >= $maxlength) {
-            return trim(textlib::substr($str, 0, $maxlength)).'...';
+        if (core_text::strlen($str) >= $maxlength) {
+            return trim(core_text::substr($str, 0, $maxlength)).'...';
         } else {
             return $str;
         }
@@ -3142,7 +3168,7 @@ function initialise_filepicker($args) {
     $user_context = context_user::instance($USER->id);
 
     list($context, $course, $cm) = get_context_info_array($context->id);
-    $contexts = array($user_context, get_system_context());
+    $contexts = array($user_context, context_system::instance());
     if (!empty($course)) {
         // adding course context
         $contexts[] = context_course::instance($course->id);

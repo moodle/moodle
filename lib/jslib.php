@@ -23,7 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-//NOTE: do not verify MOODLE_INTERNAL here, this is used from themes too
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Send javascript file content with as much caching as possible
@@ -91,70 +91,6 @@ function js_send_unmodified($lastmodified, $etag) {
         header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
     }
     die;
-}
-
-/**
- * Minify javascript files
- * @param array $files
- * @return string
- */
-function js_minify($files) {
-    // setup include path
-    set_include_path(__DIR__ . '/minify/lib' . PATH_SEPARATOR . get_include_path());
-    require_once('Minify.php');
-
-    if (empty($files)) {
-        return '';
-    }
-
-    if (0 === stripos(PHP_OS, 'win')) {
-        Minify::setDocRoot(); // IIS may need help
-    }
-    // disable all caching, we do it in moodle
-    Minify::setCache(null, false);
-
-    $options = array(
-        // JSMin is not GNU GPL compatible, use the plus version instead.
-        'minifiers' => array(Minify::TYPE_JS => array('JSMinPlus', 'minify')),
-        'bubbleCssImports' => false,
-        // Don't gzip content we just want text for storage
-        'encodeOutput' => false,
-        // Maximum age to cache, not used but required
-        'maxAge' => 1800,
-        // The files to minify
-        'files' => $files,
-        // Turn orr URI rewriting
-        'rewriteCssUris' => false,
-        // This returns the CSS rather than echoing it for display
-        'quiet' => true
-    );
-
-    $error = 'unknown';
-    try {
-        $result = Minify::serve('Files', $options);
-        if ($result['success']) {
-            return $result['content'];
-        }
-    } catch (Exception $e) {
-        $error = $e->getMessage();
-        $error = str_replace("\r", ' ', $error);
-        $error = str_replace("\n", ' ', $error);
-    }
-
-    // minification failed - try to inform the theme developer and include the non-minified version
-    $js = <<<EOD
-try {console.log('Error: Minimisation of javascript failed!');} catch (e) {}
-
-// Error: $error
-// Problem detected during javascript minimisation, please review the following code
-// =================================================================================
-
-
-EOD;
-    foreach ($files as $jsfile) {
-        $js .= file_get_contents($jsfile)."\n";
-    }
-    return $js;
 }
 
 /**

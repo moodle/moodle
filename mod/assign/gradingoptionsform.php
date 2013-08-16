@@ -55,16 +55,25 @@ class mod_assign_grading_options_form extends moodleform {
             $mform->addElement('select', 'filter', get_string('filter', 'assign'), $options, $dirtyclass);
         }
         if (!empty($instance['markingallocationopt'])) {
-            $mform->addElement('select', 'markerfilter', get_string('markerfilter', 'assign'), $instance['markingallocationopt'], $dirtyclass);
+            $markingfilter = get_string('markerfilter', 'assign');
+            $mform->addElement('select', 'markerfilter', $markingfilter, $instance['markingallocationopt'], $dirtyclass);
         }
         if (!empty($instance['markingworkflowopt'])) {
-            $mform->addElement('select', 'workflowfilter', get_string('workflowfilter', 'assign'), $instance['markingworkflowopt'], $dirtyclass);
+            $workflowfilter = get_string('workflowfilter', 'assign');
+            $mform->addElement('select', 'workflowfilter', $workflowfilter, $instance['markingworkflowopt'], $dirtyclass);
         }
         // Quickgrading.
         if ($instance['showquickgrading']) {
             $mform->addElement('checkbox', 'quickgrading', get_string('quickgrading', 'assign'), '', $dirtyclass);
             $mform->addHelpButton('quickgrading', 'quickgrading', 'assign');
             $mform->setDefault('quickgrading', $instance['quickgrading']);
+        }
+
+        // Show active/suspended user option.
+        if ($instance['showonlyactiveenrolopt']) {
+            $mform->addElement('checkbox', 'showonlyactiveenrol', get_string('showonlyactiveenrol', 'grades'), '', $dirtyclass);
+            $mform->addHelpButton('showonlyactiveenrol', 'showonlyactiveenrol', 'grades');
+            $mform->setDefault('showonlyactiveenrol', $instance['showonlyactiveenrol']);
         }
 
         // Hidden params.

@@ -108,6 +108,7 @@ class core_webservice_external extends external_api {
                 $service = $DB->get_record_sql($servicesql, array($token, $USER->id));
 
                 $siteinfo['downloadfiles'] = $service->downloadfiles;
+                $siteinfo['uploadfiles'] = $service->uploadfiles;
 
                 if (!empty($service)) {
                     // Return the release and version number for web service users only.
@@ -134,7 +135,7 @@ class core_webservice_external extends external_api {
             if ($function->component == 'moodle' || $function->component == 'core') {
                 $version = $CFG->version; // Moodle version.
             } else {
-                $versionpath = get_component_directory($function->component).'/version.php';
+                $versionpath = core_component::get_component_directory($function->component).'/version.php';
                 if (is_readable($versionpath)) {
                     // We store the component version once retrieved (so we don't load twice the version.php).
                     if (!isset($componentversions[$function->component])) {
@@ -156,8 +157,8 @@ class core_webservice_external extends external_api {
 
         $siteinfo['functions'] = $availablefunctions;
 
-        // Mobile CSS theme and alternative login url
-        $siteinfo['mobilecssurl'] = get_config('admin', 'mobilecssurl');
+        // Mobile CSS theme and alternative login url.
+        $siteinfo['mobilecssurl'] = $CFG->mobilecssurl;
 
         return $siteinfo;
     }
@@ -194,6 +195,8 @@ class core_webservice_external extends external_api {
                         ), 'functions that are available')
                     ),
                 'downloadfiles'  => new external_value(PARAM_INT, '1 if users are allowed to download files, 0 if not',
+                                                       VALUE_OPTIONAL),
+                'uploadfiles'  => new external_value(PARAM_INT, '1 if users are allowed to upload files, 0 if not',
                                                        VALUE_OPTIONAL),
                 'release'  => new external_value(PARAM_TEXT, 'Moodle release number', VALUE_OPTIONAL),
                 'version'  => new external_value(PARAM_TEXT, 'Moodle version number', VALUE_OPTIONAL),

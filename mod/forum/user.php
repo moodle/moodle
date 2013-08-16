@@ -75,7 +75,7 @@ if (isguestuser($user)) {
 // Make sure the user has not been deleted
 if ($user->deleted) {
     $PAGE->set_title(get_string('userdeleted'));
-    $PAGE->set_context(get_system_context());
+    $PAGE->set_context(context_system::instance());
     echo $OUTPUT->header();
     echo $OUTPUT->heading($PAGE->title);
     echo $OUTPUT->footer();
@@ -110,7 +110,7 @@ if ($isspecificcourse) {
     // We are going to search for all of the users posts in all courses!
     // a general require login here as we arn't actually within any course.
     require_login();
-    $PAGE->set_context(get_system_context());
+    $PAGE->set_context(context_system::instance());
 
     // Now we need to get all of the courses to search.
     // All courses where the user has posted within a forum will be returned.

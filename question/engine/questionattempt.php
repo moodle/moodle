@@ -576,6 +576,10 @@ class question_attempt {
      * @return string A brief textual description of the current state.
      */
     public function get_state_string($showcorrectness) {
+        // Special case when attempt is based on previous one, see MDL-31226.
+        if ($this->get_num_steps() == 1 && $this->get_state() == question_state::$complete) {
+            return get_string('notchanged', 'question');
+        }
         return $this->behaviour->get_state_string($showcorrectness);
     }
 
@@ -886,9 +890,9 @@ class question_attempt {
 
         // Initialise the first step.
         $firststep = new question_attempt_step($submitteddata, $timestamp, $userid, $existingstepid);
-        $firststep->set_state(question_state::$todo);
         if ($submitteddata) {
-            $this->question->apply_attempt_state($firststep);
+            $firststep->set_state(question_state::$complete);
+            $this->behaviour->apply_attempt_state($firststep);
         } else {
             $this->behaviour->init_first_step($firststep, $variant);
         }
@@ -1007,7 +1011,7 @@ class question_attempt {
      * that it is valid or cleaning it in any way.
      * @return array name => value.
      */
-    protected function get_all_submitted_qt_vars($postdata) {
+    public function get_all_submitted_qt_vars($postdata) {
         if (is_null($postdata)) {
             $postdata = $_POST;
         }
@@ -1016,7 +1020,7 @@ class question_attempt {
         $prefixlen = strlen($this->get_field_prefix());
 
         $submitteddata = array();
-        foreach ($_POST as $name => $value) {
+        foreach ($postdata as $name => $value) {
             if (preg_match($pattern, $name)) {
                 $submitteddata[substr($name, $prefixlen)] = $value;
             }

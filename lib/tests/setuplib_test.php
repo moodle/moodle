@@ -17,7 +17,8 @@
 /**
  * Unit tests for setuplib.php
  *
- * @package   core_phpunit
+ * @package   core
+ * @category  phpunit
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -31,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_setuplib_testcase extends basic_testcase {
+class core_setuplib_testcase extends advanced_testcase {
 
     /**
      * Test get_docs_url_standard in the normal case when we should link to Moodle docs.
@@ -68,7 +69,7 @@ class core_setuplib_testcase extends basic_testcase {
      */
     public function test_get_docs_url_wwwroot() {
         global $CFG;
-        $this->assertEquals($CFG->wwwroot . '/lib/tests/setuplib_test.php',
+        $this->assertSame($CFG->wwwroot . '/lib/tests/setuplib_test.php',
                 get_docs_url('%%WWWROOT%%/lib/tests/setuplib_test.php'));
     }
 
@@ -83,29 +84,29 @@ class core_setuplib_testcase extends basic_testcase {
             'Mozilla/5.0 (iPad; U; CPU OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5',
         );
         $crawlers = array(
-            // Google
+            // Google.
             'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
             'Googlebot/2.1 (+http://www.googlebot.com/bot.html)',
             'Googlebot-Image/1.0',
-            // Yahoo
+            // Yahoo.
             'Mozilla/5.0 (compatible; Yahoo! Slurp; http://help.yahoo.com/help/us/ysearch/slurp)',
-            // Bing
+            // Bing.
             'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
             'Mozilla/5.0 (compatible; bingbot/2.0 +http://www.bing.com/bingbot.htm)',
-            // MSN
+            // MSN.
             'msnbot/2.1',
-            // Yandex
+            // Yandex.
             'Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)',
             'Mozilla/5.0 (compatible; YandexImages/3.0; +http://yandex.com/bots)',
-            // AltaVista
+            // AltaVista.
             'AltaVista V2.0B crawler@evreka.com',
-            // ZoomSpider
+            // ZoomSpider.
             'ZoomSpider - wrensoft.com [ZSEBOT]',
-            // Baidu
+            // Baidu.
             'Baiduspider+(+http://www.baidu.com/search/spider_jp.html)',
             'Baiduspider+(+http://www.baidu.com/search/spider.htm)',
             'BaiDuSpider',
-            // Ask.com
+            // Ask.com.
             'User-Agent: Mozilla/2.0 (compatible; Ask Jeeves/Teoma)',
         );
 
@@ -120,13 +121,13 @@ class core_setuplib_testcase extends basic_testcase {
     }
 
     /**
-     * Test if get_exception_info() removes file system paths
+     * Test if get_exception_info() removes file system paths.
      */
     public function test_exception_info_removes_serverpaths() {
         global $CFG;
 
         // This doesn't test them all possible ones, but these are set for unit tests.
-        $cfgnames = array('dataroot', 'dirroot', 'tempdir', 'cachedir');
+        $cfgnames = array('dataroot', 'dirroot', 'tempdir', 'cachedir', 'localcachedir');
 
         $fixture  = '';
         $expected = '';
@@ -141,5 +142,80 @@ class core_setuplib_testcase extends basic_testcase {
 
         $this->assertContains($expected, $exceptioninfo->message, 'Exception message does not contain system paths');
         $this->assertContains($expected, $exceptioninfo->debuginfo, 'Exception debug info does not contain system paths');
+    }
+
+    public function test_localcachedir() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Test default location - can not be modified in phpunit tests because we override everything in config.php.
+        $this->assertSame("$CFG->dataroot/localcache", $CFG->localcachedir);
+
+        $now = time();
+        $timestampfile = "$CFG->localcachedir/.lastpurged";
+
+        $dir = make_localcache_directory('', false);
+        $this->assertSame($CFG->localcachedir, $dir);
+        $this->assertFileNotExists("$CFG->localcachedir/.htaccess");
+        $this->assertFileExists($timestampfile);
+        $this->assertGreaterThanOrEqual($now, filemtime($timestampfile));
+        $this->assertLessThanOrEqual(time(), filemtime($timestampfile));
+
+        $dir = make_localcache_directory('test/test', false);
+        $this->assertSame("$CFG->localcachedir/test/test", $dir);
+
+        // Test custom location.
+        $CFG->localcachedir = "$CFG->dataroot/testlocalcache";
+        $now = time();
+        $timestampfile = "$CFG->localcachedir/.lastpurged";
+        $this->assertFileNotExists($timestampfile);
+
+        $dir = make_localcache_directory('', false);
+        $this->assertSame($CFG->localcachedir, $dir);
+        $this->assertFileExists("$CFG->localcachedir/.htaccess");
+        $this->assertFileExists($timestampfile);
+        $this->assertGreaterThanOrEqual($now, filemtime($timestampfile));
+        $this->assertLessThanOrEqual(time(), filemtime($timestampfile));
+
+        $dir = make_localcache_directory('test', false);
+        $this->assertSame("$CFG->localcachedir/test", $dir);
+
+        $prevtime = filemtime($timestampfile);
+        $dir = make_localcache_directory('pokus', false);
+        $this->assertSame("$CFG->localcachedir/pokus", $dir);
+        $this->assertSame($prevtime, filemtime($timestampfile));
+
+        // Test purging.
+        $testfile = "$CFG->localcachedir/test/test.txt";
+        $this->assertTrue(touch($testfile));
+
+        $now = time();
+        set_config('localcachedirpurged', $now - 2);
+        purge_all_caches();
+        $this->assertFileNotExists($testfile);
+        $this->assertFileNotExists(dirname($testfile));
+        $this->assertFileExists($timestampfile);
+        $this->assertGreaterThanOrEqual($now, filemtime($timestampfile));
+        $this->assertLessThanOrEqual(time(), filemtime($timestampfile));
+        $this->assertGreaterThanOrEqual($now, $CFG->localcachedirpurged);
+        $this->assertLessThanOrEqual(time(), $CFG->localcachedirpurged);
+
+        // Simulates purge_all_caches() on another server node.
+        make_localcache_directory('test', false);
+        $this->assertTrue(touch($testfile));
+        set_config('localcachedirpurged', $now - 1);
+        $this->assertTrue(touch($timestampfile, $now - 2));
+        clearstatcache();
+        $this->assertSame($now - 2, filemtime($timestampfile));
+
+        $now = time();
+        $dir = make_localcache_directory('', false);
+        $this->assertSame("$CFG->localcachedir", $dir);
+        $this->assertFileNotExists($testfile);
+        $this->assertFileNotExists(dirname($testfile));
+        $this->assertFileExists($timestampfile);
+        $this->assertGreaterThanOrEqual($now, filemtime($timestampfile));
+        $this->assertLessThanOrEqual(time(), filemtime($timestampfile));
     }
 }

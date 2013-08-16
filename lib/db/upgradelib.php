@@ -164,3 +164,109 @@ function upgrade_mysql_fix_unsigned_and_lob_columns() {
         $pbar->update($i, $tablecount, "Converted unsigned/lob columns in MySQL database - $i/$tablecount.");
     }
 }
+
+/**
+ * Migrate NTEXT to NVARCHAR(MAX).
+ */
+function upgrade_mssql_nvarcharmax() {
+    global $DB;
+
+    if ($DB->get_dbfamily() !== 'mssql') {
+        return;
+    }
+
+    $pbar = new progress_bar('mssqlconvertntext', 500, true);
+
+    $prefix = $DB->get_prefix();
+    $tables = $DB->get_tables(false);
+
+    $tablecount = count($tables);
+    $i = 0;
+    foreach ($tables as $table) {
+        $i++;
+
+        $columns = array();
+
+        $sql = "SELECT column_name
+                  FROM INFORMATION_SCHEMA.COLUMNS
+                 WHERE table_name = '{{$table}}' AND UPPER(data_type) = 'NTEXT'";
+        $rs = $DB->get_recordset_sql($sql);
+        foreach ($rs as $column) {
+            $columns[] = $column->column_name;
+        }
+        $rs->close();
+
+        if ($columns) {
+            // Set appropriate timeout - 1 minute per thousand of records should be enough, min 60 minutes just in case.
+            $count = $DB->count_records($table, array());
+            $timeout = ($count/1000)*60;
+            $timeout = ($timeout < 60*60) ? 60*60 : (int)$timeout;
+            upgrade_set_timeout($timeout);
+
+            $updates = array();
+            foreach ($columns as $column) {
+                // Change the definition.
+                $sql = "ALTER TABLE {$prefix}$table ALTER COLUMN $column NVARCHAR(MAX)";
+                $DB->change_database_structure($sql);
+                $updates[] = "$column = $column";
+            }
+
+            // Now force the migration of text data to new optimised storage.
+            $sql = "UPDATE {{$table}} SET ".implode(', ', $updates);
+            $DB->execute($sql);
+        }
+
+        $pbar->update($i, $tablecount, "Converted NTEXT to NVARCHAR(MAX) columns in MS SQL Server database - $i/$tablecount.");
+    }
+}
+
+/**
+ * Migrate IMAGE to VARBINARY(MAX).
+ */
+function upgrade_mssql_varbinarymax() {
+    global $DB;
+
+    if ($DB->get_dbfamily() !== 'mssql') {
+        return;
+    }
+
+    $pbar = new progress_bar('mssqlconvertimage', 500, true);
+
+    $prefix = $DB->get_prefix();
+    $tables = $DB->get_tables(false);
+
+    $tablecount = count($tables);
+    $i = 0;
+    foreach ($tables as $table) {
+        $i++;
+
+        $columns = array();
+
+        $sql = "SELECT column_name
+                  FROM INFORMATION_SCHEMA.COLUMNS
+                 WHERE table_name = '{{$table}}' AND UPPER(data_type) = 'IMAGE'";
+        $rs = $DB->get_recordset_sql($sql);
+        foreach ($rs as $column) {
+            $columns[] = $column->column_name;
+        }
+        $rs->close();
+
+        if ($columns) {
+            // Set appropriate timeout - 1 minute per thousand of records should be enough, min 60 minutes just in case.
+            $count = $DB->count_records($table, array());
+            $timeout = ($count/1000)*60;
+            $timeout = ($timeout < 60*60) ? 60*60 : (int)$timeout;
+            upgrade_set_timeout($timeout);
+
+            foreach ($columns as $column) {
+                // Change the definition.
+                $sql = "ALTER TABLE {$prefix}$table ALTER COLUMN $column VARBINARY(MAX)";
+                $DB->change_database_structure($sql);
+            }
+
+            // Binary columns should not be used, do not waste time optimising the storage.
+        }
+
+        $pbar->update($i, $tablecount, "Converted IMAGE to VARBINARY(MAX) columns in MS SQL Server database - $i/$tablecount.");
+    }
+}

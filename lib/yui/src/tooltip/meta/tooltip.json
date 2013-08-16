@@ -9,7 +9,7 @@
         "widget-position",
         "widget-position-align",
         "event-outside",
-        "cache"
+        "cache-base"
     ]
   }
 }

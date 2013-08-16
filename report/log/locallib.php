@@ -139,10 +139,12 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
 
     // If looking at a different host, we're interested in all our site users
     if ($hostid == $CFG->mnet_localhost_id && $course->id != SITEID) {
-        $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, u.firstname, u.lastname, u.idnumber', null, $limitfrom, $limitnum);
+        $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, ' . get_all_user_name_fields(true, 'u'),
+                null, $limitfrom, $limitnum);
     } else {
         // this may be a lot of users :-(
-        $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, firstname, lastname, idnumber', $limitfrom, $limitnum);
+        $courseusers = $DB->get_records('user', array('deleted'=>0), 'lastaccess DESC', 'id, ' . get_all_user_name_fields(true),
+                $limitfrom, $limitnum);
     }
 
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
@@ -231,8 +233,8 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
             }
             $section = $cm->sectionnum;
             $modname = strip_tags($cm->get_formatted_name());
-            if (textlib::strlen($modname) > 55) {
-                $modname = textlib::substr($modname, 0, 50)."...";
+            if (core_text::strlen($modname) > 55) {
+                $modname = core_text::substr($modname, 0, 50)."...";
             }
             if (!$cm->visible) {
                 $modname = "(".$modname.")";
@@ -347,6 +349,7 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
         }
         echo html_writer::label(get_string('participantslist'), 'menuuser', false, array('class' => 'accesshide'));
         echo html_writer::select($users, "user", $selecteduser, false);
+        $a = new stdClass();
         $a->url = "$CFG->wwwroot/report/log/index.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
             ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
         print_string('logtoomanyusers','moodle',$a);
@@ -440,7 +443,8 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
     $limitfrom = empty($showusers) ? 0 : '';
     $limitnum  = empty($showusers) ? COURSE_MAX_USERS_PER_DROPDOWN + 1 : '';
 
-    $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, u.firstname, u.lastname', null, $limitfrom, $limitnum);
+    $courseusers = get_enrolled_users($context, '', $selectedgroup, 'u.id, ' . get_all_user_name_fields(true, 'u'),
+            null, $limitfrom, $limitnum);
 
     if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
         $showusers = 1;
@@ -483,8 +487,8 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
             }
             $section = $cm->sectionnum;
             $modname = strip_tags($cm->get_formatted_name());
-            if (textlib::strlen($modname) > 55) {
-                $modname = textlib::substr($modname, 0, 50)."...";
+            if (core_text::strlen($modname) > 55) {
+                $modname = core_text::substr($modname, 0, 50)."...";
             }
             if (!$cm->visible) {
                 $modname = "(".$modname.")";

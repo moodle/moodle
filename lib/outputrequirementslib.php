@@ -192,7 +192,7 @@ class page_requirements_manager {
         $this->YUI_config->comboBase    = $this->yui3loader->comboBase;
         $this->YUI_config->combine      = $this->yui3loader->combine;
 
-        $configname = $this->YUI_config->set_config_function("if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin');}");
+        $configname = $this->YUI_config->set_config_source('lib/yui/config/yui2.js');
         $this->YUI_config->add_group('yui2', array(
             // Loader configuration for our 2in3, for now ignores $CFG->useexternalyui.
             'base' => $CFG->httpswwwroot . '/lib/yuilib/2in3/' . $CFG->yui2version . '/build/',
@@ -207,7 +207,7 @@ class page_requirements_manager {
                 )
             )
         ));
-        $configname = $this->YUI_config->set_config_function("var p = me.path, b = me.name.replace(/^moodle-/,'').split('-', 3), n = b.pop();if (/(skin|core)/.test(n)) {n = b.pop();me.type = 'css';};me.path = b.join('-')+'/'+n+'/'+n;if(me.type !== 'css'){me.path=me.path+'-min';};me.path=me.path+'.'+me.type;");
+        $configname = $this->YUI_config->set_config_source('lib/yui/config/moodle.js');
         $this->YUI_config->add_group('moodle', array(
             'name' => 'moodle',
             'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
@@ -245,7 +245,6 @@ class page_requirements_manager {
 
         // Every page should include definition of following modules.
         $this->js_module($this->find_module('core_filepicker'));
-        $this->js_module($this->find_module('core_dock'));
     }
 
     /**
@@ -417,7 +416,7 @@ class page_requirements_manager {
             return true;
         }
 
-        $componentdir = get_component_directory($component);
+        $componentdir = core_component::get_component_directory($component);
         if (!file_exists($componentdir) or !file_exists("$componentdir/jquery/plugins.php")) {
             debugging("Can not load jQuery plugin '$plugin', missing plugins.php in component '$component'.", DEBUG_DEVELOPER);
             return false;
@@ -613,12 +612,17 @@ class page_requirements_manager {
                     throw new coding_exception('Attempt to require a JavaScript file that does not exist.', $url);
                 }
             }
-            if (!empty($CFG->cachejs) and !empty($CFG->jsrev) and $CFG->jsrev > 0 and substr($url, -3) === '.js') {
+            if (substr($url, -3) === '.js') {
+                if (empty($CFG->cachejs) or !isset($CFG->jsrev)) {
+                    $jsrev = -1;
+                } else {
+                    $jsrev = (int)$CFG->jsrev;
+                }
                 if (empty($CFG->slasharguments)) {
-                    return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('rev'=>$CFG->jsrev, 'jsfile'=>$url));
+                    return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('rev'=>$jsrev, 'jsfile'=>$url));
                 } else {
                     $returnurl = new moodle_url($CFG->httpswwwroot.'/lib/javascript.php');
-                    $returnurl->set_slashargument('/'.$CFG->jsrev.$url);
+                    $returnurl->set_slashargument('/'.$jsrev.$url);
                     return $returnurl;
                 }
             } else {
@@ -654,7 +658,7 @@ class page_requirements_manager {
                                                         array('nofilesavailable', 'repository'), array('norepositoriesavailable', 'repository'),
                                                         array('fileexistsdialogheader', 'repository'), array('fileexistsdialog_editor', 'repository'),
                                                         array('fileexistsdialog_filemanager', 'repository'), array('renameto', 'repository'),
-                                                        array('referencesexist', 'repository')
+                                                        array('referencesexist', 'repository'), array('select', 'repository')
                                                     ));
                     break;
                 case 'core_comment':
@@ -672,15 +676,6 @@ class page_requirements_manager {
                 case 'core_completion':
                     $module = array('name'     => 'core_completion',
                                     'fullpath' => '/course/completion.js');
-                    break;
-                case 'core_dock':
-                    $module = array('name'     => 'core_dock',
-                                    'fullpath' => '/blocks/dock.js',
-                                    'requires' => array('base', 'node', 'event-custom', 'event-mouseenter', 'event-resize', 'escape'),
-                                    'strings'  => array(array('addtodock', 'block'),array('undockitem', 'block'),array('dockblock', 'block'),
-                                                        array('undockblock', 'block'),array('undockall', 'block'),array('thisdirectionvertical', 'langconfig'),
-                                                        array('hidedockpanel', 'block'),array('hidepanel', 'block')
-                                                    ));
                     break;
                 case 'core_message':
                     $module = array('name'     => 'core_message',
@@ -714,7 +709,7 @@ class page_requirements_manager {
             }
 
         } else {
-            if ($dir = get_component_directory($component)) {
+            if ($dir = core_component::get_component_directory($component)) {
                 if (file_exists("$dir/module.js")) {
                     if (strpos($dir, $CFG->dirroot.'/') === 0) {
                         $dir = substr($dir, strlen($CFG->dirroot));
@@ -1554,6 +1549,36 @@ class YUI_config {
     }
 
     /**
+     * Allow setting of the config function described in {@see set_config_function} from a file.
+     * The contents of this file are then passed to set_config_function.
+     *
+     * When jsrev is positive, the function is minified and stored in a MUC cache for subsequent uses.
+     *
+     * @param $file The path to the JavaScript function used for YUI configuration.
+     * @return String the name of the function to use in the group pattern configuration.
+     */
+    public function set_config_source($file) {
+        global $CFG;
+        $cache = cache::make('core', 'yuimodules');
+
+        // Attempt to get the metadata from the cache.
+        $keyname = 'configfn_' . $file;
+        $fullpath = $CFG->dirroot . '/' . $file;
+        if (!isset($CFG->jsrev) || $CFG->jsrev == -1) {
+            $cache->delete($keyname);
+            $configfn = file_get_contents($fullpath);
+        } else {
+            $configfn = $cache->get($keyname);
+            if ($configfn === false) {
+                require_once($CFG->libdir . '/jslib.php');
+                $configfn = core_minify::js_files(array($fullpath));
+                $cache->set($keyname, $configfn);
+            }
+        }
+        return $this->set_config_function($configfn);
+    }
+
+    /**
      * Retrieve the list of JavaScript functions for YUI_config groups.
      *
      * @return String The complete set of config functions
@@ -1632,6 +1657,7 @@ class YUI_config {
         $cache = cache::make('core', 'yuimodules');
         if (!isset($CFG->jsrev) || $CFG->jsrev == -1) {
             $metadata = array();
+            $metadata = $this->get_moodle_metadata();
             $cache->delete('metadata');
         } else {
             // Attempt to get the metadata from the cache.
@@ -1657,7 +1683,7 @@ class YUI_config {
     private function get_moodle_metadata() {
         $moodlemodules = array();
         // Core isn't a plugin type or subsystem - handle it seperately.
-        if ($module = $this->get_moodle_path_metadata(get_component_directory('core'))) {
+        if ($module = $this->get_moodle_path_metadata(core_component::get_component_directory('core'))) {
             $moodlemodules = array_merge($moodlemodules, $module);
         }
 
@@ -1675,7 +1701,7 @@ class YUI_config {
         // And finally the plugins.
         $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $pathroot) {
-            $pluginlist = get_plugin_list($plugintype);
+            $pluginlist = core_component::get_plugin_list($plugintype);
             foreach ($pluginlist as $plugin => $path) {
                 if ($module = $this->get_moodle_path_metadata($path)) {
                     $moodlemodules = array_merge($moodlemodules, $module);
@@ -1719,7 +1745,6 @@ class YUI_config {
  */
 function js_reset_all_caches() {
     global $CFG;
-    require_once("$CFG->libdir/filelib.php");
 
     $next = time();
     if (isset($CFG->jsrev) and $next <= $CFG->jsrev and $CFG->jsrev - $next < 60*60) {
@@ -1730,5 +1755,4 @@ function js_reset_all_caches() {
     }
 
     set_config('jsrev', $next);
-    fulldelete("$CFG->cachedir/js");
 }

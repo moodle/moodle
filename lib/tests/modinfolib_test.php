@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/conditionlib.php');
  * @copyright 2012 Andrew Davis
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class modinfolib_testcase extends advanced_testcase {
+class core_modinfolib_testcase extends advanced_testcase {
 
     /**
      * Test is_user_access_restricted_by_group()
@@ -44,18 +44,18 @@ class modinfolib_testcase extends advanced_testcase {
     public function test_is_user_access_restricted_by_group() {
         global $DB, $CFG, $USER;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
-        // Create a course
+        // Create a course.
         $course = $this->getDataGenerator()->create_course();
         $coursecontext = context_course::instance($course->id);
 
-        // Create a mod_assign instance
+        // Create a mod_assign instance.
         $assign = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
         $cm_info = get_fast_modinfo($course)->instances['assign'][$assign->id];
 
-        // Create and enrol a student
-        // Enrolment is necessary for groups to work
+        // Create and enrol a student.
+        // Enrolment is necessary for groups to work.
         $studentrole = $DB->get_record('role', array('shortname'=>'student'), '*', MUST_EXIST);
         $student = $this->getDataGenerator()->create_user();
         role_assign($studentrole->id, $student->id, $coursecontext);
@@ -69,20 +69,20 @@ class modinfolib_testcase extends advanced_testcase {
         }
         $enrolplugin->enrol_user($enrolinstance, $student->id);
 
-        // Switch to a student and reload the context info
+        // Switch to a student and reload the context info.
         $this->setUser($student);
         $cm_info = $this->refresh_cm_info($course, $assign);
 
-        // Create up a teacher
+        // Create up a teacher.
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
         $teacher = $this->getDataGenerator()->create_user();
         role_assign($teacherrole->id, $teacher->id, $coursecontext);
 
-        // Create 2 groupings
+        // Create 2 groupings.
         $grouping1 = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id, 'name' => 'grouping1'));
         $grouping2 = $this->getDataGenerator()->create_grouping(array('courseid' => $course->id, 'name' => 'grouping2'));
 
-        // Create 2 groups and put them in the groupings
+        // Create 2 groups and put them in the groupings.
         $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'idnumber' => 'group1'));
         groups_assign_grouping($grouping1->id, $group1->id);
         $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id, 'idnumber' => 'group2'));
@@ -109,7 +109,7 @@ class modinfolib_testcase extends advanced_testcase {
         $cm_info = $this->refresh_cm_info($course, $assign);
         $this->assertFalse($cm_info->is_user_access_restricted_by_group());
 
-        // Switch to a teacher and reload the context info
+        // Switch to a teacher and reload the context info.
         $this->setUser($teacher);
         $cm_info = $this->refresh_cm_info($course, $assign);
 
@@ -126,49 +126,49 @@ class modinfolib_testcase extends advanced_testcase {
     public function test_is_user_access_restricted_by_conditional_access() {
         global $DB, $CFG;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
-        // Create a course and a mod_assign instance
+        // Create a course and a mod_assign instance.
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->getDataGenerator()->create_module('assign', array('course'=>$course->id));
         $cm_info = get_fast_modinfo($course)->instances['assign'][$assign->id];
 
-        // Set up a teacher
+        // Set up a teacher.
         $coursecontext = context_course::instance($course->id);
         $teacherrole = $DB->get_record('role', array('shortname'=>'editingteacher'), '*', MUST_EXIST);
         $teacher = $this->getDataGenerator()->create_user();
         role_assign($teacherrole->id, $teacher->id, $coursecontext);
 
-        // Mark the activity as unavailable (due to unmet conditions)
-        // Testing of the code that normally turns this flag on and off is done in conditionlib_test.php
+        // Mark the activity as unavailable (due to unmet conditions).
+        // Testing of the code that normally turns this flag on and off is done in conditionlib_test.php.
         $cm_info->available = false;
-        // Set the activity to be hidden entirely if it is unavailable to the user
+        // Set the activity to be hidden entirely if it is unavailable to the user.
         $cm_info->showavailability = CONDITION_STUDENTVIEW_HIDE;
 
-        // If conditional availability is disabled the activity will always be unrestricted
+        // If conditional availability is disabled the activity will always be unrestricted.
         $CFG->enableavailability = false;
         $this->assertFalse($cm_info->is_user_access_restricted_by_conditional_access());
 
-        // Turn on conditional availability
+        // Turn on conditional availability.
         $CFG->enableavailability = true;
 
-        // The unavailable, hidden entirely activity should now be restricted
+        // The unavailable, hidden entirely activity should now be restricted.
         $this->assertTrue($cm_info->is_user_access_restricted_by_conditional_access());
 
-        // If the activity is available it should not be restricted
+        // If the activity is available it should not be restricted.
         $cm_info->available = true;
         $this->assertFalse($cm_info->is_user_access_restricted_by_conditional_access());
 
-        // If the activity is unavailable and set to be greyed out it should not be restricted
+        // If the activity is unavailable and set to be greyed out it should not be restricted.
         $cm_info->available = false;
         $cm_info->showavailability = CONDITION_STUDENTVIEW_SHOW;
         $this->assertFalse($cm_info->is_user_access_restricted_by_conditional_access());
 
-        // If the activity is unavailable and set to be hidden entirely its restricted unless user has 'moodle/course:viewhiddenactivities'
+        // If the activity is unavailable and set to be hidden entirely its restricted unless user has 'moodle/course:viewhiddenactivities'.
         $cm_info->available = false;
         $cm_info->showavailability = CONDITION_STUDENTVIEW_HIDE;
 
-        // Switch to a teacher and reload the context info
+        // Switch to a teacher and reload the context info.
         $this->setUser($teacher);
         $cm_info = $this->refresh_cm_info($course, $assign);
 

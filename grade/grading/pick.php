@@ -223,7 +223,7 @@ foreach ($rs as $template) {
     $actions = array();
     if ($controller->is_shared_template()) {
         $actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('pick' => $template->id)),
-            get_string('templatepick', 'core_grading'), 'i/tick_green_big', 'pick template');
+            get_string('templatepick', 'core_grading'), 'i/valid', 'pick template');
         if ($canmanage or ($canshare and ($template->usercreated == $USER->id))) {
             //$actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('edit' => $template->id)),
             //    get_string('templateedit', 'core_grading'), 'i/edit', 'edit');
@@ -232,7 +232,7 @@ foreach ($rs as $template) {
         }
     } else if ($controller->is_own_form()) {
         $actions[] = $output->pick_action_icon(new moodle_url($PAGE->url, array('pick' => $template->id)),
-            get_string('templatepickownform', 'core_grading'), 'i/tick_green_big', 'pick ownform');
+            get_string('templatepickownform', 'core_grading'), 'i/valid', 'pick ownform');
     }
     $out .= $output->box(join(' ', $actions), 'template-actions');
     $out .= $output->box($controller->get_formatted_description(), 'template-description');

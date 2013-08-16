@@ -156,7 +156,7 @@ abstract class core_media {
      * @param moodle_url $url URL
      */
     public static function get_extension(moodle_url $url) {
-        // Note: Does not use textlib (. is UTF8-safe).
+        // Note: Does not use core_text (. is UTF8-safe).
         $filename = self::get_filename($url);
         $dot = strrpos($filename, '.');
         if ($dot === false) {

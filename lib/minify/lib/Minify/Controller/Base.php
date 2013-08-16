@@ -79,33 +79,6 @@ abstract class Minify_Controller_Base {
     }
     
     /**
-     * Load any code necessary to execute the given minifier callback.
-     * 
-     * The controller is responsible for loading minification code on demand
-     * via this method. This built-in function will only load classes for
-     * static method callbacks where the class isn't already defined. It uses
-     * the PEAR convention, so, given array('Jimmy_Minifier', 'minCss'), this 
-     * function will include 'Jimmy/Minifier.php'.
-     * 
-     * If you need code loaded on demand and this doesn't suit you, you'll need
-     * to override this function in your subclass. 
-     * @see Minify_Controller_Page::loadMinifier()
-     * 
-     * @param callback $minifierCallback callback of minifier function
-     * 
-     * @return null
-     */
-    public function loadMinifier($minifierCallback)
-    {
-        if (is_array($minifierCallback)
-            && is_string($minifierCallback[0])
-            && !class_exists($minifierCallback[0], false)) {
-            
-            require str_replace('_', '/', $minifierCallback[0]) . '.php';
-        }
-    }
-    
-    /**
      * Is a user-given file within an allowable directory, existing,
      * and having an extension js/css/html/txt ?
      * 
@@ -244,7 +217,6 @@ abstract class Minify_Controller_Base {
      * @return null
      */
     public function log($msg) {
-        require_once 'Minify/Logger.php';
         Minify_Logger::log($msg);
     }
 }

@@ -35,7 +35,7 @@ global $CFG;
 require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
 
-class moodlesimplepie_testcase extends basic_testcase {
+class core_rsslib_testcase extends basic_testcase {
 
     // A url we know exists and is valid.
     const VALIDURL = 'http://download.moodle.org/unittest/rsstest.xml';
@@ -46,43 +46,38 @@ class moodlesimplepie_testcase extends basic_testcase {
     // The number of seconds tests should wait for the server to respond (high to prevent false positives).
     const TIMEOUT = 10;
 
-    function setUp() {
+    protected function setUp() {
         moodle_simplepie::reset_cache();
     }
 
-    function test_getfeed() {
+    public function test_getfeed() {
         $feed = new moodle_simplepie(self::VALIDURL, self::TIMEOUT);
 
         $this->assertInstanceOf('moodle_simplepie', $feed);
 
         $this->assertNull($feed->error(), "Failed to load the sample RSS file. Please check your proxy settings in Moodle. %s");
-        if ($feed->error()) {
-            return;
-        }
 
-        $this->assertEquals($feed->get_title(), 'Moodle News');
+        $this->assertSame('Moodle News', $feed->get_title());
 
-        $this->assertEquals($feed->get_link(), 'http://moodle.org/mod/forum/view.php?f=1');
-        $this->assertEquals($feed->get_description(), "General news about Moodle.\n\nMoodle is a leading open-source course management system (CMS) - a software package designed to help educators create quality online courses. Such e-learning systems are sometimes also called Learning Management Systems (LMS) or Virtual Learning Environments (VLE). One of the main advantages of Moodle over other systems is a strong grounding in social constructionist pedagogy.");
+        $this->assertSame('http://moodle.org/mod/forum/view.php?f=1', $feed->get_link());
+        $this->assertSame("General news about Moodle.\n\nMoodle is a leading open-source course management system (CMS) - a software package designed to help educators create quality online courses. Such e-learning systems are sometimes also called Learning Management Systems (LMS) or Virtual Learning Environments (VLE). One of the main advantages of Moodle over other systems is a strong grounding in social constructionist pedagogy.",
+            $feed->get_description());
 
-        $this->assertEquals($feed->get_copyright(), '&amp;#169; 2007 moodle');
-        $this->assertEquals($feed->get_image_url(), 'http://moodle.org/pix/i/rsssitelogo.gif');
-        $this->assertEquals($feed->get_image_title(), 'moodle');
-        $this->assertEquals($feed->get_image_link(), 'http://moodle.org/');
-        $this->assertEquals($feed->get_image_width(), '140');
-        $this->assertEquals($feed->get_image_height(), '35');
+        $this->assertSame('&amp;#169; 2007 moodle', $feed->get_copyright());
+        $this->assertSame('http://moodle.org/pix/i/rsssitelogo.gif', $feed->get_image_url());
+        $this->assertSame('moodle', $feed->get_image_title());
+        $this->assertSame('http://moodle.org/', $feed->get_image_link());
+        $this->assertEquals('140', $feed->get_image_width());
+        $this->assertEquals('35', $feed->get_image_height());
 
         $this->assertNotEmpty($items = $feed->get_items());
-        $this->assertEquals(count($items), 15);
+        $this->assertCount(15, $items);
 
         $this->assertNotEmpty($itemone = $feed->get_item(0));
-        if (!$itemone) {
-            return;
-        }
 
-        $this->assertEquals($itemone->get_title(), 'Google HOP contest encourages pre-University students to work on Moodle');
-        $this->assertEquals($itemone->get_link(), 'http://moodle.org/mod/forum/discuss.php?d=85629');
-        $this->assertEquals($itemone->get_id(), 'http://moodle.org/mod/forum/discuss.php?d=85629');
+        $this->assertSame('Google HOP contest encourages pre-University students to work on Moodle', $itemone->get_title());
+        $this->assertSame('http://moodle.org/mod/forum/discuss.php?d=85629', $itemone->get_link());
+        $this->assertSame('http://moodle.org/mod/forum/discuss.php?d=85629', $itemone->get_id());
         $description = <<<EOD
 by Martin Dougiamas. &nbsp;<p><p><img src="http://code.google.com/opensource/ghop/2007-8/images/ghoplogosm.jpg" align="right" style="margin:10px" />After their very successful <a href="http://code.google.com/soc/2007/">Summer of Code</a> program for University students, Google just announced their new <a href="http://code.google.com/opensource/ghop/2007-8/">Highly Open Participation contest</a>, designed to encourage pre-University students to get involved with open source projects via much smaller and diverse contributions.<br />
 <br />
@@ -95,31 +90,30 @@ Google will pay students US$100 for every three tasks they successfully complete
 You can find out all the details on the <a href="http://code.google.com/p/google-highly-open-participation-moodle/">Moodle/GHOP contest site</a>.</p></p>
 EOD;
         $description = purify_html($description);
-        $this->assertEquals($itemone->get_description(), $description);
+        $this->assertSame($description, $itemone->get_description());
 
+        // TODO fix this so it uses $CFG by default.
+        $this->assertSame(1196412453, $itemone->get_date('U'));
 
-        // TODO fix this so it uses $CFG by default
-        $this->assertEquals($itemone->get_date('U'), 1196412453);
-
-        // last item
+        // Last item.
         $this->assertNotEmpty($feed->get_item(14));
-        // Past last item
+        // Past last item.
         $this->assertEmpty($feed->get_item(15));
     }
 
     /*
-     * Test retrieving a url which doesn't exist
+     * Test retrieving a url which doesn't exist.
      */
-    function test_failurl() {
-        $feed = @new moodle_simplepie(self::INVALIDURL, self::TIMEOUT); // we do not want this in php error log
+    public function test_failurl() {
+        $feed = @new moodle_simplepie(self::INVALIDURL, self::TIMEOUT); // We do not want this in php error log.
 
         $this->assertNotEmpty($feed->error());
     }
 
     /*
-     * Test retrieving a url with broken proxy configuration
+     * Test retrieving a url with broken proxy configuration.
      */
-    function test_failproxy() {
+    public function test_failproxy() {
         global $CFG;
 
         $oldproxy = $CFG->proxyhost;
@@ -133,16 +127,13 @@ EOD;
     }
 
     /*
-     * Test retrieving a url which sends a redirect to another valid feed
+     * Test retrieving a url which sends a redirect to another valid feed.
      */
-    function test_redirect() {
-        global $CFG;
-
+    public function test_redirect() {
         $feed = new moodle_simplepie(self::REDIRECTURL, self::TIMEOUT);
 
         $this->assertNull($feed->error());
-        $this->assertEquals($feed->get_title(), 'Moodle News');
-        $this->assertEquals($feed->get_link(), 'http://moodle.org/mod/forum/view.php?f=1');
+        $this->assertSame('Moodle News', $feed->get_title());
+        $this->assertSame('http://moodle.org/mod/forum/view.php?f=1', $feed->get_link());
     }
-
 }

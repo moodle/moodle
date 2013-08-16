@@ -93,7 +93,7 @@ function install_init_dataroot($dataroot, $dirpermissions) {
         return false;
     }
 
-    umask(0000);
+    umask(0000); // $CFG->umaskpermissions is not set yet.
     if (!file_exists($dataroot)) {
         if (!mkdir($dataroot, $dirpermissions, true)) {
             // most probably this does not work, but anyway

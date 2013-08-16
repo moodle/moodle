@@ -76,7 +76,7 @@ function mod_book_migrate_moddata_dir_to_legacy($book, $context, $path) {
                 continue;
             }
 
-            if (textlib::strlen($filepath) > 255) {
+            if (core_text::strlen($filepath) > 255) {
                 echo $OUTPUT->notification(" File path longer than 255 chars, skipping: ".$fulldir.$item->getFilename());
                 unset($item); // release file handle
                 continue;

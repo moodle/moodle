@@ -70,6 +70,11 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $subscription = new backup_nested_element('subscription', array('id'), array(
             'userid'));
 
+        $digests = new backup_nested_element('digests');
+
+        $digest = new backup_nested_element('digest', array('id'), array(
+            'userid', 'maildigest'));
+
         $readposts = new backup_nested_element('readposts');
 
         $read = new backup_nested_element('read', array('id'), array(
@@ -88,6 +93,9 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
         $forum->add_child($subscriptions);
         $subscriptions->add_child($subscription);
+
+        $forum->add_child($digests);
+        $digests->add_child($digest);
 
         $forum->add_child($readposts);
         $readposts->add_child($read);
@@ -118,6 +126,8 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
 
             $subscription->set_source_table('forum_subscriptions', array('forum' => backup::VAR_PARENTID));
 
+            $digest->set_source_table('forum_digests', array('forum' => backup::VAR_PARENTID));
+
             $read->set_source_table('forum_read', array('forumid' => backup::VAR_PARENTID));
 
             $track->set_source_table('forum_track_prefs', array('forumid' => backup::VAR_PARENTID));
@@ -142,6 +152,8 @@ class backup_forum_activity_structure_step extends backup_activity_structure_ste
         $rating->annotate_ids('user', 'userid');
 
         $subscription->annotate_ids('user', 'userid');
+
+        $digest->annotate_ids('user', 'userid');
 
         $read->annotate_ids('user', 'userid');
 

@@ -391,8 +391,8 @@ class repository_googledocs extends repository {
 
         // Filter and order the results.
         $files = array_filter($files, array($this, 'filter'));
-        collatorlib::ksort($files, collatorlib::SORT_NATURAL);
-        collatorlib::ksort($folders, collatorlib::SORT_NATURAL);
+        core_collator::ksort($files, core_collator::SORT_NATURAL);
+        core_collator::ksort($folders, core_collator::SORT_NATURAL);
         return array_merge(array_values($folders), array_values($files));
     }
 
@@ -414,12 +414,15 @@ class repository_googledocs extends repository {
      * @return string JSON encoded array of information about the file.
      */
     public function get_file($reference, $filename = '') {
+        global $CFG;
+
         $request = new Google_HttpRequest($reference);
         $httpRequest = Google_Client::$io->authenticatedRequest($request);
         if ($httpRequest->getResponseHttpCode() == 200) {
             $path = $this->prepare_file($filename);
             $content = $httpRequest->getResponseBody();
             if (file_put_contents($path, $content) !== false) {
+                @chmod($path, $CFG->filepermissions);
                 return array(
                     'path' => $path,
                     'url' => $reference

@@ -1624,9 +1624,9 @@ class page_wiki_map extends page_wiki {
         foreach ($pages as $page) {
             // We need to format the title here to account for any filtering
             $letter = format_string($page->title, true, array('context' => $this->modcontext));
-            $letter = textlib::substr($letter, 0, 1);
+            $letter = core_text::substr($letter, 0, 1);
             if (preg_match('/^[a-zA-Z]$/', $letter)) {
-                $letter = textlib::strtoupper($letter);
+                $letter = core_text::strtoupper($letter);
                 $stdaux->{$letter}[] = wiki_parser_link($page);
             } else {
                 $stdaux->{$strspecial}[] = wiki_parser_link($page);
@@ -1883,14 +1883,14 @@ class page_wiki_restoreversion extends page_wiki {
         $return = new moodle_url('/mod/wiki/viewversion.php', array('pageid'=>$this->page->id, 'versionid'=>$version->id));
 
         echo $OUTPUT->heading(get_string('restoreconfirm', 'wiki', $version->version), 2);
-        print_container_start(false, 'wiki_restoreform');
+        echo $OUTPUT->container_start(false, 'wiki_restoreform');
         echo '<form class="wiki_restore_yes" action="' . $restoreurl . '" method="post" id="restoreversion">';
         echo '<div><input type="submit" name="confirm" value="' . get_string('yes') . '" /></div>';
         echo '</form>';
         echo '<form class="wiki_restore_no" action="' . $return . '" method="post">';
         echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
         echo '</form>';
-        print_container_end();
+        echo $OUTPUT->container_end();
     }
 }
 /**
@@ -1951,14 +1951,14 @@ class page_wiki_deletecomment extends page_wiki {
         $return = new moodle_url('/mod/wiki/comments.php', array('pageid'=>$this->page->id));
 
         echo $OUTPUT->heading($strdeletecheckfull);
-        print_container_start(false, 'wiki_deletecommentform');
+        echo $OUTPUT->container_start(false, 'wiki_deletecommentform');
         echo '<form class="wiki_deletecomment_yes" action="' . $deleteurl . '" method="post" id="deletecomment">';
         echo '<div><input type="submit" name="confirmdeletecomment" value="' . get_string('yes') . '" /></div>';
         echo '</form>';
         echo '<form class="wiki_deletecomment_no" action="' . $return . '" method="post">';
         echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
         echo '</form>';
-        print_container_end();
+        echo $OUTPUT->container_end();
     }
 }
 
@@ -2121,13 +2121,13 @@ class page_wiki_viewversion extends page_wiki {
             $viewlink = new moodle_url('/user/view.php', array('id' => $userinfo->id));
             $heading .= '&nbsp;&nbsp;&nbsp;<strong>' . get_string('user') . ':</strong>&nbsp;' . html_writer::link($viewlink->out(false), fullname($userinfo));
             $heading .= '&nbsp;&nbsp;&rarr;&nbsp;' . $OUTPUT->user_picture(wiki_get_user_info($pageversion->userid), array('popup' => true)) . '</p>';
-            print_container($heading, false, 'mdl-align wiki_modifieduser wiki_headingtime');
+            echo $OUTPUT->container($heading, false, 'mdl-align wiki_modifieduser wiki_headingtime');
             $options = array('swid' => $this->subwiki->id, 'pretty_print' => true, 'pageid' => $this->page->id);
 
             $pageversion->content = file_rewrite_pluginfile_urls($pageversion->content, 'pluginfile.php', $this->modcontext->id, 'mod_wiki', 'attachments', $this->subwiki->id);
 
             $parseroutput = wiki_parse_content($pageversion->contentformat, $pageversion->content, $options);
-            $content = print_container(format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true)), false, '', '', true);
+            $content = $OUTPUT->container(format_text($parseroutput['parsed_text'], FORMAT_HTML, array('overflowdiv'=>true)), false, '', '', true);
             echo $OUTPUT->box($content, 'generalbox wiki_contentbox');
 
         } else {
@@ -2165,12 +2165,23 @@ class page_wiki_confirmrestore extends page_wiki_save {
 
 class page_wiki_prettyview extends page_wiki {
 
-    function print_header() {
-        global $CFG, $PAGE, $OUTPUT;
+    function __construct($wiki, $subwiki, $cm) {
+        global $PAGE;
         $PAGE->set_pagelayout('embedded');
-        echo $OUTPUT->header();
+        parent::__construct($wiki, $subwiki, $cm);
+    }
 
-        echo '<h1 id="wiki_printable_title">' . format_string($this->title) . '</h1>';
+    function print_header() {
+        global $OUTPUT;
+        $this->set_url();
+
+        echo $OUTPUT->header();
+        // Print dialog link.
+        $printtext = get_string('print', 'wiki');
+        $printlinkatt = array('onclick' => 'window.print();return false;', 'class' => 'printicon');
+        $printiconlink = html_writer::link('#', $printtext, $printlinkatt);
+        echo html_writer::tag('div', $printiconlink, array('class' => 'displayprinticon'));
+        echo html_writer::tag('h1', format_string($this->title), array('id' => 'wiki_printable_title'));
     }
 
     function print_content() {

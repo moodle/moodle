@@ -413,8 +413,9 @@ abstract class user_selector_base {
      */
     protected function required_fields_sql($u) {
         // Raw list of fields.
-        $fields = array('id', 'firstname', 'lastname');
-        $fields = array_merge($fields, $this->extrafields);
+        $fields = array('id');
+        // Add additional name fields
+        $fields = array_merge($fields, get_all_user_name_fields(), $this->extrafields);
 
         // Prepend the table alias.
         if ($u) {
@@ -780,6 +781,9 @@ class group_non_members_selector extends groups_user_selector_base {
             $roleparams = array();
         }
 
+        // We want to query both the current context and parent contexts.
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+
         // Get the search condition.
         list($searchcondition, $searchparams) = $this->search_sql($search, 'u');
 
@@ -793,7 +797,7 @@ class group_non_members_selector extends groups_user_selector_base {
                             WHERE igm.userid = u.id AND ig.courseid = :courseid) AS numgroups";
         $sql = "   FROM {user} u
                    JOIN ($enrolsql) e ON e.id = u.id
-              LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid " . get_related_contexts_string($context) . " AND ra.roleid $roleids)
+              LEFT JOIN {role_assignments} ra ON (ra.userid = u.id AND ra.contextid $relatedctxsql AND ra.roleid $roleids)
               LEFT JOIN {role} r ON r.id = ra.roleid
               LEFT JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)
                   WHERE u.deleted = 0
@@ -803,7 +807,7 @@ class group_non_members_selector extends groups_user_selector_base {
         list($sort, $sortparams) = users_order_by_sql('u', $search, $this->accesscontext);
         $orderby = ' ORDER BY ' . $sort;
 
-        $params = array_merge($searchparams, $roleparams, $enrolparams);
+        $params = array_merge($searchparams, $roleparams, $enrolparams, $relatedctxparams);
         $params['courseid'] = $this->courseid;
         $params['groupid']  = $this->groupid;
 

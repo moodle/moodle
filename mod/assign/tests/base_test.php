@@ -46,6 +46,8 @@ class mod_assign_base_testcase extends advanced_testcase {
     const DEFAULT_EDITING_TEACHER_COUNT = 2;
     /** @const Optional extra number of students to create */
     const EXTRA_STUDENT_COUNT = 40;
+    /** @const Optional number of suspended students */
+    const EXTRA_SUSPENDED_COUNT = 10;
     /** @const Optional extra number of teachers to create */
     const EXTRA_TEACHER_COUNT = 5;
     /** @const Optional extra number of editing teachers to create */
@@ -73,6 +75,9 @@ class mod_assign_base_testcase extends advanced_testcase {
 
     /** @var array $extrastudents List of EXTRA_STUDENT_COUNT students in the course*/
     protected $extrastudents = null;
+
+    /** @var array $extrasuspendedstudents List of EXTRA_SUSPENDED_COUNT students in the course*/
+    protected $extrasuspendedstudents = null;
 
     /** @var array $groups List of 10 groups in the course */
     protected $groups = null;
@@ -151,6 +156,11 @@ class mod_assign_base_testcase extends advanced_testcase {
             array_push($this->extrastudents, $this->getDataGenerator()->create_user());
         }
 
+        $this->extrasuspendedstudents = array();
+        for ($i = 0; $i < self::EXTRA_SUSPENDED_COUNT; $i++) {
+            array_push($this->extrasuspendedstudents, $this->getDataGenerator()->create_user());
+        }
+
         $teacherrole = $DB->get_record('role', array('shortname'=>'teacher'));
         foreach ($this->extrateachers as $i => $teacher) {
             $this->getDataGenerator()->enrol_user($teacher->id,
@@ -177,6 +187,14 @@ class mod_assign_base_testcase extends advanced_testcase {
             }
         }
 
+        foreach ($this->extrasuspendedstudents as $i => $suspendedstudent) {
+            $this->getDataGenerator()->enrol_user($suspendedstudent->id,
+                                                  $this->course->id,
+                                                  $studentrole->id, 'manual', 0, 0, ENROL_USER_SUSPENDED);
+            if ($i < (self::EXTRA_SUSPENDED_COUNT / 2)) {
+                groups_add_member($this->groups[$i % self::GROUP_COUNT], $suspendedstudent);
+            }
+        }
     }
 
     /**

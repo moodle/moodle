@@ -47,7 +47,7 @@ require_once($CFG->dirroot . '/question/engine/lib.php');
  */
 class question_type {
     protected $fileoptions = array(
-        'subdirs' => false,
+        'subdirs' => true,
         'maxfiles' => -1,
         'maxbytes' => 0,
     );

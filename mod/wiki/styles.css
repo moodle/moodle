@@ -363,3 +363,8 @@ a.wiki_edit_section {
     height: 22px;
     vertical-align: middle;
 }
+
+.path-mod-wiki .printicon {
+    background: url([[pix:t/print]]) no-repeat scroll 2px center transparent; padding-left: 20px;
+}
+#page-mod-wiki-prettyview .displayprinticon {text-align: right;}

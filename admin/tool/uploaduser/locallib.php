@@ -183,7 +183,7 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
     $processed = array();
     foreach ($columns as $key=>$unused) {
         $field = $columns[$key];
-        $lcfield = textlib::strtolower($field);
+        $lcfield = core_text::strtolower($field);
         if (in_array($field, $stdfields) or in_array($lcfield, $stdfields)) {
             // standard fields are only lowercase
             $newfield = $lcfield;
@@ -295,18 +295,18 @@ function uu_process_template_callback($username, $firstname, $lastname, $block) 
 
     switch ($block[1]) {
         case '+':
-            $repl = textlib::strtoupper($repl);
+            $repl = core_text::strtoupper($repl);
             break;
         case '-':
-            $repl = textlib::strtolower($repl);
+            $repl = core_text::strtolower($repl);
             break;
         case '~':
-            $repl = textlib::strtotitle($repl);
+            $repl = core_text::strtotitle($repl);
             break;
     }
 
     if (!empty($block[2])) {
-        $repl = textlib::substr($repl, 0 , $block[2]);
+        $repl = core_text::substr($repl, 0 , $block[2]);
     }
 
     return $repl;
@@ -321,12 +321,13 @@ function uu_process_template_callback($username, $firstname, $lastname, $block) 
  * @return array type=>name
  */
 function uu_supported_auths() {
-    // only following plugins are guaranteed to work properly
-    $whitelist = array('manual', 'nologin', 'none', 'email');
+    // Get all the enabled plugins.
     $plugins = get_enabled_auth_plugins();
     $choices = array();
     foreach ($plugins as $plugin) {
-        if (!in_array($plugin, $whitelist)) {
+        $objplugin = get_auth_plugin($plugin);
+        // If the plugin can not be manually set skip it.
+        if (!$objplugin->can_be_manually_set()) {
             continue;
         }
         $choices[$plugin] = get_string('pluginname', "auth_{$plugin}");

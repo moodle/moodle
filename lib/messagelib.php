@@ -116,7 +116,7 @@ function message_send($eventdata) {
 
     if (PHPUNIT_TEST and class_exists('phpunit_util')) {
         // Add some more tests to make sure the normal code can actually work.
-        $componentdir = get_component_directory($eventdata->component);
+        $componentdir = core_component::get_component_directory($eventdata->component);
         if (!$componentdir or !is_dir($componentdir)) {
             throw new coding_exception('Invalid component specified in message-send(): '.$eventdata->component);
         }
@@ -392,22 +392,6 @@ function message_set_default_message_preference($component, $messagename, $filep
 }
 
 /**
- * This function has been deprecated please use {@link message_get_providers_for_user()} instead.
- *
- * Returns the active providers for the current user, based on capability
- *
- * @see message_get_providers_for_user()
- * @deprecated since 2.1
- * @todo Remove in 2.5 (MDL-34454)
- * @return array An array of message providers
- */
-function message_get_my_providers() {
-    global $USER;
-    debugging('message_get_my_providers is deprecated please update your code', DEBUG_DEVELOPER);
-    return message_get_providers_for_user($USER->id);
-}
-
-/**
  * Returns the active providers for the user specified, based on capability
  *
  * @param int $userid id of user
@@ -430,7 +414,7 @@ function message_get_providers_for_user($userid) {
 
     // If the component is an enrolment plugin, check it is enabled
     foreach ($providers as $providerid => $provider) {
-        list($type, $name) = normalize_component($provider->component);
+        list($type, $name) = core_component::normalize_component($provider->component);
         if ($type == 'enrol' && !enrol_is_enabled($name)) {
             unset($providers[$providerid]);
         }
@@ -541,7 +525,7 @@ function message_get_providers_from_db($component) {
  * @return array An array of message providers or empty array if not exists
  */
 function message_get_providers_from_file($component) {
-    $defpath = get_component_directory($component).'/db/messages.php';
+    $defpath = core_component::get_component_directory($component).'/db/messages.php';
 
     $messageproviders = array();
 

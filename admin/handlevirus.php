@@ -39,10 +39,11 @@ while(!feof($fd)) {
     $action = clam_handle_infected_file($file,$log->userid,true);
     clam_replace_infected_file($file);
 
-    list($ctxselect, $ctxjoin) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
+    $ctxselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = c.id AND ctx.contextlevel = :contextlevel)";
     $sql = "SELECT c.id, c.fullname $ctxselect FROM {course} c $ctxjoin WHERE c.id = :courseid";
-    $course = $DB->get_record_sql($sql, array('courseid' => $log->course));
-    context_instance_preload($course);
+    $course = $DB->get_record_sql($sql, array('courseid' => $log->course, 'contextlevel' => CONTEXT_COURSE));
+    context_helper::preload_from_record($course);
 
     $user = $DB->get_record("user", array("id"=>$log->userid));
     $subject = get_string('virusfoundsubject','moodle',format_string($site->fullname));

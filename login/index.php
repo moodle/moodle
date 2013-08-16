@@ -119,7 +119,7 @@ if ($user !== false or $frm !== false or $errormsg !== '') {
 
 if ($frm and isset($frm->username)) {                             // Login WITH cookies
 
-    $frm->username = trim(textlib::strtolower($frm->username));
+    $frm->username = trim(core_text::strtolower($frm->username));
 
     if (is_enabled_auth('none') ) {
         if ($frm->username !== clean_param($frm->username, PARAM_USERNAME)) {
@@ -177,8 +177,6 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         }
 
     /// Let's get them all set up.
-        add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID,
-                   $user->id, 0, $user->id);
         complete_user_login($user);
 
         // sets the username cookie

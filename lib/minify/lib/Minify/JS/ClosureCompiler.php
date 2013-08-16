@@ -69,7 +69,7 @@ class Minify_JS_ClosureCompiler {
         }
         return $response;
     }
-    
+
     protected $_fallbackFunc = null;
 
     protected function _getResponse($postBody)
@@ -79,7 +79,7 @@ class Minify_JS_ClosureCompiler {
             $contents = file_get_contents(self::URL, false, stream_context_create(array(
                 'http' => array(
                     'method' => 'POST',
-                    'header' => 'Content-type: application/x-www-form-urlencoded',
+                    'header' => "Content-type: application/x-www-form-urlencoded\r\nConnection: close\r\n",
                     'content' => $postBody,
                     'max_redirects' => 0,
                     'timeout' => 15,
@@ -125,7 +125,6 @@ class Minify_JS_ClosureCompiler {
      */
     protected function _fallback($js)
     {
-        require_once 'JSMin.php';
         return JSMin::minify($js);
     }
 }

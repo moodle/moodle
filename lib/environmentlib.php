@@ -962,7 +962,7 @@ function environment_check_database($version, $env_select) {
     }
 
 /// Now search the version we are using (depending of vendor)
-    $current_vendor = $DB->get_dbfamily();
+    $current_vendor = $DB->get_dbvendor();
 
     $dbinfo = $DB->get_server_info();
     $current_version = normalize_version($dbinfo['version']);

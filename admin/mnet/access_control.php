@@ -103,7 +103,7 @@ if ($form = data_submitted() and confirm_sesskey()) {
         $usernames = explode(',', $form->username);
 
         foreach ($usernames as $username) {
-            $username = trim(textlib::strtolower($username));
+            $username = trim(core_text::strtolower($username));
             if (!empty($username)) {
                 if (mnet_update_sso_access_control($username, $form->mnet_host_id, $form->accessctrl)) {
                     if ($form->accessctrl == 'allow') {

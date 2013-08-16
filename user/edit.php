@@ -50,7 +50,7 @@ if ($course->id != SITEID) {
     }
     redirect(get_login_url());
 } else {
-    $PAGE->set_context(get_system_context());
+    $PAGE->set_context(context_system::instance());
     $PAGE->set_pagelayout('standard');
 }
 

@@ -294,7 +294,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
         $html = '';
         $link = new moodle_url('/mod/wiki/prettyview.php', array('pageid' => $page->id));
         $html .= $this->output->container_start('wiki_right');
-        $html .= $this->output->action_link($link, get_string('prettyprint', 'wiki'), new popup_action('click', $link));
+        $html .= $this->output->action_link($link, get_string('prettyprint', 'wiki'), new popup_action('click', $link), array('class' => 'printicon'));
         $html .= $this->output->container_end();
         return $html;
     }

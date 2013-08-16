@@ -166,15 +166,17 @@ class question_usage_by_activity {
      */
     public function add_question(question_definition $question, $maxmark = null) {
         $qa = new question_attempt($question, $this->get_id(), $this->observer, $maxmark);
-        if (count($this->questionattempts) == 0) {
-            $this->questionattempts[1] = $qa;
-        } else {
-            $this->questionattempts[] = $qa;
-        }
-        end($this->questionattempts); // Ready to get the last key on the next line.
-        $qa->set_slot(key($this->questionattempts));
+        $qa->set_slot($this->next_slot_number());
+        $this->questionattempts[$this->next_slot_number()] = $qa;
         $this->observer->notify_attempt_added($qa);
         return $qa->get_slot();
+    }
+
+    /**
+     * The slot number that will be allotted to the next question added.
+     */
+    public function next_slot_number() {
+        return count($this->questionattempts) + 1;
     }
 
     /**
@@ -582,6 +584,28 @@ class question_usage_by_activity {
      */
     public function extract_responses($slot, $postdata = null) {
         return $this->get_question_attempt($slot)->get_submitted_data($postdata);
+    }
+
+    /**
+     * Transform an array of response data for slots to an array of post data as you would get from quiz attempt form.
+     *
+     * @param $simulatedresponses array keys are slot nos => contains arrays representing student
+     *                                   responses which will be passed to question_definition::prepare_simulated_post_data method
+     *                                   and then have the appropriate prefix added.
+     * @return array simulated post data
+     */
+    public function prepare_simulated_post_data($simulatedresponses) {
+        $simulatedpostdata = array();
+        $simulatedpostdata['slots'] = implode(',', array_keys($simulatedresponses));
+        foreach ($simulatedresponses as $slot => $responsedata) {
+            $prefix = $this->get_field_prefix($slot);
+            $slotresponse = $this->get_question($slot)->prepare_simulated_post_data($responsedata);
+            $slotresponse[':sequencecheck'] =  $this->get_question_attempt($slot)->get_sequence_check_count();
+            foreach ($slotresponse as $key => $value) {
+                $simulatedpostdata[$prefix.$key] = $value;
+            }
+        }
+        return $simulatedpostdata;
     }
 
     /**

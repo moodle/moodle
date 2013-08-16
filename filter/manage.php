@@ -53,7 +53,7 @@ if (!in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, C
 
 $isfrontpage = ($context->contextlevel == CONTEXT_COURSE && $context->instanceid == SITEID);
 
-$contextname = print_context_name($context);
+$contextname = $context->get_context_name();
 
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $heading = "$SITE->fullname: ".get_string("categories");
@@ -212,7 +212,7 @@ if (empty($availablefilters)) {
 /// Appropriate back link.
 if (!$isfrontpage) {
     echo html_writer::start_tag('div', array('class'=>'backlink'));
-    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>get_context_url($context)));
+    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href' => $context->get_url()));
     echo html_writer::end_tag('div');
 }
 

@@ -91,10 +91,13 @@ class block_settings extends block_base {
     }
 
     function get_required_javascript() {
-        global $CFG;
-        $arguments = array('id' => $this->instance->id, 'instance' => $this->instance->id, 'candock' => $this->instance_can_be_docked());
-        $this->page->requires->yui_module(array('core_dock', 'moodle-block_navigation-navigation'), 'M.block_navigation.init_add_tree', array($arguments));
-        user_preference_allow_ajax_update('docked_block_instance_'.$this->instance->id, PARAM_INT);
+        parent::get_required_javascript();
+        $arguments = array(
+            'id' => $this->instance->id,
+            'instance' => $this->instance->id,
+            'candock' => $this->instance_can_be_docked()
+        );
+        $this->page->requires->yui_module('moodle-block_navigation-navigation', 'M.block_navigation.init_add_tree', array($arguments));
     }
 
     /**

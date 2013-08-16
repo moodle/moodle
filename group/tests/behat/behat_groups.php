@@ -51,36 +51,39 @@ class behat_groups extends behat_base {
         global $DB;
 
         $user = $DB->get_record('user', array('username' => $username));
-        $userfullname = fullname($user);
+        $userfullname = $this->getSession()->getSelectorsHandler()->xpathLiteral(fullname($user));
+
+        // Using a xpath liternal to avoid problems with quotes and double quotes.
+        $groupname = $this->getSession()->getSelectorsHandler()->xpathLiteral($groupname);
 
         // We don't know the option text as it contains the number of users in the group.
         $select = $this->find_field('groups');
-        $xpath = "//select[@id='groups']/descendant::option[contains(., '" . $groupname . "')]";
+        $xpath = "//select[@id='groups']/descendant::option[contains(., $groupname)]";
         $groupoption = $this->find('xpath', $xpath);
         $fulloption = $groupoption->getText();
         $select->selectOption($fulloption);
 
         // Here we don't need to wait for the AJAX response.
-        $this->find_button('Add/remove users')->click();
+        $this->find_button(get_string('adduserstogroup', 'group'))->click();
 
         // Wait for add/remove members page to be loaded.
         $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
 
         // Getting the option and selecting it.
         $select = $this->find_field('addselect');
-        $xpath = "//select[@id='addselect']/descendant::option[contains(., '" . $userfullname . "')]";
+        $xpath = "//select[@id='addselect']/descendant::option[contains(., $userfullname)]";
         $memberoption = $this->find('xpath', $xpath);
         $fulloption = $memberoption->getText();
         $select->selectOption($fulloption);
 
         // Click add button.
-        $this->find_button('Add')->click();
+        $this->find_button(get_string('add'))->click();
 
         // Wait for the page to load.
         $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
 
         // Returning to the main groups page.
-        $this->find_button('Back to groups')->click();
+        $this->find_button(get_string('backtogroups', 'group'))->click();
     }
 
 }

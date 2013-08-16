@@ -99,21 +99,6 @@ class mssql_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns localised database description
-     * Note: can be used before connect()
-     * @return string
-     */
-    public function get_configuration_hints() {
-        $str = get_string('databasesettingssub_mssql', 'install');
-        $str .= "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
-        $str .= "onclick=\"return window.open('http://docs.moodle.org/en/Installing_MSSQL_for_PHP')\"";
-        $str .= ">";
-        $str .= '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
-        $str .= get_string('moodledocslink', 'install') . '</a></p>';
-        return $str;
-    }
-
-    /**
      * Connect to db
      * Must be called before other methods.
      * @param string $dbhost The database host.
@@ -140,7 +125,8 @@ class mssql_native_moodle_database extends moodle_database {
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
         $dbhost = $this->dbhost;
-        if (isset($dboptions['dbport'])) {
+        // Zero shouldn't be used as a port number so doing a check with empty() should be fine.
+        if (!empty($dboptions['dbport'])) {
             if (stristr(PHP_OS, 'win') && !stristr(PHP_OS, 'darwin')) {
                 $dbhost .= ','.$dboptions['dbport'];
             } else {
@@ -478,9 +464,15 @@ class mssql_native_moodle_database extends moodle_database {
             // id columns being auto_incremnt are PK by definition
             $info->primary_key = ($info->name == 'id' && $info->meta_type == 'R' && $info->auto_increment);
 
-            // Put correct length for character and LOB types
-            $info->max_length = $info->meta_type == 'C' ? $rawcolumn->char_max_length : $rawcolumn->max_length;
-            $info->max_length = ($info->meta_type == 'X' || $info->meta_type == 'B') ? -1 : $info->max_length;
+            if ($info->meta_type === 'C' and $rawcolumn->char_max_length == -1) {
+                // This is NVARCHAR(MAX), not a normal NVARCHAR.
+                $info->max_length = -1;
+                $info->meta_type = 'X';
+            } else {
+                // Put correct length for character and LOB types
+                $info->max_length = $info->meta_type == 'C' ? $rawcolumn->char_max_length : $rawcolumn->max_length;
+                $info->max_length = ($info->meta_type == 'X' || $info->meta_type == 'B') ? -1 : $info->max_length;
+            }
 
             // Scale
             $info->scale = $rawcolumn->scale ? $rawcolumn->scale : false;
@@ -587,6 +579,7 @@ class mssql_native_moodle_database extends moodle_database {
                 $type = 'X';
                 break;
             case 'IMAGE':
+            case 'VARBINARY':
             case 'VARBINARY(MAX)':
                 $type = 'B';
                 break;

@@ -523,7 +523,7 @@ class rating_manager {
 
         // Get the item table name, the item id field, and the item user field for the given rating item
         // from the related component.
-        list($type, $name) = normalize_component($options->component);
+        list($type, $name) = core_component::normalize_component($options->component);
         $default = array(null, 'id', 'userid');
         list($itemtablename, $itemidcol, $itemuseridcol) = plugin_callback($type, $name, 'rating', 'get_item_fields', array($options), $default);
 
@@ -791,15 +791,17 @@ class rating_manager {
             $modulename = $options->modulename;
             $moduleid   = intval($options->moduleid);
 
-            //going direct to the db for the context id seems wrong
-            list($ctxselect, $ctxjoin) = context_instance_preload_sql('cm.id', CONTEXT_MODULE, 'ctx');
+            // Going direct to the db for the context id seems wrong.
+            $ctxselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+            $ctxjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = cm.id AND ctx.contextlevel = :contextlevel)";
             $sql = "SELECT cm.* $ctxselect
                       FROM {course_modules} cm
                  LEFT JOIN {modules} mo ON mo.id = cm.module
                  LEFT JOIN {{$modulename}} m ON m.id = cm.instance $ctxjoin
                      WHERE mo.name=:modulename AND
                            m.id=:moduleid";
-            $contextrecord = $DB->get_record_sql($sql, array('modulename'=>$modulename, 'moduleid'=>$moduleid), '*', MUST_EXIST);
+            $params = array('modulename' => $modulename, 'moduleid' => $moduleid, 'contextlevel' => CONTEXT_MODULE);
+            $contextrecord = $DB->get_record_sql($sql, $params, '*', MUST_EXIST);
             $contextid = $contextrecord->ctxid;
         }
 
@@ -928,7 +930,7 @@ class rating_manager {
         $pluginpermissionsarray = null;
         $defaultpluginpermissions = array('rate'=>false,'view'=>false,'viewany'=>false,'viewall'=>false);//deny by default
         if (!empty($component)) {
-            list($type, $name) = normalize_component($component);
+            list($type, $name) = core_component::normalize_component($component);
             $pluginpermissionsarray = plugin_callback($type, $name, 'rating', 'permissions', array($contextid, $component, $ratingarea), $defaultpluginpermissions);
         } else {
             $pluginpermissionsarray = $defaultpluginpermissions;
@@ -971,7 +973,7 @@ class rating_manager {
             throw new coding_exception('The rateduserid option is now a required option when checking rating validity');
         }
 
-        list($plugintype, $pluginname) = normalize_component($params['component']);
+        list($plugintype, $pluginname) = core_component::normalize_component($params['component']);
 
         //this looks for a function like forum_rating_validate() in mod_forum lib.php
         //wrapping the params array in another array as call_user_func_array() expands arrays into multiple arguments

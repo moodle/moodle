@@ -106,6 +106,7 @@ function quiz_add_instance($quiz) {
  */
 function quiz_update_instance($quiz, $mform) {
     global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
     // Process the options from the form.
     $result = quiz_process_options($quiz);
@@ -113,11 +114,16 @@ function quiz_update_instance($quiz, $mform) {
         return $result;
     }
 
+    // Get the current value, so we can see what changed.
     $oldquiz = $DB->get_record('quiz', array('id' => $quiz->instance));
+
+    // We need two values from the existing DB record that are not in the form,
+    // in some of the function calls below.
+    $quiz->sumgrades = $oldquiz->sumgrades;
+    $quiz->grade     = $oldquiz->grade;
 
     // Repaginate, if asked to.
     if (!$quiz->shufflequestions && !empty($quiz->repaginatenow)) {
-        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
         $quiz->questions = quiz_repaginate(quiz_clean_layout($oldquiz->questions, true),
                 $quiz->questionsperpage);
     }
@@ -131,19 +137,15 @@ function quiz_update_instance($quiz, $mform) {
     quiz_after_add_or_update($quiz);
 
     if ($oldquiz->grademethod != $quiz->grademethod) {
-        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-        $quiz->sumgrades = $oldquiz->sumgrades;
-        $quiz->grade = $oldquiz->grade;
         quiz_update_all_final_grades($quiz);
         quiz_update_grades($quiz);
     }
 
-    $updateattempts = $oldquiz->timelimit != $quiz->timelimit
-                   || $oldquiz->timeclose != $quiz->timeclose
-                   || $oldquiz->graceperiod != $quiz->graceperiod;
-    if ($updateattempts) {
-        require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-        quiz_update_open_attempts(array('quizid'=>$quiz->id));
+    $quizdateschanged = $oldquiz->timelimit   != $quiz->timelimit
+                     || $oldquiz->timeclose   != $quiz->timeclose
+                     || $oldquiz->graceperiod != $quiz->graceperiod;
+    if ($quizdateschanged) {
+        quiz_update_open_attempts(array('quizid' => $quiz->id));
     }
 
     // Delete any previous preview attempts.
@@ -715,6 +717,13 @@ function quiz_grade_item_update($quiz, $grades = null) {
         // b) open enabled, closed disabled - we can not "hide after",
         //    grades are kept visible even after closing.
         $params['hidden'] = 0;
+    }
+
+    if (!$params['hidden']) {
+        // If the grade item is not hidden by the quiz logic, then we need to
+        // hide it if the quiz is hidden from students.
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id);
+        $params['hidden'] = !$cm->visible;
     }
 
     if ($grades  === 'reset') {

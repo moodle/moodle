@@ -30,7 +30,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/notes/externallib.php');
 
-class core_notes_external_testcase extends externallib_advanced_testcase {
+class core_notes_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test create_notes

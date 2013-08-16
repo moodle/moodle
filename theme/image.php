@@ -59,7 +59,7 @@ if ($slashargument = min_get_slash_argument()) {
 }
 
 if (empty($component) or $component === 'moodle' or $component === 'core') {
-    $component = 'moodle';
+    $component = 'core';
 }
 
 if (empty($image)) {
@@ -74,12 +74,12 @@ if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
     image_not_found();
 }
 
-$candidatelocation = "$CFG->cachedir/theme/$themename/pix/$component";
-$etag = sha1("$themename/$component/$rev/$image");
+$candidatelocation = "$CFG->localcachedir/theme/$rev/$themename/pix/$component";
+$etag = sha1("$rev/$themename/$component/$image");
 
-if ($rev > -1) {
+if ($rev > 0) {
     if (file_exists("$candidatelocation/$image.error")) {
-        // this is a major speedup if there are multiple missing images,
+        // This is a major speedup if there are multiple missing images,
         // the only problem is that random requests may pollute our cache.
         image_not_found();
     }
@@ -130,26 +130,37 @@ define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
 require("$CFG->dirroot/lib/setup.php");
 
 $theme = theme_config::load($themename);
-$rev = theme_get_revision();
-$etag = sha1("$themename/$component/$rev/$image");
+$themerev = theme_get_revision();
+
+if ($themerev <= 0 or $rev != $themerev) {
+    // Do not send caching headers if they do not request current revision,
+    // we do not want to pollute browser caches with outdated images.
+    $imagefile = $theme->resolve_image_location($image, $component, $usesvg);
+    if (empty($imagefile) or !is_readable($imagefile)) {
+        image_not_found();
+    }
+    send_uncached_image($imagefile);
+}
+
+make_localcache_directory('theme', false);
 
 // We're not using SVG and there is no cached version of this file (in any format).
 // As we're going to be caching a format other than svg, and because svg use is conditional we need to ensure that at the same
 // time we cache a version of the SVG if it exists. If we don't do this other users who ask for SVG would not ever get it as
 // there is a cached image already of another format.
 // Remember this only gets run once before any candidate exists, and only if we want a cached revision.
-if (!$usesvg && $rev > -1) {
+if (!$usesvg) {
     $imagefile = $theme->resolve_image_location($image, $component, true);
     if (!empty($imagefile) && is_readable($imagefile)) {
         $cacheimage = cache_image($image, $imagefile, $candidatelocation);
         $pathinfo = pathinfo($imagefile);
-        // There is no SVG equivilant, we've just successfully cached an image of another format.
+        // There is no SVG equivalent, we've just successfully cached an image of another format.
         if ($pathinfo['extension'] !== 'svg') {
             // Serve the file as we would in a normal request.
             if (connection_aborted()) {
                 die;
             }
-            // make sure nothing failed
+            // Make sure nothing failed.
             clearstatcache();
             if (file_exists($cacheimage)) {
                 send_cached_image($cacheimage, $etag);
@@ -163,28 +174,24 @@ if (!$usesvg && $rev > -1) {
 // Either SVG was requested or we've cached a SVG version and are ready to serve a regular format.
 $imagefile = $theme->resolve_image_location($image, $component, $usesvg);
 if (empty($imagefile) or !is_readable($imagefile)) {
-    if ($rev > -1) {
-        if (!file_exists($candidatelocation)) {
-            @mkdir($candidatelocation, $CFG->directorypermissions, true);
-        }
-        // make note we can not find this file
-        $cacheimage = "$candidatelocation/$image.error";
-        $fp = fopen($cacheimage, 'w');
-        fclose($fp);
+    if (!file_exists($candidatelocation)) {
+        @mkdir($candidatelocation, $CFG->directorypermissions, true);
     }
+    // Make note we can not find this file.
+    $cacheimage = "$candidatelocation/$image.error";
+    $fp = fopen($cacheimage, 'w');
+    fclose($fp);
     image_not_found();
 }
 
-if ($rev > -1) {
-    $cacheimage = cache_image($image, $imagefile, $candidatelocation);
-    if (connection_aborted()) {
-        die;
-    }
-    // make sure nothing failed
-    clearstatcache();
-    if (file_exists($cacheimage)) {
-        send_cached_image($cacheimage, $etag);
-    }
+$cacheimage = cache_image($image, $imagefile, $candidatelocation);
+if (connection_aborted()) {
+    die;
+}
+// Make sure nothing failed.
+clearstatcache();
+if (file_exists($cacheimage)) {
+    send_cached_image($cacheimage, $etag);
 }
 
 send_uncached_image($imagefile);

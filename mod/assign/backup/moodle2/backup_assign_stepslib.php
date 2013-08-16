@@ -68,7 +68,6 @@ class backup_assign_activity_structure_step extends backup_activity_structure_st
                                                   'markingworkflow',
                                                   'markingallocation'));
 
-
         $userflags = new backup_nested_element('userflags');
 
         $userflag = new backup_nested_element('userflag', array('id'),

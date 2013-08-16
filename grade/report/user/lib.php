@@ -337,6 +337,9 @@ class grade_report_user extends grade_report {
 
         /// Process those items that have scores associated
         if ($type == 'item' or $type == 'categoryitem' or $type == 'courseitem') {
+            $header_row = "row_{$eid}_{$this->user->id}";
+            $header_cat = "cat_{$grade_object->categoryid}_{$this->user->id}";
+
             if (! $grade_grade = grade_grade::fetch(array('itemid'=>$grade_object->id,'userid'=>$this->user->id))) {
                 $grade_grade = new grade_grade();
                 $grade_grade->userid = $this->user->id;
@@ -365,7 +368,8 @@ class grade_report_user extends grade_report {
                     $cm = $instances[$grade_object->iteminstance];
                     if (!$cm->uservisible) {
                         // Further checks are required to determine whether the activity is entirely hidden or just greyed out.
-                        if ($cm->is_user_access_restricted_by_group() || $cm->is_user_access_restricted_by_conditional_access()) {
+                        if ($cm->is_user_access_restricted_by_group() || $cm->is_user_access_restricted_by_conditional_access() ||
+                                $cm->is_user_access_restricted_by_capability()) {
                             $hide = true;
                         }
                     }
@@ -386,11 +390,16 @@ class grade_report_user extends grade_report {
                 } else {
                    $class .= ($type == 'categoryitem' or $type == 'courseitem') ? " ".$alter."d$depth baggb" : " item b1b";
                 }
+                if ($type == 'categoryitem' or $type == 'courseitem') {
+                    $header_cat = "cat_{$grade_object->iteminstance}_{$this->user->id}";
+                }
 
                 /// Name
                 $data['itemname']['content'] = $fullname;
                 $data['itemname']['class'] = $class;
                 $data['itemname']['colspan'] = ($this->maxdepth - $depth);
+                $data['itemname']['celltype'] = 'th';
+                $data['itemname']['id'] = $header_row;
 
                 /// Actual Grade
                 $gradeval = $grade_grade->finalgrade;
@@ -403,6 +412,7 @@ class grade_report_user extends grade_report {
                 if ($this->showweight) {
                     $data['weight']['class'] = $class;
                     $data['weight']['content'] = '-';
+                    $data['weight']['headers'] = "$header_cat $header_row weight";
                     // has a weight assigned, might be extra credit
                     if ($grade_object->aggregationcoef > 0 && $type <> 'courseitem') {
                         $data['weight']['content'] = number_format($grade_object->aggregationcoef,2).'%';
@@ -428,12 +438,14 @@ class grade_report_user extends grade_report {
                         $gradeval = $this->blank_hidden_total($this->courseid, $grade_grade->grade_item, $gradeval);
                         $data['grade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true);
                     }
+                    $data['grade']['headers'] = "$header_cat $header_row grade";
                 }
 
                 // Range
                 if ($this->showrange) {
                     $data['range']['class'] = $class;
                     $data['range']['content'] = $grade_grade->grade_item->get_formatted_range(GRADE_DISPLAY_TYPE_REAL, $this->rangedecimals);
+                    $data['range']['headers'] = "$header_cat $header_row range";
                 }
 
                 // Percentage
@@ -448,6 +460,7 @@ class grade_report_user extends grade_report {
                         $data['percentage']['class'] = $class;
                         $data['percentage']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_PERCENTAGE);
                     }
+                    $data['percentage']['headers'] = "$header_cat $header_row percentage";
                 }
 
                 // Lettergrade
@@ -466,6 +479,7 @@ class grade_report_user extends grade_report {
                         $data['lettergrade']['class'] = $class;
                         $data['lettergrade']['content'] = grade_format_gradevalue($gradeval, $grade_grade->grade_item, true, GRADE_DISPLAY_TYPE_LETTER);
                     }
+                    $data['lettergrade']['headers'] = "$header_cat $header_row lettergrade";
                 }
 
                 // Rank
@@ -493,6 +507,7 @@ class grade_report_user extends grade_report {
                         $data['rank']['class'] = $class;
                         $data['rank']['content'] = "$rank/".$this->get_numusers(false); // total course users
                     }
+                    $data['rank']['headers'] = "$header_cat $header_row rank";
                 }
 
                 // Average
@@ -503,6 +518,7 @@ class grade_report_user extends grade_report {
                     } else {
                         $data['average']['content'] = '-';
                     }
+                    $data['average']['headers'] = "$header_cat $header_row average";
                 }
 
                 // Feedback
@@ -517,6 +533,7 @@ class grade_report_user extends grade_report {
                         $data['feedback']['class'] = $classfeedback.' feedbacktext';
                         $data['feedback']['content'] = format_text($grade_grade->feedback, $grade_grade->feedbackformat);
                     }
+                    $data['feedback']['headers'] = "$header_cat $header_row feedback";
                 }
             }
         }
@@ -533,6 +550,8 @@ class grade_report_user extends grade_report {
             }
             $data['itemname']['colspan'] = ($this->maxdepth - $depth + count($this->tablecolumns) - 1);
             $data['itemname']['content'] = $fullname;
+            $data['itemname']['celltype'] = 'th';
+            $data['itemname']['id'] = "cat_{$grade_object->id}_{$this->user->id}";
         }
 
         /// Add this row to the overall system
@@ -556,13 +575,16 @@ class grade_report_user extends grade_report {
 
         /// Build table structure
         $html = "
-            <table cellspacing='0' cellpadding='0' class='boxaligncenter generaltable user-grade'>
+            <table cellspacing='0'
+                   cellpadding='0'
+                   summary='" . s($this->get_lang_string('tablesummary', 'gradereport_user')) . "'
+                   class='boxaligncenter generaltable user-grade'>
             <thead>
                 <tr>
-                    <th class=\"header\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
+                    <th id='".$this->tablecolumns[0]."' class=\"header\" colspan='$maxspan'>".$this->tableheaders[0]."</th>\n";
 
         for ($i = 1; $i < count($this->tableheaders); $i++) {
-            $html .= "<th class=\"header\">".$this->tableheaders[$i]."</th>\n";
+            $html .= "<th id='".$this->tablecolumns[$i]."' class=\"header\">".$this->tableheaders[$i]."</th>\n";
         }
 
         $html .= "
@@ -583,8 +605,11 @@ class grade_report_user extends grade_report {
                 $class = (isset($this->tabledata[$i][$name]['class'])) ? $this->tabledata[$i][$name]['class'] : '';
                 $colspan = (isset($this->tabledata[$i][$name]['colspan'])) ? "colspan='".$this->tabledata[$i][$name]['colspan']."'" : '';
                 $content = (isset($this->tabledata[$i][$name]['content'])) ? $this->tabledata[$i][$name]['content'] : null;
+                $celltype = (isset($this->tabledata[$i][$name]['celltype'])) ? $this->tabledata[$i][$name]['celltype'] : 'td';
+                $id = (isset($this->tabledata[$i][$name]['id'])) ? "id='{$this->tabledata[$i][$name]['id']}'" : '';
+                $headers = (isset($this->tabledata[$i][$name]['headers'])) ? "headers='{$this->tabledata[$i][$name]['headers']}'" : '';
                 if (isset($content)) {
-                    $html .= "<td class='$class' $colspan>$content</td>\n";
+                    $html .= "<$celltype $id $headers class='$class' $colspan>$content</$celltype>\n";
                 }
             }
             $html .= "</tr>\n";
@@ -611,42 +636,34 @@ class grade_report_user extends grade_report {
 
     /**
      * Builds the grade item averages.
-     *
      */
     function calculate_averages() {
         global $USER, $DB;
 
         if ($this->showaverage) {
-            // this settings are actually grader report settings (not user report)
+            // This settings are actually grader report settings (not user report)
             // however we're using them as having two separate but identical settings the
-            // user would have to keep in sync would be annoying
+            // user would have to keep in sync would be annoying.
             $averagesdisplaytype   = $this->get_pref('averagesdisplaytype');
             $averagesdecimalpoints = $this->get_pref('averagesdecimalpoints');
             $meanselection         = $this->get_pref('meanselection');
             $shownumberofgrades    = $this->get_pref('shownumberofgrades');
 
             $avghtml = '';
-            $avgcssclass = 'avg';
-
-            $straverage = get_string('overallaverage', 'grades');
-
             $groupsql = $this->groupsql;
             $groupwheresql = $this->groupwheresql;
-            //$groupwheresqlparams = ;
-
-            if ($shownumberofgrades) {
-                $straverage .= ' (' . get_string('submissions', 'grades') . ') ';
-            }
-
             $totalcount = $this->get_numusers(false);
 
-            //limit to users with a gradeable role ie students
+            // We want to query both the current context and parent contexts.
+            list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+
+            // Limit to users with a gradeable role ie students.
             list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
-            //limit to users with an active enrolment
+            // Limit to users with an active enrolment.
             list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
 
-            $params = array_merge($this->groupwheresql_params, $gradebookrolesparams, $enrolledparams);
+            $params = array_merge($this->groupwheresql_params, $gradebookrolesparams, $enrolledparams, $relatedctxparams);
             $params['courseid'] = $this->courseid;
 
             // find sums of all grade items in course
@@ -659,7 +676,7 @@ class grade_report_user extends grade_report {
                                    SELECT DISTINCT ra.userid
                                      FROM {role_assignments} ra
                                     WHERE ra.roleid $gradebookrolessql
-                                      AND ra.contextid " . get_related_contexts_string($this->context) . "
+                                      AND ra.contextid $relatedctxsql
                            ) rainner ON rainner.userid = u.id
                       $groupsql
                      WHERE gi.courseid = :courseid
@@ -690,7 +707,7 @@ class grade_report_user extends grade_report {
                                SELECT DISTINCT ra.userid
                                  FROM {role_assignments} ra
                                 WHERE ra.roleid $gradebookrolessql
-                                  AND ra.contextid " . get_related_contexts_string($this->context) . "
+                                  AND ra.contextid $relatedctxsql
                            ) rainner ON rainner.userid = u.id
                       LEFT JOIN {grade_grades} gg
                              ON (gg.itemid = gi.id AND gg.userid = u.id AND gg.finalgrade IS NOT NULL AND gg.hidden = 0)
@@ -731,8 +748,6 @@ class grade_report_user extends grade_report {
                     $mean_count = $totalcount;
                 }
 
-                $decimalpoints = $item->get_decimals();
-
                 // Determine which display type to use for this average
                 if (!empty($USER->gradeediting) && $USER->gradeediting[$this->courseid]) {
                     $displaytype = GRADE_DISPLAY_TYPE_REAL;
@@ -747,7 +762,6 @@ class grade_report_user extends grade_report {
                 // Override grade_item setting if a display preference (not inherit) was set for the averages
                 if ($averagesdecimalpoints == GRADE_REPORT_PREFERENCE_INHERIT) {
                     $decimalpoints = $item->get_decimals();
-
                 } else {
                     $decimalpoints = $averagesdecimalpoints;
                 }

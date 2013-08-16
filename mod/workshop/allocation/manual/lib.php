@@ -224,15 +224,18 @@ class workshop_manual_allocator implements workshop_allocator {
 
         // load the participants' submissions
         $submissions = $this->workshop->get_submissions(array_keys($participants));
+        $allnames = get_all_user_name_fields();
         foreach ($submissions as $submission) {
             if (!isset($userinfo[$submission->authorid])) {
                 $userinfo[$submission->authorid]            = new stdclass();
                 $userinfo[$submission->authorid]->id        = $submission->authorid;
-                $userinfo[$submission->authorid]->firstname = $submission->authorfirstname;
-                $userinfo[$submission->authorid]->lastname  = $submission->authorlastname;
                 $userinfo[$submission->authorid]->picture   = $submission->authorpicture;
                 $userinfo[$submission->authorid]->imagealt  = $submission->authorimagealt;
                 $userinfo[$submission->authorid]->email     = $submission->authoremail;
+                foreach ($allnames as $addname) {
+                    $temp = 'author' . $addname;
+                    $userinfo[$submission->authorid]->$addname = $submission->$temp;
+                }
             }
         }
 
@@ -240,8 +243,8 @@ class workshop_manual_allocator implements workshop_allocator {
         $reviewers = array();
         if ($submissions) {
             list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
-            $sql = "SELECT a.id AS assessmentid, a.submissionid,
-                           r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt, r.email,
+            $picturefields = user_picture::fields('r', array(), 'reviewerid');
+            $sql = "SELECT a.id AS assessmentid, a.submissionid, $picturefields,
                            s.id AS submissionid, s.authorid
                       FROM {workshop_assessments} a
                       JOIN {user} r ON (a.reviewerid = r.id)
@@ -252,11 +255,12 @@ class workshop_manual_allocator implements workshop_allocator {
                 if (!isset($userinfo[$reviewer->reviewerid])) {
                     $userinfo[$reviewer->reviewerid]            = new stdclass();
                     $userinfo[$reviewer->reviewerid]->id        = $reviewer->reviewerid;
-                    $userinfo[$reviewer->reviewerid]->firstname = $reviewer->firstname;
-                    $userinfo[$reviewer->reviewerid]->lastname  = $reviewer->lastname;
                     $userinfo[$reviewer->reviewerid]->picture   = $reviewer->picture;
                     $userinfo[$reviewer->reviewerid]->imagealt  = $reviewer->imagealt;
                     $userinfo[$reviewer->reviewerid]->email     = $reviewer->email;
+                    foreach ($allnames as $addname) {
+                        $userinfo[$reviewer->reviewerid]->$addname = $reviewer->$addname;
+                    }
                 }
             }
         }
@@ -265,11 +269,12 @@ class workshop_manual_allocator implements workshop_allocator {
         $reviewees = array();
         if ($participants) {
             list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
+            $namefields = get_all_user_name_fields(true, 'e');
             $params['workshopid'] = $this->workshop->id;
             $sql = "SELECT a.id AS assessmentid, a.submissionid,
                            u.id AS reviewerid,
                            s.id AS submissionid,
-                           e.id AS revieweeid, e.lastname, e.firstname, e.picture, e.imagealt, e.email
+                           e.id AS revieweeid, e.lastname, e.firstname, $namefields, e.picture, e.imagealt, e.email
                       FROM {user} u
                       JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id)
@@ -285,6 +290,9 @@ class workshop_manual_allocator implements workshop_allocator {
                     $userinfo[$reviewee->revieweeid]->picture   = $reviewee->picture;
                     $userinfo[$reviewee->revieweeid]->imagealt  = $reviewee->imagealt;
                     $userinfo[$reviewee->revieweeid]->email     = $reviewee->email;
+                    foreach ($allnames as $addname) {
+                        $userinfo[$reviewee->revieweeid]->$addname = $reviewee->$addname;
+                    }
                 }
             }
         }

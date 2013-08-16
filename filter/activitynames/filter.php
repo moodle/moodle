@@ -36,9 +36,11 @@ class filter_activitynames extends moodle_text_filter {
     static $cachedcourseid;
 
     function filter($text, array $options = array()) {
-        if (!$courseid = get_courseid_from_context($this->context)) {
+        $coursectx = $this->context->get_course_context(false);
+        if (!$coursectx) {
             return $text;
         }
+        $courseid = $coursectx->instanceid;
 
         // Initialise/invalidate our trivial cache if dealing with a different course
         if (!isset(self::$cachedcourseid) || self::$cachedcourseid !== (int)$courseid) {

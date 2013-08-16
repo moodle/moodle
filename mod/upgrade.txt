@@ -43,7 +43,7 @@ optional - no changes needed:
 required changes in code:
 * fix missing parameter types in optional_param() and required_param()
 * use new optional_param_array(), required_param_array() or clean_param_array() when dealing with array parameters
-* textlib->asort() replaced by specialized collatorlib::asort()
+* core_text::asort() replaced by specialized core_collator::asort()
 * use new make_temp_directory() and make_cache_directory()
 
 

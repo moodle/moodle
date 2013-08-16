@@ -176,7 +176,7 @@ abstract class backup_qtype_plugin extends backup_plugin {
     public static function get_components_and_fileareas($filter = null) {
         $components = array();
         // Get all the plugins of this type
-        $qtypes = get_plugin_list('qtype');
+        $qtypes = core_component::get_plugin_list('qtype');
         foreach ($qtypes as $name => $path) {
             // Apply filter if specified
             if (!is_null($filter) && $filter != $name) {

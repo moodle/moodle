@@ -30,8 +30,13 @@ class tinymce_moodlenolink extends editor_tinymce_plugin {
     protected function update_init_params(array &$params, context $context,
             array $options = null) {
 
-        // Add button after 'unlink' in advancedbuttons3.
-        $this->add_button_after($params, 3, 'moodlenolink', 'unlink');
+        if ($row = $this->find_button($params, 'unlink')) {
+            // Add button after 'unlink'.
+            $this->add_button_after($params, $row, 'moodlenolink', 'unlink');
+        } else {
+            // Add this button in the end of the first row (by default 'unlink' button should be in the first row).
+            $this->add_button_after($params, 1, 'moodlenolink');
+        }
 
         // Add JS file, which uses default name.
         $this->add_js_plugin($params);

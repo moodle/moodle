@@ -1,0 +1,28 @@
+This files describes API changes for code that uses the question API.
+
+=== 2.6 ===
+
+1) It is sometimes necessary to display bits of question content without having
+   and attempt (question_usage) in progress. Two examples of this are the option
+   in the question bank to display the questiontext, and in the quiz statistics
+   report, where it displays the question text above the report.
+
+   Previously, this display was done using a special method that only worked for
+   the question text, but which would not work for other parts of the question.
+   That old mechanism has been deprecated, and there is a new method that you
+   should use.
+
+   To display the question, replace calls to question_rewrite_questiontext_preview_urls
+   with calls to question_rewrite_question_preview_urls. Because the new function
+   is more flexibile, you have to pass more arguments.
+
+   To perform the necessary permission checks when the file is downloaded, you need
+   to implement the callback [component name]_question_preview_pluginfile.
+   (Previously you implemented [component name]_questiontext_preview_pluginfile.)
+   quiz_statistics_question_preview_pluginfile is an example of what to do.
+
+   question_send_questiontext_file has been deprecated. It is no longer necessary.
+
+   To ensure you are no longer using or defining any deprecated functions,
+   search for the regular expression:
+   question_rewrite_questiontext_preview_urls|_questiontext_preview_pluginfile|question_send_questiontext_file

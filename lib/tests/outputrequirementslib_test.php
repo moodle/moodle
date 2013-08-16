@@ -29,7 +29,7 @@ global $CFG;
 require_once($CFG->libdir . '/outputrequirementslib.php');
 
 
-class outputrequirements_test extends advanced_testcase {
+class core_outputrequirementslib_testcase extends advanced_testcase {
     public function test_string_for_js() {
         $this->resetAfterTest();
 

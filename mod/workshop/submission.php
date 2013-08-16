@@ -187,11 +187,12 @@ if ($edit) {
         if ($workshop->phase == workshop::PHASE_ASSESSMENT) {
             $formdata->late = $formdata->late | 0x2;
         }
+        $logdata = null;
         if (is_null($submission->id)) {
             $submission->id = $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
-            $workshop->log('add submission', $workshop->submission_url($submission->id), $submission->id);
+            $logdata = $workshop->log('add submission', $workshop->submission_url($submission->id), $submission->id, true);
         } else {
-            $workshop->log('update submission', $workshop->submission_url($submission->id), $submission->id);
+            $logdata = $workshop->log('update submission', $workshop->submission_url($submission->id), $submission->id, true);
             if (empty($formdata->id) or empty($submission->id) or ($formdata->id != $submission->id)) {
                 throw new moodle_exception('err_submissionid', 'workshop');
             }
@@ -211,17 +212,18 @@ if ($edit) {
         // send submitted content for plagiarism detection
         $fs = get_file_storage();
         $files = $fs->get_area_files($workshop->context->id, 'mod_workshop', 'submission_attachment', $submission->id);
-        $eventdata = new stdClass();
-        $eventdata->modulename   = 'workshop';
-        $eventdata->cmid         = $cm->id;
-        $eventdata->itemid       = $submission->id;
-        $eventdata->courseid     = $course->id;
-        $eventdata->userid       = $USER->id;
-        $eventdata->content      = $formdata->content;
-        if ($files) {
-            $eventdata->pathnamehashes = array_keys($files);
-        }
-        events_trigger('assessable_content_uploaded', $eventdata);
+
+        $params = array(
+            'context' => $workshop->context,
+            'objectid' => $submission->id,
+            'other' => array(
+                'content' => $formdata->content,
+                'pathnamehashes' => array_keys($files)
+            )
+        );
+        $event = \mod_workshop\event\assessable_uploaded::create($params);
+        $event->set_legacy_logdata($logdata);
+        $event->trigger();
 
         redirect($workshop->submission_url($formdata->id));
     }

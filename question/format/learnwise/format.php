@@ -17,8 +17,7 @@
 /**
  * Examview question importer.
  *
- * @package    qformat
- * @subpackage learnwise
+ * @package    qformat_learnwise
  * @copyright  2005 Alton College, Hampshire, UK
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -54,7 +53,7 @@ class qformat_learnwise extends qformat_default {
         $questions = array();
         $currentquestion = array();
 
-        foreach($lines as $line) {
+        foreach ($lines as $line) {
             $line = trim($line);
             $currentquestion[] = $line;
 
@@ -70,7 +69,7 @@ class qformat_learnwise extends qformat_default {
         global $OUTPUT;
 
         $text = implode(' ', $lines);
-        $text = str_replace(array('\t','\n','\r'), array('','',''), $text);
+        $text = str_replace(array('\t', '\n', '\r'), array('', '', ''), $text);
 
         $startpos = strpos($text, '<question type');
         $endpos = strpos($text, '</question>');
@@ -79,10 +78,10 @@ class qformat_learnwise extends qformat_default {
         }
 
         preg_match("/<question type=[\"\']([^\"\']+)[\"\']>/i", $text, $matches);
-        $type = strtolower($matches[1]); // multichoice or multianswerchoice
+        $type = strtolower($matches[1]); // Multichoice or multianswerchoice.
 
-        $questiontext = textlib::entities_to_utf8($this->stringbetween($text, '<text>', '</text>'));
-        $questionhint = textlib::entities_to_utf8($this->stringbetween($text, '<hint>', '</hint>'));
+        $questiontext = core_text::entities_to_utf8($this->stringbetween($text, '<text>', '</text>'));
+        $questionhint = core_text::entities_to_utf8($this->stringbetween($text, '<hint>', '</hint>'));
         $questionaward = $this->stringbetween($text, '<award>', '</award>');
         $optionlist = $this->stringbetween($text, '<answer>', '</answer>');
 
@@ -101,7 +100,7 @@ class qformat_learnwise extends qformat_default {
                 $correct = $this->stringbetween($option, ' correct="', '">');
                 $answer = $this->stringbetween($option, '">', '</option>');
                 $optionscorrect[$n] = $correct;
-                $optionstext[$n] = textlib::entities_to_utf8($answer);
+                $optionstext[$n] = core_text::entities_to_utf8($answer);
                 ++$n;
             }
         } else if ($type == 'multianswerchoice') {
@@ -127,7 +126,7 @@ class qformat_learnwise extends qformat_default {
                 $answer = $this->stringbetween($option, '">', '</option>');
 
                 $optionscorrect[$n] = $correct;
-                $optionstext[$n] = textlib::entities_to_utf8($answer);
+                $optionstext[$n] = core_text::entities_to_utf8($answer);
                 $optionsaward[$n] = $award;
                 ++$n;
             }

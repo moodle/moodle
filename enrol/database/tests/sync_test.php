@@ -53,6 +53,7 @@ class enrol_database_testcase extends advanced_testcase {
                 set_config('dbsybasequoting', '1', 'enrol_database');
                 break;
 
+            case 'mariadb_native_moodle_database':
             case 'mysqli_native_moodle_database':
                 set_config('dbtype', 'mysqli', 'enrol_database');
                 set_config('dbsetupsql', "SET NAMES 'UTF-8'", 'enrol_database');

@@ -2,11 +2,9 @@
   "moodle-block_navigation-navigation": {
     "requires": [
         "base",
-        "core_dock",
         "io-base",
         "node",
-        "dom",
-        "event-custom",
+        "event-synthetic",
         "event-delegate",
         "json-parse"
     ]

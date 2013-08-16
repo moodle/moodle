@@ -253,6 +253,7 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
             // more points to single template - not useable there
             echo '<option value="##more##">' .get_string('more', 'data'). ' - ##more##</option>';
             echo '<option value="##moreurl##">' .get_string('moreurl', 'data'). ' - ##moreurl##</option>';
+            echo '<option value="##delcheck##">' .get_string('delcheck', 'data'). ' - ##delcheck##</option>';
         }
         echo '</optgroup>';
         echo '<optgroup label="'.get_string('other', 'data').'">';

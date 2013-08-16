@@ -170,7 +170,7 @@ class zip_archive extends file_archive {
             $name = $localname;
             // This should not happen.
             if (!empty($this->encoding) and $this->encoding !== 'utf-8') {
-                $name = @textlib::convert($name, $this->encoding, 'utf-8');
+                $name = @core_text::convert($name, $this->encoding, 'utf-8');
             }
             $name = str_replace('\\', '/', $name);   // no MS \ separators
             $name = clean_param($name, PARAM_PATH);  // only safe chars
@@ -318,10 +318,9 @@ class zip_archive extends file_archive {
         }
         if (substr($fileinfo->pathname, -9) === 'Thumbs.db') {
             $stream = $this->za->getStream($fileinfo->pathname);
-            $info = unpack('Nsiga/Nsigb', fread($stream, 8));
-            $signature = fread($stream, 8);
+            $info = base64_encode(fread($stream, 8));
             fclose($stream);
-            if ($info['siga'] === 0xd0cf11e0 && $info['sigb'] === 0xa1b11ae1) {
+            if ($info === '0M8R4KGxGuE=') {
                 // It's an OLE Compound File - so it's almost certainly a Windows thumbnail cache.
                 return true;
             }
@@ -597,8 +596,8 @@ class zip_archive extends file_archive {
                 }
                 if (!$found and !empty($this->encoding) and $this->encoding !== 'utf-8') {
                     // Try the encoding from open().
-                    $newname = @textlib::convert($name, $this->encoding, 'utf-8');
-                    $original  = textlib::convert($newname, 'utf-8', $this->encoding);
+                    $newname = @core_text::convert($name, $this->encoding, 'utf-8');
+                    $original  = core_text::convert($newname, 'utf-8', $this->encoding);
                     if ($original === $name) {
                         $found = true;
                         $name = $newname;
@@ -650,8 +649,8 @@ class zip_archive extends file_archive {
                                 break;
                         }
                     }
-                    $newname = @textlib::convert($name, $encoding, 'utf-8');
-                    $original  = textlib::convert($newname, 'utf-8', $encoding);
+                    $newname = @core_text::convert($name, $encoding, 'utf-8');
+                    $original  = core_text::convert($newname, 'utf-8', $encoding);
 
                     if ($original === $name) {
                         $name = $newname;

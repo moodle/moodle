@@ -337,6 +337,8 @@ function upgrade_stale_php_files_present() {
     global $CFG;
 
     $someexamplesofremovedfiles = array(
+        // removed in 2.6dev
+        '/admin/oacleanup.php',
         // removed in 2.5dev
         '/backup/lib.php',
         '/backup/bb/README.txt',
@@ -383,7 +385,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         return upgrade_plugins_blocks($startcallback, $endcallback, $verbose);
     }
 
-    $plugs = get_plugin_list($type);
+    $plugs = core_component::get_plugin_list($type);
 
     foreach ($plugs as $plug=>$fullplug) {
         // Reset time so that it works when installing a large number of plugins
@@ -411,7 +413,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
         if (isset($plugin->component)) {
             if ($plugin->component !== $component) {
                 $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullplug);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($plugin->component));
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', core_component::get_component_directory($plugin->component));
                 throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
@@ -538,7 +540,7 @@ function upgrade_plugins($type, $startcallback, $endcallback, $verbose) {
 function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
     global $CFG, $DB;
 
-    $mods = get_plugin_list('mod');
+    $mods = core_component::get_plugin_list('mod');
 
     foreach ($mods as $mod=>$fullmod) {
 
@@ -569,7 +571,7 @@ function upgrade_plugins_modules($startcallback, $endcallback, $verbose) {
         if (isset($module->component)) {
             if ($module->component !== $component) {
                 $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullmod);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($module->component));
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', core_component::get_component_directory($module->component));
                 throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
@@ -713,7 +715,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
     //Is this a first install
     $first_install = null;
 
-    $blocks = get_plugin_list('block');
+    $blocks = core_component::get_plugin_list('block');
 
     foreach ($blocks as $blockname=>$fullblock) {
 
@@ -749,7 +751,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
         if (isset($block->component)) {
             if ($block->component !== $component) {
                 $current = str_replace($CFG->dirroot, '$CFG->dirroot', $fullblock);
-                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', get_component_directory($block->component));
+                $expected = str_replace($CFG->dirroot, '$CFG->dirroot', core_component::get_component_directory($block->component));
                 throw new plugin_misplaced_exception($component, $expected, $current);
             }
         }
@@ -907,7 +909,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 function log_update_descriptions($component) {
     global $DB;
 
-    $defpath = get_component_directory($component).'/db/log.php';
+    $defpath = core_component::get_component_directory($component).'/db/log.php';
 
     if (!file_exists($defpath)) {
         $DB->delete_records('log_display', array('component'=>$component));
@@ -964,7 +966,7 @@ function log_update_descriptions($component) {
 function external_update_descriptions($component) {
     global $DB, $CFG;
 
-    $defpath = get_component_directory($component).'/db/services.php';
+    $defpath = core_component::get_component_directory($component).'/db/services.php';
 
     if (!file_exists($defpath)) {
         require_once($CFG->dirroot.'/lib/externallib.php');
@@ -1043,6 +1045,7 @@ function external_update_descriptions($component) {
         $service['requiredcapability'] = empty($service['requiredcapability']) ? null : $service['requiredcapability'];
         $service['restrictedusers'] = !isset($service['restrictedusers']) ? 1 : $service['restrictedusers'];
         $service['downloadfiles'] = !isset($service['downloadfiles']) ? 0 : $service['downloadfiles'];
+        $service['uploadfiles'] = !isset($service['uploadfiles']) ? 0 : $service['uploadfiles'];
         $service['shortname'] = !isset($service['shortname']) ? null : $service['shortname'];
 
         $update = false;
@@ -1056,6 +1059,10 @@ function external_update_descriptions($component) {
         }
         if ($dbservice->downloadfiles != $service['downloadfiles']) {
             $dbservice->downloadfiles = $service['downloadfiles'];
+            $update = true;
+        }
+        if ($dbservice->uploadfiles != $service['uploadfiles']) {
+            $dbservice->uploadfiles = $service['uploadfiles'];
             $update = true;
         }
         //if shortname is not a PARAM_ALPHANUMEXT, fail (tested here for service update and creation)
@@ -1112,6 +1119,7 @@ function external_update_descriptions($component) {
         $dbservice->requiredcapability = empty($service['requiredcapability']) ? null : $service['requiredcapability'];
         $dbservice->restrictedusers    = !isset($service['restrictedusers']) ? 1 : $service['restrictedusers'];
         $dbservice->downloadfiles      = !isset($service['downloadfiles']) ? 0 : $service['downloadfiles'];
+        $dbservice->uploadfiles        = !isset($service['uploadfiles']) ? 0 : $service['uploadfiles'];
         $dbservice->shortname          = !isset($service['shortname']) ? null : $service['shortname'];
         $dbservice->component          = $component;
         $dbservice->timecreated        = time();
@@ -1162,7 +1170,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
         $plugin = 'core';
     }
 
-    list($plugintype, $pluginname) = normalize_component($plugin);
+    list($plugintype, $pluginname) = core_component::normalize_component($plugin);
     $component = is_null($pluginname) ? $plugintype : $plugintype . '_' . $pluginname;
 
     $backtrace = format_backtrace($backtrace, true);
@@ -1185,7 +1193,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
             $currentversion = ($currentversion === false) ? null : $currentversion;
         } catch (Exception $ignored) {
         }
-        $cd = get_component_directory($component);
+        $cd = core_component::get_component_directory($component);
         if (file_exists("$cd/version.php")) {
             $module = new stdClass();
             $module->version = null;
@@ -1200,7 +1208,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
             }
         } catch (Exception $ignored) {
         }
-        $cd = get_component_directory($component);
+        $cd = core_component::get_component_directory($component);
         if (file_exists("$cd/version.php")) {
             $plugin = new stdClass();
             $plugin->version = null;
@@ -1213,7 +1221,7 @@ function upgrade_log($type, $plugin, $info, $details=null, $backtrace=null) {
         if (!empty($pluginversion)) {
             $currentversion = $pluginversion;
         }
-        $cd = get_component_directory($component);
+        $cd = core_component::get_component_directory($component);
         if (file_exists("$cd/version.php")) {
             $plugin = new stdClass();
             $plugin->version = null;
@@ -1465,12 +1473,17 @@ function install_core($version, $verbose) {
     global $CFG, $DB;
 
     // We can not call purge_all_caches() yet, make sure the temp and cache dirs exist and are empty.
-    make_cache_directory('', true);
     remove_dir($CFG->cachedir.'', true);
-    make_temp_directory('', true);
+    make_cache_directory('', true);
+
+    remove_dir($CFG->localcachedir.'', true);
+    make_localcache_directory('', true);
+
     remove_dir($CFG->tempdir.'', true);
-    make_writable_directory($CFG->dataroot.'/muc', true);
+    make_temp_directory('', true);
+
     remove_dir($CFG->dataroot.'/muc', true);
+    make_writable_directory($CFG->dataroot.'/muc', true);
 
     try {
         set_time_limit(600);
@@ -1581,12 +1594,14 @@ function upgrade_noncore($verbose) {
 
     // upgrade all plugins types
     try {
-        $plugintypes = get_plugin_types();
+        $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $type=>$location) {
             upgrade_plugins($type, 'print_upgrade_part_start', 'print_upgrade_part_end', $verbose);
         }
         // Update cache definitions. Involves scanning each plugin for any changes.
         cache_helper::update_definitions();
+        // Mark the site as upgraded.
+        set_config('allversionshash', core_component::get_all_versions_hash());
     } catch (Exception $ex) {
         upgrade_handle_exception($ex);
     }
@@ -1627,7 +1642,7 @@ function upgrade_plugin_mnet_functions($component) {
     global $DB, $CFG;
 
     list($type, $plugin) = explode('_', $component);
-    $path = get_plugin_directory($type, $plugin);
+    $path = core_component::get_plugin_directory($type, $plugin);
 
     $publishes = array();
     $subscribes = array();
@@ -1974,7 +1989,7 @@ function upgrade_rename_old_backup_files_using_shortname() {
     }
 
     require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');
-    $backupword = str_replace(' ', '_', textlib::strtolower(get_string('backupfilename')));
+    $backupword = str_replace(' ', '_', core_text::strtolower(get_string('backupfilename')));
     $backupword = trim(clean_filename($backupword), '_');
     $filename = $backupword . '-' . backup::FORMAT_MOODLE . '-' . backup::TYPE_1COURSE . '-';
     $regex = '#^'.preg_quote($filename, '#').'.*\.mbz$#';
@@ -2025,13 +2040,13 @@ function upgrade_rename_old_backup_files_using_shortname() {
         $newname = $filename . $bcinfo->original_course_id . '-';
         if ($useshortname) {
             $shortname = str_replace(' ', '_', $bcinfo->original_course_shortname);
-            $shortname = textlib::strtolower(trim(clean_filename($shortname), '_'));
+            $shortname = core_text::strtolower(trim(clean_filename($shortname), '_'));
             $newname .= $shortname . '-';
         }
 
         $backupdateformat = str_replace(' ', '_', get_string('backupnameformat', 'langconfig'));
         $date = userdate($bcinfo->backup_date, $backupdateformat, 99, false);
-        $date = textlib::strtolower(trim(clean_filename($date), '_'));
+        $date = core_text::strtolower(trim(clean_filename($date), '_'));
         $newname .= $date;
 
         if (isset($bcinfo->root_settings['users']) && !$bcinfo->root_settings['users']) {

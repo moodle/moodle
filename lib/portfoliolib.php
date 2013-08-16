@@ -534,6 +534,16 @@ function portfolio_instances($visibleonly=true, $useronly=true) {
 }
 
 /**
+ * Return whether there are visible instances in portfolio.
+ *
+ * @return bool true when there are some visible instances.
+ */
+function portfolio_has_visible_instances() {
+    global $DB;
+    return $DB->record_exists('portfolio_instance', array('visible' => 1));
+}
+
+/**
  * Supported formats currently in use.
  * Canonical place for a list of all formats
  * that portfolio plugins and callers
@@ -815,7 +825,7 @@ function portfolio_plugin_sanity_check($plugins=null) {
     if (is_string($plugins)) {
         $plugins = array($plugins);
     } else if (empty($plugins)) {
-        $plugins = get_plugin_list('portfolio');
+        $plugins = core_component::get_plugin_list('portfolio');
         $plugins = array_keys($plugins);
     }
 
@@ -1313,7 +1323,7 @@ function portfolio_include_callback_file($component, $class = null) {
     }
 
     // Obtain the component's location.
-    if (!$componentloc = get_component_directory($component)) {
+    if (!$componentloc = core_component::get_component_directory($component)) {
         throw new portfolio_button_exception('nocallbackcomponent', 'portfolio', '', $component);
     }
 

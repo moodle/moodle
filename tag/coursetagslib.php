@@ -284,7 +284,7 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
                 //add tag if does not exist
                 if (!$tagid = tag_get_id($tag)) {
                     $tag_id_array = tag_add(array($tag), $tagtype);
-                    $tagid = $tag_id_array[textlib::strtolower($tag)];
+                    $tagid = $tag_id_array[core_text::strtolower($tag)];
                 }
                 //ordering
                 $ordering = 0;
@@ -401,7 +401,7 @@ function coursetag_delete_course_tags($courseid, $showfeedback=false) {
                 $DB->delete_records('tag', array('id'=>$tag->tagid));
                 // Delete files
                 $fs = get_file_storage();
-                $fs->delete_area_files(get_system_context()->id, 'tag', 'description', $tag->tagid);
+                $fs->delete_area_files(context_system::instance()->id, 'tag', 'description', $tag->tagid);
             }
         }
     }

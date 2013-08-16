@@ -165,7 +165,7 @@ abstract class renderer_factory_base implements renderer_factory {
         global $CFG; // needed in included files
 
         // standardize component name ala frankenstyle
-        list($plugin, $type) = normalize_component($component);
+        list($plugin, $type) = core_component::normalize_component($component);
         if ($type === null) {
             $component = $plugin;
         } else {
@@ -174,7 +174,7 @@ abstract class renderer_factory_base implements renderer_factory {
 
         if ($component !== 'core') {
             // renderers are stored in renderer.php files
-            if (!$compdirectory = get_component_directory($component)) {
+            if (!$compdirectory = core_component::get_component_directory($component)) {
                 throw new coding_exception('Invalid component specified in renderer request');
             }
             $rendererfile = $compdirectory . '/renderer.php';

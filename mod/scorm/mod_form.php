@@ -160,6 +160,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addHelpButton('hidetoc', 'hidetoc', 'scorm');
         $mform->setDefault('hidetoc', $cfg_scorm->hidetoc);
         $mform->setAdvanced('hidetoc', $cfg_scorm->hidetoc_adv);
+        $mform->disabledIf('hidetoc', 'scormtype', 'eq', SCORM_TYPE_AICCURL);
 
         // Hide Navigation panel.
         $mform->addElement('selectyesno', 'hidenav', get_string('hidenav', 'scorm'));

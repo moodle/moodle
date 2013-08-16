@@ -87,13 +87,15 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      * @return bool success
      */
     public function create_database($dbhost, $dbuser, $dbpass, $dbname, array $dboptions=null) {
+        global $CFG;
+
         $this->dbhost = $dbhost;
         $this->dbuser = $dbuser;
         $this->dbpass = $dbpass;
         $this->dbname = $dbname;
         $filepath = $this->get_dbfilepath();
         $dirpath = dirname($filepath);
-        @mkdir($dirpath);
+        @mkdir($dirpath, $CFG->directorypermissions, true);
         return touch($filepath);
     }
 

@@ -52,14 +52,14 @@ class behat_permissions extends behat_base {
 
         return array(
             new Given('I am on homepage'),
-            new Given('I collapse "Front page settings" node'),
-            new Given('I expand "Site administration" node'),
-            new Given('I expand "Users" node'),
-            new Given('I expand "Permissions" node'),
-            new Given('I follow "Define roles"'),
+            new Given('I collapse "' . get_string('frontpagesettings', 'admin') . '" node'),
+            new Given('I expand "' . get_string('administrationsite') . '" node'),
+            new Given('I expand "' . get_string('users', 'admin') . '" node'),
+            new Given('I expand "' . get_string('permissions', 'role') . '" node'),
+            new Given('I follow "' . get_string('defineroles', 'role') . '"'),
             new Given('I follow "Edit ' . $this->escape($rolename) . ' role"'),
             new Given('I fill the capabilities form with the following permissions:', $table),
-            new Given('I press "Save changes"')
+            new Given('I press "' . get_string('savechanges') . '"')
         );
     }
 
@@ -73,12 +73,12 @@ class behat_permissions extends behat_base {
     public function i_override_the_system_permissions_of_role_with($rolename, $table) {
 
         // We don't know the number of overrides so we have to get it to match the option contents.
-        $roleoption = $this->find('xpath', '//select[@name="roleid"]/option[contains(text(),"' . $this->escape($rolename) . '")]');
+        $roleoption = $this->find('xpath', '//select[@name="roleid"]/option[contains(.,"' . $this->escape($rolename) . '")]');
 
         return array(
-            new Given('I select "' . $this->escape($roleoption->getText()) . '" from "Advanced role override"'),
+            new Given('I select "' . $this->escape($roleoption->getText()) . '" from "' . get_string('advancedoverride', 'role') . '"'),
             new Given('I fill the capabilities form with the following permissions:', $table),
-            new Given('I press "Save changes"')
+            new Given('I press "' . get_string('savechanges') . '"')
         );
     }
 
@@ -93,9 +93,9 @@ class behat_permissions extends behat_base {
         // Ensure we are using the advanced view.
         // Wrapped in a try/catch to capture the exception and continue execution, we don't know if advanced mode was already enabled.
         try {
-            $advancedtoggle = $this->find_button('Show advanced');
+            $advancedtoggle = $this->find_button(get_string('showadvanced', 'form'));
             if ($advancedtoggle) {
-                $this->getSession()->getPage()->pressButton('Show advanced');
+                $this->getSession()->getPage()->pressButton(get_string('showadvanced', 'form'));
             }
         } catch (Exception $e) {
             // We already are in advanced mode.

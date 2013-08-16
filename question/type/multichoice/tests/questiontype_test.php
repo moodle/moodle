@@ -17,9 +17,8 @@
 /**
  * Unit tests for the mulitple choice question definition class.
  *
- * @package    qtype
- * @subpackage multichoice
- * @copyright  2009 The Open University
+ * @package    qtype_multichoice
+ * @copyright  2013 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,8 +26,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 require_once($CFG->dirroot . '/question/type/multichoice/questiontype.php');
-
+require_once($CFG->dirroot . '/question/type/edit_question_form.php');
+require_once($CFG->dirroot . '/question/type/multichoice/edit_multichoice_form.php');
 
 /**
  * Unit tests for the multiple choice question definition class.
@@ -99,5 +100,67 @@ class qtype_multichoice_test extends advanced_testcase {
             1 => array(1 => new question_possible_response('frog', 1)),
             2 => array(2 => new question_possible_response('toad', 0)),
         ), $this->qtype->get_possible_responses($q));
+    }
+
+    public function get_question_saving_which() {
+        return array(array('two_of_four'), array('one_of_four'));
+    }
+
+    /**
+     * @dataProvider get_question_saving_which
+     */
+    public function test_question_saving_two_of_four($which) {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $questiondata = test_question_maker::get_question_data('multichoice', $which);
+        $formdata = test_question_maker::get_question_form_data('multichoice', $which);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category(array());
+
+        $formdata->category = "{$cat->id},{$cat->contextid}";
+        qtype_multichoice_edit_form::mock_submit((array)$formdata);
+
+        $form = qtype_multichoice_test_helper::get_question_editing_form($cat, $questiondata);
+
+        $this->assertTrue($form->is_validated());
+
+        $fromform = $form->get_data();
+
+        $returnedfromsave = $this->qtype->save_question($questiondata, $fromform);
+        $actualquestionsdata = question_load_questions(array($returnedfromsave->id));
+        $actualquestiondata = end($actualquestionsdata);
+
+        foreach ($questiondata as $property => $value) {
+            if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options', 'hints', 'stamp'))) {
+                $this->assertAttributeEquals($value, $property, $actualquestiondata);
+            }
+        }
+
+        foreach ($questiondata->options as $optionname => $value) {
+            if (!in_array($optionname, array('answers'))) {
+                $this->assertAttributeEquals($value, $optionname, $actualquestiondata->options);
+            }
+        }
+
+        foreach ($questiondata->hints as $hint) {
+            $actualhint = array_shift($actualquestiondata->hints);
+            foreach ($hint as $property => $value) {
+                if (!in_array($property, array('id', 'questionid', 'options'))) {
+                    $this->assertAttributeEquals($value, $property, $actualhint);
+                }
+            }
+        }
+
+        foreach ($questiondata->options->answers as $answer) {
+            $actualanswer = array_shift($actualquestiondata->options->answers);
+            foreach ($answer as $ansproperty => $ansvalue) {
+                // This question does not use 'answerformat', will ignore it.
+                if (!in_array($ansproperty, array('id', 'question', 'answerformat'))) {
+                    $this->assertAttributeEquals($ansvalue, $ansproperty, $actualanswer);
+                }
+            }
+        }
     }
 }

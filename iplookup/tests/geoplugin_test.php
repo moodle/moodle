@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * GeoIp data file parsing test.
  */
-class geoplugin_testcase extends advanced_testcase {
+class core_iplookup_geoplugin_testcase extends advanced_testcase {
 
     public function test_geoip() {
         global $CFG;

@@ -146,7 +146,7 @@ class feedback_item_label extends feedback_item_base {
         if (!$item->feedback AND $item->template) {
             $template = $DB->get_record('feedback_template', array('id'=>$item->template));
             if ($template->ispublic) {
-                $context = get_system_context();
+                $context = context_system::instance();
             } else {
                 $context = context_course::instance($template->course);
             }

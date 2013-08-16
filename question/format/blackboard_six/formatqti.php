@@ -141,26 +141,25 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
                             $bbsubquestions = $this->getpath($pblock,
                                     array('#', 'flow'),
                                     array(), false);
-                            $sub_questions = array();
                             foreach ($bbsubquestions as $bbsubquestion) {
-                                $sub_question = new stdClass();
-                                $sub_question->ident = $this->getpath($bbsubquestion,
+                                $subquestion = new stdClass();
+                                $subquestion->ident = $this->getpath($bbsubquestion,
                                         array('#', 'response_lid', 0, '@', 'ident'),
                                         '', true);
                                 $this->process_block($this->getpath($bbsubquestion,
                                         array('#', 'flow', 0),
-                                        false, false), $sub_question);
+                                        false, false), $subquestion);
                                 $bbchoices = $this->getpath($bbsubquestion,
                                         array('#', 'response_lid', 0, '#', 'render_choice', 0,
                                         '#', 'flow_label', 0, '#', 'response_label'),
                                         array(), false);
                                 $choices = array();
                                 $this->process_choices($bbchoices, $choices);
-                                $sub_question->choices = $choices;
+                                $subquestion->choices = $choices;
                                 if (!isset($block->subquestions)) {
                                     $block->subquestions = array();
                                 }
-                                $block->subquestions[] = $sub_question;
+                                $block->subquestions[] = $subquestion;
                             }
                             break;
                         case 'Multiple Answer':
@@ -483,18 +482,18 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
      * @param array $feedbacks array of feedbacks suitable for a rawquestion.
      */
     public function process_feedback($feedbackset, &$feedbacks) {
-        foreach ($feedbackset as $bb_feedback) {
+        foreach ($feedbackset as $bbfeedback) {
             $feedback = new stdClass();
-            $feedback->ident = $this->getpath($bb_feedback,
+            $feedback->ident = $this->getpath($bbfeedback,
                     array('@', 'ident'), '', true);
             $feedback->text = '';
-            if ($this->getpath($bb_feedback,
+            if ($this->getpath($bbfeedback,
                     array('#', 'flow_mat', 0), false, false)) {
-                $this->process_block($this->getpath($bb_feedback,
+                $this->process_block($this->getpath($bbfeedback,
                         array('#', 'flow_mat', 0), false, false), $feedback);
-            } else if ($this->getpath($bb_feedback,
+            } else if ($this->getpath($bbfeedback,
                     array('#', 'solution', 0, '#', 'solutionmaterial', 0, '#', 'flow_mat', 0), false, false)) {
-                $this->process_block($this->getpath($bb_feedback,
+                $this->process_block($this->getpath($bbfeedback,
                         array('#', 'solution', 0, '#', 'solutionmaterial', 0, '#', 'flow_mat', 0), false, false), $feedback);
             }
 

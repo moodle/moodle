@@ -118,21 +118,6 @@ class sqlsrv_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns localised database description
-     * Note: can be used before connect()
-     * @return string
-     */
-    public function get_configuration_hints() {
-        $str = get_string('databasesettingssub_sqlsrv', 'install');
-        $str .= "<p style='text-align:right'><a href=\"javascript:void(0)\" ";
-        $str .= "onclick=\"return window.open('http://docs.moodle.org/en/Using_the_Microsoft_SQL_Server_Driver_for_PHP')\"";
-        $str .= ">";
-        $str .= '<img src="pix/docs.gif'.'" alt="Docs" class="iconhelp" />';
-        $str .= get_string('moodledocslink', 'install').'</a></p>';
-        return $str;
-    }
-
-    /**
      * Connect to db
      * Must be called before most other methods. (you can call methods that return connection configuration parameters)
      * @param string $dbhost The database host.
@@ -543,9 +528,15 @@ class sqlsrv_native_moodle_database extends moodle_database {
             // id columns being auto_incremnt are PK by definition
             $info->primary_key = ($info->name == 'id' && $info->meta_type == 'R' && $info->auto_increment);
 
-            // Put correct length for character and LOB types
-            $info->max_length = $info->meta_type == 'C' ? $rawcolumn->char_max_length : $rawcolumn->max_length;
-            $info->max_length = ($info->meta_type == 'X' || $info->meta_type == 'B') ? -1 : $info->max_length;
+            if ($info->meta_type === 'C' and $rawcolumn->char_max_length == -1) {
+                // This is NVARCHAR(MAX), not a normal NVARCHAR.
+                $info->max_length = -1;
+                $info->meta_type = 'X';
+            } else {
+                // Put correct length for character and LOB types
+                $info->max_length = $info->meta_type == 'C' ? $rawcolumn->char_max_length : $rawcolumn->max_length;
+                $info->max_length = ($info->meta_type == 'X' || $info->meta_type == 'B') ? -1 : $info->max_length;
+            }
 
             // Scale
             $info->scale = $rawcolumn->scale ? $rawcolumn->scale : false;
@@ -660,6 +651,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
            break;
 
           case 'IMAGE':
+          case 'VARBINARY':
           case 'VARBINARY(MAX)':
            $type = 'B';
            break;

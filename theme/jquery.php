@@ -62,11 +62,7 @@ if ($component === 'core') {
     }
 
 } else {
-    define('ABORT_AFTER_CONFIG_CANCEL', true);
-    define('NO_MOODLE_COOKIES', true); // Session not used here.
-    define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check.
-    require("$CFG->dirroot/lib/setup.php");
-    $componentdir = get_component_directory($component);
+    $componentdir = core_component::get_component_directory($component);
 }
 
 if (!file_exists($componentdir) or !file_exists("$componentdir/jquery/plugins.php")) {

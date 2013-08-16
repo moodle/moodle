@@ -370,9 +370,6 @@
                 ));
     $table->setup();
 
-    // we are looking for all users with this role assigned in this context or higher
-    $contextlist = get_related_contexts_string($context);
-
     list($esql, $params) = get_enrolled_sql($context, NULL, $currentgroup, true);
     $joins = array("FROM {user} u");
     $wheres = array();
@@ -381,21 +378,17 @@
             'id', 'username', 'firstname', 'lastname', 'email', 'city', 'country',
             'picture', 'lang', 'timezone', 'maildisplay', 'imagealt', 'lastaccess'));
 
+    $mainuserfields = user_picture::fields('u', array('username', 'email', 'city', 'country', 'lang', 'timezone', 'maildisplay'));
+
     if ($isfrontpage) {
-        $select = "SELECT u.id, u.username, u.firstname, u.lastname,
-                          u.email, u.city, u.country, u.picture,
-                          u.lang, u.timezone, u.maildisplay, u.imagealt,
-                          u.lastaccess$extrasql";
+        $select = "SELECT $mainuserfields, u.lastaccess$extrasql";
         $joins[] = "JOIN ($esql) e ON e.id = u.id"; // everybody on the frontpage usually
         if ($accesssince) {
             $wheres[] = get_user_lastaccess_sql($accesssince);
         }
 
     } else {
-        $select = "SELECT u.id, u.username, u.firstname, u.lastname,
-                          u.email, u.city, u.country, u.picture,
-                          u.lang, u.timezone, u.maildisplay, u.imagealt,
-                          COALESCE(ul.timeaccess, 0) AS lastaccess$extrasql";
+        $select = "SELECT $mainuserfields, COALESCE(ul.timeaccess, 0) AS lastaccess$extrasql";
         $joins[] = "JOIN ($esql) e ON e.id = u.id"; // course enrolled users only
         $joins[] = "LEFT JOIN {user_lastaccess} ul ON (ul.userid = u.id AND ul.courseid = :courseid)"; // not everybody accessed course yet
         $params['courseid'] = $course->id;
@@ -405,15 +398,20 @@
     }
 
     // performance hacks - we preload user contexts together with accounts
-    list($ccselect, $ccjoin) = context_instance_preload_sql('u.id', CONTEXT_USER, 'ctx');
+    $ccselect = ', ' . context_helper::get_preload_record_columns_sql('ctx');
+    $ccjoin = "LEFT JOIN {context} ctx ON (ctx.instanceid = u.id AND ctx.contextlevel = :contextlevel)";
+    $params['contextlevel'] = CONTEXT_USER;
     $select .= $ccselect;
     $joins[] = $ccjoin;
 
 
     // limit list to users with some role only
     if ($roleid) {
-        $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $contextlist)";
-        $params['roleid'] = $roleid;
+        // We want to query both the current context and parent contexts.
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+
+        $wheres[] = "u.id IN (SELECT userid FROM {role_assignments} WHERE roleid = :roleid AND contextid $relatedctxsql)";
+        $params = array_merge($params, array('roleid' => $roleid), $relatedctxparams);
     }
 
     $from = implode("\n", $joins);
@@ -587,7 +585,7 @@
                     }
                     $usersprinted[] = $user->id; /// Add new user to the array of users printed
 
-                    context_instance_preload($user);
+                    context_helper::preload_from_record($user);
 
                     $context = context_course::instance($course->id);
                     $usercontext = context_user::instance($user->id);
@@ -709,7 +707,7 @@
                 }
                 $usersprinted[] = $user->id; /// Add new user to the array of users printed
 
-                context_instance_preload($user);
+                context_helper::preload_from_record($user);
 
                 if ($user->lastaccess) {
                     $lastaccess = format_time(time() - $user->lastaccess, $datestring);

@@ -93,7 +93,7 @@ class grouping_form extends moodleform {
             $idnumber = '';
         }
         if ($data['id'] and $grouping = $DB->get_record('groupings', array('id'=>$data['id']))) {
-            if (textlib::strtolower($grouping->name) != textlib::strtolower($name)) {
+            if (core_text::strtolower($grouping->name) != core_text::strtolower($name)) {
                 if (groups_get_grouping_by_name($COURSE->id,  $name)) {
                     $errors['name'] = get_string('groupingnameexists', 'group', $name);
                 }

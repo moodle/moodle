@@ -61,7 +61,7 @@ class enrol_guest_enrol_form extends moodleform {
             if ($data['guestpassword'] !== $instance->password) {
                 $plugin = enrol_get_plugin('guest');
                 if ($plugin->get_config('showhint')) {
-                    $hint = textlib::substr($instance->password, 0, 1);
+                    $hint = core_text::substr($instance->password, 0, 1);
                     $errors['guestpassword'] = get_string('passwordinvalidhint', 'enrol_guest', $hint);
                 } else {
                     $errors['guestpassword'] = get_string('passwordinvalid', 'enrol_guest');

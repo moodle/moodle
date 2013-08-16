@@ -30,17 +30,17 @@ Feature: Set up contextual data for tests
     Then I should see "Course 1"
     And I should see "Course 2"
     And I should see "Course 3"
-    When I go to the courses management page
+    And I go to the courses management page
     And I follow "Cat 1"
-    Then I should see "Cat 2"
+    And I should see "Cat 2"
     And I should see "Cat 3"
-    When I follow "Cat 3"
-    Then I should see "Course 1"
+    And I follow "Cat 3"
+    And I should see "Course 1"
     And I should see "Course 2"
-    When I select "Cat 2" from "Course categories:"
-    Then I should see "No courses in this category"
-    When I select "Miscellaneous" from "Course categories:"
-    Then I should see "Course 3"
+    And I select "Cat 1 / Cat 2" from "Course categories:"
+    And I should see "No courses in this category"
+    And I select "Miscellaneous" from "Course categories:"
+    And I should see "Course 3"
 
   @javascript
   Scenario: Add a bunch of groups and groupings
@@ -65,6 +65,37 @@ Feature: Set up contextual data for tests
     And I should see "Grouping 1"
     And I should see "Grouping 2"
 
+  @javascript
+  Scenario: Role overrides
+    Given the following "users" exists:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | student1 | Student | 1 | student1@asd.com |
+    And the following "categories" exists:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+    And the following "courses" exists:
+      | fullname | shortname |
+      | Course 1 | C1 |
+    And the following "course enrolments" exists:
+      | user | course | role |
+      | student1 | C1 | student |
+      | teacher1 | C1 | editingteacher |
+    And the following "permission overrides" exists:
+      | capability | permission | role | contextlevel | reference |
+      | mod/forum:editanypost | Allow | student | Course | C1 |
+      | mod/forum:replynews | Prevent | editingteacher | Course | C1 |
+    When I log in as "admin"
+    And I follow "Course 1"
+    And I expand "Users" node
+    And I follow "Permissions"
+    And I select "Student (1)" from "Advanced role override"
+    Then the "mod/forum:editanypost" field should match "1" value
+    And I press "Cancel"
+    And I select "Teacher (1)" from "Advanced role override"
+    And the "mod/forum:replynews" field should match "-1" value
+    And I press "Cancel"
+
   Scenario: Add course enrolments
     Given the following "users" exists:
       | username | firstname | lastname | email |
@@ -78,6 +109,49 @@ Feature: Set up contextual data for tests
     When I log in as "student1"
     And I follow "Course 1"
     Then I should see "Topic 1"
+
+  Scenario: Add role assigns
+    Given the following "users" exists:
+      | username | firstname | lastname | email |
+      | user1 | User | 1 | user1@moodlemoodle.com |
+      | user2 | User | 2 | user2@moodlemoodle.com |
+      | user3 | User | 3 | user3@moodlemoodle.com |
+    And the following "categories" exists:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+    And the following "courses" exists:
+      | fullname | shortname | category |
+      | Course 1 | C1 | CAT1 |
+    And the following "role assigns" exists:
+      | user  | role           | contextlevel | reference |
+      | user1 | manager        | System       |           |
+      | user2 | editingteacher | Category     | CAT1      |
+      | user3 | editingteacher | Course       | C1        |
+    When I log in as "user1"
+    Then I should see "Front page settings"
+    And I log out
+    And I log in as "user2"
+    And I follow "Course 1"
+    And I should see "Turn editing on"
+    And I log out
+    And I log in as "user3"
+    And I follow "Course 1"
+    And I should see "Turn editing on"
+
+  Scenario: Add modules
+    Given the following "courses" exists:
+      | fullname | shortname |
+      | Course 1 | C1 |
+    And the following "activities" exists:
+      | activity | name | intro | course | idnumber |
+      | assign   | Test assignment name | Test assignment description | C1 | assign1 |
+      | data     | Test database name | Test database description | C1 | data1 |
+    When I log in as "admin"
+    And I follow "Course 1"
+    Then I should see "Test assignment name"
+    And I should see "Test database name"
+    And I follow "Test assignment name"
+    And I should see "Test assignment description"
 
   @javascript
   Scenario: Add relations between users and groups

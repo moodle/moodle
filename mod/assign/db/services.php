@@ -47,5 +47,21 @@ $functions = array(
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Returns the submissions for assignments',
                 'type' => 'read'
+        ),
+
+        'mod_assign_get_user_flags' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'get_user_flags',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Returns the user flags for assignments',
+                'type' => 'read'
+        ),
+
+        'mod_assign_get_user_mappings' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'get_user_mappings',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Returns the blind marking mappings for assignments',
+                'type' => 'read'
         )
 );

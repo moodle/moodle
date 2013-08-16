@@ -25,6 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->libdir . '/questionlib.php');
+
 
 /**
  * Unit tests for (some of) ../questionlib.php.
@@ -32,27 +35,24 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2006 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class questionlib_testcase extends basic_testcase {
+class core_questionlib_testcase extends basic_testcase {
 
     public function test_question_reorder_qtypes() {
-        global $CFG;
-        require_once($CFG->libdir . '/questionlib.php');
-
-        $this->assertEquals(question_reorder_qtypes(
-                array('t1' => '', 't2' => '', 't3' => ''), 't1', +1),
-            array(0 => 't2', 1 => 't1', 2 => 't3'));
-        $this->assertEquals(question_reorder_qtypes(
-                array('t1' => '', 't2' => '', 't3' => ''), 't1', -1),
-            array(0 => 't1', 1 => 't2', 2 => 't3'));
-        $this->assertEquals(question_reorder_qtypes(
-                array('t1' => '', 't2' => '', 't3' => ''), 't2', -1),
-            array(0 => 't2', 1 => 't1', 2 => 't3'));
-        $this->assertEquals(question_reorder_qtypes(
-                array('t1' => '', 't2' => '', 't3' => ''), 't3', +1),
-            array(0 => 't1', 1 => 't2', 2 => 't3'));
-        $this->assertEquals(question_reorder_qtypes(
-                array('t1' => '', 't2' => '', 't3' => ''), 'missing', +1),
-            array(0 => 't1', 1 => 't2', 2 => 't3'));
+        $this->assertEquals(
+            array(0 => 't2', 1 => 't1', 2 => 't3'),
+            question_reorder_qtypes(array('t1' => '', 't2' => '', 't3' => ''), 't1', +1));
+        $this->assertEquals(
+            array(0 => 't1', 1 => 't2', 2 => 't3'),
+            question_reorder_qtypes(array('t1' => '', 't2' => '', 't3' => ''), 't1', -1));
+        $this->assertEquals(
+            array(0 => 't2', 1 => 't1', 2 => 't3'),
+            question_reorder_qtypes(array('t1' => '', 't2' => '', 't3' => ''), 't2', -1));
+        $this->assertEquals(
+            array(0 => 't1', 1 => 't2', 2 => 't3'),
+            question_reorder_qtypes(array('t1' => '', 't2' => '', 't3' => ''), 't3', +1));
+        $this->assertEquals(
+            array(0 => 't1', 1 => 't2', 2 => 't3'),
+            question_reorder_qtypes(array('t1' => '', 't2' => '', 't3' => ''), 'missing', +1));
     }
 
     public function test_match_grade_options() {

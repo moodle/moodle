@@ -67,7 +67,7 @@ if (!isset($functions[$function])) {
 }
 
 // list all enabled webservices
-$available_protocols = get_plugin_list('webservice');
+$available_protocols = core_component::get_plugin_list('webservice');
 $active_protocols = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
 $protocols = array();
 foreach ($active_protocols as $p) {

@@ -58,10 +58,10 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $assign = self::getDataGenerator()->create_module('assign', $assigndata);
 
         // Create a manual enrolment record.
-        $manual_enrol_data['enrol'] = 'manual';
-        $manual_enrol_data['status'] = 0;
-        $manual_enrol_data['courseid'] = $course->id;
-        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+        $manualenroldata['enrol'] = 'manual';
+        $manualenroldata['status'] = 0;
+        $manualenroldata['courseid'] = $course->id;
+        $enrolid = $DB->insert_record('enrol', $manualenroldata);
 
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course->id);
@@ -70,10 +70,10 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
-        $user_enrolment_data['status'] = 0;
-        $user_enrolment_data['enrolid'] = $enrolid;
-        $user_enrolment_data['userid'] = $USER->id;
-        $DB->insert_record('user_enrolments', $user_enrolment_data);
+        $userenrolmentdata['status'] = 0;
+        $userenrolmentdata['enrolid'] = $enrolid;
+        $userenrolmentdata['userid'] = $USER->id;
+        $DB->insert_record('user_enrolments', $userenrolmentdata);
 
         // Create a student and give them 2 grades (for 2 attempts).
         $student = self::getDataGenerator()->create_user();
@@ -111,7 +111,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(1, count($assignment['grades']));
         $grade = $assignment['grades'][0];
         $this->assertEquals($student->id, $grade['userid']);
-        // Should be the last grade (not the first)
+        // Should be the last grade (not the first).
         $this->assertEquals(75, $grade['grade']);
     }
 
@@ -148,7 +148,9 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create the assignment module.
         $assign1 = self::getDataGenerator()->create_module('assign', array(
             'course' => $course1->id,
-            'name' => 'lightwork assignment'
+            'name' => 'lightwork assignment',
+            'markingworkflow' => 1,
+            'markingallocation' => 1
         ));
 
         // Create manual enrolment record.
@@ -185,6 +187,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
         $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertEquals(1, $assignment['markingworkflow']);
+        $this->assertEquals(1, $assignment['markingallocation']);
 
         $result = mod_assign_external::get_assignments(array($course1->id));
 
@@ -199,6 +203,8 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals($assign1->id, $assignment['id']);
         $this->assertEquals($course1->id, $assignment['course']);
         $this->assertEquals('lightwork assignment', $assignment['name']);
+        $this->assertEquals(1, $assignment['markingworkflow']);
+        $this->assertEquals(1, $assignment['markingallocation']);
 
         $result = mod_assign_external::get_assignments(array($course2->id));
 
@@ -259,10 +265,10 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
 
         // Create manual enrolment record.
-        $manual_enrol_data['enrol'] = 'manual';
-        $manual_enrol_data['status'] = 0;
-        $manual_enrol_data['courseid'] = $course1->id;
-        $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
+        $manualenroldata['enrol'] = 'manual';
+        $manualenroldata['status'] = 0;
+        $manualenroldata['courseid'] = $course1->id;
+        $enrolid = $DB->insert_record('enrol', $manualenroldata);
 
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course1->id);
@@ -271,10 +277,10 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
-        $user_enrolment_data['status'] = 0;
-        $user_enrolment_data['enrolid'] = $enrolid;
-        $user_enrolment_data['userid'] = $USER->id;
-        $DB->insert_record('user_enrolments', $user_enrolment_data);
+        $userenrolmentdata['status'] = 0;
+        $userenrolmentdata['enrolid'] = $enrolid;
+        $userenrolmentdata['userid'] = $USER->id;
+        $DB->insert_record('user_enrolments', $userenrolmentdata);
 
         $assignmentids[] = $assign1->id;
         $result = mod_assign_external::get_submissions($assignmentids);
@@ -297,4 +303,137 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         }
         $this->assertTrue($foundonlinetext);
     }
+
+    /**
+     * Test get_user_flags
+     */
+    public function test_get_user_flags () {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        // Create a course and assignment.
+        $coursedata['idnumber'] = 'idnumbercourse';
+        $coursedata['fullname'] = 'Lightwork Course';
+        $coursedata['summary'] = 'Lightwork Course description';
+        $coursedata['summaryformat'] = FORMAT_MOODLE;
+        $course = self::getDataGenerator()->create_course($coursedata);
+
+        $assigndata['course'] = $course->id;
+        $assigndata['name'] = 'lightwork assignment';
+
+        $assign = self::getDataGenerator()->create_module('assign', $assigndata);
+
+        // Create a manual enrolment record.
+        $manualenroldata['enrol'] = 'manual';
+        $manualenroldata['status'] = 0;
+        $manualenroldata['courseid'] = $course->id;
+        $enrolid = $DB->insert_record('enrol', $manualenroldata);
+
+        // Create a teacher and give them capabilities.
+        $context = context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
+        $context = context_module::instance($assign->id);
+        $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
+
+        // Create the teacher's enrolment record.
+        $userenrolmentdata['status'] = 0;
+        $userenrolmentdata['enrolid'] = $enrolid;
+        $userenrolmentdata['userid'] = $USER->id;
+        $DB->insert_record('user_enrolments', $userenrolmentdata);
+
+        // Create a student and give them a user flag record.
+        $student = self::getDataGenerator()->create_user();
+        $userflag = new stdClass();
+        $userflag->assignment = $assign->id;
+        $userflag->userid = $student->id;
+        $userflag->locked = 0;
+        $userflag->mailed = 0;
+        $userflag->extensionduedate = 0;
+        $userflag->workflowstate = 'inmarking';
+        $userflag->allocatedmarker = $USER->id;
+
+        $DB->insert_record('assign_user_flags', $userflag);
+
+        $assignmentids[] = $assign->id;
+        $result = mod_assign_external::get_user_flags($assignmentids);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(mod_assign_external::get_user_flags_returns(), $result);
+
+        // Check that the correct user flag information for the student is returned.
+        $this->assertEquals(1, count($result['assignments']));
+        $assignment = $result['assignments'][0];
+        $this->assertEquals($assign->id, $assignment['assignmentid']);
+        // Should be one user flag record.
+        $this->assertEquals(1, count($assignment['userflags']));
+        $userflag = $assignment['userflags'][0];
+        $this->assertEquals($student->id, $userflag['userid']);
+        $this->assertEquals(0, $userflag['locked']);
+        $this->assertEquals(0, $userflag['mailed']);
+        $this->assertEquals(0, $userflag['extensionduedate']);
+        $this->assertEquals('inmarking', $userflag['workflowstate']);
+        $this->assertEquals($USER->id, $userflag['allocatedmarker']);
+    }
+
+    /**
+     * Test get_user_mappings
+     */
+    public function test_get_user_mappings () {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        // Create a course and assignment.
+        $coursedata['idnumber'] = 'idnumbercourse';
+        $coursedata['fullname'] = 'Lightwork Course';
+        $coursedata['summary'] = 'Lightwork Course description';
+        $coursedata['summaryformat'] = FORMAT_MOODLE;
+        $course = self::getDataGenerator()->create_course($coursedata);
+
+        $assigndata['course'] = $course->id;
+        $assigndata['name'] = 'lightwork assignment';
+
+        $assign = self::getDataGenerator()->create_module('assign', $assigndata);
+
+        // Create a manual enrolment record.
+        $manualenroldata['enrol'] = 'manual';
+        $manualenroldata['status'] = 0;
+        $manualenroldata['courseid'] = $course->id;
+        $enrolid = $DB->insert_record('enrol', $manualenroldata);
+
+        // Create a teacher and give them capabilities.
+        $context = context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
+        $context = context_module::instance($assign->id);
+        $this->assignUserCapability('mod/assign:revealidentities', $context->id, $roleid);
+
+        // Create the teacher's enrolment record.
+        $userenrolmentdata['status'] = 0;
+        $userenrolmentdata['enrolid'] = $enrolid;
+        $userenrolmentdata['userid'] = $USER->id;
+        $DB->insert_record('user_enrolments', $userenrolmentdata);
+
+        // Create a student and give them a user mapping record.
+        $student = self::getDataGenerator()->create_user();
+        $mapping = new stdClass();
+        $mapping->assignment = $assign->id;
+        $mapping->userid = $student->id;
+
+        $DB->insert_record('assign_user_mapping', $mapping);
+
+        $assignmentids[] = $assign->id;
+        $result = mod_assign_external::get_user_mappings($assignmentids);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(mod_assign_external::get_user_mappings_returns(), $result);
+
+        // Check that the correct user mapping information for the student is returned.
+        $this->assertEquals(1, count($result['assignments']));
+        $assignment = $result['assignments'][0];
+        $this->assertEquals($assign->id, $assignment['assignmentid']);
+        // Should be one user mapping record.
+        $this->assertEquals(1, count($assignment['mappings']));
+        $mapping = $assignment['mappings'][0];
+        $this->assertEquals($student->id, $mapping['userid']);
+    }
+
 }

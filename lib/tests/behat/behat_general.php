@@ -29,7 +29,9 @@ require_once(__DIR__ . '/../../behat/behat_base.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
     Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
-    Behat\Mink\Exception\DriverException as DriverException;
+    Behat\Mink\Exception\DriverException as DriverException,
+    WebDriver\Exception\NoSuchElement as NoSuchElement,
+    WebDriver\Exception\StaleElementReference as StaleElementReference;
 
 /**
  * Cross component steps definitions.
@@ -78,10 +80,19 @@ class behat_general extends behat_base {
             return false;
         }
 
-        $content = $metarefresh->getAttribute('content');
+        // Wrapped in try & catch in case the redirection has already been executed.
+        try {
+            $content = $metarefresh->getAttribute('content');
+        } catch (NoSuchElement $e) {
+            return false;
+        } catch (StaleElementReference $e) {
+            return false;
+        }
+
+        // Getting the refresh time and the url if present.
         if (strstr($content, 'url') != false) {
 
-            list($waittime, $url) = explode(';', $metarefresh->getAttribute('content'));
+            list($waittime, $url) = explode(';', $content);
 
             // Cleaning the URL value.
             $url = trim(substr($url, strpos($url, 'http')));
@@ -231,8 +242,8 @@ class behat_general extends behat_base {
 
         // The table row container.
         $nocontainerexception = new ElementNotFoundException($this->getSession(), '"' . $tablerowtext . '" row text ');
-        $tablerowtext = str_replace("'", "\'", $tablerowtext);
-        $rownode = $this->find('xpath', "//tr[contains(., '" . $tablerowtext . "')]", $nocontainerexception);
+        $tablerowtext = $this->getSession()->getSelectorsHandler()->xpathLiteral($tablerowtext);
+        $rownode = $this->find('xpath', "//tr[contains(., $tablerowtext)]", $nocontainerexception);
 
         // Looking for the element DOM node inside the specified row.
         list($selector, $locator) = $this->transform_selector($selectortype, $element);
@@ -274,7 +285,7 @@ class behat_general extends behat_base {
     public function assert_page_contains_text($text) {
 
         $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
-        $xpath = "/descendant::*[contains(., " . $xpathliteral. ")]";
+        $xpath = "/descendant::*[contains(., $xpathliteral)]";
 
         // Wait until it finds the text, otherwise custom exception.
         try {
@@ -294,7 +305,7 @@ class behat_general extends behat_base {
     public function assert_page_not_contains_text($text) {
 
         $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
-        $xpath = "/descendant::*[not(contains(., " . $xpathliteral. "))]";
+        $xpath = "/descendant::*[not(contains(., $xpathliteral))]";
 
         // Wait until it finds the text, otherwise custom exception.
         try {

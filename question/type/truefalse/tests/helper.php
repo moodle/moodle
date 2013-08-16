@@ -63,6 +63,67 @@ class qtype_truefalse_test_helper extends question_test_helper {
         return $tf;
     }
 
+    public function get_truefalse_question_form_data_true() {
+
+        $form = new stdClass();
+        $form->name = 'True/false question';
+        $form->questiontext = array();
+        $form->questiontext['format'] = '1';
+        $form->questiontext['text'] = 'The answer is true.';
+
+        $form->defaultmark = 1;
+        $form->generalfeedback = array();
+        $form->generalfeedback['format'] = '1';
+        $form->generalfeedback['text'] = 'You should have selected true.';
+
+        $form->correctanswer = '1';
+        $form->feedbacktrue = array();
+        $form->feedbacktrue['format'] = '1';
+        $form->feedbacktrue['text'] = 'This is the right answer.';
+
+        $form->feedbackfalse = array();
+        $form->feedbackfalse['format'] = '1';
+        $form->feedbackfalse['text'] = 'This is the wrong answer.';
+
+        $form->penalty = 1;
+
+        return $form;
+    }
+
+    function get_truefalse_question_data_true() {
+
+        $q = new stdClass();
+        $q->name = 'True/false question';
+        $q->questiontext = 'The answer is true.';
+        $q->questiontextformat = FORMAT_HTML;
+        $q->generalfeedback = 'You should have selected true.';
+        $q->generalfeedbackformat = FORMAT_HTML;
+        $q->defaultmark = 1;
+        $q->penalty = 1;
+        $q->qtype = 'truefalse';
+        $q->length = '1';
+        $q->hidden = '0';
+        $q->createdby = '2';
+        $q->modifiedby = '2';
+        $q->options = new stdClass();
+        $q->options->trueanswer = '0';
+        $q->options->falseanswer = '1';
+        $q->options->answers = array();
+        $q->options->answers[0] = new stdClass();
+        $q->options->answers[0]->answer = 'True';
+        $q->options->answers[0]->fraction = '1.0000000';
+        $q->options->answers[0]->feedback = 'This is the right answer.';
+        $q->options->answers[0]->feedbackformat = FORMAT_HTML;
+
+        $q->options->answers[1] = new stdClass();
+        $q->options->answers[1]->answer = 'False';
+        $q->options->answers[1]->fraction = '0.0000000';
+        $q->options->answers[1]->feedback = 'This is the wrong answer.';
+        $q->options->answers[1]->feedbackformat = FORMAT_HTML;
+
+        return $q;
+    }
+
     /**
      * Makes a truefalse question with correct answer false.
      * @return qtype_truefalse_question

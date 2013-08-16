@@ -1,0 +1,110 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Native MariaDB class representing moodle database interface.
+ *
+ * @package    core_dml
+ * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__.'/moodle_database.php');
+require_once(__DIR__.'/mysqli_native_moodle_database.php');
+require_once(__DIR__.'/mysqli_native_moodle_recordset.php');
+require_once(__DIR__.'/mysqli_native_moodle_temptables.php');
+
+/**
+ * Native MariaDB class representing moodle database interface.
+ *
+ * @package    core_dml
+ * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class mariadb_native_moodle_database extends mysqli_native_moodle_database {
+
+    /**
+     * Returns localised database type name
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_name() {
+        return get_string('nativemariadb', 'install');
+    }
+
+    /**
+     * Returns localised database configuration help.
+     * Note: can be used before connect()
+     * @return string
+     */
+    public function get_configuration_help() {
+        return get_string('nativemariadbhelp', 'install');
+    }
+
+    /**
+     * Returns the database vendor.
+     * Note: can be used before connect()
+     * @return string The db vendor name, usually the same as db family name.
+     */
+    public function get_dbvendor() {
+        return 'mariadb';
+    }
+
+    /**
+     * Returns more specific database driver type
+     * Note: can be used before connect()
+     * @return string db type mysqli, pgsql, oci, mssql, sqlsrv
+     */
+    protected function get_dbtype() {
+        return 'mariadb';
+    }
+
+    /**
+     * It is time to require transactions everywhere.
+     *
+     * MyISAM is NOT supported!
+     *
+     * @return bool
+     */
+    protected function transactions_supported() {
+        if ($this->external) {
+            return parent::transactions_supported();
+        }
+        return true;
+    }
+
+    /**
+     * Returns the current db engine.
+     *
+     * MyISAM is NOT supported!
+     *
+     * @return string or null MySQL engine name
+     */
+    public function get_dbengine() {
+        if ($this->external) {
+            return null;
+        }
+
+        $engine = parent::get_dbengine();
+        if ($engine === 'MyISAM') {
+            debugging('MyISAM tables are not supported in MariaDB driver!');
+            $engine = 'XtraDB';
+        }
+        return $engine;
+    }
+}

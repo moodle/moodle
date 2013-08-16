@@ -105,9 +105,9 @@ function tool_dbtransfer_rebuild_target_log_actions(moodle_database $target, pro
     try {
         $DB->delete_records('log_display', array('component'=>'moodle'));
         log_update_descriptions('moodle');
-        $plugintypes = get_plugin_types();
+        $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $type => $location) {
-            $plugs = get_plugin_list($type);
+            $plugs = core_component::get_plugin_list($type);
             foreach ($plugs as $plug => $fullplug) {
                 $component = $type.'_'.$plug;
                 $DB->delete_records('log_display', array('component'=>$component));

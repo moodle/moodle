@@ -172,7 +172,7 @@ class course_modinfo extends stdClass {
                 $modnamesused[$mod->modname] = $modnames[$mod->modname];
             }
         }
-        collatorlib::asort($modnamesused);
+        core_collator::asort($modnamesused);
         return $modnamesused;
     }
 
@@ -275,7 +275,7 @@ class course_modinfo extends stdClass {
 
         // Load sectioncache field into memory as PHP object and check it's valid
         $sectioncache = unserialize($course->sectioncache);
-        if (!is_array($sectioncache) || empty($sectioncache)) {
+        if (!is_array($sectioncache)) {
             // hmm, something is wrong - let's fix it
             rebuild_course_cache($course->id);
             $course->sectioncache = $DB->get_field('course', 'sectioncache', array('id'=>$course->id));
@@ -288,7 +288,7 @@ class course_modinfo extends stdClass {
         }
 
         // If we haven't already preloaded contexts for the course, do it now
-        preload_course_contexts($course->id);
+        context_helper::preload_course($course->id);
 
         // Loop through each piece of module data, constructing it
         $modexists = array();
@@ -1203,7 +1203,8 @@ class cm_info extends stdClass {
         }
 
         // Check group membership.
-        if ($this->is_user_access_restricted_by_group()) {
+        if ($this->is_user_access_restricted_by_group() ||
+                $this->is_user_access_restricted_by_capability()) {
 
              $this->uservisible = false;
             // Ensure activity is completely hidden from the user.
@@ -1232,6 +1233,23 @@ class cm_info extends stdClass {
             }
         }
         return false;
+    }
+
+    /**
+     * Checks whether mod/...:view capability restricts the current user's access.
+     *
+     * @return bool True if the user access is restricted.
+     */
+    public function is_user_access_restricted_by_capability() {
+        $capability = 'mod/' . $this->modname . ':view';
+        $capabilityinfo = get_capability_info($capability);
+        if (!$capabilityinfo) {
+            // Capability does not exist, no one is prevented from seeing the activity.
+            return false;
+        }
+
+        // You are blocked if you don't have the capability.
+        return !has_capability($capability, context_module::instance($this->id));
     }
 
     /**
@@ -1396,8 +1414,10 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
     if (count($cache) > MAX_MODINFO_CACHE_SIZE) {
         reset($cache);
         $key = key($cache);
-        unset($cache[$key]->instances);
-        unset($cache[$key]->cms);
+        // Unsetting static variable in PHP is percular, it removes the reference,
+        // but data remain in memory. Prior to unsetting, the varable needs to be
+        // set to empty to remove its remains from memory.
+        $cache[$key] = '';
         unset($cache[$key]);
     }
 

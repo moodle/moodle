@@ -2190,5 +2190,142 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013061700.00);
     }
 
+    if ($oldversion < 2013070800.00) {
+
+        // Remove orphan repository instances.
+        if ($DB->get_dbfamily() === 'mysql') {
+            $sql = "DELETE {repository_instances} FROM {repository_instances}
+                    LEFT JOIN {context} ON {context}.id = {repository_instances}.contextid
+                    WHERE {context}.id IS NULL";
+        } else {
+            $sql = "DELETE FROM {repository_instances}
+                    WHERE NOT EXISTS (
+                        SELECT 'x' FROM {context}
+                        WHERE {context}.id = {repository_instances}.contextid)";
+        }
+        $DB->execute($sql);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013070800.00);
+    }
+
+    if ($oldversion < 2013070800.01) {
+
+        // Define field lastnamephonetic to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('lastnamephonetic', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'imagealt');
+        $index = new xmldb_index('lastnamephonetic', XMLDB_INDEX_NOTUNIQUE, array('lastnamephonetic'));
+
+        // Conditionally launch add field lastnamephonetic.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $dbman->add_index($table, $index);
+        }
+
+        // Define field firstnamephonetic to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('firstnamephonetic', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'lastnamephonetic');
+        $index = new xmldb_index('firstnamephonetic', XMLDB_INDEX_NOTUNIQUE, array('firstnamephonetic'));
+
+        // Conditionally launch add field firstnamephonetic.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $dbman->add_index($table, $index);
+        }
+
+        // Define field alternatename to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('middlename', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'firstnamephonetic');
+        $index = new xmldb_index('middlename', XMLDB_INDEX_NOTUNIQUE, array('middlename'));
+
+        // Conditionally launch add field firstnamephonetic.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $dbman->add_index($table, $index);
+        }
+
+        // Define field alternatename to be added to user.
+        $table = new xmldb_table('user');
+        $field = new xmldb_field('alternatename', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'middlename');
+        $index = new xmldb_index('alternatename', XMLDB_INDEX_NOTUNIQUE, array('alternatename'));
+
+        // Conditionally launch add field alternatename.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013070800.01);
+    }
+
+    if ($oldversion < 2013071500.01) {
+        // The enrol_authorize plugin has been removed, if there are no records
+        // and no plugin files then remove the plugin data.
+        $enrolauthorize = new xmldb_table('enrol_authorize');
+        $enrolauthorizerefunds = new xmldb_table('enrol_authorize_refunds');
+
+        if (!file_exists($CFG->dirroot.'/enrol/authorize/version.php') &&
+            $dbman->table_exists($enrolauthorize) &&
+            $dbman->table_exists($enrolauthorizerefunds)) {
+
+            $enrolauthorizecount = $DB->count_records('enrol_authorize');
+            $enrolauthorizerefundcount = $DB->count_records('enrol_authorize_refunds');
+
+            if (empty($enrolauthorizecount) && empty($enrolauthorizerefundcount)) {
+
+                // Drop the database tables.
+                $dbman->drop_table($enrolauthorize);
+                $dbman->drop_table($enrolauthorizerefunds);
+
+                // Drop the message provider and associated data manually.
+                $DB->delete_records('message_providers', array('component' => 'enrol_authorize'));
+                $DB->delete_records_select('config_plugins', "plugin = 'message' AND ".$DB->sql_like('name', '?', false), array("%_provider_enrol_authorize_%"));
+                $DB->delete_records_select('user_preferences', $DB->sql_like('name', '?', false), array("message_provider_enrol_authorize_%"));
+
+                // Remove capabilities.
+                capabilities_cleanup('enrol_authorize');
+
+                // Remove all other associated config.
+                unset_all_config_for_plugin('enrol_authorize');
+            }
+        }
+        upgrade_main_savepoint(true, 2013071500.01);
+    }
+
+    if ($oldversion < 2013071500.02) {
+        // Define field attachment to be dropped from badge.
+        $table = new xmldb_table('badge');
+        $field = new xmldb_field('image');
+
+        // Conditionally launch drop field eventtype.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2013071500.02);
+    }
+
+    if ($oldversion < 2013072600.01) {
+        upgrade_mssql_nvarcharmax();
+        upgrade_mssql_varbinarymax();
+
+        upgrade_main_savepoint(true, 2013072600.01);
+    }
+
+    if ($oldversion < 2013081200.00) {
+        // Define field uploadfiles to be added to external_services.
+        $table = new xmldb_table('external_services');
+        $field = new xmldb_field('uploadfiles', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'downloadfiles');
+
+        // Conditionally launch add field uploadfiles.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013081200.00);
+    }
+
     return true;
 }

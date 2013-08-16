@@ -1247,7 +1247,7 @@ class graph {
           break;
       }
       // start of Moodle addition
-      $text = textlib::utf8_to_entities($text, true, true); //does not work with hex entities!
+      $text = core_text::utf8_to_entities($text, true, true); //does not work with hex entities!
       // end of Moodle addition
       ImageTTFText($this->image, $points, $angle, $x, $y, $colour, $font, $text);
     }
@@ -1352,7 +1352,7 @@ class graph {
 
       // get boundary box and offsets for printing at an angle
       // start of Moodle addition
-      $text = textlib::utf8_to_entities($text, true, true); //gd does not work with hex entities!
+      $text = core_text::utf8_to_entities($text, true, true); //gd does not work with hex entities!
       // end of Moodle addition
       $bounds = ImageTTFBBox($points, $angle, $font, $text);
 

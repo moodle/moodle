@@ -104,7 +104,7 @@ class course_settings_form extends moodleform {
         $types = array('report', 'export', 'import');
 
         foreach($types as $type) {
-            foreach (get_plugin_list('grade'.$type) as $plugin => $plugindir) {
+            foreach (core_component::get_plugin_list('grade'.$type) as $plugin => $plugindir) {
              // Include all the settings commands for this plugin if there are any
                 if (file_exists($plugindir.'/lib.php')) {
                     require_once($plugindir.'/lib.php');

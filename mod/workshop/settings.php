@@ -61,7 +61,7 @@ if ($ADMIN->fulltree) {
                         get_string('configexamplesmode', 'workshop'), workshop::EXAMPLES_VOLUNTARY, $options));
 
     // include the settings of allocation subplugins
-    $allocators = get_plugin_list('workshopallocation');
+    $allocators = core_component::get_plugin_list('workshopallocation');
     foreach ($allocators as $allocator => $path) {
         if (file_exists($settingsfile = $path . '/settings.php')) {
             $settings->add(new admin_setting_heading('workshopallocationsetting'.$allocator,
@@ -71,7 +71,7 @@ if ($ADMIN->fulltree) {
     }
 
     // include the settings of grading strategy subplugins
-    $strategies = get_plugin_list('workshopform');
+    $strategies = core_component::get_plugin_list('workshopform');
     foreach ($strategies as $strategy => $path) {
         if (file_exists($settingsfile = $path . '/settings.php')) {
             $settings->add(new admin_setting_heading('workshopformsetting'.$strategy,
@@ -81,7 +81,7 @@ if ($ADMIN->fulltree) {
     }
 
     // include the settings of grading evaluation subplugins
-    $evaluations = get_plugin_list('workshopeval');
+    $evaluations = core_component::get_plugin_list('workshopeval');
     foreach ($evaluations as $evaluation => $path) {
         if (file_exists($settingsfile = $path . '/settings.php')) {
             $settings->add(new admin_setting_heading('workshopevalsetting'.$evaluation,

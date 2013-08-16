@@ -10,11 +10,11 @@
 .course-content .single-section .section-navigation {margin-bottom:0;}
 
 /** coursebox **/
-.coursebox {border:1px solid #DDD;border-color:#DDDDDD;}
 #page-enrol-index .generalbox.info,
 #page-course-info .generalbox.info {border:none;}
+.coursebox {border:none}
 .coursebox .info {margin:0;font-size:100%;}
-.coursebox .name {margin:5px;}
+.coursebox .name {margin:5px; width: 80%;}
 .coursebox .content {font-size:90%;}
 .coursebox .teachers {margin:5px 1em;}
 .coursebox .summary,
@@ -93,10 +93,10 @@
 .path-report-outline .loginfo {text-align:center;margin:1em;}
 
 /* Course */
-/*.courses .coursebox.even {background-color:white; border-color:white;}*/
-.courses .coursebox.odd {background-color:[[setting:rblockcolumnbgc]];border-color:[[setting:rblockcolumnbgc]];}
-.courses .coursebox:hover,
-.course_category_tree .courses > .paging:hover {background-color:#eee;}
+.courses .coursebox.even {background-color:[[setting:lblockcolumnbgc]];border-color:#eee;}
+.courses .coursebox.odd {background-color:[[setting:blockcontentbgc]];border-color:#eee;}
+.courses .coursebox.even:hover, .course_category_tree .courses > .paging:hover {background-color:[[setting:hovercolor]];}
+.courses .coursebox.odd:hover, .course_category_tree .courses > .paging:hover {background-color:[[setting:hovercolor]];}
 
 /* Category listings */
 .course_category_tree .controls {margin-bottom:5px;text-align:right;float:right;}
@@ -106,9 +106,6 @@
 .course_category_tree .category > .info {margin: 5px 0;}
 .course_category_tree .category > .info .name {margin:5px;padding-left:16px;}
 .dir-rtl .course_category_tree .category > .info .name {padding-left:0;padding-right:16px;}
-.courses .coursebox.even {background-color:#f6f6f6;border-color:#eee;}
-.courses .coursebox:hover,
-.course_category_tree .courses > .paging:hover {background-color:#eee;}
 .course_category_tree .courses > .paging,
 .course_category_tree .subcategories > .paging {padding:5px;}
 

@@ -38,7 +38,7 @@ class core_role_permissions_table extends core_role_capability_table_base {
     /**
      * Constructor.
      * @param context $context the context this table relates to.
-     * @param string $contextname print_context_name($context) - to save recomputing.
+     * @param string $contextname $context->get_context_name() - to save recomputing.
      * @param array $allowoverrides
      * @param array $allowsafeoverrides
      * @param array $overridableroles

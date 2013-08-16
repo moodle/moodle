@@ -307,6 +307,39 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Assert that an event legacy data is equal to the expected value.
+     *
+     * @param mixed $expected expected data.
+     * @param \core\event\base $event the event object.
+     * @param string $message
+     * @return void
+     */
+    public function assertEventLegacyData($expected, \core\event\base $event, $message = '') {
+        $legacydata = phpunit_event_mock::testable_get_legacy_eventdata($event);
+        if ($message === '') {
+            $message = 'Event legacy data does not match expected value.';
+        }
+        $this->assertEquals($expected, $legacydata, $message);
+    }
+
+    /**
+     * Assert that an event legacy log data is equal to the expected value.
+     *
+     * @param mixed $expected expected data.
+     * @param \core\event\base $event the event object.
+     * @param string $message
+     * @return void
+     */
+    public function assertEventLegacyLogData($expected, \core\event\base $event, $message = '') {
+        $legacydata = phpunit_event_mock::testable_get_legacy_logdata($event);
+        if ($message === '') {
+            $message = 'Event legacy log data does not match expected value.';
+        }
+        $this->assertEquals($expected, $legacydata, $message);
+    }
+
+
+    /**
      * Starts message redirection.
      *
      * You can verify if messages were sent or not by inspecting the messages
@@ -317,6 +350,19 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
      */
     public function redirectMessages() {
         return phpunit_util::start_message_redirection();
+    }
+
+    /**
+     * Starts event redirection.
+     *
+     * You can verify if events were triggered or not by inspecting the events
+     * array in the returned event sink instance. The redirection
+     * can be stopped by calling $sink->close();
+     *
+     * @return phpunit_event_sink
+     */
+    public function redirectEvents() {
+        return phpunit_util::start_event_redirection();
     }
 
     /**

@@ -37,14 +37,17 @@ class tinymce_moodlemedia extends editor_tinymce_plugin {
             }
         }
 
-        // Add button after emoticon button in advancedbuttons3.
-        $added = $this->add_button_after($params, 3, 'moodlemedia', 'moodleemoticon', false);
-
-        // Note: We know that the emoticon button has already been added, if it
-        // exists, because I set the sort order higher for this. So, if no
-        // emoticon, add after 'image'.
-        if (!$added) {
-            $this->add_button_after($params, 3, 'moodlemedia', 'image');
+        if ($row = $this->find_button($params, 'moodleemoticon')) {
+            // Add button after 'moodleemoticon' icon.
+            $this->add_button_after($params, $row, 'moodlemedia', 'moodleemoticon');
+        } else if ($row = $this->find_button($params, 'image')) {
+            // Note: We know that the plugin emoticon button has already been added
+            // if it is enabled because this plugin has higher sortorder.
+            // Otherwise add after 'image'.
+            $this->add_button_after($params, $row, 'moodlemedia', 'image');
+        } else {
+            // Add this button in the end of the first row (by default 'image' button should be in the first row).
+            $this->add_button_after($params, 1, 'moodlemedia');
         }
 
         // Add JS file, which uses default name.

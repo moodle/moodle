@@ -163,6 +163,22 @@ class enrol_users_filter_form extends moodleform {
         $mform->addElement('select', 'role', get_string('role'),
                 array(0 => get_string('all')) + $rolenames);
 
+        // Filter by group.
+        $allgroups = $manager->get_all_groups();
+        $groupsmenu[0] = get_string('allparticipants');
+        foreach($allgroups as $gid => $unused) {
+            $groupsmenu[$gid] = $allgroups[$gid]->name;
+        }
+        if (count($groupsmenu) > 1) {
+            $mform->addElement('select', 'filtergroup', get_string('group'), $groupsmenu);
+        }
+
+        // Status active/inactive.
+        $mform->addElement('select', 'status', get_string('status'),
+                array(-1 => get_string('all'),
+                    ENROL_USER_ACTIVE => get_string('active'),
+                    ENROL_USER_SUSPENDED => get_string('inactive')));
+
         // Submit button does not use add_action_buttons because that adds
         // another fieldset which causes the CSS style to break in an unfixable
         // way due to fieldset quirks.

@@ -188,6 +188,17 @@ class qtype_match_question extends question_graded_automatically_with_countback 
         return $response;
     }
 
+    public function prepare_simulated_post_data($simulatedresponse) {
+        $postdata = array();
+        $stemnos = array_flip($this->stemorder);
+        $choicetochoiceno = array_flip($this->choices);
+        $choicenotochoiceselectvalue = array_flip($this->choiceorder);
+        foreach ($simulatedresponse as $subquestion => $choice) {
+            $postdata[$this->field($stemnos[$subquestion + 1])] = $choicenotochoiceselectvalue[$choicetochoiceno[$choice]];
+        }
+        return $postdata;
+    }
+
     public function get_right_choice_for($stemid) {
         foreach ($this->choiceorder as $choicekey => $choiceid) {
             if ($this->right[$stemid] == $choiceid) {

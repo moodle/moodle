@@ -53,7 +53,7 @@ class admin_uploaduser_form1 extends moodleform {
             $mform->setDefault('delimiter_name', 'comma');
         }
 
-        $choices = textlib::get_encodings();
+        $choices = core_text::get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'tool_uploaduser'), $choices);
         $mform->setDefault('encoding', 'UTF-8');
 
@@ -257,9 +257,10 @@ class admin_uploaduser_form2 extends moodleform {
         } else {
             $mform->setDefault('city', $CFG->defaultcity);
         }
-        $mform->addRule('city', get_string('required'), 'required');
 
-        $mform->addElement('select', 'country', get_string('selectacountry'), get_string_manager()->get_list_of_countries());
+        $choices = get_string_manager()->get_list_of_countries();
+        $choices = array(''=>get_string('selectacountry').'...') + $choices;
+        $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
         if (empty($CFG->country)) {
             $mform->setDefault('country', $templateuser->country);
         } else {

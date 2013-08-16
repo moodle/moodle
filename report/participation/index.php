@@ -214,14 +214,16 @@ if (!empty($instanceid) && !empty($roleid)) {
     list($actionsql, $params) = $DB->get_in_or_equal($actions, SQL_PARAMS_NAMED, 'action');
     $actionsql = "action $actionsql";
 
-    $relatedcontexts = get_related_contexts_string($context);
+    // We want to query both the current context and parent contexts.
+    list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
 
     $sql = "SELECT ra.userid, u.firstname, u.lastname, u.idnumber, l.actioncount AS count
-            FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedcontexts AND roleid = :roleid ) ra
+            FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
             JOIN {user} u ON u.id = ra.userid
             LEFT JOIN (
                 SELECT userid, COUNT(action) AS actioncount FROM {log} WHERE cmid = :instanceid AND time > :timefrom AND $actionsql GROUP BY userid
             ) l ON (l.userid = ra.userid)";
+    $params = array_merge($params, $relatedctxparams);
     $params['roleid'] = $roleid;
     $params['instanceid'] = $instanceid;
     $params['timefrom'] = $timefrom;
@@ -239,7 +241,7 @@ if (!empty($instanceid) && !empty($roleid)) {
     $countsql = "SELECT COUNT(DISTINCT(ra.userid))
                    FROM {role_assignments} ra
                    JOIN {user} u ON u.id = ra.userid
-                  WHERE ra.contextid $relatedcontexts AND ra.roleid = :roleid";
+                  WHERE ra.contextid $relatedctxsql AND ra.roleid = :roleid";
 
     $totalcount = $DB->count_records_sql($countsql, $params);
 

@@ -48,7 +48,7 @@ function iplookup_find_location($ip) {
             return $info;
         }
         if (!empty($location->city)) {
-            $info['city'] = textlib::convert($location->city, 'iso-8859-1', 'utf-8');
+            $info['city'] = core_text::convert($location->city, 'iso-8859-1', 'utf-8');
             $info['title'][] = $info['city'];
         }
 

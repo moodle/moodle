@@ -91,7 +91,7 @@ class block_edit_form extends moodleform {
         $mform->addElement('hidden', 'bui_parentcontextid', $parentcontext->id);
         $mform->setType('bui_parentcontextid', PARAM_INT);
 
-        $mform->addElement('static', 'bui_homecontext', get_string('createdat', 'block'), print_context_name($parentcontext));
+        $mform->addElement('static', 'bui_homecontext', get_string('createdat', 'block'), $parentcontext->get_context_name());
         $mform->addHelpButton('bui_homecontext', 'createdat', 'block');
 
         // For pre-calculated (fixed) pagetype lists
@@ -142,7 +142,7 @@ class block_edit_form extends moodleform {
             // module context doesn't have child contexts, so display in current context only
             $mform->addElement('hidden', 'bui_contexts', BUI_CONTEXTS_CURRENT);
         } else {
-            $parentcontextname = print_context_name($parentcontext);
+            $parentcontextname = $parentcontext->get_context_name();
             $contextoptions[BUI_CONTEXTS_CURRENT]      = get_string('showoncontextonly', 'block', $parentcontextname);
             $contextoptions[BUI_CONTEXTS_CURRENT_SUBS] = get_string('showoncontextandsubs', 'block', $parentcontextname);
             $mform->addElement('select', 'bui_contexts', get_string('contexts', 'block'), $contextoptions);

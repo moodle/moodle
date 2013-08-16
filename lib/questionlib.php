@@ -138,7 +138,7 @@ function questions_in_use($questionids) {
         return true;
     }
 
-    foreach (get_plugin_list('mod') as $module => $path) {
+    foreach (core_component::get_plugin_list('mod') as $module => $path) {
         $lib = $path . '/lib.php';
         if (is_readable($lib)) {
             include_once($lib);
@@ -441,9 +441,14 @@ function question_delete_course_category($category, $newcategory, $feedback=true
                     $questionids = $DB->get_records_menu('question',
                             array('category'=>$category->id), '', 'id, 1');
                     if (!empty($questionids)) {
+                        $parentcontextid = false;
+                        $parentcontext = $context->get_parent_context();
+                        if ($parentcontext) {
+                            $parentcontextid = $parentcontext->id;
+                        }
                         if (!$rescueqcategory = question_save_from_deletion(
-                                array_keys($questionids), get_parent_contextid($context),
-                                print_context_name($context), $rescueqcategory)) {
+                                array_keys($questionids), $parentcontextid,
+                                $context->get_context_name(), $rescueqcategory)) {
                             return false;
                         }
                         $feedbackdata[] = array($category->name,
@@ -477,8 +482,8 @@ function question_delete_course_category($category, $newcategory, $feedback=true
                 array('contextid'=>$context->id));
         if ($feedback) {
             $a = new stdClass();
-            $a->oldplace = print_context_name($context);
-            $a->newplace = print_context_name($newcontext);
+            $a->oldplace = $context->get_context_name();
+            $a->newplace = $newcontext->get_context_name();
             echo $OUTPUT->notification(
                     get_string('movedquestionsandcategories', 'question', $a), 'notifysuccess');
         }
@@ -1059,7 +1064,7 @@ function question_make_default_categories($contexts) {
                 array('contextid' => $context->id))) {
             // Otherwise, we need to make one
             $category = new stdClass();
-            $contextname = print_context_name($context, false, true);
+            $contextname = $context->get_context_name(false, true);
             $category->name = get_string('defaultfor', 'question', $contextname);
             $category->info = get_string('defaultinfofor', 'question', $contextname);
             $category->contextid = $context->id;
@@ -1227,7 +1232,7 @@ function get_import_export_formats($type) {
     global $CFG;
     require_once($CFG->dirroot . '/question/format.php');
 
-    $formatclasses = get_plugin_list_with_class('qformat', '', 'format.php');
+    $formatclasses = core_component::get_plugin_list_with_class('qformat', '', 'format.php');
 
     $fileformatname = array();
     foreach ($formatclasses as $component => $formatclass) {
@@ -1245,7 +1250,7 @@ function get_import_export_formats($type) {
         }
     }
 
-    collatorlib::asort($fileformatnames);
+    core_collator::asort($fileformatnames);
     return $fileformatnames;
 }
 
@@ -1726,21 +1731,61 @@ function question_rewrite_question_urls($text, $file, $contextid, $component,
 
 /**
  * Rewrite the PLUGINFILE urls in the questiontext, when viewing the question
- * text outside and attempt (for example, in the question bank listing or in the
+ * text outside an attempt (for example, in the question bank listing or in the
  * quiz statistics report).
  *
  * @param string $questiontext the question text.
  * @param int $contextid the context the text is being displayed in.
  * @param string $component component
- * @param array $ids other IDs will be used to check file permission
- * @param array $options
+ * @param array $questionid the question id
+ * @param array $options e.g. forcedownload. Passed to file_rewrite_pluginfile_urls.
  * @return string $questiontext with URLs rewritten.
+ * @deprecated since Moodle 2.6
  */
 function question_rewrite_questiontext_preview_urls($questiontext, $contextid,
         $component, $questionid, $options=null) {
+    global $DB;
 
-    return file_rewrite_pluginfile_urls($questiontext, 'pluginfile.php', $contextid,
-            'question', 'questiontext_preview', "$component/$questionid", $options);
+    debugging('question_rewrite_questiontext_preview_urls has been deprecated. ' .
+            'Please use question_rewrite_question_preview_urls instead', DEBUG_DEVELOPER);
+    $questioncontextid = $DB->get_field_sql('
+            SELECT qc.contextid
+              FROM {question} q
+              JOIN {question_categories} qc ON qc.id = q.category
+             WHERE q.id = :id', array('id' => $questionid), MUST_EXIST);
+
+    return question_rewrite_question_preview_urls($questiontext, $questionid,
+            $questioncontextid, 'question', 'questiontext', $questionid,
+            $contextid, $component, $options);
+}
+
+/**
+ * Rewrite the PLUGINFILE urls in part of the content of a question, for use when
+ * viewing the question outside an attempt (for example, in the question bank
+ * listing or in the quiz statistics report).
+ *
+ * @param string $text the question text.
+ * @param int $questionid the question id.
+ * @param int $filecontextid the context id of the question being displayed.
+ * @param string $filecomponent the component that owns the file area.
+ * @param string $filearea the file area name.
+ * @param int|null $itemid the file's itemid
+ * @param int $previewcontextid the context id where the preview is being displayed.
+ * @param string $previewcomponent component responsible for displaying the preview.
+ * @param array $options text and file options ('forcehttps'=>false)
+ * @return string $questiontext with URLs rewritten.
+ */
+function question_rewrite_question_preview_urls($text, $questionid,
+        $filecontextid, $filecomponent, $filearea, $itemid,
+        $previewcontextid, $previewcomponent, $options = null) {
+
+    $path = "preview/$previewcontextid/$previewcomponent/$questionid";
+    if ($itemid) {
+        $path .= '/' . $itemid;
+    }
+
+    return file_rewrite_pluginfile_urls($text, 'pluginfile.php', $filecontextid,
+            $filecomponent, $filearea, $path, $options);
 }
 
 /**
@@ -1749,10 +1794,13 @@ function question_rewrite_questiontext_preview_urls($questiontext, $contextid,
  * @param array $args the remaining file arguments (file path).
  * @param bool $forcedownload whether the user must be forced to download the file.
  * @param array $options additional options affecting the file serving
+ * @deprecated since Moodle 2.6.
  */
 function question_send_questiontext_file($questionid, $args, $forcedownload, $options) {
     global $DB;
 
+    debugging('question_send_questiontext_file has been deprecated. It is no longer necessary. ' .
+            'You can now just use send_stored_file.', DEBUG_DEVELOPER);
     $question = $DB->get_record_sql('
             SELECT q.id, qc.contextid
               FROM {question} q
@@ -1761,6 +1809,10 @@ function question_send_questiontext_file($questionid, $args, $forcedownload, $op
 
     $fs = get_file_storage();
     $fullpath = "/$question->contextid/question/questiontext/$question->id/" . implode('/', $args);
+
+    // Get rid of the redundant questionid.
+    $fullpath = str_replace("/{$questionid}/{$questionid}/", "/{$questionid}/", $fullpath);
+
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         send_file_not_found();
     }
@@ -1794,16 +1846,7 @@ function question_send_questiontext_file($questionid, $args, $forcedownload, $op
 function question_pluginfile($course, $context, $component, $filearea, $args, $forcedownload, array $options=array()) {
     global $DB, $CFG;
 
-    if ($filearea === 'questiontext_preview') {
-        $component = array_shift($args);
-        $questionid = array_shift($args);
-
-        component_callback($component, 'questiontext_preview_pluginfile', array(
-                $context, $questionid, $args, $forcedownload, $options));
-
-        send_file_not_found();
-    }
-
+    // Special case, sending a question bank export.
     if ($filearea === 'export') {
         list($context, $course, $cm) = get_context_info_array($context->id);
         require_login($course, false, $cm);
@@ -1863,7 +1906,35 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
         send_file($content, $filename, 0, 0, true, true, $qformat->mime_type());
     }
 
-    $qubaid = (int)array_shift($args);
+    // Normal case, a file belonging to a question.
+    $qubaidorpreview = array_shift($args);
+
+    // Two sub-cases: 1. A question being previewed outside an attempt/usage.
+    if ($qubaidorpreview === 'preview') {
+        $previewcontextid = (int)array_shift($args);
+        $previewcomponent = array_shift($args);
+        $questionid = (int) array_shift($args);
+        $previewcontext = context_helper::instance_by_id($previewcontextid);
+
+        $result = component_callback($previewcomponent, 'question_preview_pluginfile', array(
+                $previewcontext, $questionid,
+                $context, $component, $filearea, $args,
+                $forcedownload, $options), 'newcallbackmissing');
+
+        if ($result === 'newcallbackmissing' && $filearea = 'questiontext') {
+            // Fall back to the legacy callback for backwards compatibility.
+            debugging("Component {$previewcomponent} does not define the expected " .
+                    "{$previewcomponent}_question_preview_pluginfile callback. Falling back to the deprecated " .
+                    "{$previewcomponent}_questiontext_preview_pluginfile callback.", DEBUG_DEVELOPER);
+            component_callback($previewcomponent, 'questiontext_preview_pluginfile', array(
+                    $previewcontext, $questionid, $args, $forcedownload, $options));
+        }
+
+        send_file_not_found();
+    }
+
+    // 2. A question being attempted in the normal way.
+    $qubaid = (int)$qubaidorpreview;
     $slot = (int)array_shift($args);
 
     $module = $DB->get_field('question_usages', 'component',
@@ -1875,7 +1946,7 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
                 $component, $filearea, $qubaid, $slot, $args, $forcedownload, $options);
 
     } else {
-        $dir = get_component_directory($module);
+        $dir = core_component::get_component_directory($module);
         if (!file_exists("$dir/lib.php")) {
             send_file_not_found();
         }
@@ -1905,13 +1976,17 @@ function question_pluginfile($course, $context, $component, $filearea, $args, $f
  *
  * @package  core_files
  * @category files
- * @param stdClass $context the context
- * @param int $questionid the question id
- * @param array $args remaining file args
- * @param bool $forcedownload
- * @param array $options additional options affecting the file serving
+ * @param context $previewcontext the context in which the preview is happening.
+ * @param int $questionid the question id.
+ * @param context $filecontext the file (question) context.
+ * @param string $filecomponent the component the file belongs to.
+ * @param string $filearea the file area.
+ * @param array $args remaining file args.
+ * @param bool $forcedownload.
+ * @param array $options additional options affecting the file serving.
  */
-function core_question_questiontext_preview_pluginfile($context, $questionid, $args, $forcedownload, array $options=array()) {
+function core_question_question_preview_pluginfile($previewcontext, $questionid,
+        $filecontext, $filecomponent, $filearea, $args, $forcedownload, $options = array()) {
     global $DB;
 
     // Verify that contextid matches the question.
@@ -1920,15 +1995,22 @@ function core_question_questiontext_preview_pluginfile($context, $questionid, $a
               FROM {question} q
               JOIN {question_categories} qc ON qc.id = q.category
              WHERE q.id = :id AND qc.contextid = :contextid',
-            array('id' => $questionid, 'contextid' => $context->id), MUST_EXIST);
+            array('id' => $questionid, 'contextid' => $filecontext->id), MUST_EXIST);
 
     // Check the capability.
-    list($context, $course, $cm) = get_context_info_array($context->id);
+    list($context, $course, $cm) = get_context_info_array($previewcontext->id);
     require_login($course, false, $cm);
 
     question_require_capability_on($question, 'use');
 
-    question_send_questiontext_file($questionid, $args, $forcedownload, $options);
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/{$filecontext->id}/{$filecomponent}/{$filearea}/{$relativepath}";
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        send_file_not_found();
+    }
+
+    send_stored_file($file, 0, 0, $forcedownload, $options);
 }
 
 /**

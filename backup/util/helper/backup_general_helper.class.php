@@ -72,7 +72,7 @@ abstract class backup_general_helper extends backup_helper {
 
         static $availableblocks = array(); // Get and cache available blocks
         if (empty($availableblocks)) {
-            $availableblocks = array_keys(get_plugin_list('block'));
+            $availableblocks = array_keys(core_component::get_plugin_list('block'));
         }
 
         $path = $path . '/blocks'; // Always look under blocks subdir

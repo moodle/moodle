@@ -178,7 +178,7 @@ class feedback_edit_create_template_form extends moodleform {
                                                  get_string('name', 'feedback'),
                                                  array('size'=>'40', 'maxlength'=>'200'));
 
-        if (has_capability('mod/feedback:createpublictemplate', get_system_context())) {
+        if (has_capability('mod/feedback:createpublictemplate', context_system::instance())) {
             $elementgroup[] = $mform->createElement('checkbox',
                                                      'ispublic',
                                                      get_string('public', 'feedback'),

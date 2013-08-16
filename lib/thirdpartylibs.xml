@@ -88,7 +88,7 @@
     <location>minify</location>
     <name>Minify</name>
     <license>BSD</license>
-    <version>2.1.5</version>
+    <version>2.1.7</version>
     <licenseversion></licenseversion>
   </library>
   <library>
@@ -207,21 +207,21 @@
     <location>jquery</location>
     <name>jQuery</name>
     <license>MIT</license>
-    <version>1.9.1</version>
+    <version>1.10.2</version>
     <licenseversion></licenseversion>
   </library>
   <library>
     <location>jquery</location>
     <name>jQuery Migrate</name>
     <license>MIT</license>
-    <version>1.1.1</version>
+    <version>1.2.1</version>
     <licenseversion></licenseversion>
   </library>
   <library>
     <location>jquery</location>
     <name>jQuery UI</name>
     <license>MIT</license>
-    <version>1.10.2</version>
+    <version>1.10.3</version>
     <licenseversion></licenseversion>
   </library>
   <library>
@@ -306,6 +306,13 @@
     <name>Gallery Bootstrap Engine</name>
     <license>BSD</license>
     <version>2012.08.22-20-00</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>lib/editor/tinymce/plugins/pdw/tinymce</location>
+    <name>PDW Toolbar Toggle</name>
+    <license>MIT</license>
+    <version>1.2</version>
     <licenseversion></licenseversion>
   </library>
 </libraries>

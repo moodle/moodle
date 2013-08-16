@@ -28,7 +28,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2012 Paul Charsley
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_webservice_external_testcase extends externallib_advanced_testcase {
+class core_webservice_externallib_testcase extends externallib_advanced_testcase {
 
     public function setUp() {
         // Calling parent is good, always
@@ -62,6 +62,7 @@ class core_webservice_external_testcase extends externallib_advanced_testcase {
         $webservice->component = 'moodle';
         $webservice->timecreated = time();
         $webservice->downloadfiles = true;
+        $webservice->uploadfiles = true;
         $externalserviceid = $DB->insert_record('external_services', $webservice);
 
         // Add a function to the service
@@ -92,11 +93,13 @@ class core_webservice_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(true, $siteinfo['downloadfiles']);
         $this->assertEquals($CFG->release, $siteinfo['release']);
         $this->assertEquals($CFG->version, $siteinfo['version']);
-        $this->assertEquals(get_config('admin', 'mobilecssurl'), $siteinfo['mobilecssurl']);
+        $this->assertEquals($CFG->mobilecssurl, $siteinfo['mobilecssurl']);
         $this->assertEquals(count($siteinfo['functions']), 1);
         $function = array_pop($siteinfo['functions']);
         $this->assertEquals($function['name'], 'core_course_get_contents');
         $this->assertEquals($function['version'], $siteinfo['version']);
+        $this->assertEquals(1, $siteinfo['downloadfiles']);
+        $this->assertEquals(1, $siteinfo['uploadfiles']);
     }
 
 }

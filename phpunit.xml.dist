@@ -31,11 +31,13 @@
         <testsuite name="core_test">
             <directory suffix="_test.php">lib/testing/tests</directory>
         </testsuite>
-        <testsuite name="core_db">
+        <testsuite name="core_ddl">
             <directory suffix="_test.php">lib/ddl/tests</directory>
+        </testsuite>
+        <testsuite name="core_dml">
             <directory suffix="_test.php">lib/dml/tests</directory>
         </testsuite>
-        <testsuite name="core_lib">
+        <testsuite name="core">
             <directory suffix="_test.php">lib/tests</directory>
             <directory suffix="_test.php">lib/ajax/tests</directory>
             <directory suffix="_test.php">lib/form/tests</directory>

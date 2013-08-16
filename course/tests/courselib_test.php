@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot.'/course/lib.php');
 
-class courselib_testcase extends advanced_testcase {
+class core_course_courselib_testcase extends advanced_testcase {
 
     /**
      * Set forum specific test values for calling create_module().
@@ -637,6 +637,55 @@ class courselib_testcase extends advanced_testcase {
         // Ensure all 7 (0-6) sections were created and modinfo/sectioninfo cache works properly
         $sectionscreated = array_keys(get_fast_modinfo($course)->get_section_info_all());
         $this->assertEquals(range(0, $course->numsections + 1), $sectionscreated);
+    }
+
+    public function test_course_add_cm_to_section() {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        // Create course with 1 section.
+        $course = $this->getDataGenerator()->create_course(
+                array('shortname' => 'GrowingCourse',
+                    'fullname' => 'Growing Course',
+                    'numsections' => 1),
+                array('createsections' => true));
+
+        // Trash modinfo.
+        rebuild_course_cache($course->id, true);
+
+        // Create some cms for testing.
+        $cmids = array();
+        for ($i=0; $i<4; $i++) {
+            $cmids[$i] = $DB->insert_record('course_modules', array('course' => $course->id));
+        }
+
+        // Add it to section that exists.
+        course_add_cm_to_section($course, $cmids[0], 1);
+
+        // Check it got added to sequence.
+        $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 1));
+        $this->assertEquals($cmids[0], $sequence);
+
+        // Add a second, this time using courseid variant of parameters.
+        course_add_cm_to_section($course->id, $cmids[1], 1);
+        $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 1));
+        $this->assertEquals($cmids[0] . ',' . $cmids[1], $sequence);
+
+        // Check modinfo was not rebuilt (important for performance if calling
+        // repeatedly).
+        $this->assertNull($DB->get_field('course', 'modinfo', array('id' => $course->id)));
+
+        // Add one to section that doesn't exist (this might rebuild modinfo).
+        course_add_cm_to_section($course, $cmids[2], 2);
+        $this->assertEquals(3, $DB->count_records('course_sections', array('course' => $course->id)));
+        $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 2));
+        $this->assertEquals($cmids[2], $sequence);
+
+        // Add using the 'before' option.
+        course_add_cm_to_section($course, $cmids[3], 2, $cmids[2]);
+        $this->assertEquals(3, $DB->count_records('course_sections', array('course' => $course->id)));
+        $sequence = $DB->get_field('course_sections', 'sequence', array('course' => $course->id, 'section' => 2));
+        $this->assertEquals($cmids[3] . ',' . $cmids[2], $sequence);
     }
 
     public function test_reorder_sections() {
@@ -1249,5 +1298,40 @@ class courselib_testcase extends advanced_testcase {
         $modinfo = get_fast_modinfo($course);
         $pagecm = $modinfo->cms[$page->cmid];
         $this->assertEquals($pagecm->visible, 0);
+    }
+
+    public function test_course_delete_module() {
+        global $DB;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Create course and modules.
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 5));
+
+        // Generate an assignment with due date (will generate a course event).
+        $assign = $this->getDataGenerator()->create_module('assign', array('duedate' => time(), 'course' => $course->id));
+
+        $cm = get_coursemodule_from_instance('assign', $assign->id);
+
+        // Verify context exists.
+        $this->assertInstanceOf('context_module', context_module::instance($cm->id, IGNORE_MISSING));
+
+        // Verify event assignment event has been generated.
+        $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
+        $this->assertEquals(1, $eventcount);
+
+        // Run delete..
+        course_delete_module($cm->id);
+
+        // Verify the context has been removed.
+        $this->assertFalse(context_module::instance($cm->id, IGNORE_MISSING));
+
+        // Verify the course_module record has been deleted.
+        $cmcount = $DB->count_records('course_modules', array('id' => $cm->id));
+        $this->assertEmpty($cmcount);
+
+        // Verify event assignment events have been removed.
+        $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
+        $this->assertEmpty($eventcount);
     }
 }

@@ -29,4 +29,3 @@ other plugin types.
 $string['pluginname'] = 'Aiken format';
 $string['pluginname_help'] = 'This is a simple format ...';
 $string['pluginname_link'] = 'qformat/aiken';
-

@@ -96,6 +96,29 @@ abstract class question_test_helper {
      * this question type.
      */
     abstract public function get_test_questions();
+
+    /**
+     * Set up a form to create a question in $cat. This method also sets cat and contextid on $questiondata object.
+     * @param object $cat the category
+     * @param object $questiondata form initialisation requires question data.
+     * @return moodleform
+     */
+    public static function get_question_editing_form($cat, $questiondata) {
+        $catcontext = context::instance_by_id($cat->contextid, MUST_EXIST);
+        $contexts = new question_edit_contexts($catcontext);
+        $dataforformconstructor = new stdClass();
+        $dataforformconstructor->qtype = $questiondata->qtype;
+        $dataforformconstructor->contextid = $questiondata->contextid = $catcontext->id;
+        $dataforformconstructor->category = $questiondata->category = $cat->id;
+        $dataforformconstructor->formoptions = new stdClass();
+        $dataforformconstructor->formoptions->canmove = true;
+        $dataforformconstructor->formoptions->cansaveasnew = true;
+        $dataforformconstructor->formoptions->movecontext = false;
+        $dataforformconstructor->formoptions->canedit = true;
+        $dataforformconstructor->formoptions->repeatelements = true;
+        $qtype = question_bank::get_qtype($questiondata->qtype);
+        return  $qtype->create_editing_form('question.php', $dataforformconstructor, $cat, $contexts, true);
+    }
 }
 
 
@@ -172,18 +195,6 @@ class test_question_maker {
         $qdata->hints = array();
     }
 
-    public static function initialise_question_form_data($qdata) {
-        $formdata = new stdClass();
-        $formdata->id = 0;
-        $formdata->category = '0,0';
-        $formdata->usecurrentcat = 1;
-        $formdata->categorymoveto = '0,0';
-        $formdata->tags = array();
-        $formdata->penalty = 0.3333333;
-        $formdata->questiontextformat = FORMAT_HTML;
-        $formdata->generalfeedbackformat = FORMAT_HTML;
-    }
-
     /**
      * Get the test helper class for a particular question type.
      * @param $qtype the question type name, e.g. 'multichoice'.
@@ -196,7 +207,7 @@ class test_question_maker {
             return self::$testhelpers[$qtype];
         }
 
-        $file = get_plugin_directory('qtype', $qtype) . '/tests/helper.php';
+        $file = core_component::get_plugin_directory('qtype', $qtype) . '/tests/helper.php';
         if (!is_readable($file)) {
             throw new coding_exception('Question type ' . $qtype .
                 ' does not have test helper code.');
@@ -412,6 +423,19 @@ class test_question_maker {
         $q->shownumcorrect = true;
         $q->incorrectfeedback = self::STANDARD_OVERALL_INCORRECT_FEEDBACK;
         $q->incorrectfeedbackformat = FORMAT_HTML;
+    }
+
+    /**
+     * Add some standard overall feedback to a question's form data.
+     */
+    public static function set_standard_combined_feedback_form_data($form) {
+        $form->correctfeedback = array('text' => self::STANDARD_OVERALL_CORRECT_FEEDBACK,
+                                    'format' => FORMAT_HTML);
+        $form->partiallycorrectfeedback = array('text' => self::STANDARD_OVERALL_PARTIALLYCORRECT_FEEDBACK,
+                                             'format' => FORMAT_HTML);
+        $form->shownumcorrect = true;
+        $form->incorrectfeedback = array('text' => self::STANDARD_OVERALL_INCORRECT_FEEDBACK,
+                                    'format' => FORMAT_HTML);
     }
 }
 
@@ -824,6 +848,13 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
                 'Looking for a hidden input with attributes ' . html_writer::attributes($attributes) . ' in ' . $this->currentoutput);
     }
 
+    protected function check_output_contains_lang_string($identifier, $component = '', $a = null) {
+        $this->render();
+        $string = get_string($identifier, $component, $a);
+        $this->assertContains($string, $this->currentoutput,
+                'Expected string ' . $string . ' not found in ' . $this->currentoutput);
+    }
+
     protected function get_tag_matcher($tag, $attributes) {
         return array(
             'tag' => $tag,
@@ -1169,5 +1200,70 @@ class question_test_recordset extends moodle_recordset {
 
     public function close() {
         $this->records = null;
+    }
+}
+
+/**
+ * A {@link question_variant_selection_strategy} designed for testing.
+ * For selected. questions it wil return a specific variants. In for the other
+ * slots it will use a fallback strategy.
+ *
+ * @copyright  2013 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_variant_forced_choices_selection_strategy
+    implements question_variant_selection_strategy {
+
+    /** @var array seed => variant to select. */
+    protected $forcedchoices;
+
+    /** @var question_variant_selection_strategy strategy used to make the non-forced choices. */
+    protected $basestrategy;
+
+    /**
+     * Constructor.
+     * @param array $forcedchoice array seed => variant to select.
+     * @param question_variant_selection_strategy $basestrategy strategy used
+     *      to make the non-forced choices.
+     */
+    public function __construct(array $forcedchoices, question_variant_selection_strategy $basestrategy) {
+        $this->forcedchoices = $forcedchoices;
+        $this->basestrategy  = $basestrategy;
+    }
+
+    public function choose_variant($maxvariants, $seed) {
+        if (array_key_exists($seed, $this->forcedchoices)) {
+            if ($this->forcedchoices[$seed] > $maxvariants) {
+                throw new coding_exception('Forced variant out of range.');
+            }
+            return $this->forcedchoices[$seed];
+        } else {
+            return $this->basestrategy->choose_variant($maxvariants, $seed);
+        }
+    }
+
+    /**
+     * Helper method for preparing the $forcedchoices array.
+     * @param array $variantsbyslot slot number => variant to select.
+     * @param question_usage_by_activity $quba the question usage we need a strategy for.
+     * @return array that can be passed to the constructor as $forcedchoices.
+     */
+    public static function prepare_forced_choices_array(array $variantsbyslot,
+                                                        question_usage_by_activity $quba) {
+
+        $forcedchoices = array();
+
+        foreach ($variantsbyslot as $slot => $varianttochoose) {
+            $question = $quba->get_question($slot);
+            $seed = $question->get_variants_selection_seed();
+            if (array_key_exists($seed, $forcedchoices) && $forcedchoices[$seed] != $varianttochoose) {
+                throw new coding_exception('Inconsistent forced variant detected at slot ' . $slot);
+            }
+            if ($varianttochoose > $question->get_num_variants()) {
+                throw new coding_exception('Forced variant out of range at slot ' . $slot);
+            }
+            $forcedchoices[$seed] = $varianttochoose;
+        }
+        return $forcedchoices;
     }
 }

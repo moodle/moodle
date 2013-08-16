@@ -60,6 +60,7 @@ $string['addfilehere'] = 'Add file(s) here';
 $string['addinganew'] = 'Adding a new {$a}';
 $string['addinganewto'] = 'Adding a new {$a->what} to {$a->to}';
 $string['addingdatatoexisting'] = 'Adding data to existing';
+$string['additionalnames'] = 'Additional names';
 $string['addlinkhere'] = 'Add link here';
 $string['addnewcategory'] = 'Add new category';
 $string['addnewcourse'] = 'Add a new course';
@@ -135,6 +136,7 @@ $string['allparticipants'] = 'All participants';
 $string['allteachers'] = 'All teachers';
 $string['alphanumerical'] = 'Can only contain alphanumeric characters, hyphen (-) or period (.)';
 $string['alreadyconfirmed'] = 'Registration has already been confirmed';
+$string['alternatename'] = 'Alternate name';
 $string['always'] = 'Always';
 $string['and'] = '{$a->one} and {$a->two}';
 $string['answer'] = 'Answer';
@@ -556,6 +558,13 @@ $string['emailconfirmsent'] = '<p>An email should have been sent to your address
    <p>It contains easy instructions to complete your registration.</p>
    <p>If you continue to have difficulty, contact the site administrator.</p>';
 $string['emaildigest'] = 'Email digest type';
+$string['emaildigest_help'] = 'This is the daily digest setting that forums will use by default.
+
+* No digest - you will receive one e-mail per forum post;
+* Digest - complete posts - you will receive one digest e-mail per day containing the complete contents of each forum post;
+* Digest - subjects only - you will receive one digest e-mail per day containing just the subject of each forum post.
+
+You can also choose a different setting for each forum if you wish.';
 $string['emaildigestcomplete'] = 'Complete (daily email with full posts)';
 $string['emaildigestoff'] = 'No digest (single email per forum post)';
 $string['emaildigestsubjects'] = 'Subjects (daily email with subjects only)';
@@ -680,6 +689,7 @@ $string['filter'] = 'Filter';
 $string['findmorecourses'] = 'Find more courses...';
 $string['firstaccess'] = 'First access';
 $string['firstname'] = 'First name';
+$string['firstnamephonetic'] = 'First name - phonetic';
 $string['firsttime'] = 'Is this your first time here?';
 $string['folder'] = 'Folder';
 $string['folderclosed'] = 'Closed folder';
@@ -910,6 +920,7 @@ $string['lastedited'] = 'Last edited';
 $string['lastlogin'] = 'Last login';
 $string['lastmodified'] = 'Last modified';
 $string['lastname'] = 'Surname';
+$string['lastnamephonetic'] = 'Surname - phonetic';
 $string['lastyear'] = 'Last year';
 $string['latestlanguagepack'] = 'Check for latest language pack on moodle.org';
 $string['layouttable'] = 'Layout table';
@@ -1019,6 +1030,7 @@ $string['messageprovider:instantmessage'] = 'Personal messages between users';
 $string['messageprovider:instantmessage_help'] = 'This section configures what happens to messages that are sent to you directly from other users on this site.';
 $string['messageselect'] = 'Select this user as a message recipient';
 $string['messageselectadd'] = 'Send a message';
+$string['middlename'] = 'Middle name';
 $string['migratinggrades'] = 'Migrating grades';
 $string['min'] = 'min';
 $string['mins'] = 'mins';

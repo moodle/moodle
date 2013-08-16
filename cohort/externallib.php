@@ -258,7 +258,7 @@ class core_cohort_external extends external_api {
         return new external_multiple_structure(
             new external_single_structure(
                 array(
-                    'id' => new external_value(PARAM_NUMBER, 'ID of the cohort'),
+                    'id' => new external_value(PARAM_INT, 'ID of the cohort'),
                     'name' => new external_value(PARAM_RAW, 'cohort name'),
                     'idnumber' => new external_value(PARAM_RAW, 'cohort idnumber'),
                     'description' => new external_value(PARAM_RAW, 'cohort description'),
@@ -280,7 +280,7 @@ class core_cohort_external extends external_api {
                 'cohorts' => new external_multiple_structure(
                     new external_single_structure(
                         array(
-                            'id' => new external_value(PARAM_NUMBER, 'ID of the cohort'),
+                            'id' => new external_value(PARAM_INT, 'ID of the cohort'),
                             'categorytype' => new external_single_structure(
                                 array(
                                     'type' => new external_value(PARAM_TEXT, 'the name of the field: id (numeric value

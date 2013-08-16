@@ -108,6 +108,9 @@ class cache_config_writer extends cache_config {
             fflush($handle);
             fclose($handle);
             $locking->unlock('configwrite', 'config');
+            @chmod($cachefile, $CFG->filepermissions);
+            // Tell PHP to recompile the script.
+            core_component::invalidate_opcode_php_cache($cachefile);
         } else {
             throw new cache_exception('ex_configcannotsave', 'cache', '', null, 'Unable to open the cache config file.');
         }
@@ -146,7 +149,7 @@ class cache_config_writer extends cache_config {
         }
         $class = 'cachestore_'.$plugin;
         if (!class_exists($class)) {
-            $plugins = get_plugin_list_with_file('cachestore', 'lib.php');
+            $plugins = core_component::get_plugin_list_with_file('cachestore', 'lib.php');
             if (!array_key_exists($plugin, $plugins)) {
                 throw new cache_exception('Invalid plugin name specified. The plugin does not exist or is not valid.');
             }
@@ -201,7 +204,7 @@ class cache_config_writer extends cache_config {
         }
         $class = 'cachelock_'.$plugin;
         if (!class_exists($class)) {
-            $plugins = get_plugin_list_with_file('cachelock', 'lib.php');
+            $plugins = core_component::get_plugin_list_with_file('cachelock', 'lib.php');
             if (!array_key_exists($plugin, $plugins)) {
                 throw new cache_exception('Invalid lock name specified. The plugin does not exist or is not valid.');
             }
@@ -312,7 +315,7 @@ class cache_config_writer extends cache_config {
         if (!array_key_exists($name, $this->configstores)) {
             throw new cache_exception('The requested instance does not exist.');
         }
-        $plugins = get_plugin_list_with_file('cachestore', 'lib.php');
+        $plugins = core_component::get_plugin_list_with_file('cachestore', 'lib.php');
         if (!array_key_exists($plugin, $plugins)) {
             throw new cache_exception('Invalid plugin name specified. The plugin either does not exist or is not valid.');
         }
@@ -518,9 +521,9 @@ class cache_config_writer extends cache_config {
         }
 
         if (!$coreonly) {
-            $plugintypes = get_plugin_types();
+            $plugintypes = core_component::get_plugin_types();
             foreach ($plugintypes as $type => $location) {
-                $plugins = get_plugin_list_with_file($type, 'db/caches.php');
+                $plugins = core_component::get_plugin_list_with_file($type, 'db/caches.php');
                 foreach ($plugins as $plugin => $filepath) {
                     $component = clean_param($type.'_'.$plugin, PARAM_COMPONENT); // Standardised plugin name.
                     $files[$component] = $filepath;
@@ -735,7 +738,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_store_plugin_summaries() {
         $return = array();
-        $plugins = get_plugin_list_with_file('cachestore', 'lib.php', true);
+        $plugins = core_component::get_plugin_list_with_file('cachestore', 'lib.php', true);
         foreach ($plugins as $plugin => $path) {
             $class = 'cachestore_'.$plugin;
             $return[$plugin] = array(
@@ -901,7 +904,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_store_instance_actions($name, array $storedetails) {
         $actions = array();
-        if (has_capability('moodle/site:config', get_system_context())) {
+        if (has_capability('moodle/site:config', context_system::instance())) {
             $baseurl = new moodle_url('/cache/admin.php', array('store' => $name, 'sesskey' => sesskey()));
             if (empty($storedetails['default'])) {
                 $actions[] = array(
@@ -952,7 +955,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_add_store_form($plugin) {
         global $CFG; // Needed for includes.
-        $plugins = get_plugin_list('cachestore');
+        $plugins = core_component::get_plugin_list('cachestore');
         if (!array_key_exists($plugin, $plugins)) {
             throw new coding_exception('Invalid cache plugin used when trying to create an edit form.');
         }
@@ -984,7 +987,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_edit_store_form($plugin, $store) {
         global $CFG; // Needed for includes.
-        $plugins = get_plugin_list('cachestore');
+        $plugins = core_component::get_plugin_list('cachestore');
         if (!array_key_exists($plugin, $plugins)) {
             throw new coding_exception('Invalid cache plugin used when trying to create an edit form.');
         }
@@ -1189,7 +1192,7 @@ abstract class cache_administration_helper extends cache_helper {
      * @return array
      */
     public static function get_addable_lock_options() {
-        $plugins = get_plugin_list_with_class('cachelock', '', 'lib.php');
+        $plugins = core_component::get_plugin_list_with_class('cachelock', '', 'lib.php');
         $options = array();
         $len = strlen('cachelock_');
         foreach ($plugins as $plugin => $class) {
@@ -1213,7 +1216,7 @@ abstract class cache_administration_helper extends cache_helper {
      */
     public static function get_add_lock_form($plugin, array $lockplugin = null) {
         global $CFG; // Needed for includes.
-        $plugins = get_plugin_list('cachelock');
+        $plugins = core_component::get_plugin_list('cachelock');
         if (!array_key_exists($plugin, $plugins)) {
             throw new coding_exception('Invalid cache lock plugin requested when trying to create a form.');
         }

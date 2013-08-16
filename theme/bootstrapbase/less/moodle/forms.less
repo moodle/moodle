@@ -87,6 +87,16 @@ form {
         display: inline-block;
     }
 }
+.mform label {
+    display: inline-block;
+}
+
+.mform .iconhelp {
+    margin-left: 4px;
+}
+.dir-rtl .mform .iconhelp {
+    margin-right: 4px;
+}
 .mform .ftextarea #id_alltext {
     width: 100%;
 }
@@ -149,6 +159,12 @@ input#id_externalurl {
 .form-item .form-label,
 .mform .fitem div.fitemtitle {
     .form-horizontal .control-label
+}
+.dir-rtl {
+    .form-item .form-label,
+    .mform .fitem div.fitemtitle {
+        float:right;
+    }
 }
 .form-defaultinfo,
 .form-label .form-shortname {
@@ -340,6 +356,9 @@ input[type="checkbox"] {
 }
 .form-item .form-label label {
     margin-bottom: 0;
+}
+.dir-rtl .form-item .form-label label {
+     text-align:left;
 }
 .felement.ffilepicker {
     margin-top: 5px;

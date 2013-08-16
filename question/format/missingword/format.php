@@ -17,8 +17,7 @@
 /**
  * Missing word question importer.
  *
- * @package    qformat
- * @subpackage missingword
+ * @package    qformat_missingword
  * @copyright  1999 onwards Martin Dougiamas {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -53,20 +52,19 @@ defined('MOODLE_INTERNAL') || die();
 class qformat_missingword extends qformat_default {
 
     public function provide_import() {
-      return true;
+        return true;
     }
 
     public function readquestion($lines) {
-    /// Given an array of lines known to define a question in
-    /// this format, this function converts it into a question
-    /// object suitable for processing and insertion into Moodle.
+        // Given an array of lines known to define a question in
+        // this format, this function converts it into a question
+        // object suitable for processing and insertion into Moodle.
 
         $question = $this->defaultquestion();
-        ///$comment added by T Robb
-        $comment = NULL;
+        $comment = null; // Added by T Robb.
         $text = implode(" ", $lines);
 
-        /// Find answer section
+        // Find answer section.
 
         $answerstart = strpos($text, "{");
         if ($answerstart === false) {
@@ -87,7 +85,7 @@ class qformat_missingword extends qformat_default {
         $question->questiontext = substr_replace($text, "_____", $answerstart, $answerlength+1);
         $question->name = $this->create_default_question_name($question->questiontext, get_string('questionname', 'question'));
 
-        /// Parse the answers
+        // Parse the answers.
         $answertext = str_replace("=", "~=", $answertext);
         $answers = explode("~", $answertext);
         if (isset($answers[0])) {
@@ -125,40 +123,38 @@ class qformat_missingword extends qformat_default {
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
 
-                    // Tom's addition starts here
+                    // Tom's addition starts here.
                     $answeight = 0;
-                    if (strspn($answer,"1234567890%") > 0){
-                        //Make sure that the percent sign is the last in the span
-                        if (strpos($answer,"%") == strspn($answer,"1234567890%") - 1) {
-                            $answeight0 = substr($answer,0,strspn($answer,"1234567890%"));
-                            $answeight = round(($answeight0/100),2);
-                            $answer = substr($answer,(strspn($answer,"1234567890%")));
+                    if (strspn($answer, "1234567890%") > 0) {
+                        // Make sure that the percent sign is the last in the span.
+                        if (strpos($answer, "%") == strspn($answer, "1234567890%") - 1) {
+                            $answeight0 = substr($answer, 0, strspn($answer, "1234567890%"));
+                            $answeight = round(($answeight0/100), 2);
+                            $answer = substr($answer, (strspn($answer, "1234567890%")));
                         }
                     }
-                    if ($answer[0] == "="){
+                    if ($answer[0] == "=") {
                         $answeight = 1;
                     }
-                    //remove the protective underscore for leading numbers in answers
-                    if ($answer[0] == "_"){
+                    // Remove the protective underscore for leading numbers in answers.
+                    if ($answer[0] == "_") {
                         $answer = substr($answer, 1);
                     }
                     $answer = trim($answer);
 
-                    if (strpos($answer,"#") > 0){
-                        $hashpos = strpos($answer,"#");
-                        $comment = substr(($answer),$hashpos+1);
-                        $answer  = substr($answer,0,$hashpos);
+                    if (strpos($answer, "#") > 0) {
+                        $hashpos = strpos($answer, "#");
+                        $comment = substr(($answer), $hashpos+1);
+                        $answer  = substr($answer, 0, $hashpos);
                     } else {
                         $comment = " ";
                     }
-                    // End of Tom's addition
+                    // End of Tom's addition.
 
                     if ($answer[0] == "=") {
-#                       $question->fraction[$key] = 1;
                         $question->fraction[$key] = $answeight;
                         $answer = substr($answer, 1);
                     } else {
-#                       $question->fraction[$key] = 0;
                         $question->fraction[$key] = $answeight;
                     }
                     $question->answer[$key]   = array('text' => $answer, 'format' => FORMAT_HTML);

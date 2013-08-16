@@ -47,7 +47,7 @@ $table->set_attribute('class', 'admintable generaltable');
 $table->setup();
 
 $plugins = array();
-foreach (get_plugin_list('local') as $plugin => $plugindir) {
+foreach (core_component::get_plugin_list('local') as $plugin => $plugindir) {
     if (get_string_manager()->string_exists('pluginname', 'local_' . $plugin)) {
         $strpluginname = get_string('pluginname', 'local_' . $plugin);
     } else {
@@ -55,7 +55,7 @@ foreach (get_plugin_list('local') as $plugin => $plugindir) {
     }
     $plugins[$plugin] = $strpluginname;
 }
-collatorlib::asort($plugins);
+core_collator::asort($plugins);
 
 foreach ($plugins as $plugin => $name) {
     $uninstall = '';

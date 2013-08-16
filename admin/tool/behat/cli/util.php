@@ -84,6 +84,7 @@ define('BEHAT_UTIL', true);
 define('CLI_SCRIPT', true);
 define('ABORT_AFTER_CONFIG', true);
 define('NO_OUTPUT_BUFFERING', true);
+define('IGNORE_COMPONENT_CACHE', true);
 
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', '1');
@@ -142,6 +143,9 @@ foreach ($vars as $var) {
     $CFG->{$var} = $CFG->{'behat_' . $var};
 }
 
+// Clean $CFG extra values before performing any action.
+behat_clean_init_config();
+
 $CFG->noemailever = true;
 $CFG->passwordsaltmain = 'moodle';
 
@@ -150,6 +154,7 @@ $CFG->jsrev = 1;
 
 // Unset cache and temp directories to reset them again with the new $CFG->dataroot.
 unset($CFG->cachedir);
+unset($CFG->localcachedir);
 unset($CFG->tempdir);
 
 // Continues setup.

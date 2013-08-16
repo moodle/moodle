@@ -42,6 +42,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
             $paths[] = new restore_path_element('forum_post', '/activity/forum/discussions/discussion/posts/post');
             $paths[] = new restore_path_element('forum_rating', '/activity/forum/discussions/discussion/posts/post/ratings/rating');
             $paths[] = new restore_path_element('forum_subscription', '/activity/forum/subscriptions/subscription');
+            $paths[] = new restore_path_element('forum_digest', '/activity/forum/digests/digest');
             $paths[] = new restore_path_element('forum_read', '/activity/forum/readposts/read');
             $paths[] = new restore_path_element('forum_track', '/activity/forum/trackedprefs/track');
         }
@@ -149,6 +150,18 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
         $newitemid = $DB->insert_record('forum_subscriptions', $data);
     }
 
+    protected function process_forum_digest($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+
+        $data->forum = $this->get_new_parentid('forum');
+        $data->userid = $this->get_mappingid('user', $data->userid);
+
+        $newitemid = $DB->insert_record('forum_digests', $data);
+    }
+
     protected function process_forum_read($data) {
         global $DB;
 
@@ -197,7 +210,7 @@ class restore_forum_activity_structure_step extends restore_activity_structure_s
             $sd->messageformat = $forumrec->introformat;
             $sd->messagetrust  = true;
             $sd->mailnow  = false;
-            $sdid = forum_add_discussion($sd, null, $sillybyrefvar, $this->task->get_userid());
+            $sdid = forum_add_discussion($sd, null, null, $this->task->get_userid());
             // Mark the post as mailed
             $DB->set_field ('forum_posts','mailed', '1', array('discussion' => $sdid));
             // Copy all the files from mod_foum/intro to mod_forum/post

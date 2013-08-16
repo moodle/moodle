@@ -17,6 +17,9 @@
 // Upstream Bootstrap.
 @import "bootstrap/bootstrap";
 
+// Override Bootstrap defaults.
+@import "moodle/bootstrapoverride";
+
 // Set image location.
 @iconSpritePath:          ~"[[pix:theme|glyphicons-halflings]]";
 @iconWhiteSpritePath:     ~"[[pix:theme|glyphicons-halflings-white]]";
@@ -26,7 +29,6 @@
 // On Wider screens.
 @horizontalComponentOffset980: 220px;
 @horizontalComponentOffset1200: 265px;
-
 
 // Roll back nameclashes.
 @import "moodle/undo";

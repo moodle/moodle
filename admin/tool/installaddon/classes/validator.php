@@ -332,7 +332,7 @@ class tool_installaddon_validator {
 
         if (isset($info[$type.'->component'])) {
             $this->versionphp['component'] = $info[$type.'->component'];
-            list($reqtype, $reqname) = normalize_component($this->versionphp['component']);
+            list($reqtype, $reqname) = core_component::normalize_component($this->versionphp['component']);
             if ($reqtype !== $this->assertions['plugintype']) {
                 $this->add_message(self::ERROR, 'componentmismatchtype', array(
                     'expected' => $this->assertions['plugintype'],
@@ -563,7 +563,7 @@ class tool_installaddon_validator {
 
         $plugintypepath = null;
 
-        foreach (get_plugin_types() as $type => $fullpath) {
+        foreach (core_component::get_plugin_types() as $type => $fullpath) {
             if ($type === $plugintype) {
                 $plugintypepath = $fullpath;
                 break;

@@ -41,8 +41,9 @@ class mod_assign_batch_set_marking_workflow_state_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
         $params = $this->_customdata;
+        $formheader = get_string('batchsetmarkingworkflowstateforusers', 'assign', count($params['users']));
 
-        $mform->addElement('header', 'general', get_string('batchsetmarkingworkflowstateforusers', 'assign', count($params['users'])));
+        $mform->addElement('header', 'general', $formheader);
         $mform->addElement('static', 'userslist', get_string('selectedusers', 'assign'), $params['usershtml']);
 
         $options = $params['markingworkflowstates'];

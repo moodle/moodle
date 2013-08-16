@@ -271,18 +271,21 @@ abstract class grade_report {
      * @return int Count of users
      */
     public function get_numusers($groups=true) {
-        global $CFG, $DB;
+        global $DB;
 
         $groupsql      = "";
         $groupwheresql = "";
 
-        //limit to users with a gradeable role
+        // Limit to users with a gradeable role.
         list($gradebookrolessql, $gradebookrolesparams) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
-        //limit to users with an active enrollment
+        // Limit to users with an active enrollment.
         list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->context);
 
-        $params = array_merge($gradebookrolesparams, $enrolledparams);
+        // We want to query both the current context and parent contexts.
+        list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($this->context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+
+        $params = array_merge($gradebookrolesparams, $enrolledparams, $relatedctxparams);
 
         if ($groups) {
             $groupsql      = $this->groupsql;
@@ -300,7 +303,7 @@ abstract class grade_report {
                       WHERE ra.roleid $gradebookrolessql
                             AND u.deleted = 0
                             $groupwheresql
-                            AND ra.contextid ".get_related_contexts_string($this->context);
+                            AND ra.contextid $relatedctxsql";
         return $DB->count_records_sql($countsql, $params);
     }
 

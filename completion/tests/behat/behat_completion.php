@@ -50,12 +50,13 @@ class behat_completion extends behat_base {
     public function user_has_completed_activity($userfullname, $activityname) {
 
         // Will throw an exception if the element can not be hovered.
+        $titleliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($userfullname . ", " . $activityname . ": Completed");
         $xpath = "//table[@id='completion-progress']" .
-            "/descendant::img[contains(@title, '" . $userfullname . ", " . $activityname . ": Completed')]";
+            "/descendant::img[contains(@title, $titleliteral)]";
 
         return array(
             new Given('I go to the current course activity completion report'),
-            new Given('I hover "' . $xpath . '" "xpath_element"')
+            new Given('I hover "' . $this->escape($xpath) . '" "xpath_element"')
         );
     }
 
@@ -68,11 +69,13 @@ class behat_completion extends behat_base {
      */
     public function user_has_not_completed_activity($userfullname, $activityname) {
 
+        // Will throw an exception if the element can not be hovered.
+        $titleliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($userfullname . ", " . $activityname . ": Not completed");
         $xpath = "//table[@id='completion-progress']" .
-            "/descendant::img[contains(@title, '" . $userfullname . ", " . $activityname . ": Not completed')]";
+            "/descendant::img[contains(@title, $titleliteral)]";
         return array(
             new Given('I go to the current course activity completion report'),
-            new Given('I hover "' . $xpath . '" "xpath_element"')
+            new Given('I hover "' . $this->escape($xpath) . '" "xpath_element"')
         );
 
         return $steps;
@@ -89,15 +92,15 @@ class behat_completion extends behat_base {
 
         // Expand reports node if we can't see the link.
         try {
-            $this->find('xpath', "//*[@id='settingsnav']" .
+            $this->find('xpath', "//div[@id='settingsnav']" .
                 "/descendant::li" .
-                "/descendant::li[not(contains(@class,'collapsed'))]" .
-                "/descendant::p[contains(., 'Activity completion')]");
+                "/descendant::li[not(contains(concat(' ', normalize-space(@class), ' '), ' collapsed '))]" .
+                "/descendant::p[contains(., '" . get_string('pluginname', 'report_progress') . "')]");
         } catch (ElementNotFoundException $e) {
-            $steps[] = new Given('I expand "Reports" node');
+            $steps[] = new Given('I expand "' . get_string('reports') . '" node');
         }
 
-        $steps[] = new Given('I follow "Activity completion"');
+        $steps[] = new Given('I follow "' . get_string('pluginname', 'report_progress') . '"');
 
         return $steps;
     }

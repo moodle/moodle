@@ -40,6 +40,8 @@
 /// These can be added to perform an action on a record
     $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
     $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
+    $multidelete = optional_param_array('delcheck', null, PARAM_INT);
+    $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
@@ -230,7 +232,7 @@
         $search = '';
     }
 
-    if (textlib::strlen($search) < 2) {
+    if (core_text::strlen($search) < 2) {
         $search = '';
     }
     $SESSION->dataprefs[$data->id]['search'] = $search;   // Make it sticky
@@ -326,16 +328,17 @@
     groups_print_activity_menu($cm, $returnurl);
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
+    $canmanageentries = has_capability('mod/data:manageentries', $context);
     // If a student is not part of a group and seperate groups is enabled, we don't
     // want them seeing all records.
-    if ($currentgroup == 0 && $groupmode == 1 && !has_capability('mod/data:manageentries', $context)) {
+    if ($currentgroup == 0 && $groupmode == 1 && !$canmanageentries) {
         $canviewallrecords = false;
     } else {
         $canviewallrecords = true;
     }
 
     // detect entries not approved yet and show hint instead of not found error
-    if ($record and $data->approval and !$record->approved and $record->userid != $USER->id and !has_capability('mod/data:manageentries', $context)) {
+    if ($record and $data->approval and !$record->approved and $record->userid != $USER->id and !$canmanageentries) {
         if (!$currentgroup or $record->groupid == $currentgroup or $record->groupid == 0) {
             print_error('notapproved', 'data');
         }
@@ -360,26 +363,11 @@
 
 /// Delete any requested records
 
-    if ($delete && confirm_sesskey() && (has_capability('mod/data:manageentries', $context) or data_isowner($delete))) {
+    if ($delete && confirm_sesskey() && ($canmanageentries or data_isowner($delete))) {
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
-            if ($deleterecord = $DB->get_record('data_records', array('id'=>$delete))) {   // Need to check this is valid
-                if ($deleterecord->dataid == $data->id) {                       // Must be from this database
-                    if ($contents = $DB->get_records('data_content', array('recordid'=>$deleterecord->id))) {
-                        foreach ($contents as $content) {  // Delete files or whatever else this field allows
-                            if ($field = data_get_field_from_id($content->fieldid, $data)) { // Might not be there
-                                $field->delete_content($content->recordid);
-                            }
-                        }
-                    }
-                    $DB->delete_records('data_content', array('recordid'=>$deleterecord->id));
-                    $DB->delete_records('data_records', array('id'=>$deleterecord->id));
-
-                    add_to_log($course->id, 'data', 'record delete', "view.php?id=$cm->id", $data->id, $cm->id);
-
-                    echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
-                }
+            if (data_delete_record($delete, $data, $course->id, $cm->id)) {
+                echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
             }
-
         } else {   // Print a confirmation page
             if ($deleterecord = $DB->get_record('data_records', array('id'=>$delete))) {   // Need to check this is valid
                 if ($deleterecord->dataid == $data->id) {                       // Must be from this database
@@ -398,9 +386,44 @@
     }
 
 
+    // Multi-delete.
+    if ($serialdelete) {
+        $multidelete = json_decode($serialdelete);
+    }
+
+    if ($multidelete && confirm_sesskey() && $canmanageentries) {
+        if ($confirm = optional_param('confirm', 0, PARAM_INT)) {
+            foreach ($multidelete as $value) {
+                data_delete_record($value, $data, $course->id, $cm->id);
+            }
+        } else {
+            $validrecords = array();
+            $recordids = array();
+            foreach ($multidelete as $value) {
+                if ($deleterecord = $DB->get_record('data_records', array('id'=>$value))) {   // Need to check this is valid
+                    if ($deleterecord->dataid == $data->id) {                       // Must be from this database
+                        $validrecords[] = $deleterecord;
+                        $recordids[] = $deleterecord->id;
+                    }
+                }
+            }
+
+            $serialiseddata = json_encode($recordids);
+            $submitactions = array('d' => $data->id, 'sesskey' => sesskey(), 'confirm' => '1', 'serialdelete' => $serialiseddata);
+            $action = new moodle_url('/mod/data/view.php', $submitactions);
+            $cancelurl = new moodle_url('/mod/data/view.php', array('d' => $data->id));
+            $deletebutton = new single_button($action, get_string('delete'));
+            echo $OUTPUT->confirm(get_string('confirmdeleterecords', 'data'), $deletebutton, $cancelurl);
+            echo data_print_template('listtemplate', $validrecords, $data, '', 0, false);
+            echo $OUTPUT->footer();
+            exit;
+        }
+    }
+
+
 //if data activity closed dont let students in
 $showactivity = true;
-if (!has_capability('mod/data:manageentries', $context)) {
+if (!$canmanageentries) {
     $timenow = time();
     if (!empty($data->timeavailablefrom) && $data->timeavailablefrom > $timenow) {
         echo $OUTPUT->notification(get_string('notopenyet', 'data', userdate($data->timeavailablefrom)));
@@ -422,6 +445,9 @@ if ($showactivity) {
         $currenttab = 'list';
     }
     include('tabs.php');
+
+    $url = new moodle_url('/mod/data/view.php', array('d' => $data->id, 'sesskey' => sesskey()));
+    echo html_writer::start_tag('form', array('action' => $url, 'method' => 'post'));
 
     if ($mode == 'asearch') {
         $maxcount = 0;
@@ -446,7 +472,7 @@ if ($showactivity) {
 
          $numentries = data_numentries($data);
     /// Check the number of entries required against the number of entries already made (doesn't apply to teachers)
-        if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !has_capability('mod/data:manageentries', $context)) {
+        if ($data->requiredentries > 0 && $numentries < $data->requiredentries && !$canmanageentries) {
             $data->entriesleft = $data->requiredentries - $numentries;
             $strentrieslefttoadd = get_string('entrieslefttoadd', 'data', $data);
             echo $OUTPUT->notification($strentrieslefttoadd);
@@ -454,7 +480,7 @@ if ($showactivity) {
 
     /// Check the number of entries required before to view other participant's entries against the number of entries already made (doesn't apply to teachers)
         $requiredentries_allowed = true;
-        if ($data->requiredentriestoview > 0 && $numentries < $data->requiredentriestoview && !has_capability('mod/data:manageentries', $context)) {
+        if ($data->requiredentriestoview > 0 && $numentries < $data->requiredentriestoview && !$canmanageentries) {
             $data->entrieslefttoview = $data->requiredentriestoview - $numentries;
             $strentrieslefttoaddtoview = get_string('entrieslefttoaddtoview', 'data', $data);
             echo $OUTPUT->notification($strentrieslefttoaddtoview);
@@ -498,6 +524,7 @@ if ($showactivity) {
         $advparams       = array();
         // This is used for the initial reduction of advanced search results with required entries.
         $entrysql        = '';
+        $namefields = get_all_user_name_fields(true, 'u');
 
     /// Find the field we are sorting on
         if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {
@@ -521,7 +548,7 @@ if ($showactivity) {
                     $ordering = "r.timecreated $order";
             }
 
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, ' . $namefields;
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = '{data_content} c,{data_records} r, {user} u ';
             $where =  'WHERE c.recordid = r.id
@@ -554,7 +581,9 @@ if ($showactivity) {
                     $advparams = array_merge($advparams, $val->params);
                 }
             } else if ($search) {
-                $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)." OR ".$DB->sql_like('u.firstname', ':search2', false)." OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
+                $searchselect = " AND (".$DB->sql_like('c.content', ':search1', false)."
+                                  OR ".$DB->sql_like('u.firstname', ':search2', false)."
+                                  OR ".$DB->sql_like('u.lastname', ':search3', false)." ) ";
                 $params['search1'] = "%$search%";
                 $params['search2'] = "%$search%";
                 $params['search3'] = "%$search%";
@@ -567,7 +596,8 @@ if ($showactivity) {
             $sortcontent = $DB->sql_compare_text('c.' . $sortfield->get_sort_field());
             $sortcontentfull = $sortfield->get_sort_sql($sortcontent);
 
-            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, ' . $sortcontentfull . ' AS sortorder ';
+            $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, ' . $namefields . ',
+                    ' . $sortcontentfull . ' AS sortorder ';
             $count = ' COUNT(DISTINCT c.recordid) ';
             $tables = '{data_content} c, {data_records} r, {user} u ';
             $where =  'WHERE c.recordid = r.id
@@ -661,7 +691,7 @@ if ($showactivity) {
         if (!$records = $DB->get_records_sql($sqlselect, $allparams, $page * $nowperpage, $nowperpage)) {
             // Nothing to show!
             if ($record) {         // Something was requested so try to show that at least (bug 5132)
-                if (has_capability('mod/data:manageentries', $context) || empty($data->approval) ||
+                if ($canmanageentries || empty($data->approval) ||
                          $record->approved || (isloggedin() && $record->userid == $USER->id)) {
                     if (!$currentgroup || $record->groupid == $currentgroup || $record->groupid == 0) {
                         // OK, we can show this one
@@ -772,8 +802,20 @@ if ($showactivity) {
         echo $button->to_html(PORTFOLIO_ADD_FULL_FORM);
     }
 
+
     //Advanced search form doesn't make sense for single (redirects list view)
     if (($maxcount || $mode == 'asearch') && $mode != 'single') {
+        if ($canmanageentries) {
+            echo html_writer::start_tag('div', array('class' => 'form-buttons'));
+            echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checkall', 'value' => get_string('selectall')));
+            echo html_writer::empty_tag('input', array('type' => 'button', 'id' => 'checknone', 'value' => get_string('deselectall')));
+            echo html_writer::empty_tag('input', array('class' => 'form-submit', 'type' => 'submit', 'value' => get_string('deleteselected')));
+            echo html_writer::end_tag('div');
+
+            $module = array('name'=>'mod_data', 'fullpath'=>'/mod/data/module.js');
+            $PAGE->requires->js_init_call('M.mod_data.init_view', null, false, $module);
+        }
+        echo html_writer::end_tag('form');
         data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
     }
 }

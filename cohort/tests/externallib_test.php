@@ -30,7 +30,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/cohort/externallib.php');
 
-class core_cohort_external_testcase extends externallib_advanced_testcase {
+class core_cohort_externallib_testcase extends externallib_advanced_testcase {
 
     /**
      * Test create_cohorts
@@ -147,10 +147,6 @@ class core_cohort_external_testcase extends externallib_advanced_testcase {
         // Check we retrieve the good total number of enrolled cohorts + no error on capability.
         $this->assertEquals(2, count($returnedcohorts));
 
-        // Call the external function.
-        $returnedcohorts = core_cohort_external::get_cohorts(array(
-                    $cohort1->id, $cohort2->id));
-
         foreach ($returnedcohorts as $enrolledcohort) {
             if ($enrolledcohort['idnumber'] == $cohort1->idnumber) {
                 $this->assertEquals($cohort1->name, $enrolledcohort['name']);
@@ -205,6 +201,36 @@ class core_cohort_external_testcase extends externallib_advanced_testcase {
         $this->unassignUserCapability('moodle/cohort:manage', $context->id, $roleid);
         $this->setExpectedException('required_capability_exception');
         core_cohort_external::update_cohorts(array($cohort1));
+    }
+
+    /**
+     * Verify handling of 'id' param.
+     */
+    public function test_update_cohorts_invalid_id_param() {
+        $this->resetAfterTest(true);
+        $cohort = self::getDataGenerator()->create_cohort();
+
+        $cohort1 = array(
+            'id' => 'THIS IS NOT AN ID',
+            'name' => 'Changed cohort name',
+            'categorytype' => array('type' => 'id', 'value' => '1'),
+            'idnumber' => $cohort->idnumber,
+        );
+
+        try {
+            core_cohort_external::update_cohorts(array($cohort1));
+            $this->fail('Expecting invalid_parameter_exception exception, none occured');
+        } catch (invalid_parameter_exception $e1) {
+            $this->assertContains('Invalid external api parameter: the value is "THIS IS NOT AN ID"', $e1->debuginfo);
+        }
+
+        $cohort1['id'] = 9.999; // Also not a valid id of a cohort.
+        try {
+            core_cohort_external::update_cohorts(array($cohort1));
+            $this->fail('Expecting invalid_parameter_exception exception, none occured');
+        } catch (invalid_parameter_exception $e2) {
+            $this->assertContains('Invalid external api parameter: the value is "9.999"', $e2->debuginfo);
+        }
     }
 
     /**

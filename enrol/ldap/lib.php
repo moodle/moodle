@@ -327,7 +327,7 @@ class enrol_ldap_plugin extends enrol_plugin {
                 $trace->finished();
                 return;
             }
-            $oneidnumber = ldap_filter_addslashes(textlib::convert($course->idnumber, 'utf-8', $this->get_config('ldapencoding')));
+            $oneidnumber = ldap_filter_addslashes(core_text::convert($course->idnumber, 'utf-8', $this->get_config('ldapencoding')));
         }
 
         // Get enrolments for each type of role.
@@ -689,7 +689,7 @@ class enrol_ldap_plugin extends enrol_plugin {
             return array();
         }
 
-        $extmemberuid = textlib::convert($memberuid, 'utf-8', $this->get_config('ldapencoding'));
+        $extmemberuid = core_text::convert($memberuid, 'utf-8', $this->get_config('ldapencoding'));
 
         if($this->get_config('memberattribute_isdn')) {
             if (!($extmemberuid = $this->ldap_find_userdn($extmemberuid))) {

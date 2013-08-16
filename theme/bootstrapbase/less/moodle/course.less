@@ -39,7 +39,6 @@
     margin: 1em;
 }
 .section .activity img.activityicon {
-    vertical-align: text-bottom;
     margin-right: 6px;
 }
 .dir-rtl .section .activity img.activityicon {
@@ -69,12 +68,18 @@
     margin-left: 40%;
     padding-left: 22px;
 }
+.section .activity.modtype_label.label {
+    font-weight: normal;
+}
 .section li.activity {
     padding: .2em;
     clear: both;
 }
 .section .activity .activityinstance .groupinglabel {
-    padding-left: .45em;
+    padding-left: 30px;
+}
+.dir-rtl .section .activity .activityinstance .groupinglabel {
+    padding-right: 30px;
 }
 .section .activity .availabilityinfo,
 .section .activity .contentafterlink {
@@ -89,7 +94,8 @@
 .section .activity .contentafterlink p {
     margin: .5em 0;
 }
-.editing .section .activity:hover {
+.editing .section .activity:hover,
+.editing .section .activity.action-menu-shown {
     background-color: @grayLighter;
 }
 .course-content .current {
@@ -209,7 +215,10 @@
     text-align: right;
 }
 .path-course-view .unread {
-    margin-left: 3em;
+    margin-left: 30px;
+}
+.dir-rtl.path-course-view .unread {
+    margin-right: 30px;
 }
 .path-course-view .block.drag .header {
     cursor: move;
@@ -584,4 +593,13 @@ span.editinstructions {
 #page-course-index-category .categorypicker {
     text-align: center;
     margin: 10px 0 20px;
+}
+
+.section .activity .moodle-actionmenu .iconsmall {
+    max-width: none !important; /** reset sets 100% !important which breaks on IE8 without this !important */
+    width:16px;
+    height:16px;
+    width:1rem;
+    height:1rem;
+    padding:0.3em;
 }

@@ -63,7 +63,7 @@ class behat_block_comments extends behat_base {
             $commentstextarea = $this->find('css', '.comment-area textarea', $exception);
             $commentstextarea->setValue($comment);
 
-            $this->find_link('Save comment')->click();
+            $this->find_link(get_string('savecomment'))->click();
 
             // Wait for the AJAX request.
             $this->getSession()->wait(4 * 1000, false);
@@ -91,18 +91,17 @@ class behat_block_comments extends behat_base {
 
         $exception = new ElementNotFoundException($this->getSession(), '"' . $comment . '" comment ');
 
-        $commentxpath = "//div[contains(concat(' ', @class, ' '), ' block_comments ')]" .
-            "/descendant::div[@class='comment-message'][contains(., '" . $comment . "')]";
+        // Using xpath liternal to avoid possible problems with comments containing quotes.
+        $commentliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($comment);
+
+        $commentxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' block_comments ')]" .
+            "/descendant::div[@class='comment-message'][contains(., $commentliteral)]";
         $commentnode = $this->find('xpath', $commentxpath, $exception);
 
         // Click on delete icon.
         $deleteexception = new ExpectationException('"' . $comment . '" comment can not be deleted', $this->getSession());
         $deleteicon = $this->find('css', '.comment-delete a img', $deleteexception, $commentnode);
         $deleteicon->click();
-
-        // Yes confirm.
-        $confirmnode = $this->find('xpath', "//div[@class='comment-delete-confirm']/descendant::a[contains(., 'Yes')]");
-        $confirmnode->click();
 
         // Wait for the AJAX request.
         $this->getSession()->wait(4 * 1000, false);

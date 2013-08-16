@@ -1165,7 +1165,7 @@ function wiki_get_comment($commentid){
 function wiki_get_comments($contextid, $pageid) {
     global $DB;
 
-    return $DB->get_records('comments', array('contextid' => $contextid, 'itemid' => $pageid, 'commentarea' => 'wiki_page'));
+    return $DB->get_records('comments', array('contextid' => $contextid, 'itemid' => $pageid, 'commentarea' => 'wiki_page'), 'timecreated ASC');
 }
 
 /**
@@ -1303,8 +1303,8 @@ function wiki_print_page_content($page, $context, $subwikiid) {
  */
 function wiki_trim_string($text, $limit = 25) {
 
-    if (textlib::strlen($text) > $limit) {
-        $text = textlib::substr($text, 0, $limit) . '...';
+    if (core_text::strlen($text) > $limit) {
+        $text = core_text::substr($text, 0, $limit) . '...';
     }
 
     return $text;

@@ -60,7 +60,9 @@ class block_calendar_upcoming extends block_base {
         $events = calendar_get_upcoming($courses, $group, $user, $lookahead, $maxevents);
 
         if (!empty($this->instance)) {
-            $this->content->text = calendar_get_block_upcoming($events, 'view.php?view=day&amp;course='.$courseshown.'&amp;');
+            $link = 'view.php?view=day&amp;course='.$courseshown.'&amp;';
+            $showcourselink = ($this->page->course->id == SITEID);
+            $this->content->text = calendar_get_block_upcoming($events, $link, $showcourselink);
         }
 
         if (empty($this->content->text)) {

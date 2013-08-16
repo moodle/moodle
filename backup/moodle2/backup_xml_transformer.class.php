@@ -157,7 +157,7 @@ class backup_xml_transformer extends xml_contenttransformer {
         $encoders['backup_course_task'] = 'encode_content_links';
 
         // Add the module ones. Each module supporting moodle2 backups MUST have it
-        $mods = get_plugin_list('mod');
+        $mods = core_component::get_plugin_list('mod');
         foreach ($mods as $mod => $moddir) {
             if (plugin_supports('mod', $mod, FEATURE_BACKUP_MOODLE2)) {
                 $encoders['backup_' . $mod . '_activity_task'] = 'encode_content_links';
@@ -165,7 +165,7 @@ class backup_xml_transformer extends xml_contenttransformer {
         }
 
         // Add the block encoders
-        $blocks = get_plugin_list('block');
+        $blocks = core_component::get_plugin_list('block');
         foreach ($blocks as $block => $blockdir) {
             if (class_exists('backup_' . $block . '_block_task')) {
                 $encoders['backup_' . $block . '_block_task'] = 'encode_content_links';

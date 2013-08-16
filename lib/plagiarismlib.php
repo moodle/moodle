@@ -188,7 +188,7 @@ function plagiarism_load_available_plugins() {
     if (empty($CFG->enableplagiarism)) {
         return array();
     }
-    $plagiarismplugins = get_plugin_list('plagiarism');
+    $plagiarismplugins = core_component::get_plugin_list('plagiarism');
     $availableplugins = array();
     foreach($plagiarismplugins as $plugin => $dir) {
         //check this plugin is enabled and a lib file exists.

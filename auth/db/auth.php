@@ -58,8 +58,8 @@ class auth_plugin_db extends auth_plugin_base {
     function user_login($username, $password) {
         global $CFG, $DB;
 
-        $extusername = textlib::convert($username, 'utf-8', $this->config->extencoding);
-        $extpassword = textlib::convert($password, 'utf-8', $this->config->extencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->extencoding);
+        $extpassword = core_text::convert($password, 'utf-8', $this->config->extencoding);
 
         if ($this->is_internal()) {
             // Lookup username externally, but resolve
@@ -176,7 +176,7 @@ class auth_plugin_db extends auth_plugin_base {
     function get_userinfo($username) {
         global $CFG;
 
-        $extusername = textlib::convert($username, 'utf-8', $this->config->extencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->extencoding);
 
         $authdb = $this->db_init();
 
@@ -199,7 +199,7 @@ class auth_plugin_db extends auth_plugin_base {
                     $fields_obj = $rs->FetchObj();
                     $fields_obj = (object)array_change_key_case((array)$fields_obj , CASE_LOWER);
                     foreach ($selectfields as $localname=>$externalname) {
-                        $result[$localname] = textlib::convert($fields_obj->{$localname}, $this->config->extencoding, 'utf-8');
+                        $result[$localname] = core_text::convert($fields_obj->{$localname}, $this->config->extencoding, 'utf-8');
                      }
                  }
                  $rs->Close();
@@ -426,7 +426,7 @@ class auth_plugin_db extends auth_plugin_base {
         // Init result value.
         $result = false;
 
-        $extusername = textlib::convert($username, 'utf-8', $this->config->extencoding);
+        $extusername = core_text::convert($username, 'utf-8', $this->config->extencoding);
 
         $authdb = $this->db_init();
 
@@ -501,7 +501,7 @@ class auth_plugin_db extends auth_plugin_base {
         global $CFG, $DB;
 
         //just in case check text case
-        $username = trim(textlib::strtolower($username));
+        $username = trim(core_text::strtolower($username));
 
         // get the current user record
         $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id));
@@ -569,7 +569,7 @@ class auth_plugin_db extends auth_plugin_base {
             return false;
         }
 
-        $extusername = textlib::convert($olduser->username, 'utf-8', $this->config->extencoding);
+        $extusername = core_text::convert($olduser->username, 'utf-8', $this->config->extencoding);
 
         $authdb = $this->db_init();
 
@@ -586,7 +586,7 @@ class auth_plugin_db extends auth_plugin_base {
             }
             $nuvalue = $newuser->$key;
             if ($nuvalue != $value) {
-                $update[] = $this->config->{"field_map_$key"}."='".$this->ext_addslashes(textlib::convert($nuvalue, 'utf-8', $this->config->extencoding))."'";
+                $update[] = $this->config->{"field_map_$key"}."='".$this->ext_addslashes(core_text::convert($nuvalue, 'utf-8', $this->config->extencoding))."'";
             }
         }
         if (!empty($update)) {

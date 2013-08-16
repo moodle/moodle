@@ -58,7 +58,7 @@ $leftcols = 1 + count($extrafields);
 function csv_quote($value) {
     global $excel;
     if ($excel) {
-        return textlib::convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
+        return core_text::convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
     } else {
         return '"'.str_replace('"',"'",$value).'"';
     }
@@ -133,7 +133,7 @@ if ($csv && $grandtotal && count($activities)>0) { // Only show CSV if there are
 
     $shortname = format_string($course->shortname, true, array('context' => $context));
     header('Content-Disposition: attachment; filename=progress.'.
-        preg_replace('/[^a-z0-9-]/','_',textlib::strtolower(strip_tags($shortname))).'.csv');
+        preg_replace('/[^a-z0-9-]/','_',core_text::strtolower(strip_tags($shortname))).'.csv');
     // Unicode byte-order mark for Excel
     if ($excel) {
         header('Content-Type: text/csv; charset=UTF-16LE');

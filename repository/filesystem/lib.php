@@ -48,9 +48,14 @@ class repository_filesystem extends repository {
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         global $CFG;
         parent::__construct($repositoryid, $context, $options);
-        $root = $CFG->dataroot.'/repository/';
+        $root = $CFG->dataroot . '/repository/';
         $subdir = $this->get_option('fs_path');
-        $this->root_path = $root . $subdir . '/';
+
+        $this->root_path = $root;
+        if (!empty($subdir)) {
+            $this->root_path .= $subdir . '/';
+        }
+
         if (!empty($options['ajax'])) {
             if (!is_dir($this->root_path)) {
                 $created = mkdir($this->root_path, $CFG->directorypermissions, true);
@@ -105,8 +110,8 @@ class repository_filesystem extends repository {
                 }
             }
         }
-        collatorlib::asort($fileslist, collatorlib::SORT_STRING);
-        collatorlib::asort($dirslist, collatorlib::SORT_STRING);
+        core_collator::asort($fileslist, core_collator::SORT_STRING);
+        core_collator::asort($dirslist, core_collator::SORT_STRING);
         // fill the $list['list']
         foreach ($dirslist as $file) {
             if (!empty($path)) {
@@ -190,7 +195,7 @@ class repository_filesystem extends repository {
 
     public static function instance_config_form($mform) {
         global $CFG, $PAGE;
-        if (has_capability('moodle/site:config', get_system_context())) {
+        if (has_capability('moodle/site:config', context_system::instance())) {
             $path = $CFG->dataroot . '/repository/';
             if (!is_dir($path)) {
                 mkdir($path, $CFG->directorypermissions, true);
@@ -222,10 +227,10 @@ class repository_filesystem extends repository {
 
     public static function create($type, $userid, $context, $params, $readonly=0) {
         global $PAGE;
-        if (has_capability('moodle/site:config', get_system_context())) {
+        if (has_capability('moodle/site:config', context_system::instance())) {
             return parent::create($type, $userid, $context, $params, $readonly);
         } else {
-            require_capability('moodle/site:config', get_system_context());
+            require_capability('moodle/site:config', context_system::instance());
             return false;
         }
     }
