@@ -48,6 +48,7 @@ $uninstall = optional_param('uninstall', '', PARAM_COMPONENT);
 $delete = optional_param('delete', '', PARAM_COMPONENT);
 $confirmed = optional_param('confirm', false, PARAM_BOOL);
 
+/** @var core_admin_renderer $output */
 $output = $PAGE->get_renderer('core', 'admin');
 
 $pluginman = plugin_manager::instance();
@@ -143,7 +144,8 @@ if ($delete and $confirmed) {
     if (function_exists('opcache_reset')) {
         opcache_reset();
     }
-    redirect($PAGE->url);
+    // We need to execute upgrade to make sure everything including caches is up to date.
+    redirect(new moodle_url('/admin/index.php'));
 }
 
 $checker = available_update_checker::instance();
