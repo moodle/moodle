@@ -239,6 +239,36 @@ class core_text {
     }
 
     /**
+     * Finds the last occurrence of a character in a string within another.
+     * UTF-8 ONLY safe mb_strrchr().
+     *
+     * @param string $haystack The string from which to get the last occurrence of needle.
+     * @param string $needle The string to find in haystack.
+     * @param boolean $part If true, returns the portion before needle, else return the portion after (including needle).
+     * @return string|false False when not found.
+     * @since 2.4.6, 2.5.2, 2.6
+     */
+    public static function strrchr($haystack, $needle, $part = false) {
+
+        if (function_exists('mb_strrchr')) {
+            return mb_strrchr($haystack, $needle, $part, 'UTF-8');
+        }
+
+        $pos = self::strrpos($haystack, $needle);
+        if ($pos === false) {
+            return false;
+        }
+
+        $length = null;
+        if ($part) {
+            $length = $pos;
+            $pos = 0;
+        }
+
+        return self::substr($haystack, $pos, $length, 'utf-8');
+    }
+
+    /**
      * Multibyte safe strlen() function, uses mbstring or iconv for UTF-8, falls back to typo3.
      *
      * @param string $text input string
@@ -331,7 +361,7 @@ class core_text {
      * @return int the numeric position of the last occurrence of needle in haystack
      */
     public static function strrpos($haystack, $needle) {
-        if (function_exists('mb_strpos')) {
+        if (function_exists('mb_strrpos')) {
             return mb_strrpos($haystack, $needle, null, 'UTF-8');
         } else {
             return iconv_strrpos($haystack, $needle, 'UTF-8');
