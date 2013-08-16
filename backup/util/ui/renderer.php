@@ -140,7 +140,7 @@ class core_backup_renderer extends plugin_renderer_base {
                     }
                     if (empty($table)) {
                         $table = new html_table();
-                        $table->head = array('Module', 'Title', 'Userinfo');
+                        $table->head = array(get_string('module','backup'), get_string('title','backup'), get_string('userinfo','backup'));
                         $table->colclasses = array('modulename', 'moduletitle', 'userinfoincluded');
                         $table->align = array('left','left', 'center');
                         $table->attributes = array('class'=>'activitytable generaltable');
