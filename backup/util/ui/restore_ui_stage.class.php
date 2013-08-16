@@ -93,10 +93,48 @@ abstract class restore_ui_stage extends base_ui_stage {
  * no use for the restore controller.
  */
 abstract class restore_ui_independent_stage {
+    /**
+     * @var core_backup_progress Optional progress reporter
+     */
+    private $progressreporter;
+
     abstract public function __construct($contextid);
     abstract public function process();
     abstract public function display(core_backup_renderer $renderer);
     abstract public function get_stage();
+
+    /**
+     * Gets the progress reporter object in use for this restore UI stage.
+     *
+     * IMPORTANT: This progress reporter is used only for UI progress that is
+     * outside the restore controller. The restore controller has its own
+     * progress reporter which is used for progress during the main restore.
+     * Use the restore controller's progress reporter to report progress during
+     * a restore operation, not this one.
+     *
+     * This extra reporter is necessary because on some restore UI screens,
+     * there are long-running tasks even though there is no restore controller
+     * in use. There is a similar function in restore_ui. but that class is not
+     * used on some stages.
+     *
+     * @return core_backup_null_progress
+     */
+    public function get_progress_reporter() {
+        if (!$this->progressreporter) {
+            $this->progressreporter = new core_backup_null_progress();
+        }
+        return $this->progressreporter;
+    }
+
+    /**
+     * Sets the progress reporter that will be returned by get_progress_reporter.
+     *
+     * @param core_backup_progress $progressreporter Progress reporter
+     */
+    public function set_progress_reporter(core_backup_progress $progressreporter) {
+        $this->progressreporter = $progressreporter;
+    }
+
     /**
      * Gets an array of progress bar items that can be displayed through the restore renderer.
      * @return array Array of items for the progress bar
