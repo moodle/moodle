@@ -17,6 +17,22 @@
     float: left;
     clear: none;
 }
+.dir-rtl {
+    .userprofile .description {
+        margin-right:0;
+    }
+    .user-box {
+        float:right;
+    }
+    .userprofile dl.list dt {
+        float:right;
+        text-align: left;
+        padding-left: 10px;
+    }
+    .userprofile dl.list dd {
+        margin-left:0;
+    }
+}
 .userlist .action-icon img {
     vertical-align: middle;
 }
@@ -156,9 +172,8 @@
     margin-right: auto;
 }
 /** Overide for RTL layout **/
-.dir-rtl .descriptionbox {
-    margin-right: 110px;
-    margin-left: 0;
+.dir-rtl .userprofilebox .descriptionbox {
+    margin: 0;
 }
 .dir-rtl .userlist table#participants td,
 .dir-rtl .userlist table#participants th {
