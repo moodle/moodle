@@ -111,7 +111,7 @@ class user_filtering {
             case 'country':     return new user_filter_select('country', get_string('country'), $advanced, 'country', get_string_manager()->get_list_of_countries(), $USER->country);
             case 'confirmed':   return new user_filter_yesno('confirmed', get_string('confirmed', 'admin'), $advanced, 'confirmed');
             case 'suspended':   return new user_filter_yesno('suspended', get_string('suspended', 'auth'), $advanced, 'suspended');
-            case 'profile':     return new user_filter_profilefield('profile', get_string('profile'), $advanced);
+            case 'profile':     return new user_filter_profilefield('profile', get_string('profilefields', 'admin'), $advanced);
             case 'courserole':  return new user_filter_courserole('courserole', get_string('courserole', 'filters'), $advanced);
             case 'systemrole':  return new user_filter_globalrole('systemrole', get_string('globalrole', 'role'), $advanced);
             case 'firstaccess': return new user_filter_date('firstaccess', get_string('firstaccess', 'filters'), $advanced, 'firstaccess');
