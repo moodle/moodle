@@ -202,7 +202,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function initialise(cache_definition $definition) {
         $this->storeid = $definition->generate_definition_hash();
-        $this->store = &self::register_store_id($definition->get_id());
+        $this->store = &self::register_store_id($this->name.'-'.$definition->get_id());
         $this->ttl = $definition->get_ttl();
         $maxsize = $definition->get_maxsize();
         if ($maxsize !== null) {
@@ -300,7 +300,8 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      *
      * @param string $key The key to use.
      * @param mixed $data The data to set.
-     * @param bool $testmaxsize If set to true then we test the maxsize arg and reduce if required.
+     * @param bool $testmaxsize If set to true then we test the maxsize arg and reduce if required. If this is set to false you will
+     *      need to perform these checks yourself. This allows for bulk set's to be performed and maxsize tests performed once.
      * @return bool True if the operation was a success false otherwise.
      */
     public function set($key, $data, $testmaxsize = true) {
@@ -429,7 +430,7 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      */
     public function delete($key) {
         if (!isset($this->store[$key])) {
-            return false;
+            return true;
         }
         unset($this->store[$key]);
         if ($this->maxsize !== false) {
@@ -445,15 +446,19 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * @return int The number of items successfully deleted.
      */
     public function delete_many(array $keys) {
+        // The number of items that have been successfully deleted.
         $count = 0;
+        // The number of items that have actually being removed (how much to decrement maxsize by).
+        $reduction = 0;
         foreach ($keys as $key) {
             if (isset($this->store[$key])) {
-                $count++;
+                $reduction++;
             }
+            $count++;
             unset($this->store[$key]);
         }
         if ($this->maxsize !== false) {
-            $this->storecount -= $count;
+            $this->storecount -= $reduction;
         }
         return $count;
     }
@@ -535,26 +540,26 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
      * @return int number of removed elements
      */
     protected function check_ttl() {
-        if ($this->ttl == 0) {
+        if ($this->ttl === 0) {
             return 0;
         }
         $maxtime = cache::now() - $this->ttl;
-        $c = 0;
+        $count = 0;
         for ($value = reset($this->store); $value !== false; $value = next($this->store)) {
             if ($value[1] >= $maxtime) {
-                // We know that elements are sorted by ttl so no need to continue;
+                // We know that elements are sorted by ttl so no need to continue.
                 break;
             }
-            $c++;
+            $count++;
         }
-        if ($c) {
-            // Remove first $c elements as they are expired.
-            $this->store = array_slice($this->store, $c, null, true);
+        if ($count) {
+            // Remove first $count elements as they are expired.
+            $this->store = array_slice($this->store, $count, null, true);
             if ($this->maxsize !== false) {
-                $this->storecount -= $c;
+                $this->storecount -= $count;
             }
         }
-        return $c;
+        return $count;
     }
 
     /**
@@ -581,5 +586,13 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
             }
         }
         return $return;
+    }
+
+    /**
+     * This store supports native TTL handling.
+     * @return bool
+     */
+    public function store_supports_native_ttl() {
+        return true;
     }
 }
