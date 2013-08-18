@@ -271,7 +271,7 @@ class cache implements cache_loader {
      *      In advanced cases an array may be useful such as in situations requiring the multi-key functionality.
      * @param int $strictness One of IGNORE_MISSING | MUST_EXIST
      * @return mixed|false The data from the cache or false if the key did not exist within the cache.
-     * @throws moodle_exception
+     * @throws coding_exception
      */
     public function get($key, $strictness = IGNORE_MISSING) {
         // 1. Parse the key.
@@ -329,7 +329,7 @@ class cache implements cache_loader {
         }
         // 5. Validate strictness.
         if ($strictness === MUST_EXIST && $result === false) {
-            throw new moodle_exception('Requested key did not exist in any cache stores and could not be loaded.');
+            throw new coding_exception('Requested key did not exist in any cache stores and could not be loaded.');
         }
         // 6. Set it to the store if we got it from the loader/datasource.
         if ($setaftervalidation) {
@@ -363,7 +363,7 @@ class cache implements cache_loader {
      * @return array An array of key value pairs for the items that could be retrieved from the cache.
      *      If MUST_EXIST was used and not all keys existed within the cache then an exception will be thrown.
      *      Otherwise any key that did not exist will have a data value of false within the results.
-     * @throws moodle_exception
+     * @throws coding_exception
      */
     public function get_many(array $keys, $strictness = IGNORE_MISSING) {
 
@@ -420,7 +420,7 @@ class cache implements cache_loader {
             $missingkeys = array();
             foreach ($result as $key => $value) {
                 if ($value === false) {
-                    $missingkeys[] = ($usingloader) ? $key : $parsedkeys[$key];
+                    $missingkeys[] = $parsedkeys[$key];
                 }
             }
             if (!empty($missingkeys)) {
@@ -430,11 +430,9 @@ class cache implements cache_loader {
                     $resultmissing = $this->datasource->load_many_for_cache($missingkeys);
                 }
                 foreach ($resultmissing as $key => $value) {
-                    $pkey = ($usingloader) ? $key : $keysparsed[$key];
-                    $realkey = ($usingloader) ? $parsedkeys[$key] : $key;
-                    $result[$pkey] = $value;
+                    $result[$keysparsed[$key]] = $value;
                     if ($value !== false) {
-                        $this->set($realkey, $value);
+                        $this->set($key, $value);
                     }
                 }
                 unset($resultmissing);
@@ -453,7 +451,7 @@ class cache implements cache_loader {
         if ($strictness === MUST_EXIST) {
             foreach ($keys as $key) {
                 if (!array_key_exists($key, $fullresult)) {
-                    throw new moodle_exception('Not all the requested keys existed within the cache stores.');
+                    throw new coding_exception('Not all the requested keys existed within the cache stores.');
                 }
             }
         }
@@ -483,6 +481,11 @@ class cache implements cache_loader {
         if ($this->perfdebug) {
             cache_helper::record_cache_set($this->storetype, $this->definition->get_id());
         }
+        if ($this->loader !== false) {
+            // We have a loader available set it there as well.
+            // We have to let the loader do its own parsing of data as it may be unique.
+            $this->loader->set($key, $data);
+        }
         if (is_object($data) && $data instanceof cacheable_object) {
             $data = new cache_cached_object($data);
         } else if (!is_scalar($data)) {
@@ -506,6 +509,7 @@ class cache implements cache_loader {
      * Removes references where required.
      *
      * @param stdClass|array $data
+     * @return mixed What ever was put in but without any references.
      */
     protected function unref($data) {
         if ($this->definition->uses_simple_data()) {
@@ -593,6 +597,11 @@ class cache implements cache_loader {
      *      ... if they care that is.
      */
     public function set_many(array $keyvaluearray) {
+        if ($this->loader !== false) {
+            // We have a loader available set it there as well.
+            // We have to let the loader do its own parsing of data as it may be unique.
+            $this->loader->set_many($keyvaluearray);
+        }
         $data = array();
         $simulatettl = $this->has_a_ttl() && !$this->store_supports_native_ttl();
         $usepersistcache = $this->is_using_persist_cache();
@@ -1340,7 +1349,6 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @param string|int $key The key for the data being requested.
      * @param int $strictness One of IGNORE_MISSING | MUST_EXIST
      * @return mixed|false The data from the cache or false if the key did not exist within the cache.
-     * @throws moodle_exception
      */
     public function get($key, $strictness = IGNORE_MISSING) {
         if ($this->requirelockingread && $this->check_lock_state($key) === false) {
@@ -1364,7 +1372,7 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @return array An array of key value pairs for the items that could be retrieved from the cache.
      *      If MUST_EXIST was used and not all keys existed within the cache then an exception will be thrown.
      *      Otherwise any key that did not exist will have a data value of false within the results.
-     * @throws moodle_exception
+     * @throws coding_exception
      */
     public function get_many(array $keys, $strictness = IGNORE_MISSING) {
         if ($this->requirelockingread) {
@@ -1498,7 +1506,7 @@ class cache_session extends cache {
     /**
      * This is the key used to track last access.
      */
-    const LASTACCESS = 'lastaccess';
+    const LASTACCESS = '__lastaccess__';
 
     /**
      * Override the cache::construct method.
@@ -1599,7 +1607,7 @@ class cache_session extends cache {
     protected function parse_key($key) {
         $prefix = $this->get_key_prefix();
         if ($key === self::LASTACCESS) {
-            return '__lastaccess__'.$prefix;
+            return $key.$prefix;
         }
         return $prefix.'_'.parent::parse_key($key);
     }
@@ -1651,7 +1659,7 @@ class cache_session extends cache {
      *      In advanced cases an array may be useful such as in situations requiring the multi-key functionality.
      * @param int $strictness One of IGNORE_MISSING | MUST_EXIST
      * @return mixed|false The data from the cache or false if the key did not exist within the cache.
-     * @throws moodle_exception
+     * @throws coding_exception
      */
     public function get($key, $strictness = IGNORE_MISSING) {
         // Check the tracked user.
@@ -1695,7 +1703,7 @@ class cache_session extends cache {
         }
         // 5. Validate strictness.
         if ($strictness === MUST_EXIST && $result === false) {
-            throw new moodle_exception('Requested key did not exist in any cache stores and could not be loaded.');
+            throw new coding_exception('Requested key did not exist in any cache stores and could not be loaded.');
         }
         // 6. Make sure we don't pass back anything that could be a reference.
         //    We don't want people modifying the data in the cache.
@@ -1728,6 +1736,12 @@ class cache_session extends cache {
      */
     public function set($key, $data) {
         $this->check_tracked_user();
+        $loader = $this->get_loader();
+        if ($loader !== false) {
+            // We have a loader available set it there as well.
+            // We have to let the loader do its own parsing of data as it may be unique.
+            $loader->set($key, $data);
+        }
         if ($this->perfdebug) {
             cache_helper::record_cache_set($this->storetype, $this->get_definition()->get_id());
         }
@@ -1780,7 +1794,7 @@ class cache_session extends cache {
      * @return array An array of key value pairs for the items that could be retrieved from the cache.
      *      If MUST_EXIST was used and not all keys existed within the cache then an exception will be thrown.
      *      Otherwise any key that did not exist will have a data value of false within the results.
-     * @throws moodle_exception
+     * @throws coding_exception
      */
     public function get_many(array $keys, $strictness = IGNORE_MISSING) {
         $this->check_tracked_user();
@@ -1788,17 +1802,19 @@ class cache_session extends cache {
         $keymap = array();
         foreach ($keys as $key) {
             $parsedkey = $this->parse_key($key);
-            $parsedkeys[] = $parsedkey;
+            $parsedkeys[$key] = $parsedkey;
             $keymap[$parsedkey] = $key;
         }
         $result = $this->get_store()->get_many($parsedkeys);
-        $mustexist = $strictness === MUST_EXIST;
         $return = array();
+        $missingkeys = array();
+        $hasmissingkeys = false;
         foreach ($result as $parsedkey => $value) {
+            $key = $keymap[$parsedkey];
             if ($value instanceof cache_ttl_wrapper) {
                 /* @var cache_ttl_wrapper $value */
                 if ($value->has_expired()) {
-                    $this->get_store()->delete($parsedkey);
+                    $this->delete($keymap[$parsedkey]);
                     $value = false;
                 } else {
                     $value = $value->data;
@@ -1808,11 +1824,40 @@ class cache_session extends cache {
                 /* @var cache_cached_object $value */
                 $value = $value->restore_object();
             }
-            if ($value === false && $mustexist) {
-                throw new moodle_exception('Not all the requested keys existed within the cache stores.');
+            $return[$key] = $value;
+            if ($value === false) {
+                $hasmissingkeys = true;
+                $missingkeys[$parsedkey] = $key;
             }
-            $return[$keymap[$parsedkey]] = $value;
         }
+        if ($hasmissingkeys) {
+            // We've got missing keys - we've got to check any loaders or data sources.
+            $loader = $this->get_loader();
+            $datasource = $this->get_datasource();
+            if ($loader !== false) {
+                foreach ($loader->get_many($missingkeys) as $key => $value) {
+                    if ($value !== false) {
+                        $return[$key] = $value;
+                        unset($missingkeys[$parsedkeys[$key]]);
+                    }
+                }
+            }
+            $hasmissingkeys = count($missingkeys) > 0;
+            if ($datasource !== false && $hasmissingkeys) {
+                // We're still missing keys but we've got a datasource.
+                foreach ($datasource->load_many_for_cache($missingkeys) as $key => $value) {
+                    if ($value !== false) {
+                        $return[$key] = $value;
+                        unset($missingkeys[$parsedkeys[$key]]);
+                    }
+                }
+                $hasmissingkeys = count($missingkeys) > 0;
+            }
+        }
+        if ($hasmissingkeys && $strictness === MUST_EXIST) {
+            throw new coding_exception('Requested key did not exist in any cache stores and could not be loaded.');
+        }
+
         return $return;
 
     }
@@ -1859,6 +1904,12 @@ class cache_session extends cache {
      */
     public function set_many(array $keyvaluearray) {
         $this->check_tracked_user();
+        $loader = $this->get_loader();
+        if ($loader !== false) {
+            // We have a loader available set it there as well.
+            // We have to let the loader do its own parsing of data as it may be unique.
+            $loader->set_many($keyvaluearray);
+        }
         $data = array();
         $definitionid = $this->get_definition()->get_ttl();
         $simulatettl = $this->has_a_ttl() && !$this->store_supports_native_ttl();
