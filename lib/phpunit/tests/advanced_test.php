@@ -340,6 +340,33 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('user', array('username'=>'onemore')));
     }
 
+    public function test_message_processors_reset() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Get all processors first.
+        $processors1 = get_message_processors();
+
+        // Add a new message processor and get all processors again.
+        $processor = new stdClass();
+        $processor->name = 'test_processor';
+        $processor->enabled = 1;
+        $DB->insert_record('message_processors', $processor);
+
+        $processors2 = get_message_processors();
+
+        // Assert that new processor still haven't been added to the list.
+        $this->assertSame($processors1, $processors2);
+
+        // Reset message processors data.
+        $processors3 = get_message_processors(false, true);
+        // Now, list of processors should not be the same any more,
+        // And we should have one more message processor in the list.
+        $this->assertNotSame($processors1, $processors3);
+        $this->assertEquals(count($processors1) + 1, count($processors3));
+    }
+
     public function test_message_redirection() {
         global $DB;
 
