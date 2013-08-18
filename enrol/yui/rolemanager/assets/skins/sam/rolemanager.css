@@ -6,3 +6,4 @@
 .enrolpanel .container .header .close {width:25px;height:15px;position:absolute;top:5px;right:1em;cursor:pointer;background:url("sprite.png") no-repeat scroll 0 0 transparent;}
 .enrolpanel .container .content {}
 .enrolpanel .container .content input {margin:5px;font-size:10px;}
+.enrolpanel.roleassign.visible .container {width:auto;}
