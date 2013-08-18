@@ -153,5 +153,47 @@ class cachestore_session_test extends cachestore_tests {
             'key1', 'key2', 'key3'
         )));
 
+        // Test that that cache deletes element that was least recently accessed.
+        $this->assertEquals('valueA', $cacheone->get('keyA'));
+        $cacheone->set('keyD', 'valueD');
+        $this->assertEquals('valueA', $cacheone->get('keyA'));
+        $this->assertFalse($cacheone->get('keyB'));
+        $this->assertEquals(array('keyD' => 'valueD', 'keyC' => 'valueC'), $cacheone->get_many(array('keyD', 'keyC')));
+        $cacheone->set('keyE', 'valueE');
+        $this->assertFalse($cacheone->get('keyB'));
+        $this->assertFalse($cacheone->get('keyA'));
+        $this->assertEquals(array('keyA' => false, 'keyE' => 'valueE', 'keyD' => 'valueD', 'keyC' => 'valueC'),
+                $cacheone->get_many(array('keyA', 'keyE', 'keyD', 'keyC')));
+        // Overwrite keyE (moves it to the end of array), and set keyF.
+        $cacheone->set_many(array('keyE' => 'valueE', 'keyF' => 'valueF'));
+        $this->assertEquals(array('keyC' => 'valueC', 'keyE' => 'valueE', 'keyD' => false, 'keyF' => 'valueF'),
+                $cacheone->get_many(array('keyC', 'keyE', 'keyD', 'keyF')));
+    }
+
+    public function test_ttl() {
+        $config = cache_config_phpunittest::instance();
+        $config->phpunit_add_definition('phpunit/three', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'three',
+            'maxsize' => 3,
+            'ttl' => 3
+        ));
+
+        $cachethree = cache::make('phpunit', 'three');
+
+        // Make sure that when cache with ttl is full the elements that were added first are deleted first regardless of access time.
+        $cachethree->set('key1', 'value1');
+        $cachethree->set('key2', 'value2');
+        $cachethree->set('key3', 'value3');
+        $cachethree->set('key4', 'value4');
+        $this->assertFalse($cachethree->get('key1'));
+        $this->assertEquals('value4', $cachethree->get('key4'));
+        $cachethree->set('key5', 'value5');
+        $this->assertFalse($cachethree->get('key2'));
+        $this->assertEquals('value4', $cachethree->get('key4'));
+        $cachethree->set_many(array('key6' => 'value6', 'key7' => 'value7'));
+        $this->assertEquals(array('key3' => false, 'key4' => false, 'key5' => 'value5', 'key6' => 'value6', 'key7' => 'value7'),
+                $cachethree->get_many(array('key3', 'key4', 'key5', 'key6', 'key7')));
     }
 }
