@@ -77,12 +77,15 @@ function xmldb_scorm_upgrade($oldversion) {
 
 
     // Moodle v2.4.0 release upgrade line
-    // Put any upgrade step following this
+    // Put any upgrade step following this.
+
+    // Moodle v2.5.0 release upgrade line.
+    // Put any upgrade step following this.
 
     // Remove old imsrepository type - convert any existing records to external type to help prevent major errors.
-    if ($oldversion < 2013050101) {
+    if ($oldversion < 2013081301) {
         $scorms = $DB->get_recordset('scorm', array('scormtype' => 'imsrepository'));
-        foreach($scorms as $scorm) {
+        foreach ($scorms as $scorm) {
             $scorm->scormtype = SCORM_TYPE_EXTERNAL;
             if (!empty($CFG->repository)) { // Fix path to imsmanifest if $CFG->repository is set.
                 $scorm->reference = $CFG->repository.substr($scorm->reference, 1).'/imsmanifest.xml';
@@ -91,13 +94,25 @@ function xmldb_scorm_upgrade($oldversion) {
             $scorm->revision++;
             $DB->update_record('scorm', $scorm);
         }
-        upgrade_mod_savepoint(true, 2013050101, 'scorm');
+        upgrade_mod_savepoint(true, 2013081301, 'scorm');
     }
 
-
-    // Moodle v2.5.0 release upgrade line.
-    // Put any upgrade step following this.
-
+    // Fix AICC parent/child relationships (MDL-37394).
+    if ($oldversion < 2013081302) {
+        // Get all AICC packages.
+        $aiccpackages = $DB->get_recordset('scorm', array('version' => 'AICC'), '', 'id');
+        foreach ($aiccpackages as $aicc) {
+            $sql = "UPDATE {scorm_scoes}
+                       SET parent = organization
+                     WHERE scorm = ?
+                       AND " . $DB->sql_isempty('scorm_scoes', 'manifest', false, false) . "
+                       AND " . $DB->sql_isnotempty('scorm_scoes', 'organization', false, false) . "
+                       AND parent = '/'";
+            $DB->execute($sql, array($aicc->id));
+        }
+        $aiccpackages->close();
+        upgrade_mod_savepoint(true, 2013081302, 'scorm');
+    }
 
     return true;
 }
