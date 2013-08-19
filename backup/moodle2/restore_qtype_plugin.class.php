@@ -35,6 +35,18 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class restore_qtype_plugin extends restore_plugin {
 
+    /*
+     * A simple answer to id cache for a single questions answers.
+     * @var array
+     */
+    private $questionanswercache = array();
+
+    /*
+     * The id of the current question in the questionanswercache.
+     * @var int
+     */
+    private $questionanswercacheid = null;
+
     /**
      * Add to $paths the restore_path_elements needed
      * to handle question_answers for a given question
@@ -147,38 +159,32 @@ abstract class restore_qtype_plugin extends restore_plugin {
 
         // The question existed, we need to map the existing question_answers
         } else {
-            // Look in question_answers by answertext matching
-            $sql = 'SELECT id
-                      FROM {question_answers}
-                     WHERE question = ?
-                       AND ' . $DB->sql_compare_text('answer', 255) . ' = ' . $DB->sql_compare_text('?', 255);
-            $params = array($newquestionid, $data->answertext);
-            $newitemid = $DB->get_field_sql($sql, $params);
-
-            // Not able to find the answer, let's try cleaning the answertext
-            // of all the question answers in DB as slower fallback. MDL-30018.
-            if (!$newitemid) {
+            // Have we cached the current question?
+            if ($this->questionanswercacheid !== $newquestionid) {
+                // The question changed, purge and start again!
+                $this->questionanswercache = array();
                 $params = array('question' => $newquestionid);
                 $answers = $DB->get_records('question_answers', $params, '', 'id, answer');
+                $this->questionanswercacheid = $newquestionid;
+                // Cache all cleaned answers for a simple text match.
                 foreach ($answers as $answer) {
-                    // Clean in the same way than {@link xml_writer::xml_safe_utf8()}.
+                    // MDL-30018: Clean in the same way as {@link xml_writer::xml_safe_utf8()}.
                     $clean = preg_replace('/[\x-\x8\xb-\xc\xe-\x1f\x7f]/is','', $answer->answer); // Clean CTRL chars.
                     $clean = preg_replace("/\r\n|\r/", "\n", $clean); // Normalize line ending.
-                    if ($clean === $data->answertext) {
-                        $newitemid = $data->id;
-                    }
+                    $this->questionanswercache[$clean] = $answer->id;
                 }
             }
 
-            // If we haven't found the newitemid, something has gone really wrong, question in DB
-            // is missing answers, exception
-            if (!$newitemid) {
+            if (!isset($this->questionanswercache[$data->answertext])) {
+                // If we haven't found the matching answer, something has gone really wrong, the question in the DB
+                // is missing answers, throw an exception.
                 $info = new stdClass();
                 $info->filequestionid = $oldquestionid;
                 $info->dbquestionid   = $newquestionid;
                 $info->answer         = $data->answertext;
                 throw new restore_step_exception('error_question_answers_missing_in_db', $info);
             }
+            $newitemid = $this->questionanswercache[$data->answertext];
         }
         // Create mapping (we'll use this intensively when restoring question_states. And also answerfeedback files)
         $this->set_mapping('question_answer', $oldid, $newitemid);
