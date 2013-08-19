@@ -95,6 +95,24 @@ class cache_config_phpunittest extends cache_config_writer {
     }
 
     /**
+     * Forcefully adds a session store.
+     *
+     * @param string $name
+     */
+    public function phpunit_add_session_store($name) {
+        $this->configstores[$name] = array(
+            'name' => $name,
+            'plugin' => 'session',
+            'configuration' => array(),
+            'features' => 14,
+            'modes' => 2,
+            'default' => true,
+            'class' => 'cachestore_session',
+            'lock' => 'cachelock_file_default',
+        );
+    }
+
+    /**
      * Forcefully injects a definition => store mapping.
      *
      * This function does no validation, you should only be calling if it you know
