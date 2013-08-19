@@ -26,7 +26,8 @@
 .moodleSkin table.mceToolbar {margin-left:3px}
 .moodleSkin .mceToolbar .mceToolbarStart span, .moodleSkin .mceToolbar .mceToolbarEnd span {display:none;}
 .moodleSkin .mceToolbar .mceToolbarEndListBox span, .moodleSkin .mceToolbar .mceToolbarStartListBox span {display:none}
-.moodleSkin span.mceIcon, .moodleSkin img.mceIcon {display:block; width:20px; height:20px}
+.moodleSkin span.mceIcon {display:block; width:20px; height:20px;}
+.moodleSkin img.mceIcon {display:block; width:16px; height:16px; padding: 2px 0 0 2px;}
 .moodleSkin td.mceCenter {text-align:center;}
 .moodleSkin td.mceCenter table {margin:0 auto; text-align:left;}
 .moodleSkin td.mceRight table {margin:0 0 0 auto;}
@@ -77,8 +78,8 @@
 .moodleSkin .mceColorSplitMenu a.mceMoreColors:hover {border:1px solid #0A246A; background-color:#B6BDD2}
 .moodleSkin a.mceMoreColors:hover {border:1px solid #0A246A}
 /* Font selector preview stuff */
-.moodleSkin .mce_forecolor span.mceAction, .moodleSkin .mce_backcolor span.mceAction {height:22px;overflow:hidden; position: relative; z-index: 100 }
-.moodleSkin .mceColorPreview {width:18px; height:19px; overflow:hidden; margin-left: 2px; position: relative; top: -21px;}
+.moodleSkin .mce_forecolor span.mceAction, .moodleSkin .mce_backcolor span.mceAction {height:22px;overflow:hidden; position: relative; top: 2px; z-index: 100 }
+.moodleSkin .mceColorPreview {width:16px; height:16px; overflow:hidden; margin-left: 2px; position: relative; top: -18px;}
 
 /* Menu */
 .moodleSkin .mceMenu {position:absolute; left:0; top:0; z-index:1000; border:1px solid #BBB; direction:ltr}
@@ -175,6 +176,9 @@
 .moodleSkin span.mce_preview {background:url(img/preview.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_print {background:url(img/print.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_save {background:url(img/save.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_pastetext {background:url(img/paste_text.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_pasteword {background:url(img/paste_word.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_replace {background:url(img/find_replace.png) 2px 2px no-repeat;}
 
 /* Theme */
 .moodleSkin td.mceToolbar, .moodleSkin td.mceStatusbar, .moodleSkin .mceMenuItemTitle a {background:#F9F9F9}
@@ -191,12 +195,9 @@
 .moodleSkin span.mce_insertlayer {background-position:-260px -20px}
 .moodleSkin span.mce_movebackward {background-position:-280px -20px}
 .moodleSkin span.mce_moveforward {background-position:-300px -20px}
-.moodleSkin span.mce_pastetext {background-position:-360px -20px}
-.moodleSkin span.mce_pasteword {background-position:-380px -20px}
 .moodleSkin span.mce_selectall {background-position:-400px -20px}
 .moodleSkin span.mce_cell_props {background-position:-600px -20px}
 .moodleSkin span.mce_styleprops {background-position:-560px -20px}
-.moodleSkin span.mce_replace {background-position:-500px -20px}
 .moodleSkin span.mce_absolute {background-position:-180px -20px}
 .moodleSkin span.mce_cancel {background-position:-460px -20px}
 .moodleSkin span.mce_delete_table {background-position:-620px -20px}
