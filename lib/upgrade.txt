@@ -104,6 +104,12 @@ Event triggering and event handlers:
     * All existing events and event handlers should be replaced by new
       event classes and matching new event observers.
     * See http://docs.moodle.org/dev/Event_2 for more information.
+    * The following events will be entirely removed, though they can still
+      be captured using handlers, but they should not be used any more.
+      * groups_members_removed          -> \core\event\group_member_removed
+      * groups_groupings_groups_removed -> (no replacement)
+      * groups_groups_deleted           -> \core\event\group_deleted
+      * groups_groupings_deleted        -> \core\event\grouping_deleted
 
 === 2.5.1 ===
 

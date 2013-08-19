@@ -64,8 +64,9 @@ function groups_add_member($grouporid, $userorid, $component=null, $itemid=0) {
         $group = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
     }
 
-    //check if the user a participant of the group course
-    if (!is_enrolled(context_course::instance($group->courseid), $userid)) {
+    // Check if the user a participant of the group course.
+    $context = context_course::instance($group->courseid);
+    if (!is_enrolled($context, $userid)) {
         return false;
     }
 
@@ -99,16 +100,23 @@ function groups_add_member($grouporid, $userorid, $component=null, $itemid=0) {
 
     $DB->insert_record('groups_members', $member);
 
-    //update group info
+    // Update group info, and group object.
     $DB->set_field('groups', 'timemodified', $member->timeadded, array('id'=>$groupid));
+    $group->timemodified = $member->timeadded;
 
-    //trigger groups events
-    $eventdata = new stdClass();
-    $eventdata->groupid = $groupid;
-    $eventdata->userid  = $userid;
-    $eventdata->component = $member->component;
-    $eventdata->itemid = $member->itemid;
-    events_trigger('groups_member_added', $eventdata);
+    // Trigger group event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $groupid,
+        'relateduserid' => $userid,
+        'other' => array(
+            'component' => $member->component,
+            'itemid' => $member->itemid
+        )
+    );
+    $event = \core\event\group_member_added::create($params);
+    $event->add_record_snapshot('groups', $group);
+    $event->trigger();
 
     return true;
 }
@@ -174,10 +182,8 @@ function groups_remove_member($grouporid, $userorid) {
 
     if (is_object($userorid)) {
         $userid = $userorid->id;
-        $user   = $userorid;
     } else {
         $userid = $userorid;
-        $user = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
     }
 
     if (is_object($grouporid)) {
@@ -194,14 +200,20 @@ function groups_remove_member($grouporid, $userorid) {
 
     $DB->delete_records('groups_members', array('groupid'=>$groupid, 'userid'=>$userid));
 
-    //update group info
-    $DB->set_field('groups', 'timemodified', time(), array('id'=>$groupid));
+    // Update group info.
+    $time = time();
+    $DB->set_field('groups', 'timemodified', $time, array('id' => $groupid));
+    $group->timemodified = $time;
 
-    //trigger groups events
-    $eventdata = new stdClass();
-    $eventdata->groupid = $groupid;
-    $eventdata->userid  = $userid;
-    events_trigger('groups_member_removed', $eventdata);
+    // Trigger group event.
+    $params = array(
+        'context' => context_course::instance($group->courseid),
+        'objectid' => $groupid,
+        'relateduserid' => $userid
+    );
+    $event = \core\event\group_member_removed::create($params);
+    $event->add_record_snapshot('groups', $group);
+    $event->trigger();
 
     return true;
 }
@@ -257,8 +269,14 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($course->id));
 
-    //trigger groups events
-    events_trigger('groups_group_created', $group);
+    // Trigger group event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $group->id
+    );
+    $event = \core\event\group_created::create($params);
+    $event->add_record_snapshot('groups', $group);
+    $event->trigger();
 
     return $group->id;
 }
@@ -289,8 +307,6 @@ function groups_create_grouping($data, $editoroptions=null) {
     }
 
     $id = $DB->insert_record('groupings', $data);
-
-    //trigger groups events
     $data->id = $id;
 
     if ($editoroptions !== null) {
@@ -304,7 +320,14 @@ function groups_create_grouping($data, $editoroptions=null) {
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
 
-    events_trigger('groups_grouping_created', $data);
+    // Trigger group event.
+    $params = array(
+        'context' => context_course::instance($data->courseid),
+        'objectid' => $id
+    );
+    $event = \core\event\grouping_created::create($params);
+    $event->set_legacy_eventdata($data);
+    $event->trigger();
 
     return $id;
 }
@@ -376,9 +399,14 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
         groups_update_group_icon($group, $data, $editform);
     }
 
-    //trigger groups events
-    events_trigger('groups_group_updated', $group);
-
+    // Trigger group event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $group->id
+    );
+    $event = \core\event\group_updated::create($params);
+    $event->add_record_snapshot('groups', $group);
+    $event->trigger();
 
     return true;
 }
@@ -408,8 +436,14 @@ function groups_update_grouping($data, $editoroptions=null) {
     // Invalidate the group data.
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
 
-    //trigger groups events
-    events_trigger('groups_grouping_updated', $data);
+    // Trigger group event.
+    $params = array(
+        'context' => context_course::instance($data->courseid),
+        'objectid' => $data->id
+    );
+    $event = \core\event\grouping_updated::create($params);
+    $event->set_legacy_eventdata($data);
+    $event->trigger();
 
     return true;
 }
@@ -454,8 +488,14 @@ function groups_delete_group($grouporid) {
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($group->courseid));
 
-    //trigger groups events
-    events_trigger('groups_group_deleted', $group);
+    // Trigger group event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $groupid
+    );
+    $event = \core\event\group_deleted::create($params);
+    $event->add_record_snapshot('groups', $group);
+    $event->trigger();
 
     return true;
 }
@@ -499,8 +539,14 @@ function groups_delete_grouping($groupingorid) {
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($grouping->courseid));
 
-    //trigger groups events
-    events_trigger('groups_grouping_deleted', $grouping);
+    // Trigger group event.
+    $params = array(
+        'context' => $context,
+        'objectid' => $groupingid
+    );
+    $event = \core\event\grouping_deleted::create($params);
+    $event->add_record_snapshot('groupings', $grouping);
+    $event->trigger();
 
     return true;
 }
@@ -521,23 +567,27 @@ function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) 
         return false;
     }
 
-    $params = array('courseid'=>$courseid);
+    // Select * so that the function groups_remove_member() gets the whole record.
+    $groups = $DB->get_recordset('groups', array('courseid' => $courseid));
+    foreach ($groups as $group) {
+        if ($userid) {
+            $userids = array($userid);
+        } else {
+            $userids = $DB->get_fieldset_select('groups_members', 'userid', 'groupid = :groupid', array('groupid' => $group->id));
+        }
 
-    if ($userid) {
-        $usersql = "AND userid = :userid";
-        $params['userid'] = $userid;
-    } else {
-        $usersql = "";
+        foreach ($userids as $id) {
+            groups_remove_member($group, $id);
+        }
     }
 
-    $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = :courseid";
-    $DB->delete_records_select('groups_members', "groupid IN ($groupssql) $usersql", $params);
-
-    //trigger groups events
+    // TODO MDL-41312 Remove events_trigger_legacy('groups_members_removed').
+    // This event is kept here for backwards compatibility, because it cannot be
+    // translated to a new event as it is wrong.
     $eventdata = new stdClass();
     $eventdata->courseid = $courseid;
     $eventdata->userid   = $userid;
-    events_trigger('groups_members_removed', $eventdata);
+    events_trigger_legacy('groups_members_removed', $eventdata);
 
     if ($showfeedback) {
         echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groupmembers', 'group'), 'notifysuccess');
@@ -557,13 +607,20 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
     global $DB, $OUTPUT;
 
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
-    $DB->delete_records_select('groupings_groups', "groupid IN ($groupssql)", array($courseid));
+    $results = $DB->get_recordset_select('groupings_groups', "groupid IN ($groupssql)",
+        array($courseid), '', 'groupid, groupingid');
+
+    foreach ($results as $result) {
+        groups_unassign_grouping($result->groupingid, $result->groupid, false);
+    }
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
 
-    //trigger groups events
-    events_trigger('groups_groupings_groups_removed', $courseid);
+    // TODO MDL-41312 Remove events_trigger_legacy('groups_groupings_groups_removed').
+    // This event is kept here for backwards compatibility, because it cannot be
+    // translated to a new event as it is wrong.
+    events_trigger_legacy('groups_groupings_groups_removed', $courseid);
 
     // no need to show any feedback here - we delete usually first groupings and then groups
 
@@ -580,31 +637,18 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
 function groups_delete_groups($courseid, $showfeedback=false) {
     global $CFG, $DB, $OUTPUT;
 
-    // delete any uses of groups
-    // Any associated files are deleted as part of groups_delete_groupings_groups
-    groups_delete_groupings_groups($courseid, $showfeedback);
-    groups_delete_group_members($courseid, 0, $showfeedback);
-
-    // delete group pictures and descriptions
-    $context = context_course::instance($courseid);
-    $fs = get_file_storage();
-    $fs->delete_area_files($context->id, 'group');
-
-    // delete group calendar events
-    $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
-    $DB->delete_records_select('event', "groupid IN ($groupssql)", array($courseid));
-
-    $context = context_course::instance($courseid);
-    $fs = get_file_storage();
-    $fs->delete_area_files($context->id, 'group');
-
-    $DB->delete_records('groups', array('courseid'=>$courseid));
+    $groups = $DB->get_recordset('groups', array('courseid' => $courseid));
+    foreach ($groups as $group) {
+        groups_delete_group($group);
+    }
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
 
-    // trigger groups events
-    events_trigger('groups_groups_deleted', $courseid);
+    // TODO MDL-41312 Remove events_trigger_legacy('groups_groups_deleted').
+    // This event is kept here for backwards compatibility, because it cannot be
+    // translated to a new event as it is wrong.
+    events_trigger_legacy('groups_groups_deleted', $courseid);
 
     if ($showfeedback) {
         echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groups', 'group'), 'notifysuccess');
@@ -623,28 +667,18 @@ function groups_delete_groups($courseid, $showfeedback=false) {
 function groups_delete_groupings($courseid, $showfeedback=false) {
     global $DB, $OUTPUT;
 
-    // delete any uses of groupings
-    $sql = "DELETE FROM {groupings_groups}
-             WHERE groupingid in (SELECT id FROM {groupings} g WHERE g.courseid = ?)";
-    $DB->execute($sql, array($courseid));
+    $groupings = $DB->get_recordset_select('groupings', 'courseid = ?', array($courseid));
+    foreach ($groupings as $grouping) {
+        groups_delete_grouping($grouping);
+    }
 
-    // remove the default groupingid from course
-    $DB->set_field('course', 'defaultgroupingid', 0, array('id'=>$courseid));
-    // remove the groupingid from all course modules
-    $DB->set_field('course_modules', 'groupingid', 0, array('course'=>$courseid));
-
-    // Delete all files associated with groupings for this course
-    $context = context_course::instance($courseid);
-    $fs = get_file_storage();
-    $fs->delete_area_files($context->id, 'grouping');
-
-    $DB->delete_records('groupings', array('courseid'=>$courseid));
-
-    // Invalidate the grouping cache for the course
+    // Invalidate the grouping cache for the course.
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
 
-    // trigger groups events
-    events_trigger('groups_groupings_deleted', $courseid);
+    // TODO MDL-41312 Remove events_trigger_legacy('groups_groupings_deleted').
+    // This event is kept here for backwards compatibility, because it cannot be
+    // translated to a new event as it is wrong.
+    events_trigger_legacy('groups_groupings_deleted', $courseid);
 
     if ($showfeedback) {
         echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groupings', 'group'), 'notifysuccess');
