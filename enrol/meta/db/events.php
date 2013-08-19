@@ -41,31 +41,27 @@ $handlers = array (
         'internal'         => 1,
     ),
 
-    'user_enrolled' => array (
-        'handlerfile'      => '/enrol/meta/locallib.php',
-        'handlerfunction'  => array('enrol_meta_handler', 'user_enrolled'),
-        'schedule'         => 'instant',
-        'internal'         => 1,
-    ),
-
-    'user_unenrolled' => array (
-        'handlerfile'      => '/enrol/meta/locallib.php',
-        'handlerfunction'  => array('enrol_meta_handler', 'user_unenrolled'),
-        'schedule'         => 'instant',
-        'internal'         => 1,
-    ),
-
-    'user_enrol_modified' => array (
-        'handlerfile'      => '/enrol/meta/locallib.php',
-        'handlerfunction'  => array('enrol_meta_handler', 'user_enrol_modified'),
-        'schedule'         => 'instant',
-        'internal'         => 1,
-    ),
-
     'course_deleted' => array (
         'handlerfile'      => '/enrol/meta/locallib.php',
         'handlerfunction'  => array('enrol_meta_handler', 'course_deleted'),
         'schedule'         => 'instant',
         'internal'         => 1,
+    ),
+);
+
+// List of observers.
+$observers = array(
+
+    array(
+        'eventname'   => '\core\event\user_enrolment_created',
+        'callback'    => 'enrol_meta_observer::user_enrolment_created',
+    ),
+    array(
+        'eventname'   => '\core\event\user_enrolment_deleted',
+        'callback'    => 'enrol_meta_observer::user_enrolment_deleted',
+    ),
+    array(
+        'eventname'   => '\core\event\user_enrolment_updated',
+        'callback'    => 'enrol_meta_observer::user_enrolment_updated',
     ),
 );

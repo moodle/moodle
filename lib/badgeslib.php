@@ -932,40 +932,6 @@ function badges_add_course_navigation(navigation_node $coursenode, stdClass $cou
 }
 
 /**
- * Triggered when 'user_updated' event happens.
- *
- * @param   object $eventdata Holds all information about a user.
- * @return  boolean
- */
-function badges_award_handle_profile_criteria_review(stdClass $eventdata) {
-    global $DB, $CFG;
-
-    if (!empty($CFG->enablebadges)) {
-        $userid = $eventdata->id;
-
-        if ($rs = $DB->get_records('badge_criteria', array('criteriatype' => BADGE_CRITERIA_TYPE_PROFILE))) {
-            foreach ($rs as $r) {
-                $badge = new badge($r->badgeid);
-                if (!$badge->is_active() || $badge->is_issued($userid)) {
-                    continue;
-                }
-
-                if ($badge->criteria[BADGE_CRITERIA_TYPE_PROFILE]->review($userid)) {
-                    $badge->criteria[BADGE_CRITERIA_TYPE_PROFILE]->mark_complete($userid);
-
-                    if ($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->review($userid)) {
-                        $badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($userid);
-                        $badge->issue($userid);
-                    }
-                }
-            }
-        }
-    }
-
-    return true;
-}
-
-/**
  * Triggered when badge is manually awarded.
  *
  * @param   object      $data

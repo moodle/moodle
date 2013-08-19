@@ -257,7 +257,17 @@ class enrol_manual_editselectedusers_operation extends enrol_bulk_enrolment_oper
                 foreach ($user->enrolments as $enrolment) {
                     $enrolment->courseid  = $enrolment->enrolmentinstance->courseid;
                     $enrolment->enrol     = 'manual';
-                    events_trigger('user_enrol_modified', $enrolment);
+                    // Trigger event.
+                    $event = \core\event\user_enrolment_updated::create(
+                            array(
+                                'objectid' => $enrolment->id,
+                                'courseid' => $enrolment->courseid,
+                                'context' => context_course::instance($enrolment->courseid),
+                                'relateduserid' => $user->id,
+                                'other' => array('enrol' => 'manual')
+                                )
+                            );
+                    $event->trigger();
                 }
             }
             return true;

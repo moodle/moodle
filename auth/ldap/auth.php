@@ -78,6 +78,7 @@ if (!defined('LDAP_OPT_DIAGNOSTIC_MESSAGE')) {
 
 require_once($CFG->libdir.'/authlib.php');
 require_once($CFG->libdir.'/ldaplib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 /**
  * LDAP authentication plugin.
@@ -550,7 +551,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             print_error('auth_ldap_create_error', 'auth_ldap');
         }
 
-        $user->id = $DB->insert_record('user', $user);
+        $user->id = user_create_user($user, false);
 
         // Save any custom profile field information
         profile_save_data($user);
@@ -562,7 +563,6 @@ class auth_plugin_ldap extends auth_plugin_base {
         update_internal_user_password($user, $plainslashedpassword);
 
         $user = $DB->get_record('user', array('id'=>$user->id));
-        events_trigger('user_created', $user);
 
         if (! send_confirmation_email($user)) {
             print_error('noemail', 'auth_ldap');
@@ -612,12 +612,12 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if (!$this->user_activate($username)) {
                     return AUTH_CONFIRM_FAIL;
                 }
-                $DB->set_field('user', 'confirmed', 1, array('id'=>$user->id));
+                $user->confirmed = 1;
                 if ($user->firstaccess == 0) {
-                    $DB->set_field('user', 'firstaccess', time(), array('id'=>$user->id));
+                    $user->firstaccess = time();
                 }
-                $euser = $DB->get_record('user', array('id' => $user->id));
-                events_trigger('user_updated', $euser);
+                require_once($CFG->dirroot.'/user/lib.php');
+                user_update_user($user, false);
                 return AUTH_CONFIRM_OK;
             }
         } else {
@@ -806,10 +806,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $updateuser = new stdClass();
                     $updateuser->id = $user->id;
                     $updateuser->suspended = 1;
-                    $DB->update_record('user', $updateuser);
+                    user_update_user($updateuser, false);
                     echo "\t"; print_string('auth_dbsuspenduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
-                    $euser = $DB->get_record('user', array('id' => $user->id));
-                    events_trigger('user_updated', $euser);
                     session_kill_user($user->id);
                 }
             } else {
@@ -835,10 +833,8 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $updateuser->id = $user->id;
                     $updateuser->auth = $this->authtype;
                     $updateuser->suspended = 0;
-                    $DB->update_record('user', $updateuser);
+                    user_update_user($updateuser, false);
                     echo "\t"; print_string('auth_dbreviveduser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id)); echo "\n";
-                    $euser = $DB->get_record('user', array('id' => $user->id));
-                    events_trigger('user_updated', $euser);
                 }
             } else {
                 print_string('nouserentriestorevive', 'auth_ldap');
@@ -950,10 +946,10 @@ class auth_plugin_ldap extends auth_plugin_base {
                     $user->lang = $CFG->lang;
                 }
 
-                $id = $DB->insert_record('user', $user);
+                $id = user_create_user($user, false);
                 echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
                 $euser = $DB->get_record('user', array('id' => $id));
-                events_trigger('user_created', $euser);
+
                 if (!empty($this->config->forcechangepassword)) {
                     set_user_preference('auth_forcepasswordchange', 1, $id);
                 }
@@ -1011,22 +1007,25 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $updatekeys = array_keys($newinfo);
             }
 
-            foreach ($updatekeys as $key) {
-                if (isset($newinfo[$key])) {
-                    $value = $newinfo[$key];
-                } else {
-                    $value = '';
-                }
+            if (!empty($updatekeys)) {
+                $newuser = new stdClass();
+                $newuser->id = $userid;
 
-                if (!empty($this->config->{'field_updatelocal_' . $key})) {
-                    if ($user->{$key} != $value) { // only update if it's changed
-                        $DB->set_field('user', $key, $value, array('id'=>$userid));
+                foreach ($updatekeys as $key) {
+                    if (isset($newinfo[$key])) {
+                        $value = $newinfo[$key];
+                    } else {
+                        $value = '';
+                    }
+
+                    if (!empty($this->config->{'field_updatelocal_' . $key})) {
+                        // Only update if it's changed.
+                        if ($user->{$key} != $value) {
+                            $newuser->$key = $value;
+                        }
                     }
                 }
-            }
-            if (!empty($updatekeys)) {
-                $euser = $DB->get_record('user', array('id' => $userid));
-                events_trigger('user_updated', $euser);
+                user_update_user($newuser, false);
             }
         } else {
             return false;

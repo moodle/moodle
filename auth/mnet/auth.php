@@ -216,6 +216,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $CFG, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
         require_once $CFG->libdir . '/gdlib.php';
+        require_once($CFG->dirroot.'/user/lib.php');
 
         // verify the remote host is configured locally before attempting RPC call
         if (! $remotehost = $DB->get_record('mnet_host', array('wwwroot' => $remotepeer->wwwroot, 'deleted' => 0))) {
@@ -361,8 +362,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (empty($localuser->firstaccess)) { // Now firstaccess, grab it here
             $localuser->firstaccess = time();
         }
-
-        $DB->update_record('user', $localuser);
+        user_update_user($localuser, false);
 
         if (!$firsttime) {
             // repeat customer! let the IDP know about enrolments

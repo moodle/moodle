@@ -1276,16 +1276,7 @@ abstract class enrol_plugin {
         if ($ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$userid))) {
             //only update if timestart or timeend or status are different.
             if ($ue->timestart != $timestart or $ue->timeend != $timeend or (!is_null($status) and $ue->status != $status)) {
-                $ue->timestart    = $timestart;
-                $ue->timeend      = $timeend;
-                if (!is_null($status)) {
-                    $ue->status   = $status;
-                }
-                $ue->modifierid   = $USER->id;
-                $ue->timemodified = time();
-                $DB->update_record('user_enrolments', $ue);
-
-                $updated = true;
+                $this->update_user_enrol($instance, $userid, $status, $timestart, $timeend);
             }
         } else {
             $ue = new stdClass();
@@ -1303,16 +1294,17 @@ abstract class enrol_plugin {
         }
 
         if ($inserted) {
-            // add extra info and trigger event
-            $ue->courseid  = $courseid;
-            $ue->enrol     = $name;
-            events_trigger('user_enrolled', $ue);
-        } else if ($updated) {
-            $ue->courseid  = $courseid;
-            $ue->enrol     = $name;
-            events_trigger('user_enrol_modified', $ue);
-            // resets current enrolment caches
-            $context->mark_dirty();
+            // Trigger event.
+            $event = \core\event\user_enrolment_created::create(
+                    array(
+                        'objectid' => $ue->id,
+                        'courseid' => $courseid,
+                        'context' => $context,
+                        'relateduserid' => $ue->userid,
+                        'other' => array('enrol' => $name)
+                        )
+                    );
+            $event->trigger();
         }
 
         if ($roleid) {
@@ -1389,10 +1381,17 @@ abstract class enrol_plugin {
         $DB->update_record('user_enrolments', $ue);
         context_course::instance($instance->courseid)->mark_dirty(); // reset enrol caches
 
-        // trigger event
-        $ue->courseid  = $instance->courseid;
-        $ue->enrol     = $instance->name;
-        events_trigger('user_enrol_modified', $ue);
+        // Trigger event.
+        $event = \core\event\user_enrolment_updated::create(
+                array(
+                    'objectid' => $ue->id,
+                    'courseid' => $instance->courseid,
+                    'context' => context_course::instance($instance->courseid),
+                    'relateduserid' => $ue->userid,
+                    'other' => array('enrol' => $name)
+                    )
+                );
+        $event->trigger();
     }
 
     /**
@@ -1440,8 +1439,6 @@ abstract class enrol_plugin {
                  WHERE ue.userid = :userid AND e.courseid = :courseid";
         if ($DB->record_exists_sql($sql, array('userid'=>$userid, 'courseid'=>$courseid))) {
             $ue->lastenrol = false;
-            events_trigger('user_unenrolled', $ue);
-            // user still has some enrolments, no big cleanup yet
 
         } else {
             // the big cleanup IS necessary!
@@ -1458,9 +1455,20 @@ abstract class enrol_plugin {
             $DB->delete_records('user_lastaccess', array('userid'=>$userid, 'courseid'=>$courseid));
 
             $ue->lastenrol = true; // means user not enrolled any more
-            events_trigger('user_unenrolled', $ue);
         }
-
+        // Trigger event.
+        $event = \core\event\user_enrolment_deleted::create(
+                array(
+                    'courseid' => $courseid,
+                    'context' => $context,
+                    'relateduserid' => $ue->userid,
+                    'other' => array(
+                        'userenrolment' => (array)$ue,
+                        'enrol' => $name
+                        )
+                    )
+                );
+        $event->trigger();
         // reset all enrol caches
         $context->mark_dirty();
 

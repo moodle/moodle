@@ -26,6 +26,7 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/editlib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 $key = required_param('key', PARAM_ALPHANUM);
 $id  = required_param('id', PARAM_INT);
@@ -60,17 +61,16 @@ if (empty($preferences['newemailattemptsleft'])) {
     cancel_email_update($user->id);
     $user->email = $preferences['newemail'];
 
-    // Detect duplicate before saving
+    // Detect duplicate before saving.
     if ($DB->get_record('user', array('email' => $user->email))) {
         $stremailnowexists = get_string('emailnowexists', 'auth');
         echo $OUTPUT->box($stremailnowexists, 'center');
         echo $OUTPUT->continue_button("$CFG->wwwroot/user/view.php?id=$user->id");
     } else {
-        // update user email
-        $DB->set_field('user', 'email', $user->email, array('id' => $user->id));
+        // Update user email.
         $authplugin = get_auth_plugin($user->auth);
         $authplugin->user_update($olduser, $user);
-        events_trigger('user_updated', $user);
+        user_update_user($user, false);
         $a->email = $user->email;
         $stremailupdatesuccess = get_string('emailupdatesuccess', 'auth', $a);
         echo $OUTPUT->box($stremailupdatesuccess, 'center');
