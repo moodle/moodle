@@ -38,7 +38,7 @@ require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_test_base {
+class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthrough_test_base {
     public function test_manual_graded_essay() {
 
         // Create an essay question.
@@ -56,7 +56,7 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
                 $this->get_does_not_contain_feedback_expectation());
 
         // Simulate some data submitted by the student.
-        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_PLAIN));
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
 
         // Verify.
         $this->check_current_state(question_state::$complete);
@@ -68,16 +68,16 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
 
         // Process the same data again, check it does not create a new step.
         $numsteps = $this->get_step_count();
-        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_PLAIN));
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
         $this->check_step_count($numsteps);
 
         // Process different data, check it creates a new step.
-        $this->process_submission(array('answer' => ''));
+        $this->process_submission(array('answer' => '', 'answerformat' => FORMAT_HTML));
         $this->check_step_count($numsteps + 1);
         $this->check_current_state(question_state::$todo);
 
         // Change back, check it creates a new step.
-        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_PLAIN));
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
         $this->check_step_count($numsteps + 2);
 
         // Finish the attempt.
@@ -206,7 +206,7 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
         $this->check_current_mark(null);
 
         // Simulate some data submitted by the student.
-        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_PLAIN));
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
 
         // Verify.
         $this->check_current_state(question_state::$complete);
@@ -283,7 +283,7 @@ class qbehaviour_manualgraded_walkthrough_test extends qbehaviour_walkthrough_te
                 $this->get_does_not_contain_feedback_expectation());
 
         // Simulate some data submitted by the student.
-        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_PLAIN));
+        $this->process_submission(array('answer' => 'This is my wonderful essay!', 'answerformat' => FORMAT_HTML));
 
         // Verify.
         $this->check_current_state(question_state::$complete);
