@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->dirroot.'/course/dnduploadlib.php');
 require_once($CFG->dirroot.'/course/format/lib.php');
 
 define('COURSE_MAX_LOGS_PER_PAGE', 1000);       // records
@@ -2925,7 +2924,7 @@ function course_ajax_enabled($course) {
  * @return bool
  */
 function include_course_ajax($course, $usedmodules = array(), $enabledmodules = null, $config = null) {
-    global $PAGE, $SITE;
+    global $CFG, $PAGE, $SITE;
 
     // Ensure that ajax should be included
     if (!course_ajax_enabled($course)) {
@@ -3023,6 +3022,7 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
     }
 
     // Load drag and drop upload AJAX.
+    require_once($CFG->dirroot.'/course/dnduploadlib.php');
     dndupload_add_to_course($course, $enabledmodules);
 
     return true;
