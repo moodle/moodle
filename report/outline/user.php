@@ -53,7 +53,12 @@ if (!report_outline_can_access_user_report($user, $course, true)) {
     require_capability('report/outline:view', $coursecontext);
 }
 
-add_to_log($course->id, 'course', 'report outline', "report/outline/user.php?id=$user->id&course=$course->id&mode=$mode", $course->id);
+// Trigger a content view event.
+$event = \report_outline\event\content_viewed::create(array('courseid' => $course->id,
+                                                            'other'    => array('content' => 'user outline')));
+$event->set_page_detail();
+$event->set_legacy_logdata(array($course->id, 'course', 'report outline', "report/outline/user.php?id=$user->id&course=$course->id&mode=$mode", $course->id));
+$event->trigger();
 
 $stractivityreport = get_string('activityreport');
 

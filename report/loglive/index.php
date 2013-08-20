@@ -48,8 +48,6 @@ $strlivelogs = get_string('livelogs', 'report_loglive');
 if ($inpopup) {
     session_get_instance()->write_close();
 
-    add_to_log($course->id, 'course', 'report live', "report/loglive/index.php?id=$course->id", $course->id);
-
     $date = time() - 3600;
 
     $url = new moodle_url('/report/loglive/index.php', array('id'=>$course->id, 'user'=>0, 'date'=>$date, 'inpopup'=>1));
@@ -64,6 +62,13 @@ if ($inpopup) {
     $PAGE->set_periodic_refresh_delay(REPORT_LOGLIVE_REFRESH);
     $PAGE->set_heading($strlivelogs);
     echo $OUTPUT->header();
+
+    // Trigger a content view event.
+    $event = \report_loglive\event\content_viewed::create(array('courseid' => $course->id,
+                                                                'other'    => array('content' => 'loglive')));
+    $event->set_page_detail();
+    $event->set_legacy_logdata(array($course->id, 'course', 'report live', "report/loglive/index.php?id=$course->id", $course->id));
+    $event->trigger();
 
     print_log($course, 0, $date, "l.time DESC", $page, 500, $url);
 
