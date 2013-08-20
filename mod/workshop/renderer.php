@@ -339,6 +339,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @return string HTML to be echoed
      */
     protected function render_workshop_allocation_result(workshop_allocation_result $result) {
+        global $CFG;
 
         $status = $result->get_status();
 
@@ -384,7 +385,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         if (is_array($logs) and !empty($logs)) {
             $o .= html_writer::start_tag('ul', array('class' => 'allocation-init-results'));
             foreach ($logs as $log) {
-                if ($log->type == 'debug' and !debugging('', DEBUG_DEVELOPER)) {
+                if ($log->type == 'debug' and !$CFG->debugdeveloper) {
                     // display allocation debugging messages for developers only
                     continue;
                 }

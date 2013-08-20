@@ -94,7 +94,6 @@ class backup_factories_testcase extends advanced_testcase {
 
         // Instantiate with debugging enabled and $CFG->backup_error_log_logger_level not set
         $CFG->debugdisplay = true;
-        $CFG->debug = DEBUG_DEVELOPER;
         unset($CFG->backup_error_log_logger_level);
         $logger1 = backup_factory::get_logger_chain(backup::INTERACTIVE_YES, backup::EXECUTION_INMEDIATE, 'test');
         $this->assertTrue($logger1 instanceof error_log_logger);  // 1st logger is error_log_logger

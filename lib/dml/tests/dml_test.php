@@ -1475,8 +1475,6 @@ class core_dml_testcase extends database_driver_testcase {
     }
 
     public function test_get_records_sql() {
-        global $CFG;
-
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1518,11 +1516,11 @@ class core_dml_testcase extends database_driver_testcase {
         $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {{$tablename}}", null);
         $this->assertDebuggingCalled();
         $this->assertEquals(6, count($records));
-        $CFG->debug = DEBUG_MINIMAL;
+        set_debugging(DEBUG_MINIMAL);
         $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {{$tablename}}", null);
         $this->assertDebuggingNotCalled();
         $this->assertEquals(6, count($records));
-        $CFG->debug = DEBUG_DEVELOPER;
+        set_debugging(DEBUG_DEVELOPER);
 
         // negative limits = no limits
         $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, -1, -1);
@@ -1734,8 +1732,6 @@ class core_dml_testcase extends database_driver_testcase {
     }
 
     public function test_get_record_sql() {
-        global $CFG;
-
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1774,10 +1770,10 @@ class core_dml_testcase extends database_driver_testcase {
 
         $this->assertNotEmpty($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
         $this->assertDebuggingCalled();
-        $CFG->debug = DEBUG_MINIMAL;
+        set_debugging(DEBUG_MINIMAL);
         $this->assertNotEmpty($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
         $this->assertDebuggingNotCalled();
-        $CFG->debug = DEBUG_DEVELOPER;
+        set_debugging(DEBUG_DEVELOPER);
 
         // multiple matches ignored
         $this->assertNotEmpty($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MULTIPLE));

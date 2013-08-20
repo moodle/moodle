@@ -6728,8 +6728,8 @@ function get_string($identifier, $component = '', $a = null, $lazyload = false) 
         return new lang_string($identifier, $component, $a);
     }
 
-    if (debugging('', DEBUG_DEVELOPER) && clean_param($identifier, PARAM_STRINGID) === '') {
-        throw new coding_exception('Invalid string identifier. The identifier cannot be empty. Please fix your get_string() call.');
+    if ($CFG->debugdeveloper && clean_param($identifier, PARAM_STRINGID) === '') {
+        throw new coding_exception('Invalid string identifier. The identifier cannot be empty. Please fix your get_string() call.', DEBUG_DEVELOPER);
     }
 
     // There is now a forth argument again, this time it is a boolean however so
@@ -7222,7 +7222,7 @@ function get_list_of_plugins($directory='mod', $exclude='', $basedir='') {
         $basedir = $basedir .'/'. $directory;
     }
 
-    if (empty($exclude) and debugging('', DEBUG_DEVELOPER)) {
+    if ($CFG->debugdeveloper and empty($exclude)) {
         // Make sure devs do not use this to list normal plugins,
         // this is intended for general directories that are not plugins!
 
@@ -10068,8 +10068,8 @@ class lang_string {
         // Check if we need to process the string.
         if ($this->string === null) {
             // Check the quality of the identifier.
-            if (debugging('', DEBUG_DEVELOPER) && clean_param($this->identifier, PARAM_STRINGID) === '') {
-                throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please check your string definition');
+            if ($CFG->debugdeveloper && clean_param($this->identifier, PARAM_STRINGID) === '') {
+                throw new coding_exception('Invalid string identifier. Most probably some illegal character is part of the string identifier. Please check your string definition', DEBUG_DEVELOPER);
             }
 
             // Process the string.

@@ -189,11 +189,8 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
      * Test the hash_key functionality.
      */
     public function test_hash_key() {
-        global $CFG;
-
-        $currentdebugging = $CFG->debug;
-
-        $CFG->debug = E_ALL;
+        $this->resetAfterTest();
+        set_debugging(DEBUG_ALL);
 
         // First with simplekeys
         $instance = cache_config_phpunittest::instance(true);
@@ -230,7 +227,5 @@ class core_cache_administration_helper_testcase extends advanced_testcase {
 
         $result = cache_helper::hash_key('test/test', $definition);
         $this->assertEquals(sha1($definition->generate_single_key_prefix().'-test/test'), $result);
-
-        $CFG->debug = $currentdebugging;
     }
 }

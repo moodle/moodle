@@ -34,7 +34,7 @@ if (!is_siteadmin()) {
     error('Only for admins');
 }
 
-if (!debugging('', DEBUG_DEVELOPER)) {
+if (!$CFG->debugdeveloper) {
     error('This script is for developers only!!!');
 }
 

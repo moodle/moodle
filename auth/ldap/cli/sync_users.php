@@ -52,7 +52,7 @@ require(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php'); // global m
 require_once($CFG->dirroot.'/course/lib.php');
 
 // Ensure errors are well explained
-$CFG->debug = DEBUG_NORMAL;
+set_debugging(DEBUG_DEVELOPER, true);
 
 if (!is_enabled_auth('ldap')) {
     error_log('[AUTH LDAP] '.get_string('pluginnotenabled', 'auth_ldap'));

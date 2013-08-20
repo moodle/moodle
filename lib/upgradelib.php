@@ -1148,7 +1148,7 @@ function upgrade_handle_exception($ex, $plugin = null) {
     upgrade_log(UPGRADE_LOG_ERROR, $plugin, 'Exception: ' . get_class($ex), $info->message, $info->backtrace);
 
     // Always turn on debugging - admins need to know what is going on
-    $CFG->debug = DEBUG_DEVELOPER;
+    set_debugging(DEBUG_DEVELOPER, true);
 
     default_exception_handler($ex, true, $plugin);
 }
