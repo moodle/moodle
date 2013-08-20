@@ -27,7 +27,7 @@ M.qtype_multianswer = M.qtype_multianswer || {};
 
 
 M.qtype_multianswer.init = function (Y, questiondiv) {
-    Y.one(questiondiv).all('span.subquestion').each(function(subqspan, i) {
+    Y.one(questiondiv).all('span.subquestion').each(function(subqspan) {
         var feedbackspan = subqspan.one('.feedbackspan');
         if (!feedbackspan) {
             return;
@@ -39,7 +39,9 @@ M.qtype_multianswer.init = function (Y, questiondiv) {
             align: {
                 node: subqspan,
                 points: [Y.WidgetPositionAlign.TC, Y.WidgetPositionAlign.BC]
-            }
+            },
+            constrain: subqspan.ancestor('div.que'),
+            preventOverlap: true
         });
         overlay.render();
 
