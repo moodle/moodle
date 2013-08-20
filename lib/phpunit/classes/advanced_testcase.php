@@ -354,6 +354,19 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Starts email redirection.
+     *
+     * You can verify if email were sent or not by inspecting the email
+     * array in the returned phpmailer sink instance. The redirection
+     * can be stopped by calling $sink->close();
+     *
+     * @return phpunit_message_sink
+     */
+    public function redirectEmails() {
+        return phpunit_util::start_phpmailer_redirection();
+    }
+
+    /**
      * Starts event redirection.
      *
      * You can verify if events were triggered or not by inspecting the events
