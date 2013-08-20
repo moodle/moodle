@@ -1425,6 +1425,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(context_course::instance($movedcourse->id)->id, $event->contextid);
         $this->assertEquals($movedcourse, $event->get_record_snapshot('course', $movedcourse->id));
         $this->assertEquals('course_updated', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($movedcourse, $event);
         $expectedlog = array($movedcourse->id, 'course', 'move', 'edit.php?id=' . $movedcourse->id, $movedcourse->id);
         $this->assertEventLegacyLogData($expectedlog, $event);
     }
@@ -1573,6 +1574,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($category2->id, $event->objectid);
         $this->assertEquals($category2context->id, $event->contextid);
         $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($category2, $event);
         $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category2->name . '(ID ' . $category2->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
     }
