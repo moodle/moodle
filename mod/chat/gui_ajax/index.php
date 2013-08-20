@@ -79,7 +79,7 @@ echo $OUTPUT->box(html_writer::tag('h2',  get_string('messages', 'chat'), array(
         '<ul id="messages-list"></ul>', '', 'chat-messages');
 $table = new html_table();
 $table->data = array(
-    array(' &raquo; <label class="accesshide" for="input-message">' . get_string('entermessage', 'chat') . ' </label><input type="text" disabled="true" id="input-message" value="Loading..." size="50" /> <input type="button" id="button-send" value="'.get_string('send', 'chat').'" /> <a id="choosetheme" href="###">'.get_string('themes').' &raquo; </a>')
+    array('<label class="accesshide" for="input-message">' . get_string('entermessage', 'chat') . ' </label><input type="text" disabled="true" id="input-message" value="Loading..." size="50" /> <input type="button" id="button-send" value="'.get_string('send', 'chat').'" /> <a id="choosetheme" href="###">'.get_string('themes').' &raquo; </a>')
 );
 echo $OUTPUT->box(html_writer::tag('h2',  get_string('composemessage', 'chat'), array('class' => 'accesshide')) .
         html_writer::table($table), '', 'chat-input-area');
