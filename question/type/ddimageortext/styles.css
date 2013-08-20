@@ -5,6 +5,7 @@
 
 .que.ddimageortext div.droparea img, form.mform fieldset#id_previewareaheader div.droparea img  {
     border: 1px solid #000000;
+    max-width: none;
 }
 
 .que.ddimageortext .draghome, form.mform fieldset#id_previewareaheader .draghome {
