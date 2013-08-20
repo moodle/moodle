@@ -71,6 +71,9 @@
         <testsuite name="core_cache">
             <directory suffix="_test.php">cache/tests</directory>
         </testsuite>
+        <testsuite name="core_calendar">
+            <directory suffix="_test.php">calendar/tests</directory>
+        </testsuite>
         <testsuite name="core_enrol">
             <directory suffix="_test.php">enrol/tests</directory>
         </testsuite>
