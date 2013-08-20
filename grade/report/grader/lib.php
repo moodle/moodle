@@ -158,7 +158,7 @@ class grade_report_grader extends grade_report {
     public function process_data($data) {
         global $DB;
         $warnings = array();
-        
+
         $separategroups = false;
         $mygroups       = array();
         if ($this->groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $this->context)) {

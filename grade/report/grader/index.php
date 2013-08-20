@@ -43,12 +43,12 @@ $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 $graderreportsifirst  = optional_param('sifirst', NULL, PARAM_ALPHA);
 $graderreportsilast   = optional_param('silast', NULL, PARAM_ALPHA);
 
-// The report object is recreated each time, save search information to USER object for future use.
+// The report object is recreated each time, save search information to SESSION object for future use.
 if (isset($graderreportsifirst)) {
-    $USER->filterfirstname = $graderreportsifirst; 
+    $SESSION->filterfirstname = $graderreportsifirst; 
 }  
 if (isset($graderreportsilast)) {
-    $USER->filtersurname = $graderreportsilast;
+    $SESSION->filtersurname = $graderreportsilast;
 } 
 
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
@@ -153,8 +153,8 @@ echo $report->group_selector;
 
 // User search
 $url = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-$firstinitial = isset($USER->filterfirstname) ? $USER->filterfirstname : '';
-$lastinitial  = isset($USER->filtersurname) ? $USER->filtersurname : '';
+$firstinitial = isset($SESSION->filterfirstname) ? $SESSION->filterfirstname : '';
+$lastinitial  = isset($SESSION->filtersurname) ? $SESSION->filtersurname : '';
 $totalusers = $report->get_numusers(true, false);
 $renderer = $PAGE->get_renderer('core_user');
 echo $renderer->user_search($url, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);

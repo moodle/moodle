@@ -388,17 +388,17 @@ abstract class grade_report {
     }
 
     public function setup_users() {
-        global $USER;
+        global $SESSION, $DB;
         
         $this->userwheresql = "";
         $this->userwheresql_params = array();
-        if (isset($USER->filterfirstname) && !empty($USER->filterfirstname)) {
-            $this->userwheresql .= ' AND u.firstname ILIKE  :firstname ';
-            $this->userwheresql_params['firstname'] = $USER->filterfirstname.'%';
+        if (isset($SESSION->filterfirstname) && !empty($SESSION->filterfirstname)) {
+            $this->userwheresql .= ' AND '.$DB->sql_like('u.firstname', ':firstname', false, false);
+            $this->userwheresql_params['firstname'] = $SESSION->filterfirstname.'%';
         }
-        if (isset($USER->filtersurname) && !empty($USER->filtersurname)) {
-            $this->userwheresql .= ' AND u.lastname ILIKE  :lastname ';
-            $this->userwheresql_params['lastname'] = $USER->filtersurname.'%';
+        if (isset($SESSION->filtersurname) && !empty($SESSION->filtersurname)) {
+            $this->userwheresql .= ' AND '.$DB->sql_like('u.lastname', ':lastname', false, false);
+            $this->userwheresql_params['lastname'] = $SESSION->filtersurname.'%';
         }
     }
 
