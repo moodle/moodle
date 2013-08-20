@@ -151,7 +151,7 @@ class moodle_simplepie_file extends SimplePie_File
 
         if ($parser->parse()) {
             $this->headers = $parser->headers;
-            $this->body = $parser->body;
+            $this->body = trim($parser->body);
             $this->status_code = $parser->status_code;
 
 
