@@ -46,7 +46,30 @@ class autogroup_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $mform->addElement('header', 'autogroup', get_string('autocreategroups', 'group'));
+        $mform->addElement('header', 'autogroup', get_string('general'));
+
+        $mform->addElement('text', 'namingscheme', get_string('namingscheme', 'group'));
+        $mform->addHelpButton('namingscheme', 'namingscheme', 'group');
+        $mform->addRule('namingscheme', get_string('required'), 'required', null, 'client');
+        $mform->setType('namingscheme', PARAM_TEXT);
+        // There must not be duplicate group names in course.
+        $template = get_string('grouptemplate', 'group');
+        $gname = groups_parse_name($template, 0);
+        if (!groups_get_group_by_name($COURSE->id, $gname)) {
+            $mform->setDefault('namingscheme', $template);
+        }
+
+        $options = array('groups' => get_string('numgroups', 'group'),
+                         'members' => get_string('nummembers', 'group'));
+        $mform->addElement('select', 'groupby', get_string('groupby', 'group'), $options);
+
+        $mform->addElement('text', 'number', get_string('number', 'group'),'maxlength="4" size="4"');
+        $mform->setType('number', PARAM_INT);
+        $mform->addRule('number', null, 'numeric', null, 'client');
+        $mform->addRule('number', get_string('required'), 'required', null, 'client');
+
+        $mform->addElement('header', 'groupmembershdr', get_string('groupmembers', 'group'));
+        $mform->setExpanded('groupmembershdr', true);
 
         $options = array(0=>get_string('all'));
         $options += $this->_customdata['roles'];
@@ -76,20 +99,6 @@ class autogroup_form extends moodleform {
             $mform->setType('cohortid', PARAM_INT);
             $mform->setConstant('cohortid', '0');
         }
-
-        $options = array('groups' => get_string('numgroups', 'group'),
-                         'members' => get_string('nummembers', 'group'));
-        $mform->addElement('select', 'groupby', get_string('groupby', 'group'), $options);
-
-        $mform->addElement('text', 'number', get_string('number', 'group'),'maxlength="4" size="4"');
-        $mform->setType('number', PARAM_INT);
-        $mform->addRule('number', null, 'numeric', null, 'client');
-        $mform->addRule('number', get_string('required'), 'required', null, 'client');
-
-        $mform->addElement('checkbox', 'nosmallgroups', get_string('nosmallgroups', 'group'));
-        $mform->disabledIf('nosmallgroups', 'groupby', 'noteq', 'members');
-        $mform->setAdvanced('nosmallgroups');
-
         $options = array('no'        => get_string('noallocation', 'group'),
                          'random'    => get_string('random', 'group'),
                          'firstname' => get_string('byfirstname', 'group'),
@@ -97,20 +106,13 @@ class autogroup_form extends moodleform {
                          'idnumber'  => get_string('byidnumber', 'group'));
         $mform->addElement('select', 'allocateby', get_string('allocateby', 'group'), $options);
         $mform->setDefault('allocateby', 'random');
-        $mform->setAdvanced('allocateby');
 
-        $mform->addElement('text', 'namingscheme', get_string('namingscheme', 'group'));
-        $mform->addHelpButton('namingscheme', 'namingscheme', 'group');
-        $mform->addRule('namingscheme', get_string('required'), 'required', null, 'client');
-        $mform->setType('namingscheme', PARAM_TEXT);
-        // there must not be duplicate group names in course
-        $template = get_string('grouptemplate', 'group');
-        $gname = groups_parse_name($template, 0);
-        if (!groups_get_group_by_name($COURSE->id, $gname)) {
-            $mform->setDefault('namingscheme', $template);
-        }
+        $mform->addElement('checkbox', 'nosmallgroups', get_string('nosmallgroups', 'group'));
+        $mform->disabledIf('nosmallgroups', 'groupby', 'noteq', 'members');
 
-        $options = array('0' => get_string('no'),
+        $mform->addElement('header', 'groupinghdr', get_string('grouping', 'group'));
+
+        $options = array('0' => get_string('nogrouping', 'group'),
                          '-1'=> get_string('newgrouping', 'group'));
         if ($groupings = groups_get_all_groupings($COURSE->id)) {
             foreach ($groupings as $grouping) {

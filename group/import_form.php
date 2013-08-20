@@ -46,7 +46,7 @@ class groups_import_form extends moodleform {
 
         //fill in the data depending on page params
         //later using set_data
-        $mform->addElement('header', 'general');
+        $mform->addElement('header', 'general', get_string('general'));
 
         $filepickeroptions = array();
         $filepickeroptions['filetypes'] = '*';
