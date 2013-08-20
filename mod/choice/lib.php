@@ -374,7 +374,7 @@ function prepare_choice_show_results($choice, $course, $cm, $allresponses, $forc
     $display->fullnamecapability = has_capability('moodle/site:viewfullnames', $context);
 
     if (empty($allresponses)) {
-        echo $OUTPUT->heading(get_string("nousersyet"));
+        echo $OUTPUT->heading(get_string("nousersyet"), 3, null);
         return false;
     }
 
