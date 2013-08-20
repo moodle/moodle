@@ -1648,4 +1648,54 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Clear the time limit, otherwise PHPUnit complains.
         set_time_limit(0);
     }
+
+    /**
+     * Test that triggering a course_section_updated event works as expected.
+     */
+    public function test_course_section_updated_event() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the course with sections.
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 10), array('createsections' => true));
+        $sections = $DB->get_records('course_sections', array('course' => $course->id));
+
+        $coursecontext = context_course::instance($course->id);
+
+        $section = array_pop($sections);
+        $section->name = 'Test section';
+        $section->summary = 'Test section summary';
+        $DB->update_record('course_sections', $section);
+
+        // Trigger an event for course section update.
+        $event = \core\event\course_section_updated::create(
+                array(
+                    'objectid' => $section->id,
+                    'courseid' => $course->id,
+                    'context' => context_course::instance($course->id)
+                )
+            );
+        $event->add_record_snapshot('course_sections', $section);
+        // Trigger and catch event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_section_updated', $event);
+        $this->assertEquals('course_sections', $event->objecttable);
+        $this->assertEquals($section->id, $event->objectid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals($coursecontext->id, $event->contextid);
+        $expecteddesc = 'Course ' . $event->courseid . ' section ' . $event->other['sectionnum'] . ' updated by user ' . $event->userid;
+        $this->assertEquals($expecteddesc, $event->get_description());
+        $this->assertEquals($section, $event->get_record_snapshot('course_sections', $event->objectid));
+        $id = $section->id;
+        $sectionnum = $section->section;
+        $expectedlegacydata = array($course->id, "course", "editsection", 'editsection.php?id=' . $id, $sectionnum);
+        $this->assertEventLegacyLogData($expectedlegacydata, $event);
+    }
 }
