@@ -189,33 +189,4 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->closeHeaderBefore('buttonar');
     }
 
-    /**
-     * Server side validation.
-     * @param array $data - form data
-     * @param object $files  - form files
-     * @return array $errors - form errors
-     */
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        $columns = $this->_customdata['columns'];
-        $optype  = $data['options']['mode'];
-
-        // Look for other required data.
-        if ($optype != tool_uploadcourse_processor::MODE_UPDATE_ONLY) {
-            if (!in_array('fullname', $columns)) {
-                if (isset($errors['mode'])) {
-                    $errors['mode'] .= ' ';
-                }
-                $errors['mode'] .= get_string('missingfield', 'error', 'fullname');
-            }
-            if (!in_array('summary', $columns)) {
-                if (isset($errors['mode'])) {
-                    $errors['mode'] .= ' ';
-                }
-                $errors['mode'] .= get_string('missingfield', 'error', 'summary');
-            }
-        }
-
-        return $errors;
-    }
 }
