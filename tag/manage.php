@@ -225,9 +225,10 @@ if ($where) {
     $where = 'WHERE '. $where;
 }
 
+$allusernames = get_all_user_name_fields(true, 'u');
 $query = "
         SELECT tg.id, tg.name, tg.rawname, tg.tagtype, tg.flag, tg.timemodified,
-               u.id AS owner, u.firstname, u.lastname,
+               u.id AS owner, $allusernames,
                COUNT(ti.id) AS count
           FROM {tag} tg
      LEFT JOIN {tag_instance} ti ON ti.tagid = tg.id
