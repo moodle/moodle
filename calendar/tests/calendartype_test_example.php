@@ -111,7 +111,7 @@ class structure extends type_base {
      * @return array an array that represents the date in user time
      */
     public function timestamp_to_date_array($time, $timezone) {
-        $gregoriancalendar = \core_calendar\type_factory::factory('gregorian');
+        $gregoriancalendar = \core_calendar\type_factory::get_calendar_instance('gregorian');
         $date = $gregoriancalendar->timestamp_to_date_array($time, $timezone);
         $newdate = $this->convert_from_gregorian($date['year'], $date['mon'], $date['mday'],
             $date['hours'], $date['minutes']);

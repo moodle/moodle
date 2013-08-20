@@ -30,7 +30,7 @@ class profile_define_datetime extends profile_define_base {
      */
     public function define_form_specific($form) {
         // Get the current calendar in use - see MDL-18375.
-        $calendartype = \core_calendar\type_factory::factory();
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
 
         // Create variables to store start and end.
         list($year, $month, $day) = explode('_', date('Y_m_d'));
@@ -86,7 +86,7 @@ class profile_define_datetime extends profile_define_base {
      */
     public function define_after_data(&$mform) {
         // Get the current calendar in use - see MDL-18375.
-        $calendartype = \core_calendar\type_factory::factory();
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
 
         // The start and end year will be set as a Gregorian year in the DB. We want
         // to convert these to the equivalent year in the current calendar system.
@@ -113,7 +113,7 @@ class profile_define_datetime extends profile_define_base {
      */
     public function define_save_preprocess($data) {
         // Get the current calendar in use - see MDL-18375.
-        $calendartype = \core_calendar\type_factory::factory();
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
 
         // Ensure the years are saved as Gregorian in the database.
         $startdate = $calendartype->convert_to_gregorian($data->param1, 1, 1);

@@ -80,7 +80,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
      */
     function MoodleQuickForm_date_time_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
         // Get the calendar type used - see MDL-18375.
-        $calendartype = \core_calendar\type_factory::factory();
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
         $this->_options = array('startyear' => $calendartype->get_min_year(), 'stopyear' => $calendartype->get_max_year(),
                                 'defaulttime' => 0, 'timezone' => 99, 'step' => 5, 'optional' => false);
 
@@ -115,7 +115,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
         global $OUTPUT;
 
         // Get the calendar type used - see MDL-18375.
-        $calendartype = \core_calendar\type_factory::factory();
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
         $days = $calendartype->get_days();
         $months = $calendartype->get_months();
         for ($i = $this->_options['startyear']; $i <= $this->_options['stopyear']; $i++) {
@@ -291,7 +291,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
                 }
             }
             // Get the calendar type used - see MDL-18375.
-            $calendartype = \core_calendar\type_factory::factory();
+            $calendartype = \core_calendar\type_factory::get_calendar_instance();
             $gregoriandate = $calendartype->convert_to_gregorian($valuearray['year'],
                                                                  $valuearray['month'],
                                                                  $valuearray['day'],

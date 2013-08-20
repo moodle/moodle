@@ -34,7 +34,7 @@ class type_factory {
      * @return calendartype_* the created calendar_type class
      * @throws coding_exception if the calendar type file could not be loaded
      */
-    public static function factory($type = null) {
+    public static function get_calendar_instance($type = null) {
         if (is_null($type)) {
             $type = self::get_calendar_type();
         }
