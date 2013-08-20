@@ -1,9 +1,16 @@
 .que.multianswer .feedbackspan {
     display: block;
+    max-width: 70%;
     background: #fff3bf;
     padding: 0.5em;
     margin-top: 1em;
     box-shadow: 0.5em 0.5em 1em #000000;
+}
+body.ie6 .que.multianswer .feedbackspan,
+body.ie7 .que.multianswer .feedbackspan,
+body.ie8 .que.multianswer .feedbackspan,
+body.ie9 .que.multianswer .feedbackspan {
+    width: 70%;
 }
 .que.multianswer .answer .specificfeedback {
     display: inline;
