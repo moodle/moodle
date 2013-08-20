@@ -242,7 +242,17 @@ class course_modinfo extends stdClass {
      * @param int $userid User ID
      */
     public function __construct($course, $userid) {
-        global $CFG, $DB;
+        global $CFG, $DB, $COURSE, $SITE;
+
+        if (!isset($course->modinfo) || !isset($course->sectioncache)) {
+            if (!empty($COURSE->id) && $COURSE->id == $course->id) {
+                $course = $COURSE;
+            } else if (!empty($SITE->id) && $SITE->id == $course->id) {
+                $course = $SITE;
+            } else {
+                $course = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+            }
+        }
 
         // Check modinfo field is set. If not, build and load it.
         if (empty($course->modinfo) || empty($course->sectioncache)) {
@@ -1315,7 +1325,7 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
     if (is_object($courseorid)) {
         $course = $courseorid;
     } else {
-        $course = (object)array('id' => $courseorid, 'modinfo' => null, 'sectioncache' => null);
+        $course = (object)array('id' => $courseorid);
     }
 
     // Function is called with $reset = true
@@ -1344,14 +1354,6 @@ function get_fast_modinfo($courseorid, $userid = 0, $resetonly = false) {
             // this course's modinfo for the same user was recently retrieved, return cached
             return $cache[$course->id];
         }
-    }
-
-    if (!property_exists($course, 'modinfo')) {
-        debugging('Coding problem - missing course modinfo property in get_fast_modinfo() call');
-    }
-
-    if (!property_exists($course, 'sectioncache')) {
-        debugging('Coding problem - missing course sectioncache property in get_fast_modinfo() call');
     }
 
     unset($cache[$course->id]); // prevent potential reference problems when switching users
