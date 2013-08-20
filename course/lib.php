@@ -2026,14 +2026,14 @@ function course_allowed_module($course, $modname) {
  * @return bool success
  */
 function move_courses($courseids, $categoryid) {
-    global $CFG, $DB, $OUTPUT;
+    global $DB;
 
     if (empty($courseids)) {
-        // nothing to do
+        // Nothing to do.
         return;
     }
 
-    if (!$category = $DB->get_record('course_categories', array('id'=>$categoryid))) {
+    if (!$category = $DB->get_record('course_categories', array('id' => $categoryid))) {
         return false;
     }
 
@@ -2042,21 +2042,37 @@ function move_courses($courseids, $categoryid) {
     $i = 1;
 
     foreach ($courseids as $courseid) {
-        if ($course = $DB->get_record('course', array('id'=>$courseid), 'id, category')) {
+        if ($dbcourse = $DB->get_record('course', array('id' => $courseid))) {
             $course = new stdClass();
             $course->id = $courseid;
             $course->category  = $category->id;
             $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
             if ($category->visible == 0) {
-                // hide the course when moving into hidden category,
-                // do not update the visibleold flag - we want to get to previous state if somebody unhides the category
+                // Hide the course when moving into hidden category, do not update the visibleold flag - we want to get
+                // to previous state if somebody unhides the category.
                 $course->visible = 0;
             }
 
             $DB->update_record('course', $course);
-            add_to_log($course->id, "course", "move", "edit.php?id=$course->id", $course->id);
 
-            $context   = context_course::instance($course->id);
+            // Store the context.
+            $context = context_course::instance($course->id);
+
+            // Update the course object we are passing to the event.
+            $dbcourse->category = $course->category;
+            $dbcourse->sortorder = $course->sortorder;
+
+            // Trigger a course updated event.
+            $event = \core\event\course_updated::create(array(
+                'objectid' => $course->id,
+                'context' => $context,
+                'other' => array('shortname' => $dbcourse->shortname,
+                                 'fullname' => $dbcourse->fullname)
+            ));
+            $event->add_record_snapshot('course', $dbcourse);
+            $event->set_legacy_logdata(array($course->id, 'course', 'move', 'edit.php?id=' . $course->id, $course->id));
+            $event->trigger();
+
             $context->update_moved($newparent);
         }
     }
@@ -2229,7 +2245,7 @@ function course_overviewfiles_options($course) {
  * @return object new course instance
  */
 function create_course($data, $editoroptions = NULL) {
-    global $CFG, $DB;
+    global $DB;
 
     //check the categoryid - must be given for all new courses
     $category = $DB->get_record('course_categories', array('id'=>$data->category), '*', MUST_EXIST);
@@ -2304,10 +2320,15 @@ function create_course($data, $editoroptions = NULL) {
     // set up enrolments
     enrol_course_updated(true, $course, $data);
 
-    add_to_log(SITEID, 'course', 'new', 'view.php?id='.$course->id, $data->fullname.' (ID '.$course->id.')');
-
-    // Trigger events
-    events_trigger('course_created', $course);
+    // Trigger a course created event.
+    $event = \core\event\course_created::create(array(
+        'objectid' => $course->id,
+        'context' => context_course::instance($course->id),
+        'other' => array('shortname' => $course->shortname,
+                         'fullname' => $course->fullname)
+    ));
+    $event->add_record_snapshot('course', $course);
+    $event->trigger();
 
     return $course;
 }
@@ -2323,7 +2344,7 @@ function create_course($data, $editoroptions = NULL) {
  * @return void
  */
 function update_course($data, $editoroptions = NULL) {
-    global $CFG, $DB;
+    global $DB;
 
     $data->timemodified = time();
 
@@ -2393,10 +2414,16 @@ function update_course($data, $editoroptions = NULL) {
     // update enrol settings
     enrol_course_updated(false, $course, $data);
 
-    add_to_log($course->id, "course", "update", "edit.php?id=$course->id", $course->id);
-
-    // Trigger events
-    events_trigger('course_updated', $course);
+    // Trigger a course updated event.
+    $event = \core\event\course_updated::create(array(
+        'objectid' => $course->id,
+        'context' => $context,
+        'other' => array('shortname' => $course->shortname,
+                         'fullname' => $course->fullname)
+    ));
+    $event->add_record_snapshot('course', $course);
+    $event->set_legacy_logdata(array($course->id, 'course', 'update', 'edit.php?id=' . $course->id, $course->id));
+    $event->trigger();
 
     if ($oldcourse->format !== $course->format) {
         // Remove all options stored for the previous format

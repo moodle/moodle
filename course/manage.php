@@ -249,7 +249,22 @@ if ((!empty($hide) or !empty($show)) && confirm_sesskey()) {
     $params = array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time());
     $DB->update_record('course', $params);
     cache_helper::purge_by_event('changesincourse');
-    add_to_log($course->id, "course", ($visible ? 'show' : 'hide'), "edit.php?id=$course->id", $course->id);
+
+    // Update the course object we pass to the event class.
+    $course->visible = $params['visible'];
+    $course->visibleold = $params['visibleold'];
+    $course->timemodified = $params['timemodified'];
+
+    // Trigger a course updated event.
+    $event = \core\event\course_updated::create(array(
+        'objectid' => $course->id,
+        'context' => $coursecontext,
+        'other' => array('shortname' => $course->shortname,
+                         'fullname' => $course->fullname)
+    ));
+    $event->add_record_snapshot('course', $course);
+    $event->set_legacy_logdata(array($course->id, 'course', ($visible ? 'show' : 'hide'), 'edit.php?id=' . $course->id, $course->id));
+    $event->trigger();
 }
 
 if ((!empty($moveup) or !empty($movedown)) && confirm_sesskey()) {
@@ -277,7 +292,20 @@ if ((!empty($moveup) or !empty($movedown)) && confirm_sesskey()) {
         $DB->set_field('course', 'sortorder', $swapcourse->sortorder, array('id' => $movecourse->id));
         $DB->set_field('course', 'sortorder', $movecourse->sortorder, array('id' => $swapcourse->id));
         cache_helper::purge_by_event('changesincourse');
-        add_to_log($movecourse->id, "course", "move", "edit.php?id=$movecourse->id", $movecourse->id);
+
+        // Update $movecourse's sortorder.
+        $movecourse->sortorder = $swapcourse->sortorder;
+
+        // Trigger a course updated event.
+        $event = \core\event\course_updated::create(array(
+            'objectid' => $movecourse->id,
+            'context' => context_course::instance($movecourse->id),
+            'other' => array('shortname' => $movecourse->shortname,
+                             'fullname' => $movecourse->fullname)
+        ));
+        $event->add_record_snapshot('course', $movecourse);
+        $event->set_legacy_logdata(array($movecourse->id, 'course', 'move', 'edit.php?id=' . $movecourse->id, $movecourse->id));
+        $event->trigger();
     }
 }
 

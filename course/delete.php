@@ -63,10 +63,6 @@
         print_error('confirmsesskeybad', 'error');
     }
 
-    // OK checks done, delete the course now.
-
-    add_to_log(SITEID, "course", "delete", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
-
     $strdeletingcourse = get_string("deletingcourse", "", $courseshortname);
 
     $PAGE->navbar->add($strdeletingcourse);
