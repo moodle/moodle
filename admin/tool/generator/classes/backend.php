@@ -266,7 +266,7 @@ class tool_generator_backend {
         // the required number.
         $this->log('checkaccounts', $count);
         $nextnumber = 1;
-        $rs = $DB->get_recordset_select('user', 'username LIKE ?',
+        $rs = $DB->get_recordset_select('user', $DB->sql_like('username', '?'),
                 array('tool_generator_%'), 'username', 'id, username');
         foreach ($rs as $rec) {
             // Extract number from username.
