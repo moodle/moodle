@@ -183,7 +183,6 @@ class core_files_externallib_testcase extends advanced_testcase {
 
         $this->setAdminUser();
         $USER->email = 'test@moodle.com';
-        // print_object($USER);
 
         $course = $this->getDataGenerator()->create_course();
         $record = new stdClass();
