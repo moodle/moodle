@@ -30,19 +30,19 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['cannotcreatelangdir'] = 'Nije moguće kreirati direktorijum jezika';
-$string['cannotcreatetempdir'] = 'Nije moguće kreirati privremeni direktorijum';
+$string['cannotcreatelangdir'] = 'Nije moguće kreirati direktorij jezika';
+$string['cannotcreatetempdir'] = 'Nije moguće kreirati privremeni direktorij';
 $string['cannotdownloadcomponents'] = 'Nije moguće preuzeti komponente.';
 $string['cannotdownloadzipfile'] = 'Nije moguće preuzeti arhivu';
 $string['cannotfindcomponent'] = 'Nije moguće pronaći komponentu.';
 $string['cannotsavemd5file'] = 'Nije moguće sačuvati md5 datoteku.';
-$string['cannotsavezipfile'] = 'Nije moguće sačuvti ZIP arhivu.';
+$string['cannotsavezipfile'] = 'Nije moguće sačuvati ZIP arhivu.';
 $string['cannotunzipfile'] = 'Nije moguće raspakovati ZIP datoteku.';
 $string['componentisuptodate'] = 'Komponenta je dostupna u svojoj najnovijoj verziji';
-$string['downloadedfilecheckfailed'] = 'Nije uspela provera preuzete datoteke';
+$string['downloadedfilecheckfailed'] = 'Nije uspjela provjera preuzete datoteke';
 $string['invalidmd5'] = 'Neispravna md5 datoteka';
 $string['missingrequiredfield'] = 'Nedostaje neko obavezno polje';
-$string['remotedownloaderror'] = 'Preuzimanje komponente na Vaš server nije uspelo. Proverite podešavanja proksi serevera. PHP cURL ekstenzija se preporučuje.<br /><br />Morate da preuzmete <a href="{$a->url}">{$a->url}</a> datoteku ručno, kopirate je u direktorijum "{$a->dest}" na svom sereveru tamo je raspakujete.';
+$string['remotedownloaderror'] = 'Preuzimanje komponente na Vaš server nije uspjelo. Provjerite podešavanja proksi servera. PHP cURL ekstenzija se preporučuje.<br /><br />Morate da preuzmete <a href="{$a->url}">{$a->url}</a> datoteku ručno, kopirate je u direktorij "{$a->dest}" na svom sereveru i tamo je raspakovati.';
 $string['wrongdestpath'] = 'Pogrešna odredišna putanja';
 $string['wrongsourcebase'] = 'Pogrešna baza izvornog URL-a';
 $string['wrongzipfilename'] = 'Pogrešan naziv arhive';
