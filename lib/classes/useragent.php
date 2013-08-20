@@ -93,12 +93,6 @@ class core_useragent {
     protected $devicetypecustoms = array();
 
     /**
-     * True if the user agent supports ajax. False if not.
-     * @var bool|null Null until initialised, then true or false.
-     */
-    protected $supportsajax = null;
-
-    /**
      * True if the user agent supports the display of svg images. False if not.
      * @var bool|null Null until initialised, then true or false.
      */
@@ -135,9 +129,6 @@ class core_useragent {
         } else {
             $this->useragent = false;
             $this->devicetype = self::DEVICETYPE_DEFAULT;
-        }
-        if (empty($CFG->enableajax)) {
-            $this->supportsajax = false;
         }
     }
 
