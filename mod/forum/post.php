@@ -505,8 +505,6 @@ if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field
     $forum->maxattachments = 3;
 }
 
-require_once('post_form.php');
-
 $thresholdwarning = forum_check_throttling($forum, $cm);
 $mform_post = new mod_forum_post_form('post.php', array('course' => $course,
                                                         'cm' => $cm,
