@@ -78,6 +78,13 @@ if ($form2data = $mform2->is_cancelled()) {
 
     $options = (array) $form2data->options;
     $defaults = (array) $form2data->defaults;
+
+    // Restorefile deserves its own logic because formslib does not really appreciate
+    // when the name of a filepicker is an array...
+    $options['restorefile'] = '';
+    if (!empty($form2data->restorefile)) {
+        $options['restorefile'] = $mform2->save_temp_file('restorefile');
+    }
     $processor = new tool_uploadcourse_processor($cir, $options, $defaults);
 
     echo $OUTPUT->header();
@@ -89,6 +96,11 @@ if ($form2data = $mform2->is_cancelled()) {
         echo $OUTPUT->heading(get_string('uploadcoursesresult', 'tool_uploadcourse'));
         $processor->execute(new tool_uploadcourse_tracker(tool_uploadcourse_tracker::OUTPUT_HTML));
         echo $OUTPUT->continue_button($returnurl);
+    }
+
+    // Deleting the file after processing or preview.
+    if (!empty($options['restorefile'])) {
+        @unlink($options['restorefile']);
     }
 
 } else {
