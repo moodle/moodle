@@ -183,18 +183,19 @@ M.gradereport_grader.classes.report.prototype.table_highlight_row = function (e,
     tr.all('.cell').toggleClass('hmarked');
 };
 /**
- * Highlights a cell in the table
+ * Highlights a column in the table
  *
  * @function
  * @param {Event} e
  * @param {Y.Node} cell
  */
 M.gradereport_grader.classes.report.prototype.table_highlight_column = function(e, cell) {
-    var column = 0;
-    while (cell = cell.previous('.cell')) {
-        column += parseFloat(cell.getAttribute('colspan')) || 1;
+    // Among cell classes find the one that matches pattern / i[\d]+ /
+    var itemclass = (' '+cell.getAttribute('class')+' ').match(/ (i[\d]+) /);
+    if (itemclass) {
+        // Toggle class .vmarked for all cells in the table with the same class
+        this.table.all('.cell.'+itemclass[1]).toggleClass('vmarked');
     }
-    this.table.all('.c'+column).toggleClass('vmarked');
 };
 /**
  * Builds an object containing information at the relevant cell given either

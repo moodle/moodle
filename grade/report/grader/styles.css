@@ -23,6 +23,9 @@ table#user-grades .catlevel2 {
 background-color:#f9f9f9;
 }
 
+table#user-grades tr.range td.cell {
+    font-weight: 700;
+}
 table#user-grades tr.avg td.cell {
 background-color:#efefff;
 font-weight:700;
@@ -53,6 +56,9 @@ background-color:#efefef;
 background-image:none;
 }
 
+table#user-grades tr.even th.header {
+    background-image: none;
+}
 table#user-grades tr.groupavg td.cell {
 background-color:#efffef;
 font-weight:700;
@@ -132,12 +138,12 @@ border-width:1px 1px 0;
 table#user-grades th.user {
 text-align:left;
 border-style:solid;
-border-width:0 0 1px;
+border-width:1px 0;
 }
 
 table#user-grades th.userfield {
 border-style:solid;
-border-width:0 0 1px 1px;
+border-width:1px;
 }
 
 table#user-grades th.categoryitem,
@@ -497,25 +503,27 @@ background-color:#efefef;
 
 table#user-grades td.vmarked,
 table#user-grades tr.odd td.vmarked,
-table#user-grades td.vmarked,
-table#user-grades tr.odd td.vmarked,
-table#user-grades tr.even td.vmarked {
+table#user-grades tr.avg td.vmarked,
+table#user-grades tr.controls td.vmarked,
+table#user-grades .catlevel1.vmarked,
+table#user-grades .catlevel2.vmarked,
+table#user-grades .catlevel3.vmarked,
+table#user-grades tr.range td.vmarked,
+table#user-grades tr.groupavg td.vmarked {
 background-color:#fc3;
 }
 
 table#user-grades td.hmarked,
 table#user-grades tr.odd td.hmarked,
-table#user-grades td.hmarked,
-table#user-grades tr.odd td.hmarked,
-table#user-grades tr.even td.hmarked {
+table#user-grades tr.even td.hmarked,
+table#user-grades tr.odd th.hmarked,
+table#user-grades tr.even th.hmarked {
 background-color:#ff9;
 }
 
 table#user-grades td.hmarked.vmarked,
 table#user-grades tr.odd td.hmarked.vmarked,
-table#user-grades td.hmarked.vmarked,
-table#user-grades tr.even td.hmarked.vmarked,
-table#user-grades tr.odd td.hmarked.vmarked {
+table#user-grades tr.even td.hmarked.vmarked {
 background-color:#fc9;
 }
 
@@ -545,11 +553,9 @@ text-align:right;
     overflow:auto;
 }
 
-.path-grade-report-grader table tr.avg td.cell,
 table#user-grades td.controls,
-.path-grade-report-grader table tr.avg,
-.path-grade-report-grader table tr.avg td,
-.path-grade-report-grader table tr.avg th {
+.path-grade-report-grader table tr.avg .cell,
+.path-grade-report-grader table tr.range .cell {
 background-color:#f3ead8;
 }
 
@@ -640,4 +646,20 @@ position:absolute;
 
 .path-grade-report-grader.ie6 .excludedfloater {
 font-size:7px;
+}
+
+/** MDL-40071 **/
+.path-grade-report-grader.dir-rtl table th.user,
+.path-grade-report-grader.dir-rtl table td.userfield {
+    text-align: right;
+}
+
+/** MDL-40180 **/
+.dir-rtl table#user-grades th.category,
+.dir-rtl table#user-grades th#studentheader,
+.dir-rtl table#user-grades th.user {
+    text-align: right;
+}
+.path-grade-report-grader.dir-rtl th.user img.userpicture {
+    margin-left: 0.5em;
 }

@@ -1,5 +1,10 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
+
+=== 2.6 ===
+Notes:
+* For the themes based on bootstrapbase please read theme/bootstrapbase/upgrade.txt
+
 === 2.6 ===
 Notes:
 * The file picker and activity chooser have been converted to use M.core.dialogue. This means the styles

@@ -783,7 +783,7 @@ class grade_report_grader extends grade_report {
                     $headerlink = $this->gtree->get_element_header($element, true, $this->get_pref('showactivityicons'), false);
 
                     $itemcell = new html_table_cell();
-                    $itemcell->attributes['class'] = $type . ' ' . $catlevel . ' highlightable';
+                    $itemcell->attributes['class'] = $type . ' ' . $catlevel . ' highlightable'. ' i'. $element['object']->id;
 
                     if ($element['object']->is_hidden()) {
                         $itemcell->attributes['class'] .= ' dimmed_text';
@@ -891,7 +891,7 @@ class grade_report_grader extends grade_report {
                 $eid = $this->gtree->get_grade_eid($grade);
                 $element = array('eid'=>$eid, 'object'=>$grade, 'type'=>'grade');
 
-                $itemcell->attributes['class'] .= ' grade';
+                $itemcell->attributes['class'] .= ' grade i'.$itemid;
                 if ($item->is_category_item()) {
                     $itemcell->attributes['class'] .= ' cat';
                 }
@@ -1226,7 +1226,7 @@ class grade_report_grader extends grade_report {
                 $eid = $this->gtree->get_item_eid($item);
                 $element = $this->gtree->locate_element($eid);
                 $itemcell = new html_table_cell();
-                $itemcell->attributes['class'] = 'controls icons';
+                $itemcell->attributes['class'] = 'controls icons i'.$itemid;
                 $itemcell->text = $this->get_icons($element);
                 $iconsrow->cells[] = $itemcell;
             }
@@ -1252,8 +1252,7 @@ class grade_report_grader extends grade_report {
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
                 $itemcell = new html_table_cell();
-                $itemcell->header = true;
-                $itemcell->attributes['class'] .= ' header range';
+                $itemcell->attributes['class'] .= ' range i'. $itemid;
 
                 $hidden = '';
                 if ($item->is_hidden()) {
@@ -1371,6 +1370,7 @@ class grade_report_grader extends grade_report {
 
                 if ($item->needsupdate) {
                     $avgcell = new html_table_cell();
+                    $avgcell->attributes['class'] = 'i'. $itemid;
                     $avgcell->text = $OUTPUT->container(get_string('error'), 'gradingerror');
                     $avgrow->cells[] = $avgcell;
                     continue;
@@ -1414,6 +1414,7 @@ class grade_report_grader extends grade_report {
 
                 if (!isset($sumarray[$item->id]) || $meancount == 0) {
                     $avgcell = new html_table_cell();
+                    $avgcell->attributes['class'] = 'i'. $itemid;
                     $avgcell->text = '-';
                     $avgrow->cells[] = $avgcell;
 
@@ -1428,6 +1429,7 @@ class grade_report_grader extends grade_report {
                     }
 
                     $avgcell = new html_table_cell();
+                    $avgcell->attributes['class'] = 'i'. $itemid;
                     $avgcell->text = $gradehtml.$numberofgrades;
                     $avgrow->cells[] = $avgcell;
                 }
