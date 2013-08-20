@@ -104,10 +104,14 @@ if ($param->delete && ($questionstomove = $DB->count_records("question", array("
 if ($qcobject->catform->is_cancelled()) {
     redirect($thispageurl);
 } else if ($catformdata = $qcobject->catform->get_data()) {
+    $catformdata->infoformat = $catformdata->info['format'];
+    $catformdata->info       = $catformdata->info['text'];
     if (!$catformdata->id) {//new category
-        $qcobject->add_category($catformdata->parent, $catformdata->name, $catformdata->info);
+        $qcobject->add_category($catformdata->parent, $catformdata->name,
+                $catformdata->info, false, $catformdata->infoformat);
     } else {
-        $qcobject->update_category($catformdata->id, $catformdata->parent, $catformdata->name, $catformdata->info);
+        $qcobject->update_category($catformdata->id, $catformdata->parent,
+                $catformdata->name, $catformdata->info, $catformdata->infoformat);
     }
     redirect($thispageurl);
 } else if ((!empty($param->delete) and (!$questionstomove) and confirm_sesskey())) {
