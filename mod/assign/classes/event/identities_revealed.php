@@ -85,7 +85,7 @@ class identities_revealed extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = 50;          // TODO MDL-37658.
+        $this->data['level'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'assign';
     }
 

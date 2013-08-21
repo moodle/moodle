@@ -85,7 +85,7 @@ class submission_updated extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = 50;          // TODO MDL-41040.
+        $this->data['level'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'assign_submission';
     }
 

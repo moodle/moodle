@@ -95,7 +95,7 @@ class all_submissions_downloaded extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = 50;          // TODO MDL-37658.
+        $this->data['level'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'assign';
     }
 
