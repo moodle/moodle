@@ -30,15 +30,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['admindirname'] = 'Cyfeiriadur y Gweinyddwr';
+$string['admindirname'] = 'Cyfeiriadur y gweinyddwr';
 $string['availablelangs'] = 'Y pecynnau iaith sydd ar gael';
 $string['chooselanguagehead'] = 'Dewis iaith';
-$string['chooselanguagesub'] = 'Dewiswch iaith ar gyfer y broses osod YN UNIG. Gallwch ddewis yr iaith ar gyfer y safle ac ar gyfer defnyddwyr yn nes ymlaen ar sgrin arall.';
+$string['chooselanguagesub'] = 'Dewiswch iaith ar gyfer y broses osod. Bydd yr iaith hon yn cael ei defnyddio fel yr iaith ddiofyn ar gyfer y safle, ond gellir ei newid yn nes ymlaen.';
+$string['clialreadyconfigured'] = 'Mae\'r ffeil config.php yn bodoli eisoes, defnyddiwch admin/cli/install_database.php os ydych chi am osod y safle hwn.';
+$string['clialreadyinstalled'] = 'Mae\'r ffeil config.php yn bodoli eisoes, defnyddiwch admin/cli/upgrade.php os ydych chi am uwchraddio eich safle.';
 $string['cliinstallheader'] = 'Rhaglen gosod llinell gorchymyn Moodle {$a}';
 $string['databasehost'] = 'Gwesteiwr y gronfa ddata';
 $string['databasename'] = 'Enw\'r gronfa ddata';
 $string['databasetypehead'] = 'Dewis gyrrwr ar gyfer y gronfa ddata';
-$string['dataroot'] = 'Cyfeiriadur Data';
+$string['dataroot'] = 'Cyfeiriadur data';
 $string['datarootpermission'] = 'Hawliau ar gyfer cyfeiriaduron data';
 $string['dbprefix'] = 'Llythrennau Blaen Tablau';
 $string['dirroot'] = 'Cyfeiriadur Moodle';
