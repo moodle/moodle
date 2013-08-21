@@ -99,13 +99,25 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $record->course = $course3->id;
         $forum3 = $this->getDataGenerator()->create_module('forum', $record);
 
-        // Add discussions to course 1 and 2 started by user1.
+        // Add a second forum in course 1.
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $forum4 = $this->getDataGenerator()->create_module('forum', $record);
+
+        // Add discussions to course 1 started by user1.
         $record = new stdClass();
         $record->course = $course1->id;
         $record->userid = $user1->id;
         $record->forum = $forum1->id;
         $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
 
+        $record = new stdClass();
+        $record->course = $course1->id;
+        $record->userid = $user1->id;
+        $record->forum = $forum4->id;
+        $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        // Add discussions to course2 started by user1.
         $record = new stdClass();
         $record->course = $course2->id;
         $record->userid = $user1->id;
