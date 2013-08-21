@@ -1099,7 +1099,8 @@ class cm_info extends stdClass {
         $this->indent           = isset($mod->indent) ? $mod->indent : 0;
         $this->extra            = isset($mod->extra) ? $mod->extra : '';
         $this->extraclasses     = isset($mod->extraclasses) ? $mod->extraclasses : '';
-        $this->iconurl          = isset($mod->iconurl) ? $mod->iconurl : '';
+        // iconurl may be stored as either string or instance of moodle_url.
+        $this->iconurl          = isset($mod->iconurl) ? new moodle_url($mod->iconurl) : '';
         $this->onclick          = isset($mod->onclick) ? $mod->onclick : '';
         $this->content          = isset($mod->content) ? $mod->content : '';
         $this->icon             = isset($mod->icon) ? $mod->icon : '';
