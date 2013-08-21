@@ -2052,7 +2052,7 @@ function move_courses($courseids, $categoryid) {
                 $course->visible = 0;
             }
 
-            update_course_record($course);
+            $DB->update_record('course', $course);
 
             // Store the context.
             $context = context_course::instance($course->id);
@@ -2383,7 +2383,7 @@ function update_course($data, $editoroptions = NULL) {
     }
 
     // Update with the new data
-    update_course_record($data);
+    $DB->update_record('course', $data);
     // make sure the modinfo cache is reset
     rebuild_course_cache($data->id);
 

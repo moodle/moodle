@@ -1422,7 +1422,7 @@ class restore_course_structure_step extends restore_structure_step {
         }
 
         // Course record ready, update it
-        update_course_record($data);
+        $DB->update_record('course', $data);
 
         course_get_format($data)->update_course_format_options($data);
 

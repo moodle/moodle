@@ -585,27 +585,6 @@ function get_course($courseid, $clone = true) {
 }
 
 /**
- * Updates a course record in database. If the update affects the global $COURSE
- * or $SITE, then these variables are also changed.
- *
- * @param stdClass $courserec Course record
- * @throws dml_exception If error updating database
- */
-function update_course_record($courserec) {
-    global $DB, $COURSE, $SITE;
-    $DB->update_record('course', $courserec);
-    if (!empty($COURSE->id) && $COURSE->id == $courserec->id) {
-        foreach ((array)$courserec as $name => $value) {
-            $COURSE->{$name} = $value;
-        }
-    } else if (!empty($SITE->id) && $SITE->id == $courserec->id) {
-        foreach ((array)$courserec as $name => $value) {
-            $SITE->{$name} = $value;
-        }
-    }
-}
-
-/**
  * Returns list of courses, for whole site, or category
  *
  * Returns list of courses, for whole site, or category

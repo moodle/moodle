@@ -1468,16 +1468,19 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     if ($clearonly) {
         if (empty($courseid)) {
             $DB->execute('UPDATE {course} set modinfo = ?, sectioncache = ?', array(null, null));
-            // Clear the cached globals too.
-            $COURSE->modinfo = null;
-            $COURSE->sectioncache = null;
-            $SITE->modinfo = null;
-            $SITE->sectioncache = null;
         } else {
             // Clear both fields in one update
             $resetobj = (object)array('id' => $courseid, 'modinfo' => null, 'sectioncache' => null);
-            // Update course object including cached globals.
-            update_course_record($resetobj);
+            $DB->update_record('course', $resetobj);
+        }
+        // update cached global COURSE too ;-)
+        if ($courseid == $COURSE->id or empty($courseid)) {
+            $COURSE->modinfo = null;
+            $COURSE->sectioncache = null;
+        }
+        if ($courseid == $SITE->id) {
+            $SITE->modinfo = null;
+            $SITE->sectioncache = null;
         }
         // reset the fast modinfo cache
         get_fast_modinfo($courseid, 0, true);
@@ -1499,9 +1502,16 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         $sectioncache = serialize(course_modinfo::build_section_cache($course->id));
         $updateobj = (object)array('id' => $course->id,
                 'modinfo' => $modinfo, 'sectioncache' => $sectioncache);
-
-        // Update course object including cached globals.
-        update_course_record($updateobj);
+        $DB->update_record("course", $updateobj);
+        // update cached global COURSE too ;-)
+        if ($course->id == $COURSE->id) {
+            $COURSE->modinfo = $modinfo;
+            $COURSE->sectioncache = $sectioncache;
+        }
+        if ($course->id == $SITE->id) {
+            $SITE->modinfo = $modinfo;
+            $SITE->sectioncache = $sectioncache;
+        }
     }
     $rs->close();
     // reset the fast modinfo cache
