@@ -39,6 +39,11 @@ require_once($CFG->libdir . '/csslib.php');
  */
 class core_csslib_testcase extends advanced_testcase {
 
+    /**
+     * Returns a CSS optimiser
+     *
+     * @return css_optimiser
+     */
     protected function get_optimiser() {
         return new css_optimiser();
     }
@@ -377,6 +382,9 @@ class core_csslib_testcase extends advanced_testcase {
         $this->assertSame($css, $optimiser->process($css));
     }
 
+    /**
+     * Test widths.
+     */
     public function test_widths() {
         $optimiser = new css_optimiser();
 
@@ -503,6 +511,9 @@ class core_csslib_testcase extends advanced_testcase {
         $this->assertSame($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Test cursor optimisations
+     */
     public function test_cursor() {
         $optimiser = new css_optimiser();
 
@@ -527,6 +538,9 @@ class core_csslib_testcase extends advanced_testcase {
         $this->assertSame($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Test vertical align optimisations
+     */
     public function test_vertical_align() {
         $optimiser = new css_optimiser();
 
@@ -550,6 +564,9 @@ class core_csslib_testcase extends advanced_testcase {
         $this->assertSame($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Test float optimisations
+     */
     public function test_float() {
         $optimiser = new css_optimiser();
 
@@ -697,7 +714,7 @@ class core_csslib_testcase extends advanced_testcase {
 
         // Test some complex IE css... I couldn't even think of a more complext solution
         // than the CSS they came up with.
-        $cssin  = 'a { opacity: 0.5; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; filter: alpha(opacity=50); }';
+        $cssin  = 'a { opacity: 0.5;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)"; filter: alpha(opacity=50); }';
         $cssout = 'a{opacity:0.5;-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";filter:alpha(opacity=50);}';
         $this->assertSame($cssout, $optimiser->process($cssin));
     }
@@ -1027,9 +1044,27 @@ CSS;
         $cssin = "@media screen and (min-width:30px) {\n  #region-main-box{background-color:#000;}\n}\n@media screen and (min-width:31px) {\n  #region-main-box{background-color:#FFF;}\n}";
         $cssout = "@media screen and (min-width:30px) { #region-main-box{background-color:#000;} }\n@media screen and (min-width:31px) { #region-main-box{background-color:#FFF;} }";
         $this->assertSame($cssout, $optimiser->process($cssin));
+
+        $cssin = "@media (min-width: 768px) and (max-width: 979px) {\n*{*zoom:1;}}";
+        $cssout = "@media (min-width: 768px) and (max-width: 979px) { *{*zoom:1;} }";
+        $this->assertSame($cssout, $optimiser->process($cssin));
+
+        $cssin = "#test {min-width:1200px;}@media (min-width: 768px) {#test {min-width: 1024px;}}";
+        $cssout = "#test{min-width:1200px;} \n@media (min-width: 768px) { #test{min-width:1024px;} }";
+        $this->assertSame($cssout, $optimiser->process($cssin));
+
+        $cssin = "@media(min-width:768px){#page-calender-view .container fluid{min-width:1024px}}.section_add_menus{text-align:right}";
+        $cssout = ".section_add_menus{text-align:right;} \n@media (min-width:768px) { #page-calender-view .container fluid{min-width:1024px;} }";
+        $this->assertSame($cssout, $optimiser->process($cssin));
+
+        $cssin = "@-ms-keyframes progress-bar-stripes{from{background-position:40px 0}to{background-position:0 0}}";
+        $cssout = "@-ms-keyframes progress-bar-stripes {from{background-position:40px 0;}to{background-position:0 0;}}";
+        $this->assertSame($cssout, $optimiser->process($cssin));
     }
 
-
+    /**
+     * Test the ordering of CSS optimisationss
+     */
     public function test_css_optimisation_ordering() {
         $optimiser = $this->get_optimiser();
 
@@ -1041,6 +1076,9 @@ CSS;
         $this->assertSame($cssout, $optimiser->process($cssin));
     }
 
+    /**
+     * Test CSS chunking
+     */
     public function test_css_chunking() {
         // Test with an even number of styles.
         $css = 'a{}b{}c{}d{}e{}f{}';
@@ -1142,5 +1180,73 @@ CSS;
         $chunks = css_chunk_by_selector_count($css, 'styles.php?type=test', 2, 0);
         $this->assertInternalType('array', $chunks);
         // I don't care what the outcome is, I just want to make sure it doesn't die.
+    }
+
+    /**
+     * Test CSS3.
+     */
+    public function test_css3() {
+        $optimiser = $this->get_optimiser();
+
+        $css = '.test > .test{display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '*{display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = 'div > *{display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = 'div:nth-child(3){display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '.test:nth-child(3){display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '*:nth-child(3){display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '*[id]{display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '*[id=blah]{display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '*[*id=blah]{display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '*[*id=blah_]{display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '*[id^=blah*d]{display:inline-block;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '.test{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '#test{box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);}';
+        $this->assertSame($css, $optimiser->process($css));
+    }
+
+    /**
+     * Test browser hacks here.
+     */
+    public function test_browser_hacks() {
+        $optimiser = $this->get_optimiser();
+
+        $css = '#test{*zoom:1;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '.test{width:75%;*width:76%;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '#test{*zoom:1;*display:inline;}';
+        $this->assertSame($css, $optimiser->process($css));
+
+        $css = '.test{width:75%;*width:76%;width:76%}';
+        $this->assertSame('.test{width:76%;*width:76%;}', $optimiser->process($css));
+
+        $css = '.test{width:75%;*width:76%;*width:75%}';
+        $this->assertSame('.test{width:75%;*width:75%;}', $optimiser->process($css));
     }
 }

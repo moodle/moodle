@@ -20,7 +20,7 @@
  * Please see the {@link css_optimiser} class for greater detail.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -60,7 +60,7 @@ function css_store_css(theme_config $theme, $csspath, array $cssfiles, $chunk = 
         $css = $optimiser->process($css);
 
         // If cssoptimisestats is set then stats from the optimisation are collected
-        // and output at the beginning of the CSS
+        // and output at the beginning of the CSS.
         if (!empty($CFG->cssoptimiserstats)) {
             $css = $optimiser->output_stats_css().$css;
         }
@@ -127,7 +127,7 @@ function css_write_file($filename, $content) {
         fclose($fp);
         rename($filename.'.tmp', $filename);
         @chmod($filename, $CFG->filepermissions);
-        @unlink($filename.'.tmp'); // just in case anything fails
+        @unlink($filename.'.tmp'); // Just in case anything fails.
     }
 }
 
@@ -221,7 +221,8 @@ function css_chunk_by_selector_count($css, $importurl, $maxselectors = 4095, $bu
  * @param string $etag The revision to make sure we utilise any caches.
  */
 function css_send_cached_css($csspath, $etag) {
-    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
+    // 60 days only - the revision may get incremented quite often.
+    $lifetime = 60*60*24*60;
 
     header('Etag: "'.$etag.'"');
     header('Content-Disposition: inline; filename="styles.php"');
@@ -251,9 +252,7 @@ function css_send_cached_css($csspath, $etag) {
  *
  * @param string $css
  */
-function css_send_uncached_css($css, $themesupportsoptimisation = true) {
-    global $CFG;
-
+function css_send_uncached_css($css) {
     header('Content-Disposition: inline; filename="styles_debug.php"');
     header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + THEME_DESIGNER_CACHE_LIFETIME) .' GMT');
@@ -264,19 +263,19 @@ function css_send_uncached_css($css, $themesupportsoptimisation = true) {
     if (is_array($css)) {
         $css = implode("\n\n", $css);
     }
-
     echo $css;
-
     die;
 }
 
 /**
  * Send file not modified headers
+ *
  * @param int $lastmodified
  * @param string $etag
  */
 function css_send_unmodified($lastmodified, $etag) {
-    $lifetime = 60*60*24*60; // 60 days only - the revision may get incremented quite often
+    // 60 days only - the revision may get incremented quite often.
+    $lifetime = 60*60*24*60;
     header('HTTP/1.1 304 Not Modified');
     header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
     header('Cache-Control: public, max-age='.$lifetime);
@@ -327,16 +326,16 @@ function css_is_colour($value) {
     } else if (in_array(strtolower($value), array_keys(css_optimiser::$htmlcolours))) {
         return true;
     } else if (preg_match($rgb, $value, $m) && $m[1] < 256 && $m[2] < 256 && $m[3] < 256) {
-        // It is an RGB colour
+        // It is an RGB colour.
         return true;
     } else if (preg_match($rgba, $value, $m) && $m[1] < 256 && $m[2] < 256 && $m[3] < 256) {
-        // It is an RGBA colour
+        // It is an RGBA colour.
         return true;
     } else if (preg_match($hsl, $value, $m) && $m[1] <= 360 && $m[2] <= 100 && $m[3] <= 100) {
-        // It is an HSL colour
+        // It is an HSL colour.
         return true;
     } else if (preg_match($hsla, $value, $m) && $m[1] <= 360 && $m[2] <= 100 && $m[3] <= 100) {
-        // It is an HSLA colour
+        // It is an HSLA colour.
         return true;
     }
     // Doesn't look like a colour.
@@ -379,8 +378,7 @@ function css_sort_by_count(array $a, array $b) {
 }
 
 /**
- * A basic CSS optimiser that strips out unwanted things and then processing the
- * CSS organising styles and moving duplicates and useless CSS.
+ * A basic CSS optimiser that strips out unwanted things and then processes CSS organising and cleaning styles.
  *
  * This CSS optimiser works by reading through a CSS string one character at a
  * time and building an object structure of the CSS.
@@ -389,7 +387,7 @@ function css_sort_by_count(array $a, array $b) {
  * then combined into an optimised form to keep them as short as possible.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -503,9 +501,7 @@ class css_optimiser {
      * @return string The optimised CSS
      */
     public function process($css) {
-        global $CFG;
-
-        // Easiest win there is
+        // Easiest win there is.
         $css = trim($css);
 
         $this->reset_stats();
@@ -526,7 +522,7 @@ class css_optimiser {
         $css = preg_replace('#\r?\n#', ' ', $css);
 
         // Next remove the comments... no need to them in an optimised world and
-        // knowing they're all gone allows us to REALLY make our processing simpler
+        // knowing they're all gone allows us to REALLY make our processing simpler.
         $css = preg_replace('#/\*(.*?)\*/#m', '', $css, -1, $this->commentsincss);
 
         $medias = array(
@@ -544,6 +540,7 @@ class css_optimiser {
         $inbraces = false;      // {
         $inbrackets = false;    // [
         $inparenthesis = false; // (
+        /* @var css_media $currentmedia */
         $currentmedia = $medias['all'];
         $currentatrule = null;
         $suspectatrule = false;
@@ -560,7 +557,7 @@ class css_optimiser {
                 $suspectatrule = true;
             }
             switch ($currentprocess) {
-                // Start processing an @ rule e.g. @media, @page, @keyframes
+                // Start processing an @ rule e.g. @media, @page, @keyframes.
                 case self::PROCESSING_ATRULE:
                     switch ($char) {
                         case ';':
@@ -578,13 +575,17 @@ class css_optimiser {
                                 $buffer = '';
                                 $currentatrule = false;
                             }
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                         case '{':
-                            if ($currentatrule == 'media' && preg_match('#\s*@media\s*([a-zA-Z0-9]+(\s*,\s*[a-zA-Z0-9]+)*)\s*{#', $buffer, $matches)) {
-                                // Basic media declaration
+                            $regexmediabasic = '#\s*@media\s*([a-zA-Z0-9]+(\s*,\s*[a-zA-Z0-9]+)*)\s*{#';
+                            $regexadvmedia = '#\s*@media\s*([^{]+)#';
+                            $regexkeyframes = '#@((\-moz\-|\-webkit\-|\-ms\-|\-o\-)?keyframes)\s*([^\s]+)#';
+
+                            if ($currentatrule == 'media' && preg_match($regexmediabasic, $buffer, $matches)) {
+                                // Basic media declaration.
                                 $mediatypes = str_replace(' ', '', $matches[1]);
                                 if (!array_key_exists($mediatypes, $medias)) {
                                     $medias[$mediatypes] = new css_media($mediatypes);
@@ -592,17 +593,17 @@ class css_optimiser {
                                 $currentmedia = $medias[$mediatypes];
                                 $currentprocess = self::PROCESSING_SELECTORS;
                                 $buffer = '';
-                            } else if ($currentatrule == 'media' && preg_match('#\s*@media\s*([^{]+)#', $buffer, $matches)) {
-                                // Advanced media query declaration http://www.w3.org/TR/css3-mediaqueries/
+                            } else if ($currentatrule == 'media' && preg_match($regexadvmedia, $buffer, $matches)) {
+                                // Advanced media query declaration http://www.w3.org/TR/css3-mediaqueries/.
                                 $mediatypes = $matches[1];
                                 $hash = md5($mediatypes);
                                 $medias[$hash] = new css_media($mediatypes);
                                 $currentmedia = $medias[$hash];
                                 $currentprocess = self::PROCESSING_SELECTORS;
                                 $buffer = '';
-                            } else if ($currentatrule == 'keyframes' && preg_match('#@((\-moz\-|\-webkit\-)?keyframes)\s*([^\s]+)#', $buffer, $matches)) {
+                            } else if ($currentatrule == 'keyframes' && preg_match($regexkeyframes, $buffer, $matches)) {
                                 // Keyframes declaration, we treat it exactly like a @media declaration except we don't allow
-                                // them to be overridden to ensure we don't mess anything up. (means we keep everything in order)
+                                // them to be overridden to ensure we don't mess anything up. (means we keep everything in order).
                                 $keyframefor = $matches[1];
                                 $keyframename = $matches[3];
                                 $keyframe = new css_keyframe($keyframefor, $keyframename);
@@ -611,40 +612,41 @@ class css_optimiser {
                                 $currentprocess = self::PROCESSING_SELECTORS;
                                 $buffer = '';
                             }
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                     }
                     break;
-                // Start processing selectors
+                // Start processing selectors.
                 case self::PROCESSING_START:
                 case self::PROCESSING_SELECTORS:
+                    $regexatrule = '#@(media|import|charset|(\-moz\-|\-webkit\-|\-ms\-|\-o\-)?(keyframes))\s*#';
                     switch ($char) {
                         case '[':
                             $inbrackets ++;
                             $buffer .= $char;
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                         case ']':
                             $inbrackets --;
                             $buffer .= $char;
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                         case ' ':
                             if ($inbrackets) {
-                                // continue 1: The switch processing chars
-                                // continue 2: The switch processing the state
-                                // continue 3: The for loop
+                                // Continue 1: The switch processing chars
+                                // Continue 2: The switch processing the state
+                                // Continue 3: The for loop.
                                 continue 3;
                             }
                             if (!empty($buffer)) {
-                                // Check for known @ rules
-                                if ($suspectatrule && preg_match('#@(media|import|charset|(\-moz\-|\-webkit\-)?(keyframes))\s*#', $buffer, $matches)) {
+                                // Check for known @ rules.
+                                if ($suspectatrule && preg_match($regexatrule, $buffer, $matches)) {
                                     $currentatrule = (!empty($matches[3]))?$matches[3]:$matches[1];
                                     $currentprocess = self::PROCESSING_ATRULE;
                                     $buffer .= $char;
@@ -654,15 +656,27 @@ class css_optimiser {
                                 }
                             }
                             $suspectatrule = false;
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                         case '{':
                             if ($inbrackets) {
-                                // continue 1: The switch processing chars
-                                // continue 2: The switch processing the state
-                                // continue 3: The for loop
+                                // Continue 1: The switch processing chars
+                                // Continue 2: The switch processing the state
+                                // Continue 3: The for loop.
+                                continue 3;
+                            }
+                            // Check for known @ rules.
+                            if ($suspectatrule && preg_match($regexatrule, $buffer, $matches)) {
+                                // Ahh we've been in an @rule, lets rewind one and have the @rule case process this.
+                                $currentatrule = (!empty($matches[3]))?$matches[3]:$matches[1];
+                                $currentprocess = self::PROCESSING_ATRULE;
+                                $i--;
+                                $suspectatrule = false;
+                                // Continue 1: The switch processing chars
+                                // Continue 2: The switch processing the state
+                                // Continue 3: The for loop.
                                 continue 3;
                             }
                             if ($buffer !== '') {
@@ -673,15 +687,15 @@ class css_optimiser {
                             $currentprocess = self::PROCESSING_STYLES;
 
                             $buffer = '';
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                         case '}':
                             if ($inbrackets) {
-                                // continue 1: The switch processing chars
-                                // continue 2: The switch processing the state
-                                // continue 3: The for loop
+                                // Continue 1: The switch processing chars
+                                // Continue 2: The switch processing the state
+                                // Continue 3: The for loop.
                                 continue 3;
                             }
                             if ($currentatrule == 'media') {
@@ -693,28 +707,28 @@ class css_optimiser {
                                 $currentatrule = false;
                                 $buffer = '';
                             }
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                         case ',':
                             if ($inbrackets) {
-                                // continue 1: The switch processing chars
-                                // continue 2: The switch processing the state
-                                // continue 3: The for loop
+                                // Continue 1: The switch processing chars
+                                // Continue 2: The switch processing the state
+                                // Continue 3: The for loop.
                                 continue 3;
                             }
                             $currentselector->add($buffer);
                             $currentrule->add_selector($currentselector);
                             $currentselector = css_selector::init();
                             $buffer = '';
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                     }
                     break;
-                // Start processing styles
+                // Start processing styles.
                 case self::PROCESSING_STYLES:
                     if ($char == '"' || $char == "'") {
                         if ($inquotes === false) {
@@ -732,17 +746,17 @@ class css_optimiser {
                         case ';':
                             if ($inparenthesis) {
                                 $buffer .= $char;
-                                // continue 1: The switch processing chars
-                                // continue 2: The switch processing the state
-                                // continue 3: The for loop
+                                // Continue 1: The switch processing chars
+                                // Continue 2: The switch processing the state
+                                // Continue 3: The for loop.
                                 continue 3;
                             }
                             $currentrule->add_style($buffer);
                             $buffer = '';
                             $inquotes = false;
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                         case '}':
                             $currentrule->add_style($buffer);
@@ -756,23 +770,23 @@ class css_optimiser {
                             $buffer = '';
                             $inquotes = false;
                             $inparenthesis = false;
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                         case '(':
                             $inparenthesis = true;
                             $buffer .= $char;
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                         case ')':
                             $inparenthesis = false;
                             $buffer .= $char;
-                            // continue 1: The switch processing chars
-                            // continue 2: The switch processing the state
-                            // continue 3: The for loop
+                            // Continue 1: The switch processing chars
+                            // Continue 2: The switch processing the state
+                            // Continue 3: The for loop.
                             continue 3;
                     }
                     break;
@@ -793,8 +807,8 @@ class css_optimiser {
      * Produces CSS for the given charset, imports, media, and keyframes
      * @param string $charset
      * @param array $imports
-     * @param array $medias
-     * @param array $keyframes
+     * @param css_media[] $medias
+     * @param css_keyframe[] $keyframes
      * @return string
      */
     protected function produce_css($charset, array $imports, array $medias, array $keyframes) {
@@ -811,9 +825,9 @@ class css_optimiser {
         $cssstandard = array();
         $csskeyframes = array();
 
-        // Process each media declaration individually
+        // Process each media declaration individually.
         foreach ($medias as $media) {
-            // If this declaration applies to all media types
+            // If this declaration applies to all media types.
             if (in_array('all', $media->get_types())) {
                 // Collect all rules that represet reset rules and remove them from the media object at the same time.
                 // We do this because we prioritise reset rules to the top of a CSS output. This ensures that they
@@ -823,7 +837,7 @@ class css_optimiser {
                     $cssreset[] = css_writer::media('all', $resetrules);
                 }
             }
-            // Get the standard cSS
+            // Get the standard cSS.
             $cssstandard[] = $media->out();
         }
 
@@ -839,7 +853,7 @@ class css_optimiser {
             }
         }
 
-        // Join it all together
+        // Join it all together.
         $css .= join('', $cssreset);
         $css .= join('', $cssstandard);
         $css .= join('', $csskeyframes);
@@ -847,7 +861,7 @@ class css_optimiser {
         // Record the strlenght of the now optimised CSS.
         $this->optimisedstrlen = strlen($css);
 
-        // Return the now produced CSS
+        // Return the now produced CSS.
         return $css;
     }
 
@@ -886,7 +900,7 @@ class css_optimiser {
             'improvementrules'     => '-',
             'improvementselectors'     => '-',
         );
-        // Avoid division by 0 errors by checking we have valid raw values
+        // Avoid division by 0 errors by checking we have valid raw values.
         if ($this->rawstrlen > 0) {
             $stats['improvementstrlen'] = round(100 - ($this->optimisedstrlen / $this->rawstrlen) * 100, 1).'%';
         }
@@ -917,7 +931,7 @@ class css_optimiser {
     public function get_errors($clear = false) {
         $errors = $this->errors;
         if ($clear) {
-            // Reset the error array
+            // Reset the error array.
             $this->errors = array();
         }
         return $errors;
@@ -1001,8 +1015,7 @@ class css_optimiser {
      * This reference table is used to allow us to unify colours, and will aid
      * us in identifying buggy CSS using unsupported colours.
      *
-     * @staticvar array
-     * @var array
+     * @var string[]
      */
     public static $htmlcolours = array(
         'aliceblue' => '#F0F8FF',
@@ -1160,7 +1173,7 @@ class css_optimiser {
  * Used to prepare CSS strings
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1218,7 +1231,7 @@ abstract class css_writer {
      * Returns CSS for media
      *
      * @param string $typestring
-     * @param array $rules An array of css_rule objects
+     * @param css_rule[] $rules An array of css_rule objects
      * @return string
      */
     public static function media($typestring, array &$rules) {
@@ -1244,12 +1257,10 @@ abstract class css_writer {
      *
      * @param string $for The desired declaration. e.g. keyframes, -moz-keyframes, -webkit-keyframes
      * @param string $name The name for the keyframe
-     * @param array $rules An array of rules belonging to the keyframe
+     * @param css_rule[] $rules An array of rules belonging to the keyframe
      * @return string
      */
     public static function keyframe($for, $name, array &$rules) {
-        $nl = self::get_separator();
-
         $output = "\n@{$for} {$name} {";
         foreach ($rules as $rule) {
             $output .= $rule->out();
@@ -1273,7 +1284,7 @@ abstract class css_writer {
     /**
      * Returns CSS for the selectors of a rule
      *
-     * @param array $selectors Array of css_selector objects
+     * @param css_selector[] $selectors Array of css_selector objects
      * @return string
      */
     public static function selectors(array $selectors) {
@@ -1298,7 +1309,7 @@ abstract class css_writer {
     /**
      * Returns a CSS string for the provided styles
      *
-     * @param array $styles Array of css_style objects
+     * @param css_style[] $styles Array of css_style objects
      * @return string
      */
     public static function styles(array $styles) {
@@ -1308,6 +1319,7 @@ abstract class css_writer {
             // An advanced style is a style with one or more values, and can occur in situations like background-image
             // where browse specific values are being used.
             if (is_array($style)) {
+                /* @var css_style[] $style */
                 foreach ($style as $advstyle) {
                     $bits[] = $advstyle->out();
                 }
@@ -1336,13 +1348,32 @@ abstract class css_writer {
 }
 
 /**
+ * A consolidatable style interface.
+ *
+ * Class that implement this have a short-hand notation for specifying multiple styles.
+ *
+ * @package core
+ * @subpackage cssoptimiser
+ * @copyright 2012 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+interface core_css_consolidatable_style {
+    /**
+     * Used to consolidate several styles into a single "short-hand" style.
+     * @param array $styles
+     * @return mixed
+     */
+    public static function consolidate(array $styles);
+}
+
+/**
  * A structure to represent a CSS selector.
  *
  * The selector is the classes, id, elements, and psuedo bits that make up a CSS
  * rule.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1378,7 +1409,9 @@ class css_selector {
     /**
      * CSS selectors can only be created through the init method above.
      */
-    protected function __construct() {}
+    protected function __construct() {
+        // Nothing to do here by default.
+    }
 
     /**
      * Adds a selector to the end of the current selector
@@ -1391,13 +1424,13 @@ class css_selector {
         if (strpos($selector, '.') !== 0 && strpos($selector, '#') !== 0) {
             $count ++;
         }
-        // If its already false then no need to continue, its not basic
+        // If its already false then no need to continue, its not basic.
         if ($this->isbasic !== false) {
-            // If theres more than one part making up this selector its not basic
+            // If theres more than one part making up this selector its not basic.
             if ($count > 1) {
                 $this->isbasic = false;
             } else {
-                // Check whether it is a basic element (a-z+) with possible psuedo selector
+                // Check whether it is a basic element (a-z+) with possible psuedo selector.
                 $this->isbasic = (bool)preg_match('#^[a-z]+(:[a-zA-Z]+)?$#', $selector);
             }
         }
@@ -1433,7 +1466,7 @@ class css_selector {
  * A structure to represent a CSS rule.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1441,13 +1474,13 @@ class css_rule {
 
     /**
      * An array of CSS selectors {@link css_selector}
-     * @var array
+     * @var css_selector[]
      */
     protected $selectors = array();
 
     /**
      * An array of CSS styles {@link css_style}
-     * @var array
+     * @var css_style[]
      */
     protected $styles = array();
 
@@ -1463,7 +1496,7 @@ class css_rule {
      * Constructs a new css rule.
      *
      * @param string $selector The selector or array of selectors that make up this rule.
-     * @param array $styles An array of styles that belong to this rule.
+     * @param css_style[] $styles An array of styles that belong to this rule.
      */
     protected function __construct($selector = null, array $styles = array()) {
         if ($selector != null) {
@@ -1508,7 +1541,7 @@ class css_rule {
         } else if ($style instanceof css_style) {
             // Clone the style as it may be coming from another rule and we don't
             // want references as it will likely be overwritten by proceeding
-            // rules
+            // rules.
             $style = clone($style);
         }
         if ($style instanceof css_style) {
@@ -1544,7 +1577,7 @@ class css_rule {
      * This method simply iterates over the array and calls {@link css_rule::add_style()}
      * with each.
      *
-     * @param array $styles Adds an array of styles
+     * @param css_style[] $styles Adds an array of styles
      */
     public function add_styles(array $styles) {
         foreach ($styles as $style) {
@@ -1555,7 +1588,7 @@ class css_rule {
     /**
      * Returns the array of selectors
      *
-     * @return array
+     * @return css_selector[]
      */
     public function get_selectors() {
         return $this->selectors;
@@ -1564,7 +1597,7 @@ class css_rule {
     /**
      * Returns the array of styles
      *
-     * @return array
+     * @return css_style[]
      */
     public function get_styles() {
         return $this->styles;
@@ -1584,12 +1617,16 @@ class css_rule {
     /**
      * Consolidates all styles associated with this rule
      *
-     * @return array An array of consolidated styles
+     * @return css_style[] An array of consolidated styles
      */
     public function get_consolidated_styles() {
+        /* @var css_style[] $organisedstyles */
         $organisedstyles = array();
+        /* @var css_style[] $finalstyles */
         $finalstyles = array();
+        /* @var core_css_consolidatable_style[] $consolidate */
         $consolidate = array();
+        /* @var css_style[] $advancedstyles */
         $advancedstyles = array();
         foreach ($this->styles as $style) {
             // If the style is an array then we are processing an advanced style. An advanced style is a style that can have
@@ -1598,6 +1635,7 @@ class css_rule {
                 $single = null;
                 $count = 0;
                 foreach ($style as $advstyle) {
+                    /* @var css_style $advstyle */
                     $key = $count++;
                     $advancedstyles[$key] = $advstyle;
                     if (!$advstyle->allows_multiple_values()) {
@@ -1611,7 +1649,8 @@ class css_rule {
                     $style = $advancedstyles[$single];
 
                     $consolidatetoclass = $style->consolidate_to();
-                    if (($style->is_valid() || $style->is_special_empty_value()) && !empty($consolidatetoclass) && class_exists('css_style_'.$consolidatetoclass)) {
+                    if (($style->is_valid() || $style->is_special_empty_value()) && !empty($consolidatetoclass) &&
+                            class_exists('css_style_'.$consolidatetoclass)) {
                         $class = 'css_style_'.$consolidatetoclass;
                         if (!array_key_exists($class, $consolidate)) {
                             $consolidate[$class] = array();
@@ -1625,7 +1664,8 @@ class css_rule {
                 continue;
             }
             $consolidatetoclass = $style->consolidate_to();
-            if (($style->is_valid() || $style->is_special_empty_value()) && !empty($consolidatetoclass) && class_exists('css_style_'.$consolidatetoclass)) {
+            if (($style->is_valid() || $style->is_special_empty_value()) && !empty($consolidatetoclass) &&
+                    class_exists('css_style_'.$consolidatetoclass)) {
                 $class = 'css_style_'.$consolidatetoclass;
                 if (!array_key_exists($class, $consolidate)) {
                     $consolidate[$class] = array();
@@ -1638,7 +1678,7 @@ class css_rule {
         }
 
         foreach ($consolidate as $class => $styles) {
-            $organisedstyles[$class] = $class::consolidate($styles);
+            $organisedstyles[$class] = call_user_func(array($class, 'consolidate'), $styles);
         }
 
         foreach ($organisedstyles as $style) {
@@ -1658,7 +1698,7 @@ class css_rule {
      * Splits this rules into an array of CSS rules. One for each of the selectors
      * that make up this rule.
      *
-     * @return array(css_rule)
+     * @return css_rule[]
      */
     public function split_by_selector() {
         $return = array();
@@ -1672,7 +1712,7 @@ class css_rule {
      * Splits this rule into an array of rules. One for each of the styles that
      * make up this rule
      *
-     * @return array Array of css_rule objects
+     * @return css_rule[] Array of css_rule objects
      */
     public function split_by_style() {
         $return = array();
@@ -1725,6 +1765,7 @@ class css_rule {
     public function has_errors() {
         foreach ($this->styles as $style) {
             if (is_array($style)) {
+                /* @var css_style[] $style */
                 foreach ($style as $advstyle) {
                     if ($advstyle->has_error()) {
                         return true;
@@ -1752,9 +1793,10 @@ class css_rule {
         $errors = array();
         foreach ($this->styles as $style) {
             if (is_array($style)) {
-                foreach ($style as $s) {
-                    if ($style instanceof css_style && $style->has_error()) {
-                        $errors[] = "  * ".$style->get_last_error();
+                /* @var css_style[] $style */
+                foreach ($style as $advstyle) {
+                    if ($advstyle instanceof css_style && $advstyle->has_error()) {
+                        $errors[] = "  * ".$advstyle->get_last_error();
                     }
                 }
             } else if ($style instanceof css_style && $style->has_error()) {
@@ -1789,14 +1831,14 @@ class css_rule {
  * When no declaration is specified rules accumulate into @media all.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class css_rule_collection {
     /**
      * An array of rules within this collection instance
-     * @var array
+     * @var css_rule[]
      */
     protected $rules = array();
 
@@ -1824,7 +1866,7 @@ abstract class css_rule_collection {
     /**
      * Returns the rules used by this collection
      *
-     * @return array
+     * @return css_rule[]
      */
     public function get_rules() {
         return $this->rules;
@@ -1837,9 +1879,11 @@ abstract class css_rule_collection {
      * @return bool True if the CSS was optimised by this method
      */
     public function organise_rules_by_selectors() {
-        $optimised = array();
+        /* @var css_rule[] $optimisedrules */
+        $optimisedrules = array();
         $beforecount = count($this->rules);
         $lasthash = null;
+        /* @var css_rule $lastrule */
         $lastrule = null;
         foreach ($this->rules as $rule) {
             $hash = $rule->get_style_hash();
@@ -1851,10 +1895,10 @@ abstract class css_rule_collection {
             }
             $lastrule = clone($rule);
             $lasthash = $hash;
-            $optimised[] = $lastrule;
+            $optimisedrules[] = $lastrule;
         }
         $this->rules = array();
-        foreach ($optimised as $optimised) {
+        foreach ($optimisedrules as $optimised) {
             $this->rules[$optimised->get_selector_hash()] = $optimised;
         }
         $aftercount = count($this->rules);
@@ -1900,7 +1944,7 @@ abstract class css_rule_collection {
     /**
      * Returns any errors that have happened within rules in this collection.
      *
-     * @return string
+     * @return string[]
      */
     public function get_errors() {
         $errors = array();
@@ -1917,7 +1961,7 @@ abstract class css_rule_collection {
  * A media class to organise rules by the media they apply to.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -1980,16 +2024,22 @@ class css_media extends css_rule_collection {
  * A media class to organise rules by the media they apply to.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class css_keyframe extends css_rule_collection {
 
-    /** @var string $for The directive e.g. keyframes, -moz-keyframes, -webkit-keyframes  */
+    /**
+     * The directive e.g. keyframes, -moz-keyframes, -webkit-keyframes
+     * @var string
+     */
     protected $for;
 
-    /** @var string $name The name for the keyframes */
+    /**
+     * The name for the keyframes
+     * @var string
+     */
     protected $name;
     /**
      * Constructs a new keyframe
@@ -2031,7 +2081,7 @@ class css_keyframe extends css_rule_collection {
  * An absract class to represent CSS styles
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2085,9 +2135,14 @@ abstract class css_style {
      * @return css_style_generic
      */
     public static function init_automatic($name, $value) {
-        $specificclass = 'css_style_'.preg_replace('#[^a-zA-Z0-9]+#', '', $name);
+        $cleanedname = preg_replace('#[^a-zA-Z0-9]+#', '', $name);
+        $specificclass = 'css_style_'.$cleanedname;
         if (class_exists($specificclass)) {
-            return $specificclass::init($value);
+            $style = call_user_func(array($specificclass, 'init'), $value);
+            if ($cleanedname !== $name && !is_array($style)) {
+                $style->set_actual_name($name);
+            }
+            return $style;
         }
         return new css_style_generic($name, $value);
     }
@@ -2263,13 +2318,24 @@ abstract class css_style {
     public function set_important($important = true) {
         $this->important = (bool) $important;
     }
+
+    /**
+     * Sets the actual name used within the style.
+     *
+     * This method allows us to support browser hacks like *width:0;
+     *
+     * @param string $name
+     */
+    public function set_actual_name($name) {
+        $this->name = $name;
+    }
 }
 
 /**
  * A generic CSS style class to use when a more specific class does not exist.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2295,7 +2361,7 @@ class css_style_generic extends css_style {
  * A colour CSS style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2380,7 +2446,7 @@ class css_style_color extends css_style {
  * A width style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2426,11 +2492,11 @@ class css_style_width extends css_style {
  * A margin style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class css_style_margin extends css_style_width {
+class css_style_margin extends css_style_width implements core_css_consolidatable_style {
 
     /**
      * Initialises a margin style.
@@ -2476,8 +2542,8 @@ class css_style_margin extends css_style_width {
     /**
      * Consolidates individual margin styles into a single margin style
      *
-     * @param array $styles
-     * @return array An array of consolidated styles
+     * @param css_style[] $styles
+     * @return css_style[] An array of consolidated styles
      */
     public static function consolidate(array $styles) {
         if (count($styles) != 4) {
@@ -2565,7 +2631,7 @@ class css_style_margin extends css_style_width {
  * A margin top style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2595,7 +2661,7 @@ class css_style_margintop extends css_style_margin {
  * A margin right style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2625,7 +2691,7 @@ class css_style_marginright extends css_style_margin {
  * A margin bottom style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2655,7 +2721,7 @@ class css_style_marginbottom extends css_style_margin {
  * A margin left style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -2685,11 +2751,11 @@ class css_style_marginleft extends css_style_margin {
  * A border style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class css_style_border extends css_style {
+class css_style_border extends css_style implements core_css_consolidatable_style {
 
     /**
      * Initalises the border style into an array of individual style compontents
@@ -2707,24 +2773,24 @@ class css_style_border extends css_style {
             if (!css_style_borderwidth::is_border_width($width)) {
                 $width = '0';
             }
-            $return[] = new css_style_borderwidth('border-top-width', $width);
-            $return[] = new css_style_borderwidth('border-right-width', $width);
-            $return[] = new css_style_borderwidth('border-bottom-width', $width);
-            $return[] = new css_style_borderwidth('border-left-width', $width);
+            $return[] = css_style_bordertopwidth::init($width);
+            $return[] = css_style_borderrightwidth::init($width);
+            $return[] = css_style_borderbottomwidth::init($width);
+            $return[] = css_style_borderleftwidth::init($width);
         }
         if (count($bits) > 0) {
             $style = array_shift($bits);
-            $return[] = new css_style_borderstyle('border-top-style', $style);
-            $return[] = new css_style_borderstyle('border-right-style', $style);
-            $return[] = new css_style_borderstyle('border-bottom-style', $style);
-            $return[] = new css_style_borderstyle('border-left-style', $style);
+            $return[] = css_style_bordertopstyle::init($style);
+            $return[] = css_style_borderrightstyle::init($style);
+            $return[] = css_style_borderbottomstyle::init($style);
+            $return[] = css_style_borderleftstyle::init($style);
         }
         if (count($bits) > 0) {
             $colour = array_shift($bits);
-            $return[] = new css_style_bordercolor('border-top-color', $colour);
-            $return[] = new css_style_bordercolor('border-right-color', $colour);
-            $return[] = new css_style_bordercolor('border-bottom-color', $colour);
-            $return[] = new css_style_bordercolor('border-left-color', $colour);
+            $return[] = css_style_bordertopcolor::init($colour);
+            $return[] = css_style_borderrightcolor::init($colour);
+            $return[] = css_style_borderbottomcolor::init($colour);
+            $return[] = css_style_borderleftcolor::init($colour);
         }
         return $return;
     }
@@ -2732,8 +2798,8 @@ class css_style_border extends css_style {
     /**
      * Consolidates all border styles into a single style
      *
-     * @param array $styles An array of border styles
-     * @return array An optimised array of border styles
+     * @param css_style[] $styles An array of border styles
+     * @return css_style[] An optimised array of border styles
      */
     public static function consolidate(array $styles) {
 
@@ -2800,9 +2866,10 @@ class css_style_border extends css_style {
         $allstylesnull = $allstylesthesame && $nullstyles;
         $allcolorsnull = $allcolorsthesame && $nullcolors;
 
+        /* @var css_style[] $return */
         $return = array();
         if ($allwidthsnull && $allstylesnull && $allcolorsnull) {
-            // Everything is null still... boo
+            // Everything is null still... boo.
             return array(new css_style_border('border', ''));
 
         } else if ($allwidthsnull && $allstylesnull) {
@@ -2849,7 +2916,11 @@ class css_style_border extends css_style {
                 self::consolidate_styles_by_direction($return, 'css_style_bordercolor', 'border-color', $bordercolors);
             }
 
-        } else if (!$nullwidths && !$nullcolors && !$nullstyles && max(array_count_values($borderwidths)) == 3 && max(array_count_values($borderstyles)) == 3 && max(array_count_values($bordercolors)) == 3) {
+        } else if (!$nullwidths && !$nullcolors && !$nullstyles &&
+            max(array_count_values($borderwidths)) == 3 &&
+            max(array_count_values($borderstyles)) == 3 &&
+            max(array_count_values($bordercolors)) == 3) {
+
             $widthkeys = array();
             $stylekeys = array();
             $colorkeys = array();
@@ -2883,20 +2954,30 @@ class css_style_border extends css_style {
 
             if ($widthkeys == $stylekeys && $stylekeys == $colorkeys) {
                 $key = $widthkeys[0][0];
-                self::build_style_string($return, 'css_style_border', 'border',  $borderwidths[$key], $borderstyles[$key], $bordercolors[$key]);
+                self::build_style_string($return, 'css_style_border', 'border',
+                    $borderwidths[$key], $borderstyles[$key], $bordercolors[$key]);
                 $key = $widthkeys[1][0];
-                self::build_style_string($return, 'css_style_border'.$key, 'border-'.$key,  $borderwidths[$key], $borderstyles[$key], $bordercolors[$key]);
+                self::build_style_string($return, 'css_style_border'.$key, 'border-'.$key,
+                    $borderwidths[$key], $borderstyles[$key], $bordercolors[$key]);
             } else {
-                self::build_style_string($return, 'css_style_bordertop', 'border-top', $borderwidths['top'], $borderstyles['top'], $bordercolors['top']);
-                self::build_style_string($return, 'css_style_borderright', 'border-right', $borderwidths['right'], $borderstyles['right'], $bordercolors['right']);
-                self::build_style_string($return, 'css_style_borderbottom', 'border-bottom', $borderwidths['bottom'], $borderstyles['bottom'], $bordercolors['bottom']);
-                self::build_style_string($return, 'css_style_borderleft', 'border-left', $borderwidths['left'], $borderstyles['left'], $bordercolors['left']);
+                self::build_style_string($return, 'css_style_bordertop', 'border-top',
+                    $borderwidths['top'], $borderstyles['top'], $bordercolors['top']);
+                self::build_style_string($return, 'css_style_borderright', 'border-right',
+                    $borderwidths['right'], $borderstyles['right'], $bordercolors['right']);
+                self::build_style_string($return, 'css_style_borderbottom', 'border-bottom',
+                    $borderwidths['bottom'], $borderstyles['bottom'], $bordercolors['bottom']);
+                self::build_style_string($return, 'css_style_borderleft', 'border-left',
+                    $borderwidths['left'], $borderstyles['left'], $bordercolors['left']);
             }
         } else {
-            self::build_style_string($return, 'css_style_bordertop', 'border-top', $borderwidths['top'], $borderstyles['top'], $bordercolors['top']);
-            self::build_style_string($return, 'css_style_borderright', 'border-right', $borderwidths['right'], $borderstyles['right'], $bordercolors['right']);
-            self::build_style_string($return, 'css_style_borderbottom', 'border-bottom', $borderwidths['bottom'], $borderstyles['bottom'], $bordercolors['bottom']);
-            self::build_style_string($return, 'css_style_borderleft', 'border-left', $borderwidths['left'], $borderstyles['left'], $bordercolors['left']);
+            self::build_style_string($return, 'css_style_bordertop', 'border-top',
+                $borderwidths['top'], $borderstyles['top'], $bordercolors['top']);
+            self::build_style_string($return, 'css_style_borderright', 'border-right',
+                $borderwidths['right'], $borderstyles['right'], $bordercolors['right']);
+            self::build_style_string($return, 'css_style_borderbottom', 'border-bottom',
+                $borderwidths['bottom'], $borderstyles['bottom'], $bordercolors['bottom']);
+            self::build_style_string($return, 'css_style_borderleft', 'border-left',
+                $borderwidths['left'], $borderstyles['left'], $bordercolors['left']);
         }
         foreach ($return as $key => $style) {
             if ($style->get_value() == '') {
@@ -2929,7 +3010,8 @@ class css_style_border extends css_style {
      * @param string $left The left value
      * @return bool
      */
-    public static function consolidate_styles_by_direction(&$array, $class, $style, $top, $right = null, $bottom = null, $left = null) {
+    public static function consolidate_styles_by_direction(&$array, $class, $style,
+                                                           $top, $right = null, $bottom = null, $left = null) {
         if (is_array($top)) {
             $right = $top['right'];
             $bottom = $top['bottom'];
@@ -3003,7 +3085,7 @@ class css_style_border extends css_style {
  * A border colour style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3083,7 +3165,7 @@ class css_style_bordercolor extends css_style_color {
  * A border left style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3126,7 +3208,7 @@ class css_style_borderleft extends css_style_generic {
  * A border right style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3169,7 +3251,7 @@ class css_style_borderright extends css_style_generic {
  * A border top style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3212,7 +3294,7 @@ class css_style_bordertop extends css_style_generic {
  * A border bottom style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3255,7 +3337,7 @@ class css_style_borderbottom extends css_style_generic {
  * A border width style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3342,7 +3424,7 @@ class css_style_borderwidth extends css_style_width {
  * A border style style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3395,7 +3477,7 @@ class css_style_borderstyle extends css_style_generic {
  * A border top colour style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3425,7 +3507,7 @@ class css_style_bordertopcolor extends css_style_bordercolor {
  * A border left colour style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3455,7 +3537,7 @@ class css_style_borderleftcolor extends css_style_bordercolor {
  * A border right colour style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3485,7 +3567,7 @@ class css_style_borderrightcolor extends css_style_bordercolor {
  * A border bottom colour style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3515,7 +3597,7 @@ class css_style_borderbottomcolor extends css_style_bordercolor {
  * A border width top style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3545,7 +3627,7 @@ class css_style_bordertopwidth extends css_style_borderwidth {
  * A border width left style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3575,7 +3657,7 @@ class css_style_borderleftwidth extends css_style_borderwidth {
  * A border width right style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3605,7 +3687,7 @@ class css_style_borderrightwidth extends css_style_borderwidth {
  * A border width bottom style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3635,7 +3717,7 @@ class css_style_borderbottomwidth extends css_style_borderwidth {
  * A border top style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3665,7 +3747,7 @@ class css_style_bordertopstyle extends css_style_borderstyle {
  * A border left style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3695,7 +3777,7 @@ class css_style_borderleftstyle extends css_style_borderstyle {
  * A border right style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3725,7 +3807,7 @@ class css_style_borderrightstyle extends css_style_borderstyle {
  * A border bottom style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -3755,11 +3837,11 @@ class css_style_borderbottomstyle extends css_style_borderstyle {
  * A background style
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class css_style_background extends css_style {
+class css_style_background extends css_style implements core_css_consolidatable_style {
 
     /**
      * Initialises a background style
@@ -3768,15 +3850,14 @@ class css_style_background extends css_style {
      * @return array An array of background component.
      */
     public static function init($value) {
-        // colour - image - repeat - attachment - position
-
+        // Colour - image - repeat - attachment - position.
         $imageurl = null;
         if (preg_match('#url\(([^\)]+)\)#', $value, $matches)) {
             $imageurl = trim($matches[1]);
             $value = str_replace($matches[1], '', $value);
         }
 
-        // Switch out the brackets so that they don't get messed up when we explode
+        // Switch out the brackets so that they don't get messed up when we explode.
         $brackets = array();
         $bracketcount = 0;
         while (preg_match('#\([^\)\(]+\)#', $value, $matches)) {
@@ -3788,7 +3869,7 @@ class css_style_background extends css_style {
 
         $important = (stripos($value, '!important') !== false);
         if ($important) {
-            // Great some genius put !important in the background shorthand property
+            // Great some genius put !important in the background shorthand property.
             $value = str_replace('!important', '', $value);
         }
 
@@ -3805,6 +3886,7 @@ class css_style_background extends css_style {
         $attachments = array('scroll' , 'fixed', 'inherit');
         $positions = array('top', 'left', 'bottom', 'right', 'center');
 
+        /* @var css_style_background[] $return */
         $return = array();
         $unknownbits = array();
 
@@ -3828,7 +3910,7 @@ class css_style_background extends css_style {
 
         $attachment = self::NULL_VALUE;
         if (count($bits) > 0 && in_array(reset($bits), $attachments)) {
-            // scroll , fixed, inherit
+            // Scroll , fixed, inherit.
             $attachment = array_shift($bits);
         }
 
@@ -3866,16 +3948,19 @@ class css_style_background extends css_style {
             }
         }
 
-        if ($color === self::NULL_VALUE && $image === self::NULL_VALUE && $repeat === self::NULL_VALUE && $attachment === self::NULL_VALUE && $position === self::NULL_VALUE) {
+        if ($color === self::NULL_VALUE &&
+            $image === self::NULL_VALUE &&
+            $repeat === self::NULL_VALUE && $attachment === self::NULL_VALUE &&
+            $position === self::NULL_VALUE) {
             // All primaries are null, return without doing anything else. There may be advanced madness there.
             return $return;
         }
 
-        $return[] = new css_style_backgroundcolor('background-color', $color);
-        $return[] = new css_style_backgroundimage('background-image', $image);
-        $return[] = new css_style_backgroundrepeat('background-repeat', $repeat);
-        $return[] = new css_style_backgroundattachment('background-attachment', $attachment);
-        $return[] = new css_style_backgroundposition('background-position', $position);
+        $return[] = css_style_backgroundcolor::init($color);
+        $return[] = css_style_backgroundimage::init($image);
+        $return[] = css_style_backgroundrepeat::init($repeat);
+        $return[] = css_style_backgroundattachment::init($attachment);
+        $return[] = css_style_backgroundposition::init($position);
 
         if ($important) {
             foreach ($return as $style) {
@@ -3903,8 +3988,8 @@ class css_style_background extends css_style {
     /**
      * Consolidates background styles into a single background style
      *
-     * @param array $styles Consolidates the provided array of background styles
-     * @return array Consolidated optimised background styles
+     * @param css_style_background[] $styles Consolidates the provided array of background styles
+     * @return css_style[] Consolidated optimised background styles
      */
     public static function consolidate(array $styles) {
 
@@ -3937,8 +4022,11 @@ class css_style_background extends css_style {
             }
         }
 
+        /* @var css_style[] $organisedstyles */
         $organisedstyles = array();
+        /* @var css_style[] $advancedstyles */
         $advancedstyles = array();
+        /* @var css_style[] $importantstyles */
         $importantstyles = array();
         foreach ($styles as $style) {
             if ($style instanceof css_style_backgroundimage_advanced) {
@@ -3978,6 +4066,7 @@ class css_style_background extends css_style {
             }
         }
 
+        /* @var css_style[] $consolidatetosingle */
         $consolidatetosingle = array();
         if (!is_null($color) && !is_null($image) && !is_null($repeat) && !is_null($attachment) && !is_null($position)) {
             // We can use the shorthand background-style!
@@ -4005,7 +4094,7 @@ class css_style_background extends css_style {
         }
 
         $return = array();
-        // Single background style needs to come first;
+        // Single background style needs to come first.
         if (count($consolidatetosingle) > 0) {
             $returnstyle = new css_style_background('background', join(' ', $consolidatetosingle));
             if ($allimportant) {
@@ -4016,14 +4105,30 @@ class css_style_background extends css_style {
         foreach ($styles as $style) {
             $value = null;
             switch ($style->get_name()) {
-                case 'background-color'      : $value = $color;      break;
-                case 'background-image'      : $value = $image;      break;
-                case 'background-repeat'     : $value = $repeat;     break;
-                case 'background-attachment' : $value = $attachment; break;
-                case 'background-position'   : $value = $position;   break;
-                case 'background-clip'       : $value = $clip;       break;
-                case 'background-origin'     : $value = $origin;     break;
-                case 'background-size'       : $value = $size;       break;
+                case 'background-color' :
+                    $value = $color;
+                    break;
+                case 'background-image' :
+                    $value = $image;
+                    break;
+                case 'background-repeat' :
+                    $value = $repeat;
+                    break;
+                case 'background-attachment' :
+                    $value = $attachment;
+                    break;
+                case 'background-position' :
+                    $value = $position;
+                    break;
+                case 'background-clip' :
+                    $value = $clip;
+                    break;
+                case 'background-origin':
+                    $value = $origin;
+                    break;
+                case 'background-size':
+                    $value = $size;
+                    break;
             }
             if (!is_null($value)) {
                 $return[] = $style;
@@ -4038,7 +4143,7 @@ class css_style_background extends css_style {
  * A advanced background style that allows multiple values to preserve unknown entities
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4071,7 +4176,7 @@ class css_style_background_advanced extends css_style_generic {
  * Based upon the colour style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4122,7 +4227,7 @@ class css_style_backgroundcolor extends css_style_color {
  * A background image style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4135,7 +4240,7 @@ class css_style_backgroundimage extends css_style_generic {
      * @return css_style_backgroundimage
      */
     public static function init($value) {
-        if (!preg_match('#^\s*(none|inherit|url\()#i', $value)) {
+        if ($value !== self::NULL_VALUE && !preg_match('#^\s*(none|inherit|url\()#i', $value)) {
             return css_style_backgroundimage_advanced::init($value);
         }
         return new css_style_backgroundimage('background-image', $value);
@@ -4173,10 +4278,10 @@ class css_style_backgroundimage extends css_style_generic {
 }
 
 /**
- * A background image style that supports mulitple values and masquerades as a background-image
+ * A background image style that supports multiple values and masquerades as a background-image
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4207,7 +4312,7 @@ class css_style_backgroundimage_advanced extends css_style_generic {
  * A background repeat style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4258,7 +4363,7 @@ class css_style_backgroundrepeat extends css_style_generic {
  * A background attachment style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4309,7 +4414,7 @@ class css_style_backgroundattachment extends css_style_generic {
  * A background position style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4360,7 +4465,7 @@ class css_style_backgroundposition extends css_style_generic {
  * A background size style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4390,7 +4495,7 @@ class css_style_backgroundsize extends css_style_generic {
  * A background clip style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4420,7 +4525,7 @@ class css_style_backgroundclip extends css_style_generic {
  * A background origin style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4450,11 +4555,11 @@ class css_style_backgroundorigin extends css_style_generic {
  * A padding style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class css_style_padding extends css_style_width {
+class css_style_padding extends css_style_width implements core_css_consolidatable_style {
 
     /**
      * Initialises this padding style into several individual padding styles
@@ -4496,8 +4601,8 @@ class css_style_padding extends css_style_width {
     /**
      * Consolidates several padding styles into a single style.
      *
-     * @param array $styles Array of padding styles
-     * @return array Optimised+consolidated array of padding styles
+     * @param css_style_padding[] $styles Array of padding styles
+     * @return css_style[] Optimised+consolidated array of padding styles
      */
     public static function consolidate(array $styles) {
         if (count($styles) != 4) {
@@ -4548,10 +4653,18 @@ class css_style_padding extends css_style_width {
             $left = null;
             foreach ($styles as $style) {
                 switch ($style->get_name()) {
-                    case 'padding-top' : $top = $style->get_value(false);break;
-                    case 'padding-right' : $right = $style->get_value(false);break;
-                    case 'padding-bottom' : $bottom = $style->get_value(false);break;
-                    case 'padding-left' : $left = $style->get_value(false);break;
+                    case 'padding-top' :
+                        $top = $style->get_value(false);
+                        break;
+                    case 'padding-right' :
+                        $right = $style->get_value(false);
+                        break;
+                    case 'padding-bottom' :
+                        $bottom = $style->get_value(false);
+                        break;
+                    case 'padding-left' :
+                        $left = $style->get_value(false);
+                        break;
                 }
             }
             if ($top == $bottom && $left == $right) {
@@ -4577,7 +4690,7 @@ class css_style_padding extends css_style_width {
  * A padding top style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4607,7 +4720,7 @@ class css_style_paddingtop extends css_style_padding {
  * A padding right style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4637,7 +4750,7 @@ class css_style_paddingright extends css_style_padding {
  * A padding bottom style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4667,7 +4780,7 @@ class css_style_paddingbottom extends css_style_padding {
  * A padding left style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4697,7 +4810,7 @@ class css_style_paddingleft extends css_style_padding {
  * A cursor style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4717,10 +4830,10 @@ class css_style_cursor extends css_style_generic {
      * @return string
      */
     protected function clean_value($value) {
-        // Allowed values for the cursor style
+        // Allowed values for the cursor style.
         $allowed = array('auto', 'crosshair', 'default', 'e-resize', 'help', 'move', 'n-resize', 'ne-resize', 'nw-resize',
                          'pointer', 'progress', 's-resize', 'se-resize', 'sw-resize', 'text', 'w-resize', 'wait', 'inherit');
-        // Has to be one of the allowed values of an image to use. Loosely match the image... doesn't need to be thorough
+        // Has to be one of the allowed values of an image to use. Loosely match the image... doesn't need to be thorough.
         if (!in_array($value, $allowed) && !preg_match('#\.[a-zA-Z0-9_\-]{1,5}$#', $value)) {
             $this->set_error('Invalid or unexpected cursor value specified: '.$value);
         }
@@ -4732,7 +4845,7 @@ class css_style_cursor extends css_style_generic {
  * A vertical alignment style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -4764,7 +4877,7 @@ class css_style_verticalalign extends css_style_generic {
  * A float style.
  *
  * @package core
- * @category css
+ * @subpackage cssoptimiser
  * @copyright 2012 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
