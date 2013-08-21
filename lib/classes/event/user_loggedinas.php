@@ -42,8 +42,7 @@ class user_loggedinas extends base {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        // TODO MDL-41040 set level.
-        $this->data['level'] = 50;
+        $this->data['level'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'user';
     }
 

@@ -34,7 +34,7 @@ class course_updated extends base {
     protected function init() {
         $this->data['objecttable'] = 'course';
         $this->data['crud'] = 'u';
-        $this->data['level'] = 50;
+        $this->data['level'] = self::LEVEL_TEACHING;
     }
 
     /**
