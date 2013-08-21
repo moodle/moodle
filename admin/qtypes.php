@@ -129,7 +129,7 @@ if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey())
         print_error('cannotdeletemissingqtype', 'question', $thispageurl);
     }
 
-    if (!isset($qtypes[$delete])) {
+    if (!isset($qtypes[$delete]) && !get_config('qtype_' . $delete, 'version')) {
         print_error('unknownquestiontype', 'question', $thispageurl, $delete);
     }
 
@@ -158,18 +158,12 @@ if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey())
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('deletingqtype', 'question', $qtypename));
 
-    // Delete any configuration records.
-    if (!unset_all_config_for_plugin('qtype_' . $delete)) {
-        echo $OUTPUT->notification(get_string('errordeletingconfig', 'admin', 'qtype_' . $delete));
-    }
+    // Delete any questoin configuration records mentioning this plugin.
     unset_config($delete . '_disabled', 'question');
     unset_config($delete . '_sortorder', 'question');
 
-    // Then the tables themselves
-    drop_plugin_tables($delete, $qtypes[$delete]->plugin_dir() . '/db/install.xml', false);
-
-    // Remove event handlers and dequeue pending events
-    events_uninstall('qtype_' . $delete);
+    // Then uninstall the plugin.
+    uninstall_plugin('qtype', $delete);
 
     $a = new stdClass();
     $a->qtype = $qtypename;

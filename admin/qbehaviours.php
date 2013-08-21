@@ -143,7 +143,7 @@ if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey())
         print_error('cannotdeletemissingbehaviour', 'question', $thispageurl);
     }
 
-    if (!isset($behaviours[$delete])) {
+    if (!isset($behaviours[$delete]) && !get_config('qbehaviour_' . $delete, 'version')) {
         print_error('unknownbehaviour', 'question', $thispageurl, $delete);
     }
 
@@ -171,10 +171,7 @@ if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey())
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('deletingbehaviour', 'question', $behaviourname));
 
-    // Delete any configuration records.
-    if (!unset_all_config_for_plugin('qbehaviour_' . $delete)) {
-        echo $OUTPUT->notification(get_string('errordeletingconfig', 'admin', 'qbehaviour_' . $delete));
-    }
+    // Remove this behaviour from configurations where it might appear.
     if (($key = array_search($delete, $disabledbehaviours)) !== false) {
         unset($disabledbehaviours[$key]);
         set_config('disabledbehaviours', implode(',', $disabledbehaviours), 'question');
@@ -185,12 +182,10 @@ if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey())
         set_config('behavioursortorder', implode(',', $behaviourorder), 'question');
     }
 
-    // Then the tables themselves
-    drop_plugin_tables($delete, core_component::get_plugin_directory('qbehaviour', $delete) . '/db/install.xml', false);
+    // Then uninstall the plugin.
+    uninstall_plugin('qbehaviour', $delete);
 
-    // Remove event handlers and dequeue pending events
-    events_uninstall('qbehaviour_' . $delete);
-
+    // Display a message.
     $a = new stdClass();
     $a->behaviour = $behaviourname;
     $a->directory = core_component::get_plugin_directory('qbehaviour', $delete);
