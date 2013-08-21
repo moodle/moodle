@@ -2136,6 +2136,7 @@ function qf_errorHandler(element, _qfMsg) {
     return true;
   }
 
+
   if (_qfMsg != \'\') {
     var errorSpan = document.getElementById(\'id_error_\'+element.name);
     if (!errorSpan) {
@@ -2157,6 +2158,8 @@ function qf_errorHandler(element, _qfMsg) {
       && div.className != "error") {
         div.className += " error";
         linebreak = document.createElement("br");
+        linebreak.className = "error";
+        linebreak.id = \'id_error_break_\'+element.name;
         errorSpan.parentNode.insertBefore(linebreak, errorSpan.nextSibling);
     }
 
