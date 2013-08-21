@@ -42,7 +42,7 @@ $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 // Get the course information so we can print the header and
 // check the course id is valid
 
-$course = get_course($courseid);
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 
 $url = new moodle_url('/group/index.php', array('id'=>$courseid));
 if ($userid) {

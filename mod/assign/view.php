@@ -34,7 +34,7 @@ $urlparams = array('id' => $id,
 
 $url = new moodle_url('/mod/assign/view.php', $urlparams);
 $cm = get_coursemodule_from_id('assign', $id, 0, false, MUST_EXIST);
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 $PAGE->set_url($url);

@@ -49,7 +49,7 @@
         if ($COURSE->id == $cm->course) {
             $course = $COURSE;
         } else {
-            $course = get_course($cm->course);
+            $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
         }
         //context id from db should match the submitted one
         if ($context->id != $modcontext->id || !has_capability('mod/glossary:view', $modcontext)) {

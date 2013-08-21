@@ -28,7 +28,7 @@ require_once($CFG->dirroot.'/report/outline/locallib.php');
 
 $id = required_param('id',PARAM_INT);       // course id
 
-$course = get_course($id);
+$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 $PAGE->set_url('/report/outline/index.php', array('id'=>$id));
 $PAGE->set_pagelayout('report');

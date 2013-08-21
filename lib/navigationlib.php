@@ -2744,7 +2744,7 @@ class global_navigation_for_ajax extends global_navigation {
                 $this->load_category($this->instanceid, self::TYPE_MY_CATEGORY);
                 break;
             case self::TYPE_COURSE :
-                $course = get_course($this->instanceid);
+                $course = $DB->get_record('course', array('id' => $this->instanceid), '*', MUST_EXIST);
                 require_course_login($course, true, null, false, true);
                 $this->page->set_context(context_course::instance($course->id));
                 $coursenode = $this->add_course($course);

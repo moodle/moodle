@@ -63,7 +63,7 @@ $courseid = (int)array_shift($args);
 $relativepath = implode('/', $args);
 
 // security: limit access to existing course subdirectories
-$course = get_course($courseid);
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 
 if ($course->legacyfiles != 2) {
     // course files disabled

@@ -90,7 +90,7 @@ $hasparentaccess = $isparent && has_all_capabilities(array('moodle/user:viewdeta
 // Check whether a specific course has been requested
 if ($isspecificcourse) {
     // Get the requested course and its context
-    $course = get_course($courseid);
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     $coursecontext = context_course::instance($courseid, MUST_EXIST);
     // We have a specific course to search, which we will also assume we are within.
     if ($hasparentaccess) {

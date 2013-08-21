@@ -36,7 +36,7 @@ if ($mode !== 'today' and $mode !== 'all') {
 }
 
 $user = $DB->get_record('user', array('id'=>$userid, 'deleted'=>0), '*', MUST_EXIST);
-$course = get_course($courseid);
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 
 $coursecontext   = context_course::instance($course->id);
 $personalcontext = context_user::instance($user->id);

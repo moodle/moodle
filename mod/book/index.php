@@ -27,7 +27,7 @@ require_once(dirname(__FILE__).'/locallib.php');
 
 $id = required_param('id', PARAM_INT); // Course ID.
 
-$course = get_course($id);
+$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 unset($id);
 

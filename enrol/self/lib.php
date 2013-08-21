@@ -397,7 +397,7 @@ class enrol_self_plugin extends enrol_plugin {
     protected function email_welcome_message($instance, $user) {
         global $CFG, $DB;
 
-        $course = get_course($instance->courseid);
+        $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
         $context = context_course::instance($course->id);
 
         $a = new stdClass();

@@ -247,7 +247,7 @@ class course_modinfo extends stdClass {
         // Check modinfo field is set. If not, build and load it.
         if (empty($course->modinfo) || empty($course->sectioncache)) {
             rebuild_course_cache($course->id);
-            $course = get_course($course->id);
+            $course = $DB->get_record('course', array('id'=>$course->id), '*', MUST_EXIST);
         }
 
         // Set initial values

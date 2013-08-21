@@ -30,7 +30,7 @@ $chapterid = required_param('chapterid', PARAM_INT); // Chapter ID
 $confirm   = optional_param('confirm', 0, PARAM_BOOL);
 
 $cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 $book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 require_login($course, false, $cm);

@@ -65,7 +65,7 @@ if ($l) {  // Two ways to specify the module
     $lti = $DB->get_record('lti', array('id' => $cm->instance), '*', MUST_EXIST);
 }
 
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);

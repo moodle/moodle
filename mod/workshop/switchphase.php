@@ -32,7 +32,7 @@ $phase      = required_param('phase', PARAM_INT);           // the code of the n
 $confirm    = optional_param('confirm', false, PARAM_BOOL); // confirmation
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
-$course     = get_course($cm->course);
+$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop($workshop, $cm, $course);
 

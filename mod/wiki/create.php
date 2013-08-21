@@ -82,7 +82,7 @@ if (groups_get_activity_groupmode($cm)) {
     }
 }
 
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, true, $cm);
 

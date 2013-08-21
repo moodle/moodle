@@ -31,7 +31,7 @@ $id         = required_param('id', PARAM_INT); // course_module ID
 $tool       = required_param('tool', PARAM_ALPHA);
 
 $cm         = get_coursemodule_from_id('workshop', $id, 0, false, MUST_EXIST);
-$course     = get_course($cm->course);
+$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 
 require_login($course, false, $cm);

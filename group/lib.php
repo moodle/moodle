@@ -218,7 +218,7 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
     global $CFG, $DB;
 
     //check that courseid exists
-    $course = get_course($data->courseid);
+    $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
     $context = context_course::instance($course->id);
 
     $data->timecreated  = time();

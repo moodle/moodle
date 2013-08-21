@@ -43,7 +43,7 @@ if ($courseid == SITEID) {   // Since Moodle 2.0 all site-level profiles are sho
 $PAGE->set_url('/user/view.php', array('id'=>$id,'course'=>$courseid));
 
 $user = $DB->get_record('user', array('id'=>$id), '*', MUST_EXIST);
-$course = get_course($courseid);
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 $currentuser = ($user->id == $USER->id);
 
 $systemcontext = context_system::instance();

@@ -30,7 +30,7 @@ require_once(dirname(__FILE__).'/locallib.php');
 $cmid       = required_param('cmid', PARAM_INT);
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
-$course     = get_course($cm->course);
+$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 require_capability('mod/workshop:editdimensions', $PAGE->context);

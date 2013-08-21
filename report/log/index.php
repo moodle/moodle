@@ -100,7 +100,7 @@ $PAGE->set_url('/report/log/index.php', $params);
 $PAGE->set_pagelayout('report');
 
 if ($hostid == $CFG->mnet_localhost_id) {
-    $course = get_course($id);
+    $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
 } else {
     $course_stub       = $DB->get_record('mnet_log', array('hostid'=>$hostid, 'course'=>$id), '*', true);

@@ -3628,7 +3628,7 @@ function forum_rating_validate($params) {
     $post = $DB->get_record('forum_posts', array('id' => $params['itemid'], 'userid' => $params['rateduserid']), '*', MUST_EXIST);
     $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion), '*', MUST_EXIST);
     $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
-    $course = get_course($forum->course);
+    $course = $DB->get_record('course', array('id' => $forum->course), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id , false, MUST_EXIST);
     $context = context_module::instance($cm->id);
 

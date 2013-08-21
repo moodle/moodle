@@ -32,7 +32,7 @@ $sid    = required_param('sid', PARAM_INT);     // example submission id
 $aid    = required_param('aid', PARAM_INT);     // the user's assessment id
 
 $cm     = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 if (isguestuser()) {

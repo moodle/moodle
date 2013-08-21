@@ -67,7 +67,7 @@ class core_course_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_course_contents($courseid, $options = array()) {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->dirroot . "/course/lib.php");
 
         //validate parameter
@@ -75,7 +75,7 @@ class core_course_external extends external_api {
                         array('courseid' => $courseid, 'options' => $options));
 
         //retrieve the course
-        $course = get_course($params['courseid']);
+        $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
 
         //check course format exist
         if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
@@ -848,7 +848,7 @@ class core_course_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['courseids'] as $courseid) {
-            $course = get_course($courseid);
+            $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 
             // Check if the context is valid.
             $coursecontext = context_course::instance($course->id);
@@ -1077,7 +1077,7 @@ class core_course_external extends external_api {
         $rc->execute_plan();
         $rc->destroy();
 
-        $course = get_course($newcourseid);
+        $course = $DB->get_record('course', array('id' => $newcourseid), '*', MUST_EXIST);
         $course->fullname = $params['fullname'];
         $course->shortname = $params['shortname'];
         $course->visible = $params['visible'];

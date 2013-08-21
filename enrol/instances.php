@@ -29,7 +29,7 @@ $action     = optional_param('action', '', PARAM_ALPHANUMEXT);
 $instanceid = optional_param('instance', 0, PARAM_INT);
 $confirm    = optional_param('confirm', 0, PARAM_BOOL);
 
-$course = get_course($id);
+$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 if ($course->id == SITEID) {

@@ -31,7 +31,7 @@ $asid       = required_param('asid', PARAM_INT);  // assessment id
 $assessment = $DB->get_record('workshop_assessments', array('id' => $asid), '*', MUST_EXIST);
 $example    = $DB->get_record('workshop_submissions', array('id' => $assessment->submissionid, 'example' => 1), '*', MUST_EXIST);
 $workshop   = $DB->get_record('workshop', array('id' => $example->workshopid), '*', MUST_EXIST);
-$course     = get_course($workshop->course);
+$course     = $DB->get_record('course', array('id' => $workshop->course), '*', MUST_EXIST);
 $cm         = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
 
 require_login($course, false, $cm);

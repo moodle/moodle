@@ -30,7 +30,7 @@ $courseid = required_param('id', PARAM_INT);
 
 $PAGE->set_url('/grade/edit/outcome/course.php', array('id'=>$courseid));
 
-$course = get_course($courseid);
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 /// Make sure they can even access this course
 require_login($course);

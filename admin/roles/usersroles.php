@@ -32,7 +32,7 @@ $courseid = required_param('courseid', PARAM_INT);
 
 // Validate them and get the corresponding objects.
 $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
-$course = get_course($courseid);
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 $usercontext = context_user::instance($user->id);
 $coursecontext = context_course::instance($course->id);

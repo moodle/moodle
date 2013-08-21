@@ -14,7 +14,7 @@ $PAGE->set_url($url);
 $PAGE->set_popup_notification_allowed(false); // No popup notifications in the chat window
 
 $chat = $DB->get_record('chat', array('id'=>$id), '*', MUST_EXIST);
-$course = get_course($chat->course);
+$course = $DB->get_record('course', array('id'=>$chat->course), '*', MUST_EXIST);
 $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id, false, MUST_EXIST);
 
 $context = context_module::instance($cm->id);

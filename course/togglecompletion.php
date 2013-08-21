@@ -40,7 +40,7 @@ if ($courseid) {
     $PAGE->set_url(new moodle_url('/course/togglecompletion.php', array('course'=>$courseid)));
 
     // Check user is logged in
-    $course = get_course($courseid);
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     $context = context_course::instance($course->id);
     require_login($course);
 
@@ -129,7 +129,7 @@ switch($targetstate) {
 
 // Get course-modules entry
 $cm = get_coursemodule_from_id(null, $cmid, null, true, MUST_EXIST);
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 // Check user is logged in
 require_login($course, false, $cm);

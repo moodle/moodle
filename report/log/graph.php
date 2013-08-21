@@ -40,7 +40,7 @@ if ($type !== "usercourse.png" and $type !== "userday.png") {
     $type = 'userday.png';
 }
 
-$course = get_course($id);
+$course = $DB->get_record("course", array("id"=>$id), '*', MUST_EXIST);
 $user = $DB->get_record("user", array("id"=>$user, 'deleted'=>0), '*', MUST_EXIST);
 
 $coursecontext   = context_course::instance($course->id);

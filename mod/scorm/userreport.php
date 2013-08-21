@@ -44,7 +44,7 @@ if ($attempt !== '1') {
 if (!empty($id)) {
     $url->param('id', $id);
     $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
     $scorm = $DB->get_record('scorm', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
     if (!empty($b)) {
@@ -55,7 +55,7 @@ if (!empty($id)) {
     if (!empty($a)) {
         $url->param('a', $a);
         $scorm = $DB->get_record('scorm', array('id' => $a), '*', MUST_EXIST);
-        $course = get_course($scorm->course);
+        $course = $DB->get_record('course', array('id' => $scorm->course), '*', MUST_EXIST);
         $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id, false, MUST_EXIST);
     }
 }

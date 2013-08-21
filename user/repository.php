@@ -35,7 +35,7 @@ if ($config !== 0) {
 }
 $PAGE->set_url($url);
 
-$course = get_course($course);
+$course = $DB->get_record("course", array("id"=>$course), '*', MUST_EXIST);
 
 $user = $USER;
 $baseurl = $CFG->wwwroot . '/user/repository.php';

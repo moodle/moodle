@@ -48,7 +48,7 @@ if (!$cm = get_coursemodule_from_instance("wiki", $subwiki->wikiid)) {
 }
 
 // Checking course instance
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 $context = context_module::instance($cm->id);
 

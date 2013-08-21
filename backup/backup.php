@@ -40,7 +40,7 @@ $PAGE->set_pagelayout('admin');
 
 $id = $courseid;
 $cm = null;
-$course = get_course($courseid);
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
 $type = backup::TYPE_1COURSE;
 if (!is_null($sectionid)) {
     $section = $DB->get_record('course_sections', array('course'=>$course->id, 'id'=>$sectionid), '*', MUST_EXIST);

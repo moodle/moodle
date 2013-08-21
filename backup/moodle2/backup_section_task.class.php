@@ -148,7 +148,7 @@ class backup_section_task extends backup_task {
         // All these are common settings to be shared by all sections
 
         $section = $DB->get_record('course_sections', array('id' => $this->sectionid), '*', MUST_EXIST);
-        $course = get_course($section->course);
+        $course = $DB->get_record('course', array('id' => $section->course), '*', MUST_EXIST);
 
         // Define section_included (to decide if the whole task must be really executed)
         $settingname = $settingprefix . 'included';

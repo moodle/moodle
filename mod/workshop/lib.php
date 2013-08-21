@@ -944,7 +944,7 @@ function workshop_cron() {
         require_once($CFG->dirroot.'/mod/workshop/locallib.php');
         foreach ($workshops as $workshop) {
             $cm = get_coursemodule_from_instance('workshop', $workshop->id, $workshop->course, false, MUST_EXIST);
-            $course = get_course($cm->course);
+            $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
             $workshop = new workshop($workshop, $cm, $course);
             $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
             $workshop->log('update switch phase', $workshop->view_url(), $workshop->phase);

@@ -40,7 +40,7 @@
     $PAGE->set_url($url);
 
     $discussion = $DB->get_record('forum_discussions', array('id' => $d), '*', MUST_EXIST);
-    $course = get_course($discussion->course);
+    $course = $DB->get_record('course', array('id' => $discussion->course), '*', MUST_EXIST);
     $forum = $DB->get_record('forum', array('id' => $discussion->forum), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id, false, MUST_EXIST);
 

@@ -38,7 +38,7 @@ if (! $cm = get_coursemodule_from_id('quiz', $cmid)) {
 if (! $quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
     print_error('invalidcoursemodule');
 }
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 // Get the course groups.
 $groups = groups_get_all_groups($cm->course);

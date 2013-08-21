@@ -32,7 +32,7 @@ require_once($CFG->libdir.'/filelib.php');
 $id = required_param('id', PARAM_INT);           // Course Module ID
 
 $cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 $book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 $PAGE->set_url('/mod/book/tool/exportimscp/index.php', array('id'=>$id));

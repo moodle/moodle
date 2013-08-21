@@ -35,7 +35,7 @@ $confirm    = optional_param('confirm', false, PARAM_BOOL); // example removal r
 $assess     = optional_param('assess', false, PARAM_BOOL);  // assessment required
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
-$course     = get_course($cm->course);
+$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 if (isguestuser()) {

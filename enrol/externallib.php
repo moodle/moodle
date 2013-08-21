@@ -124,7 +124,7 @@ class core_enrol_external extends external_api {
 
         foreach ($params['coursecapabilities'] as $coursecapability) {
             $courseid = $coursecapability['courseid'];
-            $course = get_course($courseid);
+            $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
             $coursecontext = context_course::instance($courseid);
             if (!$coursecontext) {
                 throw new moodle_exception('cannotfindcourse', 'error', '', null,
@@ -423,7 +423,7 @@ class core_enrol_external extends external_api {
             }
         }
 
-        $course = get_course($courseid);
+        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
         $coursecontext = context_course::instance($courseid, IGNORE_MISSING);
         if ($courseid == SITEID) {
             $context = context_system::instance();

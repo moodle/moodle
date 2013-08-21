@@ -40,7 +40,7 @@ require_once($CFG->libdir . '/filelib.php');
 //check user access capability to this page
 $id = required_param('id', PARAM_INT);
 
-$course = get_course($id);
+$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 require_login($course);
 
 //page settings

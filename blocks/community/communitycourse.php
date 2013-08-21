@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
 
 require_login();
 $courseid = required_param('courseid', PARAM_INT); //if no courseid is given
-$parentcourse = get_course($courseid);
+$parentcourse = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 $context = context_course::instance($courseid);
 $PAGE->set_course($parentcourse);

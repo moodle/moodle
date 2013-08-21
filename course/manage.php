@@ -237,10 +237,10 @@ if (!empty($moveto) && ($data = data_submitted()) && confirm_sesskey()) {
 if ((!empty($hide) or !empty($show)) && confirm_sesskey()) {
     // Hide or show a course.
     if (!empty($hide)) {
-        $course = get_course($hide);
+        $course = $DB->get_record('course', array('id' => $hide), '*', MUST_EXIST);
         $visible = 0;
     } else {
-        $course = get_course($show);
+        $course = $DB->get_record('course', array('id' => $show), '*', MUST_EXIST);
         $visible = 1;
     }
     $coursecontext = context_course::instance($course->id);

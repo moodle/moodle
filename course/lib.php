@@ -3085,7 +3085,7 @@ function course_get_url($courseorid, $section = null, $options = array()) {
  * @return object the created module info
  */
 function create_module($moduleinfo) {
-    global $CFG;
+    global $DB, $CFG;
 
     require_once($CFG->dirroot . '/course/modlib.php');
 
@@ -3101,7 +3101,7 @@ function create_module($moduleinfo) {
     }
 
     // Some additional checks (capability / existing instances).
-    $course = get_course($moduleinfo->course);
+    $course = $DB->get_record('course', array('id'=>$moduleinfo->course), '*', MUST_EXIST);
     list($module, $context, $cw) = can_add_moduleinfo($course, $moduleinfo->modulename, $moduleinfo->section);
 
     // Load module library.
@@ -3125,7 +3125,7 @@ function create_module($moduleinfo) {
  * @return object the updated module info
  */
 function update_module($moduleinfo) {
-    global $CFG;
+    global $DB, $CFG;
 
     require_once($CFG->dirroot . '/course/modlib.php');
 
@@ -3133,7 +3133,7 @@ function update_module($moduleinfo) {
     $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
 
     // Check the course exists.
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
     // Some checks (capaibility / existing instances).
     list($cm, $context, $module, $data, $cw) = can_update_moduleinfo($cm);

@@ -40,7 +40,7 @@ if (! $quiz = $DB->get_record('quiz', array('id' => $override->quiz))) {
 if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $quiz->course)) {
     print_error('invalidcoursemodule');
 }
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 $context = context_module::instance($cm->id);
 

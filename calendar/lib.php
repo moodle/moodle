@@ -1811,7 +1811,7 @@ function calendar_get_allowed_types(&$allowed, $course = null) {
 
     if (!empty($course)) {
         if (!is_object($course)) {
-            $course = get_course($course);
+            $course = $DB->get_record('course', array('id' => $course), '*', MUST_EXIST);
         }
         if ($course->id != SITEID) {
             $coursecontext = context_course::instance($course->id);

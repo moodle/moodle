@@ -7,7 +7,7 @@ require_once($CFG->dirroot.'/calendar/lib.php');
 require_once($CFG->dirroot.'/calendar/preferences_form.php');
 
 $courseid = required_param('course', PARAM_INT);
-$course = get_course($courseid);
+$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
 $PAGE->set_url(new moodle_url('/calendar/preferences.php', array('course' => $courseid)));
 $PAGE->set_pagelayout('standard');

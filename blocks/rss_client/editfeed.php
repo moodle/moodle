@@ -154,7 +154,7 @@ if ($courseid == SITEID) {
     $courseid = 0;
 }
 if ($courseid) {
-    $course = get_course($courseid);
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
     $PAGE->set_course($course);
     $context = $PAGE->context;
 } else {

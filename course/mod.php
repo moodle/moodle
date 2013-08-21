@@ -80,7 +80,7 @@ if (!empty($add)) {
 
 } else if (!empty($duplicate)) {
     $cm     = get_coursemodule_from_id('', $duplicate, 0, true, MUST_EXIST);
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     require_login($course, false, $cm);
     $coursecontext = context_course::instance($course->id);
@@ -117,7 +117,7 @@ if (!empty($add)) {
 
 } else if (!empty($delete)) {
     $cm     = get_coursemodule_from_id('', $delete, 0, true, MUST_EXIST);
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     require_login($course, false, $cm);
     $modcontext = context_module::instance($cm->id);
@@ -158,7 +158,7 @@ if (!empty($add)) {
 
 if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     $cm     = get_coursemodule_from_id('', $USER->activitycopy, 0, true, MUST_EXIST);
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     require_login($course, false, $cm);
     $coursecontext = context_course::instance($course->id);
@@ -198,7 +198,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     $id = required_param('id', PARAM_INT);
 
     $cm     = get_coursemodule_from_id('', $id, 0, true, MUST_EXIST);
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     require_login($course, false, $cm);
     $coursecontext = context_course::instance($course->id);
@@ -219,7 +219,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
 } else if (!empty($hide) and confirm_sesskey()) {
     $cm     = get_coursemodule_from_id('', $hide, 0, true, MUST_EXIST);
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     require_login($course, false, $cm);
     $coursecontext = context_course::instance($course->id);
@@ -232,7 +232,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
 } else if (!empty($show) and confirm_sesskey()) {
     $cm     = get_coursemodule_from_id('', $show, 0, true, MUST_EXIST);
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     require_login($course, false, $cm);
     $coursecontext = context_course::instance($course->id);
@@ -253,7 +253,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     $id = required_param('id', PARAM_INT);
 
     $cm     = get_coursemodule_from_id('', $id, 0, true, MUST_EXIST);
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     require_login($course, false, $cm);
     $coursecontext = context_course::instance($course->id);
@@ -266,7 +266,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
 } else if (!empty($copy) and confirm_sesskey()) { // value = course module
     $cm     = get_coursemodule_from_id('', $copy, 0, true, MUST_EXIST);
-    $course = get_course($cm->course);
+    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
     require_login($course, false, $cm);
     $coursecontext = context_course::instance($course->id);
@@ -285,7 +285,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 } else if (!empty($cancelcopy) and confirm_sesskey()) { // value = course module
 
     $courseid = $USER->activitycopycourse;
-    $course = get_course($courseid);
+    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
 
     $cm     = get_coursemodule_from_id('', $USER->activitycopy, 0, true, IGNORE_MISSING);
     $sectionreturn = $USER->activitycopysectionreturn;

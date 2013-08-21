@@ -31,7 +31,7 @@ $mode    = optional_param('mode', "todaylogs", PARAM_ALPHA);
 
 $url = new moodle_url('/course/user.php', array('id'=>$id,'user'=>$user, 'mode'=>$mode));
 
-$course = get_course($id);
+$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 $user = $DB->get_record("user", array("id"=>$user, 'deleted'=>0), '*', MUST_EXIST);
 
 if ($mode === 'outline' or $mode === 'complete') {

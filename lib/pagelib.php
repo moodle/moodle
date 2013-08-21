@@ -950,7 +950,7 @@ class moodle_page {
 
         if (!$this->_course || $this->_course->id != $cm->course) {
             if (!$course) {
-                $course = get_course($cm->course);
+                $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
             }
             if ($course->id != $cm->course) {
                 throw new coding_exception('The course you passed to $PAGE->set_cm does not correspond to the $cm.');

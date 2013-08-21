@@ -55,7 +55,7 @@ $id = required_param('id', PARAM_INT); // Course Module ID
 
 $cm = get_coursemodule_from_id('lti', $id, 0, false, MUST_EXIST);
 $lti = $DB->get_record('lti', array('id' => $cm->instance), '*', MUST_EXIST);
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course);
 

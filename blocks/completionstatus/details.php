@@ -32,7 +32,7 @@ $id = required_param('course', PARAM_INT);
 $userid = optional_param('user', 0, PARAM_INT);
 
 // Load course.
-$course = get_course($id);
+$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 
 // Load user.
 if ($userid) {

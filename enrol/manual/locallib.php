@@ -389,7 +389,7 @@ function enrol_manual_migrate_plugin_enrolments($enrol) {
         $minstance = false;
         if (!$e->mid) {
             // Manual instance does not exist yet, add a new one.
-            $course = get_course($e->courseid);
+            $course = $DB->get_record('course', array('id'=>$e->courseid), '*', MUST_EXIST);
             if ($minstance = $DB->get_record('enrol', array('courseid'=>$course->id, 'enrol'=>'manual'))) {
                 // Already created by previous iteration.
                 $e->mid = $minstance->id;

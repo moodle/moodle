@@ -34,7 +34,7 @@ $id = required_param('id', PARAM_INT);  // Course module ID
 $cm = get_coursemodule_from_id('folder', $id, 0, true, MUST_EXIST);
 $context = context_module::instance($cm->id, MUST_EXIST);
 $folder = $DB->get_record('folder', array('id'=>$cm->instance), '*', MUST_EXIST);
-$course = get_course($cm->course);
+$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 
 require_login($course, false, $cm);
 require_capability('mod/folder:managefiles', $context);

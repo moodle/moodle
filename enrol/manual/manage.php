@@ -31,7 +31,7 @@ $extendperiod = optional_param('extendperiod', 0, PARAM_INT);
 $extendbase   = optional_param('extendbase', 3, PARAM_INT);
 
 $instance = $DB->get_record('enrol', array('id'=>$enrolid, 'enrol'=>'manual'), '*', MUST_EXIST);
-$course = get_course($instance->courseid);
+$course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 require_login($course);
