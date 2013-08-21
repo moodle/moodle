@@ -67,7 +67,7 @@ class core_course_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_course_contents($courseid, $options = array()) {
-        global $CFG, $DB;
+        global $CFG;
         require_once($CFG->dirroot . "/course/lib.php");
 
         //validate parameter
@@ -75,7 +75,7 @@ class core_course_external extends external_api {
                         array('courseid' => $courseid, 'options' => $options));
 
         //retrieve the course
-        $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
+        $course = get_course($params['courseid']);
 
         //check course format exist
         if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
@@ -848,7 +848,7 @@ class core_course_external extends external_api {
         $transaction = $DB->start_delegated_transaction();
 
         foreach ($params['courseids'] as $courseid) {
-            $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+            $course = get_course($courseid);
 
             // Check if the context is valid.
             $coursecontext = context_course::instance($course->id);
@@ -1077,13 +1077,13 @@ class core_course_external extends external_api {
         $rc->execute_plan();
         $rc->destroy();
 
-        $course = $DB->get_record('course', array('id' => $newcourseid), '*', MUST_EXIST);
+        $course = get_course($newcourseid);
         $course->fullname = $params['fullname'];
         $course->shortname = $params['shortname'];
         $course->visible = $params['visible'];
 
         // Set shortname and fullname back.
-        $DB->update_record('course', $course);
+        update_course_record($course);
 
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete($backupbasepath);

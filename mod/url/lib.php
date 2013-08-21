@@ -306,7 +306,7 @@ function url_export_contents($cm, $baseurl) {
     $contents = array();
     $context = context_module::instance($cm->id);
 
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
     $url = $DB->get_record('url', array('id'=>$cm->instance), '*', MUST_EXIST);
 
     $fullurl = str_replace('&amp;', '&', url_get_full_url($url, $cm, $course));

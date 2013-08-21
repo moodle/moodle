@@ -28,7 +28,7 @@ require_once("$CFG->libdir/resourcelib.php");
 
 $id = required_param('id', PARAM_INT); // course id
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 $PAGE->set_pagelayout('course');
 require_course_login($course, true);
 

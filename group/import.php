@@ -30,7 +30,7 @@ include_once('import_form.php');
 
 $id = required_param('id', PARAM_INT);    // Course id
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 
 $PAGE->set_url('/group/import.php', array('id'=>$id));
 

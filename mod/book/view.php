@@ -36,12 +36,12 @@ $edit      = optional_param('edit', -1, PARAM_BOOL);    // Edit mode
 // =========================================================================
 if ($id) {
     $cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
     $book = $DB->get_record('book', array('id'=>$cm->instance), '*', MUST_EXIST);
 } else {
     $book = $DB->get_record('book', array('id'=>$bid), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('book', $book->id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
     $id = $cm->id;
 }
 

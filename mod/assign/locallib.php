@@ -575,7 +575,7 @@ class assign {
         $returnid = $DB->insert_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$returnid), '*', MUST_EXIST);
         // Cache the course record.
-        $this->course = $DB->get_record('course', array('id'=>$formdata->course), '*', MUST_EXIST);
+        $this->course = get_course($formdata->course);
 
         if ($callplugins) {
             // Call save_settings hook for submission plugins.

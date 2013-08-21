@@ -25,7 +25,7 @@ if ($eid) {
     $entry = $DB->get_record('glossary_entries', array('id'=>$eid), '*', MUST_EXIST);
     $glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid), '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('glossary', $glossary->id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
     require_course_login($course, true, $cm);
     $entry->glossaryname = $glossary->name;
     $entry->cmid = $cm->id;
@@ -33,7 +33,7 @@ if ($eid) {
     $entries = array($entry);
 
 } else if ($concept) {
-    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+    $course = get_course($courseid);
     require_course_login($course);
     $entries = glossary_get_entries_search($concept, $courseid);
 
@@ -45,7 +45,7 @@ if ($entries) {
     foreach ($entries as $key => $entry) {
         // Need to get the course where the entry is,
         // in order to check for visibility/approve permissions there
-        $entrycourse = $DB->get_record('course', array('id' => $entry->courseid), '*', MUST_EXIST);
+        $entrycourse = get_course($entry->courseid);
         $modinfo = get_fast_modinfo($entrycourse);
         // make sure the entry is visible
         if (empty($modinfo->cms[$entry->cmid]->uservisible)) {

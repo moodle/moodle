@@ -28,7 +28,7 @@ require_once('edit_form.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 
-$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+$course = get_course($courseid);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 require_login($course);

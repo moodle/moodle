@@ -75,7 +75,7 @@ if ($id) {
 } else if ($courseid){
     $heading = get_string('addoutcome', 'grades');
     /// adding new outcome from course
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $course = get_course($courseid);
     require_login($course);
     $context = context_course::instance($course->id);
     require_capability('moodle/grade:manage', $context);

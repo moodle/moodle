@@ -2120,8 +2120,8 @@ class core_accesslib_testcase extends advanced_testcase {
         $guestid = $CFG->siteguest;
 
         // Enrol some users into some courses.
-        $course1 = $DB->get_record('course', array('id'=>$testcourses[22]), '*', MUST_EXIST);
-        $course2 = $DB->get_record('course', array('id'=>$testcourses[7]), '*', MUST_EXIST);
+        $course1 = get_course($testcourses[22]);
+        $course2 = get_course($testcourses[7]);
         $cms = $DB->get_records('course_modules', array('course'=>$course1->id), 'id');
         $cm1 = reset($cms);
         $blocks = $DB->get_records('block_instances', array('parentcontextid'=>context_module::instance($cm1->id)->id), 'id');
@@ -2433,7 +2433,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $miscid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
         $categorycontext = context_coursecat::instance($miscid);
         $course->category = $miscid;
-        $DB->update_record('course', $course);
+        update_course_record($course);
         $context->update_moved($categorycontext);
 
         $context = context_course::instance($course->id);
@@ -2672,7 +2672,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $miscid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
         $categorycontext = context_coursecat::instance($miscid);
         $course->category = $miscid;
-        $DB->update_record('course', $course);
+        update_course_record($course);
         context_moved($context, $categorycontext);
         $this->assertDebuggingCalled('context_moved() is deprecated, please use context::update_moved() instead.', DEBUG_DEVELOPER);
         $context = context_course::instance($course->id);

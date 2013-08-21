@@ -53,7 +53,7 @@ if (!empty($add)) {
     $url->param('course', $course);
     $PAGE->set_url($url);
 
-    $course = $DB->get_record('course', array('id'=>$course), '*', MUST_EXIST);
+    $course = get_course($course);
     require_login($course);
 
     list($module, $context, $cw) = can_add_moduleinfo($course, $add, $section);
@@ -124,7 +124,7 @@ if (!empty($add)) {
     $cm = get_coursemodule_from_id('', $update, 0, false, MUST_EXIST);
 
     // Check the course exists.
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
 
     // require_login
     require_login($course, false, $cm); // needed to setup proper $COURSE

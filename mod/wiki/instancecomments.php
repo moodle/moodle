@@ -54,7 +54,7 @@ if (!$subwiki = wiki_get_subwiki($page->subwikiid)) {
 if (!$cm = get_coursemodule_from_instance("wiki", $subwiki->wikiid)) {
     print_error('invalidcoursemodule');
 }
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$course = get_course($cm->course);
 if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
     print_error('incorrectwikiid', 'wiki');
 }

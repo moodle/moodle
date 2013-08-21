@@ -38,7 +38,7 @@ $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults 
 
 $PAGE->set_url('/user/editadvanced.php', array('course'=>$course, 'id'=>$id));
 
-$course = $DB->get_record('course', array('id'=>$course), '*', MUST_EXIST);
+$course = get_course($course);
 
 if (!empty($USER->newadminuser)) {
     $PAGE->set_course($SITE);

@@ -33,7 +33,7 @@ $sectionreturn = optional_param('sr', 0, PARAM_INT);
 $PAGE->set_url('/course/editsection.php', array('id'=>$id, 'sr'=> $sectionreturn));
 
 $section = $DB->get_record('course_sections', array('id' => $id), '*', MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $section->course), '*', MUST_EXIST);
+$course = get_course($section->course);
 $sectionnum = $section->section;
 
 require_login($course);

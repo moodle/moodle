@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/' . $CFG->admin . '/registration/lib.php');
 require_once($CFG->dirroot.'/course/publish/forms.php');
 
 $id = required_param('id', PARAM_INT);
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 require_login($course);
 
 $PAGE->set_url('/course/publish/hubselector.php', array('id' => $course->id));

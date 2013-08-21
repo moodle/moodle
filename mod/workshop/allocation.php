@@ -35,7 +35,7 @@ $cmid       = required_param('cmid', PARAM_INT);                    // course mo
 $method     = optional_param('method', 'manual', PARAM_ALPHA);      // method to use
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
-$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$course     = get_course($cm->course);
 $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 $workshop   = new workshop($workshop, $cm, $course);
 

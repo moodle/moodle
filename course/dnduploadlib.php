@@ -460,7 +460,7 @@ class dndupload_ajax_processor {
             throw new coding_exception('dndupload_ajax_processor should only be used within AJAX requests');
         }
 
-        $this->course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+        $this->course = get_course($courseid);
 
         require_login($this->course, false);
         $this->context = context_course::instance($this->course->id);

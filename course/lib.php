@@ -2052,7 +2052,7 @@ function move_courses($courseids, $categoryid) {
                 $course->visible = 0;
             }
 
-            $DB->update_record('course', $course);
+            update_course_record($course);
 
             // Store the context.
             $context = context_course::instance($course->id);
@@ -2383,7 +2383,7 @@ function update_course($data, $editoroptions = NULL) {
     }
 
     // Update with the new data
-    $DB->update_record('course', $data);
+    update_course_record($data);
     // make sure the modinfo cache is reset
     rebuild_course_cache($data->id);
 
@@ -3083,7 +3083,7 @@ function course_get_url($courseorid, $section = null, $options = array()) {
  * @return object the created module info
  */
 function create_module($moduleinfo) {
-    global $DB, $CFG;
+    global $CFG;
 
     require_once($CFG->dirroot . '/course/modlib.php');
 
@@ -3099,7 +3099,7 @@ function create_module($moduleinfo) {
     }
 
     // Some additional checks (capability / existing instances).
-    $course = $DB->get_record('course', array('id'=>$moduleinfo->course), '*', MUST_EXIST);
+    $course = get_course($moduleinfo->course);
     list($module, $context, $cw) = can_add_moduleinfo($course, $moduleinfo->modulename, $moduleinfo->section);
 
     // Load module library.
@@ -3123,7 +3123,7 @@ function create_module($moduleinfo) {
  * @return object the updated module info
  */
 function update_module($moduleinfo) {
-    global $DB, $CFG;
+    global $CFG;
 
     require_once($CFG->dirroot . '/course/modlib.php');
 
@@ -3131,7 +3131,7 @@ function update_module($moduleinfo) {
     $cm = get_coursemodule_from_id('', $moduleinfo->coursemodule, 0, false, MUST_EXIST);
 
     // Check the course exists.
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
 
     // Some checks (capaibility / existing instances).
     list($cm, $context, $module, $data, $cw) = can_update_moduleinfo($cm);

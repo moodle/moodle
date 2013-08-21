@@ -51,7 +51,7 @@ require_once($CFG->dirroot.'/mod/lti/lib.php');
 
 $id = required_param('id', PARAM_INT);   // course id
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = get_course($id);
 
 require_login($course);
 $PAGE->set_pagelayout('incourse');

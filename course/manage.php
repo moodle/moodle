@@ -237,17 +237,17 @@ if (!empty($moveto) && ($data = data_submitted()) && confirm_sesskey()) {
 if ((!empty($hide) or !empty($show)) && confirm_sesskey()) {
     // Hide or show a course.
     if (!empty($hide)) {
-        $course = $DB->get_record('course', array('id' => $hide), '*', MUST_EXIST);
+        $course = get_course($hide);
         $visible = 0;
     } else {
-        $course = $DB->get_record('course', array('id' => $show), '*', MUST_EXIST);
+        $course = get_course($show);
         $visible = 1;
     }
     $coursecontext = context_course::instance($course->id);
     require_capability('moodle/course:visibility', $coursecontext);
     // Set the visibility of the course. we set the old flag when user manually changes visibility of course.
     $params = array('id' => $course->id, 'visible' => $visible, 'visibleold' => $visible, 'timemodified' => time());
-    $DB->update_record('course', $params);
+    update_course_record((object)$params);
     cache_helper::purge_by_event('changesincourse');
 
     // Update the course object we pass to the event class.

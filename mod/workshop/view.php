@@ -42,11 +42,11 @@ $eval       = optional_param('eval', null, PARAM_PLUGIN);
 
 if ($id) {
     $cm         = get_coursemodule_from_id('workshop', $id, 0, false, MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $course     = get_course($cm->course);
     $workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
 } else {
     $workshop   = $DB->get_record('workshop', array('id' => $w), '*', MUST_EXIST);
-    $course     = $DB->get_record('course', array('id' => $workshop->course), '*', MUST_EXIST);
+    $course     = get_course($workshop->course);
     $cm         = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
 }
 

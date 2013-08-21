@@ -49,14 +49,14 @@ if ($id) {
     $url->param('id', $id);
     $PAGE->set_url($url);
     $cm     = get_coursemodule_from_id('data', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
     $data   = $DB->get_record('data', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 } else {
     $url->param('d', $d);
     $PAGE->set_url($url);
     $data   = $DB->get_record('data', array('id'=>$d), '*', MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$data->course), '*', MUST_EXIST);
+    $course = get_course($data->course);
     $cm     = get_coursemodule_from_instance('data', $data->id, $course->id, false, MUST_EXIST);
 }
 

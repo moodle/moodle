@@ -33,7 +33,7 @@ $scoid = required_param('scoid', PARAM_INT);// sco ID
 $sco = $DB->get_record('scorm_scoes', array('id'=>$scoid), '*', MUST_EXIST);
 $scorm = $DB->get_record('scorm', array('id'=>$sco->scorm), '*', MUST_EXIST);
 $cm = get_coursemodule_from_instance('scorm', $scorm->id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$scorm->course), '*', MUST_EXIST);
+$course = get_course($scorm->course);
 
 
 // Capability Checks

@@ -36,7 +36,7 @@ $cmid           = required_param('cmid', PARAM_INT);
 $courseid       = required_param('course', PARAM_INT);
 $sectionreturn  = optional_param('sr', null, PARAM_INT);
 
-$course     = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course     = get_course($courseid);
 $cm         = get_coursemodule_from_id('', $cmid, $course->id, true, MUST_EXIST);
 $cmcontext  = context_module::instance($cm->id);
 $context    = context_course::instance($courseid);

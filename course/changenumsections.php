@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/course/lib.php');
 
 $courseid = required_param('courseid', PARAM_INT);
 $increase = optional_param('increase', true, PARAM_BOOL);
-$course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+$course = get_course($courseid);
 $courseformatoptions = course_get_format($course)->get_format_options();
 
 $PAGE->set_url('/course/changenumsections.php', array('courseid' => $courseid));

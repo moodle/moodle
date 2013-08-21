@@ -36,12 +36,12 @@ require_once($CFG->libdir.'/xmlize.php');
 $id     = optional_param('id', 0, PARAM_INT);           // course module id
 if ($id) {
     $cm = get_coursemodule_from_id('data', $id, null, null, MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+    $course = get_course($cm->course);
     $data = $DB->get_record('data', array('id'=>$cm->instance), '*', MUST_EXIST);
 } else {
     $d = required_param('d', PARAM_INT);     // database activity id
     $data = $DB->get_record('data', array('id'=>$d), '*', MUST_EXIST);
-    $course = $DB->get_record('course', array('id'=>$data->course), '*', MUST_EXIST);
+    $course = get_course($data->course);
     $cm = get_coursemodule_from_instance('data', $data->id, $course->id, null, MUST_EXIST);
 }
 

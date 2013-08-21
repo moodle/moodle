@@ -34,7 +34,7 @@ $id = required_param('id', PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);
 
 $cm = get_coursemodule_from_id('quiz', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$course = get_course($cm->course);
 $quiz = $DB->get_record('quiz', array('id' => $cm->instance), '*', MUST_EXIST);
 require_login($course, false, $cm);
 

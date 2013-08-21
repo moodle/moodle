@@ -38,7 +38,7 @@ $filter = optional_param('ifilter', 0, PARAM_INT); // Table filter for return ur
 $ue = $DB->get_record('user_enrolments', array('id' => $ueid), '*', MUST_EXIST);
 $user = $DB->get_record('user', array('id'=>$ue->userid), '*', MUST_EXIST);
 $instance = $DB->get_record('enrol', array('id'=>$ue->enrolid), '*', MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
+$course = get_course($instance->courseid);
 
 // The URL of the enrolled users page for the course.
 $usersurl = new moodle_url('/enrol/users.php', array('id' => $course->id));

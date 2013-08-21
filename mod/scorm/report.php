@@ -33,7 +33,7 @@ $download = optional_param('download', '', PARAM_RAW);
 $mode = optional_param('mode', '', PARAM_ALPHA); // Report mode
 
 $cm = get_coursemodule_from_id('scorm', $id, 0, false, MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
+$course = get_course($cm->course);
 $scorm = $DB->get_record('scorm', array('id'=>$cm->instance), '*', MUST_EXIST);
 
 $contextmodule = context_module::instance($cm->id);

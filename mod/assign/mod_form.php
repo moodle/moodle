@@ -68,7 +68,7 @@ class mod_assign_mod_form extends moodleform_mod {
             if (!$ctx) {
                 $ctx = context_course::instance($this->current->course);
             }
-            $course = $DB->get_record('course', array('id'=>$this->current->course), '*', MUST_EXIST);
+            $course = get_course($this->current->course);
             $assignment->set_course($course);
         }
 
@@ -259,7 +259,7 @@ class mod_assign_mod_form extends moodleform_mod {
             if (!$ctx) {
                 $ctx = context_course::instance($this->current->course);
             }
-            $course = $DB->get_record('course', array('id'=>$this->current->course), '*', MUST_EXIST);
+            $course = get_course($this->current->course);
             $assignment->set_course($course);
         }
         $assignment->plugin_data_preprocessing($defaultvalues);

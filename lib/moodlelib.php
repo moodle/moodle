@@ -2887,7 +2887,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
         } else if ($courseorid == SITEID) {
             $course = clone($SITE);
         } else {
-            $course = $DB->get_record('course', array('id' => $courseorid), '*', MUST_EXIST);
+            $course = get_course($courseorid);
         }
         if ($cm) {
             if ($cm->course != $course->id) {
@@ -4912,7 +4912,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     // Some crazy wishlist of stuff we should skip during purging of course content.
     $options = (array)$options;
 
-    $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+    $course = get_course($courseid);
     $coursecontext = context_course::instance($courseid);
     $fs = get_file_storage();
 
@@ -5105,7 +5105,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     if (!empty($options['keep_groups_and_groupings'])) {
         $oldcourse->defaultgroupingid = 0;
     }
-    $DB->update_record('course', $oldcourse);
+    update_course_record($oldcourse);
 
     // Delete course sections and availability options.
     $DB->delete_records_select('course_sections_availability',

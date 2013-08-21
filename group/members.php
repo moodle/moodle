@@ -32,7 +32,7 @@ $groupid = required_param('group', PARAM_INT);
 $cancel  = optional_param('cancel', false, PARAM_BOOL);
 
 $group = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
-$course = $DB->get_record('course', array('id'=>$group->courseid), '*', MUST_EXIST);
+$course = get_course($group->courseid);
 
 $PAGE->set_url('/group/members.php', array('group'=>$groupid));
 $PAGE->set_pagelayout('admin');
