@@ -1271,32 +1271,10 @@ function scorm_dndupload_handle($uploadinfo) {
     $file = reset($files);
 
     // Validate the file, make sure it's a valid SCORM package!
-    $packer = get_file_packer('application/zip');
-    $filelist = $file->list_files($packer);
-
-    if (!is_array($filelist)) {
+    $errors = scorm_validate_package($file);
+    if (!empty($errors)) {
         return false;
-    } else {
-        $manifestpresent = false;
-        $aiccfound = false;
-
-        foreach ($filelist as $info) {
-            if ($info->pathname == 'imsmanifest.xml') {
-                $manifestpresent = true;
-                break;
-            }
-
-            if (preg_match('/\.cst$/', $info->pathname)) {
-                $aiccfound = true;
-                break;
-            }
-        }
-
-        if (!$manifestpresent && !$aiccfound) {
-            return false;
-        }
     }
-
     // Create a default scorm object to pass to scorm_add_instance()!
     $scorm = get_config('scorm');
     $scorm->course = $uploadinfo->course->id;

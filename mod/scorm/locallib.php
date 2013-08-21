@@ -1886,3 +1886,41 @@ function scorm_check_url($url) {
 
     return true;
 }
+
+/**
+ * Check that a Zip file contains a valid SCORM package
+ *
+ * @param $file stored_file a Zip file.
+ * @return array empty if no issue is found. Array of error message otherwise
+ */
+function scorm_validate_package($file) {
+    $packer = get_file_packer('application/zip');
+    $errors = array();
+    $filelist = $packer->list_files($file);
+
+    if (!is_array($filelist)) {
+        $errors['packagefile'] = get_string('badarchive', 'scorm');
+    } else {
+        $aiccfound = false;
+        $badmanifestpresent = false;
+        foreach ($filelist as $info) {
+            if ($info->pathname == 'imsmanifest.xml') {
+                return array();
+             } else if (strpos($info->pathname, 'imsmanifest.xml') !== false) {
+                // This package has an imsmanifest file inside a folder of the package.
+                $badmanifestpresent = true;
+            }
+            if (preg_match('/\.cst$/', $info->pathname)) {
+                return array();
+            }
+        }
+        if (!$aiccfound) {
+            if ($badmanifestpresent) {
+                $errors['packagefile'] = get_string('badimsmanifestlocation', 'scorm');
+            } else {
+                $errors['packagefile'] = get_string('nomanifest', 'scorm');
+            }
+        }
+    }
+    return $errors;
+}
