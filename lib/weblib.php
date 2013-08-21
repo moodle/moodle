@@ -2802,7 +2802,7 @@ function set_debugging($level, $debugdisplay = null) {
     global $CFG;
 
     $CFG->debug = (int)$level;
-    $CFG->debugdeveloper = ($CFG->debug & DEBUG_DEVELOPER);
+    $CFG->debugdeveloper = (($CFG->debug & DEBUG_DEVELOPER) === DEBUG_DEVELOPER);
 
     if ($debugdisplay !== null) {
         $CFG->debugdisplay = (bool)$debugdisplay;
