@@ -2136,6 +2136,7 @@ function qf_errorHandler(element, _qfMsg) {
     return true;
   }
 
+
   if (_qfMsg != \'\') {
     var errorSpan = document.getElementById(\'id_error_\'+element.name);
     if (!errorSpan) {
@@ -2157,6 +2158,8 @@ function qf_errorHandler(element, _qfMsg) {
       && div.className != "error") {
         div.className += " error";
         linebreak = document.createElement("br");
+        linebreak.className = "error";
+        linebreak.id = \'id_error_break_\'+element.name;
         errorSpan.parentNode.insertBefore(linebreak, errorSpan.nextSibling);
     }
 
@@ -2165,6 +2168,10 @@ function qf_errorHandler(element, _qfMsg) {
     var errorSpan = document.getElementById(\'id_error_\'+element.name);
     if (errorSpan) {
       errorSpan.parentNode.removeChild(errorSpan);
+    }
+    var linebreak = document.getElementById(\'id_error_break_\'+element.name);
+    if (linebreak) {
+      linebreak.parentNode.removeChild(linebreak);
     }
 
     if (div.className.substr(div.className.length - 6, 6) == " error") {
@@ -2213,7 +2220,7 @@ function validate_' . $this->_formName . '_' . $escapedElementName . '(element) 
   ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\']) && ret;
   if (!ret && !first_focus) {
     first_focus = true;
-    frm.elements[\''.$elementName.'\'].focus();
+    frm.elements[\'id_error_'.$elementName.'\'].focus();
   }
 ';
 
