@@ -25,6 +25,7 @@
 
 require_once("../config.php");
 require_once("lib.php");
+require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/conditionlib.php');
 
 $id = required_param('id', PARAM_INT);    // course_sections.id
