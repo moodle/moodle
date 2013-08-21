@@ -1279,22 +1279,21 @@ class question_file_saver implements question_response_files {
             $string .= $file->get_filepath() . $file->get_filename() . '|' .
                     $file->get_contenthash() . '|';
         }
-
-        if ($string) {
-            $hash = md5($string);
-        } else {
-            $hash = '';
-        }
+        $hash = md5($string);
 
         if (is_null($text)) {
-            return $hash;
+            if ($string) {
+                return $hash;
+            } else {
+                return '';
+            }
         }
 
         // We add the file hash so a simple string comparison will say if the
         // files have been changed. First strip off any existing file hash.
-        $text = preg_replace('/\s*<!-- File hash: \w+ -->\s*$/', '', $text);
-        $text = file_rewrite_urls_to_pluginfile($text, $draftitemid);
-        if ($hash) {
+        if ($text !== '') {
+            $text = preg_replace('/\s*<!-- File hash: \w+ -->\s*$/', '', $text);
+            $text = file_rewrite_urls_to_pluginfile($text, $draftitemid);
             $text .= '<!-- File hash: ' . $hash . ' -->';
         }
         return $text;
@@ -1391,8 +1390,15 @@ class question_file_loader implements question_response_files {
      */
     public function get_question_file_saver() {
 
-        // Value will be either a plain MD5 hash, or some real content, followed
-        // by an MD5 hash in a HTML comment. We only want the value in the latter case.
+        // There are three possibilities here for what $value will look like:
+        // 1) some HTML content followed by an MD5 hash in a HTML comment;
+        // 2) a plain MD5 hash;
+        // 3) or some real content, without any hash.
+        // The problem is that 3) is ambiguous in the case where a student writes
+        // a response that looks exactly like an MD5 hash. For attempts made now,
+        // we avoid case 3) by always going for case 1) or 2) (except when the
+        // response is blank. However, there may be case 3) data in the database
+        // so we need to handle it as best we can.
         if (preg_match('/\s*<!-- File hash: [0-9a-zA-Z]{32} -->\s*$/', $this->value)) {
             $value = preg_replace('/\s*<!-- File hash: [0-9a-zA-Z]{32} -->\s*$/', '', $this->value);
 
@@ -1400,8 +1406,7 @@ class question_file_loader implements question_response_files {
             $value = null;
 
         } else {
-            throw new coding_exception('$value passed to question_file_loader::get_question_file_saver' .
-                    ' was not of the expected form.');
+            $value = $this->value;
         }
 
         list($draftid, $text) = $this->step->prepare_response_files_draft_itemid_with_text(
