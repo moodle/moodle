@@ -76,6 +76,7 @@ class mod_assign_generator extends testing_module_generator {
 
         $record->coursemodule = $this->precreate_course_module($record->course, $options);
         $id = assign_add_instance($record, null);
+        rebuild_course_cache($record->course, true);
         return $this->post_add_instance($id, $record->coursemodule);
     }
 }
