@@ -81,7 +81,6 @@
 .gradingform_rubric .plainvalue.empty {font-style: italic; color: #AAA;}
 
 .gradingform_rubric.editor .criterion .levels .level .delete {position:absolute;right:0;}
-.dir-rtl .gradingform_rubric.editor .criterion .levels .level .delete {position: relative;}
 .gradingform_rubric .criterion .levels .level .score {font-style:italic;color:#575;font-weight: bold;margin-top:5px;white-space:nowrap;}
 .gradingform_rubric .criterion .levels .level .score .scorevalue {padding-right:5px;}
 
