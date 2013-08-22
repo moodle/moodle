@@ -2221,7 +2221,7 @@ function validate_' . $this->_formName . '_' . $escapedElementName . '(element) 
   ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\']) && ret;
   if (!ret && !first_focus) {
     first_focus = true;
-    frm.elements[\''.$elementName.'\'].focus();
+    frm.elements[\'id_error_'.$elementName.'\'].focus();
   }
 ';
 
