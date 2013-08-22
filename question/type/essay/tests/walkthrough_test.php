@@ -348,4 +348,77 @@ class qtype_essay_walkthrough_testcase extends qbehaviour_walkthrough_test_base 
         $this->check_current_mark(null);
         $this->check_step_count(1);
     }
+
+    public function test_deferred_feedback_html_editor_with_files_attempt_on_last_no_files_uploaded() {
+        global $CFG, $USER;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $usercontextid = context_user::instance($USER->id)->id;
+        $fs = get_file_storage();
+
+        // Create an essay question in the DB.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $question = $generator->create_question('essay', 'editorfilepicker', array('category' => $cat->id));
+
+        // Start attempt at the question.
+        $q = question_bank::load_question($question->id);
+        $this->start_attempt_at_question($q, 'deferredfeedback', 1);
+
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+
+        // Process a response and check the expected result.
+        // First we need to get the draft item ids.
+        $this->render();
+        if (!preg_match('/env=editor&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
+            throw new coding_exception('Editor draft item id not found.');
+        }
+        $editordraftid = $matches[1];
+        if (!preg_match('/env=filemanager&amp;action=browse&amp;.*?itemid=(\d+)&amp;/', $this->currentoutput, $matches)) {
+            throw new coding_exception('File manager draft item id not found.');
+        }
+        $attachementsdraftid = $matches[1];
+
+        $this->process_submission(array(
+                'answer' => 'I refuse to draw you a picture, so there!',
+                'answerformat' => FORMAT_HTML,
+                'answer:itemid' => $editordraftid,
+                'attachments' => $attachementsdraftid));
+
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->save_quba();
+
+        // Now submit all and finish.
+        $this->finish();
+        $this->check_current_state(question_state::$needsgrading);
+        $this->check_current_mark(null);
+        $this->check_step_count(3);
+        $this->save_quba();
+
+        // Now start a new attempt based on the old one.
+        $this->load_quba();
+        $oldqa = $this->get_question_attempt();
+
+        $q = question_bank::load_question($question->id);
+        $this->quba = question_engine::make_questions_usage_by_activity('unit_test',
+                context_system::instance());
+        $this->quba->set_preferred_behaviour('deferredfeedback');
+        $this->slot = $this->quba->add_question($q, 1);
+        $this->quba->start_question_based_on($this->slot, $oldqa);
+
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+        $this->save_quba();
+
+        // Check the display.
+        $this->load_quba();
+        $this->render();
+        $this->assertRegExp('/I refuse to draw you a picture, so there!/', $this->currentoutput);
+    }
 }
