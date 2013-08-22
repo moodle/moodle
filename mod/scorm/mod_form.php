@@ -81,20 +81,20 @@ class mod_scorm_mod_form extends moodleform_mod {
             $mform->setType('scormtype', PARAM_ALPHA);
         }
 
-        if (count($scormtypes) > 1) {
-            // Update packages timing.
-            $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
-            $mform->setType('updatefreq', PARAM_INT);
-            $mform->setDefault('updatefreq', $cfgscorm->updatefreq);
-            $mform->addHelpButton('updatefreq', 'updatefreq', 'scorm');
-            $mform->disabledIf('updatefreq', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
-        } else {
-            $mform->addElement('hidden', 'updatefreq', 0);
-            $mform->setType('updatefreq', PARAM_INT);
-        }
+        // Update packages timing.
+        $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), scorm_get_updatefreq_array());
+        $mform->setType('updatefreq', PARAM_INT);
+        $mform->setDefault('updatefreq', $cfgscorm->updatefreq);
+        $mform->addHelpButton('updatefreq', 'updatefreq', 'scorm');
 
         // New local package upload.
-        $mform->addElement('filepicker', 'packagefile', get_string('package', 'scorm'));
+        $filemanageroptions = array();
+        $filemanageroptions['accepted_types'] = array('.zip');
+        $filemanageroptions['maxbytes'] = 0;
+        $filemanageroptions['maxfiles'] = 1;
+        $filemanageroptions['subdirs'] = 0;
+
+        $mform->addElement('filemanager', 'packagefile', get_string('package', 'scorm'), null, $filemanageroptions);
         $mform->addHelpButton('packagefile', 'package', 'scorm');
         $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
 
@@ -280,7 +280,8 @@ class mod_scorm_mod_form extends moodleform_mod {
         $coursescorm = current($scorms);
 
         $draftitemid = file_get_submitted_draft_itemid('packagefile');
-        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_scorm', 'package', 0);
+        file_prepare_draft_area($draftitemid, $this->context->id, 'mod_scorm', 'package', 0,
+            array('subdirs' => 0, 'maxfiles' => 1));
         $defaultvalues['packagefile'] = $draftitemid;
 
         if (($COURSE->format == 'singleactivity') && ((count($scorms) == 0) || ($defaultvalues['instance'] == $coursescorm->id))) {
@@ -323,25 +324,35 @@ class mod_scorm_mod_form extends moodleform_mod {
     }
 
     public function validation($data, $files) {
-        global $CFG;
+        global $CFG, $USER;
         $errors = parent::validation($data, $files);
 
         $type = $data['scormtype'];
 
         if ($type === SCORM_TYPE_LOCAL) {
-            if (!empty($data['update'])) {
-                // OK, not required.
-
-            } else if (empty($data['packagefile'])) {
+            if (empty($data['packagefile'])) {
                 $errors['packagefile'] = get_string('required');
 
             } else {
-                $files = $this->get_draft_files('packagefile');
+                $draftitemid = file_get_submitted_draft_itemid('packagefile');
+
+                file_prepare_draft_area($draftitemid, $this->context->id, 'mod_scorm', 'packagefilecheck', null,
+                    array('subdirs' => 0, 'maxfiles' => 1));
+
+                // Get file from users draft area.
+                $usercontext = context_user::instance($USER->id);
+                $fs = get_file_storage();
+                $files = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'id', false);
+
                 if (count($files)<1) {
                     $errors['packagefile'] = get_string('required');
                     return $errors;
                 }
                 $file = reset($files);
+                if (!$file->is_external_file() && !empty($data['updatefreq'])) {
+                    // Make sure updatefreq is not set if using normal local file.
+                    $errors['updatefreq'] = get_string('updatefreq_error', 'mod_scorm');
+                }
                 $errors = array_merge($errors, scorm_validate_package($file));
             }
 
