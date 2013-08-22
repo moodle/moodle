@@ -73,7 +73,7 @@ $THEME->layouts = array(
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
     ),
-    // part of course, typical for modules - default page layout if $cm specified in require_login().
+    // part of course, typical for modules - default page layout if $cm specified in require_login()
     'incourse' => array(
         'file' => 'columns3.php',
         'regions' => array('side-pre', 'side-post'),
@@ -123,7 +123,7 @@ $THEME->layouts = array(
         'regions' => array(),
         'options' => array('nofooter'=>true, 'nocoursefooter'=>true),
     ),
-    // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible.
+    // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible
     'embedded' => array(
         'file' => 'embedded.php',
         'regions' => array()
@@ -167,7 +167,7 @@ $THEME->javascripts_footer = array(
     'moodlebootstrap',
 );
 
-if (core_useragent::check_ie_version() && core_useragent::check_ie_version('9.0')) {
+if (check_browser_version('MSIE') && !check_browser_version('MSIE', '9.0')) {
     $THEME->javascripts[] = 'html5shiv';
 }
 

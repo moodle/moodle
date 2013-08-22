@@ -659,7 +659,7 @@ class moodle_page {
      */
     protected function magic_get_devicetypeinuse() {
         if (empty($this->_devicetypeinuse)) {
-            $this->_devicetypeinuse = core_useragent::get_user_device_type();
+            $this->_devicetypeinuse = get_user_device_type();
         }
         return $this->_devicetypeinuse;
     }
@@ -1549,12 +1549,12 @@ class moodle_page {
                         return $mnetpeertheme;
                     }
                     // First try for the device the user is using.
-                    $devicetheme = core_useragent::get_device_type_theme($this->devicetypeinuse);
+                    $devicetheme = get_selected_theme_for_device_type($this->devicetypeinuse);
                     if (!empty($devicetheme)) {
                         return $devicetheme;
                     }
                     // Next try for the default device (as a fallback).
-                    $devicetheme = core_useragent::get_device_type_theme('default');
+                    $devicetheme = get_selected_theme_for_device_type('default');
                     if (!empty($devicetheme)) {
                         return $devicetheme;
                     }
@@ -1636,7 +1636,7 @@ class moodle_page {
             $this->add_body_class('path-' . join('-', array_slice($pathbits, 0, $i)));
         }
 
-        $this->add_body_classes(core_useragent::get_browser_version_classes());
+        $this->add_body_classes(get_browser_version_classes());
         $this->add_body_class('dir-' . get_string('thisdirection', 'langconfig'));
         $this->add_body_class('lang-' . current_language());
         $this->add_body_class('yui-skin-sam'); // Make YUI happy, if it is used.

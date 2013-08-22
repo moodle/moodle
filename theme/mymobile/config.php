@@ -142,11 +142,10 @@ $THEME->layouts = array(
 );
 
 // Get whether to show blocks and use appropriate pagelayout
-// this is necessary for block JS errors and other block problems.
-$thisdevice = core_useragent::get_device_type();
-if ($thisdevice === core_useragent::DEVICETYPE_DEFAULT || $thisdevice === core_useragent::DEVICETYPE_TABLET ||
-    optional_param('mymobile_blocks', false, PARAM_BOOL)) {
-    // These are layouts with blocks.
+// this is necessary for block JS errors and other block problems
+$thisdevice = get_device_type();
+if ($thisdevice == "default" || $thisdevice == "tablet" || optional_param('mymobile_blocks', false, PARAM_BOOL)) {
+    // These are layouts with blocks
     $blocklayouts = array('course', 'incourse', 'frontpage', 'mydashboard', 'mypublic');
     foreach ($blocklayouts as $layout) {
         $THEME->layouts[$layout]['regions'] = array('myblocks');

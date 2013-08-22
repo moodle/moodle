@@ -105,7 +105,7 @@ class core_theme_config_testcase extends advanced_testcase {
             'Mozilla/5.0 (Linux; U; Android 3.0; en-us; Xoom Build/HRI39) AppleWebKit/534.13 (KHTML, like Gecko) Version/4.0 Safari/534.13' => true
         );
         foreach ($useragents as $agent => $expected) {
-            core_useragent::instance(true, $agent);
+            $_SERVER['HTTP_USER_AGENT'] = $agent;
             // We need to clone the theme as usesvg property is calculated only once.
             $testtheme = clone $theme;
             $imagefile = $testtheme->resolve_image_location('i/test', 'moodle', null);

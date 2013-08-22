@@ -656,7 +656,7 @@ class theme_config {
 
         if ($rev > -1) {
             $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
-            $separate = (core_useragent::check_ie_version('5') && !core_useragent::check_ie_version('10'));
+            $separate = (check_browser_version('MSIE', 5) && !check_browser_version('MSIE', 10));
             if (!empty($CFG->slasharguments)) {
                 $slashargs = '';
                 if (!$svg) {
@@ -734,7 +734,7 @@ class theme_config {
                 // We do this because all modern browsers support SVG and this param will one day be removed.
                 $baseurl->param('svg', '0');
             }
-            if (core_useragent::check_ie_version('5')) {
+            if (check_browser_version('MSIE', 5)) {
                 // lalala, IE does not allow more than 31 linked CSS files from main document
                 $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
                 foreach ($css['parents'] as $parent=>$sheets) {
@@ -1359,9 +1359,24 @@ class theme_config {
     public function use_svg_icons() {
         global $CFG;
         if ($this->usesvg === null) {
-
             if (!isset($CFG->svgicons) || !is_bool($CFG->svgicons)) {
-                $this->usesvg = core_useragent::supports_svg();
+                // IE 5 - 8 don't support SVG at all.
+                if (empty($_SERVER['HTTP_USER_AGENT'])) {
+                    // Can't be sure, just say no.
+                    $this->usesvg = false;
+                } else if (check_browser_version('MSIE', 0) and !check_browser_version('MSIE', 9)) {
+                    // IE < 9 doesn't support SVG. Say no.
+                    $this->usesvg = false;
+                } else if (preg_match('#Android +[0-2]\.#', $_SERVER['HTTP_USER_AGENT'])) {
+                    // Android < 3 doesn't support SVG. Say no.
+                    $this->usesvg = false;
+                } else if (check_browser_version('Opera', 0)) {
+                    // Opera 12 still does not support SVG well enough. Say no.
+                    $this->usesvg = false;
+                } else {
+                    // Presumed fine.
+                    $this->usesvg = true;
+                }
             } else {
                 // Force them on/off depending upon the setting.
                 $this->usesvg = $CFG->svgicons;

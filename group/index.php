@@ -152,8 +152,7 @@ $currenttab = 'groups';
 require('tabs.php');
 
 $disabled = 'disabled="disabled"';
-$ajaxenabled = ajaxenabled();
-if ($ajaxenabled) {
+if (ajaxenabled()) {
     // Some buttons are enabled if single group selected
     $showaddmembersform_disabled = $singlegroup ? '' : $disabled;
     $showeditgroupsettingsform_disabled = $singlegroup ? '' : $disabled;
@@ -179,7 +178,7 @@ echo '<tr>'."\n";
 echo "<td>\n";
 echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
 
-if ($ajaxenabled) { // TODO: move this to JS init!
+if (ajaxenabled()) { // TODO: move this to JS init!
     $onchange = 'M.core_group.membersCombo.refreshMembers();';
 } else {
     $onchange = '';
@@ -276,7 +275,7 @@ echo '</table>'."\n";
 echo '</div>'."\n";
 echo '</form>'."\n";
 
-if ($ajaxenabled) {
+if (ajaxenabled()) {
     $PAGE->requires->js_init_call('M.core_group.init_index', array($CFG->wwwroot, $courseid));
     $PAGE->requires->js_init_call('M.core_group.groupslist', array($preventgroupremoval));
 }

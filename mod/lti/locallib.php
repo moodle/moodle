@@ -1145,12 +1145,12 @@ function lti_get_launch_container($lti, $toolconfig) {
         $launchcontainer = LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
     }
 
-    $devicetype = core_useragent::get_device_type();
+    $devicetype = get_device_type();
 
     //Scrolling within the object element doesn't work on iOS or Android
     //Opening the popup window also had some issues in testing
     //For mobile devices, always take up the entire screen to ensure the best experience
-    if ($devicetype === core_useragent::DEVICETYPE_MOBILE || $devicetype === core_useragent::DEVICETYPE_TABLET ) {
+    if ($devicetype === 'mobile' || $devicetype === 'tablet' ) {
         $launchcontainer = LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW;
     }
 
