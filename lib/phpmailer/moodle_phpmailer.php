@@ -128,7 +128,7 @@ class moodle_phpmailer extends PHPMailer {
 
     protected function PostSend() {
         // Now ask phpunit if it wants to catch this message.
-        if (phpunit_util::is_redirecting_messages()) {
+        if (PHPUNIT_TEST && phpunit_util::is_redirecting_messages()) {
             $mail = new stdClass();
             $mail->header = $this->MIMEHeader;
             $mail->body = $this->MIMEBody;
