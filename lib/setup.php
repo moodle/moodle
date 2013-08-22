@@ -339,7 +339,7 @@ if (isset($CFG->debug)) {
 } else {
     $CFG->debug = 0;
 }
-$CFG->debugdeveloper = ($CFG->debug & E_ALL and $CFG->debug & E_STRICT); // DEBUG_DEVELOPER is not available yet.
+$CFG->debugdeveloper = (($CFG->debug & (E_ALL | E_STRICT)) === (E_ALL | E_STRICT)); // DEBUG_DEVELOPER is not available yet.
 
 if (!defined('MOODLE_INTERNAL')) { // Necessary because cli installer has to define it earlier.
     /** Used by library scripts to check they are being called by Moodle. */
@@ -599,7 +599,7 @@ if (isset($CFG->debug)) {
 }  else {
     $CFG->debug = 0;
 }
-$CFG->debugdeveloper = ($CFG->debug & DEBUG_DEVELOPER);
+$CFG->debugdeveloper = (($CFG->debug & DEBUG_DEVELOPER) === DEBUG_DEVELOPER);
 
 // Find out if PHP configured to display warnings,
 // this is a security problem because some moodle scripts may
