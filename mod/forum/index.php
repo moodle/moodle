@@ -477,12 +477,12 @@ if (!isguestuser() && isloggedin() && $can_subscribe) {
 }
 
 if ($generalforums) {
-    echo $OUTPUT->heading(get_string('generalforums', 'forum'));
+    echo $OUTPUT->heading(get_string('generalforums', 'forum'), 2);
     echo html_writer::table($generaltable);
 }
 
 if ($learningforums) {
-    echo $OUTPUT->heading(get_string('learningforums', 'forum'));
+    echo $OUTPUT->heading(get_string('learningforums', 'forum'), 2);
     echo html_writer::table($learningtable);
 }
 

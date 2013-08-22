@@ -50,6 +50,7 @@ $PAGE->navbar->add($strdata, new moodle_url('/mod/data/index.php', array('id'=>$
 $PAGE->set_title($strdata);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
+echo $OUTPUT->heading($strdataplural, 2);
 
 if (! $datas = get_all_instances_in_course("data", $course)) {
     notice(get_string('thereareno', 'moodle',$strdataplural) , "$CFG->wwwroot/course/view.php?id=$course->id");
