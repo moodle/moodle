@@ -3624,7 +3624,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
 
         // Iterate over aliases in the queue.
         foreach ($rs as $record) {
-            $info = restore_dbops::decode_backup_temp_info($record->info);
+            $info = backup_controller_dbops::decode_backup_temp_info($record->info);
 
             // Try to pick a repository instance that should serve the alias.
             $repository = $this->choose_repository($info);
