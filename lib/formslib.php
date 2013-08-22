@@ -1977,6 +1977,10 @@ function qf_errorHandler(element, _qfMsg) {
     if (errorSpan) {
       errorSpan.parentNode.removeChild(errorSpan);
     }
+    var linebreak = document.getElementById(\'id_error_break_\'+element.name);
+    if (linebreak) {
+      linebreak.parentNode.removeChild(linebreak);
+    }
 
     if (div.className.substr(div.className.length - 6, 6) == " error") {
       div.className = div.className.substr(0, div.className.length - 6);
@@ -2024,7 +2028,7 @@ function validate_' . $this->_formName . '_' . $escapedElementName . '(element) 
   ret = validate_' . $this->_formName . '_' . $escapedElementName.'(frm.elements[\''.$elementName.'\']) && ret;
   if (!ret && !first_focus) {
     first_focus = true;
-    frm.elements[\''.$elementName.'\'].focus();
+    frm.elements[\'id_error_'.$elementName.'\'].focus();
   }
 ';
 
