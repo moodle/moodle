@@ -28,6 +28,21 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Class to store, cache, render and manage course category
  *
+ * @property-read int $id
+ * @property-read string $name
+ * @property-read string $idnumber
+ * @property-read string $description
+ * @property-read int $descriptionformat
+ * @property-read int $parent
+ * @property-read int $sortorder
+ * @property-read int $coursecount
+ * @property-read int $visible
+ * @property-read int $visibleold
+ * @property-read int $timemodified
+ * @property-read int $depth
+ * @property-read string $path
+ * @property-read string $theme
+ *
  * @package    core
  * @subpackage course
  * @copyright  2013 Marina Glancy
@@ -2028,6 +2043,37 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
  * {@link coursecat::search_courses()}
  * and
  * {@link coursecat::get_courses()}
+ *
+ * @property-read int $id
+ * @property-read int $category Category ID
+ * @property-read int $sortorder
+ * @property-read string $fullname
+ * @property-read string $shortname
+ * @property-read string $idnumber
+ * @property-read string $summary
+ * @property-read int $summaryformat
+ * @property-read string $format
+ * @property-read int $showgrades
+ * @property-read string $sectioncache
+ * @property-read string $modinfo
+ * @property-read int $newsitems
+ * @property-read int $startdate
+ * @property-read int $marker
+ * @property-read int $maxbytes
+ * @property-read int $legacyfiles
+ * @property-read int $showreports
+ * @property-read int $visible
+ * @property-read int $visibleold
+ * @property-read int $groupmode
+ * @property-read int $groupmodeforce
+ * @property-read int $defaultgroupingid
+ * @property-read string $lang
+ * @property-read string $theme
+ * @property-read int $timecreated
+ * @property-read int $timemodified
+ * @property-read int $requested
+ * @property-read int $enablecompletion
+ * @property-read int $completionnotify
  *
  * @package    core
  * @subpackage course
