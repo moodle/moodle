@@ -34,6 +34,7 @@ list($options, $unrecognized) = cli_get_params(
         'help' => false,
         'shortname' => false,
         'size' => false,
+        'fixeddataset' => false,
         'bypasscheck' => false,
         'quiet' => false
     ),
@@ -53,6 +54,7 @@ level.
 Options:
 --shortname    Shortname of course to create (required)
 --size         Size of course to create XS, S, M, L, XL, or XXL (required)
+--fixeddataset Use a fixed data set instead of randomly generated data
 --bypasscheck  Bypasses the developer-mode check (be careful!)
 --quiet        Do not show any output
 
@@ -73,6 +75,7 @@ if (empty($options['bypasscheck']) && !debugging('', DEBUG_DEVELOPER)) {
 // Get options.
 $shortname = $options['shortname'];
 $sizename = $options['size'];
+$fixeddataset = $options['fixeddataset'];
 
 // Check size.
 try {
@@ -90,5 +93,5 @@ if ($error = tool_generator_backend::check_shortname_available($shortname)) {
 session_set_user(get_admin());
 
 // Do backend code to generate course.
-$backend = new tool_generator_backend($shortname, $size, empty($options['quiet']));
+$backend = new tool_generator_backend($shortname, $size, $fixeddataset, empty($options['quiet']));
 $id = $backend->make();
