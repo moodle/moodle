@@ -69,7 +69,7 @@ class backup_base_optigroup_testcase extends basic_testcase {
     /**
      * Incorrect creation tests (attributes and final elements)
      */
-    function itest_wrong_creation() {
+    function test_wrong_creation() {
 
         // Create instance with invalid name
         try {
