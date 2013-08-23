@@ -177,16 +177,12 @@ class core_calendar_type_testcase extends advanced_testcase {
     private function core_functions_test($type) {
         $this->set_calendar_type($type);
 
-        $class = "\\calendartype_$type\\structure";
-        $calendar = new $class();
+        // Get the calendar.
+        $calendar = \core_calendar\type_factory::get_calendar_instance();
 
         // Test the userdate function.
         $this->assertEquals($calendar->timestamp_to_date_string($this->user->timecreated, '', 99, true, true),
             userdate($this->user->timecreated));
-
-        // Test the usergetdate function.
-        $this->assertEquals($calendar->timestamp_to_date_array($this->user->timecreated, '', 99, true, true),
-            usergetdate($this->user->timecreated));
     }
 
     /**
@@ -220,7 +216,10 @@ class core_calendar_type_testcase extends advanced_testcase {
     private function convert_unixtime_to_dateselector_test($type, $date) {
         $this->set_calendar_type($type);
 
-        $usergetdate = usergetdate($date['timestamp'], 0.0);
+        // Get the calendar.
+        $calendar = \core_calendar\type_factory::get_calendar_instance();
+
+        $usergetdate = $calendar->timestamp_to_date_array($date['timestamp'], 0.0);
         $comparedate = array(
             'minute' => $usergetdate['minutes'],
             'hour' => $usergetdate['hours'],

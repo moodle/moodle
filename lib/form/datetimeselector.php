@@ -168,12 +168,12 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
     function onQuickFormEvent($event, $arg, &$caller) {
         switch ($event) {
             case 'updateValue':
-                // constant values override both default and submitted ones
-                // default values are overriden by submitted
+                // Constant values override both default and submitted ones
+                // default values are overriden by submitted.
                 $value = $this->_findValue($caller->_constantValues);
                 if (null === $value) {
-                    // if no boxes were checked, then there is no value in the array
-                    // yet we don't want to display default value in this case
+                    // If no boxes were checked, then there is no value in the array
+                    // yet we don't want to display default value in this case.
                     if ($caller->isSubmitted()) {
                         $value = $this->_findValue($caller->_submitValues);
                     } else {
@@ -188,7 +188,8 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
                     }
                 }
                 if (!is_array($value)) {
-                    $currentdate = usergetdate($value, $this->_options['timezone']);
+                    $calendartype = \core_calendar\type_factory::get_calendar_instance();
+                    $currentdate = $calendartype->timestamp_to_date_array($value, $this->_options['timezone']);
                     // Round minutes to the previous multiple of step.
                     $currentdate['minutes'] -= $currentdate['minutes'] % $this->_options['step'];
                     $value = array(
@@ -197,19 +198,19 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
                         'day' => $currentdate['mday'],
                         'month' => $currentdate['mon'],
                         'year' => $currentdate['year']);
-                    // If optional, default to off, unless a date was provided
-                    if($this->_options['optional']) {
+                    // If optional, default to off, unless a date was provided.
+                    if ($this->_options['optional']) {
                         $value['enabled'] = $requestvalue != 0;
                     }
                 } else {
                     $value['enabled'] = isset($value['enabled']);
                 }
-                if (null !== $value){
+                if (null !== $value) {
                     $this->setValue($value);
                 }
                 break;
             case 'createElement':
-                if($arg[2]['optional']) {
+                if ($arg[2]['optional']) {
                     // When using the function addElement, rather than createElement, we still
                     // enter this case, making this check necessary.
                     if ($this->_usedcreateelement) {

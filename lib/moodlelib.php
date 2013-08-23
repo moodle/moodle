@@ -2191,19 +2191,63 @@ function date_format_string($date, $format, $tz = 99) {
 }
 
 /**
- * Given a $time timestamp in GMT (seconds since epoch), returns an array that represents
- * the date in user time.
+ * Given a $time timestamp in GMT (seconds since epoch),
+ * returns an array that represents the date in user time
  *
  * @package core
  * @category time
- * @param int $time timestamp in GMT
- * @param float|int|string $timezone the timezone to use to calculate the time
- *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
- * @return array an array that represents the date in user time
+ * @uses HOURSECS
+ * @param int $time Timestamp in GMT
+ * @param float|int|string $timezone offset's time with timezone, if float and not 99, then no
+ *        dst offset is applied {@link http://docs.moodle.org/dev/Time_API#Timezone}
+ * @return array An array that represents the date in user time
  */
-function usergetdate($time, $timezone = 99) {
-    $calendartype = \core_calendar\type_factory::get_calendar_instance();
-    return $calendartype->timestamp_to_date_array($time, $timezone);
+function usergetdate($time, $timezone=99) {
+
+    // Save input timezone, required for dst offset check.
+    $passedtimezone = $timezone;
+
+    $timezone = get_user_timezone_offset($timezone);
+
+    if (abs($timezone) > 13) {
+        // Server time.
+        return getdate($time);
+    }
+
+    // Add daylight saving offset for string timezones only, as we can't get dst for
+    // float values. if timezone is 99 (user default timezone), then try update dst.
+    if ($passedtimezone == 99 || !is_numeric($passedtimezone)) {
+        $time += dst_offset_on($time, $passedtimezone);
+    }
+
+    $time += intval((float)$timezone * HOURSECS);
+
+    $datestring = gmstrftime('%B_%A_%j_%Y_%m_%w_%d_%H_%M_%S', $time);
+
+    // Be careful to ensure the returned array matches that produced by getdate() above.
+    list(
+        $getdate['month'],
+        $getdate['weekday'],
+        $getdate['yday'],
+        $getdate['year'],
+        $getdate['mon'],
+        $getdate['wday'],
+        $getdate['mday'],
+        $getdate['hours'],
+        $getdate['minutes'],
+        $getdate['seconds']
+    ) = explode('_', $datestring);
+
+    // Set correct datatype to match with getdate().
+    $getdate['seconds'] = (int)$getdate['seconds'];
+    $getdate['yday'] = (int)$getdate['yday'] - 1; // The function gmstrftime returns 0 through 365.
+    $getdate['year'] = (int)$getdate['year'];
+    $getdate['mon'] = (int)$getdate['mon'];
+    $getdate['wday'] = (int)$getdate['wday'];
+    $getdate['mday'] = (int)$getdate['mday'];
+    $getdate['hours'] = (int)$getdate['hours'];
+    $getdate['minutes'] = (int)$getdate['minutes'];
+    return $getdate;
 }
 
 /**

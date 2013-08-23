@@ -177,50 +177,7 @@ class structure extends type_base {
      * @return array an array that represents the date in user time
      */
     public function timestamp_to_date_array($time, $timezone) {
-        // Save input timezone, required for dst offset check.
-        $passedtimezone = $timezone;
-
-        $timezone = get_user_timezone_offset($timezone);
-
-        if (abs($timezone) > 13) { // Server time.
-            return getdate($time);
-        }
-
-        // Add daylight saving offset for string timezones only, as we can't get dst for
-        // float values. if timezone is 99 (user default timezone), then try update dst.
-        if ($passedtimezone == 99 || !is_numeric($passedtimezone)) {
-            $time += dst_offset_on($time, $passedtimezone);
-        }
-
-        $time += intval((float)$timezone * HOURSECS);
-
-        $datestring = gmstrftime('%B_%A_%j_%Y_%m_%w_%d_%H_%M_%S', $time);
-
-        // Be careful to ensure the returned array matches that produced by getdate() above.
-        list (
-            $getdate['month'],
-            $getdate['weekday'],
-            $getdate['yday'],
-            $getdate['year'],
-            $getdate['mon'],
-            $getdate['wday'],
-            $getdate['mday'],
-            $getdate['hours'],
-            $getdate['minutes'],
-            $getdate['seconds']
-            ) = explode('_', $datestring);
-
-        // Set correct datatype to match with getdate().
-        $getdate['seconds'] = (int) $getdate['seconds'];
-        $getdate['yday'] = (int) $getdate['yday'] - 1;
-        $getdate['year'] = (int) $getdate['year'];
-        $getdate['mon'] = (int) $getdate['mon'];
-        $getdate['wday'] = (int) $getdate['wday'];
-        $getdate['mday'] = (int) $getdate['mday'];
-        $getdate['hours'] = (int) $getdate['hours'];
-        $getdate['minutes']  = (int) $getdate['minutes'];
-
-        return $getdate;
+        return usergetdate($time, $timezone);
     }
 
     /**
