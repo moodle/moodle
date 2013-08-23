@@ -400,7 +400,7 @@ class core_files_renderer extends plugin_renderer_base {
             <button class="{!}fp-file-cancel">'.get_string('cancel').'</button>
         </div>
     </form>
-    <div class="fp-info">
+    <div class="fp-info clearfix">
         <div class="fp-hr"></div>
         <p class="{!}fp-thumbnail"></p>
         <div class="fp-fileinfo">
@@ -699,7 +699,7 @@ class core_files_renderer extends plugin_renderer_base {
             <button class="{!}fp-select-cancel">'.get_string('cancel').'</button>
         </div>
     </form>
-    <div class="fp-info">
+    <div class="fp-info clearfix">
         <div class="fp-hr"></div>
         <p class="{!}fp-thumbnail"></p>
         <div class="fp-fileinfo">
