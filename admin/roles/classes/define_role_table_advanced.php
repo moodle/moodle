@@ -49,14 +49,11 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         $this->displaypermissions = $this->allpermissions;
         $this->strperms[$this->allpermissions[CAP_INHERIT]] = get_string('notset', 'core_role');
 
-        $this->allcontextlevels = array(
-            CONTEXT_SYSTEM => get_string('coresystem'),
-            CONTEXT_USER => get_string('user'),
-            CONTEXT_COURSECAT => get_string('category'),
-            CONTEXT_COURSE => get_string('course'),
-            CONTEXT_MODULE => get_string('activitymodule'),
-            CONTEXT_BLOCK => get_string('block')
-        );
+        $this->allcontextlevels = array();
+        $levels = context_helper::get_all_levels();
+        foreach ($levels as $level => $classname) {
+            $this->allcontextlevels[$level] = context_helper::get_level_name($level);
+        }
     }
 
     protected function load_current_permissions() {
