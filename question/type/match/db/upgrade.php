@@ -44,6 +44,25 @@ function xmldb_qtype_match_upgrade($oldversion) {
     // Moodle v2.4.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2013012099) {
+        // Find duplicate rows before they break the 2013012103 step below.
+        $problemids = $DB->get_recordset_sql("
+                SELECT question, MIN(id) AS recordidtokeep
+                  FROM {question_match}
+              GROUP BY question
+                HAVING COUNT(1) > 1
+                ");
+        foreach ($problemids as $problem) {
+            $DB->delete_records_select('question_match',
+                    'question = ? AND id > ?',
+                    array($problem->question, $problem->recordidtokeep));
+        }
+        $problemids->close();
+
+        // Shortanswer savepoint reached.
+        upgrade_plugin_savepoint(true, 2013012099, 'qtype', 'match');
+    }
+
     if ($oldversion < 2013012100) {
 
         // Define table question_match to be renamed to qtype_match_options.

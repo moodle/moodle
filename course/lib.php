@@ -959,7 +959,9 @@ function get_array_of_activities($courseid) {
                                    $mod[$seq]->extraclasses = $info->extraclasses;
                                }
                                if (!empty($info->iconurl)) {
-                                   $mod[$seq]->iconurl = $info->iconurl;
+                                   // Convert URL to string as it's easier to store. Also serialized object contains \0 byte and can not be written to Postgres DB.
+                                   $url = new moodle_url($info->iconurl);
+                                   $mod[$seq]->iconurl = $url->out(false);
                                }
                                if (!empty($info->onclick)) {
                                    $mod[$seq]->onclick = $info->onclick;
