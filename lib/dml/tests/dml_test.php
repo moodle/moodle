@@ -3573,7 +3573,7 @@ class dml_testcase extends database_driver_testcase {
         $this->assertEquals(next($records)->nametext, '91.10');
     }
 
-    function sql_compare_text() {
+    public function test_sql_compare_text() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3588,15 +3588,43 @@ class dml_testcase extends database_driver_testcase {
 
         $DB->insert_record($tablename, array('name'=>'abcd',   'description'=>'abcd'));
         $DB->insert_record($tablename, array('name'=>'abcdef', 'description'=>'bbcdef'));
-        $DB->insert_record($tablename, array('name'=>'aaaabb', 'description'=>'aaaacccccccccccccccccc'));
+        $DB->insert_record($tablename, array('name'=>'aaaa', 'description'=>'aaaacccccccccccccccccc'));
+        $DB->insert_record($tablename, array('name'=>'xxxx',   'description'=>'123456789a123456789b123456789c123456789d'));
 
+        // Only some supported databases truncate TEXT fields for comparisons, currently MSSQL and Oracle.
+        $dbtruncatestextfields = ($DB->get_dbfamily() == 'mssql' || $DB->get_dbfamily() == 'oracle');
+
+        if ($dbtruncatestextfields) {
+            // Ensure truncation behaves as expected.
+
+            $sql = "SELECT " . $DB->sql_compare_text('description') . " AS field FROM {{$tablename}} WHERE name = ?";
+            $description = $DB->get_field_sql($sql, array('xxxx'));
+
+            // Should truncate to 32 chars (the default).
+            $this->assertEquals('123456789a123456789b123456789c12', $description);
+
+            $sql = "SELECT " . $DB->sql_compare_text('description', 35) . " AS field FROM {{$tablename}} WHERE name = ?";
+            $description = $DB->get_field_sql($sql, array('xxxx'));
+
+            // Should truncate to the specified number of chars.
+            $this->assertEquals('123456789a123456789b123456789c12345', $description);
+        }
+
+        // Ensure text field comparison is successful.
         $sql = "SELECT * FROM {{$tablename}} WHERE name = ".$DB->sql_compare_text('description');
         $records = $DB->get_records_sql($sql);
-        $this->assertEquals(count($records), 1);
+        $this->assertCount(1, $records);
 
         $sql = "SELECT * FROM {{$tablename}} WHERE name = ".$DB->sql_compare_text('description', 4);
         $records = $DB->get_records_sql($sql);
-        $this->assertEquals(count($records), 2);
+        if ($dbtruncatestextfields) {
+            // Should truncate description to 4 characters before comparing.
+            $this->assertCount(2, $records);
+        } else {
+            // Should leave untruncated, so one less match.
+            $this->assertCount(1, $records);
+        }
+
     }
 
     function test_unique_index_collation_trouble() {

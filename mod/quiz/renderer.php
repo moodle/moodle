@@ -304,7 +304,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
         if ($userpicture) {
             $fullname = fullname($userpicture->user);
             if ($userpicture->size === true) {
-                $fullname = html_writer::div($fullname);
+                $fullname = html_writer::tag('div', $fullname);
             }
             $output .= html_writer::tag('div', $this->render($userpicture) . $fullname,
                     array('id' => 'user-picture', 'class' => 'clearfix'));
@@ -1083,14 +1083,14 @@ class mod_quiz_renderer extends plugin_renderer_base {
         }
         if ($viewobj->gradebookfeedback) {
             $resultinfo .= $this->heading(get_string('comment', 'quiz'), 3, 'main');
-            $resultinfo .= '<p class="quizteacherfeedback">'.$viewobj->gradebookfeedback.
-                    "</p>\n";
+            $resultinfo .= html_writer::tag('div', $viewobj->gradebookfeedback,
+                    array('class' => 'quizteacherfeedback')) . "\n";
         }
         if ($viewobj->feedbackcolumn) {
             $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 3, 'main');
-            $resultinfo .= html_writer::tag('p',
+            $resultinfo .= html_writer::tag('div',
                     quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context),
-                    array('class' => 'quizgradefeedback'))."\n";
+                    array('class', 'quizgradefeedback')) . "\n";
         }
 
         if ($resultinfo) {

@@ -121,8 +121,8 @@ class enrol_flatfile_plugin extends enrol_plugin {
                         continue;
                     }
 
-                    if (! $user = $DB->get_record("user", array("idnumber"=>$fields[2]))) {
-                        $this->log .= "Unknown user idnumber in field 3 - ignoring line\n";
+                    if (! $user = $DB->get_record("user", array("idnumber"=>$fields[2], 'deleted'=>0))) {
+                        $this->log .= "Unknown user idnumber or deleted user in field 3 - ignoring line\n";
                         continue;
                     }
 
