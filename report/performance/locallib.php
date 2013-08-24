@@ -209,13 +209,9 @@ class report_performance {
                             DEBUG_NORMAL => 'debugnormal',
                             DEBUG_ALL => 'debugall',
                             DEBUG_DEVELOPER => 'debugdeveloper');
-        // If debug is not set then consider it as 0.
-        if (!isset($CFG->themedesignermode)) {
-            $CFG->debug = DEBUG_NONE;
-        }
 
         $issueresult->statusstr = get_string($debugchoices[$CFG->debug], 'admin');
-        if ($CFG->debug != DEBUG_DEVELOPER) {
+        if (!$CFG->debugdeveloper) {
             $issueresult->status = self::REPORT_PERFORMANCE_OK;
             $issueresult->comment = get_string('check_debugmsg_comment_nodeveloper', 'report_performance');
         } else {

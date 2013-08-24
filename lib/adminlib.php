@@ -968,6 +968,8 @@ class admin_category implements parentable_part_of_admin_tree {
      * @return bool True if successfully added, false if $something can not be added.
      */
     public function add($parentname, $something, $beforesibling = null) {
+        global $CFG;
+
         $parent = $this->locate($parentname);
         if (is_null($parent)) {
             debugging('parent does not exist!');
@@ -979,7 +981,7 @@ class admin_category implements parentable_part_of_admin_tree {
                 debugging('error - parts of tree can be inserted only into parentable parts');
                 return false;
             }
-            if (debugging('', DEBUG_DEVELOPER) && !is_null($this->locate($something->name))) {
+            if ($CFG->debugdeveloper && !is_null($this->locate($something->name))) {
                 // The name of the node is already used, simply warn the developer that this should not happen.
                 // It is intentional to check for the debug level before performing the check.
                 debugging('Duplicate admin page name: ' . $something->name, DEBUG_DEVELOPER);

@@ -1334,4 +1334,370 @@ class core_course_courselib_testcase extends advanced_testcase {
         $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
         $this->assertEmpty($eventcount);
     }
+
+    /**
+     * Test that triggering a course_created event works as expected.
+     */
+    public function test_course_created_event() {
+        $this->resetAfterTest();
+
+        // Catch the events.
+        $sink = $this->redirectEvents();
+
+        // Create the course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_created', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($course->id, $event->objectid);
+        $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
+        $this->assertEquals($course, $event->get_record_snapshot('course', $course->id));
+        $this->assertEquals('course_created', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($course, $event);
+        $expectedlog = array(SITEID, 'course', 'new', 'view.php?id=' . $course->id, $course->fullname . ' (ID ' . $course->id . ')');
+        $this->assertEventLegacyLogData($expectedlog, $event);
+    }
+
+    /**
+     * Test that triggering a course_updated event works as expected.
+     */
+    public function test_course_updated_event() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create a category we are going to move this course to.
+        $category = $this->getDataGenerator()->create_category();
+
+        // Catch the update events.
+        $sink = $this->redirectEvents();
+
+        // Keep track of the old sortorder.
+        $sortorder = $course->sortorder;
+
+        // Call update_course which will trigger a course_updated event.
+        update_course($course);
+
+        // Return the updated course information from the DB.
+        $updatedcourse = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+
+        // Now move the course to the category, this will also trigger an event.
+        move_courses(array($course->id), $category->id);
+
+        // Return the moved course information from the DB.
+        $movedcourse = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+
+        // Now we want to set the sortorder back to what it was before fix_course_sortorder() was called. The reason for
+        // this is because update_course() and move_courses() call fix_course_sortorder() which alters the sort order in
+        // the DB, but it does not set the value of the sortorder for the course object passed to the event.
+        $updatedcourse->sortorder = $sortorder;
+        $movedcourse->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - 1;
+
+        // Capture the events.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the events.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_updated', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($updatedcourse->id, $event->objectid);
+        $this->assertEquals(context_course::instance($updatedcourse->id)->id, $event->contextid);
+        $this->assertEquals($updatedcourse, $event->get_record_snapshot('course', $updatedcourse->id));
+        $this->assertEquals('course_updated', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($updatedcourse, $event);
+        $expectedlog = array($updatedcourse->id, 'course', 'update', 'edit.php?id=' . $course->id, $course->id);
+        $this->assertEventLegacyLogData($expectedlog, $event);
+
+        $event = $events[1];
+        $this->assertInstanceOf('\core\event\course_updated', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($movedcourse->id, $event->objectid);
+        $this->assertEquals(context_course::instance($movedcourse->id)->id, $event->contextid);
+        $this->assertEquals($movedcourse, $event->get_record_snapshot('course', $movedcourse->id));
+        $this->assertEquals('course_updated', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($movedcourse, $event);
+        $expectedlog = array($movedcourse->id, 'course', 'move', 'edit.php?id=' . $movedcourse->id, $movedcourse->id);
+        $this->assertEventLegacyLogData($expectedlog, $event);
+    }
+
+    /**
+     * Test that triggering a course_deleted event works as expected.
+     */
+    public function test_course_deleted_event() {
+        $this->resetAfterTest();
+
+        // Create the course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Save the course context before we delete the course.
+        $coursecontext = context_course::instance($course->id);
+
+        // Catch the update event.
+        $sink = $this->redirectEvents();
+
+        // Call delete_course() which will trigger the course_deleted event and the course_content_deleted
+        // event. This function prints out data to the screen, which we do not want during a PHPUnit test,
+        // so use ob_start and ob_end_clean to prevent this.
+        ob_start();
+        delete_course($course);
+        ob_end_clean();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[1];
+        $this->assertInstanceOf('\core\event\course_deleted', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($course->id, $event->objectid);
+        $this->assertEquals($coursecontext->id, $event->contextid);
+        $this->assertEquals($course, $event->get_record_snapshot('course', $course->id));
+        $this->assertEquals('course_deleted', $event->get_legacy_eventname());
+        // The legacy data also passed the context in the course object.
+        $course->context = $coursecontext;
+        $this->assertEventLegacyData($course, $event);
+        $expectedlog = array(SITEID, 'course', 'delete', 'view.php?id=' . $course->id, $course->fullname . '(ID ' . $course->id . ')');
+        $this->assertEventLegacyLogData($expectedlog, $event);
+    }
+
+    /**
+     * Test that triggering a course_content_deleted event works as expected.
+     */
+    public function test_course_content_deleted_event() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Get the course from the DB. The data generator adds some extra properties, such as
+        // numsections, to the course object which will fail the assertions later on.
+        $course = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+
+        // Save the course context before we delete the course.
+        $coursecontext = context_course::instance($course->id);
+
+        // Catch the update event.
+        $sink = $this->redirectEvents();
+
+        // Call remove_course_contents() which will trigger the course_content_deleted event.
+        // This function prints out data to the screen, which we do not want during a PHPUnit
+        // test, so use ob_start and ob_end_clean to prevent this.
+        ob_start();
+        remove_course_contents($course->id);
+        ob_end_clean();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_content_deleted', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($course->id, $event->objectid);
+        $this->assertEquals($coursecontext->id, $event->contextid);
+        $this->assertEquals($course, $event->get_record_snapshot('course', $course->id));
+        $this->assertEquals('course_content_removed', $event->get_legacy_eventname());
+        // The legacy data also passed the context and options in the course object.
+        $course->context = $coursecontext;
+        $course->options = array();
+        $this->assertEventLegacyData($course, $event);
+    }
+
+    /**
+     * Test that triggering a course_category_deleted event works as expected.
+     */
+    public function test_course_category_deleted_event() {
+        $this->resetAfterTest();
+
+        // Create a category.
+        $category = $this->getDataGenerator()->create_category();
+
+        // Save the context before it is deleted.
+        $categorycontext = context_coursecat::instance($category->id);
+
+        // Catch the update event.
+        $sink = $this->redirectEvents();
+
+        // Delete the category.
+        $category->delete_full();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_category_deleted', $event);
+        $this->assertEquals('course_categories', $event->objecttable);
+        $this->assertEquals($category->id, $event->objectid);
+        $this->assertEquals($categorycontext->id, $event->contextid);
+        $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($category, $event);
+        $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category->name . '(ID ' . $category->id . ')');
+        $this->assertEventLegacyLogData($expectedlog, $event);
+
+        // Create two categories.
+        $category = $this->getDataGenerator()->create_category();
+        $category2 = $this->getDataGenerator()->create_category();
+
+        // Save the context before it is moved and then deleted.
+        $category2context = context_coursecat::instance($category2->id);
+
+        // Catch the update event.
+        $sink = $this->redirectEvents();
+
+        // Move the category.
+        $category2->delete_move($category->id);
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_category_deleted', $event);
+        $this->assertEquals('course_categories', $event->objecttable);
+        $this->assertEquals($category2->id, $event->objectid);
+        $this->assertEquals($category2context->id, $event->contextid);
+        $this->assertEquals('course_category_deleted', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($category2, $event);
+        $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category2->name . '(ID ' . $category2->id . ')');
+        $this->assertEventLegacyLogData($expectedlog, $event);
+    }
+
+    /**
+     * Test that triggering a course_restored event works as expected.
+     */
+    public function test_course_restored_event() {
+        global $CFG;
+
+        // Get the necessary files to perform backup and restore.
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
+        $this->resetAfterTest();
+
+        // Set to admin user.
+        $this->setAdminUser();
+
+        // The user id is going to be 2 since we are the admin user.
+        $userid = 2;
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create backup file and save it to the backup location.
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO, backup::MODE_GENERAL, $userid);
+        $bc->execute_plan();
+        $results = $bc->get_results();
+        $file = $results['backup_destination'];
+        $fp = get_file_packer();
+        $filepath = $CFG->dataroot . '/temp/backup/test-restore-course-event';
+        $file->extract_to_pathname($fp, $filepath);
+        $bc->destroy();
+        unset($bc);
+
+        // Now we want to catch the restore course event.
+        $sink = $this->redirectEvents();
+
+        // Now restore the course to trigger the event.
+        $rc = new restore_controller('test-restore-course-event', $course->id, backup::INTERACTIVE_NO,
+            backup::MODE_GENERAL, $userid, backup::TARGET_NEW_COURSE);
+        $rc->execute_precheck();
+        $rc->execute_plan();
+
+        // Capture the event.
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_restored', $event);
+        $this->assertEquals('course', $event->objecttable);
+        $this->assertEquals($rc->get_courseid(), $event->objectid);
+        $this->assertEquals(context_course::instance($rc->get_courseid())->id, $event->contextid);
+        $this->assertEquals('course_restored', $event->get_legacy_eventname());
+        $legacydata = (object) array(
+            'courseid' => $rc->get_courseid(),
+            'userid' => $rc->get_userid(),
+            'type' => $rc->get_type(),
+            'target' => $rc->get_target(),
+            'mode' => $rc->get_mode(),
+            'operation' => $rc->get_operation(),
+            'samesite' => $rc->is_samesite()
+        );
+        $this->assertEventLegacyData($legacydata, $event);
+
+        // Destroy the resource controller since we are done using it.
+        $rc->destroy();
+        unset($rc);
+
+        // Clear the time limit, otherwise PHPUnit complains.
+        set_time_limit(0);
+    }
+
+    /**
+     * Test that triggering a course_section_updated event works as expected.
+     */
+    public function test_course_section_updated_event() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create the course with sections.
+        $course = $this->getDataGenerator()->create_course(array('numsections' => 10), array('createsections' => true));
+        $sections = $DB->get_records('course_sections', array('course' => $course->id));
+
+        $coursecontext = context_course::instance($course->id);
+
+        $section = array_pop($sections);
+        $section->name = 'Test section';
+        $section->summary = 'Test section summary';
+        $DB->update_record('course_sections', $section);
+
+        // Trigger an event for course section update.
+        $event = \core\event\course_section_updated::create(
+                array(
+                    'objectid' => $section->id,
+                    'courseid' => $course->id,
+                    'context' => context_course::instance($course->id)
+                )
+            );
+        $event->add_record_snapshot('course_sections', $section);
+        // Trigger and catch event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\course_section_updated', $event);
+        $this->assertEquals('course_sections', $event->objecttable);
+        $this->assertEquals($section->id, $event->objectid);
+        $this->assertEquals($course->id, $event->courseid);
+        $this->assertEquals($coursecontext->id, $event->contextid);
+        $expecteddesc = 'Course ' . $event->courseid . ' section ' . $event->other['sectionnum'] . ' updated by user ' . $event->userid;
+        $this->assertEquals($expecteddesc, $event->get_description());
+        $this->assertEquals($section, $event->get_record_snapshot('course_sections', $event->objectid));
+        $id = $section->id;
+        $sectionnum = $section->section;
+        $expectedlegacydata = array($course->id, "course", "editsection", 'editsection.php?id=' . $id, $sectionnum);
+        $this->assertEventLegacyLogData($expectedlegacydata, $event);
+    }
 }

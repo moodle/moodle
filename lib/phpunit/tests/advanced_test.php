@@ -65,9 +65,10 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $debuggings = $this->getDebuggingMessages();
         $this->assertEquals(0, count($debuggings));
 
-        $CFG->debug = DEBUG_NONE;
+        set_debugging(DEBUG_NONE);
         debugging('hokus');
         $this->assertDebuggingNotCalled();
+        set_debugging(DEBUG_DEVELOPER);
     }
 
     public function test_set_user() {

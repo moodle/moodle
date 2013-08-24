@@ -58,11 +58,12 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->disabledIf('options[shortnametemplate]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_OR_UPDATE);
         $mform->disabledIf('options[shortnametemplate]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_UPDATE_ONLY);
 
+        // Restore file is not in the array options on purpose, because formslib can't handle it!
         $contextid = $this->_customdata['contextid'];
         $mform->addElement('hidden', 'contextid', $contextid);
         $mform->setType('contextid', PARAM_INT);
-        $mform->addElement('filepicker', 'options[restorefile]', get_string('templatefile', 'tool_uploadcourse'));
-        $mform->addHelpButton('options[restorefile]', 'templatefile', 'tool_uploadcourse');
+        $mform->addElement('filepicker', 'restorefile', get_string('templatefile', 'tool_uploadcourse'));
+        $mform->addHelpButton('restorefile', 'templatefile', 'tool_uploadcourse');
 
         $mform->addElement('text', 'options[templatecourse]', get_string('coursetemplatename', 'tool_uploadcourse'));
         $mform->setType('options[templatecourse]', PARAM_TEXT);
@@ -188,33 +189,4 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->closeHeaderBefore('buttonar');
     }
 
-    /**
-     * Server side validation.
-     * @param array $data - form data
-     * @param object $files  - form files
-     * @return array $errors - form errors
-     */
-    public function validation($data, $files) {
-        $errors = parent::validation($data, $files);
-        $columns = $this->_customdata['columns'];
-        $optype  = $data['options']['mode'];
-
-        // Look for other required data.
-        if ($optype != tool_uploadcourse_processor::MODE_UPDATE_ONLY) {
-            if (!in_array('fullname', $columns)) {
-                if (isset($errors['mode'])) {
-                    $errors['mode'] .= ' ';
-                }
-                $errors['mode'] .= get_string('missingfield', 'error', 'fullname');
-            }
-            if (!in_array('summary', $columns)) {
-                if (isset($errors['mode'])) {
-                    $errors['mode'] .= ' ';
-                }
-                $errors['mode'] .= get_string('missingfield', 'error', 'summary');
-            }
-        }
-
-        return $errors;
-    }
 }

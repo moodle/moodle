@@ -31,8 +31,7 @@ class course_module_completion_updated extends base {
     protected function init() {
         $this->data['objecttable'] = 'course_modules_completion';
         $this->data['crud'] = 'u';
-        // TODO: MDL-37658 set level.
-        $this->data['level'] = 50;
+        $this->data['level'] = self::LEVEL_PARTICIPATING;
     }
 
     /**

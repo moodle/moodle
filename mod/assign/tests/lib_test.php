@@ -40,23 +40,26 @@ require_once($CFG->dirroot . '/mod/assign/tests/base_test.php');
 class mod_assign_lib_testcase extends mod_assign_base_testcase {
 
     public function test_assign_print_overview() {
+        global $DB;
         $this->setUser($this->editingteachers[0]);
         $this->create_instance();
         $this->create_instance(array('duedate'=>time()));
 
+        $courses = $DB->get_records('course', array('id' => $this->course->id));
+
         $this->setUser($this->students[0]);
         $overview = array();
-        assign_print_overview(array($this->course->id => $this->course), $overview);
+        assign_print_overview($courses, $overview);
         $this->assertEquals(count($overview), 1);
 
         $this->setUser($this->teachers[0]);
         $overview = array();
-        assign_print_overview(array($this->course->id => $this->course), $overview);
+        assign_print_overview($courses, $overview);
         $this->assertEquals(count($overview), 1);
 
         $this->setUser($this->editingteachers[0]);
         $overview = array();
-        assign_print_overview(array($this->course->id => $this->course), $overview);
+        assign_print_overview($courses, $overview);
         $this->assertEquals(1, count($overview));
     }
 

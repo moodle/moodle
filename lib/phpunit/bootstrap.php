@@ -198,6 +198,7 @@ unset($productioncfg);
 
 // force the same CFG settings in all sites
 $CFG->debug = (E_ALL | E_STRICT); // can not use DEBUG_DEVELOPER yet
+$CFG->debugdeveloper = true;
 $CFG->debugdisplay = 1;
 error_reporting($CFG->debug);
 ini_set('display_errors', '1');

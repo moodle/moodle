@@ -809,8 +809,34 @@ class core_completionlib_testcase extends advanced_testcase {
         $data = $ccompletion->get_record_data();
         $this->assertEventLegacyData($data, $event);
     }
-}
 
+    /**
+     * Test course completed event.
+     */
+    public function test_course_completion_updated_event() {
+        $this->setup_data();
+        $coursecontext = context_course::instance($this->course->id);
+        $coursecompletionevent = \core\event\course_completion_updated::create(
+                array(
+                    'courseid' => $this->course->id,
+                    'context' => $coursecontext
+                    )
+                );
+
+        // Mark course as complete and get triggered event.
+        $sink = $this->redirectEvents();
+        $coursecompletionevent->trigger();
+        $events = $sink->get_events();
+        $event = array_pop($events);
+        $sink->close();
+
+        $this->assertInstanceOf('\core\event\course_completion_updated', $event);
+        $this->assertEquals($this->course->id, $event->courseid);
+        $this->assertEquals($coursecontext, $event->get_context());
+        $expectedlegacylog = array($this->course->id, 'course', 'completion updated', 'completion.php?id='.$this->course->id);
+        $this->assertEventLegacyLogData($expectedlegacylog, $event);
+    }
+}
 
 class core_completionlib_fake_recordset implements Iterator {
     protected $closed;

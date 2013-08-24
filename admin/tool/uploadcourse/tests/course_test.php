@@ -635,6 +635,23 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         }
         $this->assertTrue($found);
 
+        // Restoring twice from the same course should work.
+        $data = array('shortname' => 'B1', 'templatecourse' => $c1->shortname, 'summary' => 'B', 'category' => 1,
+            'fullname' => 'B1');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $course = $DB->get_record('course', array('shortname' => 'B1'));
+        $modinfo = get_fast_modinfo($course);
+        $found = false;
+        foreach ($modinfo->get_cms() as $cmid => $cm) {
+            if ($cm->modname == 'forum' && $cm->name == $c1f1->name) {
+                $found = true;
+                break;
+            }
+        }
+        $this->assertTrue($found);
+
         // Restore the time limit to prevent warning.
         set_time_limit(0);
     }
@@ -656,6 +673,25 @@ class tool_uploadcourse_course_testcase extends advanced_testcase {
         $this->assertTrue($co->prepare());
         $co->proceed();
         $course = $DB->get_record('course', array('shortname' => 'A1'));
+        $modinfo = get_fast_modinfo($course);
+        $found = false;
+        foreach ($modinfo->get_cms() as $cmid => $cm) {
+            if ($cm->modname == 'glossary' && $cm->name == 'Imported Glossary') {
+                $found = true;
+            } else if ($cm->modname == 'forum' && $cm->name == $c1f1->name) {
+                // We should not find this!
+                $this->assertTrue(false);
+            }
+        }
+        $this->assertTrue($found);
+
+        // Restoring twice from the same file should work.
+        $data = array('shortname' => 'B1', 'backupfile' => __DIR__ . '/fixtures/backup.mbz',
+            'summary' => 'B', 'category' => 1, 'fullname' => 'B1');
+        $co = new tool_uploadcourse_course($mode, $updatemode, $data);
+        $this->assertTrue($co->prepare());
+        $co->proceed();
+        $course = $DB->get_record('course', array('shortname' => 'B1'));
         $modinfo = get_fast_modinfo($course);
         $found = false;
         foreach ($modinfo->get_cms() as $cmid => $cm) {

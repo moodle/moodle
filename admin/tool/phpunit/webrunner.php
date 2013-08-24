@@ -34,7 +34,7 @@ $execute   = optional_param('execute', 0, PARAM_BOOL);
 navigation_node::override_active_url(new moodle_url('/admin/tool/phpunit/index.php'));
 admin_externalpage_setup('toolphpunitwebrunner');
 
-if (!debugging('', DEBUG_DEVELOPER)) {
+if (!$CFG->debugdeveloper) {
     error('Not available on production sites, sorry.');
 }
 
@@ -82,7 +82,7 @@ if ($execute) {
         if ($code != 0) {
             tool_phpunit_problem('Can not initialize database');
         }
-        $CFG->debug = 0; // no pesky redirect warning, we really want to redirect
+        set_debugging(DEBUG_NONE, false); // Hack: no redirect warning, we really want to redirect.
         redirect(new moodle_url($PAGE->url, array('execute'=>1, 'tespath'=>$testpath, 'testclass'=>$testclass, 'sesskey'=>sesskey())), 'Reloading page');
         echo $OUTPUT->footer();
         die();
@@ -103,7 +103,7 @@ if ($execute) {
         if ($code != 0) {
             tool_phpunit_problem('Can not initialize database');
         }
-        $CFG->debug = 0; // no pesky redirect warning, we really want to redirect
+        set_debugging(DEBUG_NONE, false); // Hack: no redirect warning, we really want to redirect.
         redirect(new moodle_url($PAGE->url, array('execute'=>1, 'tespath'=>$testpath, 'testclass'=>$testclass, 'sesskey'=>sesskey())), 'Reloading page');
         die();
 

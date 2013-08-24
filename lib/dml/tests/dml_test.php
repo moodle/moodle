@@ -1475,8 +1475,6 @@ class core_dml_testcase extends database_driver_testcase {
     }
 
     public function test_get_records_sql() {
-        global $CFG;
-
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1518,11 +1516,11 @@ class core_dml_testcase extends database_driver_testcase {
         $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {{$tablename}}", null);
         $this->assertDebuggingCalled();
         $this->assertEquals(6, count($records));
-        $CFG->debug = DEBUG_MINIMAL;
+        set_debugging(DEBUG_MINIMAL);
         $records = $DB->get_records_sql("SELECT course AS id, course AS course FROM {{$tablename}}", null);
         $this->assertDebuggingNotCalled();
         $this->assertEquals(6, count($records));
-        $CFG->debug = DEBUG_DEVELOPER;
+        set_debugging(DEBUG_DEVELOPER);
 
         // negative limits = no limits
         $records = $DB->get_records_sql("SELECT * FROM {{$tablename}} ORDER BY id", null, -1, -1);
@@ -1734,8 +1732,6 @@ class core_dml_testcase extends database_driver_testcase {
     }
 
     public function test_get_record_sql() {
-        global $CFG;
-
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -1774,10 +1770,10 @@ class core_dml_testcase extends database_driver_testcase {
 
         $this->assertNotEmpty($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
         $this->assertDebuggingCalled();
-        $CFG->debug = DEBUG_MINIMAL;
+        set_debugging(DEBUG_MINIMAL);
         $this->assertNotEmpty($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MISSING));
         $this->assertDebuggingNotCalled();
-        $CFG->debug = DEBUG_DEVELOPER;
+        set_debugging(DEBUG_DEVELOPER);
 
         // multiple matches ignored
         $this->assertNotEmpty($DB->get_record_sql("SELECT * FROM {{$tablename}}", array(), IGNORE_MULTIPLE));
@@ -3573,7 +3569,7 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertEquals(next($records)->nametext, '91.10');
     }
 
-    function sql_compare_text() {
+    public function test_sql_compare_text() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
@@ -3588,15 +3584,43 @@ class core_dml_testcase extends database_driver_testcase {
 
         $DB->insert_record($tablename, array('name'=>'abcd',   'description'=>'abcd'));
         $DB->insert_record($tablename, array('name'=>'abcdef', 'description'=>'bbcdef'));
-        $DB->insert_record($tablename, array('name'=>'aaaabb', 'description'=>'aaaacccccccccccccccccc'));
+        $DB->insert_record($tablename, array('name'=>'aaaa', 'description'=>'aaaacccccccccccccccccc'));
+        $DB->insert_record($tablename, array('name'=>'xxxx',   'description'=>'123456789a123456789b123456789c123456789d'));
 
+        // Only some supported databases truncate TEXT fields for comparisons, currently MSSQL and Oracle.
+        $dbtruncatestextfields = ($DB->get_dbfamily() == 'mssql' || $DB->get_dbfamily() == 'oracle');
+
+        if ($dbtruncatestextfields) {
+            // Ensure truncation behaves as expected.
+
+            $sql = "SELECT " . $DB->sql_compare_text('description') . " AS field FROM {{$tablename}} WHERE name = ?";
+            $description = $DB->get_field_sql($sql, array('xxxx'));
+
+            // Should truncate to 32 chars (the default).
+            $this->assertEquals('123456789a123456789b123456789c12', $description);
+
+            $sql = "SELECT " . $DB->sql_compare_text('description', 35) . " AS field FROM {{$tablename}} WHERE name = ?";
+            $description = $DB->get_field_sql($sql, array('xxxx'));
+
+            // Should truncate to the specified number of chars.
+            $this->assertEquals('123456789a123456789b123456789c12345', $description);
+        }
+
+        // Ensure text field comparison is successful.
         $sql = "SELECT * FROM {{$tablename}} WHERE name = ".$DB->sql_compare_text('description');
         $records = $DB->get_records_sql($sql);
-        $this->assertEquals(count($records), 1);
+        $this->assertCount(1, $records);
 
         $sql = "SELECT * FROM {{$tablename}} WHERE name = ".$DB->sql_compare_text('description', 4);
         $records = $DB->get_records_sql($sql);
-        $this->assertEquals(count($records), 2);
+        if ($dbtruncatestextfields) {
+            // Should truncate description to 4 characters before comparing.
+            $this->assertCount(2, $records);
+        } else {
+            // Should leave untruncated, so one less match.
+            $this->assertCount(1, $records);
+        }
+
     }
 
     function test_unique_index_collation_trouble() {

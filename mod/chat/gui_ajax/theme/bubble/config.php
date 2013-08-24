@@ -12,8 +12,8 @@ TEMPLATE;
 $chattheme_cfg->user_message_left = <<<TEMPLATE
 <div class='chat-message ___mymessageclass___'>
     <div class="left">
-        <span class="picture">___avatar___</span>
         <span class="text triangle-border left">___message___</span>
+        <span class="picture">___avatar___</span>
     </div>
     <div class="chat-message-meta left">
         <span class="time">___time___</span>

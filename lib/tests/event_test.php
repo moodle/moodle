@@ -52,7 +52,7 @@ class core_event_testcase extends advanced_testcase {
         $this->assertSame('unittest', $event->target);
         $this->assertSame(5, $event->objectid);
         $this->assertSame('u', $event->crud);
-        $this->assertSame(10, $event->level);
+        $this->assertSame(\core\event\base::LEVEL_PARTICIPATING, $event->level);
 
         $this->assertEquals($system, $event->get_context());
         $this->assertSame($system->id, $event->contextid);
@@ -602,6 +602,10 @@ class core_event_testcase extends advanced_testcase {
             $this->assertInstanceOf('\coding_exception', $e);
         }
 
+        $event = \core_tests\event\bad_event2b::create(array('context'=>\context_system::instance()));
+        @$event->trigger();
+        $this->assertDebuggingCalled();
+
         $event = \core_tests\event\bad_event3::create(array('context'=>\context_system::instance()));
         @$event->trigger();
         $this->assertDebuggingCalled();
@@ -637,10 +641,10 @@ class core_event_testcase extends advanced_testcase {
         $event2 = \core_tests\event\problematic_event1::create(array('xxx'=>0, 'context'=>\context_system::instance()));
         $this->assertDebuggingCalled();
 
-        $CFG->debug = 0;
+        set_debugging(DEBUG_NONE);
         $event3 = \core_tests\event\problematic_event1::create(array('xxx'=>0, 'context'=>\context_system::instance()));
         $this->assertDebuggingNotCalled();
-        $CFG->debug = E_ALL | E_STRICT;
+        set_debugging(DEBUG_DEVELOPER);
 
         $event4 = \core_tests\event\problematic_event1::create(array('context'=>\context_system::instance(), 'other'=>array('a'=>1)));
         $event4->trigger();

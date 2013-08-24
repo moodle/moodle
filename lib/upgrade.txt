@@ -16,6 +16,8 @@ information provided here is intended especially for developers.
 * The string manager classes were renamed. Note that they should not be modified or used directly,
   always use get_string_manager() to get instance of the string manager.
 * The ability to use an 'insecure' rc4encrypt/rc4decrypt key has been removed.
+* Use $CFG->debugdeveloper instead of debugging('', DEBUG_DEVELOPER).
+* Use set_debugging(DEBUG_xxx) when changing debugging level for current request.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices

@@ -43,6 +43,9 @@ class phpunit_util extends testing_util {
     /** @var phpunit_message_sink alternative target for moodle messaging */
     protected static $messagesink = null;
 
+    /** @var phpunit_phpmailer_sink alternative target for phpmailer messaging */
+    protected static $phpmailersink = null;
+
     /** @var phpunit_message_sink alternative target for moodle messaging */
     protected static $eventsink = null;
 
@@ -97,6 +100,9 @@ class phpunit_util extends testing_util {
 
         // Stop any message redirection.
         phpunit_util::stop_message_redirection();
+
+        // Stop any message redirection.
+        phpunit_util::stop_phpmailer_redirection();
 
         // Stop any message redirection.
         phpunit_util::stop_event_redirection();
@@ -594,6 +600,7 @@ class phpunit_util extends testing_util {
      */
     public static function reset_debugging() {
         self::$debuggings = array();
+        set_debugging(DEBUG_DEVELOPER);
     }
 
     /**
@@ -665,6 +672,55 @@ class phpunit_util extends testing_util {
     public static function message_sent($message) {
         if (self::$messagesink) {
             self::$messagesink->add_message($message);
+        }
+    }
+
+    /**
+     * Start phpmailer redirection.
+     *
+     * Note: Do not call directly from tests,
+     *       use $sink = $this->redirectEmails() instead.
+     *
+     * @return phpunit_phpmailer_sink
+     */
+    public static function start_phpmailer_redirection() {
+        if (self::$phpmailersink) {
+            self::stop_phpmailer_redirection();
+        }
+        self::$phpmailersink = new phpunit_phpmailer_sink();
+        return self::$phpmailersink;
+    }
+
+    /**
+     * End phpmailer redirection.
+     *
+     * Note: Do not call directly from tests,
+     *       use $sink->close() instead.
+     */
+    public static function stop_phpmailer_redirection() {
+        self::$phpmailersink = null;
+    }
+
+    /**
+     * Are messages for phpmailer redirected to some sink?
+     *
+     * Note: to be called from moodle_phpmailer.php only!
+     *
+     * @return bool
+     */
+    public static function is_redirecting_phpmailer() {
+        return !empty(self::$phpmailersink);
+    }
+
+    /**
+     * To be called from messagelib.php only!
+     *
+     * @param stdClass $message record from message_read table
+     * @return bool true means send message, false means message "sent" to sink.
+     */
+    public static function phpmailer_sent($message) {
+        if (self::$phpmailersink) {
+            self::$phpmailersink->add_message($message);
         }
     }
 

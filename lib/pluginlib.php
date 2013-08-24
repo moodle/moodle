@@ -3341,7 +3341,7 @@ class plugininfo_mod extends plugininfo_base {
      */
     protected function load_version_php($disablecache=false) {
 
-        $cache = cache::make('core', 'plugininfo_base');
+        $cache = cache::make('core', 'plugininfo_mod');
 
         $versionsphp = $cache->get('versions_php');
 

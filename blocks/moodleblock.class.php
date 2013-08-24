@@ -416,6 +416,9 @@ class block_base {
             'class' => 'block_' . $this->name(). '  block',
             'role' => $this->get_aria_role()
         );
+        if ($this->hide_header()) {
+            $attributes['class'] .= ' no-header';
+        }
         if ($this->instance_can_be_docked() && get_user_preferences('docked_block_instance_'.$this->instance->id, 0)) {
             $attributes['class'] .= ' dock_on_load';
         }

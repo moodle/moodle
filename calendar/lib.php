@@ -1410,14 +1410,8 @@ function calendar_get_module_cached(&$coursecache, $modulename, $instance) {
  * @return stdClass $coursecache[$courseid] return the specific course cache
  */
 function calendar_get_course_cached(&$coursecache, $courseid) {
-    global $COURSE, $DB;
-
     if (!isset($coursecache[$courseid])) {
-        if ($courseid == $COURSE->id) {
-            $coursecache[$courseid] = $COURSE;
-        } else {
-            $coursecache[$courseid] = $DB->get_record('course', array('id'=>$courseid));
-        }
+        $coursecache[$courseid] = get_course($courseid);
     }
     return $coursecache[$courseid];
 }

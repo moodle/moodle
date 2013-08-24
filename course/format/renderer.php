@@ -172,9 +172,11 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         // When on a section page, we only display the general section title, if title is not the default one
         $hasnamesecpg = ($onsectionpage && ($section->section == 0 && !is_null($section->name)));
 
+        $classes = ' accesshide';
         if ($hasnamenotsecpg || $hasnamesecpg) {
-            $o.= $this->output->heading($this->section_title($section, $course), 3, 'sectionname');
+            $classes = '';
         }
+        $o.= $this->output->heading($this->section_title($section, $course), 3, 'sectionname' . $classes);
 
         $o.= html_writer::start_tag('div', array('class' => 'summary'));
         $o.= $this->format_summary_text($section);

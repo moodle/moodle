@@ -464,10 +464,10 @@ $CFG->admin = 'admin';
 // $CFG->debugusers = '2';
 //
 // Prevent theme caching
-// $CFG->themerev = -1; // NOT FOR PRODUCTION SERVERS!
+// $CFG->themedesignermode = true; // NOT FOR PRODUCTION SERVERS!
 //
 // Prevent JS caching
-// $CFG->jsrev = -1; // NOT FOR PRODUCTION SERVERS!
+// $CFG->cachejs = false; // NOT FOR PRODUCTION SERVERS!
 //
 // Prevent core_string_manager application caching
 // $CFG->langstringcache = false; // NOT FOR PRODUCTION SERVERS!

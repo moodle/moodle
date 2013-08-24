@@ -124,6 +124,7 @@ $string['err_nousers'] = 'There are no students on this course or group for whom
 $string['err_settingslocked'] = 'One or more students have already completed a criteria so the settings have been locked. Unlocking the completion criteria settings will delete any existing user data and may cause confusion.';
 $string['err_system'] = 'An internal error occurred in the completion system. (System administrators can enable debugging information to see more detail.)';
 $string['eventcoursecompleted'] = 'Course completed';
+$string['eventcoursecompletionupdated'] = 'Course completion updated';
 $string['eventcoursemodulecompletionupdated'] = 'Course module completion updated';
 $string['excelcsvdownload'] = 'Download in Excel-compatible format (.csv)';
 $string['fraction'] = 'Fraction';

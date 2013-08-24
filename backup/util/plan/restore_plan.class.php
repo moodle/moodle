@@ -157,15 +157,18 @@ class restore_plan extends base_plan implements loggable {
         parent::execute();
         $this->controller->set_status(backup::STATUS_FINISHED_OK);
 
-        events_trigger('course_restored', (object) array(
-            'courseid'  => $this->get_courseid(), // The new course
-            'userid'    => $this->get_userid(), // User doing the restore
-            'type'      => $this->controller->get_type(), // backup::TYPE_* constant
-            'target'    => $this->controller->get_target(), // backup::TARGET_* constant
-            'mode'      => $this->controller->get_mode(), // backup::MODE_* constant
-            'operation' => $this->controller->get_operation(), // backup::OPERATION_* constant
-            'samesite'  => $this->controller->is_samesite(),
+        // Trigger a course restored event.
+        $event = \core\event\course_restored::create(array(
+            'objectid' => $this->get_courseid(),
+            'userid' => $this->get_userid(),
+            'context' => context_course::instance($this->get_courseid()),
+            'other' => array('type' => $this->controller->get_type(),
+                             'target' => $this->controller->get_target(),
+                             'mode' => $this->controller->get_mode(),
+                             'operation' => $this->controller->get_operation(),
+                             'samesite' => $this->controller->is_samesite())
         ));
+        $event->trigger();
     }
 
     /**

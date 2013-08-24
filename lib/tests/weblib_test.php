@@ -428,4 +428,44 @@ class core_weblib_testcase extends advanced_testcase {
         $this->assertSame("do\n  re\n    mi\n", $trace2->get_buffer());
         $this->expectOutputString('');
     }
+
+    public function test_set_debugging() {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $this->assertEquals(DEBUG_DEVELOPER, $CFG->debug);
+        $this->assertTrue($CFG->debugdeveloper);
+        $this->assertNotEmpty($CFG->debugdisplay);
+
+        set_debugging(DEBUG_DEVELOPER, true);
+        $this->assertEquals(DEBUG_DEVELOPER, $CFG->debug);
+        $this->assertTrue($CFG->debugdeveloper);
+        $this->assertNotEmpty($CFG->debugdisplay);
+
+        set_debugging(DEBUG_DEVELOPER, false);
+        $this->assertEquals(DEBUG_DEVELOPER, $CFG->debug);
+        $this->assertTrue($CFG->debugdeveloper);
+        $this->assertEmpty($CFG->debugdisplay);
+
+        set_debugging(-1);
+        $this->assertEquals(-1, $CFG->debug);
+        $this->assertTrue($CFG->debugdeveloper);
+
+        set_debugging(DEBUG_ALL);
+        $this->assertEquals(DEBUG_ALL, $CFG->debug);
+        $this->assertFalse($CFG->debugdeveloper);
+
+        set_debugging(DEBUG_NORMAL);
+        $this->assertEquals(DEBUG_NORMAL, $CFG->debug);
+        $this->assertFalse($CFG->debugdeveloper);
+
+        set_debugging(DEBUG_MINIMAL);
+        $this->assertEquals(DEBUG_MINIMAL, $CFG->debug);
+        $this->assertFalse($CFG->debugdeveloper);
+
+        set_debugging(DEBUG_NONE);
+        $this->assertEquals(DEBUG_NONE, $CFG->debug);
+        $this->assertFalse($CFG->debugdeveloper);
+    }
 }

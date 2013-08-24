@@ -1064,6 +1064,9 @@ body.tag .managelink {
 #page-enrol-users .enrol_user_buttons {
     float: right;
 }
+#page-enrol-users.dir-rtl .enrol_user_buttons {
+    float: left;
+}
 #page-enrol-users .enrol_user_buttons .enrolusersbutton {
     margin-left: 1em;
     display: inline;
@@ -1960,9 +1963,6 @@ div.badge .expireimage {
 }
 
 .jsenabled {
-    .block .editing_move {
-        display:none;
-    }
     .moodle-actionmenu[data-enhance] {
         display: block;
         .menu {
@@ -2094,4 +2094,13 @@ div.badge .expireimage {
     .block .moodle-actionmenu {
         text-align: right;
     }
+}
+
+ul.dragdrop-keyboard-drag li {
+    list-style-type: none;
+}
+
+.block-control-actions .moodle-core-dragdrop-draghandle img {
+    width: 12px;
+    height: 12px;
 }

@@ -17,16 +17,13 @@
 /**
  * Version details.
  *
- * @package    tool
- * @subpackage generator
- * @copyright  2009 Nicolas Connault
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tool_generator
+ * @copyright 2013 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013050100; // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2013050100; // Requires this Moodle version
-$plugin->component = 'tool_generator'; // Full name of the plugin (used for diagnostics)
-
-$plugin->maturity  = MATURITY_ALPHA; // this version's maturity level
+$plugin->version = 2013080700;
+$plugin->requires = 2013080200;
+$plugin->component = 'tool_generator';

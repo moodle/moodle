@@ -195,12 +195,9 @@ class core_component {
     protected static function is_developer() {
         global $CFG;
 
+        // Note we can not rely on $CFG->debug here because DB is not initialised yet.
         if (isset($CFG->config_php_settings['debug'])) {
-            // Standard moodle script.
             $debug = (int)$CFG->config_php_settings['debug'];
-        } else if (isset($CFG->debug)) {
-            // Usually script with ABORT_AFTER_CONFIG.
-            $debug = (int)$CFG->debug;
         } else {
             return false;
         }

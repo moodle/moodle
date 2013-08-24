@@ -175,4 +175,121 @@ class core_files_externallib_testcase extends advanced_testcase {
         $file = $browser->get_file_info($context, $component, $filearea, $itemid, $filepath, $filename);
         $this->assertNotEmpty($file);
     }
+
+    public function test_get_files() {
+        global $USER, $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $USER->email = 'test@moodle.com';
+
+        $course = $this->getDataGenerator()->create_course();
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->name = "Mod data upload test";
+
+        $record->intro = "Some intro of some sort";
+
+        $module = $this->getDataGenerator()->create_module('data', $record);
+
+        $field = data_get_field_new('file', $module);
+
+        $fielddetail = new stdClass();
+        $fielddetail->d = $module->id;
+        $fielddetail->mode = 'add';
+        $fielddetail->type = 'file';
+        $fielddetail->sesskey = sesskey();
+        $fielddetail->name = 'Upload file';
+        $fielddetail->description = 'Some description';
+        $fielddetail->param3 = '0';
+
+        $field->define_field($fielddetail);
+        $field->insert_field();
+        $recordid = data_add_record($module);
+
+        $timemodified = $DB->get_field('data_records', 'timemodified', array('id' => $recordid));
+
+        $datacontent = array();
+        $datacontent['fieldid'] = $field->field->id;
+        $datacontent['recordid'] = $recordid;
+        $datacontent['content'] = 'Simple4.txt';
+
+        $contentid = $DB->insert_record('data_content', $datacontent);
+
+        $context = context_module::instance($module->id);
+        $usercontext = context_user::instance($USER->id);
+        $component = 'mod_data';
+        $filearea = 'content';
+        $itemid = $contentid;
+        $filename = $datacontent['content'];
+        $filecontent = base64_encode("Let us create a nice simple file.");
+
+        $filerecord = array();
+        $filerecord['contextid'] = $context->id;
+        $filerecord['component'] = $component;
+        $filerecord['filearea'] = $filearea;
+        $filerecord['itemid'] = $itemid;
+        $filerecord['filepath'] = '/';
+        $filerecord['filename'] = $filename;
+
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_string($filerecord, $filecontent);
+
+        $filename = '';
+        $testfilelisting = core_files_external::get_files($context->id, $component, $filearea, $itemid, '/', $filename);
+
+        $testdata = array();
+        $testdata['parents'] = array();
+        $testdata['parents']['0'] = array('contextid' => 1,
+                                          'component' => null,
+                                          'filearea' => null,
+                                          'itemid' => null,
+                                          'filepath' => null,
+                                          'filename' => 'System');
+        $testdata['parents']['1'] = array('contextid' => 3,
+                                          'component' => null,
+                                          'filearea' => null,
+                                          'itemid' => null,
+                                          'filepath' => null,
+                                          'filename' => 'Miscellaneous');
+        $testdata['parents']['2'] = array('contextid' => 15,
+                                          'component' => null,
+                                          'filearea' => null,
+                                          'itemid' => null,
+                                          'filepath' => null,
+                                          'filename' => 'Test course 1');
+        $testdata['parents']['3'] = array('contextid' => 20,
+                                          'component' => null,
+                                          'filearea' => null,
+                                          'itemid' => null,
+                                          'filepath' => null,
+                                          'filename' => 'Mod data upload test (Database)');
+        $testdata['parents']['4'] = array('contextid' => 20,
+                                          'component' => 'mod_data',
+                                          'filearea' => 'content',
+                                          'itemid' => null,
+                                          'filepath' => null,
+                                          'filename' => 'Fields');
+        $testdata['files'] = array();
+        $testdata['files']['0'] = array('contextid' => 20,
+                                        'component' => 'mod_data',
+                                        'filearea' => 'content',
+                                        'itemid' => 1,
+                                        'filepath' => '/',
+                                        'filename' => 'Simple4.txt',
+                                        'url' => 'http://www.example.com/moodle/pluginfile.php/20/mod_data/content/1/Simple4.txt',
+                                        'isdir' => null,
+                                        'timemodified' => $timemodified);
+
+        $this->assertEquals($testfilelisting, $testdata);
+
+        // Try again but without the context.
+        $nocontext = -1;
+        $modified = 0;
+        $contextlevel = 'module';
+        $instanceid = $module->id;
+        $testfilelisting = core_files_external::get_files($nocontext, $component, $filearea, $itemid, '/', $filename, $modified, $contextlevel, $instanceid);
+        $this->assertEquals($testfilelisting, $testdata);
+    }
 }

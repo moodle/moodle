@@ -224,7 +224,7 @@ class page_requirements_manager {
         ));
 
         // Set some more loader options applying to groups too.
-        if (debugging('', DEBUG_DEVELOPER)) {
+        if ($CFG->debugdeveloper) {
             // When debugging is enabled, we want to load the non-minified (RAW) versions of YUI library modules rather
             // than the DEBUG versions as these generally generate too much logging for our purposes.
             // However we do want the DEBUG versions of our Moodle-specific modules.
@@ -270,7 +270,7 @@ class page_requirements_manager {
             'jsrev'               => ((empty($CFG->cachejs) or empty($CFG->jsrev)) ? -1 : $CFG->jsrev),
             'svgicons'            => $page->theme->use_svg_icons()
         );
-        if (debugging('', DEBUG_DEVELOPER)) {
+        if ($CFG->debugdeveloper) {
             $this->M_cfg['developerdebug'] = true;
         }
 
@@ -300,6 +300,11 @@ class page_requirements_manager {
             if (!empty($page->cm->id)) {
                 $params['cmid'] = $page->cm->id;
             }
+            // Strings for drag and drop.
+            $this->strings_for_js(array('movecontent',
+                                        'tocontent',
+                                        'emptydragdropregion'),
+                                  'moodle');
             $page->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', array($params), null, true);
         }
     }
@@ -436,7 +441,7 @@ class page_requirements_manager {
         $this->jqueryplugins[$plugin]->urls      = array();
 
         foreach ($plugins[$plugin]['files'] as $file) {
-            if (debugging('', DEBUG_DEVELOPER)) {
+            if ($CFG->debugdeveloper) {
                 if (!file_exists("$componentdir/jquery/$file")) {
                     debugging("Invalid file '$file' specified in jQuery plugin '$plugin' in component '$component'");
                     continue;
@@ -746,7 +751,7 @@ class page_requirements_manager {
 
         // Don't load this module if we already have, no need to!
         if ($this->js_module_loaded($module['name'])) {
-            if (debugging('', DEBUG_DEVELOPER)) {
+            if ($CFG->debugdeveloper) {
                 $this->debug_moduleloadstacktraces[$module['name']][] = format_backtrace(debug_backtrace());
             }
             return;
@@ -780,7 +785,7 @@ class page_requirements_manager {
         } else {
             $this->YUI_config->add_module_config($module['name'], $module);
         }
-        if (debugging('', DEBUG_DEVELOPER)) {
+        if ($CFG->debugdeveloper) {
             if (!array_key_exists($module['name'], $this->debug_moduleloadstacktraces)) {
                 $this->debug_moduleloadstacktraces[$module['name']] = array();
             }

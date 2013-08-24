@@ -336,6 +336,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
         $filename = $key.'.cache';
         $file = $this->file_path_for_key($key);
         $ttl = $this->definition->get_ttl();
+        $maxtime = 0;
         if ($ttl) {
             $maxtime = cache::now() - $ttl;
         }

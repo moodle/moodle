@@ -27,7 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/eventslib.php');
 require_once($CFG->dirroot.'/user/selector/lib.php');
-require_once($CFG->dirroot.'/mod/forum/post_form.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
@@ -8105,15 +8104,17 @@ function forum_get_courses_user_posted_in($user, $discussionsonly = false, $incl
     // table and join to the userid there. If we are looking for posts then we need
     // to join to the forum_posts table.
     if (!$discussionsonly) {
-        $joinsql = 'JOIN {forum_discussions} fd ON fd.course = c.id
-                    JOIN {forum_posts} fp ON fp.discussion = fd.id';
-        $wheresql = 'fp.userid = :userid';
-        $params = array('userid' => $user->id);
+        $subquery = "(SELECT DISTINCT fd.course
+                         FROM {forum_discussions} fd
+                         JOIN {forum_posts} fp ON fp.discussion = fd.id
+                        WHERE fp.userid = :userid )";
     } else {
-        $joinsql = 'JOIN {forum_discussions} fd ON fd.course = c.id';
-        $wheresql = 'fd.userid = :userid';
-        $params = array('userid' => $user->id);
+        $subquery= "(SELECT DISTINCT fd.course
+                         FROM {forum_discussions} fd
+                        WHERE fd.userid = :userid )";
     }
+
+    $params = array('userid' => $user->id);
 
     // Join to the context table so that we can preload contexts if required.
     if ($includecontexts) {
@@ -8127,14 +8128,13 @@ function forum_get_courses_user_posted_in($user, $discussionsonly = false, $incl
 
     // Now we need to get all of the courses to search.
     // All courses where the user has posted within a forum will be returned.
-    $sql = "SELECT DISTINCT c.* $ctxselect
+    $sql = "SELECT c.* $ctxselect
             FROM {course} c
-            $joinsql
             $ctxjoin
-            WHERE $wheresql";
+            WHERE c.id IN ($subquery)";
     $courses = $DB->get_records_sql($sql, $params, $limitfrom, $limitnum);
     if ($includecontexts) {
-        array_map('context_instance_preload', $courses);
+        array_map('context_helper::preload_from_record', $courses);
     }
     return $courses;
 }

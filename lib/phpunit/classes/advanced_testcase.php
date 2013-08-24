@@ -248,7 +248,8 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * Clear all previous debugging messages in current test.
+     * Clear all previous debugging messages in current test
+     * and revert to default DEVELOPER_DEBUG level.
      */
     public function resetDebugging() {
         phpunit_util::reset_debugging();
@@ -350,6 +351,19 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
      */
     public function redirectMessages() {
         return phpunit_util::start_message_redirection();
+    }
+
+    /**
+     * Starts email redirection.
+     *
+     * You can verify if email were sent or not by inspecting the email
+     * array in the returned phpmailer sink instance. The redirection
+     * can be stopped by calling $sink->close();
+     *
+     * @return phpunit_message_sink
+     */
+    public function redirectEmails() {
+        return phpunit_util::start_phpmailer_redirection();
     }
 
     /**

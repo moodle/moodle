@@ -1366,6 +1366,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      */
     public function delete_full($showfeedback = true) {
         global $CFG, $DB;
+
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/questionlib.php');
         require_once($CFG->dirroot.'/cohort/lib.php');
@@ -1400,12 +1401,20 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
         // finally delete the category and it's context
         $DB->delete_records('course_categories', array('id' => $this->id));
-        context_helper::delete_instance(CONTEXT_COURSECAT, $this->id);
-        add_to_log(SITEID, "category", "delete", "index.php", "$this->name (ID $this->id)");
+
+        $coursecatcontext = context_coursecat::instance($this->id);
+        $coursecatcontext->delete();
 
         cache_helper::purge_by_event('changesincoursecat');
 
-        events_trigger('course_category_deleted', $this);
+        // Trigger a course category deleted event.
+        $event = \core\event\course_category_deleted::create(array(
+            'objectid' => $this->id,
+            'context' => $coursecatcontext,
+            'other' => array('name' => $this->name)
+        ));
+        $event->set_legacy_eventdata($this);
+        $event->trigger();
 
         // If we deleted $CFG->defaultrequestcategory, make it point somewhere else.
         if ($this->id == $CFG->defaultrequestcategory) {
@@ -1495,6 +1504,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      */
     public function delete_move($newparentid, $showfeedback = false) {
         global $CFG, $DB, $OUTPUT;
+
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/questionlib.php');
         require_once($CFG->dirroot.'/cohort/lib.php');
@@ -1543,9 +1553,15 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         // finally delete the category and it's context
         $DB->delete_records('course_categories', array('id' => $this->id));
         $context->delete();
-        add_to_log(SITEID, "category", "delete", "index.php", "$this->name (ID $this->id)");
 
-        events_trigger('course_category_deleted', $this);
+        // Trigger a course category deleted event.
+        $event = \core\event\course_category_deleted::create(array(
+            'objectid' => $this->id,
+            'context' => $context,
+            'other' => array('name' => $this->name)
+        ));
+        $event->set_legacy_eventdata($this);
+        $event->trigger();
 
         cache_helper::purge_by_event('changesincoursecat');
 

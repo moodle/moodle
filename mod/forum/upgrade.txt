@@ -1,6 +1,11 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 2.6 ===
+
+* The file post_form.php should not be included, the class it contained has
+  been moved so that it can benefit from autoloading.
+
 === 2.5 ===
 
 The function forum_check_throttling has been changed so that a warning object is returned when a user has reached the 'Post threshold for warning' or

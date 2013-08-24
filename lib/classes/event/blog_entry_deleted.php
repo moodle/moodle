@@ -44,8 +44,7 @@ class blog_entry_deleted extends \core\event\base {
         $this->context = \context_system::instance();
         $this->data['objecttable'] = 'post';
         $this->data['crud'] = 'd';
-        // TODO: MDL-37658 set level.
-        $this->data['level'] = 50;
+        $this->data['level'] = self::LEVEL_PARTICIPATING;
     }
 
     /**

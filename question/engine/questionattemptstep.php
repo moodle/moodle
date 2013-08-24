@@ -106,7 +106,7 @@ class question_attempt_step {
         global $USER;
 
         if (!is_array($data)) {
-            echo format_backtrace(debug_backtrace());
+            throw new coding_exception('$data must be an array when constructing a question_attempt_step.');
         }
         $this->state = question_state::$unprocessed;
         $this->data = $data;

@@ -28,7 +28,7 @@ define('CLI_SCRIPT', true);
 require(dirname(__FILE__) . '/../../../../config.php');
 require_once(dirname(__FILE__) . '/../locallib.php');
 
-if (!debugging('', DEBUG_DEVELOPER)) {
+if (!$CFG->debugdeveloper) {
     echo("This script is for developers only!!!\n");
     exit(1);
 }
