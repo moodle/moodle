@@ -57,6 +57,18 @@ class profile_define_datetime extends profile_define_base {
         $form->addElement('checkbox', 'param3', get_string('wanttime', 'profilefield_datetime'));
         $form->setType('param3', PARAM_INT);
 
+        $form->addElement('hidden', 'startday', '1');
+        $form->setType('startday', PARAM_INT);
+        $form->addElement('hidden', 'startmonth', '1');
+        $form->setType('startmonth', PARAM_INT);
+        $form->addElement('hidden', 'startyear', '1');
+        $form->setType('startyear', PARAM_INT);
+        $form->addElement('hidden', 'endday', '1');
+        $form->setType('endday', PARAM_INT);
+        $form->addElement('hidden', 'endmonth', '1');
+        $form->setType('endmonth', PARAM_INT);
+        $form->addElement('hidden', 'endyear', '1');
+        $form->setType('endyear', PARAM_INT);
         $form->addElement('hidden', 'defaultdata', '0');
         $form->setType('defaultdata', PARAM_INT);
     }
@@ -85,23 +97,45 @@ class profile_define_datetime extends profile_define_base {
      * @param moodleform $mform
      */
     public function define_after_data(&$mform) {
+        global $DB;
+
+        // If we are adding a new profile field then the dates have already been set
+        // by setDefault to the correct dates in the used calendar system. We only want
+        // to execute the rest of the code when we have the years in the DB saved in
+        // Gregorian that need converting to the date for this user.
+        $id = required_param('id', PARAM_INT);
+        if ($id === 0) {
+            return;
+        }
+
+        // Get the field data from the DB.
+        $field = $DB->get_record('user_info_field', array('id' => $id), 'param1, param2', MUST_EXIST);
+
         // Get the current calendar in use - see MDL-18375.
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
 
+        // An array to store form values.
+        $values = array();
+
         // The start and end year will be set as a Gregorian year in the DB. We want
-        // to convert these to the equivalent year in the current calendar system.
-        $param1 = $mform->getElement('param1');
-        $year = $param1->getValue(); // The getValue() for select elements returns an array.
-        $year = $year[0];
-        $date1 = $calendartype->convert_from_gregorian($year, 1, 1);
+        // convert these to the equivalent year in the current calendar type being used.
+        $startdate = $calendartype->convert_from_gregorian($field->param1, 1, 1);
+        $values['startday'] = $startdate['day'];
+        $values['startmonth'] = $startdate['month'];
+        $values['startyear'] = $startdate['year'];
+        $values['param1'] = $startdate['year'];
 
-        $param2 = $mform->getElement('param2');
-        $year = $param2->getValue(); // The getValue() for select elements returns an array.
-        $year = $year[0];
-        $date2 = $calendartype->convert_from_gregorian($year, 1, 1);
+        $stopdate = $calendartype->convert_from_gregorian($field->param2, 1, 1);
+        $values['endday'] = $stopdate['day'];
+        $values['endmonth'] = $stopdate['month'];
+        $values['endyear'] = $stopdate['year'];
+        $values['param2'] = $stopdate['year'];
 
-        $param1->setValue($date1['year']);
-        $param2->setValue($date2['year']);
+        // Set the values.
+        foreach ($values as $key => $value) {
+            $param = $mform->getElement($key);
+            $param->setValue($value);
+        }
     }
 
     /**
@@ -115,9 +149,19 @@ class profile_define_datetime extends profile_define_base {
         // Get the current calendar in use - see MDL-18375.
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
 
-        // Ensure the years are saved as Gregorian in the database.
-        $startdate = $calendartype->convert_to_gregorian($data->param1, 1, 1);
-        $stopdate = $calendartype->convert_to_gregorian($data->param2, 1, 1);
+        // Check if the start year was changed, if it was then convert from the start of that year.
+        if ($data->param1 != $data->startyear) {
+            $startdate = $calendartype->convert_to_gregorian($data->param1, 1, 1);
+        } else {
+            $startdate = $calendartype->convert_to_gregorian($data->param1, $data->startmonth, $data->startday);
+        }
+
+        // Check if the end year was changed, if it was then convert from the start of that year.
+        if ($data->param2 != $data->endyear) {
+            $stopdate = $calendartype->convert_to_gregorian($data->param2, 1, 1);
+        } else {
+            $stopdate = $calendartype->convert_to_gregorian($data->param2, $data->endmonth, $data->endday);
+        }
 
         $data->param1 = $startdate['year'];
         $data->param2 = $stopdate['year'];

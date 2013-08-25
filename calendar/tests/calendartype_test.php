@@ -243,6 +243,7 @@ class core_calendar_type_testcase extends advanced_testcase {
 
         // Get the data we are submitting for the form.
         $formdata = array();
+        $formdata['id'] = 0;
         $formdata['shortname'] = 'Shortname';
         $formdata['name'] = 'Name';
         $formdata['param1'] = $date['inputminyear'];
