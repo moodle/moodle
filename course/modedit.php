@@ -78,7 +78,7 @@ if (!empty($add)) {
 
     if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
         $draftid_editor = file_get_submitted_draft_itemid('introeditor');
-        file_prepare_draft_area($draftid_editor, null, null, null, null);
+        file_prepare_draft_area($draftid_editor, null, null, null, null, array('subdirs'=>true));
         $data->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
     }
 
