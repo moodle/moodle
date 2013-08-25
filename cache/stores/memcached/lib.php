@@ -141,6 +141,7 @@ class cachestore_memcached extends cache_store implements cache_is_configurable 
             }
             $this->connection->addServers($this->servers);
         }
+        // Test the connection to the pool of servers.
         $this->isready = @$this->connection->set("ping", 'ping', 1);
     }
 
