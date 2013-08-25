@@ -111,8 +111,10 @@ $editoroptions = array(
 );
 
 if (!empty($outcome_rec->id)) {
+    $editoroptions['subdirs'] = file_area_contains_subdirs($systemcontext, 'grade', 'outcome', $outcome_rec->id);
     $outcome_rec = file_prepare_standard_editor($outcome_rec, 'description', $editoroptions, $systemcontext, 'grade', 'outcome', $outcome_rec->id);
 } else {
+    $editoroptions['subdirs'] = false;
     $outcome_rec = file_prepare_standard_editor($outcome_rec, 'description', $editoroptions, $systemcontext, 'grade', 'outcome', null);
 }
 

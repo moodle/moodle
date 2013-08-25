@@ -557,8 +557,9 @@ if (forum_is_subscribed($USER->id, $forum->id)) {
     $subscribe = !empty($USER->autosubscribe);
 }
 
+$postid = empty($post->id) ? null : $post->id;
 $draftid_editor = file_get_submitted_draft_itemid('message');
-$currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'mod_forum', 'post', empty($post->id) ? null : $post->id, mod_forum_post_form::editor_options(), $post->message);
+$currenttext = file_prepare_draft_area($draftid_editor, $modcontext->id, 'mod_forum', 'post', $postid, mod_forum_post_form::editor_options($modcontext, $postid), $post->message);
 $mform_post->set_data(array(        'attachments'=>$draftitemid,
                                     'general'=>$heading,
                                     'subject'=>$post->subject,

@@ -76,7 +76,8 @@ $editoroptions = array(
     'maxfiles'  => EDITOR_UNLIMITED_FILES,
     'maxbytes'  => $CFG->maxbytes,
     'trusttext' => false,
-    'context'   => $systemcontext
+    'context'   => $systemcontext,
+    'subdirs'   => file_area_contains_subdirs($systemcontext, 'tag', 'description', $tag->id),
 );
 $tag = file_prepare_standard_editor($tag, 'description', $editoroptions, $systemcontext, 'tag', 'description', $tag->id);
 
