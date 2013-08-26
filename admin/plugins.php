@@ -38,9 +38,6 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/pluginlib.php');
 require_once($CFG->libdir . '/filelib.php');
 
-admin_externalpage_setup('pluginsoverview');
-require_capability('moodle/site:config', context_system::instance());
-
 $fetchremote = optional_param('fetchremote', false, PARAM_BOOL);
 $updatesonly = optional_param('updatesonly', false, PARAM_BOOL);
 $contribonly = optional_param('contribonly', false, PARAM_BOOL);
@@ -48,13 +45,30 @@ $uninstall = optional_param('uninstall', '', PARAM_COMPONENT);
 $delete = optional_param('delete', '', PARAM_COMPONENT);
 $confirmed = optional_param('confirm', false, PARAM_BOOL);
 
-/** @var core_admin_renderer $output */
-$output = $PAGE->get_renderer('core', 'admin');
+// NOTE: do not use admin_externalpage_setup() here because it loads
+//       full admin tree which is not possible during uninstallation.
+
+require_login();
+$syscontext = context_system::instance();
+require_capability('moodle/site:config', $syscontext);
 
 $pluginman = plugin_manager::instance();
 
 if ($uninstall) {
     require_sesskey();
+
+    if (!$confirmed) {
+        admin_externalpage_setup('pluginsoverview');
+    } else {
+        $PAGE->set_url('/admin/plugins.php');
+        $PAGE->set_context($syscontext);
+        $PAGE->set_pagelayout('maintenance');
+        $PAGE->set_popup_notification_allowed(false);
+    }
+
+    /** @var core_admin_renderer $output */
+    $output = $PAGE->get_renderer('core', 'admin');
+
     $pluginfo = $pluginman->get_plugin_info($uninstall);
 
     // Make sure we know the plugin.
@@ -105,6 +119,15 @@ if ($uninstall) {
 
 if ($delete and $confirmed) {
     require_sesskey();
+
+    $PAGE->set_url('/admin/plugins.php');
+    $PAGE->set_context($syscontext);
+    $PAGE->set_pagelayout('maintenance');
+    $PAGE->set_popup_notification_allowed(false);
+
+    /** @var core_admin_renderer $output */
+    $output = $PAGE->get_renderer('core', 'admin');
+
     $pluginfo = $pluginman->get_plugin_info($delete);
 
     // Make sure we know the plugin.
@@ -147,6 +170,11 @@ if ($delete and $confirmed) {
     // We need to execute upgrade to make sure everything including caches is up to date.
     redirect(new moodle_url('/admin/index.php'));
 }
+
+admin_externalpage_setup('pluginsoverview');
+
+/** @var core_admin_renderer $output */
+$output = $PAGE->get_renderer('core', 'admin');
 
 $checker = available_update_checker::instance();
 
