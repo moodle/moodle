@@ -59,6 +59,10 @@ if (empty($_GET['cache']) and empty($_POST['cache']) and empty($_GET['sesskey'])
     if (function_exists('opcache_reset')) {
         opcache_reset();
     }
+    $cache = 0;
+
+} else {
+    $cache = 1;
 }
 
 require('../config.php');
@@ -74,21 +78,27 @@ $showallplugins = optional_param('showallplugins', 0, PARAM_BOOL);
 $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
 $fetchupdates   = optional_param('fetchupdates', 0, PARAM_BOOL);
 $newaddonreq    = optional_param('installaddonrequest', null, PARAM_RAW);
-$cache          = optional_param('cache', 0, PARAM_BOOL);
 
 // Set up PAGE.
 $url = new moodle_url('/admin/index.php');
-if (!is_null($newaddonreq)) {
-    // We need to set the eventual add-on installation request in the $PAGE's URL
-    // so that it is stored in $SESSION->wantsurl and the admin is redirected
-    // correctly once they are logged-in.
-    $url->param('installaddonrequest', $newaddonreq);
-}
 if ($cache) {
-    $url->param('cache', $cache);
+    $url->param('cache', 1);
 }
 $PAGE->set_url($url);
 unset($url);
+
+// Are we returning from an add-on installation request at moodle.org/plugins?
+if ($newaddonreq and !$cache and empty($CFG->disableonclickaddoninstall)) {
+    $target = new moodle_url('/admin/tool/installaddon/index.php', array(
+        'installaddonrequest' => $newaddonreq,
+        'confirm' => 0));
+    if (!isloggedin() or isguestuser()) {
+        // Login and go the the add-on tool page.
+        $SESSION->wantsurl = $target->out();
+        redirect(get_login_url());
+    }
+    redirect($target);
+}
 
 $PAGE->set_pagelayout('admin'); // Set a default pagelayout
 
@@ -153,6 +163,7 @@ if (!core_tables_exist()) {
         $PAGE->set_heading($strinstallation);
         $PAGE->set_cacheable(false);
 
+        /** @var core_admin_renderer $output */
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->install_licence_page();
         die();
@@ -167,6 +178,7 @@ if (!core_tables_exist()) {
         $PAGE->set_heading($strinstallation . ' - Moodle ' . $CFG->target_release);
         $PAGE->set_cacheable(false);
 
+        /** @var core_admin_renderer $output */
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->install_environment_page($maturity, $envstatus, $environment_results, $release);
         die();
@@ -221,14 +233,12 @@ if (empty($CFG->version)) {
 }
 
 // Detect config cache inconsistency, this happens when you switch branches on dev servers.
-if ($cache) {
-    if ($CFG->version != $DB->get_field('config', 'value', array('name'=>'version'))) {
-        purge_all_caches();
-        redirect(new moodle_url('/admin/index.php'), 'Config cache inconsistency detected, resetting caches...');
-    }
+if ($CFG->version != $DB->get_field('config', 'value', array('name'=>'version'))) {
+    purge_all_caches();
+    redirect(new moodle_url('/admin/index.php'), 'Config cache inconsistency detected, resetting caches...');
 }
 
-if ($version > $CFG->version) {  // upgrade
+if (!$cache and $version > $CFG->version) {  // upgrade
     // We purge all of MUC's caches here.
     // Caches are disabled for upgrade by CACHE_DISABLE_ALL so we must set the first arg to true.
     // This ensures a real config object is loaded and the stores will be purged.
@@ -245,6 +255,7 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_title($stradministration);
         $PAGE->set_cacheable(false);
 
+        /** @var core_admin_renderer $output */
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->upgrade_stale_php_files_page();
         die();
@@ -260,6 +271,7 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_heading($strdatabasechecking);
         $PAGE->set_cacheable(false);
 
+        /** @var core_admin_renderer $output */
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->upgrade_confirm_page($a->newversion, $maturity);
         die();
@@ -274,6 +286,7 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_heading($strcurrentrelease);
         $PAGE->set_cacheable(false);
 
+        /** @var core_admin_renderer $output */
         $output = $PAGE->get_renderer('core', 'admin');
         echo $output->upgrade_environment_page($release, $envstatus, $environment_results);
         die();
@@ -288,10 +301,12 @@ if ($version > $CFG->version) {  // upgrade
 
         $reloadurl = new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1));
 
+        /** @var core_admin_renderer $output */
+        $output = $PAGE->get_renderer('core', 'admin');
+
         // check plugin dependencies first
         $failed = array();
         if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
-            $output = $PAGE->get_renderer('core', 'admin');
             echo $output->unsatisfied_dependencies_page($version, $failed, $reloadurl);
             die();
         }
@@ -304,8 +319,6 @@ if ($version > $CFG->version) {  // upgrade
             }
             redirect($reloadurl);
         }
-
-        $output = $PAGE->get_renderer('core', 'admin');
 
         $deployer = available_update_deployer::instance();
         if ($deployer->enabled()) {
@@ -333,15 +346,15 @@ if ($version > $CFG->version) {  // upgrade
 }
 
 // Updated human-readable release version if necessary
-if ($release <> $CFG->release) {  // Update the release version
+if (!$cache and $release <> $CFG->release) {  // Update the release version
     set_config('release', $release);
 }
 
-if ($branch <> $CFG->branch) {  // Update the branch
+if (!$cache and $branch <> $CFG->branch) {  // Update the branch
     set_config('branch', $branch);
 }
 
-if (moodle_needs_upgrading()) {
+if (!$cache and moodle_needs_upgrading()) {
     if (!$PAGE->headerprinted) {
         // means core upgrade or installation was not already done
         if (!$confirmplugins) {
@@ -450,8 +463,8 @@ if (during_initial_install()) {
 
 // Now we can be sure everything was upgraded and caches work fine,
 // redirect if necessary to make sure caching is enabled.
-if (!$cache and !optional_param('sesskey', '', PARAM_RAW)) {
-    redirect(new moodle_url($PAGE->url, array('cache' => 1)));
+if (!$cache) {
+    redirect(new moodle_url('/admin/index.php', array('cache' => 1)));
 }
 
 // Check for valid admin user - no guest autologin
@@ -471,17 +484,6 @@ if (empty($site->shortname)) {
 // Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
 if (!empty($id) and $id == $CFG->siteidentifier) {
     set_config('registered', time());
-}
-
-// Check if we are returning from an add-on installation request at moodle.org/plugins
-if (!is_null($newaddonreq)) {
-    if (!empty($CFG->disableonclickaddoninstall)) {
-        // The feature is disabled in config.php, ignore the request.
-    } else {
-        redirect(new moodle_url('/admin/tool/installaddon/index.php', array(
-            'installaddonrequest' => $newaddonreq,
-            'confirm' => 0)));
-    }
 }
 
 // setup critical warnings before printing admin tree block
