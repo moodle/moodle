@@ -25,16 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/* List of handlers */
-$handlers = array (
-    'course_deleted' => array (
-        'handlerfile'      => '/enrol/meta/locallib.php',
-        'handlerfunction'  => array('enrol_meta_handler', 'course_deleted'),
-        'schedule'         => 'instant',
-        'internal'         => 1,
-    ),
-);
-
 // List of observers.
 $observers = array(
 
@@ -57,5 +47,9 @@ $observers = array(
     array(
         'eventname'   => '\core\event\role_unassigned',
         'callback'    => 'enrol_meta_observer::role_unassigned',
+    ),
+    array(
+        'eventname'   => '\core\event\course_deleted',
+        'callback'    => 'enrol_meta_observer::course_deleted',
     ),
 );

@@ -233,56 +233,7 @@ class enrol_meta_handler {
             debugging('Unknown unenrol action '.$unenrolaction);
         }
     }
-
-    /**
-     * Triggered via course_deleted event.
-     * @static
-     * @param stdClass $course
-     * @return bool success
-     */
-    public static function course_deleted($course) {
-        global $DB;
-
-        if (!enrol_is_enabled('meta')) {
-            // This is slow, let enrol_meta_sync() deal with disabled plugin.
-            return true;
-        }
-
-        // does anything want to sync with this parent?
-        if (!$enrols = $DB->get_records('enrol', array('customint1'=>$course->id, 'enrol'=>'meta'), 'courseid ASC, id ASC')) {
-            return true;
-        }
-
-        $plugin = enrol_get_plugin('meta');
-        $unenrolaction = $plugin->get_config('unenrolaction', ENROL_EXT_REMOVED_SUSPENDNOROLES);
-
-        if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
-            // Simple, just delete this instance which purges all enrolments,
-            // admins were warned that this is risky setting!
-            foreach ($enrols as $enrol) {
-                $plugin->delete_instance($enrol);
-            }
-            return true;
-        }
-
-        foreach ($enrols as $enrol) {
-            $enrol->customint = 0;
-            $DB->update_record('enrol', $enrol);
-
-            if ($unenrolaction == ENROL_EXT_REMOVED_SUSPEND or $unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
-                // This makes all enrolments suspended very quickly.
-                $plugin->update_status($enrol, ENROL_INSTANCE_DISABLED);
-            }
-            if ($unenrolaction == ENROL_EXT_REMOVED_SUSPENDNOROLES) {
-                $context = context_course::instance($enrol->courseid);
-                role_unassign_all(array('contextid'=>$context->id, 'component'=>'enrol_meta', 'itemid'=>$enrol->id));
-            }
-        }
-
-        return true;
-    }
 }
-
 
 /**
  * Sync all meta course links.
