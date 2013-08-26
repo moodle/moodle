@@ -134,6 +134,7 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
         // Note - the old contextid is required in order to be able to restore files stored in
         // sub plugin file areas attached to the submissionid.
         $this->set_mapping('submission', $oldid, $newitemid, false, null, $this->task->get_old_contextid());
+        $this->set_mapping(restore_gradingform_plugin::itemid_mapping('submissions'), $oldid, $newitemid);
     }
 
     /**
