@@ -2389,7 +2389,14 @@ class assign {
             $result .= $this->get_renderer()->continue_button($url);
             $result .= $this->view_footer();
         } else if ($zipfile = $this->pack_files($filesforzipping)) {
-            $this->add_to_log('download all submissions', get_string('downloadall', 'assign'));
+            $addtolog = $this->add_to_log('download all submissions', get_string('downloadall', 'assign'), '', true);
+            $params = array(
+                'context' => $this->context,
+                'objectid' => $this->get_instance()->id
+            );
+            $event = \mod_assign\event\all_submissions_downloaded::create($params);
+            $event->set_legacy_logdata($addtolog);
+            $event->trigger();
             // Send file and delete after sending.
             send_temp_file($zipfile, $filename);
             // We will not get here - send_temp_file calls exit.
@@ -4507,7 +4514,14 @@ class assign {
                     $logmessage = get_string('submissionstatementacceptedlog',
                                              'mod_assign',
                                              fullname($USER));
-                    $this->add_to_log('submission statement accepted', $logmessage);
+                    $addtolog = $this->add_to_log('submission statement accepted', $logmessage, '', true);
+                    $params = array(
+                        'context' => $this->context,
+                        'objectid' => $submission->id
+                    );
+                    $event = \mod_assign\event\statement_accepted::create($params);
+                    $event->set_legacy_logdata($addtolog);
+                    $event->trigger();
                 }
                 $logdata = $this->add_to_log('submit for grading', $this->format_submission_for_log($submission), '', true);
                 $this->notify_graders($submission);
@@ -4545,7 +4559,15 @@ class assign {
         $result = $this->update_user_flags($flags);
 
         if ($result) {
-            $this->add_to_log('grant extension', $userid);
+            $addtolog = $this->add_to_log('grant extension', $userid, '', true);
+            $params = array(
+                'context' => $this->context,
+                'objectid' => $flags->assignment,
+                'relateduserid' => $userid
+            );
+            $event = \mod_assign\event\extension_granted::create($params);
+            $event->set_legacy_logdata($addtolog);
+            $event->trigger();
         }
         return $result;
     }
@@ -4778,7 +4800,15 @@ class assign {
                 }
             }
 
-            $this->add_to_log('grade submission', $this->format_grade_for_log($grade));
+            $addtolog = $this->add_to_log('grade submission', $this->format_grade_for_log($grade), '', true);
+            $params = array(
+                'context' => $this->context,
+                'objectid' => $grade->id,
+                'relateduserid' => $userid
+            );
+            $event = \mod_assign\event\submission_graded::create($params);
+            $event->set_legacy_logdata($addtolog);
+            $event->trigger();
         }
 
         return get_string('quickgradingchangessaved', 'assign');
@@ -4827,7 +4857,14 @@ class assign {
             $this->gradebook_item_update(null, $grade);
         }
 
-        $this->add_to_log('reveal identities', get_string('revealidentities', 'assign'));
+        $addtolog = $this->add_to_log('reveal identities', get_string('revealidentities', 'assign'), '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $update->id
+        );
+        $event = \mod_assign\event\identities_revealed::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
 
@@ -5015,7 +5052,14 @@ class assign {
             return false;
         }
 
-        $this->add_to_log('submissioncopied', $this->format_submission_for_log($submission));
+        $addtolog = $this->add_to_log('submissioncopied', $this->format_submission_for_log($submission), '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $submission->id
+        );
+        $event = \mod_assign\event\submission_duplicated::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
 
         $complete = COMPLETION_INCOMPLETE;
         if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
@@ -5120,9 +5164,24 @@ class assign {
                 $logmessage = get_string('submissionstatementacceptedlog',
                                          'mod_assign',
                                          fullname($USER));
-                $this->add_to_log('submission statement accepted', $logmessage);
+                $addtolog = $this->add_to_log('submission statement accepted', $logmessage, '', true);
+                $params = array(
+                    'context' => $this->context,
+                    'objectid' => $submission->id
+                );
+                $event = \mod_assign\event\statement_accepted::create($params);
+                $event->set_legacy_logdata($addtolog);
+                $event->trigger();
             }
-            $this->add_to_log('submit', $this->format_submission_for_log($submission));
+
+            $addtolog = $this->add_to_log('submit', $this->format_submission_for_log($submission), '', true);
+            $params = array(
+                'context' => $this->context,
+                'objectid' => $submission->id
+            );
+            $event = \mod_assign\event\submission_updated::create($params);
+            $event->set_legacy_logdata($addtolog);
+            $event->trigger();
 
             $complete = COMPLETION_INCOMPLETE;
             if ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
@@ -5633,7 +5692,18 @@ class assign {
         $logmessage = get_string('reverttodraftforstudent',
                                  'assign',
                                  array('id'=>$user->id, 'fullname'=>fullname($user)));
-        $this->add_to_log('revert submission to draft', $logmessage);
+        $addtolog = $this->add_to_log('revert submission to draft', $logmessage, '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $submission->id,
+            'relateduserid' => ($this->get_instance()->teamsubmission) ? null : $userid,
+            'other' => array(
+                'newstatus' => $submission->status
+            )
+        );
+        $event = \mod_assign\event\submission_status_updated::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
     /**
@@ -5672,7 +5742,15 @@ class assign {
         $logmessage = get_string('locksubmissionforstudent',
                                  'assign',
                                  array('id'=>$user->id, 'fullname'=>fullname($user)));
-        $this->add_to_log('lock submission', $logmessage);
+        $addtolog = $this->add_to_log('lock submission', $logmessage, '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $flags->assignment,
+            'relateduserid' => $user->id
+        );
+        $event = \mod_assign\event\submission_locked::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
 
@@ -5681,7 +5759,7 @@ class assign {
      *
      * @return void
      */
-    private function process_set_batch_marking_workflow_state() {
+    protected function process_set_batch_marking_workflow_state() {
         global $DB;
 
         require_sesskey();
@@ -5712,7 +5790,18 @@ class assign {
                                 'fullname'=>fullname($user),
                                 'state'=>$state);
                 $message = get_string('setmarkingworkflowstateforlog', 'assign', $params);
-                $this->add_to_log('set marking workflow state', $message);
+                $addtolog = $this->add_to_log('set marking workflow state', $message, '', true);
+                $params = array(
+                    'context' => $this->context,
+                    'objectid' => $this->get_instance()->id,
+                    'relateduserid' => $userid,
+                    'other' => array(
+                        'newstate' => $state
+                    )
+                );
+                $event = \mod_assign\event\workflow_state_updated::create($params);
+                $event->set_legacy_logdata($addtolog);
+                $event->trigger();
             }
         }
     }
@@ -5722,7 +5811,7 @@ class assign {
      *
      * @return void
      */
-    private function process_set_batch_marking_allocation() {
+    protected function process_set_batch_marking_allocation() {
         global $DB;
 
         require_sesskey();
@@ -5754,7 +5843,18 @@ class assign {
                     'fullname'=>fullname($user),
                     'marker'=>fullname($marker));
                 $message = get_string('setmarkerallocationforlog', 'assign', $params);
-                $this->add_to_log('set marking allocation', $message);
+                $addtolog = $this->add_to_log('set marking allocation', $message, '', true);
+                $params = array(
+                    'context' => $this->context,
+                    'objectid' => $this->get_instance()->id,
+                    'relateduserid' => $userid,
+                    'other' => array(
+                        'markerid' => $marker->id
+                    )
+                );
+                $event = \mod_assign\event\marker_updated::create($params);
+                $event->set_legacy_logdata($addtolog);
+                $event->trigger();
             }
         }
     }
@@ -5794,7 +5894,15 @@ class assign {
         $logmessage = get_string('unlocksubmissionforstudent',
                                  'assign',
                                  array('id'=>$user->id, 'fullname'=>fullname($user)));
-        $this->add_to_log('unlock submission', $logmessage);
+        $addtolog = $this->add_to_log('unlock submission', $logmessage, '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $flags->assignment,
+            'relateduserid' => $user->id
+        );
+        $event = \mod_assign\event\submission_unlocked::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
     /**
@@ -5849,9 +5957,16 @@ class assign {
         }
         $this->update_grade($grade);
         $this->notify_grade_modified($grade);
-        $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
-        $this->add_to_log('grade submission', $this->format_grade_for_log($grade));
+        $addtolog = $this->add_to_log('grade submission', $this->format_grade_for_log($grade), '', true);
+        $params = array(
+            'context' => $this->context,
+            'objectid' => $grade->id,
+            'relateduserid' => $userid
+        );
+        $event = \mod_assign\event\submission_graded::create($params);
+        $event->set_legacy_logdata($addtolog);
+        $event->trigger();
     }
 
 

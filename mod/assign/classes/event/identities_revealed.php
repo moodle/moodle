@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign assessable submitted event.
+ * mod_assign identities revealed event.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
@@ -27,13 +27,13 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign assessable submitted event class.
+ * mod_assign identities revealed event class.
  *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class assessable_submitted extends \core\event\assessable_submitted {
+class identities_revealed extends \core\event\base {
 
     /**
      * Legacy log data.
@@ -48,32 +48,7 @@ class assessable_submitted extends \core\event\assessable_submitted {
      * @return string
      */
     public function get_description() {
-        return "User {$this->userid} has submitted the submission {$this->objectid}.";
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $eventdata = new \stdClass();
-        $eventdata->modulename = 'assign';
-        $eventdata->cmid = $this->context->instanceid;
-        $eventdata->itemid = $this->objectid;
-        $eventdata->courseid = $this->courseid;
-        $eventdata->userid = $this->userid;
-        $eventdata->params = array('submission_editable' => $this->other['submission_editable']);
-        return $eventdata;
-    }
-
-    /**
-     * Return the legacy event name.
-     *
-     * @return string
-     */
-    public static function get_legacy_eventname() {
-        return 'assessable_submitted';
+        return "User {$this->userid} has revealed the identities in assignment {$this->objectid}.";
     }
 
     /**
@@ -91,7 +66,7 @@ class assessable_submitted extends \core\event\assessable_submitted {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_assessable_submitted', 'mod_assign');
+        return get_string('event_identities_revealed', 'mod_assign');
     }
 
     /**
@@ -104,6 +79,17 @@ class assessable_submitted extends \core\event\assessable_submitted {
     }
 
     /**
+     * Init method.
+     *
+     * @return void
+     */
+    protected function init() {
+        $this->data['crud'] = 'u';
+        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['objecttable'] = 'assign';
+    }
+
+    /**
      * Sets the legacy event log data.
      *
      * @param stdClass $legacylogdata legacy log data.
@@ -113,26 +99,4 @@ class assessable_submitted extends \core\event\assessable_submitted {
         $this->legacylogdata = $legacylogdata;
     }
 
-    /**
-     * Init method.
-     *
-     * @return void
-     */
-    protected function init() {
-        parent::init();
-        $this->data['objecttable'] = 'assign_submission';
-    }
-
-    /**
-     * Custom validation.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        parent::validate_data();
-        if (!isset($this->other['submission_editable'])) {
-            throw new \coding_exception('Other must contain the key submission_editable.');
-        }
-    }
 }

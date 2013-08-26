@@ -239,6 +239,10 @@ class testable_assign extends assign {
         return parent::apply_grade_to_user($formdata, $userid, $attemptnumber);
     }
 
+    public function testable_format_submission_for_log(stdClass $submission) {
+        return parent::format_submission_for_log($submission);
+    }
+
     public function testable_get_grading_userid_list() {
         return parent::get_grading_userid_list();
     }
@@ -253,6 +257,45 @@ class testable_assign extends assign {
 
     public function testable_process_add_attempt($userid = 0) {
         return parent::process_add_attempt($userid);
+    }
+
+    public function testable_process_lock($userid = 0) {
+        return parent::process_lock($userid);
+    }
+
+    public function testable_process_save_quick_grades($postdata) {
+        // Ugly hack to get something into the method.
+        global $_POST;
+        $_POST = $postdata;
+        return parent::process_save_quick_grades();
+    }
+
+    public function testable_process_unlock($userid = 0) {
+        return parent::process_unlock($userid);
+    }
+
+    public function testable_process_copy_previous_attempt(&$notices) {
+        return parent::process_copy_previous_attempt($notices);
+    }
+
+    public function testable_process_revert_to_draft($userid = 0) {
+        return parent::process_revert_to_draft($userid);
+    }
+
+    public function testable_process_set_batch_marking_allocation($selectedusers, $markerid) {
+        // Ugly hack to get something into the method.
+        global $_POST;
+        $_POST['selectedusers'] = $selectedusers;
+        $_POST['allocatedmarker'] = $markerid;
+        return parent::process_set_batch_marking_allocation();
+    }
+
+    public function testable_process_set_batch_marking_workflow_state($selectedusers, $state) {
+        // Ugly hack to get something into the method.
+        global $_POST;
+        $_POST['selectedusers'] = $selectedusers;
+        $_POST['markingworkflowstate'] = $state;
+        return parent::process_set_batch_marking_workflow_state();
     }
 
     public function testable_submissions_open($userid = 0) {
