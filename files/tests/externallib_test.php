@@ -176,25 +176,31 @@ class core_files_externallib_testcase extends advanced_testcase {
         $this->assertNotEmpty($file);
     }
 
+    /**
+     * Test getting a list of files with and without a context ID.
+     */
     public function test_get_files() {
         global $USER, $DB;
 
         $this->resetAfterTest();
 
+        // Set the current user to be the administrator.
         $this->setAdminUser();
         $USER->email = 'test@moodle.com';
 
+        // Create a course.
         $course = $this->getDataGenerator()->create_course();
         $record = new stdClass();
         $record->course = $course->id;
         $record->name = "Mod data upload test";
-
         $record->intro = "Some intro of some sort";
 
+        // Create a database module.
         $module = $this->getDataGenerator()->create_module('data', $record);
 
+        // Create a new field in the database activity.
         $field = data_get_field_new('file', $module);
-
+        // Add more detail about the field.
         $fielddetail = new stdClass();
         $fielddetail->d = $module->id;
         $fielddetail->mode = 'add';
@@ -208,15 +214,15 @@ class core_files_externallib_testcase extends advanced_testcase {
         $field->insert_field();
         $recordid = data_add_record($module);
 
-        $timemodified = $DB->get_field('data_records', 'timemodified', array('id' => $recordid));
-
+        // File information for the database module record.
         $datacontent = array();
         $datacontent['fieldid'] = $field->field->id;
         $datacontent['recordid'] = $recordid;
         $datacontent['content'] = 'Simple4.txt';
 
+        // Insert the information about the file.
         $contentid = $DB->insert_record('data_content', $datacontent);
-
+        // Required information for uploading a file.
         $context = context_module::instance($module->id);
         $usercontext = context_user::instance($USER->id);
         $component = 'mod_data';
@@ -233,12 +239,18 @@ class core_files_externallib_testcase extends advanced_testcase {
         $filerecord['filepath'] = '/';
         $filerecord['filename'] = $filename;
 
+        // Create an area to upload the file.
         $fs = get_file_storage();
+        // Create a file from the string that we made earlier.
         $file = $fs->create_file_from_string($filerecord, $filecontent);
+        $timemodified = $file->get_timemodified();
 
+        // Use the web service function to return the information about the file that we just uploaded.
+        // The first time is with a valid context ID.
         $filename = '';
         $testfilelisting = core_files_external::get_files($context->id, $component, $filearea, $itemid, '/', $filename);
 
+        // With the information that we have provided we should get an object exactly like the one below.
         $testdata = array();
         $testdata['parents'] = array();
         $testdata['parents']['0'] = array('contextid' => 1,
@@ -275,18 +287,19 @@ class core_files_externallib_testcase extends advanced_testcase {
         $testdata['files']['0'] = array('contextid' => 20,
                                         'component' => 'mod_data',
                                         'filearea' => 'content',
-                                        'itemid' => 1,
+                                        'itemid' => '1',
                                         'filepath' => '/',
                                         'filename' => 'Simple4.txt',
                                         'url' => 'http://www.example.com/moodle/pluginfile.php/20/mod_data/content/1/Simple4.txt',
-                                        'isdir' => null,
+                                        'isdir' => false,
                                         'timemodified' => $timemodified);
-
+        // Make sure that they are the same.
         $this->assertEquals($testfilelisting, $testdata);
 
-        // Try again but without the context.
+        // Try again but without the context. Minus one signals the function to use other variables to obtain the context.
         $nocontext = -1;
         $modified = 0;
+        // Context level and instance ID are used to determine what the context is.
         $contextlevel = 'module';
         $instanceid = $module->id;
         $testfilelisting = core_files_external::get_files($nocontext, $component, $filearea, $itemid, '/', $filename, $modified, $contextlevel, $instanceid);
