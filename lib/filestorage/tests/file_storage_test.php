@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,8 +17,8 @@
 /**
  * Unit tests for /lib/filestorage/file_storage.php
  *
- * @package   core
- * @category  test
+ * @package   core_files
+ * @category  phpunit
  * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -68,12 +67,10 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         $this->assertFileExists($location);
 
-
         // Verify the dir placeholder files are created.
         $this->assertEquals(3, $DB->count_records('files', array()));
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>sha1('/'.$filerecord['contextid'].'/'.$filerecord['component'].'/'.$filerecord['filearea'].'/'.$filerecord['itemid'].'/.'))));
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>sha1('/'.$filerecord['contextid'].'/'.$filerecord['component'].'/'.$filerecord['filearea'].'/'.$filerecord['itemid'].$filerecord['filepath'].'.'))));
-
 
         // Tests that missing content file is recreated.
 
@@ -87,7 +84,6 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertFileExists($location);
 
         $this->assertEquals(4, $DB->count_records('files', array()));
-
 
         // Test that borked content file is recreated.
 
@@ -140,12 +136,10 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         $this->assertFileExists($location);
 
-
         // Verify the dir placeholder files are created.
         $this->assertEquals(3, $DB->count_records('files', array()));
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>sha1('/'.$filerecord['contextid'].'/'.$filerecord['component'].'/'.$filerecord['filearea'].'/'.$filerecord['itemid'].'/.'))));
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>sha1('/'.$filerecord['contextid'].'/'.$filerecord['component'].'/'.$filerecord['filearea'].'/'.$filerecord['itemid'].$filerecord['filepath'].'.'))));
-
 
         // Tests that missing content file is recreated.
 
@@ -159,7 +153,6 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertFileExists($location);
 
         $this->assertEquals(4, $DB->count_records('files', array()));
-
 
         // Test that borked content file is recreated.
 
@@ -231,7 +224,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
     public function test_get_file_preview(stored_file $file) {
         global $CFG;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
         $fs = get_file_storage();
 
         $previewtinyicon = $fs->get_file_preview($file, 'tinyicon');
@@ -275,7 +268,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
     public function test_file_renaming() {
         global $CFG;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
         $fs = get_file_storage();
         $syscontext = context_system::instance();
         $component = 'core';
@@ -299,15 +292,15 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $newpath = '/test/';
         $newname = 'newtest.txt';
 
-        // this should work
+        // This should work.
         $originalfile->rename($newpath, $newname);
         $file = $fs->get_file($syscontext->id, $component, $filearea, $itemid, $newpath, $newname);
         $this->assertInstanceOf('stored_file', $file);
         $this->assertEquals($contenthash, $file->get_contenthash());
 
-        // try break it
+        // Try break it.
         $this->setExpectedException('file_exception');
-        // this shall throw exception
+        // This shall throw exception.
         $originalfile->rename($newpath, $newname);
     }
 
@@ -319,8 +312,8 @@ class core_files_file_storage_testcase extends advanced_testcase {
     public function test_create_file_from_reference() {
         global $CFG, $DB;
 
-        $this->resetAfterTest(true);
-        // create user
+        $this->resetAfterTest();
+        // Create user.
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $this->setUser($user);
@@ -330,11 +323,10 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $fs = get_file_storage();
 
         $repositorypluginname = 'user';
-        // override repository permission
+        // Override repository permission.
         $capability = 'repository/' . $repositorypluginname . ':view';
         $allroles = $DB->get_records_menu('role', array(), 'id', 'archetype, id');
         assign_capability($capability, CAP_ALLOW, $allroles['guest'], $syscontext->id, true);
-
 
         $args = array();
         $args['type'] = $repositorypluginname;
@@ -377,35 +369,35 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertEquals($originalfile->get_filesize(), $newstoredfile->get_filesize());
         $this->assertRegExp('#' . $filename. '$#', $newstoredfile->get_reference_details());
 
-        // Test looking for references
+        // Test looking for references.
         $count = $fs->get_references_count_by_storedfile($originalfile);
         $this->assertEquals(1, $count);
         $files = $fs->get_references_by_storedfile($originalfile);
         $file = reset($files);
         $this->assertEquals($file, $newstoredfile);
 
-        // Look for references by repository ID
+        // Look for references by repository ID.
         $files = $fs->get_external_files($userrepository->id);
         $file = reset($files);
         $this->assertEquals($file, $newstoredfile);
 
-        // Try convert reference to local file
+        // Try convert reference to local file.
         $importedfile = $fs->import_external_file($newstoredfile);
         $this->assertFalse($importedfile->is_external_file());
         $this->assertInstanceOf('stored_file', $importedfile);
-        // still readable?
+        // Still readable?
         $this->assertEquals($content, $importedfile->get_content());
     }
 
     private function setup_three_private_files() {
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $this->setUser($user->id);
         $usercontext = context_user::instance($user->id);
-        // create a user private file
+        // Create a user private file.
         $file1 = new stdClass;
         $file1->contextid = $usercontext->id;
         $file1->component = 'user';
@@ -472,7 +464,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
             $this->assertEquals($key, $file->get_pathnamehash());
         }
 
-        // Test with an itemid with no files
+        // Test with an itemid with no files.
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private', 666, 'sortorder', false);
         // Should be none.
         $this->assertEmpty($areafiles);
@@ -481,7 +473,6 @@ class core_files_file_storage_testcase extends advanced_testcase {
     public function test_get_area_tree() {
         $user = $this->setup_three_private_files();
         $fs = get_file_storage();
-
 
         // Get area files with default options.
         $areatree = $fs->get_area_tree($user->ctxid, 'user', 'private', 0);
@@ -554,7 +545,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $fs = get_file_storage();
 
         $areafiles = $fs->get_area_files($user->ctxid, 'user', 'private');
-        // Test get_file_by_hash
+        // Test get_file_by_hash.
         $filebyhash = reset($areafiles);
         $shouldbesame = $fs->get_file_by_hash($filebyhash->get_pathnamehash());
         $this->assertEquals($filebyhash->get_id(), $shouldbesame->get_id());
@@ -572,12 +563,12 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $userrepository = reset($repos);
         $this->assertInstanceOf('repository', $userrepository);
 
-        // no aliases yet
+        // No aliases yet.
         $exfiles = $fs->get_external_files($userrepository->id, 'id');
         $this->assertEquals(array(), $exfiles);
 
-        // create three aliases linking the same original: $aliasfile1 and $aliasfile2 are
-        // created via create_file_from_reference(), $aliasfile3 created from $aliasfile2
+        // Create three aliases linking the same original: $aliasfile1 and $aliasfile2 are
+        // created via create_file_from_reference(), $aliasfile3 created from $aliasfile2.
         $originalfile = null;
         foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
             if (!$areafile->is_directory()) {
@@ -604,7 +595,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         $aliasrecord->filepath = '/bar/';
         $aliasrecord->filename = 'uno.txt';
-        // change the order of the items in the array to make sure that it does not matter
+        // Change the order of the items in the array to make sure that it does not matter.
         ksort($originalrecord);
         $ref = $fs->pack_reference($originalrecord);
         $aliasfile2 = $fs->create_file_from_reference($aliasrecord, $userrepository->id, $ref);
@@ -613,14 +604,14 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $aliasrecord->filename = 'jedna.txt';
         $aliasfile3 = $fs->create_file_from_storedfile($aliasrecord, $aliasfile2);
 
-        // make sure we get three aliases now
+        // Make sure we get three aliases now.
         $exfiles = $fs->get_external_files($userrepository->id, 'id');
         $this->assertEquals(3, count($exfiles));
         foreach ($exfiles as $exfile) {
             $this->assertTrue($exfile->is_external_file());
         }
-        // make sure they all link the same original (thence that all are linked with the same
-        // record in {files_reference})
+        // Make sure they all link the same original (thence that all are linked with the same
+        // record in {files_reference}).
         $this->assertEquals($aliasfile1->get_referencefileid(), $aliasfile2->get_referencefileid());
         $this->assertEquals($aliasfile3->get_referencefileid(), $aliasfile2->get_referencefileid());
     }
@@ -699,7 +690,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $directoryfile = $fs->create_file_from_string($filerecord, 'Test content');
         $this->assertInstanceOf('stored_file', $directoryfile);
 
-        // Don't recurse without dirs
+        // Don't recurse without dirs.
         $files = $fs->get_directory_files($user->ctxid, 'user', 'private', 0, '/', false, false, 'id');
         // 3 files only.
         $this->assertCount(3, $files);
@@ -790,7 +781,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $result = $fs->search_references_count($reference);
         $this->assertSame($result, 2);
 
-        // The method can't be used for references to files outside the filepool
+        // The method can't be used for references to files outside the filepool.
         $exceptionthrown = false;
         try {
             $fs->search_references('http://dl.dropbox.com/download/1234567/naked-dougiamas.jpg');
@@ -1475,7 +1466,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $repos = repository::get_instances(array('type'=>'user'));
         $repo = reset($repos);
 
-        // create two aliases linking the same original
+        // Create two aliases linking the same original.
 
         $originalfile = null;
         foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
@@ -1486,7 +1477,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         }
         $this->assertInstanceOf('stored_file', $originalfile);
 
-        // calling delete_reference() on a non-reference file
+        // Calling delete_reference() on a non-reference file.
 
         $originalrecord = array(
             'contextid' => $originalfile->get_contextid(),
@@ -1509,16 +1500,16 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $ref = $fs->pack_reference($originalrecord);
         $aliasfile2 = $fs->create_file_from_reference($aliasrecord, $repo->id, $ref);
 
-        // refetch A/symlink.txt
+        // Refetch A/symlink.txt file.
         $symlink1 = $fs->get_file($aliasrecord->contextid, $aliasrecord->component,
             $aliasrecord->filearea, $aliasrecord->itemid, '/A/', 'symlink.txt');
         $this->assertTrue($symlink1->is_external_file());
 
-        // unlink the A/symlink.txt
+        // Unlink the A/symlink.txt file.
         $symlink1->delete_reference();
         $this->assertFalse($symlink1->is_external_file());
 
-        // make sure that B/symlink.txt has not been affected
+        // Make sure that B/symlink.txt has not been affected.
         $symlink2 = $fs->get_file($aliasrecord->contextid, $aliasrecord->component,
             $aliasrecord->filearea, $aliasrecord->itemid, '/B/', 'symlink.txt');
         $this->assertTrue($symlink2->is_external_file());

@@ -37,7 +37,8 @@ defined('MOODLE_INTERNAL') || die();
 class core_phpunit_basic_testcase extends basic_testcase {
     protected $testassertexecuted = false;
 
-    public function setUp() {
+    protected function setUp() {
+        parent::setUp();
         if ($this->getName() === 'test_setup_assert') {
             $this->assertTrue(true);
             $this->testassertexecuted = true;
@@ -61,7 +62,7 @@ class core_phpunit_basic_testcase extends basic_testcase {
      * @return void
      */
     public function test_assert_behaviour() {
-        // arrays
+        // Arrays.
         $a = array('a', 'b', 'c');
         $b = array('a', 'c', 'b');
         $c = array('a', 'b', 'c');
@@ -71,11 +72,11 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $this->assertEquals($a, $c);
         $this->assertEquals($a, $b, '', 0, 10, true);
 
-        // objects
+        // Objects.
         $a = new stdClass();
         $a->x = 'x';
         $a->y = 'y';
-        $b = new stdClass(); // switched order
+        $b = new stdClass(); // Switched order.
         $b->y = 'y';
         $b->x = 'x';
         $c = $a;
@@ -89,7 +90,7 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $this->assertSame($a, $c);
         $this->assertNotEquals($a, $d);
 
-        // string comparison
+        // String comparison.
         $this->assertEquals(1, '1');
         $this->assertEquals(null, '');
 
@@ -98,12 +99,12 @@ class core_phpunit_basic_testcase extends basic_testcase {
         $this->assertNotEquals(null, '0');
         $this->assertNotEquals(array(), '');
 
-        // other comparison
+        // Other comparison.
         $this->assertEquals(null, null);
         $this->assertEquals(false, null);
         $this->assertEquals(0, null);
 
-        // emptiness
+        // Emptiness.
         $this->assertEmpty(0);
         $this->assertEmpty(0.0);
         $this->assertEmpty('');
@@ -143,7 +144,7 @@ STRING;
         $this->testassertexecuted = false;
     }
 
-// Uncomment following tests to see logging of unexpected changes in global state and database
+    // Uncomment following tests to see logging of unexpected changes in global state and database.
     /*
         public function test_db_modification() {
             global $DB;

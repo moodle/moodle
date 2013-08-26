@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Unit tests for dateselector form element
  *
@@ -33,28 +32,6 @@ require_once($CFG->libdir . '/form/dateselector.php');
 require_once($CFG->libdir.'/formslib.php');
 
 /**
- * Form object to be used in test case.
- */
-class temp_form_date extends moodleform {
-    /**
-     * Form defination.
-     */
-    public function definition() {
-        // No definition required.
-    }
-    /**
-     * Returns form reference
-     * @return MoodleQuickForm
-     */
-    public function getform() {
-        $mform = $this->_form;
-        // set submitted flag, to simulate submission
-        $mform->_flagSubmitted = true;
-        return $mform;
-    }
-}
-
-/**
  * Unit tests for MoodleQuickForm_date_selector
  *
  * Contains test cases for testing MoodleQuickForm_date_selector
@@ -64,7 +41,7 @@ class temp_form_date extends moodleform {
  * @copyright  2012 Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dateselector_form_element_testcase extends basic_testcase {
+class core_form_dateselector_testcase extends basic_testcase {
     /** @var MoodleQuickForm Keeps reference of dummy form object */
     private $mform;
     /** @var stdClass saves current user data */
@@ -83,12 +60,13 @@ class dateselector_form_element_testcase extends basic_testcase {
     /**
      * Initalize test wide variable, it is called in start of the testcase
      */
-    public function setUp() {
-        // Get form data
+    protected function setUp() {
+        parent::setUp();
+        // Get form data.
         $form = new temp_form_date();
         $this->mform = $form->getform();
 
-        // Set test values
+        // Set test values.
         $this->testvals = array(
             array (
                 'day' => 1,
@@ -145,8 +123,9 @@ class dateselector_form_element_testcase extends basic_testcase {
      * Clears the data set in the setUp() method call.
      * @see dateselector_form_element_testcase::setUp()
      */
-    public function tearDown() {
+    protected function tearDown() {
         unset($this->testvals);
+        parent::tearDown();
     }
 
     /**
@@ -169,11 +148,11 @@ class dateselector_form_element_testcase extends basic_testcase {
             $el->_createElements();
             $submitvalues = array('dateselector' => $vals);
 
-            $this->assertSame($el->exportValue($submitvalues), array('dateselector' => $vals['timestamp']),
+            $this->assertSame(array('dateselector' => $vals['timestamp']), $el->exportValue($submitvalues),
                     "Please check if timezones are updated (Site adminstration -> location -> update timezone)");
         }
 
-        // Restore user orignal timezone.
+        // Restore user original timezone.
         $this->restoretimezone();
     }
 
@@ -183,7 +162,7 @@ class dateselector_form_element_testcase extends basic_testcase {
     public function test_onquickformevent() {
         global $USER;
         $testvals = $this->testvals;
-        // Get dummy form for data
+        // Get dummy form for data.
         $mform = $this->mform;
         // Set timezone to Australia/Perth for testing.
         $this->settimezone();
@@ -202,20 +181,20 @@ class dateselector_form_element_testcase extends basic_testcase {
                 );
             $mform->_submitValues = array('dateselector' => $vals['timestamp']);
             $el->onQuickFormEvent('updateValue', null, $mform);
-            $this->assertSame($el->getValue(), $expectedvalues);
+            $this->assertSame($expectedvalues, $el->getValue());
         }
 
-        // Restore user orignal timezone.
+        // Restore user original timezone.
         $this->restoretimezone();
     }
 
     /**
-     * Set user timezone to Australia/Perth for testing
+     * Set user timezone to Australia/Perth for testing.
      */
     private function settimezone() {
         global $USER, $CFG, $DB;
         $this->olduser = $USER;
-        $USER = $DB->get_record('user', array('id'=>2)); //admin
+        $USER = $DB->get_record('user', array('id'=>2)); // Admin.
 
         // Check if forcetimezone is set then save it and set it to use user timezone.
         $this->cfgforcetimezone = null;
@@ -239,7 +218,7 @@ class dateselector_form_element_testcase extends basic_testcase {
     }
 
     /**
-     * Restore user timezone to orignal state
+     * Restore user timezone to original state
      */
     private function restoretimezone() {
         global $USER, $CFG;
@@ -256,5 +235,27 @@ class dateselector_form_element_testcase extends basic_testcase {
         setlocale(LC_TIME, $this->oldlocale);
 
         $USER = $this->olduser;
+    }
+}
+
+/**
+ * Form object to be used in test case.
+ */
+class temp_form_date extends moodleform {
+    /**
+     * Form definition.
+     */
+    public function definition() {
+        // No definition required.
+    }
+    /**
+     * Returns form reference
+     * @return MoodleQuickForm
+     */
+    public function getform() {
+        $mform = $this->_form;
+        // set submitted flag, to simulate submission
+        $mform->_flagSubmitted = true;
+        return $mform;
     }
 }
