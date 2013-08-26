@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2012112900;        // The current plugin version (Date: YYYYMMDDXX)
+$plugin->version   = 2012112901;        // The current plugin version (Date: YYYYMMDDXX)
 $plugin->requires  = 2012112900;        // Requires this Moodle version
 $plugin->component = 'editor_tinymce';  // Full name of the plugin (used for diagnostics)
 $plugin->release   = '3.5.7b';           // This is NOT a directory name, see lib.php if you need to know where is the editor code!
