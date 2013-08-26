@@ -82,6 +82,8 @@ if ($data = $mform->get_data()) {
     require_once($formatclassfile);
     $format = new $formatclass();
 
+    $format->set_importcontext($context);
+
     // Do anything before that we need to
     if (! $format->importpreprocess()) {
                 print_error('preprocesserror', 'lesson');
