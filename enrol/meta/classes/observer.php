@@ -99,4 +99,33 @@ class enrol_meta_observer extends enrol_meta_handler {
 
         return true;
     }
+
+    /**
+     * Triggered via role_assigned event.
+     *
+     * @param \core\event\role_assigned $event
+     * @return bool true on success.
+     */
+    public static function role_assigned(\core\event\role_assigned $event) {
+        if (!enrol_is_enabled('meta')) {
+            return true;
+        }
+
+        // Prevent circular dependencies - we can not sync meta roles recursively.
+        if ($event->other['component'] === 'enrol_meta') {
+            return true;
+        }
+
+        // Only course level roles are interesting.
+        if (!$parentcontext = context::instance_by_id($event->contextid, IGNORE_MISSING)) {
+            return true;
+        }
+        if ($parentcontext->contextlevel != CONTEXT_COURSE) {
+            return true;
+        }
+
+        self::sync_course_instances($parentcontext->instanceid, $event->relateduserid);
+
+        return true;
+    }
 }

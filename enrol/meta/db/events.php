@@ -27,13 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 /* List of handlers */
 $handlers = array (
-    'role_assigned' => array (
-        'handlerfile'      => '/enrol/meta/locallib.php',
-        'handlerfunction'  => array('enrol_meta_handler', 'role_assigned'),
-        'schedule'         => 'instant',
-        'internal'         => 1,
-    ),
-
     'role_unassigned' => array (
         'handlerfile'      => '/enrol/meta/locallib.php',
         'handlerfunction'  => array('enrol_meta_handler', 'role_unassigned'),
@@ -63,5 +56,9 @@ $observers = array(
     array(
         'eventname'   => '\core\event\user_enrolment_updated',
         'callback'    => 'enrol_meta_observer::user_enrolment_updated',
+    ),
+    array(
+        'eventname'   => '\core\event\role_assigned',
+        'callback'    => 'enrol_meta_observer::role_assigned',
     ),
 );
