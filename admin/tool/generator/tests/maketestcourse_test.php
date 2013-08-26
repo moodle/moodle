@@ -107,4 +107,77 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
                     fd.forum = ?", array($forum->instance));
         $this->assertEquals(2, $posts);
     }
+
+    /**
+     * Creates an small test course with fixed data set and checks the used sections and users.
+     */
+    public function test_fixed_data_set() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create the S course (more sections and activities than XS).
+        $backend = new tool_generator_backend('TOOL_S_COURSE_1', 1, true, false);
+        $courseid = $backend->make();
+
+        // Get course details.
+        $course = get_course($courseid);
+        $modinfo = get_fast_modinfo($course);
+
+        // Check module instances belongs to section 1.
+        $instances = $modinfo->get_instances_of('page');
+        $npageinstances = count($instances);
+        foreach ($instances as $instance) {
+            $this->assertEquals(1, $instance->sectionnum);
+        }
+
+        // Users that started discussions are the same.
+        $forums = $modinfo->get_instances_of('forum');
+        $nforuminstances = count($forums);
+        $discussions = forum_get_discussions(reset($forums), 'd.timemodified ASC');
+        $lastusernumber = 0;
+        $discussionstarters = array();
+        foreach ($discussions as $discussion) {
+            $usernumber = intval($discussion->lastname);
+
+            // Checks that the users are odd numbers.
+            $this->assertEquals(1, $usernumber % 2);
+
+            // Checks that the users follows an increasing order.
+            $this->assertGreaterThan($lastusernumber, $usernumber);
+            $lastusernumber = $usernumber;
+            $discussionstarters[$discussion->userid] = $discussion->subject;
+        }
+
+        // Resetting data generators internal counters. Courses are created in individual
+        // processes so the counters are restarted before each course creation.
+        $this->resetAllData();
+        $this->setAdminUser();
+
+        // Create another S course to check that the same data was generated.
+        $backend = new tool_generator_backend('TOOL_S_COURSE_2', 1, true, false);
+        $courseid = $backend->make();
+        $course = get_course($courseid);
+        $modinfo = get_fast_modinfo($course);
+
+        // Check it generates the same number of page activities.
+        $this->assertEquals(count($modinfo->get_instances_of('page')), $npageinstances);
+
+        // Check it generates the same number of forum activities.
+        $forums = $modinfo->get_instances_of('forum');
+        $this->assertEquals(count($forums), $nforuminstances);
+
+        // Check same discussions have been started by the same users.
+        $discussions = forum_get_discussions(reset($forums), 'd.timemodified ASC');
+        reset($discussionstarters);
+        foreach ($discussions as $discussion) {
+            $previousdiscussionsubject = current($discussionstarters);
+            $previoususer = key($discussionstarters);
+            $this->assertEquals($discussion->userid, $previoususer);
+            $this->assertEquals($discussion->subject, $previousdiscussionsubject);
+            next($discussionstarters);
+        }
+
+    }
 }
