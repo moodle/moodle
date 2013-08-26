@@ -1075,7 +1075,7 @@ abstract class repository {
      *
      * @static
      * @param string $plugin repository plugin name
-     * @param string $function funciton name
+     * @param string $function function name
      * @return mixed
      */
     public static function static_function($plugin, $function) {
@@ -2299,7 +2299,7 @@ abstract class repository {
 
     /**
      * For oauth like external authentication, when external repository direct user back to moodle,
-     * this funciton will be called to set up token and token_secret
+     * this function will be called to set up token and token_secret
      */
     public function callback() {
     }
