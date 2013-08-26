@@ -88,7 +88,7 @@ $PAGE->set_url($url);
 unset($url);
 
 // Are we returning from an add-on installation request at moodle.org/plugins?
-if (!$cache and empty($CFG->disableonclickaddoninstall)) {
+if ($newaddonreq and !$cache and empty($CFG->disableonclickaddoninstall)) {
     $target = new moodle_url('/admin/tool/installaddon/index.php', array(
         'installaddonrequest' => $newaddonreq,
         'confirm' => 0));
