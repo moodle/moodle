@@ -102,14 +102,14 @@ class workflow_state_updated extends \core\event\base {
     /**
      * Custom validation.
      *
-     * @throws coding_exception
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
         if (!isset($this->other['newstate'])) {
-            throw new coding_exception('newstate must be set in $other.');
+            throw new \coding_exception('newstate must be set in $other.');
         } else if (!isset($this->relateduserid)) {
-            throw new coding_exception('relateduserid must be set.');
+            throw new \coding_exception('relateduserid must be set.');
         }
     }
 }

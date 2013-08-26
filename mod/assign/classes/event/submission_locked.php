@@ -102,12 +102,12 @@ class submission_locked extends \core\event\base {
     /**
      * Custom validation.
      *
-     * @throws coding_exception
+     * @throws \coding_exception
      * @return void
      */
     protected function validate_data() {
         if (!isset($this->relateduserid)) {
-            throw new coding_exception('relateduserid is a mandatory property.');
+            throw new \coding_exception('relateduserid is a mandatory property.');
         }
     }
 }
