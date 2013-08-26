@@ -1085,7 +1085,7 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
 
     require_once($CFG->libdir . '/filelib.php');
 
-    echo '<h3>'. strip_tags($entry->concept) . ': </h3>';
+    echo $OUTPUT->heading(strip_tags($entry->concept), 4);
 
     $definition = $entry->definition;
 
@@ -1105,13 +1105,13 @@ function glossary_print_entry_default ($entry, $glossary, $cm) {
 }
 
 /**
- * Print glossary concept/term as a heading &lt;h3>
+ * Print glossary concept/term as a heading &lt;h4>
  * @param object $entry
  */
 function  glossary_print_entry_concept($entry, $return=false) {
     global $OUTPUT;
 
-    $text = html_writer::tag('h3', format_string($entry->concept));
+    $text = $OUTPUT->heading(format_string($entry->concept), 4);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }

@@ -263,6 +263,7 @@ if ($tab == GLOSSARY_APPROVAL_VIEW) {
 } else { /// Print standard header
     echo $OUTPUT->header();
 }
+echo $OUTPUT->heading(format_string($glossary->name), 2);
 
 /// All this depends if whe have $showcommonelements
 if ($showcommonelements) {
@@ -449,7 +450,7 @@ if ($allentries) {
                     echo '<th >';
                 }
 
-                echo $OUTPUT->heading($pivottoshow);
+                echo $OUTPUT->heading($pivottoshow, 3);
                 echo "</th></tr></table></div>\n";
 
             }
