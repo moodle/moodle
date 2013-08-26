@@ -2182,9 +2182,12 @@ class global_navigation extends navigation_node {
         }
 
         if (!empty($CFG->messaging)) {
-            $messageargs = null;
+            $messageargs = array('user1' => $USER->id);
             if ($USER->id != $user->id) {
-                $messageargs = array('user1' => $user->id);
+                $messageargs['user2'] = $user->id;
+            }
+            if ($course->id != $SITE->id) {
+                $messageargs['viewing'] = MESSAGE_VIEW_COURSE. $course->id;
             }
             $url = new moodle_url('/message/index.php',$messageargs);
             $usernode->add(get_string('messages', 'message'), $url, self::TYPE_SETTING, null, 'messages');
