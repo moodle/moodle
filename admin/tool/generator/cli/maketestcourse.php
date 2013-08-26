@@ -79,13 +79,13 @@ $fixeddataset = $options['fixeddataset'];
 
 // Check size.
 try {
-    $size = tool_generator_backend::size_for_name($sizename);
+    $size = tool_generator_course_backend::size_for_name($sizename);
 } catch (coding_exception $e) {
     cli_error("Invalid size ($sizename). Use --help for help.");
 }
 
 // Check shortname.
-if ($error = tool_generator_backend::check_shortname_available($shortname)) {
+if ($error = tool_generator_course_backend::check_shortname_available($shortname)) {
     cli_error($error);
 }
 
@@ -93,5 +93,5 @@ if ($error = tool_generator_backend::check_shortname_available($shortname)) {
 session_set_user(get_admin());
 
 // Do backend code to generate course.
-$backend = new tool_generator_backend($shortname, $size, $fixeddataset, empty($options['quiet']));
+$backend = new tool_generator_course_backend($shortname, $size, $fixeddataset, empty($options['quiet']));
 $id = $backend->make();
