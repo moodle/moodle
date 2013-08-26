@@ -235,36 +235,6 @@ class enrol_meta_handler {
     }
 
     /**
-     * Triggered via role unassigned event.
-     * @static
-     * @param stdClass $ra
-     * @return bool success
-     */
-    public static function role_unassigned($ra) {
-        if (!enrol_is_enabled('meta')) {
-            // all roles are removed via cron automatically
-            return true;
-        }
-
-        // prevent circular dependencies - we can not sync meta roles recursively
-        if ($ra->component === 'enrol_meta') {
-            return true;
-        }
-
-        // only course level roles are interesting
-        if (!$parentcontext = context::instance_by_id($ra->contextid, IGNORE_MISSING)) {
-            return true;
-        }
-        if ($parentcontext->contextlevel != CONTEXT_COURSE) {
-            return true;
-        }
-
-        self::sync_course_instances($parentcontext->instanceid, $ra->userid);
-
-        return true;
-    }
-
-    /**
      * Triggered via course_deleted event.
      * @static
      * @param stdClass $course
