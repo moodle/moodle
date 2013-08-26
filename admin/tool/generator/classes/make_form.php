@@ -17,7 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/backend.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/course_backend.php');
 
 /**
  * Form with options for creating large course.
@@ -32,8 +32,8 @@ class tool_generator_make_form extends moodleform {
         $mform = $this->_form;
 
         $mform->addElement('select', 'size', get_string('size', 'tool_generator'),
-                tool_generator_backend::get_size_choices());
-        $mform->setDefault('size', tool_generator_backend::DEFAULT_SIZE);
+                tool_generator_course_backend::get_size_choices());
+        $mform->setDefault('size', tool_generator_course_backend::DEFAULT_SIZE);
 
         $mform->addElement('text', 'shortname', get_string('shortnamecourse'));
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
@@ -49,7 +49,7 @@ class tool_generator_make_form extends moodleform {
         // Check course doesn't already exist.
         if (!empty($data['shortname'])) {
             // Check shortname.
-            $error =  tool_generator_backend::check_shortname_available($data['shortname']);
+            $error =  tool_generator_course_backend::check_shortname_available($data['shortname']);
             if ($error) {
                 $errors['shortname'] = $error;
             }
