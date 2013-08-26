@@ -1153,14 +1153,6 @@ abstract class repository implements cacheable_object {
             return false;
         }
 
-        $pname = null;
-        if (is_object($plugin) || is_array($plugin)) {
-            $plugin = (object)$plugin;
-            $pname = $plugin->name;
-        } else {
-            $pname = $plugin;
-        }
-
         $args = func_get_args();
         if (count($args) <= 2) {
             $args = array();
