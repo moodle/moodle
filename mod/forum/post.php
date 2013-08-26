@@ -860,6 +860,7 @@ $PAGE->set_title("$course->shortname: $strdiscussionname ".format_string($toppos
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($forum->name), 2);
 
 // checkup
 if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {
