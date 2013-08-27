@@ -55,7 +55,7 @@ class core_event_content_viewed_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         $pageevent = \core_tests\event\content_viewed::create(array('other' => array('content' => 'tests')));
         $pageevent->set_page_detail(); // Set page details.
-        $legacydata = array(SITEID, 'site', 'view', 'view.php?id='.SITEID, SITEID);
+        $legacydata = array(SITEID, 'site', 'view', 'view.php?id=' . SITEID, SITEID);
         $pageevent->set_legacy_logdata($legacydata); // Set legacy data.
         $pageevent->trigger();
         $result = $sink->get_events();

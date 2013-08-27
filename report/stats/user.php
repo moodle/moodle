@@ -63,7 +63,8 @@ echo $OUTPUT->header();
 $event = \report_stats\event\content_viewed::create(array('courseid' => $course->id,
                                                           'other'    => array('content' => 'user stats')));
 $event->set_page_detail();
-$event->set_legacy_logdata(array($course->id, 'course', 'report stats', "report/stats/user.php?id=$user->id&course=$course->id", $course->id));
+$event->set_legacy_logdata(array($course->id, 'course', 'report stats',
+        "report/stats/user.php?id=$user->id&course=$course->id", $course->id));
 $event->trigger();
 
 if (empty($CFG->enablestats)) {

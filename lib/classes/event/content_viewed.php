@@ -29,9 +29,11 @@ namespace core\event;
  * Base class for a content view event. Each plugin must extend this to create their own content view event.
  *
  * An example usage:-
- *  $event = \report_participation\event\content_viewed::create(array('courseid' => $course->id, 'other' => array('content' => 'participants'));
+ *  $event = \report_participation\event\content_viewed::create(array('courseid' => $course->id,
+ *          'other' => array('content' => 'participants'));
  *  $event->set_page_detail();
- *  $event->set_legacy_logdata(array($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->id));
+ *  $event->set_legacy_logdata(array($course->id, "course", "report participation",
+ *          "report/participation/index.php?id=$course->id", $course->id));
  *  $event->trigger();
  * where \report_participation\event\content_viewed extends \core\event\content_viewed
  *

@@ -75,7 +75,8 @@ $PAGE->set_heading($course->fullname);
 $event = \report_log\event\content_viewed::create(array('courseid' => $course->id,
                                                         'other'    => array('content' => 'user logs')));
 $event->set_page_detail();
-$event->set_legacy_logdata(array($course->id, 'course', 'report log', "report/log/user.php?id=$user->id&course=$course->id&mode=$mode", $course->id));
+$event->set_legacy_logdata(array($course->id, 'course', 'report log',
+        "report/log/user.php?id=$user->id&course=$course->id&mode=$mode", $course->id));
 $event->trigger();
 
 echo $OUTPUT->header();

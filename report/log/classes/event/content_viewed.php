@@ -34,7 +34,7 @@ class content_viewed extends \core\event\content_viewed {
 
     /**
      * Returns relevant URL.
-     * 
+     *
      * @return \moodle_url
      */
     public function get_url() {
