@@ -1646,8 +1646,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             // Now start the whole NTLM machinery.
             if($this->config->ntlmsso_ie_fastpath == AUTH_NTLM_FASTPATH_YESATTEMPT ||
                 $this->config->ntlmsso_ie_fastpath == AUTH_NTLM_FASTPATH_YESFORM) {
-
-                if(check_browser_version('MSIE')) {
+                if (core_useragent::check_ie_version()) {
                     $sesskey = sesskey();
                     redirect($CFG->wwwroot.'/auth/ldap/ntlmsso_magic.php?sesskey='.$sesskey);
                 } else if ($this->config->ntlmsso_ie_fastpath == AUTH_NTLM_FASTPATH_YESFORM) {
