@@ -469,17 +469,20 @@ class course_modinfo extends stdClass {
  *    course_modules table
  * @property-read int $visibleold Old visible setting (if the entire section is hidden, the previous value for
  *    visible is stored in this field) - from course_modules table
- * @property-read int $groupmode Group mode (one of the constants NONE, SEPARATEGROUPS, or VISIBLEGROUPS) - from
- *    course_modules table
+ * @property-read int $groupmode Group mode (one of the constants NOGROUPS, SEPARATEGROUPS, or VISIBLEGROUPS) - from
+ *    course_modules table. Use {@link cm_info::$effectivegroupmode} to find the actual group mode that may be forced by course.
  * @property-read int $groupingid Grouping ID (0 = all groupings)
  * @property-read int $groupmembersonly Group members only (if set to 1, only members of a suitable group see this link on the
  *    course page; 0 = everyone sees it even if they don't belong to a suitable group) - from
  *    course_modules table
  * @property-read bool $coursegroupmodeforce Indicates whether the course containing the module has forced the groupmode
  *    This means that cm_info::$groupmode should be ignored and cm_info::$coursegroupmode be used instead
- * @property-read int $coursegroupmode Group mode (one of the constants NONE, SEPARATEGROUPS, or VISIBLEGROUPS) - from
+ * @property-read int $coursegroupmode Group mode (one of the constants NOGROUPS, SEPARATEGROUPS, or VISIBLEGROUPS) - from
  *    course table - as specified for the course containing the module
  *    Effective only if {@link cm_info::$coursegroupmodeforce} is set
+ * @property-read int $effectivegroupmode Effective group mode for this module (one of the constants NOGROUPS, SEPARATEGROUPS,
+ *    or VISIBLEGROUPS). This can be different from groupmode set for the module if the groupmode is forced for the course.
+ *    This value will always be NOGROUPS if module type does not support group mode.
  * @property-read int $indent Indent level on course page (0 = no indent) - from course_modules table
  * @property-read int $completion Activity completion setting for this activity, COMPLETION_TRACKING_xx constant - from
  *    course_modules table
@@ -875,6 +878,7 @@ class cm_info implements IteratorAggregate {
         'course' => 'get_course_id',
         'coursegroupmode' => 'get_course_groupmode',
         'coursegroupmodeforce' => 'get_course_groupmodeforce',
+        'effectivegroupmode' => 'get_effective_groupmode',
         'extra' => false,
         'groupingid' => false,
         'groupmembersonly' => false,
@@ -1230,6 +1234,22 @@ class cm_info implements IteratorAggregate {
      */
     private function get_course_groupmodeforce() {
         return $this->modinfo->get_course()->groupmodeforce;
+    }
+
+    /**
+     * Returns effective groupmode of the module that may be overwritten by forced course groupmode.
+     *
+     * @return int one of constants NOGROUPS, SEPARATEGROUPS, VISIBLEGROUPS
+     */
+    private function get_effective_groupmode() {
+        $groupmode = $this->groupmode;
+        if ($this->modinfo->get_course()->groupmodeforce) {
+            $groupmode = $this->modinfo->get_course()->groupmode;
+            if ($groupmode != NOGROUPS && !plugin_supports('mod', $this->modname, FEATURE_GROUPS, 0)) {
+                $groupmode = NOGROUPS;
+            }
+        }
+        return $groupmode;
     }
 
     /**

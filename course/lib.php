@@ -1929,18 +1929,13 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
 
     // Groupmode.
     if ($hasmanageactivities and plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
-        if ($mod->coursegroupmodeforce) {
-            $modgroupmode = $mod->coursegroupmode;
-        } else {
-            $modgroupmode = $mod->groupmode;
-        }
-        if ($modgroupmode == SEPARATEGROUPS) {
+        if ($mod->effectivegroupmode == SEPARATEGROUPS) {
             $nextgroupmode = VISIBLEGROUPS;
             $grouptitle = $str->groupsseparate;
             $forcedgrouptitle = $str->forcedgroupsseparate;
             $actionname = 'groupsseparate';
             $groupimage = 't/groups';
-        } else if ($modgroupmode == VISIBLEGROUPS) {
+        } else if ($mod->effectivegroupmode == VISIBLEGROUPS) {
             $nextgroupmode = NOGROUPS;
             $grouptitle = $str->groupsvisible;
             $forcedgrouptitle = $str->forcedgroupsvisible;

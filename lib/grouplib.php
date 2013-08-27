@@ -463,17 +463,19 @@ function groups_get_course_groupmode($course) {
  * Returns effective groupmode used in activity, course setting
  * overrides activity setting if groupmodeforce enabled.
  *
+ * If $cm is an instance of cm_info it is easier to use $cm->effectivegroupmode
+ *
  * @category group
  * @param cm_info|stdClass $cm the course module object. Only the ->course and ->groupmode need to be set.
  * @param stdClass $course object optional course object to improve perf
  * @return int group mode
  */
 function groups_get_activity_groupmode($cm, $course=null) {
+    if ($cm instanceof cm_info) {
+        return $cm->effectivegroupmode;
+    }
     if (isset($course->id) and $course->id == $cm->course) {
         //ok
-    } else if (isset($cm->coursegroupmode) && isset($cm->coursegroupmodeforce)) {
-        // This is an instance of cm_info (or clone) and already has the necessary course fields in it.
-        return empty($cm->coursegroupmodeforce) ? $cm->groupmode : $cm->coursegroupmode;
     } else {
         // Get course object (reuse $COURSE if possible).
         $course = get_course($cm->course, false);
