@@ -3032,7 +3032,7 @@ class navbar extends navigation_node {
         }
 
         if (count($this->children) > 0) {
-            // Add the custom children
+            // Add the custom children.
             $items = array_reverse($this->children);
         }
 
@@ -3204,30 +3204,30 @@ class navbar extends navigation_node {
         if ($this->content !== null) {
             debugging('Nav bar items must be printed before $OUTPUT->header() has been called', DEBUG_DEVELOPER);
         }
-        // Properties array used when creating the new navigation node
+        // Properties array used when creating the new navigation node.
         $itemarray = array(
             'text' => $text,
             'type' => $type
         );
-        // Set the action if one was provided
+        // Set the action if one was provided.
         if ($action!==null) {
             $itemarray['action'] = $action;
         }
-        // Set the shorttext if one was provided
+        // Set the shorttext if one was provided.
         if ($shorttext!==null) {
             $itemarray['shorttext'] = $shorttext;
         }
-        // Set the icon if one was provided
+        // Set the icon if one was provided.
         if ($icon!==null) {
             $itemarray['icon'] = $icon;
         }
-        // Default the key to the number of children if not provided
+        // Default the key to the number of children if not provided.
         if ($key === null) {
             $key = count($this->children);
         }
-        // Set the key
+        // Set the key.
         $itemarray['key'] = $key;
-        // Set the parent to this node
+        // Set the parent to this node.
         $itemarray['parent'] = $this;
         // Add the child node to the prepend list.
         $this->prependchildren[] = new navigation_node($itemarray);
