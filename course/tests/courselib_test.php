@@ -856,8 +856,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Perform the move
         moveto_module($cm, $newsection);
 
-        // reset of get_fast_modinfo is usually called the code calling moveto_module so call it here
-        get_fast_modinfo(0, 0, true);
         $cms = get_fast_modinfo($course)->get_cms();
         $cm = reset($cms);
 
@@ -883,11 +881,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Perform a second move as some issues were only seen on the second move
         $newsection = get_fast_modinfo($course)->get_section_info(2);
         $oldsectionid = $cm->section;
-        $result = moveto_module($cm, $newsection);
-        $this->assertTrue($result);
+        moveto_module($cm, $newsection);
 
-        // reset of get_fast_modinfo is usually called the code calling moveto_module so call it here
-        get_fast_modinfo(0, 0, true);
         $cms = get_fast_modinfo($course)->get_cms();
         $cm = reset($cms);
 
@@ -1197,12 +1192,9 @@ class core_course_courselib_testcase extends advanced_testcase {
         $forumcm = $modinfo->cms[$forum->cmid];
         $pagecm = $modinfo->cms[$page->cmid];
 
-        // Move the forum and the page to a hidden section.
-        moveto_module($forumcm, $hiddensection);
-        moveto_module($pagecm, $hiddensection);
-
-        // Reset modinfo cache.
-        get_fast_modinfo(0, 0, true);
+        // Move the forum and the page to a hidden section, make sure moveto_module returns 0 as new visibility state.
+        $this->assertEquals(0, moveto_module($forumcm, $hiddensection));
+        $this->assertEquals(0, moveto_module($pagecm, $hiddensection));
 
         $modinfo = get_fast_modinfo($course);
 
@@ -1228,29 +1220,26 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($quizcm->visible, 1);
 
         // Move forum and page back to visible section.
+        // Make sure the visibility is restored to the original value (visible for forum and hidden for page).
         $visiblesection = $modinfo->get_section_info(2);
-        moveto_module($forumcm, $visiblesection);
-        moveto_module($pagecm, $visiblesection);
+        $this->assertEquals(1, moveto_module($forumcm, $visiblesection));
+        $this->assertEquals(0, moveto_module($pagecm, $visiblesection));
 
-        // Reset modinfo cache.
-        get_fast_modinfo(0, 0, true);
         $modinfo = get_fast_modinfo($course);
 
-        // Verify that forum has been made visible.
+        // Double check that forum has been made visible.
         $forumcm = $modinfo->cms[$forum->cmid];
         $this->assertEquals($forumcm->visible, 1);
 
-        // Verify that page has stayed invisible.
+        // Double check that page has stayed invisible.
         $pagecm = $modinfo->cms[$page->cmid];
         $this->assertEquals($pagecm->visible, 0);
 
-        // Move the page in the same section (this is what mod duplicate does_
-        moveto_module($pagecm, $visiblesection, $forumcm);
+        // Move the page in the same section (this is what mod duplicate does).
+        // Visibility of page remains 0.
+        $this->assertEquals(0, moveto_module($pagecm, $visiblesection, $forumcm));
 
-        // Reset modinfo cache.
-        get_fast_modinfo(0, 0, true);
-
-        // Verify that the the page is still hidden
+        // Double check that the the page is still hidden.
         $modinfo = get_fast_modinfo($course);
         $pagecm = $modinfo->cms[$page->cmid];
         $this->assertEquals($pagecm->visible, 0);
@@ -1288,13 +1277,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($section->id, $pagecm->section);
 
 
-        // Move the forum and the page to a hidden section.
-        moveto_module($pagecm, $section, $forumcm);
+        // Move the page inside the hidden section. Make sure it is hidden.
+        $this->assertEquals(0, moveto_module($pagecm, $section, $forumcm));
 
-        // Reset modinfo cache.
-        get_fast_modinfo(0, 0, true);
-
-        // Verify that the the page is still hidden
+        // Double check that the the page is still hidden.
         $modinfo = get_fast_modinfo($course);
         $pagecm = $modinfo->cms[$page->cmid];
         $this->assertEquals($pagecm->visible, 0);

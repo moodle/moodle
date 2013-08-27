@@ -18,6 +18,7 @@ information provided here is intended especially for developers.
 * The ability to use an 'insecure' rc4encrypt/rc4decrypt key has been removed.
 * Use $CFG->debugdeveloper instead of debugging('', DEBUG_DEVELOPER).
 * Use set_debugging(DEBUG_xxx) when changing debugging level for current request.
+* Function moveto_module() does not modify $mod argument and instead now returns the new module visibility value.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
