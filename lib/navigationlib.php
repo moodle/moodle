@@ -1201,12 +1201,14 @@ class global_navigation extends navigation_node {
                 // Load the course sections into the page
                 $this->load_course_sections($course, $coursenode, null, $cm);
                 $activity = $coursenode->find($cm->id, navigation_node::TYPE_ACTIVITY);
-                // Finally load the cm specific navigaton information
-                $this->load_activity($cm, $course, $activity);
-                // Check if we have an active ndoe
-                if (!$activity->contains_active_node() && !$activity->search_for_active_node()) {
-                    // And make the activity node active.
-                    $activity->make_active();
+                if (!empty($activity)) {
+                    // Finally load the cm specific navigaton information
+                    $this->load_activity($cm, $course, $activity);
+                    // Check if we have an active ndoe
+                    if (!$activity->contains_active_node() && !$activity->search_for_active_node()) {
+                        // And make the activity node active.
+                        $activity->make_active();
+                    }
                 }
                 break;
             case CONTEXT_USER :
