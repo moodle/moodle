@@ -83,7 +83,7 @@ if (!empty($scoid)) {
                     'scorm_scoes',
                     'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true).' AND id > ?',
                     array($scorm->id, $sco->id),
-                    'id ASC')) {
+                    'sortorder, id')) {
                 $sco = current($scoes);
             }
         }
@@ -97,7 +97,7 @@ if (!isset($sco)) {
         'scorm_scoes',
         'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true),
         array($scorm->id),
-        'id ASC'
+        'sortorder, id'
     );
     $sco = current($scoes);
 }

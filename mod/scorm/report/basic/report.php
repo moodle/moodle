@@ -137,7 +137,7 @@ class scorm_basic_report extends scorm_default_report {
             $headers[]= get_string('last', 'scorm');
             $columns[]= 'score';
             $headers[]= get_string('score', 'scorm');
-            if ($detailedrep && $scoes = $DB->get_records('scorm_scoes', array("scorm"=>$scorm->id), 'id')) {
+            if ($detailedrep && $scoes = $DB->get_records('scorm_scoes', array("scorm"=>$scorm->id), 'sortorder, id')) {
                 foreach ($scoes as $sco) {
                     if ($sco->launch!='') {
                         $columns[]= 'scograde'.$sco->id;

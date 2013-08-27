@@ -367,13 +367,12 @@ function scorm_get_sco($id, $what=SCO_ALL) {
 function scorm_get_scoes($id, $organisation=false) {
     global $DB;
 
-    $organizationsql = '';
     $queryarray = array('scorm'=>$id);
     if (!empty($organisation)) {
         $queryarray['organization'] = $organisation;
     }
-    if ($scoes = $DB->get_records('scorm_scoes', $queryarray, 'id ASC')) {
-        // drop keys so that it is a simple array as expected
+    if ($scoes = $DB->get_records('scorm_scoes', $queryarray, 'sortorder, id')) {
+        // Drop keys so that it is a simple array as expected.
         $scoes = array_values($scoes);
         foreach ($scoes as $sco) {
             if ($scodatas = $DB->get_records('scorm_scoes_data', array('scoid'=>$sco->id))) {
@@ -627,7 +626,7 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1) {
     $attemptscore->sum = 0;
     $attemptscore->lastmodify = 0;
 
-    if (!$scoes = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id))) {
+    if (!$scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id), 'sortorder, id')) {
         return null;
     }
 
@@ -814,7 +813,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
     if ($orgs = $DB->get_records_select_menu('scorm_scoes', 'scorm = ? AND '.
                                          $DB->sql_isempty('scorm_scoes', 'launch', false, true).' AND '.
                                          $DB->sql_isempty('scorm_scoes', 'organization', false, false),
-                                         array($scorm->id), 'id', 'id,title')) {
+                                         array($scorm->id), 'sortorder, id', 'id,title')) {
         if (count($orgs) > 1) {
             $select = new single_select(new moodle_url($action), 'organization', $orgs, $organization, null);
             $select->label = get_string('organizations', 'scorm');
@@ -900,7 +899,8 @@ function scorm_simple_play($scorm, $user, $context, $cmid) {
     if ($scorm->scormtype != SCORM_TYPE_LOCAL && $scorm->updatefreq == SCORM_UPDATE_EVERYTIME) {
         scorm_parse($scorm, false);
     }
-    $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true), array($scorm->id), 'id', 'id');
+    $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.
+        $DB->sql_isnotempty('scorm_scoes', 'launch', false, true), array($scorm->id), 'sortorder, id', 'id');
 
     if ($scoes) {
         $orgidentifier = '';
@@ -1461,7 +1461,6 @@ function scorm_get_toc_get_parent_child(&$result) {
     $final = array();
     $level = 0;
     $prevparent = '/';
-    ksort($result);
 
     foreach ($result as $sco) {
         if ($sco->parent == '/') {

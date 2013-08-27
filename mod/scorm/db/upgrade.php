@@ -114,6 +114,21 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013081302, 'scorm');
     }
 
+    if ($oldversion < 2013081303) {
+
+        // Define field sortorder to be added to scorm_scoes.
+        $table = new xmldb_table('scorm_scoes');
+        $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'title');
+
+        // Conditionally launch add field sortorder.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Scorm savepoint reached.
+        upgrade_mod_savepoint(true, 2013081303, 'scorm');
+    }
+
     return true;
 }
 

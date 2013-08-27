@@ -525,27 +525,47 @@ function scorm_parse_scorm($scorm, $manifest) {
     $scoes = new stdClass();
     $scoes->version = '';
     $scoes = scorm_get_manifest($manifests, $scoes);
+    $sortorder = 0;
     if (count($scoes->elements) > 0) {
         $olditems = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id));
         foreach ($scoes->elements as $manifest => $organizations) {
             foreach ($organizations as $organization => $items) {
                 foreach ($items as $identifier => $item) {
+                    $sortorder++;
                     // This new db mngt will support all SCORM future extensions
                     $newitem = new stdClass();
                     $newitem->scorm = $scorm->id;
                     $newitem->manifest = $manifest;
                     $newitem->organization = $organization;
+                    $newitem->sortorder = $sortorder;
                     $standarddatas = array('parent', 'identifier', 'launch', 'scormtype', 'title');
                     foreach ($standarddatas as $standarddata) {
                         if (isset($item->$standarddata)) {
                             $newitem->$standarddata = $item->$standarddata;
+                        } else {
+                            $newitem->$standarddata = '';
                         }
                     }
 
-                    // Insert the new SCO, and retain the link between the old and new for later adjustment
-                    $id = $DB->insert_record('scorm_scoes', $newitem);
                     if (!empty($olditems) && ($olditemid = scorm_array_search('identifier', $newitem->identifier, $olditems))) {
-                        $olditems[$olditemid]->newid = $id;
+                        $newitem->id = $olditemid;
+                        // Update the Sco sortorder but keep id so that user tracks are kept against the same ids.
+                        $DB->update_record('scorm_scoes', $newitem);
+                        $id = $olditemid;
+                        // Remove all old data so we don't duplicate it.
+                        $DB->delete_records('scorm_scoes_data', array('scoid'=>$olditemid));
+                        $DB->delete_records('scorm_seq_objective', array('scoid'=>$olditemid));
+                        $DB->delete_records('scorm_seq_mapinfo', array('scoid'=>$olditemid));
+                        $DB->delete_records('scorm_seq_ruleconds', array('scoid'=>$olditemid));
+                        $DB->delete_records('scorm_seq_rulecond', array('scoid'=>$olditemid));
+                        $DB->delete_records('scorm_seq_rolluprule', array('scoid'=>$olditemid));
+                        $DB->delete_records('scorm_seq_rolluprulecond', array('scoid'=>$olditemid));
+
+                        // Now remove this SCO from the olditems object as we have dealt with it.
+                        unset($olditems[$olditemid]);
+                    } else {
+                        // Insert the new SCO, and retain the link between the old and new for later adjustment
+                        $id = $DB->insert_record('scorm_scoes', $newitem);
                     }
 
                     if ($optionaldatas = scorm_optionals_data($item, $standarddatas)) {
@@ -641,9 +661,6 @@ function scorm_parse_scorm($scorm, $manifest) {
             foreach ($olditems as $olditem) {
                 $DB->delete_records('scorm_scoes', array('id'=>$olditem->id));
                 $DB->delete_records('scorm_scoes_data', array('scoid'=>$olditem->id));
-                if (isset($olditem->newid)) {
-                    $DB->set_field('scorm_scoes_track', 'scoid', $olditem->newid, array('scoid' => $olditem->id));
-                }
                 $DB->delete_records('scorm_scoes_track', array('scoid'=>$olditem->id));
                 $DB->delete_records('scorm_seq_objective', array('scoid'=>$olditem->id));
                 $DB->delete_records('scorm_seq_mapinfo', array('scoid'=>$olditem->id));
@@ -701,7 +718,8 @@ function scorm_get_parent($sco) {
 function scorm_get_children($sco) {
     global $DB;
 
-    if ($children = $DB->get_records('scorm_scoes', array('scorm'=>$sco->scorm, 'parent'=>$sco->identifier))) {//originally this said parent instead of childrean
+    $children = $DB->get_records('scorm_scoes', array('scorm' => $sco->scorm, 'parent' => $sco->identifier), 'sortorder, id');
+    if (!empty($children)) {
         return $children;
     }
     return null;
@@ -710,7 +728,7 @@ function scorm_get_children($sco) {
 function scorm_get_available_children($sco) {
     global $DB;
 
-    $res = $DB->get_records('scorm_scoes', array('scorm' => $sco->scorm, 'parent' => $sco->identifier));
+    $res = $DB->get_records('scorm_scoes', array('scorm' => $sco->scorm, 'parent' => $sco->identifier), 'sortorder, id');
     if (!$res || $res == null) {
         return false;
     } else {
@@ -738,7 +756,7 @@ function scorm_get_available_descendent($descend = array(), $sco) {
 function scorm_get_siblings($sco) {
     global $DB;
 
-    if ($siblings = $DB->get_records('scorm_scoes', array('scorm'=>$sco->scorm, 'parent'=>$sco->parent))) {
+    if ($siblings = $DB->get_records('scorm_scoes', array('scorm'=>$sco->scorm, 'parent'=>$sco->parent), 'sortorder, id')) {
         unset($siblings[$sco->id]);
         if (!empty($siblings)) {
             return $siblings;

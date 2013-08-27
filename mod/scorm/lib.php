@@ -388,7 +388,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     if ($orgs = $DB->get_records_select('scorm_scoes', 'scorm = ? AND '.
                                          $DB->sql_isempty('scorm_scoes', 'launch', false, true).' AND '.
                                          $DB->sql_isempty('scorm_scoes', 'organization', false, false),
-                                         array($scorm->id), 'id', 'id,identifier,title')) {
+                                         array($scorm->id), 'sortorder, id', 'id, identifier, title')) {
         if (count($orgs) <= 1) {
             unset($orgs);
             $orgs = array();
@@ -407,7 +407,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
             }
             $report .= "<ul id='0' class='$liststyle'>";
                 $conditions['scorm'] = $scorm->id;
-            if ($scoes = $DB->get_records('scorm_scoes', $conditions, "id ASC")) {
+            if ($scoes = $DB->get_records('scorm_scoes', $conditions, "sortorder, id")) {
                 // drop keys so that we can access array sequentially
                 $scoes = array_values($scoes);
                 $level=0;

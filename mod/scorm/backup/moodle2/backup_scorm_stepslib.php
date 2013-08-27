@@ -51,7 +51,7 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
 
         $sco = new backup_nested_element('sco', array('id'), array(
             'manifest', 'organization', 'parent', 'identifier',
-            'launch', 'scormtype', 'title'));
+            'launch', 'scormtype', 'title', 'sortorder'));
 
         $scodatas = new backup_nested_element('sco_datas');
 
@@ -128,7 +128,7 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
         $scorm->set_source_table('scorm', array('id' => backup::VAR_ACTIVITYID));
 
         // Order is important for several SCORM calls (especially scorm_scoes) in the following calls to set_source_table
-        $sco->set_source_table('scorm_scoes', array('scorm' => backup::VAR_PARENTID), 'id ASC');
+        $sco->set_source_table('scorm_scoes', array('scorm' => backup::VAR_PARENTID), 'sortorder, id');
         $scodata->set_source_table('scorm_scoes_data', array('scoid' => backup::VAR_PARENTID), 'id ASC');
         $seqrulecond->set_source_table('scorm_seq_ruleconds', array('scoid' => backup::VAR_PARENTID), 'id ASC');
         $seqrulecondsdata->set_source_table('scorm_seq_rulecond', array('ruleconditionsid' => backup::VAR_PARENTID), 'id ASC');

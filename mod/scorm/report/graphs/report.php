@@ -46,7 +46,7 @@ class scorm_graphs_report extends scorm_default_report {
             groups_print_activity_menu($cm, new moodle_url($PAGE->url));
         }
 
-        if ($scoes = $DB->get_records('scorm_scoes', array("scorm"=>$scorm->id), 'id')) {
+        if ($scoes = $DB->get_records('scorm_scoes', array("scorm"=>$scorm->id), 'sortorder, id')) {
             foreach ($scoes as $sco) {
                 if ($sco->launch != '') {
                     $imageurl = new moodle_url('/mod/scorm/report/graphs/graph.php',

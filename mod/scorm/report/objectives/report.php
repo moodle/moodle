@@ -148,7 +148,7 @@ class scorm_objectives_report extends scorm_default_report {
             $headers[] = get_string('last', 'scorm');
             $columns[] = 'score';
             $headers[] = get_string('score', 'scorm');
-            $scoes = $DB->get_records('scorm_scoes', array("scorm"=>$scorm->id), 'id');
+            $scoes = $DB->get_records('scorm_scoes', array("scorm" => $scorm->id), 'sortorder, id');
             foreach ($scoes as $sco) {
                 if ($sco->launch != '') {
                     $columns[] = 'scograde'.$sco->id;
