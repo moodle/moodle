@@ -32,7 +32,7 @@ class mod_wiki_filesedit_form extends moodleform {
 
         $data    = $this->_customdata['data'];
         $options = $this->_customdata['options'];
-
+        $mform->addElement('header', 'general', get_string('editfiles', 'wiki'));
         $mform->addElement('filemanager', 'files_filemanager', get_string('files'), null, $options);
 
         $mform->addElement('hidden', 'returnurl', $data->returnurl);
