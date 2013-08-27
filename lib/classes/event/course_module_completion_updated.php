@@ -40,7 +40,7 @@ class course_module_completion_updated extends base {
      * @return string
      */
     public static function get_name() {
-        return new get_string('eventcoursemodulecompletionupdated', 'core_completion');
+        return get_string('eventcoursemodulecompletionupdated', 'core_completion');
     }
 
     /**

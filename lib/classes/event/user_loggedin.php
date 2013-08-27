@@ -60,7 +60,7 @@ class user_loggedin extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return new get_string('event_user_loggedin', 'auth');
+        return get_string('event_user_loggedin', 'auth');
     }
 
     /**
