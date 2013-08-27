@@ -155,12 +155,7 @@
 .moodleSkin span.mce_cut {background:url(img/cut.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_blockquote {background:url(img/blockquote.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_removeformat {background:url(img/clear_formatting.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_forecolorpicker {background: #300 url(img/text_color.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_backcolorpicker {background:url(img/text_highlight.png) 2px 2px no-repeat;}
-.moodleSkin .mce_forecolor span.mceAction {background:url(img/text_color.png) 2px 2px no-repeat;}
-.moodleSkin .mce_backcolor span.mceAction {background:url(img/text_highlight.png) 2px 2px no-repeat;}
-
-/* Plugins */
+.moodleSkin span.mce_cleanup {background:url(img/cleanup_messy_code.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_ltr {background:url(img/left_to_right.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_rtl {background:url(img/right_to_left.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_emotions {background:url(img/emoticons.png) 2px 2px no-repeat;}
@@ -179,38 +174,44 @@
 .moodleSkin span.mce_pastetext {background:url(img/paste_text.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_pasteword {background:url(img/paste_word.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_replace {background:url(img/find_replace.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_insertlayer {background:url(img/layers.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_insert_layer {background:url(img/layers.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_movebackward {background:url(img/layers_under.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_moveforward {background:url(img/layers_over.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_styleprops {background:url(img/styleprops.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_insertdate {background:url(img/insert_date.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_cancel {background:url(img/delete.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_merge_cells {background:url(img/merge_cells.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_split_cells {background:url(img/split_cells.png) 2px 2px no-repeat;}
+
+.moodleSkin span.mce_forecolorpicker {background: #300 url(img/text_color.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_backcolorpicker {background:url(img/text_highlight.png) 2px 2px no-repeat;}
+.moodleSkin .mce_forecolor span.mceAction {background:url(img/text_color.png) 2px 2px no-repeat;}
+.moodleSkin .mce_backcolor span.mceAction {background:url(img/text_highlight.png) 2px 2px no-repeat;}
 
 /* Theme */
-.moodleSkin td.mceToolbar, .moodleSkin td.mceStatusbar, .moodleSkin .mceMenuItemTitle a {background:#F9F9F9}
+.moodleSkin td.mceToolbar, .moodleSkin td.mceStatusbar, .moodleSkin .mceMenuItemTitle a {background:#F2F2F2}
 .moodleSkin .mceListBox .mceText {background:#FFF}
 .moodleSkin .mceIcon {background:url(../../img/icons.gif) no-repeat 20px 20px}
 
 /* Buttons Without New Icons */
-.moodleSkin span.mce_cleanup {background-position:-40px 0}
+
 .moodleSkin span.mce_visualaid {background-position:-660px 0}
 
-/* Plugins Without New Icons */
-.moodleSkin span.mce_advhr {background-position:-0px -20px}
-.moodleSkin span.mce_insertdate {background-position:-140px -20px}
-.moodleSkin span.mce_insertlayer {background-position:-260px -20px}
-.moodleSkin span.mce_movebackward {background-position:-280px -20px}
-.moodleSkin span.mce_moveforward {background-position:-300px -20px}
-.moodleSkin span.mce_selectall {background-position:-400px -20px}
-.moodleSkin span.mce_cell_props {background-position:-600px -20px}
-.moodleSkin span.mce_styleprops {background-position:-560px -20px}
-.moodleSkin span.mce_absolute {background-position:-180px -20px}
-.moodleSkin span.mce_cancel {background-position:-460px -20px}
+/* Unused Plugins Without New Icons - kept for fringe cases where users want to enable them */
 .moodleSkin span.mce_delete_table {background-position:-620px -20px}
 .moodleSkin span.mce_delete_col {background-position:-640px -20px}
 .moodleSkin span.mce_delete_row {background-position:-660px -20px}
+.moodleSkin span.mce_cell_props {background-position:-600px -20px}
 .moodleSkin span.mce_col_after {background-position:-680px -20px}
 .moodleSkin span.mce_col_before {background-position:-700px -20px}
 .moodleSkin span.mce_row_after {background-position:-720px -20px}
 .moodleSkin span.mce_row_before {background-position:-740px -20px}
-.moodleSkin span.mce_merge_cells {background-position:-760px -20px}
 .moodleSkin span.mce_table_props {background-position:-980px -20px}
 .moodleSkin span.mce_row_props {background-position:-780px -20px}
-.moodleSkin span.mce_split_cells {background-position:-800px -20px}
+.moodleSkin span.mce_advhr {background-position:-0px -20px}
+.moodleSkin span.mce_selectall {background-position:-400px -20px}
+.moodleSkin span.mce_absolute {background-position:-180px -20px}
 .moodleSkin span.mce_abbr {background-position:-860px -20px}
 .moodleSkin span.mce_acronym {background-position:-880px -20px}
 .moodleSkin span.mce_attribs {background-position:-900px -20px}
@@ -224,4 +225,4 @@
 .moodleSkin span.mce_visualblocks {background-position: -40px -40px}
 .moodleSkin span.mce_backward {background-position:-200px -20px}
 .moodleSkin span.mce_forward {background-position:-220px -20px}
-.moodleSkin span.mce_insert_layer {background-position:-240px -20px}
+
