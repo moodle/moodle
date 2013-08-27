@@ -120,6 +120,7 @@
     $PAGE->set_title("$course->shortname: ".format_string($survey->name));
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
+    echo $OUTPUT->heading($survey->name);
 
 /// Check to see if groups are being used in this survey
     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
@@ -177,7 +178,7 @@
     switch ($action) {
 
       case "summary":
-        echo $OUTPUT->heading($strsummary);
+        echo $OUTPUT->heading($strsummary, 3);
 
         if (survey_count_responses($survey->id, $currentgroup, $groupingid)) {
             echo "<div class='reportsummary'><a href=\"report.php?action=scales&amp;id=$id\">";
@@ -189,7 +190,7 @@
         break;
 
       case "scales":
-        echo $OUTPUT->heading($strscales);
+        echo $OUTPUT->heading($strscales, 3);
 
         if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
             echo $OUTPUT->notification(get_string("nobodyyet","survey"));
@@ -230,16 +231,16 @@
 
             if ($scale = $DB->get_records("survey_questions", array("multi"=>$qid))) {
                 $scale = array_pop($scale);
-                echo $OUTPUT->heading("$scale->text - $strselectedquestions");
+                echo $OUTPUT->heading("$scale->text - $strselectedquestions", 3);
             } else {
-                echo $OUTPUT->heading($strselectedquestions);
+                echo $OUTPUT->heading($strselectedquestions, 3);
             }
 
         } else {        // get all top-level questions
             $questions = $DB->get_records_list("survey_questions", "id", explode(',',$survey->questions));
             $questionorder = explode(",", $survey->questions);
 
-            echo $OUTPUT->heading($strallquestions);
+            echo $OUTPUT->heading($strallquestions, 3);
         }
 
         if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
@@ -264,7 +265,7 @@
                 $question->text = get_string($question->text, "survey");
 
                 if ($question->multi) {
-                    echo "<h3>$question->text:</h3>";
+                    echo $OUTPUT->heading($question->text . ':', 4);
 
                     $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
                     $subquestionorder = explode(",", $question->multi);
@@ -319,7 +320,7 @@
 
         $answers =  explode(",", get_string($question->options, "survey"));
 
-        echo $OUTPUT->heading("$strquestion: $question->text");
+        echo $OUTPUT->heading("$strquestion: $question->text", 3);
 
 
         $strname = get_string("name", "survey");
@@ -360,7 +361,7 @@
 
       case "students":
 
-         echo $OUTPUT->heading(get_string("analysisof", "survey", get_string('participants')));
+         echo $OUTPUT->heading(get_string("analysisof", "survey", get_string('participants')), 3);
 
          if (! $results = survey_get_responses($survey->id, $currentgroup, $groupingid) ) {
              echo $OUTPUT->notification(get_string("nobodyyet","survey"));
@@ -375,7 +376,7 @@
              print_error('invaliduserid');
          }
 
-         echo $OUTPUT->heading(get_string("analysisof", "survey", fullname($user)));
+         echo $OUTPUT->heading(get_string("analysisof", "survey", fullname($user)), 3);
 
          if ($notes != '' and confirm_sesskey()) {
              if (survey_get_analysis($survey->id, $user->id)) {
@@ -472,7 +473,7 @@
          break;
 
       case "download":
-        echo $OUTPUT->heading($strdownload);
+        echo $OUTPUT->heading($strdownload, 3);
 
         require_capability('mod/survey:download', $context);
 
