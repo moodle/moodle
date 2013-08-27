@@ -123,7 +123,7 @@ class mod_choice_renderer extends plugin_renderer_base {
     public function display_publish_name_vertical($choices) {
         global $PAGE;
         $html ='';
-        $html .= html_writer::tag('h2',format_string(get_string("responses", "choice")), array('class'=>'main'));
+        $html .= html_writer::tag('h3',format_string(get_string("responses", "choice")));
 
         $attributes = array('method'=>'POST');
         $attributes['action'] = new moodle_url($PAGE->url);
@@ -364,7 +364,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $truserpercentage = new html_table_row($rows['userpercentage']);
         $table->data = array($trgraph, $trusernumber, $truserpercentage);
 
-        $header = html_writer::tag('h2',format_string(get_string("responses", "choice")));
+        $header = html_writer::tag('h3',format_string(get_string("responses", "choice")));
         $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
         $html .= html_writer::tag('a', get_string('skipresultgraph', 'choice'), array('href'=>'#skipresultgraph', 'class'=>'skip-block'));
         $html .= html_writer::tag('div', html_writer::table($table), array('class'=>'response'));
@@ -460,7 +460,7 @@ class mod_choice_renderer extends plugin_renderer_base {
         $table->data = $rows;
 
         $html = '';
-        $header = html_writer::tag('h2',format_string(get_string("responses", "choice")));
+        $header = html_writer::tag('h3',format_string(get_string("responses", "choice")));
         $html .= html_writer::tag('div', $header, array('class'=>'responseheader'));
         $html .= html_writer::table($table);
 
