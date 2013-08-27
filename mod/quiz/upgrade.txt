@@ -1,6 +1,12 @@
 This files describes API changes in the quiz code.
 
 
+=== 2.4.5 ===
+
+* mod_quiz_renderer::view_best_score should not be used any more. (It did not do
+  what the name suggested anyway.)
+
+
 === 2.4 ===
 
 * mod_quiz_renderer::finish_review_link now requires $attemptobj to be passed in
