@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_indent-button",
+  "builds": {
+    "moodle-atto_indent-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

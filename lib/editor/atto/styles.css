@@ -1,0 +1,71 @@
+div.editor_atto {
+    background-color: white;
+    border: 1px solid #444;
+}
+
+div.editor_atto_toolbar {
+    display: block;
+}
+
+div.editor_atto_toolbar button {
+    padding: 1px;
+    padding: 3px;
+}
+div.editor_atto_toolbar button img {
+    padding: 1px;
+}
+
+div.editor_atto_toolbar button.atto_strike_button,
+div.editor_atto_toolbar button.atto_unorderedlist_button,
+div.editor_atto_toolbar button.atto_clear_button,
+div.editor_atto_toolbar button.atto_indent_button {
+    margin-right: 1em;
+}
+body.dir-rtl div.editor_atto_toolbar button.atto_strike_button,
+body.dir-rtl div.editor_atto_toolbar button.atto_unorderedlist_button,
+body.dir-rtl div.editor_atto_toolbar button.atto_clear_button,
+body.dir-rtl div.editor_atto_toolbar button.atto_indent_button {
+    margin-right: 0px;
+    margin-left: 1em;
+}
+
+.atto_hasmenu .icon {
+    width: 32px;
+}
+
+.editor_atto img {
+    resize: both; overflow: auto;
+}
+.atto_menuentry {
+    clear: left;
+}
+.atto_menuentry img {
+    width: 16px;
+    height: 16px;
+}
+
+.atto_menu {
+    min-width: 12em;
+    background: white;
+    padding: 1px;
+}
+
+.atto_menu a {
+    color: black;
+}
+.atto_menuentry {
+    border-bottom: 1px solid #eee;
+    padding: 2px;
+}
+
+.atto_menuentry h1,
+.atto_menuentry h2,
+.atto_menuentry p {
+    margin: 4px;
+}
+
+
+.atto_form label {
+    display: block;
+    margin: 5px;
+}
