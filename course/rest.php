@@ -133,8 +133,8 @@ switch($requestmethod) {
                             $beforemod = NULL;
                         }
 
-                        moveto_module($cm, $section, $beforemod);
-                        echo json_encode(array('visible' => $cm->visible));
+                        $isvisible = moveto_module($cm, $section, $beforemod);
+                        echo json_encode(array('visible' => $isvisible));
                         break;
                     case 'gettitle':
                         require_capability('moodle/course:manageactivities', $modcontext);
