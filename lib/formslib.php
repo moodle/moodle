@@ -261,10 +261,10 @@ abstract class moodleform {
         $submission = array();
         if ($method == 'post') {
             if (!empty($_POST)) {
-                $submission = $_POST;
+                $submission = $this->_get_post_params();
             }
         } else {
-            $submission = array_merge_recursive($_GET, $_POST); // emulate handling of parameters in xxxx_param()
+            $submission = array_merge_recursive($_GET, $this->_get_post_params()); // Emulate handling of parameters in xxxx_param().
         }
 
         // following trick is needed to enable proper sesskey checks when using GET forms
@@ -281,6 +281,38 @@ abstract class moodleform {
         $this->detectMissingSetType();
 
         $this->_form->updateSubmission($submission, $files);
+    }
+
+    /**
+     * Internal method. Gets all POST variables, bypassing max_input_vars limit if needed.
+     *
+     * @return array All POST variables as an array, in the same format as $_POST.
+     */
+    protected function _get_post_params() {
+        $enctype = $this->_form->getAttribute('enctype');
+        $max = (int)ini_get('max_input_vars');
+
+        if (empty($max) || count($_POST, COUNT_RECURSIVE) < $max || (!empty($enctype) && $enctype == 'multipart/form-data')) {
+            return $_POST;
+        }
+
+        // Large POST request with enctype supported by php://input.
+        // Parse php://input in chunks to bypass max_input_vars limit, which also applies to parse_str().
+        $allvalues = array();
+        $values = array();
+        $str = file_get_contents("php://input");
+        $delim = '&';
+
+        $chunks = array_map(function($p) use ($delim) {
+                return implode($delim, $p);
+            }, array_chunk(explode($delim, $str), $max));
+
+        foreach ($chunks as $chunk) {
+            parse_str($chunk, $values);
+            $allvalues = array_merge_recursive($allvalues, $values);
+        }
+
+        return $allvalues;
     }
 
     /**
