@@ -1030,7 +1030,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
     }
 
     /**
-     * @deprecated Do not use any more. Removed in Moodle 2.5.
+     * @deprecated Do not use any more. Removed in Moodle 2.6.
      */
     public function view_best_score($viewobj) {
         return '';
