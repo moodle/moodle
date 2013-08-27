@@ -42,6 +42,7 @@ $string['cachedef_coursecat'] = 'Course categories lists for particular user';
 $string['cachedef_coursecatrecords'] = 'Course categories records';
 $string['cachedef_coursecontacts'] = 'List of course contacts';
 $string['cachedef_coursecattree'] = 'Course categories tree';
+$string['cachedef_coursemodinfo'] = 'Accumulated information about modules and sections for each course';
 $string['cachedef_databasemeta'] = 'Database meta information';
 $string['cachedef_eventinvalidation'] = 'Event invalidation';
 $string['cachedef_externalbadges'] = 'External badges for particular user';

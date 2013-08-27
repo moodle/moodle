@@ -1590,6 +1590,13 @@ function purge_all_caches() {
     get_string_manager()->reset_caches();
     core_text::reset_caches();
 
+    // Bump up cacherev field for all courses.
+    try {
+        increment_revision_number('course', 'cacherev', '');
+    } catch (moodle_exception $e) {
+        // Ignore exception since this function is also called before upgrade script when field course.cacherev does not exist yet.
+    }
+
     cache_helper::purge_all();
 
     // Purge all other caches: rss, simplepie, etc.
@@ -5072,6 +5079,10 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     // Delete legacy files - just in case some files are still left there after conversion to new file api,
     // also some non-standard unsupported plugins may try to store something there.
     fulldelete($CFG->dataroot.'/'.$course->id);
+
+    // Delete from cache to reduce the cache size especially makes sense in case of bulk course deletion.
+    $cachemodinfo = cache::make('core', 'coursemodinfo');
+    $cachemodinfo->delete($courseid);
 
     // Trigger a course content deleted event.
     $event = \core\event\course_content_deleted::create(array(

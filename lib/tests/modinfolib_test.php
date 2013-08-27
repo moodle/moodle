@@ -267,6 +267,100 @@ class core_modinfolib_testcase extends advanced_testcase {
         set_config('enablecompletion', $oldcfgenablecompletion);
     }
 
+    public function test_matching_cacherev() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $cache = cache::make('core', 'coursemodinfo');
+
+        // Generate the course and pre-requisite module.
+        $course = $this->getDataGenerator()->create_course(
+                array('format' => 'topics',
+                    'numsections' => 3),
+                array('createsections' => true));
+
+        // Make sure the cacherev is set.
+        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $this->assertGreaterThan(0, $cacherev);
+        $prevcacherev = $cacherev;
+
+        // Reset course cache and make sure cacherev is bumped up but cache is empty.
+        rebuild_course_cache($course->id, true);
+        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $this->assertGreaterThan($prevcacherev, $cacherev);
+        $this->assertEmpty($cache->get($course->id));
+        $prevcacherev = $cacherev;
+
+        // Build course cache. Cacherev should not change but cache is now not empty. Make sure cacherev is the same everywhere.
+        $modinfo = get_fast_modinfo($course->id);
+        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $this->assertEquals($prevcacherev, $cacherev);
+        $cachedvalue = $cache->get($course->id);
+        $this->assertNotEmpty($cachedvalue);
+        $this->assertEquals($cacherev, $cachedvalue->cacherev);
+        $this->assertEquals($cacherev, $modinfo->get_course()->cacherev);
+        $prevcacherev = $cacherev;
+
+        // Little trick to check that cache is not rebuilt druing the next step - substitute the value in MUC and later check that it is still there.
+        $cache->set($course->id, (object)array_merge((array)$cachedvalue, array('secretfield' => 1)));
+
+        // Clear static cache and call get_fast_modinfo() again (pretend we are in another request). Cache should not be rebuilt.
+        course_modinfo::clear_instance_cache();
+        $modinfo = get_fast_modinfo($course->id);
+        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $this->assertEquals($prevcacherev, $cacherev);
+        $cachedvalue = $cache->get($course->id);
+        $this->assertNotEmpty($cachedvalue);
+        $this->assertEquals($cacherev, $cachedvalue->cacherev);
+        $this->assertNotEmpty($cachedvalue->secretfield);
+        $this->assertEquals($cacherev, $modinfo->get_course()->cacherev);
+        $prevcacherev = $cacherev;
+
+        // Rebuild course cache. Cacherev must be incremented everywhere.
+        rebuild_course_cache($course->id);
+        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $this->assertGreaterThan($prevcacherev, $cacherev);
+        $cachedvalue = $cache->get($course->id);
+        $this->assertNotEmpty($cachedvalue);
+        $this->assertEquals($cacherev, $cachedvalue->cacherev);
+        $modinfo = get_fast_modinfo($course->id);
+        $this->assertEquals($cacherev, $modinfo->get_course()->cacherev);
+        $prevcacherev = $cacherev;
+
+        // Update cacherev in DB and make sure the cache will be rebuilt on the next call to get_fast_modinfo().
+        increment_revision_number('course', 'cacherev', 'id = ?', array($course->id));
+        // We need to clear static cache for course_modinfo instances too.
+        course_modinfo::clear_instance_cache();
+        $modinfo = get_fast_modinfo($course->id);
+        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $this->assertGreaterThan($prevcacherev, $cacherev);
+        $cachedvalue = $cache->get($course->id);
+        $this->assertNotEmpty($cachedvalue);
+        $this->assertEquals($cacherev, $cachedvalue->cacherev);
+        $this->assertEquals($cacherev, $modinfo->get_course()->cacherev);
+        $prevcacherev = $cacherev;
+
+        // Reset cache for all courses and make sure this course cache is reset.
+        rebuild_course_cache(0, true);
+        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $this->assertGreaterThan($prevcacherev, $cacherev);
+        $this->assertEmpty($cache->get($course->id));
+        // Rebuild again.
+        $modinfo = get_fast_modinfo($course->id);
+        $cachedvalue = $cache->get($course->id);
+        $this->assertNotEmpty($cachedvalue);
+        $this->assertEquals($cacherev, $cachedvalue->cacherev);
+        $this->assertEquals($cacherev, $modinfo->get_course()->cacherev);
+        $prevcacherev = $cacherev;
+
+        // Purge all caches and make sure cacherev is increased and data from MUC erased.
+        purge_all_caches();
+        $cacherev = $DB->get_field('course', 'cacherev', array('id' => $course->id));
+        $this->assertGreaterThan($prevcacherev, $cacherev);
+        $this->assertEmpty($cache->get($course->id));
+    }
+
     public function test_course_modinfo_properties() {
         global $USER, $DB;
 

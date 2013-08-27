@@ -2386,5 +2386,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013090500.01);
     }
 
+    if ($oldversion < 2013091000.02) {
+
+        // Define field cacherev to be added to course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('cacherev', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'completionnotify');
+
+        // Conditionally launch add field cacherev.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013091000.02);
+    }
+
     return true;
 }
