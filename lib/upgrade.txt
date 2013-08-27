@@ -26,6 +26,7 @@ information provided here is intended especially for developers.
   to report progress during long operations. Related to this, zip_archive now supports an estimated_count()
   function that returns an approximate number of entries in the zip faster than the count() function.
 * Class cm_info no longer extends stdClass. All properties are read-only and calculated on first request only.
+* Class course_modinfo no longer extends stdClass. All properties are read-only.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices

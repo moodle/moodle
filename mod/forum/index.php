@@ -138,11 +138,7 @@ $generalforums  = array();
 $learningforums = array();
 $modinfo = get_fast_modinfo($course);
 
-if (!isset($modinfo->instances['forum'])) {
-    $modinfo->instances['forum'] = array();
-}
-
-foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
+foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
     if (!$cm->uservisible or !isset($forums[$forumid])) {
         continue;
     }
@@ -176,7 +172,7 @@ if (!is_null($subscribe)) {
         redirect(new moodle_url('/mod/forum/index.php', array('id' => $id)), get_string('subscribeenrolledonly', 'forum'));
     }
     // Can proceed now, the user is not guest and is enrolled
-    foreach ($modinfo->instances['forum'] as $forumid=>$cm) {
+    foreach ($modinfo->get_instances_of('forum') as $forumid=>$cm) {
         $forum = $forums[$forumid];
         $modcontext = context_module::instance($cm->id);
         $cansub = false;

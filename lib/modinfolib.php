@@ -39,69 +39,140 @@ if (!defined('MAX_MODINFO_CACHE_SIZE')) {
  *
  * This includes information about the course-modules and the sections on the course. It can also
  * include dynamic data that has been updated for the current user.
+ *
+ * Use {@link get_fast_modinfo()} to retrieve the instance of the object for particular course
+ * and particular user.
+ *
+ * @property-read int $courseid Course ID
+ * @property-read int $userid User ID
+ * @property-read array $sections Array from section number (e.g. 0) to array of course-module IDs in that
+ *     section; this only includes sections that contain at least one course-module
+ * @property-read cm_info[] $cms Array from course-module instance to cm_info object within this course, in
+ *     order of appearance
+ * @property-read cm_info[][] $instances Array from string (modname) => int (instance id) => cm_info object
+ * @property-read array $groups Groups that the current user belongs to. Calculated on the first request.
+ *     Is an array of grouping id => array of group id => group id. Includes grouping id 0 for 'all groups'
  */
-class course_modinfo extends stdClass {
-    // For convenience we store the course object here as it is needed in other parts of code
+class course_modinfo {
+    /**
+     * For convenience we store the course object here as it is needed in other parts of code
+     * @var stdClass
+     */
     private $course;
-    // Array of section data from cache
-    private $sectioninfo;
-
-    // Existing data fields
-    ///////////////////////
-
-    // These are public for backward compatibility. Note: it is not possible to retain BC
-    // using PHP magic get methods because behaviour is different with regard to empty().
 
     /**
-     * Course ID
-     * @var int
-     * @deprecated For new code, use get_course_id instead.
+     * Array of section data from cache
+     * @var section_info[]
      */
-    public $courseid;
+    private $sectioninfo;
 
     /**
      * User ID
      * @var int
-     * @deprecated For new code, use get_user_id instead.
      */
-    public $userid;
+    private $userid;
 
     /**
      * Array from int (section num, e.g. 0) => array of int (course-module id); this list only
      * includes sections that actually contain at least one course-module
      * @var array
-     * @deprecated For new code, use get_sections instead
      */
-    public $sections;
+    private $sections;
 
     /**
      * Array from int (cm id) => cm_info object
-     * @var array
-     * @deprecated For new code, use get_cms or get_cm instead.
+     * @var cm_info[]
      */
-    public $cms;
+    private $cms;
 
     /**
      * Array from string (modname) => int (instance id) => cm_info object
-     * @var array
-     * @deprecated For new code, use get_instances or get_instances_of instead.
+     * @var cm_info[][]
      */
-    public $instances;
+    private $instances;
 
     /**
      * Groups that the current user belongs to. This value is usually not available (set to null)
      * unless the course has activities set to groupmembersonly. When set, it is an array of
      * grouping id => array of group id => group id. Includes grouping id 0 for 'all groups'.
-     * @var array
-     * @deprecated Don't use this! For new code, use get_groups.
+     * @var int[][]
      */
-    public $groups;
-
-    // Get methods for data
-    ///////////////////////
+    private $groups;
 
     /**
-     * @return object Moodle course object that was used to construct this data
+     * List of class read-only properties and their getter methods.
+     * Used by magic functions __get(), __isset(), __empty()
+     * @var array
+     */
+    private static $standardproperties = array(
+        'courseid' => 'get_course_id',
+        'userid' => 'get_user_id',
+        'sections' => 'get_sections',
+        'cms' => 'get_cms',
+        'instances' => 'get_instances',
+        'groups' => 'get_groups_all',
+    );
+
+    /**
+     * Magic method getter
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function __get($name) {
+        if (isset(self::$standardproperties[$name])) {
+            $method = self::$standardproperties[$name];
+            return $this->$method();
+        } else {
+            debugging('Invalid course_modinfo property accessed: '.$name);
+            return null;
+        }
+    }
+
+    /**
+     * Magic method for function isset()
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name) {
+        if (isset(self::$standardproperties[$name])) {
+            $value = $this->__get($name);
+            return isset($value);
+        }
+        return false;
+    }
+
+    /**
+     * Magic method for function empty()
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function __empty($name) {
+        if (isset(self::$standardproperties[$name])) {
+            $value = $this->__get($name);
+            return empty($value);
+        }
+        return true;
+    }
+
+    /**
+     * Magic method setter
+     *
+     * Will display the developer warning when trying to set/overwrite existing property.
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value) {
+        debugging("It is not allowed to set the property course_modinfo::\${$name}", DEBUG_DEVELOPER);
+    }
+
+    /**
+     * Returns course object that was used in the first get_fast_modinfo() call.
+     *
+     * @return stdClass
      */
     public function get_course() {
         return $this->course;
@@ -111,7 +182,7 @@ class course_modinfo extends stdClass {
      * @return int Course ID
      */
     public function get_course_id() {
-        return $this->courseid;
+        return $this->course->id;
     }
 
     /**
@@ -130,7 +201,7 @@ class course_modinfo extends stdClass {
     }
 
     /**
-     * @return array Array from course-module instance to cm_info object within this course, in
+     * @return cm_info[] Array from course-module instance to cm_info object within this course, in
      *   order of appearance
      */
     public function get_cms() {
@@ -152,7 +223,7 @@ class course_modinfo extends stdClass {
 
     /**
      * Obtains all module instances on this course.
-     * @return array Array from module name => array from instance id => cm_info
+     * @return cm_info[][] Array from module name => array from instance id => cm_info
      */
     public function get_instances() {
         return $this->instances;
@@ -179,7 +250,7 @@ class course_modinfo extends stdClass {
     /**
      * Obtains all instances of a particular module on this course.
      * @param $modname Name of module (not full frankenstyle) e.g. 'label'
-     * @return array Array from instance id => cm_info for modules on this course; empty if none
+     * @return cm_info[] Array from instance id => cm_info for modules on this course; empty if none
      */
     public function get_instances_of($modname) {
         if (empty($this->instances[$modname])) {
@@ -189,29 +260,38 @@ class course_modinfo extends stdClass {
     }
 
     /**
-     * Returns groups that the current user belongs to on the course. Note: If not already
-     * available, this may make a database query.
-     * @param int $groupingid Grouping ID or 0 (default) for all groups
-     * @return array Array of int (group id) => int (same group id again); empty array if none
+     * Groups that the current user belongs to organised by grouping id. Calculated on the first request.
+     * @return int[][] array of grouping id => array of group id => group id. Includes grouping id 0 for 'all groups'
      */
-    public function get_groups($groupingid=0) {
+    private function get_groups_all() {
         if (is_null($this->groups)) {
             // NOTE: Performance could be improved here. The system caches user groups
             // in $USER->groupmember[$courseid] => array of groupid=>groupid. Unfortunately this
             // structure does not include grouping information. It probably could be changed to
             // do so, without a significant performance hit on login, thus saving this one query
             // each request.
-            $this->groups = groups_get_user_groups($this->courseid, $this->userid);
+            $this->groups = groups_get_user_groups($this->course->id, $this->userid);
         }
-        if (!isset($this->groups[$groupingid])) {
+        return $this->groups;
+    }
+
+    /**
+     * Returns groups that the current user belongs to on the course. Note: If not already
+     * available, this may make a database query.
+     * @param int $groupingid Grouping ID or 0 (default) for all groups
+     * @return int[] Array of int (group id) => int (same group id again); empty array if none
+     */
+    public function get_groups($groupingid = 0) {
+        $allgroups = $this->get_groups_all();
+        if (!isset($allgroups[$groupingid])) {
             return array();
         }
-        return $this->groups[$groupingid];
+        return $allgroups[$groupingid];
     }
 
     /**
      * Gets all sections as array from section number => data about section.
-     * @return array Array of section_info objects organised by section number
+     * @return section_info[] Array of section_info objects organised by section number
      */
     public function get_section_info_all() {
         return $this->sectioninfo;
@@ -255,7 +335,6 @@ class course_modinfo extends stdClass {
         }
 
         // Set initial values
-        $this->courseid = $course->id;
         $this->userid = $userid;
         $this->sections = array();
         $this->cms = array();
@@ -315,7 +394,7 @@ class course_modinfo extends stdClass {
         }
 
         // Loop through each piece of module data, constructing it
-        $modexists = array();
+        static $modexists = array();
         foreach ($info as $mod) {
             if (empty($mod->name)) {
                 // something is wrong here
@@ -323,11 +402,11 @@ class course_modinfo extends stdClass {
             }
 
             // Skip modules which don't exist
-            if (empty($modexists[$mod->mod])) {
-                if (!file_exists("$CFG->dirroot/mod/$mod->mod/lib.php")) {
-                    continue;
-                }
-                $modexists[$mod->mod] = true;
+            if (!array_key_exists($mod->mod, $modexists)) {
+                $modexists[$mod->mod] = file_exists("$CFG->dirroot/mod/$mod->mod/lib.php");
+            }
+            if (!$modexists[$mod->mod]) {
+                continue;
             }
 
             // Construct info for this module

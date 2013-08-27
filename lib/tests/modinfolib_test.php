@@ -267,6 +267,88 @@ class core_modinfolib_testcase extends advanced_testcase {
         set_config('enablecompletion', $oldcfgenablecompletion);
     }
 
+    public function test_course_modinfo_properties() {
+        global $USER, $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Generate the course and some modules. Make one section hidden.
+        $course = $this->getDataGenerator()->create_course(
+                array('format' => 'topics',
+                    'numsections' => 3),
+                array('createsections' => true));
+        $DB->execute('UPDATE {course_sections} SET visible = 0 WHERE course = ? and section = ?',
+                array($course->id, 3));
+        $coursecontext = context_course::instance($course->id);
+        $forum0 = $this->getDataGenerator()->create_module('forum',
+                array('course' => $course->id), array('section' => 0));
+        $assign0 = $this->getDataGenerator()->create_module('assign',
+                array('course' => $course->id), array('section' => 0, 'visible' => 0));
+        $forum1 = $this->getDataGenerator()->create_module('forum',
+                array('course' => $course->id), array('section' => 1));
+        $assign1 = $this->getDataGenerator()->create_module('assign',
+                array('course' => $course->id), array('section' => 1));
+        $page1 = $this->getDataGenerator()->create_module('page',
+                array('course' => $course->id), array('section' => 1));
+        $page3 = $this->getDataGenerator()->create_module('page',
+                array('course' => $course->id), array('section' => 3));
+
+        $modinfo = get_fast_modinfo($course->id);
+
+        $this->assertEquals(array($forum0->cmid, $assign0->cmid, $forum1->cmid, $assign1->cmid, $page1->cmid, $page3->cmid),
+                array_keys($modinfo->cms));
+        $this->assertEquals($course->id, $modinfo->courseid);
+        $this->assertEquals($USER->id, $modinfo->userid);
+        $this->assertEquals(array(0 => array($forum0->cmid, $assign0->cmid),
+            1 => array($forum1->cmid, $assign1->cmid, $page1->cmid), 3 => array($page3->cmid)), $modinfo->sections);
+        $this->assertEquals(array('forum', 'assign', 'page'), array_keys($modinfo->instances));
+        $this->assertEquals(array($assign0->id, $assign1->id), array_keys($modinfo->instances['assign']));
+        $this->assertEquals(array($forum0->id, $forum1->id), array_keys($modinfo->instances['forum']));
+        $this->assertEquals(array($page1->id, $page3->id), array_keys($modinfo->instances['page']));
+        $this->assertEquals(groups_get_user_groups($course->id), $modinfo->groups);
+        $this->assertEquals(array(0 => array($forum0->cmid, $assign0->cmid),
+            1 => array($forum1->cmid, $assign1->cmid, $page1->cmid),
+            3 => array($page3->cmid)), $modinfo->get_sections());
+        $this->assertEquals(array(0, 1, 2, 3), array_keys($modinfo->get_section_info_all()));
+        $this->assertEquals($forum0->cmid . ',' . $assign0->cmid, $modinfo->get_section_info(0)->sequence);
+        $this->assertEquals($forum1->cmid . ',' . $assign1->cmid . ',' . $page1->cmid, $modinfo->get_section_info(1)->sequence);
+        $this->assertEquals('', $modinfo->get_section_info(2)->sequence);
+        $this->assertEquals($page3->cmid, $modinfo->get_section_info(3)->sequence);
+        $this->assertEquals($course->id, $modinfo->get_course()->id);
+        $this->assertEquals(array('assign', 'forum', 'page'),
+                array_keys($modinfo->get_used_module_names()));
+        $this->assertEquals(array('assign', 'forum', 'page'),
+                array_keys($modinfo->get_used_module_names(true)));
+        // Admin can see hidden modules/sections.
+        $this->assertTrue($modinfo->cms[$assign0->cmid]->uservisible);
+        $this->assertTrue($modinfo->get_section_info(3)->uservisible);
+
+        // Get modinfo for non-current user (without capability to view hidden activities/sections).
+        $user = $this->getDataGenerator()->create_user();
+        $modinfo = get_fast_modinfo($course->id, $user->id);
+        $this->assertEquals($user->id, $modinfo->userid);
+        $this->assertFalse($modinfo->cms[$assign0->cmid]->uservisible);
+        $this->assertFalse($modinfo->get_section_info(3)->uservisible);
+
+        // Attempt to access and set non-existing field.
+        $this->assertTrue(empty($modinfo->somefield));
+        $this->assertFalse(isset($modinfo->somefield));
+        $modinfo->somefield;
+        $this->assertDebuggingCalled();
+        $modinfo->somefield = 'Some value';
+        $this->assertDebuggingCalled();
+        $this->assertEmpty($modinfo->somefield);
+        $this->assertDebuggingCalled();
+
+        // Attempt to overwrite existing field.
+        $this->assertFalse(empty($modinfo->cms));
+        $this->assertTrue(isset($modinfo->cms));
+        $modinfo->cms = 'Illegal overwriting';
+        $this->assertDebuggingCalled();
+        $this->assertNotEquals('Illegal overwriting', $modinfo->cms);
+    }
+
     /**
      * Test is_user_access_restricted_by_group()
      *
