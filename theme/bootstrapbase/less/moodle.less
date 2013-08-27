@@ -17,6 +17,9 @@
 // Upstream Bootstrap.
 @import "bootstrap/bootstrap";
 
+// Override Bootstrap defaults.
+@import "moodle/bootstrapoverride";
+
 // Set image location.
 @iconSpritePath:          ~"[[pix:theme|glyphicons-halflings]]";
 @iconWhiteSpritePath:     ~"[[pix:theme|glyphicons-halflings-white]]";
@@ -30,9 +33,6 @@
 
 // Roll back nameclashes.
 @import "moodle/undo";
-
-// Roll back resets.
-@import "moodle/reset";
 
 // Extra padding for fixed nav.
 // Needs to be between bootstrap/bootstrap and
