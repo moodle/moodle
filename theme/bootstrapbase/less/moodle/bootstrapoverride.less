@@ -5,7 +5,7 @@
  * rules defined in Bootstrap.
 */
 
-/** Headings **/
+// Headings.
 h1 { font-size: round(@baseFontSize * 2.30); } // ~32px
 h2 { font-size: round(@baseFontSize * 2.00); } // ~28px
 h3 { font-size: round(@baseFontSize * 1.70); } // ~24px
@@ -17,3 +17,10 @@ h1 small { font-size: round(@baseFontSize * 1.70); } // ~24px
 h2 small { font-size: round(@baseFontSize * 1.40); } // ~20px
 h3 small { font-size: round(@baseFontSize * 1.15); } // ~16px
 h4 small { font-size: round(@baseFontSize * 0.85); } // ~12px
+
+// Printing.
+@media print {
+  a[href]:after {
+    content: "";
+  }
+}
