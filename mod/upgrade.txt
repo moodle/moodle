@@ -1,6 +1,12 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 2.6 ===
+
+* xxx_get_types() module callback can now return subtypes that have
+  a custom help text set. Also instead of array it can now return
+  MOD_SUBTYPE_NO_CHILDREN. This is optional and still defaults to prior
+  behavior. See get_module_metadata() in course/lib.php for details.
 
 === 2.5 ===
 

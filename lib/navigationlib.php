@@ -3523,55 +3523,6 @@ class settings_navigation extends navigation_node {
     }
 
     /**
-     * Generate the list of modules for the given course.
-     *
-     * @param stdClass $course The course to get modules for
-     */
-    protected function get_course_modules($course) {
-        global $CFG;
-        // This function is included when we include course/lib.php at the top
-        // of this file
-        $modnames = get_module_types_names();
-        $resources = array();
-        $activities = array();
-        foreach($modnames as $modname=>$modnamestr) {
-            if (!course_allowed_module($course, $modname)) {
-                continue;
-            }
-
-            $libfile = "$CFG->dirroot/mod/$modname/lib.php";
-            if (!file_exists($libfile)) {
-                continue;
-            }
-            include_once($libfile);
-            $gettypesfunc =  $modname.'_get_types';
-            if (function_exists($gettypesfunc)) {
-                $types = $gettypesfunc();
-                foreach($types as $type) {
-                    if (!isset($type->modclass) || !isset($type->typestr)) {
-                        debugging('Incorrect activity type in '.$modname);
-                        continue;
-                    }
-                    if ($type->modclass == MOD_CLASS_RESOURCE) {
-                        $resources[html_entity_decode($type->type, ENT_QUOTES, 'UTF-8')] = $type->typestr;
-                    } else {
-                        $activities[html_entity_decode($type->type, ENT_QUOTES, 'UTF-8')] = $type->typestr;
-                    }
-                }
-            } else {
-                $archetype = plugin_supports('mod', $modname, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
-                if ($archetype == MOD_ARCHETYPE_RESOURCE) {
-                    $resources[$modname] = $modnamestr;
-                } else {
-                    // all other archetypes are considered activity
-                    $activities[$modname] = $modnamestr;
-                }
-            }
-        }
-        return array($resources, $activities);
-    }
-
-    /**
      * This function loads the course settings that are available for the user
      *
      * @param bool $forceopen If set to true the course node will be forced open

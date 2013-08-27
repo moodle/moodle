@@ -1289,8 +1289,11 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
 
         // NOTE: this is legacy stuff, module subtypes are very strongly discouraged!!
         $gettypesfunc =  $modname.'_get_types';
+        $types = MOD_SUBTYPE_NO_CHILDREN;
         if (function_exists($gettypesfunc)) {
             $types = $gettypesfunc();
+        }
+        if ($types !== MOD_SUBTYPE_NO_CHILDREN) {
             if (is_array($types) && count($types) > 0) {
                 $group = new stdClass();
                 $group->name = $modname;
@@ -1314,7 +1317,9 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
                     // should have the same archetype
                     $group->archetype = $subtype->archetype;
 
-                    if (get_string_manager()->string_exists('help' . $subtype->name, $modname)) {
+                    if (!empty($type->help)) {
+                        $subtype->help = $type->help;
+                    } else if (get_string_manager()->string_exists('help' . $subtype->name, $modname)) {
                         $subtype->help = get_string('help' . $subtype->name, $modname);
                     }
                     $subtype->link = new moodle_url($urlbase, array('add' => $modname, 'type' => $subtype->name));

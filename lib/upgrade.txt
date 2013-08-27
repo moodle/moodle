@@ -96,6 +96,8 @@ Navigation:
     * print_navigation()                    -> $OUTPUT->navbar()
     * build_navigation()                    -> $PAGE->navbar methods
     * navmenu()                             -> (no replacement)
+    * settings_navigation::
+          get_course_modules()              -> (no replacement)
 
 Calendar:
     * add_event()                           -> calendar_event::create()
