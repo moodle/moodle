@@ -2339,5 +2339,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013082300.01);
     }
 
+    // Convert SCORM course format courses to singleactivity.
+    if ($oldversion < 2013082700.00) {
+        // First set relevant singleactivity settings.
+        $formatoptions = new stdClass();
+        $formatoptions->format = 'singleactivity';
+        $formatoptions->sectionid = 0;
+        $formatoptions->name = 'activitytype';
+        $formatoptions->value = 'scorm';
+
+        $courses = $DB->get_recordset('course', array('format' => 'scorm'), 'id');
+        foreach ($courses as $course) {
+            $formatoptions->courseid = $course->id;
+            $DB->insert_record('course_format_options', $formatoptions);
+        }
+        $courses->close();
+
+        // Now update course format for these courses.
+        $sql = "UPDATE {course}
+                   SET format = 'singleactivity', modinfo = '', sectioncache = ''
+                 WHERE format = 'scorm'";
+        $DB->execute($sql);
+        upgrade_main_savepoint(true, 2013082700.00);
+    }
+
     return true;
 }
