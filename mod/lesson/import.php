@@ -57,10 +57,10 @@ $mform->set_data($data);
 
     $PAGE->navbar->add($strimportquestions);
     $PAGE->set_title($strimportquestions);
-    $PAGE->set_heading($strimportquestions);
+    $PAGE->set_heading(format_string($course->fullname));
     echo $OUTPUT->header();
-
-echo $OUTPUT->heading_with_help($strimportquestions, 'importquestions', 'lesson' );
+    echo $OUTPUT->heading(format_string($lesson->name), 2);
+    echo $OUTPUT->heading_with_help($strimportquestions, 'importquestions', 'lesson', '', '', 3);
 
 if ($data = $mform->get_data()) {
 
