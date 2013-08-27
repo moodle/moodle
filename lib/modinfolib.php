@@ -350,15 +350,8 @@ class course_modinfo extends stdClass {
         // Expand section objects
         $this->sectioninfo = array();
         foreach ($sectioncache as $number => $data) {
-            // Calculate sequence
-            if (isset($this->sections[$number])) {
-                $sequence = implode(',', $this->sections[$number]);
-            } else {
-                $sequence = '';
-            }
-            // Expand
-            $this->sectioninfo[$number] = new section_info($data, $number, $course->id, $sequence,
-                    $this, $userid);
+            $this->sectioninfo[$number] = new section_info($data, $number, null, null,
+                    $this, null);
         }
 
         // We need at least 'dynamic' data from each course-module (this is basically the remaining
@@ -1175,6 +1168,7 @@ class cm_info extends stdClass {
         $userid = $this->modinfo->get_user_id();
 
         if (!empty($CFG->enableavailability)) {
+            require_once($CFG->libdir. '/conditionlib.php');
             // Get availability information
             $ci = new condition_info($this);
             // Note that the modinfo currently available only includes minimal details (basic data)
@@ -1289,6 +1283,8 @@ class cm_info extends stdClass {
         if (empty($CFG->enableavailability)) {
             return false;
         }
+
+        require_once($CFG->libdir. '/conditionlib.php');
 
         // If module will always be visible anyway (but greyed out), don't bother checking anything else
         if ($this->showavailability == CONDITION_STUDENTVIEW_SHOW) {
@@ -1590,6 +1586,40 @@ class cached_cm_info {
 /**
  * Data about a single section on a course. This contains the fields from the
  * course_sections table, plus additional data when required.
+ *
+ * @property-read int $id Section ID - from course_sections table
+ * @property-read int $course Course ID - from course_sections table
+ * @property-read int $section Section number - from course_sections table
+ * @property-read string $name Section name if specified - from course_sections table
+ * @property-read int $visible Section visibility (1 = visible) - from course_sections table
+ * @property-read string $summary Section summary text if specified - from course_sections table
+ * @property-read int $summaryformat Section summary text format (FORMAT_xx constant) - from course_sections table
+ * @property-read int $showavailability When section is unavailable, this field controls whether it is shown to students (0 =
+ *    hide completely, 1 = show greyed out with information about when it will be available) -
+ *    from course_sections table
+ * @property-read int $availablefrom Available date for this section (0 if not set, or set to seconds since epoch;
+ *    before this date, section does not display to students) - from course_sections table
+ * @property-read int $availableuntil Available until date for this section  (0 if not set, or set to seconds since epoch;
+ *    from this date, section does not display to students) - from course_sections table
+ * @property-read int $groupingid If section is restricted to users of a particular grouping, this is its id (0 if not set) -
+ *    from course_sections table
+ * @property-read array $conditionscompletion Availability conditions for this section based on the completion of
+ *    course-modules (array from course-module id to required completion state
+ *    for that module) - from cached data in sectioncache field
+ * @property-read array $conditionsgrade Availability conditions for this section based on course grades (array from
+ *    grade item id to object with ->min, ->max fields) - from cached data in
+ *    sectioncache field
+ * @property-read array $conditionsfield Availability conditions for this section based on user fields
+ * @property-read bool $available True if this section is available to the given user i.e. if all availability conditions
+ *    are met - obtained dynamically
+ * @property-read string $availableinfo If section is not available to some users, this string gives information about
+ *    availability which can be displayed to students and/or staff (e.g. 'Available from 3 January 2010')
+ *    for display on main page - obtained dynamically
+ * @property-read bool $uservisible True if this section is available to the given user (for example, if current user
+ *    has viewhiddensections capability, they can access the section even if it is not
+ *    visible or not available, so this would be true in that case) - obtained dynamically
+ * @property-read string $sequence Comma-separated list of all modules in the section. Note, this field may not exactly
+ *    match course_sections.sequence if later has references to non-existing modules or not modules of not available module types.
  */
 class section_info implements IteratorAggregate {
     /**
@@ -1597,12 +1627,6 @@ class section_info implements IteratorAggregate {
      * @var int
      */
     private $_id;
-
-    /**
-     * Course ID - from course_sections table
-     * @var int
-     */
-    private $_course;
 
     /**
      * Section number - from course_sections table
@@ -1687,15 +1711,16 @@ class section_info implements IteratorAggregate {
 
     /**
      * True if this section is available to students i.e. if all availability conditions
-     * are met - obtained dynamically
-     * @var bool
+     * are met - obtained dynamically on request, see function {@link section_info::get_available()}
+     * @var bool|null
      */
     private $_available;
 
     /**
-     * If section is not available to students, this string gives information about
+     * If section is not available to some users, this string gives information about
      * availability which can be displayed to students and/or staff (e.g. 'Available from 3
-     * January 2010') for display on main page - obtained dynamically
+     * January 2010') for display on main page - obtained dynamically on request, see
+     * function {@link section_info::get_availableinfo()}
      * @var string
      */
     private $_availableinfo;
@@ -1703,8 +1728,9 @@ class section_info implements IteratorAggregate {
     /**
      * True if this section is available to the CURRENT user (for example, if current user
      * has viewhiddensections capability, they can access the section even if it is not
-     * visible or not available, so this would be true in that case)
-     * @var bool
+     * visible or not available, so this would be true in that case) - obtained dynamically
+     * on request, see function {@link section_info::get_uservisible()}
+     * @var bool|null
      */
     private $_uservisible;
 
@@ -1733,15 +1759,29 @@ class section_info implements IteratorAggregate {
     private $cachedformatoptions = array();
 
     /**
+     * Stores the list of all possible section options defined in each used course format.
+     * @var array
+     */
+    static private $sectionformatoptions = array();
+
+    /**
+     * Stores the modinfo object passed in constructor, may be used when requesting
+     * dynamically obtained attributes such as available, availableinfo, uservisible.
+     * Also used to retrun information about current course or user.
+     * @var course_modinfo
+     */
+    private $modinfo;
+
+    /**
      * Constructs object from database information plus extra required data.
      * @param object $data Array entry from cached sectioncache
      * @param int $number Section number (array key)
-     * @param int $courseid Course ID
-     * @param int $sequence Sequence of course-module ids contained within
+     * @param int $notused1 argument not used (informaion is available in $modinfo)
+     * @param int $notused2 argument not used (informaion is available in $modinfo)
      * @param course_modinfo $modinfo Owner (needed for checking availability)
-     * @param int $userid User ID
+     * @param int $notused3 argument not used (informaion is available in $modinfo)
      */
-    public function __construct($data, $number, $courseid, $sequence, $modinfo, $userid) {
+    public function __construct($data, $number, $notused1, $notused2, $modinfo, $notused3) {
         global $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -1762,9 +1802,20 @@ class section_info implements IteratorAggregate {
             }
         }
 
-        // cached course format data
-        $formatoptionsdef = course_get_format($courseid)->section_format_options();
-        foreach ($formatoptionsdef as $field => $option) {
+        // Other data from constructor arguments.
+        $this->_section = $number;
+        $this->modinfo = $modinfo;
+
+        // Cached course format data.
+        $course = $modinfo->get_course();
+        if (!isset($course->format) || !isset(self::$sectionformatoptions[$course->format])) {
+            $courseformat = course_get_format(isset($course->format) ? $course : $course->id);
+            if (!isset($course->format)) {
+                $course->format = $courseformat->get_format();
+            }
+            self::$sectionformatoptions[$course->format] = $courseformat->section_format_options();
+        }
+        foreach (self::$sectionformatoptions[$course->format] as $field => $option) {
             if (!empty($option['cache'])) {
                 if (isset($data->{$field})) {
                     $this->cachedformatoptions[$field] = $data->{$field};
@@ -1773,37 +1824,6 @@ class section_info implements IteratorAggregate {
                 }
             }
         }
-
-        // Other data from other places
-        $this->_course = $courseid;
-        $this->_section = $number;
-        $this->_sequence = $sequence;
-
-        // Availability data
-        if (!empty($CFG->enableavailability)) {
-            require_once($CFG->libdir. '/conditionlib.php');
-            // Get availability information
-            $ci = new condition_info_section($this);
-            $this->_available = $ci->is_available($this->_availableinfo, true,
-                    $userid, $modinfo);
-            // Display grouping info if available & not already displaying
-            // (it would already display if current user doesn't have access)
-            // for people with managegroups - same logic/class as grouping label
-            // on individual activities.
-            $context = context_course::instance($courseid);
-            if ($this->_availableinfo === '' && $this->_groupingid &&
-                    has_capability('moodle/course:managegroups', $context)) {
-                $groupings = groups_get_all_groupings($courseid);
-                $this->_availableinfo = html_writer::tag('span', '(' . format_string(
-                        $groupings[$this->_groupingid]->name, true, array('context' => $context)) .
-                        ')', array('class' => 'groupinglabel'));
-            }
-        } else {
-            $this->_available = true;
-        }
-
-        // Update visibility for current user
-        $this->update_user_visible($userid);
     }
 
     /**
@@ -1813,11 +1833,9 @@ class section_info implements IteratorAggregate {
      * @return bool
      */
     public function __isset($name) {
-        if (property_exists($this, '_'.$name)) {
-            return isset($this->{'_'.$name});
-        }
-        $defaultformatoptions = course_get_format($this->_course)->section_format_options();
-        if (array_key_exists($name, $defaultformatoptions)) {
+        if (method_exists($this, 'get_'.$name) ||
+                property_exists($this, '_'.$name) ||
+                array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
             $value = $this->__get($name);
             return isset($value);
         }
@@ -1831,11 +1849,9 @@ class section_info implements IteratorAggregate {
      * @return bool
      */
     public function __empty($name) {
-        if (property_exists($this, '_'.$name)) {
-            return empty($this->{'_'.$name});
-        }
-        $defaultformatoptions = course_get_format($this->_course)->section_format_options();
-        if (array_key_exists($name, $defaultformatoptions)) {
+        if (method_exists($this, 'get_'.$name) ||
+                property_exists($this, '_'.$name) ||
+                in_array($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
             $value = $this->__get($name);
             return empty($value);
         }
@@ -1850,20 +1866,81 @@ class section_info implements IteratorAggregate {
      * @return bool
      */
     public function __get($name) {
+        if (method_exists($this, 'get_'.$name)) {
+            return $this->{'get_'.$name}();
+        }
         if (property_exists($this, '_'.$name)) {
             return $this->{'_'.$name};
         }
         if (array_key_exists($name, $this->cachedformatoptions)) {
             return $this->cachedformatoptions[$name];
         }
-        $defaultformatoptions = course_get_format($this->_course)->section_format_options();
         // precheck if the option is defined in format to avoid unnecessary DB queries in get_format_options()
-        if (array_key_exists($name, $defaultformatoptions)) {
-            $formatoptions = course_get_format($this->_course)->get_format_options($this);
+        if (in_array($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
+            $formatoptions = course_get_format($this->modinfo->get_course())->get_format_options($this);
             return $formatoptions[$name];
         }
         debugging('Invalid section_info property accessed! '.$name);
         return null;
+    }
+
+    /**
+     * Finds whether this section is available at the moment for the current user.
+     *
+     * The value can be accessed publicly as $sectioninfo->available
+     *
+     * @return bool
+     */
+    private function get_available() {
+        global $CFG;
+        if ($this->_available !== null) {
+            // Has already been calculated.
+            return $this->_available;
+        }
+        if (!empty($CFG->enableavailability)) {
+            require_once($CFG->libdir. '/conditionlib.php');
+            // Get availability information
+            $ci = new condition_info_section($this);
+            $this->_available = $ci->is_available($this->_availableinfo, true,
+                    $this->modinfo->get_user_id(), $this->modinfo);
+            if ($this->_availableinfo === '' && $this->_groupingid) {
+                // Still may have some extra text in availableinfo because of groupping.
+                // Set as undefined so the next call to get_availabeinfo() calculates it.
+                $this->_availableinfo = null;
+            }
+        } else {
+            $this->_available = true;
+            $this->_availableinfo = '';
+        }
+        return $this->_available;
+    }
+
+    /**
+     * Returns the availability text shown next to the section on course page.
+     *
+     * @return string
+     */
+    private function get_availableinfo() {
+        // Make sure $this->_available has been calculated, it may also fill the _availableinfo property.
+        $this->get_available();
+        if ($this->_availableinfo !== null) {
+            // It has been already calculated.
+            return $this->_availableinfo;
+        }
+        $this->_availableinfo = '';
+        // Display grouping info if available & not already displaying
+        // (it would already display if current user doesn't have access)
+        // for people with managegroups - same logic/class as grouping label
+        // on individual activities.
+        $context = context_course::instance($this->get_course());
+        $userid = $this->modinfo->get_user_id();
+        if ($this->_groupingid && has_capability('moodle/course:managegroups', $context, $userid)) {
+            $groupings = groups_get_all_groupings($this->get_course());
+            $this->_availableinfo = html_writer::tag('span', '(' . format_string(
+                    $groupings[$this->_groupingid]->name, true, array('context' => $context)) .
+                    ')', array('class' => 'groupinglabel'));
+        }
+        return $this->_availableinfo;
     }
 
     /**
@@ -1876,27 +1953,61 @@ class section_info implements IteratorAggregate {
         $ret = array();
         foreach (get_object_vars($this) as $key => $value) {
             if (substr($key, 0, 1) == '_') {
-                $ret[substr($key, 1)] = $this->$key;
+                if (method_exists($this, 'get'.$key)) {
+                    $ret[substr($key, 1)] = $this->{'get'.$key}();
+                } else {
+                    $ret[substr($key, 1)] = $this->$key;
+                }
             }
         }
-        $ret = array_merge($ret, course_get_format($this->_course)->get_format_options($this));
+        $ret['sequence'] = $this->get_sequence();
+        $ret['course'] = $this->get_course();
+        $ret = array_merge($ret, course_get_format($this->modinfo->get_course())->get_format_options($this->_section));
         return new ArrayIterator($ret);
     }
 
     /**
      * Works out whether activity is visible *for current user* - if this is false, they
      * aren't allowed to access it.
-     * @param int $userid User ID
-     * @return void
+     *
+     * @return bool
      */
-    private function update_user_visible($userid) {
-        global $CFG;
-        $coursecontext = context_course::instance($this->_course);
-        $this->_uservisible = true;
-        if ((!$this->_visible || !$this->_available) &&
-                !has_capability('moodle/course:viewhiddensections', $coursecontext, $userid)) {
-            $this->_uservisible = false;
+    private function get_uservisible() {
+        if ($this->_uservisible !== null) {
+            // Has already been calculated.
+            return $this->_uservisible;
         }
+        $this->_uservisible = true;
+        if (!$this->_visible || !$this->get_available()) {
+            $coursecontext = context_course::instance($this->get_course());
+            $userid = $this->modinfo->get_user_id();
+            if (!has_capability('moodle/course:viewhiddensections', $coursecontext, $userid)) {
+                $this->_uservisible = false;
+            }
+        }
+        return $this->_uservisible;
+    }
+
+    /**
+     * Restores the course_sections.sequence value
+     *
+     * @return string
+     */
+    private function get_sequence() {
+        if (!empty($this->modinfo->sections[$this->_section])) {
+            return implode(',', $this->modinfo->sections[$this->_section]);
+        } else {
+            return '';
+        }
+    }
+
+    /**
+     * Returns course ID - from course_sections table
+     *
+     * @return int
+     */
+    private function get_course() {
+        return $this->modinfo->get_course_id();
     }
 
     /**

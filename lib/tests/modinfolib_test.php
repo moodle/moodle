@@ -35,6 +35,88 @@ require_once($CFG->libdir . '/conditionlib.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_modinfolib_testcase extends advanced_testcase {
+    public function test_section_info_properties() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+        $oldcfgenableavailability = $CFG->enableavailability;
+        $oldcfgenablecompletion = $CFG->enablecompletion;
+        set_config('enableavailability', 1);
+        set_config('enablecompletion', 1);
+        $this->setAdminUser();
+
+        // Generate the course and pre-requisite module.
+        $course = $this->getDataGenerator()->create_course(
+                array('format' => 'topics',
+                    'numsections' => 3,
+                    'enablecompletion' => 1,
+                    'groupmode' => SEPARATEGROUPS,
+                    'forcegroupmode' => 0),
+                array('createsections' => true));
+        $coursecontext = context_course::instance($course->id);
+        $prereqforum = $this->getDataGenerator()->create_module('forum',
+                array('course' => $course->id),
+                array('completion' => 1));
+
+        // Generate the module and add availability conditions.
+        $conditionscompletion = array($prereqforum->cmid => COMPLETION_COMPLETE);
+        $conditionsgrade = array(666 => (object)array('min' => 0.4, 'max' => null, 'name' => '!missing'));
+        $conditionsfield = array('email' => (object)array(
+            'fieldname' => 'email',
+            'operator' => 'contains',
+            'value' => 'test'
+        ));
+        $sectiondb = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 2));
+        $ci = new condition_info_section((object)array('id' => $sectiondb->id), CONDITION_MISSING_EVERYTHING);
+        foreach ($conditionscompletion as $cmid => $requiredcompletion) {
+            $ci->add_completion_condition($cmid, $requiredcompletion);
+        }
+        foreach ($conditionsgrade as $gradeid => $conditiongrade) {
+            $ci->add_grade_condition($gradeid, $conditiongrade->min, $conditiongrade->max, true);
+        }
+        foreach ($conditionsfield as $conditionfield) {
+            $ci->add_user_field_condition($conditionfield->fieldname, $conditionfield->operator, $conditionfield->value);
+        }
+
+        // Create and enrol a student.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $student = $this->getDataGenerator()->create_user();
+        role_assign($studentrole->id, $student->id, $coursecontext);
+        $enrolplugin = enrol_get_plugin('manual');
+        $enrolinstance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'));
+        $enrolplugin->enrol_user($enrolinstance, $student->id);
+        $this->setUser($student);
+
+        // Get modinfo.
+        $modinfo = get_fast_modinfo($course->id);
+        $si = $modinfo->get_section_info(2);
+
+        $this->assertEquals($sectiondb->id, $si->id);
+        $this->assertEquals($sectiondb->course, $si->course);
+        $this->assertEquals($sectiondb->section, $si->section);
+        $this->assertEquals($sectiondb->name, $si->name);
+        $this->assertEquals($sectiondb->visible, $si->visible);
+        $this->assertEquals($sectiondb->summary, $si->summary);
+        $this->assertEquals($sectiondb->summaryformat, $si->summaryformat);
+        $this->assertEquals($sectiondb->showavailability, $si->showavailability);
+        $this->assertEquals($sectiondb->availablefrom, $si->availablefrom);
+        $this->assertEquals($sectiondb->availableuntil, $si->availableuntil);
+        $this->assertEquals($sectiondb->groupingid, $si->groupingid);
+        $this->assertEquals($sectiondb->sequence, $si->sequence); // Since this section does not contain invalid modules.
+        $this->assertEquals($conditionscompletion, $si->conditionscompletion);
+        $this->assertEquals($conditionsgrade, $si->conditionsgrade);
+        $this->assertEquals($conditionsfield, $si->conditionsfield);
+
+        // Dynamic fields, just test that they can be retrieved (must be carefully tested in each activity type).
+        $this->assertEquals(0, $si->available);
+        $this->assertNotEmpty($si->availableinfo); // Lists all unmet availability conditions.
+        $this->assertEquals(0, $si->uservisible);
+
+        // Restore settings.
+        set_config('enableavailability', $oldcfgenableavailability);
+        set_config('enablecompletion', $oldcfgenablecompletion);
+    }
+
 
     /**
      * Test is_user_access_restricted_by_group()
