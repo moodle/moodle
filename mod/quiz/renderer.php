@@ -690,7 +690,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output = '';
         $output .= $this->view_information($quiz, $cm, $context, $viewobj->infomessages);
         $output .= $this->view_table($quiz, $context, $viewobj);
-        $output .= $this->view_best_score($viewobj);
         $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
         $output .= $this->box($this->view_page_buttons($viewobj), 'quizattempt');
         return $output;
@@ -1028,20 +1027,6 @@ class mod_quiz_renderer extends plugin_renderer_base {
             case quiz_attempt::ABANDONED:
                 return get_string('stateabandoned', 'quiz');
         }
-    }
-
-    /**
-     * Prints the students best score
-     *
-     * @param mod_quiz_view_object $viewobj
-     */
-    public function view_best_score($viewobj) {
-        $output = '';
-        // Print information about the student's best score for this quiz if possible.
-        if (!$viewobj->moreattempts) {
-            $output .= $this->heading(get_string('nomoreattempts', 'quiz'));
-        }
-        return $output;
     }
 
     /**
