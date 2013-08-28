@@ -448,7 +448,7 @@ class core_admin_renderer extends plugin_renderer_base {
     public function plugin_uninstall_results_page(plugin_manager $pluginman, plugininfo_base $pluginfo, progress_trace_buffer $progress) {
         $output = '';
 
-        $pluginname = $pluginman->plugin_name($pluginfo->component);
+        $pluginname = $pluginfo->component;
 
         $output .= $this->output->header();
         $output .= $this->output->heading(get_string('uninstalling', 'core_plugin', array('name' => $pluginname)));
@@ -457,7 +457,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $output .= $this->output->box(get_string('uninstalldelete', 'core_plugin',
             array('name' => $pluginname, 'rootdir' => $pluginfo->rootdir)), 'generalbox uninstalldelete');
-        $output .= $this->output->continue_button($this->page->url);
+        $output .= $this->output->continue_button(new moodle_url('/admin/index.php'));
         $output .= $this->output->footer();
 
         return $output;
