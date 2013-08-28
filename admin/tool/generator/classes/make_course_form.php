@@ -25,8 +25,13 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_generator_make_form extends moodleform {
+class tool_generator_make_course_form extends moodleform {
 
+    /**
+     * Course generation tool form definition.
+     *
+     * @return void
+     */
     public function definition() {
         $mform = $this->_form;
 
@@ -41,6 +46,13 @@ class tool_generator_make_form extends moodleform {
         $mform->addElement('submit', 'submit', get_string('createcourse', 'tool_generator'));
     }
 
+    /**
+     * Form validation.
+     *
+     * @param array $data
+     * @param array $files
+     * @return void
+     */
     public function validation($data, $files) {
         global $DB;
         $errors = array();
