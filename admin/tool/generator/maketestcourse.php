@@ -31,10 +31,10 @@ require('../../../config.php');
 
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/course_backend.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/make_form.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/make_course_form.php');
 
 // Initialise page and check permissions.
-admin_externalpage_setup('toolgenerator');
+admin_externalpage_setup('toolgeneratorcourse');
 
 // Start page.
 echo $OUTPUT->header();
@@ -42,7 +42,7 @@ echo $OUTPUT->heading(get_string('maketestcourse', 'tool_generator'));
 
 // Information message.
 $context = context_system::instance();
-echo $OUTPUT->box(format_text(get_string('explanation', 'tool_generator'),
+echo $OUTPUT->box(format_text(get_string('courseexplanation', 'tool_generator'),
         FORMAT_MARKDOWN, array('context' => $context)));
 
 // Check debugging is set to DEVELOPER.
@@ -53,7 +53,7 @@ if (!debugging('', DEBUG_DEVELOPER)) {
 }
 
 // Set up the form.
-$mform = new tool_generator_make_form('maketestcourse.php');
+$mform = new tool_generator_make_course_form('maketestcourse.php');
 if ($data = $mform->get_data()) {
     // Do actual work.
     echo $OUTPUT->heading(get_string('creating', 'tool_generator'));

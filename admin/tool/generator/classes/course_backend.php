@@ -114,6 +114,15 @@ class tool_generator_course_backend extends tool_generator_backend {
     }
 
     /**
+     * Returns the relation between users and course sizes.
+     *
+     * @return array
+     */
+    public static function get_users_per_size() {
+        return self::$paramusers;
+    }
+
+    /**
      * Gets a list of size choices supported by this backend.
      *
      * @return array List of size (int) => text description for display
@@ -282,6 +291,8 @@ class tool_generator_course_backend extends tool_generator_backend {
      * @param int $last Number of last user
      */
     private function create_user_accounts($first, $last) {
+        global $CFG;
+
         $this->log('createaccounts', (object)array('from' => $first, 'to' => $last), true);
         $count = $last - $first + 1;
         $done = 0;
@@ -296,6 +307,12 @@ class tool_generator_course_backend extends tool_generator_backend {
             // Create user account.
             $record = array('firstname' => get_string('firstname', 'tool_generator'),
                     'lastname' => $number, 'username' => $username);
+
+            // We add a user password if it has been specified.
+            if (!empty($CFG->tool_generator_users_password)) {
+                $record['password'] = $CFG->tool_generator_users_password;
+            }
+
             $user = $this->generator->create_user($record);
             $this->userids[$number] = (int)$user->id;
             $this->dot($done, $count);
