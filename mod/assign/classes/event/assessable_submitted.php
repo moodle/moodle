@@ -81,7 +81,7 @@ class assessable_submitted extends \core\event\assessable_submitted {
      *
      * @return array
      */
-    public function get_legacy_logdata() {
+    protected function get_legacy_logdata() {
         return $this->legacylogdata;
     }
 

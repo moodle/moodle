@@ -56,7 +56,7 @@ class submission_duplicated extends \core\event\base {
      *
      * @return array
      */
-    public function get_legacy_logdata() {
+    protected function get_legacy_logdata() {
         return $this->legacylogdata;
     }
 
