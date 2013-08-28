@@ -330,7 +330,7 @@ class tool_generator_course_backend extends tool_generator_backend {
         // Create pages.
         $number = self::$parampages[$this->size];
         $this->log('createpages', $number, true);
-        for ($i=0; $i<$number; $i++) {
+        for ($i = 0; $i < $number; $i++) {
             $record = array('course' => $this->course->id);
             $options = array('section' => $this->get_target_section());
             $pagegenerator->create_instance($record, $options);
@@ -387,7 +387,7 @@ class tool_generator_course_backend extends tool_generator_backend {
             return substr($data, -$length);
         }
         $length -= strlen($data);
-        for ($j=0; $j < $length; $j++) {
+        for ($j = 0; $j < $length; $j++) {
             $data .= chr(rand(1, 255));
         }
         return $data;
@@ -465,13 +465,13 @@ class tool_generator_course_backend extends tool_generator_backend {
 
         // Add discussions and posts.
         $sofar = 0;
-        for ($i=0; $i < $discussions; $i++) {
+        for ($i = 0; $i < $discussions; $i++) {
             $record = array('forum' => $forum->id, 'course' => $this->course->id,
                     'userid' => $this->get_target_user());
             $discussion = $forumgenerator->create_discussion($record);
             $parentid = $DB->get_field('forum_posts', 'id', array('discussion' => $discussion->id), MUST_EXIST);
             $sofar++;
-            for ($j=0; $j < $posts - 1; $j++, $sofar++) {
+            for ($j = 0; $j < $posts - 1; $j++, $sofar++) {
                 $record = array('discussion' => $discussion->id,
                         'userid' => $this->get_target_user(), 'parent' => $parentid);
                 $forumgenerator->create_post($record);

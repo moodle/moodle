@@ -12,19 +12,9 @@
             <stringProp name="Argument.value">${__time()}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="users" elementType="Argument">
-            <stringProp name="Argument.name">users</stringProp>
-            <stringProp name="Argument.value">{{USERS_PLACEHOLDER}}</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="loops" elementType="Argument">
-            <stringProp name="Argument.name">loops</stringProp>
-            <stringProp name="Argument.value">{{LOOPS_PLACEHOLDER}}</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
-          <elementProp name="rampup" elementType="Argument">
-            <stringProp name="Argument.name">rampup</stringProp>
-            <stringProp name="Argument.value">{{RAMPUP_PLACEHOLDER}}</stringProp>
+          <elementProp name="size" elementType="Argument">
+            <stringProp name="Argument.name">size</stringProp>
+            <stringProp name="Argument.value">{{SIZE_PLACEHOLDER}}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="host" elementType="Argument">
@@ -62,7 +52,6 @@
             <stringProp name="Argument.value">{{FORUMREPLYID_PLACEHOLDER}}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-
         </collectionProp>
       </elementProp>
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
@@ -70,11 +59,7 @@
     <hashTree>
       <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Samples per minute" enabled="true">
         <stringProp name="calcMode">all active threads (shared)</stringProp>
-        <doubleProp>
-          <name>throughput</name>
-          <value>120.0</value>
-          <savedValue>0.0</savedValue>
-        </doubleProp>
+        <stringProp name="throughput">${__property(throughput,throughput,120.0)}</stringProp>
       </ConstantThroughputTimer>
       <hashTree/>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Warm-up site" enabled="true">
@@ -84,8 +69,8 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${users}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">${rampup}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(users,{{USERS_PLACEHOLDER}})}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(rampup,{{RAMPUP_PLACEHOLDER}})}</stringProp>
         <longProp name="ThreadGroup.start_time">1378187955000</longProp>
         <longProp name="ThreadGroup.end_time">1378187955000</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
@@ -278,10 +263,10 @@
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">${loops}</stringProp>
+          <stringProp name="LoopController.loops">${__property(loops,loops,{{LOOPS_PLACEHOLDER}})}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${users}</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">${rampup}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__property(users,users,{{USERS_PLACEHOLDER}})}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__property(rampup,rampup,{{RAMPUP_PLACEHOLDER}})}</stringProp>
         <longProp name="ThreadGroup.start_time">1376636813000</longProp>
         <longProp name="ThreadGroup.end_time">1376636813000</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>

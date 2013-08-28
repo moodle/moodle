@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Script creates a standardised large course for testing reliability and
- * performance.
+ * Script creates a standardised large course for testing reliability and performance.
  *
  * @package tool_generator
  * @copyright 2013 The Open University
