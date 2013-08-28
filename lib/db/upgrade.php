@@ -2401,5 +2401,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013091000.02);
     }
 
+    if ($oldversion < 2013091000.03) {
+
+        // Define field modinfo to be dropped from course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('modinfo');
+
+        // Conditionally launch drop field modinfo.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field sectioncache to be dropped from course.
+        $field = new xmldb_field('sectioncache');
+
+        // Conditionally launch drop field sectioncache.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013091000.03);
+    }
+
     return true;
 }

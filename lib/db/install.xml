@@ -79,8 +79,6 @@
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="format" TYPE="char" LENGTH="21" NOTNULL="true" DEFAULT="topics" SEQUENCE="false"/>
         <FIELD NAME="showgrades" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="sectioncache" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="modinfo" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="newsitems" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
         <FIELD NAME="startdate" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="marker" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
