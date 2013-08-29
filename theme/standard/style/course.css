@@ -6,7 +6,7 @@
 .course-content ul.weeks li.section .right {padding:4px 0;}
 
 /** Course **/
-#page-course-recent h2.main {font-size:1.1em;}
+#page-course-recent h2 {font-size:1.1em;}
 #page-course-recent .user {font-size:0.75em;}
 #page-course-recent .grade {font-style: italic;font-size:0.9em;}
 #page-course-recent .forum-recent .reply .title {font-style: italic;font-size:0.9em;}

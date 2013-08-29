@@ -210,7 +210,7 @@ $(document).ready(function() {
         //my moodle page fixes
         //block_course_overview
         $('.block_course_overview div.headingwrap').attr("data-role", "none");
-        $('.block_course_overview h3.main a').attr("data-theme", mytheme);
+        $('.block_course_overview h3 a').attr("data-theme", mytheme);
     });
 
     //resource only stuff to help embedded PDFs, provides link to open in new window

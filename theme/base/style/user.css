@@ -9,7 +9,7 @@
 
 .user-box {margin:8px;width:115px;height:160px;text-align:center;float:left;clear: none;}
 
-.userlist .main .action-icon img {vertical-align: middle;}
+.userlist .action-icon img {vertical-align: middle;}
 
 .userlist #showall {margin: 10px 0px;}
 .userlist .buttons {text-align: center;}
@@ -63,4 +63,4 @@
 .dir-rtl .userlist table#participants {margin: 0 auto;}
 .dir-rtl .userprofile dl dt {float:right; width:110px; margin-left:10px;}
 .dir-rtl .userprofile dl dd {margin-right: 120px;}
-#page-my-index.dir-rtl .block h3.main { text-align: right;}
+#page-my-index.dir-rtl .block h3 { text-align: right;}
