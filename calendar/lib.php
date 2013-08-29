@@ -111,6 +111,16 @@ define('CALENDAR_IMPORT_EVENT_UPDATED',  1);
 define('CALENDAR_IMPORT_EVENT_INSERTED', 2);
 
 /**
+ * CALENDAR_SUBSCRIPTION_UPDATE - Used to represent update action for subscriptions in various forms.
+ */
+define('CALENDAR_SUBSCRIPTION_UPDATE', 1);
+
+/**
+ * CALENDAR_SUBSCRIPTION_REMOVE - Used to represent remove action for subscriptions in various forms.
+ */
+define('CALENDAR_SUBSCRIPTION_REMOVE', 2);
+
+/**
  * Return the days of the week
  *
  * @return array array of days
@@ -2914,17 +2924,13 @@ function calendar_add_icalendar_event($event, $courseid, $subscriptionid) {
  * @return string A log of the import progress, including errors
  */
 function calendar_process_subscription_row($subscriptionid, $pollinterval, $action) {
-    global $DB;
 
     // Fetch the subscription from the database making sure it exists.
     $sub = calendar_get_subscription($subscriptionid);
 
-    $strupdate = get_string('update');
-    $strremove = get_string('remove');
-
     // Update or remove the subscription, based on action.
     switch ($action) {
-        case $strupdate:
+        case CALENDAR_SUBSCRIPTION_UPDATE:
             // Skip updating file subscriptions.
             if (empty($sub->url)) {
                 break;
@@ -2935,7 +2941,7 @@ function calendar_process_subscription_row($subscriptionid, $pollinterval, $acti
             // Update the events.
             return "<p>".get_string('subscriptionupdated', 'calendar', $sub->name)."</p>" . calendar_update_subscription_events($subscriptionid);
 
-        case $strremove:
+        case CALENDAR_SUBSCRIPTION_REMOVE:
             calendar_delete_subscription($subscriptionid);
             return get_string('subscriptionremoved', 'calendar', $sub->name);
             break;
