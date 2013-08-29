@@ -487,16 +487,6 @@ class theme_config {
             }
         }
 
-        // Use parent theme's "blockrtlmanipulations" if it was defined and if it was not defined on current theme.
-        if (empty($this->blockrtlmanipulations)) {
-            foreach ($this->parent_configs as $parent_config) {
-                if (!empty($parent_config->blockrtlmanipulations)) {
-                    $this->blockrtlmanipulations = $parent_config->blockrtlmanipulations;
-                    continue;
-                }
-            }
-        }
-
         //fix arrows if needed
         $this->check_theme_arrows();
     }
