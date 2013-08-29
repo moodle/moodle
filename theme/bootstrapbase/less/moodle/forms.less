@@ -225,7 +225,22 @@ div.backup-section + form,
 .form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
     padding-left: @horizontalComponentOffset;
 }
-
+.dir-rtl {
+    table#form td.submit,
+    .form-buttons,
+    .path-admin .buttons,
+    #fitem_id_submitbutton,
+    .fp-content-center form + div,
+    div.backup-section + form,
+    #fgroup_id_buttonar {
+        .form-actions;
+        padding-right: 0;
+    }
+    .path-admin .buttons,
+    .form-buttons { // Add back the padding it would usually get from being inside a .form-horizontal.
+        padding-right: @horizontalComponentOffset;
+    }
+}
 .form-item .form-setting .form-checkbox.defaultsnext {
     // Need to specify .defaultsnext and the .form-checkbox class
     // is somewhat randomly re-used on various actual checkboxes
@@ -351,6 +366,13 @@ input[type="radio"],
 input[type="checkbox"] {
     margin-top: -4px; // Dodgy hack, must be better way.
     margin-right: 7px;
+}
+.dir-rtl {
+    input[type="radio"],
+    input[type="checkbox"] {
+        margin-left: 7px;
+        margin-right: auto;
+    }
 }
 .singleselect {
     display: inline-block;
