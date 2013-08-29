@@ -97,10 +97,10 @@ img.resize {height: 1em;width: 1em;}
 .breadcrumb img.resize {height: 0.9em;width: 0.8em;}
 
 /* Icon styles */
-img.icon {height:16px;vertical-align:text-bottom;width:16px;padding-right: 6px;}
+img.icon {height:16px;vertical-align:middle;width:16px;padding-right: 6px;}
 .dir-rtl img.icon {padding-left: 6px; padding-right: 0; }
 img.iconsmall {height:12px;margin-right:3px;vertical-align:middle;width:12px;}
-img.iconhelp, .helplink img {height:16px; padding-left:3px;vertical-align:text-bottom;width:16px;}
+img.iconhelp, .helplink img {height:16px; padding-left:3px;vertical-align:middle;width:16px;}
 .dir-rtl img.iconhelp, .dir-rtl .helplink img {padding-right: 3px; padding-left: 0; }
 img.iconlarge {height: 24px; width: 24px; vertical-align:middle;}
 img.iconsort { vertical-align: text-bottom; padding-left: .3em; margin-bottom: .15em;}

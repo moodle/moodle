@@ -2,6 +2,13 @@ This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 === 2.6 ===
 Notes:
+* The parameters value for the following functions have been modified: core_renderer::heading() and core_renderer::heading_with_help().
+  In core_renderer::heading(), the third param value for classname is set to null as default.
+  In core_renderer::heading_with_help(), additional parameters are added for heading level with default value set to 2,
+  and classname with default value set to null.
+
+=== 2.6 ===
+Notes:
 * The file picker and activity chooser have been converted to use M.core.dialogue. This means the styles
 for these elements have changed in the base and bootstrapbase themes and you will need to copy the new styles
 if you are not inheriting from either one of these themes.
