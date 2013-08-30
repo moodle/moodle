@@ -3,6 +3,11 @@ div.editor_atto {
     border: 1px solid #444;
 }
 
+.editor_atto + textarea {
+    width: 100%;
+    padding: 0;
+}
+
 div.editor_atto_toolbar {
     display: block;
 }
@@ -69,3 +74,4 @@ body.dir-rtl div.editor_atto_toolbar button.atto_indent_button {
     display: block;
     margin: 5px;
 }
+
