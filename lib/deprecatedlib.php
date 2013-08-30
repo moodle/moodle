@@ -4533,3 +4533,15 @@ function get_browser_version_classes() {
     debugging('get_browser_version_classes has been deprecated, please update your code to use core_useragent instead.', DEBUG_DEVELOPER);
     return core_useragent::get_browser_version_classes();
 }
+
+/**
+ * Generate a fake user for emails based on support settings
+ *
+ * @deprecated since Moodle 2.6
+ * @see core_user::get_support_user()
+ * @return stdClass user info
+ */
+function generate_email_supportuser() {
+    debugging('generate_email_supportuser is deprecated, please use core_user::get_support_user');
+    return core_user::get_support_user();
+}

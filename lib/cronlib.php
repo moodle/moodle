@@ -758,7 +758,7 @@ function notify_login_failures() {
         mtrace('Emailing admins about '. $count .' failed login attempts');
         foreach ($recip as $admin) {
             //emailing the admins directly rather than putting these through the messaging system
-            email_to_user($admin, generate_email_supportuser(), $subject, $body);
+            email_to_user($admin, core_user::get_support_user(), $subject, $body);
         }
     }
 

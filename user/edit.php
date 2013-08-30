@@ -250,7 +250,7 @@ if ($usernew = $userform->get_data()) {
         $emailupdatetitle = get_string('emailupdatetitle', 'auth', $a);
 
         //email confirmation directly rather than using messaging so they will definitely get an email
-        $supportuser = generate_email_supportuser();
+        $supportuser = core_user::get_support_user();
         if (!$mail_results = email_to_user($temp_user, $supportuser, $emailupdatetitle, $emailupdatemessage)) {
             die("could not send email!");
         }

@@ -5653,7 +5653,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     $temprecipients = array();
     $tempreplyto = array();
 
-    $supportuser = generate_email_supportuser();
+    $supportuser = core_user::get_support_user();
 
     // Make up an email address for handling bounces.
     if (!empty($CFG->handlebounces)) {
@@ -5803,30 +5803,6 @@ function generate_email_signoff() {
 }
 
 /**
- * Generate a fake user for emails based on support settings
- *
- * @return stdClass user info
- */
-function generate_email_supportuser() {
-    global $CFG;
-
-    static $supportuser;
-
-    if (!empty($supportuser)) {
-        return $supportuser;
-    }
-
-    $supportuser = new stdClass();
-    $supportuser->email = $CFG->supportemail ? $CFG->supportemail : $CFG->noreplyaddress;
-    $supportuser->firstname = $CFG->supportname ? $CFG->supportname : get_string('noreplyname');
-    $supportuser->lastname = '';
-    $supportuser->maildisplay = true;
-
-    return $supportuser;
-}
-
-
-/**
  * Sets specified user's password and send the new password to the user via email.
  *
  * @param stdClass $user A {@link $USER} object
@@ -5843,7 +5819,7 @@ function setnew_password_and_mail($user, $fasthash = false) {
 
     $site  = get_site();
 
-    $supportuser = generate_email_supportuser();
+    $supportuser = core_user::get_support_user();
 
     $newpassword = generate_password();
 
@@ -5877,7 +5853,7 @@ function reset_password_and_mail($user) {
     global $CFG;
 
     $site  = get_site();
-    $supportuser = generate_email_supportuser();
+    $supportuser = core_user::get_support_user();
 
     $userauth = get_auth_plugin($user->auth);
     if (!$userauth->can_reset_password() or !is_enabled_auth($user->auth)) {
@@ -5920,7 +5896,7 @@ function send_confirmation_email($user) {
     global $CFG;
 
     $site = get_site();
-    $supportuser = generate_email_supportuser();
+    $supportuser = core_user::get_support_user();
 
     $data = new stdClass();
     $data->firstname = fullname($user);
@@ -5951,7 +5927,7 @@ function send_password_change_confirmation_email($user) {
     global $CFG;
 
     $site = get_site();
-    $supportuser = generate_email_supportuser();
+    $supportuser = core_user::get_support_user();
 
     $data = new stdClass();
     $data->firstname = $user->firstname;
@@ -5978,7 +5954,7 @@ function send_password_change_info($user) {
     global $CFG;
 
     $site = get_site();
-    $supportuser = generate_email_supportuser();
+    $supportuser = core_user::get_support_user();
     $systemcontext = context_system::instance();
 
     $data = new stdClass();

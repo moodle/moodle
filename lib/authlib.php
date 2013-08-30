@@ -707,7 +707,7 @@ function login_lock_account($user) {
         }
 
         $site = get_site();
-        $supportuser = generate_email_supportuser();
+        $supportuser = core_user::get_support_user();
 
         $data = new stdClass();
         $data->firstname = $user->firstname;
