@@ -10,25 +10,12 @@
             redirect($CFG->wwwroot);
         }
 
-    /// Work out who to send the message to
-        if (!$admin = get_admin() ) {
-            print_error('cannotfindadmin', 'debug');
-        }
-
-        $supportuser = new stdClass();
-        $supportuser->email = $CFG->supportemail ? $CFG->supportemail : $admin->email;
-        $supportuser->firstname = $CFG->supportname ? $CFG->supportname : $admin->firstname;
-        $supportuser->lastname = $CFG->supportname ? '' : $admin->lastname;
-        // emailstop could be hard coded "false" to ensure error reports are sent
-        // but then admin's would have to alter their messaging preferences to temporarily stop them
-        $supportuser->emailstop = $admin->emailstop;
-        $supportuser->maildisplay = true;
-
-    /// Send the message and redirect
+        // Send the message and redirect.
         $eventdata = new stdClass();
-        $eventdata->modulename        = 'moodle';
+        $eventdata->component        = 'moodle';
+        $eventdata->name             = 'errors';
         $eventdata->userfrom          = $USER;
-        $eventdata->userto            = $supportuser;
+        $eventdata->userto            = core_user::get_support_user();
         $eventdata->subject           = 'Error: '. $form->referer .' -> '. $form->requested;
         $eventdata->fullmessage       = $form->text;
         $eventdata->fullmessageformat = FORMAT_PLAIN;

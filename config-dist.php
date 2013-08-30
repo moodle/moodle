@@ -448,6 +448,14 @@ $CFG->admin = 'admin';
 // config.php file
 //      $CFG->preventexecpath = true;
 //
+// Use the following flag to set userid for noreply user. If not set then moodle will
+// create dummy user and use -ve value as user id.
+//      $CFG->noreplyuserid = -10;
+//
+// As of version 2.6 Moodle supports admin to set support user. If not set, all mails
+// will be sent to supportemail.
+//      $CFG->supportuserid = -20;
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================

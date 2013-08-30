@@ -1,6 +1,10 @@
 This files describes API changes in /message/ messaging system,
 information provided here is intended especially for developers.
 
+=== 2.6 ===
+* Message processor extending message_output, should return true in can_send_to_any_users()
+  if it supports message sending to internal (noreply/support) users.
+
 === 2.2 ===
 
 required changes:

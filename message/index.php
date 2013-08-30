@@ -103,13 +103,15 @@ unset($user1id);
 
 $user2 = null;
 if (!empty($user2id)) {
-    $user2 = $DB->get_record("user", array("id" => $user2id));
+    $user2 = core_user::get_user($user2id);
     if (!$user2) {
         print_error('invaliduserid');
     }
 }
 unset($user2id);
 
+$user2realuser = !empty($user2) && core_user::is_real_user($user2->id);
+$showactionlinks = $showactionlinks && $user2realuser;
 $systemcontext = context_system::instance();
 
 if (!empty($user2) && $user1->id == $user2->id) {
@@ -159,7 +161,7 @@ if ($unblockcontact and confirm_sesskey()) {
 
 //was a message sent? Do NOT allow someone looking at someone else's messages to send them.
 $messageerror = null;
-if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', $systemcontext)) {
+if ($currentuser && $user2realuser && has_capability('moodle/site:sendmessage', $systemcontext)) {
     // Check that the user is not blocking us!!
     if ($contact = $DB->get_record('message_contacts', array('userid' => $user2->id, 'contactid' => $user1->id))) {
         if ($contact->blocked and !has_capability('moodle/site:readallmessages', $systemcontext)) {
@@ -199,7 +201,7 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
 }
 
 $strmessages = get_string('messages', 'message');
-if (!empty($user2)) {
+if ($user2realuser) {
     $user2fullname = fullname($user2);
 
     $PAGE->set_title("$strmessages: $user2fullname");
@@ -219,7 +221,7 @@ $countunreadtotal = 0; //count of unread messages from all users
 
 //we're dealing with unread messages early so the contact list will accurately reflect what is read/unread
 $viewingnewmessages = false;
-if (!empty($user2)) {
+if ($user2realuser) {
     //are there any unread messages from $user2
     $countunread = message_count_unread_messages($user1, $user2);
     if ($countunread>0) {
@@ -247,7 +249,7 @@ list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts($user
 message_print_contact_selector($countunreadtotal, $viewing, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showactionlinks, $page);
 
 echo html_writer::start_tag('div', array('class' => 'messagearea mdl-align'));
-    if (!empty($user2)) {
+    if ($user2realuser) {
 
         echo html_writer::start_tag('div', array('class' => 'mdl-left messagehistory'));
 

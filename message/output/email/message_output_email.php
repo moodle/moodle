@@ -127,4 +127,13 @@ class message_output_email extends message_output {
     function load_data(&$preferences, $userid){
         $preferences->email_email = get_user_preferences( 'message_processor_email_email', '', $userid);
     }
+
+    /**
+     * Returns true as message can be sent to internal support user.
+     *
+     * @return bool
+     */
+    public function can_send_to_any_users() {
+        return true;
+    }
 }
