@@ -32,3 +32,4 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'एन';
 $string['cliansweryes'] = 'वाई';
+$string['clitypevalue'] = 'टाइप मूल्य';
