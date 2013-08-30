@@ -36,9 +36,11 @@ function atto_title_init_editor($elementid) {
                               'atto_title',
                               array('class'=>'icon'));
 
-    $PAGE->requires->strings_for_js(array('h1',
-                                          'h2',
+    $PAGE->requires->strings_for_js(array('h3',
+                                          'h4',
+                                          'h5',
                                           'blockquote',
+                                          'pre',
                                           'p'), 'atto_title');
     $PAGE->requires->yui_module('moodle-atto_title-button',
                                 'M.atto_title.init',
