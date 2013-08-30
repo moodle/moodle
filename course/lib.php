@@ -2051,10 +2051,11 @@ function move_courses($courseids, $categoryid) {
     $newparent = context_coursecat::instance($category->id);
     $i = 1;
 
-    foreach ($courseids as $courseid) {
-        if ($dbcourse = $DB->get_record('course', array('id' => $courseid))) {
+    list($where, $params) = $DB->get_in_or_equal($courseids);
+    if ($dbcourses = $DB->get_records_select('course', 'id ' . $where, $params)) {
+        foreach ($dbcourses as $dbcourse) {
             $course = new stdClass();
-            $course->id = $courseid;
+            $course->id = $dbcourse->id;
             $course->category  = $category->id;
             $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
             if ($category->visible == 0) {
@@ -2071,6 +2072,9 @@ function move_courses($courseids, $categoryid) {
             // Update the course object we are passing to the event.
             $dbcourse->category = $course->category;
             $dbcourse->sortorder = $course->sortorder;
+            if (isset($course->visible)) {
+                $dbcourse->visible = $course->visible;
+            }
 
             // Trigger a course updated event.
             $event = \core\event\course_updated::create(array(
