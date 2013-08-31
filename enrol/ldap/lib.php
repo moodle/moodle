@@ -962,7 +962,7 @@ class enrol_ldap_plugin extends enrol_plugin {
             $template->groupmodeforce = $courseconfig->groupmodeforce;
             $template->visible        = $courseconfig->visible;
             $template->lang           = $courseconfig->lang;
-            $template->groupmodeforce = $courseconfig->groupmodeforce;
+            $template->enablecompletion = $courseconfig->enablecompletion;
         }
         $course = $template;
 
