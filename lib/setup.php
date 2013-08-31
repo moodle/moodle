@@ -322,7 +322,7 @@ umask($CFG->umaskpermissions);
 
 // exact version of currently used yui2 and 3 library
 $CFG->yui2version = '2.9.0';
-$CFG->yui3version = '3.9.1';
+$CFG->yui3version = '3.12.0';
 
 // Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides.
 if (!isset($CFG->config_php_settings)) {

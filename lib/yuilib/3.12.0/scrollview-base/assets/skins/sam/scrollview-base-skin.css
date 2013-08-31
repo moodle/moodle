@@ -1,0 +1,10 @@
+/*
+YUI 3.12.0 (build 8655935)
+Copyright 2013 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
+
+.yui3-skin-sam .yui3-scrollview {
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+}

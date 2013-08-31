@@ -167,13 +167,22 @@ class page_requirements_manager {
         $this->yui3loader = new stdClass();
         $this->YUI_config = new YUI_config();
 
+        if (strpos($CFG->httpswwwroot, 'https:') === 0) {
+            // On HTTPS sites all JS must be loaded from https sites,
+            // YUI CDN does not support https yet, sorry.
+            $CFG->useexternalyui = 0;
+        }
+
         // Set up some loader options.
-        if (!empty($CFG->useexternalyui) and strpos($CFG->httpswwwroot, 'https:') !== 0) {
-            $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/build/';
+        $this->yui3loader->local_base = $CFG->httpswwwroot . '/lib/yuilib/'. $CFG->yui3version . '/';
+        $this->yui3loader->local_comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep;
+
+        if (!empty($CFG->useexternalyui)) {
+            $this->yui3loader->base = 'http://yui.yahooapis.com/' . $CFG->yui3version . '/';
             $this->yui3loader->comboBase = 'http://yui.yahooapis.com/combo?';
         } else {
-            $this->yui3loader->base = $CFG->httpswwwroot . '/lib/yuilib/'. $CFG->yui3version . '/build/';
-            $this->yui3loader->comboBase = $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep;
+            $this->yui3loader->base = $this->yui3loader->local_base;
+            $this->yui3loader->comboBase = $this->yui3loader->local_comboBase;
         }
 
         // Enable combo loader? This significantly helps with caching and performance!
@@ -1219,25 +1228,28 @@ class page_requirements_manager {
 
         $code = '';
 
+        // Note: SimpleYUI is broken in 3.12 and will not be available in future YUI versions,
+        //       that is why we can not load it from CDN.
+
         if ($this->yui3loader->combine) {
             if (!empty($page->theme->yuicssmodules)) {
                 $modules = array();
                 foreach ($page->theme->yuicssmodules as $module) {
-                    $modules[] = "$CFG->yui3version/build/$module/$module-min.css";
+                    $modules[] = "$CFG->yui3version/$module/$module-min.css";
                 }
                 $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->comboBase.implode('&amp;', $modules).'" />';
             }
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->comboBase
-                     .$CFG->yui3version.'/build/simpleyui/simpleyui-min.js&amp;'
-                     .$CFG->yui3version.'/build/loader/loader-min.js"></script>';
+            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
+                     .$CFG->yui3version.'/simpleyui/simpleyui-min.js&amp;'
+                     .$CFG->yui3version.'/loader/loader-min.js"></script>';
         } else {
             if (!empty($page->theme->yuicssmodules)) {
                 foreach ($page->theme->yuicssmodules as $module) {
                     $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.$module.'/'.$module.'-min.css" />';
                 }
             }
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->base.'simpleyui/simpleyui-min.js"></script>';
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->base.'loader/loader-min.js"></script>';
+            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_base.'simpleyui/simpleyui-min.js"></script>';
+            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_base.'loader/loader-min.js"></script>';
         }
 
 
