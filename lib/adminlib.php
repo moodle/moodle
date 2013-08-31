@@ -329,6 +329,9 @@ function uninstall_plugin($type, $name) {
     // Finally purge all caches.
     purge_all_caches();
 
+    // Invalidate the hash used for upgrade detections.
+    set_config('allversionshash', '');
+
     echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
 }
 

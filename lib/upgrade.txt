@@ -18,77 +18,89 @@ information provided here is intended especially for developers.
 * The ability to use an 'insecure' rc4encrypt/rc4decrypt key has been removed.
 * Use $CFG->debugdeveloper instead of debugging('', DEBUG_DEVELOPER).
 * Use set_debugging(DEBUG_xxx) when changing debugging level for current request.
+* Function moveto_module() does not modify $mod argument and instead now returns the new module visibility value.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
 and will be removed in a future release (target: 2.8), a summary follows:
 
 Accesslib:
-    * get_context_instance()        ->  context_xxxx::instance()
-    * get_context_instance_by_id()  ->  context::instance_by_id($id)
-    * get_system_context()          ->  context_system::instance()
-    * context_moved()               ->  context::update_moved()
-    * preload_course_contexts()     ->  context_helper::preload_course()
-    * context_instance_preload()    ->  context_helper::preload_from_record()
-    * context_instance_preload_sql()->  context_helper::get_preload_record_columns_sql()
-    * get_contextlevel_name()       ->  context_helper::get_level_name()
-    * create_contexts()             ->  context_helper::create_instances()
-    * cleanup_contexts()            ->  context_helper::cleanup_instances()
-    * build_context_path()          ->  context_helper::build_all_paths()
-    * print_context_name()          ->  $context->get_context_name()
-    * mark_context_dirty()          ->  $context->mark_dirty()
-    * delete_context()              ->  $context->delete_content() or context_helper::delete_instance()
-    * get_context_url()             ->  $context->get_url()
-    * get_course_context()          ->  $context->get_course_context()
-    * get_parent_contexts()         ->  $context->get_parent_context_ids()
-    * get_parent_contextid()        ->  $context->get_parent_context()
-    * get_child_contexts()          ->  $context->get_child_contexts()
-    * rebuild_contexts()            ->  $context->reset_paths()
-    * get_user_courses_bycap()      ->  enrol_get_users_courses()
-    * get_courseid_from_context()   ->  $context->get_course_context(false)
-    * get_role_context_caps()       ->  (no replacement)
-    * load_temp_role()              ->  (no replacement)
-    * remove_temp_roles()           ->  (no replacement)
-    * get_related_contexts_string() ->  $context->get_parent_context_ids(true)
-    * get_recent_enrolments()       ->  (no replacement)
+    * get_context_instance()                ->  context_xxxx::instance()
+    * get_context_instance_by_id()          ->  context::instance_by_id($id)
+    * get_system_context()                  ->  context_system::instance()
+    * context_moved()                       ->  context::update_moved()
+    * preload_course_contexts()             ->  context_helper::preload_course()
+    * context_instance_preload()            ->  context_helper::preload_from_record()
+    * context_instance_preload_sql()        ->  context_helper::get_preload_record_columns_sql()
+    * get_contextlevel_name()               ->  context_helper::get_level_name()
+    * create_contexts()                     ->  context_helper::create_instances()
+    * cleanup_contexts()                    ->  context_helper::cleanup_instances()
+    * build_context_path()                  ->  context_helper::build_all_paths()
+    * print_context_name()                  ->  $context->get_context_name()
+    * mark_context_dirty()                  ->  $context->mark_dirty()
+    * delete_context()                      ->  $context->delete_content() or context_helper::delete_instance()
+    * get_context_url()                     ->  $context->get_url()
+    * get_course_context()                  ->  $context->get_course_context()
+    * get_parent_contexts()                 ->  $context->get_parent_context_ids()
+    * get_parent_contextid()                ->  $context->get_parent_context()
+    * get_child_contexts()                  ->  $context->get_child_contexts()
+    * rebuild_contexts()                    ->  $context->reset_paths()
+    * get_user_courses_bycap()              ->  enrol_get_users_courses()
+    * get_courseid_from_context()           ->  $context->get_course_context(false)
+    * get_role_context_caps()               ->  (no replacement)
+    * load_temp_role()                      ->  (no replacement)
+    * remove_temp_roles()                   ->  (no replacement)
+    * get_related_contexts_string()         ->  $context->get_parent_context_ids(true)
+    * get_recent_enrolments()               ->  (no replacement)
 
 Enrollment:
-    * get_course_participants()     -> get_enrolled_users()
-    * is_course_participant()       -> is_enrolled()
+    * get_course_participants()             -> get_enrolled_users()
+    * is_course_participant()               -> is_enrolled()
 
 Output:
-    * current_theme()               -> $PAGE->theme->name
-    * skip_main_destination()       -> $OUTPUT->skip_link_target()
-    * print_container()             -> $OUTPUT->container()
-    * print_container_start()       -> $OUTPUT->container_start()
-    * print_container_end()         -> $OUTPUT->container_end()
-    * print_continue()              -> $OUTPUT->continue_button()
-    * print_header()                -> $PAGE methods
-    * print_header_simple()         -> $PAGE methods
-    * print_side_block()            -> $OUTPUT->block()
-    * print_arrow()                 -> $OUTPUT->arrow()
-    * print_scale_menu_helpbutton() -> $OUTPUT->help_icon_scale($courseid, $scale)
-    * print_checkbox()              -> html_writer::checkbox()
+    * current_theme()                       -> $PAGE->theme->name
+    * skip_main_destination()               -> $OUTPUT->skip_link_target()
+    * print_container()                     -> $OUTPUT->container()
+    * print_container_start()               -> $OUTPUT->container_start()
+    * print_container_end()                 -> $OUTPUT->container_end()
+    * print_continue()                      -> $OUTPUT->continue_button()
+    * print_header()                        -> $PAGE methods
+    * print_header_simple()                 -> $PAGE methods
+    * print_side_block()                    -> $OUTPUT->block()
+    * print_arrow()                         -> $OUTPUT->arrow()
+    * print_scale_menu_helpbutton()         -> $OUTPUT->help_icon_scale($courseid, $scale)
+    * print_checkbox()                      -> html_writer::checkbox()
 
 Navigation:
-    * print_navigation()            -> $OUTPUT->navbar()
-    * build_navigation()            -> $PAGE->navbar methods
-    * navmenu()                     -> (no replacement)
+    * print_navigation()                    -> $OUTPUT->navbar()
+    * build_navigation()                    -> $PAGE->navbar methods
+    * navmenu()                             -> (no replacement)
 
 Calendar:
-    * add_event()                   -> calendar_event::create()
-    * update_event()                -> calendar_event->update()
-    * delete_event()                -> calendar_event->delete()
-    * hide_event()                  -> calendar_event->toggle_visibility(false)
-    * show_event()                  -> calendar_event->toggle_visibility(true)
+    * add_event()                           -> calendar_event::create()
+    * update_event()                        -> calendar_event->update()
+    * delete_event()                        -> calendar_event->delete()
+    * hide_event()                          -> calendar_event->toggle_visibility(false)
+    * show_event()                          -> calendar_event->toggle_visibility(true)
 
 Misc:
-    * filter_text()                 -> format_text(), format_string()...
-    * httpsrequired()               -> $PAGE->https_required()
-    * detect_munged_arguments()     -> clean_param([...], PARAM_FILE)
-    * mygroupid()                   -> groups_get_all_groups()
-    * js_minify()                   -> core_minify::js_files()
-    * css_minify_css()              -> core_minify::css_files()
+    * filter_text()                         -> format_text(), format_string()...
+    * httpsrequired()                       -> $PAGE->https_required()
+    * detect_munged_arguments()             -> clean_param([...], PARAM_FILE)
+    * mygroupid()                           -> groups_get_all_groups()
+    * js_minify()                           -> core_minify::js_files()
+    * css_minify_css()                      -> core_minify::css_files()
+
+User-agent related functions:
+    * check_browser_operating_system()      -> core_useragent::check_browser_operating_system()
+    * check_browser_version()               -> core_useragent::check_browser_version()
+    * get_device_type()                     -> core_useragent::get_device_type()
+    * get_device_type_list()                -> core_useragent::get_device_type_list()
+    * get_selected_theme_for_device_type()  -> core_useragent::get_device_type_theme()
+    * get_device_cfg_var_name()             -> core_useragent::get_device_type_cfg_var_name()
+    * set_user_device_type()                -> core_useragent::set_user_device_type()
+    * get_user_device_type()                -> core_useragent::get_user_device_type()
+    * get_browser_version_classes()         -> core_useragent::get_browser_version_classes()
 
 YUI:
     * moodle-core-notification has been deprecated with a recommendation of
@@ -104,6 +116,12 @@ Event triggering and event handlers:
     * All existing events and event handlers should be replaced by new
       event classes and matching new event observers.
     * See http://docs.moodle.org/dev/Event_2 for more information.
+    * The following events will be entirely removed, though they can still
+      be captured using handlers, but they should not be used any more.
+      * groups_members_removed          -> \core\event\group_member_removed
+      * groups_groupings_groups_removed -> (no replacement)
+      * groups_groups_deleted           -> \core\event\group_deleted
+      * groups_groupings_deleted        -> \core\event\grouping_deleted
 
 === 2.5.1 ===
 

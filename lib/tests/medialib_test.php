@@ -67,8 +67,8 @@ class core_medialib_testcase extends advanced_testcase {
      */
     private function pretend_to_be_safari() {
         // Pretend to be using Safari browser (must support mp4 for tests to work).
-        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) ' .
-                'AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1';
+        core_useragent::instance(true, 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_8; de-at) ' .
+                'AppleWebKit/533.21.1 (KHTML, like Gecko) Version/5.0.5 Safari/533.21.1');
     }
 
     /**
@@ -76,7 +76,7 @@ class core_medialib_testcase extends advanced_testcase {
      */
     private function pretend_to_be_firefox() {
         // Pretend to be using Firefox browser (must support ogg for tests to work).
-        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Windows NT 6.1; rv:8.0) Gecko/20100101 Firefox/8.0';
+        core_useragent::instance(true, 'Mozilla/5.0 (Windows NT 6.1; rv:8.0) Gecko/20100101 Firefox/8.0');
     }
 
     /**

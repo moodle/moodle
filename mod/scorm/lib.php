@@ -1271,32 +1271,10 @@ function scorm_dndupload_handle($uploadinfo) {
     $file = reset($files);
 
     // Validate the file, make sure it's a valid SCORM package!
-    $packer = get_file_packer('application/zip');
-    $filelist = $file->list_files($packer);
-
-    if (!is_array($filelist)) {
+    $errors = scorm_validate_package($file);
+    if (!empty($errors)) {
         return false;
-    } else {
-        $manifestpresent = false;
-        $aiccfound = false;
-
-        foreach ($filelist as $info) {
-            if ($info->pathname == 'imsmanifest.xml') {
-                $manifestpresent = true;
-                break;
-            }
-
-            if (preg_match('/\.cst$/', $info->pathname)) {
-                $aiccfound = true;
-                break;
-            }
-        }
-
-        if (!$manifestpresent && !$aiccfound) {
-            return false;
-        }
     }
-
     // Create a default scorm object to pass to scorm_add_instance()!
     $scorm = get_config('scorm');
     $scorm->course = $uploadinfo->course->id;
@@ -1342,4 +1320,42 @@ function scorm_set_completion($scorm, $userid, $completionstate = COMPLETION_COM
     } else {
         $completion->update_state($cm, $completionstate, $userid);
     }
+}
+
+/**
+ * Check that a Zip file contains a valid SCORM package
+ *
+ * @param $file stored_file a Zip file.
+ * @return array empty if no issue is found. Array of error message otherwise
+ */
+function scorm_validate_package($file) {
+    $packer = get_file_packer('application/zip');
+    $errors = array();
+    $filelist = $file->list_files($packer);
+
+    if (!is_array($filelist)) {
+        $errors['packagefile'] = get_string('badarchive', 'scorm');
+    } else {
+        $aiccfound = false;
+        $badmanifestpresent = false;
+        foreach ($filelist as $info) {
+            if ($info->pathname == 'imsmanifest.xml') {
+                return array();
+            } else if (strpos($info->pathname, 'imsmanifest.xml') !== false) {
+                // This package has an imsmanifest file inside a folder of the package.
+                $badmanifestpresent = true;
+            }
+            if (preg_match('/\.cst$/', $info->pathname)) {
+                return array();
+            }
+        }
+        if (!$aiccfound) {
+            if ($badmanifestpresent) {
+                $errors['packagefile'] = get_string('badimsmanifestlocation', 'scorm');
+            } else {
+                $errors['packagefile'] = get_string('nomanifest', 'scorm');
+            }
+        }
+    }
+    return $errors;
 }

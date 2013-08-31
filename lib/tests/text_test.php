@@ -360,5 +360,16 @@ class core_text_testcase extends advanced_testcase {
         $this->assertSame($textlib->specialtoascii('ábc'), 'abc');
         $this->assertSame($textlib->strtotitle('abc ABC'), 'Abc Abc');
     }
+
+    /**
+     * Test strrchr.
+     */
+    public function test_strrchr() {
+        $str = "Žluťoučký koníček";
+        $this->assertSame('koníček', core_text::strrchr($str, 'koní'));
+        $this->assertSame('Žluťoučký ', core_text::strrchr($str, 'koní', true));
+        $this->assertFalse(core_text::strrchr($str, 'A'));
+        $this->assertFalse(core_text::strrchr($str, 'ç', true));
+    }
 }
 

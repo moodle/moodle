@@ -63,8 +63,6 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('report/participation:view', $context);
 
-add_to_log($course->id, "course", "report participation", "report/participation/index.php?id=$course->id", $course->id);
-
 $strparticipation = get_string('participationreport');
 $strviews         = get_string('views');
 $strposts         = get_string('posts');
@@ -83,6 +81,14 @@ if (!array_key_exists($action, $actionoptions)) {
 $PAGE->set_title($course->shortname .': '. $strparticipation);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
+
+// Trigger a content view event.
+$event = \report_participation\event\content_viewed::create(array('courseid' => $course->id,
+                                                               'other'    => array('content' => 'participants')));
+$event->set_page_detail();
+$event->set_legacy_logdata(array($course->id, "course", "report participation",
+        "report/participation/index.php?id=$course->id", $course->id));
+$event->trigger();
 
 $modinfo = get_fast_modinfo($course);
 

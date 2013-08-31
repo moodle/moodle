@@ -132,7 +132,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         // Skip view page.
         $skipviewoptions = scorm_get_skip_view_array();
-        if ($COURSE->format == 'scorm') { // Remove option that would cause a constant redirect.
+        if ($COURSE->format == 'singleactivity') { // Remove option that would cause a constant redirect.
             unset($skipviewoptions[SCORM_SKIPVIEW_ALWAYS]);
             if ($cfg_scorm->skipview == SCORM_SKIPVIEW_ALWAYS) {
                 $cfg_scorm->skipview = SCORM_SKIPVIEW_FIRST;
@@ -283,7 +283,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         file_prepare_draft_area($draftitemid, $this->context->id, 'mod_scorm', 'package', 0);
         $default_values['packagefile'] = $draftitemid;
 
-        if (($COURSE->format == 'scorm') && ((count($scorms) == 0) || ($default_values['instance'] == $coursescorm->id))) {
+        if (($COURSE->format == 'singleactivity') && ((count($scorms) == 0) || ($default_values['instance'] == $coursescorm->id))) {
             $default_values['redirect'] = 'yes';
             $default_values['redirecturl'] = '../course/view.php?id='.$default_values['course'];
         } else {
@@ -342,33 +342,7 @@ class mod_scorm_mod_form extends moodleform_mod {
                     return $errors;
                 }
                 $file = reset($files);
-                $filename = $CFG->tempdir.'/scormimport/scrom_'.time();
-                make_temp_directory('scormimport');
-                $file->copy_content_to($filename);
-
-                $packer = get_file_packer('application/zip');
-
-                $filelist = $packer->list_files($filename);
-                if (!is_array($filelist)) {
-                    $errors['packagefile'] = 'Incorrect file package - not an archive'; //TODO: localise
-                } else {
-                    $manifestpresent = false;
-                    $aiccfound       = false;
-                    foreach ($filelist as $info) {
-                        if ($info->pathname == 'imsmanifest.xml') {
-                            $manifestpresent = true;
-                            break;
-                        }
-                        if (preg_match('/\.cst$/', $info->pathname)) {
-                            $aiccfound = true;
-                            break;
-                        }
-                    }
-                    if (!$manifestpresent and !$aiccfound) {
-                        $errors['packagefile'] = 'Incorrect file package - missing imsmanifest.xml or AICC structure'; //TODO: localise
-                    }
-                }
-                unlink($filename);
+                $errors = array_merge($errors, scorm_validate_package($file));
             }
 
         } else if ($type === SCORM_TYPE_EXTERNAL) {

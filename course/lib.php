@@ -1736,35 +1736,44 @@ function reorder_sections($sections, $origin_position, $target_position) {
  * Move the module object $mod to the specified $section
  * If $beforemod exists then that is the module
  * before which $modid should be inserted
- * All parameters are objects
+ *
+ * @param stdClass|cm_info $mod
+ * @param stdClass|section_info $section
+ * @param int|stdClass $beforemod id or object with field id corresponding to the module
+ *     before which the module needs to be included. Null for inserting in the
+ *     end of the section
+ * @return int new value for module visibility (0 or 1)
  */
 function moveto_module($mod, $section, $beforemod=NULL) {
     global $OUTPUT, $DB;
 
-/// Remove original module from original section
+    // Current module visibility state - return value of this function.
+    $modvisible = $mod->visible;
+
+    // Remove original module from original section.
     if (! delete_mod_from_section($mod->id, $mod->section)) {
         echo $OUTPUT->notification("Could not delete module from existing section");
     }
 
-    // if moving to a hidden section then hide module
+    // If moving to a hidden section then hide module.
     if ($mod->section != $section->id) {
         if (!$section->visible && $mod->visible) {
-            // Set this in the object because it is sent as a response to ajax calls.
-            $mod->visible = 0;
+            // Module was visible but must become hidden after moving to hidden section.
+            $modvisible = 0;
             set_coursemodule_visible($mod->id, 0);
             // Set visibleold to 1 so module will be visible when section is made visible.
             $DB->set_field('course_modules', 'visibleold', 1, array('id' => $mod->id));
         }
         if ($section->visible && !$mod->visible) {
+            // Hidden module was moved to the visible section, restore the module visibility from visibleold.
             set_coursemodule_visible($mod->id, $mod->visibleold);
-            // Set this in the object because it is sent as a response to ajax calls.
-            $mod->visible = $mod->visibleold;
+            $modvisible = $mod->visibleold;
         }
     }
 
-/// Add the module into the new section
+    // Add the module into the new section.
     course_add_cm_to_section($section->course, $mod->id, $section->section, $beforemod);
-    return true;
+    return $modvisible;
 }
 
 /**

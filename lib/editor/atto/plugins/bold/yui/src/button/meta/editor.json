@@ -1,0 +1,5 @@
+{
+  "moodle-atto_bold-button": {
+    "requires": ["node"]
+  }
+}

@@ -869,6 +869,7 @@ $string['chooselogs'] = 'Choose which logs you want to see';
 $string['choosereportfilter'] = 'Choose a filter for the report';
 $string['choosetheme'] = 'Choose theme';
 $string['chooseuser'] = 'Choose a user';
+$string['eventcontentviewed'] = 'Content viewed';
 $string['icqnumber'] = 'ICQ number';
 $string['icon'] = 'Icon';
 $string['idnumber'] = 'ID number';

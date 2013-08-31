@@ -1,0 +1,10 @@
+{
+  "name": "moodle-editor_atto-editor",
+  "builds": {
+    "moodle-editor_atto-editor": {
+      "jsfiles": [
+        "editor.js"
+      ]
+    }
+  }
+}

@@ -100,13 +100,6 @@ Feature: Restore Moodle 2 course backups
     And I follow "Edit settings"
     And I expand all fieldsets
     And the "id_format" field should match "Social format" value
-    And I fill the moodle form with:
-      | id_format | SCORM format |
-    And I press "Save changes"
-    And I should see "Adding a new SCORM package"
-    And I follow "Edit settings"
-    And I expand all fieldsets
-    And the "id_format" field should match "SCORM format" value
     And I press "Cancel"
 
   @javascript

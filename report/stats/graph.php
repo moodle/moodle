@@ -62,7 +62,13 @@ if (!empty($userid)) {
     require_capability('report/stats:view', $coursecontext);
 }
 
-add_to_log($course->id, 'course', 'report stats', "report/stats/graph.php?userid=$userid&id=$course->id&mode=$mode&roleid=$roleid", $course->id);
+// Trigger a content view event.
+$event = \report_stats\event\content_viewed::create(array('courseid' => $course->id,
+                                                          'other'    => array('content' => 'stats graph')));
+$event->set_page_detail();
+$event->set_legacy_logdata(array($course->id, 'course', 'report stats',
+        "report/stats/graph.php?userid=$userid&id=$course->id&mode=$mode&roleid=$roleid", $course->id));
+$event->trigger();
 
 stats_check_uptodate($course->id);
 

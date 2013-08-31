@@ -70,8 +70,8 @@ class core_grade_scale_testcase extends grade_base_testcase {
         $last_grade_scale = end($this->scale);
 
         $this->assertEquals($grade_scale->id, $last_grade_scale->id + 1);
-        $this->assertTrue(!empty($grade_scale->timecreated));
-        $this->assertTrue(!empty($grade_scale->timemodified));
+        $this->assertNotEmpty($grade_scale->timecreated);
+        $this->assertNotEmpty($grade_scale->timemodified);
     }
 
     protected function sub_test_grade_scale_update() {
@@ -87,13 +87,13 @@ class core_grade_scale_testcase extends grade_base_testcase {
 
     protected function sub_test_grade_scale_delete() {
         global $DB;
-        $grade_scale = new grade_scale($this->scale[4], false);//choose one we're not using elsewhere
+        $grade_scale = new grade_scale($this->scale[4], false); // Choose one we're not using elsewhere.
         $this->assertTrue(method_exists($grade_scale, 'delete'));
 
         $this->assertTrue($grade_scale->delete());
         $this->assertFalse($DB->get_record('scale', array('id' => $grade_scale->id)));
 
-        //keep the reference collection the same as what is in the database
+        // Keep the reference collection the same as what is in the database.
         unset($this->scale[4]);
     }
 
@@ -111,7 +111,7 @@ class core_grade_scale_testcase extends grade_base_testcase {
         $this->assertTrue(method_exists($scale, 'load_items'));
 
         $scale->load_items();
-        $this->assertEquals(7, count($scale->scale_items));
+        $this->assertCount(7, $scale->scale_items);
         $this->assertEquals('Fairly neutral', $scale->scale_items[2]);
 
     }
@@ -124,7 +124,7 @@ class core_grade_scale_testcase extends grade_base_testcase {
         $scale->scale = null;
         $scale->compact_items();
 
-        // The original string and the new string may have differences in whitespace around the delimiter, and that's OK
+        // The original string and the new string may have differences in whitespace around the delimiter, and that's OK.
         $this->assertEquals(preg_replace('/\s*,\s*/', ',', $this->scale[0]->scale), $scale->scale);
     }
 }

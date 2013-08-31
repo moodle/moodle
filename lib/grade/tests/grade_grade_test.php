@@ -65,7 +65,7 @@ class core_grade_grade_testcase extends grade_base_testcase {
         $grade_grade->rawgrademax = 110;
         $grade_grade->rawgrademin = 18;
 
-        // Check the grade_item's needsupdate variable first
+        // Check the grade_item's needsupdate variable first.
         $grade_grade->load_grade_item();
         $this->assertEmpty($grade_grade->grade_item->needsupdate);
 
@@ -75,12 +75,12 @@ class core_grade_grade_testcase extends grade_base_testcase {
 
         $this->assertEquals($grade_grade->id, $last_grade_grade->id + 1);
 
-        // timecreated will only be set if the grade was submitted by an activity module
+        // Timecreated will only be set if the grade was submitted by an activity module.
         $this->assertTrue(empty($grade_grade->timecreated));
-        // timemodified will only be set if the grade was submitted by an activity module
+        // Timemodified will only be set if the grade was submitted by an activity module.
         $this->assertTrue(empty($grade_grade->timemodified));
 
-        //keep our collection the same as is in the database
+        // Keep our collection the same as is in the database.
         $this->grade_grades[] = $grade_grade;
     }
 

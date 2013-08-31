@@ -1421,6 +1421,12 @@ class restore_course_structure_step extends restore_structure_step {
             $data->theme = '';
         }
 
+        // Check if this is an old SCORM course format.
+        if ($data->format == 'scorm') {
+            $data->format = 'singleactivity';
+            $data->activitytype = 'scorm';
+        }
+
         // Course record ready, update it
         $DB->update_record('course', $data);
 
@@ -3624,7 +3630,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
 
         // Iterate over aliases in the queue.
         foreach ($rs as $record) {
-            $info = restore_dbops::decode_backup_temp_info($record->info);
+            $info = backup_controller_dbops::decode_backup_temp_info($record->info);
 
             // Try to pick a repository instance that should serve the alias.
             $repository = $this->choose_repository($info);

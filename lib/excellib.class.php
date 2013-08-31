@@ -120,7 +120,7 @@ class MoodleExcelWorkbook {
             header('Pragma: no-cache');
         }
 
-        if (check_browser_version('MSIE')) {
+        if (core_useragent::check_ie_version()) {
             $filename = rawurlencode($filename);
         } else {
             $filename = s($filename);

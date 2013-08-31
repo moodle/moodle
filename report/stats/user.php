@@ -49,8 +49,6 @@ if (!report_stats_can_access_user_report($user, $course, true)) {
     error('Can not access user statistics report');
 }
 
-add_to_log($course->id, 'course', 'report stats', "report/stats/user.php?id=$user->id&course=$course->id", $course->id);
-
 $stractivityreport = get_string('activityreport');
 
 $PAGE->set_pagelayout('admin');
@@ -61,6 +59,13 @@ $PAGE->set_title("$course->shortname: $stractivityreport");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
+// Trigger a content view event.
+$event = \report_stats\event\content_viewed::create(array('courseid' => $course->id,
+                                                          'other'    => array('content' => 'user stats')));
+$event->set_page_detail();
+$event->set_legacy_logdata(array($course->id, 'course', 'report stats',
+        "report/stats/user.php?id=$user->id&course=$course->id", $course->id));
+$event->trigger();
 
 if (empty($CFG->enablestats)) {
     print_error('statsdisable', 'error');

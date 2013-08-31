@@ -791,6 +791,14 @@ M.core_filepicker.init = function(Y, options) {
             } else {
                 this.view_as_icons(appenditems);
             }
+            this.fpnode.one('.fp-content').setAttribute('tabindex', '0');
+            // Temporary fix for IE8 until MDL-41229 is integrated.
+            // The role dialog is needed for screen reader to read
+            // the filepicker's content (MDL-41232).
+            this.fpnode.one('.fp-content').setAttribute('role', 'dialog');
+            this.fpnode.one('.fp-content').setAttribute('aria-live', 'assertive');
+            // End of temporary fix.
+            this.fpnode.one('.fp-content').focus();
             // display/hide the link for requesting next page
             if (!appenditems && this.active_repo.hasmorepages) {
                 if (!this.fpnode.one('.fp-content .fp-nextpage')) {

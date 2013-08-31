@@ -1,0 +1,7 @@
+{
+  "moodle-atto_html-button": {
+    "requires": [
+        "node"
+    ]
+  }
+}

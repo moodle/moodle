@@ -2750,7 +2750,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="backupid" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="backupid the log record belongs to"/>
         <FIELD NAME="loglevel" TYPE="int" LENGTH="4" NOTNULL="true" SEQUENCE="false" COMMENT="level of the log (debug...error)"/>
-        <FIELD NAME="message" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="text logged"/>
+        <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="text logged"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="timestamp this log entry was created"/>
       </FIELDS>
       <KEYS>

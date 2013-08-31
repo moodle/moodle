@@ -59,7 +59,7 @@ class database_logger extends base_logger {
         if ($this->levelcol) {
             $columns[$this->levelcol] = $level;
         }
-        $columns[$this->messagecol] = $message; //TODO: should this be cleaned?
+        $columns[$this->messagecol] = clean_param($message, PARAM_NOTAGS);
         return $this->insert_log_record($this->logtable, $columns);
     }
 
@@ -69,6 +69,6 @@ class database_logger extends base_logger {
         // to preserve DB logs if the whole backup/restore transaction is
         // rollback
         global $DB;
-        return $DB->insert_record($this->logtable, $columns, false); // Don't return inserted id
+        return $DB->insert_record($table, $columns, false); // Don't return inserted id
     }
 }

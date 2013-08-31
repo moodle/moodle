@@ -770,60 +770,6 @@ function scorm_get_last_completed_attempt($scormid, $userid) {
     }
 }
 
-function scorm_course_format_display($user, $course) {
-    global $CFG, $DB, $PAGE, $OUTPUT;
-
-    $strupdate = get_string('update');
-    $context = context_course::instance($course->id);
-
-    echo '<div class="mod-scorm">';
-    if ($scorms = get_all_instances_in_course('scorm', $course)) {
-        // The module SCORM activity with the least id is the course
-        $scorm = current($scorms);
-        if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
-            print_error('invalidcoursemodule');
-        }
-        $contextmodule = context_module::instance($cm->id);
-        if ((has_capability('mod/scorm:skipview', $contextmodule))) {
-            scorm_simple_play($scorm, $user, $contextmodule, $cm->id);
-        }
-        $colspan = '';
-        $headertext = '<table width="100%"><tr><td class="title">'.get_string('name').': <b>'.format_string($scorm->name).'</b>';
-        if (has_capability('moodle/course:manageactivities', $context)) {
-            if ($PAGE->user_is_editing()) {
-                // Display update icon
-                $path = $CFG->wwwroot.'/course';
-                $headertext .= '<span class="commands">'.
-                        '<a title="'.$strupdate.'" href="'.$path.'/mod.php?update='.$cm->id.'&amp;sesskey='.sesskey().'">'.
-                        '<img src="'.$OUTPUT->pix_url('t/edit') . '" class="iconsmall" alt="'.$strupdate.'" /></a></span>';
-            }
-            $headertext .= '</td>';
-            // Display report link
-            $trackedusers = $DB->get_record('scorm_scoes_track', array('scormid'=>$scorm->id), 'count(distinct(userid)) as c');
-            if ($trackedusers->c > 0) {
-                $headertext .= '<td class="reportlink">'.
-                              '<a href="'.$CFG->wwwroot.'/mod/scorm/report.php?id='.$cm->id.'">'.
-                               get_string('viewallreports', 'scorm', $trackedusers->c).'</a>';
-            } else {
-                $headertext .= '<td class="reportlink">'.get_string('noreports', 'scorm');
-            }
-            $colspan = ' colspan="2"';
-        }
-        $headertext .= '</td></tr><tr><td'.$colspan.'>'.get_string('summary').':<br />'.format_module_intro('scorm', $scorm, $scorm->coursemodule).'</td></tr></table>';
-        echo $OUTPUT->box($headertext, 'generalbox boxwidthwide');
-        scorm_view_display($user, $scorm, 'view.php?id='.$course->id, $cm);
-    } else {
-        if (has_capability('moodle/course:update', $context)) {
-            // Create a new activity
-            $url = new moodle_url('/course/mod.php', array('id'=>$course->id, 'section'=>'0', 'sesskey'=>sesskey(),'add'=>'scorm'));
-            redirect($url);
-        } else {
-            echo $OUTPUT->notification('Could not find a scorm course here');
-        }
-    }
-    echo '</div>';
-}
-
 function scorm_view_display ($user, $scorm, $action, $cm) {
     global $CFG, $DB, $PAGE, $OUTPUT, $COURSE;
 
@@ -904,7 +850,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
                       <label for="a"><?php print_string('newattempt', 'scorm') ?></label>
             <?php
         }
-        if ($COURSE->format != 'scorm' && !empty($scorm->popup)) {
+        if (!empty($scorm->popup)) {
             echo '<input type="hidden" name="display" value="popup" />'."\n";
         }
         ?>

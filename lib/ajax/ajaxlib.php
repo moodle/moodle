@@ -51,7 +51,7 @@ function ajaxenabled(array $browsers = null) {
     if (!empty($browsers)) {
         $valid = false;
         foreach ($browsers as $brand => $version) {
-            if (check_browser_version($brand, $version)) {
+            if (core_useragent::check_browser_version($brand, $version)) {
                 $valid = true;
             }
         }
@@ -61,11 +61,11 @@ function ajaxenabled(array $browsers = null) {
         }
     }
 
-    $ie = check_browser_version('MSIE', 6.0);
-    $ff = check_browser_version('Gecko', 20051106);
-    $op = check_browser_version('Opera', 9.0);
-    $sa = check_browser_version('Safari', 412);
-    $ch = check_browser_version('Chrome', 6);
+    $ie = core_useragent::check_browser_version('MSIE', 6.0);
+    $ff = core_useragent::check_browser_version('Gecko', 20051106);
+    $op = core_useragent::check_browser_version('Opera', 9.0);
+    $sa = core_useragent::check_browser_version('Safari', 412);
+    $ch = core_useragent::check_browser_version('Chrome', 6);
 
     if (!$ie && !$ff && !$op && !$sa && !$ch) {
         /** @see http://en.wikipedia.org/wiki/User_agent */

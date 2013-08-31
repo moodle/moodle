@@ -595,8 +595,9 @@ class blog_listing {
             $userid = $USER->id;
         }
 
+        $allnamefields = get_all_user_name_fields(true, 'u');
         // The query used to locate blog entries is complicated.  It will be built from the following components:
-        $requiredfields = "p.*, u.firstname, u.lastname, u.email";  // the SELECT clause
+        $requiredfields = "p.*, $allnamefields, u.email";  // the SELECT clause
         $tables = array('p' => 'post', 'u' => 'user');   // components of the FROM clause (table_id => table_name)
         $conditions = array('u.deleted = 0', 'p.userid = u.id', '(p.module = \'blog\' OR p.module = \'blog_external\')');  // components of the WHERE clause (conjunction)
 

@@ -896,6 +896,10 @@ sup {vertical-align: super;}
     background-color:#AAA;
 }
 
+.moodle-dialogue-base .moodle-dialogue {
+    outline: #000 dotted 0;
+}
+
 .moodle-dialogue-base .hidden,
 .moodle-dialogue-base .moodle-dialogue-hidden {display:none;}
 .moodle-dialogue-base .moodle-dialogue {

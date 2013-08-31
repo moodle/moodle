@@ -233,22 +233,13 @@
         display: block;
         text-align: right;
     }
-    .jsenabled .visibleifjs.addresourcemodchooser {
-        display: none;
+    /** Handles display of the activity chooser on small screens **/
+    .jsenabled .choosercontainer #chooseform .alloptions {
+        max-width: 100%;
     }
-    .jsenabled .hiddenifjs.addresourcedropdown {
-        display: block;
-        .iconhelp {
-            display: inline-block;
-            padding: 6px;
-            vertical-align: top;
-        }
-        div.urlselect {
-            display: block;
-            form {
-                margin: 0;
-            }
-        }
+    .jsenabled .choosercontainer #chooseform .instruction,
+    .jsenabled .choosercontainer #chooseform .typesummary {
+        position:static;
     }
     .que .info {
         float: none;
