@@ -2206,8 +2206,14 @@ class page_wiki_prettyview extends page_wiki {
 
         $content = wiki_parse_content($version->contentformat, $version->content, array('printable' => true, 'swid' => $this->subwiki->id, 'pageid' => $this->page->id, 'pretty_print' => true));
 
+        $html = $content['parsed_text'];
+        $id = $this->subwiki->wikiid;
+        if ($cm = get_coursemodule_from_instance("wiki", $id)) {
+            $context = context_module::instance($cm->id);
+            $html = file_rewrite_pluginfile_urls($html, 'pluginfile.php', $context->id, 'mod_wiki', 'attachments', $this->subwiki->id);
+        }
         echo '<div id="wiki_printable_content">';
-        echo format_text($content['parsed_text'], FORMAT_HTML);
+        echo format_text($html, FORMAT_HTML);
         echo '</div>';
     }
 }

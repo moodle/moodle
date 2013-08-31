@@ -870,6 +870,7 @@ sup {vertical-align: super;}
 }
 
 .moodle-dialogue-base .moodle-dialogue {
+    outline: #000 dotted 0;
     background: none!important;
     border: 0 none!important;
 }
