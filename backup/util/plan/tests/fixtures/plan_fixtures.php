@@ -34,6 +34,10 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 class mock_base_plan extends base_plan {
     public function build() {
     }
+
+    public function get_progress() {
+        return null;
+    }
 }
 
 /**
