@@ -172,6 +172,7 @@ if (count($feedbackitems) > 1) {
 }
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($feedback->name));
 
 /// print the tabs
 require('tabs.php');
@@ -245,7 +246,7 @@ if ($do_show == 'edit') {
 
         $helpbutton = $OUTPUT->help_icon('preview', 'feedback');
 
-        echo $OUTPUT->heading($helpbutton . get_string('preview', 'feedback'));
+        echo $OUTPUT->heading(get_string('preview', 'feedback').$helpbutton, 3);
         if (isset($SESSION->feedback->moving) AND $SESSION->feedback->moving->shouldmoving == 1) {
             $anker = '<a href="edit.php?id='.$id.'">';
             $anker .= get_string('cancel_moving', 'feedback');
