@@ -150,34 +150,5 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
             $discussionstarters[$discussion->userid] = $discussion->subject;
         }
 
-        // Resetting data generators internal counters. Courses are created in individual
-        // processes so the counters are restarted before each course creation.
-        $this->resetAllData();
-        $this->setAdminUser();
-
-        // Create another S course to check that the same data was generated.
-        $backend = new tool_generator_backend('TOOL_S_COURSE_2', 1, true, false);
-        $courseid = $backend->make();
-        $course = get_course($courseid);
-        $modinfo = get_fast_modinfo($course);
-
-        // Check it generates the same number of page activities.
-        $this->assertEquals(count($modinfo->get_instances_of('page')), $npageinstances);
-
-        // Check it generates the same number of forum activities.
-        $forums = $modinfo->get_instances_of('forum');
-        $this->assertEquals(count($forums), $nforuminstances);
-
-        // Check same discussions have been started by the same users.
-        $discussions = forum_get_discussions(reset($forums), 'd.timemodified ASC');
-        reset($discussionstarters);
-        foreach ($discussions as $discussion) {
-            $previousdiscussionsubject = current($discussionstarters);
-            $previoususer = key($discussionstarters);
-            $this->assertEquals($discussion->userid, $previoususer);
-            $this->assertEquals($discussion->subject, $previousdiscussionsubject);
-            next($discussionstarters);
-        }
-
     }
 }
