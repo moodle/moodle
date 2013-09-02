@@ -993,7 +993,7 @@ class block_manager {
      *
      * @param string $region The name of the region to check
      */
-    protected function ensure_content_created($region, $output) {
+    public function ensure_content_created($region, $output) {
         $this->ensure_instances_exist($region);
         if (!array_key_exists($region, $this->visibleblockcontent)) {
             $contents = array();
