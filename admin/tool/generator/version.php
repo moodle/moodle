@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2013080700;
-$plugin->requires = 2013080200;
+$plugin->version = 2013090200;
+$plugin->requires = 2013090200;
 $plugin->component = 'tool_generator';
