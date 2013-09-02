@@ -1296,13 +1296,15 @@ M.core_filepicker.init = function(Y, options) {
         },
         render: function() {
             var client_id = this.options.client_id;
+            var fpid = "filepicker-"+ client_id;
+            var labelid = 'fp-dialog-label_'+ client_id;
             this.fpnode = Y.Node.createWithFilesSkin(M.core_filepicker.templates.generallayout).
-                set('id', 'filepicker-'+client_id);
+                set('id', 'filepicker-'+client_id).set('aria-labelledby', labelid);
             this.mainui = new M.core.dialogue({
                 extraClasses : ['filepicker'],
                 draggable    : true,
                 bodyContent  : this.fpnode,
-                headerContent: M.str.repository.filepicker,
+                headerContent: '<span id="'+ labelid +'">'+ M.str.repository.filepicker +'</span>',
                 centered     : true,
                 modal        : true,
                 visible      : false,
