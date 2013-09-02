@@ -41,7 +41,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Test get_definitions
      */
-    public function test_get_definitions () {
+    public function test_get_definitions() {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -184,8 +184,8 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
     /**
      * Test get_gradingform_instances
      */
-    public function test_get_gradingform_instances () {
-        global $DB, $CFG, $USER;
+    public function test_get_gradingform_instances() {
+        global $DB, $USER;
 
         $this->resetAfterTest(true);
         // Create a course and assignment.

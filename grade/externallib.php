@@ -38,7 +38,7 @@ class core_grading_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.5
      */
-    public static function get_definitions_parameters () {
+    public static function get_definitions_parameters() {
         return new external_function_parameters(
             array(
                 'cmids' => new external_multiple_structure(
@@ -57,7 +57,7 @@ class core_grading_external extends external_api {
      * @return array of areas with definitions for each requested course module id
      * @since Moodle 2.5
      */
-    public static function get_definitions ($cmids, $areaname, $activeonly = false) {
+    public static function get_definitions($cmids, $areaname, $activeonly = false) {
         global $DB, $CFG;
         require_once("$CFG->dirroot/grade/grading/form/lib.php");
         $params = self::validate_parameters(self::get_definitions_parameters(),
@@ -296,7 +296,7 @@ class core_grading_external extends external_api {
      * @return external_function_parameters
      * @since Moodle 2.6
      */
-    public static function get_gradingform_instances_parameters () {
+    public static function get_gradingform_instances_parameters() {
         return new external_function_parameters(
             array(
                 'definitionid' => new external_value(PARAM_INT, 'definition id'),
@@ -313,7 +313,7 @@ class core_grading_external extends external_api {
      * @return array of grading instances with fillings for the definition id
      * @since Moodle 2.6
      */
-    public static function get_gradingform_instances ($definitionid, $since = 0) {
+    public static function get_gradingform_instances($definitionid, $since = 0) {
         global $DB, $CFG;
         require_once("$CFG->dirroot/grade/grading/form/lib.php");
         $params = self::validate_parameters(self::get_gradingform_instances_parameters(),
@@ -433,7 +433,7 @@ class core_grading_external extends external_api {
      * @return external_single_structure
      * @since Moodle 2.6
      */
-    public static function get_gradingform_instances_returns () {
+    public static function get_gradingform_instances_returns() {
         return new external_single_structure(
             array(
                 'instances' => new external_multiple_structure(self::grading_instance(), 'list of grading instances'),
@@ -445,17 +445,19 @@ class core_grading_external extends external_api {
 }
 
 /**
- * @since Moodle 2.6
- * @deprecated See MDL-30085. Please do not use this class any more.
+ * core grading functions. Renamed to core_grading_external
+ *
+ * @since Moodle 2.5
+ * @deprecated since 2.6 See MDL-30085. Please do not use this class any more.
  * @see core_grading_external
  */
 class core_grade_external extends external_api {
 
-    public static function get_definitions_parameters () {
+    public static function get_definitions_parameters() {
         return core_grading_external::get_definitions_parameters();
     }
 
-    public static function get_definitions ($cmids, $areaname, $activeonly = false) {
+    public static function get_definitions($cmids, $areaname, $activeonly = false) {
         return core_grading_external::get_definitions($cmids, $areaname, $activeonly = false);
     }
 
