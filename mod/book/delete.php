@@ -78,6 +78,7 @@ if ($confirm) {  // the operation was confirmed.
 }
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading($book->name);
 
 // The operation has not been confirmed yet so ask the user to do so.
 if ($chapter->subchapter) {
