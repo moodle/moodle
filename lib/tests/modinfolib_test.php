@@ -117,6 +117,155 @@ class core_modinfolib_testcase extends advanced_testcase {
         set_config('enablecompletion', $oldcfgenablecompletion);
     }
 
+    public function test_cm_info_properties() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+        $oldcfgenableavailability = $CFG->enableavailability;
+        $oldcfgenablecompletion = $CFG->enablecompletion;
+        set_config('enableavailability', 1);
+        set_config('enablecompletion', 1);
+        $this->setAdminUser();
+
+        // Generate the course and pre-requisite module.
+        $course = $this->getDataGenerator()->create_course(
+                array('format' => 'topics',
+                    'numsections' => 3,
+                    'enablecompletion' => 1,
+                    'groupmode' => SEPARATEGROUPS,
+                    'forcegroupmode' => 0),
+                array('createsections' => true));
+        $coursecontext = context_course::instance($course->id);
+        $prereqforum = $this->getDataGenerator()->create_module('forum',
+                array('course' => $course->id),
+                array('completion' => 1));
+
+        // Generate the module and add availability conditions.
+        $conditionscompletion = array($prereqforum->cmid => COMPLETION_COMPLETE);
+        $conditionsgrade = array(666 => (object)array('min' => 0.4, 'max' => null, 'name' => '!missing'));
+        $conditionsfield = array('email' => (object)array(
+            'fieldname' => 'email',
+            'operator' => 'contains',
+            'value' => 'test'
+        ));
+        $assign = $this->getDataGenerator()->create_module('assign',
+                array('course' => $course->id),
+                array('idnumber' => 123,
+                    'groupmode' => VISIBLEGROUPS,
+                    'availablefrom' => time() + 3600,
+                    'availableuntil' => time() + 5*3600));
+        $ci = new condition_info((object)array('id' => $assign->cmid), CONDITION_MISSING_EVERYTHING);
+        foreach ($conditionscompletion as $cmid => $requiredcompletion) {
+            $ci->add_completion_condition($cmid, $requiredcompletion);
+        }
+        foreach ($conditionsgrade as $gradeid => $conditiongrade) {
+            $ci->add_grade_condition($gradeid, $conditiongrade->min, $conditiongrade->max, true);
+        }
+        foreach ($conditionsfield as $conditionfield) {
+            $ci->add_user_field_condition($conditionfield->fieldname, $conditionfield->operator, $conditionfield->value);
+        }
+
+        // Retrieve all related records from DB.
+        $assigndb = $DB->get_record('assign', array('id' => $assign->id));
+        $moduletypedb = $DB->get_record('modules', array('name' => 'assign'));
+        $moduledb = $DB->get_record('course_modules', array('module' => $moduletypedb->id, 'instance' => $assign->id));
+        $sectiondb = $DB->get_record('course_sections', array('id' => $moduledb->section));
+        $modnamessingular = get_module_types_names(false);
+        $modnamesplural = get_module_types_names(true);
+
+        // Create and enrol a student.
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
+        $student = $this->getDataGenerator()->create_user();
+        role_assign($studentrole->id, $student->id, $coursecontext);
+        $enrolplugin = enrol_get_plugin('manual');
+        $enrolinstance = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'));
+        $enrolplugin->enrol_user($enrolinstance, $student->id);
+        $this->setUser($student);
+
+        // Emulate data used in building course cache to receive the same instance of cached_cm_info as was used in building modinfo.
+        $rawmods = get_course_mods($course->id);
+        $cachedcminfo = assign_get_coursemodule_info($rawmods[$moduledb->id]);
+
+        // Get modinfo.
+        $modinfo = get_fast_modinfo($course->id);
+        $cm = $modinfo->instances['assign'][$assign->id];
+
+        $this->assertEquals($moduledb->id, $cm->id);
+        $this->assertEquals($assigndb->id, $cm->instance);
+        $this->assertEquals($moduledb->course, $cm->course);
+        $this->assertEquals($moduledb->idnumber, $cm->idnumber);
+        $this->assertEquals($moduledb->added, $cm->added);
+        $this->assertEquals($moduledb->visible, $cm->visible);
+        $this->assertEquals($moduledb->visibleold, $cm->visibleold);
+        $this->assertEquals($moduledb->groupmode, $cm->groupmode);
+        $this->assertEquals(VISIBLEGROUPS, $cm->groupmode);
+        $this->assertEquals($moduledb->groupingid, $cm->groupingid);
+        $this->assertEquals($moduledb->groupmembersonly, $cm->groupmembersonly);
+        $this->assertEquals($course->groupmodeforce, $cm->coursegroupmodeforce);
+        $this->assertEquals($course->groupmode, $cm->coursegroupmode);
+        $this->assertEquals(SEPARATEGROUPS, $cm->coursegroupmode);
+        $this->assertEquals($course->groupmodeforce ? $course->groupmode : $moduledb->groupmode,
+                $cm->effectivegroupmode); // (since mod_assign supports groups).
+        $this->assertEquals(VISIBLEGROUPS, $cm->effectivegroupmode);
+        $this->assertEquals($moduledb->indent, $cm->indent);
+        $this->assertEquals($moduledb->completion, $cm->completion);
+        $this->assertEquals($moduledb->completiongradeitemnumber, $cm->completiongradeitemnumber);
+        $this->assertEquals($moduledb->completionview, $cm->completionview);
+        $this->assertEquals($moduledb->completionexpected, $cm->completionexpected);
+        $this->assertEquals($moduledb->availablefrom, $cm->availablefrom);
+        $this->assertEquals($moduledb->availableuntil, $cm->availableuntil);
+        $this->assertEquals($moduledb->showavailability, $cm->showavailability);
+        $this->assertEquals($moduledb->showdescription, $cm->showdescription);
+        $this->assertEquals(null, $cm->extra); // Deprecated field. Used in module types that don't return cached_cm_info.
+        $this->assertEquals($cachedcminfo->icon, $cm->icon);
+        $this->assertEquals($cachedcminfo->iconcomponent, $cm->iconcomponent);
+        $this->assertEquals('assign', $cm->modname);
+        $this->assertEquals($moduledb->module, $cm->module);
+        $this->assertEquals($cachedcminfo->name, $cm->name);
+        $this->assertEquals($sectiondb->section, $cm->sectionnum);
+        $this->assertEquals($moduledb->section, $cm->section);
+        $this->assertEquals($conditionscompletion, $cm->conditionscompletion);
+        $this->assertEquals($conditionsgrade, $cm->conditionsgrade);
+        $this->assertEquals($conditionsfield, $cm->conditionsfield);
+        $this->assertEquals(context_module::instance($moduledb->id), $cm->context);
+        $this->assertEquals($modnamessingular['assign'], $cm->modfullname);
+        $this->assertEquals($modnamesplural['assign'], $cm->modplural);
+        $this->assertEquals(new moodle_url('/mod/assign/view.php', array('id' => $moduledb->id)), $cm->url);
+        $this->assertEquals($cachedcminfo->customdata, $cm->customdata);
+
+        // Dynamic fields, just test that they can be retrieved (must be carefully tested in each activity type).
+        $this->assertNotEmpty($cm->availableinfo); // Lists all unmet availability conditions.
+        $this->assertEquals(0, $cm->uservisible);
+        $this->assertEquals('', $cm->extraclasses);
+        $this->assertEquals('', $cm->onclick);
+        $this->assertEquals(null, $cm->afterlink);
+        $this->assertEquals(null, $cm->afterediticons);
+        $this->assertEquals('', $cm->content);
+
+        // Attempt to access and set non-existing field.
+        $this->assertTrue(empty($modinfo->somefield));
+        $this->assertFalse(isset($modinfo->somefield));
+        $cm->somefield;
+        $this->assertDebuggingCalled();
+        $cm->somefield = 'Some value';
+        $this->assertDebuggingCalled();
+        $this->assertEmpty($cm->somefield);
+        $this->assertDebuggingCalled();
+
+        // Attempt to overwrite an existing field.
+        $prevvalue = $cm->name;
+        $this->assertNotEmpty($cm->name);
+        $this->assertFalse(empty($cm->name));
+        $this->assertTrue(isset($cm->name));
+        $cm->name = 'Illegal overwriting';
+        $this->assertDebuggingCalled();
+        $this->assertEquals($prevvalue, $cm->name);
+        $this->assertDebuggingNotCalled();
+
+        // Restore settings.
+        set_config('enableavailability', $oldcfgenableavailability);
+        set_config('enablecompletion', $oldcfgenablecompletion);
+    }
 
     /**
      * Test is_user_access_restricted_by_group()
