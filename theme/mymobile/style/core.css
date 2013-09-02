@@ -1085,7 +1085,7 @@ table.event {
     width: 26px;
 }
 /*mymoodle */
-#page-my-indexPAGE .headingwrap h3.main a {
+#page-my-indexPAGE .headingwrap h3 a {
     color: inherit !important;
 }
 #page-my-indexPAGE .box.coursebox {
@@ -1106,7 +1106,7 @@ table.event {
 #page-my-indexPAGE .coursebox .overview .info {
     margin-left: 5px;
 }
-#page-my-indexPAGE .block h3.main {
+#page-my-indexPAGE .block h3 {
     text-align: left;
     margin-left: 15px;
 }

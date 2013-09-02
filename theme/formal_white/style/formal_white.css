@@ -22,7 +22,7 @@ h3 {font-size:120%;}
 h4 {font-weight:bold;}
 
 h1.headerheading {margin:14px 11px 8px 11px;float:left;font-size:200%;}
-h2.main, h3.main, h4.main {margin:1em;padding:0;text-align:center;}
+h2, h3, h4 {margin:1em;padding:0;text-align:center;}
 
 /* page-header */
 #page-header{

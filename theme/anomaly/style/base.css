@@ -13,12 +13,12 @@ h1, h1.headermain, h2, h2.tagline, h3, h4, h5 {
     padding: 0;
 }
 
-h1.main,
-h2.main,
-h3.main,
-h4.main,
-h5.main,
-h6.main {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     text-align: center;
 }
 

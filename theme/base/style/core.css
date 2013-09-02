@@ -135,12 +135,12 @@ form.popupform div {display: inline;}
 .arrow_button input {overflow:hidden;}
 .action-icon img.smallicon { vertical-align: text-bottom; margin-left: .45em;}
 .dir-rtl .action-icon img.smallicon { margin-right: .45em; margin-left: 0;}
-h1.main img,
-h2.main img,
-h3.main img,
-h4.main img,
-h5.main img,
-h6.main img {vertical-align: middle;}
+h1 img,
+h2 img,
+h3 img,
+h4 img,
+h5 img,
+h6 img {vertical-align: middle;}
 
 /** The 1-pixel padding is there to avoid phantom scroll bars on OS X (FF, Safari and Chrome)**/
 .no-overflow {overflow:auto;padding-bottom:1px;}
