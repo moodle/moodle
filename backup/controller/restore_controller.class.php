@@ -335,6 +335,9 @@ class restore_controller extends backup implements loggable {
         if ($this->status != backup::STATUS_NEED_PRECHECK) {
             throw new restore_controller_exception('cannot_precheck_wrong_status', $this->status);
         }
+        // Basic/initial prevention against time/memory limits
+        set_time_limit(1 * 60 * 60); // 1 hour for 1 course initially granted
+        raise_memory_limit(MEMORY_EXTRA);
         $this->precheck = restore_prechecks_helper::execute_prechecks($this, $droptemptablesafter);
         if (!array_key_exists('errors', $this->precheck)) { // No errors, can be executed
             $this->set_status(backup::STATUS_AWAITING);
