@@ -3,4 +3,7 @@ information provided here is intended especially for theme designers.
 
 === 2.6 ===
 Notes:
-* (All the changes that we make in 2.6, I'm sure this is not the last one)
+* File theme/bootstrapbase/less/moodle/grade.less is removed. Corrections are
+  made to the grade report to make it work with Bootstrapbase.
+  Theme developers need to alter config.php and update $THEME->plugins_exclude_sheets
+  to not to list stylesheet from gradereport_grade any more. See MDL-40347
