@@ -277,6 +277,7 @@ class core_badges_renderer extends plugin_renderer_base {
     protected function render_issued_badge(issued_badge $ibadge) {
         global $USER, $CFG, $DB;
         $issued = $ibadge->issued;
+        $userinfo = $ibadge->recipient;
         $badge = new badge($ibadge->badgeid);
         $today_date = date('Y-m-d');
         $today = strtotime($today_date);
@@ -287,7 +288,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $imagetable = new html_table();
         $imagetable->attributes = array('class' => 'clearfix badgeissuedimage');
         $imagetable->data[] = array(html_writer::empty_tag('img', array('src' => $issued['badge']['image'])));
-        if ($USER->id == $ibadge->recipient && !empty($CFG->enablebadges)) {
+        if ($USER->id == $userinfo->id && !empty($CFG->enablebadges)) {
             $imagetable->data[] = array($this->output->single_button(
                         new moodle_url('/badges/badge.php', array('hash' => $ibadge->hash, 'bake' => true)),
                         get_string('download'),
@@ -308,11 +309,20 @@ class core_badges_renderer extends plugin_renderer_base {
         $datatable = new html_table();
         $datatable->attributes = array('class' => 'badgeissuedinfo');
         $datatable->colclasses = array('bfield', 'bvalue');
+
+        // Recipient information.
+        $datatable->data[] = array($this->output->heading(get_string('recipientdetails', 'badges'), 3), '');
+        $datatable->data[] = array(get_string('name'), fullname($userinfo));
+        if (empty($userinfo->backpackemail)) {
+            $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->accountemail));
+        } else {
+            $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->backpackemail));
+        }
+
         $datatable->data[] = array($this->output->heading(get_string('issuerdetails', 'badges'), 3), '');
         $datatable->data[] = array(get_string('issuername', 'badges'), $badge->issuername);
         if (isset($badge->issuercontact) && !empty($badge->issuercontact)) {
-            $datatable->data[] = array(get_string('contact', 'badges'),
-                html_writer::tag('a', $badge->issuercontact, array('href' => 'mailto:' . $badge->issuercontact)));
+            $datatable->data[] = array(get_string('contact', 'badges'), obfuscate_mailto($badge->issuercontact));
         }
         $datatable->data[] = array($this->output->heading(get_string('badgedetails', 'badges'), 3), '');
         $datatable->data[] = array(get_string('name'), $badge->name);
@@ -348,7 +358,7 @@ class core_badges_renderer extends plugin_renderer_base {
 
         // Print evidence.
         $agg = $badge->get_aggregation_methods();
-        $evidence = $badge->get_criteria_completions($ibadge->recipient);
+        $evidence = $badge->get_criteria_completions($userinfo->id);
         $eids = array_map(create_function('$o', 'return $o->critid;'), $evidence);
         unset($badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]);
 
@@ -379,6 +389,7 @@ class core_badges_renderer extends plugin_renderer_base {
         $issued = $ibadge->issued;
         $assertion = $issued->assertion;
         $issuer = $assertion->badge->issuer;
+        $userinfo = $ibadge->recipient;
         $table = new html_table();
 
         $imagetable = new html_table();
@@ -388,13 +399,29 @@ class core_badges_renderer extends plugin_renderer_base {
         $datatable = new html_table();
         $datatable->attributes = array('class' => 'badgeissuedinfo');
         $datatable->colclasses = array('bfield', 'bvalue');
+
+        // Recipient information.
+        $datatable->data[] = array($this->output->heading(get_string('recipientdetails', 'badges'), 3), '');
+        // Technically, we should alway have a user at this point, but added an extra check just in case.
+        if ($userinfo) {
+            $datatable->data[] = array(get_string('name'), fullname($userinfo));
+            if (!$ibadge->valid) {
+                $notify = $this->output->notification(get_string('recipientvalidationproblem', 'badges'), 'notifynotice');
+                $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->email) . $notify);
+            } else {
+                $datatable->data[] = array(get_string('email'), obfuscate_mailto($userinfo->email));
+            }
+        } else {
+            $notify = $this->output->notification(get_string('recipientidentificationproblem', 'badges'), 'notifynotice');
+            $datatable->data[] = array(get_string('name'), $notify);
+        }
+
         $datatable->data[] = array($this->output->heading(get_string('issuerdetails', 'badges'), 3), '');
         $datatable->data[] = array(get_string('issuername', 'badges'), $issuer->name);
         $datatable->data[] = array(get_string('issuerurl', 'badges'),
                 html_writer::tag('a', $issuer->origin, array('href' => $issuer->origin)));
         if (isset($issuer->contact)) {
-            $datatable->data[] = array(get_string('contact', 'badges'),
-                html_writer::tag('a', $issuer->contact, array('href' => 'mailto:' . $issuer->contact)));
+            $datatable->data[] = array(get_string('contact', 'badges'), obfuscate_mailto($issuer->contact));
         }
         $datatable->data[] = array($this->output->heading(get_string('badgedetails', 'badges'), 3), '');
         $datatable->data[] = array(get_string('name'), $assertion->badge->name);
@@ -876,7 +903,7 @@ class issued_badge implements renderable {
     public $issued;
 
     /** @var badge recipient */
-    public $recipient = 0;
+    public $recipient;
 
     /** @var badge visibility to others */
     public $visible = 0;
@@ -902,7 +929,12 @@ class issued_badge implements renderable {
                 WHERE ' . $DB->sql_compare_text('uniquehash', 40) . ' = ' . $DB->sql_compare_text(':hash', 40),
                 array('hash' => $hash), IGNORE_MISSING);
         if ($rec) {
-            $this->recipient = $rec->userid;
+            // Get a recipient from database.
+            $user = $DB->get_record_sql('SELECT u.id, u.lastname, u.firstname,
+                                                u.email AS accountemail, b.email AS backpackemail
+                        FROM {user} u LEFT JOIN {badge_backpack} b ON u.id = b.userid
+                        WHERE u.id = :userid', array('userid' => $rec->userid));
+            $this->recipient = $user;
             $this->visible = $rec->visible;
             $this->badgeid = $rec->badgeid;
         }
@@ -916,13 +948,51 @@ class external_badge implements renderable {
     /** @var issued badge */
     public $issued;
 
+    /** @var User ID */
+    public $recipient;
+
+    /** @var validation of external badge */
+    public $valid = true;
+
     /**
      * Initializes the badge to display
      *
      * @param object $badge External badge information.
+     * @param int $recipient User id.
      */
-    public function __construct($badge) {
+    public function __construct($badge, $recipient) {
+        global $DB;
+        // At this point a user has connected a backpack. So, we are going to get
+        // their backpack email rather than their account email.
+        $user = $DB->get_record_sql('SELECT u.lastname, u.firstname, b.email
+                    FROM {user} u INNER JOIN {badge_backpack} b ON u.id = b.userid
+                    WHERE userid = :userid', array('userid' => $recipient), IGNORE_MISSING);
+
         $this->issued = $badge;
+        $this->recipient = $user;
+
+        // Check if recipient is valid.
+        // There is no way to be 100% sure that a badge belongs to a user.
+        // Backpack does not return any recipient information.
+        // All we can do is compare that backpack email hashed using salt
+        // provided in the assertion matches a badge recipient from the assertion.
+        if ($user) {
+            if (validate_email($badge->assertion->recipient) && $badge->assertion->recipient == $user->email) {
+                // If we have email, compare emails.
+                $this->valid = true;
+            } else if ($badge->assertion->recipient == 'sha256$' . hash('sha256', $user->email)) {
+                // If recipient is hashed, but no salt, compare hashes without salt.
+                $this->valid = true;
+            } else if ($badge->assertion->recipient == 'sha256$' . hash('sha256', $user->email . $badge->assertion->salt)) {
+                // If recipient is hashed, compare hashes.
+                $this->valid = true;
+            } else {
+                // Otherwise, we cannot be sure that this user is a recipient.
+                $this->valid = false;
+            }
+        } else {
+            $this->valid = false;
+        }
     }
 }
 

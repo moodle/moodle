@@ -69,7 +69,7 @@ if (is_null($badge)) {
 $PAGE->set_context(context_system::instance());
 $output = $PAGE->get_renderer('core', 'badges');
 
-$badge = new external_badge($badge);
+$badge = new external_badge($badge, $userid);
 
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('issuedbadge', 'badges'));
