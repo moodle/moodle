@@ -81,9 +81,10 @@ class core_badges_renderer extends plugin_renderer_base {
                 $url = new moodle_url('badge.php', array('hash' => $badge->uniquehash));
             } else {
                 if (!$external) {
-                    $url = new moodle_url($CFG->wwwroot . '/badges/badge.php', array('hash' => $badge->uniquehash));
+                    $url = new moodle_url('/badges/badge.php', array('hash' => $badge->uniquehash));
                 } else {
-                    $url = new moodle_url($CFG->wwwroot . '/badges/external.php', array('badge' => serialize($badge)));
+                    $hash = hash('md5', $badge->hostedUrl);
+                    $url = new moodle_url('/badges/external.php', array('hash' => $hash, 'user' => $userid));
                 }
             }
             $actions = html_writer::tag('div', $push . $download . $status, array('class' => 'badge-actions'));
@@ -918,10 +919,10 @@ class external_badge implements renderable {
     /**
      * Initializes the badge to display
      *
-     * @param string $json External badge information.
+     * @param object $badge External badge information.
      */
-    public function __construct($json) {
-        $this->issued = $json;
+    public function __construct($badge) {
+        $this->issued = $badge;
     }
 }
 
@@ -1016,7 +1017,7 @@ class badge_user_collection extends badge_collection implements renderable {
         parent::__construct($badges);
 
         if (!empty($CFG->badges_allowexternalbackpack)) {
-            $this->backpack = get_backpack_settings($userid);
+            $this->backpack = get_backpack_settings($userid, true);
         }
     }
 }
