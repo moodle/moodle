@@ -190,4 +190,3 @@ abstract class tool_generator_backend {
     }
 
 }
-
