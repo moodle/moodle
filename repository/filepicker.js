@@ -502,6 +502,7 @@ M.core_filepicker.show = function(Y, options) {
         M.core_filepicker.init(Y, options);
     }
     M.core_filepicker.instances[options.client_id].show();
+    document.getElementById("filepicker-"+ options.client_id).focus();
 };
 
 M.core_filepicker.set_templates = function(Y, templates) {
@@ -1294,11 +1295,14 @@ M.core_filepicker.init = function(Y, options) {
         },
         render: function() {
             var client_id = this.options.client_id;
+            var fpid = "filepicker-"+ client_id;
+            var labelid = 'fp-dialog-label_'+ client_id;
             this.fpnode = Y.Node.createWithFilesSkin(M.core_filepicker.templates.generallayout).
-                set('id', 'filepicker-'+client_id);
+                set('id', fpid).set('aria-labelledby', labelid);
+
             this.mainui = new Y.Panel({
                 srcNode      : this.fpnode,
-                headerContent: M.str.repository.filepicker,
+                headerContent: '<span id="'+ labelid +'">'+ M.str.repository.filepicker +'</span>',
                 zIndex       : 7500,
                 centered     : true,
                 modal        : true,
@@ -1309,6 +1313,7 @@ M.core_filepicker.init = function(Y, options) {
                 maxHeight    : this.fpnode.getStylePx('maxHeight'),
                 render       : true
             });
+
             // allow to move the panel dragging it by it's header:
             this.mainui.plug(Y.Plugin.Drag,{handles:['#filepicker-'+client_id+' .yui3-widget-hd']});
             this.mainui.show();
