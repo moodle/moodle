@@ -101,7 +101,9 @@ $string['badgeprivacysetting_help'] = 'Badges you earn can be displayed on your 
 You can still control individual badge privacy settings on your "My badges" page.';
 $string['badgeprivacysetting_str'] = 'Automatically show badges I earn on my profile page';
 $string['badgesalt'] = 'Salt for hashing the recepient\'s email address';
-$string['badgesalt_desc'] = 'Using a hash allows backpack services to confirm the badge earner without having to expose their email address. This setting should only use numbers and letters.';
+$string['badgesalt_desc'] = 'Using a hash allows backpack services to confirm the badge earner without having to expose their email address. This setting should only use numbers and letters.
+
+Note: For recipient verification purposes, please avoid changing this setting once you start issuing badges.';
 $string['badgesdisabled'] = 'Badges are not enabled on this site.';
 $string['badgesearned'] = 'Number of badges earned: {$a}';
 $string['badgesettings'] = 'Badges settings';
@@ -203,6 +205,7 @@ $string['error:cannotact'] = 'Cannot activate the badge. ';
 $string['error:cannotawardbadge'] = 'Cannot award badge to a user.';
 $string['error:clone'] = 'Cannot clone the badge.';
 $string['error:duplicatename'] = 'Badge with such name already exists in the system.';
+$string['error:externalbadgedoesntexist'] = 'Badge not found';
 $string['error:invalidbadgeurl'] = 'Invalid badge issuer URL format.';
 $string['error:invalidcriteriatype'] = 'Invalid criteria type.';
 $string['error:invalidexpiredate'] = 'Expiry date has to be in the future.';
