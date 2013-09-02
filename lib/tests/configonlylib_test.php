@@ -44,7 +44,7 @@ class core_configonlylib_testcase extends advanced_testcase {
      */
     public function test_min_fix_utf8() {
         $this->assertSame('abc', min_fix_utf8('abc'));
-        $this->assertSame("žlutý koníček přeskočil potůček \n\t\r\0", min_fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
+        $this->assertSame("žlutý koníček přeskočil potůček \n\t\r", min_fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
         $this->assertSame('aš', min_fix_utf8('a'.chr(130).'š'), 'This fails with buggy iconv() when mbstring extenstion is not available as fallback.');
     }
 
