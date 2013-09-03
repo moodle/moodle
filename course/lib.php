@@ -2052,43 +2052,42 @@ function move_courses($courseids, $categoryid) {
     $i = 1;
 
     list($where, $params) = $DB->get_in_or_equal($courseids);
-    if ($dbcourses = $DB->get_records_select('course', 'id ' . $where, $params)) {
-        foreach ($dbcourses as $dbcourse) {
-            $course = new stdClass();
-            $course->id = $dbcourse->id;
-            $course->category  = $category->id;
-            $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
-            if ($category->visible == 0) {
-                // Hide the course when moving into hidden category, do not update the visibleold flag - we want to get
-                // to previous state if somebody unhides the category.
-                $course->visible = 0;
-            }
-
-            $DB->update_record('course', $course);
-
-            // Store the context.
-            $context = context_course::instance($course->id);
-
-            // Update the course object we are passing to the event.
-            $dbcourse->category = $course->category;
-            $dbcourse->sortorder = $course->sortorder;
-            if (isset($course->visible)) {
-                $dbcourse->visible = $course->visible;
-            }
-
-            // Trigger a course updated event.
-            $event = \core\event\course_updated::create(array(
-                'objectid' => $course->id,
-                'context' => $context,
-                'other' => array('shortname' => $dbcourse->shortname,
-                                 'fullname' => $dbcourse->fullname)
-            ));
-            $event->add_record_snapshot('course', $dbcourse);
-            $event->set_legacy_logdata(array($course->id, 'course', 'move', 'edit.php?id=' . $course->id, $course->id));
-            $event->trigger();
-
-            $context->update_moved($newparent);
+    $dbcourses = $DB->get_records_select('course', 'id ' . $where, $params);
+    foreach ($dbcourses as $dbcourse) {
+        $course = new stdClass();
+        $course->id = $dbcourse->id;
+        $course->category  = $category->id;
+        $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
+        if ($category->visible == 0) {
+            // Hide the course when moving into hidden category, do not update the visibleold flag - we want to get
+            // to previous state if somebody unhides the category.
+            $course->visible = 0;
         }
+
+        $DB->update_record('course', $course);
+
+        // Store the context.
+        $context = context_course::instance($course->id);
+
+        // Update the course object we are passing to the event.
+        $dbcourse->category = $course->category;
+        $dbcourse->sortorder = $course->sortorder;
+        if (isset($course->visible)) {
+            $dbcourse->visible = $course->visible;
+        }
+
+        // Trigger a course updated event.
+        $event = \core\event\course_updated::create(array(
+            'objectid' => $course->id,
+            'context' => $context,
+            'other' => array('shortname' => $dbcourse->shortname,
+                             'fullname' => $dbcourse->fullname)
+        ));
+        $event->add_record_snapshot('course', $dbcourse);
+        $event->set_legacy_logdata(array($course->id, 'course', 'move', 'edit.php?id=' . $course->id, $course->id));
+        $event->trigger();
+
+        $context->update_moved($newparent);
     }
     fix_course_sortorder();
     cache_helper::purge_by_event('changesincourse');
