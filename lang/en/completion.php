@@ -51,7 +51,7 @@ $string['completiondisabled'] = 'Disabled, not shown in activity settings';
 $string['completionexpected'] = 'Expect completed on';
 $string['completionexpected_help']='This setting specifies the date when the activity is expected to be completed. The date is not shown to students and is only displayed in the activity completion report.';
 $string['completionicons'] = 'Completion tick boxes';
-$string['completionicons_help'] = 'A tick next an activity name may be used to indicate when the activity is complete.
+$string['completionicons_help'] = 'A tick next to an activity name may be used to indicate when the activity is complete.
 
 If a box with a dotted border is shown, a tick will appear automatically when you have completed the activity according to conditions set by the teacher.
 
