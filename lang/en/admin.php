@@ -118,7 +118,7 @@ $string['commonfiltersettings'] = 'Common filter settings';
 $string['commonsettings'] = 'Common settings';
 $string['componentinstalled'] = 'Component installed';
 $string['computedfromlogs'] = 'Computed from logs since {$a}.';
-$string['condifmodeditdefaults'] = 'The values you set here define the default values that are used in the activity settings form when you create a new activity. You can also configure which activity settings are considered advanced.';
+$string['condifmodeditdefaults'] = 'Default values are used in the settings form when creating a new activity or resource.';
 $string['confeditorhidebuttons'] = 'Select the buttons that should be hidden in the HTML editor.';
 $string['configallcountrycodes'] = 'This is the list of countries that may be selected in various places, for example in a user\'s profile. If blank (the default) the list in countries.php in the standard English language pack is used. That is the list from ISO 3166-1. Otherwise, you can specify a comma-separated list of codes, for example \'GB,FR,ES\'. If you add new, non-standard codes here, you will need to add them to countries.php in \'en\' and your language pack.';
 $string['configallowassign'] = 'You can allow people who have the roles on the left side to assign some of the column roles to other people';
@@ -159,15 +159,15 @@ $string['configcronremotepassword'] = 'This means that the cron.php script canno
     http://site.example.com/admin/cron.php?password=opensesame
 </pre>If this is left empty, no password is required.';
 $string['configcurlcache'] = 'Time-to-live for cURL cache, in seconds.';
-$string['configcustommenuitems'] = 'You can configure a custom menu here to be shown by themes. Each line consists of some menu text, a link URL (optional) and a tooltip title (optional), separated by pipe characters. You can specify a structure using hyphens. For example:
+$string['configcustommenuitems'] = 'You can configure a custom menu here to be shown by themes. Each line consists of some menu text, a link URL (optional), a tooltip title (optional) and a language code or comma-separated list of codes (optional, for displaying the line to users of the specified language only), separated by pipe characters. You can specify a structure using hyphens. For example:
 <pre>
 Moodle community|http://moodle.org
 -Moodle free support|http://moodle.org/support
 -Moodle development|http://moodle.org/development
 --Moodle Tracker|http://tracker.moodle.org
---Moodle Docs|http://docs.moodle.org
--Moodle News|http://moodle.org/news
-Moodle company
+--Moodle Docs|http://docs.moodle.org|Moodle Docs in German
+--German Moodle Docs|http://docs.moodle.org/de|Documentation in German|de
+-Moodle News|http://moodle.org/news Moodle company
 -Moodle commercial hosting|http://moodle.com/hosting
 -Moodle commercial support|http://moodle.com/support
 </pre>';
@@ -523,10 +523,10 @@ $string['filters'] = 'Filters';
 $string['filtersettings'] = 'Manage filters';
 $string['filtersettingsgeneral'] = 'General filter settings';
 $string['filteruploadedfiles'] = 'Filter uploaded files';
-$string['forcelogin'] = 'Force users to login';
-$string['forceloginforprofileimage'] = 'Force users to login to view user pictures';
+$string['forcelogin'] = 'Force users to log in';
+$string['forceloginforprofileimage'] = 'Force users to log in to view user pictures';
 $string['forceloginforprofileimage_help'] = 'If enabled, users must login in order to view user profile pictures and the default user picture will be used in all notification emails.';
-$string['forceloginforprofiles'] = 'Force users to login for profiles';
+$string['forceloginforprofiles'] = 'Force users to log in for profiles';
 $string['forcetimezone'] = 'Force default timezone';
 $string['formatuninstallwithcourses'] = 'There are {$a->count} courses using {$a->format}. Their format will be changed to {$a->defaultformat} (default format for this site). Some format-specific data may be lost. Are you sure you want to proceed?';
 $string['formatuninstallconfirm'] = '{$a} will be uninstalled. No courses currently use it. Continue?';
