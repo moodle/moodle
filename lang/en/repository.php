@@ -205,6 +205,7 @@ $string['select'] = 'Select';
 $string['settings'] = 'Settings';
 $string['setupdefaultplugins'] = 'Setting up default repository plugins';
 $string['setmainfile'] = 'Set main file';
+$string['setmainfile_help'] = 'If there are multiple files in the folder, the main file is the one that appears on the view page. Other files such as images or videos may be embedded in it. In filemanager the main file is indicated with a title in bold.';
 $string['siteinstances'] = 'Repositories instances of the site';
 $string['size'] = 'Size';
 $string['submit'] = 'Submit';

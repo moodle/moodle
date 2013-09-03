@@ -377,8 +377,10 @@ a.ygtvspacer:hover {color: transparent;text-decoration: none;}
 .filemanager.fp-select.fp-folder .fp-file-unzip,
 .filemanager.fp-select.fp-file .fp-file-zip,
 .filemanager.fp-select.fp-zip .fp-file-zip {display:none;}
-.filemanager.fp-select .fp-file-setmain {display:none;}
-.filemanager.fp-select.fp-cansetmain .fp-file-setmain {display:inline-block;}
+.filemanager.fp-select .fp-file-setmain,
+.filemanager.fp-select .fp-file-setmain-help {display:none;}
+.filemanager.fp-select.fp-cansetmain .fp-file-setmain,
+.filemanager.fp-select.fp-cansetmain .fp-file-setmain-help {display:inline-block;}
 .filemanager .fp-mainfile .fp-filename {font-weight:bold;}
 .filemanager.fp-select.fp-folder .fp-file-download {display:none;} /* to be implemented */
 .fm-operation {font-weight: bold;}

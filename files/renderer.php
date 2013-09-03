@@ -367,6 +367,7 @@ class core_files_renderer extends plugin_renderer_base {
      * @return string
      */
     private function fm_js_template_fileselectlayout() {
+        global $OUTPUT;
         $strloading  = get_string('loading', 'repository');
         $icon_progress = $this->pix_icon('i/loading_small', $strloading).'';
         $rv = '
@@ -377,7 +378,7 @@ class core_files_renderer extends plugin_renderer_base {
     <form>
         <button class="{!}fp-file-download">'.get_string('download').'</button>
         <button class="{!}fp-file-delete">'.get_string('delete').'</button>
-        <button class="{!}fp-file-setmain">'.get_string('setmainfile', 'repository').'</button>
+        <button class="{!}fp-file-setmain">'.get_string('setmainfile', 'repository').'</button><span class="fp-file-setmain-help">'.$OUTPUT->help_icon('setmainfile', 'repository').'</span>
         <button class="{!}fp-file-zip">'.get_string('zip', 'editor').'</button>
         <button class="{!}fp-file-unzip">'.get_string('unzip').'</button>
         <div class="fp-hr"></div>
