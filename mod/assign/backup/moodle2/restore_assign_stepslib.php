@@ -94,6 +94,10 @@ class restore_assign_activity_structure_step extends restore_activity_structure_
             $data->cutoffdate = $this->apply_date_offset($data->cutoffdate);
         }
 
+        if ($data->grade < 0) { // Scale found, get mapping.
+            $data->grade = -($this->get_mappingid('scale', abs($data->grade)));
+        }
+
         $newitemid = $DB->insert_record('assign', $data);
 
         $this->apply_activity_instance($newitemid);
