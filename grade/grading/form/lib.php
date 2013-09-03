@@ -432,6 +432,27 @@ abstract class gradingform_controller {
     }
 
     /**
+     * Returns an array of all active instances for this definition.
+     * (intentionally does not return instances with status NEEDUPDATE)
+     *
+     * @param int since only return instances with timemodified >= since 
+     * @return array of gradingform_instance objects
+     */
+    public function get_all_active_instances($since = 0) {
+        global $DB;
+        $conditions = array ($this->definition->id,
+                             gradingform_instance::INSTANCE_STATUS_ACTIVE,
+                             $since);
+        $where = "definitionid = ? AND status = ? AND timemodified >= ?";
+        $records = $DB->get_records_select('grading_instances', $where, $conditions);
+        $rv = array();
+        foreach ($records as $record) {
+            $rv[] = $this->get_instance($record);
+        }
+        return $rv;
+    }
+
+    /**
      * Returns true if there are already people who has been graded on this definition.
      * In this case plugins may restrict changes of the grading definition
      *
@@ -678,6 +699,24 @@ abstract class gradingform_controller {
      * @since Moodle 2.5
      */
     public static function get_external_definition_details() {
+        return null;
+    }
+
+    /**
+     * Overridden by sub classes that wish to make instance filling details available to web services.
+     * When not overridden, only instance filling data common to all grading methods is made available.
+     * When overriding, the return value should be an array containing one or more key/value pairs.
+     * These key/value pairs should match the filling data returned by the get_<method>_filling() function
+     * in the gradingform_instance subclass.
+     * For examples, look at:
+     *    $gradingform_rubric_controller->get_external_instance_filling_details()
+     *    $gradingform_guide_controller->get_external_instance_filling_details()
+     *
+     * @return array An array of one or more key/value pairs containing the external_multiple_structure/s
+     * corresponding to the definition returned by $gradingform_<method>_instance->get_<method>_filling()
+     * @since Moodle 2.6
+     */
+    public static function get_external_instance_filling_details() {
         return null;
     }
 }
