@@ -31,7 +31,7 @@ class core_component {
     /** @var array list of ignored directories - watch out for auth/db exception */
     protected static $ignoreddirs = array('CVS'=>true, '_vti_cnf'=>true, 'simpletest'=>true, 'db'=>true, 'yui'=>true, 'tests'=>true, 'classes'=>true, 'fonts'=>true);
     /** @var array list plugin types that support subplugins, do not add more here unless absolutely necessary */
-    protected static $supportsubplugins = array('mod', 'editor', 'local');
+    protected static $supportsubplugins = array('mod', 'editor', 'tool', 'local');
 
     /** @var null cache of plugin types */
     protected static $plugintypes = null;
@@ -428,6 +428,9 @@ $cache = '.var_export($cache, true).';
                     if (isset(self::$subsystems[$subtype])) {
                         error_log("Invalid subtype '$subtype'' detected in '$ownerdir', duplicates core subsystem.");
                         continue;
+                    }
+                    if ($CFG->admin !== 'admin' and strpos($dir, 'admin/') === 0) {
+                        $dir = preg_replace('|^admin/|', "$CFG->admin/", $dir);
                     }
                     if (!is_dir("$CFG->dirroot/$dir")) {
                         error_log("Invalid subtype directory '$dir' detected in '$ownerdir'.");
