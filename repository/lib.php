@@ -3219,14 +3219,3 @@ function initialise_filepicker($args) {
     }
     return $return;
 }
-
-/**
- * Small function to walk an array to attach repository ID
- *
- * @param array $value
- * @param string $key
- * @param int $id
- */
-function repository_attach_id(&$value, $key, $id){
-    $value['repo_id'] = $id;
-}
