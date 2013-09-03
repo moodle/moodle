@@ -290,16 +290,15 @@ function quiz_attempt_save_started($quizobj, $quba, $attempt) {
  */
 function quiz_fire_attempt_started_event($attempt, $quizobj) {
     // Trigger event.
-    $eventdata = new stdClass();
-    $eventdata->component = 'mod_quiz';
-    $eventdata->attemptid = $attempt->id;
-    $eventdata->timestart = $attempt->timestart;
-    $eventdata->timestamp = $attempt->timestart;
-    $eventdata->userid = $attempt->userid;
-    $eventdata->quizid = $quizobj->get_quizid();
-    $eventdata->cmid = $quizobj->get_cmid();
-    $eventdata->courseid = $quizobj->get_courseid();
-    events_trigger('quiz_attempt_started', $eventdata);
+    $eventdata = array();
+    $eventdata['context'] = $quizobj->get_context();
+    $eventdata['courseid'] = $quizobj->get_courseid();
+    $eventdata['relateduserid'] = $attempt->userid;
+    $eventdata['objectid'] = $attempt->id;
+    $event = \mod_quiz\event\attempt_started::create($eventdata);
+    $event->add_record_snapshot('quiz', $quizobj->get_quiz());
+    $event->add_record_snapshot('quiz_attempts', $attempt);
+    $event->trigger();
 }
 
 /**
@@ -1744,9 +1743,9 @@ function quiz_attempt_submitted_handler($event) {
     global $DB;
 
     $course  = $DB->get_record('course', array('id' => $event->courseid));
-    $quiz    = $DB->get_record('quiz', array('id' => $event->quizid));
-    $cm      = get_coursemodule_from_id('quiz', $event->cmid, $event->courseid);
-    $attempt = $DB->get_record('quiz_attempts', array('id' => $event->attemptid));
+    $attempt = $event->get_record_snapshot('quiz_attempts', $event->objectid);
+    $quiz    = $event->get_record_snapshot('quiz', $attempt->quiz);
+    $cm      = get_coursemodule_from_id('quiz', $event->get_context()->instanceid, $event->courseid);
 
     if (!($course && $quiz && $cm && $attempt)) {
         // Something has been deleted since the event was raised. Therefore, the
@@ -1770,9 +1769,9 @@ function quiz_attempt_overdue_handler($event) {
     global $DB;
 
     $course  = $DB->get_record('course', array('id' => $event->courseid));
-    $quiz    = $DB->get_record('quiz', array('id' => $event->quizid));
-    $cm      = get_coursemodule_from_id('quiz', $event->cmid, $event->courseid);
-    $attempt = $DB->get_record('quiz_attempts', array('id' => $event->attemptid));
+    $attempt = $event->get_record_snapshot('quiz_attempts', $event->objectid);
+    $quiz    = $event->get_record_snapshot('quiz', $attempt->quiz);
+    $cm      = get_coursemodule_from_id('quiz', $event->get_context()->instanceid, $event->courseid);
 
     if (!($course && $quiz && $cm && $attempt)) {
         // Something has been deleted since the event was raised. Therefore, the
