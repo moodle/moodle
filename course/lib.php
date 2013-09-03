@@ -871,7 +871,8 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
  *
  * Course cache is NOT rebuilt if there are any errors!
  *
- * Used in CLI script admin/cli/fix_course_sequence.php
+ * This function is used each time when course cache is being rebuilt with $fullcheck = false
+ * and in CLI script admin/cli/fix_course_sequence.php with $fullcheck = true
  *
  * @param int $courseid id of the course
  * @param array $rawmods result of funciton {@link get_course_mods()} - containst
@@ -918,23 +919,23 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
                 ksort($sequenceunique); // Preserve initial order of modules.
                 $sequence = array_values($sequenceunique);
                 $sections[$sectionid]->newsequence = join(',', $sequence);
-                $messages[] = $debuggingprefix. 'Sequence for course section ['.
-                        $sectionid. '] is "'. $sections[$sectionid]->sequence. '", must be "'. $sections[$sectionid]->newsequence. '"';
+                $messages[] = $debuggingprefix.'Sequence for course section ['.
+                        $sectionid.'] is "'.$sections[$sectionid]->sequence.'", must be "'.$sections[$sectionid]->newsequence.'"';
             }
             foreach ($sequence as $cmid) {
                 if (array_key_exists($cmid, $modsection) && isset($rawmods[$cmid])) {
                     // Some course module id appears to be in more than one section's sequences.
                     $wrongsectionid = $modsection[$cmid];
-                    $sections[$wrongsectionid]->newsequence = trim(preg_replace("/,$cmid,/", ',', ','. $sections[$wrongsectionid]->newsequence. ','), ',');
-                    $messages[] = $debuggingprefix. 'Course module ['. $cmid. '] must be removed from sequence of section ['.
-                            $wrongsectionid. '] because it is also present in sequence of section ['. $sectionid. ']';
+                    $sections[$wrongsectionid]->newsequence = trim(preg_replace("/,$cmid,/", ',', ','.$sections[$wrongsectionid]->newsequence. ','), ',');
+                    $messages[] = $debuggingprefix.'Course module ['.$cmid.'] must be removed from sequence of section ['.
+                            $wrongsectionid.'] because it is also present in sequence of section ['.$sectionid.']';
                 }
                 $modsection[$cmid] = $sectionid;
             }
         }
     }
 
-    // Add orphaned modules to their sections.
+    // Add orphaned modules to their sections if they exist or to section 0 otherwise.
     if ($fullcheck) {
         foreach ($rawmods as $cmid => $mod) {
             if (!isset($modsection[$cmid])) {
@@ -943,20 +944,20 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
                 if ($mod->section && isset($sections[$mod->section])) {
                     $modsection[$cmid] = $mod->section;
                 } else {
-                    $lastsection = end($sections);
-                    $modsection[$cmid] = $lastsection->id;
+                    $firstsection = reset($sections);
+                    $modsection[$cmid] = $firstsection->id;
                 }
-                $sections[$modsection[$cmid]]->newsequence = trim($sections[$modsection[$cmid]]->newsequence. ','. $cmid, ',');
-                $messages[] = $debuggingprefix. 'Course module ['. $cmid. '] is missing from sequence of section ['.
-                        $sectionid. ']';
+                $sections[$modsection[$cmid]]->newsequence = trim($sections[$modsection[$cmid]]->newsequence.','.$cmid, ',');
+                $messages[] = $debuggingprefix.'Course module ['.$cmid.'] is missing from sequence of section ['.
+                        $sectionid.']';
             }
         }
         foreach ($modsection as $cmid => $sectionid) {
             if (!isset($rawmods[$cmid])) {
                 // Section $sectionid refers to module id that does not exist.
-                $sections[$sectionid]->newsequence = trim(preg_replace("/,$cmid,/", ',', ','. $sections[$sectionid]->newsequence. ','), ',');
-                $messages[] = $debuggingprefix. 'Course module ['. $cmid.
-                        '] does not exist but is present in the sequence of section ['. $sectionid. ']';
+                $sections[$sectionid]->newsequence = trim(preg_replace("/,$cmid,/", ',', ','.$sections[$sectionid]->newsequence.','), ',');
+                $messages[] = $debuggingprefix.'Course module ['.$cmid.
+                        '] does not exist but is present in the sequence of section ['.$sectionid.']';
             }
         }
     }
@@ -976,8 +977,8 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
             if (!$checkonly) {
                 $DB->update_record('course_modules', array('id' => $cmid, 'section' => $modsection[$cmid]));
             }
-            $messages[] = $debuggingprefix. 'Course module ['. $cmid.
-                    '] points to section ['. $mod->section.'] instead of ['. $modsection[$cmid]. ']';
+            $messages[] = $debuggingprefix.'Course module ['.$cmid.
+                    '] points to section ['.$mod->section.'] instead of ['.$modsection[$cmid].']';
         }
     }
 

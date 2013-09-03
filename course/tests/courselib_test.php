@@ -1782,21 +1782,20 @@ class core_course_courselib_testcase extends advanced_testcase {
             'Failed integrity check for course ['. $course->id. ']. Course module ['. $page->cmid.
             '] is missing from sequence of section ['. $section1->id. ']',
             'Failed integrity check for course ['. $course->id. ']. Course module ['. $page->cmid.
-            '] points to section [8765] instead of ['. $section1->id. ']'),
+            '] points to section [8765] instead of ['. $section0->id. ']'),
                 course_integrity_check($course->id, null, null, true));
         $section0 = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 0));
         $section1 = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 1));
         $cms = $DB->get_records('course_modules', array('course' => $course->id), 'id', 'id,section');
-        $this->assertEquals($forum->cmid. ','. $quiz->cmid, $section0->sequence);
-        $this->assertEquals(''. $page->cmid, $section1->sequence);  // Module added to section.
+        $this->assertEquals($forum->cmid. ','. $quiz->cmid. ','. $page->cmid, $section0->sequence); // Module added to section.
         $this->assertEquals($section0->id, $cms[$forum->cmid]->section);
-        $this->assertEquals($section1->id, $cms[$page->cmid]->section); // Section changed to section1.
+        $this->assertEquals($section0->id, $cms[$page->cmid]->section); // Section changed to section0.
         $this->assertEquals($section0->id, $cms[$quiz->cmid]->section);
 
         // 6. Module is deleted from course_modules but not deleted in sequence (integrity check with $fullcheck = true).
         $DB->delete_records('course_modules', array('id' => $page->cmid));
         $this->assertEquals(array('Failed integrity check for course ['. $course->id. ']. Course module ['.
-                $page->cmid. '] does not exist but is present in the sequence of section ['. $section1->id. ']'),
+                $page->cmid. '] does not exist but is present in the sequence of section ['. $section0->id. ']'),
                 course_integrity_check($course->id, null, null, true));
         $section0 = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 0));
         $section1 = $DB->get_record('course_sections', array('course' => $course->id, 'section' => 1));
