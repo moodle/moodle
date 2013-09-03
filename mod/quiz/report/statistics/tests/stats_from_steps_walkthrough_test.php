@@ -79,7 +79,7 @@ class quiz_report_statistics_from_steps extends mod_quiz_attempt_walkthrough_fro
      *                                                                                  "stepsXX.csv" and "resultsXX.csv".
      * @dataProvider get_data_for_walkthrough
      */
-    public function test_walkthrough_from_csv($csvdata) {
+    public function test_walkthrough_from_csv($quizsettings, $csvdata) {
 
         // CSV data files for these tests were generated using :
         // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/responsegenerator
@@ -87,7 +87,7 @@ class quiz_report_statistics_from_steps extends mod_quiz_attempt_walkthrough_fro
         $this->resetAfterTest(true);
         question_bank::get_qtype('random')->clear_caches_before_testing();
 
-        $this->create_quiz($csvdata['questions']);
+        $this->create_quiz($quizsettings, $csvdata['questions']);
 
         $attemptids = $this->walkthrough_attempts($csvdata['steps']);
 
