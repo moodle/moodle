@@ -1090,7 +1090,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      *     - modulelist - name of module (if we are searching for courses containing specific module
      *     - tagid - id of tag
      * @param array $options display options, same as in get_courses() except 'recursive' is ignored - search is always category-independent
-     * @return array
+     * @return course_in_list[]
      */
     public static function search_courses($search, $options = array()) {
         global $DB;
@@ -1223,7 +1223,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      *             Only cached fields may be used for sorting!
      *    - offset
      *    - limit - maximum number of children to return, 0 or null for no limit
-     * @return array array of instances of course_in_list
+     * @return course_in_list[]
      */
     public function get_courses($options = array()) {
         global $DB;
@@ -2050,30 +2050,32 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
  * @property-read string $fullname
  * @property-read string $shortname
  * @property-read string $idnumber
- * @property-read string $summary
- * @property-read int $summaryformat
- * @property-read string $format
- * @property-read int $showgrades
- * @property-read string $sectioncache
- * @property-read string $modinfo
- * @property-read int $newsitems
+ * @property-read string $summary Course summary. Field is present if coursecat::get_courses()
+ *     was called with option 'summary'. Otherwise will be retrieved from DB on first request
+ * @property-read int $summaryformat Summary format. Field is present if coursecat::get_courses()
+ *     was called with option 'summary'. Otherwise will be retrieved from DB on first request
+ * @property-read string $format Course format. Retrieved from DB on first request
+ * @property-read int $showgrades Retrieved from DB on first request
+ * @property-read string $sectioncache Retrieved from DB on first request
+ * @property-read string $modinfo Retrieved from DB on first request
+ * @property-read int $newsitems Retrieved from DB on first request
  * @property-read int $startdate
- * @property-read int $marker
- * @property-read int $maxbytes
- * @property-read int $legacyfiles
- * @property-read int $showreports
+ * @property-read int $marker Retrieved from DB on first request
+ * @property-read int $maxbytes Retrieved from DB on first request
+ * @property-read int $legacyfiles Retrieved from DB on first request
+ * @property-read int $showreports Retrieved from DB on first request
  * @property-read int $visible
- * @property-read int $visibleold
- * @property-read int $groupmode
- * @property-read int $groupmodeforce
- * @property-read int $defaultgroupingid
- * @property-read string $lang
- * @property-read string $theme
- * @property-read int $timecreated
- * @property-read int $timemodified
- * @property-read int $requested
- * @property-read int $enablecompletion
- * @property-read int $completionnotify
+ * @property-read int $visibleold Retrieved from DB on first request
+ * @property-read int $groupmode Retrieved from DB on first request
+ * @property-read int $groupmodeforce Retrieved from DB on first request
+ * @property-read int $defaultgroupingid Retrieved from DB on first request
+ * @property-read string $lang Retrieved from DB on first request
+ * @property-read string $theme Retrieved from DB on first request
+ * @property-read int $timecreated Retrieved from DB on first request
+ * @property-read int $timemodified Retrieved from DB on first request
+ * @property-read int $requested Retrieved from DB on first request
+ * @property-read int $enablecompletion Retrieved from DB on first request
+ * @property-read int $completionnotify Retrieved from DB on first request
  *
  * @package    core
  * @subpackage course
