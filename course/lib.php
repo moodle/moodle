@@ -2408,7 +2408,10 @@ function update_course($data, $editoroptions = NULL) {
         $context->update_moved($newparent);
     }
 
-    fix_course_sortorder();
+    if ($movecat || (isset($data->sortorder) && $oldcourse->sortorder != $data->sortorder)) {
+        fix_course_sortorder();
+    }
+
     // purge appropriate caches in case fix_course_sortorder() did not change anything
     cache_helper::purge_by_event('changesincourse');
     if ($changesincoursecat) {
