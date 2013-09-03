@@ -180,10 +180,15 @@ class repository_coursefiles extends repository {
         return parent::is_visible();
     }
 
+    /**
+     * Return the repository name.
+     *
+     * @return string
+     */
     public function get_name() {
-        list($context, $course, $cm) = get_context_info_array($this->context->id);
-        if (!empty($course)) {
-            return get_string('courselegacyfiles') . format_string($course->shortname, true, array('context' => get_course_context($context)));
+        $context = $this->context->get_course_context(false);
+        if ($context) {
+            return get_string('courselegacyfilesofcourse', 'moodle', $context->get_context_name(false, true));
         } else {
             return get_string('courselegacyfiles');
         }
