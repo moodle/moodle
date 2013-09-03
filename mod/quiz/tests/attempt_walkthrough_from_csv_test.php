@@ -231,14 +231,13 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
             if (!$user = $DB->get_record('user', $username)) {
                 $user = $this->getDataGenerator()->create_user($username);
             }
-            $this->setUser($user);
             // Start the attempt.
             $quizobj = quiz::create($this->quiz->id, $user->id);
             $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
             $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
             $timenow = time();
-            $attempt = quiz_create_attempt($quizobj, 1, false, $timenow);
+            $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
             // Select variant and / or random sub question.
             if (!isset($step['variants'])) {
                 $step['variants'] = array();
