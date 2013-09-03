@@ -60,10 +60,13 @@ class behat_filepicker extends behat_files {
 
         // Setting the folder name in the modal window.
         $exception = new ExpectationException('The dialog to enter the folder name does not appear', $this->getSession());
-        $dialoginput = $this->find('css', '.fp-mkdir-dlg-text input');
+        $dialoginput = $this->find('css', '.fp-mkdir-dlg-text input', $exception);
         $dialoginput->setValue($foldername);
 
-        $this->getSession()->getPage()->pressButton(get_string('makeafolder'));
+        $exception = new ExpectationException('The button for the create folder dialog can not be located', $this->getSession());
+        $dialognode = $this->find('css', '.moodle-dialogue-focused');
+        $buttonnode = $this->find('css', '.fp-dlg-butcreate', $exception, $dialognode);
+        $buttonnode->click();
 
         // Wait until the process finished and modal windows are hidden.
         $this->wait_until_return_to_form();
