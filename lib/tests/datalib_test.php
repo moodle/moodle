@@ -289,4 +289,58 @@ class core_datalib_testcase extends advanced_testcase {
         $this->assertSame('ZOMBIES', $result->shortname);
         $this->assertEquals($before + 1, $DB->perf_get_queries());
     }
+
+    public function test_increment_revision_number() {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Let's abuse course.timemodified column for now.
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $DB->set_field('course', 'timemodified', 1, array());
+
+        $record1 = $DB->get_record('course', array('id'=>$course1->id));
+        $record2 = $DB->get_record('course', array('id'=>$course2->id));
+        $this->assertEquals(1, $record1->timemodified);
+        $this->assertEquals(1, $record2->timemodified);
+
+        // Incrementing some lower value.
+        $now = time();
+        increment_revision_number('course', 'timemodified', 'id = :id', array('id'=>$course1->id));
+        $record1 = $DB->get_record('course', array('id'=>$course1->id));
+        $record2 = $DB->get_record('course', array('id'=>$course2->id));
+        $this->assertGreaterThanOrEqual($now, $record1->timemodified);
+        $this->assertLessThanOrEqual($now+1, $record1->timemodified);
+        $this->assertEquals(1, $record2->timemodified);
+
+        // Incrementing in the same second.
+        $rev1 = $DB->get_field('course', 'timemodified', array('id'=>$course1->id));
+        $now = time();
+        increment_revision_number('course', 'timemodified', 'id = :id', array('id'=>$course1->id));
+        $this->assertGreaterThan($rev1, $rev1 = $DB->get_field('course', 'timemodified', array('id'=>$course1->id)));
+        increment_revision_number('course', 'timemodified', 'id = :id', array('id'=>$course1->id));
+        $this->assertGreaterThan($rev1, $rev1 = $DB->get_field('course', 'timemodified', array('id'=>$course1->id)));
+        increment_revision_number('course', 'timemodified', 'id = :id', array('id'=>$course1->id));
+        $this->assertGreaterThan($rev1, $rev1 = $DB->get_field('course', 'timemodified', array('id'=>$course1->id)));
+        $this->assertGreaterThan($now+2, $rev1);
+
+        // Recovering from runaway revision.
+        $DB->set_field('course', 'timemodified', time()+60*60*60, array('id'=>$course2->id));
+        $record2 = $DB->get_record('course', array('id'=>$course2->id));
+        $this->assertGreaterThan(time(), $record2->timemodified);
+        increment_revision_number('course', 'timemodified', 'id = :id', array('id'=>$course2->id));
+        $record2b = $DB->get_record('course', array('id'=>$course2->id));
+        $this->assertLessThan($record2->timemodified, $record2b->timemodified);
+        $this->assertGreaterThanOrEqual(time(), $record2b->timemodified);
+
+        // Update all revisions.
+        $now = time();
+        $DB->set_field('course', 'timemodified', 1, array());
+        increment_revision_number('course', 'timemodified', '');
+        $record1 = $DB->get_record('course', array('id'=>$course1->id));
+        $record2 = $DB->get_record('course', array('id'=>$course2->id));
+        $this->assertGreaterThanOrEqual($now, $record1->timemodified);
+        $this->assertLessThanOrEqual($now+1, $record1->timemodified);
+        $this->assertEquals($record1->timemodified, $record2->timemodified);
+    }
 }

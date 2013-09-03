@@ -1232,6 +1232,36 @@ function update_timezone_records($timezones) {
     }
 }
 
+/**
+ * Increment standard revision field.
+ *
+ * The revision are based on current time and are incrementing.
+ * There is a protection for runaway revisions, it may not go further than
+ * one hour into future.
+ *
+ * The field has to be XMLDB_TYPE_INTEGER with size 10.
+ *
+ * @param string $table
+ * @param string $field name of the field containing revision
+ * @param string $select use empty string when updating all records
+ * @param array $params optional select parameters
+ */
+function increment_revision_number($table, $field, $select, array $params = null) {
+    global $DB;
+
+    $now = time();
+    $sql = "UPDATE {{$table}}
+                   SET $field = (CASE
+                       WHEN $field IS NULL THEN $now
+                       WHEN $field < $now THEN $now
+                       WHEN $field > $now + 3600 THEN $now
+                       ELSE $field + 1 END)";
+    if ($select) {
+        $sql = $sql . " WHERE $select";
+    }
+    $DB->execute($sql, $params);
+}
+
 
 /// MODULE FUNCTIONS /////////////////////////////////////////////////
 
