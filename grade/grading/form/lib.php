@@ -435,7 +435,7 @@ abstract class gradingform_controller {
      * Returns an array of all active instances for this definition.
      * (intentionally does not return instances with status NEEDUPDATE)
      *
-     * @param int since only return instances with timemodified >= since 
+     * @param int since only return instances with timemodified >= since
      * @return array of gradingform_instance objects
      */
     public function get_all_active_instances($since = 0) {
