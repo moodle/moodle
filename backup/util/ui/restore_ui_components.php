@@ -174,22 +174,20 @@ abstract class restore_search_base implements renderable {
         $this->totalcount = 0;
         $contextlevel = $this->get_itemcontextlevel();
         list($sql, $params) = $this->get_searchsql();
-        $blocksz = 5000;
-        $offs = 0;
-        // Get total number, to avoid some incorrect iterations
+        // Get total number, to avoid some incorrect iterations.
         $countsql = preg_replace('/ORDER BY.*/', '', $sql);
         $totalcourses = $DB->count_records_sql("SELECT COUNT(*) FROM ($countsql) sel", $params);
-        // User to be checked is always the same (usually null, get it form first element)
-        $firstcap = reset($this->requiredcapabilities);
-        $userid = isset($firstcap['user']) ? $firstcap['user'] : null;
-        // Extract caps to check, this saves us a bunch of iterations
-        $requiredcaps = array();
-        foreach ($this->requiredcapabilities as $cap) {
-            $requiredcaps[] = $cap['capability'];
-        }
-        // Iterate while we have records and haven't reached $this->maxresults.
-        while ($totalcourses > $offs and $this->totalcount < $this->maxresults) {
-            $resultset = $DB->get_records_sql($sql, $params, $offs, $blocksz);
+        if ($totalcourses > 0) {
+            // User to be checked is always the same (usually null, get it from first element).
+            $firstcap = reset($this->requiredcapabilities);
+            $userid = isset($firstcap['user']) ? $firstcap['user'] : null;
+            // Extract caps to check, this saves us a bunch of iterations.
+            $requiredcaps = array();
+            foreach ($this->requiredcapabilities as $cap) {
+                $requiredcaps[] = $cap['capability'];
+            }
+            // Iterate while we have records and haven't reached $this->maxresults.
+            $resultset = $DB->get_recordset_sql($sql, $params);
             foreach ($resultset as $result) {
                 context_helper::preload_from_record($result);
                 $classname = context_helper::get_class_for_level($contextlevel);
@@ -208,7 +206,7 @@ abstract class restore_search_base implements renderable {
                 $this->totalcount++;
                 $this->results[$result->id] = $result;
             }
-            $offs += $blocksz;
+            $resultset->close();
         }
 
         return $this->totalcount;
