@@ -4001,7 +4001,9 @@ function update_course($data, $editoroptions = NULL) {
         context_moved($context, $newparent);
     }
 
-    fix_course_sortorder();
+    if ($movecat || (isset($data->sortorder) && $oldcourse->sortorder != $data->sortorder)) {
+        fix_course_sortorder();
+    }
 
     // Test for and remove blocks which aren't appropriate anymore
     blocks_remove_inappropriate($course);
