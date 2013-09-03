@@ -3948,7 +3948,12 @@ function assignment_extend_settings_navigation(settings_navigation $settings, na
     global $PAGE, $DB, $USER, $CFG;
 
     $assignmentrow = $DB->get_record("assignment", array("id" => $PAGE->cm->instance));
-    require_once "$CFG->dirroot/mod/assignment/type/$assignmentrow->assignmenttype/assignment.class.php";
+
+    $classfile = "$CFG->dirroot/mod/assignment/type/$assignmentrow->assignmenttype/assignment.class.php";
+    if (!file_exists($classfile)) {
+        return;
+    }
+    require_once($classfile);
 
     $assignmentclass = 'assignment_'.$assignmentrow->assignmenttype;
     $assignmentinstance = new $assignmentclass($PAGE->cm->id, $assignmentrow, $PAGE->cm, $PAGE->course);
