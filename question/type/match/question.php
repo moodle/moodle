@@ -190,11 +190,20 @@ class qtype_match_question extends question_graded_automatically_with_countback 
 
     public function prepare_simulated_post_data($simulatedresponse) {
         $postdata = array();
-        $stemnos = array_flip($this->stemorder);
+        $stemids = array_keys($this->stems);
         $choicetochoiceno = array_flip($this->choices);
         $choicenotochoiceselectvalue = array_flip($this->choiceorder);
-        foreach ($simulatedresponse as $subquestion => $choice) {
-            $postdata[$this->field($stemnos[$subquestion + 1])] = $choicenotochoiceselectvalue[$choicetochoiceno[$choice]];
+        foreach ($simulatedresponse as $stemno => $choice) {
+            $stemid = $stemids[$stemno];
+            $shuffledstemno = array_search($stemid, $this->stemorder);
+            if (empty($choice)) {
+                $choiceselectvalue = 0;
+            } else if ($choicetochoiceno[$choice]) {
+                $choiceselectvalue = $choicenotochoiceselectvalue[$choicetochoiceno[$choice]];
+            } else {
+                throw new coding_exception("Unknown choice $choice in matching question - {$this->name}.");
+            }
+            $postdata[$this->field($shuffledstemno)] = $choiceselectvalue;
         }
         return $postdata;
     }
