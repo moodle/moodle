@@ -38,7 +38,7 @@ $string['admindirsettingsub'] = 'A very few webhosts use /admin as a special URL
     renaming the admin directory in your installation, and putting that 
     new name here.  For example: <br /> <br /><b>moodleadmin</b><br /> <br />
     This will fix admin links in Moodle.';
-$string['availablelangs'] = 'List of available languages';
+$string['availablelangs'] = 'Available language packs';
 $string['caution'] = 'Caution';
 $string['cliadminpassword'] = 'New admin user password';
 $string['cliadminusername'] = 'Admin account username';

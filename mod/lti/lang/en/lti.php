@@ -224,7 +224,7 @@ $string['lti:requesttooladd'] = 'Request a tool is configured site-wide';
 $string['lti:view'] = 'Launch external tool activities';
 $string['lti_administration'] = 'LTI Administration';
 $string['lti_errormsg'] = 'The tool returned the following error message: "{$a}"';
-$string['lti_launch_error'] = 'An error occured when launching the external tool: ';
+$string['lti_launch_error'] = 'An error occurred when launching the external tool:';
 $string['lti_launch_error_tool_request'] = '<p>
 To submit a request for an administrator to complete the tool configuration, click <a href="{$a->admin_request_url}" target="_top">here</a>.
 </p>';
