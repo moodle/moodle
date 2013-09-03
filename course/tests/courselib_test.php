@@ -606,19 +606,19 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Ensure that the shortname isn't duplicated.
         try {
             $created = create_course($course);
+            $this->fail('Exception expected');
         } catch (moodle_exception $e) {
-            $message = $e->getMessage();
+            $this->assertSame(get_string('shortnametaken', 'error', $course->shortname), $e->getMessage());
         }
-        $this->assertEquals($message, get_string('shortnametaken', 'error', $course->shortname));
 
         // Ensure that the idnumber isn't duplicated.
         $course->shortname .= '1';
         try {
             $created = create_course($course);
+            $this->fail('Exception expected');
         } catch (moodle_exception $e) {
-            $message = $e->getMessage();
+            $this->assertSame(get_string('courseidnumbertaken', 'error', $course->idnumber), $e->getMessage());
         }
-        $this->assertEquals($message, get_string('courseidnumbertaken', 'error', $course->idnumber));
     }
 
     public function test_create_course_with_generator() {
