@@ -2260,17 +2260,17 @@ function create_course($data, $editoroptions = NULL) {
     //check the categoryid - must be given for all new courses
     $category = $DB->get_record('course_categories', array('id'=>$data->category), '*', MUST_EXIST);
 
-    //check if the shortname already exist
+    // Check if the shortname already exists.
     if (!empty($data->shortname)) {
         if ($DB->record_exists('course', array('shortname' => $data->shortname))) {
-            throw new moodle_exception('shortnametaken');
+            throw new moodle_exception('shortnametaken', '', '', $data->shortname);
         }
     }
 
-    //check if the id number already exist
+    // Check if the idnumber already exists.
     if (!empty($data->idnumber)) {
         if ($DB->record_exists('course', array('idnumber' => $data->idnumber))) {
-            throw new moodle_exception('idnumbertaken');
+            throw new moodle_exception('courseidnumbertaken', '', '', $data->idnumber);
         }
     }
 

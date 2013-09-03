@@ -721,7 +721,7 @@ class core_course_external extends external_api {
                 if (array_key_exists('shortname', $course) && ($oldcourse->shortname != $course['shortname'])) {
                     require_capability('moodle/course:changeshortname', $context);
                     if ($DB->record_exists('course', array('shortname' => $course['shortname']))) {
-                        throw new moodle_exception('shortnametaken');
+                        throw new moodle_exception('shortnametaken', '', '', $course['shortname']);
                     }
                 }
 
@@ -729,7 +729,7 @@ class core_course_external extends external_api {
                 if (array_key_exists('idnumber', $course) && ($oldcourse->idnumber != $course['idnumber'])) {
                     require_capability('moodle/course:changeidnumber', $context);
                     if ($DB->record_exists('course', array('idnumber' => $course['idnumber']))) {
-                        throw new moodle_exception('idnumbertaken');
+                        throw new moodle_exception('courseidnumbertaken', '', '', $course['idnumber']);
                     }
                 }
 
