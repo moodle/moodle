@@ -178,6 +178,7 @@ if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', 
         $mform = new send_form();
         $defaultmessage = new stdClass;
         $defaultmessage->id = $user2->id;
+        $defaultmessage->viewing = $viewing;
         $defaultmessage->message = '';
 
         //Check if the current user has sent a message
@@ -322,6 +323,7 @@ echo html_writer::start_tag('div', array('class' => 'messagearea mdl-align'));
                     $mform = new send_form();
                     $defaultmessage = new stdClass;
                     $defaultmessage->id = $user2->id;
+                    $defaultmessage->viewing = $viewing;
                     $defaultmessage->message = '';
                     //$defaultmessage->messageformat = FORMAT_MOODLE;
                     $mform->set_data($defaultmessage);
