@@ -56,7 +56,7 @@ class workflow_state_updated extends \core\event\base {
      *
      * @return array
      */
-    public function get_legacy_logdata() {
+    protected function get_legacy_logdata() {
         return $this->legacylogdata;
     }
 
