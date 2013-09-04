@@ -24,7 +24,7 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
       | Description | Test forum description |
-      | Read tracking for this forum | On |
+      | Read tracking | On |
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |
@@ -45,7 +45,7 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
       | Description | Test forum description |
-      | Read tracking for this forum | Off |
+      | Read tracking | Off |
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |
@@ -63,7 +63,7 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
       | Description | Test forum description |
-      | Read tracking for this forum | Optional |
+      | Read tracking | Optional |
     And I add a new discussion to "Test forum name" forum with:
       | Subject | Test post subject |
       | Message | Test post message |
