@@ -2866,6 +2866,31 @@ abstract class repository implements cacheable_object {
         $classname = $data['class'];
         return new $classname($data['id'], $data['ctxid'], $data['options'], $data['readonly']);
     }
+
+    /**
+     * Gets a file relative to this file in the repository and sends it to the browser.
+     * Used to allow relative file linking within a repository without creating file records
+     * for linked files
+     *
+     * Repositories that overwrite this must be very careful - see filesystem repository for example.
+     *
+     * @param stored_file $mainfile The main file we are trying to access relative files for.
+     * @param string $relativepath the relative path to the file we are trying to access.
+     *
+     */
+    public function send_relative_file(stored_file $mainfile, $relativepath) {
+        // This repository hasn't implemented this so send_file_not_found.
+        send_file_not_found();
+    }
+
+    /**
+     * helper function to check if the repository supports send_relative_file.
+     *
+     * @return true|false
+     */
+    public function supports_relative_file() {
+        return false;
+    }
 }
 
 /**

@@ -148,11 +148,14 @@ if (scorm_external_link($sco->launch)) {
     //TODO: does this happen?
     $result = $launcher;
 } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL) {
-    // Remote learning activity
+    // Remote learning activity.
     $result = dirname($scorm->reference).'/'.$launcher;
+} else if ($scorm->scormtype === SCORM_TYPE_LOCAL && strtolower($scorm->reference) == 'imsmanifest.xml') {
+    // This SCORM content sits in a repository that allows relative links.
+    $result = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/imsmanifest/$scorm->revision/$launcher";
 } else if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
-    //note: do not convert this to use get_file_url() or moodle_url()
-    //SCORM does not work without slasharguments and moodle_url() encodes querystring vars
+    // Note: do not convert this to use get_file_url() or moodle_url()
+    // SCORM does not work without slasharguments and moodle_url() encodes querystring vars.
     $result = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/content/$scorm->revision/$launcher";
 }
 

@@ -8,6 +8,9 @@ http://docs.moodle.org/dev/Repository_API
 * get_option() now always return null when the first parameter ($config) is not empty, and
   no value was found for this $config. Previously this could sometimes return an empty array().
 * The function repository_attach_id() was removed, it was never used and was not useful.
+* New functions send_relative_file() and supports_relative_file() to allow sending relative linked
+  files - see filesystem repository for example.
+
 
 === 2.5 ===
 

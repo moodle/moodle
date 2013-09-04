@@ -44,6 +44,9 @@ class repository_filesystem_generator extends testing_repository_generator {
         if (!isset($record['fs_path'])) {
             $record['fs_path'] = '/i/do/not/exist';
         }
+        if (!isset($record['relativefiles'])) {
+            $record['relativefiles'] = 0;
+        }
         return $record;
     }
 
