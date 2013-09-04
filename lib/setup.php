@@ -90,20 +90,11 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
     exit(1);
 }
 
-// Ignore $CFG->behat_wwwroot and use the same wwwroot.
-if (!empty($CFG->behat_switchcompletely)) {
-    $CFG->behat_wwwroot = $CFG->wwwroot;
-
-} else if (empty($CFG->behat_wwwroot)) {
-    // Default URL for acceptance testing, only accessible from localhost.
-    $CFG->behat_wwwroot = 'http://localhost:8000';
-}
-
-
 // Test environment is requested if:
-// * Behat is running (constant set hooking the behat init process before requiring config.php).
-// * If we are accessing though the built-in web server (cli-server).
 // * If $CFG->behat_switchcompletely has been set (maintains CLI scripts behaviour, which ATM is only preventive).
+// * If we are accessing though the built-in web server (cli-server).
+// * Behat is running (constant set hooking the behat init process before requiring config.php).
+// * If $CFG->behat_wwwroot has been set and the hostname/port match what the page was requested with.
 // Test environment is enabled if:
 // * User has previously enabled through admin/tool/behat/cli/util.php --enable.
 // Both are required to switch to test mode
@@ -112,10 +103,24 @@ if (!defined('BEHAT_SITE_RUNNING') && !empty($CFG->behat_dataroot) &&
 
     $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
 
-    $switchcompletely = !empty($CFG->behat_switchcompletely) && php_sapi_name() !== 'cli';
-    $builtinserver = php_sapi_name() === 'cli-server';
-    $behatrunning = defined('BEHAT_TEST');
-    $testenvironmentrequested = $switchcompletely || $builtinserver || $behatrunning;
+    if (!empty($CFG->behat_switchcompletely) && php_sapi_name() !== 'cli') {
+        $behatswitchcompletely = true;
+        $CFG->behat_wwwroot = $CFG->wwwroot;
+
+    } elseif (php_sapi_name() === 'cli-server') {
+        $behatbuiltinserver = true;
+        $CFG->behat_wwwroot = 'http://localhost:'.$_SERVER['SERVER_PORT'];
+
+    } elseif (defined('BEHAT_TEST')) {
+        $behatrunning = true;
+
+    } elseif (!empty($CFG->behat_wwwroot) && !empty($_SERVER['HTTP_HOST'])) {
+        $behaturl = parse_url($CFG->behat_wwwroot.'/');
+        $behaturl['port'] = isset($behaturl['port']) ? $behaturl['port'] : 80;
+        $behataltwww = ($behaturl['host'] == $_SERVER['HTTP_HOST']) && ($behaturl['port'] == $_SERVER['SERVER_PORT']);
+    }
+
+    $testenvironmentrequested = !empty($behatswitchcompletely) || !empty($behatbuiltinserver) || !empty($behatrunning) || !empty($behataltwww);
 
     // Only switch to test environment if it has been enabled.
     $testenvironmentenabled = file_exists($CFG->behat_dataroot . '/behat/test_environment_enabled.txt');

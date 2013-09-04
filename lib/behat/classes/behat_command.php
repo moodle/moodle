@@ -108,7 +108,7 @@ class behat_command {
 
         // We don't check the PHP version if $CFG->behat_switchcompletely has been enabled.
         // Here we are in CLI.
-        if (empty($CFG->behat_switchcompletely) && $checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
+        if (empty($CFG->behat_switchcompletely) && empty($CFG->behat_wwwroot) && $checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
             behat_error(BEHAT_EXITCODE_REQUIREMENT, 'PHP 5.4 is required. See config-dist.php for possible alternatives');
         }
 
