@@ -114,6 +114,8 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                 event.detach();
                 var s = M.str.role, confirmation = {
                     lightbox :  true,
+                    visible  :  true,
+                    centered :  true,
                     title    :  s.confirmunassigntitle,
                     question :  s.confirmunassign,
                     yesLabel :  s.confirmunassignyes,
