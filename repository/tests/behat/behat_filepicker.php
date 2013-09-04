@@ -64,8 +64,7 @@ class behat_filepicker extends behat_files {
         $dialoginput->setValue($foldername);
 
         $exception = new ExpectationException('The button for the create folder dialog can not be located', $this->getSession());
-        $dialognode = $this->find('css', '.moodle-dialogue-focused');
-        $buttonnode = $this->find('css', '.fp-dlg-butcreate', $exception, $dialognode);
+        $buttonnode = $this->find('css', '.fp-dlg-butcreate', $exception);
         $buttonnode->click();
 
         // Wait until the process finished and modal windows are hidden.
