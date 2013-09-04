@@ -332,16 +332,20 @@ class course_edit_form extends moodleform {
         global $DB, $CFG;
 
         $errors = parent::validation($data, $files);
-        if ($foundcourses = $DB->get_records('course', array('shortname'=>$data['shortname']))) {
-            if (!empty($data['id'])) {
-                unset($foundcourses[$data['id']]);
+
+        // Add field validation check for duplicate shortname.
+        if ($course = $DB->get_record('course', array('shortname' => $data['shortname']), '*', IGNORE_MULTIPLE)) {
+            if (empty($data['id']) || $course->id != $data['id']) {
+                $errors['shortname'] = get_string('shortnametaken', '', $course->fullname);
             }
-            if (!empty($foundcourses)) {
-                foreach ($foundcourses as $foundcourse) {
-                    $foundcoursenames[] = $foundcourse->fullname;
+        }
+
+        // Add field validation check for duplicate idnumber.
+        if (!empty($data['idnumber'])) {
+            if ($course = $DB->get_record('course', array('idnumber' => $data['idnumber']), '*', IGNORE_MULTIPLE)) {
+                if (empty($data['id']) || $course->id != $data['id']) {
+                    $errors['idnumber']= get_string('courseidnumbertaken', 'error', $course->fullname);
                 }
-                $foundcoursenamestring = implode(',', $foundcoursenames);
-                $errors['shortname']= get_string('shortnametaken', '', $foundcoursenamestring);
             }
         }
 

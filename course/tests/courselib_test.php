@@ -656,6 +656,54 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(range(0, $course->numsections + 1), $sectionscreated);
     }
 
+    public function test_update_course() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $defaultcategory = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
+
+        $course = new stdClass();
+        $course->fullname = 'Apu loves Unit Təsts';
+        $course->shortname = 'test1';
+        $course->idnumber = '1';
+        $course->summary = 'Awesome!';
+        $course->summaryformat = FORMAT_PLAIN;
+        $course->format = 'topics';
+        $course->newsitems = 0;
+        $course->numsections = 5;
+        $course->category = $defaultcategory;
+        $original = (array) $course;
+
+        $created = create_course($course);
+        // Ensure the checks only work on idnumber/shortname that are not already ours.
+        $created = update_course($created);
+
+        $course->shortname = 'test2';
+        $course->idnumber = '2';
+
+        $created2 = create_course($course);
+
+        // Test duplicate idnumber.
+        $created2->idnumber = '1';
+        try {
+            update_course($created2);
+            $this->fail('Expected exception when trying to update a course with duplicate idnumber');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('courseidnumbertaken', 'error', $created2->idnumber), $e->getMessage());
+        }
+
+        // Test duplicate shortname.
+        $created2->idnumber = '2';
+        $created2->shortname = 'test1';
+        
+        try {
+            update_course($created2);
+            $this->fail('Expected exception when trying to update a course with a duplicate shortname');
+        } catch (moodle_exception $e) {
+            $this->assertEquals(get_string('shortnametaken', 'error', $created2->shortname), $e->getMessage());
+        }
+    }
+
     public function test_course_add_cm_to_section() {
         global $DB;
         $this->resetAfterTest(true);
