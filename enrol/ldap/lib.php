@@ -979,7 +979,7 @@ class enrol_ldap_plugin extends enrol_plugin {
 
         // Check if the shortname already exists if it does - skip course creation.
         if ($DB->record_exists('course', array('shortname' => $course->shortname))) {
-            $trace->output(get_string('duplicateshortname', 'enrol_ldap', $course));
+            error_log($this->errorlogtag . get_string('duplicateshortname', 'enrol_ldap', $course));
             return false;
         }
 
