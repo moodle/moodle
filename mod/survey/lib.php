@@ -532,11 +532,7 @@ function survey_print_multi($question) {
     }
     echo "</tr>\n";
 
-    if ($oneanswer) {
-        echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n";
-    } else {
-        echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n";
-    }
+    echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n";
 
     $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
 
@@ -575,7 +571,7 @@ function survey_print_multi($question) {
             echo "<span class=\"option\">$q->text</span></th>\n";
 
             $default = get_accesshide($strdefault);
-            echo '<td class="whitecell"><label for="qP'. $P.$q->id .'"><input type="radio" name="qP'.$P.$q->id. '" id="qP'. $q->id .'" value="0" checked="checked" />'.$default.'</label></td>';
+            echo '<td class="whitecell"><label for="qP'.$q->id.'"><input type="radio" name="qP'.$q->id.'" id="qP'.$q->id.'" value="0" checked="checked" />'.$default.'</label></td>';
 
 
             for ($i=1;$i<=$numoptions;$i++) {
