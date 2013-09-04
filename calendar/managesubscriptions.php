@@ -33,7 +33,7 @@ $courseid = optional_param('course', SITEID, PARAM_INT);
 // Used for processing subscription actions.
 $subscriptionid = optional_param('id', 0, PARAM_INT);
 $pollinterval  = optional_param('pollinterval', 0, PARAM_INT);
-$action = optional_param('action', '', PARAM_ALPHA);
+$action = optional_param('action', '', PARAM_INT);
 
 $url = new moodle_url('/calendar/managesubscriptions.php');
 if ($courseid != SITEID) {
