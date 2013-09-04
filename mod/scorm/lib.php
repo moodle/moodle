@@ -113,20 +113,24 @@ function scorm_add_instance($scorm, $mform=null) {
 
     $id = $DB->insert_record('scorm', $scorm);
 
-    /// update course module record - from now on this instance properly exists and all function may be used
+    // Update course module record - from now on this instance properly exists and all function may be used.
     $DB->set_field('course_modules', 'instance', $id, array('id'=>$cmid));
 
-    /// reload scorm instance
+    // Reload scorm instance.
     $record = $DB->get_record('scorm', array('id'=>$id));
 
-    /// store the package and verify
+    // Store the package and verify.
     if ($record->scormtype === SCORM_TYPE_LOCAL) {
-        if ($mform) {
-            $filename = $mform->get_new_filename('packagefile');
+        if ($data = $mform->get_data()) {
+            $fs = get_file_storage();
+            $fs->delete_area_files($context->id, 'mod_scorm', 'package');
+            file_save_draft_area_files($data->packagefile, $context->id, 'mod_scorm', 'package',
+                0, array('subdirs' => 0, 'maxfiles' => 1));
+            // Get filename of zip that was uploaded.
+            $files = $fs->get_area_files($context->id, 'mod_scorm', 'package', 0, '', false);
+            $file = reset($files);
+            $filename = $file->get_filename();
             if ($filename !== false) {
-                $fs = get_file_storage();
-                $fs->delete_area_files($context->id, 'mod_scorm', 'package');
-                $mform->save_stored_file('packagefile', $context->id, 'mod_scorm', 'package', 0, '/', $filename);
                 $record->reference = $filename;
             }
         }
@@ -142,10 +146,10 @@ function scorm_add_instance($scorm, $mform=null) {
         return false;
     }
 
-    // save reference
+    // Save reference.
     $DB->update_record('scorm', $record);
 
-    /// extra fields required in grade related functions
+    // Extra fields required in grade related functions.
     $record->course     = $courseid;
     $record->cmidnumber = $cmidnumber;
     $record->cmid       = $cmid;
@@ -193,13 +197,17 @@ function scorm_update_instance($scorm, $mform=null) {
     $context = context_module::instance($cmid);
 
     if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
-        if ($mform) {
-            $filename = $mform->get_new_filename('packagefile');
+        if ($data = $mform->get_data()) {
+            $fs = get_file_storage();
+            $fs->delete_area_files($context->id, 'mod_scorm', 'package');
+            file_save_draft_area_files($data->packagefile, $context->id, 'mod_scorm', 'package',
+                0, array('subdirs' => 0, 'maxfiles' => 1));
+            // Get filename of zip that was uploaded.
+            $files = $fs->get_area_files($context->id, 'mod_scorm', 'package', 0, '', false);
+            $file = reset($files);
+            $filename = $file->get_filename();
             if ($filename !== false) {
                 $scorm->reference = $filename;
-                $fs = get_file_storage();
-                $fs->delete_area_files($context->id, 'mod_scorm', 'package');
-                $mform->save_stored_file('packagefile', $context->id, 'mod_scorm', 'package', 0, '/', $filename);
             }
         }
 
@@ -511,9 +519,9 @@ function scorm_cron () {
     require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
     $sitetimezone = $CFG->timezone;
-    /// Now see if there are any scorm updates to be done
+    // Now see if there are any scorm updates to be done.
 
-    if (!isset($CFG->scorm_updatetimelast)) {    // To catch the first time
+    if (!isset($CFG->scorm_updatetimelast)) {    // To catch the first time.
         set_config('scorm_updatetimelast', 0);
     }
 
@@ -524,17 +532,17 @@ function scorm_cron () {
 
         set_config('scorm_updatetimelast', $timenow);
 
-        mtrace('Updating scorm packages which require daily update');//We are updating
+        mtrace('Updating scorm packages which require daily update');// We are updating.
 
-        $scormsupdate = $DB->get_records_select('scorm', 'updatefreq = ? AND scormtype <> ?', array(SCORM_UPDATE_EVERYDAY, SCORM_TYPE_LOCAL));
+        $scormsupdate = $DB->get_records('scorm', array('updatefreq' => SCORM_UPDATE_EVERYDAY));
         foreach ($scormsupdate as $scormupdate) {
             scorm_parse($scormupdate, true);
         }
 
-        //now clear out AICC session table with old session data
-        $cfg_scorm = get_config('scorm');
-        if (!empty($cfg_scorm->allowaicchacp)) {
-            $expiretime = time() - ($cfg_scorm->aicchacpkeepsessiondata*24*60*60);
+        // Now clear out AICC session table with old session data.
+        $cfgscorm = get_config('scorm');
+        if (!empty($cfgscorm->allowaicchacp)) {
+            $expiretime = time() - ($cfgscorm->aicchacpkeepsessiondata*24*60*60);
             $DB->delete_records_select('scorm_aicc_session', 'timemodified < ?', array($expiretime));
         }
     }
@@ -1331,6 +1339,9 @@ function scorm_set_completion($scorm, $userid, $completionstate = COMPLETION_COM
 function scorm_validate_package($file) {
     $packer = get_file_packer('application/zip');
     $errors = array();
+    if ($file->is_external_file()) { // Get zip file so we can check it is correct.
+        $file->import_external_file_contents();
+    }
     $filelist = $file->list_files($packer);
 
     if (!is_array($filelist)) {
