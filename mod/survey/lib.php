@@ -509,7 +509,21 @@ function survey_print_multi($question) {
     $options = explode( ",", $question->options);
     $numoptions = count($options);
 
+    // COLLES Actual (which is having questions of type 1) and COLLES Preferred (type 2)
+    // expect just one answer per question. COLLES Actual and Preferred (type 3) expects
+    // two answers per question. ATTLS (having a single question of type 1) expects one
+    // answer per question. CIQ is not using multiquestions (i.e. a question with subquestions).
+    // Note that the type of subquestions does not really matter, it's the type of the
+    // question itself that determines everything.
     $oneanswer = ($question->type == 1 || $question->type == 2) ? true : false;
+
+    // COLLES Preferred (having questions of type 2) will use the radio elements with the name
+    // like qP1, qP2 etc. COLLES Actual and ATTLS have radios like q1, q2 etc.
+    if ($question->type == 2) {
+        $P = "P";
+    } else {
+        $P = "";
+    }
 
     echo "<tr class=\"smalltext\"><th scope=\"row\">$strresponses</th>";
     echo "<th scope=\"col\" class=\"hresponse\">". get_string('notyetanswered', 'survey'). "</th>";
@@ -531,13 +545,6 @@ function survey_print_multi($question) {
         $rowclass = survey_question_rowclass($qnum);
         if ($q->text) {
             $q->text = get_string($q->text, "survey");
-        }
-
-        $oneanswer = ($q->type == 1 || $q->type == 2) ? true : false;
-        if ($q->type == 2) {
-            $P = "P";
-        } else {
-            $P = "";
         }
 
         echo "<tr class=\"$rowclass rblock\">";
