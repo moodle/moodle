@@ -1390,6 +1390,8 @@ class core_course_courselib_testcase extends advanced_testcase {
      * Test that triggering a course_created event works as expected.
      */
     public function test_course_created_event() {
+        global $DB;
+
         $this->resetAfterTest();
 
         // Catch the events.
@@ -1397,6 +1399,8 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Create the course.
         $course = $this->getDataGenerator()->create_course();
+        // Get course from DB for comparison.
+        $course = $DB->get_record('course', array('id' => $course->id));
 
         // Capture the event.
         $events = $sink->get_events();
@@ -1407,7 +1411,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\course_created', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($course->id, $event->objectid);
-        $this->assertEquals(context_course::instance($course->id)->id, $event->contextid);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($course, $event->get_record_snapshot('course', $course->id));
         $this->assertEquals('course_created', $event->get_legacy_eventname());
         $this->assertEventLegacyData($course, $event);
@@ -1432,69 +1436,60 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Create a hidden category we are going to move this course to.
         $categoryhidden = $this->getDataGenerator()->create_category(array('visible' => 0));
 
-        // Catch the update events.
+        // Update course and catch course_updated event.
         $sink = $this->redirectEvents();
-
-        // Keep track of the old sortorder.
-        $sortorder = $course->sortorder;
-
-        // Call update_course which will trigger a course_updated event.
         update_course($course);
-
-        // Return the updated course information from the DB.
-        $updatedcourse = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
-
-        // Now move the course to the category, this will also trigger an event.
-        move_courses(array($course->id), $category->id);
-
-        // Return the moved course information from the DB.
-        $movedcourse = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
-
-        // Now move the course to the hidden category, this will also trigger an event.
-        move_courses(array($course->id), $categoryhidden->id);
-
-        // Return the moved course information from the DB.
-        $movedcoursehidden = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
-
-        // Now we want to set the sortorder back to what it was before fix_course_sortorder() was called. The reason for
-        // this is because update_course() and move_courses() call fix_course_sortorder() which alters the sort order in
-        // the DB, but it does not set the value of the sortorder for the course object passed to the event.
-        $updatedcourse->sortorder = $sortorder;
-        $movedcourse->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - 1;
-        $movedcoursehidden->sortorder = $categoryhidden->sortorder + MAX_COURSES_IN_CATEGORY - 1;
-
-        // Capture the events.
         $events = $sink->get_events();
         $sink->close();
 
-        // Validate the events.
-        $event = $events[0];
+        // Get updated course information from the DB.
+        $updatedcourse = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+        // Validate event.
+        $event = array_shift($events);
         $this->assertInstanceOf('\core\event\course_updated', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($updatedcourse->id, $event->objectid);
-        $this->assertEquals(context_course::instance($updatedcourse->id)->id, $event->contextid);
-        $this->assertEquals($updatedcourse, $event->get_record_snapshot('course', $updatedcourse->id));
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($updatedcourse, $event->get_record_snapshot('course', $event->objectid));
         $this->assertEquals('course_updated', $event->get_legacy_eventname());
         $this->assertEventLegacyData($updatedcourse, $event);
         $expectedlog = array($updatedcourse->id, 'course', 'update', 'edit.php?id=' . $course->id, $course->id);
         $this->assertEventLegacyLogData($expectedlog, $event);
 
-        $event = $events[1];
+        // Move course and catch course_updated event.
+        $sink = $this->redirectEvents();
+        move_courses(array($course->id), $category->id);
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Return the moved course information from the DB.
+        $movedcourse = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+        // Validate event.
+        $event = array_shift($events);
         $this->assertInstanceOf('\core\event\course_updated', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($movedcourse->id, $event->objectid);
-        $this->assertEquals(context_course::instance($movedcourse->id)->id, $event->contextid);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($movedcourse, $event->get_record_snapshot('course', $movedcourse->id));
         $this->assertEquals('course_updated', $event->get_legacy_eventname());
         $this->assertEventLegacyData($movedcourse, $event);
         $expectedlog = array($movedcourse->id, 'course', 'move', 'edit.php?id=' . $movedcourse->id, $movedcourse->id);
         $this->assertEventLegacyLogData($expectedlog, $event);
 
-        $event = $events[2];
+        // Move course to hidden category and catch course_updated event.
+        $sink = $this->redirectEvents();
+        move_courses(array($course->id), $categoryhidden->id);
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Return the moved course information from the DB.
+        $movedcoursehidden = $DB->get_record('course', array('id' => $course->id), '*', MUST_EXIST);
+        // Validate event.
+        $event = array_shift($events);
         $this->assertInstanceOf('\core\event\course_updated', $event);
         $this->assertEquals('course', $event->objecttable);
         $this->assertEquals($movedcoursehidden->id, $event->objectid);
-        $this->assertEquals(context_course::instance($movedcoursehidden->id)->id, $event->contextid);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $this->assertEquals($movedcoursehidden, $event->get_record_snapshot('course', $movedcoursehidden->id));
         $this->assertEquals('course_updated', $event->get_legacy_eventname());
         $this->assertEventLegacyData($movedcoursehidden, $event);
