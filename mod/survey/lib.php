@@ -542,7 +542,11 @@ function survey_print_multi($question) {
 
     foreach ($subquestions as $q) {
         $qnum++;
-        $rowclass = survey_question_rowclass($qnum);
+        if ($oneanswer) {
+            $rowclass = survey_question_rowclass($qnum);
+        } else {
+            $rowclass = survey_question_rowclass(round($qnum / 2));
+        }
         if ($q->text) {
             $q->text = get_string($q->text, "survey");
         }
@@ -564,11 +568,10 @@ function survey_print_multi($question) {
             $checklist["q$P$q->id"] = 0;
 
         } else {
-            // yu : fix for MDL-7501, possibly need to use user flag as this is quite ugly.
             echo "<th scope=\"row\" class=\"optioncell\">";
             echo "<b class=\"qnumtopcell\">$qnum</b> &nbsp; ";
             $qnum++;
-            echo "<span class=\"preferthat smalltext\">$stripreferthat</span> &nbsp; ";
+            echo "<span class=\"preferthat\">$stripreferthat</span> &nbsp; ";
             echo "<span class=\"option\">$q->text</span></th>\n";
 
             $default = get_accesshide($strdefault);
@@ -585,7 +588,7 @@ function survey_print_multi($question) {
             echo "<tr class=\"$rowclass rblock\">";
             echo "<th scope=\"row\" class=\"optioncell\">";
             echo "<b class=\"qnumtopcell\">$qnum</b> &nbsp; ";
-            echo "<span class=\"foundthat smalltext\">$strifoundthat</span> &nbsp; ";
+            echo "<span class=\"foundthat\">$strifoundthat</span> &nbsp; ";
             echo "<span class=\"option\">$q->text</span></th>\n";
 
             $default = get_accesshide($strdefault);
