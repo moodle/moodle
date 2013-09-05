@@ -145,7 +145,7 @@ class moodle1_mod_resource_handler extends moodle1_mod_handler {
         $resource['timemodified']    = $data['timemodified'];
 
         // populate display and displayoptions fields
-        $options = array('printheading' => 0, 'printintro' => 1);
+        $options = array('printintro' => 1);
         if ($data['options'] == 'frame') {
             $resource['display'] = RESOURCELIB_DISPLAY_FRAME;
 
