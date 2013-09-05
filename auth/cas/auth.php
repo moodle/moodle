@@ -137,7 +137,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
             // test pgtIou parameter for proxy mode (https connection
             // in background from CAS server to the php server)
             if ($authCAS != 'CAS' && !isset($_GET['pgtIou'])) {
-                $PAGE->set_url('/auth/cas/auth.php');
+                $PAGE->set_url('/login/index.php');
                 $PAGE->navbar->add($CASform);
                 $PAGE->set_title("$site->fullname: $CASform");
                 $PAGE->set_heading($site->fullname);
