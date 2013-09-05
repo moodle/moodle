@@ -186,11 +186,22 @@ if ($user->deleted) {
     }
 }
 
-/// OK, security out the way, now we are showing the user
+// OK, security out the way, now we are showing the user.
+// Trigger a user profile viewed event.
+$event = \core\event\user_profile_viewed::create(array(
+    'objectid' => $USER->id,
+    'relateduserid' => $user->id,
+    'context' => $usercontext,
+    'other' => array(
+        'courseid' => $course->id,
+        'courseshortname' => $course->shortname,
+        'coursefullname' => $course->fullname
+    )
+));
+$event->add_record_snapshot('user', $user);
+$event->trigger();
 
-add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
-
-/// Get the hidden field list
+// Get the hidden field list.
 if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
     $hiddenfields = array();
 } else {
