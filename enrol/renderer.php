@@ -193,7 +193,7 @@ class core_enrol_renderer extends plugin_renderer_base {
             if ($canassign and (is_siteadmin() or isset($assignableroles[$roleid])) and !$role['unchangeable']) {
                 $strunassign = get_string('unassignarole', 'role', $role['text']);
                 $icon = html_writer::empty_tag('img', array('alt'=>$strunassign, 'src'=>$iconenrolremove));
-                $url = new moodle_url($pageurl, array('action'=>'unassign', 'role'=>$roleid, 'user'=>$userid));
+                $url = new moodle_url($pageurl, array('action'=>'unassign', 'roleid'=>$roleid, 'user'=>$userid));
                 $rolesoutput .= html_writer::tag('div', $role['text'] . html_writer::link($url, $icon, array('class'=>'unassignrolelink', 'rel'=>$roleid, 'title'=>$strunassign)), array('class'=>'role role_'.$roleid));
             } else {
                 $rolesoutput .= html_writer::tag('div', $role['text'], array('class'=>'role unchangeable', 'rel'=>$roleid));
