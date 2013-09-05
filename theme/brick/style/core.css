@@ -272,7 +272,7 @@ div.block.hidden div.header {
 
 /** main headings **/
 
-.generalbox h2,h3.sectionname, h2.headingblock,h2,h3, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2 {
+.generalbox h2,h3.sectionname,h2,h3, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2 {
     font-weight: 600;
     letter-spacing: -1px;
     line-height: 1.3em;

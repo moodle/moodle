@@ -116,15 +116,6 @@ a:hover {
 
 /* Course
 ----------------------------*/
-
-.headingblock {
-    background: url([[pix:theme|headingblock]]) repeat-x 0 0;
-    color: #fff;
-    font-weight: normal;
-    border: none;
-    padding: 2px 5px;
-}
-
 .course-content .main {
     border: 1px solid #eee;
     background: #eee;

@@ -264,10 +264,6 @@ td.eventskey {
 
 /* Course */
 
-h2.headingblock {
-    font-weight: normal;
-}
-
 .coursebox {
     border-bottom: 1px solid #eee;
 }
@@ -291,11 +287,6 @@ h2.headingblock {
 
 .coursebox .content .teachers {
     font-size: 0.95em;
-}
-
-h2.headingblock {
-    border-bottom: 1px solid #eee;
-    font-size: 1.5em;
 }
 
 #page-course-index-category .categorypicker {

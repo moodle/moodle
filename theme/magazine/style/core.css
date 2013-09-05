@@ -697,7 +697,7 @@ html>
 
 /** main headings **/
 
-.generalbox h2,h3.sectionname, h2.headingblock,h2,h3, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2 {
+.generalbox h2,h3.sectionname,h2,h3, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2 {
     font-size: 30px;
     padding-bottom: 2px;
     margin: 3px 0 2px;

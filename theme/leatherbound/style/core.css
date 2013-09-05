@@ -151,15 +151,6 @@ a:active {
 /* Course
 ---------------------------*/
 
-h2.headingblock {
-    border-width: 0 0 1px 0;
-    padding: 5px 5px 2px;
-    font-weight: normal;
-    font-size: 1.2em;
-    background: #f7f5f1;
-    color: #251c17;
-}
-
 .course-content .main {
     background: #f7f5f1;
     border: 1px solid #ddd

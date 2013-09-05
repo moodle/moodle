@@ -28,11 +28,6 @@ ul {
     margin: 0.5em 0;
     padding: 0;
 }
-.headingblock {
-    border-bottom:0px solid #DDDDDD;
-    color:inherit;
-    font-size:inherit;
-}
 h1.helpheading,
 h2.helpheading {
     font-size: 1.6em;

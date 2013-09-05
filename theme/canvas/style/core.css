@@ -17,12 +17,6 @@ body {
     border: none;
 }
 
-.headingblock {
-    border-bottom: 1px solid #ddd;
-    font-size: 1.3em;
-    color: #333;
-}
-
 #notice {
     text-align: center;
 }
@@ -437,11 +431,6 @@ body {
 
 .managelink {
     text-align: right;
-}
-
-#page-tag-index .headingblock {
-    text-align: center;
-    margin-bottom: 0;
 }
 
 #page-tag-index #tag-management-box {
