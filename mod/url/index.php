@@ -47,6 +47,7 @@ $PAGE->set_title($course->shortname.': '.$strurls);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strurls);
 echo $OUTPUT->header();
+echo $OUTPUT->heading($strurls);
 
 if (!$urls = get_all_instances_in_course('url', $course)) {
     notice(get_string('thereareno', 'moodle', $strurls), "$CFG->wwwroot/course/view.php?id=$course->id");
