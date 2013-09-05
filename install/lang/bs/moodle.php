@@ -30,5 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'rtl';
-$string['thislanguage'] = 'سۆرانی';
+$string['language'] = 'Jezik';
+$string['next'] = 'Sljedeći';
+$string['previous'] = 'Prethodni';
+$string['reload'] = 'Učitaj ponovo';
