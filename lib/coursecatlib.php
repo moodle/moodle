@@ -596,6 +596,9 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             } else {
                 // parent not found. This is data consistency error but next fix_course_sortorder() should fix it
                 $all[0][] = $record->id;
+                if (!$record->visible) {
+                    $all['0i'][] = $record->id;
+                }
             }
             $count++;
         }
