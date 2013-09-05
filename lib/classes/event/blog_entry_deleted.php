@@ -22,6 +22,8 @@
  */
 namespace core\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * class blog_entry_deleted
  *
