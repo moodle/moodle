@@ -36,8 +36,7 @@ echo $OUTPUT->heading(get_string('maketestplan', 'tool_generator'));
 
 // Information message.
 $context = context_system::instance();
-$repourl = 'https://github.com/moodlehq/moodle-performance-comparison';
-$markdownlink = '[' . $repourl . '](' . $repourl . ')';
+$markdownlink = '[' . tool_generator_testplan_backend::get_repourl() . '](' . tool_generator_testplan_backend::get_repourl() . ')';
 echo $OUTPUT->box(format_text(get_string('testplanexplanation', 'tool_generator', $markdownlink),
         FORMAT_MARKDOWN, array('context' => $context)));
 

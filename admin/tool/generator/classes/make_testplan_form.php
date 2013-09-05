@@ -66,24 +66,16 @@ class tool_generator_make_testplan_form extends moodleform {
      * @return array An array of errors
      */
     public function validation($data, $files) {
-        global $CFG, $DB;
+        global $CFG;
 
         $errors = array();
         if (empty($CFG->tool_generator_users_password) || is_bool($CFG->tool_generator_users_password)) {
             $errors['updateuserspassword'] = get_string('error_nouserspassword', 'tool_generator');
         }
 
-        // Check the course has users.
         // Better to repeat here the query than to do it afterwards and end up with an exception.
-        $coursecontext = context_course::instance($data['courseid']);
-        if (!$users = get_enrolled_users($coursecontext, '', 0, 'u.id')) {
-            $errors['courseid'] = get_string('coursewithoutusers', 'tool_generator');
-        }
-
-        // Checks that the selected course has enough users.
-        $coursesizes = tool_generator_course_backend::get_users_per_size();
-        if (count($users) < $coursesizes[$data['size']]) {
-            $errors['size'] = get_string('notenoughusers', 'tool_generator');
+        if ($courseerrors = tool_generator_testplan_backend::has_selected_course_any_problem($data['courseid'], $data['size'])) {
+            $errors = array_merge($errors, $courseerrors);
         }
 
         return $errors;

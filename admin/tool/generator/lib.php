@@ -40,8 +40,8 @@ defined('MOODLE_INTERNAL') || die();
  */
 function tool_generator_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
 
-    // Only for admins.
-    if (!is_siteadmin()) {
+    // Only for admins or CLI.
+    if (!defined('CLI_SCRIPT') && !is_siteadmin()) {
         die;
     }
 

@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/backend.php');
+require_once(__DIR__ . '/course_backend.php');
 
 /**
  * Generates the files required by JMeter.
@@ -34,6 +35,11 @@ require_once(__DIR__ . '/backend.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tool_generator_testplan_backend extends tool_generator_backend {
+
+    /**
+     * @var The URL to the repository of the external project.
+     */
+    protected static $repourl = 'https://github.com/moodlehq/moodle-performance-comparison';
 
     /**
      * @var Number of users depending on the selected size.
@@ -85,6 +91,15 @@ class tool_generator_testplan_backend extends tool_generator_backend {
             $options[$course->id] = $course->fullname . '(' . $course->shortname . ')';
         }
         return $options;
+    }
+
+    /**
+     * Getter for moodle-performance-comparison project URL.
+     *
+     * @return string
+     */
+    public static function get_repourl() {
+        return self::$repourl;
     }
 
     /**
@@ -272,4 +287,45 @@ class tool_generator_testplan_backend extends tool_generator_backend {
         return $data;
     }
 
+    /**
+     * Checks if the selected target course is ok.
+     *
+     * @param int|string $course
+     * @param int $size
+     * @return array Errors array or false if everything is ok
+     */
+    public static function has_selected_course_any_problem($course, $size) {
+        global $DB;
+
+        $errors = array();
+
+        if (!is_numeric($course)) {
+            if (!$course = $DB->get_field('course', 'id', array('shortname' => $course))) {
+                $errors['courseid'] = get_string('error_nonexistingcourse', 'tool_generator');
+                return $errors;
+            }
+        }
+
+        $coursecontext = context_course::instance($course, IGNORE_MISSING);
+        if (!$coursecontext) {
+            $errors['courseid'] = get_string('error_nonexistingcourse', 'tool_generator');
+            return $errors;
+        }
+
+        if (!$users = get_enrolled_users($coursecontext, '', 0, 'u.id')) {
+            $errors['courseid'] = get_string('coursewithoutusers', 'tool_generator');
+        }
+
+        // Checks that the selected course has enough users.
+        $coursesizes = tool_generator_course_backend::get_users_per_size();
+        if (count($users) < $coursesizes[$size]) {
+            $errors['size'] = get_string('notenoughusers', 'tool_generator');
+        }
+
+        if (empty($errors)) {
+            return false;
+        }
+
+        return $errors;
+    }
 }
