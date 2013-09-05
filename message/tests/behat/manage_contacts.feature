@@ -12,7 +12,8 @@ Feature: Manage contacts
     And I log in as "user1"
     And I send "Message 1 from user1 to user2" message to "user2"
     And I send "Message 2 from user1 to user2" message to "user2"
-    And I follow "Messages"
+    And I expand "My profile" node
+    And I click on "Messages" "link" in the "Navigation" "block"
     And I fill in "Search people and messages" with "User Two"
     And I press "Search people and messages"
     When I click on "Add contact" "link" in the "User Two" table row

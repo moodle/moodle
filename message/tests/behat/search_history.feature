@@ -11,7 +11,8 @@ Feature: Users can search their message history
       | user2 | User | Two | two@asd.com |
     And I log in as "user1"
     When I send "Give me your biscuits" message to "user2"
-    And I follow "Messages"
+    And I expand "My profile" node
+    And I click on "Messages" "link" in the "Navigation" "block"
     And I fill in "Search people and messages" with "your biscuits"
     And I press "Search people and messages"
     Then I should see "User Two"
