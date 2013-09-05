@@ -107,6 +107,7 @@ class blog_entry_created extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        return array (SITEID, 'blog', 'add', 'index.php?userid='.$this->userid.'&entryid='.$this->objectid, $this->customobject->subject);
+        return array (SITEID, 'blog', 'add', 'index.php?userid=' . $this->relateduserid . '&entryid=' . $this->objectid,
+                $this->customobject->subject);
     }
 }
