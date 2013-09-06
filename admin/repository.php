@@ -143,8 +143,10 @@ if (($action == 'edit') || ($action == 'new')) {
             $success = $repositorytype->update_options($settings);
         } else {
             $type = new repository_type($plugin, (array)$fromform, $visible);
-            $type->create();
             $success = true;
+            if (!$repoid = $type->create()) {
+                $success = false;
+            }
             $data = data_submitted();
         }
         if ($success) {

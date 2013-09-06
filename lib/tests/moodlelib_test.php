@@ -486,7 +486,7 @@ class moodlelib_testcase extends advanced_testcase {
         $this->assertEquals($object, fix_utf8($object));
 
         // valid utf8 string
-        $this->assertSame("žlutý koníček přeskočil potůček \n\t\r\0", fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
+        $this->assertSame("žlutý koníček přeskočil potůček \n\t\r", fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
 
         // invalid utf8 string
         $this->assertSame('aš', fix_utf8('a'.chr(130).'š'), 'This fails with buggy iconv() when mbstring extenstion is not available as fallback.');

@@ -3660,9 +3660,10 @@ class assign {
                 $team = groups_get_members($submission->groupid, 'u.id');
 
                 foreach ($team as $member) {
-                    $submission->groupid = 0;
-                    $submission->userid = $member->id;
-                    $this->gradebook_item_update($submission, null);
+                    $membersubmission = clone $submission;
+                    $membersubmission->groupid = 0;
+                    $membersubmission->userid = $member->id;
+                    $this->gradebook_item_update($membersubmission, null);
                 }
                 return;
             }
@@ -5324,7 +5325,7 @@ class assign {
 
         // Give each submission plugin a chance to process the locking.
         $plugins = $this->get_submission_plugins();
-        $submission = $this->get_user_submission($userid, false);
+        $submission = $this->get_user_submission($userid, true);
         foreach ($plugins as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 $plugin->lock($submission);
@@ -5361,7 +5362,7 @@ class assign {
         }
         // Give each submission plugin a chance to process the unlocking.
         $plugins = $this->get_submission_plugins();
-        $submission = $this->get_user_submission($userid, false);
+        $submission = $this->get_user_submission($userid, true);
         foreach ($plugins as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 $plugin->unlock($submission);

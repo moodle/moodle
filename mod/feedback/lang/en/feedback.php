@@ -91,7 +91,7 @@ $string['drop_feedback'] = 'Remove from this course';
 $string['edit_item'] = 'Edit question';
 $string['edit_items'] = 'Edit questions';
 $string['email_notification'] = 'Enable notification of submissions';
-$string['email_notification_help'] = 'If enabled, administrators receive email notification of feedback submissions.';
+$string['email_notification_help'] = 'If enabled, teachers will receive notification of feedback submissions.';
 $string['emailteachermail'] = '{$a->username} has completed feedback activity : \'{$a->feedback}\'
 
 You can view it here:

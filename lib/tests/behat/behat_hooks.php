@@ -89,6 +89,7 @@ class behat_hooks extends behat_base {
 
         // Now that we are MOODLE_INTERNAL.
         require_once(__DIR__ . '/../../behat/classes/behat_command.php');
+        require_once(__DIR__ . '/../../behat/classes/behat_selectors.php');
         require_once(__DIR__ . '/../../behat/classes/util.php');
         require_once(__DIR__ . '/../../testing/classes/test_lock.php');
         require_once(__DIR__ . '/../../testing/classes/nasty_strings.php');
@@ -136,6 +137,11 @@ class behat_hooks extends behat_base {
                !behat_util::is_test_mode_enabled() ||
                !behat_util::is_test_site()) {
             throw new coding_exception('Behat only can modify the test database and the test dataroot!');
+        }
+
+        // We need the Mink session to do it and we do it only before the first scenario.
+        if (self::is_first_scenario()) {
+            behat_selectors::register_moodle_selectors($this->getSession());
         }
 
         // Avoid some notices / warnings.

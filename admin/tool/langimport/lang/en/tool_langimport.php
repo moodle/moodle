@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['install'] = 'Install selected language pack';
+$string['install'] = 'Install selected language pack(s)';
 $string['installedlangs'] = 'Installed language packs';
 $string['langimport'] = 'Language import utility';
 $string['langimportdisabled'] = 'Language import feature has been disabled. You have to update your language packs manually at the file-system level. Do not forget to purge string caches after you do so.';
@@ -38,7 +38,7 @@ $string['nolangupdateneeded'] = 'All your language packs are up to date, no upda
 $string['pluginname'] = 'Language packs';
 $string['purgestringcaches'] = 'Purge string caches';
 $string['remotelangnotavailable'] = 'Because Moodle cannot connect to download.moodle.org, it is not possible for language packs to be installed automatically. Please download the appropriate ZIP file(s) from <a href="http://download.moodle.org/langpack/">download.moodle.org/langpack</a>, copy them to your {$a} directory and unzip them manually.';
-$string['uninstall'] = 'Uninstall selected language pack';
+$string['uninstall'] = 'Uninstall selected language pack(s)';
 $string['uninstallconfirm'] = 'You are about to completely uninstall language pack {$a}, are you sure?';
 $string['updatelangs'] = 'Update all installed language packs';
 
