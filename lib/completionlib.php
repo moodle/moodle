@@ -1264,9 +1264,12 @@ class completion_info {
      * @return int Completion state e.g. COMPLETION_INCOMPLETE
      */
     public static function internal_get_grade_state($item, $grade) {
-        if (!$grade) {
+        // If no grade is supplied or the grade doesn't have an actual value, then
+        // this is not complete.
+        if (!$grade || (is_null($grade->finalgrade) && is_null($grade->rawgrade))) {
             return COMPLETION_INCOMPLETE;
         }
+
         // Conditions to show pass/fail:
         // a) Grade has pass mark (default is 0.00000 which is boolean true so be careful)
         // b) Grade is visible (neither hidden nor hidden-until)
