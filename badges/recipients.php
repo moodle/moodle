@@ -31,7 +31,6 @@ $badgeid    = required_param('id', PARAM_INT);
 $sortby     = optional_param('sort', 'dateissued', PARAM_ALPHA);
 $sorthow    = optional_param('dir', 'DESC', PARAM_ALPHA);
 $page       = optional_param('page', 0, PARAM_INT);
-$updatepref = optional_param('updatepref', false, PARAM_BOOL);
 
 require_login();
 
