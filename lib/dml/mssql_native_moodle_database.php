@@ -639,6 +639,7 @@ class mssql_native_moodle_database extends moodle_database {
 
             } else {
                 $param = str_replace("'", "''", $param);
+                $param = str_replace("\0", "", $param);
                 $return .= "N'$param'";
             }
 

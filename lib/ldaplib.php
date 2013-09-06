@@ -241,9 +241,11 @@ function ldap_find_userdn($ldapconnection, $username, $contexts, $objectclass, $
         }
 
         if ($search_sub) {
-            $ldap_result = ldap_search($ldapconnection, $context,
-                                       '(&'.$objectclass.'('.$search_attrib.'='.ldap_filter_addslashes($username).'))',
-                                       array($search_attrib));
+            if (!$ldap_result = @ldap_search($ldapconnection, $context,
+                                           '(&'.$objectclass.'('.$search_attrib.'='.ldap_filter_addslashes($username).'))',
+                                           array($search_attrib))) {
+                break; // Not found in this context.
+            }
         } else {
             $ldap_result = ldap_list($ldapconnection, $context,
                                      '(&'.$objectclass.'('.$search_attrib.'='.ldap_filter_addslashes($username).'))',

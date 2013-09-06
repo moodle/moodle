@@ -189,7 +189,7 @@ abstract class grade_export {
             $name .= ' ('.get_string('feedback').')';
         }
 
-        return strip_tags($name);
+        return html_to_text($name, 0, false);
     }
 
     /**

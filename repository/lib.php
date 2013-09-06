@@ -255,6 +255,7 @@ class repository_type {
             }
             //run plugin_init function
             if (!repository::static_function($this->_typename, 'plugin_init')) {
+                $this->update_visibility(false);
                 if (!$silent) {
                     throw new repository_exception('cannotinitplugin', 'repository');
                 }
@@ -1074,7 +1075,7 @@ abstract class repository {
      *
      * @static
      * @param string $plugin repository plugin name
-     * @param string $function funciton name
+     * @param string $function function name
      * @return mixed
      */
     public static function static_function($plugin, $function) {
@@ -1085,14 +1086,6 @@ abstract class repository {
         if (!file_exists($typedirectory)) {
             //throw new repository_exception('invalidplugin', 'repository');
             return false;
-        }
-
-        $pname = null;
-        if (is_object($plugin) || is_array($plugin)) {
-            $plugin = (object)$plugin;
-            $pname = $plugin->name;
-        } else {
-            $pname = $plugin;
         }
 
         $args = func_get_args();
@@ -2306,7 +2299,7 @@ abstract class repository {
 
     /**
      * For oauth like external authentication, when external repository direct user back to moodle,
-     * this funciton will be called to set up token and token_secret
+     * this function will be called to set up token and token_secret
      */
     public function callback() {
     }

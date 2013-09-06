@@ -9,7 +9,7 @@ class mod_assignment_mod_form extends moodleform_mod {
     protected $_assignmentinstance = null;
 
     function definition() {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $DB, $PAGE, $COURSE;
         $mform =& $this->_form;
 
         // this hack is needed for different settings of each subtype
@@ -29,7 +29,11 @@ class mod_assignment_mod_form extends moodleform_mod {
         $mform->setType('type', PARAM_ALPHA);
         $mform->setDefault('type', $type);
 
-        require_once($CFG->dirroot.'/mod/assignment/type/'.$type.'/assignment.class.php');
+        $classfile = $CFG->dirroot.'/mod/assignment/type/'.$type.'/assignment.class.php';
+        if (!file_exists($classfile)) {
+            throw new moodle_exception('unsupportedsubplugin', 'assignment', new moodle_url('/course/view.php', array('id' => $COURSE->id)), $type);
+        }
+        require_once($classfile);
         $assignmentclass = 'assignment_'.$type;
         $assignmentinstance = new $assignmentclass();
 

@@ -184,9 +184,10 @@ class enrol_ldap_plugin extends enrol_plugin {
                     if ($this->get_config('autocreate')) { // Autocreate
                         error_log($this->errorlogtag.get_string('createcourseextid', 'enrol_ldap',
                                                                 array('courseextid'=>$course_ext_id)));
-                        if ($newcourseid = $this->create_course($enrol)) {
-                            $course = $DB->get_record('course', array('id'=>$newcourseid));
+                        if (!$newcourseid = $this->create_course($enrol)) {
+                            continue;
                         }
+                        $course = $DB->get_record('course', array('id'=>$newcourseid));
                     } else {
                         error_log($this->errorlogtag.get_string('createnotcourseextid', 'enrol_ldap',
                                                                 array('courseextid'=>$course_ext_id)));
@@ -400,9 +401,10 @@ class enrol_ldap_plugin extends enrol_plugin {
                             if ($this->get_config('autocreate')) { // Autocreate
                                 error_log($this->errorlogtag.get_string('createcourseextid', 'enrol_ldap',
                                                                         array('courseextid'=>$idnumber)));
-                                if ($newcourseid = $this->create_course($course)) {
-                                    $course_obj = $DB->get_record('course', array('id'=>$newcourseid));
+                                if (!$newcourseid = $this->create_course($course)) {
+                                    continue;
                                 }
+                                $course_obj = $DB->get_record('course', array('id'=>$newcourseid));
                             } else {
                                 error_log($this->errorlogtag.get_string('createnotcourseextid', 'enrol_ldap',
                                                                         array('courseextid'=>$idnumber)));
@@ -975,6 +977,12 @@ class enrol_ldap_plugin extends enrol_plugin {
             $course->summary = '';
         } else {
             $course->summary = $course_ext[$this->get_config('course_summary')][0];
+        }
+
+        // Check if the shortname already exists if it does - skip course creation.
+        if ($DB->record_exists('course', array('shortname' => $course->shortname))) {
+            error_log($this->errorlogtag . get_string('duplicateshortname', 'enrol_ldap', $course));
+            return false;
         }
 
         $newcourse = create_course($course);
