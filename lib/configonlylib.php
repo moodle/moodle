@@ -95,6 +95,9 @@ function min_fix_utf8($value) {
         error_reporting($olderror ^ E_NOTICE);
     }
 
+    // No null bytes expected in our data, so let's remove it.
+    $value = str_replace("\0", '', $value);
+
     static $buggyiconv = null;
     if ($buggyiconv === null) {
         $buggyiconv = (!function_exists('iconv') or iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
