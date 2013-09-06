@@ -228,9 +228,7 @@ class oauth_helper {
         //     oauth_token_secret
         $result = $this->parse_result($content);
         if (empty($result['oauth_token'])) {
-            // failed
-            var_dump($result);
-            exit;
+            throw new moodle_exception('Error while requesting an oauth token');
         }
         // build oauth authrize url
         if (!empty($this->oauth_callback)) {
