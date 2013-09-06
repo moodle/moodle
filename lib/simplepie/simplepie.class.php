@@ -14466,6 +14466,10 @@ class SimplePie_Sanitize
 			if ($type & SIMPLEPIE_CONSTRUCT_IRI)
 			{
 				$data = SimplePie_Misc::absolutize_url($data, $base);
+				// Moodle modification - Only return valid URLs. Note this change is interim and
+				// 2.5 and upwards have the cleaning performed in our own sanitizer.
+				$data = clean_param($data, PARAM_URL);
+				// End of Moodle modification.
 			}
 
 			if ($type & (SIMPLEPIE_CONSTRUCT_TEXT | SIMPLEPIE_CONSTRUCT_IRI))
