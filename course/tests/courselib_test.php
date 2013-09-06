@@ -660,7 +660,8 @@ class core_course_courselib_testcase extends advanced_testcase {
         global $DB;
 
         $this->resetAfterTest();
-        $defaultcategory = $DB->get_field_select('course_categories', "MIN(id)", "parent=0");
+
+        $defaultcategory = $DB->get_field_select('course_categories', 'MIN(id)', 'parent = 0');
 
         $course = new stdClass();
         $course->fullname = 'Apu loves Unit Təsts';
@@ -672,11 +673,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $course->newsitems = 0;
         $course->numsections = 5;
         $course->category = $defaultcategory;
-        $original = (array) $course;
 
         $created = create_course($course);
         // Ensure the checks only work on idnumber/shortname that are not already ours.
-        $created = update_course($created);
+        update_course($created);
 
         $course->shortname = 'test2';
         $course->idnumber = '2';
@@ -695,7 +695,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Test duplicate shortname.
         $created2->idnumber = '2';
         $created2->shortname = 'test1';
-        
         try {
             update_course($created2);
             $this->fail('Expected exception when trying to update a course with a duplicate shortname');

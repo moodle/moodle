@@ -2382,7 +2382,6 @@ function update_course($data, $editoroptions = NULL) {
         }
     }
 
-
     if (!isset($data->category) or empty($data->category)) {
         // prevent nulls and 0 in category field
         unset($data->category);
