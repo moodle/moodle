@@ -1012,6 +1012,7 @@ $string['tablenosave'] = 'Changes in table above are saved automatically.';
 $string['tablesnosave'] = 'Changes in tables above are saved automatically.';
 $string['tabselectedtofront'] = 'On tables with tabs, should the row with the currently selected tab be placed at the front';
 $string['tabselectedtofronttext'] = 'Bring selected tab row to front';
+$string['testsiteupgradewarning'] = 'You are currently using the {$a} test site, to upgrade it properly use the command line interface tool';
 $string['themedesignermode'] = 'Theme designer mode';
 $string['themelist'] = 'Theme list';
 $string['themenoselected'] = 'No theme selected';

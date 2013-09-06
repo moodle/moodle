@@ -223,6 +223,13 @@ if ($cache) {
 }
 
 if ($version > $CFG->version) {  // upgrade
+
+    // Warning about upgrading a test site.
+    $testsite = false;
+    if (defined('BEHAT_SITE_RUNNING')) {
+        $testsite = 'behat';
+    }
+
     // We purge all of MUC's caches here.
     // Caches are disabled for upgrade by CACHE_DISABLE_ALL so we must set the first arg to true.
     // This ensures a real config object is loaded and the stores will be purged.
@@ -255,7 +262,7 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_cacheable(false);
 
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $output->upgrade_confirm_page($a->newversion, $maturity);
+        echo $output->upgrade_confirm_page($a->newversion, $maturity, $testsite);
         die();
 
     } else if (empty($confirmrelease)){
