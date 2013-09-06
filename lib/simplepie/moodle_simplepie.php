@@ -198,6 +198,7 @@ class moodle_simplepie_sanitize extends SimplePie_Sanitize {
             if ($absolute !== false) {
                 $data = $absolute;
             }
+            $data = clean_param($data, PARAM_URL);
         }
 
         if ($type & (SIMPLEPIE_CONSTRUCT_TEXT | SIMPLEPIE_CONSTRUCT_IRI)) {
