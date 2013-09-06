@@ -20,6 +20,7 @@
  */
 function xmldb_portfolio_googledocs_upgrade($oldversion) {
     global $CFG, $DB;
+    require_once(__DIR__.'/upgradelib.php');
 
     $dbman = $DB->get_manager();
 
@@ -52,29 +53,4 @@ function xmldb_portfolio_googledocs_upgrade($oldversion) {
 
 
     return true;
-}
-
-function portfolio_googledocs_admin_upgrade_notification() {
-    $admins = get_admins();
-
-    if (empty($admins)) {
-        return;
-    }
-    $a = new stdClass;
-    $a->docsurl = get_docs_url('Google_OAuth_2.0_setup');
-
-    foreach ($admins as $admin) {
-        $message = new stdClass();
-        $message->component         = 'moodle';
-        $message->name              = 'notices';
-        $message->userfrom          = get_admin();
-        $message->userto            = $admin;
-        $message->smallmessage      = get_string('oauth2upgrade_message_small', 'portfolio_googledocs');
-        $message->subject           = get_string('oauth2upgrade_message_subject', 'portfolio_googledocs');
-        $message->fullmessage       = get_string('oauth2upgrade_message_content', 'portfolio_googledocs', $a);
-        $message->fullmessagehtml   = get_string('oauth2upgrade_message_content', 'portfolio_googledocs', $a);
-        $message->fullmessageformat = FORMAT_PLAIN;
-        $message->notification      = 1;
-        message_send($message);
-    }
 }

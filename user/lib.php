@@ -28,18 +28,19 @@
 /**
  * Creates a user
  *
- * @param object $user user to create
+ * @param stdClass $user user to create
+ * @param bool $updatepassword if true, authentication plugin will update password.
  * @return int id of the newly created user
  */
-function user_create_user($user) {
+function user_create_user($user, $updatepassword = true) {
     global $DB;
 
-    // set the timecreate field to the current time
+    // Set the timecreate field to the current time.
     if (!is_object($user)) {
             $user = (object)$user;
     }
 
-    //check username
+    // Check username.
     if ($user->username !== core_text::strtolower($user->username)) {
         throw new moodle_exception('usernamelowercase');
     } else {
@@ -48,10 +49,10 @@ function user_create_user($user) {
         }
     }
 
-    // save the password in a temp value for later
-    if (isset($user->password)) {
+    // Save the password in a temp value for later.
+    if ($updatepassword && isset($user->password)) {
 
-        //check password toward the password policy
+        // Check password toward the password policy.
         if (!check_password_policy($user->password, $errmsg)) {
             throw new moodle_exception($errmsg);
         }
@@ -63,36 +64,39 @@ function user_create_user($user) {
     $user->timecreated = time();
     $user->timemodified = $user->timecreated;
 
-    // insert the user into the database
+    // Insert the user into the database.
     $newuserid = $DB->insert_record('user', $user);
 
-    // trigger user_created event on the full database user row
-    $newuser = $DB->get_record('user', array('id' => $newuserid));
+    // Create USER context for this user.
+    $usercontext = context_user::instance($newuserid);
 
-    // create USER context for this user
-    context_user::instance($newuserid);
-
-    // update user password if necessary
+    // Update user password if necessary.
     if (isset($userpassword)) {
+        // Get full database user row, in case auth is default.
+        $newuser = $DB->get_record('user', array('id' => $newuserid));
         $authplugin = get_auth_plugin($newuser->auth);
         $authplugin->user_update_password($newuser, $userpassword);
     }
 
-    events_trigger('user_created', $newuser);
-
-    add_to_log(SITEID, 'user', get_string('create'), '/view.php?id='.$newuser->id,
-        fullname($newuser));
+    // Trigger event.
+    $event = \core\event\user_created::create(
+            array(
+                'objectid' => $newuserid,
+                'context' => $usercontext
+                )
+            );
+    $event->trigger();
 
     return $newuserid;
-
 }
 
 /**
  * Update a user with a user object (will compare against the ID)
  *
- * @param object $user the user to update
+ * @param stdClass $user the user to update
+ * @param bool $updatepassword if true, authentication plugin will update password.
  */
-function user_update_user($user) {
+function user_update_user($user, $updatepassword = true) {
     global $DB;
 
     // set the timecreate field to the current time
@@ -111,8 +115,8 @@ function user_update_user($user) {
         }
     }
 
-    // unset password here, for updating later
-    if (isset($user->password)) {
+    // Unset password here, for updating later, if password update is required.
+    if ($updatepassword && isset($user->password)) {
 
         //check password toward the password policy
         if (!check_password_policy($user->password, $errmsg)) {
@@ -126,22 +130,27 @@ function user_update_user($user) {
     $user->timemodified = time();
     $DB->update_record('user', $user);
 
-    // trigger user_updated event on the full database user row
-    $updateduser = $DB->get_record('user', array('id' => $user->id));
+    if ($updatepassword) {
+        // Get full user record.
+        $updateduser = $DB->get_record('user', array('id' => $user->id));
 
-    // if password was set, then update its hash
-    if (isset($passwd)) {
-        $authplugin = get_auth_plugin($updateduser->auth);
-        if ($authplugin->can_change_password()) {
-            $authplugin->user_update_password($updateduser, $passwd);
+        // if password was set, then update its hash
+        if (isset($passwd)) {
+            $authplugin = get_auth_plugin($updateduser->auth);
+            if ($authplugin->can_change_password()) {
+                $authplugin->user_update_password($updateduser, $passwd);
+            }
         }
     }
 
-    events_trigger('user_updated', $updateduser);
-
-    add_to_log(SITEID, 'user', get_string('update'), '/view.php?id='.$updateduser->id,
-        fullname($updateduser));
-
+    // Trigger event.
+    $event = \core\event\user_updated::create(
+            array(
+                'objectid' => $user->id,
+                'context' => context_user::instance($user->id)
+                )
+            );
+    $event->trigger();
 }
 
 /**

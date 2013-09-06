@@ -168,4 +168,37 @@ class mod_forum_lib_testcase extends advanced_testcase {
             $this->assertContains($course->shortname, array($course1->shortname, $course2->shortname));
         }
     }
+
+    /**
+     * Test user_enrolment_deleted observer.
+     */
+    public function test_user_enrolment_deleted_observer() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $metaplugin = enrol_get_plugin('meta');
+        $user1 = $this->getDataGenerator()->create_user();
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+        $student = $DB->get_record('role', array('shortname'=>'student'));
+
+        $e1 = $metaplugin->add_instance($course2, array('customint1' => $course1->id));
+        $enrol1 = $DB->get_record('enrol', array('id' => $e1));
+
+        // Enrol user.
+        $metaplugin->enrol_user($enrol1, $user1->id, $student->id);
+        $this->assertEquals(1, $DB->count_records('user_enrolments'));
+
+        // Unenrol user and capture event.
+        $sink = $this->redirectEvents();
+        $metaplugin->unenrol_user($enrol1, $user1->id);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertEquals(0, $DB->count_records('user_enrolments'));
+        $this->assertInstanceOf('\core\event\user_enrolment_deleted', $event);
+        $this->assertEquals('user_unenrolled', $event->get_legacy_eventname());
+    }
 }

@@ -27,6 +27,7 @@ require('../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/csvlib.class.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 require_once($CFG->dirroot.'/group/lib.php');
 require_once($CFG->dirroot.'/cohort/lib.php');
 require_once('locallib.php');
@@ -654,9 +655,8 @@ if ($formdata = $mform2->is_cancelled()) {
             }
 
             if ($doupdate or $existinguser->password !== $oldpw) {
-                // we want only users that were really updated
-
-                $DB->update_record('user', $existinguser);
+                // We want only users that were really updated.
+                user_update_user($existinguser, false);
 
                 $upt->track('status', $struserupdated);
                 $usersupdated++;
@@ -667,8 +667,6 @@ if ($formdata = $mform2->is_cancelled()) {
                     // save custom profile fields data from csv file
                     profile_save_data($existinguser);
                 }
-
-                events_trigger('user_updated', $existinguser);
 
                 if ($bulk == UU_BULK_UPDATED or $bulk == UU_BULK_ALL) {
                     if (!in_array($user->id, $SESSION->bulk_users)) {
@@ -789,8 +787,7 @@ if ($formdata = $mform2->is_cancelled()) {
                 $upt->track('password', '-', 'normal', false);
             }
 
-            // create user - insert_record ignores any extra properties
-            $user->id = $DB->insert_record('user', $user);
+            $user->id = user_create_user($user, false);
             $upt->track('username', html_writer::link(new moodle_url('/user/profile.php', array('id'=>$user->id)), s($user->username)), 'normal', false);
 
             // pre-process custom profile menu fields data from csv file
@@ -811,8 +808,6 @@ if ($formdata = $mform2->is_cancelled()) {
 
             // make sure user context exists
             context_user::instance($user->id);
-
-            events_trigger('user_created', $user);
 
             if ($bulk == UU_BULK_NEW or $bulk == UU_BULK_ALL) {
                 if (!in_array($user->id, $SESSION->bulk_users)) {

@@ -28,6 +28,7 @@ require_once($CFG->libdir.'/gdlib.php');
 require_once($CFG->dirroot.'/user/edit_form.php');
 require_once($CFG->dirroot.'/user/editlib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 //HTTPS is required in this page when $CFG->loginhttps enabled
 $PAGE->https_required();
@@ -177,8 +178,6 @@ $email_changed = false;
 
 if ($usernew = $userform->get_data()) {
 
-    add_to_log($course->id, 'user', 'update', "view.php?id=$user->id&course=$course->id", '');
-
     $email_changed_html = '';
 
     if ($CFG->emailchangeconfirmation) {
@@ -206,14 +205,14 @@ if ($usernew = $userform->get_data()) {
         $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $personalcontext, 'user', 'profile', 0);
     }
 
-    $DB->update_record('user', $usernew);
-
-    // pass a true $userold here
-    if (! $authplugin->user_update($user, $usernew)) {
-        // auth update failed, rollback for moodle
-        $DB->update_record('user', $user);
+    // Pass a true old $user here.
+    if (!$authplugin->user_update($user, $usernew)) {
+        // Auth update failed.
         print_error('cannotupdateprofile');
     }
+
+    // Update user with new profile data.
+    user_update_user($usernew, false);
 
     //update preferences
     useredit_update_user_preference($usernew);
@@ -259,7 +258,6 @@ if ($usernew = $userform->get_data()) {
 
     // reload from db
     $usernew = $DB->get_record('user', array('id'=>$user->id));
-    events_trigger('user_updated', $usernew);
 
     if ($USER->id == $user->id) {
         // Override old $USER session variable if needed

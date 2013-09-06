@@ -1220,6 +1220,8 @@ function fix_utf8($value) {
             // Shortcut.
             return $value;
         }
+        // No null bytes expected in our data, so let's remove it.
+        $value = str_replace("\0", '', $value);
 
         // Lower error reporting because glibc throws bogus notices.
         $olderror = error_reporting();
@@ -3213,11 +3215,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
 function require_logout() {
     global $USER;
 
-    $params = $USER;
-
     if (isloggedin()) {
-        add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
-
         $authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
         foreach ($authsequence as $authname) {
             $authplugin = get_auth_plugin($authname);
@@ -3225,9 +3223,16 @@ function require_logout() {
         }
     }
 
-    events_trigger('user_logout', $params);
+    $event = \core\event\user_loggedout::create(
+            array(
+                'objectid' => $USER->id,
+                'context' => context_user::instance($USER->id)
+                )
+            );
+    $event->trigger();
+
     session_get_instance()->terminate_current();
-    unset($params);
+    unset($GLOBALS['USER']);
 }
 
 /**
@@ -3440,7 +3445,9 @@ function get_user_key($script, $userid, $instance=null, $iprestriction=null, $va
  * @return bool Always returns true
  */
 function update_user_login_times() {
-    global $USER, $DB;
+    global $USER, $DB, $CFG;
+
+    require_once($CFG->dirroot.'/user/lib.php');
 
     if (isguestuser()) {
         // Do not update guest access times/ips for performance.
@@ -3466,7 +3473,7 @@ function update_user_login_times() {
     $USER->lastaccess = $user->lastaccess = $now;
     $USER->lastip = $user->lastip = getremoteaddr();
 
-    $DB->update_record('user', $user);
+    user_update_user($user, false);
     return true;
 }
 
@@ -3965,7 +3972,9 @@ function get_user_fieldnames() {
  */
 function create_user_record($username, $password, $auth = 'manual') {
     global $CFG, $DB;
-    require_once($CFG->dirroot."/user/profile/lib.php");
+    require_once($CFG->dirroot.'/user/profile/lib.php');
+    require_once($CFG->dirroot.'/user/lib.php');
+
     // Just in case check text case.
     $username = trim(core_text::strtolower($username));
 
@@ -4006,7 +4015,7 @@ function create_user_record($username, $password, $auth = 'manual') {
     $newuser->timemodified = $newuser->timecreated;
     $newuser->mnethostid = $CFG->mnet_localhost_id;
 
-    $newuser->id = $DB->insert_record('user', $newuser);
+    $newuser->id = user_create_user($newuser, false);
 
     // Save user profile data.
     profile_save_data($newuser);
@@ -4017,10 +4026,6 @@ function create_user_record($username, $password, $auth = 'manual') {
     }
     // Set the password.
     update_internal_user_password($user, $password);
-
-    // Fetch full user record for the event, the complete user data contains too much info
-    // and we want to be consistent with other places that trigger this event.
-    events_trigger('user_created', $DB->get_record('user', array('id' => $user->id)));
 
     return $user;
 }
@@ -4034,6 +4039,7 @@ function create_user_record($username, $password, $auth = 'manual') {
 function update_user_record($username) {
     global $DB, $CFG;
     require_once($CFG->dirroot."/user/profile/lib.php");
+    require_once($CFG->dirroot.'/user/lib.php');
     // Just in case check text case.
     $username = trim(core_text::strtolower($username));
 
@@ -4076,14 +4082,10 @@ function update_user_record($username) {
         if ($newuser) {
             $newuser['id'] = $oldinfo->id;
             $newuser['timemodified'] = time();
-            $DB->update_record('user', $newuser);
+            user_update_user((object) $newuser, false);
 
             // Save user profile data.
             profile_save_data((object) $newuser);
-
-            // Fetch full user record for the event, the complete user data contains too much info
-            // and we want to be consistent with other places that trigger this event.
-            events_trigger('user_updated', $DB->get_record('user', array('id' => $oldinfo->id)));
         }
     }
 
@@ -4141,6 +4143,7 @@ function delete_user(stdClass $user) {
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/message/lib.php');
     require_once($CFG->dirroot.'/tag/lib.php');
+    require_once($CFG->dirroot.'/user/lib.php');
 
     // Make sure nobody sends bogus record type as parameter.
     if (!property_exists($user, 'id') or !property_exists($user, 'username')) {
@@ -4166,6 +4169,9 @@ function delete_user(stdClass $user) {
         debugging('Local administrator accounts can not be deleted.');
         return false;
     }
+
+    // Keep a copy of user context, we need it for event.
+    $usercontext = context_user::instance($user->id);
 
     // Delete all grades - backup is kept in grade_grades_history table.
     grade_user_delete($user->id);
@@ -4216,9 +4222,6 @@ function delete_user(stdClass $user) {
     // Force logout - may fail if file based sessions used, sorry.
     session_kill_user($user->id);
 
-    // Now do a final accesslib cleanup - removes all role assignments in user context and context itself.
-    context_helper::delete_instance(CONTEXT_USER, $user->id);
-
     // Workaround for bulk deletes of users with the same email address.
     $delname = "$user->email.".time();
     while ($DB->record_exists('user', array('username' => $delname))) { // No need to use mnethostid here.
@@ -4235,9 +4238,22 @@ function delete_user(stdClass $user) {
     $updateuser->picture      = 0;
     $updateuser->timemodified = time();
 
-    $DB->update_record('user', $updateuser);
-    // Add this action to log.
-    add_to_log(SITEID, 'user', 'delete', "view.php?id=$user->id", $user->firstname.' '.$user->lastname);
+    user_update_user($updateuser, false);
+
+    // Now do a final accesslib cleanup - removes all role assignments in user context and context itself.
+    context_helper::delete_instance(CONTEXT_USER, $user->id);
+
+    // Any plugin that needs to cleanup should register this event.
+    // Trigger event.
+    $event = \core\event\user_deleted::create(
+            array(
+                'objectid' => $user->id,
+                'context' => $usercontext,
+                'other' => array('user' => (array)clone $user)
+                )
+            );
+    $event->add_record_snapshot('user', $updateuser);
+    $event->trigger();
 
     // We will update the user's timemodified, as it will be passed to the user_deleted event, which
     // should know about this updated property persisted to the user's table.
@@ -4246,9 +4262,6 @@ function delete_user(stdClass $user) {
     // Notify auth plugin - do not block the delete even when plugin fails.
     $authplugin = get_auth_plugin($user->auth);
     $authplugin->user_delete($user);
-
-    // Any plugin that needs to cleanup should register this event.
-    events_trigger('user_deleted', $user);
 
     return true;
 }

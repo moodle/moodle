@@ -87,6 +87,16 @@ class backup_plan extends base_plan implements loggable {
         return $this->controller->get_logger();
     }
 
+    /**
+     * Gets the progress reporter, which can be used to report progress within
+     * the backup or restore process.
+     *
+     * @return core_backup_progress Progress reporting object
+     */
+    public function get_progress() {
+        return $this->controller->get_progress();
+    }
+
     public function is_excluding_activities() {
         return $this->excludingdactivities;
     }

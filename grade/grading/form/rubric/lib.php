@@ -688,6 +688,29 @@ class gradingform_rubric_controller extends gradingform_controller {
         return array('rubric_criteria' => $rubric_criteria);
     }
 
+    /**
+     * Returns an array that defines the structure of the rubric's filling. This function is used by
+     * the web service function core_grading_external::get_gradingform_instances().
+     *
+     * @return An array containing a single key/value pair with the 'criteria' external_multiple_structure
+     * @see gradingform_controller::get_external_instance_filling_details()
+     * @since Moodle 2.6
+     */
+    public static function get_external_instance_filling_details() {
+        $criteria = new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'filling id'),
+                    'criterionid' => new external_value(PARAM_INT, 'criterion id'),
+                    'levelid' => new external_value(PARAM_INT, 'level id', VALUE_OPTIONAL),
+                    'remark' => new external_value(PARAM_RAW, 'remark', VALUE_OPTIONAL),
+                    'remarkformat' => new external_format_value('remark', VALUE_OPTIONAL)
+                )
+            ), 'filling', VALUE_OPTIONAL
+        );
+        return array ('criteria' => $criteria);
+    }
+
 }
 
 /**

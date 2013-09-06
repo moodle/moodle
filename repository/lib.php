@@ -255,6 +255,7 @@ class repository_type implements cacheable_object {
             }
             //run plugin_init function
             if (!repository::static_function($this->_typename, 'plugin_init')) {
+                $this->update_visibility(false);
                 if (!$silent) {
                     throw new repository_exception('cannotinitplugin', 'repository');
                 }
@@ -1139,7 +1140,7 @@ abstract class repository implements cacheable_object {
      *
      * @static
      * @param string $plugin repository plugin name
-     * @param string $function funciton name
+     * @param string $function function name
      * @return mixed
      */
     public static function static_function($plugin, $function) {
@@ -1150,14 +1151,6 @@ abstract class repository implements cacheable_object {
         if (!file_exists($typedirectory)) {
             //throw new repository_exception('invalidplugin', 'repository');
             return false;
-        }
-
-        $pname = null;
-        if (is_object($plugin) || is_array($plugin)) {
-            $plugin = (object)$plugin;
-            $pname = $plugin->name;
-        } else {
-            $pname = $plugin;
         }
 
         $args = func_get_args();
@@ -2437,7 +2430,7 @@ abstract class repository implements cacheable_object {
 
     /**
      * For oauth like external authentication, when external repository direct user back to moodle,
-     * this funciton will be called to set up token and token_secret
+     * this function will be called to set up token and token_secret
      */
     public function callback() {
     }
@@ -3225,15 +3218,4 @@ function initialise_filepicker($args) {
         $PAGE->requires->js_init_call('M.core_filepicker.set_templates', array($templates), true);
     }
     return $return;
-}
-
-/**
- * Small function to walk an array to attach repository ID
- *
- * @param array $value
- * @param string $key
- * @param int $id
- */
-function repository_attach_id(&$value, $key, $id){
-    $value['repo_id'] = $id;
 }

@@ -89,36 +89,6 @@ $maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $coursemaxby
 // Wait as long as it takes for this script to finish
 set_time_limit(0);
 
-// Early actions which need to be done before repository instances initialised
-switch ($action) {
-    // global search
-    case 'gsearch':
-        $params = array();
-        $params['context'] = array(context::instance_by_id($contextid), context_system::instance());
-        $params['currentcontext'] = context::instance_by_id($contextid);
-        $repos = repository::get_instances($params);
-        $list = array();
-        foreach($repos as $repo){
-            if ($repo->global_search()) {
-                $ret = $repo->search($search_text);
-                array_walk($ret['list'], 'repository_attach_id', $repo->id);  // See function below
-                $tmp = array_merge($list, $ret['list']);
-                $list = $tmp;
-            }
-        }
-        $listing = array('list'=>$list);
-        $listing['gsearch'] = true;
-        die(json_encode($listing));
-        break;
-
-    // remove the cache files & logout
-    case 'ccache':
-        $cache = new curl_cache;
-        $cache->refresh();
-        $action = 'list';
-        break;
-}
-
 // These actions all occur on the currently active repository instance
 switch ($action) {
     case 'sign':

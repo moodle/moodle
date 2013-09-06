@@ -204,6 +204,9 @@ function scorm_parse($scorm, $full) {
 
         if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
             if ($packagefile = $fs->get_file($context->id, 'mod_scorm', 'package', 0, '/', $scorm->reference)) {
+                if ($packagefile->is_external_file()) { // Get zip file so we can check it is correct.
+                    $packagefile->import_external_file_contents();
+                }
                 $newhash = $packagefile->get_contenthash();
             } else {
                 $newhash = null;

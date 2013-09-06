@@ -35,7 +35,7 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         // Create the XS course.
-        $backend = new tool_generator_backend('TOOL_MAKELARGECOURSE_XS', 0, false);
+        $backend = new tool_generator_course_backend('TOOL_MAKELARGECOURSE_XS', 0, false, false);
         $courseid = $backend->make();
 
         // Get course details.
@@ -106,5 +106,49 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
                 WHERE
                     fd.forum = ?", array($forum->instance));
         $this->assertEquals(2, $posts);
+    }
+
+    /**
+     * Creates an small test course with fixed data set and checks the used sections and users.
+     */
+    public function test_fixed_data_set() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create the S course (more sections and activities than XS).
+        $backend = new tool_generator_course_backend('TOOL_S_COURSE_1', 1, true, false);
+        $courseid = $backend->make();
+
+        // Get course details.
+        $course = get_course($courseid);
+        $modinfo = get_fast_modinfo($course);
+
+        // Check module instances belongs to section 1.
+        $instances = $modinfo->get_instances_of('page');
+        $npageinstances = count($instances);
+        foreach ($instances as $instance) {
+            $this->assertEquals(1, $instance->sectionnum);
+        }
+
+        // Users that started discussions are the same.
+        $forums = $modinfo->get_instances_of('forum');
+        $nforuminstances = count($forums);
+        $discussions = forum_get_discussions(reset($forums), 'd.timemodified ASC');
+        $lastusernumber = 0;
+        $discussionstarters = array();
+        foreach ($discussions as $discussion) {
+            $usernumber = intval($discussion->lastname);
+
+            // Checks that the users are odd numbers.
+            $this->assertEquals(1, $usernumber % 2);
+
+            // Checks that the users follows an increasing order.
+            $this->assertGreaterThan($lastusernumber, $usernumber);
+            $lastusernumber = $usernumber;
+            $discussionstarters[$discussion->userid] = $discussion->subject;
+        }
+
     }
 }

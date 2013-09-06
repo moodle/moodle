@@ -332,6 +332,7 @@ class core_component_testcase extends advanced_testcase {
         $expected = array(
             'mod' => "$CFG->dirroot/mod",
             'editor' => "$CFG->dirroot/lib/editor",
+            'tool' => "$CFG->dirroot/$CFG->admin/tool",
             'local' => "$CFG->dirroot/local",
         );
 

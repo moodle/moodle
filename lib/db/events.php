@@ -36,14 +36,6 @@ defined('MOODLE_INTERNAL') || die();
 /* List of legacy event handlers */
 
 $handlers = array(
-
-    'user_updated' => array (
-        'handlerfile'      => '/lib/badgeslib.php',
-        'handlerfunction'  => 'badges_award_handle_profile_criteria_review',
-        'schedule'         => 'instant',
-        'internal'         => 1,
-    ),
-
 /*
  * portfolio queued event - for non interactive file transfers
  * NOTE: this is a HACK, please do not add any more things like this here
@@ -70,6 +62,10 @@ $observers = array(
     array(
         'eventname'   => '\core\event\course_completed',
         'callback'    => 'core_badges_observer::course_criteria_review',
+    ),
+    array(
+        'eventname'   => '\core\event\user_updated',
+        'callback'    => 'core_badges_observer::profile_criteria_review',
     )
 
 );

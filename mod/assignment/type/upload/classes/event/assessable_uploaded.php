@@ -92,10 +92,10 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
     /**
      * Return localised event name.
      *
-     * @return \lang_string
+     * @return string
      */
     public static function get_name() {
-        return new \lang_string('event_assessable_uploaded', 'assignment_upload');
+        return get_string('event_assessable_uploaded', 'assignment_upload');
     }
 
     /**

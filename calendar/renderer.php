@@ -836,9 +836,11 @@ class core_calendar_renderer extends plugin_renderer_base {
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'course', 'value' => $courseid));
         $html .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $subscription->id));
         if (!empty($subscription->url)) {
-            $html .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'action', 'value' => get_string('update')));
+            $html .= html_writer::tag('button', get_string('update'), array('type'  => 'submit', 'name' => 'action',
+                                                                            'value' => CALENDAR_SUBSCRIPTION_UPDATE));
         }
-        $html .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'action', 'value' => get_string('remove')));
+        $html .= html_writer::tag('button', get_string('remove'), array('type'  => 'submit', 'name' => 'action',
+                                                                        'value' => CALENDAR_SUBSCRIPTION_REMOVE));
         $html .= html_writer::end_tag('div');
         $html .= html_writer::end_tag('form');
         return $html;

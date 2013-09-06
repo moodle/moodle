@@ -602,6 +602,23 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Ensure blocks have been associated to the course.
         $blockcount = $DB->count_records('block_instances', array('parentcontextid' => $context->id));
         $this->assertGreaterThan(0, $blockcount);
+
+        // Ensure that the shortname isn't duplicated.
+        try {
+            $created = create_course($course);
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertSame(get_string('shortnametaken', 'error', $course->shortname), $e->getMessage());
+        }
+
+        // Ensure that the idnumber isn't duplicated.
+        $course->shortname .= '1';
+        try {
+            $created = create_course($course);
+            $this->fail('Exception expected');
+        } catch (moodle_exception $e) {
+            $this->assertSame(get_string('courseidnumbertaken', 'error', $course->idnumber), $e->getMessage());
+        }
     }
 
     public function test_create_course_with_generator() {

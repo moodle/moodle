@@ -333,6 +333,7 @@ $string['courselegacyfiles_help'] = 'The course files area provides some backwar
 
 If you use this area to store course files, you can expose yourself to a number of privacy and security issues, as well as experiencing missing files in backups, course imports and any time content is shared or re-used.  It is therefore recommended that you do not use this area unless you really know what you are doing.';
 $string['courselegacyfiles_link'] = 'coursefiles2';
+$string['courselegacyfilesofcourse'] = 'Legacy course files: {$a}';
 $string['courseoverview'] = 'Course overview';
 $string['courseoverviewgraph'] = 'Course overview graph';
 $string['courseprofiles'] = 'Course profiles';
@@ -667,6 +668,10 @@ $string['eventcoursedeleted'] = 'Course deleted';
 $string['eventcourserestored'] = 'Course restored';
 $string['eventcourseupdated'] = 'Course updated';
 $string['eventcoursesectionupdated'] = ' Course section updated';
+$string['eventusercreated'] = 'User created';
+$string['eventuserdeleted'] = 'User deleted';
+$string['eventuserloggedout'] = 'User logged out';
+$string['eventuserupdated'] = 'User updated';
 $string['everybody'] = 'Everybody';
 $string['executeat'] = 'Execute at';
 $string['existing'] = 'Existing';

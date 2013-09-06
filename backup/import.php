@@ -90,10 +90,24 @@ if ($backup->get_stage() == backup_ui::STAGE_CONFIRMATION) {
 
 // If it's the final stage process the import
 if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
+    echo $OUTPUT->header();
+
+    // Display an extra progress bar so that we can show the current stage.
+    echo html_writer::start_div('', array('id' => 'executionprogress'));
+    echo $renderer->progress_bar($backup->get_progress_bar());
+
+    // Start the progress display - we split into 2 chunks for backup and restore.
+    $progress = new core_backup_display_progress();
+    $progress->start_progress('', 2);
+    $backup->get_controller()->set_progress($progress);
+
     // First execute the backup
     $backup->execute();
     $backup->destroy();
     unset($backup);
+
+    // Note that we've done that progress.
+    $progress->progress(1);
 
     // Check whether the backup directory still exists. If missing, something
     // went really wrong in backup, throw error. Note that backup::MODE_IMPORT
@@ -106,6 +120,7 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Prepare the restore controller. We don't need a UI here as we will just use what
     // ever the restore has (the user has just chosen).
     $rc = new restore_controller($backupid, $course->id, backup::INTERACTIVE_YES, backup::MODE_IMPORT, $USER->id, $restoretarget);
+    $rc->set_progress($progress);
     // Convert the backup if required.... it should NEVER happed
     if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
         $rc->convert();
@@ -140,8 +155,12 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Delete the temp directory now
     fulldelete($tempdestination);
 
+    // All progress complete. Hide progress area.
+    $progress->end_progress();
+    echo html_writer::end_div();
+    echo html_writer::script('document.getElementById("executionprogress").style.display = "none";');
+
     // Display a notification and a continue button
-    echo $OUTPUT->header();
     if ($warnings) {
         echo $OUTPUT->box_start();
         echo $OUTPUT->notification(get_string('warning'), 'notifywarning');

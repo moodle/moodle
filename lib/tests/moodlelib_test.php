@@ -169,8 +169,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         $object->b = 'bb';
         $this->assertEquals($object, fix_utf8($object));
 
-        // Valid utf8 string.
-        $this->assertSame("žlutý koníček přeskočil potůček \n\t\r\0", fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
+        // valid utf8 string
+        $this->assertSame("žlutý koníček přeskočil potůček \n\t\r", fix_utf8("žlutý koníček přeskočil potůček \n\t\r\0"));
 
         // Invalid utf8 string.
         $this->assertSame('aš', fix_utf8('a'.chr(130).'š'), 'This fails with buggy iconv() when mbstring extenstion is not available as fallback.');
@@ -1851,7 +1851,14 @@ class core_moodlelib_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user(array('idnumber'=>'abc'));
         $user2 = $this->getDataGenerator()->create_user(array('idnumber'=>'xyz'));
 
+        // Delete user and capture event.
+        $sink = $this->redirectEvents();
         $result = delete_user($user);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        // Test user is deleted in DB.
         $this->assertTrue($result);
         $deluser = $DB->get_record('user', array('id'=>$user->id), '*', MUST_EXIST);
         $this->assertEquals(1, $deluser->deleted);
@@ -1862,8 +1869,15 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $this->assertEquals(1, $DB->count_records('user', array('deleted'=>1)));
 
-        // Try invalid params.
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_deleted', $event);
+        $this->assertSame($user->id, $event->objectid);
+        $this->assertSame('user_deleted', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($user, $event);
+        $expectedlogdata = array(SITEID, 'user', 'delete', "view.php?id=$user->id", $user->firstname.' '.$user->lastname);
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
 
+        // Try invalid params.
         $record = new stdClass();
         $record->grrr = 1;
         try {
@@ -2406,5 +2420,36 @@ class core_moodlelib_testcase extends advanced_testcase {
         $formatstring = 'start seconds away second firstquater first firsthalf';
         $expectedarray = array('19' => 'second', '38' => 'first', '44' => 'firsthalf');
         $this->assertEquals($expectedarray, order_in_string($valuearray, $formatstring));
+    }
+
+    /**
+     * Test require_logout.
+     */
+    public function test_require_logout() {
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $course = $this->getDataGenerator()->create_course();
+
+        $this->assertTrue(isloggedin());
+
+        // Logout user and capture event.
+        $sink = $this->redirectEvents();
+        require_logout();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        // Check if user is logged out.
+        $this->assertFalse(isloggedin());
+
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_loggedout', $event);
+        $this->assertSame($user->id, $event->objectid);
+        $this->assertSame('user_logout', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($user, $event);
+        $expectedlogdata = array(SITEID, 'user', 'logout', 'view.php?id='.$event->objectid.'&course='.SITEID, $event->objectid, 0,
+            $event->objectid);
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
     }
 }

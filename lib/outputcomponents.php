@@ -3102,6 +3102,18 @@ class action_menu implements renderable {
     public $attributessecondary = array();
 
     /**
+     * The string to use next to the icon for the action icon relating to the secondary (dropdown) menu.
+     * @var array
+     */
+    public $actiontext = null;
+
+    /**
+     * An icon to use for the toggling the secondary menu (dropdown).
+     * @var pix_icon
+     */
+    public $actionicon;
+
+    /**
      * Constructs the action menu with the given items.
      *
      * @param array $actions An array of actions.
@@ -3127,6 +3139,12 @@ class action_menu implements renderable {
             'data-rel' => 'menu-content',
             'aria-labelledby' => 'action-menu-toggle-'.$this->instance,
             'role' => 'menu'
+        );
+        $this->actionicon = new pix_icon(
+            't/contextmenu',
+            new lang_string('actions', 'moodle'),
+            'moodle',
+            array('class' => 'iconsmall', 'title' => '')
         );
         $this->set_alignment(self::TR, self::BR);
         foreach ($actions as $action) {
@@ -3208,14 +3226,18 @@ class action_menu implements renderable {
         if ($output === null) {
             $output = $OUTPUT;
         }
-        $title = get_string('actions', 'moodle');
-        $pixicon = $output->pix_icon(
-            't/contextmenu',
-            $title,
-            'moodle',
-            array('class' => 'iconsmall', 'title' => '')
-        );
-
+        $pixicon = $this->actionicon;
+        $title = new lang_string('actions', 'moodle');
+        if ($pixicon instanceof renderable) {
+            $pixicon = $output->render($pixicon);
+            if ($pixicon instanceof pix_icon && isset($pixicon->attributes['alt'])) {
+                $title = $pixicon->attributes['alt'];
+            }
+        }
+        $string = '';
+        if ($this->actiontext) {
+            $string = $this->actiontext;
+        }
         $actions = $this->primaryactions;
         $attributes = array(
             'class' => 'toggle-display',
@@ -3223,7 +3245,7 @@ class action_menu implements renderable {
             'id' => 'action-menu-toggle-'.$this->instance,
             'role' => 'menuitem'
         );
-        $actions[] = html_writer::link('#', $pixicon, $attributes);
+        $actions[] = html_writer::link('#', $string.$pixicon, $attributes);
         return $actions;
     }
 
@@ -3344,7 +3366,7 @@ class action_menu_link extends action_link implements renderable {
      * @param bool $primary Whether this is a primary action or not.
      * @param array $attributes Any attribtues associated with the action.
      */
-    public function __construct(moodle_url $url, pix_icon $icon, $text, $primary = true, array $attributes = array()) {
+    public function __construct(moodle_url $url, pix_icon $icon = null, $text, $primary = true, array $attributes = array()) {
         parent::__construct($url, $text, null, $attributes, $icon);
         $this->primary = (bool)$primary;
         $this->add_class('menu-action');
@@ -3369,7 +3391,7 @@ class action_menu_link_primary extends action_menu_link {
      * @param string $text
      * @param array $attributes
      */
-    public function __construct(moodle_url $url, pix_icon $icon, $text, array $attributes = array()) {
+    public function __construct(moodle_url $url, pix_icon $icon = null, $text, array $attributes = array()) {
         parent::__construct($url, $icon, $text, true, $attributes);
     }
 }
@@ -3391,7 +3413,7 @@ class action_menu_link_secondary extends action_menu_link {
      * @param string $text
      * @param array $attributes
      */
-    public function __construct(moodle_url $url, pix_icon $icon, $text, array $attributes = array()) {
+    public function __construct(moodle_url $url, pix_icon $icon = null, $text, array $attributes = array()) {
         parent::__construct($url, $icon, $text, false, $attributes);
     }
 }

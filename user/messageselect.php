@@ -58,13 +58,12 @@ if ($deluser !== 0) {
     $url->param('deluser', $deluser);
 }
 $PAGE->set_url($url);
-$PAGE->set_context(context_system::instance());
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
 }
 
-require_login();
+require_login($course);
 
 $coursecontext = context_course::instance($id);   // Course context
 $systemcontext = context_system::instance();   // SYSTEM context

@@ -38,14 +38,14 @@ Feature: View my courses in navigation block
     And I log out
     And I log in as "student1"
     When I follow "My home"
-    Then I should not see "cat1" in the "div.block_navigation .type_system" "css_element"
-    And I should not see "cat2" in the "div.block_navigation .type_system" "css_element"
-    And I should see "c1" in the "div.block_navigation .type_system" "css_element"
-    And I should see "c31" in the "div.block_navigation .type_system" "css_element"
-    And I should see "c331" in the "div.block_navigation .type_system" "css_element"
-    And I should not see "c2" in the "div.block_navigation .type_system" "css_element"
-    And I should not see "c32" in the "div.block_navigation .type_system" "css_element"
-    And I should not see "c332" in the "div.block_navigation .type_system" "css_element"
+    Then I should not see "cat1" in the "Navigation" "block"
+    And I should not see "cat2" in the "Navigation" "block"
+    And I should see "c1" in the "Navigation" "block"
+    And I should see "c31" in the "Navigation" "block"
+    And I should see "c331" in the "Navigation" "block"
+    And I should not see "c2" in the "Navigation" "block"
+    And I should not see "c32" in the "Navigation" "block"
+    And I should not see "c332" in the "Navigation" "block"
 
   @javascript
   Scenario: The nested list of enrolled courses is shown
@@ -54,18 +54,18 @@ Feature: View my courses in navigation block
     And I log out
     And I log in as "student1"
     When I follow "My home"
-    Then I should see "cat1" in the "div.block_navigation .type_system" "css_element"
-    And I should see "cat3" in the "div.block_navigation .type_system" "css_element"
-    And I should not see "cat2" in the "div.block_navigation .type_system" "css_element"
+    Then I should see "cat1" in the "Navigation" "block"
+    And I should see "cat3" in the "Navigation" "block"
+    And I should not see "cat2" in the "Navigation" "block"
     And I expand "cat3" node
     And I wait "2" seconds
-    And I should see "cat31" in the "div.block_navigation .type_system" "css_element"
-    And I should see "cat33" in the "div.block_navigation .type_system" "css_element"
-    And I should not see "cat32" in the "div.block_navigation .type_system" "css_element"
+    And I should see "cat31" in the "Navigation" "block"
+    And I should see "cat33" in the "Navigation" "block"
+    And I should not see "cat32" in the "Navigation" "block"
     And I expand "cat31" node
     And I wait "2" seconds
-    And I should see "c31" in the "div.block_navigation .type_system" "css_element"
+    And I should see "c31" in the "Navigation" "block"
     And I expand "cat33" node
     And I wait "2" seconds
-    And I should see "c331" in the "div.block_navigation .type_system" "css_element"
-    And I should not see "c332" in the "div.block_navigation .type_system" "css_element"
+    And I should see "c331" in the "Navigation" "block"
+    And I should not see "c332" in the "Navigation" "block"

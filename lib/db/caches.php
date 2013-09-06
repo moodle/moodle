@@ -233,4 +233,10 @@ $definitions = array(
         'mode' => cache_store::MODE_REQUEST,
         'persistent' => true,
     ),
+    // Used to store external badges.
+    'externalbadges' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'ttl' => 3600,
+    ),
 );

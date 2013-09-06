@@ -342,7 +342,11 @@ echo "</div></div>"; // Closing desriptionbox and userprofilebox.
 if (isloggedin() && has_capability('moodle/site:sendmessage', $usercontext)
     && !empty($CFG->messaging) && !isguestuser() && !isguestuser($user) && ($USER->id != $user->id)) {
     echo '<div class="messagebox">';
-    echo '<a href="'.$CFG->wwwroot.'/message/index.php?id='.$user->id.'">'.get_string('messageselectadd').'</a>';
+    $sendmessageurl = new moodle_url('/message/index.php', array('id' => $user->id));
+    if ($courseid) {
+        $sendmessageurl->param('viewing', MESSAGE_VIEW_COURSE. $courseid);
+    }
+    echo html_writer::link($sendmessageurl, get_string('messageselectadd'));
     echo '</div>';
 }
 

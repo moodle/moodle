@@ -6289,28 +6289,6 @@ function forum_user_role_assigned($cp) {
     }
 }
 
-/**
- * This function gets run whenever user is unenrolled from course
- *
- * @param stdClass $cp
- * @return void
- */
-function forum_user_unenrolled($cp) {
-    global $DB;
-
-    // NOTE: this has to be as fast as possible!
-
-    if ($cp->lastenrol) {
-        $params = array('userid'=>$cp->userid, 'courseid'=>$cp->courseid);
-        $forumselect = "IN (SELECT f.id FROM {forum} f WHERE f.course = :courseid)";
-
-        $DB->delete_records_select('forum_digests',       "userid = :userid AND forum $forumselect", $params);
-        $DB->delete_records_select('forum_subscriptions', "userid = :userid AND forum $forumselect", $params);
-        $DB->delete_records_select('forum_track_prefs',   "userid = :userid AND forumid $forumselect", $params);
-        $DB->delete_records_select('forum_read',          "userid = :userid AND forumid $forumselect", $params);
-    }
-}
-
 // Functions to do with read tracking.
 
 /**
