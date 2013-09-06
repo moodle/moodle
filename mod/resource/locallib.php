@@ -408,7 +408,7 @@ function resource_print_filenotfound($resource, $cm, $course) {
 }
 
 /**
- * Decide the best diaply format.
+ * Decide the best display format.
  * @param object $resource
  * @return int display type constant
  */
@@ -428,7 +428,7 @@ function resource_get_final_display_type($resource) {
     if (file_mimetype_in_typegroup($mimetype, 'archive')) {
         return RESOURCELIB_DISPLAY_DOWNLOAD;
     }
-    if (file_mimetype_in_typegroup($mimetype, array('web_image', '.pdf', '.htm', 'web_video', 'web_audio'))) {
+    if (file_mimetype_in_typegroup($mimetype, array('web_image', '.htm', 'web_video', 'web_audio'))) {
         return RESOURCELIB_DISPLAY_EMBED;
     }
 
