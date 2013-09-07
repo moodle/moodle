@@ -119,11 +119,14 @@ class core_blog_renderer extends plugin_renderer_base {
         // Body.
         $o .= format_text($entry->summary, $entry->summaryformat, array('overflowdiv' => true));
 
-        // Uniquehash is used as a link to an external blog.
         if (!empty($entry->uniquehash)) {
-            $o .= $this->output->container_start('externalblog');
-            $o .= html_writer::link($entry->uniquehash, get_string('linktooriginalentry', 'blog'));
-            $o .= $this->output->container_end();
+            // Uniquehash is used as a link to an external blog.
+            $url = clean_param($entry->uniquehash, PARAM_URL);
+            if (!empty($url)) {
+                $o .= $this->output->container_start('externalblog');
+                $o .= html_writer::link($url, get_string('linktooriginalentry', 'blog'));
+                $o .= $this->output->container_end();
+            }
         }
 
         // Links to tags.
