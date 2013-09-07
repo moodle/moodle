@@ -214,11 +214,14 @@ class blog_entry {
         $contentcell->text .= $template['body'];
         $contentcell->text .= $attachedimages;
 
-        // Uniquehash is used as a link to an external blog
         if (!empty($this->uniquehash)) {
-            $contentcell->text .= $OUTPUT->container_start('externalblog');
-            $contentcell->text .= html_writer::link($this->uniquehash, get_string('linktooriginalentry', 'blog'));
-            $contentcell->text .= $OUTPUT->container_end();
+            // Uniquehash is used as a link to an external blog
+            $url = clean_param($this->uniquehash, PARAM_URL);
+            if (!empty($url)) {
+                $contentcell->text .= $OUTPUT->container_start('externalblog');
+                $contentcell->text .= html_writer::link($url, get_string('linktooriginalentry', 'blog'));
+                $contentcell->text .= $OUTPUT->container_end();
+            }
         }
 
         // Links to tags
