@@ -151,7 +151,7 @@ function book_get_chapter_title($chid, $chapters, $book, $context) {
 }
 
 /**
- * Add the book TOC sticky block to the 1st region available
+ * Add the book TOC sticky block to the default region
  *
  * @param array $chapters
  * @param stdClass $chapter
@@ -169,9 +169,8 @@ function book_add_fake_block($chapters, $chapter, $book, $cm, $edit) {
     $bc->attributes['class'] = 'block block_book_toc';
     $bc->content = $toc;
 
-    $regions = $PAGE->blocks->get_regions();
-    $firstregion = reset($regions);
-    $PAGE->blocks->add_fake_block($bc, $firstregion);
+    $defaultregion = $PAGE->blocks->get_default_region();
+    $PAGE->blocks->add_fake_block($bc, $defaultregion);
 }
 
 /**
