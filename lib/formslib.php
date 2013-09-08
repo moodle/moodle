@@ -303,9 +303,8 @@ abstract class moodleform {
         $str = file_get_contents("php://input");
         $delim = '&';
 
-        $chunks = array_map(function($p) use ($delim) {
-                return implode($delim, $p);
-            }, array_chunk(explode($delim, $str), $max));
+        $fun = create_function('$p', 'return implode("'.$delim.'", $p);');
+        $chunks = array_map($fun, array_chunk(explode($delim, $str), $max));
 
         foreach ($chunks as $chunk) {
             parse_str($chunk, $values);
