@@ -81,6 +81,31 @@ function file_encode_url($urlbase, $path, $forcedownload=false, $https=false) {
 }
 
 /**
+ * Detects if area contains subdirs,
+ * this is intended for file areas that are attached to content
+ * migrated from 1.x where subdirs were allowed everywhere.
+ *
+ * @param context $context
+ * @param string $component
+ * @param string $filearea
+ * @param string $itemid
+ * @return bool
+ */
+function file_area_contains_subdirs(context $context, $component, $filearea, $itemid) {
+    global $DB;
+
+    if (!isset($itemid)) {
+        // Not initialised yet.
+        return false;
+    }
+
+    // Detect if any directories are already present, this is necessary for content upgraded from 1.x.
+    $select = "contextid = :contextid AND component = :component AND filearea = :filearea AND itemid = :itemid AND filepath <> '/' AND filename = '.'";
+    $params = array('contextid'=>$context->id, 'component'=>$component, 'filearea'=>$filearea, 'itemid'=>$itemid);
+    return $DB->record_exists_select('files', $select, $params);
+}
+
+/**
  * Prepares 'editor' formslib element from data in database
  *
  * The passed $data record must contain field foobar, foobarformat and optionally foobartrust. This

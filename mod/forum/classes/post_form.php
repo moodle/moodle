@@ -57,9 +57,11 @@ class mod_forum_post_form extends moodleform {
     /**
      * Returns the options array to use in forum text editor
      *
+     * @param context_module $context
+     * @param int $postid post id, use null when adding new post
      * @return array
      */
-    public static function editor_options() {
+    public static function editor_options(context_module $context, $postid) {
         global $COURSE, $PAGE, $CFG;
         // TODO: add max files and max size support
         $maxbytes = get_user_max_upload_file_size($PAGE->context, $CFG->maxbytes, $COURSE->maxbytes);
@@ -67,7 +69,8 @@ class mod_forum_post_form extends moodleform {
             'maxfiles' => EDITOR_UNLIMITED_FILES,
             'maxbytes' => $maxbytes,
             'trusttext'=> true,
-            'return_types'=> FILE_INTERNAL | FILE_EXTERNAL
+            'return_types'=> FILE_INTERNAL | FILE_EXTERNAL,
+            'subdirs' => file_area_contains_subdirs($context, 'mod_forum', 'post', $postid)
         );
     }
 
@@ -106,7 +109,7 @@ class mod_forum_post_form extends moodleform {
         $mform->addRule('subject', get_string('required'), 'required', null, 'client');
         $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $mform->addElement('editor', 'message', get_string('message', 'forum'), null, self::editor_options());
+        $mform->addElement('editor', 'message', get_string('message', 'forum'), null, self::editor_options($modcontext, (empty($post->id) ? null : $post->id)));
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
 

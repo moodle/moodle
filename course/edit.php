@@ -70,6 +70,7 @@ $overviewfilesoptions = course_overviewfiles_options($course);
 if (!empty($course)) {
     //add context for editor
     $editoroptions['context'] = $coursecontext;
+    $editoroptions['subdirs'] = file_area_contains_subdirs($coursecontext, 'course', 'summary', 0);
     $course = file_prepare_standard_editor($course, 'summary', $editoroptions, $coursecontext, 'course', 'summary', 0);
     if ($overviewfilesoptions) {
         file_prepare_standard_filemanager($course, 'overviewfiles', $overviewfilesoptions, $coursecontext, 'course', 'overviewfiles', 0);
@@ -84,6 +85,7 @@ if (!empty($course)) {
 } else {
     //editor should respect category context if course context is not set.
     $editoroptions['context'] = $catcontext;
+    $editoroptions['subdirs'] = 0;
     $course = file_prepare_standard_editor($course, 'summary', $editoroptions, null, 'course', 'summary', null);
     if ($overviewfilesoptions) {
         file_prepare_standard_filemanager($course, 'overviewfiles', $overviewfilesoptions, null, 'course', 'overviewfiles', 0);

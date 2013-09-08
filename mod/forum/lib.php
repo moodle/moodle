@@ -4370,7 +4370,7 @@ function forum_add_new_post($post, $mform, &$message) {
 
     $post->id = $DB->insert_record("forum_posts", $post);
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
-            mod_forum_post_form::editor_options(), $post->message);
+            mod_forum_post_form::editor_options($context, null), $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
     forum_add_attachment($post, $forum, $cm, $mform, $message);
 
@@ -4420,7 +4420,7 @@ function forum_update_post($post, $mform, &$message) {
         $discussion->timeend   = $post->timeend;
     }
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
-            mod_forum_post_form::editor_options(), $post->message);
+            mod_forum_post_form::editor_options($context, $post->id), $post->message);
     $DB->set_field('forum_posts', 'message', $post->message, array('id'=>$post->id));
 
     $DB->update_record('forum_discussions', $discussion);
@@ -4484,7 +4484,7 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
     if (!empty($cm->id) && !empty($discussion->itemid)) {   // In "single simple discussions" this may not exist yet
         $context = context_module::instance($cm->id);
         $text = file_save_draft_area_files($discussion->itemid, $context->id, 'mod_forum', 'post', $post->id,
-                mod_forum_post_form::editor_options(), $post->message);
+                mod_forum_post_form::editor_options($context, null), $post->message);
         $DB->set_field('forum_posts', 'message', $text, array('id'=>$post->id));
     }
 
