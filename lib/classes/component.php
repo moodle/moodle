@@ -43,6 +43,8 @@ class core_component {
     protected static $classmap = null;
     /** @var null list of some known files that can be included. */
     protected static $filemap = null;
+    /** @var int|float core version. */
+    protected static $version = null;
     /** @var array list of the files to map. */
     protected static $filestomap = array('lib.php', 'settings.php');
 
@@ -133,8 +135,11 @@ class core_component {
                 include($cachefile);
                 if (!is_array($cache)) {
                     // Something is very wrong.
-                } else if (!isset($cache['plugintypes']) or !isset($cache['plugins']) or !isset($cache['subsystems']) or !isset($cache['classmap'])) {
+                } else if (!isset($cache['version'])) {
                     // Something is very wrong.
+                } else if ((float) $cache['version'] !== (float) self::fetch_core_version()) {
+                    // Outdated cache. We trigger an error log to track an eventual repetitive failure of float comparison.
+                    error_log('Resetting core_component cache after core upgrade to version ' . self::fetch_core_version());
                 } else if ($cache['plugintypes']['mod'] !== "$CFG->dirroot/mod") {
                     // $CFG->dirroot was changed.
                 } else {
@@ -227,6 +232,7 @@ class core_component {
             'plugins'     => self::$plugins,
             'classmap'    => self::$classmap,
             'filemap'     => self::$filemap,
+            'version'     => self::$version,
         );
 
         return '<?php
@@ -249,6 +255,23 @@ $cache = '.var_export($cache, true).';
 
         self::fill_classmap_cache();
         self::fill_filemap_cache();
+        self::fetch_core_version();
+    }
+
+    /**
+     * Get the core version.
+     *
+     * In order for this to work properly, opcache should be reset beforehand.
+     *
+     * @return float core version.
+     */
+    protected static function fetch_core_version() {
+        global $CFG;
+        if (self::$version === null) {
+            require($CFG->dirroot . '/version.php');
+            self::$version = $version;
+        }
+        return self::$version;
     }
 
     /**
@@ -870,9 +893,7 @@ $cache = '.var_export($cache, true).';
         $versions = array();
 
         // Main version first.
-        $version = null;
-        include($CFG->dirroot.'/version.php');
-        $versions['core'] = $version;
+        $versions['core'] = self::fetch_core_version();
 
         // The problem here is tha the component cache might be stable,
         // we want this to work also on frontpage without resetting the component cache.

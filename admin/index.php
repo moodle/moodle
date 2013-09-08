@@ -66,6 +66,16 @@ if (empty($_GET['cache']) and empty($_POST['cache']) and empty($_GET['sesskey'])
 }
 
 require('../config.php');
+
+// Invalidate the cache of version.php in any circumstances to help core_component
+// detecting if the version has changed and component cache should be reset.
+if (function_exists('opcache_invalidate')) {
+    opcache_invalidate($CFG->dirroot . '/version.php', true);
+}
+// Make sure the component cache gets rebuilt if necessary, any method that
+// indirectly calls the protected init() method is good here.
+core_component::get_core_subsystems();
+
 require_once($CFG->libdir.'/adminlib.php');    // various admin-only functions
 require_once($CFG->libdir.'/upgradelib.php');  // general upgrade/install related functions
 require_once($CFG->libdir.'/pluginlib.php');   // available updates notifications
