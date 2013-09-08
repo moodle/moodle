@@ -81,7 +81,7 @@ function block_html_pluginfile($course, $birecord_or_cm, $context, $filearea, $a
         $forcedownload = true;
     }
 
-    session_get_instance()->write_close();
+    \core\session\manager::write_close();
     send_stored_file($file, 60*60, 0, $forcedownload, $options);
 }
 

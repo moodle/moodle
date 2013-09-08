@@ -191,7 +191,7 @@ class phpunit_util extends testing_util {
         $user = new stdClass();
         $user->id = 0;
         $user->mnethostid = $CFG->mnet_localhost_id;
-        session_set_user($user);
+        \core\session\manager::set_user($user);
 
         // reset all static caches
         \core\event\manager::phpunit_reset();

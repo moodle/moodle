@@ -119,6 +119,12 @@ abstract class moodle_database {
     /** @var string MD5 of settings used for connection. Used by MUC as an identifier. */
     private $settingshash;
 
+    /** @var cache_application for column info */
+    protected $metacache;
+
+    /** @var bool flag marking database instance as disposed */
+    protected $disposed;
+
     /**
      * @var int internal temporary variable used to fix params. Its used by {@link _fix_sql_params_dollar_callback()}.
      */
@@ -337,6 +343,10 @@ abstract class moodle_database {
      * @return void
      */
     public function dispose() {
+        if ($this->disposed) {
+            return;
+        }
+        $this->disposed = true;
         if ($this->transactions) {
             // this should not happen, it usually indicates wrong catching of exceptions,
             // because all transactions should be finished manually or in default exception handler.
@@ -354,9 +364,7 @@ abstract class moodle_database {
         }
         // Always terminate sessions here to make it consistent,
         // this is needed because we need to save session to db before closing it.
-        if (function_exists('session_get_instance')) {
-            session_get_instance()->write_close();
-        }
+        \core\session\manager::write_close();
         $this->used_for_db_sessions = false;
 
         if ($this->temptables) {
@@ -368,6 +376,10 @@ abstract class moodle_database {
             $this->database_manager = null;
         }
         $this->tables  = null;
+
+        // We do not need the MUC cache any more,
+        // if we did not keep it as property it might be already gone before we saved the session.
+        $this->metacache = null;
     }
 
     /**
@@ -955,10 +967,25 @@ abstract class moodle_database {
      * @return void
      */
     public function reset_caches() {
-        $this->tables  = null;
+        $this->tables = null;
+        $this->metacache = null;
         // Purge MUC as well
         $identifiers = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
         cache_helper::purge_by_definition('core', 'databasemeta', $identifiers);
+    }
+
+    /**
+     * Call before using $this->metacache.
+     *
+     * Note: this is necessary because we want to write to database in shutdown handler
+     *       and it needs to use the caches, but MUC would be already disposed.
+     */
+    protected function init_caches() {
+        if ($this->metacache) {
+            return;
+        }
+        $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
+        $this->metacache = cache::make('core', 'databasemeta', $properties);
     }
 
     /**

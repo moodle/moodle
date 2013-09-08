@@ -84,5 +84,5 @@ if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->get_filename() == 
 // ========================================
 // finally send the file
 // ========================================
-session_get_instance()->write_close(); // unlock session during fileserving
+\core\session\manager::write_close(); // Unlock session during file serving.
 send_stored_file($file, 0, false, true, array('preview' => $preview)); // force download - security first!

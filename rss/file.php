@@ -128,7 +128,7 @@ $user = get_complete_user_data('id', $userid);
 // let enrol plugins deal with new enrolments if necessary
 enrol_check_plugins($user);
 
-session_set_user($user); //for login and capability checks
+\core\session\manager::set_user($user); //for login and capability checks
 
 try {
     $autologinguest = true;

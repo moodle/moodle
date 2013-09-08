@@ -185,26 +185,6 @@ class core_authlib_testcase extends advanced_testcase {
         ini_set('error_log', $oldlog);
     }
 
-    public function test_user_loggedin_event() {
-        global $USER;
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-
-        $sink = $this->redirectEvents();
-        $user = clone($USER);
-        login_attempt_valid($user);
-        $events = $sink->get_events();
-        $sink->close();
-
-        $this->assertCount(1, $events);
-        $event = reset($events);
-        $this->assertInstanceOf('\core\event\user_loggedin', $event);
-        $this->assertEquals('user', $event->objecttable);
-        $this->assertEquals('2', $event->objectid);
-        $this->assertEquals(context_system::instance()->id, $event->contextid);
-        $this->assertEquals($user, $event->get_record_snapshot('user', 2));
-    }
-
     public function test_user_loggedin_event_exceptions() {
         try {
             $event = \core\event\user_loggedin::create(array('objectid' => 1));

@@ -30,7 +30,7 @@ if (isguestuser()) {
     print_error('noguests');
 }
 
-session_get_instance()->write_close();
+\core\session\manager::write_close();
 
 /// Delete old users now
 

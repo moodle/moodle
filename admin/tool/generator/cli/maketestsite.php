@@ -88,7 +88,7 @@ try {
 }
 
 // Switch to admin user account.
-session_set_user(get_admin());
+\core\session\manager::set_user(get_admin());
 
 // Do backend code to generate site.
 $backend = new tool_generator_site_backend($size, $options['bypasscheck'], $fixeddataset, empty($options['quiet']));

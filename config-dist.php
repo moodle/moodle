@@ -224,10 +224,22 @@ $CFG->admin = 'admin';
 // RewriteRule (^.*/theme/yui_combo\.php)(/.*) $1?file=$2
 //
 //
-// By default all user sessions should be using locking, uncomment
-// the following setting to prevent locking for guests and not-logged-in
-// accounts. This may improve performance significantly.
-//     $CFG->sessionlockloggedinonly = 1;
+// Following settings may be used to select session driver, uncomment only one of the handlers.
+//   Database session handler (not compatible with MyISAM):
+//      $CFG->session_handler_class = '\core\session\database';
+//      $CFG->session_database_acquire_lock_timeout = 120;
+//
+//   File session handler (file system locking required):
+//      $CFG->session_handler_class = '\core\session\file';
+//      $CFG->session_file_save_path = $CFG->dataroot.'/sessions';
+//
+//   Memcached session handler (requires memcached server and extension):
+//      $CFG->session_handler_class = '\core\session\memcached';
+//      $CFG->session_memcached_save_path = '127.0.0.1:11211';
+//      $CFG->session_memcached_prefix = 'memc.sess.key.';
+//
+// Following setting allows you to alter how frequently is timemodified updated in sessions table.
+//      $CFG->session_update_timemodified_frequency = 20; // In seconds.
 //
 // If this setting is set to true, then Moodle will track the IP of the
 // current user to make sure it hasn't changed during a session.  This

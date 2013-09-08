@@ -68,7 +68,7 @@ case 'init':
     break;
 
 case 'chat':
-    session_get_instance()->write_close();
+    \core\session\manager::write_close();
     chat_delete_old_users();
     $chat_message = clean_text($chat_message, FORMAT_MOODLE);
 

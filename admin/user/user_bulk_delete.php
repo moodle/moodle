@@ -34,7 +34,7 @@ if ($confirm and confirm_sesskey()) {
         }
     }
     $rs->close();
-    session_gc(); // remove stale sessions
+    \core\session\manager::gc(); // Remove stale sessions.
     echo $OUTPUT->box_start('generalbox', 'notice');
     if (!empty($notifications)) {
         echo $notifications;

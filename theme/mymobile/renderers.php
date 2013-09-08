@@ -307,8 +307,8 @@ class theme_mymobile_core_renderer extends core_renderer {
 
         $course = $this->page->course;
 
-        if (session_is_loggedinas()) {
-            $realuser = session_get_realuser();
+        if (\core\session\manager::is_loggedinas()) {
+            $realuser = \core\session\manager::get_realuser();
             $fullname = fullname($realuser, true);
             $realuserinfo = " [<a href=\"$CFG->wwwroot/course/loginas.php?id=$course->id&amp;sesskey=".sesskey()."\">$fullname</a>] ";
         } else {
@@ -386,8 +386,8 @@ class theme_mymobile_core_renderer extends core_renderer {
         $loginpage = ((string)$this->page->url === get_login_url());
         $course = $this->page->course;
 
-        if (session_is_loggedinas()) {
-            $realuser = session_get_realuser();
+        if (\core\session\manager::is_loggedinas()) {
+            $realuser = \core\session\manager::get_realuser();
             $fullname = fullname($realuser, true);
             $realuserinfo = ' [<a href="'.$CFG->wwwroot.'/course/loginas.php?id=$course->id&amp;sesskey='.sesskey().'">$fullname</a>] ';
         } else {
@@ -628,7 +628,7 @@ class theme_mymobile_core_renderer extends core_renderer {
     public function header() {
         global $USER, $CFG;
 
-        if (session_is_loggedinas()) {
+        if (\core\session\manager::is_loggedinas()) {
             $this->page->add_body_class('userloggedinas');
         }
 

@@ -68,7 +68,7 @@ if (!empty($user)) {
     enrol_check_plugins($user);
 
     // setup user session to check capability
-    session_set_user($user);
+    \core\session\manager::set_user($user);
 
     //check if the service exists and is enabled
     $service = $DB->get_record('external_services', array('shortname' => $serviceshortname, 'enabled' => 1));
@@ -116,8 +116,7 @@ if (!empty($user)) {
         $unsettoken = false;
         //if sid is set then there must be a valid associated session no matter the token type
         if (!empty($token->sid)) {
-            $session = session_get_instance();
-            if (!$session->session_exists($token->sid)){
+            if (!\core\session\manager::session_exists($token->sid)){
                 //this token will never be valid anymore, delete it
                 $DB->delete_records('external_tokens', array('sid'=>$token->sid));
                 $unsettoken = true;

@@ -46,7 +46,7 @@ require_capability('report/loglive:view', $context);
 $strlivelogs = get_string('livelogs', 'report_loglive');
 
 if ($inpopup) {
-    session_get_instance()->write_close();
+    \core\session\manager::write_close();
 
     $date = time() - 3600;
 

@@ -743,7 +743,7 @@ abstract class repository implements cacheable_object {
         $repocontext = context::instance_by_id($this->instance->contextid);
 
         // Prevent access to private repositories when logged in as.
-        if ($can && session_is_loggedinas()) {
+        if ($can && \core\session\manager::is_loggedinas()) {
             if ($this->contains_private_data() || $repocontext->contextlevel == CONTEXT_USER) {
                 $can = false;
             }

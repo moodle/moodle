@@ -1165,7 +1165,7 @@ function redirect_if_major_upgrade_required() {
     if (empty($CFG->version) or (float)$CFG->version < $lastmajordbchanges or
             during_initial_install() or !empty($CFG->adminsetuppending)) {
         try {
-            @session_get_instance()->terminate_current();
+            @\core\session\manager::terminate_current();
         } catch (Exception $e) {
             // Ignore any errors, redirect to upgrade anyway.
         }

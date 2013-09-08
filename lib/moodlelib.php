@@ -1582,7 +1582,7 @@ function get_users_from_config($value, $capability, $includeadmins = true) {
  * @return void
  */
 function purge_all_caches() {
-    global $CFG;
+    global $CFG, $DB;
 
     reset_text_filters_cache();
     js_reset_all_caches();
@@ -1597,6 +1597,7 @@ function purge_all_caches() {
         // Ignore exception since this function is also called before upgrade script when field course.cacherev does not exist yet.
     }
 
+    $DB->reset_caches();
     cache_helper::purge_all();
 
     // Purge all other caches: rss, simplepie, etc.
@@ -2896,7 +2897,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // Loginas as redirection if needed.
-    if ($course->id != SITEID and session_is_loggedinas()) {
+    if ($course->id != SITEID and \core\session\manager::is_loggedinas()) {
         if ($USER->loginascontext->contextlevel == CONTEXT_COURSE) {
             if ($USER->loginascontext->instanceid != $course->id) {
                 print_error('loginasonecourse', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
@@ -2905,7 +2906,7 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     }
 
     // Check whether the user should be changing password (but only if it is REALLY them).
-    if (get_user_preferences('auth_forcepasswordchange') && !session_is_loggedinas()) {
+    if (get_user_preferences('auth_forcepasswordchange') && !\core\session\manager::is_loggedinas()) {
         $userauth = get_auth_plugin($USER->auth);
         if ($userauth->can_change_password() and !$preventredirect) {
             if ($setwantsurltome) {
@@ -3013,9 +3014,9 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
     if ($course->id == SITEID) {
         // Everybody is enrolled on the frontpage.
     } else {
-        if (session_is_loggedinas()) {
+        if (\core\session\manager::is_loggedinas()) {
             // Make sure the REAL person can access this course first.
-            $realuser = session_get_realuser();
+            $realuser = \core\session\manager::get_realuser();
             if (!is_enrolled($coursecontext, $realuser->id, '', true) and
                 !is_viewing($coursecontext, $realuser->id) and !is_siteadmin($realuser->id)) {
                 if ($preventredirect) {
@@ -3147,26 +3148,39 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
  * @category   access
  */
 function require_logout() {
-    global $USER;
+    global $USER, $DB;
 
-    if (isloggedin()) {
-        $authsequence = get_enabled_auth_plugins(); // Auths, in sequence.
-        foreach ($authsequence as $authname) {
-            $authplugin = get_auth_plugin($authname);
-            $authplugin->prelogout_hook();
-        }
+    if (!isloggedin()) {
+        // This should not happen often, no need for hooks or events here.
+        \core\session\manager::terminate_current();
+        return;
     }
 
-    $event = \core\event\user_loggedout::create(
-            array(
-                'objectid' => $USER->id,
-                'context' => context_user::instance($USER->id)
-                )
-            );
-    $event->trigger();
+    // Execute hooks before action.
+    $authsequence = get_enabled_auth_plugins();
+    foreach ($authsequence as $authname) {
+        $authplugin = get_auth_plugin($authname);
+        $authplugin->prelogout_hook();
+    }
 
-    session_get_instance()->terminate_current();
-    unset($GLOBALS['USER']);
+    // Store info that gets removed during logout.
+    $sid = session_id();
+    $event = \core\event\user_loggedout::create(
+        array(
+            'userid' => $USER->id,
+            'objectid' => $USER->id,
+            'other' => array('sessionid' => $sid),
+        )
+    );
+    if ($session = $DB->get_record('sessions', array('sid'=>$sid))) {
+        $event->add_record_snapshot('sessions', $session);
+    }
+
+    // Delete session record and drop $_SESSION content.
+    \core\session\manager::terminate_current();
+
+    // Trigger event AFTER action.
+    $event->trigger();
 }
 
 /**
@@ -3271,7 +3285,7 @@ function require_user_key_login($script, $instance=null) {
     }
 
     // Extra safety.
-    @session_write_close();
+    \core\session\manager::write_close();
 
     $keyvalue = required_param('key', PARAM_ALPHANUM);
 
@@ -3296,7 +3310,7 @@ function require_user_key_login($script, $instance=null) {
 
     // Emulate normal session.
     enrol_check_plugins($user);
-    session_set_user($user);
+    \core\session\manager::set_user($user);
 
     // Note we are not using normal login.
     if (!defined('USER_KEY_LOGIN')) {
@@ -4154,7 +4168,7 @@ function delete_user(stdClass $user) {
     $DB->delete_records('user_private_key', array('userid' => $user->id));
 
     // Force logout - may fail if file based sessions used, sorry.
-    session_kill_user($user->id);
+    \core\session\manager::kill_user_sessions($user->id);
 
     // Workaround for bulk deletes of users with the same email address.
     $delname = "$user->email.".time();
@@ -4386,15 +4400,7 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
 function complete_user_login($user) {
     global $CFG, $USER;
 
-    // Regenerate session id and delete old session,
-    // this helps prevent session fixation attacks from the same domain.
-    session_regenerate_id(true);
-
-    // Let enrol plugins deal with new enrolments if necessary.
-    enrol_check_plugins($user);
-
-    // Check enrolments, load caps and setup $USER object.
-    session_set_user($user);
+    \core\session\manager::login_user($user);
 
     // Reload preferences from DB.
     unset($USER->preference);
@@ -4406,8 +4412,24 @@ function complete_user_login($user) {
     // Extra session prefs init.
     set_login_session_preferences();
 
+    // Trigger login event.
+    $event = \core\event\user_loggedin::create(
+        array(
+            'userid' => $USER->id,
+            'objectid' => $USER->id,
+            'other' => array('username' => $USER->username),
+        )
+    );
+    $event->add_record_snapshot('user', $user);
+    $event->trigger();
+
     if (isguestuser()) {
         // No need to continue when user is THE guest.
+        return $USER;
+    }
+
+    if (CLI_SCRIPT) {
+        // We can redirect to password change URL only in browser.
         return $USER;
     }
 
@@ -8834,10 +8856,10 @@ function get_performance_info() {
     }
 
     // Display size of session if session started.
-    if (session_id()) {
-        $info['sessionsize'] = display_size(strlen(session_encode()));
-        $info['html'] .= '<span class="sessionsize">Session: ' . $info['sessionsize'] . '</span> ';
-        $info['txt'] .= "Session: {$info['sessionsize']} ";
+    if ($si = \core\session\manager::get_performance_info()) {
+        $info['sessionsize'] = $si['size'];
+        $info['html'] .= $si['html'];
+        $info['txt'] .= $si['txt'];
     }
 
     if ($stats = cache_helper::get_stats()) {

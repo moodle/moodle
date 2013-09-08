@@ -163,7 +163,7 @@ if (!core_tables_exist()) {
     $strinstallation = get_string('installation', 'install');
 
     // remove current session content completely
-    session_get_instance()->terminate_current();
+    \core\session\manager::terminate_current();
 
     if (empty($agreelicense)) {
         $strlicense = get_string('license');

@@ -320,7 +320,7 @@ class quiz_overview_report extends quiz_attempts_report {
      * Unlock the session and allow the regrading process to run in the background.
      */
     protected function unlock_session() {
-        session_get_instance()->write_close();
+        \core\session\manager::write_close();
         ignore_user_abort(true);
     }
 

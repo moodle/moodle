@@ -90,7 +90,7 @@ if ($error = tool_generator_course_backend::check_shortname_available($shortname
 }
 
 // Switch to admin user account.
-session_set_user(get_admin());
+\core\session\manager::set_user(get_admin());
 
 // Do backend code to generate course.
 $backend = new tool_generator_course_backend($shortname, $size, $fixeddataset, empty($options['quiet']));

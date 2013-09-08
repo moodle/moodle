@@ -2588,12 +2588,11 @@ function redirect($url, $message='', $delay=-1) {
         }
     }
 
-    if ($delay == 0 && !$debugdisableredirect && !headers_sent()) {
-        // Workaround for IIS bug http://support.microsoft.com/kb/q176113/.
-        if (session_id()) {
-            session_get_instance()->write_close();
-        }
+    // Make sure the session is closed properly, this prevents problems in IIS
+    // and also some potential PHP shutdown issues.
+    \core\session\manager::write_close();
 
+    if ($delay == 0 && !$debugdisableredirect && !headers_sent()) {
         // 302 might not work for POST requests, 303 is ignored by obsolete clients.
         @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other');
         @header('Location: '.$url);
