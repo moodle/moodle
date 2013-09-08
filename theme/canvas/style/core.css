@@ -35,8 +35,7 @@ body {
 .errorbox,
 .continuebutton,
 .singlebutton,
-.buttons,
-.singleselect {
+.buttons {
     text-align: center;
     margin: 1em 0;
 }
