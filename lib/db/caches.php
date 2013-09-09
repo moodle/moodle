@@ -208,7 +208,6 @@ $definitions = array(
     // Used to store data for course categories visible to current user. Helps to browse list of categories.
     'coursecat' => array(
         'mode' => cache_store::MODE_SESSION,
-        'persistentdata' => true,
         'invalidationevents' => array(
             'changesincoursecat',
             'changesincourse',

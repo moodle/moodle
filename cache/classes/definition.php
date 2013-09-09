@@ -802,11 +802,16 @@ class cache_definition {
      * @return bool
      */
     public function should_be_persistent() {
+        debugging('should_be_persistent has been deprecated please call data_should_be_persistent instead', DEBUG_DEVELOPER);
         return $this->data_should_be_persistent();
     }
 
     /**
-     * Returns true if the cache loader for this definition should be persistent.
+     * Returns true if we should hold onto the data flowing through the cache.
+     *
+     * If set to true data flowing through the cache will be stored in a static variable
+     * to make subsequent requests for the data much faster.
+     *
      * @return bool
      */
     public function data_should_be_persistent() {
