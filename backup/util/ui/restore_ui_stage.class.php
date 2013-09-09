@@ -475,8 +475,9 @@ class restore_ui_stage_schema extends restore_ui_stage {
         if ($this->stageform === null) {
             $form = new restore_schema_form($this, $PAGE->url);
             $tasks = $this->ui->get_tasks();
-            $content = '';
             $courseheading = false;
+
+            $allsettings = array();
             foreach ($tasks as $task) {
                 if (!($task instanceof restore_root_task)) {
                     if (!$courseheading) {
@@ -484,13 +485,11 @@ class restore_ui_stage_schema extends restore_ui_stage {
                         $form->add_heading('coursesettings', get_string('coursesettings', 'backup'));
                         $courseheading = true;
                     }
-                    // First add each setting
+                    // Put each setting into an array of settings to add. Adding
+                    // a setting individually is a very slow operation, so we add
+                    // them all in a batch later on.
                     foreach ($task->get_settings() as $setting) {
-                        $form->add_setting($setting, $task);
-                    }
-                    // The add all the dependencies
-                    foreach ($task->get_settings() as $setting) {
-                        $form->add_dependencies($setting);
+                        $allsettings[] = array($setting, $task);
                     }
                 } else if ($this->ui->enforce_changed_dependencies()) {
                     // Only show these settings if dependencies changed them.
@@ -505,6 +504,15 @@ class restore_ui_stage_schema extends restore_ui_stage {
                     }
                 }
             }
+
+            // Actually add all the settings that we put in the array.
+            $form->add_settings($allsettings);
+
+            // Add the dependencies for all the settings.
+            foreach ($allsettings as $settingtask) {
+                $form->add_dependencies($settingtask[0]);
+            }
+
             $this->stageform = $form;
         }
         return $this->stageform;
