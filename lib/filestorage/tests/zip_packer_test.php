@@ -25,10 +25,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->libdir . '/filestorage/file_progress.php');
 
-class core_files_zip_packer_testcase extends advanced_testcase {
+class core_files_zip_packer_testcase extends advanced_testcase implements file_progress {
     protected $testfile;
     protected $files;
+
+    /**
+     * @var array Progress information passed to the progress reporter
+     */
+    protected $progress;
 
     protected function setUp() {
         parent::setUp();
@@ -414,5 +421,93 @@ class core_files_zip_packer_testcase extends advanced_testcase {
         $zip_archive->close();
 
         unlink($archive);
+    }
+
+    /**
+     * Tests the progress reporting.
+     */
+    public function test_file_progress() {
+        global $CFG;
+
+        // Set up.
+        $this->resetAfterTest(true);
+        $packer = get_file_packer('application/zip');
+        $archive = "$CFG->tempdir/archive.zip";
+        $context = context_system::instance();
+
+        // Archive to pathname.
+        $this->progress = array();
+        $result = $packer->archive_to_pathname($this->files, $archive, true, $this);
+        $this->assertTrue($result);
+        // Should send progress at least once per file.
+        $this->assertTrue(count($this->progress) >= count($this->files));
+        // Each progress will be indeterminate.
+        $this->assertEquals(
+                array(file_progress::INDETERMINATE, file_progress::INDETERMINATE),
+                $this->progress[0]);
+
+        // Archive to storage.
+        $this->progress = array();
+        $archivefile = $packer->archive_to_storage($this->files, $context->id,
+                'phpunit', 'test', 0, '/', 'archive.zip', null, true, $this);
+        $this->assertInstanceOf('stored_file', $archivefile);
+        $this->assertTrue(count($this->progress) >= count($this->files));
+        $this->assertEquals(
+                array(file_progress::INDETERMINATE, file_progress::INDETERMINATE),
+                $this->progress[0]);
+
+        // Extract to pathname.
+        $this->progress = array();
+        $target = "$CFG->tempdir/test/";
+        check_dir_exists($target);
+        $result = $packer->extract_to_pathname($archive, $target, null, $this);
+        remove_dir($target);
+        $this->assertEquals(count($this->files), count($result));
+        $this->assertTrue(count($this->progress) >= count($this->files));
+        $this->check_progress_toward_max();
+
+        // Extract to storage (from storage).
+        $this->progress = array();
+        $result = $packer->extract_to_storage($archivefile, $context->id,
+                'phpunit', 'target', 0, '/', null, $this);
+        $this->assertEquals(count($this->files), count($result));
+        $this->assertTrue(count($this->progress) >= count($this->files));
+        $this->check_progress_toward_max();
+
+        // Extract to storage (from path).
+        $this->progress = array();
+        $result = $packer->extract_to_storage($archive, $context->id,
+                'phpunit', 'target', 0, '/', null, $this);
+        $this->assertEquals(count($this->files), count($result));
+        $this->assertTrue(count($this->progress) >= count($this->files));
+        $this->check_progress_toward_max();
+
+        // Wipe created disk file.
+        unlink($archive);
+    }
+
+    /**
+     * Checks that progress reported is numeric rather than indeterminate,
+     * and follows the progress reporting rules.
+     */
+    private function check_progress_toward_max() {
+        $lastvalue = -1;
+        foreach ($this->progress as $progressitem) {
+            list($value, $max) = $progressitem;
+            $this->assertNotEquals(file_progress::INDETERMINATE, $max);
+            $this->assertTrue($value <= $max);
+            $this->assertTrue($value >= $lastvalue);
+            $lastvalue = $value;
+        }
+    }
+
+    /**
+     * Handles file_progress interface.
+     *
+     * @param int $progress
+     * @param int $max
+     */
+    public function progress($progress = file_progress::INDETERMINATE, $max = file_progress::INDETERMINATE) {
+        $this->progress[] = array($progress, $max);
     }
 }
