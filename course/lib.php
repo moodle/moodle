@@ -3972,7 +3972,7 @@ function update_course($data, $editoroptions = NULL) {
     // Check we don't have a duplicate idnumber.
     if (!empty($data->idnumber) && $oldcourse->idnumber != $data->idnumber) {
         if ($DB->record_exists('course', array('idnumber' => $data->idnumber))) {
-            throw new moodle_exception('courseidnumbertaken', '', '', $data->idnumber);
+            throw new moodle_exception('idnumbertaken', 'error');
         }
     }
 

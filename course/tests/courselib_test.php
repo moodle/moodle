@@ -130,7 +130,7 @@ class courselib_testcase extends advanced_testcase {
             update_course($created2);
             $this->fail('Expected exception when trying to update a course with duplicate idnumber');
         } catch (moodle_exception $e) {
-            $this->assertEquals(get_string('courseidnumbertaken', 'error', $created2->idnumber), $e->getMessage());
+            $this->assertEquals(get_string('idnumbertaken', 'error'), $e->getMessage());
         }
 
         // Test duplicate shortname.
