@@ -822,69 +822,6 @@ function badges_get_user_badges($userid, $courseid = 0, $page = 0, $perpage = 0,
 }
 
 /**
- * Get issued badge details for assertion URL
- *
- * @param string $hash
- */
-function badges_get_issued_badge_info($hash) {
-    global $DB, $CFG;
-
-    $a = array();
-
-    $record = $DB->get_record_sql('
-            SELECT
-                bi.dateissued,
-                bi.dateexpire,
-                u.email,
-                b.*,
-                bb.email as backpackemail
-            FROM
-                {badge} b
-                JOIN {badge_issued} bi
-                    ON b.id = bi.badgeid
-                JOIN {user} u
-                    ON u.id = bi.userid
-                LEFT JOIN {badge_backpack} bb
-                    ON bb.userid = bi.userid
-            WHERE ' . $DB->sql_compare_text('bi.uniquehash', 40) . ' = ' . $DB->sql_compare_text(':hash', 40),
-            array('hash' => $hash), IGNORE_MISSING);
-
-    if ($record) {
-        if ($record->type == BADGE_TYPE_SITE) {
-            $context = context_system::instance();
-        } else {
-            $context = context_course::instance($record->courseid);
-        }
-
-        $url = new moodle_url('/badges/badge.php', array('hash' => $hash));
-        $email = empty($record->backpackemail) ? $record->email : $record->backpackemail;
-
-        // Recipient's email is hashed: <algorithm>$<hash(email + salt)>.
-        $a['recipient'] = 'sha256$' . hash('sha256', $email . $CFG->badges_badgesalt);
-        $a['salt'] = $CFG->badges_badgesalt;
-
-        if ($record->dateexpire) {
-            $a['expires'] = date('Y-m-d', $record->dateexpire);
-        }
-
-        $a['issued_on'] = date('Y-m-d', $record->dateissued);
-        $a['evidence'] = $url->out(); // Issued badge URL.
-        $a['badge'] = array();
-        $a['badge']['version'] = '0.5.0'; // Version of OBI specification, 0.5.0 - current beta.
-        $a['badge']['name'] = $record->name;
-        $a['badge']['image'] = moodle_url::make_pluginfile_url($context->id, 'badges', 'badgeimage', $record->id, '/', 'f1')->out();
-        $a['badge']['description'] = $record->description;
-        $a['badge']['criteria'] = $url->out(); // Issued badge URL.
-        $a['badge']['issuer'] = array();
-        $a['badge']['issuer']['origin'] = $record->issuerurl;
-        $a['badge']['issuer']['name'] = $record->issuername;
-        $a['badge']['issuer']['contact'] = $record->issuercontact;
-    }
-
-    return $a;
-}
-
-/**
  * Extends the course administration navigation with the Badges page
  *
  * @param navigation_node $coursenode
