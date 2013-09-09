@@ -10,7 +10,7 @@ h1,h2,h3,h4,h5,h6 {
     margin: 0;
 }
 
-h2.main,h3.main,h4.main {
+h2,h3,h4 {
     text-align: center;
     padding: 0.5em 0 1em;
     margin: 0;

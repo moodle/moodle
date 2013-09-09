@@ -251,7 +251,7 @@ div.block.hidden div.header {
     padding: 4px;
 }
 
-.block div.content h1, .block div.content h2.main, .block div.content h3.main {
+.block div.content h1, .block div.content h2, .block div.content h3 {
     font-size: 13px;
     background-image: none;
 }
@@ -272,7 +272,7 @@ div.block.hidden div.header {
 
 /** main headings **/
 
-.generalbox h2,h3.sectionname, h2.headingblock,h2.main,h3.main, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2 {
+.generalbox h2,h3.sectionname, h2.headingblock,h2,h3, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2 {
     font-weight: 600;
     letter-spacing: -1px;
     line-height: 1.3em;
@@ -283,7 +283,7 @@ div.block.hidden div.header {
     background-position: 0% 100%;
 }
 
-.generalbox h2, h3.sectionname, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2, div.hd h3.main {
+.generalbox h2, h3.sectionname, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2, div.hd h3 {
     font-size: 22px;
     background: none;
 }

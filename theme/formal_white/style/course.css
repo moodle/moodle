@@ -25,7 +25,7 @@
 .coursebox > .info:after {clear:both;content:".";display:block;height:0;min-width:0;visibility:hidden;}
 .coursebox .enrolmenticons img, .coursebox .moreinfo img {margin: 0.3em 0.2em -0.2em 0;}
 
-#page-course-recent h2.main {font-size:110%;}
+#page-course-recent h2 {font-size:110%;}
 #page-course-recent .user {font-size:75%;}
 #page-course-recent .grade {font-style:italic;font-size:90%;}
 #page-course-recent .forum-recent .reply .title {font-style:italic;font-size:90%;}

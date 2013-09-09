@@ -10,7 +10,7 @@
 .dir-rtl .section_add_menus .urlselect { margin-right: .4em; margin-left: 0;}
 .section_add_menus .urlselect select { margin-left: .2em;}
 .dir-rtl .section_add_menus .urlselect select { margin-right: .2em; margin-left: 0;}
-.section_add_menus .urlselect img.iconhelp { padding: 0; margin: 0; vertical-align: text-bottom;}
+.section_add_menus .urlselect img.iconhelp { padding: 0; margin: 0; vertical-align: middle;}
 
 .site-topic ul.section,
 .course-content ul.section { margin: 1em;}
@@ -211,7 +211,7 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 /* Course drag and drop upload styles */
 #dndupload-status {width:40%;margin:0 30%;padding:6px;border:1px solid #ddd;text-align:center;background:#ffc;position:absolute;z-index:9999;box-shadow:2px 2px 5px 1px #ccc;border-radius:0px 0px 8px 8px;z-index: 0;}
 .dndupload-preview {color:#909090;border:1px dashed #909090;list-style:none; margin-top: .2em; padding: .3em; line-height: 16px;}
-.dndupload-preview img.icon { vertical-align: text-bottom; padding: 0;}
+.dndupload-preview img.icon { vertical-align: middle; padding: 0;}
 .dndupload-progress-outer {width:70px;border:1px solid black;border-radius:4px;height:10px;display:inline-block;margin:0;padding:0;overflow:hidden;position:relative;}
 .dndupload-progress-inner {width:0%;height:100%;background-color:green;display:inline-block;margin:0;padding:0;float:left;box-shadow: 0 0 4px #229b15;border-radius:2px;background-repeat:repeat-x;background-position:top;background-image:url([[pix:theme_base|progress]])}
 .dndupload-hidden {display:none;}
