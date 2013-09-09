@@ -531,7 +531,7 @@ class restore_ui_stage_schema extends restore_ui_stage {
 class restore_ui_stage_review extends restore_ui_stage {
     /**
      * Constructs the stage
-     * @param backup_ui $ui
+     * @param restore_ui $ui
      */
     public function __construct($ui, array $params=null) {
         $this->stage = restore_ui::STAGE_REVIEW;
@@ -570,7 +570,11 @@ class restore_ui_stage_review extends restore_ui_stage {
             $content = '';
             $courseheading = false;
 
-            foreach ($this->ui->get_tasks() as $task) {
+            $progress = $this->ui->get_progress_reporter();
+            $tasks = $this->ui->get_tasks();
+            $progress->start_progress('initialise_stage_form', count($tasks));
+            $done = 1;
+            foreach ($tasks as $task) {
                 if ($task instanceof restore_root_task) {
                     // If its a backup root add a root settings heading to group nicely
                     $form->add_heading('rootsettings', get_string('rootsettings', 'backup'));
@@ -583,7 +587,10 @@ class restore_ui_stage_review extends restore_ui_stage {
                 foreach ($task->get_settings() as $setting) {
                     $form->add_fixed_setting($setting, $task);
                 }
+                // Update progress.
+                $progress->progress($done++);
             }
+            $progress->end_progress();
             $this->stageform = $form;
         }
         return $this->stageform;
