@@ -58,7 +58,7 @@ class backup_resource_activity_task extends backup_activity_task {
      * @return string the content with the URLs encoded
      */
     static public function encode_content_links($content) {
-        global $CFG;
+        global $CFG, $DB;
 
         $base = preg_quote($CFG->wwwroot,"/");
 
