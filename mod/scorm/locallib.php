@@ -71,16 +71,14 @@ class scorm_package_file_info extends file_info_stored {
  * @return array an array of popup options as the key and their defaults as the value
  */
 function scorm_get_popup_options_array() {
-    global $CFG;
-    $cfg_scorm = get_config('scorm');
+    $cfgscorm = get_config('scorm');
 
-    return array('resizable'=> isset($cfg_scorm->resizable) ? $cfg_scorm->resizable : 0,
-                 'scrollbars'=> isset($cfg_scorm->scrollbars) ? $cfg_scorm->scrollbars : 0,
-                 'directories'=> isset($cfg_scorm->directories) ? $cfg_scorm->directories : 0,
-                 'location'=> isset($cfg_scorm->location) ? $cfg_scorm->location : 0,
-                 'menubar'=> isset($cfg_scorm->menubar) ? $cfg_scorm->menubar : 0,
-                 'toolbar'=> isset($cfg_scorm->toolbar) ? $cfg_scorm->toolbar : 0,
-                 'status'=> isset($cfg_scorm->status) ? $cfg_scorm->status : 0);
+    return array('scrollbars'=> isset($cfgscorm->scrollbars) ? $cfgscorm->scrollbars : 0,
+                 'directories'=> isset($cfgscorm->directories) ? $cfgscorm->directories : 0,
+                 'location'=> isset($cfgscorm->location) ? $cfgscorm->location : 0,
+                 'menubar'=> isset($cfgscorm->menubar) ? $cfgscorm->menubar : 0,
+                 'toolbar'=> isset($cfgscorm->toolbar) ? $cfgscorm->toolbar : 0,
+                 'status'=> isset($cfgscorm->status) ? $cfgscorm->status : 0);
 }
 
 /**
