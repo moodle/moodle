@@ -1238,6 +1238,15 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             array('class' => 'glossary-hidden-note'));
     }
 
+    if (has_capability('mod/glossary:approve', $context) && !$glossary->defaultapproval && $entry->approved) {
+        $output = true;
+        $return .= '<a class="action-icon" title="' . get_string('disapprove', 'glossary').
+                   '" href="approve.php?newstate=0&amp;eid='.$entry->id.'&amp;mode='.$mode.
+                   '&amp;hook='.urlencode($hook).'&amp;sesskey='.sesskey().
+                   '"><img src="'.$OUTPUT->pix_url('t/block').'" class="smallicon" alt="'.
+                   get_string('disapprove','glossary').$altsuffix.'" /></a>';
+    }
+
     $iscurrentuser = ($entry->userid == $USER->id);
 
     if (has_capability('mod/glossary:manageentries', $context) or (isloggedin() and has_capability('mod/glossary:write', $context) and $iscurrentuser)) {
