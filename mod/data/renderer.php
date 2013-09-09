@@ -32,7 +32,7 @@ class mod_data_renderer extends plugin_renderer_base {
         }
 
         if (!empty($newfields)) {
-            $html .= $this->output->heading_with_help($strfieldmappings, 'fieldmappings', 'data');
+            $html .= $this->output->heading_with_help($strfieldmappings, 'fieldmappings', 'data', '', '', 3);
 
             $table = new html_table();
             $table->data = array();

@@ -325,8 +325,6 @@
     echo $OUTPUT->header();
 
 /// Check to see if groups are being used here
-    $returnurl = $CFG->wwwroot . '/mod/data/view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
-    groups_print_activity_menu($cm, $returnurl);
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
     $canmanageentries = has_capability('mod/data:manageentries', $context);
@@ -345,7 +343,7 @@
         }
     }
 
-    echo $OUTPUT->heading(format_string($data->name));
+    echo $OUTPUT->heading(format_string($data->name), 2);
 
     // Do we need to show a link to the RSS feed for the records?
     //this links has been Settings (database activity administration) block
@@ -361,6 +359,9 @@
         $options->noclean = true;
     }
     echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
+    
+    $returnurl = $CFG->wwwroot . '/mod/data/view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
+    groups_print_activity_menu($cm, $returnurl);
 
 /// Delete any requested records
 

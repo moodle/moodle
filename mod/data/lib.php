@@ -279,7 +279,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         echo '<input type="hidden" name="type" value="'.$this->type.'" />'."\n";
         echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />'."\n";
 
-        echo $OUTPUT->heading($this->name());
+        echo $OUTPUT->heading($this->name(), 3);
 
         require_once($CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html');
 
@@ -1997,13 +1997,12 @@ function data_print_header($course, $cm, $data, $currenttab='') {
 
     $PAGE->set_title($data->name);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($data->name));
+    echo $OUTPUT->heading(format_string($data->name), 2);
+    echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
 
-// Groups needed for Add entry tab
+    // Groups needed for Add entry tab
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
-
-    echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
 
     // Print the tabs
 

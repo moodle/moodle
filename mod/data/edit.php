@@ -249,10 +249,9 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
 /// Print the page header
 
 echo $OUTPUT->header();
-groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id);
-echo $OUTPUT->heading(format_string($data->name));
-
+echo $OUTPUT->heading(format_string($data->name), 2);
 echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
+groups_print_activity_menu($cm, $CFG->wwwroot.'/mod/data/edit.php?d='.$data->id);
 
 /// Print the tabs
 
@@ -277,7 +276,7 @@ echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
 if (!$rid){
-    echo $OUTPUT->heading(get_string('newentry','data'), 2);
+    echo $OUTPUT->heading(get_string('newentry','data'), 3);
 }
 
 /******************************************

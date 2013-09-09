@@ -372,6 +372,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                       forum_go_back_to("discuss.php?d=$post->discussion"));
             }
             echo $OUTPUT->header();
+            echo $OUTPUT->heading(format_string($forum->name), 2);
             echo $OUTPUT->confirm(get_string("deletesureplural", "forum", $replycount+1),
                          "post.php?delete=$delete&confirm=$delete",
                          $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
@@ -385,6 +386,7 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
             }
         } else {
             echo $OUTPUT->header();
+            echo $OUTPUT->heading(format_string($forum->name), 2);
             echo $OUTPUT->confirm(get_string("deletesure", "forum", $replycount),
                          "post.php?delete=$delete&confirm=$delete",
                          $CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#p'.$post->id);
@@ -467,7 +469,8 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         $PAGE->set_title(format_string($discussion->name).": ".format_string($post->subject));
         $PAGE->set_heading($course->fullname);
         echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('pruneheading', 'forum'));
+        echo $OUTPUT->heading(format_string($forum->name), 2);
+        echo $OUTPUT->heading(get_string('pruneheading', 'forum'), 3);
         echo '<center>';
 
         include('prune.html');
@@ -861,6 +864,7 @@ $PAGE->set_title("$course->shortname: $strdiscussionname ".format_string($toppos
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($forum->name), 2);
 
 // checkup
 if (!empty($parent) && !forum_user_can_see_post($forum, $discussion, $post, null, $cm)) {

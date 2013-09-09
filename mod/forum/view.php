@@ -121,10 +121,13 @@
         notice(get_string('noviewdiscussionspermission', 'forum'));
     }
 
+    echo $OUTPUT->heading(format_string($forum->name), 2);
+    if (!empty($forum->intro) && $forum->type != 'single' && $forum->type != 'teacher') {
+        echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
+    }
+
 /// find out current groups mode
     groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/forum/view.php?id=' . $cm->id);
-    $currentgroup = groups_get_activity_group($cm);
-    $groupmode = groups_get_activity_groupmode($cm);
 
 /// Okay, we can show the discussions. Log the forum view.
     if ($cm->id) {
@@ -187,9 +190,6 @@
             break;
 
         case 'eachuser':
-            if (!empty($forum->intro)) {
-                echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
-            }
             echo '<p class="mdl-align">';
             if (forum_user_can_post_discussion($forum, null, -1, $cm)) {
                 print_string("allowsdiscussions", "forum");
@@ -213,9 +213,6 @@
             break;
 
         case 'blog':
-            if (!empty($forum->intro)) {
-                echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
-            }
             echo '<br />';
             if (!empty($showall)) {
                 forum_print_latest_discussions($course, $forum, 0, 'plain', '', -1, -1, -1, 0, $cm);
@@ -225,9 +222,6 @@
             break;
 
         default:
-            if (!empty($forum->intro)) {
-                echo $OUTPUT->box(format_module_intro('forum', $forum, $cm->id), 'generalbox', 'intro');
-            }
             echo '<br />';
             if (!empty($showall)) {
                 forum_print_latest_discussions($course, $forum, 0, 'header', '', -1, -1, -1, 0, $cm);
