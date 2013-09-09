@@ -15,19 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The english language pack used in this profile field type.
+ * Strings for component 'calendartype_gregorian', language 'en'.
  *
- * @package profilefield_datetime
- * @copyright 2010 Mark Nelson <markn@moodle.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package calendartype_gregorian
+ * @copyright 2008 onwards Foodle Group {@link http://foodle.org}
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['currentdatedefault'] = 'Check to use current date as default';
-$string['defaultdate'] = 'Default date';
-$string['endyear'] = 'End year';
-$string['notset'] = 'Not set';
-$string['pluginname'] = 'Date/Time';
-$string['specifydatedefault'] = 'or specify a date';
-$string['startyearafterend'] = 'The start year can\'t occur after the end year';
-$string['startyear'] = 'Start year';
-$string['wanttime'] = 'Include time?';
+$string['name'] = 'Gregorian';
+$string['pluginname'] = 'Gregorian calendar type';
