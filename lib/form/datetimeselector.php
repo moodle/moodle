@@ -55,8 +55,8 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
      * optional => if true, show a checkbox beside the date to turn it on (or off)
      * @var array
      */
-    var $_options = array('startyear' => null, 'stopyear' => null, 'defaulttime' => null,
-                    'timezone' => null, 'step' => null, 'optional' => null);
+    protected $_options = array('startyear' => null, 'stopyear' => null, 'defaulttime' => 0,
+            'timezone' => 99, 'step' => 5, 'optional' => false);
 
     /**
      * @var array These complement separators, they are appended to the resultant HTML.
@@ -79,11 +79,6 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
      * @param mixed $attributes Either a typical HTML attribute string or an associative array
      */
     function MoodleQuickForm_date_time_selector($elementName = null, $elementLabel = null, $options = array(), $attributes = null) {
-        // Get the calendar type used - see MDL-18375.
-        $calendartype = \core_calendar\type_factory::get_calendar_instance();
-        $this->_options = array('startyear' => $calendartype->get_min_year(), 'stopyear' => $calendartype->get_max_year(),
-                                'defaulttime' => 0, 'timezone' => 99, 'step' => 5, 'optional' => false);
-
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         $this->_persistantFreeze = true;
         $this->_appendName = true;
@@ -100,6 +95,8 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
                 }
             }
         }
+        // Get the calendar type used - see MDL-18375.
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
         // The YUI2 calendar only supports the gregorian calendar type.
         if ($calendartype->get_name() === 'gregorian') {
             form_init_date_js();
@@ -116,11 +113,7 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
 
         // Get the calendar type used - see MDL-18375.
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
-        $days = $calendartype->get_days();
-        $months = $calendartype->get_months();
-        for ($i = $this->_options['startyear']; $i <= $this->_options['stopyear']; $i++) {
-            $years[$i] = $i;
-        }
+
         for ($i=0; $i<=23; $i++) {
             $hours[$i] = sprintf("%02d",$i);
         }
@@ -129,10 +122,11 @@ class MoodleQuickForm_date_time_selector extends MoodleQuickForm_group {
         }
 
         $this->_elements = array();
-        // E_STRICT creating elements without forms is nasty because it internally uses $this
-        $this->_elements[] = @MoodleQuickForm::createElement('select', 'day', get_string('day', 'form'), $days, $this->getAttributes(), true);
-        $this->_elements[] = @MoodleQuickForm::createElement('select', 'month', get_string('month', 'form'), $months, $this->getAttributes(), true);
-        $this->_elements[] = @MoodleQuickForm::createElement('select', 'year', get_string('year', 'form'), $years, $this->getAttributes(), true);
+        $dateformat = $calendartype->date_order($this->_options['startyear'], $this->_options['stopyear']);
+        foreach ($dateformat as $key => $date) {
+            // E_STRICT creating elements without forms is nasty because it internally uses $this
+            $this->_elements[] = @MoodleQuickForm::createElement('select', $key, get_string($key, 'form'), $date, $this->getAttributes(), true);
+        }
         if (right_to_left()) {   // Switch order of elements for Right-to-Left
             $this->_elements[] = @MoodleQuickForm::createElement('select', 'minute', get_string('minute', 'form'), $minutes, $this->getAttributes(), true);
             $this->_elements[] = @MoodleQuickForm::createElement('select', 'hour', get_string('hour', 'form'), $hours, $this->getAttributes(), true);

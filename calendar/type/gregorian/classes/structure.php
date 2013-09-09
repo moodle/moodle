@@ -76,21 +76,43 @@ class structure extends type_base {
     }
 
     /**
-     * Returns the minimum year of the calendar.
+     * Returns a list of all of the years being used.
      *
-     * @return int the minumum year
+     * @return array the years.
      */
-    public function get_min_year() {
-        return 1900;
+    public function get_years() {
+        $years = array();
+
+        for ($i = $this->minyear; $i <= $this->maxyear; $i++) {
+            $years[$i] = $i;
+        }
+
+        return $years;
     }
 
     /**
-     * Returns the maximum year of the calendar.
+     * Returns a multidimensional array with information for day, month, year
+     * and the order they are displayed when selecting a date.
+     * The order in the array will be the order displayed when selecting a date.
+     * Override this function to change the date selector order.
      *
-     * @return int the max year
+     * @param int $minyear The year to start with.
+     * @param int $maxyear The year to finish with.
+     * @return array Full date information.
      */
-    public function get_max_year() {
-        return 2050;
+    public function date_order($minyear = null, $maxyear = null) {
+        if (!empty($minyear)) {
+            $this->minyear = $minyear;
+        }
+        if (!empty($maxyear)) {
+            $this->maxyear = $maxyear;
+        }
+        $dateinfo = array();
+        $dateinfo['day'] = $this->get_days();
+        $dateinfo['year'] = $this->get_years();
+        $dateinfo['month'] = $this->get_months();
+
+        return $dateinfo;
     }
 
     /**
