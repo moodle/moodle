@@ -1499,10 +1499,16 @@ class move_inforef_annotations_to_final extends backup_execution_step {
 
         // Items we want to include in the inforef file
         $items = backup_helper::get_inforef_itemnames();
+        $progress = $this->task->get_progress();
+        $progress->start_progress($this->get_name(), count($items));
+        $done = 1;
         foreach ($items as $itemname) {
             // Delegate to dbops
-            backup_structure_dbops::move_annotations_to_final($this->get_backupid(), $itemname);
+            backup_structure_dbops::move_annotations_to_final($this->get_backupid(),
+                    $itemname, $progress);
+            $progress->progress($done++);
         }
+        $progress->end_progress();
     }
 }
 
@@ -1667,7 +1673,11 @@ class backup_main_structure_step extends backup_structure_step {
 /**
  * Execution step that will generate the final zip (.mbz) file with all the contents
  */
-class backup_zip_contents extends backup_execution_step {
+class backup_zip_contents extends backup_execution_step implements file_progress {
+    /**
+     * @var bool True if we have started tracking progress
+     */
+    protected $startedprogress;
 
     protected function define_execution() {
 
@@ -1694,8 +1704,34 @@ class backup_zip_contents extends backup_execution_step {
         $zippacker = get_file_packer('application/zip');
 
         // Zip files
-        $zippacker->archive_to_pathname($files, $zipfile);
+        $zippacker->archive_to_pathname($files, $zipfile, true, $this);
+
+        // If any progress happened, end it.
+        if ($this->startedprogress) {
+            $this->task->get_progress()->end_progress();
+        }
     }
+
+    /**
+     * Implementation for file_progress interface to display unzip progress.
+     *
+     * @param int $progress Current progress
+     * @param int $max Max value
+     */
+    public function progress($progress = file_progress::INDETERMINATE, $max = file_progress::INDETERMINATE) {
+        $reporter = $this->task->get_progress();
+
+        // Start tracking progress if necessary.
+        if (!$this->startedprogress) {
+            $reporter->start_progress('extract_file_to_dir', ($max == file_progress::INDETERMINATE)
+                    ? core_backup_progress::INDETERMINATE : $max);
+            $this->startedprogress = true;
+        }
+
+        // Pass progress through to whatever handles it.
+        $reporter->progress(($progress == file_progress::INDETERMINATE)
+                ? core_backup_progress::INDETERMINATE : $progress);
+     }
 }
 
 /**
@@ -1955,6 +1991,8 @@ class backup_annotate_all_user_files extends backup_execution_step {
         // Fetch all annotated (final) users
         $rs = $DB->get_recordset('backup_ids_temp', array(
             'backupid' => $this->get_backupid(), 'itemname' => 'userfinal'));
+        $progress = $this->task->get_progress();
+        $progress->start_progress($this->get_name());
         foreach ($rs as $record) {
             $userid = $record->itemid;
             $userctx = context_user::instance($userid, IGNORE_MISSING);
@@ -1966,8 +2004,10 @@ class backup_annotate_all_user_files extends backup_execution_step {
                 // We don't need to specify itemid ($userid - 5th param) as far as by
                 // context we can get all the associated files. See MDL-22092
                 backup_structure_dbops::annotate_files($this->get_backupid(), $userctx->id, 'user', $filearea, null);
+                $progress->progress();
             }
         }
+        $progress->end_progress();
         $rs->close();
     }
 }
