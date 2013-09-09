@@ -798,7 +798,7 @@ class cache_definition {
      *
      * Please call data_should_be_persistent instead.
      *
-     * @deprecated since 2.6
+     * @deprecated since 2.5.3
      * @return bool
      */
     public function should_be_persistent() {
@@ -806,7 +806,11 @@ class cache_definition {
     }
 
     /**
-     * Returns true if the cache loader for this definition should be persistent.
+     * Returns true if we should hold onto the data flowing through the cache.
+     *
+     * If set to true data flowing through the cache will be stored in a static variable
+     * to make subsequent requests for the data much faster.
+     *
      * @return bool
      */
     public function data_should_be_persistent() {

@@ -251,26 +251,6 @@ class cache_phpunit_application extends cache_application {
     public function phpunit_get_store_implements() {
         return class_implements($this->get_store());
     }
-
-    /**
-     * Returns the given key directly from the persistdata cache.
-     *
-     * @param string $key
-     * @return false|mixed
-     */
-    public function phpunit_get_directly_from_persistcache($key) {
-        $key = $this->parse_key($key);
-        return $this->get_from_persist_cache($key);
-    }
-
-    /**
-     * Returns the cache loaders definition.
-     *
-     * @return cache_definition
-     */
-    public function phpunit_get_definition() {
-        return $this->get_definition();
-    }
 }
 
 /**
