@@ -359,7 +359,7 @@
         $options->noclean = true;
     }
     echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
-    
+
     $returnurl = $CFG->wwwroot . '/mod/data/view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
     groups_print_activity_menu($cm, $returnurl);
 

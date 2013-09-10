@@ -160,7 +160,7 @@
     $PAGE->set_heading($course->fullname);
     $PAGE->set_button($searchform);
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($forum->name), 2); 
+    echo $OUTPUT->heading(format_string($forum->name), 2);
 
 /// Check to see if groups are being used in this forum
 /// If so, make sure the current person is allowed to see this discussion
