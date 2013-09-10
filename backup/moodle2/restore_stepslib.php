@@ -3625,7 +3625,7 @@ class restore_process_file_aliases_queue extends restore_execution_step {
     protected function define_execution() {
         global $DB;
 
-        $this->log('processing file aliases queue', backup::LOG_INFO);
+        $this->log('processing file aliases queue', backup::LOG_DEBUG);
 
         $fs = get_file_storage();
 
