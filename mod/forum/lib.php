@@ -3831,7 +3831,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
 /**
  * This function is now deprecated. Use shorten_text($message, $CFG->forum_shortpost) instead.
- * 
+ *
  * Given a post object that we already know has a long message
  * this function truncates the message nicely to the first
  * sane place between $CFG->forum_longpost and $CFG->forum_shortpost
