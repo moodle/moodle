@@ -1535,4 +1535,162 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertInstanceOf('cache_request', $cache);
         $this->assertArrayHasKey('cache_is_searchable', $cache->phpunit_get_store_implements());
     }
+
+    public function test_persistent_cache() {
+        $instance = cache_config_phpunittest::instance();
+        $instance->phpunit_add_definition('phpunit/persistentapp', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'persistentapp',
+            'persistentdata' => true,
+            'persistentmaxsize' => 3,
+        ));
+        $instance->phpunit_add_definition('phpunit/persistentapp2', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'persistentapp2',
+            'persistentdata' => true,
+            'persistentmaxsize' => 3,
+        ));
+        $instance->phpunit_add_definition('phpunit/persistentapp3', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'persistentapp3',
+            'persistentdata' => true,
+            'persistentmaxsize' => 3,
+        ));
+        $instance->phpunit_add_definition('phpunit/persistentapp4', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'persistentapp3',
+            'persistentdata' => true,
+            'persistentmaxsize' => 4,
+        ));
+        $cache = cache::make('phpunit', 'persistentapp');
+        $this->assertInstanceOf('cache_phpunit_application', $cache);
+
+        // Set and get three elements.
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('b', 'B'));
+        $this->assertTrue($cache->set('c', 'C'));
+        $this->assertEquals('A', $cache->get('a'));
+        $this->assertEquals(array('b' => 'B', 'c' => 'C'), $cache->get_many(array('b', 'c')));
+
+        // Make sure all items are in persistent cache.
+        $this->assertEquals('A', $cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertEquals('B', $cache->phpunit_get_directly_from_persistcache('b'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
+
+        // Add new value and make sure it is in cache and it is in persistcache.
+        $this->assertTrue($cache->set('d', 'D'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
+        $this->assertEquals('D', $cache->get('d'));
+
+        // Now the least recent accessed item (a) is no longer in persistent cache.
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertEquals('B', $cache->phpunit_get_directly_from_persistcache('b'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
+
+        // Adding and deleting element.
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->delete('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertFalse($cache->has('a'));
+
+        // Make sure "purge" deletes from persist as well.
+        $cache->purge();
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('c'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('d'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('e'));
+
+        // Check that persistent cache holds the last accessed items by get/set.
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('b', 'B'));
+        $this->assertTrue($cache->set('c', 'C'));
+        $this->assertTrue($cache->set('d', 'D'));
+        $this->assertTrue($cache->set('e', 'E'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+
+        /** @var cache_phpunit_application $cache */
+        $cache = cache::make('phpunit', 'persistentapp2');
+        $this->assertInstanceOf('cache_phpunit_application', $cache);
+
+        // Check that persistent cache holds the last accessed items by get/set.
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('b', 'B'));
+        $this->assertTrue($cache->set('c', 'C'));
+        $this->assertTrue($cache->set('d', 'D'));
+        $this->assertTrue($cache->set('e', 'E'));
+        // Current keys in persist cache: c, d, e.
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
+
+        $this->assertEquals('A', $cache->get('a'));
+        // Current keys in persist cache: d, e, a.
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+        $this->assertEquals('A', $cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('c'));
+
+        // Current keys in persist cache: d, e, a.
+        $this->assertEquals(array('c' => 'C'), $cache->get_many(array('c')));
+        // Current keys in persist cache: e, a, c.
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+        $this->assertEquals('A', $cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('d'));
+
+
+        $cache = cache::make('phpunit', 'persistentapp3');
+        $this->assertInstanceOf('cache_phpunit_application', $cache);
+
+        // Check that persistent cache holds the last accessed items by get/set.
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('b', 'B'));
+        $this->assertTrue($cache->set('c', 'C'));
+        $this->assertTrue($cache->set('d', 'D'));
+        $this->assertTrue($cache->set('e', 'E'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+
+        $this->assertTrue($cache->set('b', 'B2'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertEquals('B2', $cache->phpunit_get_directly_from_persistcache('b'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('c'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+
+        $this->assertEquals(2, $cache->set_many(array('b' => 'B3', 'c' => 'C3')));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertEquals('B3', $cache->phpunit_get_directly_from_persistcache('b'));
+        $this->assertEquals('C3', $cache->phpunit_get_directly_from_persistcache('c'));
+        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+
+        $cache = cache::make('phpunit', 'persistentapp4');
+        $this->assertInstanceOf('cache_phpunit_application', $cache);
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertTrue($cache->set('a', 'A'));
+        $this->assertEquals('A', $cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertEquals('A', $cache->get('a'));
+    }
 }
