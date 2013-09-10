@@ -2927,6 +2927,9 @@ class assign {
             }
         }
 
+        // Sort links alphabetically based on the link description.
+        core_collator::asort($links);
+
         $gradingactions = new url_select($links);
         $gradingactions->set_label(get_string('choosegradingaction', 'assign'));
 
