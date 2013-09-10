@@ -90,10 +90,10 @@ echo $OUTPUT->header();
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-echo $OUTPUT->heading(format_text($feedback->name));
+echo $OUTPUT->heading(format_string($feedback->name));
 
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
-echo $OUTPUT->heading(get_string('confirmusetemplate', 'feedback'));
+echo $OUTPUT->heading(get_string('confirmusetemplate', 'feedback'), 3);
 
 $mform->display();
 

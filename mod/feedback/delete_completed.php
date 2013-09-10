@@ -104,9 +104,9 @@ echo $OUTPUT->header();
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-echo $OUTPUT->heading(format_text($feedback->name));
+echo $OUTPUT->heading(format_string($feedback->name));
 echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter boxwidthnormal');
-echo $OUTPUT->heading(get_string('confirmdeleteentry', 'feedback'));
+echo html_writer::tag('p', get_string('confirmdeleteentry', 'feedback'), array('class' => 'bold'));
 $mform->display();
 echo $OUTPUT->box_end();
 

@@ -87,6 +87,7 @@ $strfeedback  = get_string("modulename", "feedback");
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($feedback->name));
 
 require('tabs.php');
 
@@ -144,7 +145,7 @@ if ($coursemap = feedback_get_courses_from_sitecourse_map($feedback->id)) {
 
     $table->print_html();
 } else {
-    echo '<h3>'.get_string('mapcoursenone', 'feedback').'</h3>';
+    echo $OUTPUT->heading(get_string('mapcoursenone', 'feedback'), 3);
 }
 
 

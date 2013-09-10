@@ -125,10 +125,13 @@ if ($item->id) {
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
+
+// Print the main part of the page.
+echo $OUTPUT->heading(format_string($feedback->name));
+
 /// print the tabs
 require('tabs.php');
-/// Print the main part of the page
-echo $OUTPUT->heading(format_text($feedback->name));
+
 //print errormsg
 if (isset($error)) {
     echo $error;

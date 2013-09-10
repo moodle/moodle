@@ -95,7 +95,7 @@ $strfeedback  = get_string("modulename", "feedback");
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_title(format_string($feedback->name));
 echo $OUTPUT->header();
-
+echo $OUTPUT->heading(format_string($feedback->name));
 /// print the tabs
 require('tabs.php');
 
@@ -103,7 +103,7 @@ require('tabs.php');
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
-echo $OUTPUT->heading(get_string('import_questions', 'feedback'));
+echo $OUTPUT->heading(get_string('import_questions', 'feedback'), 3);
 
 if (isset($importerror->msg) AND is_array($importerror->msg)) {
     echo $OUTPUT->box_start('generalbox errorboxcontent boxaligncenter');
