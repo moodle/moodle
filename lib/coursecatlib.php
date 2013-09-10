@@ -2202,12 +2202,11 @@ class course_in_list implements IteratorAggregate {
     public function has_course_overviewfiles() {
         global $CFG;
         if (empty($CFG->courseoverviewfileslimit)) {
-            return 0;
+            return false;
         }
-        require_once($CFG->libdir. '/filestorage/file_storage.php');
         $fs = get_file_storage();
         $context = context_course::instance($this->id);
-        return $fs->is_area_empty($context->id, 'course', 'overviewfiles');
+        return !$fs->is_area_empty($context->id, 'course', 'overviewfiles');
     }
 
     /**
