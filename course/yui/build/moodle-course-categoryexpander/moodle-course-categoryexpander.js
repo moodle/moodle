@@ -51,9 +51,34 @@ var CSS = {
  * @method init
  */
 NS.init = function() {
-    Y.one(Y.config.doc).delegate('click', this.toggle_category_expansion, SELECTORS.CATEGORYLISTENLINK, this);
-    Y.one(Y.config.doc).delegate('click', this.toggle_coursebox_expansion, SELECTORS.COURSEBOXLISTENLINK, this);
-    Y.one(Y.config.doc).delegate('click', this.collapse_expand_all, SELECTORS.COLLAPSEEXPAND, this);
+    var doc = Y.one(Y.config.doc);
+    doc.delegate('click', this.toggle_category_expansion, SELECTORS.CATEGORYLISTENLINK, this);
+    doc.delegate('click', this.toggle_coursebox_expansion, SELECTORS.COURSEBOXLISTENLINK, this);
+    doc.delegate('click', this.collapse_expand_all, SELECTORS.COLLAPSEEXPAND, this);
+
+    // Only set up they keybaord listeners when tab is first pressed - it
+    // may never happen and modifying the DOM on a large number of nodes
+    // can be very expensive.
+    doc.once('key', this.setup_keyboard_listeners, 'tab', this);
+};
+
+/**
+ * Set up keyboard expansion for course content.
+ *
+ * This includes setting up the delegation but also adding the nodes to the
+ * tabflow.
+ *
+ * @method setup_keyboard_listeners
+ */
+NS.setup_keyboard_listeners = function() {
+    var doc = Y.one(Y.config.doc);
+
+    doc.all(SELECTORS.CATEGORYLISTENLINK, SELECTORS.COURSEBOXLISTENLINK, SELECTORS.COLLAPSEEXPAND).setAttribute('tabindex', '0');
+
+
+    Y.one(Y.config.doc).delegate('key', this.toggle_category_expansion, 'enter', SELECTORS.CATEGORYLISTENLINK, this);
+    Y.one(Y.config.doc).delegate('key', this.toggle_coursebox_expansion, 'enter', SELECTORS.COURSEBOXLISTENLINK, this);
+    Y.one(Y.config.doc).delegate('key', this.collapse_expand_all, 'enter', SELECTORS.COLLAPSEEXPAND, this);
 };
 
 /**
@@ -408,4 +433,4 @@ NS.add_animation = function(childnode) {
 };
 
 
-}, '@VERSION@', {"requires": ["node"]});
+}, '@VERSION@', {"requires": ["node", "event-key"]});
