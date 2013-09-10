@@ -62,7 +62,9 @@ class group_form extends moodleform {
 
         $mform->addElement('editor', 'description_editor', get_string('groupdescription', 'group'), null, $editoroptions);
         $mform->setType('description_editor', PARAM_RAW);
-
+        if (!empty($CFG->passwordpolicy)){
+            $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
+        }
         $mform->addElement('passwordunmask', 'enrolmentkey', get_string('enrolmentkey', 'group'), 'maxlength="254" size="24"', get_string('enrolmentkey', 'group'));
         $mform->addHelpButton('enrolmentkey', 'enrolmentkey', 'group');
         $mform->setType('enrolmentkey', PARAM_RAW);
@@ -95,6 +97,14 @@ class group_form extends moodleform {
         $errors = parent::validation($data, $files);
 
         $name = trim($data['name']);
+
+        /*force check password_policy on time of group formation too if enrolmentkey password policy check is applied */   
+          if (!empty($CFG->groupenrolmentkeypolicy) and $data['enrolmentkey']) {
+                $errmsg = '';
+                if (!check_password_policy($data['enrolmentkey'], $errmsg)) {
+                    $errors['enrolmentkey'] = $errmsg;
+                }
+            }
         if (isset($data['idnumber'])) {
             $idnumber = trim($data['idnumber']);
         } else {
@@ -113,7 +123,7 @@ class group_form extends moodleform {
             }
 
             if (!empty($CFG->groupenrolmentkeypolicy) and $data['enrolmentkey'] != '' and $group->enrolmentkey !== $data['enrolmentkey']) {
-                // enforce password policy only if changing password
+                // enforce password policy also  if changing password
                 $errmsg = '';
                 if (!check_password_policy($data['enrolmentkey'], $errmsg)) {
                     $errors['enrolmentkey'] = $errmsg;
