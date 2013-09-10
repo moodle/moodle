@@ -357,7 +357,7 @@ if ($action === 'delete') {
     }
 
     // output the stats
-    echo $OUTPUT->heading(get_string('lessonstats', 'lesson'));
+    echo $OUTPUT->heading(get_string('lessonstats', 'lesson'), 3);
     $stattable = new html_table();
     $stattable->head = array(get_string('averagescore', 'lesson'), get_string('averagetime', 'lesson'),
                             get_string('highscore', 'lesson'), get_string('lowscore', 'lesson'),
@@ -509,7 +509,7 @@ if ($action === 'delete') {
             //$headingobject->firstname = $students[$userid]->firstname;
             //$headingobject->attempt = $try + 1;
             //print_heading(get_string("studentattemptlesson", "lesson", $headingobject));
-        echo $OUTPUT->heading(get_string('attempt', 'lesson', $try+1));
+        echo $OUTPUT->heading(get_string('attempt', 'lesson', $try+1), 3);
 
         $table->head = array();
         $table->align = array('right', 'left');

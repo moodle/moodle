@@ -53,6 +53,7 @@ $PAGE->navbar->add($strlessons);
 $PAGE->set_title("$course->shortname: $strlessons");
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
+echo $OUTPUT->heading($strlessons, 2);
 
 /// Get all the appropriate data
 
