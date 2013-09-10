@@ -1,6 +1,6 @@
 div.editor_atto {
     background-color: white;
-    border: 1px solid #444;
+    border: 1px solid #BBB;
 }
 
 .editor_atto + textarea {
@@ -10,12 +10,25 @@ div.editor_atto {
 
 div.editor_atto_toolbar {
     display: block;
+    background: #F2F2F2;
+    min-height: 36px;
+    border-top: 1px solid #BBB;
+    border-left: 1px solid #BBB;
+    border-right: 1px solid #BBB;
 }
 
 div.editor_atto_toolbar button {
-    padding: 1px;
+    margin-top: 5px;
+    margin-bottom: 0px;
     padding: 3px;
+    background: none;
+    border: none;
+ }
+
+div.editor_atto_toolbar button[disabled] {
+    opacity: .45;
 }
+
 div.editor_atto_toolbar button img {
     padding: 1px;
 }
@@ -74,3 +87,4 @@ body.dir-rtl div.editor_atto_toolbar button.atto_indent_button {
     display: block;
     margin: 5px;
 }
+
