@@ -3490,9 +3490,10 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
     $options->trusted = $post->messagetrust;
     $options->context = $modcontext;
     if ($shortenpost) {
-        // Prepare shortened version
+        // Prepare shortened version by filtering the text then shortening it.
         $postclass    = 'shortenedpost';
-        $postcontent  = format_text(forum_shorten_post($post->message), $post->messageformat, $options, $course->id);
+        $postcontent  = format_text($post->message, $post->messageformat, $options);
+        $postcontent  = shorten_text($postcontent, $CFG->forum_shortpost);
         $postcontent .= html_writer::link($discussionlink, get_string('readtherest', 'forum'));
         $postcontent .= html_writer::tag('div', '('.get_string('numwords', 'moodle', count_words($post->message)).')',
             array('class'=>'post-word-count'));
@@ -3828,61 +3829,24 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
 }
 
-
 /**
+ * This function is now deprecated. Use shorten_text($message, $CFG->forum_shortpost) instead.
+ * 
  * Given a post object that we already know has a long message
  * this function truncates the message nicely to the first
  * sane place between $CFG->forum_longpost and $CFG->forum_shortpost
  *
+ * @deprecated since Moodle 2.6
+ * @see shorten_text()
+ * @todo finalise deprecation in 2.8 in MDL-40851
  * @global object
  * @param string $message
  * @return string
  */
 function forum_shorten_post($message) {
-
    global $CFG;
-
-   $i = 0;
-   $tag = false;
-   $length = strlen($message);
-   $count = 0;
-   $stopzone = false;
-   $truncate = 0;
-
-   for ($i=0; $i<$length; $i++) {
-       $char = $message[$i];
-
-       switch ($char) {
-           case "<":
-               $tag = true;
-               break;
-           case ">":
-               $tag = false;
-               break;
-           default:
-               if (!$tag) {
-                   if ($stopzone) {
-                       if ($char == ".") {
-                           $truncate = $i+1;
-                           break 2;
-                       }
-                   }
-                   $count++;
-               }
-               break;
-       }
-       if (!$stopzone) {
-           if ($count > $CFG->forum_shortpost) {
-               $stopzone = true;
-           }
-       }
-   }
-
-   if (!$truncate) {
-       $truncate = $i;
-   }
-
-   return substr($message, 0, $truncate);
+   debugging('forum_shorten_post() is deprecated since Moodle 2.6. Please use shorten_text($message, $CFG->forum_shortpost) instead.', DEBUG_DEVELOPER);
+   return shorten_text($message, $CFG->forum_shortpost);
 }
 
 /**

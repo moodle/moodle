@@ -5,6 +5,9 @@ information provided here is intended especially for developers.
 
 * The file post_form.php should not be included, the class it contained has
   been moved so that it can benefit from autoloading.
+* The function forum_shorten_post() has been deprecated. It was doing a poor
+  job of shortening forum post text and the shorten_text() function does a
+  much better job.
 
 === 2.5 ===
 
