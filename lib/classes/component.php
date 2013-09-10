@@ -916,12 +916,12 @@ $cache = '.var_export($cache, true).';
                     $module = new stdClass();
                     $module->version = null;
                     include($fullplug.'/version.php');
-                    $versions[$plug] = $module->version;
+                    $versions[$type.'_'.$plug] = $module->version;
                 } else {
                     $plugin = new stdClass();
                     $plugin->version = null;
                     @include($fullplug.'/version.php');
-                    $versions[$plug] = $plugin->version;
+                    $versions[$type.'_'.$plug] = $plugin->version;
                 }
             }
         }
