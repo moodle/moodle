@@ -1453,8 +1453,14 @@ class assignment_base {
                     if ($currentposition == $offset && $offset < $endposition) {
                         $rowclass = null;
                         $final_grade = $grading_info->items[0]->grades[$auser->id];
-                        $grademax = $grading_info->items[0]->grademax;
-                        $final_grade->formatted_grade = round($final_grade->grade,2) .' / ' . round($grademax,2);
+                        //format the final grade properly if we are using a scale
+                        //use floor to force the grade to be an integer
+                        if ($grading_info->items[0]->scaleid) {
+                            $final_grade->formatted_grade = $this->display_grade(floor($final_grade->grade));
+                        } else {
+                            $grademax = $grading_info->items[0]->grademax;
+                            $final_grade->formatted_grade = round($final_grade->grade,2) .' / ' . round($grademax,2);
+                        }
                         $locked_overridden = 'locked';
                         if ($final_grade->overridden) {
                             $locked_overridden = 'overridden';
