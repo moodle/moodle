@@ -404,6 +404,9 @@ class cache implements cache_loader {
                 if ($value instanceof cache_cached_object) {
                     $value = $value->restore_object();
                 }
+                if ($value !== false && $this->is_using_persist_cache()) {
+                    $this->set_in_persist_cache($key, $value);
+                }
                 $resultstore[$key] = $value;
             }
         }
@@ -800,6 +803,10 @@ class cache implements cache_loader {
     public function purge() {
         // 1. Purge the persist cache.
         $this->persistcache = array();
+        if ($this->persistmaxsize !== false) {
+            $this->persistkeys = array();
+            $this->persistcount = 0;
+        }
         // 2. Purge the store.
         $this->store->purge();
         // 3. Optionally pruge any stacked loaders.
@@ -1005,6 +1012,10 @@ class cache implements cache_loader {
         // This method of checking if an array was supplied is faster than is_array.
         if ($key === (array)$key) {
             $key = $key['key'];
+        }
+        if ($this->persistmaxsize !== false && isset($this->persistkeys[$key])) {
+            $this->persistcount--;
+            unset($this->persistkeys[$key]);
         }
         $this->persistcache[$key] = $data;
         if ($this->persistmaxsize !== false) {
