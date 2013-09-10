@@ -34,6 +34,8 @@ use Behat\Behat\Event\SuiteEvent as SuiteEvent,
     Behat\Behat\Event\StepEvent as StepEvent,
     WebDriver\Exception\NoSuchWindow as NoSuchWindow,
     WebDriver\Exception\UnexpectedAlertOpen as UnexpectedAlertOpen,
+    WebDriver\Exception\UnknownError as UnknownError,
+    WebDriver\Exception\CurlExec as CurlExec,
     WebDriver\Exception\NoAlertOpenError as NoAlertOpenError;
 
 /**
@@ -103,7 +105,9 @@ class behat_hooks extends behat_base {
         }
 
         if (!behat_util::is_server_running()) {
-            throw new Exception($CFG->behat_wwwroot . ' is not available, ensure you started your PHP built-in server. More info in ' . behat_command::DOCS_URL . '#Running_tests');
+            throw new Exception($CFG->behat_wwwroot .
+                ' is not available, ensure you started your PHP built-in server or your web server is correctly started and set up.' .
+                ' More info in ' . behat_command::DOCS_URL . '#Running_tests');
         }
 
         // Prevents using outdated data, upgrade script would start and tests would fail.
@@ -170,12 +174,23 @@ class behat_hooks extends behat_base {
         }
 
         // Start always in the the homepage.
-        $this->getSession()->visit($this->locate_path('/'));
+        try {
+            $this->getSession()->visit($this->locate_path('/'));
+        } catch (CurlExec $e) {
+            // Exception thrown by WebDriver, so only @javascript tests will be caugth; in
+            // behat_util::is_server_running() we already checked that the server is running.
+            $moreinfo = 'More info in ' . behat_command::DOCS_URL . '#Running_tests';
+            $msg = 'Selenium server is not running, you need to start it to run tests that involve Javascript. ' . $moreinfo;
+            throw new Exception($msg);
+        } catch (UnknownError $e) {
+            // Generic 'I have no idea' Selenium error. Custom exception to provide more feedback about possible solutions.
+            $this->throw_unknown_exception($e);
+        }
 
         // Checking that the root path is a Moodle test site.
         if (self::is_first_scenario()) {
             $notestsiteexception = new Exception('The base URL (' . $CFG->wwwroot . ') is not a behat test site, ' .
-                'ensure you started the built-in web server in the correct directory');
+                'ensure you started the built-in web server in the correct directory or your web server is correctly started and set up');
             $this->find("xpath", "//head/child::title[normalize-space(.)='Acceptance test site']", $notestsiteexception);
 
             self::$initprocessesfinished = true;
@@ -190,27 +205,6 @@ class behat_hooks extends behat_base {
             }
         }
 
-    }
-
-    /**
-     * Ensures selenium is running.
-     *
-     * Is only executed in scenarios which requires Javascript to run,
-     * it returns a direct error message about what's going on.
-     *
-     * @throws Exception
-     * @BeforeScenario @javascript
-     */
-    public function before_scenario_javascript($event) {
-
-        // Just trying if server responds.
-        try {
-            $this->getSession()->wait(0, false);
-        } catch (Exception $e) {
-            $moreinfo = 'More info in ' . behat_command::DOCS_URL . '#Running_tests';
-            $msg = 'Selenium server is not running, you need to start it to run tests that involves Javascript. ' . $moreinfo;
-            throw new Exception($msg);
-        }
     }
 
     /**
@@ -246,6 +240,9 @@ class behat_hooks extends behat_base {
 
         } catch (NoSuchWindow $e) {
             // If we were interacting with a popup window it will not exists after closing it.
+        } catch (UnknownError $e) {
+            // Custom exception to provide more feedback about possible solutions.
+            $this->throw_unknown_exception($e);
         }
     }
 
@@ -362,4 +359,17 @@ class behat_hooks extends behat_base {
     protected static function is_first_scenario() {
         return !(self::$initprocessesfinished);
     }
+
+    /**
+     * Throws an exception after appending an extra info text.
+     *
+     * @throws Exception
+     * @param UnknownError $exception
+     * @return void
+     */
+    protected function throw_unknown_exception(UnknownError $exception) {
+        $text = get_string('unknownexceptioninfo', 'tool_behat');
+        throw new Exception($text . PHP_EOL . $exception->getMessage());
+    }
+
 }
