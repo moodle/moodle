@@ -80,8 +80,9 @@ h2, h3, h4 {margin:1em;padding:0;text-align:center;}
 
 /* navbar */
 .navbar {width:auto;background-image:url([[pix:theme|trend/__setting_trendcolor__/bg_bread]]);background-repeat:repeat-x;line-height:29px;} /* 30 pixel is the height if bg_bread */
-.navbar li span {color:#E3DFD4;}
-.navbar li a:link, .navbar li a:visited {color:white;}
+.navbar li span.arrow {color:black;font-size:50%;}
+.navbar li span {color:white;}
+.navbar li a:link, .navbar li a:visited {color:black;}
 
 #page-content {
     /* min-width here is useless until min-width in frame.css/#frametop is gretaer enought to hold this #page-content min-width */
