@@ -1,4 +1,3 @@
-
 /*
  * NOTE: the /mod/chat/gui_header_js/ is not a real plugin,
  * ideally this code should be in /mod/chat/module.js
