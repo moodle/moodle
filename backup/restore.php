@@ -43,7 +43,6 @@ if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
     }
 }
 
-$outcome = $restore->process();
 $heading = $course->fullname;
 
 $PAGE->set_title($heading.': '.$restore->get_stage_name());
@@ -52,6 +51,15 @@ $PAGE->navbar->add($restore->get_stage_name());
 
 $renderer = $PAGE->get_renderer('core','backup');
 echo $OUTPUT->header();
+
+// Prepare a progress bar which can display optionally during long-running
+// operations while setting up the UI.
+$slowprogress = new core_backup_display_progress_if_slow();
+// Depending on the code branch above, $restore may be a restore_ui or it may
+// be a restore_ui_independent_stage. Either way, this function exists.
+$restore->set_progress_reporter($slowprogress);
+$outcome = $restore->process();
+
 if (!$restore->is_independent() && $restore->enforce_changed_dependencies()) {
     debugging('Your settings have been altered due to unmet dependencies', DEBUG_DEVELOPER);
 }

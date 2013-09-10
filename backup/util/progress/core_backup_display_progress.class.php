@@ -95,6 +95,11 @@ class core_backup_display_progress extends core_backup_progress {
         echo html_writer::end_div();
     }
 
+    /**
+     * When progress is updated, updates the bar.
+     *
+     * @see core_backup_progress::update_progress()
+     */
     public function update_progress() {
         // If finished...
         if (!$this->is_in_progress_section()) {
