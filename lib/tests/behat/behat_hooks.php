@@ -191,7 +191,7 @@ class behat_hooks extends behat_base {
         if (self::is_first_scenario()) {
             $notestsiteexception = new Exception('The base URL (' . $CFG->wwwroot . ') is not a behat test site, ' .
                 'ensure you started the built-in web server in the correct directory or your web server is correctly started and set up');
-            $this->find("xpath", "//head/child::title[normalize-space(.)='Acceptance test site']", $notestsiteexception);
+            $this->find("xpath", "//head/child::title[normalize-space(.)='" . behat_util::BEHATSITENAME . "']", $notestsiteexception);
 
             self::$initprocessesfinished = true;
         }
