@@ -111,6 +111,7 @@
     $PAGE->set_heading(format_string($course->fullname));
 
     echo $OUTPUT->header();
+    echo $OUTPUT->heading(format_string($forum->name), 2);
 
 /// Some capability checks.
     if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
