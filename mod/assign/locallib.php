@@ -2327,9 +2327,15 @@ class assign {
             $showedit = $this->submissions_open($userid) && ($this->is_any_submission_plugin_enabled());
 
             if ($teamsubmission) {
-                $showsubmit = $showedit && $teamsubmission && ($teamsubmission->status == ASSIGN_SUBMISSION_STATUS_DRAFT);
+                $showsubmit = $showedit &&
+                              $teamsubmission &&
+                              ($teamsubmission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) &&
+                              !$this->submission_empty($teamsubmission);
             } else {
-                $showsubmit = $showedit && $submission && ($submission->status == ASSIGN_SUBMISSION_STATUS_DRAFT);
+                $showsubmit = $showedit &&
+                              $submission &&
+                              ($submission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) &&
+                              !$this->submission_empty($submission);
             }
             if (!$this->get_instance()->submissiondrafts) {
                 $showsubmit = false;
@@ -2900,7 +2906,13 @@ class assign {
             if ($teamsubmission && ($teamsubmission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
                 $showsubmit = false;
             }
+            if ($teamsubmission && $this->submission_empty($teamsubmission)) {
+                $showsubmit = false;
+            }
             if ($submission && ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
+                $showsubmit = false;
+            }
+            if ($submission && $this->submission_empty($submission)) {
                 $showsubmit = false;
             }
             if (!$this->get_instance()->submissiondrafts) {
@@ -3983,7 +3995,26 @@ class assign {
     }
 
     /**
-     * save assignment submission
+     * Determine if the current submission is empty or not.
+     *
+     * @param submission $submission the students submission record to check.
+     * @return bool
+     */
+    public function submission_empty($submission) {
+        $allempty = true;
+
+        foreach ($this->submissionplugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible()) {
+                if (!$allempty || !$plugin->is_empty($submission)) {
+                    $allempty = false;
+                }
+            }
+        }
+        return $allempty;
+    }
+
+    /**
+     * Save assignment submission.
      *
      * @param  moodleform $mform
      * @param  array $notices Any error messages that should be shown to the user at the top of the edit submission form.
@@ -4026,8 +4057,6 @@ class assign {
                 return true;
             }
 
-
-            $allempty = true;
             $pluginerror = false;
             foreach ($this->submissionplugins as $plugin) {
                 if ($plugin->is_enabled() && $plugin->is_visible()) {
@@ -4035,11 +4064,9 @@ class assign {
                         $notices[] = $plugin->get_error();
                         $pluginerror = true;
                     }
-                    if (!$allempty || !$plugin->is_empty($submission)) {
-                        $allempty = false;
-                    }
                 }
             }
+            $allempty = $this->submission_empty($submission);
             if ($pluginerror || $allempty) {
                 if ($allempty) {
                     $notices[] = get_string('submissionempty', 'mod_assign');
