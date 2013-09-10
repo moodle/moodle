@@ -258,7 +258,7 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
         return false;
     }
 
-    echo $OUTPUT->heading(get_string('newsurveyresponses', 'survey').':');
+    echo $OUTPUT->heading(get_string('newsurveyresponses', 'survey').':', 3);
     foreach ($surveys as $survey) {
         $url = $CFG->wwwroot.'/mod/survey/view.php?id='.$survey->cmid;
         print_recent_activity_note($survey->time, $survey, $survey->name, $url, false, $viewfullnames);
@@ -503,7 +503,7 @@ function survey_print_multi($question) {
     $strdefault    = get_string('notyetanswered', 'survey');
     $strresponses  = get_string('responses', 'survey');
 
-    echo $OUTPUT->heading($question->text, 3, 'questiontext');
+    echo $OUTPUT->heading($question->text, 3);
     echo "\n<table width=\"90%\" cellpadding=\"4\" cellspacing=\"1\" border=\"0\" class=\"surveytable\">";
 
     $options = explode( ",", $question->options);
