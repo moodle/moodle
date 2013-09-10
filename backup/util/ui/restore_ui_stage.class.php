@@ -180,11 +180,18 @@ abstract class restore_ui_independent_stage {
  *
  * This is the first stage, it is independent.
  */
-class restore_ui_stage_confirm extends restore_ui_independent_stage {
+class restore_ui_stage_confirm extends restore_ui_independent_stage implements file_progress {
+
     protected $contextid;
     protected $filename = null;
     protected $filepath = null;
     protected $details;
+
+    /**
+     * @var bool True if we have started reporting progress
+     */
+    protected $startedprogress = false;
+
     public function __construct($contextid) {
         $this->contextid = $contextid;
         $this->filename = required_param('filename', PARAM_FILE);
@@ -206,7 +213,35 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
         $this->filepath = restore_controller::get_tempdir_name($this->contextid, $USER->id);
 
         $fb = get_file_packer();
-        return ($fb->extract_to_pathname("$CFG->tempdir/backup/".$this->filename, "$CFG->tempdir/backup/$this->filepath/"));
+        $result = $fb->extract_to_pathname("$CFG->tempdir/backup/".$this->filename,
+                "$CFG->tempdir/backup/$this->filepath/", null, $this);
+
+        // If any progress happened, end it.
+        if ($this->startedprogress) {
+            $this->get_progress_reporter()->end_progress();
+        }
+        return $result;
+    }
+
+    /**
+     * Implementation for file_progress interface to display unzip progress.
+     *
+     * @param int $progress Current progress
+     * @param int $max Max value
+     */
+    public function progress($progress = file_progress::INDETERMINATE, $max = file_progress::INDETERMINATE) {
+        $reporter = $this->get_progress_reporter();
+
+        // Start tracking progress if necessary.
+        if (!$this->startedprogress) {
+            $reporter->start_progress('extract_file_to_dir',
+                    ($max == file_progress::INDETERMINATE) ? core_backup_progress::INDETERMINATE : $max);
+            $this->startedprogress = true;
+        }
+
+        // Pass progress through to whatever handles it.
+        $reporter->progress(
+                ($progress == file_progress::INDETERMINATE) ? core_backup_progress::INDETERMINATE : $progress);
     }
 
     /**
