@@ -235,11 +235,13 @@ NS.run_expansion = function(categorynode) {
         // To avoid a jump effect, we need to set the height of the children to 0 here before removing the SECTIONCOLLAPSED class.
         categorychildren.setStyle('height', '0');
         categorynode.removeClass(CSS.SECTIONCOLLAPSED);
+        categorynode.setAttribute('aria-expanded', 'true');
         categorychildren.fx.set('reverse', false);
     } else {
         categorychildren.fx.set('reverse', true);
         categorychildren.fx.once('end', function(e, categorynode) {
             categorynode.addClass(CSS.SECTIONCOLLAPSED);
+            categorynode.setAttribute('aria-expanded', 'false');
         }, this, categorynode);
     }
 
