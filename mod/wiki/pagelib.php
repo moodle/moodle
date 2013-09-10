@@ -132,7 +132,7 @@ abstract class page_wiki {
         $this->setup_tabs();
 
         echo $OUTPUT->header();
-        $wiki = wiki_get_wiki($this->subwiki->wikiid);
+        $wiki = $PAGE->activityrecord;
         echo $OUTPUT->heading($wiki->name);
 
         echo $this->wikioutput->wiki_info();
