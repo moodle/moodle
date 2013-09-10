@@ -32,7 +32,7 @@ class booktool_importhtml_form extends moodleform {
         $mform = $this->_form;
         $data  = $this->_customdata;
 
-        $mform->addElement('header', 'general', get_string('import'));
+        $mform->addElement('header', 'general', get_string('import', 'booktool_importhtml'));
 
         $options = array(
                 // '0'=>get_string('typeonefile', 'booktool_importhtml'),
