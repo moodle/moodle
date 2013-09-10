@@ -98,6 +98,7 @@ class blog_entry_deleted extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        return array (SITEID, 'blog', 'delete', 'index.php?userid='.$this->userid, 'deleted blog entry with entry id# '. $this->objectid);
+        return array (SITEID, 'blog', 'delete', 'index.php?userid=' . $this->relateduserid, 'deleted blog entry with entry id# '.
+                $this->objectid);
     }
 }

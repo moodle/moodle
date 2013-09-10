@@ -159,9 +159,11 @@ class core_bloglib_testcase extends advanced_testcase {
 
         $this->setAdminUser();
         $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
 
-        // Create a blog entry.
+        // Create a blog entry for another user as Admin.
         $blog = new blog_entry();
+        $blog->userid = $user->id;
         $blog->summary = "This is summary of blog";
         $blog->subject = "Subject of blog";
         $states = blog_entry::get_applicable_publish_states();
@@ -177,9 +179,12 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEquals($sitecontext->id, $event->contextid);
         $this->assertEquals($blog->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals("post", $event->objecttable);
+        $arr = array(SITEID, 'blog', 'add', 'index.php?userid=' . $user->id . '&entryid=' . $blog->id, $blog->subject);
+        $this->assertEventLegacyLogData($arr, $event);
 
-        // Delete a blog entry.
+        // Delete a user blog entry as Admin.
         $record = $DB->get_record('post', array('id' => $blog->id));
         $blog->delete();
         $events = $sink->get_events();
@@ -190,9 +195,11 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEquals(context_system::instance()->id, $event->contextid);
         $this->assertEquals($blog->id, $event->objectid);
         $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals("post", $event->objecttable);
         $this->assertEquals($record, $event->get_record_snapshot("post", $blog->id));
         $this->assertSame('blog_entry_deleted', $event->get_legacy_eventname());
-
+        $arr = array(SITEID, 'blog', 'delete', 'index.php?userid=' . $user->id, 'deleted blog entry with entry id# '. $blog->id);
+        $this->assertEventLegacyLogData($arr, $event);
     }
 }
