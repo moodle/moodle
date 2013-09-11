@@ -2902,7 +2902,7 @@ class assign {
                 }
             }
 
-            $showsubmit = ($submission || $teamsubmission) && $showlinks;
+            $showsubmit = ($submission || $teamsubmission) && $showlinks && $this->submissions_open($user->id);
             if ($teamsubmission && ($teamsubmission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
                 $showsubmit = false;
             }
@@ -3578,6 +3578,9 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/submissionconfirmform.php');
         require_sesskey();
 
+        if (!$this->submissions_open()) {
+            return $this->view_student_error_message();
+        }
         $data = new stdClass();
         $adminconfig = $this->get_admin_config();
         $requiresubmissionstatement = (!empty($adminconfig->requiresubmissionstatement) ||
@@ -4029,6 +4032,9 @@ class assign {
         // Need submit permission to submit an assignment.
         require_capability('mod/assign:submit', $this->context);
         require_sesskey();
+        if (!$this->submissions_open()) {
+            return $this->view_student_error_message();
+        }
 
         $data = new stdClass();
         $mform = new mod_assign_submission_form(null, array($this, $data));
