@@ -60,13 +60,17 @@ abstract class base_plan implements checksumable, executable {
         $task->set_plan($this);
         // Append task settings to plan array, if not present, for comodity
         foreach ($task->get_settings() as $key => $setting) {
-            if (!in_array($setting, $this->settings)) {
-                $name = $setting->get_name();
-                if (!isset($this->settings[$name])) {
-                    $this->settings[$name] = $setting;
-                } else {
-                    throw new base_plan_exception('multiple_settings_by_name_found', $name);
-                }
+            // Check if there is already a setting for this name.
+            $name = $setting->get_name();
+            if (!isset($this->settings[$name])) {
+                // There is no setting, so add it.
+                $this->settings[$name] = $setting;
+            } else if ($this->settings[$name] != $setting) {
+                // If the setting already exists AND it is not the same setting,
+                // then throw an error. (I.e. you're allowed to add the same
+                // setting twice, but cannot add two different ones with same
+                // name.)
+                throw new base_plan_exception('multiple_settings_by_name_found', $name);
             }
         }
     }
