@@ -359,16 +359,16 @@ ORDER BY
      * Load information about the latest state of each question from the database.
      *
      * @param qubaid_condition $qubaids used to restrict which usages are included
-     * in the query. See {@link qubaid_condition}.
-     * @param array $slots A list of slots for the questions you want to konw about.
+     *                                  in the query. See {@link qubaid_condition}.
+     * @param array            $slots   A list of slots for the questions you want to konw about.
+     * @param string|null      $fields
      * @return array of records. See the SQL in this function to see the fields available.
      */
-    public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots) {
+    public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots, $fields = null) {
         list($slottest, $params) = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
 
-        $records = $this->db->get_records_sql("
-SELECT
-    qas.id,
+        if ($fields === null) {
+            $fields =  "qas.id,
     qa.id AS questionattemptid,
     qa.questionusageid,
     qa.slot,
@@ -387,7 +387,13 @@ SELECT
     qas.state,
     qas.fraction,
     qas.timecreated,
-    qas.userid
+    qas.userid";
+
+        }
+
+        $records = $this->db->get_records_sql("
+SELECT
+    {$fields}
 
 FROM {$qubaids->from_question_attempts('qa')}
 JOIN {question_attempt_steps} qas ON
@@ -1458,6 +1464,14 @@ abstract class qubaid_condition {
      * @return the params needed by a query that uses {@link usage_id_in()}.
      */
     public abstract function usage_id_in_params();
+
+    /**
+     * @return string 40-character hash code that uniquely identifies the combination of properties and class name of this qubaid
+     *                  condition.
+     */
+    public function get_hash_code() {
+        return sha1(serialize($this));
+    }
 }
 
 

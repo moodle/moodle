@@ -18,9 +18,11 @@
  * This file contains the code to analyse all the responses to a particular
  * question.
  *
- * @package   quiz_statistics
- * @copyright 2010 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    core
+ * @subpackage questionbank
+ * @copyright  2013 Open University
+ * @author     Jamie Pratt <me@jamiep.org>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
@@ -31,13 +33,13 @@ defined('MOODLE_INTERNAL') || die();
  * This class can store and compute the analysis of the responses to a particular
  * question.
  *
- * @copyright 2010 The Open University
+ * @copyright 2013 Open University
+ * @author    Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_statistics_response_analyser {
+class question_response_analyser {
     /** @var object the data from the database that defines the question. */
     protected $questiondata;
-    protected $loaded = false;
 
     /**
      * @var array This is a multi-dimensional array that stores the results of
@@ -119,9 +121,9 @@ class quiz_statistics_response_analyser {
     /**
      * Analyse all the response data for for all the specified attempts at
      * this question.
-     * @param $qubaids which attempts to consider.
+     * @param qubaid_condition $qubaids which attempts to consider.
      */
-    public function analyse($qubaids) {
+    public function calculate($qubaids) {
         // Load data.
         $dm = new question_engine_data_mapper();
         $questionattempts = $dm->load_attempts_at_question($this->questiondata->id, $qubaids);
@@ -130,8 +132,8 @@ class quiz_statistics_response_analyser {
         foreach ($questionattempts as $qa) {
             $this->add_data_from_one_attempt($qa);
         }
+        $this->store_cached($qubaids);
 
-        $this->loaded = true;
     }
 
     /**
@@ -164,19 +166,16 @@ class quiz_statistics_response_analyser {
     }
 
     /**
-     * Store the computed response analysis in the quiz_question_response_stats
-     * table.
-     * @param int $quizstatisticsid the cached quiz statistics to load the
+     * Store the computed response analysis in the question_response_analysis table.
+     * @param qubaid_condition $qubaids
      * data corresponding to.
-     * @return bool true if cached data was found in the database and loaded,
-     * otherwise false, to mean no data was loaded.
+     * @return bool true if cached data was found in the database and loaded, otherwise false, to mean no data was loaded.
      */
-    public function load_cached($quizstatisticsid) {
+    public function load_cached($qubaids) {
         global $DB;
 
-        $rows = $DB->get_records('quiz_question_response_stats',
-                array('quizstatisticsid' => $quizstatisticsid,
-                        'questionid' => $this->questiondata->id));
+        $rows = $DB->get_records('question_response_analysis',
+                array('hashcode' => $qubaids->get_hash_code(), 'questionid' => $this->questiondata->id));
         if (!$rows) {
             return false;
         }
@@ -186,28 +185,22 @@ class quiz_statistics_response_analyser {
             $this->responses[$row->subqid][$row->aid][$row->response]->count = $row->rcount;
             $this->responses[$row->subqid][$row->aid][$row->response]->fraction = $row->credit;
         }
-        $this->loaded = true;
         return true;
     }
 
     /**
-     * Store the computed response analysis in the quiz_question_response_stats
-     * table.
-     * @param int $quizstatisticsid the cached quiz statistics this correspons to.
+     * Store the computed response analysis in the question_response_analysis table.
+     * @param qubaid_condition $qubaids
      */
-    public function store_cached($quizstatisticsid) {
+    public function store_cached($qubaids) {
         global $DB;
 
-        if (!$this->loaded) {
-            throw new coding_exception(
-                    'Question responses have not been analyised. Cannot store in the database.');
-        }
-
+        $cachetime = time();
         foreach ($this->responses as $subpartid => $partdata) {
             foreach ($partdata as $responseclassid => $classdata) {
                 foreach ($classdata as $response => $data) {
                     $row = new stdClass();
-                    $row->quizstatisticsid = $quizstatisticsid;
+                    $row->hashcode = $qubaids->get_hash_code();
                     $row->questionid = $this->questiondata->id;
                     $row->subqid = $subpartid;
                     if ($responseclassid === '') {
@@ -218,7 +211,8 @@ class quiz_statistics_response_analyser {
                     $row->response = $response;
                     $row->rcount = $data->count;
                     $row->credit = $data->fraction;
-                    $DB->insert_record('quiz_question_response_stats', $row, false);
+                    $row->timemodified = $cachetime;
+                    $DB->insert_record('question_response_analysis', $row, false);
                 }
             }
         }
