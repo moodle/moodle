@@ -88,17 +88,22 @@ class grade_import_mapping_form extends moodleform {
         }
         $mform->addElement('select', 'mapfrom', get_string('mapfrom', 'grades'), $mapfromoptions);
 
-        $maptooptions = array('userid'=>'userid', 'username'=>'username', 'useridnumber'=>'useridnumber', 'useremail'=>'useremail', '0'=>'ignore');
+        $maptooptions = array(
+            'userid'       => get_string('userid', 'grades'),
+            'username'     => get_string('username'),
+            'useridnumber' => get_string('idnumber'),
+            'useremail'    => get_string('email'),
+            '0'            => get_string('ignore', 'grades')
+        );
         $mform->addElement('select', 'mapto', get_string('mapto', 'grades'), $maptooptions);
 
         $mform->addElement('header', 'general', get_string('mappings', 'grades'));
 
-        // add a comment option
-
-        $comments = array();
+        // Add a feedback option.
+        $feedbacks = array();
         if ($gradeitems = $this->_customdata['gradeitems']) {
             foreach ($gradeitems as $itemid => $itemname) {
-                $comments['feedback_'.$itemid] = 'comments for '.$itemname;
+                $feedbacks['feedback_'.$itemid] = get_string('feedbackforgradeitems', 'grades', $itemname);
             }
         }
 
@@ -106,11 +111,16 @@ class grade_import_mapping_form extends moodleform {
             $i = 0; // index
             foreach ($header as $h) {
                 $h = trim($h);
-                // this is what each header maps to
-                $mform->addElement('selectgroups', 'mapping_'.$i, s($h),
-                    array('others'=>array('0'=>'ignore', 'new'=>'new gradeitem'),
-                    'gradeitems'=>$gradeitems,
-                    'comments'=>$comments));
+                // This is what each header maps to.
+                $headermapsto = array(
+                    get_string('others', 'grades')     => array(
+                        '0'   => get_string('ignore', 'grades'),
+                        'new' => get_string('newitem', 'grades')
+                    ),
+                    get_string('gradeitems', 'grades') => $gradeitems,
+                    get_string('feedbacks', 'grades')  => $feedbacks
+                );
+                $mform->addElement('selectgroups', 'mapping_'.$i, s($h), $headermapsto);
                 $i++;
             }
         }
