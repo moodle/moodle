@@ -520,8 +520,12 @@ body {
     background: #ddd;
 }
 
-.gradestable .lastrow td.cell {
-    background: #eee !important;
+table#user-grades tr.avg td.cell {
+    background: #eee;
+}
+
+table#user-grades tr.avg td.vmarked {
+    background-color: #fc3;
 }
 
 .user-grade td.b1t,
