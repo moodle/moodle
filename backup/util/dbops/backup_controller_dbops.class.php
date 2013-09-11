@@ -350,14 +350,31 @@ abstract class backup_controller_dbops extends backup_dbops {
 
     /**
      * Get details information for main moodle_backup.xml file, extracting it from
-     * the specified controller
+     * the specified controller.
+     *
+     * If you specify the progress monitor, this will start a new progress section
+     * to track progress in processing (in case this task takes a long time).
+     *
+     * @param string $backupid Backup ID
+     * @param core_backup_progress $progress Optional progress monitor
      */
-    public static function get_moodle_backup_information($backupid) {
+    public static function get_moodle_backup_information($backupid,
+            core_backup_progress $progress = null) {
+
+        // Start tracking progress if required (for load_controller).
+        if ($progress) {
+            $progress->start_progress('get_moodle_backup_information', 2);
+        }
 
         $detailsinfo = array(); // Information details
         $contentsinfo= array(); // Information about backup contents
         $settingsinfo= array(); // Information about backup settings
         $bc = self::load_controller($backupid); // Load controller
+
+        // Note that we have loaded controller.
+        if ($progress) {
+            $progress->progress(1);
+        }
 
         // Details info
         $detailsinfo['id'] = $bc->get_id();
@@ -377,8 +394,15 @@ abstract class backup_controller_dbops extends backup_dbops {
         $contentsinfo['sections']   = array();
         $contentsinfo['course']     = array();
 
+        // Get tasks and start nested progress.
+        $tasks = $bc->get_plan()->get_tasks();
+        if ($progress) {
+            $progress->start_progress('get_moodle_backup_information', count($tasks));
+            $done = 1;
+        }
+
         // Contents info (extract information from tasks)
-        foreach ($bc->get_plan()->get_tasks() as $task) {
+        foreach ($tasks as $task) {
 
             if ($task instanceof backup_activity_task) { // Activity task
 
@@ -407,9 +431,20 @@ abstract class backup_controller_dbops extends backup_dbops {
                 list($contentinfo, $settings) = self::get_root_backup_information($task);
                 $settingsinfo = array_merge($settingsinfo, $settings);
             }
+
+            // Report task handled.
+            if ($progress) {
+                $progress->progress($done++);
+            }
         }
 
         $bc->destroy(); // Always need to destroy controller to handle circular references
+
+        // Finish progress reporting.
+        if ($progress) {
+            $progress->end_progress();
+            $progress->end_progress();
+        }
 
         return array(array((object)$detailsinfo), $contentsinfo, $settingsinfo);
     }

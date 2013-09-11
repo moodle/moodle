@@ -88,14 +88,30 @@ if (!($bc = backup_ui::load_controller($backupid))) {
                             backup::INTERACTIVE_YES, backup::MODE_GENERAL, $USER->id);
 }
 $backup = new backup_ui($bc);
-$backup->process();
 
-$PAGE->set_title($heading.': '.$backup->get_stage_name());
+$PAGE->set_title($heading);
 $PAGE->set_heading($heading);
-$PAGE->navbar->add($backup->get_stage_name());
 
 $renderer = $PAGE->get_renderer('core','backup');
 echo $OUTPUT->header();
+
+// Prepare a progress bar which can display optionally during long-running
+// operations while setting up the UI.
+$slowprogress = new core_backup_display_progress_if_slow(get_string('preparingui', 'backup'));
+
+$previous = optional_param('previous', false, PARAM_BOOL);
+if ($backup->get_stage() == backup_ui::STAGE_SCHEMA && !$previous) {
+    // After schema stage, we are probably going to get to the confirmation stage,
+    // The confirmation stage has 2 sets of progress, so this is needed to prevent
+    // it showing 2 progress bars.
+    $twobars = true;
+    $slowprogress->start_progress('', 2);
+} else {
+    $twobars = false;
+}
+$backup->get_controller()->set_progress($slowprogress);
+$backup->process();
+
 if ($backup->enforce_changed_dependencies()) {
     debugging('Your settings have been altered due to unmet dependencies', DEBUG_DEVELOPER);
 }
@@ -112,8 +128,16 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     $backup->save_controller();
 }
 
+// Displaying UI can require progress reporting, so do it here before outputting
+// the backup stage bar (as part of the existing progress bar, if required).
+$ui = $backup->display($renderer);
+if ($twobars) {
+    $slowprogress->end_progress();
+}
+
 echo $renderer->progress_bar($backup->get_progress_bar());
-echo $backup->display($renderer);
+
+echo $ui;
 $backup->destroy();
 unset($backup);
 echo $OUTPUT->footer();
