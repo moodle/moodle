@@ -103,7 +103,7 @@ foreach ($courses as $courseid) {
     if ($errors) {
         if (!empty($options['fix'])) {
             // Reset the course cache to make sure cache is recalculated next time the course is viewed.
-            $DB->upgrade_record('course', array('modinfo' => null, 'id' => $courseid));
+            rebuild_course_cache($courseid, true);
         }
         foreach ($errors as $error) {
             cli_problem($error);
