@@ -520,7 +520,8 @@ body {
     background: #ddd;
 }
 
-table#user-grades tr.avg td.cell {
+table#user-grades tr.avg td.cell,
+table#user-grades tr.avg th.cell {
     background: #eee;
 }
 
