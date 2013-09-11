@@ -606,7 +606,7 @@ class course_modinfo {
         foreach (self::$cachedfields as $key) {
             if (!isset($course->$key)) {
                 $course = $DB->get_record('course', array('id' => $course->id),
-                        array_merge(array('id'), self::$cachedfields), MUST_EXIST);
+                        implode(',', array_merge(array('id'), self::$cachedfields)), MUST_EXIST);
                 break;
             }
         }
