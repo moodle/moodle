@@ -31,6 +31,10 @@ require_once($CFG->libdir . '/blocklib.php');
 
 
 class core_moodle_page_testcase extends advanced_testcase {
+
+    /**
+     * @var testable_moodle_page
+     */
     protected $testpage;
 
     public function setUp() {
@@ -570,8 +574,80 @@ class core_moodle_page_testcase extends advanced_testcase {
         $expectedcaps = array('moodle/course:manageactivities', 'moodle/site:other', 'moodle/site:manageblocks');
         $this->assertEquals(array_values($expectedcaps), array_values($actualcaps));
     }
-}
 
+    /**
+     * Test getting a renderer.
+     */
+    public function test_get_renderer() {
+        global $OUTPUT, $PAGE;
+        $oldoutput = $OUTPUT;
+        $oldpage = $PAGE;
+        $PAGE = $this->testpage;
+
+        $this->testpage->set_pagelayout('standard');
+        $this->assertEquals('standard', $this->testpage->pagelayout);
+        // Initialise theme and output for the next tests.
+        $this->testpage->initialise_theme_and_output();
+        // Check the generated $OUTPUT object is a core renderer.
+        $this->assertInstanceOf('core_renderer', $OUTPUT);
+        // Check we can get a core renderer if we explicitly request one (no component).
+        $this->assertInstanceOf('core_renderer', $this->testpage->get_renderer('core'));
+        // Check we get a CLI renderer if we request a maintenance renderer. The CLI target should take precedence.
+        $this->assertInstanceOf('core_renderer_cli',
+            $this->testpage->get_renderer('core', null, RENDERER_TARGET_MAINTENANCE));
+
+        // Check we can get a coures renderer if we explicitly request one (valid component).
+        $this->assertInstanceOf('core_course_renderer', $this->testpage->get_renderer('core', 'course'));
+
+        // Check a properly invalid component.
+        try {
+            $this->testpage->get_renderer('core', 'monkeys');
+            $this->fail('Request for renderer with invalid component didn\'t throw expected exception.');
+        } catch (coding_exception $exception) {
+            $this->assertEquals('monkeys', $exception->debuginfo);
+        }
+
+        $PAGE = $oldpage;
+        $OUTPUT = $oldoutput;
+    }
+
+    /**
+     * Tests getting a renderer with a maintenance layout.
+     *
+     * This layout has special hacks in place in order to deliver a "maintenance" renderer.
+     */
+    public function test_get_renderer_maintenance() {
+        global $OUTPUT, $PAGE;
+        $oldoutput = $OUTPUT;
+        $oldpage = $PAGE;
+        $PAGE = $this->testpage;
+
+        $this->testpage->set_pagelayout('maintenance');
+        $this->assertEquals('maintenance', $this->testpage->pagelayout);
+        // Initialise theme and output for the next tests.
+        $this->testpage->initialise_theme_and_output();
+        // Check the generated $OUTPUT object is a core cli renderer.
+        // It shouldn't be maintenance because there the cli target should take greater precedence.
+        $this->assertInstanceOf('core_renderer_cli', $OUTPUT);
+        // Check we can get a core renderer if we explicitly request one (no component).
+        $this->assertInstanceOf('core_renderer', $this->testpage->get_renderer('core'));
+        // Check we get a CLI renderer if we request a maintenance renderer. The CLI target should take precedence.
+        $this->assertInstanceOf('core_renderer_cli',
+            $this->testpage->get_renderer('core', null, RENDERER_TARGET_MAINTENANCE));
+        // Check we can get a coures renderer if we explicitly request one (valid component).
+        $this->assertInstanceOf('core_course_renderer', $this->testpage->get_renderer('core', 'course'));
+
+        try {
+            $this->testpage->get_renderer('core', 'monkeys');
+            $this->fail('Request for renderer with invalid component didn\'t throw expected exception.');
+        } catch (coding_exception $exception) {
+            $this->assertEquals('monkeys', $exception->debuginfo);
+        }
+
+        $PAGE = $oldpage;
+        $OUTPUT = $oldoutput;
+    }
+}
 
 /**
  * Test-specific subclass to make some protected things public.

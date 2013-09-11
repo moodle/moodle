@@ -15,6 +15,11 @@ Notes:
 * For the themes based on bootstrapbase please also read theme/bootstrapbase/upgrade.txt
 * A new component action_menu is now used to display editing icons for courses and blocks within a drop down. If you have a theme that doesn't
   extend base, canvas, or clean then you will need to style for this new component within your theme.
+* The maintenance layout now has a special renderer that extends the core_renderer in order to prevent some methods from interacting
+  with the database. Please be aware that for the maintenance layout some methods now always return an empty string.
+  This has been done because it is important that during maintenance routines we don't show any links, interact with the database,
+  or interact with caches as doing so may lead to errors,
+  Please see the maintenance renderer notes below for details on the functions affected.
 
 Renderer changes:
 * core_course_renderer::course_section_cm_edit_actions has two new optional arguments and now uses and action_menu component.
@@ -30,6 +35,26 @@ Selector changes:
   The name (h3|div} of both courses and categories used to have .name, for courses in the list this was changed to .coursename and for categories in the list this was changed to .categoryname.
 * Classes ".header and .headingblock" were removed from all front page content headings.
 * Classes ".headingblock .header .tag-header" were removed from the tag index page
+
+Maintenance renderer notes:
+When the maintenance layout is being used $OUTPUT will be an instance of core_renderer_maintenance.
+This renderer mimics the core_renderer except that the following functions always return an empty string.
+* core_maintenance_renderer::block
+* core_maintenance_renderer::blocks
+* core_maintenance_renderer::blocks_for_regions
+* core_maintenance_renderer::course_header
+* core_maintenance_renderer::course_footer
+* core_maintenance_renderer::course_content_header
+* core_maintenance_renderer::course_content_footer
+* core_maintenance_renderer::custom_menu
+* core_maintenance_renderer::file_picker
+* core_maintenance_renderer::htmllize_file_tree
+* core_maintenance_renderer::lang_menu
+* core_maintenance_renderer::login_info
+* core_maintenance_renderer::user_picture
+
+If you have overridden methods of the core_renderer in your theme and want those changes to be shown during times of maintenance you
+will also need to override the core_renderer_maintenance and copy your customisations from the core_renderer to that.
 
 === 2.5.1 ===
 
