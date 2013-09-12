@@ -43,7 +43,7 @@ Feature: Automatic creation of groups
     And I expand all fieldsets
     And I fill the moodle form with:
       | Group/member count | 2 |
-      | Create in grouping | New grouping |
+      | Grouping of auto-created groups | New grouping |
       | Grouping name | Grouping name |
     And I press "Preview"
     Then I should see "Group members"
