@@ -3,9 +3,9 @@
     require('../config.php');
     require_once($CFG->libdir.'/eventslib.php');
 
-    if ($form = data_submitted()) { // form submitted, do not check referer (original page unknown)!
-
-    /// Only deal with real users
+    // Form submitted, do not check referer (original page unknown).
+    if ($form = data_submitted()) {
+        // Only deal with real users.
         if (!isloggedin()) {
             redirect($CFG->wwwroot);
         }
