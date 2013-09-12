@@ -143,9 +143,23 @@ class behat_hooks extends behat_base {
             throw new coding_exception('Behat only can modify the test database and the test dataroot!');
         }
 
+        try {
+            $session = $this->getSession();
+        } catch (CurlExec $e) {
+            // Exception thrown by WebDriver, so only @javascript tests will be caugth; in
+            // behat_util::is_server_running() we already checked that the server is running.
+            $moreinfo = 'More info in ' . behat_command::DOCS_URL . '#Running_tests';
+            $msg = 'Selenium server is not running, you need to start it to run tests that involve Javascript. ' . $moreinfo;
+            throw new Exception($msg);
+        } catch (UnknownError $e) {
+            // Generic 'I have no idea' Selenium error. Custom exception to provide more feedback about possible solutions.
+            $this->throw_unknown_exception($e);
+        }
+
+
         // We need the Mink session to do it and we do it only before the first scenario.
         if (self::is_first_scenario()) {
-            behat_selectors::register_moodle_selectors($this->getSession());
+            behat_selectors::register_moodle_selectors($session);
         }
 
         // Avoid some notices / warnings.
@@ -168,24 +182,19 @@ class behat_hooks extends behat_base {
         if (!empty($CFG->behat_restart_browser_after) && $this->running_javascript()) {
             $now = time();
             if (self::$lastbrowsersessionstart + $CFG->behat_restart_browser_after < $now) {
-                $this->getSession()->restart();
+                $session->restart();
                 self::$lastbrowsersessionstart = $now;
             }
         }
 
         // Start always in the the homepage.
         try {
-            $this->getSession()->visit($this->locate_path('/'));
-        } catch (CurlExec $e) {
-            // Exception thrown by WebDriver, so only @javascript tests will be caugth; in
-            // behat_util::is_server_running() we already checked that the server is running.
-            $moreinfo = 'More info in ' . behat_command::DOCS_URL . '#Running_tests';
-            $msg = 'Selenium server is not running, you need to start it to run tests that involve Javascript. ' . $moreinfo;
-            throw new Exception($msg);
+            // Let's be conservative as we never know when new upstream issues will affect us.
+            $session->visit($this->locate_path('/'));
         } catch (UnknownError $e) {
-            // Generic 'I have no idea' Selenium error. Custom exception to provide more feedback about possible solutions.
             $this->throw_unknown_exception($e);
         }
+
 
         // Checking that the root path is a Moodle test site.
         if (self::is_first_scenario()) {
@@ -199,7 +208,7 @@ class behat_hooks extends behat_base {
         // Closing JS dialogs if present. Otherwise they would block this scenario execution.
         if ($this->running_javascript()) {
             try {
-                $this->getSession()->getDriver()->getWebDriverSession()->accept_alert();
+                $session->getDriver()->getWebDriverSession()->accept_alert();
             } catch (NoAlertOpenError $e) {
                 // All ok, there should not be JS dialogs in theory.
             }
