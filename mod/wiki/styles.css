@@ -146,8 +146,12 @@
 }
 
 .wiki_restore_yes, .wiki_deletecomment_yes,
-.wiki_restore_no, .wiki_deletecomment_no {
+.dir-rtl .wiki_restore_no, .wiki_deletecomment_no {
     float: left;
+}
+.wiki_restore_no, .wiki_deletecomment_no,
+.dir-rtl .wiki_restore_yes, .wiki_deletecomment_yes {
+    float: right;
 }
 
 .wiki_restoreform, .wiki_deletecommentform {
