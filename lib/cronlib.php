@@ -790,7 +790,7 @@ function cron_delete_from_temp() {
         $iter = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::CHILD_FIRST);
 
         for ($iter->rewind(); $iter->valid(); $iter->next()) {
-            $node = $iter->getPathname();
+            $node = $iter->getRealPath();
             if (!is_readable($node)) {
                 continue;
             }

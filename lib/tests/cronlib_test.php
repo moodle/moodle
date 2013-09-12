@@ -37,6 +37,8 @@ class cronlib_testcase extends basic_testcase {
      */
     public function cron_delete_from_temp_provider() {
         global $CFG;
+
+        $tmpdir = realpath($CFG->tempdir);
         $time = time();
 
         $weekstime = $time - strtotime('1 week');
@@ -97,14 +99,14 @@ class cronlib_testcase extends basic_testcase {
                 array(
                     array($node1, $node2, $node3, $node4, $node5, $node6, $node7, $node8, $node9, $node10),
                     array(
-                        "$CFG->tempdir/dir1",
-                        "$CFG->tempdir/dir1/dir1_1",
-                        "$CFG->tempdir/dir1/dir1_1/dir1_2",
-                        "$CFG->tempdir/dir1/dir1_1/dir1_2/file2",
-                        "$CFG->tempdir/dir1/dir1_4",
-                        "$CFG->tempdir/dir1/dir1_4/file2",
-                        "$CFG->tempdir/dir2",
-                        "$CFG->tempdir/file1",
+                        $tmpdir.DIRECTORY_SEPARATOR.'dir1',
+                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_1',
+                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_1'.DIRECTORY_SEPARATOR.'dir1_2',
+                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_1'.DIRECTORY_SEPARATOR.'dir1_2'.DIRECTORY_SEPARATOR.'file2',
+                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_4',
+                        $tmpdir.DIRECTORY_SEPARATOR.'dir1'.DIRECTORY_SEPARATOR.'dir1_4'.DIRECTORY_SEPARATOR.'file2',
+                        $tmpdir.DIRECTORY_SEPARATOR.'dir2',
+                        $tmpdir.DIRECTORY_SEPARATOR.'file1',
                     )
                 ),
                 array(
@@ -143,7 +145,7 @@ class cronlib_testcase extends basic_testcase {
         $actual = array();
         for ($iter->rewind(); $iter->valid(); $iter->next()) {
             if (!$iter->isDot()) {
-                $actual[] = $iter->getPathname();
+                $actual[] = $iter->getRealPath();
             }
         }
 
