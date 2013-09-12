@@ -258,6 +258,13 @@ margin: 0;
 /* Courses
 ----------------------------*/
 
+h2.headingblock {
+    font-weight: normal;
+    color:#999;
+    font-size: 1.5em;
+    border-bottom:1px dotted #eee;
+}
+
 .coursebox {
     border-color: #eee;
 }

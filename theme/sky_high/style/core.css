@@ -184,6 +184,15 @@ p.helplink a {
 
 /* @group Course */
 
+.headingblock {
+    border: 0px none;
+    border-bottom: 1px solid #98bcd6;
+    padding-bottom: 0px;
+    padding-top: 5px;
+    color: #336699;
+    font-size: 1.8em;
+    font-weight: normal;
+}
 .completionprogress {
     color: #336699;
     text-transform: uppercase;

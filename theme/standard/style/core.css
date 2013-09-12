@@ -37,6 +37,9 @@ div.header,
 .informationbox,
 .noticebox,
 .tabledivider {border-color:#DDD;}
+.headingblock {border:1px solid #DDD;padding:5px;margin-top:0;}
+h2.headingblock {font-size:1.1em;}
+.headingblock .outline {border-color:#DDDDDD;}
 .header,
 .navbar {background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;background-color:#e1e1df;}
 

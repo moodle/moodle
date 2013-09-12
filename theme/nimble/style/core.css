@@ -79,6 +79,11 @@ h1.headermain {
 
 /* Content */
 
+h2.headingblock {
+	text-shadow: 1px 1px 3px #aaa;
+	color: #445566;
+}
+
 /* Region Post */
 
 #region-post-wrap-1 {

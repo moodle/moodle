@@ -90,7 +90,8 @@ a.autolink.glossary:hover {cursor: help;}
 .warning,
 .errorbox .title,
 .pagingbar .title,
-.pagingbar .thispage {font-weight: bold;}
+.pagingbar .thispage,
+.headingblock {font-weight: bold;}
 img.resize {height: 1em;width: 1em;}
 .block img.resize,
 .breadcrumb img.resize {height: 0.9em;width: 0.8em;}

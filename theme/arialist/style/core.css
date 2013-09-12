@@ -110,6 +110,14 @@ fieldset#general legend {
 /* Courses
 ----------------------------*/
 
+h2.headingblock {
+    font-weight: normal;
+    color:#999;
+    font-size: 1.5em;
+    border-bottom:1px solid #eee;
+    padding-bottom:2px;
+}
+
 .coursebox {
     border-color: #eee;
 }
