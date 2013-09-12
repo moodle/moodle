@@ -2424,5 +2424,31 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013091000.03);
     }
 
+    if ($oldversion < 2013091300.01) {
+
+        $table = new xmldb_table('user');
+
+        // Changing precision of field institution on table user to (255).
+        $field = new xmldb_field('institution', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'phone2');
+
+        // Launch change of precision for field institution.
+        $dbman->change_field_precision($table, $field);
+
+        // Changing precision of field department on table user to (255).
+        $field = new xmldb_field('department', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'institution');
+
+        // Launch change of precision for field department.
+        $dbman->change_field_precision($table, $field);
+
+        // Changing precision of field address on table user to (255).
+        $field = new xmldb_field('address', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'department');
+
+        // Launch change of precision for field address.
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013091300.01);
+    }
+
     return true;
 }
