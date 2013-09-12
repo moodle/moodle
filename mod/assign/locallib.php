@@ -4033,7 +4033,8 @@ class assign {
         require_capability('mod/assign:submit', $this->context);
         require_sesskey();
         if (!$this->submissions_open()) {
-            return $this->view_student_error_message();
+            $notices[] = get_string('duedatereached', 'assign');
+            return false;
         }
 
         $data = new stdClass();
@@ -4042,10 +4043,6 @@ class assign {
             return true;
         }
         if ($data = $mform->get_data()) {
-            if (!$this->submissions_open()) {
-                $notices[] = get_string('duedatereached', 'assign');
-                return false;
-            }
             if ($this->get_instance()->teamsubmission) {
                 $submission = $this->get_group_submission($USER->id, 0, true);
             } else {
