@@ -176,6 +176,10 @@ if (empty($select)) {
     echo $select;
 }
 
+// Fetch current active group.
+$groupmode = groups_get_course_groupmode($course);
+$currentgroup = $SESSION->activegroup[$course->id][$groupmode][$course->defaultgroupingid];
+
 if (!empty($instanceid) && !empty($roleid)) {
     // from here assume we have at least the module we're using.
     $cm = $modinfo->cms[$instanceid];

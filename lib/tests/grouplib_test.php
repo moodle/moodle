@@ -713,10 +713,14 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertContains(format_string($group2->name), $html);
 
         // Let us test activegroup changes now.
+        $this->setUser($user);
         $SESSION->activegroup[$course->id][VISIBLEGROUPS][$course->defaultgroupingid] = 5;
         groups_allgroups_course_menu($course, 'someurl.php', false); // Do not update session.
         $this->assertSame(5, $SESSION->activegroup[$course->id][VISIBLEGROUPS][$course->defaultgroupingid]);
-        groups_allgroups_course_menu($course, 'someurl.php', true, 2); // Update session.
-        $this->assertSame(2, $SESSION->activegroup[$course->id][VISIBLEGROUPS][$course->defaultgroupingid]);
+        groups_allgroups_course_menu($course, 'someurl.php', true, $group1->id); // Update session.
+        $this->assertSame($group1->id, $SESSION->activegroup[$course->id][VISIBLEGROUPS][$course->defaultgroupingid]);
+        // Try to update session with an invalid groupid. It should not accept the invalid id.
+        groups_allgroups_course_menu($course, 'someurl.php', true, 256);
+        $this->assertEquals($group1->id, $SESSION->activegroup[$course->id][VISIBLEGROUPS][$course->defaultgroupingid]);
     }
 }

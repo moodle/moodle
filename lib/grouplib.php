@@ -581,13 +581,24 @@ function groups_allgroups_course_menu($course, $urlroot, $update = false, $activ
         $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
     }
 
-    if ($update) {
-        $SESSION->activegroup[$course->id][$groupmode][$course->defaultgroupingid] = $activegroup;
-    }
-
     foreach ($allowedgroups as $group) {
         $groupsmenu[$group->id] = format_string($group->name);
     }
+
+    if ($update) {
+        // Init activegroup array if necessary.
+        if (!isset($SESSION->activegroup)) {
+            $SESSION->activegroup = array();
+        }
+        if (!isset($SESSION->activegroup[$course->id])) {
+            $SESSION->activegroup[$course->id] = array(SEPARATEGROUPS => array(), VISIBLEGROUPS => array(), 'aag' => array());
+        }
+        if (empty($groupsmenu[$activegroup])) {
+            $activegroup = key($groupsmenu); // Force set to one of accessible groups.
+        }
+        $SESSION->activegroup[$course->id][$groupmode][$course->defaultgroupingid] = $activegroup;
+    }
+
     $grouplabel = get_string('groups');
     if (count($groupsmenu) == 0) {
         return '';
