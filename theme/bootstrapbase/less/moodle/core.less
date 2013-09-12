@@ -181,7 +181,7 @@ img.resize {
 /* Icon styles */
 img.icon {
     height: 16px;
-    vertical-align: middle;
+    vertical-align: text-bottom;
     width: 16px;
     padding-right: 6px;
 }
@@ -198,8 +198,16 @@ img.iconsmall {
 img.iconhelp, .helplink img {
     height: 16px;
     padding-left: 3px;
-    vertical-align: middle;
+    vertical-align: text-bottom;
     width: 16px;
+}
+h1 img.iconhelp, h1 img.icon,
+h2 img.iconhelp, h2 img.icon,
+h3 img.iconhelp, h3 img.icon,
+h4 img.iconhelp, h4 img.icon,
+h5 img.iconhelp, h5 img.icon,
+h6 img.iconhelp, h6 img.icon {
+  vertical-align: middle;
 }
 .dir-rtl img.iconhelp, .dir-rtl .helplink img {
     padding-right: 3px;
@@ -294,9 +302,7 @@ form.popupform div {
     vertical-align: text-bottom;
     margin: 0 0.3em;
 }
-img {
-    vertical-align: middle;
-}
+
 /** The 1-pixel padding is there to avoid phantom scroll bars on OS X (FF, Safari and Chrome)**/
 .no-overflow {
     overflow: auto;

@@ -97,10 +97,10 @@ img.resize {height: 1em;width: 1em;}
 .breadcrumb img.resize {height: 0.9em;width: 0.8em;}
 
 /* Icon styles */
-img.icon {height:16px;vertical-align:middle;width:16px;padding-right: 6px;}
+img.icon {height:16px;vertical-align:text-bottom;width:16px;padding-right: 6px;}
 .dir-rtl img.icon {padding-left: 6px; padding-right: 0; }
 img.iconsmall {height:12px;margin-right:3px;vertical-align:middle;width:12px;}
-img.iconhelp, .helplink img {height:16px; padding-left:3px;vertical-align:middle;width:16px;}
+img.iconhelp, .helplink img {height:16px; padding-left:3px;vertical-align:text-bottom;width:16px;}
 .dir-rtl img.iconhelp, .dir-rtl .helplink img {padding-right: 3px; padding-left: 0; }
 img.iconlarge {height: 24px; width: 24px; vertical-align:middle;}
 img.iconsort { vertical-align: text-bottom; padding-left: .3em; margin-bottom: .15em;}
@@ -135,12 +135,18 @@ form.popupform div {display: inline;}
 .arrow_button input {overflow:hidden;}
 .action-icon img.smallicon { vertical-align: text-bottom; margin-left: .45em;}
 .dir-rtl .action-icon img.smallicon { margin-right: .45em; margin-left: 0;}
-h1 img,
-h2 img,
-h3 img,
-h4 img,
-h5 img,
-h6 img {vertical-align: middle;}
+h1 img.icon,
+h1 img.iconhelp,
+h2 img.icon,
+h2 img.iconhelp,
+h3 img.icon,
+h3 img.iconhelp,
+h4 img.icon,
+h4 img.iconhelp,
+h5 img.icon,
+h5 img.iconhelp,
+h6 img.icon,
+h6 img.iconhelp {vertical-align: middle;}
 
 /** The 1-pixel padding is there to avoid phantom scroll bars on OS X (FF, Safari and Chrome)**/
 .no-overflow {overflow:auto;padding-bottom:1px;}
@@ -1494,3 +1500,17 @@ div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
 
 ul.dragdrop-keyboard-drag li { list-style-type: none; }
 .block-control-actions .moodle-core-dragdrop-draghandle img { width: 12px; height: 12px; }
+
+.block .header h2,
+.course-content h3,
+.pagelayout-frontpage h2,
+.pagelayout-frontpage h3,
+.pagelayout-frontpage h4,
+.pagelayout-frontpage h5,
+.pagelayout-frontpage h6,
+.pagelayout-coursecategory h3,
+.pagelayout-coursecategory h4,
+.pagelayout-coursecategory h5,
+.pagelayout-coursecategory h6 {
+    text-align: inherit;
+}
