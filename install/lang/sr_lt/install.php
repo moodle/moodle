@@ -31,7 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Administratorski direktorijum';
-$string['availablelangs'] = 'Spisak dostupnih jezika';
+$string['availablelangs'] = 'Dostupni jezički paketi';
 $string['chooselanguagehead'] = 'Izaberite jezik';
 $string['chooselanguagesub'] = 'Molimo izaberite jezik koji će se koristiti tokom instalacije. Ovaj jezik će, takođe, biti korišćen na nivou sajta kao podrazumevani, mada to naknadno može biti promenjeno.';
 $string['clialreadyconfigured'] = 'Datoteka config.php već postoji. Molimo, koristite admin/cli/install_database.php ako želite da instalirate ovaj sajt.';
