@@ -2555,5 +2555,29 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013092001.02);
     }
 
+    if ($oldversion < 2013092700.01) {
+
+        $table = new xmldb_table('files');
+
+        // Define field referencelastsync to be dropped from files.
+        $field = new xmldb_field('referencelastsync');
+
+        // Conditionally launch drop field referencelastsync.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field referencelifetime to be dropped from files.
+        $field = new xmldb_field('referencelifetime');
+
+        // Conditionally launch drop field referencelifetime.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013092700.01);
+    }
+        
     return true;
 }

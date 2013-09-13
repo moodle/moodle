@@ -156,12 +156,6 @@ class stored_file {
                     }
                 }
 
-                if ($field === 'referencelastsync' or $field === 'referencelifetime') {
-                    // do not update those fields
-                    // TODO MDL-33416 [2.4] fields referencelastsync and referencelifetime to be removed from {files} table completely
-                    continue;
-                }
-
                 // adding the field
                 $this->file_record->$field = $value;
             } else {
