@@ -1866,7 +1866,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $DB->update_record('course_sections', array('id' => $section1->id, 'sequence' => ''));
         $this->assertEquals(array(
             'Failed integrity check for course ['. $course->id. ']. Course module ['. $page->cmid.
-            '] is missing from sequence of section ['. $section1->id. ']',
+            '] is missing from sequence of section ['. $section0->id. ']',
             'Failed integrity check for course ['. $course->id. ']. Course module ['. $page->cmid.
             '] points to section [8765] instead of ['. $section0->id. ']'),
                 course_integrity_check($course->id, null, null, true));

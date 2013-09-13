@@ -949,7 +949,7 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
                 }
                 $sections[$modsection[$cmid]]->newsequence = trim($sections[$modsection[$cmid]]->newsequence.','.$cmid, ',');
                 $messages[] = $debuggingprefix.'Course module ['.$cmid.'] is missing from sequence of section ['.
-                        $sectionid.']';
+                        $modsection[$cmid].']';
             }
         }
         foreach ($modsection as $cmid => $sectionid) {
