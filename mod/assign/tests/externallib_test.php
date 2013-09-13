@@ -481,7 +481,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $plugin = $assign->get_submission_plugin_by_type('onlinetext');
         $plugin->save($submission, $data);
 
-        // Ready to test
+        // Ready to test.
         $this->setUser($teacher);
         $students = array($student1->id, $student2->id);
         $result = mod_assign_external::lock_submissions($instance->id, $students);
@@ -545,7 +545,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $plugin = $assign->get_submission_plugin_by_type('onlinetext');
         $plugin->save($submission, $data);
 
-        // Ready to test
+        // Ready to test.
         $this->setUser($teacher);
         $students = array($student1->id, $student2->id);
         $result = mod_assign_external::lock_submissions($instance->id, $students);
@@ -786,7 +786,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $result = mod_assign_external::submit_for_grading($instance->id);
         $this->assertEquals(0, count($result));
 
-        // Ready to test
+        // Ready to test.
         $this->setUser($teacher);
         $students = array($student1->id, $student2->id);
         $result = mod_assign_external::revert_submissions_to_draft($instance->id, array($student1->id));
@@ -868,7 +868,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
         $fs->create_file_from_string($filerecord, 'image contents (not really)');
 
-        // Now try a submission
+        // Now try a submission.
         $submissionpluginparams = array();
         $submissionpluginparams['files_filemanager'] = $draftidfile;
         $onlinetexteditorparams = array('text'=>'Yeeha!',
@@ -936,13 +936,20 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $fs = get_file_storage();
         $fs->create_file_from_string($filerecord, 'text contents');
 
-        // Now try a grade
+        // Now try a grade.
         $feedbackpluginparams = array();
         $feedbackpluginparams['files_filemanager'] = $draftidfile;
         $feedbackeditorparams = array('text'=>'Yeeha!',
                                         'format'=>1);
         $feedbackpluginparams['assignfeedbackcomments_editor'] = $feedbackeditorparams;
-        $result = mod_assign_external::save_grade($instance->id, $student1->id, 50.0, -1, true, 'released', false, $feedbackpluginparams);
+        $result = mod_assign_external::save_grade($instance->id,
+                                                  $student1->id,
+                                                  50.0,
+                                                  -1,
+                                                  true,
+                                                  'released',
+                                                  false,
+                                                  $feedbackpluginparams);
 
         // No warnings.
         $this->assertEquals(0, count($result));
@@ -950,7 +957,6 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $result = mod_assign_external::get_grades(array($instance->id));
 
         $this->assertEquals($result['assignments'][0]['grades'][0]['grade'], '50.0');
-
     }
 
     /**
@@ -988,7 +994,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($student1->id,
                                               $course->id,
                                               $studentrole->id);
-        // Now try a submission
+        // Now try a submission.
         $this->setUser($student1);
         $draftidonlinetext = file_get_unused_draft_itemid();
         $submissionpluginparams = array();
@@ -1001,13 +1007,20 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
 
         $this->setUser($teacher);
         // Add a grade and reopen the attempt.
-        // Now try a grade
+        // Now try a grade.
         $feedbackpluginparams = array();
         $feedbackpluginparams['files_filemanager'] = file_get_unused_draft_itemid();
         $feedbackeditorparams = array('text'=>'Yeeha!',
                                         'format'=>1);
         $feedbackpluginparams['assignfeedbackcomments_editor'] = $feedbackeditorparams;
-        $result = mod_assign_external::save_grade($instance->id, $student1->id, 50.0, -1, true, 'released', false, $feedbackpluginparams);
+        $result = mod_assign_external::save_grade($instance->id,
+                                                  $student1->id,
+                                                  50.0,
+                                                  -1,
+                                                  true,
+                                                  'released',
+                                                  false,
+                                                  $feedbackpluginparams);
 
         $this->setUser($student1);
         // Now copy the previous attempt.

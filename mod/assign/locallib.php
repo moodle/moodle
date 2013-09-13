@@ -2003,10 +2003,10 @@ class assign {
                     $submitted = get_string('submissionstatus_', 'assign');
                 }
             }
-            $grading_info = grade_get_grades($course->id, 'mod', 'assign', $cm->instance, $USER->id);
-            if (isset($grading_info->items[0]->grades[$USER->id]) &&
-                    !$grading_info->items[0]->grades[$USER->id]->hidden ) {
-                $grade = $grading_info->items[0]->grades[$USER->id]->str_grade;
+            $gradinginfo = grade_get_grades($course->id, 'mod', 'assign', $cm->instance, $USER->id);
+            if (isset($gradinginfo->items[0]->grades[$USER->id]) &&
+                    !$gradinginfo->items[0]->grades[$USER->id]->hidden ) {
+                $grade = $gradinginfo->items[0]->grades[$USER->id]->str_grade;
             } else {
                 $grade = '-';
             }
@@ -3651,7 +3651,8 @@ class assign {
                 // Only show the grade if it is not hidden in gradebook.
                 if (!empty($gradebookgrade->grade) && ($cangrade || !$gradebookgrade->hidden)) {
                     if ($controller = $gradingmanager->get_active_controller()) {
-                        $controller->set_grade_range(make_grades_menu($this->get_instance()->grade), $this->get_instance()->grade > 0);
+                        $menu = make_grades_menu($this->get_instance()->grade);
+                        $controller->set_grade_range($menu, $this->get_instance()->grade > 0);
                         $gradefordisplay = $controller->render_grade($PAGE,
                                                                      $grade->id,
                                                                      $gradingitem,
@@ -6022,7 +6023,6 @@ class assign {
                 $plugin->unlock($submission, $flags);
             }
         }
-
 
         $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 

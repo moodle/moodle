@@ -1528,7 +1528,14 @@ class mod_assign_external extends external_api {
      * @return null
      * @since Moodle 2.6
      */
-    public static function save_grade($assignmentid, $userid, $grade, $attemptnumber, $addattempt, $workflowstate, $applytoall, $plugindata) {
+    public static function save_grade($assignmentid,
+                                      $userid,
+                                      $grade,
+                                      $attemptnumber,
+                                      $addattempt,
+                                      $workflowstate,
+                                      $applytoall,
+                                      $plugindata) {
         global $CFG, $USER;
         require_once("$CFG->dirroot/mod/assign/locallib.php");
 

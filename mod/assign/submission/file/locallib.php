@@ -484,6 +484,11 @@ class assign_submission_file extends assign_submission_plugin {
      * @return external_description|null
      */
     public function get_external_parameters() {
-        return array('files_filemanager' => new external_value(PARAM_INT, 'The id of a draft area containing files for this submission.'));
+        return array(
+            'files_filemanager' => new external_value(
+                PARAM_INT,
+                'The id of a draft area containing files for this submission.'
+            )
+        );
     }
 }
