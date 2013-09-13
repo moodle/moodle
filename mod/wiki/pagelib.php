@@ -1954,7 +1954,8 @@ class page_wiki_deletecomment extends page_wiki {
         $deleteurl = new moodle_url('/mod/wiki/instancecomments.php', $optionsyes);
         $return = new moodle_url('/mod/wiki/comments.php', array('pageid'=>$this->page->id));
 
-        echo html_writer::tag('p', $strdeletecheckfull, array('class' => 'bold'));
+        echo $OUTPUT->container_start('wiki-form-center');
+        echo html_writer::tag('p', $strdeletecheckfull);
         echo $OUTPUT->container_start(false, 'wiki_deletecommentform');
         echo '<form class="wiki_deletecomment_yes" action="' . $deleteurl . '" method="post" id="deletecomment">';
         echo '<div><input type="submit" name="confirmdeletecomment" value="' . get_string('yes') . '" /></div>';
@@ -1962,6 +1963,7 @@ class page_wiki_deletecomment extends page_wiki {
         echo '<form class="wiki_deletecomment_no" action="' . $return . '" method="post">';
         echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
         echo '</form>';
+        echo $OUTPUT->container_end();
         echo $OUTPUT->container_end();
     }
 }
