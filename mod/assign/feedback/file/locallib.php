@@ -36,7 +36,7 @@ define('ASSIGNFEEDBACK_FILE_MAXFILEUNZIPTIME', 120);
 /**
  * Library class for file feedback plugin extending feedback plugin base class.
  *
- * @package   asignfeedback_file
+ * @package   assignfeedback_file
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

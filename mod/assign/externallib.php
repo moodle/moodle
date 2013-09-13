@@ -29,6 +29,8 @@ require_once("$CFG->libdir/externallib.php");
 
 /**
  * Assign functions
+ * @copyright 2012 Paul Charsley
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_assign_external extends external_api {
 
@@ -36,7 +38,7 @@ class mod_assign_external extends external_api {
      * Generate a warning in a standard structure for a known failure.
      *
      * @param int $assignmentid - The assignment
-     * @param string $warningcode - The key for the warning message (@see $warningmessages)
+     * @param string $warningcode - The key for the warning message
      * @param string $detail - A description of the error
      * @return array - Warning structure containing item, itemid, warningcode, message
      */
@@ -85,7 +87,7 @@ class mod_assign_external extends external_api {
 
     /**
      * Returns grade information from assign_grades for the requested assignment ids
-     * @param array of ints $assignmentids
+     * @param int[] $assignmentids
      * @param int $since only return records with timemodified >= since
      * @return array of grade records for each requested assignment
      * @since  Moodle 2.4
@@ -507,7 +509,7 @@ class mod_assign_external extends external_api {
     /**
      * Returns submissions for the requested assignment ids
      *
-     * @param array of ints $assignmentids
+     * @param int[] $assignmentids
      * @param string $status only return submissions with this status
      * @param int $since only return submissions with timemodified >= since
      * @param int $before only return submissions with timemodified <= before
@@ -752,7 +754,7 @@ class mod_assign_external extends external_api {
 
     /**
      * Returns user flag information from assign_user_flags for the requested assignment ids
-     * @param array of ints $assignmentids
+     * @param int[] $assignmentids
      * @return array of user flag records for each requested assignment
      * @since  Moodle 2.6
      */
@@ -906,7 +908,7 @@ class mod_assign_external extends external_api {
 
     /**
      * Returns user mapping information from assign_user_mapping for the requested assignment ids
-     * @param array of ints $assignmentids
+     * @param int[] $assignmentids
      * @return array of user mapping records for each requested assignment
      * @since  Moodle 2.6
      */
@@ -1438,10 +1440,11 @@ class mod_assign_external extends external_api {
     }
 
     /**
-     * Save a student submission for a single assignment.
+     * Save a student submission for a single assignment
      *
      * @param int $assignmentid The id of the assignment
-     * @return array of warnings to indicate any errors.
+     * @param array $plugindata - The submitted data for plugins
+     * @return array of warnings to indicate any errors
      * @since Moodle 2.6
      */
     public static function save_submission($assignmentid, $plugindata) {
@@ -1525,6 +1528,13 @@ class mod_assign_external extends external_api {
      * Save a student grade for a single assignment.
      *
      * @param int $assignmentid The id of the assignment
+     * @param int $userid The id of the user
+     * @param float $grade The grade
+     * @param int $attemptnumber The attempt number
+     * @param bool $addattempt Allow another attempt
+     * @param string $workflowstate New workflow state
+     * @param bool $applytoall Apply the grade to all members of the group
+     * @param array $plugindata Custom data used by plugins
      * @return null
      * @since Moodle 2.6
      */
@@ -1593,6 +1603,7 @@ class mod_assign_external extends external_api {
     /**
      * Copy a students previous attempt to a new attempt.
      *
+     * @param int $assignmentid
      * @return array of warnings to indicate any errors.
      * @since Moodle 2.6
      */

@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Restore subplugin class that provides the necessary information needed to restore
+ * Restore subplugin class.
+ *
+ * Provides the necessary information needed to restore
  * one assign_submission subplugin.
  *
  * @package   assignfeedback_comments
@@ -26,7 +28,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Restore subplugin class that provides the necessary information needed to restore
+ * Restore subplugin class.
+ *
+ * Provides the necessary information needed to restore
  * one assignfeedback subplugin.
  *
  * @package   assignfeedback_comments

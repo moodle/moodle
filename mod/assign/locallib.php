@@ -674,7 +674,7 @@ class assign {
      * Actual implementation of the reset course functionality, delete all the
      * assignment submissions for course $data->courseid.
      *
-     * @param $data the data submitted from the reset course.
+     * @param stdClass $data the data submitted from the reset course.
      * @return array status array
      */
     public function reset_userdata($data) {
@@ -2142,6 +2142,7 @@ class assign {
     /**
      * Rewrite plugin file urls so they resolve correctly in an exported zip.
      *
+     * @param string $text - The replacement text
      * @param stdClass $user - The user record
      * @param assign_plugin $plugin - The assignment plugin
      */
@@ -2231,6 +2232,7 @@ class assign {
     /**
      * Display a continue page.
      *
+     * @param string $message - The message to display
      * @return string
      */
     protected function view_savegrading_result($message) {
@@ -3237,6 +3239,7 @@ class assign {
     /**
      * Allows the plugin to show a batch grading operation page.
      *
+     * @param moodleform $mform
      * @return none
      */
     protected function view_plugin_grading_batch_operation($mform) {
@@ -3453,7 +3456,7 @@ class assign {
     /**
      * Ask the user to confirm they want to submit their work for grading.
      *
-     * @param $mform moodleform - null unless form validation has failed
+     * @param moodleform $mform - null unless form validation has failed
      * @return string
      */
     protected function check_submit_for_grading($mform) {
@@ -4242,7 +4245,6 @@ class assign {
      * @param string $modulename
      * @param stdClass $coursemodule
      * @param string $assignmentname
-     * @param stdClass $info
      */
     protected static function format_notification_message_html($messagetype,
                                                              $info,
@@ -4282,6 +4284,8 @@ class assign {
      * @param stdClass $course
      * @param string $modulename
      * @param string $assignmentname
+     * @param bool $blindmarking
+     * @param int $uniqueidforuser
      * @return void
      */
     public static function send_assignment_notification($userfrom,
@@ -4531,7 +4535,7 @@ class assign {
     /**
      * Assignment submission is processed before grading.
      *
-     * @param $mform If validation failed when submitting this form - this is the moodleform.
+     * @param moodleform|null $mform If validation failed when submitting this form - this is the moodleform.
      *               It can be null.
      * @return bool Return false if the validation fails. This affects which page is displayed next.
      */
@@ -5364,6 +5368,7 @@ class assign {
      * This is specific to the assignment, marker and student.
      *
      * @param int $userid - The student userid
+     * @param stdClass|false $grade - The grade record
      * @param bool $gradingdisabled
      * @return mixed gradingform_instance|null $gradinginstance
      */
@@ -6064,7 +6069,7 @@ class assign {
      *
      * @param stdClass $formdata - the data from the form
      * @param int $userid - the user to apply the grade to
-     * @param int attemptnumber - The attempt number to apply the grade to.
+     * @param int $attemptnumber - The attempt number to apply the grade to.
      * @return void
      */
     protected function apply_grade_to_user($formdata, $userid, $attemptnumber) {
@@ -6175,7 +6180,6 @@ class assign {
      *
      * @param int $userid
      * @param  stdClass $data
-     * @param int $attemptnumber - -1 means latest attempt
      * @return bool - was the grade saved
      */
     public function save_grade($userid, $data) {
@@ -6602,6 +6606,7 @@ class assign {
     /**
      * Lookup this user id and return the unique id for this assignment.
      *
+     * @param int $assignid The assignment id
      * @param int $userid The userid to lookup
      * @return int The unique id
      */

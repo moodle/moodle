@@ -249,6 +249,7 @@ class assign_submission_file extends assign_submission_plugin {
      * Produce a list of files suitable for export that represent this feedback or submission
      *
      * @param stdClass $submission The submission
+     * @param stdClass $user The user record - unused
      * @return array - return an array of files indexed by filename
      */
     public function get_files(stdClass $submission, stdClass $user) {
