@@ -7,11 +7,21 @@ http://docs.moodle.org/dev/Repository_API
 
 * get_option() now always return null when the first parameter ($config) is not empty, and
   no value was found for this $config. Previously this could sometimes return an empty array().
+
 * The function repository_attach_id() was removed, it was never used and was not useful.
+
 * New functions send_relative_file() and supports_relative_file() to allow sending relative linked
   files - see filesystem repository for example.
-* DB fields files.referencelifetime and files.referencelastsync are deleted.
-  Their values are stored only in files_reference.lastsync and files_reference.lifetime.
+
+* DB fields files.referencelifetime, files.referencelastsync and files_reference.lifetime
+  are deleted. The last synchronization time is stored only in files_reference.lastsync
+  and lifetime is not stored in DB any more, each repository must decide for itself
+  when to synchronize the file in function repository::sync_reference().
+
+* The following methods in class repository are deprecated: sync_external_file(),
+  get_file_by_reference(), get_reference_file_lifetime(), sync_individual_file() and
+  reset_caches(). Instead there is one method repository::sync_reference() - this simplifies
+  the repositories API and reduces the number of DB queries.
 
 === 2.5 ===
 

@@ -103,6 +103,13 @@ Navigation:
 Files and repositories:
     * stored_file::replace_content_with()   -> stored_file::replace_file_with()
     * stored_file::set_filesize()           -> stored_file::replace_file_with()
+    * stored_file::get_referencelifetime()  -> (no replacement)
+    * repository::sync_external_file()      -> see repository::sync_reference()
+    * repository::get_file_by_reference()   -> repository::sync_reference()
+    * repository::
+          get_reference_file_lifetime()     -> (no replacement)
+    * repository::sync_individual_file()    -> (no replacement)
+    * repository::reset_caches()            -> (no replacement)
 
 Calendar:
     * add_event()                           -> calendar_event::create()
