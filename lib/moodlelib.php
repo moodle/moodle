@@ -5947,23 +5947,27 @@ function send_confirmation_email($user) {
  * Sends a password change confirmation email.
  *
  * @param stdClass $user A {@link $USER} object
+ * @param stdClass $resetrecord An object tracking metadata regarding password reset request
  * @return bool Returns true if mail was sent OK and false if there was an error.
  */
-function send_password_change_confirmation_email($user) {
+function send_password_change_confirmation_email($user, $resetrecord) {
     global $CFG;
 
     $site = get_site();
     $supportuser = core_user::get_support_user();
+    $pwresetmins = isset($CFG->pwresettime) ? floor($CFG->pwresettime / MINSECS) : 30;
 
     $data = new stdClass();
     $data->firstname = $user->firstname;
     $data->lastname  = $user->lastname;
+    $data->username  = $user->username;
     $data->sitename  = format_string($site->fullname);
-    $data->link      = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. urlencode($user->username);
+    $data->link      = $CFG->httpswwwroot .'/login/forgot_password.php?token='. $resetrecord->token;
     $data->admin     = generate_email_signoff();
+    $data->resetminutes = $pwresetmins;
 
-    $message = get_string('emailpasswordconfirmation', '', $data);
-    $subject = get_string('emailpasswordconfirmationsubject', '', format_string($site->fullname));
+    $message = get_string('emailresetconfirmation', '', $data);
+    $subject = get_string('emailresetconfirmationsubject', '', format_string($site->fullname));
 
     // Directly email rather than using the messaging system to ensure its not routed to a popup or jabber.
     return email_to_user($user, $supportuser, $subject, $message);

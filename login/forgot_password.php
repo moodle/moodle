@@ -28,11 +28,11 @@
 
 require('../config.php');
 require_once($CFG->libdir.'/authlib.php');
-require_once('lib.php');
+require_once(__DIR__ . '/lib.php');
 require_once('forgot_password_form.php');
+require_once('set_password_form.php');
 
-$p_secret   = optional_param('p', false, PARAM_RAW);
-$p_username = optional_param('s', false, PARAM_RAW);
+$token = optional_param('token', false, PARAM_RAW);
 
 //HTTPS is required in this page when $CFG->loginhttps enabled
 $PAGE->https_required();
@@ -60,12 +60,12 @@ if (isloggedin() and !isguestuser()) {
     redirect($CFG->wwwroot.'/index.php', get_string('loginalready'), 5);
 }
 
-if (empty($p_secret)) {
-    // This is a new password reset request
-    // identify the user & send confirmation email
+if (empty($token)) {
+    // This is a new password reset request.
+    // Process the request; identify the user & send confirmation email:
     forgotpw_process_request();
 } else {
     // User clicked on confirmation link in email message
     // validate the token & set new password
-    forgotpw_process_pwset($p_secret, $p_username);
+    forgotpw_process_pwset($token);
 }

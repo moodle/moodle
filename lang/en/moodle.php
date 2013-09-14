@@ -535,6 +535,7 @@ $string['editthisactivity'] = 'Edit this activity';
 $string['editthiscategory'] = 'Edit this category';
 $string['edituser'] = 'Edit user accounts';
 $string['email'] = 'Email address';
+$string['emailalreadysent'] = 'A Password reset email has already been sent. Please check your email.';
 $string['emailactive'] = 'Email activated';
 $string['emailagain'] = 'Email (again)';
 $string['emailconfirm'] = 'Confirm your account';
@@ -609,7 +610,7 @@ If you continue to have difficulty, please contact the site administrator.</p>';
 $string['emailpasswordconfirmnoemail'] = '<p>The user account you specified does not have a recorded email address.</p>
    <p>Please contact the site administrator.</p>';
 $string['emailpasswordconfirmnotsent'] = '<p>The user detail you supplied does not identify an existing user account.</p>
-   <p>Please check the detail you entered, then try again.
+   <p>Please check the information you entered, then try again.
 If you continue to have difficulty, please contact the site administrator.</p>';
 $string['emailpasswordconfirmsent'] = 'An email should have been sent to your address at <b>{$a}</b>.
 <br />It contains easy instructions to confirm and complete this password change.
@@ -651,6 +652,24 @@ $string['emailpasswordsent'] = 'Thank you for confirming the change of password.
 An email containing your new password has been sent to your address at<br /><b>{$a->email}</b>.<br />
 The new password was automatically generated - you might like to
 <a href="{$a->link}">change your password</a> to something easier to remember.';
+$string['emailresetconfirmation'] = 'Hi {$a->firstname},
+
+A password reset was requested for your account \'{$a->username}\' at {$a->sitename}.
+
+To confirm this request, and set a new password for your account, please
+go to the following web address:
+
+{$a->link}
+(This link is valid for {$a->resetminutes} minutes from the time this reset was first requested)
+
+If this password reset was not requested by you, no action is needed.
+
+If you need help, please contact the site administrator,
+{$a->admin}';
+$string['emailresetconfirmationsubject'] = '{$a}: Password reset request';
+$string['emailresetconfirmsent'] = 'An email has been sent to your address at <b>{$a}</b>.
+<br />It contains easy instructions to confirm and complete this password change.
+If you continue to have difficulty, contact the site administrator.';
 $string['emptydragdropregion'] = 'empty region';
 $string['enable'] = 'Enable';
 $string['encryptedcode'] = 'Encrypted code';
@@ -1226,6 +1245,7 @@ $string['noreplybouncemessage'] = 'You have replied to a no-reply email address.
 Following is the content of your email:';
 $string['noreplybouncesubject'] = '{$a} - bounced email.';
 $string['noreplyname'] = 'Do not reply to this email';
+$string['noresetrecord'] = 'There is no record of that reset request. Please initiate a new password reset request.';
 $string['noresults'] = 'No results';
 $string['normal'] = 'Normal';
 $string['normalfilter'] = 'Normal search';
@@ -1304,6 +1324,7 @@ $string['passwordnohelp'] = 'No help is available to find your lost password. Pl
 $string['passwordrecovery'] = 'Yes, help me log in';
 $string['passwordsdiffer'] = 'These passwords do not match';
 $string['passwordsent'] = 'Password has been sent';
+$string['passwordset'] = 'Your password has been set.';
 $string['passwordsenttext'] = '<p>An email has been sent to your address at {$a->email}.</p>
    <p><b>Please check your email for your new password</b></p>
    <p>The new password was automatically generated, so you might like to
@@ -1418,6 +1439,7 @@ $string['resetcomponent'] = 'Component';
 $string['resetcourse'] = 'Reset course';
 $string['resetinfo'] = 'This page allows you to empty a course of user data, while retaining the activities and other settings.  Please be warned that by choosing items below and submitting this page you will delete your chosen user data from this course forever!';
 $string['resetnotimplemented'] = 'Reset not implemented';
+$string['resetrecordexpired'] = 'The password reset link you used is more than {$a} minutes old and has expired. Please initiate a new password reset.';
 $string['resetstartdate'] = 'Reset start date';
 $string['resetstatus'] = 'Status';
 $string['resettask'] = 'Task';
@@ -1542,6 +1564,8 @@ $string['separateandconnectedinfo'] = 'The scale based on the theory of separate
 $string['servererror'] = 'An error occurred whilst communicating with the server';
 $string['serverlocaltime'] = 'Server\'s local time';
 $string['setcategorytheme'] = 'Set category theme';
+$string['setpassword'] = 'Set Password';
+$string['setpasswordinstructions'] = 'Please enter and repeat your new password below, then click "Set Password". <br />Your new password will be saved, and you will be logged in.';
 $string['settings'] = 'Settings';
 $string['shortname'] = 'Short name'; // @deprecated MDL-34652 - use shortnamecourse or shortnameuser or some own context specific string
 $string['shortnamecollisionwarning'] = '[*] = This shortname is already in use by a course and will need to be changed upon approval';
