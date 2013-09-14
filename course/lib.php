@@ -2362,6 +2362,20 @@ function update_course($data, $editoroptions = NULL) {
         $data = file_postupdate_standard_filemanager($data, 'overviewfiles', $overviewfilesoptions, $context, 'course', 'overviewfiles', 0);
     }
 
+    // Check we don't have a duplicate shortname.
+    if (!empty($data->shortname) && $oldcourse->shortname != $data->shortname) {
+        if ($DB->record_exists('course', array('shortname' => $data->shortname))) {
+            throw new moodle_exception('shortnametaken', '', '', $data->shortname);
+        }
+    }
+
+    // Check we don't have a duplicate idnumber.
+    if (!empty($data->idnumber) && $oldcourse->idnumber != $data->idnumber) {
+        if ($DB->record_exists('course', array('idnumber' => $data->idnumber))) {
+            throw new moodle_exception('idnumbertaken', 'error');
+        }
+    }
+
     if (!isset($data->category) or empty($data->category)) {
         // prevent nulls and 0 in category field
         unset($data->category);
@@ -2402,7 +2416,10 @@ function update_course($data, $editoroptions = NULL) {
         context_moved($context, $newparent);
     }
 
-    fix_course_sortorder();
+    if ($movecat || (isset($data->sortorder) && $oldcourse->sortorder != $data->sortorder)) {
+        fix_course_sortorder();
+    }
+
     // purge appropriate caches in case fix_course_sortorder() did not change anything
     cache_helper::purge_by_event('changesincourse');
     if ($changesincoursecat) {

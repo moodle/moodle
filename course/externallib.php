@@ -717,20 +717,14 @@ class core_course_external extends external_api {
                     require_capability('moodle/course:changefullname', $context);
                 }
 
-                // Check if the shortname already exist and user have capability.
+                // Check if the user can change shortname.
                 if (array_key_exists('shortname', $course) && ($oldcourse->shortname != $course['shortname'])) {
                     require_capability('moodle/course:changeshortname', $context);
-                    if ($DB->record_exists('course', array('shortname' => $course['shortname']))) {
-                        throw new moodle_exception('shortnametaken');
-                    }
                 }
 
-                // Check if the id number already exist and user have capability.
+                // Check if the user can change the idnumber.
                 if (array_key_exists('idnumber', $course) && ($oldcourse->idnumber != $course['idnumber'])) {
                     require_capability('moodle/course:changeidnumber', $context);
-                    if ($DB->record_exists('course', array('idnumber' => $course['idnumber']))) {
-                        throw new moodle_exception('idnumbertaken');
-                    }
                 }
 
                 // Check if user can change summary.

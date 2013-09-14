@@ -236,14 +236,9 @@ form.loginform #rememberusername {
     margin-right:0;
 }
 
-/* RSS - MDL-29367 */
-.block_rss_client .list li:first-child {
-    border-top-width: 0;
-}
-
+/* RSS - MDL-28561 */
 .block_rss_client .list li {
-    border-top: 1px solid #DDDDDD;
-    padding: 5px;
+    border-top-color: #DDD;
 }
 
 /* Upcoming events - MDL-29367 */

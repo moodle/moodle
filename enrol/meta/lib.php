@@ -46,7 +46,12 @@ class enrol_meta_plugin extends enrol_plugin {
         } else if (empty($instance->name)) {
             $enrol = $this->get_name();
             $course = $DB->get_record('course', array('id'=>$instance->customint1));
-            $coursename = format_string(get_course_display_name_for_list($course));
+            if ($course) {
+                $coursename = format_string(get_course_display_name_for_list($course));
+            } else {
+                // Use course id, if course is deleted.
+                $coursename = $instance->customint1;
+            }
             return get_string('pluginname', 'enrol_' . $enrol) . ' (' . $coursename . ')';
         } else {
             return format_string($instance->name);

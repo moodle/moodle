@@ -108,7 +108,7 @@ Thanks very much.';
 $string['collesaname'] = 'COLLES (Actual)';
 $string['collesapintro'] = 'The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. 
 
-Each one of the 24 statements below asks you to compare your <b>preferred</b> (ideal) and <b>actual</b> experience in this unit.
+Each couple of the 24 statements below asks you to compare your <b>preferred</b> (ideal) and <b>actual</b> experience in this unit.
 
 There are no \'right\' or \'wrong\' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
 

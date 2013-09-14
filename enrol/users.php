@@ -73,7 +73,7 @@ if ($action) {
          */
         case 'unassign':
             if (has_capability('moodle/role:assign', $manager->get_context())) {
-                $role = required_param('role', PARAM_INT);
+                $role = required_param('roleid', PARAM_INT);
                 $user = required_param('user', PARAM_INT);
                 if ($confirm && $manager->unassign_role_from_user($user, $role)) {
                     redirect($PAGE->url);
@@ -81,7 +81,7 @@ if ($action) {
                     $user = $DB->get_record('user', array('id'=>$user), '*', MUST_EXIST);
                     $allroles = $manager->get_all_roles();
                     $role = $allroles[$role];
-                    $yesurl = new moodle_url($PAGE->url, array('action'=>'unassign', 'role'=>$role->id, 'user'=>$user->id, 'confirm'=>1, 'sesskey'=>sesskey()));
+                    $yesurl = new moodle_url($PAGE->url, array('action'=>'unassign', 'roleid'=>$role->id, 'user'=>$user->id, 'confirm'=>1, 'sesskey'=>sesskey()));
                     $message = get_string('unassignconfirm', 'role', array('user'=>fullname($user, true), 'role'=>$role->localname));
                     $pagetitle = get_string('unassignarole', 'role', $role->localname);
                     $pagecontent = $OUTPUT->confirm($message, $yesurl, $PAGE->url);
