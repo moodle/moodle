@@ -10,6 +10,7 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir.'/pluginlib.php');
 
 require_login();
 require_capability('moodle/site:config', context_system::instance());
@@ -52,6 +53,7 @@ switch ($action) {
             set_config('registerauth', '');
         }
         session_gc(); // remove stale sessions
+        plugin_manager::reset_caches();
         break;
 
     case 'enable':
@@ -62,6 +64,7 @@ switch ($action) {
             set_config('auth', implode(',', $authsenabled));
         }
         session_gc(); // remove stale sessions
+        plugin_manager::reset_caches();
         break;
 
     case 'down':

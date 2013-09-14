@@ -17,6 +17,7 @@
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/pluginlib.php');
 
 require_sesskey();
 
@@ -102,6 +103,7 @@ if (!empty($edit) || !empty($new)) {
             $data = data_submitted();
         }
         if ($success) {
+            plugin_manager::reset_caches();
             redirect($parenturl);
         } else {
             print_error('instancenotsaved', 'repository', $parenturl);
@@ -118,6 +120,7 @@ if (!empty($edit) || !empty($new)) {
 } else if (!empty($hide)) {
     $instance = repository::get_type_by_typename($hide);
     $instance->hide();
+    plugin_manager::reset_caches();
     $return = true;
 } else if (!empty($delete)) {
     $instance = repository::get_instance($delete);
@@ -130,6 +133,7 @@ if (!empty($edit) || !empty($new)) {
     if ($sure) {
         if ($instance->delete($downloadcontents)) {
             $deletedstr = get_string('instancedeleted', 'repository');
+            plugin_manager::reset_caches();
             redirect($parenturl, $deletedstr, 3);
         } else {
             print_error('instancenotdeleted', 'repository', $parenturl);

@@ -2450,5 +2450,52 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013091300.01);
     }
 
+    if ($oldversion < 2013092001.01) {
+        // Force uninstall of deleted tool.
+        if (!file_exists("$CFG->dirroot/$CFG->admin/tool/bloglevelupgrade")) {
+            // Remove capabilities.
+            capabilities_cleanup('tool_bloglevelupgrade');
+            // Remove all other associated config.
+            unset_all_config_for_plugin('tool_bloglevelupgrade');
+        }
+        upgrade_main_savepoint(true, 2013092001.01);
+    }
+
+    if ($oldversion < 2013092001.02) {
+        // Define field version to be dropped from modules.
+        $table = new xmldb_table('modules');
+        $field = new xmldb_field('version');
+
+        // Conditionally launch drop field version.
+        if ($dbman->field_exists($table, $field)) {
+            // Migrate all plugin version info to config_plugins table.
+            $modules = $DB->get_records('modules');
+            foreach ($modules as $module) {
+                set_config('version', $module->version, 'mod_'.$module->name);
+            }
+            unset($modules);
+
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field version to be dropped from block.
+        $table = new xmldb_table('block');
+        $field = new xmldb_field('version');
+
+        // Conditionally launch drop field version.
+        if ($dbman->field_exists($table, $field)) {
+            $blocks = $DB->get_records('block');
+            foreach ($blocks as $block) {
+                set_config('version', $block->version, 'block_'.$block->name);
+            }
+            unset($blocks);
+
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013092001.02);
+    }
+
     return true;
 }

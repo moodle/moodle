@@ -5,6 +5,7 @@
     require_once('../course/lib.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
+    require_once($CFG->libdir.'/pluginlib.php');
 
     // defines
     define('MODULE_TABLE','module_administration_table');
@@ -27,9 +28,6 @@
     $stractivitymodule = get_string("activitymodule");
     $strshowmodulecourse = get_string('showmodulecourse');
 
-    // Purge all caches related to activity modules administration.
-    cache::make('core', 'plugininfo_mod')->purge();
-
 /// If data submitted, then process and store.
 
     if (!empty($hide) and confirm_sesskey()) {
@@ -50,6 +48,7 @@
                                 FROM {course_modules}
                                WHERE visibleold=1 AND module=?)",
                 array($module->id));
+        plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -66,6 +65,7 @@
                                 FROM {course_modules}
                                WHERE visible=1 AND module=?)",
                 array($module->id));
+        plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -143,12 +143,12 @@
             $visible = "";
             $class = "";
         }
-
+        $version = get_config('mod_'.$module->name, 'version');
 
         $table->add_data(array(
             '<span'.$class.'>'.$strmodulename.'</span>',
             $countlink,
-            '<span'.$class.'>'.$module->version.'</span>',
+            '<span'.$class.'>'.$version.'</span>',
             $visible,
             $uninstall,
             $settings

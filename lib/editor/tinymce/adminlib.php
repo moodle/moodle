@@ -24,8 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->libdir/pluginlib.php");
-
 
 /**
  * Editor subplugin info class.
@@ -35,6 +33,34 @@ require_once("$CFG->libdir/pluginlib.php");
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugininfo_tinymce extends plugininfo_base {
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        $disabledsubplugins = array();
+        $config = get_config('editor_tinymce', 'disabledsubplugins');
+        if ($config) {
+            $config = explode(',', $config);
+            foreach ($config as $sp) {
+                $sp = trim($sp);
+                if ($sp !== '') {
+                    $disabledsubplugins[$sp] = $sp;
+                }
+            }
+        }
+
+        $enabled = array();
+        $installed = core_component::get_plugin_list('tinymce');
+        foreach ($installed as $plugin => $fulldir) {
+            if (isset($disabledsubplugins[$plugin])) {
+                continue;
+            }
+            $enabled[$plugin] = $plugin;
+        }
+
+        return $enabled;
+    }
 
     public function is_uninstall_allowed() {
         return true;
@@ -58,26 +84,6 @@ class plugininfo_tinymce extends plugininfo_base {
         if ($settings) {
             $ADMIN->add($parentnodename, $settings);
         }
-    }
-
-    public function is_enabled() {
-        static $disabledsubplugins = null; // TODO: MDL-34344 remove this once get_config() is cached via MUC!
-
-        if (is_null($disabledsubplugins)) {
-            $disabledsubplugins = array();
-            $config = get_config('editor_tinymce', 'disabledsubplugins');
-            if ($config) {
-                $config = explode(',', $config);
-                foreach ($config as $sp) {
-                    $sp = trim($sp);
-                    if ($sp !== '') {
-                        $disabledsubplugins[$sp] = $sp;
-                    }
-                }
-            }
-        }
-
-        return !isset($disabledsubplugins[$this->name]);
     }
 }
 

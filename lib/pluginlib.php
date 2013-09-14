@@ -61,6 +61,12 @@ class plugin_manager {
     protected $pluginsinfo = null;
     /** @var array of raw subplugins information */
     protected $subpluginsinfo = null;
+    /** @var array list of installed plugins $name=>$version */
+    protected $installedplugins = null;
+    /** @var array list of all enabled plugins $name=>$name */
+    protected $enabledplugins = null;
+    /** @var array list of all enabled plugins $name=>$diskversion */
+    protected $presentplugins = null;
 
     /**
      * Direct initiation not allowed, use the factory method {@link self::instance()}
@@ -87,39 +93,292 @@ class plugin_manager {
     }
 
     /**
-     * Reset any caches
+     * Reset all caches.
      * @param bool $phpunitreset
      */
     public static function reset_caches($phpunitreset = false) {
         if ($phpunitreset) {
             self::$singletoninstance = null;
+        } else {
+            if (self::$singletoninstance) {
+                self::$singletoninstance->pluginsinfo = null;
+                self::$singletoninstance->subpluginsinfo = null;
+                self::$singletoninstance->installedplugins = null;
+                self::$singletoninstance->enabledplugins = null;
+                self::$singletoninstance->presentplugins = null;
+            }
         }
+        $cache = cache::make('core', 'plugin_manager');
+        $cache->purge();
     }
 
     /**
      * Returns the result of {@link core_component::get_plugin_types()} ordered for humans
      *
      * @see self::reorder_plugin_types()
-     * @param bool $fullpaths false means relative paths from dirroot
      * @return array (string)name => (string)location
      */
-    public function get_plugin_types($fullpaths = true) {
-        return $this->reorder_plugin_types(core_component::get_plugin_types($fullpaths));
+    public function get_plugin_types() {
+        if (func_num_args() > 0) {
+            if (!func_get_arg(0)) {
+                throw coding_exception('plugin_manager->get_plugin_types() does not support relative paths.');
+            }
+        }
+        return $this->reorder_plugin_types(core_component::get_plugin_types());
     }
 
     /**
-     * Returns list of known plugins of the given type
+     * Load list of installed plugins,
+     * always call before using $this->installedplugins.
+     *
+     * This method is caching results for all plugins.
+     */
+    protected function load_installed_plugins() {
+        global $DB, $CFG;
+
+        if ($this->installedplugins) {
+            return;
+        }
+
+        if (empty($CFG->version)) {
+            // Nothing installed yet.
+            $this->installedplugins = array();
+            return;
+        }
+
+        $cache = cache::make('core', 'plugin_manager');
+        $installed = $cache->get('installed');
+
+        if (is_array($installed)) {
+            $this->installedplugins = $installed;
+            return;
+        }
+
+        $this->installedplugins = array();
+
+        if ($CFG->version < 2013092001.02) {
+            // We did not upgrade the database yet.
+            $modules = $DB->get_records('modules', array(), 'name ASC', 'id, name, version');
+            foreach ($modules as $module) {
+                $this->installedplugins['mod'][$module->name] = $module->version;
+            }
+            $blocks = $DB->get_records('block', array(), 'name ASC', 'id, name, version');
+            foreach ($blocks as $block) {
+                $this->installedplugins['block'][$block->name] = $block->version;
+            }
+        }
+
+        $versions = $DB->get_records('config_plugins', array('name'=>'version'));
+        foreach ($versions as $version) {
+            $parts = explode('_', $version->plugin, 2);
+            if (!isset($parts[1])) {
+                // Invalid component, there must be at least one "_".
+                continue;
+            }
+            // Do not verify here if plugin type and name are valid.
+            $this->installedplugins[$parts[0]][$parts[1]] = $version->value;
+        }
+
+        foreach ($this->installedplugins as $key => $value) {
+            ksort($this->installedplugins[$key]);
+        }
+
+        $cache->set('installed', $this->installedplugins);
+    }
+
+    /**
+     * Return list of installed plugins of given type.
+     * @param string $type
+     * @return array $name=>$version
+     */
+    public function get_installed_plugins($type) {
+        $this->load_installed_plugins();
+        if (isset($this->installedplugins[$type])) {
+            return $this->installedplugins[$type];
+        }
+        return array();
+    }
+
+    /**
+     * Load list of all enabled plugins,
+     * call before using $this->enabledplugins.
+     *
+     * This method is caching results from individual plugin info classes.
+     */
+    protected function load_enabled_plugins() {
+        global $CFG;
+
+        if ($this->enabledplugins) {
+            return;
+        }
+
+        if (empty($CFG->version)) {
+            $this->enabledplugins = array();
+            return;
+        }
+
+        $cache = cache::make('core', 'plugin_manager');
+        $enabled = $cache->get('enabled');
+
+        if (is_array($enabled)) {
+            $this->enabledplugins = $enabled;
+            return;
+        }
+
+        $this->enabledplugins = array();
+
+        require_once($CFG->libdir.'/adminlib.php');
+
+        $plugintypes = core_component::get_plugin_types();
+        foreach ($plugintypes as $plugintype => $fulldir) {
+            // Hack: include mod and editor subplugin management classes first,
+            //       the adminlib.php is supposed to contain extra admin settings too.
+            $plugininfoclass = 'plugininfo_' . $plugintype;
+            if (!class_exists($plugininfoclass) and file_exists("$fulldir/adminlib.php")) {
+                include_once("$fulldir/adminlib.php");
+            }
+            if (class_exists($plugininfoclass)) {
+                $enabled = $plugininfoclass::get_enabled_plugins();
+                if (!is_array($enabled)) {
+                    continue;
+                }
+                $this->enabledplugins[$plugintype] = $enabled;
+            }
+        }
+
+        $cache->set('enabled', $this->enabledplugins);
+    }
+
+    /**
+     * Get list of enabled plugins of given type,
+     * the result may contain missing plugins.
+     *
+     * @param string $type
+     * @return array|null  list of enabled plugins of this type, null if unknown
+     */
+    public function get_enabled_plugins($type) {
+        $this->load_enabled_plugins();
+        if (isset($this->enabledplugins[$type])) {
+            return $this->enabledplugins[$type];
+        }
+        return null;
+    }
+
+    /**
+     * Load list of all present plugins - call before using $this->presentplugins.
+     */
+    protected function load_present_plugins() {
+        if ($this->presentplugins) {
+            return;
+        }
+
+        $cache = cache::make('core', 'plugin_manager');
+        $present = $cache->get('present');
+
+        if (is_array($present)) {
+            $this->presentplugins = $present;
+            return;
+        }
+
+        $this->presentplugins = array();
+
+        $plugintypes = core_component::get_plugin_types();
+        foreach ($plugintypes as $type => $typedir) {
+            $plugs = core_component::get_plugin_list($type);
+            foreach ($plugs as $plug => $fullplug) {
+                $plugin = new stdClass();
+                $plugin->version = null;
+                $module = $plugin;
+                @include($fullplug.'/version.php');
+                $this->presentplugins[$type][$plug] = $plugin;
+            }
+        }
+
+        $cache->set('present', $this->presentplugins);
+    }
+
+    /**
+     * Get list of present plugins of given type.
+     *
+     * @param string $type
+     * @return array|null  list of presnet plugins $name=>$diskversion, null if unknown
+     */
+    public function get_present_plugins($type) {
+        $this->load_present_plugins();
+        if (isset($this->presentplugins[$type])) {
+            return $this->presentplugins[$type];
+        }
+        return null;
+    }
+
+    /**
+     * Returns a tree of known plugins and information about them
+     *
+     * @return array 2D array. The first keys are plugin type names (e.g. qtype);
+     *      the second keys are the plugin local name (e.g. multichoice); and
+     *      the values are the corresponding objects extending {@link plugininfo_base}
+     */
+    public function get_plugins() {
+        global $CFG;
+
+        if (is_array($this->pluginsinfo)) {
+            return $this->pluginsinfo;
+        }
+
+        $this->pluginsinfo = array();
+
+        // Hack: include mod and editor subplugin management classes first,
+        //       the adminlib.php is supposed to contain extra admin settings too.
+        require_once($CFG->libdir.'/adminlib.php');
+        foreach (core_component::get_plugin_types_with_subplugins() as $type => $ignored) {
+            foreach (core_component::get_plugin_list($type) as $dir) {
+                if (file_exists("$dir/adminlib.php")) {
+                    include_once("$dir/adminlib.php");
+                }
+            }
+        }
+        $plugintypes = $this->get_plugin_types();
+        foreach ($plugintypes as $plugintype => $plugintyperootdir) {
+            if (in_array($plugintype, array('base', 'general'))) {
+                throw new coding_exception('Illegal usage of reserved word for plugin type');
+            }
+            if (class_exists('plugininfo_' . $plugintype)) {
+                $plugintypeclass = 'plugininfo_' . $plugintype;
+            } else {
+                $plugintypeclass = 'plugininfo_general';
+            }
+            if (!in_array('plugininfo_base', class_parents($plugintypeclass))) {
+                throw new coding_exception('Class ' . $plugintypeclass . ' must extend plugininfo_base');
+            }
+            $plugins = $plugintypeclass::get_plugins($plugintype, $plugintyperootdir, $plugintypeclass);
+            $this->pluginsinfo[$plugintype] = $plugins;
+        }
+
+        if (empty($CFG->disableupdatenotifications) and !during_initial_install()) {
+            // append the information about available updates provided by {@link available_update_checker()}
+            $provider = available_update_checker::instance();
+            foreach ($this->pluginsinfo as $plugintype => $plugins) {
+                foreach ($plugins as $plugininfoholder) {
+                    $plugininfoholder->check_available_updates($provider);
+                }
+            }
+        }
+
+        return $this->pluginsinfo;
+    }
+
+    /**
+     * Returns list of known plugins of the given type.
      *
      * This method returns the subset of the tree returned by {@link self::get_plugins()}.
      * If the given type is not known, empty array is returned.
      *
      * @param string $type plugin type, e.g. 'mod' or 'workshopallocation'
-     * @param bool $disablecache force reload, cache can be used otherwise
      * @return array (string)plugin name (e.g. 'workshop') => corresponding subclass of {@link plugininfo_base}
      */
-    public function get_plugins_of_type($type, $disablecache=false) {
+    public function get_plugins_of_type($type) {
 
-        $plugins = $this->get_plugins($disablecache);
+        $plugins = $this->get_plugins();
 
         if (!isset($plugins[$type])) {
             return array();
@@ -129,78 +388,23 @@ class plugin_manager {
     }
 
     /**
-     * Returns a tree of known plugins and information about them
-     *
-     * @param bool $disablecache force reload, cache can be used otherwise
-     * @return array 2D array. The first keys are plugin type names (e.g. qtype);
-     *      the second keys are the plugin local name (e.g. multichoice); and
-     *      the values are the corresponding objects extending {@link plugininfo_base}
-     */
-    public function get_plugins($disablecache=false) {
-        global $CFG;
-
-        if ($disablecache or is_null($this->pluginsinfo)) {
-            // Hack: include mod and editor subplugin management classes first,
-            //       the adminlib.php is supposed to contain extra admin settings too.
-            require_once($CFG->libdir.'/adminlib.php');
-            foreach (core_component::get_plugin_types_with_subplugins() as $type => $ignored) {
-                foreach (core_component::get_plugin_list($type) as $dir) {
-                    if (file_exists("$dir/adminlib.php")) {
-                        include_once("$dir/adminlib.php");
-                    }
-                }
-            }
-            $this->pluginsinfo = array();
-            $plugintypes = $this->get_plugin_types();
-            foreach ($plugintypes as $plugintype => $plugintyperootdir) {
-                if (in_array($plugintype, array('base', 'general'))) {
-                    throw new coding_exception('Illegal usage of reserved word for plugin type');
-                }
-                if (class_exists('plugininfo_' . $plugintype)) {
-                    $plugintypeclass = 'plugininfo_' . $plugintype;
-                } else {
-                    $plugintypeclass = 'plugininfo_general';
-                }
-                if (!in_array('plugininfo_base', class_parents($plugintypeclass))) {
-                    throw new coding_exception('Class ' . $plugintypeclass . ' must extend plugininfo_base');
-                }
-                $plugins = call_user_func(array($plugintypeclass, 'get_plugins'), $plugintype, $plugintyperootdir, $plugintypeclass);
-                $this->pluginsinfo[$plugintype] = $plugins;
-            }
-
-            if (empty($CFG->disableupdatenotifications) and !during_initial_install()) {
-                // append the information about available updates provided by {@link available_update_checker()}
-                $provider = available_update_checker::instance();
-                foreach ($this->pluginsinfo as $plugintype => $plugins) {
-                    foreach ($plugins as $plugininfoholder) {
-                        $plugininfoholder->check_available_updates($provider);
-                    }
-                }
-            }
-        }
-
-        return $this->pluginsinfo;
-    }
-
-    /**
-     * Returns list of all known subplugins of the given plugin
+     * Returns list of all known subplugins of the given plugin.
      *
      * For plugins that do not provide subplugins (i.e. there is no support for it),
      * empty array is returned.
      *
      * @param string $component full component name, e.g. 'mod_workshop'
-     * @param bool $disablecache force reload, cache can be used otherwise
      * @return array (string) component name (e.g. 'workshopallocation_random') => subclass of {@link plugininfo_base}
      */
-    public function get_subplugins_of_plugin($component, $disablecache=false) {
+    public function get_subplugins_of_plugin($component) {
 
-        $pluginfo = $this->get_plugin_info($component, $disablecache);
+        $pluginfo = $this->get_plugin_info($component);
 
         if (is_null($pluginfo)) {
             return array();
         }
 
-        $subplugins = $this->get_subplugins($disablecache);
+        $subplugins = $this->get_subplugins();
 
         if (!isset($subplugins[$pluginfo->component])) {
             return array();
@@ -221,28 +425,29 @@ class plugin_manager {
      * Returns list of plugins that define their subplugins and the information
      * about them from the db/subplugins.php file.
      *
-     * @param bool $disablecache force reload, cache can be used otherwise
      * @return array with keys like 'mod_quiz', and values the data from the
      *      corresponding db/subplugins.php file.
      */
-    public function get_subplugins($disablecache=false) {
+    public function get_subplugins() {
 
-        if ($disablecache or is_null($this->subpluginsinfo)) {
-            $this->subpluginsinfo = array();
-            foreach (core_component::get_plugin_types_with_subplugins() as $type => $ignored) {
-                foreach (core_component::get_plugin_list($type) as $component => $ownerdir) {
-                    $componentsubplugins = array();
-                    if (file_exists($ownerdir . '/db/subplugins.php')) {
-                        $subplugins = array();
-                        include($ownerdir . '/db/subplugins.php');
-                        foreach ($subplugins as $subplugintype => $subplugintyperootdir) {
-                            $subplugin = new stdClass();
-                            $subplugin->type = $subplugintype;
-                            $subplugin->typerootdir = $subplugintyperootdir;
-                            $componentsubplugins[$subplugintype] = $subplugin;
-                        }
-                        $this->subpluginsinfo[$type . '_' . $component] = $componentsubplugins;
+        if (is_array($this->subpluginsinfo)) {
+            return $this->subpluginsinfo;
+        }
+
+        $this->subpluginsinfo = array();
+        foreach (core_component::get_plugin_types_with_subplugins() as $type => $ignored) {
+            foreach (core_component::get_plugin_list($type) as $component => $ownerdir) {
+                $componentsubplugins = array();
+                if (file_exists($ownerdir . '/db/subplugins.php')) {
+                    $subplugins = array();
+                    include($ownerdir . '/db/subplugins.php');
+                    foreach ($subplugins as $subplugintype => $subplugintyperootdir) {
+                        $subplugin = new stdClass();
+                        $subplugin->type = $subplugintype;
+                        $subplugin->typerootdir = $subplugintyperootdir;
+                        $componentsubplugins[$subplugintype] = $subplugin;
                     }
+                    $this->subpluginsinfo[$type . '_' . $component] = $componentsubplugins;
                 }
             }
         }
@@ -350,12 +555,11 @@ class plugin_manager {
      * Returns information about the known plugin, or null
      *
      * @param string $component frankenstyle component name.
-     * @param bool $disablecache force reload, cache can be used otherwise
      * @return plugininfo_base|null the corresponding plugin information.
      */
-    public function get_plugin_info($component, $disablecache=false) {
-        list($type, $name) = $this->normalize_component($component);
-        $plugins = $this->get_plugins($disablecache);
+    public function get_plugin_info($component) {
+        list($type, $name) = core_component::normalize_component($component);
+        $plugins = $this->get_plugins();
         if (isset($plugins[$type][$name])) {
             return $plugins[$type][$name];
         } else {
@@ -637,6 +841,7 @@ class plugin_manager {
         $plugins = array(
             'qformat' => array('blackboard'),
             'enrol' => array('authorize'),
+            'tool' => array('bloglevelupgrade'),
         );
 
         if (!isset($plugins[$type])) {
@@ -877,18 +1082,6 @@ class plugin_manager {
         } else {
             return false;
         }
-    }
-
-    /**
-     * Wrapper for the core function {@link core_component::normalize_component()}.
-     *
-     * This is here just to make it possible to mock it in unit tests.
-     *
-     * @param string $component
-     * @return array
-     */
-    protected function normalize_component($component) {
-        return core_component::normalize_component($component);
     }
 
     /**
@@ -2420,7 +2613,6 @@ class plugininfo_default_factory {
         $plugin->init_display_name();
         $plugin->load_disk_version();
         $plugin->load_db_version();
-        $plugin->load_required_main_version();
         $plugin->init_is_standard();
 
         return $plugin;
@@ -2445,7 +2637,7 @@ abstract class plugininfo_base {
     public $displayname;
     /** @var string the plugin source, one of plugin_manager::PLUGIN_SOURCE_xxx constants */
     public $source;
-    /** @var fullpath to the location of this plugin */
+    /** @var string fullpath to the location of this plugin */
     public $rootdir;
     /** @var int|string the version of the plugin's source code */
     public $versiondisk;
@@ -2463,7 +2655,16 @@ abstract class plugininfo_base {
     public $availableupdates;
 
     /**
-     * Gathers and returns the information about all plugins of the given type
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        return null;
+    }
+
+    /**
+     * Gathers and returns the information about all plugins of the given type,
+     * either on disk or previously installed.
      *
      * @param string $type the name of the plugintype, eg. mod, auth or workshopform
      * @param string $typerootdir full path to the location of the plugin dir
@@ -2471,15 +2672,35 @@ abstract class plugininfo_base {
      * @return array of plugintype classes, indexed by the plugin name
      */
     public static function get_plugins($type, $typerootdir, $typeclass) {
-
-        // get the information about plugins at the disk
+        // Get the information about plugins at the disk.
         $plugins = core_component::get_plugin_list($type);
-        $ondisk = array();
+        $return = array();
         foreach ($plugins as $pluginname => $pluginrootdir) {
-            $ondisk[$pluginname] = plugininfo_default_factory::make($type, $typerootdir,
+            $return[$pluginname] = plugininfo_default_factory::make($type, $typerootdir,
                 $pluginname, $pluginrootdir, $typeclass);
         }
-        return $ondisk;
+
+        // Fetch missing incorrectly uninstalled plugins.
+        $manager = plugin_manager::instance();
+        $plugins = $manager->get_installed_plugins($type);
+
+        foreach ($plugins as $name => $version) {
+            if (isset($return[$name])) {
+                continue;
+            }
+            $plugin              = new $typeclass();
+            $plugin->type        = $type;
+            $plugin->typerootdir = $typerootdir;
+            $plugin->name        = $name;
+            $plugin->rootdir     = null;
+            $plugin->displayname = $name;
+            $plugin->versiondb   = $version;
+            $plugin->init_is_standard();
+
+            $return[$name] = $plugin;
+        }
+
+        return $return;
     }
 
     /**
@@ -2525,34 +2746,6 @@ abstract class plugininfo_base {
     }
 
     /**
-     * Load the data from version.php.
-     *
-     * @param bool $disablecache do not attempt to obtain data from the cache
-     * @return stdClass the object called $plugin defined in version.php
-     */
-    protected function load_version_php($disablecache=false) {
-
-        $cache = cache::make('core', 'plugininfo_base');
-
-        $versionsphp = $cache->get('versions_php');
-
-        if (!$disablecache and $versionsphp !== false and isset($versionsphp[$this->component])) {
-            return $versionsphp[$this->component];
-        }
-
-        $versionfile = $this->full_path('version.php');
-
-        $plugin = new stdClass();
-        if (is_readable($versionfile)) {
-            include($versionfile);
-        }
-        $versionsphp[$this->component] = $plugin;
-        $cache->set('versions_php', $versionsphp);
-
-        return $plugin;
-    }
-
-    /**
      * Sets {@link $versiondisk} property to a numerical value representing the
      * version of the plugin's source code.
      *
@@ -2561,33 +2754,26 @@ abstract class plugininfo_base {
      * data) or is missing from disk.
      */
     public function load_disk_version() {
-        $plugin = $this->load_version_php();
+        $versions = plugin_manager::instance()->get_present_plugins($this->type);
+
+        $this->versiondisk = null;
+        $this->versionrequires = null;
+        $this->dependencies = array();
+
+        if (!isset($versions[$this->name])) {
+            return;
+        }
+
+        $plugin = $versions[$this->name];
+
         if (isset($plugin->version)) {
             $this->versiondisk = $plugin->version;
         }
-    }
-
-    /**
-     * Sets {@link $versionrequires} property to a numerical value representing
-     * the version of Moodle core that this plugin requires.
-     */
-    public function load_required_main_version() {
-        $plugin = $this->load_version_php();
         if (isset($plugin->requires)) {
             $this->versionrequires = $plugin->requires;
         }
-    }
-
-    /**
-     * Initialise {@link $dependencies} to the list of other plugins (in any)
-     * that this one requires to be installed.
-     */
-    protected function load_other_required_plugins() {
-        $plugin = $this->load_version_php();
-        if (!empty($plugin->dependencies)) {
+        if (isset($plugin->dependencies)) {
             $this->dependencies = $plugin->dependencies;
-        } else {
-            $this->dependencies = array(); // By default, no dependencies.
         }
     }
 
@@ -2599,7 +2785,7 @@ abstract class plugininfo_base {
      */
     public function get_other_required_plugins() {
         if (is_null($this->dependencies)) {
-            $this->load_other_required_plugins();
+            $this->load_disk_version();
         }
         return $this->dependencies;
     }
@@ -2631,8 +2817,12 @@ abstract class plugininfo_base {
      * data) or has not been installed yet.
      */
     public function load_db_version() {
-        if ($ver = self::get_version_from_config_plugins($this->component)) {
-            $this->versiondb = $ver;
+        $versions = plugin_manager::instance()->get_installed_plugins($this->type);
+
+        if (isset($versions[$this->name])) {
+            $this->versiondb = $versions[$this->name];
+        } else {
+            $this->versiondb = null;
         }
     }
 
@@ -2707,7 +2897,9 @@ abstract class plugininfo_base {
                 return plugin_manager::PLUGIN_STATUS_MISSING;
             }
 
-        } else if ((string)$this->versiondb === (string)$this->versiondisk) {
+        } else if ((float)$this->versiondb === (float)$this->versiondisk) {
+            // Note: the float comparison should work fine here
+            //       because there are no arithmetic operations with the numbers.
             return plugin_manager::PLUGIN_STATUS_UPTODATE;
 
         } else if ($this->versiondb < $this->versiondisk) {
@@ -2733,7 +2925,18 @@ abstract class plugininfo_base {
      * @return null|bool
      */
     public function is_enabled() {
-        return null;
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return false;
+        }
+
+        $enabled = plugin_manager::instance()->get_enabled_plugins($this->type);
+
+        if (!is_array($enabled)) {
+            return null;
+        }
+
+        return isset($enabled[$this->name]);
     }
 
     /**
@@ -2842,7 +3045,7 @@ abstract class plugininfo_base {
      * Note that even if true is returned, the core may still prohibit the uninstallation,
      * e.g. in case there are other plugins that depend on this one.
      *
-     * @return boolean
+     * @return bool
      */
     public function is_uninstall_allowed() {
 
@@ -2921,40 +3124,9 @@ abstract class plugininfo_base {
     }
 
     /**
-     * Provides access to plugin versions from the {config_plugins} table
-     *
-     * @param string $plugin plugin name
-     * @param bool $disablecache do not attempt to obtain data from the cache
-     * @return int|bool the stored value or false if not found
-     */
-    protected function get_version_from_config_plugins($plugin, $disablecache=false) {
-        global $DB;
-
-        $cache = cache::make('core', 'plugininfo_base');
-
-        $pluginversions = $cache->get('versions_db');
-
-        if ($pluginversions === false or $disablecache) {
-            try {
-                $pluginversions = $DB->get_records_menu('config_plugins', array('name' => 'version'), 'plugin', 'plugin,value');
-            } catch (dml_exception $e) {
-                // before install
-                $pluginversions = array();
-            }
-            $cache->set('versions_db', $pluginversions);
-        }
-
-        if (isset($pluginversions[$plugin])) {
-            return $pluginversions[$plugin];
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Provides access to the plugin_manager singleton.
      *
-     * @return plugin_manmager
+     * @return plugin_manager
      */
     protected function get_plugin_manager() {
         return plugin_manager::instance();
@@ -2973,31 +3145,14 @@ class plugininfo_general extends plugininfo_base {
  * Class for page side blocks
  */
 class plugininfo_block extends plugininfo_base {
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        global $DB;
 
-    public static function get_plugins($type, $typerootdir, $typeclass) {
-
-        // get the information about blocks at the disk
-        $blocks = parent::get_plugins($type, $typerootdir, $typeclass);
-
-        // add blocks missing from disk
-        $blocksinfo = self::get_blocks_info();
-        foreach ($blocksinfo as $blockname => $blockinfo) {
-            if (isset($blocks[$blockname])) {
-                continue;
-            }
-            $plugin                 = new $typeclass();
-            $plugin->type           = $type;
-            $plugin->typerootdir    = $typerootdir;
-            $plugin->name           = $blockname;
-            $plugin->rootdir        = null;
-            $plugin->displayname    = $blockname;
-            $plugin->versiondb      = $blockinfo->version;
-            $plugin->init_is_standard();
-
-            $blocks[$blockname]   = $plugin;
-        }
-
-        return $blocks;
+        return $DB->get_records_menu('block', array('visible'=>1), 'name ASC', 'name, name AS val');
     }
 
     /**
@@ -3030,29 +3185,6 @@ class plugininfo_block extends plugininfo_base {
         }
     }
 
-    public function load_db_version() {
-        global $DB;
-
-        $blocksinfo = self::get_blocks_info();
-        if (isset($blocksinfo[$this->name]->version)) {
-            $this->versiondb = $blocksinfo[$this->name]->version;
-        }
-    }
-
-    public function is_enabled() {
-
-        $blocksinfo = self::get_blocks_info();
-        if (isset($blocksinfo[$this->name]->visible)) {
-            if ($blocksinfo[$this->name]->visible) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return parent::is_enabled();
-        }
-    }
-
     public function get_settings_section_name() {
         return 'blocksetting' . $this->name;
     }
@@ -3061,6 +3193,12 @@ class plugininfo_block extends plugininfo_base {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
         $ADMIN = $adminroot; // may be used in settings.php
         $block = $this; // also can be used inside settings.php
+
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
+
         $section = $this->get_settings_section_name();
 
         if (!$hassiteconfig || (($blockinstance = block_instance($this->name)) === false)) {
@@ -3073,11 +3211,6 @@ class plugininfo_block extends plugininfo_base {
                 $settings = new admin_settingpage($section, $this->displayname,
                         'moodle/site:config', $this->is_enabled() === false);
                 include($this->full_path('settings.php')); // this may also set $settings to null
-            } else {
-                $blocksinfo = self::get_blocks_info();
-                $settingsurl = new moodle_url('/admin/block.php', array('block' => $blocksinfo[$this->name]->id));
-                $settings = new admin_externalpage($section, $this->displayname,
-                        $settingsurl, 'moodle/site:config', $this->is_enabled() === false);
             }
         }
         if ($settings) {
@@ -3103,32 +3236,6 @@ class plugininfo_block extends plugininfo_base {
 
         return '<p>'.get_string('uninstallextraconfirmblock', 'core_plugin', array('instances'=>$count)).'</p>';
     }
-
-    /**
-     * Provides access to the records in {block} table
-     *
-     * @param bool $disablecache do not attempt to obtain data from the cache
-     * @return array array of stdClasses
-     */
-    protected static function get_blocks_info($disablecache=false) {
-        global $DB;
-
-        $cache = cache::make('core', 'plugininfo_block');
-
-        $blocktypes = $cache->get('blocktypes');
-
-        if ($blocktypes === false or $disablecache) {
-            try {
-                $blocktypes = $DB->get_records('block', null, 'name', 'name,id,version,visible');
-            } catch (dml_exception $e) {
-                // before install
-                $blocktypes = array();
-            }
-            $cache->set('blocktypes', $blocktypes);
-        }
-
-        return $blocktypes;
-    }
 }
 
 
@@ -3137,80 +3244,29 @@ class plugininfo_block extends plugininfo_base {
  */
 class plugininfo_filter extends plugininfo_base {
 
-    public static function get_plugins($type, $typerootdir, $typeclass) {
-        global $CFG, $DB;
-
-        $filters = array();
-
-        // get the list of filters in /filter location
-        $installed = filter_get_all_installed();
-
-        foreach ($installed as $name => $displayname) {
-            $plugin                 = new $typeclass();
-            $plugin->type           = $type;
-            $plugin->typerootdir    = $typerootdir;
-            $plugin->name           = $name;
-            $plugin->rootdir        = "$CFG->dirroot/filter/$name";
-            $plugin->displayname    = $displayname;
-
-            $plugin->load_disk_version();
-            $plugin->load_db_version();
-            $plugin->load_required_main_version();
-            $plugin->init_is_standard();
-
-            $filters[$plugin->name] = $plugin;
-        }
-
-        // Do not mess with filter registration here!
-
-        $globalstates = self::get_global_states();
-
-        // make sure that all registered filters are installed, just in case
-        foreach ($globalstates as $name => $info) {
-            if (!isset($filters[$name])) {
-                // oops, there is a record in filter_active but the filter is not installed
-                $plugin                 = new $typeclass();
-                $plugin->type           = $type;
-                $plugin->typerootdir    = $typerootdir;
-                $plugin->name           = $name;
-                $plugin->rootdir        = "$CFG->dirroot/filter/$name";
-                $plugin->displayname    = $name;
-
-                $plugin->load_db_version();
-
-                if (is_null($plugin->versiondb)) {
-                    // this is a hack to stimulate 'Missing from disk' error
-                    // because $plugin->versiondisk will be null !== false
-                    $plugin->versiondb = false;
-                }
-
-                $filters[$plugin->name] = $plugin;
-            }
-        }
-
-        return $filters;
-    }
-
     public function init_display_name() {
-        // do nothing, the name is set in self::get_plugins()
+        if (!get_string_manager()->string_exists('filtername', $this->component)) {
+            $this->displayname = '[filtername,' . $this->component . ']';
+        } else {
+            $this->displayname = get_string('filtername', $this->component);
+        }
     }
 
-    public function is_enabled() {
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        global $DB, $CFG;
+        require_once("$CFG->libdir/filterlib.php");
 
-        $globalstates = self::get_global_states();
-
-        foreach ($globalstates as $name => $info) {
-            if ($name === $this->name) {
-                if ($info->active == TEXTFILTER_DISABLED) {
-                    return false;
-                } else {
-                    // it may be 'On' or 'Off, but available'
-                    return null;
-                }
-            }
+        $enabled = array();
+        $filters = $DB->get_records_select('filter_active', "active <> :disabled", array('disabled'=>TEXTFILTER_DISABLED), 'filter ASC', 'id, filter');
+        foreach ($filters as $filter) {
+            $enabled[$filter->filter] = $filter->filter;
         }
 
-        return null;
+        return $enabled;
     }
 
     public function get_settings_section_name() {
@@ -3221,6 +3277,11 @@ class plugininfo_filter extends plugininfo_base {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
         $ADMIN = $adminroot; // may be used in settings.php
         $filter = $this; // also can be used inside settings.php
+
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
 
         $settings = null;
         if ($hassiteconfig && file_exists($this->full_path('filtersettings.php'))) {
@@ -3241,50 +3302,6 @@ class plugininfo_filter extends plugininfo_base {
     public function get_uninstall_url() {
         return new moodle_url('/admin/filters.php', array('sesskey' => sesskey(), 'filterpath' => $this->name, 'action' => 'delete'));
     }
-
-    /**
-     * Provides access to the results of {@link filter_get_global_states()}
-     * but indexed by the normalized filter name
-     *
-     * The legacy filter name is available as ->legacyname property.
-     *
-     * @param bool $disablecache do not attempt to obtain data from the cache
-     * @return array
-     */
-    protected static function get_global_states($disablecache=false) {
-        global $DB;
-
-        $cache = cache::make('core', 'plugininfo_filter');
-
-        $globalstates = $cache->get('globalstates');
-
-        if ($globalstates === false or $disablecache) {
-
-            if (!$DB->get_manager()->table_exists('filter_active')) {
-                // Not installed yet.
-                $cache->set('globalstates', array());
-                return array();
-            }
-
-            $globalstates = array();
-
-            foreach (filter_get_global_states() as $name => $info) {
-                if (strpos($name, '/') !== false) {
-                    // Skip existing before upgrade to new names.
-                    continue;
-                }
-
-                $filterinfo = new stdClass();
-                $filterinfo->active = $info->active;
-                $filterinfo->sortorder = $info->sortorder;
-                $globalstates[$name] = $filterinfo;
-            }
-
-            $cache->set('globalstates', $globalstates);
-        }
-
-        return $globalstates;
-    }
 }
 
 
@@ -3292,31 +3309,13 @@ class plugininfo_filter extends plugininfo_base {
  * Class for activity modules
  */
 class plugininfo_mod extends plugininfo_base {
-
-    public static function get_plugins($type, $typerootdir, $typeclass) {
-
-        // get the information about plugins at the disk
-        $modules = parent::get_plugins($type, $typerootdir, $typeclass);
-
-        // add modules missing from disk
-        $modulesinfo = self::get_modules_info();
-        foreach ($modulesinfo as $modulename => $moduleinfo) {
-            if (isset($modules[$modulename])) {
-                continue;
-            }
-            $plugin                 = new $typeclass();
-            $plugin->type           = $type;
-            $plugin->typerootdir    = $typerootdir;
-            $plugin->name           = $modulename;
-            $plugin->rootdir        = null;
-            $plugin->displayname    = $modulename;
-            $plugin->versiondb      = $moduleinfo->version;
-            $plugin->init_is_standard();
-
-            $modules[$modulename]   = $plugin;
-        }
-
-        return $modules;
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        global $DB;
+        return $DB->get_records_menu('modules', array('visible'=>1), 'name ASC', 'name, name AS val');
     }
 
     /**
@@ -3344,61 +3343,6 @@ class plugininfo_mod extends plugininfo_base {
         }
     }
 
-    /**
-     * Load the data from version.php.
-     *
-     * @param bool $disablecache do not attempt to obtain data from the cache
-     * @return object the data object defined in version.php.
-     */
-    protected function load_version_php($disablecache=false) {
-
-        $cache = cache::make('core', 'plugininfo_mod');
-
-        $versionsphp = $cache->get('versions_php');
-
-        if (!$disablecache and $versionsphp !== false and isset($versionsphp[$this->component])) {
-            return $versionsphp[$this->component];
-        }
-
-        $versionfile = $this->full_path('version.php');
-
-        $module = new stdClass();
-        $plugin = new stdClass();
-        if (is_readable($versionfile)) {
-            include($versionfile);
-        }
-        if (!isset($module->version) and isset($plugin->version)) {
-            $module = $plugin;
-        }
-        $versionsphp[$this->component] = $module;
-        $cache->set('versions_php', $versionsphp);
-
-        return $module;
-    }
-
-    public function load_db_version() {
-        global $DB;
-
-        $modulesinfo = self::get_modules_info();
-        if (isset($modulesinfo[$this->name]->version)) {
-            $this->versiondb = $modulesinfo[$this->name]->version;
-        }
-    }
-
-    public function is_enabled() {
-
-        $modulesinfo = self::get_modules_info();
-        if (isset($modulesinfo[$this->name]->visible)) {
-            if ($modulesinfo[$this->name]->visible) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return parent::is_enabled();
-        }
-    }
-
     public function get_settings_section_name() {
         return 'modsetting' . $this->name;
     }
@@ -3407,11 +3351,16 @@ class plugininfo_mod extends plugininfo_base {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
         $ADMIN = $adminroot; // may be used in settings.php
         $module = $this; // also can be used inside settings.php
+
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
+
         $section = $this->get_settings_section_name();
 
-        $modulesinfo = self::get_modules_info();
         $settings = null;
-        if ($hassiteconfig && isset($modulesinfo[$this->name]) && file_exists($this->full_path('settings.php'))) {
+        if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
             $settings = new admin_settingpage($section, $this->displayname,
                     'moodle/site:config', $this->is_enabled() === false);
             include($this->full_path('settings.php')); // this may also set $settings to null
@@ -3462,32 +3411,6 @@ class plugininfo_mod extends plugininfo_base {
 
         return '<p>'.get_string('uninstallextraconfirmmod', 'core_plugin', array('instances'=>$count, 'courses'=>$courses)).'</p>';
     }
-
-    /**
-     * Provides access to the records in {modules} table
-     *
-     * @param bool $disablecache do not attempt to obtain data from the cache
-     * @return array array of stdClasses
-     */
-    protected static function get_modules_info($disablecache=false) {
-        global $DB;
-
-        $cache = cache::make('core', 'plugininfo_mod');
-
-        $modulesinfo = $cache->get('modulesinfo');
-
-        if ($modulesinfo === false or $disablecache) {
-            try {
-                $modulesinfo = $DB->get_records('modules', null, 'name', 'name,id,version,visible');
-            } catch (dml_exception $e) {
-                // before install
-                $modulesinfo = array();
-            }
-            $cache->set('modulesinfo', $modulesinfo);
-        }
-
-        return $modulesinfo;
-    }
 }
 
 
@@ -3529,6 +3452,11 @@ class plugininfo_qtype extends plugininfo_base {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
         $ADMIN = $adminroot; // may be used in settings.php
         $qtype = $this; // also can be used inside settings.php
+
+        if (!$this->rootdir) {
+            // Most probably somebody deleted dir without proper uninstall.
+            return;
+        }
         $section = $this->get_settings_section_name();
 
         $settings = null;
@@ -3550,18 +3478,20 @@ class plugininfo_qtype extends plugininfo_base {
  * Class for authentication plugins
  */
 class plugininfo_auth extends plugininfo_base {
-
-    public function is_enabled() {
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
         global $CFG;
 
-        if (in_array($this->name, array('nologin', 'manual'))) {
-            // these two are always enabled and can't be disabled
-            return null;
+        // These two are always enabled and can't be disabled.
+        $enabled = array('nologin'=>'nologin', 'manual'=>'manual');
+        foreach (explode(',', $CFG->auth) as $auth) {
+            $enabled[$auth] = $auth;
         }
 
-        $enabled = array_flip(explode(',', $CFG->auth));
-
-        return isset($enabled[$this->name]);
+        return $enabled;
     }
 
     public function get_settings_section_name() {
@@ -3572,6 +3502,12 @@ class plugininfo_auth extends plugininfo_base {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
         $ADMIN = $adminroot; // may be used in settings.php
         $auth = $this; // also to be used inside settings.php
+
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
+
         $section = $this->get_settings_section_name();
 
         $settings = null;
@@ -3598,18 +3534,19 @@ class plugininfo_auth extends plugininfo_base {
  * Class for enrolment plugins
  */
 class plugininfo_enrol extends plugininfo_base {
-
-    public function is_enabled() {
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
         global $CFG;
 
-        // We do not actually need whole enrolment classes here so we do not call
-        // {@link enrol_get_plugins()}. Note that this may produce slightly different
-        // results, for example if the enrolment plugin does not contain lib.php
-        // but it is listed in $CFG->enrol_plugins_enabled
+        $enabled = array();
+        foreach (explode(',', $CFG->enrol_plugins_enabled) as $enrol) {
+            $enabled[$enrol] = $enrol;
+        }
 
-        $enabled = array_flip(explode(',', $CFG->enrol_plugins_enabled));
-
-        return isset($enabled[$this->name]);
+        return $enabled;
     }
 
     public function get_settings_section_name() {
@@ -3622,6 +3559,11 @@ class plugininfo_enrol extends plugininfo_base {
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
+
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
 
         if (!$hassiteconfig or !file_exists($this->full_path('settings.php'))) {
             return;
@@ -3681,6 +3623,14 @@ class plugininfo_enrol extends plugininfo_base {
  * Class for messaging processors
  */
 class plugininfo_message extends plugininfo_base {
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        global $DB;
+        return $DB->get_records_menu('message_processors', array('enabled'=>1), 'name ASC', 'name, name AS val');
+    }
 
     public function get_settings_section_name() {
         return 'messagesetting' . $this->name;
@@ -3689,6 +3639,12 @@ class plugininfo_message extends plugininfo_base {
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
         $ADMIN = $adminroot; // may be used in settings.php
+
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
+
         if (!$hassiteconfig) {
             return;
         }
@@ -3706,18 +3662,6 @@ class plugininfo_message extends plugininfo_base {
         }
         if ($settings) {
             $ADMIN->add($parentnodename, $settings);
-        }
-    }
-
-    /**
-     * @see plugintype_interface::is_enabled()
-     */
-    public function is_enabled() {
-        $processors = get_message_processors();
-        if (isset($processors[$this->name])) {
-            return $processors[$this->name]->configured && $processors[$this->name]->enabled;
-        } else {
-            return parent::is_enabled();
         }
     }
 
@@ -3744,12 +3688,13 @@ class plugininfo_message extends plugininfo_base {
  * Class for repositories
  */
 class plugininfo_repository extends plugininfo_base {
-
-    public function is_enabled() {
-
-        $enabled = self::get_enabled_repositories();
-
-        return isset($enabled[$this->name]);
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        global $DB;
+        return $DB->get_records_menu('repository', array('visible'=>1), 'type ASC', 'type, type AS val');
     }
 
     public function get_settings_section_name() {
@@ -3757,6 +3702,11 @@ class plugininfo_repository extends plugininfo_base {
     }
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
+
         if ($hassiteconfig && $this->is_enabled()) {
             // completely no access to repository setting when it is not enabled
             $sectionname = $this->get_settings_section_name();
@@ -3767,27 +3717,6 @@ class plugininfo_repository extends plugininfo_base {
             $adminroot->add($parentnodename, $settings);
         }
     }
-
-    /**
-     * Provides access to the records in {repository} table
-     *
-     * @param bool $disablecache do not attempt to obtain data from the cache
-     * @return array array of stdClasses
-     */
-    protected static function get_enabled_repositories($disablecache=false) {
-        global $DB;
-
-        $cache = cache::make('core', 'plugininfo_repository');
-
-        $enabled = $cache->get('enabled');
-
-        if ($enabled === false or $disablecache) {
-            $enabled = $DB->get_records('repository', null, 'type', 'type,visible,sortorder');
-            $cache->set('enabled', $enabled);
-        }
-
-        return $enabled;
-    }
 }
 
 
@@ -3795,44 +3724,17 @@ class plugininfo_repository extends plugininfo_base {
  * Class for portfolios
  */
 class plugininfo_portfolio extends plugininfo_base {
-
-    public function is_enabled() {
-
-        $enabled = self::get_enabled_portfolios();
-
-        return isset($enabled[$this->name]);
-    }
-
     /**
-     * Returns list of enabled portfolio plugins
-     *
-     * Portfolio plugin is enabled if there is at least one record in the {portfolio_instance}
-     * table for it.
-     *
-     * @param bool $disablecache do not attempt to obtain data from the cache
-     * @return array array of stdClasses with properties plugin and visible indexed by plugin
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
      */
-    protected static function get_enabled_portfolios($disablecache=false) {
+    public static function get_enabled_plugins() {
         global $DB;
 
-        $cache = cache::make('core', 'plugininfo_portfolio');
-
-        $enabled = $cache->get('enabled');
-
-        if ($enabled === false or $disablecache) {
-            $enabled = array();
-            $instances = $DB->get_recordset('portfolio_instance', null, '', 'plugin,visible');
-            foreach ($instances as $instance) {
-                if (isset($enabled[$instance->plugin])) {
-                    if ($instance->visible) {
-                        $enabled[$instance->plugin]->visible = $instance->visible;
-                    }
-                } else {
-                    $enabled[$instance->plugin] = $instance;
-                }
-            }
-            $instances->close();
-            $cache->set('enabled', $enabled);
+        $enabled = array();
+        $rs = $DB->get_recordset('portfolio_instance', array('visible'=>1), 'plugin ASC', 'plugin');
+        foreach ($rs as $repository) {
+            $enabled[$repository->plugin] = $repository->plugin;
         }
 
         return $enabled;
@@ -3911,6 +3813,24 @@ class plugininfo_local extends plugininfo_base {
  * Class for HTML editors
  */
 class plugininfo_editor extends plugininfo_base {
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        global $CFG;
+
+        if (empty($CFG->texteditors)) {
+            return array('tinymce'=>'tinymce', 'textarea'=>'textarea');
+        }
+
+        $enabled = array();
+        foreach (explode(',', $CFG->texteditors) as $editor) {
+            $enabled[$editor] = $editor;
+        }
+
+        return $enabled;
+    }
 
     public function get_settings_section_name() {
         return 'editorsettings' . $this->name;
@@ -3920,6 +3840,12 @@ class plugininfo_editor extends plugininfo_base {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
         $ADMIN = $adminroot; // may be used in settings.php
         $editor = $this; // also can be used inside settings.php
+
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
+
         $section = $this->get_settings_section_name();
 
         $settings = null;
@@ -3943,27 +3869,6 @@ class plugininfo_editor extends plugininfo_base {
             return true;
         }
     }
-
-    /**
-     * Returns the information about plugin availability
-     *
-     * True means that the plugin is enabled. False means that the plugin is
-     * disabled. Null means that the information is not available, or the
-     * plugin does not support configurable availability or the availability
-     * can not be changed.
-     *
-     * @return null|bool
-     */
-    public function is_enabled() {
-        global $CFG;
-        if (empty($CFG->texteditors)) {
-            $CFG->texteditors = 'tinymce,textarea';
-        }
-        if (in_array($this->name, explode(',', $CFG->texteditors))) {
-            return true;
-        }
-        return false;
-    }
 }
 
 /**
@@ -3976,6 +3881,11 @@ class plugininfo_plagiarism extends plugininfo_base {
     }
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
+
         // plagiarism plugin just redirect to settings.php in the plugins directory
         if ($hassiteconfig && file_exists($this->full_path('settings.php'))) {
             $section = $this->get_settings_section_name();
@@ -3995,6 +3905,24 @@ class plugininfo_plagiarism extends plugininfo_base {
  * Class for webservice protocols
  */
 class plugininfo_webservice extends plugininfo_base {
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        global $CFG;
+
+        if (empty($CFG->enablewebservices) or empty($CFG->webserviceprotocols)) {
+            return array();
+        }
+
+        $enabled = array();
+        foreach (explode(',', $CFG->webserviceprotocols) as $protocol) {
+            $enabled[$protocol] = $protocol;
+        }
+
+        return $enabled;
+    }
 
     public function get_settings_section_name() {
         return 'webservicesetting' . $this->name;
@@ -4004,6 +3932,12 @@ class plugininfo_webservice extends plugininfo_base {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
         $ADMIN = $adminroot; // may be used in settings.php
         $webservice = $this; // also can be used inside settings.php
+
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
+
         $section = $this->get_settings_section_name();
 
         $settings = null;
@@ -4017,18 +3951,6 @@ class plugininfo_webservice extends plugininfo_base {
         }
     }
 
-    public function is_enabled() {
-        global $CFG;
-        if (empty($CFG->enablewebservices)) {
-            return false;
-        }
-        $active_webservices = empty($CFG->webserviceprotocols) ? array() : explode(',', $CFG->webserviceprotocols);
-        if (in_array($this->name, $active_webservices)) {
-            return true;
-        }
-        return false;
-    }
-
     public function is_uninstall_allowed() {
         return false;
     }
@@ -4038,6 +3960,36 @@ class plugininfo_webservice extends plugininfo_base {
  * Class for course formats
  */
 class plugininfo_format extends plugininfo_base {
+    /**
+     * Finds all enabled plugins, the result may include missing plugins.
+     * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
+     */
+    public static function get_enabled_plugins() {
+        global $DB;
+
+        $plugins = plugin_manager::instance()->get_installed_plugins('format');
+        $installed = array();
+        foreach ($plugins as $plugin => $version) {
+            $installed[] = 'format_'.$plugin;
+        }
+
+        list($installed, $params) = $DB->get_in_or_equal($installed, SQL_PARAMS_NAMED);
+        $disabled = $DB->get_recordset_select('config_plugins', "plugin $installed AND name = 'disabled'", $params, 'plugin ASC');
+        foreach ($disabled as $conf) {
+            if (empty($conf->value)) {
+                continue;
+            }
+            list($type, $name) = explode('_', $conf->component, 2);
+            unset($plugins[$name]);
+        }
+
+        $enabled = array();
+        foreach ($plugins as $plugin => $version) {
+            $enabled[$plugin] = $plugin;
+        }
+
+        return $enabled;
+    }
 
     /**
      * Gathers and returns the information about all plugins of the given type
@@ -4066,6 +4018,12 @@ class plugininfo_format extends plugininfo_base {
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // in case settings.php wants to refer to them
         $ADMIN = $adminroot; // also may be used in settings.php
+
+        if (!$this->rootdir) {
+            // Plugin missing.
+            return;
+        }
+
         $section = $this->get_settings_section_name();
 
         $settings = null;
@@ -4077,10 +4035,6 @@ class plugininfo_format extends plugininfo_base {
         if ($settings) {
             $ADMIN->add($parentnodename, $settings);
         }
-    }
-
-    public function is_enabled() {
-        return !get_config($this->component, 'disabled');
     }
 
     public function is_uninstall_allowed() {

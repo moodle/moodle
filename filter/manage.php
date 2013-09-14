@@ -25,6 +25,7 @@
 
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/pluginlib.php');
 
 $contextid = required_param('contextid',PARAM_INT);
 $forfilter = optional_param('filter', '', PARAM_SAFEDIR);
@@ -35,9 +36,6 @@ list($context, $course, $cm) = get_context_info_array($contextid);
 require_login($course, false, $cm);
 require_capability('moodle/filter:manage', $context);
 $PAGE->set_context($context);
-
-// Purge all caches related to filter administration.
-cache::make('core', 'plugininfo_filter')->purge();
 
 $args = array('contextid'=>$contextid);
 $baseurl = new moodle_url('/filter/manage.php', $args);

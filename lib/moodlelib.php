@@ -1589,6 +1589,9 @@ function purge_all_caches() {
     theme_reset_all_caches();
     get_string_manager()->reset_caches();
     core_text::reset_caches();
+    if (class_exists('plugin_manager')) {
+        plugin_manager::reset_caches();
+    }
 
     // Bump up cacherev field for all courses.
     try {

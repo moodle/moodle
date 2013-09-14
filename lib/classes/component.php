@@ -927,17 +927,11 @@ $cache = '.var_export($cache, true).';
                 $plugs = self::fetch_plugins($type, $typedir);
             }
             foreach ($plugs as $plug => $fullplug) {
-                if ($type === 'mod') {
-                    $module = new stdClass();
-                    $module->version = null;
-                    include($fullplug.'/version.php');
-                    $versions[$type.'_'.$plug] = $module->version;
-                } else {
-                    $plugin = new stdClass();
-                    $plugin->version = null;
-                    @include($fullplug.'/version.php');
-                    $versions[$type.'_'.$plug] = $plugin->version;
-                }
+                $plugin = new stdClass();
+                $plugin->version = null;
+                $module = $plugin;
+                @include($fullplug.'/version.php');
+                $versions[$type.'_'.$plug] = $plugin->version;
             }
         }
 

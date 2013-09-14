@@ -53,11 +53,13 @@ switch ($action) {
                 print_error('cannotdisableformat', 'error', $return);
             }
             set_config('disabled', 1, 'format_'. $formatname);
+            plugin_manager::reset_caches();
         }
         break;
     case 'enable':
         if (!$formatplugins[$formatname]->is_enabled()) {
             unset_config('disabled', 'format_'. $formatname);
+            plugin_manager::reset_caches();
         }
         break;
     case 'up':
