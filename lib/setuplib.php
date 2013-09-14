@@ -51,19 +51,6 @@ define('MEMORY_EXTRA', -3);
 /** Extremely large memory limit - not recommended for standard scripts */
 define('MEMORY_HUGE', -4);
 
-/**
- * Software maturity levels used by the core and plugins
- */
-define('MATURITY_ALPHA',    50);    // internals can be tested using white box techniques
-define('MATURITY_BETA',     100);   // feature complete, ready for preview and testing
-define('MATURITY_RC',       150);   // tested, will be released unless there are fatal bugs
-define('MATURITY_STABLE',   200);   // ready for production deployment
-
-/**
- * Special value that can be used in $plugin->dependencies in version.php files.
- */
-define('ANY_VERSION', 'any');
-
 
 /**
  * Simple class. It is usually used instead of stdClass because it looks
