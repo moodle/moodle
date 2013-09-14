@@ -22,6 +22,16 @@ information provided here is intended especially for developers.
 * Use behat_selectors::get_allowed_text_selectors() and behat_selectors::get_allowed_selectors() instead of
   behat_command::$allowedtextselectors and behat_command::$allowedselectors
 * Subplugins are supported in admin tools and local plugins.
+* file_packer/zip_packer API has been modified so that key functions support a new file_progress interface
+  to report progress during long operations. Related to this, zip_archive now supports an estimated_count()
+  function that returns an approximate number of entries in the zip faster than the count() function.
+* Class cm_info no longer extends stdClass. All properties are read-only and calculated on first request only.
+* Class course_modinfo no longer extends stdClass. All properties are read-only.
+* Database fields modinfo and sectioncache in table course are removed. Application cache core/coursemodinfo
+  is used instead. Course cache is still reset, rebuilt and retrieved using function rebuild_course_cache() and
+  get_fast_modinfo(). Purging all caches and every core upgrade purges course modinfo cache as well.
+  If function get_fast_modinfo() is called for multiple courses make sure to include field cacherev in course
+  object.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
@@ -93,6 +103,7 @@ Misc:
     * mygroupid()                           -> groups_get_all_groups()
     * js_minify()                           -> core_minify::js_files()
     * css_minify_css()                      -> core_minify::css_files()
+    * course_modinfo::build_section_cache() -> (no replacement)
 
 User-agent related functions:
     * check_browser_operating_system()      -> core_useragent::check_browser_operating_system()

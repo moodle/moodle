@@ -6,36 +6,10 @@ h1, h2, h3, h4, h5, h6 {
     page-break-inside: avoid;
 }
 
-.book_title {
-    margin-left: -40px;
-    font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
-    font-size: 3em;
-    font-weight: bold;
-    margin-top: 120px;
-    margin-bottom: 30px;
-    text-align: center;
-}
-
 .book_summary {
     margin-left: -40px;
     text-align: center;
     margin-bottom: 120px;
-}
-
-.book_chapter_title {
-    font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
-    text-align: left;
-    font-size: 1.7em;
-    font-weight: bold;
-
-    border-style: solid;
-    border-top-width: 0px;
-    border-right-width: 0px;
-    border-bottom-width: 1px;
-    border-left-width: 0px;
-
-    margin-left: 0px;
-    margin-bottom: 20px;
 }
 
 .book_chapter {

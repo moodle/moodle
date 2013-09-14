@@ -145,11 +145,12 @@
     border: thin solid black;
 }
 
-.wiki_restore_yes, .wiki_deletecomment_yes {
+.wiki_restore_yes, .wiki_deletecomment_yes,
+.dir-rtl .wiki_restore_no, .dir-rtl .wiki_deletecomment_no {
     float: left;
 }
-
-.wiki_restore_no, .wiki_deletecomment_no {
+.wiki_restore_no, .wiki_deletecomment_no,
+.dir-rtl .wiki_restore_yes, .dir-rtl .wiki_deletecomment_yes {
     float: right;
 }
 

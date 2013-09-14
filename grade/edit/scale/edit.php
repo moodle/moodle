@@ -104,8 +104,10 @@ $editoroptions = array(
 );
 
 if (!empty($scale_rec->id)) {
+    $editoroptions['subdirs'] = file_area_contains_subdirs($systemcontext, 'grade', 'scale', $scale_rec->id);
     $scale_rec = file_prepare_standard_editor($scale_rec, 'description', $editoroptions, $systemcontext, 'grade', 'scale', $scale_rec->id);
 } else {
+    $editoroptions['subdirs'] = false;
     $scale_rec = file_prepare_standard_editor($scale_rec, 'description', $editoroptions, $systemcontext, 'grade', 'scale', null);
 }
 $mform = new edit_scale_form(null, compact('gpr', 'editoroptions'));

@@ -43,6 +43,11 @@ require_once(__DIR__ . '/../../filelib.php');
 class behat_util extends testing_util {
 
     /**
+     * The behat test site fullname and shortname.
+     */
+    const BEHATSITENAME = "Acceptance test site";
+
+    /**
      * @var array Files to skip when resetting dataroot folder
      */
     protected static $datarootskiponreset = array('.', '..', 'behat', 'behattestdir.txt');
@@ -70,8 +75,8 @@ class behat_util extends testing_util {
         $options = array();
         $options['adminuser'] = 'admin';
         $options['adminpass'] = 'admin';
-        $options['fullname'] = 'Acceptance test site';
-        $options['shortname'] = 'Acceptance test site';
+        $options['fullname'] = self::BEHATSITENAME;
+        $options['shortname'] = self::BEHATSITENAME;
 
         install_cli_database($options, false);
 

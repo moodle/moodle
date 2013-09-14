@@ -56,8 +56,6 @@ if ($ADMIN->fulltree) {
     //--- modedit defaults -----------------------------------------------------------------------------------
     $settings->add(new admin_setting_heading('resourcemodeditdefaults', get_string('modeditdefaults', 'admin'), get_string('condifmodeditdefaults', 'admin')));
 
-    $settings->add(new admin_setting_configcheckbox('resource/printheading',
-        get_string('printheading', 'resource'), get_string('printheadingexplain', 'resource'), 0));
     $settings->add(new admin_setting_configcheckbox('resource/printintro',
         get_string('printintro', 'resource'), get_string('printintroexplain', 'resource'), 1));
     $settings->add(new admin_setting_configselect('resource/display',

@@ -67,7 +67,8 @@ if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('importingchapters', 'booktool_importhtml'));
+    echo $OUTPUT->heading($book->name);
+    echo $OUTPUT->heading(get_string('importingchapters', 'booktool_importhtml'), 3);
 
     // this is a bloody hack - children do not try this at home!
     $fs = get_file_storage();
@@ -84,7 +85,7 @@ if ($mform->is_cancelled()) {
 }
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('import', 'booktool_importhtml'));
+echo $OUTPUT->heading($book->name);
 
 $mform->display();
 

@@ -61,6 +61,7 @@
     $PAGE->set_title($strsurveysaved);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
+    echo $OUTPUT->heading($survey->name);
 
     if (survey_already_done($survey->id, $USER->id)) {
         notice(get_string("alreadysubmitted", "survey"), $_SERVER["HTTP_REFERER"]);

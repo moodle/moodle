@@ -18,12 +18,12 @@ a:hover {text-decoration:underline;color:#FF0000;}
 /**
  * Headings
  */
-h1.main,
-h2.main,
-h3.main,
-h4.main,
-h5.main,
-h6.main {text-align:center;font-weight:bold;}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {text-align:center;font-weight:bold;}
 
 th.header,
 td.header,

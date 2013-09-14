@@ -1,19 +1,6 @@
 
-.path-mod-book .book_chapter_title {
-    font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif;
-    text-align: left;
-    font-size: large;
-    font-weight: bold;
-
-    margin-left: 0;
-    margin-bottom: 20px;
-}
-.dir-rtl.path-mod-book .book_chapter_title {
-    text-align: right;
-}
-
 .path-mod-book .navtop img.icon,
-.path-mod-book .navbotton img.icon {
+.path-mod-book .navbottom img.icon {
   margin-right: 4px;
   margin-left: 4px;
   border: 0;
@@ -63,11 +50,6 @@
 .dir-rtl.path-mod-book .book_toc_none ul ul {
     margin-left: 0;
     margin-right: 0;
-}
-
-/* toc style NUMBERED */
-.path-mod-book .book_toc_numbered {
-  font-size: 0.8em;
 }
 
 /*toc style BULLETS */

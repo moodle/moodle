@@ -218,6 +218,9 @@ class core_conditionlib_testcase extends advanced_testcase {
             $record->{$name} = $value;
         }
         $sectionid = $DB->insert_record('course_sections', $record);
+        foreach ($cmids as $cmid) {
+            $DB->update_record('course_modules', array('section' => $sectionid, 'id' => $cmid));
+        }
         rebuild_course_cache($courseid, true);
         return $sectionid;
     }

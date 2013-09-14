@@ -36,6 +36,7 @@ $timefrom   = optional_param('timefrom', 0, PARAM_INT); // how far back to look.
 $action     = optional_param('action', '', PARAM_ALPHA);
 $page       = optional_param('page', 0, PARAM_INT);                     // which page to show
 $perpage    = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);  // how many per page
+$currentgroup = optional_param('group', 0, PARAM_INT); // Get the active group.
 
 $url = new moodle_url('/report/participation/index.php', array('id'=>$id));
 if ($roleid !== 0) $url->param('roleid');
@@ -164,10 +165,32 @@ echo '<input type="submit" value="'.get_string('go').'" />'."\n</div></form>\n";
 
 $baseurl =  $CFG->wwwroot.'/report/participation/index.php?id='.$course->id.'&amp;roleid='
     .$roleid.'&amp;instanceid='.$instanceid.'&amp;timefrom='.$timefrom.'&amp;action='.$action.'&amp;perpage='.$perpage;
+$select = groups_allgroups_course_menu($course, $baseurl, true, $currentgroup);
+
+// User cannot see any group.
+if (empty($select)) {
+    echo $OUTPUT->heading(get_string("notingroup"));
+    echo $OUTPUT->footer();
+    exit;
+} else {
+    echo $select;
+}
+
+// Fetch current active group.
+$groupmode = groups_get_course_groupmode($course);
+$currentgroup = $SESSION->activegroup[$course->id][$groupmode][$course->defaultgroupingid];
 
 if (!empty($instanceid) && !empty($roleid)) {
     // from here assume we have at least the module we're using.
     $cm = $modinfo->cms[$instanceid];
+
+    // Group security checks.
+    if (!groups_group_visible($currentgroup, $course, $cm)) {
+        echo $OUTPUT->heading(get_string("notingroup"));
+        echo $OUTPUT->footer();
+        exit;
+    }
+
     $modulename = get_string('modulename', $cm->modname);
 
     include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
@@ -223,9 +246,16 @@ if (!empty($instanceid) && !empty($roleid)) {
     // We want to query both the current context and parent contexts.
     list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
 
+    $groupsql = "";
+    if (!empty($currentgroup)) {
+        $groupsql = "JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
+        $params['groupid'] = $currentgroup;
+    }
+
     $sql = "SELECT ra.userid, u.firstname, u.lastname, u.idnumber, l.actioncount AS count
             FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
             JOIN {user} u ON u.id = ra.userid
+            $groupsql
             LEFT JOIN (
                 SELECT userid, COUNT(action) AS actioncount FROM {log} WHERE cmid = :instanceid AND time > :timefrom AND $actionsql GROUP BY userid
             ) l ON (l.userid = ra.userid)";
@@ -247,6 +277,7 @@ if (!empty($instanceid) && !empty($roleid)) {
     $countsql = "SELECT COUNT(DISTINCT(ra.userid))
                    FROM {role_assignments} ra
                    JOIN {user} u ON u.id = ra.userid
+                   $groupsql
                   WHERE ra.contextid $relatedctxsql AND ra.roleid = :roleid";
 
     $totalcount = $DB->count_records_sql($countsql, $params);

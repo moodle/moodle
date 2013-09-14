@@ -766,26 +766,17 @@ class auth_plugin_mnet extends auth_plugin_base {
             }
             $mnethostlogssql = "
             SELECT
-                mhostlogs.remoteid, mhostlogs.time, mhostlogs.userid, mhostlogs.ip,
-                mhostlogs.course, mhostlogs.module, mhostlogs.cmid, mhostlogs.action,
-                mhostlogs.url, mhostlogs.info, mhostlogs.username, c.fullname as coursename,
-                c.modinfo
+                l.id as remoteid, l.time, l.userid, l.ip, l.course, l.module, l.cmid,
+                l.action, l.url, l.info, u.username
             FROM
-                (
-                    SELECT
-                        l.id as remoteid, l.time, l.userid, l.ip, l.course, l.module, l.cmid,
-                        l.action, l.url, l.info, u.username
-                    FROM
-                        {user} u
-                        INNER JOIN {log} l on l.userid = u.id
-                    WHERE
-                        u.mnethostid = ?
-                        AND l.id > ?
-                    ORDER BY remoteid ASC
-                    LIMIT 500
-                ) mhostlogs
-                INNER JOIN {course} c on c.id = mhostlogs.course
-            ORDER by mhostlogs.remoteid ASC";
+                {user} u
+                INNER JOIN {log} l on l.userid = u.id
+            WHERE
+                u.mnethostid = ?
+                AND l.id > ?
+                AND l.course IS NOT NULL
+            ORDER by l.id ASC
+            LIMIT 500";
 
             $mnethostlogs = $DB->get_records_sql($mnethostlogssql, array($mnethostid, $mnet_request->response['last log id']));
 
@@ -796,18 +787,18 @@ class auth_plugin_mnet extends auth_plugin_base {
             $processedlogs = array();
 
             foreach($mnethostlogs as $hostlog) {
-                // Extract the name of the relevant module instance from the
-                // course modinfo if possible.
-                if (!empty($hostlog->modinfo) && !empty($hostlog->cmid)) {
-                    $modinfo = unserialize($hostlog->modinfo);
-                    unset($hostlog->modinfo);
-                    $modulearray = array();
-                    foreach($modinfo as $module) {
-                        $modulearray[$module->cm] = $module->name;
+                try {
+                    // Get impersonalised course information. If it is cached there will be no DB queries.
+                    $modinfo = get_fast_modinfo($hostlog->course, -1);
+                    $hostlog->coursename = $modinfo->get_course()->fullname;
+                    if (!empty($hostlog->cmid) && isset($modinfo->cms[$hostlog->cmid])) {
+                        $hostlog->resource_name = $modinfo->cms[$hostlog->cmid]->name;
+                    } else {
+                        $hostlog->resource_name = '';
                     }
-                    $hostlog->resource_name = $modulearray[$hostlog->cmid];
-                } else {
-                    $hostlog->resource_name = '';
+                } catch (moodle_exception $e) {
+                    // Course not found
+                    continue;
                 }
 
                 $processedlogs[] = array (

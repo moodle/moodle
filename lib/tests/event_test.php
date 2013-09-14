@@ -123,6 +123,7 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_observers_parsing() {
+        global $CFG;
 
         $observers = array(
             array(
@@ -168,7 +169,7 @@ class core_event_testcase extends advanced_testcase {
         $observer->callable = '\core_tests\event\unittest_observer::observe_one';
         $observer->priority = 0;
         $observer->internal = true;
-        $observer->includefile = 'lib/tests/fixtures/event_fixtures.php';
+        $observer->includefile = $CFG->dirroot.'/lib/tests/fixtures/event_fixtures.php';
         $expected[1] = $observer;
 
         $this->assertEquals($expected, $result['\core_tests\event\unittest_executed']);
@@ -216,7 +217,7 @@ class core_event_testcase extends advanced_testcase {
         $observer->callable = '\core_tests\event\unittest_observer::observe_one';
         $observer->priority = 0;
         $observer->internal = true;
-        $observer->includefile = 'lib/tests/fixtures/event_fixtures.php';
+        $observer->includefile = $CFG->dirroot.'/lib/tests/fixtures/event_fixtures.php';
         $expected[0] = $observer;
         $this->assertEquals($expected, $result['\core_tests\event\unittest_executed']);
 

@@ -91,6 +91,9 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
         $this->_options['trusted'] = trusttext_trusted($this->_options['context']);
         parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
 
+        // Note: for some reason the code using this setting does not like bools.
+        $this->_options['subdirs'] = (int)($this->_options['subdirs'] == 1);
+
         editors_head_setup();
     }
 
@@ -205,7 +208,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element {
      * @param bool $allow true if sub directory can be created.
      */
     function setSubdirs($allow) {
-        $this->_options['subdirs'] = $allow;
+        $this->_options['subdirs'] = (int)($allow == 1);
     }
 
     /**

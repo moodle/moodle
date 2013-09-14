@@ -27,6 +27,7 @@
     $PAGE->set_title($strsurveys);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
+    echo $OUTPUT->heading($strsurveys);
 
     if (! $surveys = get_all_instances_in_course("survey", $course)) {
         notice(get_string('thereareno', 'moodle', $strsurveys), "../../course/view.php?id=$course->id");

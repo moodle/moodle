@@ -311,9 +311,11 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         $patterns[]='##moreurl##';
         $patterns[]='##user##';
         $patterns[]='##approve##';
+        $patterns[]='##disapprove##';
         $patterns[]='##comments##';
         $patterns[] = '##timeadded##';
         $patterns[] = '##timemodified##';
+        $replacement[] = '';
         $replacement[] = '';
         $replacement[] = '';
         $replacement[] = '';

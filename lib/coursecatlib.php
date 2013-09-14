@@ -844,7 +844,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
         $fields = array('c.id', 'c.category', 'c.sortorder',
                         'c.shortname', 'c.fullname', 'c.idnumber',
-                        'c.startdate', 'c.visible');
+                        'c.startdate', 'c.visible', 'c.cacherev');
         if (!empty($options['summary'])) {
             $fields[] = 'c.summary';
             $fields[] = 'c.summaryformat';
@@ -2056,8 +2056,6 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
  *     was called with option 'summary'. Otherwise will be retrieved from DB on first request
  * @property-read string $format Course format. Retrieved from DB on first request
  * @property-read int $showgrades Retrieved from DB on first request
- * @property-read string $sectioncache Retrieved from DB on first request
- * @property-read string $modinfo Retrieved from DB on first request
  * @property-read int $newsitems Retrieved from DB on first request
  * @property-read int $startdate
  * @property-read int $marker Retrieved from DB on first request
@@ -2076,6 +2074,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
  * @property-read int $requested Retrieved from DB on first request
  * @property-read int $enablecompletion Retrieved from DB on first request
  * @property-read int $completionnotify Retrieved from DB on first request
+ * @property-read int $cacherev
  *
  * @package    core
  * @subpackage course
@@ -2203,12 +2202,11 @@ class course_in_list implements IteratorAggregate {
     public function has_course_overviewfiles() {
         global $CFG;
         if (empty($CFG->courseoverviewfileslimit)) {
-            return 0;
+            return false;
         }
-        require_once($CFG->libdir. '/filestorage/file_storage.php');
         $fs = get_file_storage();
         $context = context_course::instance($this->id);
-        return $fs->is_area_empty($context->id, 'course', 'overviewfiles');
+        return !$fs->is_area_empty($context->id, 'course', 'overviewfiles');
     }
 
     /**

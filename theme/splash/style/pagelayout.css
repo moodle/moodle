@@ -266,10 +266,10 @@ a:hover,
     line-height:1em;
     padding:10px 0;
 }
-h2.main,h3.main,h4.main,h5.main,h6.main{
+h2,h3,h4,h5,h6{
     text-align:left;
 }
-#region-main h2.main{
+#region-main h2{
     font-size:1.6em;
     font-weight:400;
     line-height:1.6em;
@@ -742,7 +742,7 @@ table.quizreviewsummary {
     margin:0 auto;
     width:960px;
 }
-.pagelayout-report #page-content #report-main-content .region-content h2.main{
+.pagelayout-report #page-content #report-main-content .region-content h2{
     margin:5px 0;
 }
 .jsenabled .collapsed .collapsibleregioninner{

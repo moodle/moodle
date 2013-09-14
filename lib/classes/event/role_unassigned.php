@@ -16,6 +16,8 @@
 
 namespace core\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Role unassigned event.
  *
@@ -54,7 +56,7 @@ class role_unassigned extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new moodle_url('/admin/roles/assign.php', array('contextid'=>$this->contextid, 'roleid'=>$this->objectid));
+        return new moodle_url('/admin/roles/assign.php', array('contextid' => $this->contextid, 'roleid' => $this->objectid));
     }
 
     /**

@@ -66,6 +66,7 @@ $completion->set_module_viewed($cm);
     $PAGE->set_title(format_string($survey->name));
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
+    echo $OUTPUT->heading($survey->name);
 
 /// Check to see if groups are being used in this survey
     if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
@@ -100,8 +101,8 @@ $completion->set_module_viewed($cm);
         $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
 
         if ($showscales) {
-            echo $OUTPUT->heading(get_string("surveycompleted", "survey"));
-            echo $OUTPUT->heading(get_string("peoplecompleted", "survey", $numusers));
+            echo $OUTPUT->box(get_string("surveycompleted", "survey"));
+            echo $OUTPUT->box(get_string("peoplecompleted", "survey", $numusers));
             echo '<div class="resultgraph">';
             survey_print_graph("id=$cm->id&amp;sid=$USER->id&amp;group=$currentgroup&amp;type=student.png");
             echo '</div>';

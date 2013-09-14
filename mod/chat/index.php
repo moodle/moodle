@@ -29,6 +29,7 @@ $PAGE->navbar->add($strchats);
 $PAGE->set_title($strchats);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
+echo $OUTPUT->heading($strchats, 2);
 
 /// Get all the appropriate data
 

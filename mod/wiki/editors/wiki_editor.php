@@ -60,7 +60,7 @@ function wiki_print_editor_wiki($pageid, $content, $editor, $version = -1, $sect
     $tag = getTokens($editor, 'nowiki');
     $wiki_editor['nowiki'] = array('ed_nowiki.gif', get_string('wikinowikitext', 'wiki'), $tag[0], $tag[1], get_string('wikinowikitext', 'wiki'));
 
-    $OUTPUT->heading(strtoupper(get_string('format' . $editor, 'wiki')));
+    $OUTPUT->heading(strtoupper(get_string('format' . $editor, 'wiki')), 3);
 
     $PAGE->requires->js('/mod/wiki/editors/wiki/buttons.js');
 

@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->dirroot . '/lib/filestorage/file_progress.php');
+
 /**
  * Class representing local files stored in a sha1 file pool.
  *
@@ -480,11 +482,13 @@ class stored_file {
      *
      * @param file_packer $packer file packer instance
      * @param string $pathname target directory
+     * @param file_progress $progress Progress indicator callback or null if not required
      * @return array|bool list of processed files; false if error
      */
-    public function extract_to_pathname(file_packer $packer, $pathname) {
+    public function extract_to_pathname(file_packer $packer, $pathname,
+            file_progress $progress = null) {
         $archivefile = $this->get_content_file_location();
-        return $packer->extract_to_pathname($archivefile, $pathname);
+        return $packer->extract_to_pathname($archivefile, $pathname, null, $progress);
     }
 
     /**
@@ -497,11 +501,14 @@ class stored_file {
      * @param int $itemid item ID
      * @param string $pathbase path base
      * @param int $userid user ID
+     * @param file_progress $progress Progress indicator callback or null if not required
      * @return array|bool list of processed files; false if error
      */
-    public function extract_to_storage(file_packer $packer, $contextid, $component, $filearea, $itemid, $pathbase, $userid = NULL) {
+    public function extract_to_storage(file_packer $packer, $contextid,
+            $component, $filearea, $itemid, $pathbase, $userid = null, file_progress $progress = null) {
         $archivefile = $this->get_content_file_location();
-        return $packer->extract_to_storage($archivefile, $contextid, $component, $filearea, $itemid, $pathbase);
+        return $packer->extract_to_storage($archivefile, $contextid,
+                $component, $filearea, $itemid, $pathbase, $userid, $progress);
     }
 
     /**

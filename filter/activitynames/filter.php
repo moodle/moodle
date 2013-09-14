@@ -55,27 +55,36 @@ class filter_activitynames extends moodle_text_filter {
 
             $modinfo = get_fast_modinfo($courseid);
             if (!empty($modinfo->cms)) {
-                self::$activitylist = array();      /// We will store all the activities here
+                self::$activitylist = array(); // We will store all the created filters here.
 
-                //Sort modinfo by name length
-                $sortedactivities = fullclone($modinfo->cms);
-                usort($sortedactivities, 'filter_activitynames_comparemodulenamesbylength');
+                // Create array of visible activities sorted by the name length (we are only interested in properties name and url).
+                $sortedactivities = array();
+                foreach ($modinfo->cms as $cm) {
+                    // Exclude labels, hidden activities and activities for group members only.
+                    if ($cm->visible and empty($cm->groupmembersonly) and $cm->has_view()) {
+                        $sortedactivities[] = (object)array(
+                            'name' => $cm->name,
+                            'url' => $cm->url,
+                            'id' => $cm->id,
+                            'namelen' => strlen($cm->name),
+                        );
+                    }
+                }
+                core_collator::asort_objects_by_property($sortedactivities, 'namelen', SORT_NUMERIC);
 
                 foreach ($sortedactivities as $cm) {
-                    //Exclude labels, hidden activities and activities for group members only
-                    if ($cm->visible and empty($cm->groupmembersonly) and $cm->has_view()) {
-                        $title = s(trim(strip_tags($cm->name)));
-                        $currentname = trim($cm->name);
-                        $entitisedname  = s($currentname);
-                        /// Avoid empty or unlinkable activity names
-                        if (!empty($title)) {
-                            $href_tag_begin = html_writer::start_tag('a',
-                                    array('class' => 'autolink', 'title' => $title,
-                                        'href' => $cm->get_url()));
-                            self::$activitylist[$cm->id] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
-                            if ($currentname != $entitisedname) { /// If name has some entity (&amp; &quot; &lt; &gt;) add that filter too. MDL-17545
-                                self::$activitylist[$cm->id.'-e'] = new filterobject($entitisedname, $href_tag_begin, '</a>', false, true);
-                            }
+                    $title = s(trim(strip_tags($cm->name)));
+                    $currentname = trim($cm->name);
+                    $entitisedname  = s($currentname);
+                    // Avoid empty or unlinkable activity names.
+                    if (!empty($title)) {
+                        $href_tag_begin = html_writer::start_tag('a',
+                                array('class' => 'autolink', 'title' => $title,
+                                    'href' => $cm->url));
+                        self::$activitylist[$cm->id] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
+                        if ($currentname != $entitisedname) {
+                            // If name has some entity (&amp; &quot; &lt; &gt;) add that filter too. MDL-17545.
+                            self::$activitylist[$cm->id.'-e'] = new filterobject($entitisedname, $href_tag_begin, '</a>', false, true);
                         }
                     }
                 }
@@ -100,14 +109,3 @@ class filter_activitynames extends moodle_text_filter {
         }
     }
 }
-
-
-
-//This function is used to order module names from longer to shorter
-function filter_activitynames_comparemodulenamesbylength($a, $b)  {
-    if (strlen($a->name) == strlen($b->name)) {
-        return 0;
-    }
-    return (strlen($a->name) < strlen($b->name)) ? 1 : -1;
-}
-

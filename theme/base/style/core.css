@@ -135,12 +135,18 @@ form.popupform div {display: inline;}
 .arrow_button input {overflow:hidden;}
 .action-icon img.smallicon { vertical-align: text-bottom; margin-left: .45em;}
 .dir-rtl .action-icon img.smallicon { margin-right: .45em; margin-left: 0;}
-h1.main img,
-h2.main img,
-h3.main img,
-h4.main img,
-h5.main img,
-h6.main img {vertical-align: middle;}
+h1 img.icon,
+h1 img.iconhelp,
+h2 img.icon,
+h2 img.iconhelp,
+h3 img.icon,
+h3 img.iconhelp,
+h4 img.icon,
+h4 img.iconhelp,
+h5 img.icon,
+h5 img.iconhelp,
+h6 img.icon,
+h6 img.iconhelp {vertical-align: middle;}
 
 /** The 1-pixel padding is there to avoid phantom scroll bars on OS X (FF, Safari and Chrome)**/
 .no-overflow {overflow:auto;padding-bottom:1px;}
@@ -1494,3 +1500,17 @@ div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
 
 ul.dragdrop-keyboard-drag li { list-style-type: none; }
 .block-control-actions .moodle-core-dragdrop-draghandle img { width: 12px; height: 12px; }
+
+.block .header h2,
+.course-content h3,
+.pagelayout-frontpage h2,
+.pagelayout-frontpage h3,
+.pagelayout-frontpage h4,
+.pagelayout-frontpage h5,
+.pagelayout-frontpage h6,
+.pagelayout-coursecategory h3,
+.pagelayout-coursecategory h4,
+.pagelayout-coursecategory h5,
+.pagelayout-coursecategory h6 {
+    text-align: inherit;
+}

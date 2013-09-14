@@ -97,7 +97,7 @@ $form_save->set_data(array('d' => $data->id, 'name'=>$data->name));
 /* Output */
 if (!$form_export->is_submitted()) {
     echo $OUTPUT->header();
-    echo $OUTPUT->heading(format_string($data->name));
+    echo $OUTPUT->heading(format_string($data->name), 2);
 
     // Needed for tabs.php
     $currenttab = 'presets';
@@ -243,12 +243,12 @@ if (optional_param('sesskey', false, PARAM_BOOL) && confirm_sesskey()) {
 }
 
 // Export forms
-echo $OUTPUT->heading(get_string('export', 'data'));
+echo $OUTPUT->heading(get_string('export', 'data'), 3);
 $form_export->display();
 $form_save->display();
 
 // Import forms
-echo $OUTPUT->heading(get_string('import'));
+echo $OUTPUT->heading(get_string('import'), 3);
 $form_importzip->display();
 $form_importexisting->display();
 

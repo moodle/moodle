@@ -895,38 +895,29 @@ function badges_add_course_navigation(navigation_node $coursenode, stdClass $cou
 
     $coursecontext = context_course::instance($course->id);
     $isfrontpage = (!$coursecontext || $course->id == $SITE->id);
+    $canmanage = has_any_capability(array('moodle/badges:viewawarded',
+                                          'moodle/badges:createbadge',
+                                          'moodle/badges:awardbadge',
+                                          'moodle/badges:configurecriteria',
+                                          'moodle/badges:configuremessages',
+                                          'moodle/badges:configuredetails',
+                                          'moodle/badges:deletebadge'), $coursecontext);
 
-    if (!empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) && !$isfrontpage) {
-        if (has_capability('moodle/badges:configuredetails', $coursecontext)) {
-            $coursenode->add(get_string('coursebadges', 'badges'), null,
-                    navigation_node::TYPE_CONTAINER, null, 'coursebadges',
-                    new pix_icon('i/badge', get_string('coursebadges', 'badges')));
+    if (!empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges) && !$isfrontpage && $canmanage) {
+        $coursenode->add(get_string('coursebadges', 'badges'), null,
+                navigation_node::TYPE_CONTAINER, null, 'coursebadges',
+                new pix_icon('i/badge', get_string('coursebadges', 'badges')));
 
-            if (has_capability('moodle/badges:viewawarded', $coursecontext)) {
-                $url = new moodle_url('/badges/index.php',
-                        array('type' => BADGE_TYPE_COURSE, 'id' => $course->id));
+        $url = new moodle_url('/badges/index.php', array('type' => BADGE_TYPE_COURSE, 'id' => $course->id));
 
-                $coursenode->get('coursebadges')->add(get_string('managebadges', 'badges'), $url,
-                    navigation_node::TYPE_SETTING, null, 'coursebadges');
-            }
+        $coursenode->get('coursebadges')->add(get_string('managebadges', 'badges'), $url,
+            navigation_node::TYPE_SETTING, null, 'coursebadges');
 
-            if (has_capability('moodle/badges:createbadge', $coursecontext)) {
-                $url = new moodle_url('/badges/newbadge.php',
-                        array('type' => BADGE_TYPE_COURSE, 'id' => $course->id));
+        if (has_capability('moodle/badges:createbadge', $coursecontext)) {
+            $url = new moodle_url('/badges/newbadge.php', array('type' => BADGE_TYPE_COURSE, 'id' => $course->id));
 
-                $coursenode->get('coursebadges')->add(get_string('newbadge', 'badges'), $url,
-                        navigation_node::TYPE_SETTING, null, 'newbadge');
-            }
-        } else if (has_capability('moodle/badges:awardbadge', $coursecontext)) {
-            $coursenode->add(get_string('coursebadges', 'badges'), null,
-                    navigation_node::TYPE_CONTAINER, null, 'coursebadges',
-                    new pix_icon('i/badge', get_string('coursebadges', 'badges')));
-
-            $url = new moodle_url('/badges/index.php',
-                    array('type' => BADGE_TYPE_COURSE, 'id' => $course->id));
-
-            $coursenode->get('coursebadges')->add(get_string('managebadges', 'badges'), $url,
-                    navigation_node::TYPE_SETTING, null, 'coursebadges');
+            $coursenode->get('coursebadges')->add(get_string('newbadge', 'badges'), $url,
+                    navigation_node::TYPE_SETTING, null, 'newbadge');
         }
     }
 }

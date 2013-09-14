@@ -92,14 +92,12 @@ $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('report');
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($data->name));
-
+echo $OUTPUT->heading(format_string($data->name), 2);
+echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
 
 /// Groups needed for Add entry tab
 $currentgroup = groups_get_activity_group($cm);
 $groupmode = groups_get_activity_groupmode($cm);
-
-echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
 
 /// Print the tabs.
 $currenttab = 'templates';
@@ -246,6 +244,7 @@ if ($mode != 'csstemplate' and $mode != 'jstemplate') {
         echo '<option value="##edit##">' .get_string('edit', 'data'). ' - ##edit##</option>';
         echo '<option value="##delete##">' .get_string('delete', 'data'). ' - ##delete##</option>';
         echo '<option value="##approve##">' .get_string('approve', 'data'). ' - ##approve##</option>';
+        echo '<option value="##disapprove##">' .get_string('disapprove', 'data'). ' - ##disapprove##</option>';
         if ($mode != 'rsstemplate') {
             echo '<option value="##export##">' .get_string('export', 'data'). ' - ##export##</option>';
         }

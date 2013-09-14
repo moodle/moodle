@@ -43,14 +43,13 @@
                    SET visibleold=visible, visible=0
                  WHERE module=?";
         $DB->execute($sql, array($module->id));
-        // clear the course modinfo cache for courses
-        // where we just uninstalld something
-        $sql = "UPDATE {course}
-                   SET modinfo=''
-                 WHERE id IN (SELECT DISTINCT course
+        // Increment course.cacherev for courses where we just made something invisible.
+        // This will force cache rebuilding on the next request.
+        increment_revision_number('course', 'cacherev',
+                "id IN (SELECT DISTINCT course
                                 FROM {course_modules}
-                               WHERE visibleold=1 AND module=?)";
-        $DB->execute($sql, array($module->id));
+                               WHERE visibleold=1 AND module=?)",
+                array($module->id));
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -60,14 +59,13 @@
         }
         $DB->set_field("modules", "visible", "1", array("id"=>$module->id)); // Show main module
         $DB->set_field('course_modules', 'visible', '1', array('visibleold'=>1, 'module'=>$module->id)); // Get the previous saved visible state for the course module.
-        // clear the course modinfo cache for courses
-        // where we just made something visible
-        $sql = "UPDATE {course}
-                   SET modinfo = ''
-                 WHERE id IN (SELECT DISTINCT course
+        // Increment course.cacherev for courses where we just made something visible.
+        // This will force cache rebuilding on the next request.
+        increment_revision_number('course', 'cacherev',
+                "id IN (SELECT DISTINCT course
                                 FROM {course_modules}
-                               WHERE visible=1 AND module=?)";
-        $DB->execute($sql, array($module->id));
+                               WHERE visible=1 AND module=?)",
+                array($module->id));
         admin_get_root(true, false);  // settings not required - only pages
     }
 

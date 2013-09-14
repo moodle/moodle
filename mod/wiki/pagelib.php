@@ -132,6 +132,8 @@ abstract class page_wiki {
         $this->setup_tabs();
 
         echo $OUTPUT->header();
+        $wiki = $PAGE->activityrecord;
+        echo $OUTPUT->heading($wiki->name);
 
         echo $this->wikioutput->wiki_info();
 
@@ -148,8 +150,8 @@ abstract class page_wiki {
         global $OUTPUT;
         $html = '';
 
-        $html .= $OUTPUT->container_start();
-        $html .= $OUTPUT->heading(format_string($this->title), 2, 'wiki_headingtitle');
+        $html .= $OUTPUT->container_start('wiki_headingtitle');
+        $html .= $OUTPUT->heading(format_string($this->title), 3);
         $html .= $OUTPUT->container_end();
         echo $html;
     }
@@ -387,8 +389,8 @@ class page_wiki_edit extends page_wiki {
         if (isset($this->section)) {
             $title .= ' : ' . $this->section;
         }
-        echo $OUTPUT->container_start('wiki_clear');
-        echo $OUTPUT->heading(format_string($title), 2, 'wiki_headingtitle');
+        echo $OUTPUT->container_start('wiki_clear wiki_headingtitle');
+        echo $OUTPUT->heading(format_string($title), 3);
         echo $OUTPUT->container_end();
     }
 
@@ -619,7 +621,7 @@ class page_wiki_comments extends page_wiki {
         $format = $version->contentformat;
 
         if (empty($comments)) {
-            echo $OUTPUT->heading(get_string('nocomments', 'wiki'));
+            echo html_writer::tag('p', get_string('nocomments', 'wiki'), array('class' => 'bold'));
         }
 
         foreach ($comments as $comment) {
@@ -1078,7 +1080,7 @@ class page_wiki_diff extends page_wiki {
         $vstring = new stdClass();
         $vstring->old = $this->compare;
         $vstring->new = $this->comparewith;
-        echo $OUTPUT->heading(get_string('comparewith', 'wiki', $vstring));
+        echo html_writer::tag('div', get_string('comparewith', 'wiki', $vstring), array('class' => 'wiki_headingtitle'));
     }
 
     /**
@@ -1185,8 +1187,8 @@ class page_wiki_history extends page_wiki {
         global $OUTPUT;
         $html = '';
 
-        $html .= $OUTPUT->container_start();
-        $html .= $OUTPUT->heading_with_help(format_string($this->title), 'history', 'wiki');
+        $html .= $OUTPUT->container_start('wiki_headingtitle');
+        $html .= $OUTPUT->heading_with_help(format_string($this->title), 'history', 'wiki', '', '', 3);
         $html .= $OUTPUT->container_end();
         echo $html;
     }
@@ -1251,7 +1253,7 @@ class page_wiki_history extends page_wiki {
         $a = new StdClass;
         $a->date = userdate($this->page->timecreated, get_string('strftimedaydatetime', 'langconfig'));
         $a->username = fullname($creator);
-        echo $OUTPUT->heading(get_string('createddate', 'wiki', $a), 4, 'wiki_headingtime');
+        echo html_writer::tag ('div', get_string('createddate', 'wiki', $a), array('class' => 'wiki_headingtime'));
         if ($vcount > 0) {
 
             /// If there is only one version, we don't need radios nor forms
@@ -1882,7 +1884,8 @@ class page_wiki_restoreversion extends page_wiki {
         $restoreurl = new moodle_url('/mod/wiki/restoreversion.php', $optionsyes);
         $return = new moodle_url('/mod/wiki/viewversion.php', array('pageid'=>$this->page->id, 'versionid'=>$version->id));
 
-        echo $OUTPUT->heading(get_string('restoreconfirm', 'wiki', $version->version), 2);
+        echo $OUTPUT->container_start('wiki-form-center');
+        echo html_writer::tag('div', get_string('restoreconfirm', 'wiki', $version->version));
         echo $OUTPUT->container_start(false, 'wiki_restoreform');
         echo '<form class="wiki_restore_yes" action="' . $restoreurl . '" method="post" id="restoreversion">';
         echo '<div><input type="submit" name="confirm" value="' . get_string('yes') . '" /></div>';
@@ -1890,6 +1893,7 @@ class page_wiki_restoreversion extends page_wiki {
         echo '<form class="wiki_restore_no" action="' . $return . '" method="post">';
         echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
         echo '</form>';
+        echo $OUTPUT->container_end();
         echo $OUTPUT->container_end();
     }
 }
@@ -1950,7 +1954,8 @@ class page_wiki_deletecomment extends page_wiki {
         $deleteurl = new moodle_url('/mod/wiki/instancecomments.php', $optionsyes);
         $return = new moodle_url('/mod/wiki/comments.php', array('pageid'=>$this->page->id));
 
-        echo $OUTPUT->heading($strdeletecheckfull);
+        echo $OUTPUT->container_start('wiki-form-center');
+        echo html_writer::tag('p', $strdeletecheckfull);
         echo $OUTPUT->container_start(false, 'wiki_deletecommentform');
         echo '<form class="wiki_deletecomment_yes" action="' . $deleteurl . '" method="post" id="deletecomment">';
         echo '<div><input type="submit" name="confirmdeletecomment" value="' . get_string('yes') . '" /></div>';
@@ -1958,6 +1963,7 @@ class page_wiki_deletecomment extends page_wiki {
         echo '<form class="wiki_deletecomment_no" action="' . $return . '" method="post">';
         echo '<div><input type="submit" name="norestore" value="' . get_string('no') . '" /></div>';
         echo '</form>';
+        echo $OUTPUT->container_end();
         echo $OUTPUT->container_end();
     }
 }
@@ -2115,13 +2121,15 @@ class page_wiki_viewversion extends page_wiki {
 
         if ($pageversion) {
             $restorelink = new moodle_url('/mod/wiki/restoreversion.php', array('pageid' => $this->page->id, 'versionid' => $this->version->id));
-            echo $OUTPUT->heading(get_string('viewversion', 'wiki', $pageversion->version) . '<br />' . html_writer::link($restorelink->out(false), '(' . get_string('restorethis', 'wiki') . ')', array('class' => 'wiki_restore')) . '&nbsp;', 4);
+            echo html_writer::tag('div', get_string('viewversion', 'wiki', $pageversion->version) . '<br />' .
+                html_writer::link($restorelink->out(false), '(' . get_string('restorethis', 'wiki') .
+                ')', array('class' => 'wiki_restore')) . '&nbsp;', array('class' => 'wiki_headingtitle'));
             $userinfo = wiki_get_user_info($pageversion->userid);
             $heading = '<p><strong>' . get_string('modified', 'wiki') . ':</strong>&nbsp;' . userdate($pageversion->timecreated, get_string('strftimedatetime', 'langconfig'));
             $viewlink = new moodle_url('/user/view.php', array('id' => $userinfo->id));
             $heading .= '&nbsp;&nbsp;&nbsp;<strong>' . get_string('user') . ':</strong>&nbsp;' . html_writer::link($viewlink->out(false), fullname($userinfo));
             $heading .= '&nbsp;&nbsp;&rarr;&nbsp;' . $OUTPUT->user_picture(wiki_get_user_info($pageversion->userid), array('popup' => true)) . '</p>';
-            echo $OUTPUT->container($heading, false, 'mdl-align wiki_modifieduser wiki_headingtime');
+            echo $OUTPUT->container($heading, 'wiki_headingtime', 'mdl-align wiki_modifieduser');
             $options = array('swid' => $this->subwiki->id, 'pretty_print' => true, 'pageid' => $this->page->id);
 
             $pageversion->content = file_rewrite_pluginfile_urls($pageversion->content, 'pluginfile.php', $this->modcontext->id, 'mod_wiki', 'attachments', $this->subwiki->id);
@@ -2583,7 +2591,7 @@ class page_wiki_admin extends page_wiki {
         $a = new stdClass();
         $a->date = userdate($this->page->timecreated, get_string('strftimedaydatetime', 'langconfig'));
         $a->username = fullname($creator);
-        echo $OUTPUT->heading(get_string('createddate', 'wiki', $a), 4, 'wiki_headingtime');
+        echo $OUTPUT->heading(get_string('createddate', 'wiki', $a), 4);
         if ($versioncount > 0) {
             /// If there is only one version, we don't need radios nor forms
             if (count($versions) == 1) {

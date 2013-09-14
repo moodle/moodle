@@ -342,6 +342,20 @@ class zip_archive extends file_archive {
     }
 
     /**
+     * Returns approximate number of files in archive. This may be a slight
+     * overestimate.
+     *
+     * @return int|bool Estimated number of files, or false if not opened
+     */
+    public function estimated_count() {
+        if (!isset($this->za)) {
+            return false;
+        }
+
+        return $this->za->numFiles;
+    }
+
+    /**
      * Add file into archive.
      *
      * @param string $localname name of file in archive

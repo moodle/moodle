@@ -459,11 +459,11 @@ div#jcontrols_button span.arrow.sep {
 
 /** inner block style for decent display of recent news, etc **/
 
-.block_recent_activity.block_docked div.content h2.main,
-.block_recent_activity.block_docked div.content h3.main,
-.side-pre .block div.content h2.main,
-.side-post .block div.content h2.main,
-.block div.content h3.main,
+.block_recent_activity.block_docked div.content h2,
+.block_recent_activity.block_docked div.content h3,
+.side-pre .block div.content h2,
+.side-post .block div.content h2,
+.block div.content h3,
 .block div.content h2 {
     font-size: 13px;
     color: #333;
@@ -697,7 +697,7 @@ html>
 
 /** main headings **/
 
-.generalbox h2,h3.sectionname, h2.headingblock,h2.main,h3.main, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2 {
+.generalbox h2,h3.sectionname, h2.headingblock,h2,h3, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2 {
     font-size: 30px;
     padding-bottom: 2px;
     margin: 3px 0 2px;
@@ -710,7 +710,7 @@ html>
     background: url([[pix:theme|hr_grid]]) repeat-x 0% 89%
     }
 
-.generalbox h2, h3.sectionname, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2, div.hd h3.main {
+.generalbox h2, h3.sectionname, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2, div.hd h3 {
     font-size: 22px;
     background: none;
 }
@@ -1029,7 +1029,7 @@ div.assignment.overview div {
 
 /** glossary activity **/
 
-table.glossarycategoryheader h2.main {
+table.glossarycategoryheader h2 {
     text-align: center;
     margin-bottom: 0;
     margin-top: 0;
@@ -1108,7 +1108,7 @@ div.generalbox.sitetopic, div.generalbox.authsui,#page-admin-roles-assign div.ge
     border: none;
 }
 
-div.generalbox.firstpageoptions h3.main {
+div.generalbox.firstpageoptions h3 {
     font-size: 16px;
 }
 

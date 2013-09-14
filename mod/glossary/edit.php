@@ -66,7 +66,8 @@ if ($id) { // if entry is specified
 $maxfiles = 99;                // TODO: add some setting
 $maxbytes = $course->maxbytes; // TODO: add some setting
 
-$definitionoptions = array('trusttext'=>true, 'subdirs'=>false, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes, 'context'=>$context);
+$definitionoptions = array('trusttext'=>true, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes, 'context'=>$context,
+    'subdirs'=>file_area_contains_subdirs($context, 'mod_glossary', 'entry', $entry->id));
 $attachmentoptions = array('subdirs'=>false, 'maxfiles'=>$maxfiles, 'maxbytes'=>$maxbytes);
 
 $entry = file_prepare_standard_editor($entry, 'definition', $definitionoptions, $context, 'mod_glossary', 'entry', $entry->id);
@@ -184,7 +185,10 @@ if (!empty($id)) {
 $PAGE->set_title(format_string($glossary->name));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($glossary->name));
+echo $OUTPUT->heading(format_string($glossary->name), 2);
+if ($glossary->intro) {
+    echo $OUTPUT->box(format_module_intro('glossary', $glossary, $cm->id), 'generalbox', 'intro');
+}
 
 $mform->display();
 

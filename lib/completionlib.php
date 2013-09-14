@@ -1077,7 +1077,7 @@ class completion_info {
      * Obtains a list of activities for which completion is enabled on the
      * course. The list is ordered by the section order of those activities.
      *
-     * @return array Array from $cmid => $cm of all activities with completion enabled,
+     * @return cm_info[] Array from $cmid => $cm of all activities with completion enabled,
      *   empty array if none
      */
     public function get_activities() {

@@ -18,12 +18,12 @@
     margin-right: 2px;
 }
 
-.block h3.main {
+.block h3 {
     padding: 0.5em 0;
     text-align: left;
     font-size: 1.1em;
 }
-.dir-rtl .block h3.main {text-align: right;}
+.dir-rtl .block h3 {text-align: right;}
 
 /* Login
 ------------------------------*/

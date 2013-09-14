@@ -194,13 +194,13 @@ function uninstall_plugin($type, $name) {
             }
         }
 
-        // clear course.modinfo for courses that used this module
-        $sql = "UPDATE {course}
-                   SET modinfo=''
-                 WHERE id IN (SELECT DISTINCT course
+        // Increment course.cacherev for courses that used this module.
+        // This will force cache rebuilding on the next request.
+        increment_revision_number('course', 'cacherev',
+                "id IN (SELECT DISTINCT course
                                 FROM {course_modules}
-                               WHERE module=?)";
-        $DB->execute($sql, array($module->id));
+                               WHERE module=?)",
+                array($module->id));
 
         // delete all the course module records
         $DB->delete_records('course_modules', array('module' => $module->id));

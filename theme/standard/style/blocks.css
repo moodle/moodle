@@ -77,8 +77,7 @@
 
 /** RSS Client **/
 .block_rss_client .image {text-align:center;}
-.block_rss_client .list li {padding:5px;font-size:0.85em;border-top:1px solid #DDD;}
-.block_rss_client .list li:first-child {border-top-width: 0px;}
+.block_rss_client .list li {font-size:0.85em;border-top-color:#DDD;}
 .block_rss_client .list li .description {color:#555555;font-size:0.8em;padding-left:1em;}
 
 /** Site main menu **/

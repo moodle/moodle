@@ -93,10 +93,48 @@ abstract class restore_ui_stage extends base_ui_stage {
  * no use for the restore controller.
  */
 abstract class restore_ui_independent_stage {
+    /**
+     * @var core_backup_progress Optional progress reporter
+     */
+    private $progressreporter;
+
     abstract public function __construct($contextid);
     abstract public function process();
     abstract public function display(core_backup_renderer $renderer);
     abstract public function get_stage();
+
+    /**
+     * Gets the progress reporter object in use for this restore UI stage.
+     *
+     * IMPORTANT: This progress reporter is used only for UI progress that is
+     * outside the restore controller. The restore controller has its own
+     * progress reporter which is used for progress during the main restore.
+     * Use the restore controller's progress reporter to report progress during
+     * a restore operation, not this one.
+     *
+     * This extra reporter is necessary because on some restore UI screens,
+     * there are long-running tasks even though there is no restore controller
+     * in use. There is a similar function in restore_ui. but that class is not
+     * used on some stages.
+     *
+     * @return core_backup_null_progress
+     */
+    public function get_progress_reporter() {
+        if (!$this->progressreporter) {
+            $this->progressreporter = new core_backup_null_progress();
+        }
+        return $this->progressreporter;
+    }
+
+    /**
+     * Sets the progress reporter that will be returned by get_progress_reporter.
+     *
+     * @param core_backup_progress $progressreporter Progress reporter
+     */
+    public function set_progress_reporter(core_backup_progress $progressreporter) {
+        $this->progressreporter = $progressreporter;
+    }
+
     /**
      * Gets an array of progress bar items that can be displayed through the restore renderer.
      * @return array Array of items for the progress bar
@@ -142,11 +180,18 @@ abstract class restore_ui_independent_stage {
  *
  * This is the first stage, it is independent.
  */
-class restore_ui_stage_confirm extends restore_ui_independent_stage {
+class restore_ui_stage_confirm extends restore_ui_independent_stage implements file_progress {
+
     protected $contextid;
     protected $filename = null;
     protected $filepath = null;
     protected $details;
+
+    /**
+     * @var bool True if we have started reporting progress
+     */
+    protected $startedprogress = false;
+
     public function __construct($contextid) {
         $this->contextid = $contextid;
         $this->filename = required_param('filename', PARAM_FILE);
@@ -168,7 +213,35 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage {
         $this->filepath = restore_controller::get_tempdir_name($this->contextid, $USER->id);
 
         $fb = get_file_packer();
-        return ($fb->extract_to_pathname("$CFG->tempdir/backup/".$this->filename, "$CFG->tempdir/backup/$this->filepath/"));
+        $result = $fb->extract_to_pathname("$CFG->tempdir/backup/".$this->filename,
+                "$CFG->tempdir/backup/$this->filepath/", null, $this);
+
+        // If any progress happened, end it.
+        if ($this->startedprogress) {
+            $this->get_progress_reporter()->end_progress();
+        }
+        return $result;
+    }
+
+    /**
+     * Implementation for file_progress interface to display unzip progress.
+     *
+     * @param int $progress Current progress
+     * @param int $max Max value
+     */
+    public function progress($progress = file_progress::INDETERMINATE, $max = file_progress::INDETERMINATE) {
+        $reporter = $this->get_progress_reporter();
+
+        // Start tracking progress if necessary.
+        if (!$this->startedprogress) {
+            $reporter->start_progress('extract_file_to_dir',
+                    ($max == file_progress::INDETERMINATE) ? core_backup_progress::INDETERMINATE : $max);
+            $this->startedprogress = true;
+        }
+
+        // Pass progress through to whatever handles it.
+        $reporter->progress(
+                ($progress == file_progress::INDETERMINATE) ? core_backup_progress::INDETERMINATE : $progress);
     }
 
     /**
@@ -475,8 +548,9 @@ class restore_ui_stage_schema extends restore_ui_stage {
         if ($this->stageform === null) {
             $form = new restore_schema_form($this, $PAGE->url);
             $tasks = $this->ui->get_tasks();
-            $content = '';
             $courseheading = false;
+
+            $allsettings = array();
             foreach ($tasks as $task) {
                 if (!($task instanceof restore_root_task)) {
                     if (!$courseheading) {
@@ -484,13 +558,11 @@ class restore_ui_stage_schema extends restore_ui_stage {
                         $form->add_heading('coursesettings', get_string('coursesettings', 'backup'));
                         $courseheading = true;
                     }
-                    // First add each setting
+                    // Put each setting into an array of settings to add. Adding
+                    // a setting individually is a very slow operation, so we add
+                    // them all in a batch later on.
                     foreach ($task->get_settings() as $setting) {
-                        $form->add_setting($setting, $task);
-                    }
-                    // The add all the dependencies
-                    foreach ($task->get_settings() as $setting) {
-                        $form->add_dependencies($setting);
+                        $allsettings[] = array($setting, $task);
                     }
                 } else if ($this->ui->enforce_changed_dependencies()) {
                     // Only show these settings if dependencies changed them.
@@ -505,6 +577,15 @@ class restore_ui_stage_schema extends restore_ui_stage {
                     }
                 }
             }
+
+            // Actually add all the settings that we put in the array.
+            $form->add_settings($allsettings);
+
+            // Add the dependencies for all the settings.
+            foreach ($allsettings as $settingtask) {
+                $form->add_dependencies($settingtask[0]);
+            }
+
             $this->stageform = $form;
         }
         return $this->stageform;
@@ -523,7 +604,7 @@ class restore_ui_stage_schema extends restore_ui_stage {
 class restore_ui_stage_review extends restore_ui_stage {
     /**
      * Constructs the stage
-     * @param backup_ui $ui
+     * @param restore_ui $ui
      */
     public function __construct($ui, array $params=null) {
         $this->stage = restore_ui::STAGE_REVIEW;
@@ -562,7 +643,11 @@ class restore_ui_stage_review extends restore_ui_stage {
             $content = '';
             $courseheading = false;
 
-            foreach ($this->ui->get_tasks() as $task) {
+            $progress = $this->ui->get_progress_reporter();
+            $tasks = $this->ui->get_tasks();
+            $progress->start_progress('initialise_stage_form', count($tasks));
+            $done = 1;
+            foreach ($tasks as $task) {
                 if ($task instanceof restore_root_task) {
                     // If its a backup root add a root settings heading to group nicely
                     $form->add_heading('rootsettings', get_string('rootsettings', 'backup'));
@@ -575,7 +660,10 @@ class restore_ui_stage_review extends restore_ui_stage {
                 foreach ($task->get_settings() as $setting) {
                     $form->add_fixed_setting($setting, $task);
                 }
+                // Update progress.
+                $progress->progress($done++);
             }
+            $progress->end_progress();
             $this->stageform = $form;
         }
         return $this->stageform;

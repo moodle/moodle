@@ -1,14 +1,15 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
+
 === 2.6 ===
+
 Notes:
+* The parameters value for the following functions have been modified: core_renderer::heading() and core_renderer::heading_with_help().
+  This means that headings using the default options will no longer have the class "main" which was the previous default.
 * The file picker and activity chooser have been converted to use M.core.dialogue. This means the styles
-for these elements have changed in the base and bootstrapbase themes and you will need to copy the new styles
-if you are not inheriting from either one of these themes.
-
-=== 2.6 ===
-
-Notes:
+  for these elements have changed in the base and bootstrapbase themes and you will need to copy the new styles
+  if you are not inheriting from either one of these themes.
+* For the themes based on bootstrapbase please also read theme/bootstrapbase/upgrade.txt
 * A new component action_menu is now used to display editing icons for courses and blocks within a drop down. If you have a theme that doesn't
   extend base, canvas, or clean then you will need to style for this new component within your theme.
 

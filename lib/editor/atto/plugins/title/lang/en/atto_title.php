@@ -24,7 +24,9 @@
 
 $string['pluginname'] = 'Paragraph styles';
 $string['title'] = 'Paragraph styles';
-$string['h1'] = 'Title';
-$string['h2'] = 'Heading';
+$string['h3'] = 'Heading 1';
+$string['h4'] = 'Heading 2';
+$string['h5'] = 'Heading 3';
 $string['blockquote'] = 'Quoted';
 $string['p'] = 'Plain';
+$string['pre'] = 'Pre-formatted';

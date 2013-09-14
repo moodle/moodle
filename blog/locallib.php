@@ -263,10 +263,11 @@ class blog_entry implements renderable {
         tag_set('post', $this->id, $this->tags);
 
         // Trigger an event for the new entry.
-        $event = \core\event\blog_entry_created::create(array('objectid' => $this->id,
-                                                            'userid'   => $this->userid,
-                                                            'other'    => array ("subject" => $this->subject)
-                                                      ));
+        $event = \core\event\blog_entry_created::create(array(
+            'objectid'      => $this->id,
+            'relateduserid' => $this->userid,
+            'other'         => array('subject' => $this->subject)
+        ));
         $event->set_custom_data($this);
         $event->trigger();
     }
@@ -274,11 +275,15 @@ class blog_entry implements renderable {
     /**
      * Updates this entry in the database. Access control checks must be done by calling code.
      *
-     * @param mform $form Used for attachments
+     * @param array       $params            Entry parameters.
+     * @param moodleform  $form              Used for attachments.
+     * @param array       $summaryoptions    Summary options.
+     * @param array       $attachmentoptions Attachment options.
+     *
      * @return void
      */
     public function edit($params=array(), $form=null, $summaryoptions=array(), $attachmentoptions=array()) {
-        global $CFG, $USER, $DB, $PAGE;
+        global $CFG, $DB;
 
         $sitecontext = context_system::instance();
         $entry = $this;
@@ -297,12 +302,17 @@ class blog_entry implements renderable {
 
         $entry->lastmodified = time();
 
-        // Update record
+        // Update record.
         $DB->update_record('post', $entry);
         tag_set('post', $entry->id, $entry->tags);
 
-        add_to_log(SITEID, 'blog', 'update', 'index.php?userid='.$USER->id.'&entryid='.$entry->id, $entry->subject);
-        events_trigger('blog_entry_edited', $entry);
+        $event = \core\event\blog_entry_updated::create(array(
+            'objectid'      => $entry->id,
+            'relateduserid' => $entry->userid,
+            'other'         => array('subject' => $entry->subject)
+        ));
+        $event->set_custom_data($entry);
+        $event->trigger();
     }
 
     /**
@@ -321,10 +331,11 @@ class blog_entry implements renderable {
         $DB->delete_records('post', array('id' => $this->id));
         tag_set('post', $this->id, array());
 
-        $event = \core\event\blog_entry_deleted::create(array('objectid' => $this->id,
-                                                            'userid'   => $this->userid,
-                                                            'other'   => array("record" => (array)$record)
-                                                      ));
+        $event = \core\event\blog_entry_deleted::create(array(
+            'objectid'      => $this->id,
+            'relateduserid' => $this->userid,
+            'other'         => array('record' => (array) $record)
+        ));
         $event->add_record_snapshot("post", $record);
         $event->set_custom_data($this);
         $event->trigger();

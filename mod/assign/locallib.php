@@ -2723,11 +2723,13 @@ class assign {
             if ($teamsubmission) {
                 $showsubmit = $showedit &&
                               $teamsubmission &&
-                              ($teamsubmission->status == ASSIGN_SUBMISSION_STATUS_DRAFT);
+                              ($teamsubmission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) &&
+                              !$this->submission_empty($teamsubmission);
             } else {
                 $showsubmit = $showedit &&
                               $submission &&
-                              ($submission->status == ASSIGN_SUBMISSION_STATUS_DRAFT);
+                              ($submission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) &&
+                              !$this->submission_empty($submission);
             }
             if (!$this->get_instance()->submissiondrafts) {
                 $showsubmit = false;
@@ -2924,6 +2926,9 @@ class assign {
                 }
             }
         }
+
+        // Sort links alphabetically based on the link description.
+        core_collator::asort($links);
 
         $gradingactions = new url_select($links);
         $gradingactions->set_label(get_string('choosegradingaction', 'assign'));
@@ -3547,11 +3552,17 @@ class assign {
                 }
             }
 
-            $showsubmit = ($submission || $teamsubmission) && $showlinks;
-            if ($teamsubmission && ($teamsubmission->status != ASSIGN_SUBMISSION_STATUS_DRAFT)) {
+            $showsubmit = ($submission || $teamsubmission) && $showlinks && $this->submissions_open($user->id);
+            if ($teamsubmission && ($teamsubmission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
                 $showsubmit = false;
             }
-            if ($submission && ($submission->status != ASSIGN_SUBMISSION_STATUS_DRAFT)) {
+            if ($teamsubmission && $this->submission_empty($teamsubmission)) {
+                $showsubmit = false;
+            }
+            if ($submission && ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
+                $showsubmit = false;
+            }
+            if ($submission && $this->submission_empty($submission)) {
                 $showsubmit = false;
             }
             if (!$this->get_instance()->submissiondrafts) {
@@ -4466,6 +4477,9 @@ class assign {
         require_once($CFG->dirroot . '/mod/assign/submissionconfirmform.php');
         require_sesskey();
 
+        if (!$this->submissions_open()) {
+            return $this->view_student_error_message();
+        }
         $instance = $this->get_instance();
         $data = new stdClass();
         $adminconfig = $this->get_admin_config();
@@ -5095,6 +5109,25 @@ class assign {
     }
 
     /**
+     * Determine if the current submission is empty or not.
+     *
+     * @param submission $submission the students submission record to check.
+     * @return bool
+     */
+    public function submission_empty($submission) {
+        $allempty = true;
+
+        foreach ($this->submissionplugins as $plugin) {
+            if ($plugin->is_enabled() && $plugin->is_visible()) {
+                if (!$allempty || !$plugin->is_empty($submission)) {
+                    $allempty = false;
+                }
+            }
+        }
+        return $allempty;
+    }
+
+    /**
      * Save assignment submission.
      *
      * @param  moodleform $mform
@@ -5111,6 +5144,10 @@ class assign {
         // Need submit permission to submit an assignment.
         require_capability('mod/assign:submit', $this->context);
         require_sesskey();
+        if (!$this->submissions_open()) {
+            $notices[] = get_string('duedatereached', 'assign');
+            return false;
+        }
         $instance = $this->get_instance();
 
         $data = new stdClass();
@@ -5138,7 +5175,6 @@ class assign {
                 return true;
             }
 
-            $allempty = true;
             $pluginerror = false;
             foreach ($this->submissionplugins as $plugin) {
                 if ($plugin->is_enabled() && $plugin->is_visible()) {
@@ -5146,11 +5182,9 @@ class assign {
                         $notices[] = $plugin->get_error();
                         $pluginerror = true;
                     }
-                    if (!$allempty || !$plugin->is_empty($submission)) {
-                        $allempty = false;
-                    }
                 }
             }
+            $allempty = $this->submission_empty($submission);
             if ($pluginerror || $allempty) {
                 if ($allempty) {
                     $notices[] = get_string('submissionempty', 'mod_assign');

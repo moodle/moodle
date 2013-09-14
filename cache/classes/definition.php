@@ -756,7 +756,7 @@ class cache_definition {
      */
     public function set_identifiers(array $identifiers = array()) {
         foreach ($this->requireidentifiers as $identifier) {
-            if (!array_key_exists($identifier, $identifiers)) {
+            if (!isset($identifiers[$identifier])) {
                 throw new coding_exception('Identifier required for cache has not been provided: '.$identifier);
             }
         }

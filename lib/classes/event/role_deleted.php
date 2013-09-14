@@ -16,6 +16,8 @@
 
 namespace core\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Role assigned event.
  *
@@ -67,6 +69,7 @@ class role_deleted extends base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid='.$this->objectid, $this->other['shortname'], '');
+        return array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid=' . $this->objectid,
+            $this->other['shortname'], '');
     }
 }

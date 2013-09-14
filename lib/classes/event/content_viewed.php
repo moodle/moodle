@@ -23,6 +23,8 @@
 
 namespace core\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Class content_viewed.
  *

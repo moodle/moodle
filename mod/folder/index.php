@@ -47,6 +47,7 @@ $PAGE->set_title($course->shortname.': '.$strfolders);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strfolders);
 echo $OUTPUT->header();
+echo $OUTPUT->heading($strfolders);
 
 if (!$folders = get_all_instances_in_course('folder', $course)) {
     notice(get_string('thereareno', 'moodle', $strfolders), "$CFG->wwwroot/course/view.php?id=$course->id");

@@ -763,16 +763,12 @@ abstract class condition_info_base {
      * Obtains a string describing all availability restrictions (even if
      * they do not apply any more).
      *
-     * @global stdClass $COURSE
-     * @global moodle_database $DB
-     * @param object $modinfo Usually leave as null for default. Specify when
-     *   calling recursively from inside get_fast_modinfo. The value supplied
-     *   here must include list of all CMs with 'id' and 'name'
+     * @param course_modinfo|null $modinfo Usually leave as null for default. Specify when
+     *   calling recursively from inside get_fast_modinfo()
      * @return string Information string (for admin) about all restrictions on
      *   this item
      */
     public function get_full_information($modinfo=null) {
-        global $COURSE, $DB;
         $this->require_data();
 
         $information = '';
@@ -780,16 +776,10 @@ abstract class condition_info_base {
 
         // Completion conditions
         if (count($this->item->conditionscompletion) > 0) {
-            if ($this->item->course == $COURSE->id) {
-                $course = $COURSE;
-            } else {
-                $course = $DB->get_record('course', array('id' => $this->item->course),
-                        'id, enablecompletion, modinfo, sectioncache', MUST_EXIST);
+            if (!$modinfo) {
+                $modinfo = get_fast_modinfo($this->item->course);
             }
             foreach ($this->item->conditionscompletion as $cmid => $expectedcompletion) {
-                if (!$modinfo) {
-                    $modinfo = get_fast_modinfo($course);
-                }
                 if (empty($modinfo->cms[$cmid])) {
                     continue;
                 }
@@ -948,8 +938,6 @@ abstract class condition_info_base {
      * - This does not take account of the viewhiddenactivities capability.
      *   That should apply later.
      *
-     * @global stdClass $COURSE
-     * @global moodle_database $DB
      * @uses COMPLETION_COMPLETE
      * @uses COMPLETION_COMPLETE_FAIL
      * @uses COMPLETION_COMPLETE_PASS
@@ -960,13 +948,11 @@ abstract class condition_info_base {
      *   required for all course-modules, to make the front page and similar
      *   pages work more quickly (works only for current user)
      * @param int $userid If set, specifies a different user ID to check availability for
-     * @param object $modinfo Usually leave as null for default. Specify when
-     *   calling recursively from inside get_fast_modinfo. The value supplied
-     *   here must include list of all CMs with 'id' and 'name'
+     * @param course_modinfo|null $modinfo Usually leave as null for default. Specify when
+     *   calling recursively from inside get_fast_modinfo()
      * @return bool True if this item is available to the user, false otherwise
      */
     public function is_available(&$information, $grabthelot=false, $userid=0, $modinfo=null) {
-        global $COURSE, $DB;
         $this->require_data();
 
         $available = true;
@@ -974,20 +960,13 @@ abstract class condition_info_base {
 
         // Check each completion condition
         if (count($this->item->conditionscompletion) > 0) {
-            if ($this->item->course == $COURSE->id) {
-                $course = $COURSE;
-            } else {
-                $course = $DB->get_record('course', array('id' => $this->item->course),
-                        'id, enablecompletion, modinfo, sectioncache', MUST_EXIST);
+            if (!$modinfo) {
+                $modinfo = get_fast_modinfo($this->item->course);
             }
-
-            $completion = new completion_info($course);
+            $completion = new completion_info($modinfo->get_course());
             foreach ($this->item->conditionscompletion as $cmid => $expectedcompletion) {
                 // If this depends on a deleted module, handle that situation
                 // gracefully.
-                if (!$modinfo) {
-                    $modinfo = get_fast_modinfo($course);
-                }
                 if (empty($modinfo->cms[$cmid])) {
                     global $PAGE;
                     if (isset($PAGE) && strpos($PAGE->pagetype, 'course-view-')===0) {

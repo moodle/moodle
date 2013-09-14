@@ -56,6 +56,7 @@ $PAGE->navbar->add($strwikis, "index.php?id=$course->id");
 $PAGE->set_title($strwikis);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
+echo $OUTPUT->heading($strwikis);
 
 /// Get all the appropriate data
 if (!$wikis = get_all_instances_in_course("wiki", $course)) {

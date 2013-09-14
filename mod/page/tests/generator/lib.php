@@ -78,9 +78,6 @@ class mod_page_generator extends testing_module_generator {
         } else {
             $record->cmidnumber = '';
         }
-        if (!isset($record->printheading)) {
-            $record->printheading = 1;
-        }
         if (!isset($record->printintro)) {
             $record->printintro = 0;
         }

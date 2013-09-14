@@ -517,8 +517,8 @@ function scorm_has_tracks($scormid, $userid) {
 }
 
 function scorm_get_tracks($scoid, $userid, $attempt='') {
-    /// Gets all tracks of specified sco and user
-    global $CFG, $DB;
+    // Gets all tracks of specified sco and user.
+    global $DB;
 
     if (empty($attempt)) {
         if ($scormid = $DB->get_field('scorm_scoes', 'scorm', array('id'=>$scoid))) {
@@ -527,54 +527,64 @@ function scorm_get_tracks($scoid, $userid, $attempt='') {
             $attempt = 1;
         }
     }
-    if ($tracks = $DB->get_records('scorm_scoes_track', array('userid'=>$userid, 'scoid'=>$scoid, 'attempt'=>$attempt), 'element ASC')) {
-        $usertrack = new stdClass();
+    if ($tracks = $DB->get_records('scorm_scoes_track', array('userid'=>$userid, 'scoid'=>$scoid,
+                                                              'attempt'=>$attempt), 'element ASC')) {
+        $usertrack = scorm_format_interactions($tracks);
         $usertrack->userid = $userid;
         $usertrack->scoid = $scoid;
-        // Defined in order to unify scorm1.2 and scorm2004
-        $usertrack->score_raw = '';
-        $usertrack->status = '';
-        $usertrack->total_time = '00:00:00';
-        $usertrack->session_time = '00:00:00';
-        $usertrack->timemodified = 0;
-        foreach ($tracks as $track) {
-            $element = $track->element;
-            $usertrack->{$element} = $track->value;
-            switch ($element) {
-                case 'cmi.core.lesson_status':
-                case 'cmi.completion_status':
-                    if ($track->value == 'not attempted') {
-                        $track->value = 'notattempted';
-                    }
-                    $usertrack->status = $track->value;
-                break;
-                case 'cmi.core.score.raw':
-                case 'cmi.score.raw':
-                    $usertrack->score_raw = (float) sprintf('%2.2f', $track->value);
-                break;
-                case 'cmi.core.session_time':
-                case 'cmi.session_time':
-                    $usertrack->session_time = $track->value;
-                break;
-                case 'cmi.core.total_time':
-                case 'cmi.total_time':
-                    $usertrack->total_time = $track->value;
-                break;
-            }
-            if (isset($track->timemodified) && ($track->timemodified > $usertrack->timemodified)) {
-                $usertrack->timemodified = $track->timemodified;
-            }
-        }
-        if (is_array($usertrack)) {
-            ksort($usertrack);
-        }
+
         return $usertrack;
     } else {
         return false;
     }
 }
+/**
+ * helper function to return a formatted list of interactions for reports.
+ *
+ * @param array $trackdata the records from scorm_scoes_track table
+ * @return object formatted list of interactions
+ */
+function scorm_format_interactions($trackdata) {
+    $usertrack = new stdClass();
 
+    // Defined in order to unify scorm1.2 and scorm2004.
+    $usertrack->score_raw = '';
+    $usertrack->status = '';
+    $usertrack->total_time = '00:00:00';
+    $usertrack->session_time = '00:00:00';
+    $usertrack->timemodified = 0;
 
+    foreach ($trackdata as $track) {
+        $element = $track->element;
+        $usertrack->{$element} = $track->value;
+        switch ($element) {
+            case 'cmi.core.lesson_status':
+            case 'cmi.completion_status':
+                if ($track->value == 'not attempted') {
+                    $track->value = 'notattempted';
+                }
+                $usertrack->status = $track->value;
+                break;
+            case 'cmi.core.score.raw':
+            case 'cmi.score.raw':
+                $usertrack->score_raw = (float) sprintf('%2.2f', $track->value);
+                break;
+            case 'cmi.core.session_time':
+            case 'cmi.session_time':
+                $usertrack->session_time = $track->value;
+                break;
+            case 'cmi.core.total_time':
+            case 'cmi.total_time':
+                $usertrack->total_time = $track->value;
+                break;
+        }
+        if (isset($track->timemodified) && ($track->timemodified > $usertrack->timemodified)) {
+            $usertrack->timemodified = $track->timemodified;
+        }
+    }
+
+    return $usertrack;
+}
 /* Find the start and finsh time for a a given SCO attempt
  *
  * @param int $scormid SCORM Id
@@ -606,15 +616,6 @@ function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
         $timedata->finish = $timedata->start;
     }
     return $timedata;
-}
-
-
-function scorm_get_user_data($userid) {
-    global $DB;
-    /// Gets user info required to display the table of scorm results
-    /// for report.php
-
-    return $DB->get_record('user', array('id'=>$userid), user_picture::fields());
 }
 
 function scorm_grade_user_attempt($scorm, $userid, $attempt=1) {
@@ -771,6 +772,25 @@ function scorm_get_last_completed_attempt($scormid, $userid) {
     } else {
         return $lastattempt;
     }
+}
+
+/**
+ * Returns the full list of attempts a user has made.
+ *
+ * @param int $scormid the id of the scorm.
+ * @param int $userid the id of the user.
+ *
+ * @return array array of attemptids
+ */
+function scorm_get_all_attempts($scormid, $userid) {
+    global $DB;
+    $attemptids = array();
+    $sql = "SELECT DISTINCT attempt FROM {scorm_scoes_track} WHERE userid = ? AND scormid = ? ORDER BY attempt";
+    $attempts = $DB->get_records_sql($sql, array($userid, $scormid));
+    foreach ($attempts as $attempt) {
+        $attemptids[] = $attempt->attempt;
+    }
+    return $attemptids;
 }
 
 function scorm_view_display ($user, $scorm, $action, $cm) {

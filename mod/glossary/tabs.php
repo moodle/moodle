@@ -102,9 +102,9 @@
         default:
             glossary_print_alphabet_menu($cm, $glossary, "letter", $hook, $sortkey, $sortorder);
             if ($mode == 'search' and $hook) {
-                echo "<h3>$strsearch: $hook</h3>";
+                echo html_writer::tag('div', "$strsearch: $hook");
             }
         break;
     }
-    echo '<hr />';
+    echo html_writer::empty_tag('hr');
 ?>

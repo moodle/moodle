@@ -35,6 +35,7 @@ $PAGE->navbar->add($strglossarys, "index.php?id=$course->id");
 $PAGE->set_title($strglossarys);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($strglossarys), 2);
 
 /// Get all the appropriate data
 

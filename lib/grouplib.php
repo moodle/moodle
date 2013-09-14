@@ -463,17 +463,19 @@ function groups_get_course_groupmode($course) {
  * Returns effective groupmode used in activity, course setting
  * overrides activity setting if groupmodeforce enabled.
  *
+ * If $cm is an instance of cm_info it is easier to use $cm->effectivegroupmode
+ *
  * @category group
  * @param cm_info|stdClass $cm the course module object. Only the ->course and ->groupmode need to be set.
  * @param stdClass $course object optional course object to improve perf
  * @return int group mode
  */
 function groups_get_activity_groupmode($cm, $course=null) {
+    if ($cm instanceof cm_info) {
+        return $cm->effectivegroupmode;
+    }
     if (isset($course->id) and $course->id == $cm->course) {
         //ok
-    } else if (isset($cm->coursegroupmode) && isset($cm->coursegroupmodeforce)) {
-        // This is an instance of cm_info (or clone) and already has the necessary course fields in it.
-        return empty($cm->coursegroupmodeforce) ? $cm->groupmode : $cm->coursegroupmode;
     } else {
         // Get course object (reuse $COURSE if possible).
         $course = get_course($cm->course, false);
@@ -552,6 +554,65 @@ function groups_print_course_menu($course, $urlroot, $return=false) {
     } else {
         echo $output;
     }
+}
+
+/**
+ * Generates html to print menu selector for course level, listing all groups.
+ * Note: This api does not do any group mode check use groups_print_course_menu() instead if you want proper checks.
+ *
+ * @param stdclass          $course  course object.
+ * @param string|moodle_url $urlroot return address. Accepts either a string or a moodle_url.
+ * @param bool              $update  set this to true to update current active group based on the group param.
+ * @param int               $activegroup Change group active to this group if $update set to true.
+ *
+ * @return string html or void
+ */
+function groups_allgroups_course_menu($course, $urlroot, $update = false, $activegroup = 0) {
+    global $SESSION, $OUTPUT, $USER;
+
+    $groupmode = groups_get_course_groupmode($course);
+    $context = context_course::instance($course->id);
+    $groupsmenu = array();
+
+    if (has_capability('moodle/site:accessallgroups', $context)) {
+        $groupsmenu[0] = get_string('allparticipants');
+        $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
+    } else {
+        $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
+    }
+
+    foreach ($allowedgroups as $group) {
+        $groupsmenu[$group->id] = format_string($group->name);
+    }
+
+    if ($update) {
+        // Init activegroup array if necessary.
+        if (!isset($SESSION->activegroup)) {
+            $SESSION->activegroup = array();
+        }
+        if (!isset($SESSION->activegroup[$course->id])) {
+            $SESSION->activegroup[$course->id] = array(SEPARATEGROUPS => array(), VISIBLEGROUPS => array(), 'aag' => array());
+        }
+        if (empty($groupsmenu[$activegroup])) {
+            $activegroup = key($groupsmenu); // Force set to one of accessible groups.
+        }
+        $SESSION->activegroup[$course->id][$groupmode][$course->defaultgroupingid] = $activegroup;
+    }
+
+    $grouplabel = get_string('groups');
+    if (count($groupsmenu) == 0) {
+        return '';
+    } else if (count($groupsmenu) == 1) {
+        $groupname = reset($groupsmenu);
+        $output = $grouplabel.': '.$groupname;
+    } else {
+        $select = new single_select(new moodle_url($urlroot), 'group', $groupsmenu, $activegroup, null, 'selectgroup');
+        $select->label = $grouplabel;
+        $output = $OUTPUT->render($select);
+    }
+
+    return $output;
+
 }
 
 /**

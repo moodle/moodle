@@ -39,6 +39,7 @@
     $page = optional_param('page', 0, PARAM_INT);
 /// These can be added to perform an action on a record
     $approve = optional_param('approve', 0, PARAM_INT);    //approval recordid
+    $disapprove = optional_param('disapprove', 0, PARAM_INT);    // disapproval recordid
     $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
     $multidelete = optional_param_array('delcheck', null, PARAM_INT);
     $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
@@ -324,8 +325,6 @@
     echo $OUTPUT->header();
 
 /// Check to see if groups are being used here
-    $returnurl = $CFG->wwwroot . '/mod/data/view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
-    groups_print_activity_menu($cm, $returnurl);
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
     $canmanageentries = has_capability('mod/data:manageentries', $context);
@@ -344,7 +343,7 @@
         }
     }
 
-    echo $OUTPUT->heading(format_string($data->name));
+    echo $OUTPUT->heading(format_string($data->name), 2);
 
     // Do we need to show a link to the RSS feed for the records?
     //this links has been Settings (database activity administration) block
@@ -360,6 +359,9 @@
         $options->noclean = true;
     }
     echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');
+
+    $returnurl = $CFG->wwwroot . '/mod/data/view.php?d='.$data->id.'&amp;search='.s($search).'&amp;sort='.s($sort).'&amp;order='.s($order).'&amp;';
+    groups_print_activity_menu($cm, $returnurl);
 
 /// Delete any requested records
 
@@ -453,19 +455,22 @@ if ($showactivity) {
         $maxcount = 0;
 
     } else {
-    /// Approve any requested records
+        // Approve or disapprove any requested records
         $params = array(); // named params array
 
         $approvecap = has_capability('mod/data:approve', $context);
 
-        if ($approve && confirm_sesskey() && $approvecap) {
-            if ($approverecord = $DB->get_record('data_records', array('id'=>$approve))) {   // Need to check this is valid
+        if (($approve || $disapprove) && confirm_sesskey() && $approvecap) {
+            $newapproved = $approve ? 1 : 0;
+            $recordid = $newapproved ? $approve : $disapprove;
+            if ($approverecord = $DB->get_record('data_records', array('id' => $recordid))) {   // Need to check this is valid
                 if ($approverecord->dataid == $data->id) {                       // Must be from this database
                     $newrecord = new stdClass();
                     $newrecord->id = $approverecord->id;
-                    $newrecord->approved = 1;
+                    $newrecord->approved = $newapproved;
                     $DB->update_record('data_records', $newrecord);
-                    echo $OUTPUT->notification(get_string('recordapproved','data'), 'notifysuccess');
+                    $msgkey = $newapproved ? 'recordapproved' : 'recorddisapproved';
+                    echo $OUTPUT->notification(get_string($msgkey, 'data'), 'notifysuccess');
                 }
             }
         }

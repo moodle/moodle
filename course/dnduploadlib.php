@@ -684,7 +684,6 @@ class dndupload_ajax_processor {
         $DB->set_field('course_modules', 'instance', $instanceid, array('id' => $this->cm->id));
         // Rebuild the course cache after update action
         rebuild_course_cache($this->course->id, true);
-        $this->course->modinfo = null; // Otherwise we will just get the old version back again.
 
         $sectionid = course_add_cm_to_section($this->course, $this->cm->id, $this->section);
 

@@ -46,7 +46,7 @@ div.dockedtitle {
 
 /** main headings and forum post subject default color #4e0000 **/
 
-#nologo, #nologo a, .generalbox h2,h3.sectionname, div.tabtree li.selected a span, .forumpost .subject, .blog_entry div.subject a, h2.headingblock,h2.main,h3.main, h2.main a, h3.main a, div.loginpanel h2, div.signuppanel h2 {
+#nologo, #nologo a, .generalbox h2,h3.sectionname, div.tabtree li.selected a span, .forumpost .subject, .blog_entry div.subject a, h2.headingblock,h2,h3, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2 {
     color: [[setting:headingcolor]];
 }
 

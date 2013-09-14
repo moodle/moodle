@@ -31,7 +31,7 @@
 .section .activity .moodle-actionmenu .menubar > li > * {display:inline-block;min-height:16px;padding: 0.2em;}
 .section .activity .moodle-actionmenu .menubar > li > img {margin: 0.2em;vertical-align: text-bottom;padding:0 3px 0 0;}
 .section .activity .moodle-actionmenu .iconsmall {vertical-align: baseline;width:16px;height:16px;}
-
+.single-section h3.sectionname {text-align:center;clear:both;}
 .sitetopic .section li.activity,
 .course-content .section li.activity {padding: .2em;}
 .section .activity .activityinstance .groupinglabel { padding-left: .45em; }
