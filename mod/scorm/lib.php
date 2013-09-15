@@ -1349,3 +1349,37 @@ function scorm_set_completion($scorm, $userid, $completionstate = COMPLETION_COM
         $completion->update_state($cm, $completionstate, $userid);
     }
 }
+
+/**
+ * Check and set the correct mode and attempt when entering a SCORM package.
+ *
+ * @param object $scorm object
+ * @param string $newattempt should a new attempt be generated here.
+ * @param int $attempt the attempt number this is for.
+ * @param int $userid the userid of the user.
+ * @param string $mode the current mode that has been selected.
+ */
+function scorm_check_mode($scorm, $newattempt, &$attempt, $userid, &$mode) {
+    global $DB;
+    if (($newattempt == 'on') && (($attempt < $scorm->maxattempt) || ($scorm->maxattempt == 0))) {
+        $attempt++;
+        $mode = 'normal';
+    } else if ($mode != 'browse') { // Check if review mode should be set.
+        $mode = 'normal'; // Set to normal mode by default.
+
+        // If all tracks == passed, failed or completed then use review mode.
+        $tracks = $DB->get_recordset('scorm_scoes_track', array('scormid' => $scorm->id, 'userid' => $userid,
+            'attempt' => $attempt, 'element' => 'cmi.core.lesson_status'));
+        foreach ($tracks as $track) {
+            if (($track->value == 'completed') || ($track->value == 'passed') || ($track->value == 'failed')) {
+                $mode = 'review';
+            } else { // Found an incomplete sco so exit and use normal mode.
+                $mode = 'normal';
+                break;
+            }
+        }
+        $tracks->close();
+    } else if (($mode == 'browse') && ($scorm->hidebrowse == 1)) { // Prevent Browse mode if hidebrowse is set.
+        $mode = 'normal';
+    }
+}
