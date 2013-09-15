@@ -1136,13 +1136,20 @@ function profile_display_badges($userid, $courseid = 0) {
     global $CFG, $PAGE, $USER, $SITE;
     require_once($CFG->dirroot . '/badges/renderer.php');
 
-    if ($USER->id == $userid || has_capability('moodle/badges:viewotherbadges', context_user::instance($USER->id))) {
+    // Determine context.
+    if (isloggedin()) {
+        $context = context_user::instance($USER->id);
+    } else {
+        $context = context_system::instance();
+    }
+
+    if ($USER->id == $userid || has_capability('moodle/badges:viewotherbadges', $context)) {
         $records = badges_get_user_badges($userid, $courseid, null, null, null, true);
         $renderer = new core_badges_renderer($PAGE, '');
 
         // Print local badges.
         if ($records) {
-            $left = get_string('localbadgesp', 'badges', $SITE->fullname);
+            $left = get_string('localbadgesp', 'badges', format_string($SITE->fullname));
             $right = $renderer->print_badges_list($records, $userid, true);
             echo html_writer::tag('dt', $left);
             echo html_writer::tag('dd', $right);
