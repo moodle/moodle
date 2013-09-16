@@ -2002,6 +2002,43 @@ function send_header_404() {
 }
 
 /**
+ * The readfile function can fail when files are larger than 2GB (even on 64-bit
+ * platforms). This wrapper uses readfile for small files and custom code for
+ * large ones.
+ *
+ * @param string $path Path to file
+ * @param int $filesize Size of file (if left out, will get it automatically)
+ * @return int|bool Size read (will always be $filesize) or false if failed
+ */
+function readfile_allow_large($path, $filesize = -1) {
+    // Automatically get size if not specified.
+    if ($filesize === -1) {
+        $filesize = filesize($path);
+    }
+    if ($filesize <= 2147483647) {
+        // If the file is up to 2^31 - 1, send it normally using readfile.
+        return readfile($path);
+    } else {
+        // For large files, read and output in 64KB chunks.
+        $handle = fopen($path, 'r');
+        if ($handle === false) {
+            return false;
+        }
+        $left = $filesize;
+        while ($left > 0) {
+            $size = min($left, 65536);
+            $buffer = fread($handle, $size);
+            if ($buffer === false) {
+                return false;
+            }
+            echo $buffer;
+            $left -= $size;
+        }
+        return $filesize;
+    }
+}
+
+/**
  * Enhanced readfile() with optional acceleration.
  * @param string|stored_file $file
  * @param string $mimetype
@@ -2123,7 +2160,7 @@ function readfile_accel($file, $mimetype, $accelerate) {
     if (is_object($file)) {
         $file->readfile();
     } else {
-        readfile($file);
+        readfile_allow_large($file, $filesize);
     }
 }
 
