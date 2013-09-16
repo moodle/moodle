@@ -253,12 +253,12 @@ class cache_phpunit_application extends cache_application {
     }
 
     /**
-     * Returns the given key directly from the persistdata cache.
+     * Returns the given key directly from the static acceleration array.
      *
      * @param string $key
      * @return false|mixed
      */
-    public function phpunit_get_directly_from_persistcache($key) {
+    public function phpunit_get_directly_from_staticaccelerationarray($key) {
         $key = $this->parse_key($key);
         return $this->get_from_persist_cache($key);
     }

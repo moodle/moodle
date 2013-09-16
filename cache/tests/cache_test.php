@@ -149,8 +149,8 @@ class core_cache_testcase extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'test_default_application_cache',
-            'persistentdata' => true,
-            'persistentmaxsize' => 1
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 1
         ));
         $cache = cache::make('phpunit', 'test_default_application_cache');
         $this->assertInstanceOf('cache_application', $cache);
@@ -189,7 +189,7 @@ class core_cache_testcase extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'nostoretest2',
-            'persistentdata' => true
+            'staticacceleration' => true
         ));
         $instance->phpunit_remove_stores();
 
@@ -924,11 +924,11 @@ class core_cache_testcase extends advanced_testcase {
                 'crazyevent'
             )
         ));
-        $instance->phpunit_add_definition('phpunit/eventpurgetestpersistentapp', array(
+        $instance->phpunit_add_definition('phpunit/eventpurgetestaccelerated', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
-            'area' => 'eventpurgetestpersistentapp',
-            'persistentdata' => true,
+            'area' => 'eventpurgetestaccelerated',
+            'staticacceleration' => true,
             'invalidationevents' => array(
                 'crazyevent'
             )
@@ -947,8 +947,8 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertFalse($cache->get('testkey1'));
         $this->assertFalse($cache->get('testkey2'));
 
-        // Now test the persistent cache.
-        $cache = cache::make('phpunit', 'eventpurgetestpersistentapp');
+        // Now test the static acceleration array.
+        $cache = cache::make('phpunit', 'eventpurgetestaccelerated');
         $this->assertTrue($cache->set('testkey1', 'test data 1'));
         $this->assertEquals('test data 1', $cache->get('testkey1'));
         $this->assertTrue($cache->set('testkey2', 'test data 2'));
@@ -975,11 +975,11 @@ class core_cache_testcase extends advanced_testcase {
                 'crazyevent'
             )
         ));
-        $instance->phpunit_add_definition('phpunit/eventpurgetestpersistent', array(
+        $instance->phpunit_add_definition('phpunit/eventpurgetestaccelerated', array(
             'mode' => cache_store::MODE_SESSION,
             'component' => 'phpunit',
-            'area' => 'eventpurgetestpersistent',
-            'persistentdata' => true,
+            'area' => 'eventpurgetestaccelerated',
+            'staticacceleration' => true,
             'invalidationevents' => array(
                 'crazyevent'
             )
@@ -998,8 +998,8 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertFalse($cache->get('testkey1'));
         $this->assertFalse($cache->get('testkey2'));
 
-        // Now test the persistent cache.
-        $cache = cache::make('phpunit', 'eventpurgetestpersistent');
+        // Now test the static acceleration array.
+        $cache = cache::make('phpunit', 'eventpurgetestaccelerated');
         $this->assertTrue($cache->set('testkey1', 'test data 1'));
         $this->assertEquals('test data 1', $cache->get('testkey1'));
         $this->assertTrue($cache->set('testkey2', 'test data 2'));
@@ -1400,8 +1400,8 @@ class core_cache_testcase extends advanced_testcase {
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
             'area' => 'test_application_locking',
-            'persistentdata' => true,
-            'persistentmaxsize' => 1,
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 1,
             'requirelockingread' => true,
             'requirelockingwrite' => true
         ));
@@ -1536,37 +1536,37 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertArrayHasKey('cache_is_searchable', $cache->phpunit_get_store_implements());
     }
 
-    public function test_persistent_cache() {
+    public function test_static_acceleration() {
         $instance = cache_config_phpunittest::instance();
-        $instance->phpunit_add_definition('phpunit/persistentapp', array(
+        $instance->phpunit_add_definition('phpunit/accelerated', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
-            'area' => 'persistentapp',
-            'persistentdata' => true,
-            'persistentmaxsize' => 3,
+            'area' => 'accelerated',
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 3,
         ));
-        $instance->phpunit_add_definition('phpunit/persistentapp2', array(
+        $instance->phpunit_add_definition('phpunit/accelerated2', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
-            'area' => 'persistentapp2',
-            'persistentdata' => true,
-            'persistentmaxsize' => 3,
+            'area' => 'accelerated2',
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 3,
         ));
-        $instance->phpunit_add_definition('phpunit/persistentapp3', array(
+        $instance->phpunit_add_definition('phpunit/accelerated3', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
-            'area' => 'persistentapp3',
-            'persistentdata' => true,
-            'persistentmaxsize' => 3,
+            'area' => 'accelerated3',
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 3,
         ));
-        $instance->phpunit_add_definition('phpunit/persistentapp4', array(
+        $instance->phpunit_add_definition('phpunit/accelerated4', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
-            'area' => 'persistentapp3',
-            'persistentdata' => true,
-            'persistentmaxsize' => 4,
+            'area' => 'accelerated4',
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 4,
         ));
-        $cache = cache::make('phpunit', 'persistentapp');
+        $cache = cache::make('phpunit', 'accelerated');
         $this->assertInstanceOf('cache_phpunit_application', $cache);
 
         // Set and get three elements.
@@ -1576,112 +1576,112 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertEquals('A', $cache->get('a'));
         $this->assertEquals(array('b' => 'B', 'c' => 'C'), $cache->get_many(array('b', 'c')));
 
-        // Make sure all items are in persistent cache.
-        $this->assertEquals('A', $cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertEquals('B', $cache->phpunit_get_directly_from_persistcache('b'));
-        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
+        // Make sure all items are in static acceleration array.
+        $this->assertEquals('A', $cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertEquals('B', $cache->phpunit_get_directly_from_staticaccelerationarray('b'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_staticaccelerationarray('c'));
 
-        // Add new value and make sure it is in cache and it is in persistcache.
+        // Add new value and make sure it is in cache and it is in array.
         $this->assertTrue($cache->set('d', 'D'));
-        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_staticaccelerationarray('d'));
         $this->assertEquals('D', $cache->get('d'));
 
-        // Now the least recent accessed item (a) is no longer in persistent cache.
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertEquals('B', $cache->phpunit_get_directly_from_persistcache('b'));
-        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
+        // Now the least recent accessed item (a) is no longer in acceleration array.
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertEquals('B', $cache->phpunit_get_directly_from_staticaccelerationarray('b'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_staticaccelerationarray('c'));
 
         // Adding and deleting element.
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->delete('a'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('a'));
         $this->assertFalse($cache->has('a'));
 
-        // Make sure "purge" deletes from persist as well.
+        // Make sure "purge" deletes from the array as well.
         $cache->purge();
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('c'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('d'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('e'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('b'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('c'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('d'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('e'));
 
-        // Check that persistent cache holds the last accessed items by get/set.
+        // Check that the array holds the last accessed items by get/set.
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->set('b', 'B'));
         $this->assertTrue($cache->set('c', 'C'));
         $this->assertTrue($cache->set('d', 'D'));
         $this->assertTrue($cache->set('e', 'E'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
-        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
-        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
-        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('b'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_staticaccelerationarray('c'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_staticaccelerationarray('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_staticaccelerationarray('e'));
 
         /** @var cache_phpunit_application $cache */
-        $cache = cache::make('phpunit', 'persistentapp2');
+        $cache = cache::make('phpunit', 'accelerated2');
         $this->assertInstanceOf('cache_phpunit_application', $cache);
 
-        // Check that persistent cache holds the last accessed items by get/set.
+        // Check that the array holds the last accessed items by get/set.
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->set('b', 'B'));
         $this->assertTrue($cache->set('c', 'C'));
         $this->assertTrue($cache->set('d', 'D'));
         $this->assertTrue($cache->set('e', 'E'));
-        // Current keys in persist cache: c, d, e.
-        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
-        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
-        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
+        // Current keys in the array: c, d, e.
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_staticaccelerationarray('c'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_staticaccelerationarray('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_staticaccelerationarray('e'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('b'));
 
         $this->assertEquals('A', $cache->get('a'));
-        // Current keys in persist cache: d, e, a.
-        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
-        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
-        $this->assertEquals('A', $cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('c'));
+        // Current keys in the array: d, e, a.
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_staticaccelerationarray('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_staticaccelerationarray('e'));
+        $this->assertEquals('A', $cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('b'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('c'));
 
-        // Current keys in persist cache: d, e, a.
+        // Current keys in the array: d, e, a.
         $this->assertEquals(array('c' => 'C'), $cache->get_many(array('c')));
-        // Current keys in persist cache: e, a, c.
-        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
-        $this->assertEquals('A', $cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('d'));
+        // Current keys in the array: e, a, c.
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_staticaccelerationarray('e'));
+        $this->assertEquals('A', $cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_staticaccelerationarray('c'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('b'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('d'));
 
 
-        $cache = cache::make('phpunit', 'persistentapp3');
+        $cache = cache::make('phpunit', 'accelerated3');
         $this->assertInstanceOf('cache_phpunit_application', $cache);
 
-        // Check that persistent cache holds the last accessed items by get/set.
+        // Check that the array holds the last accessed items by get/set.
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->set('b', 'B'));
         $this->assertTrue($cache->set('c', 'C'));
         $this->assertTrue($cache->set('d', 'D'));
         $this->assertTrue($cache->set('e', 'E'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('b'));
-        $this->assertEquals('C', $cache->phpunit_get_directly_from_persistcache('c'));
-        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
-        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('b'));
+        $this->assertEquals('C', $cache->phpunit_get_directly_from_staticaccelerationarray('c'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_staticaccelerationarray('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_staticaccelerationarray('e'));
 
         $this->assertTrue($cache->set('b', 'B2'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertEquals('B2', $cache->phpunit_get_directly_from_persistcache('b'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('c'));
-        $this->assertEquals('D', $cache->phpunit_get_directly_from_persistcache('d'));
-        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertEquals('B2', $cache->phpunit_get_directly_from_staticaccelerationarray('b'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('c'));
+        $this->assertEquals('D', $cache->phpunit_get_directly_from_staticaccelerationarray('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_staticaccelerationarray('e'));
 
         $this->assertEquals(2, $cache->set_many(array('b' => 'B3', 'c' => 'C3')));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('a'));
-        $this->assertEquals('B3', $cache->phpunit_get_directly_from_persistcache('b'));
-        $this->assertEquals('C3', $cache->phpunit_get_directly_from_persistcache('c'));
-        $this->assertFalse($cache->phpunit_get_directly_from_persistcache('d'));
-        $this->assertEquals('E', $cache->phpunit_get_directly_from_persistcache('e'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('a'));
+        $this->assertEquals('B3', $cache->phpunit_get_directly_from_staticaccelerationarray('b'));
+        $this->assertEquals('C3', $cache->phpunit_get_directly_from_staticaccelerationarray('c'));
+        $this->assertFalse($cache->phpunit_get_directly_from_staticaccelerationarray('d'));
+        $this->assertEquals('E', $cache->phpunit_get_directly_from_staticaccelerationarray('e'));
 
-        $cache = cache::make('phpunit', 'persistentapp4');
+        $cache = cache::make('phpunit', 'accelerated4');
         $this->assertInstanceOf('cache_phpunit_application', $cache);
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->set('a', 'A'));
@@ -1690,7 +1690,7 @@ class core_cache_testcase extends advanced_testcase {
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->set('a', 'A'));
         $this->assertTrue($cache->set('a', 'A'));
-        $this->assertEquals('A', $cache->phpunit_get_directly_from_persistcache('a'));
+        $this->assertEquals('A', $cache->phpunit_get_directly_from_staticaccelerationarray('a'));
         $this->assertEquals('A', $cache->get('a'));
     }
 }

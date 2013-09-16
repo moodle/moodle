@@ -36,8 +36,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
-        'persistentmaxsize' => 30
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 30
     ),
 
     // Used to store cache of all available translations.
@@ -58,8 +58,8 @@ $definitions = array(
         'requireidentifiers' => array(
             'dbfamily'
         ),
-        'persistentdata' => true,
-        'persistentmaxsize' => 15
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 15
     ),
 
     // Event invalidation cache.
@@ -71,7 +71,7 @@ $definitions = array(
     // cache will likely be used either lots or never.
     'eventinvalidation' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistentdata' => true,
+        'staticacceleration' => true,
         'requiredataguarantee' => true,
         'simpledata' => true,
     ),
@@ -103,7 +103,7 @@ $definitions = array(
     // Persistence is used because normally several settings within a script.
     'config' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistentdata' => true,
+        'staticacceleration' => true,
         'simpledata' => true
     ),
 
@@ -114,7 +114,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true, // The course id the groupings exist for.
         'simpledata' => true, // Array of stdClass objects containing only strings.
-        'persistentdata' => true, // Likely there will be a couple of calls to this.
+        'staticacceleration' => true, // Likely there will be a couple of calls to this.
         'persistmaxsize' => 2, // The original cache used 1, we've increased that to two.
     ),
 
@@ -123,7 +123,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
+        'staticacceleration' => true,
     ),
 
     // YUI Module cache.
@@ -137,8 +137,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
-        'persistentmaxsize' => 2,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 2,
     ),
 
     // Cache used by the {@link plugin_manager} class.
@@ -147,8 +147,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
-        'persistentmaxsize' => 2,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 2,
     ),
 
     // Cache used by the {@link plugininfo_mod} class.
@@ -156,8 +156,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
-        'persistentmaxsize' => 1,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
     ),
 
     // Cache used by the {@link plugininfo_block} class.
@@ -165,8 +165,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
-        'persistentmaxsize' => 1,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
     ),
 
     // Cache used by the {@link plugininfo_filter} class.
@@ -174,8 +174,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
-        'persistentmaxsize' => 1,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
     ),
 
     // Cache used by the {@link plugininfo_repository} class.
@@ -183,8 +183,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
-        'persistentmaxsize' => 1,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
     ),
 
     // Cache used by the {@link plugininfo_portfolio} class.
@@ -192,15 +192,14 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
-        'persistentmaxsize' => 1,
->>>>>>> MDL-40903 cache: converted persistent into persistentdata
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 1,
     ),
 
     // Used to store the full tree of course categories.
     'coursecattree' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistentdata' => true,
+        'staticacceleration' => true,
         'invalidationevents' => array(
             'changesincoursecat',
         )
@@ -225,7 +224,7 @@ $definitions = array(
     // Cache course contacts for the courses.
     'coursecontacts' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistentdata' => true,
+        'staticacceleration' => true,
         'simplekeys' => true,
     ),
     // Used to store data for repositories to avoid repetitive DB queries within one request.
