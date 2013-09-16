@@ -214,6 +214,28 @@ class backup_progress_testcase extends basic_testcase {
     }
 
     /**
+     * To avoid causing problems, progress needs to work for sections that have
+     * zero entries.
+     */
+    public function test_zero() {
+        $progress = new core_backup_mock_progress();
+        $progress->start_progress('parent', 100);
+        $progress->progress(1);
+        $this->assert_min_max(0.01, 0.01, $progress);
+        $progress->start_progress('child', 0);
+
+        // For 'zero' progress, the progress section as immediately complete
+        // within the parent count, so it moves up to 2%.
+        $this->assert_min_max(0.02, 0.02, $progress);
+        $progress->progress(0);
+        $this->assert_min_max(0.02, 0.02, $progress);
+        $progress->end_progress();
+        $this->assert_min_max(0.02, 0.02, $progress);
+
+        set_time_limit(0);
+    }
+
+    /**
      * Tests for any exceptions due to invalid calls.
      */
     public function test_exceptions() {
@@ -245,12 +267,12 @@ class backup_progress_testcase extends basic_testcase {
             $this->assertEquals(1, preg_match('~must be 1~', $e->getMessage()));
         }
 
-        // Check invalid start (0).
+        // Check invalid start (-2).
         try {
-            $progress->start_progress('hello', 0);
+            $progress->start_progress('hello', -2);
             $this->fail();
         } catch (coding_exception $e) {
-            $this->assertEquals(1, preg_match('~cannot be zero or negative~', $e->getMessage()));
+            $this->assertEquals(1, preg_match('~cannot be negative~', $e->getMessage()));
         }
 
         // Indeterminate when value expected.

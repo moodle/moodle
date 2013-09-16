@@ -87,9 +87,9 @@ abstract class core_backup_progress {
      */
     public function start_progress($description, $max = self::INDETERMINATE,
             $parentcount = 1) {
-        if ($max != self::INDETERMINATE && $max <= 0) {
+        if ($max != self::INDETERMINATE && $max < 0) {
             throw new coding_exception(
-                    'start_progress() max value cannot be zero or negative');
+                    'start_progress() max value cannot be negative');
         }
         if ($parentcount < 1) {
             throw new coding_exception(
