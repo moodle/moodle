@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/scorm/db" VERSION="20120326" COMMENT="XMLDB file for Moodle mod/scorm"
+<XMLDB PATH="mod/scorm/db" VERSION="20130826" COMMENT="XMLDB file for Moodle mod/scorm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -61,6 +61,7 @@
         <FIELD NAME="launch" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="scormtype" TYPE="char" LENGTH="5" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="order of scoes"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

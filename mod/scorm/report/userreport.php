@@ -72,7 +72,7 @@ require($CFG->dirroot . '/mod/scorm/report/userreporttabs.php');
 $output = $PAGE->get_renderer('mod_scorm');
 echo $output->view_user_heading($user, $course, $PAGE->url, $attempt, $attemptids);
 
-if ($scoes = $DB->get_records_select('scorm_scoes', "scorm = ? ORDER BY id", array($scorm->id))) {
+if ($scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id), 'sortorder, id')) {
     // Print general score data.
     $table = new html_table();
     $table->head = array(
