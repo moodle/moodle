@@ -120,7 +120,7 @@ class award_criteria_activity extends award_criteria {
         $course = $DB->get_record('course', array('id' => $this->courseid));
         $info = new completion_info($course);
         $mods = $info->get_activities();
-        $mids = array_map(create_function('$o', 'return $o->id;'), $mods);
+        $mids = array_keys($mods);
 
         if ($this->id !== 0) {
             $existing = array_keys($this->params);
