@@ -347,10 +347,10 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
     $mform->setType('idnumber', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="40" size="25"');
+    $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="255" size="25"');
     $mform->setType('institution', PARAM_TEXT);
 
-    $mform->addElement('text', 'department', get_string('department'), 'maxlength="30" size="25"');
+    $mform->addElement('text', 'department', get_string('department'), 'maxlength="255" size="25"');
     $mform->setType('department', PARAM_TEXT);
 
     $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
@@ -359,7 +359,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
     $mform->setType('phone2', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="25"');
+    $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
     $mform->setType('address', PARAM_TEXT);
 
 
