@@ -571,15 +571,15 @@ table#categoryquestions {
     border-left: thin solid #777;
     line-height: 1.3em;
     border-radius: 0.6em;
-    border-radius-bottomleft: 0;
-    border-radius-topleft: 0;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
     width: 88%;
     padding: 0.15em 0 0.3em;
     background-color: #d6d6d6;
 }
 #page-mod-quiz-edit div.quizpage .pagecontent .pagestatus {
-    border-radius-bottomright: 0.3em;
-    border-radius-topright: 0.3em;
+    border-bottom-right-radius: 0.3em;
+    border-top-right-radius: 0.3em;
     margin: 0.3em;
     padding: 0.1em 0.1em 0.1em 0.3em;
     background-color: #eee;
@@ -647,8 +647,8 @@ table#categoryquestions {
     float: left;
     position: relative;
     border-radius: 0.3em;
-    border-radius-bottomleft: 0;
-    border-radius-topleft: 0;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
     line-height: 1.2em;
     padding: 0.1em;
     background-color: #F9F9F9;
@@ -757,8 +757,8 @@ table#categoryquestions {
     float: left;
     position: relative;
     border-radius: 0.6em;
-    border-radius-bottomleft: 0;
-    border-radius-topleft: 0;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
     line-height: 1.4em;
     padding: 0.5em;
 }
@@ -772,8 +772,8 @@ table#categoryquestions {
     position: absolute;
     right: 60px;
     border-radius: 0.2em;
-    border-radius-bottomleft: 0;
-    border-radius-topleft: 0;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
     z-index: 900;
     display: block;
     margin: 0;
@@ -792,8 +792,8 @@ table#categoryquestions {
     position: absolute;
     right: 50px;
     border-radius: 0.2em;
-    border-radius-bottomleft: 0;
-    border-radius-topleft: 0;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
     z-index: 900;
     display: block;
     margin: 0;
