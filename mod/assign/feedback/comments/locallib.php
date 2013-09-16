@@ -390,4 +390,16 @@ class assign_feedback_comments extends assign_feedback_plugin {
         return $this->view($grade) == '';
     }
 
+    /**
+     * Return a description of external params suitable for uploading an feedback comment from a webservice.
+     *
+     * @return external_description|null
+     */
+    public function get_external_parameters() {
+        $editorparams = array('text' => new external_value(PARAM_TEXT, 'The text for this feedback.'),
+                              'format' => new external_value(PARAM_INT, 'The format for this feedback'));
+        $editorstructure = new external_single_structure($editorparams);
+        return array('assignfeedbackcomments_editor' => $editorstructure);
+    }
+
 }

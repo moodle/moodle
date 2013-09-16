@@ -63,5 +63,70 @@ $functions = array(
                 'classpath' => 'mod/assign/externallib.php',
                 'description' => 'Returns the blind marking mappings for assignments',
                 'type' => 'read'
+        ),
+
+        'mod_assign_revert_submissions_to_draft' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'revert_submissions_to_draft',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Reverts the list of submissions to draft status',
+                'type' => 'write'
+        ),
+
+        'mod_assign_lock_submissions' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'lock_submissions',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Prevent students from making changes to a list of submissions',
+                'type' => 'write'
+        ),
+
+        'mod_assign_unlock_submissions' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'unlock_submissions',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Allow students to make changes to a list of submissions',
+                'type' => 'write'
+        ),
+
+        'mod_assign_save_submission' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'save_submission',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Update the current students submission',
+                'type' => 'write'
+        ),
+
+        'mod_assign_submit_for_grading' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'submit_for_grading',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Submit the current students assignment for grading',
+                'type' => 'write'
+        ),
+
+        'mod_assign_save_grade' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'save_grade',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Save a grade update for a single student.',
+                'type' => 'write'
+        ),
+
+        'mod_assign_save_user_extensions' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'save_user_extensions',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Save a list of assignment extensions',
+                'type' => 'write'
+        ),
+
+        'mod_assign_reveal_identities' => array(
+                'classname' => 'mod_assign_external',
+                'methodname' => 'reveal_identities',
+                'classpath' => 'mod/assign/externallib.php',
+                'description' => 'Reveal the identities for a blind marking assignment',
+                'type' => 'write'
         )
+
 );

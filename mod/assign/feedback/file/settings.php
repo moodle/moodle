@@ -17,7 +17,7 @@
 /**
  * This file defines the admin settings for this plugin
  *
- * @package   assignsubmission_onlinetext
+ * @package   assignfeedback_file
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

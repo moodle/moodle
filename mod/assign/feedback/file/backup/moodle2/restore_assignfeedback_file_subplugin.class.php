@@ -24,7 +24,9 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Restore subplugin class that provides the necessary information needed
+ * Restore subplugin class.
+ *
+ * Provides the necessary information needed
  * to restore one assign_feedback subplugin.
  *
  * @package   assignfeedback_file

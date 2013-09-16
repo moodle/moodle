@@ -249,6 +249,7 @@ class assign_submission_file extends assign_submission_plugin {
      * Produce a list of files suitable for export that represent this feedback or submission
      *
      * @param stdClass $submission The submission
+     * @param stdClass $user The user record - unused
      * @return array - return an array of files indexed by filename
      */
     public function get_files(stdClass $submission, stdClass $user) {
@@ -476,5 +477,19 @@ class assign_submission_file extends assign_submission_plugin {
             $DB->insert_record('assignsubmission_file', $filesubmission);
         }
         return true;
+    }
+
+    /**
+     * Return a description of external params suitable for uploading a file submission from a webservice.
+     *
+     * @return external_description|null
+     */
+    public function get_external_parameters() {
+        return array(
+            'files_filemanager' => new external_value(
+                PARAM_INT,
+                'The id of a draft area containing files for this submission.'
+            )
+        );
     }
 }

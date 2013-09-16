@@ -23,7 +23,9 @@
  */
 
 /**
- * restore subplugin class that provides the necessary information needed to restore
+ * Restore subplugin class.
+ *
+ * Provides the necessary information needed to restore
  * one assign_submission subplugin.
  *
  * @package assignsubmission_onlinetext

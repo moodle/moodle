@@ -627,5 +627,13 @@ abstract class assign_plugin {
         return true;
     }
 
-
+    /**
+     * If this plugin can participate in a webservice (save_submission or save_grade),
+     * return a list of external_params to be included in the definition of that webservice.
+     *
+     * @return external_description|null
+     */
+    public function get_external_parameters() {
+        return null;
+    }
 }

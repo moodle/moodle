@@ -42,6 +42,7 @@ class assign_submit_for_grading_page implements renderable {
      * Constructor
      * @param string $notifications - Any mesages to display
      * @param int $coursemoduleid
+     * @param moodleform $confirmform
      */
     public function __construct($notifications, $coursemoduleid, $confirmform) {
         $this->notifications = $notifications;
@@ -69,6 +70,7 @@ class assign_gradingmessage implements renderable {
      * Constructor
      * @param string $heading This is the heading to display
      * @param string $message This is the message to display
+     * @param int $coursemoduleid
      */
     public function __construct($heading, $message, $coursemoduleid) {
         $this->heading = $heading;
@@ -404,6 +406,7 @@ class assign_submission_status implements renderable {
      * @param int $extensionduedate - Any extension to the due date granted for this user
      * @param context $context - Any extension to the due date granted for this user
      * @param bool $blindmarking - Should we hide student identities from graders?
+     * @param string $gradingcontrollerpreview
      * @param string $attemptreopenmethod - The method of reopening student attempts.
      * @param int $maxattempts - How many attempts can a student make?
      */
@@ -493,14 +496,14 @@ class assign_attempt_history implements renderable {
     /**
      * Constructor
      *
-     * @param $submissions
-     * @param $grades
-     * @param $submissionplugins
-     * @param $feedbackplugins
-     * @param $coursemoduleid
-     * @param $returnaction
-     * @param $returnparams
-     * @param $cangrade
+     * @param array $submissions
+     * @param array $grades
+     * @param array $submissionplugins
+     * @param array $feedbackplugins
+     * @param int $coursemoduleid
+     * @param string $returnaction
+     * @param array $returnparams
+     * @param bool $cangrade
      */
     public function __construct($submissions,
                                 $grades,
@@ -648,8 +651,8 @@ class assign_course_index_summary implements renderable {
     /**
      * constructor
      *
-     * @param $usesections boolean - True if this course format uses sections
-     * @param $courseformatname string - The id of this course format
+     * @param boolean $usesections - True if this course format uses sections
+     * @param string $courseformatname - The id of this course format
      */
     public function __construct($usesections, $courseformatname) {
         $this->usesections = $usesections;

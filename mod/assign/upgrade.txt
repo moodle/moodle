@@ -3,6 +3,11 @@ This files describes API changes in the assign code.
 === 2.6 ===
 * To see submission/grades of inactive users, user should have moodle/course:viewsuspendedusers capability.
 * count_* functions will return only active participants.
+* assign_submission_plugin->lock and unlock methods have an additional parameter for user flags. A user will not
+  always have a submission record when the submission is locked/unlocked.
+* Submission and feedback plugins can now participate in webservices. The plugin must implement get_external_parameters()
+  to describe the parameters it is expecting from the mod_assign_save_grade or mod_assign_save_submission functions. The
+  plugin will then handle the webservice via it's normal save() method with the extra data supplied in the $data argument.
 
 === 2.5 ===
 
