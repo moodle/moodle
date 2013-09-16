@@ -35,8 +35,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistentdata' => true,
-        'persistentmaxsize' => 30
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 30
     ),
 
     // Used to store database meta information.
@@ -48,8 +48,8 @@ $definitions = array(
         'requireidentifiers' => array(
             'dbfamily'
         ),
-        'persistentdata' => true,
-        'persistentmaxsize' => 15
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 15
     ),
 
     // Event invalidation cache.
@@ -61,7 +61,7 @@ $definitions = array(
     // cache will likely be used either lots or never.
     'eventinvalidation' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistentdata' => true,
+        'staticacceleration' => true,
         'requiredataguarantee' => true,
         'simpledata' => true,
     ),
