@@ -16,6 +16,7 @@
 
 require_once("../../config.php");
 require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+require_once($CFG->dirroot.'/course/lib.php');
 
 $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
 $a = optional_param('a', '', PARAM_INT);         // scorm ID
