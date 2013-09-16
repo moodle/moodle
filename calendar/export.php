@@ -56,10 +56,27 @@ if (empty($CFG->enablecalendarexport)) {
 
 $courseid = optional_param('course', SITEID, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
-$day  = optional_param('cal_d', 0, PARAM_INT);
-$mon  = optional_param('cal_m', 0, PARAM_INT);
-$yr   = optional_param('cal_y', 0, PARAM_INT);
+$day = optional_param('cal_d', 0, PARAM_INT);
+$mon = optional_param('cal_m', 0, PARAM_INT);
+$year = optional_param('cal_y', 0, PARAM_INT);
+$time = optional_param('time', 0, PARAM_INT);
 $generateurl = optional_param('generateurl', 0, PARAM_BOOL);
+
+// Get the calendar type we are using.
+$calendartype = \core_calendar\type_factory::get_calendar_instance();
+
+// If a day, month and year were passed then convert it to a timestamp. If these were passed
+// then we can assume the day, month and year are passed as Gregorian, as no where in core
+// should we be passing these values rather than the time. This is done for BC.
+if (!empty($day) && !empty($mon) && !empty($year)) {
+    if (checkdate($mon, $day, $year)) {
+        $time = make_timestamp($year, $mon, $day);
+    } else {
+        $time = time();
+    }
+} else if (empty($time)) {
+    $time = time();
+}
 
 if ($courseid != SITEID && !empty($courseid)) {
     $course = $DB->get_record('course', array('id' => $courseid));
@@ -72,36 +89,29 @@ if ($courseid != SITEID && !empty($courseid)) {
 }
 require_course_login($course);
 
-$url = new moodle_url('/calendar/export.php');
+$url = new moodle_url('/calendar/export.php', array('time' => $time));
+
 if ($action !== '') {
     $url->param('action', $action);
 }
-if ($day !== 0) {
-    $url->param('cal_d', $day);
-}
-if ($mon !== 0) {
-    $url->param('cal_m', $mon);
-}
-if ($yr !== 0) {
-    $url->param('cal_y', $yr);
-}
+
 if ($course !== NULL) {
     $url->param('course', $course->id);
 }
 $PAGE->set_url($url);
 
-$calendar = new calendar_information($day, $mon, $yr);
+$calendar = new calendar_information(0, 0, 0, $time);
 $calendar->prepare_for_view($course, $courses);
 
 $pagetitle = get_string('export', 'calendar');
-$now = usergetdate(time());
+$now = $calendartype->timestamp_to_date_array($time);
 
 // Print title and header
 if ($issite) {
     $PAGE->navbar->add($course->shortname, new moodle_url('/course/view.php', array('id'=>$course->id)));
 }
 $link = new moodle_url(CALENDAR_URL.'view.php', array('view'=>'upcoming', 'course'=>$calendar->courseid));
-$PAGE->navbar->add(get_string('calendar', 'calendar'), calendar_get_link_href($link, $now['mday'], $now['mon'], $now['year']));
+$PAGE->navbar->add(get_string('calendar', 'calendar'), calendar_get_link_href($link, 0, 0, 0, $time));
 $PAGE->navbar->add($pagetitle);
 
 $PAGE->set_title($course->shortname.': '.get_string('calendar', 'calendar').': '.$pagetitle);
@@ -125,14 +135,17 @@ switch($action) {
             $weekend = intval($CFG->calendar_weekend);
         }
 
+        // Get the number of days.
+        $numberofdaysinweek = $calendartype->get_num_weekdays();
+
         $authtoken = sha1($USER->id . $DB->get_field('user', 'password', array('id'=>$USER->id)). $CFG->calendar_exportsalt);
         // Let's populate some vars to let "common tasks" be somewhat smart...
-        // If today it's weekend, give the "next week" option
-        $allownextweek  = $weekend & (1 << $now['wday']);
-        // If it's the last week of the month, give the "next month" option
-        $allownextmonth = calendar_days_in_month($now['mon'], $now['year']) - $now['mday'] < 7;
-        // If today it's weekend but tomorrow it isn't, do NOT give the "this week" option
-        $allowthisweek  = !(($weekend & (1 << $now['wday'])) && !($weekend & (1 << (($now['wday'] + 1) % 7))));
+        // If today it's weekend, give the "next week" option.
+        $allownextweek = $weekend & (1 << $now['wday']);
+        // If it's the last week of the month, give the "next month" option.
+        $allownextmonth = calendar_days_in_month($now['mon'], $now['year']) - $now['mday'] < $numberofdaysinweek;
+        // If today it's weekend but tomorrow it isn't, do NOT give the "this week" option.
+        $allowthisweek = !(($weekend & (1 << $now['wday'])) && !($weekend & (1 << (($now['wday'] + 1) % $numberofdaysinweek))));
         echo $renderer->basic_export_form($allowthisweek, $allownextweek, $allownextmonth, $USER->id, $authtoken);
         break;
 }

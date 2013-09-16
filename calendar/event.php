@@ -57,26 +57,34 @@ $action = optional_param('action', 'new', PARAM_ALPHA);
 $eventid = optional_param('id', 0, PARAM_INT);
 $courseid = optional_param('courseid', SITEID, PARAM_INT);
 $courseid = optional_param('course', $courseid, PARAM_INT);
-$cal_y = optional_param('cal_y', 0, PARAM_INT);
-$cal_m = optional_param('cal_m', 0, PARAM_INT);
-$cal_d = optional_param('cal_d', 0, PARAM_INT);
+$day = optional_param('cal_d', 0, PARAM_INT);
+$month = optional_param('cal_m', 0, PARAM_INT);
+$year = optional_param('cal_y', 0, PARAM_INT);
+$time = optional_param('time', 0, PARAM_INT);
+
+// If a day, month and year were passed then convert it to a timestamp. If these were passed
+// then we can assume the day, month and year are passed as Gregorian, as no where in core
+// should we be passing these values rather than the time. This is done for BC.
+if (!empty($day) && !empty($month) && !empty($year)) {
+    if (checkdate($month, $day, $year)) {
+        $time = make_timestamp($year, $month, $day);
+    } else {
+        $time = time();
+    }
+} else if (empty($time)) {
+    $time = time();
+}
 
 $url = new moodle_url('/calendar/event.php', array('action' => $action));
+
 if ($eventid != 0) {
     $url->param('id', $eventid);
 }
+
 if ($courseid != SITEID) {
     $url->param('course', $courseid);
 }
-if ($cal_y !== 0) {
-    $url->param('cal_y', $cal_y);
-}
-if ($cal_m !== 0) {
-    $url->param('cal_m', $cal_m);
-}
-if ($cal_d !== 0) {
-    $url->param('cal_d', $cal_d);
-}
+
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
 
@@ -99,7 +107,7 @@ if ($action === 'delete' && $eventid > 0) {
     redirect($deleteurl);
 }
 
-$calendar = new calendar_information($cal_d, $cal_m, $cal_y);
+$calendar = new calendar_information(0, 0, 0, $time);
 $calendar->prepare_for_view($course, $courses);
 
 $formoptions = new stdClass;
@@ -133,16 +141,7 @@ if ($eventid !== 0) {
             unset($formoptions->eventtypes->groups);
         }
     }
-    if($cal_y && $cal_m && $cal_d && checkdate($cal_m, $cal_d, $cal_y)) {
-        $event->timestart = make_timestamp($cal_y, $cal_m, $cal_d, 0, 0, 0);
-    } else if($cal_y && $cal_m && checkdate($cal_m, 1, $cal_y)) {
-        $now = usergetdate(time());
-        if($cal_y == $now['year'] && $cal_m == $now['mon']) {
-            $event->timestart = make_timestamp($cal_y, $cal_m, $now['mday'], 0, 0, 0);
-        } else {
-            $event->timestart = make_timestamp($cal_y, $cal_m, 1, 0, 0, 0);
-        }
-    }
+    $event->timestart = $time;
     $event = new calendar_event($event);
     if (!calendar_add_event_allowed($event)) {
         print_error('nopermissions');
@@ -168,9 +167,7 @@ if ($data) {
 
     $params = array(
         'view' => 'day',
-        'cal_d' => userdate($event->timestart, '%d'),
-        'cal_m' => userdate($event->timestart, '%m'),
-        'cal_y' => userdate($event->timestart, '%Y'),
+        'time' => $event->timestart,
     );
     $eventurl = new moodle_url('/calendar/view.php', $params);
     if (!empty($event->courseid) && $event->courseid != SITEID) {
