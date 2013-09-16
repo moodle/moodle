@@ -221,14 +221,14 @@ class mod_assign_renderer extends plugin_renderer_base {
         }
 
         $this->page->set_title(get_string('pluginname', 'assign'));
-        $this->page->set_heading($header->assign->name);
+        $this->page->set_heading($this->page->course->fullname);
 
         $o .= $this->output->header();
+        $heading = format_string($header->assign->name, false, array('context' => $header->context));
+        $o .= $this->output->heading($heading);
         if ($header->preface) {
             $o .= $header->preface;
         }
-        $heading = format_string($header->assign->name, false, array('context' => $header->context));
-        $o .= $this->output->heading($heading);
 
         if ($header->showintro) {
             $o .= $this->output->box_start('generalbox boxaligncenter', 'intro');
