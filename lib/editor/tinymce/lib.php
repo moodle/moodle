@@ -34,29 +34,8 @@ class tinymce_texteditor extends texteditor {
      * @return bool
      */
     public function supported_by_browser() {
-        if (core_useragent::check_ie_version(6)) {
-            return true;
-        }
-        if (core_useragent::check_gecko_version(20030516)) {
-            return true;
-        }
-        if (core_useragent::check_safari_version(412)) {
-            return true;
-        }
-        if (core_useragent::check_chrome_version(6)) {
-            return true;
-        }
-        if (core_useragent::check_opera_version(9)) {
-            return true;
-        }
-        if (core_useragent::check_safari_ios_version(534)) {
-            return true;
-        }
-        if (core_useragent::check_webkit_version(534)) {
-            return true;
-        }
-
-        return false;
+        // We don't support any browsers which it doesn't support.
+        return true;
     }
 
     /**

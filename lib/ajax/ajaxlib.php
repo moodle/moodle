@@ -61,19 +61,6 @@ function ajaxenabled(array $browsers = null) {
         }
     }
 
-    $ie = core_useragent::check_browser_version('MSIE', 6.0);
-    $ff = core_useragent::check_browser_version('Gecko', 20051106);
-    $op = core_useragent::check_browser_version('Opera', 9.0);
-    $sa = core_useragent::check_browser_version('Safari', 412);
-    $ch = core_useragent::check_browser_version('Chrome', 6);
-
-    if (!$ie && !$ff && !$op && !$sa && !$ch) {
-        /** @see http://en.wikipedia.org/wiki/User_agent */
-        // Gecko build 20051107 is what is in Firefox 1.5.
-        // We still have issues with AJAX in other browsers.
-        return false;
-    }
-
     if (!empty($CFG->enableajax)) {
         return true;
     } else {

@@ -164,7 +164,7 @@ $THEME->javascripts_footer = array(
     'moodlebootstrap',
 );
 
-if (core_useragent::check_ie_version() && !core_useragent::check_ie_version('9.0')) {
+if (core_useragent::is_ie() && !core_useragent::check_ie_version('9.0')) {
     $THEME->javascripts[] = 'html5shiv';
 }
 

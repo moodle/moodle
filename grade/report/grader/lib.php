@@ -1585,14 +1585,8 @@ class grade_report_grader extends grade_report {
      */
     public function is_fixed_students() {
         global $CFG;
-        return $CFG->grade_report_fixedstudents &&
-            (core_useragent::check_ie_version('7.0') ||
-             core_useragent::check_firefox_version('2.0') ||
-             core_useragent::check_gecko_version('2006010100') ||
-             core_useragent::check_camino_version('1.0') ||
-             core_useragent::check_opera_version('6.0') ||
-             core_useragent::check_chrome_version('6') ||
-             core_useragent::check_safari_version('300'));
+
+        return $CFG->grade_report_fixedstudents;
     }
 
     /**

@@ -656,7 +656,7 @@ class theme_config {
 
         if ($rev > -1) {
             $url = new moodle_url("$CFG->httpswwwroot/theme/styles.php");
-            $separate = (core_useragent::check_ie_version('5') && !core_useragent::check_ie_version('10'));
+            $separate = (core_useragent::is_ie() && !core_useragent::check_ie_version('10'));
             if (!empty($CFG->slasharguments)) {
                 $slashargs = '';
                 if (!$svg) {
@@ -734,7 +734,7 @@ class theme_config {
                 // We do this because all modern browsers support SVG and this param will one day be removed.
                 $baseurl->param('svg', '0');
             }
-            if (core_useragent::check_ie_version('5')) {
+            if (core_useragent::is_ie()) {
                 // lalala, IE does not allow more than 31 linked CSS files from main document
                 $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
                 foreach ($css['parents'] as $parent=>$sheets) {

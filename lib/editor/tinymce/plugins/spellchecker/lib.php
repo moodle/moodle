@@ -63,7 +63,7 @@ class tinymce_spellchecker extends editor_tinymce_plugin {
 
     protected function is_legacy_browser() {
         // IE8 and IE9 are the only supported browsers that do not have spellchecker.
-        if (core_useragent::check_ie_version() and !core_useragent::check_ie_version(10)) {
+        if (core_useragent::is_ie() and !core_useragent::check_ie_version(10)) {
             return true;
         }
         // The rest of browsers supports spellchecking or is horribly outdated and we do not care...

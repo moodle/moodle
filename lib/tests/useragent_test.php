@@ -163,53 +163,69 @@ class core_useragent_testcase extends basic_testcase {
      */
     public function test_check_browser_version() {
         core_useragent::instance(true, $this->user_agents['Safari']['412']['Mac OS X']);
+        $this->assertTrue(core_useragent::is_safari());
         $this->assertTrue(core_useragent::check_safari_version());
+        $this->assertTrue(core_useragent::is_webkit());
         $this->assertTrue(core_useragent::check_webkit_version());
         $this->assertTrue(core_useragent::check_safari_version('312'));
         $this->assertFalse(core_useragent::check_safari_version('500'));
+        $this->assertFalse(core_useragent::is_chrome());
         $this->assertFalse(core_useragent::check_chrome_version());
+        $this->assertFalse(core_useragent::is_safari_ios());
         $this->assertFalse(core_useragent::check_safari_ios_version());
 
         core_useragent::instance(true, $this->user_agents['Safari iOS']['528']['iPhone']);
+        $this->assertTrue(core_useragent::is_safari_ios());
         $this->assertTrue(core_useragent::check_safari_ios_version());
+        $this->assertTrue(core_useragent::is_webkit());
         $this->assertTrue(core_useragent::check_webkit_version());
         $this->assertTrue(core_useragent::check_safari_ios_version('527'));
         $this->assertFalse(core_useragent::check_safari_ios_version(590));
         $this->assertFalse(core_useragent::check_safari_version('312'));
         $this->assertFalse(core_useragent::check_safari_version('500'));
+        $this->assertFalse(core_useragent::is_chrome());
         $this->assertFalse(core_useragent::check_chrome_version());
 
         core_useragent::instance(true, $this->user_agents['WebKit Android']['530']['Nexus']);
+        $this->assertTrue(core_useragent::is_webkit());
         $this->assertTrue(core_useragent::check_webkit_version());
         $this->assertTrue(core_useragent::check_webkit_android_version('527'));
         $this->assertFalse(core_useragent::check_webkit_android_version(590));
+        $this->assertFalse(core_useragent::is_safari());
         $this->assertFalse(core_useragent::check_safari_version());
+        $this->assertFalse(core_useragent::is_chrome());
         $this->assertFalse(core_useragent::check_chrome_version());
 
         core_useragent::instance(true, $this->user_agents['Chrome']['8']['Mac OS X']);
+        $this->assertTrue(core_useragent::is_chrome());
         $this->assertTrue(core_useragent::check_chrome_version());
+        $this->assertTrue(core_useragent::is_webkit());
         $this->assertTrue(core_useragent::check_webkit_version());
         $this->assertTrue(core_useragent::check_chrome_version(8));
         $this->assertFalse(core_useragent::check_chrome_version(10));
         $this->assertFalse(core_useragent::check_safari_version('1'));
 
         core_useragent::instance(true, $this->user_agents['Opera']['9.0']['Windows XP']);
+        $this->assertTrue(core_useragent::is_opera());
         $this->assertTrue(core_useragent::check_opera_version());
         $this->assertTrue(core_useragent::check_opera_version('8.0'));
         $this->assertFalse(core_useragent::check_opera_version('10.0'));
 
         core_useragent::instance(true, $this->user_agents['MSIE']['6.0']['Windows XP SP2']);
+        $this->assertTrue(core_useragent::is_ie());
         $this->assertTrue(core_useragent::check_ie_version());
         $this->assertTrue(core_useragent::check_ie_version('5.0'));
         $this->assertFalse(core_useragent::check_ie_version('7.0'));
 
         core_useragent::instance(true, $this->user_agents['MSIE']['5.0']['Windows 98']);
+        $this->assertFalse(core_useragent::is_ie());
         $this->assertFalse(core_useragent::check_ie_version());
         $this->assertTrue(core_useragent::check_ie_version(0));
         $this->assertTrue(core_useragent::check_ie_version('5.0'));
         $this->assertFalse(core_useragent::check_ie_version('7.0'));
 
         core_useragent::instance(true, $this->user_agents['MSIE']['9.0']['Windows 7']);
+        $this->assertTrue(core_useragent::is_ie());
         $this->assertTrue(core_useragent::check_ie_version());
         $this->assertTrue(core_useragent::check_ie_version(0));
         $this->assertTrue(core_useragent::check_ie_version('5.0'));
@@ -217,6 +233,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_ie_version('10'));
 
         core_useragent::instance(true, $this->user_agents['MSIE']['9.0i']['Windows 7']);
+        $this->assertTrue(core_useragent::is_ie());
         $this->assertTrue(core_useragent::check_ie_version());
         $this->assertTrue(core_useragent::check_ie_version(0));
         $this->assertTrue(core_useragent::check_ie_version('5.0'));
@@ -224,6 +241,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_ie_version('10'));
 
         core_useragent::instance(true, $this->user_agents['MSIE']['10.0']['Windows 8']);
+        $this->assertTrue(core_useragent::is_ie());
         $this->assertTrue(core_useragent::check_ie_version());
         $this->assertTrue(core_useragent::check_ie_version(0));
         $this->assertTrue(core_useragent::check_ie_version('5.0'));
@@ -232,6 +250,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_ie_version('11'));
 
         core_useragent::instance(true, $this->user_agents['MSIE']['10.0i']['Windows 8']);
+        $this->assertTrue(core_useragent::is_ie());
         $this->assertTrue(core_useragent::check_ie_version());
         $this->assertTrue(core_useragent::check_ie_version(0));
         $this->assertTrue(core_useragent::check_ie_version('5.0'));
@@ -240,6 +259,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_ie_version('11'));
 
         core_useragent::instance(true, $this->user_agents['Firefox']['2.0']['Windows XP']);
+        $this->assertTrue(core_useragent::is_firefox());
         $this->assertTrue(core_useragent::check_firefox_version());
         $this->assertTrue(core_useragent::check_firefox_version('1.5'));
         $this->assertFalse(core_useragent::check_firefox_version('3.0'));
@@ -249,6 +269,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_gecko_version(2006010100));
 
         core_useragent::instance(true, $this->user_agents['Firefox']['1.0.6']['Windows XP']);
+        $this->assertTrue(core_useragent::is_firefox());
         $this->assertTrue(core_useragent::check_firefox_version());
         $this->assertTrue(core_useragent::check_gecko_version('1'));
         $this->assertFalse(core_useragent::check_gecko_version(20030516));
@@ -259,6 +280,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_gecko_version('2'));
 
         core_useragent::instance(true, $this->user_agents['Firefox']['2.0']['Windows XP']);
+        $this->assertTrue(core_useragent::is_firefox());
         $this->assertTrue(core_useragent::check_firefox_version());
         $this->assertTrue(core_useragent::check_firefox_version('1.5'));
         $this->assertTrue(core_useragent::check_gecko_version('1'));
@@ -269,6 +291,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_firefox_version('3.0'));
 
         core_useragent::instance(true, $this->user_agents['Firefox']['3.6']['Linux']);
+        $this->assertTrue(core_useragent::is_firefox());
         $this->assertTrue(core_useragent::check_firefox_version());
         $this->assertTrue(core_useragent::check_firefox_version('1.5'));
         $this->assertTrue(core_useragent::check_firefox_version('3.0'));
@@ -281,6 +304,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_firefox_version('10'));
 
         core_useragent::instance(true, $this->user_agents['Firefox']['3.6']['Linux']);
+        $this->assertTrue(core_useragent::is_firefox());
         $this->assertTrue(core_useragent::check_firefox_version());
         $this->assertTrue(core_useragent::check_firefox_version('1.5'));
         $this->assertTrue(core_useragent::check_firefox_version('3.0'));
@@ -295,6 +319,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_gecko_version('4'));
 
         core_useragent::instance(true, $this->user_agents['Firefox']['15.0a2']['Windows']);
+        $this->assertTrue(core_useragent::is_firefox());
         $this->assertTrue(core_useragent::check_firefox_version());
         $this->assertTrue(core_useragent::check_firefox_version('1.5'));
         $this->assertTrue(core_useragent::check_firefox_version('3.0'));
@@ -311,6 +336,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_gecko_version('18'));
 
         core_useragent::instance(true, $this->user_agents['Firefox']['18.0']['Mac OS X']);
+        $this->assertTrue(core_useragent::is_firefox());
         $this->assertTrue(core_useragent::check_firefox_version());
         $this->assertTrue(core_useragent::check_firefox_version('1.5'));
         $this->assertTrue(core_useragent::check_firefox_version('3.0'));
@@ -335,6 +361,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_gecko_version(2006010100));
         $this->assertFalse(core_useragent::check_gecko_version('3.6'));
         $this->assertFalse(core_useragent::check_gecko_version('4.0'));
+        $this->assertFalse(core_useragent::is_firefox());
         $this->assertFalse(core_useragent::check_firefox_version());
 
         core_useragent::instance(true, $this->user_agents['SeaMonkey']['2.1']['Linux']);
@@ -344,6 +371,7 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_gecko_version(20030516));
         $this->assertTrue(core_useragent::check_gecko_version(20051106));
         $this->assertTrue(core_useragent::check_gecko_version(2006010100));
+        $this->assertTrue(core_useragent::is_firefox());
         $this->assertTrue(core_useragent::check_firefox_version());
         $this->assertTrue(core_useragent::check_firefox_version(4.0));
         $this->assertFalse(core_useragent::check_firefox_version(5));
