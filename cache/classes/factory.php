@@ -208,7 +208,8 @@ class cache_factory {
      * @param array $options An array of options, available options are:
      *   - simplekeys : Set to true if the keys you will use are a-zA-Z0-9_
      *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
-     *   - persistent : If set to true the cache will persist construction requests.
+     *   - staticacceleration : If set to true the cache will hold onto data passing through it.
+     *   - staticaccelerationsize : The maximum number of items to hold onto for acceleration purposes.
      * @return cache_application|cache_session|cache_request
      */
     public function create_cache_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
@@ -302,6 +303,15 @@ class cache_factory {
             return array();
         }
         return $this->definitionstores[$id];
+    }
+
+    /**
+     * Returns the cache instances that have been used within this request.
+     * @since 2.6
+     * @return array
+     */
+    public function get_caches_in_use() {
+        return $this->cachesfromdefinitions;
     }
 
     /**
@@ -592,7 +602,7 @@ class cache_factory {
      * </code>
      */
     public static function disable_stores() {
-        // First reset to clear any persistent caches.
+        // First reset to clear any static acceleration array.
         $factory = self::instance();
         $factory->reset_cache_instances();
         $factory->set_state(self::STATE_STORES_DISABLED);
