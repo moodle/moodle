@@ -63,7 +63,8 @@ if ($id) {
 
             $displaystring = null;
             if (!empty($grade_item->itemmodule)) {
-                $displaystring = get_string('modulename', $grade_item->itemmodule).': '.$grade_item->get_name();
+                $displaystring = get_string('modulename', $grade_item->itemmodule).get_string('labelsep', 'langconfig')
+                        .$grade_item->get_name();
             } else {
                 $displaystring = $grade_item->get_name();
             }
