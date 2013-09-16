@@ -446,6 +446,22 @@ class core_files_zip_packer_testcase extends advanced_testcase implements file_p
                 array(file_progress::INDETERMINATE, file_progress::INDETERMINATE),
                 $this->progress[0]);
 
+        // Archive to pathname using entire folder and subfolder instead of file list.
+        unlink($archive);
+        $folder = make_temp_directory('zip_packer_progress');
+        file_put_contents($folder . '/test1.txt', 'hello');
+        $subfolder = $folder . '/sub';
+        check_dir_exists($subfolder);
+        file_put_contents($subfolder . '/test2.txt', 'world');
+        file_put_contents($subfolder . '/test3.txt', 'and');
+        file_put_contents($subfolder . '/test4.txt', 'other');
+        file_put_contents($subfolder . '/test5.txt', 'worlds');
+        $this->progress = array();
+        $result = $packer->archive_to_pathname(array('' => $folder), $archive, true, $this);
+        $this->assertTrue($result);
+        // Should send progress at least once per file.
+        $this->assertTrue(count($this->progress) >= 5);
+
         // Archive to storage.
         $this->progress = array();
         $archivefile = $packer->archive_to_storage($this->files, $context->id,
