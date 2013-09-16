@@ -35,6 +35,7 @@ information provided here is intended especially for developers.
 * Internal (noreply and support) user support has been added for sending/receiving message.
   Use core_user::get_noreply_user() and core_user::get_support_user() to get noreply and support user's respectively.
   Real users can be used as noreply/support users by setting $CFG->noreplyuserid and $CFG->supportuserid
+* New function readfile_allow_large() in filelib.php for use when very large files may need sending to user.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
