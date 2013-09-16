@@ -584,6 +584,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $params['assignsubmission_onlinetext_enabled'] = 1;
         $params['submissiondrafts'] = 1;
         $params['sendnotifications'] = 0;
+        $params['requiresubmissionstatement'] = 1;
         $instance = $generator->create_instance($params);
         $cm = get_coursemodule_from_instance('assign', $instance->id);
         $context = context_module::instance($cm->id);
@@ -607,7 +608,12 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $plugin = $assign->get_submission_plugin_by_type('onlinetext');
         $plugin->save($submission, $data);
 
-        $result = mod_assign_external::submit_for_grading($instance->id);
+        $result = mod_assign_external::submit_for_grading($instance->id, false);
+
+        // Should be 1 fail because the submission statement was not aceptted.
+        $this->assertEquals(1, count($result));
+
+        $result = mod_assign_external::submit_for_grading($instance->id, true);
 
         // Check for 0 warnings.
         $this->assertEquals(0, count($result));
@@ -657,7 +663,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
                                               $studentrole->id);
 
         $this->setUser($student1);
-        $result = mod_assign_external::submit_for_grading($instance->id);
+        $result = mod_assign_external::submit_for_grading($instance->id, true);
 
         // Check for 0 warnings.
         $this->assertEquals(1, count($result));
@@ -675,7 +681,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, count($result));
 
         $this->setUser($student1);
-        $result = mod_assign_external::submit_for_grading($instance->id);
+        $result = mod_assign_external::submit_for_grading($instance->id, true);
         $this->assertEquals(0, count($result));
 
         $this->setUser($student1);
@@ -783,7 +789,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a student1 with an online text submission.
         // Simulate a submission.
         $this->setUser($student1);
-        $result = mod_assign_external::submit_for_grading($instance->id);
+        $result = mod_assign_external::submit_for_grading($instance->id, true);
         $this->assertEquals(0, count($result));
 
         // Ready to test.

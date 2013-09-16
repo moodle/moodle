@@ -1223,14 +1223,15 @@ class mod_assign_external extends external_api {
     }
 
     /**
-     * Describes the parameters for unlock_submissions
+     * Describes the parameters for submit_for_grading
      * @return external_external_function_parameters
      * @since  Moodle 2.6
      */
     public static function submit_for_grading_parameters() {
         return new external_function_parameters(
             array(
-                'assignmentid' => new external_value(PARAM_INT, 'The assignment id to operate on')
+                'assignmentid' => new external_value(PARAM_INT, 'The assignment id to operate on'),
+                'acceptsubmissionstatement' => new external_value(PARAM_BOOL, 'Accept the assignment submission statement')
             )
         );
     }
@@ -1242,12 +1243,13 @@ class mod_assign_external extends external_api {
      * @return array of warnings to indicate any errors.
      * @since Moodle 2.6
      */
-    public static function submit_for_grading($assignmentid) {
+    public static function submit_for_grading($assignmentid, $acceptsubmissionstatement) {
         global $CFG, $USER;
         require_once("$CFG->dirroot/mod/assign/locallib.php");
 
         $params = self::validate_parameters(self::submit_for_grading_parameters(),
-                                            array('assignmentid' => $assignmentid));
+                                            array('assignmentid' => $assignmentid,
+                                                  'acceptsubmissionstatement' => $acceptsubmissionstatement));
 
         $cm = get_coursemodule_from_instance('assign', $assignmentid, 0, false, MUST_EXIST);
         $context = context_module::instance($cm->id);
@@ -1255,7 +1257,10 @@ class mod_assign_external extends external_api {
         $assignment = new assign($context, $cm, null);
 
         $warnings = array();
-        if (!$assignment->submit_for_grading()) {
+        $data = new stdClass();
+        $data->submissionstatement = $acceptsubmissionstatement;
+
+        if (!$assignment->submit_for_grading($data)) {
             $detail = 'User id: ' . $USER->id . ', Assignment id: ' . $assignmentid;
             $warnings[] = self::generate_warning($assignmentid,
                                                  'couldnotsubmitforgrading',
