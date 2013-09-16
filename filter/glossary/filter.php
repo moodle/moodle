@@ -43,6 +43,7 @@ class filter_glossary extends moodle_text_filter {
                     'moodle-filter_glossary-autolinker',
                     'M.filter_glossary.init_filter_autolinking',
                     array(array('courseid' => 0)));
+            $page->requires->strings_for_js(array('ok'), 'moodle');
             $jsinitialised = true;
         }
     }
