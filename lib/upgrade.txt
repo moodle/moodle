@@ -141,6 +141,7 @@ Event triggering and event handlers:
       * groups_groupings_groups_removed -> (no replacement)
       * groups_groups_deleted           -> \core\event\group_deleted
       * groups_groupings_deleted        -> \core\event\grouping_deleted
+    * edit_module_post_actions() does not trigger events any more.
 
 === 2.5.1 ===
 

@@ -703,18 +703,19 @@ class dndupload_ajax_processor {
         $mod->groupmodelink = $this->cm->groupmodelink;
         $mod->groupmode = $this->cm->groupmode;
 
-        // Trigger mod_created event with information about this module.
-        $eventdata = new stdClass();
-        $eventdata->modulename = $mod->modname;
-        $eventdata->name       = $mod->name;
-        $eventdata->cmid       = $mod->id;
-        $eventdata->courseid   = $this->course->id;
-        $eventdata->userid     = $USER->id;
-        events_trigger('mod_created', $eventdata);
+        // Trigger course module created event.
+        $event = \core\event\course_module_created::create(array(
+            'courseid' => $this->course->id,
+            'context'  => context_module::instance($mod->id),
+            'objectid' => $mod->id,
+            'other'    => array(
+                'modulename' => $mod->modname,
+                'name'       => $mod->name,
+                'instanceid' => $instanceid
+            )
+        ));
+        $event->trigger();
 
-        add_to_log($this->course->id, "course", "add mod",
-                   "../mod/{$mod->modname}/view.php?id=$mod->id",
-                   "{$mod->modname} $instanceid");
         add_to_log($this->course->id, $mod->modname, "add",
                    "view.php?id=$mod->id",
                    "$instanceid", $mod->id);

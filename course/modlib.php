@@ -140,16 +140,24 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         condition_info::update_cm_from_form((object)array('id'=>$moduleinfo->coursemodule), $moduleinfo, false);
     }
 
-    $eventname = 'mod_created';
+    // Trigger event based on the action we did.
+    $event = \core\event\course_module_created::create(array(
+         'courseid' => $course->id,
+         'context'  => $modcontext,
+         'objectid' => $moduleinfo->coursemodule,
+         'other'    => array(
+             'modulename' => $moduleinfo->modulename,
+             'name'       => $moduleinfo->name,
+             'instanceid' => $moduleinfo->instance
+         )
+    ));
+    $event->trigger();
 
-    add_to_log($course->id, "course", "add mod",
-               "../mod/$moduleinfo->modulename/view.php?id=$moduleinfo->coursemodule",
-               "$moduleinfo->modulename $moduleinfo->instance");
     add_to_log($course->id, $moduleinfo->modulename, "add",
                "view.php?id=$moduleinfo->coursemodule",
                "$moduleinfo->instance", $moduleinfo->coursemodule);
 
-    $moduleinfo = edit_module_post_actions($moduleinfo, $course, 'mod_created');
+    $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 
     return $moduleinfo;
 }
@@ -157,27 +165,18 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
 
 /**
  * Common create/update module module actions that need to be processed as soon as a module is created/updaded.
- * For example: trigger event, create grade parent category, add outcomes, rebuild caches, regrade, save plagiarism settings...
+ * For example:create grade parent category, add outcomes, rebuild caches, regrade, save plagiarism settings...
+ * Please note this api does not trigger events as of MOODLE 2.6. Please trigger events before calling this api.
  *
  * @param object $moduleinfo the module info
  * @param object $course the course of the module
- * @param string $eventname the event name to trigger
  *
- * return object moduleinfo update with grading management info
+ * @return object moduleinfo update with grading management info
  */
-function edit_module_post_actions($moduleinfo, $course, $eventname) {
-    global $USER, $CFG;
+function edit_module_post_actions($moduleinfo, $course) {
+    global $CFG;
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
-
-    // Trigger mod_created/mod_updated event with information about this module.
-    $eventdata = new stdClass();
-    $eventdata->modulename = $moduleinfo->modulename;
-    $eventdata->name       = $moduleinfo->name;
-    $eventdata->cmid       = $moduleinfo->coursemodule;
-    $eventdata->courseid   = $course->id;
-    $eventdata->userid     = $USER->id;
-    events_trigger($eventname, $eventdata);
 
     // Sync idnumber with grade_item.
     if ($grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
@@ -490,14 +489,24 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $completion->reset_all_state($cm);
     }
 
-    add_to_log($course->id, "course", "update mod",
-               "../mod/$moduleinfo->modulename/view.php?id=$moduleinfo->coursemodule",
-               "$moduleinfo->modulename $moduleinfo->instance");
+    // Trigger event based on the action we did.
+    $event = \core\event\course_module_updated::create(array(
+        'courseid' => $course->id,
+        'context'  => $modcontext,
+        'objectid' => $moduleinfo->coursemodule,
+        'other'    => array(
+            'modulename' => $moduleinfo->modulename,
+            'name'       => $moduleinfo->name,
+            'instanceid' => $moduleinfo->instance
+        )
+    ));
+    $event->trigger();
+
     add_to_log($course->id, $moduleinfo->modulename, "update",
                "view.php?id=$moduleinfo->coursemodule",
                "$moduleinfo->instance", $moduleinfo->coursemodule);
 
-    $moduleinfo = edit_module_post_actions($moduleinfo, $course, 'mod_updated');
+    $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 
     return array($cm, $moduleinfo);
 }
