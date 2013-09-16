@@ -1225,10 +1225,19 @@ class assign {
      */
     public function list_participants($currentgroup, $idsonly) {
         if ($idsonly) {
-            return get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.id');
+            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup, 'u.id');
         } else {
-            return get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup);
+            $users = get_enrolled_users($this->context, 'mod/assign:submit', $currentgroup);
         }
+
+        $cm = $this->get_course_module();
+        foreach ($users as $userid => $user) {
+            if (!groups_course_module_visible($cm, $userid)) {
+                unset($users[$userid]);
+            }
+        }
+
+        return $users;
     }
 
     /**
@@ -1260,7 +1269,7 @@ class assign {
      * @return int number of matching users
      */
     public function count_participants($currentgroup) {
-        return count_enrolled_users($this->context, 'mod/assign:submit', $currentgroup);
+        return count($this->list_participants($currentgroup, true));
     }
 
     /**
