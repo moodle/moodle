@@ -116,6 +116,7 @@ if (empty($launch) && (has_capability('mod/scorm:skipview', $contextmodule))) {
 $PAGE->set_title($pagetitle);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($scorm->name));
 
 if (!empty($action) && confirm_sesskey() && has_capability('mod/scorm:deleteownresponses', $contextmodule)) {
     if ($action == 'delete') {
@@ -135,7 +136,6 @@ $currenttab = 'info';
 require($CFG->dirroot . '/mod/scorm/tabs.php');
 
 // Print the main part of the page
-echo $OUTPUT->heading(format_string($scorm->name));
 $attemptstatus = '';
 if (empty($launch) && ($scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_ALL ||
          $scorm->displayattemptstatus == SCORM_DISPLAY_ATTEMPTSTATUS_ENTRY)) {

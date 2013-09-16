@@ -87,7 +87,7 @@ if (!$table->is_downloading($download, $exportfilename)) {
     require($CFG->dirroot . '/mod/scorm/report/userreporttabs.php');
     echo $OUTPUT->box_start('generalbox boxaligncenter');
     echo $OUTPUT->heading("$strattempt $attempt - ". fullname($user).': '.
-    format_string($selsco->title). ' - '. get_string('details', 'scorm'));
+    format_string($selsco->title). ' - '. get_string('details', 'scorm'), 3);
 }
 $table->define_baseurl($PAGE->url);
 $table->define_columns(array('element', 'value'));
