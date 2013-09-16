@@ -119,3 +119,6 @@
 #page-course-publish-metadata .hublink {}
 #page-course-publish-backup .courseuploadtextinfo {text-align:center;}
 #page-course-publish-backup .sharecoursecontinue  {text-align:center;}
+
+.sitetopic .section .activity .commands,
+.course-content .section .activity .commands {float: right;}
