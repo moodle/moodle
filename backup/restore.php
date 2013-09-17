@@ -43,11 +43,8 @@ if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
     }
 }
 
-$heading = $course->fullname;
-
-$PAGE->set_title($heading.': '.$restore->get_stage_name());
-$PAGE->set_heading($heading);
-$PAGE->navbar->add($restore->get_stage_name());
+$PAGE->set_title($course->shortname . ': ' . get_string('restore'));
+$PAGE->set_heading($course->fullname);
 
 $renderer = $PAGE->get_renderer('core','backup');
 echo $OUTPUT->header();

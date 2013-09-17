@@ -25,11 +25,9 @@ require_login($course);
 // Must hold restoretargetimport in the current course
 require_capability('moodle/restore:restoretargetimport', $context);
 
-$heading = get_string('import');
-
 // Set up the page
-$PAGE->set_title($heading);
-$PAGE->set_heading($heading);
+$PAGE->set_title($course->shortname . ': ' . get_string('import'));
+$PAGE->set_heading($course->fullname);
 $PAGE->set_url(new moodle_url('/backup/import.php', array('id'=>$courseid)));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
@@ -181,11 +179,6 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Otherwise save the controller and progress
     $backup->save_controller();
 }
-
-// Adjust the page for the stage
-$PAGE->set_title($heading.': '.$backup->get_stage_name());
-$PAGE->set_heading($heading.': '.$backup->get_stage_name());
-$PAGE->navbar->add($backup->get_stage_name());
 
 // Display the current stage
 echo $OUTPUT->header();
