@@ -59,6 +59,11 @@ if (!empty($add)) {
     $context = context_course::instance($course->id);
     require_capability('moodle/course:manageactivities', $context);
 
+    // There is no page for this in the navigation. The closest we'll have is the course section.
+    // If the course section isn't displayed on the navigation this will fall back to the course which
+    // will be the closest match we have.
+    navigation_node::override_active_url(course_get_url($course, $section));
+
     course_create_sections_if_missing($course, $section);
     $cw = get_fast_modinfo($course)->get_section_info($section);
 
@@ -122,6 +127,7 @@ if (!empty($add)) {
     } else {
         $pageheading = get_string('addinganew', 'moodle', $fullmodulename);
     }
+    $navbaraddition = $pageheading;
 
 } else if (!empty($update)) {
 
@@ -228,6 +234,7 @@ if (!empty($add)) {
     } else {
         $pageheading = get_string('updatinga', 'moodle', $fullmodulename);
     }
+    $navbaraddition = null;
 
 } else {
     require_login();
@@ -651,6 +658,11 @@ if ($mform->is_cancelled()) {
     $PAGE->set_heading($course->fullname);
     $PAGE->set_title($streditinga);
     $PAGE->set_cacheable(false);
+
+    if (isset($navbaraddition)) {
+        $PAGE->navbar->add($navbaraddition);
+    }
+
     echo $OUTPUT->header();
 
     if (get_string_manager()->string_exists('modulename_help', $module->name)) {
