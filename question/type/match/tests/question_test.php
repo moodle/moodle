@@ -98,35 +98,33 @@ class qtype_match_question_test extends advanced_testcase {
 
     public function test_grading() {
         $question = test_question_maker::make_a_matching_question();
-        $question->shufflestems = false;
         $question->start_attempt(new question_attempt_step(), 1);
 
         $choiceorder = $question->get_choice_order();
         $orderforchoice = array_combine(array_values($choiceorder), array_keys($choiceorder));
 
-        $this->assertEquals(array(1, question_state::$gradedright),
-                $question->grade_response(array('sub0' => $orderforchoice[1],
-                        'sub1' => $orderforchoice[2], 'sub2' => $orderforchoice[2],
-                        'sub3' => $orderforchoice[1])));
-        $this->assertEquals(array(0.25, question_state::$gradedpartial),
-                $question->grade_response(array('sub0' => $orderforchoice[1])));
-        $this->assertEquals(array(0, question_state::$gradedwrong),
-                $question->grade_response(array('sub0' => $orderforchoice[2],
-                        'sub1' => $orderforchoice[3], 'sub2' => $orderforchoice[1],
-                        'sub3' => $orderforchoice[2])));
+        $correctreponse = $question->prepare_simulated_post_data(
+                                                array(0 => 'Mammal', 1 => 'Amphibian', 2  => 'Amphibian', 3  => 'Mammal'));
+        $this->assertEquals(array(1, question_state::$gradedright), $question->grade_response($correctreponse));
+
+        $partialresponse = $question->prepare_simulated_post_data(array(0 => 'Mammal'));
+        $this->assertEquals(array(0.25, question_state::$gradedpartial), $question->grade_response($partialresponse));
+
+        $partiallycorrectresponse = $question->prepare_simulated_post_data(
+                                                array(0 => 'Mammal', 1 => 'Insect', 2 => 'Insect', 3 => 'Amphibian'));
+        $this->assertEquals(array(0.25, question_state::$gradedpartial), $question->grade_response($partiallycorrectresponse));
+
+        $wrongresponse = $question->prepare_simulated_post_data(
+                                                array(0 => 'Amphibian', 1 => 'Insect', 2 => 'Insect', 3  => 'Amphibian'));
+        $this->assertEquals(array(0, question_state::$gradedwrong), $question->grade_response($wrongresponse));
     }
 
     public function test_get_correct_response() {
         $question = test_question_maker::make_a_matching_question();
-        $question->shufflestems = false;
         $question->start_attempt(new question_attempt_step(), 1);
 
-        $choiceorder = $question->get_choice_order();
-        $orderforchoice = array_combine(array_values($choiceorder), array_keys($choiceorder));
-
-        $this->assertEquals(array('sub0' => $orderforchoice[1], 'sub1' => $orderforchoice[2],
-                'sub2' => $orderforchoice[2], 'sub3' => $orderforchoice[1]),
-                $question->get_correct_response());
+        $correct = $question->prepare_simulated_post_data(array(0 => 'Mammal', 1 => 'Amphibian', 2 => 'Amphibian', 3 => 'Mammal'));
+        $this->assertEquals($correct, $question->get_correct_response());
     }
 
     public function test_get_question_summary() {
@@ -144,40 +142,40 @@ class qtype_match_question_test extends advanced_testcase {
 
     public function test_summarise_response() {
         $match = test_question_maker::make_a_matching_question();
-        $match->shufflestems = false;
         $match->start_attempt(new question_attempt_step(), 1);
 
-        $summary = $match->summarise_response(array('sub0' => 2, 'sub1' => 1));
+        $summary = $match->summarise_response($match->prepare_simulated_post_data(array(0 => 'Amphibian', 1 => 'Mammal')));
 
-        $this->assertRegExp('/Dog -> \w+; Frog -> \w+/', $summary);
+        $this->assertRegExp('/Dog -> Amphibian/', $summary);
+        $this->assertRegExp('/Frog -> Mammal/', $summary);
     }
 
     public function test_classify_response() {
         $match = test_question_maker::make_a_matching_question();
-        $match->shufflestems = false;
         $match->start_attempt(new question_attempt_step(), 1);
 
-        $choiceorder = $match->get_choice_order();
-        $orderforchoice = array_combine(array_values($choiceorder), array_keys($choiceorder));
-        $choices = array(0 => get_string('choose') . '...');
-        foreach ($choiceorder as $key => $choice) {
-            $choices[$key] = $match->choices[$choice];
-        }
-
+        $response = $match->prepare_simulated_post_data(array(0 => 'Amphibian', 1 => 'Insect', 2 => '', 3 => ''));
         $this->assertEquals(array(
                     1 => new question_classified_response(2, 'Amphibian', 0),
                     2 => new question_classified_response(3, 'Insect', 0),
                     3 => question_classified_response::no_response(),
                     4 => question_classified_response::no_response(),
-                ), $match->classify_response(array('sub0' => $orderforchoice[2],
-                        'sub1' => $orderforchoice[3], 'sub2' => 0, 'sub3' => 0)));
+                ), $match->classify_response($response));
+
+        $response = $match->prepare_simulated_post_data(array(0 => 'Mammal', 1 => 'Amphibian', 2 => 'Amphibian', 3 => 'Mammal'));
         $this->assertEquals(array(
                     1 => new question_classified_response(1, 'Mammal', 0.25),
                     2 => new question_classified_response(2, 'Amphibian', 0.25),
                     3 => new question_classified_response(2, 'Amphibian', 0.25),
                     4 => new question_classified_response(1, 'Mammal', 0.25),
-                ), $match->classify_response(array('sub0' => $orderforchoice[1],
-                        'sub1' => $orderforchoice[2], 'sub2' => $orderforchoice[2],
-                        'sub3' => $orderforchoice[1])));
+                ), $match->classify_response($response));
     }
+
+    public function test_prepare_simulated_post_data() {
+        $m = test_question_maker::make_a_matching_question();
+        $m->start_attempt(new question_attempt_step(), 1);
+        $postdata = $m->prepare_simulated_post_data(array(0 => 'Mammal', 1 => 'Amphibian', 2 => 'Amphibian', 3 => 'Mammal'));
+        $this->assertEquals(array(4, 4), $m->get_num_parts_right($postdata));
+    }
+
 }
