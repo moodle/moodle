@@ -99,7 +99,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
             $title = html_writer::link($submission->url, $title);
         }
 
-        $o .= $this->output->heading($title, 3, 'title');
+        $o .= $this->output->heading($title, 3);
 
         if (!$anonymous) {
             $author             = new stdclass();
@@ -229,7 +229,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $classes = 'submission-full example';
         $o .= $this->output->container_start($classes);
         $o .= $this->output->container_start('header');
-        $o .= $this->output->heading(format_string($example->title), 3, 'title');
+        $o .= $this->output->container(format_string($example->title), array('class' => 'title'));
         $o .= $this->output->container_end(); // end of header
 
         $content = file_rewrite_pluginfile_urls($example->content, 'pluginfile.php', $this->page->context->id,
