@@ -52,7 +52,7 @@ class scorm_graphs_report extends scorm_default_report {
                     $imageurl = new moodle_url('/mod/scorm/report/graphs/graph.php',
                             array('scoid' => $sco->id));
                     $graphname = $sco->title;
-                    echo $OUTPUT->heading($graphname);
+                    echo $OUTPUT->heading($graphname, 3);
                     echo html_writer::tag('div', html_writer::empty_tag('img',
                             array('src' => $imageurl, 'alt' => $graphname)),
                             array('class' => 'graph'));

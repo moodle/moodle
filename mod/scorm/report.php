@@ -74,9 +74,9 @@ if (empty($noheader)) {
     $PAGE->navbar->add($strreport, new moodle_url('/mod/scorm/report.php', array('id'=>$cm->id)));
 
     echo $OUTPUT->header();
+    echo $OUTPUT->heading(format_string($scorm->name));
     $currenttab = 'reports';
     require($CFG->dirroot . '/mod/scorm/tabs.php');
-    echo $OUTPUT->heading(format_string($scorm->name));
 }
 
 // Open the selected Scorm report and display it
