@@ -29,6 +29,7 @@
 
 #page-mod-glossary-view table.glossarycategoryheader {margin-bottom:0em;}
 #page-mod-glossary-view table.glossarycategoryheader th {padding:0px;}
+#page-mod-glossary-view td.glossarysearchbox label {display: inline-block;}
 
 #page-mod-glossary-showentry #page-content {min-width:600px;}
 
