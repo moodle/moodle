@@ -39,16 +39,7 @@ if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $courseid))
 }
 
 if ($beep) {
-    $message->chatid    = $chatuser->chatid;
-    $message->userid    = $chatuser->userid;
-    $message->groupid   = $chatuser->groupid;
-    $message->message   = "beep $beep";
-    $message->system    = 0;
-    $message->timestamp = time();
-
-    $DB->insert_record('chat_messages', $message);
-    $DB->insert_record('chat_messages_current', $message);
-
+    chat_send_chatmessage($chatuser, "beep $beep", 0, $cm);
     $chatuser->lastmessageping = time();          // A beep is a ping  ;-)
 }
 
