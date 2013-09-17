@@ -99,8 +99,6 @@
 .courses .coursebox.odd:hover, .course_category_tree .courses > .paging:hover {background-color:[[setting:hovercolor]];}
 
 /* Category listings */
-.course_category_tree .controls {margin-bottom:5px;text-align:right;float:right;}
-.course_category_tree .controls div {padding-right:2em;font-size:75%;}
 .course_category_tree .category > .info {background-image:url([[pix:theme|trend/__setting_trendcolor__/hgradient]]);background-repeat:repeat-x;border:1px solid #ddd;}
 .course_category_tree.frontpage-category-names .category > .info {background:none;border:none;}
 .course_category_tree .category > .info {margin: 5px 0;}

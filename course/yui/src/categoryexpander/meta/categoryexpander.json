@@ -1,0 +1,8 @@
+{
+  "moodle-course-categoryexpander": {
+    "requires": [
+        "node",
+        "event-key"
+    ]
+  }
+}
