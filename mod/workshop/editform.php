@@ -74,7 +74,8 @@ if ($mform->is_cancelled()) {
 // Output starts here
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('pluginname', 'workshopform_' . $workshop->strategy));
+echo $OUTPUT->heading(format_string($workshop->name));
+echo $OUTPUT->heading(get_string('pluginname', 'workshopform_' . $workshop->strategy), 3);
 
 $mform->display();
 

@@ -57,6 +57,7 @@ $initresult = $allocator->init();
 //
 $output = $PAGE->get_renderer('mod_workshop');
 echo $output->header();
+echo $OUTPUT->heading(format_string($workshop->name));
 
 $allocators = workshop::installed_allocators();
 if (!empty($allocators)) {

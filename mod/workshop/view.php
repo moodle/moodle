@@ -371,7 +371,7 @@ case workshop::PHASE_ASSESSMENT:
         print_collapsible_region_start('', 'workshop-viewlet-assignedassessments', get_string('assignedassessments', 'workshop'));
         if (! $assessments = $workshop->get_assessments_by_reviewer($USER->id)) {
             echo $output->box_start('generalbox assessment-none');
-            echo $output->heading(get_string('assignedassessmentsnone', 'workshop'), 3);
+            echo $output->notification(get_string('assignedassessmentsnone', 'workshop'));
             echo $output->box_end();
         } else {
             $shownames = has_capability('mod/workshop:viewauthornames', $PAGE->context);
