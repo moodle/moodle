@@ -68,7 +68,6 @@ class mod_quiz_attempt_walkthrough_testcase extends advanced_testcase {
 
         // Make a user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
-        $this->setUser($user1);
 
         $quizobj = quiz::create($quiz->id, $user1->id);
 
@@ -77,7 +76,7 @@ class mod_quiz_attempt_walkthrough_testcase extends advanced_testcase {
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
         $timenow = time();
-        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow);
+        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user1->id);
 
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
 
