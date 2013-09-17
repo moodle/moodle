@@ -598,9 +598,23 @@ class question_usage_by_activity {
         $simulatedpostdata = array();
         $simulatedpostdata['slots'] = implode(',', array_keys($simulatedresponses));
         foreach ($simulatedresponses as $slot => $responsedata) {
-            $prefix = $this->get_field_prefix($slot);
-            $slotresponse = $this->get_question($slot)->prepare_simulated_post_data($responsedata);
+            $slotresponse = array();
+
+            // Behaviour vars should not be processed by question type, just add prefix.
+            $behaviourvars = $this->get_question_attempt($slot)->get_behaviour()->get_expected_data();
+            foreach ($behaviourvars as $behaviourvarname => $unused) {
+                $behaviourvarkey = '-'.$behaviourvarname;
+                if (isset($responsedata[$behaviourvarkey])) {
+                    $slotresponse[$behaviourvarkey] = $responsedata[$behaviourvarkey];
+                    unset($responsedata[$behaviourvarkey]);
+                }
+            }
+
+            $slotresponse += $this->get_question($slot)->prepare_simulated_post_data($responsedata);
             $slotresponse[':sequencecheck'] =  $this->get_question_attempt($slot)->get_sequence_check_count();
+
+            // Add this slot's prefix to slot data.
+            $prefix = $this->get_field_prefix($slot);
             foreach ($slotresponse as $key => $value) {
                 $simulatedpostdata[$prefix.$key] = $value;
             }

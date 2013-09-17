@@ -41,11 +41,6 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  */
 class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
 
-    /**
-     * @var array postfix number for sets of csv files to load data from.
-     */
-    protected $tests = array('00');
-
     protected $files = array('questions', 'steps', 'results');
 
     /**
@@ -58,7 +53,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      */
     protected $randqids;
 
-    public function create_quiz($qs) {
+    public function create_quiz($quizsettings, $qs) {
         global $SITE, $DB;
         $this->setAdminUser();
 
@@ -106,10 +101,14 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
 
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
-        $this->quiz = $quizgenerator->create_instance(array('course'=>$SITE->id,
-                                                      'questionsperpage' => 0,
-                                                      'grade' => 100.0,
-                                                      'sumgrades' => $sumofgrades));
+
+        // Settings from param override defaults.
+        $aggregratedsettings = $quizsettings + array('course'=>$SITE->id,
+                                                     'questionsperpage' => 0,
+                                                     'grade' => 100.0,
+                                                     'sumgrades' => $sumofgrades);
+
+        $this->quiz = $quizgenerator->create_instance($aggregratedsettings);
 
         $this->randqids = array();
         foreach ($slots as $slotno => $slotquestion) {
@@ -143,7 +142,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      * @param string $test
      * @return \PHPUnit_Extensions_Database_DataSet_ITable
      */
-    protected function load_csv_data_file($setname, $test) {
+    protected function load_csv_data_file($setname, $test='') {
         $files = array($setname => $this->get_full_path_of_csv_file($setname, $test));
         return $this->createCsvDataSet($files)->getTable($setname);
     }
@@ -177,17 +176,19 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
     /**
      * Data provider method for test_walkthrough_from_csv. Called by PHPUnit.
      *
-     * @return array One array element for each run of the test. Each element contains an array with the one param for
+     * @return array One array element for each run of the test. Each element contains an array with the params for
      *                  test_walkthrough_from_csv.
      */
     public function get_data_for_walkthrough() {
+        $quizzes = $this->load_csv_data_file('quizzes');
         $datasets = array();
-        foreach ($this->tests as $test) {
+        for ($rowno = 0; $rowno < $quizzes->getRowCount(); $rowno++) {
+            $quizsettings = $quizzes->getRow($rowno);
             $dataset = array();
             foreach ($this->files as $file) {
-                $dataset[$file] = $this->load_csv_data_file($file, $test);
+                $dataset[$file] = $this->load_csv_data_file($file, $quizsettings['testnumber']);
             }
-            $datasets[] = array($dataset);
+            $datasets[] = array($quizsettings, $dataset);
         }
         return $datasets;
     }
@@ -195,11 +196,12 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
     /**
      * Create a quiz add questions to it, walk through quiz attempts and then check results.
      *
-     * @param PHPUnit_Extensions_Database_DataSet_ITable[] of data read from csv file "questionsXX.csv",
+     * @param $quizsettings array of settings read from csv file quizzes.csv
+     * @param $csvdata \PHPUnit_Extensions_Database_DataSet_ITable[] of data read from csv file "questionsXX.csv",
      *                                                                                  "stepsXX.csv" and "resultsXX.csv".
      * @dataProvider get_data_for_walkthrough
      */
-    public function test_walkthrough_from_csv($csvdata) {
+    public function test_walkthrough_from_csv($quizsettings, $csvdata) {
 
         // CSV data files for these tests were generated using :
         // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/responsegenerator
@@ -207,7 +209,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
         $this->resetAfterTest(true);
         question_bank::get_qtype('random')->clear_caches_before_testing();
 
-        $this->create_quiz($csvdata['questions']);
+        $this->create_quiz($quizsettings, $csvdata['questions']);
 
         $attemptids = $this->walkthrough_attempts($csvdata['steps']);
 
@@ -231,38 +233,47 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
             if (!$user = $DB->get_record('user', $username)) {
                 $user = $this->getDataGenerator()->create_user($username);
             }
-            // Start the attempt.
-            $quizobj = quiz::create($this->quiz->id, $user->id);
-            $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
-            $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
-            $timenow = time();
-            $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
-            // Select variant and / or random sub question.
-            if (!isset($step['variants'])) {
-                $step['variants'] = array();
-            }
-            if (isset($step['randqs'])) {
-                // Replace 'names' with ids.
-                foreach ($step['randqs'] as $slotno => $randqname) {
-                    $step['randqs'][$slotno] = $this->randqids[$slotno][$randqname];
+            if (!isset($attemptids[$step['quizattempt']])) {
+                // Start the attempt.
+                $quizobj = quiz::create($this->quiz->id, $user->id);
+                $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+                $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+                $prevattempts = quiz_get_user_attempts($this->quiz->id, $user->id, 'all', true);
+                $attemptnumber = count($prevattempts) + 1;
+                $timenow = time();
+                $attempt = quiz_create_attempt($quizobj, $attemptnumber, false, $timenow, false, $user->id);
+                // Select variant and / or random sub question.
+                if (!isset($step['variants'])) {
+                    $step['variants'] = array();
                 }
-            } else {
-                $step['randqs'] = array();
-            }
-            quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow, $step['randqs'], $step['variants']);
-            quiz_attempt_save_started($quizobj, $quba, $attempt);
+                if (isset($step['randqs'])) {
+                    // Replace 'names' with ids.
+                    foreach ($step['randqs'] as $slotno => $randqname) {
+                        $step['randqs'][$slotno] = $this->randqids[$slotno][$randqname];
+                    }
+                } else {
+                    $step['randqs'] = array();
+                }
 
-            $attemptids[$step['quizattempt']] = $attempt->id;
+                quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $timenow, $step['randqs'], $step['variants']);
+                quiz_attempt_save_started($quizobj, $quba, $attempt);
+                $attemptid = $attemptids[$step['quizattempt']] = $attempt->id;
+            } else {
+                $attemptid = $attemptids[$step['quizattempt']];
+            }
+
 
             // Process some responses from the student.
-            $attemptobj = quiz_attempt::create($attempt->id);
+            $attemptobj = quiz_attempt::create($attemptid);
             $attemptobj->process_submitted_actions($timenow, false, $step['responses']);
 
             // Finish the attempt.
-            $attemptobj = quiz_attempt::create($attempt->id);
-            $attemptobj->process_finish($timenow, false);
-
+            if (!isset($step['finished']) || ($step['finished'] == 1)) {
+                $attemptobj = quiz_attempt::create($attemptid);
+                $attemptobj->process_finish($timenow, false);
+            }
         }
         return $attemptids;
     }
@@ -289,6 +300,9 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
      */
     protected function check_attempt_results($result, $attemptobj) {
         foreach ($result as $fieldname => $value) {
+            if ($value === '!NULL!') {
+                $value = null;
+            }
             switch ($fieldname) {
                 case 'quizattempt' :
                     break;
@@ -311,7 +325,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
                     }
                     break;
                 case 'finished' :
-                    $this->assertEquals($value, $attemptobj->is_finished());
+                    $this->assertEquals((bool)$value, $attemptobj->is_finished());
                     break;
                 case 'summarks' :
                     $this->assertEquals($value, $attemptobj->get_sum_marks(), "Sum of marks of attempt {$result['quizattempt']}.");
