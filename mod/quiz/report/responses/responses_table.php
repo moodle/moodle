@@ -97,6 +97,11 @@ class quiz_responses_table extends quiz_attempts_report_table {
             $summary = trim($stepdata->$field);
         }
 
+        if ($this->is_downloading() && $this->is_downloading() != 'xhtml') {
+            return $summary;
+        }
+        $summary = s($summary);
+
         if ($this->is_downloading() || $field != 'responsesummary') {
             return $summary;
         }
