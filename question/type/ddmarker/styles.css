@@ -61,13 +61,13 @@ form.mform fieldset#id_previewareaheader div.markertexts span.markertext {
     background-color: yellow;
     border-style : solid;
     border-width : 2px;
-    border-colour : khaki;
+    border-color : khaki;
 }
 .que.ddmarker span.wrongpart {
     background-color: yellow;
     border-style : solid;
     border-width : 2px;
-    border-colour : khaki;
+    border-color : khaki;
     padding: 5px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
