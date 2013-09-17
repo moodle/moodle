@@ -34,7 +34,7 @@
 
 /* Button */
 .moodleSkin .mceButton {display:block; width:20px; height:20px; padding: 1px; margin: 0 1px 0 0 }
-.moodleSkin a.mceButtonEnabled:hover {background-color:#CCC;}
+.moodleSkin a.mceButtonEnabled:hover {background-color:#FFF;}
 .moodleSkin a.mceButtonActive, .moodleSkin a.mceButtonSelected {background-color:#DDD; padding: 0px; border: 1px solid #BBB}
 .moodleSkin .mceButtonDisabled .mceIcon {opacity:0.3}
 .moodleSkin .mceButtonLabeled {width:auto}
@@ -61,7 +61,6 @@
 .moodleSkin .mceSplitButton {margin-right:2px;}
 .moodleSkin .mceSplitButton, .moodleSkin .mceSplitButton a, .moodleSkin .mceSplitButton span {display:block; height:22px; direction:ltr; }
 .moodleSkin .mceSplitButton a.mceAction {width:20px}
-.moodleSkin .mceSplitButton span.mceAction {width:20px; background-image:url(../../img/icons.gif)}
 .moodleSkin .mceSplitButton a.mceOpen {width:10px; background:url(img/button_bg.png) 44px 0}
 .moodleSkin .mceSplitButton span.mceOpen {display:none}
 .moodleSkin table.mceSplitButtonEnabled:hover a.mceAction, .moodleSkin .mceSplitButtonHover a.mceAction, .moodleSkin .mceSplitButtonSelected {background:url(img/button_bg.png) 0 -22px}
@@ -183,6 +182,32 @@
 .moodleSkin span.mce_cancel {background:url(img/delete.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_merge_cells {background:url(img/merge_cells.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_split_cells {background:url(img/split_cells.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_advhr {background:url(img/advance_hr.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_absolute {background:url(img/absolute.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_abbr {background:url(img/abbr.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_acronym {background:url(img/acronym.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_delete_table {background:url(img/delete_table.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_delete_col {background:url(img/delete_col.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_delete_row {background:url(img/delete_row.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_cell_props {background:url(img/cell_props.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_col_after {background:url(img/insert_col_after.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_col_before {background:url(img/insert_col_before.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_row_after {background:url(img/insert_row_after.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_row_before {background:url(img/insert_row_before.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_visualaid {background:url(img/visual_aid.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_table_props {background:url(img/table_props.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_row_props {background:url(img/row_props.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_selectall {background:url(img/text_highlight.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_cite {background:url(img/cite.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_del {background:url(img/delete.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_ins {background:url(img/insert.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_fullpage {background:url(img/fullpage.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_iespell {background:url(img/spellcheck.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_restoredraft {background:url(img/restore_draft.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_spellchecker {background:url(img/spellcheck.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_visualblocks {background:url(img/visual_blocks.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_backward {background:url(img/backward.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_forward {background:url(img/forward.png) 2px 2px no-repeat;}
 
 .moodleSkin span.mce_forecolorpicker {background: #300 url(img/text_color.png) 2px 2px no-repeat;}
 .moodleSkin span.mce_backcolorpicker {background:url(img/text_highlight.png) 2px 2px no-repeat;}
@@ -193,36 +218,3 @@
 .moodleSkin td.mceToolbar, .moodleSkin td.mceStatusbar, .moodleSkin .mceMenuItemTitle a {background:#F2F2F2}
 .moodleSkin .mceListBox .mceText {background:#FFF}
 .moodleSkin .mceIcon {background:url(../../img/icons.gif) no-repeat 20px 20px}
-
-/* Buttons Without New Icons */
-
-.moodleSkin span.mce_visualaid {background-position:-660px 0}
-
-/* Unused Plugins Without New Icons - kept for fringe cases where users want to enable them */
-.moodleSkin span.mce_delete_table {background-position:-620px -20px}
-.moodleSkin span.mce_delete_col {background-position:-640px -20px}
-.moodleSkin span.mce_delete_row {background-position:-660px -20px}
-.moodleSkin span.mce_cell_props {background-position:-600px -20px}
-.moodleSkin span.mce_col_after {background-position:-680px -20px}
-.moodleSkin span.mce_col_before {background-position:-700px -20px}
-.moodleSkin span.mce_row_after {background-position:-720px -20px}
-.moodleSkin span.mce_row_before {background-position:-740px -20px}
-.moodleSkin span.mce_table_props {background-position:-980px -20px}
-.moodleSkin span.mce_row_props {background-position:-780px -20px}
-.moodleSkin span.mce_advhr {background-position:-0px -20px}
-.moodleSkin span.mce_selectall {background-position:-400px -20px}
-.moodleSkin span.mce_absolute {background-position:-180px -20px}
-.moodleSkin span.mce_abbr {background-position:-860px -20px}
-.moodleSkin span.mce_acronym {background-position:-880px -20px}
-.moodleSkin span.mce_attribs {background-position:-900px -20px}
-.moodleSkin span.mce_cite {background-position:-920px -20px}
-.moodleSkin span.mce_del {background-position:-940px -20px}
-.moodleSkin span.mce_ins {background-position:-960px -20px}
-.moodleSkin span.mce_fullpage {background-position:-80px -20px}
-.moodleSkin span.mce_iespell {background-position:-120px -20px}
-.moodleSkin span.mce_restoredraft {background-position:-20px -40px}
-.moodleSkin span.mce_spellchecker {background-position:-540px -20px}
-.moodleSkin span.mce_visualblocks {background-position: -40px -40px}
-.moodleSkin span.mce_backward {background-position:-200px -20px}
-.moodleSkin span.mce_forward {background-position:-220px -20px}
-
