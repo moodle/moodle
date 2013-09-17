@@ -37,7 +37,7 @@ class mod_feedback_delete_completed_form extends moodleform {
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'completedid');
-        $mform->setType('completeid', PARAM_INT);
+        $mform->setType('completedid', PARAM_INT);
         $mform->addElement('hidden', 'do_show');
         $mform->setType('do_show', PARAM_INT);
         $mform->addElement('hidden', 'confirmdelete');
