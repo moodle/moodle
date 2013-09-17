@@ -1619,7 +1619,7 @@ function set_coursemodule_visible($id, $visible) {
  * @since 2.5
  */
 function course_delete_module($cmid) {
-    global $CFG, $DB, $USER;
+    global $CFG, $DB;
 
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/blog/lib.php');
@@ -1702,18 +1702,18 @@ function course_delete_module($cmid) {
             "Cannot delete the module $modulename (instance) from section.");
     }
 
-    // Trigger a mod_deleted event with information about this module.
-    $eventdata = new stdClass();
-    $eventdata->modulename = $modulename;
-    $eventdata->cmid       = $cm->id;
-    $eventdata->courseid   = $cm->course;
-    $eventdata->userid     = $USER->id;
-    events_trigger('mod_deleted', $eventdata);
-
-    add_to_log($cm->course, 'course', "delete mod",
-               "view.php?id=$cm->course",
-               "$modulename $cm->instance", $cm->id);
-
+    // Trigger event for course module delete action.
+    $event = \core\event\course_module_deleted::create(array(
+        'courseid' => $cm->course,
+        'context'  => $modcontext,
+        'objectid' => $cm->id,
+        'other'    => array(
+            'modulename' => $modulename,
+            'instanceid'   => $cm->instance,
+        )
+    ));
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->trigger();
     rebuild_course_cache($cm->course, true);
 }
 
