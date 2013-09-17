@@ -30,7 +30,7 @@ $definitions = array(
 
     // Used to store processed lang files.
     // The keys used are the revision, lang and component of the string file.
-    // The persistent max size has been based upon student access of the site.
+    // The static acceleration size has been based upon student access of the site.
     // NOTE: this data may be safely stored in local caches on cluster nodes.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
@@ -46,7 +46,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'staticacceleration' => true,
     ),
 
     // Used to store database meta information.
@@ -115,7 +115,7 @@ $definitions = array(
         'simplekeys' => true, // The course id the groupings exist for.
         'simpledata' => true, // Array of stdClass objects containing only strings.
         'staticacceleration' => true, // Likely there will be a couple of calls to this.
-        'persistmaxsize' => 2, // The original cache used 1, we've increased that to two.
+        'staticaccelerationsize' => 2, // The original cache used 1, we've increased that to two.
     ),
 
     // Used to cache calendar subscriptions.

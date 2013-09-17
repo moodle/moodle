@@ -282,8 +282,8 @@ class cache implements cache_loader {
         $parsedkey = $this->parse_key($key);
         // 2. Get it from the static acceleration array if we can (only when it is enabled and it has already been requested/set).
         $result = false;
-        if ($this->is_using_persist_cache()) {
-            $result = $this->get_from_persist_cache($parsedkey);
+        if ($this->use_static_acceleration()) {
+            $result = $this->static_acceleration_get($parsedkey);
         }
         if ($result !== false) {
             if (!is_scalar($result)) {
@@ -309,8 +309,8 @@ class cache implements cache_loader {
             if ($result instanceof cache_cached_object) {
                 $result = $result->restore_object();
             }
-            if ($this->is_using_persist_cache()) {
-                $this->set_in_persist_cache($parsedkey, $result);
+            if ($this->use_static_acceleration()) {
+                $this->static_acceleration_set($parsedkey, $result);
             }
         }
         // 4. Load if from the loader/datasource if we don't already have it.
@@ -378,14 +378,14 @@ class cache implements cache_loader {
         $keystofind = array();
 
         // First up check the persist cache for each key.
-        $isusingpersist = $this->is_using_persist_cache();
+        $isusingpersist = $this->use_static_acceleration();
         foreach ($keys as $key) {
             $pkey = $this->parse_key($key);
             $keysparsed[$key] = $pkey;
             $parsedkeys[$pkey] = $key;
             $keystofind[$pkey] = $key;
             if ($isusingpersist) {
-                $value = $this->get_from_persist_cache($pkey);
+                $value = $this->static_acceleration_get($pkey);
                 if ($value !== false) {
                     $resultpersist[$pkey] = $value;
                     unset($keystofind[$pkey]);
@@ -408,8 +408,8 @@ class cache implements cache_loader {
                 if ($value instanceof cache_cached_object) {
                     $value = $value->restore_object();
                 }
-                if ($value !== false && $this->is_using_persist_cache()) {
-                    $this->set_in_persist_cache($key, $value);
+                if ($value !== false && $this->use_static_acceleration()) {
+                    $this->static_acceleration_set($key, $value);
                 }
                 $resultstore[$key] = $value;
             }
@@ -506,8 +506,8 @@ class cache implements cache_loader {
             $data = new cache_ttl_wrapper($data, $this->definition->get_ttl());
         }
         $parsedkey = $this->parse_key($key);
-        if ($this->is_using_persist_cache()) {
-            $this->set_in_persist_cache($parsedkey, $data);
+        if ($this->use_static_acceleration()) {
+            $this->static_acceleration_set($parsedkey, $data);
         }
         return $this->store->set($parsedkey, $data);
     }
@@ -611,7 +611,7 @@ class cache implements cache_loader {
         }
         $data = array();
         $simulatettl = $this->has_a_ttl() && !$this->store_supports_native_ttl();
-        $usestaticaccelerationarray = $this->is_using_persist_cache();
+        $usestaticaccelerationarray = $this->use_static_acceleration();
         foreach ($keyvaluearray as $key => $value) {
             if (is_object($value) && $value instanceof cacheable_object) {
                 $value = new cache_cached_object($value);
@@ -630,7 +630,7 @@ class cache implements cache_loader {
                 'value' => $value
             );
             if ($usestaticaccelerationarray) {
-                $this->set_in_persist_cache($data[$key]['key'], $value);
+                $this->static_acceleration_set($data[$key]['key'], $value);
             }
         }
         if ($this->perfdebug) {
@@ -662,7 +662,7 @@ class cache implements cache_loader {
      */
     public function has($key, $tryloadifpossible = false) {
         $parsedkey = $this->parse_key($key);
-        if ($this->is_in_persist_cache($parsedkey)) {
+        if ($this->static_acceleration_has($parsedkey)) {
             // Hoorah, that was easy. It exists in the static acceleration array so we definitely have it.
             return true;
         }
@@ -744,11 +744,11 @@ class cache implements cache_loader {
             return false;
         }
 
-        if ($this->is_using_persist_cache()) {
+        if ($this->use_static_acceleration()) {
             $parsedkeys = array();
             foreach ($keys as $id => $key) {
                 $parsedkey = $this->parse_key($key);
-                if ($this->is_in_persist_cache($parsedkey)) {
+                if ($this->static_acceleration_has($parsedkey)) {
                     return true;
                 }
                 $parsedkeys[] = $parsedkey;
@@ -769,7 +769,7 @@ class cache implements cache_loader {
      */
     public function delete($key, $recurse = true) {
         $parsedkey = $this->parse_key($key);
-        $this->delete_from_persist_cache($parsedkey);
+        $this->static_acceleration_delete($parsedkey);
         if ($recurse && $this->loader !== false) {
             // Delete from the bottom of the stack first.
             $this->loader->delete($key, $recurse);
@@ -787,9 +787,9 @@ class cache implements cache_loader {
      */
     public function delete_many(array $keys, $recurse = true) {
         $parsedkeys = array_map(array($this, 'parse_key'), $keys);
-        if ($this->is_using_persist_cache()) {
+        if ($this->use_static_acceleration()) {
             foreach ($parsedkeys as $parsedkey) {
-                $this->delete_from_persist_cache($parsedkey);
+                $this->static_acceleration_delete($parsedkey);
             }
         }
         if ($recurse && $this->loader !== false) {
@@ -921,10 +921,35 @@ class cache implements cache_loader {
     /**
      * Returns true if this cache is making use of the static acceleration array.
      *
+     * @deprecated since 2.6
+     * @see cache::use_static_acceleration()
      * @return bool
      */
     protected function is_using_persist_cache() {
+        debugging('This function has been deprecated. Please call use_static_acceleration instead', DEBUG_DEVELOPER);
+        return $this->use_static_acceleration();
+    }
+
+    /**
+     * Returns true if this cache is making use of the static acceleration array.
+     *
+     * @return bool
+     */
+    protected function use_static_acceleration() {
         return $this->staticacceleration;
+    }
+
+    /**
+     * Returns true if the requested key exists within the static acceleration array.
+     *
+     * @see cache::static_acceleration_has
+     * @deprecated since 2.6
+     * @param string $key The parsed key
+     * @return bool
+     */
+    protected function is_in_persist_cache($key) {
+        debugging('This function has been deprecated. Please call static_acceleration_has instead', DEBUG_DEVELOPER);
+        return $this->static_acceleration_has($key);
     }
 
     /**
@@ -933,7 +958,7 @@ class cache implements cache_loader {
      * @param string $key The parsed key
      * @return bool
      */
-    protected function is_in_persist_cache($key) {
+    protected function static_acceleration_has($key) {
         // This method of checking if an array was supplied is faster than is_array.
         if ($key === (array)$key) {
             $key = $key['key'];
@@ -953,10 +978,23 @@ class cache implements cache_loader {
     /**
      * Returns the item from the static acceleration array if it exists there.
      *
+     * @deprecated since 2.6
+     * @see cache::static_acceleration_get
      * @param string $key The parsed key
      * @return mixed|false The data from the static acceleration array or false if it wasn't there.
      */
     protected function get_from_persist_cache($key) {
+        debugging('This function has been deprecated. Please call static_acceleration_get instead', DEBUG_DEVELOPER);
+        return $this->static_acceleration_get($key);
+    }
+
+    /**
+     * Returns the item from the static acceleration array if it exists there.
+     *
+     * @param string $key The parsed key
+     * @return mixed|false The data from the static acceleration array or false if it wasn't there.
+     */
+    protected function static_acceleration_get($key) {
         // This method of checking if an array was supplied is faster than is_array.
         if ($key === (array)$key) {
             $key = $key['key'];
@@ -975,7 +1013,7 @@ class cache implements cache_loader {
                 }
                 $result = $data;
             } else if ($data->has_expired()) {
-                $this->delete_from_persist_cache($key);
+                $this->static_acceleration_delete($key);
                 $result = false;
             } else {
                 if ($data instanceof cache_cached_object) {
@@ -1009,11 +1047,25 @@ class cache implements cache_loader {
     /**
      * Sets a key value pair into the static acceleration array.
      *
+     * @deprecated since 2.6
+     * @see cache::static_acceleration_set
      * @param string $key The parsed key
      * @param mixed $data
      * @return bool
      */
     protected function set_in_persist_cache($key, $data) {
+        debugging('This function has been deprecated. Please call static_acceleration_set instead', DEBUG_DEVELOPER);
+        return $this->static_acceleration_set($key, $data);
+    }
+
+    /**
+     * Sets a key value pair into the static acceleration array.
+     *
+     * @param string $key The parsed key
+     * @param mixed $data
+     * @return bool
+     */
+    protected function static_acceleration_set($key, $data) {
         // This method of checking if an array was supplied is faster than is_array.
         if ($key === (array)$key) {
             $key = $key['key'];
@@ -1038,10 +1090,23 @@ class cache implements cache_loader {
     /**
      * Deletes an item from the static acceleration array.
      *
+     * @deprecated since 2.6
+     * @see cache::static_acceleration_delete()
      * @param string|int $key As given to get|set|delete
      * @return bool True on success, false otherwise.
      */
     protected function delete_from_persist_cache($key) {
+        debugging('This function has been deprecated. Please call static_acceleration_delete instead', DEBUG_DEVELOPER);
+        return $this->static_acceleration_delete($key);
+    }
+
+    /**
+     * Deletes an item from the static acceleration array.
+     *
+     * @param string|int $key As given to get|set|delete
+     * @return bool True on success, false otherwise.
+     */
+    protected function static_acceleration_delete($key) {
         unset($this->staticaccelerationarray[$key]);
         if ($this->staticaccelerationsize !== false) {
             $dropkey = array_search($key, $this->staticaccelerationkeys);
@@ -2083,7 +2148,7 @@ class cache_session extends cache {
      *
      * @return bool
      */
-    protected function is_using_persist_cache() {
+    protected function use_static_acceleration() {
         return false;
     }
 }
