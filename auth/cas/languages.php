@@ -1,7 +1,7 @@
 <?php
 
 $caslangconstprefix = 'PHPCAS_LANG_';
-$caslangprefixlen = strlen('CAS_Language_') + 1;
+$caslangprefixlen = strlen('CAS_Languages_');
 $CASLANGUAGES = array ();
 
 $consts = get_defined_constants(true);
