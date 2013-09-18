@@ -16,6 +16,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/backend.php');
+
 /**
  * Automated unit testing. This tests the 'make large course' backend,
  * using the 'XS' option so that it completes quickly.

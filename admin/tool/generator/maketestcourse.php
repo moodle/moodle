@@ -30,6 +30,8 @@ define('NO_OUTPUT_BUFFERING', true);
 require('../../../config.php');
 
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/backend.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/make_form.php');
 
 // Initialise page and check permissions.
 admin_externalpage_setup('toolgenerator');

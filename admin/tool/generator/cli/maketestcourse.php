@@ -27,6 +27,7 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require(dirname(__FILE__) . '/../../../../config.php');
 require_once($CFG->libdir. '/clilib.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/backend.php');
 
 // CLI options.
 list($options, $unrecognized) = cli_get_params(
