@@ -91,7 +91,7 @@ NS.setup_keyboard_listeners = function() {
  */
 NS.toggle_category_expansion = function(e) {
     // Load the actual dependencies now that we've been called.
-    Y.use('io-base', 'json-parse', 'moodle-core-notification', 'anim', function() {
+    Y.use('io-base', 'json-parse', 'moodle-core-notification', 'anim-node-plugin', function() {
         // Overload the toggle_category_expansion with the _toggle_category_expansion function to ensure that
         // this function isn't called in the future, and call it for the first time.
         NS.toggle_category_expansion = NS._toggle_category_expansion;
@@ -108,7 +108,7 @@ NS.toggle_category_expansion = function(e) {
  */
 NS.toggle_coursebox_expansion = function(e) {
     // Load the actual dependencies now that we've been called.
-    Y.use('io-base', 'json-parse', 'moodle-core-notification', 'anim', function() {
+    Y.use('io-base', 'json-parse', 'moodle-core-notification', 'anim-node-plugin', function() {
         // Overload the toggle_coursebox_expansion with the _toggle_coursebox_expansion function to ensure that
         // this function isn't called in the future, and call it for the first time.
         NS.toggle_coursebox_expansion = NS._toggle_coursebox_expansion;
@@ -263,7 +263,26 @@ NS.run_expansion = function(categorynode) {
     categorychildren.fx.run();
 };
 
+/**
+ * Toggle collapsing of all nodes.
+ *
+ * @method collapse_expand_all
+ * @private
+ * @param {EventFacade} e
+ */
 NS.collapse_expand_all = function(e) {
+    // Load the actual dependencies now that we've been called.
+    Y.use('io-base', 'json-parse', 'moodle-core-notification', 'anim-node-plugin', function() {
+        // Overload the collapse_expand_all with the _collapse_expand_all function to ensure that
+        // this function isn't called in the future, and call it for the first time.
+        NS.collapse_expand_all = NS._collapse_expand_all;
+        NS.collapse_expand_all(e);
+    });
+
+    e.preventDefault();
+};
+
+NS._collapse_expand_all = function(e) {
     // The collapse/expand button has no actual target but we need to prevent it's default
     // action to ensure we don't make the page reload/jump.
     e.preventDefault();
