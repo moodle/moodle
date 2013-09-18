@@ -31,21 +31,21 @@ defined('MOODLE_INTERNAL') || die();
 function atto_underline_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('underline',
+    $icon = $OUTPUT->pix_icon('e/underline',
                               get_string('underline', 'atto_underline'),
-                              'atto_underline',
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->yui_module('moodle-atto_underline-button',
                                 'M.atto_underline.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'style')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_underline_sort_order() {
     return 2;

@@ -31,18 +31,18 @@ defined('MOODLE_INTERNAL') || die();
 function atto_bold_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('bold', get_string('bold', 'atto_bold'), 'atto_bold', array('class'=>'icon'));
+    $icon = $OUTPUT->pix_icon('e/bold', get_string('bold', 'atto_bold'), 'moodle', array('class'=>'icon'));
 
     $PAGE->requires->yui_module('moodle-atto_bold-button',
                                 'M.atto_bold.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'style')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_bold_sort_order() {
     return 0;

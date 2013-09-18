@@ -29,21 +29,21 @@
 function atto_unorderedlist_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('unorderedlist',
+    $icon = $OUTPUT->pix_icon('e/bullet_list',
                               get_string('unorderedlist', 'atto_unorderedlist'),
-                              'atto_unorderedlist',
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->yui_module('moodle-atto_unorderedlist-button',
                                 'M.atto_unorderedlist.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'list')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_unorderedlist_sort_order() {
     return 7;
