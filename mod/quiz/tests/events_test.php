@@ -119,7 +119,7 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $this->assertEventLegacyData($legacydata, $event);
     }
 
-    public function test_attempt_timelimit_exceeded() {
+    public function test_attempt_becameoverdue() {
 
         list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
         $attemptobj = quiz_attempt::create($attempt->id);
@@ -133,7 +133,7 @@ class mod_quiz_events_testcase extends advanced_testcase {
 
         $this->assertCount(1, $events);
         $event = $events[0];
-        $this->assertInstanceOf('\mod_quiz\event\attempt_timelimit_exceeded', $event);
+        $this->assertInstanceOf('\mod_quiz\event\attempt_becameoverdue', $event);
         $this->assertEquals('quiz_attempts', $event->objecttable);
         $this->assertEquals($quizobj->get_context(), $event->get_context());
         $this->assertEquals($attempt->userid, $event->relateduserid);

@@ -27,11 +27,14 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Event for when a quiz attempt is overdue.
  *
+ * Please note that the name of this event is not following the event naming convention.
+ * Its name should not be used as a reference for other events to be created.
+ *
  * @package    mod_quiz
  * @copyright  2013 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class attempt_timelimit_exceeded extends \core\event\base {
+class attempt_becameoverdue extends \core\event\base {
 
     /**
      * Init method.
