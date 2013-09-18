@@ -31,7 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Admin direktorioa';
-$string['availablelangs'] = 'Hizkuntza eskuragarrien zerrenda';
+$string['availablelangs'] = 'Hizkuntza-pakete eskuragarriak';
 $string['chooselanguagehead'] = 'Aukeratu hizkuntza bat';
 $string['chooselanguagesub'] = 'Mesedez, aukeratu instalaziorako hizkuntza bat. Hizkuntza hori erabiliko da gunearen berezko hizkuntza gisa, baina aurrerago alda daiteke.';
 $string['clialreadyconfigured'] = 'File config.php fitxategia badago, mesedez erabili admin/cli/install_database.php gune hau instalatu nahi baduzu.';
