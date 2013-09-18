@@ -219,11 +219,11 @@ class page_requirements_manager {
         $configname = $this->YUI_config->set_config_source('lib/yui/config/moodle.js');
         $this->YUI_config->add_group('moodle', array(
             'name' => 'moodle',
-            'base' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep.'moodle/'.$jsrev.'/',
+            'base' => $CFG->httpswwwroot . '/theme/yui_combo.php' . $sep . 'm/' . $jsrev . '/',
             'combine' => $this->yui3loader->combine,
             'comboBase' => $CFG->httpswwwroot . '/theme/yui_combo.php'.$sep,
             'ext' => false,
-            'root' => 'moodle/'.$jsrev.'/', // Add the rev to the root path so that we can control caching.
+            'root' => 'm/'.$jsrev.'/', // Add the rev to the root path so that we can control caching.
             'patterns' => array(
                 'moodle-' => array(
                     'group' => 'moodle',

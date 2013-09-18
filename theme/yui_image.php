@@ -40,6 +40,9 @@ if ($slashargument = min_get_slash_argument()) {
 $etag = sha1($path);
 $parts = explode('/', $path);
 $version = array_shift($parts);
+if ($version === 'm') {
+    $version = 'moodle';
+}
 if ($version == 'moodle' && count($parts) >= 3) {
     $frankenstyle = array_shift($parts);
     $module = array_shift($parts);
