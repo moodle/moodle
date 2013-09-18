@@ -24,7 +24,7 @@ $organization = optional_param('organization', '', PARAM_INT); // organization I
 $action = optional_param('action', '', PARAM_ALPHA);
 
 if (!empty($id)) {
-    if (! $cm = get_coursemodule_from_id('scorm', $id)) {
+    if (! $cm = get_coursemodule_from_id('scorm', $id, 0, true)) {
         print_error('invalidcoursemodule');
     }
     if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
@@ -40,7 +40,7 @@ if (!empty($id)) {
     if (! $course = $DB->get_record("course", array("id"=>$scorm->course))) {
         print_error('coursemisconf');
     }
-    if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
+    if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id, true)) {
         print_error('invalidcoursemodule');
     }
 } else {
@@ -89,7 +89,7 @@ if (!empty($scorm->popup)) {
     $courseformat = course_get_format($course)->get_course();
     $sectionid = '';
     if (isset($courseformat->coursedisplay) && $courseformat->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
-        $sectionid = $cm->section;
+        $sectionid = $cm->sectionnum;
     }
 
     $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => $launch,
