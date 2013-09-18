@@ -1552,6 +1552,8 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012120301.11) {
+        // This upgrade step is re-written under MDL-38228 (see below).
+        /*
         // Retrieve the list of course_sections as a recordset to save memory
         $coursesections = $DB->get_recordset('course_sections', null, 'course, id', 'id, course, sequence');
         foreach ($coursesections as $coursesection) {
@@ -1595,6 +1597,7 @@ function xmldb_main_upgrade($oldversion) {
             }
         }
         $coursesections->close();
+        */
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2012120301.11);
@@ -1611,6 +1614,22 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012120302.01) {
+        // MDL-38228. Single script to upgrade course_modules instead of 2012120301.11.
+        // It replaces two scripts (now commented out) introduced in MDL-37939 and MDL-38173.
+
+        // This upgrade script fixes the mismatches between DB fields course_modules.section
+        // and course_sections.sequence. It makes sure that each module is included
+        // in the sequence of only one section and that course_modules.section points back to it.
+
+        // This script in included in each major version upgrade process so make sure we don't run it twice.
+        if (empty($CFG->movingmoduleupgradescriptwasrun)) {
+            upgrade_course_modules_sequences();
+
+            // To skip running the same script on the upgrade to the next major release.
+            set_config('movingmoduleupgradescriptwasrun', 1);
+        }
+
+        /*
         // Retrieve the list of course_sections as a recordset to save memory.
         // This is to fix a regression caused by MDL-37939.
         // In this case the upgrade step is fixing records where:
@@ -1667,6 +1686,7 @@ function xmldb_main_upgrade($oldversion) {
             }
         }
         $coursesections->close();
+        */
 
         upgrade_main_savepoint(true, 2012120302.01);
     }
