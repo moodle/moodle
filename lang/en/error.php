@@ -221,6 +221,7 @@ $string['duplicateroleshortname'] = 'There is already a role with this short nam
 $string['duplicateusername'] = 'Duplicate username - skipping record';
 $string['emailfail'] = 'Emailing failed';
 $string['error'] = 'Error occurred';
+$string['errorprocessingarchive'] = 'Error processing archive file';
 $string['errorcleaningdirectory'] = 'Error cleaning directory "{$a}"';
 $string['errorcopyingfiles'] = 'Error copying files';
 $string['errorcreatingdirectory'] = 'Error creating directory "{$a}"';

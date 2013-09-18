@@ -50,6 +50,17 @@ class stored_file {
     private $repository;
 
     /**
+     * @var int Indicates a file handle of the type returned by fopen.
+     */
+    const FILE_HANDLE_FOPEN = 0;
+
+    /**
+     * @var int Indicates a file handle of the type returned by gzopen.
+     */
+    const FILE_HANDLE_GZOPEN = 1;
+
+
+    /**
      * Constructor, this constructor should be called ONLY from the file_storage class!
      *
      * @param file_storage $fs file  storage instance
@@ -381,16 +392,26 @@ class stored_file {
      *
      * When you want to modify a file, create a new file and delete the old one.
      *
+     * @param int $type Type of file handle (FILE_HANDLE_xx constant)
      * @return resource file handle
      */
-    public function get_content_file_handle() {
+    public function get_content_file_handle($type = self::FILE_HANDLE_FOPEN) {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
             if (!$this->fs->try_content_recovery($this) or !is_readable($path)) {
                 throw new file_exception('storedfilecannotread', '', $path);
             }
         }
-        return fopen($path, 'rb'); // Binary reading only!!
+        switch ($type) {
+            case self::FILE_HANDLE_FOPEN:
+                // Binary reading.
+                return fopen($path, 'rb');
+            case self::FILE_HANDLE_GZOPEN:
+                // Binary reading of file in gz format.
+                return gzopen($path, 'rb');
+            default:
+                throw new coding_exception('Unexpected file handle type');
+        }
     }
 
     /**

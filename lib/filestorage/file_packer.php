@@ -35,7 +35,19 @@ abstract class file_packer {
     /**
      * Archive files and store the result in file storage.
      *
-     * @param array $files array with zip paths as keys (archivepath=>ospathname or archivepath=>stored_file)
+     * The key of the $files array is always the path within the archive, e.g.
+     * 'folder/subfolder/file.txt'. There are several options for the values of
+     * the array:
+     * - null = this entry represents a directory, so no file
+     * - string = full path to file within operating system filesystem
+     * - stored_file = file within Moodle filesystem
+     * - array with one string element = use in-memory string for file content
+     *
+     * For the string (OS path) and stored_file (Moodle filesystem) cases, you
+     * can specify a directory instead of a file to recursively include all files
+     * within this directory.
+     *
+     * @param array $files Array of files to archive
      * @param int $contextid context ID
      * @param string $component component
      * @param string $filearea file area
@@ -53,6 +65,18 @@ abstract class file_packer {
 
     /**
      * Archive files and store the result in os file.
+     *
+     * The key of the $files array is always the path within the archive, e.g.
+     * 'folder/subfolder/file.txt'. There are several options for the values of
+     * the array:
+     * - null = this entry represents a directory, so no file
+     * - string = full path to file within operating system filesystem
+     * - stored_file = file within Moodle filesystem
+     * - array with one string element = use in-memory string for file content
+     *
+     * For the string (OS path) and stored_file (Moodle filesystem) cases, you
+     * can specify a directory instead of a file to recursively include all files
+     * within this directory.
      *
      * @param array $files array with zip paths as keys (archivepath=>ospathname or archivepath=>stored_file)
      * @param string $archivefile path to target zip file
