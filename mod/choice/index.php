@@ -14,7 +14,9 @@
     require_course_login($course);
     $PAGE->set_pagelayout('incourse');
 
-    add_to_log($course->id, "choice", "view all", "index.php?id=$course->id", "");
+    $eventdata = array('context' => context_course::instance($id));
+    $event = \mod_choice\event\instances_list_viewed::create($eventdata);
+    $event->trigger();
 
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");

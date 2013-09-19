@@ -293,21 +293,49 @@ WHERE
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
             $DB->update_record("choice_answers", $newanswer);
-            add_to_log($course->id, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
+
+            $eventdata = array();
+            $eventdata['context'] = $context;
+            $eventdata['objectid'] = $newanswer->id;
+            $eventdata['userid'] = $userid;
+            $eventdata['courseid'] = $course->id;
+            $eventdata['other'] = array();
+            $eventdata['other']['choiceid'] = $choice->id;
+            $eventdata['other']['optionid'] = $formanswer;
+
+            $event = \mod_choice\event\answer_updated::create($eventdata);
+            $event->add_record_snapshot('choice_answers', $newanswer);
+            $event->add_record_snapshot('course', $course);
+            $event->add_record_snapshot('course_modules', $cm);
+            $event->trigger();
         } else {
             $newanswer = new stdClass();
             $newanswer->choiceid = $choice->id;
             $newanswer->userid = $userid;
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
-            $DB->insert_record("choice_answers", $newanswer);
+            $newanswer->id = $DB->insert_record("choice_answers", $newanswer);
 
             // Update completion state
             $completion = new completion_info($course);
             if ($completion->is_enabled($cm) && $choice->completionsubmit) {
                 $completion->update_state($cm, COMPLETION_COMPLETE);
             }
-            add_to_log($course->id, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
+
+            $eventdata = array();
+            $eventdata['context'] = $context;
+            $eventdata['objectid'] = $newanswer->id;
+            $eventdata['userid'] = $userid;
+            $eventdata['courseid'] = $course->id;
+            $eventdata['other'] = array();
+            $eventdata['other']['choiceid'] = $choice->id;
+            $eventdata['other']['optionid'] = $formanswer;
+
+            $event = \mod_choice\event\answer_submitted::create($eventdata);
+            $event->add_record_snapshot('choice_answers', $newanswer);
+            $event->add_record_snapshot('course', $course);
+            $event->add_record_snapshot('course_modules', $cm);
+            $event->trigger();
         }
     } else {
         if (!($current->optionid==$formanswer)) { //check to see if current choice already selected - if not display error
