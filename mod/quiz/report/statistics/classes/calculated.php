@@ -1,0 +1,211 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * The statistics calculator returns an instance of this class which contains the calculated statistics.
+ *
+ * @package    quiz_statistics
+ * @copyright  2013 The Open University
+ * @author     James Pratt me@jamiep.org
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class quiz_statistics_calculated {
+
+    public function __construct($allattempts = null) {
+        if ($allattempts !== null) {
+            $this->allattempts = $allattempts;
+        }
+    }
+
+    /**
+     * @var bool whether we are calculating calculate stats from all attempts.
+     */
+    public $allattempts;
+
+    public $firstattemptscount = 0;
+
+    public $allattemptscount = 0;
+
+    public $firstattemptsavg;
+
+    public $allattemptsavg;
+
+    public $firstattemptstotal = 0;
+
+    public $allattemptstotal = 0;
+
+    public $median;
+
+    public $standarddeviation;
+
+    public $skewness;
+
+    public $kurtosis;
+
+    public $cic;
+
+    public $errorratio;
+
+    public $standarderror;
+
+    public $timemodified;
+
+    public function s() {
+        if ($this->allattempts) {
+            return $this->allattemptscount;
+        } else {
+            return $this->firstattemptscount;
+        }
+    }
+
+    public function avg() {
+        if ($this->allattempts) {
+            return $this->allattemptsavg;
+        } else {
+            return $this->firstattemptsavg;
+        }
+    }
+
+    public function total() {
+        if ($this->allattempts) {
+            return $this->allattemptstotal;
+        } else {
+            return $this->firstattemptstotal;
+        }
+    }
+
+    /**
+     * @param $course
+     * @param $cm
+     * @param $quiz
+     * @return array to display in table or spreadsheet.
+     */
+    public function get_formatted_quiz_info_data($course, $cm, $quiz) {
+
+        // You can edit this array to control which statistics are displayed.
+        $todisplay = array('firstattemptscount' => 'number',
+                           'allattemptscount' => 'number',
+                           'firstattemptsavg' => 'summarks_as_percentage',
+                           'allattemptsavg' => 'summarks_as_percentage',
+                           'median' => 'summarks_as_percentage',
+                           'standarddeviation' => 'summarks_as_percentage',
+                           'skewness' => 'number_format',
+                           'kurtosis' => 'number_format',
+                           'cic' => 'number_format_percent',
+                           'errorratio' => 'number_format_percent',
+                           'standarderror' => 'summarks_as_percentage');
+
+        // General information about the quiz.
+        $quizinfo = array();
+        $quizinfo[get_string('quizname', 'quiz_statistics')] = format_string($quiz->name);
+        $quizinfo[get_string('coursename', 'quiz_statistics')] = format_string($course->fullname);
+        if ($cm->idnumber) {
+            $quizinfo[get_string('idnumbermod')] = $cm->idnumber;
+        }
+        if ($quiz->timeopen) {
+            $quizinfo[get_string('quizopen', 'quiz')] = userdate($quiz->timeopen);
+        }
+        if ($quiz->timeclose) {
+            $quizinfo[get_string('quizclose', 'quiz')] = userdate($quiz->timeclose);
+        }
+        if ($quiz->timeopen && $quiz->timeclose) {
+            $quizinfo[get_string('duration', 'quiz_statistics')] =
+                format_time($quiz->timeclose - $quiz->timeopen);
+        }
+
+        // The statistics.
+        foreach ($todisplay as $property => $format) {
+            if (!isset($this->$property)) {
+                continue;
+            }
+            $value = $this->$property;
+
+            switch ($format) {
+                case 'summarks_as_percentage':
+                    $formattedvalue = quiz_report_scale_summarks_as_percentage($value, $quiz);
+                    break;
+                case 'number_format_percent':
+                    $formattedvalue = quiz_format_grade($quiz, $value) . '%';
+                    break;
+                case 'number_format':
+                    // 2 extra decimal places, since not a percentage,
+                    // and we want the same number of sig figs.
+                    $formattedvalue = format_float($value, $quiz->decimalpoints + 2);
+                    break;
+                case 'number':
+                    $formattedvalue = $value + 0;
+                    break;
+                default:
+                    $formattedvalue = $value;
+            }
+
+            $quizinfo[get_string($property, 'quiz_statistics', $this->using_attempts_string())] = $formattedvalue;
+        }
+
+        return $quizinfo;
+    }
+
+    /**
+     * @return string the appropriate lang string to describe this option.
+     */
+    protected function using_attempts_string() {
+        if ($this->allattempts) {
+            return get_string('allattempts', 'quiz_statistics');
+        } else {
+            return get_string('firstattempts', 'quiz_statistics');
+        }
+    }
+
+
+    protected $fieldsindb = array('allattempts', 'firstattemptscount', 'allattemptscount', 'firstattemptsavg', 'allattemptsavg',
+                                    'median', 'standarddeviation', 'skewness',
+                                    'kurtosis', 'cic', 'errorratio', 'standarderror');
+
+    /**
+     * @param $qubaids qubaid_condition
+     */
+    public function cache($qubaids) {
+        global $DB;
+
+        $toinsert = new stdClass();
+
+        foreach ($this->fieldsindb as $field) {
+            $toinsert->{$field} = $this->{$field};
+        }
+
+        $toinsert->hashcode = $qubaids->get_hash_code();
+        $toinsert->timemodified = time();
+
+        // Fix up some dodgy data.
+        if (isset($toinsert->errorratio) && is_nan($toinsert->errorratio)) {
+            $toinsert->errorratio = null;
+        }
+        if (isset($toinsert->standarderror) && is_nan($toinsert->standarderror)) {
+            $toinsert->standarderror = null;
+        }
+
+        // Store the data.
+        $DB->insert_record('quiz_statistics', $toinsert);
+
+    }
+
+    public function populate_from_record($record) {
+        foreach ($this->fieldsindb as $field) {
+            $this->$field = $record->$field;
+        }
+        $this->timemodified = $record->timemodified;
+    }
+}
