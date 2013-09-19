@@ -1794,9 +1794,10 @@ function markdown_to_html($text) {
         return $text;
     }
 
-    require_once($CFG->libdir .'/markdown.php');
+    require_once($CFG->libdir .'/markdown/Markdown.php');
+    require_once($CFG->libdir .'/markdown/MarkdownExtra.php');
 
-    return Markdown($text);
+    return \Michelf\MarkdownExtra::defaultTransform($text);
 }
 
 /**
