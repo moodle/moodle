@@ -90,8 +90,10 @@ class backup_course_task extends backup_task {
         // course->defaultgroupingid
         $this->add_step(new backup_annotate_groups_from_groupings('annotate_groups_from_groupings'));
 
-        // Annotate the question_categories belonging to the course context
-        $this->add_step(new backup_calculate_question_categories('course_question_categories'));
+        // Annotate the question_categories belonging to the course context (conditionally).
+        if ($this->get_setting_value('questionbank')) {
+            $this->add_step(new backup_calculate_question_categories('course_question_categories'));
+        }
 
         // Generate the roles file (optionally role assignments and always role overrides)
         $this->add_step(new backup_roles_structure_step('course_roles', 'roles.xml'));

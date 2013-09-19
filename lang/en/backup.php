@@ -226,6 +226,7 @@ $string['rootsettingfilters'] = 'Include filters';
 $string['rootsettingcomments'] = 'Include comments';
 $string['rootsettingcalendarevents'] = 'Include calendar events';
 $string['rootsettinguserscompletion'] = 'Include user completion details';
+$string['rootsettingquestionbank'] = 'Include question bank';
 $string['rootsettinglogs'] = 'Include course logs';
 $string['rootsettinggradehistories'] = 'Include grade history';
 $string['rootsettingimscc1'] = 'Convert to IMS Common Cartridge 1.0';
