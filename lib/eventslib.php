@@ -363,6 +363,8 @@ function events_process_queued_handler($qhandler) {
     $qh->status       = $qhandler->status + 1;
     $DB->update_record('events_queue_handlers', $qh);
 
+    debugging($errormessage);
+
     return false;
 }
 
