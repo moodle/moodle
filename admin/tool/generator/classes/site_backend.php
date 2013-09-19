@@ -104,7 +104,7 @@ class tool_generator_site_backend extends tool_generator_backend {
         // Create courses.
         $prevchdir = getcwd();
         chdir($CFG->dirroot);
-        $ncourse = $this->get_last_testcourse_id();
+        $ncourse = self::get_last_testcourse_id();
         foreach (self::$sitecourses as $coursesize => $ncourses) {
             for ($i = 1; $i <= $ncourses[$this->size]; $i++) {
                 // Non language-dependant shortname.
@@ -177,26 +177,29 @@ class tool_generator_site_backend extends tool_generator_backend {
      *
      * @return int The last generated numeric value.
      */
-    protected function get_last_testcourse_id() {
+    protected static function get_last_testcourse_id() {
         global $DB;
 
         $params = array();
         $params['shortnameprefix'] = $DB->sql_like_escape(self::SHORTNAMEPREFIX) . '%';
         $like = $DB->sql_like('shortname', ':shortnameprefix');
 
-        if (!$testcourses = $DB->get_records_select('course', $like, $params, 'shortname DESC')) {
+        if (!$testcourses = $DB->get_records_select('course', $like, $params, '', 'shortname')) {
             return 0;
         }
+        // SQL order by is not appropiate here as is ordering strings.
+        $shortnames = array_keys($testcourses);
+        rsort($shortnames, SORT_NATURAL);
 
         // They come ordered by shortname DESC, so non-numeric values will be the first ones.
-        foreach ($testcourses as $testcourse) {
-            $sufix = substr($testcourse->shortname, strlen(self::SHORTNAMEPREFIX));
-            if (is_numeric($sufix)) {
+        $prefixnchars = strlen(self::SHORTNAMEPREFIX);
+        foreach ($shortnames as $shortname) {
+            $sufix = substr($shortname, $prefixnchars);
+            if (preg_match('/^[\d]+$/', $sufix)) {
                 return $sufix;
             }
         }
-
-        // If all sufixes are not numeric this is the fist make test site run.
+        // If all sufixes are not numeric this is the first make test site run.
         return 0;
     }
 
