@@ -2567,6 +2567,8 @@ abstract class repository implements cacheable_object {
             if ($tempfile = $fs->get_file($user_context->id, 'user', 'draft', $itemid, $newfilepath, $newfilename)) {
                 // Remember original file source field.
                 $source = @unserialize($file->get_source());
+                // Remember the original sortorder.
+                $sortorder = $file->get_sortorder();
                 if ($tempfile->is_external_file()) {
                     // New file is a reference. Check that existing file does not have any other files referencing to it
                     if (isset($source->original) && $fs->search_references_count($source->original)) {
@@ -2585,6 +2587,7 @@ abstract class repository implements cacheable_object {
                     $newfilesource->original = $source->original;
                     $newfile->set_source(serialize($newfilesource));
                 }
+                $newfile->set_sortorder($sortorder);
                 // remove temp file
                 $tempfile->delete();
                 return true;
