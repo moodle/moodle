@@ -80,7 +80,7 @@ if ($getpdf) {
 
     $c  = '<h3>General information</h3>';
     $c .= 'Moodle release: '            . $CFG->release . '<br />';
-    $c .= 'PDF producer: TCPDF '        . $doc->getTCPDFVersion()  . ' (http://www.tcpdf.org) <br />';
+    $c .= 'PDF producer: TCPDF '        . TCPDF_STATIC::getTCPDFVersion() . ' (http://www.tcpdf.org) <br />';
     $c .= 'Font of this test page: '    . $fontfamily   . '<br />';
 
     $c .= '<h3>Current settings</h3>';
