@@ -5143,6 +5143,16 @@ function reset_course_userdata($data) {
     $data->courseid = $data->id;
     $context = context_course::instance($data->courseid);
 
+    $eventparams = array(
+        'context' => $context,
+        'courseid' => $data->id,
+        'other' => array(
+            'reset_options' => (array) $data
+        )
+    );
+    $event = \core\event\course_reset_started::create($eventparams);
+    $event->trigger();
+
     // Calculate the time shift of dates.
     if (!empty($data->reset_start_date)) {
         // Time part of course startdate should be zero.
@@ -5363,6 +5373,9 @@ function reset_course_userdata($data) {
         require_once($CFG->dirroot.'/comment/lib.php');
         comment::reset_course_page_comments($context);
     }
+
+    $event = \core\event\course_reset_ended::create($eventparams);
+    $event->trigger();
 
     return $status;
 }
