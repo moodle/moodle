@@ -163,7 +163,7 @@ echo $OUTPUT->doctype() ?>
         <!-- end header -->
 
         <!-- main content -->
-        <div data-role="content" class="mymobilecontent" <?php echo $databodytheme; ?>>
+        <div id="page-content" data-role="content" class="mymobilecontent block-region" <?php echo $databodytheme; ?>>
           <?php if($toset) {  // If we get the true, that means load/show settings only. ?>
             <h2 class="jsets"><?php p(get_string('settings')); ?></h2>
             <?php
