@@ -45,11 +45,13 @@ $title = get_string('create', 'badges');
 
 if (($type == BADGE_TYPE_COURSE) && ($course = $DB->get_record('course', array('id' => $courseid)))) {
     require_login($course);
-    $PAGE->set_context(context_course::instance($course->id));
+    $coursecontext = context_course::instance($course->id);
+    $PAGE->set_context($coursecontext);
     $PAGE->set_pagelayout('course');
     $PAGE->set_url('/badges/newbadge.php', array('type' => $type, 'id' => $course->id));
-    $PAGE->set_heading($course->fullname . ": " . $title);
-    $PAGE->set_title($course->fullname . ": " . $title);
+    $heading = format_string($course->fullname, true, array('context' => $coursecontext)) . ": " . $title;
+    $PAGE->set_heading($heading);
+    $PAGE->set_title($heading);
 } else {
     $PAGE->set_context(context_system::instance());
     $PAGE->set_pagelayout('admin');
