@@ -30,7 +30,4 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'Jezik';
-$string['next'] = 'Naprej';
-$string['previous'] = 'Prejšnje';
-$string['reload'] = 'Osveži';
+$string['environmentrequireversion'] = 'version {$a->needed} is required and ye are running {$a->current}';
