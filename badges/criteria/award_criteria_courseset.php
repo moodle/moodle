@@ -160,10 +160,11 @@ class award_criteria_courseset extends award_criteria {
         // In courseset, print out only the ones that were already selected.
         foreach ($this->params as $p) {
             if ($course = $DB->get_record('course', array('id' => $p['course']))) {
+                $coursecontext = context_course::instance($course->id);
                 $param = array(
                         'id' => $course->id,
                         'checked' => true,
-                        'name' => ucfirst($course->fullname),
+                        'name' => ucfirst(format_string($course->fullname, true, array('context' => $coursecontext))),
                         'error' => false
                 );
 
