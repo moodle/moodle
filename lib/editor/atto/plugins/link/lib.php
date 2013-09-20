@@ -39,6 +39,7 @@ function atto_link_init_editor($elementid) {
     $PAGE->requires->strings_for_js(array('createlink',
                                           'enterurl',
                                           'browserepositories',
+                                          'openinnewwindow',
                                           'accessibilityhint'),
                                     'atto_link');
 
