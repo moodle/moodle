@@ -544,7 +544,8 @@ abstract class backup_controller_dbops extends backup_dbops {
             'backup_general_badges'             => 'badges',
             'backup_general_userscompletion'    => 'userscompletion',
             'backup_general_logs'               => 'logs',
-            'backup_general_histories'          => 'grade_histories'
+            'backup_general_histories'          => 'grade_histories',
+            'backup_general_questionbank'       => 'questionbank'
         );
         $plan = $controller->get_plan();
         foreach ($settings as $config=>$settingname) {
