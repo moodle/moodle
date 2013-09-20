@@ -1043,4 +1043,91 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         $this->assertNotEmpty($result['assignments'][0]['submissions'][0]['plugins']);
 
     }
+
+    /**
+     * Test set_user_flags
+     */
+    public function test_set_user_flags() {
+        global $DB, $USER;
+
+        $this->resetAfterTest(true);
+        // Create a course and assignment.
+        $coursedata['idnumber'] = 'idnumbercourse';
+        $coursedata['fullname'] = 'Lightwork Course';
+        $coursedata['summary'] = 'Lightwork Course description';
+        $coursedata['summaryformat'] = FORMAT_MOODLE;
+        $course = self::getDataGenerator()->create_course($coursedata);
+
+        $assigndata['course'] = $course->id;
+        $assigndata['name'] = 'lightwork assignment';
+
+        $assign = self::getDataGenerator()->create_module('assign', $assigndata);
+
+        // Create a manual enrolment record.
+        $manualenroldata['enrol'] = 'manual';
+        $manualenroldata['status'] = 0;
+        $manualenroldata['courseid'] = $course->id;
+        $enrolid = $DB->insert_record('enrol', $manualenroldata);
+
+        // Create a teacher and give them capabilities.
+        $context = context_course::instance($course->id);
+        $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
+        $context = context_module::instance($assign->id);
+        $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
+
+        // Create the teacher's enrolment record.
+        $userenrolmentdata['status'] = 0;
+        $userenrolmentdata['enrolid'] = $enrolid;
+        $userenrolmentdata['userid'] = $USER->id;
+        $DB->insert_record('user_enrolments', $userenrolmentdata);
+
+        // Create a student.
+        $student = self::getDataGenerator()->create_user();
+
+        // Create test user flags record.
+        $userflags = array();
+        $userflag['userid'] = $student->id;
+        $userflag['workflowstate'] = 'inmarking';
+        $userflag['allocatedmarker'] = $USER->id;
+        $userflags = array($userflag);
+
+        $createduserflags = mod_assign_external::set_user_flags($assign->id, $userflags);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $createduserflags = external_api::clean_returnvalue(mod_assign_external::set_user_flags_returns(), $createduserflags);
+
+        $this->assertEquals($student->id, $createduserflags[0]['userid']);
+        $createduserflag = $DB->get_record('assign_user_flags', array('id' => $createduserflags[0]['id']));
+
+        // Confirm that all data was inserted correctly.
+        $this->assertEquals($student->id,  $createduserflag->userid);
+        $this->assertEquals($assign->id, $createduserflag->assignment);
+        $this->assertEquals(0, $createduserflag->locked);
+        $this->assertEquals(2, $createduserflag->mailed);
+        $this->assertEquals(0, $createduserflag->extensionduedate);
+        $this->assertEquals('inmarking', $createduserflag->workflowstate);
+        $this->assertEquals($USER->id, $createduserflag->allocatedmarker);
+
+        // Create update data.
+        $userflags = array();
+        $userflag['userid'] = $createduserflag->userid;
+        $userflag['workflowstate'] = 'readyforreview';
+        $userflags = array($userflag);
+
+        $updateduserflags = mod_assign_external::set_user_flags($assign->id, $userflags);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $updateduserflags = external_api::clean_returnvalue(mod_assign_external::set_user_flags_returns(), $updateduserflags);
+
+        $this->assertEquals($student->id, $updateduserflags[0]['userid']);
+        $updateduserflag = $DB->get_record('assign_user_flags', array('id' => $updateduserflags[0]['id']));
+
+        // Confirm that all data was updated correctly.
+        $this->assertEquals($student->id,  $updateduserflag->userid);
+        $this->assertEquals($assign->id, $updateduserflag->assignment);
+        $this->assertEquals(0, $updateduserflag->locked);
+        $this->assertEquals(2, $updateduserflag->mailed);
+        $this->assertEquals(0, $updateduserflag->extensionduedate);
+        $this->assertEquals('readyforreview', $updateduserflag->workflowstate);
+        $this->assertEquals($USER->id, $updateduserflag->allocatedmarker);
+    }
+
 }
