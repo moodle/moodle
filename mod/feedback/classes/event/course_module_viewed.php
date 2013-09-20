@@ -99,7 +99,7 @@ class course_module_viewed extends \core\event\content_viewed {
         if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
             return null;
         } else {
-            return array($this->courseid, 'feedback', 'view', 'view.php?id=' . $this->other['cmid'], $this->other['instanceid'],
+            return array($this->courseid, 'feedback', 'view', 'view.php?id=' . $this->other['cmid'], $this->objectid,
                     $this->other['cmid']);
         }
     }
@@ -115,9 +115,6 @@ class course_module_viewed extends \core\event\content_viewed {
         }
         if (!isset($this->other['cmid'])) {
             throw new \coding_exception("Field other['cmid'] cannot be empty");
-        }
-        if (!isset($this->other['instanceid'])) {
-            throw new \coding_exception("Field other['instanceid'] cannot be empty");
         }
 
         // Call parent validations.

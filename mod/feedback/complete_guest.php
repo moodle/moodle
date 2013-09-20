@@ -208,12 +208,6 @@ if ($feedback_can_submit) {
         if (feedback_check_values($startitempos, $lastitempos)) {
             $userid = $USER->id; //arb
             if ($completedid = feedback_save_guest_values(sesskey())) {
-                add_to_log($course->id,
-                           'feedback',
-                           'startcomplete',
-                           'view.php?id='.$cm->id,
-                           $feedback->id);
-
                 //now it can be saved
                 if (!$gonextpage AND !$gopreviouspage) {
                     $preservevalues = false;
