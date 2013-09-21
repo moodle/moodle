@@ -30,7 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['availablelangs'] = 'Списък на наличните езици';
+$string['availablelangs'] = 'Налични езикови пакети';
 $string['chooselanguagehead'] = 'Изберете език';
 $string['chooselanguagesub'] = 'Моля, изберете език за инсталацията. Този език ще бъде, също така, език по подразбиране на сайта, но може да бъде променен и по-късно след инсталирането.';
 $string['databasehost'] = 'Хост на базата данни';
