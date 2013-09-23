@@ -221,6 +221,14 @@ ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include
 //point zend include path to moodles lib/zend so that includes and requires will search there for files before anywhere else
 ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include_path'));
 
+// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
+// Required because the database checks below lead to session interaction which is going to lead us to requiring autoloaded classes.
+if (defined('COMPONENT_CLASSLOADER')) {
+    spl_autoload_register(COMPONENT_CLASSLOADER);
+} else {
+    spl_autoload_register('core_component::classloader');
+}
+
 require('version.php');
 $CFG->target_release = $release;
 
