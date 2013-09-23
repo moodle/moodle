@@ -53,7 +53,8 @@ Block
 }
 .block-region .invisible {
     opacity: 0.5;
-    filter: alpha(opacity=50);
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";  /** must come first! **/
+    filter: alpha(opacity=50);  /** must come second! **/
 }
 .block .block-hider-show,
 .block .block-hider-hide {
@@ -77,9 +78,7 @@ Block
     list-style-type: none;
 }
 .block-region li {
-    padding: 0 0 20px 0;
-}
-.block-region li ul {
+    padding: 0;
 }
 .block-region li li {
     margin: 0 20px 0 10px;
@@ -91,7 +90,7 @@ Block
     width: 100%;
 }
 .block .header div.commands {
-    margin-left: 10px;
+    margin-left: 0;
 }
 #region-pre .block .header {
     background:url([[pix:theme|images/light3]]) 0 -136px repeat-x;
@@ -152,4 +151,46 @@ Block
     left:0px;
     bottom: 0px;
     position:absolute;
+}
+/* COMMAND ICONS
+-----------------------*/
+img.iconsmall,
+.block.block_with_controls div.header div.commands a img,
+.block-control-actions span.moodle-core-dragdrop-draghandle img,
+.course-content ul.topics li.section .right img,
+.course-content ul.topics li.section .left img {
+    height:15px;
+    margin:2px;
+    width:15px;
+    background-color: #eee;
+    border: 1px solid #aaa;
+    padding:1px;
+    -webkit-border-radius:5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+.course-content ul.topics li.section .right img.spacer,
+.course-content ul.topics li.section .left img.spacer {
+    height: 1px;
+    margin: 0;
+    width: 1px;
+    background: none;
+    border: 0 none;
+    padding: 0;
+    border-radius: 0;
+}
+.block .header .commands {
+    text-align: center;
+}
+.block-control-actions span.moodle-core-dragdrop-draghandle {
+    position: relative;
+    top: 5px;
+}
+.moodle-actionmenu.show[data-enhanced] .menu a {
+    color: #333333;
+    display: block;
+    padding: 2px 0.5em;
+}
+.moodle-actionmenu.show[data-enhanced] .menu {
+    left: 0;
 }
