@@ -256,12 +256,16 @@ if ($usernew = $userform->get_data()) {
         }
     }
 
-    // reload from db
-    $usernew = $DB->get_record('user', array('id'=>$user->id));
+    // Reload from db, we need new full name on this page if we do not redirect.
+    $user = $DB->get_record('user', array('id'=>$user->id), '*', MUST_EXIST);
 
     if ($USER->id == $user->id) {
         // Override old $USER session variable if needed
-        foreach ((array)$usernew as $variable => $value) {
+        foreach ((array)$user as $variable => $value) {
+            if ($variable === 'description' or $variable === 'password') {
+                // These are not set for security nad perf reasons.
+                continue;
+            }
             $USER->$variable = $value;
         }
         // preload custom fields
