@@ -110,6 +110,18 @@ Misc:
     * course_modinfo::build_section_cache() -> (no replacement)
     * generate_email_supportuser()          -> core_user::get_support_user()
 
+Sessions:
+    * session_get_instance()->xxx()         -> \core\session\manager::xxx()
+    * session_kill_all()                    -> \core\session\manager::kill_all_sessions()
+    * session_touch()                       -> \core\session\manager::touch_session()
+    * session_kill()                        -> \core\session\manager::kill_session()
+    * session_kill_user()                   -> \core\session\manager::kill_user_sessions()
+    * session_gc()                          -> \core\session\manager::gc()
+    * session_set_user()                    -> \core\session\manager::set_user()
+    * session_is_loggedinas()               -> \core\session\manager::is_loggedinas()
+    * session_get_realuser()                -> \core\session\manager::get_realuser()
+    * session_loginas()                     -> \core\session\manager::loginas()
+
 User-agent related functions:
     * check_browser_operating_system()      -> core_useragent::check_browser_operating_system()
     * check_browser_version()               -> core_useragent::check_browser_version()

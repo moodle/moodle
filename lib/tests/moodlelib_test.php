@@ -2422,6 +2422,30 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEquals($expectedarray, order_in_string($valuearray, $formatstring));
     }
 
+    public function test_complete_user_login() {
+        global $USER;
+
+        $this->resetAfterTest();
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser(0);
+
+        $sink = $this->redirectEvents();
+        @complete_user_login($user); // Hide session header errors.
+        $this->assertEquals($user->id, $USER->id);
+        $events = $sink->get_events();
+        $sink->close();
+
+        $this->assertCount(2, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\user_updated', $event);
+        $event = $events[1];
+        $this->assertInstanceOf('\core\event\user_loggedin', $event);
+        $this->assertEquals('user', $event->objecttable);
+        $this->assertEquals($user->id, $event->objectid);
+        $this->assertEquals(context_system::instance()->id, $event->contextid);
+        $this->assertEquals($user, $event->get_record_snapshot('user', $user->id));
+    }
+
     /**
      * Test require_logout.
      */
@@ -2429,7 +2453,6 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
-        $course = $this->getDataGenerator()->create_course();
 
         $this->assertTrue(isloggedin());
 

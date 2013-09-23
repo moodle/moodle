@@ -687,7 +687,7 @@ if ($formdata = $mform2->is_cancelled()) {
             }
 
             if ($dologout) {
-                session_kill_user($existinguser->id);
+                \core\session\manager::kill_user_sessions($existinguser->id);
             }
 
         } else {

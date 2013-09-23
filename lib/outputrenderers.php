@@ -578,8 +578,8 @@ class core_renderer extends renderer_base {
 
         $loginpage = ((string)$this->page->url === get_login_url());
         $course = $this->page->course;
-        if (session_is_loggedinas()) {
-            $realuser = session_get_realuser();
+        if (\core\session\manager::is_loggedinas()) {
+            $realuser = \core\session\manager::get_realuser();
             $fullname = fullname($realuser, true);
             if ($withlinks) {
                 $loginastitle = get_string('loginas');
@@ -775,7 +775,7 @@ class core_renderer extends renderer_base {
     public function header() {
         global $USER, $CFG;
 
-        if (session_is_loggedinas()) {
+        if (\core\session\manager::is_loggedinas()) {
             $this->page->add_body_class('userloggedinas');
         }
 

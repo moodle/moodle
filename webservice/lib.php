@@ -90,12 +90,11 @@ class webservice {
         enrol_check_plugins($user);
 
         // setup user session to check capability
-        session_set_user($user);
+        \core\session\manager::set_user($user);
 
         //assumes that if sid is set then there must be a valid associated session no matter the token type
         if ($token->sid) {
-            $session = session_get_instance();
-            if (!$session->session_exists($token->sid)) {
+            if (!\core\session\manager::session_exists($token->sid)) {
                 $DB->delete_records('external_tokens', array('sid' => $token->sid));
                 throw new webservice_access_exception('Invalid session based token - session not found or expired');
             }
@@ -905,7 +904,7 @@ abstract class webservice_server implements webservice_server_interface {
 
         // now fake user login, the session is completely empty too
         enrol_check_plugins($user);
-        session_set_user($user);
+        \core\session\manager::set_user($user);
         $this->userid = $user->id;
 
         if ($this->authmethod != WEBSERVICE_AUTHMETHOD_SESSION_TOKEN && !has_capability("webservice/$this->wsname:use", $this->restricted_context)) {
@@ -936,8 +935,7 @@ abstract class webservice_server implements webservice_server_interface {
         }
 
         if ($token->sid){//assumes that if sid is set then there must be a valid associated session no matter the token type
-            $session = session_get_instance();
-            if (!$session->session_exists($token->sid)){
+            if (!\core\session\manager::session_exists($token->sid)){
                 $DB->delete_records('external_tokens', array('sid'=>$token->sid));
                 throw new webservice_access_exception('Invalid session based token - session not found or expired');
             }

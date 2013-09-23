@@ -436,7 +436,7 @@ class core_repositorylib_testcase extends advanced_testcase {
         $userrepo = repository::get_repository_by_id($user1repoid, $syscontext);
 
         $this->setAdminUser();
-        session_loginas($user1->id, $syscontext);
+        \core\session\manager::loginas($user1->id, $syscontext);
 
         // Logged in as, I cannot view a user instance.
         $caughtexception = false;

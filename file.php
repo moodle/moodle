@@ -111,7 +111,7 @@ if ($file->get_filename() == '.') {
 // ========================================
 // finally send the file
 // ========================================
-session_get_instance()->write_close(); // unlock session during fileserving
+\core\session\manager::write_close(); // Unlock session during file serving.
 send_stored_file($file, $lifetime, $CFG->filteruploadedfiles, $forcedownload);
 
 

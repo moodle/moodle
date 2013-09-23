@@ -176,7 +176,7 @@ class behat_hooks extends behat_base {
 
         // Assing valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
-        session_set_user($user);
+        \core\session\manager::set_user($user);
 
         // Reset the browser if specified in config.php.
         if (!empty($CFG->behat_restart_browser_after) && $this->running_javascript()) {

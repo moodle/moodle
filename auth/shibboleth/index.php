@@ -48,7 +48,7 @@
                 && $user = authenticate_user_login($frm->username, $frm->password)) {
 
             enrol_check_plugins($user);
-            session_set_user($user);
+            \core\session\manager::set_user($user);
 
             $USER->loggedin = true;
             $USER->site     = $CFG->wwwroot; // for added security, store the site in the

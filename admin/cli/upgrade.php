@@ -172,7 +172,7 @@ set_config('branch', $branch);
 upgrade_noncore(true);
 
 // log in as admin - we need doanything permission when applying defaults
-session_set_user(get_admin());
+\core\session\manager::set_user(get_admin());
 
 // apply all default settings, just in case do it twice to fill all defaults
 admin_apply_default_settings(NULL, false);

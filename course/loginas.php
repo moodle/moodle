@@ -11,7 +11,7 @@ $url = new moodle_url('/course/loginas.php', array('id'=>$id));
 $PAGE->set_url($url);
 
 // Reset user back to their real self if needed, for security reasons you need to log out and log in again.
-if (session_is_loggedinas()) {
+if (\core\session\manager::is_loggedinas()) {
     require_sesskey();
     require_logout();
 
@@ -61,7 +61,7 @@ if (has_capability('moodle/user:loginas', $systemcontext)) {
 }
 
 // Login as this user and return to course home page.
-session_loginas($userid, $context);
+\core\session\manager::loginas($userid, $context);
 $newfullname = fullname($USER, true);
 
 $strloginas    = get_string('loginas');

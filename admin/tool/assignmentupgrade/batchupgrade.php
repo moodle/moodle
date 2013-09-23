@@ -47,7 +47,7 @@ if (!$confirm) {
 }
 raise_memory_limit(MEMORY_EXTRA);
 // Release session.
-session_get_instance()->write_close();
+\core\session\manager::write_close();
 
 echo $renderer->header();
 echo $renderer->heading(get_string('batchupgrade', 'tool_assignmentupgrade'));

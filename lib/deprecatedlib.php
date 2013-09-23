@@ -31,6 +31,140 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Factory method that was returning moodle_session object.
+ *
+ * @deprecated since 2.6
+ * @return \core\session\manager
+ */
+function session_get_instance() {
+    // Note: the new session manager includes all methods from the original session class.
+    static $deprecatedinstance = null;
+
+    debugging('session_get_instance() is deprecated, use \core\session\manager instead', DEBUG_DEVELOPER);
+
+    if (!$deprecatedinstance) {
+        $deprecatedinstance = new \core\session\manager();
+    }
+
+    return $deprecatedinstance;
+}
+
+/**
+ * Returns true if legacy session used.
+ *
+ * @deprecated since 2.6
+ * @return bool
+ */
+function session_is_legacy() {
+    debugging('session_is_legacy() is deprecated, do not use any more', DEBUG_DEVELOPER);
+    return false;
+}
+
+/**
+ * Terminates all sessions, auth hooks are not executed.
+ * Useful in upgrade scripts.
+ *
+ * @deprecated since 2.6
+ */
+function session_kill_all() {
+    debugging('session_kill_all() is deprecated, use \core\session\manager::kill_all_sessions() instead', DEBUG_DEVELOPER);
+    \core\session\manager::kill_all_sessions();
+}
+
+/**
+ * Mark session as accessed, prevents timeouts.
+ *
+ * @deprecated since 2.6
+ * @param string $sid
+ */
+function session_touch($sid) {
+    debugging('session_touch() is deprecated, use \core\session\manager::touch_session() instead', DEBUG_DEVELOPER);
+    \core\session\manager::touch_session($sid);
+}
+
+/**
+ * Terminates one sessions, auth hooks are not executed.
+ *
+ * @deprecated since 2.6
+ * @param string $sid session id
+ */
+function session_kill($sid) {
+    debugging('session_kill() is deprecated, use \core\session\manager::kill_session() instead', DEBUG_DEVELOPER);
+    \core\session\manager::kill_session($sid);
+}
+
+/**
+ * Terminates all sessions of one user, auth hooks are not executed.
+ * NOTE: This can not work for file based sessions!
+ *
+ * @deprecated since 2.6
+ * @param int $userid user id
+ */
+function session_kill_user($userid) {
+    debugging('session_kill_user() is deprecated, use \core\session\manager::kill_user_sessions() instead', DEBUG_DEVELOPER);
+    \core\session\manager::kill_user_sessions($userid);
+}
+
+/**
+ * Session garbage collection
+ * - verify timeout for all users
+ * - kill sessions of all deleted users
+ * - kill sessions of users with disabled plugins or 'nologin' plugin
+ *
+ * @deprecated since 2.6
+ */
+function session_gc() {
+    debugging('session_gc() is deprecated, use \core\session\manager::gc() instead', DEBUG_DEVELOPER);
+    \core\session\manager::gc();
+}
+
+/**
+ * Setup $USER object - called during login, loginas, etc.
+ *
+ * Call sync_user_enrolments() manually after log-in, or log-in-as.
+ *
+ * @deprecated since 2.6
+ * @param stdClass $user full user record object
+ * @return void
+ */
+function session_set_user($user) {
+    debugging('session_set_user() is deprecated, use \core\session\manager::set_user() instead', DEBUG_DEVELOPER);
+    \core\session\manager::set_user($user);
+}
+
+/**
+ * Is current $USER logged-in-as somebody else?
+ * @deprecated since 2.6
+ * @return bool
+ */
+function session_is_loggedinas() {
+    debugging('session_is_loggedinas() is deprecated, use \core\session\manager::is_loggedinas() instead', DEBUG_DEVELOPER);
+    return \core\session\manager::is_loggedinas();
+}
+
+/**
+ * Returns the $USER object ignoring current login-as session
+ * @deprecated since 2.6
+ * @return stdClass user object
+ */
+function session_get_realuser() {
+    debugging('session_get_realuser() is deprecated, use \core\session\manager::get_realuser() instead', DEBUG_DEVELOPER);
+    return \core\session\manager::get_realuser();
+}
+
+/**
+ * Login as another user - no security checks here.
+ * @deprecated since 2.6
+ * @param int $userid
+ * @param stdClass $context
+ * @return void
+ */
+function session_loginas($userid, $context) {
+    debugging('session_loginas() is deprecated, use \core\session\manager::loginas() instead', DEBUG_DEVELOPER);
+    \core\session\manager::loginas($userid, $context);
+}
+
+/**
  * Minify JavaScript files.
  *
  * @deprecated since 2.6

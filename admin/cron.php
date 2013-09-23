@@ -53,7 +53,7 @@ require_once($CFG->libdir.'/clilib.php');
 require_once($CFG->libdir.'/cronlib.php');
 
 // extra safety
-session_get_instance()->write_close();
+\core\session\manager::write_close();
 
 // check if execution allowed
 if (!empty($CFG->cronclionly)) {

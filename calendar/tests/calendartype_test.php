@@ -277,6 +277,6 @@ class core_calendar_type_testcase extends advanced_testcase {
      */
     private function set_calendar_type($type) {
         $this->user->calendartype = $type;
-        session_set_user($this->user);
+        \core\session\manager::set_user($this->user);
     }
 }
