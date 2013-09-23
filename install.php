@@ -161,6 +161,7 @@ if (!empty($_POST)) {
 }
 
 // Fake some settings so that we can use selected functions from moodlelib.php, weblib.php and filelib.php.
+global $CFG;
 $CFG = new stdClass();
 $CFG->lang                 = $config->lang;
 $CFG->dirroot              = dirname(__FILE__);
@@ -232,17 +233,25 @@ if (defined('COMPONENT_CLASSLOADER')) {
 require('version.php');
 $CFG->target_release = $release;
 
-$SESSION = new stdClass();
-$SESSION->lang = $CFG->lang;
+$_SESSION = array();
+$_SESSION['SESSION'] = new stdClass();
+$_SESSION['SESSION']->lang = $CFG->lang;
+$_SESSION['USER'] = new stdClass();
+$_SESSION['USER']->id = 0;
+$_SESSION['USER']->mnethostid = 1;
 
-$USER = new stdClass();
-$USER->id = 0;
+global $SESSION;
+global $USER;
+$SESSION = &$_SESSION['SESSION'];
+$USER    = &$_SESSION['USER'];
 
+global $COURSE;
 $COURSE = new stdClass();
-$COURSE->id = 0;
+$COURSE->id = 1;
 
+global $SITE;
 $SITE = $COURSE;
-define('SITEID', 0);
+define('SITEID', 1);
 
 $hint_dataroot = '';
 $hint_admindir = '';
