@@ -1,11 +1,15 @@
 div.editor_atto {
     background-color: white;
     border: 1px solid #BBB;
+    width: 100%;
 }
 
 .editor_atto + textarea {
     width: 100%;
     padding: 0;
+    resize: vertical;
+    border-radius: 0;
+    border: 1px solid #BBB;
 }
 
 div.editor_atto_toolbar {
@@ -15,6 +19,7 @@ div.editor_atto_toolbar {
     border-top: 1px solid #BBB;
     border-left: 1px solid #BBB;
     border-right: 1px solid #BBB;
+    width: 100%;
 }
 
 div.editor_atto_toolbar button {
