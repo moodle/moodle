@@ -329,7 +329,7 @@ class theme_config {
      * This is used when displaying blocks for regions only.
      * @var array
      */
-    public $blockrtlmanipulations = array();
+    public $blockrtlmanipulations = null;
 
     /**
      * @var renderer_factory Instance of the renderer_factory implementation
@@ -488,8 +488,15 @@ class theme_config {
         }
 
         // Use parent theme's "blockrtlmanipulations" if it was defined and if it was not defined on current theme.
-        if (empty($this->blockrtlmanipulations) and !empty($parent_config->blockrtlmanipulations)) {
-            $this->blockrtlmanipulations = $parent_config->blockrtlmanipulations;
+        if (!is_array($this->blockrtlmanipulations)) {
+            $blockrtlmanipulations = array();
+            foreach ($this->parent_configs as $parentconfig) {
+                if (isset($parentconfig->blockrtlmanipulations)) {
+                    $blockrtlmanipulations = $parentconfig->blockrtlmanipulations;
+                    break;
+                }
+            }
+            $this->blockrtlmanipulations = $blockrtlmanipulations;
         }
 
         //fix arrows if needed
