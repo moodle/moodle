@@ -5443,6 +5443,7 @@ function moodle_process_email($modargs, $body) {
 function get_mailer($action='get') {
     global $CFG;
 
+    /** @var moodle_phpmailer $mailer */
     static $mailer  = null;
     static $counter = 0;
 
@@ -5454,7 +5455,7 @@ function get_mailer($action='get') {
         $prevkeepalive = false;
 
         if (isset($mailer) and $mailer->Mailer == 'smtp') {
-            if ($counter < $CFG->smtpmaxbulk and !$mailer->IsError()) {
+            if ($counter < $CFG->smtpmaxbulk and !$mailer->isError()) {
                 $counter++;
                 // Reset the mailer.
                 $mailer->Priority         = 3;
@@ -5469,10 +5470,10 @@ function get_mailer($action='get') {
                 $mailer->AltBody          = "";
                 $mailer->ConfirmReadingTo = "";
 
-                $mailer->ClearAllRecipients();
-                $mailer->ClearReplyTos();
-                $mailer->ClearAttachments();
-                $mailer->ClearCustomHeaders();
+                $mailer->clearAllRecipients();
+                $mailer->clearReplyTos();
+                $mailer->clearAttachments();
+                $mailer->clearCustomHeaders();
                 return $mailer;
             }
 
@@ -5480,35 +5481,22 @@ function get_mailer($action='get') {
             get_mailer('flush');
         }
 
-        include_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
+        require_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
         $mailer = new moodle_phpmailer();
 
         $counter = 1;
 
-        // Mailer version.
-        $mailer->Version   = 'Moodle '.$CFG->version;
-        // Plugin directory (eg smtp plugin).
-        $mailer->PluginDir = $CFG->libdir.'/phpmailer/';
-        $mailer->CharSet   = 'UTF-8';
-
-        // Some MTAs may do double conversion of LF if CRLF used, CRLF is required line ending in RFC 822bis.
-        if (isset($CFG->mailnewline) and $CFG->mailnewline == 'CRLF') {
-            $mailer->LE = "\r\n";
-        } else {
-            $mailer->LE = "\n";
-        }
-
         if ($CFG->smtphosts == 'qmail') {
             // Use Qmail system.
-            $mailer->IsQmail();
+            $mailer->isQmail();
 
         } else if (empty($CFG->smtphosts)) {
             // Use PHP mail() = sendmail.
-            $mailer->IsMail();
+            $mailer->isMail();
 
         } else {
             // Use SMTP directly.
-            $mailer->IsSMTP();
+            $mailer->isSMTP();
             if (!empty($CFG->debugsmtp)) {
                 $mailer->SMTPDebug = true;
             }
@@ -5714,10 +5702,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         // Add custom headers.
         if (is_array($from->customheaders)) {
             foreach ($from->customheaders as $customheader) {
-                $mail->AddCustomHeader($customheader);
+                $mail->addCustomHeader($customheader);
             }
         } else {
-            $mail->AddCustomHeader($from->customheaders);
+            $mail->addCustomHeader($from->customheaders);
         }
     }
 
@@ -5727,7 +5715,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
 
     if ($messagehtml && !empty($user->mailformat) && $user->mailformat == 1) {
         // Don't ever send HTML to users who don't want it.
-        $mail->IsHTML(true);
+        $mail->isHTML(true);
         $mail->Encoding = 'quoted-printable';
         $mail->Body    =  $messagehtml;
         $mail->AltBody =  "\n$messagetext\n";
@@ -5740,11 +5728,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         if (preg_match( "~\\.\\.~" , $attachment )) {
             // Security check for ".." in dir path.
             $temprecipients[] = array($supportuser->email, fullname($supportuser, true));
-            $mail->AddStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
+            $mail->addStringAttachment('Error in attachment.  User attempted to attach a filename with a unsafe name.', 'error.txt', '8bit', 'text/plain');
         } else {
             require_once($CFG->libdir.'/filelib.php');
             $mimetype = mimeinfo('type', $attachname);
-            $mail->AddAttachment($CFG->dataroot .'/'. $attachment, $attachname, 'base64', $mimetype);
+            $mail->addAttachment($CFG->dataroot .'/'. $attachment, $attachname, 'base64', $mimetype);
         }
     }
 
@@ -5779,13 +5767,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     }
 
     foreach ($temprecipients as $values) {
-        $mail->AddAddress($values[0], $values[1]);
+        $mail->addAddress($values[0], $values[1]);
     }
     foreach ($tempreplyto as $values) {
-        $mail->AddReplyTo($values[0], $values[1]);
+        $mail->addReplyTo($values[0], $values[1]);
     }
 
-    if ($mail->Send()) {
+    if ($mail->send()) {
         set_send_count($user);
         if (!empty($mail->SMTPDebug)) {
             echo '</pre>';

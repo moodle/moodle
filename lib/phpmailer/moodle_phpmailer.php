@@ -17,8 +17,7 @@
 /**
  * Customised version of phpmailer for Moodle
  *
- * @package    moodle
- * @subpackage lib
+ * @package    core
  * @author     Dan Poltawski <talktodan@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,7 +27,9 @@ defined('MOODLE_INTERNAL') || die();
 // PLEASE NOTE: we use the phpmailer class _unmodified_
 // through the joys of OO. Distros are free to use their stock
 // version of this file.
+// NOTE: do not rely on phpmailer autoloader for performance reasons.
 require_once($CFG->libdir.'/phpmailer/class.phpmailer.php');
+require_once($CFG->libdir.'/phpmailer/class.smtp.php');
 
 /**
  * Moodle Customised version of the PHPMailer class
@@ -50,8 +51,14 @@ class moodle_phpmailer extends PHPMailer {
     public function __construct(){
         global $CFG;
         $this->Version   = 'Moodle '.$CFG->version;         // mailer version
-        $this->PluginDir = $CFG->libdir.'/phpmailer/';      // plugin directory (eg smtp plugin)
         $this->CharSet   = 'UTF-8';
+
+        // Some MTAs may do double conversion of LF if CRLF used, CRLF is required line ending in RFC 822bis.
+        if (isset($CFG->mailnewline) and $CFG->mailnewline == 'CRLF') {
+            $this->LE = "\r\n";
+        } else {
+            $this->LE = "\n";
+        }
     }
 
     /**
@@ -59,12 +66,15 @@ class moodle_phpmailer extends PHPMailer {
      * message-ids
      * http://tracker.moodle.org/browse/MDL-3681
      */
-    public function AddCustomHeader($custom_header) {
-        if(preg_match('/message-id:(.*)/i', $custom_header, $matches)){
+    public function addCustomHeader($custom_header, $value = null) {
+        if ($value === null and preg_match('/message-id:(.*)/i', $custom_header, $matches)) {
             $this->MessageID = $matches[1];
             return true;
-        }else{
-            return parent::AddCustomHeader($custom_header);
+        } else if ($value !== null and strcasecmp($custom_header, 'message-id') === 0) {
+            $this->MessageID = $value;
+            return true;
+        } else {
+            return parent::addCustomHeader($custom_header, $value);
         }
     }
 
@@ -72,24 +82,24 @@ class moodle_phpmailer extends PHPMailer {
      * Use internal moodles own core_text to encode mimeheaders.
      * Fall back to phpmailers inbuilt functions if not 
      */
-    public function EncodeHeader($str, $position = 'text') {
+    public function encodeHeader($str, $position = 'text') {
         $encoded = core_text::encode_mimeheader($str, $this->CharSet);
         if ($encoded !== false) {
             $encoded = str_replace("\n", $this->LE, $encoded);
-            if ($position == 'phrase') {
+            if ($position === 'phrase') {
                 return ("\"$encoded\"");
             }
             return $encoded;
         }
 
-        return parent::EncodeHeader($str, $position);
+        return parent::encodeHeader($str, $position);
     }
 
     /**
      * Replaced function to fix tz bug:
      * http://tracker.moodle.org/browse/MDL-12596
      */
-    public static function RFCDate() {
+    public static function rfcDate() {
         $tz = date('Z');
         $tzs = ($tz < 0) ? '-' : '+';
         $tz = abs($tz);
@@ -105,13 +115,13 @@ class moodle_phpmailer extends PHPMailer {
      *
      * @see parent::EncodeQP() for full documentation
      */
-    public function EncodeQP($string, $line_max = 76, $space_conv = false) {
+    public function encodeQP($string, $line_max = 76) {
         //if (function_exists('quoted_printable_encode')) { //Use native function if it's available (>= PHP5.3)
         //    return quoted_printable_encode($string);
         //}
         $filters = stream_get_filters();
         if (!in_array('convert.*', $filters)) { //Got convert stream filter?
-            return $this->EncodeQPphp($string, $line_max, $space_conv); //Fall back to old implementation
+            return parent::encodeQP($string, $line_max); //Fall back to old implementation
         }
         $fp = fopen('php://temp/', 'r+');
         $string = preg_replace('/\r\n?/', $this->LE, $string); //Normalise line breaks
@@ -133,7 +143,7 @@ class moodle_phpmailer extends PHPMailer {
      *
      * @return bool
      */
-    protected function PostSend() {
+    public function postSend() {
         // Now ask phpunit if it wants to catch this message.
         if (PHPUNIT_TEST && phpunit_util::is_redirecting_messages()) {
             $mail = new stdClass();
@@ -144,7 +154,7 @@ class moodle_phpmailer extends PHPMailer {
             phpunit_util::phpmailer_sent($mail);
             return true;
         } else {
-            return parent::PostSend();
+            return parent::postSend();
         }
     }
 }
