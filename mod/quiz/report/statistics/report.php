@@ -478,7 +478,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         // The statistics.
         foreach ($todisplay as $property => $format) {
-            if (!isset($quizstats->$property) || empty($format[$property])) {
+            if (!isset($quizstats->$property) || !$format) {
                 continue;
             }
             $value = $quizstats->$property;
