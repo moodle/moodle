@@ -14,8 +14,11 @@ if (! $course = $DB->get_record('course', array('id'=>$id))) {
 require_course_login($course);
 $PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, 'chat', 'view all', "index.php?id=$course->id", '');
-
+$params = array(
+    'context' => context_course::instance($id)
+);
+$event = \mod_chat\event\instances_list_viewed::create($params);
+$event->trigger();
 
 /// Get all required strings
 

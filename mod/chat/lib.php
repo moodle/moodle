@@ -602,16 +602,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         if ($version == 'sockets') {
             // do not send 'enter' message, chatd will do it
         } else {
-            $message = new stdClass();
-            $message->chatid    = $chatuser->chatid;
-            $message->userid    = $chatuser->userid;
-            $message->groupid   = $groupid;
-            $message->message   = 'enter';
-            $message->system    = 1;
-            $message->timestamp = time();
-
-            $DB->insert_record('chat_messages', $message);
-            $DB->insert_record('chat_messages_current', $message);
+            chat_send_chatmessage($chatuser, 'enter', true);
         }
     }
 
@@ -637,16 +628,7 @@ function chat_delete_old_users() {
     if ($oldusers = $DB->get_records_select('chat_users', $query, $params) ) {
         $DB->delete_records_select('chat_users', $query, $params);
         foreach ($oldusers as $olduser) {
-            $message = new stdClass();
-            $message->chatid    = $olduser->chatid;
-            $message->userid    = $olduser->userid;
-            $message->groupid   = $olduser->groupid;
-            $message->message   = 'exit';
-            $message->system    = 1;
-            $message->timestamp = time();
-
-            $DB->insert_record('chat_messages', $message);
-            $DB->insert_record('chat_messages_current', $message);
+            chat_send_chatmessage($olduser, 'exit', true);
         }
     }
 }
@@ -706,6 +688,51 @@ function chat_update_chat_times($chatid=0) {
             $calendarevent->update($event, false);
         }
     }
+}
+
+/**
+ * Send a message on the chat.
+ *
+ * @param object $chatuser The chat user record.
+ * @param string $messagetext The message to be sent.
+ * @param bool $system False for non-system messages, true for system messages.
+ * @param object $cm The course module object, pass it to save a database query when we trigger the event.
+ * @return int The message ID.
+ * @since 2.6
+ */
+function chat_send_chatmessage($chatuser, $messagetext, $system = false, $cm = null) {
+    global $DB;
+
+    $message = new stdClass();
+    $message->chatid    = $chatuser->chatid;
+    $message->userid    = $chatuser->userid;
+    $message->groupid   = $chatuser->groupid;
+    $message->message   = $messagetext;
+    $message->system    = $system ? 1 : 0;
+    $message->timestamp = time();
+
+    $messageid = $DB->insert_record('chat_messages', $message);
+    $DB->insert_record('chat_messages_current', $message);
+    $message->id = $messageid;
+
+    if (!$system) {
+
+        if (empty($cm)) {
+            $cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $chatuser->course);
+        }
+
+        $params = array(
+            'context' => context_module::instance($cm->id),
+            'objectid' => $message->id,
+            // We set relateduserid, because when triggered from the chat daemon, the event userid is null.
+            'relateduserid' => $chatuser->userid
+        );
+        $event = \mod_chat\event\message_sent::create($params);
+        $event->add_record_snapshot('chat_messages', $message);
+        $event->trigger();
+    }
+
+    return $message->id;
 }
 
 /**

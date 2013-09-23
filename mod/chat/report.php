@@ -47,7 +47,17 @@
         notice(get_string('nopermissiontoseethechatlog', 'chat'));
     }
 
-    add_to_log($course->id, 'chat', 'report', "report.php?id=$cm->id", $chat->id, $cm->id);
+    $params = array(
+        'context' => $context,
+        'objectid' => $chat->id,
+        'other' => array(
+            'start' => $start,
+            'end' => $end
+        )
+    );
+    $event = \mod_chat\event\sessions_viewed::create($params);
+    $event->add_record_snapshot('chat', $chat);
+    $event->trigger();
 
     $strchats         = get_string('modulenameplural', 'chat');
     $strchat          = get_string('modulename', 'chat');
