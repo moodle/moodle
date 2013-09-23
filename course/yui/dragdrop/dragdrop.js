@@ -17,7 +17,8 @@ YUI.add('moodle-course-dragdrop', function(Y) {
         SECTION : 'section',
         SECTIONADDMENUS : 'section_add_menus',
         SECTIONHANDLE : 'section-handle',
-        SUMMARY : 'summary'
+        SUMMARY : 'summary',
+        SECTIONDRAGGABLE: 'sectiondraggable'
     };
 
     var DRAGSECTION = function() {
@@ -28,7 +29,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
         initializer : function(params) {
             // Set group for parent class
-            this.groups = ['section'];
+            this.groups = [ CSS.SECTIONDRAGGABLE ];
             this.samenodeclass = M.course.format.get_sectionwrapperclass();
             this.parentnodeclass = M.course.format.get_containerclass();
 
@@ -39,14 +40,16 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             // Initialise sections dragging
             this.sectionlistselector = M.course.format.get_section_wrapper(Y);
             if (this.sectionlistselector) {
+                // We need both the list of all sections, and just those which are moveable.
+                // When updating titles and orders, the immoveable sections may need to be updated too.
                 this.sectionlistselector = '.'+CSS.COURSECONTENT+' '+this.sectionlistselector;
+
                 this.setup_for_section(this.sectionlistselector);
 
                 // Make each li element in the lists of sections draggable
-                var nodeselector = this.sectionlistselector.slice(CSS.COURSECONTENT.length+2);
                 var del = new Y.DD.Delegate({
                     container: '.'+CSS.COURSECONTENT,
-                    nodes: nodeselector,
+                    nodes: '.' + CSS.SECTIONDRAGGABLE,
                     target: true,
                     handles: ['.'+CSS.LEFT],
                     dragConfig: {groups: this.groups}
@@ -95,6 +98,9 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                         if (movedown) {
                             movedown.remove();
                         }
+
+                        // This section can be moved - add the class to indicate this to Y.DD.
+                        sectionnode.addClass(CSS.SECTIONDRAGGABLE);
                     }
                 }
             }, this);
