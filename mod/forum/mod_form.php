@@ -89,6 +89,7 @@ class mod_forum_mod_form extends moodleform_mod {
         $options[FORUM_TRACKING_ON] = get_string('trackingon', 'forum');
         $mform->addElement('select', 'trackingtype', get_string('trackingtype', 'forum'), $options);
         $mform->addHelpButton('trackingtype', 'trackingtype', 'forum');
+        $mform->setDefault('trackingtype', $CFG->forum_trackingtype);
 
         if ($CFG->enablerssfeeds && isset($CFG->forum_enablerssfeeds) && $CFG->forum_enablerssfeeds) {
 //-------------------------------------------------------------------------------
