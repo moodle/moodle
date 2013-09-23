@@ -4,12 +4,11 @@
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="question_multichoice" COMMENT="Options for multiple choice questions">
+    <TABLE NAME="qtype_multichoice_options" COMMENT="Options for multiple choice questions">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id"/>
         <FIELD NAME="layout" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Not used. Was intended for a vertical/horizontal layout option. See MDL-18445."/>
-        <FIELD NAME="answers" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Redundant. Comma-separated list of question_answer ids. SELECT id FROM question_answers WHERE question = ? ORDER BY id."/>
         <FIELD NAME="single" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="If 0 it multiple response (checkboxes). Otherwise it is radio buttons."/>
         <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Whether the choices can be randomly shuffled."/>
         <FIELD NAME="correctfeedback" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Feedback shown for any correct response."/>
@@ -23,7 +22,7 @@
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id"/>
+        <KEY NAME="questionid" TYPE="foreign-unique" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

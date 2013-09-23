@@ -109,8 +109,8 @@ class qtype_multianswer extends question_type {
                     if ($oldwrappedquestion->qtype != $wrapped->qtype) {
                         switch ($oldwrappedquestion->qtype) {
                             case 'multichoice':
-                                $DB->delete_records('question_multichoice',
-                                        array('question' => $oldwrappedquestion->id));
+                                $DB->delete_records('qtype_multichoice_options',
+                                        array('questionid' => $oldwrappedquestion->id));
                                 break;
                             case 'shortanswer':
                                 $DB->delete_records('qtype_shortanswer_options',
