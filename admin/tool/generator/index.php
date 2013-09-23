@@ -15,34 +15,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Random course generator.
+ * Development data generator.
  *
- * @package    tool
- * @subpackage generator
+ * @package    tool_generator
  * @copyright  2009 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 require(dirname(__FILE__) . '/../../../config.php');
-require_once('locallib.php');
 
-
-require_login();
-$systemcontext = context_system::instance();
-require_capability('moodle/site:config', $systemcontext);
-if (!is_siteadmin()) {
-    error('Only for admins');
-}
-
-if (!$CFG->debugdeveloper) {
-    error('This script is for developers only!!!');
-}
-
-$PAGE->set_url('/admin/tool/generator/index.php');
-$PAGE->set_context(context_system::instance());
-$PAGE->set_pagelayout('base');
-$generator = new generator_web();
-$generator->setup();
-$generator->display();
-$generator->generate_data();
-$generator->complete();
+// This index page was previously in use, for now we redirect to the make test
+// course page - but we might reinstate this page in the future.
+redirect(new moodle_url('/admin/tool/generator/maketestcourse.php'));
