@@ -26,6 +26,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/*
+ * URL of backpack. Currently only the Open Badges backpack
+ * is supported.
+ */
+define('BADGE_BACKPACKURL', 'http://backpack.openbadges.org');
+
 global $CFG;
 require_once($CFG->libdir . '/filelib.php');
 
