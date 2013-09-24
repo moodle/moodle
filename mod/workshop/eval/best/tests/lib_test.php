@@ -239,6 +239,82 @@ class workshopeval_best_evaluation_testcase extends basic_testcase {
             $this->evaluator->assessments_distance($assessment2, $referential, $diminfo, $settings));
 
     }
+
+    public function test_assessments_distance_zero_variance() {
+        // Fixture set-up: an assessment form of the strategy "Number of errors",
+        // three assertions, same weight.
+        $diminfo = array(
+            1 => (object)array('min' => 0, 'max' => 1, 'weight' => 1),
+            2 => (object)array('min' => 0, 'max' => 1, 'weight' => 1),
+            3 => (object)array('min' => 0, 'max' => 1, 'weight' => 1),
+        );
+
+        // Simulate structure returned by {@link workshop_best_evaluation::prepare_data_from_recordset()}
+        $assessments = array(
+            // The first assessment has weight 0 and the assessment was No, No, No.
+            10 => (object)array(
+                'assessmentid' => 10,
+                'weight' => 0,
+                'reviewerid' => 56,
+                'gradinggrade' => null,
+                'submissionid' => 99,
+                'dimgrades' => array(
+                    1 => 0,
+                    2 => 0,
+                    3 => 0,
+                ),
+            ),
+            // The second assessment has weight 1 and assessments was Yes, Yes, Yes.
+            20 => (object)array(
+                'assessmentid' => 20,
+                'weight' => 1,
+                'reviewerid' => 76,
+                'gradinggrade' => null,
+                'submissionid' => 99,
+                'dimgrades' => array(
+                    1 => 1,
+                    2 => 1,
+                    3 => 1,
+                ),
+            ),
+            // The third assessment has weight 1 and assessments was Yes, Yes, Yes too.
+            30 => (object)array(
+                'assessmentid' => 30,
+                'weight' => 1,
+                'reviewerid' => 97,
+                'gradinggrade' => null,
+                'submissionid' => 99,
+                'dimgrades' => array(
+                    1 => 1,
+                    2 => 1,
+                    3 => 1,
+                ),
+            ),
+        );
+
+        // Process assessments in the same way as in the {@link workshop_best_evaluation::process_assessments()}
+        $assessments = $this->evaluator->normalize_grades($assessments, $diminfo);
+        $average = $this->evaluator->average_assessment($assessments);
+        $variances = $this->evaluator->weighted_variance($assessments);
+        foreach ($variances as $dimid => $variance) {
+            $diminfo[$dimid]->variance = $variance;
+        }
+
+        // Simulate the chosen comparison of assessments "fair" (does not really matter here but we need something).
+        $settings = (object)array('comparison' => 5);
+
+        // Exercise SUT: for every assessment, calculate its distance from the average one.
+        $distances = array();
+        foreach ($assessments as $asid => $assessment) {
+            $distances[$asid] = $this->evaluator->assessments_distance($assessment, $average, $diminfo, $settings);
+        }
+
+        // Validate: the first assessment is far far away from the average one ...
+        $this->assertTrue($distances[10] > 0);
+        // ... while the two others were both picked as the referential ones.
+        $this->assertTrue($distances[20] == 0);
+        $this->assertTrue($distances[30] == 0);
+    }
 }
 
 
