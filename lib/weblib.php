@@ -822,6 +822,39 @@ class moodle_url {
             return null;
         }
     }
+
+    /**
+     * Returns the 'scheme' portion of a URL. For example, if the URL is
+     * http://www.example.org:447/my/file/is/here.txt?really=1 then this will
+     * return 'http' (without the colon).
+     *
+     * @return string Scheme of the URL.
+     */
+    public function get_scheme() {
+        return $this->scheme;
+    }
+
+    /**
+     * Returns the 'host' portion of a URL. For example, if the URL is
+     * http://www.example.org:447/my/file/is/here.txt?really=1 then this will
+     * return 'www.example.org'.
+     *
+     * @return string Host of the URL.
+     */
+    public function get_host() {
+        return $this->host;
+    }
+
+    /**
+     * Returns the 'port' portion of a URL. For example, if the URL is
+     * http://www.example.org:447/my/file/is/here.txt?really=1 then this will
+     * return '447'.
+     *
+     * @return string Port of the URL.
+     */
+    public function get_port() {
+        return $this->port;
+    }
 }
 
 /**
