@@ -765,8 +765,10 @@ if (empty($CFG->sessiontimeout)) {
     $CFG->sessiontimeout = 7200;
 }
 \core\session\manager::start();
-$SESSION = &$_SESSION['SESSION'];
-$USER    = &$_SESSION['USER'];
+if (!PHPUNIT_TEST and !defined('BEHAT_TEST')) {
+    $SESSION =& $_SESSION['SESSION'];
+    $USER    =& $_SESSION['USER'];
+}
 
 // Late profiling, only happening if early one wasn't started
 if (!empty($CFG->profilingenabled)) {
