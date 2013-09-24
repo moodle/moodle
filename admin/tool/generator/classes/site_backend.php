@@ -189,7 +189,8 @@ class tool_generator_site_backend extends tool_generator_backend {
         }
         // SQL order by is not appropiate here as is ordering strings.
         $shortnames = array_keys($testcourses);
-        rsort($shortnames, SORT_NATURAL);
+        core_collator::asort($shortnames, core_collator::SORT_NATURAL);
+        $shortnames = array_reverse($shortnames);
 
         // They come ordered by shortname DESC, so non-numeric values will be the first ones.
         $prefixnchars = strlen(self::SHORTNAMEPREFIX);
