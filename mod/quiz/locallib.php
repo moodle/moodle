@@ -1788,8 +1788,11 @@ function quiz_attempt_overdue_handler($event) {
  * Handle groups_member_added event
  *
  * @param object $event the event object.
+ * @deprecated since 2.6, see {@link \mod_quiz\group_observers::group_member_added()}.
  */
 function quiz_groups_member_added_handler($event) {
+    debugging('quiz_groups_member_added_handler() is deprecated, please use ' .
+        '\mod_quiz\group_observers::group_member_added() instead.', DEBUG_DEVELOPER);
     quiz_update_open_attempts(array('userid'=>$event->userid, 'groupid'=>$event->groupid));
 }
 
@@ -1797,8 +1800,11 @@ function quiz_groups_member_added_handler($event) {
  * Handle groups_member_removed event
  *
  * @param object $event the event object.
+ * @deprecated since 2.6, see {@link \mod_quiz\group_observers::group_member_removed()}.
  */
 function quiz_groups_member_removed_handler($event) {
+    debugging('quiz_groups_member_removed_handler() is deprecated, please use ' .
+        '\mod_quiz\group_observers::group_member_removed() instead.', DEBUG_DEVELOPER);
     quiz_update_open_attempts(array('userid'=>$event->userid, 'groupid'=>$event->groupid));
 }
 
@@ -1806,32 +1812,49 @@ function quiz_groups_member_removed_handler($event) {
  * Handle groups_group_deleted event
  *
  * @param object $event the event object.
+ * @deprecated since 2.6, see {@link \mod_quiz\group_observers::group_deleted()}.
  */
 function quiz_groups_group_deleted_handler($event) {
     global $DB;
+    debugging('quiz_groups_group_deleted_handler() is deprecated, please use ' .
+        '\mod_quiz\group_observers::group_deleted() instead.', DEBUG_DEVELOPER);
+    quiz_process_group_deleted_in_course($event->courseid);
+}
+
+/**
+ * Logic to happen when a/some group(s) has/have been deleted in a course.
+ *
+ * @param int $courseid The course ID.
+ * @return void
+ */
+function quiz_process_group_deleted_in_course($courseid) {
+    global $DB;
 
     // It would be nice if we got the groupid that was deleted.
-    // Instead, we just update all quizzes with orphaned group overrides
+    // Instead, we just update all quizzes with orphaned group overrides.
     $sql = "SELECT o.id, o.quiz
               FROM {quiz_overrides} o
               JOIN {quiz} quiz ON quiz.id = o.quiz
          LEFT JOIN {groups} grp ON grp.id = o.groupid
              WHERE quiz.course = :courseid AND grp.id IS NULL";
-    $params = array('courseid'=>$event->courseid);
+    $params = array('courseid' => $courseid);
     $records = $DB->get_records_sql_menu($sql, $params);
     if (!$records) {
         return; // Nothing to do.
     }
     $DB->delete_records_list('quiz_overrides', 'id', array_keys($records));
-    quiz_update_open_attempts(array('quizid'=>array_unique(array_values($records))));
+    quiz_update_open_attempts(array('quizid' => array_unique(array_values($records))));
 }
 
 /**
  * Handle groups_members_removed event
  *
  * @param object $event the event object.
+ * @deprecated since 2.6, see {@link \mod_quiz\group_observers::group_member_removed()}.
  */
 function quiz_groups_members_removed_handler($event) {
+    debugging('quiz_groups_members_removed_handler() is deprecated, please use ' .
+        '\mod_quiz\group_observers::group_member_removed() instead.', DEBUG_DEVELOPER);
     if ($event->userid == 0) {
         quiz_update_open_attempts(array('courseid'=>$event->courseid));
     } else {
