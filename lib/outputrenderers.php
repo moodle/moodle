@@ -3374,6 +3374,8 @@ class core_renderer_cli extends core_renderer {
      * @return string A template fragment for a fatal error
      */
     public function fatal_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
+        global $CFG;
+
         $output = "!!! $message !!!\n";
 
         if ($CFG->debugdeveloper) {

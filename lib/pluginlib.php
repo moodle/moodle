@@ -2704,6 +2704,24 @@ abstract class plugininfo_base {
     }
 
     /**
+     * Is this plugin already installed and updated?
+     * @return bool true if plugin installed and upgraded.
+     */
+    public function is_updated() {
+        if (!$this->rootdir) {
+            return false;
+        }
+        if ($this->versiondb === null and $this->versiondisk === null) {
+            // There is no version.php or version info inside,
+            // for now let's pretend it is ok.
+            // TODO: return false once we require version in each plugin.
+            return true;
+        }
+
+        return ((float)$this->versiondb === (float)$this->versiondisk);
+    }
+
+    /**
      * Sets {@link $displayname} property to a localized name of the plugin
      */
     public function init_display_name() {
@@ -3968,6 +3986,9 @@ class plugininfo_format extends plugininfo_base {
         global $DB;
 
         $plugins = plugin_manager::instance()->get_installed_plugins('format');
+        if (!$plugins) {
+            return array();
+        }
         $installed = array();
         foreach ($plugins as $plugin => $version) {
             $installed[] = 'format_'.$plugin;

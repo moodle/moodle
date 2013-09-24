@@ -6419,8 +6419,10 @@ function admin_get_root($reload=false, $requirefulltree=true) {
  */
 function admin_apply_default_settings($node=NULL, $unconditional=true) {
     global $CFG;
+    require_once($CFG->libdir.'/pluginlib.php');
 
     if (is_null($node)) {
+        plugin_manager::reset_caches();
         $node = admin_get_root(true, true);
     }
 
@@ -6445,6 +6447,8 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
                 $setting->write_setting_flags(null);
             }
         }
+    // Just in case somebody modifies the list of active plugins directly.
+    plugin_manager::reset_caches();
 }
 
 /**

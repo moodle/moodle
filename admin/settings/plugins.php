@@ -14,6 +14,9 @@ if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('modsettings', new lang_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());
     foreach ($allplugins['mod'] as $module) {
+        if (!$module->is_updated()) {
+            continue;
+        }
         $module->load_settings($ADMIN, 'modsettings', $hassiteconfig);
     }
 
@@ -23,6 +26,9 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_manageformats());
     $ADMIN->add('formatsettings', $temp);
     foreach ($allplugins['format'] as $format) {
+        if (!$format->is_updated()) {
+            continue;
+        }
         $format->load_settings($ADMIN, 'formatsettings', $hassiteconfig);
     }
 
@@ -30,6 +36,9 @@ if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('blocksettings', new lang_string('blocks')));
     $ADMIN->add('blocksettings', new admin_page_manageblocks());
     foreach ($allplugins['block'] as $block) {
+        if (!$block->is_updated()) {
+            continue;
+        }
         $block->load_settings($ADMIN, 'blocksettings', $hassiteconfig);
     }
 
@@ -38,6 +47,9 @@ if ($hassiteconfig) {
     $ADMIN->add('messageoutputs', new admin_page_managemessageoutputs());
     $ADMIN->add('messageoutputs', new admin_page_defaultmessageoutputs());
     foreach ($allplugins['message'] as $processor) {
+        if (!$processor->is_updated()) {
+            continue;
+        }
         $processor->load_settings($ADMIN, 'messageoutputs', $hassiteconfig);
     }
 
@@ -67,6 +79,9 @@ if ($hassiteconfig) {
     $ADMIN->add('authsettings', $temp);
 
     foreach ($allplugins['auth'] as $auth) {
+        if (!$auth->is_updated()) {
+            continue;
+        }
         $auth->load_settings($ADMIN, 'authsettings', $hassiteconfig);
     }
 
@@ -76,6 +91,9 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_manageenrols());
     $ADMIN->add('enrolments', $temp);
     foreach($allplugins['enrol'] as $enrol) {
+        if (!$enrol->is_updated()) {
+            continue;
+        }
         $enrol->load_settings($ADMIN, 'enrolments', $hassiteconfig);
     }
 
@@ -86,6 +104,9 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_manageeditors());
     $ADMIN->add('editorsettings', $temp);
     foreach ($allplugins['editor'] as $editor) {
+        if (!$editor->is_updated()) {
+            continue;
+        }
         $editor->load_settings($ADMIN, 'editorsettings', $hassiteconfig);
     }
 
@@ -148,6 +169,9 @@ if ($hassiteconfig) {
     $ADMIN->add('filtersettings', $temp);
 
     foreach ($allplugins['filter'] as $filter) {
+        if (!$filter->is_updated()) {
+            continue;
+        }
         $filter->load_settings($ADMIN, 'filtersettings', $hassiteconfig);
     }
 
@@ -239,6 +263,9 @@ if ($hassiteconfig) {
     $ADMIN->add('repositorysettings', new admin_externalpage('repositoryinstanceedit',
         new lang_string('editrepositoryinstance', 'repository'), $url, 'moodle/site:config', true));
     foreach ($allplugins['repository'] as $repositorytype) {
+        if (!$repositorytype->is_updated()) {
+            continue;
+        }
         $repositorytype->load_settings($ADMIN, 'repositorysettings', $hassiteconfig);
     }
 
@@ -288,6 +315,9 @@ if ($hassiteconfig) {
     $ADMIN->add('webservicesettings', $temp);
     /// links to protocol pages
     foreach ($allplugins['webservice'] as $webservice) {
+        if (!$webservice->is_updated()) {
+            continue;
+        }
         $webservice->load_settings($ADMIN, 'webservicesettings', $hassiteconfig);
     }
     /// manage token page link
@@ -363,6 +393,9 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
 
     // Settings for particular question types.
     foreach ($allplugins['qtype'] as $qtype) {
+        if (!$qtype->is_updated()) {
+            continue;
+        }
         $qtype->load_settings($ADMIN, 'qtypesettings', $hassiteconfig);
     }
 }
@@ -374,6 +407,9 @@ if ($hassiteconfig && !empty($CFG->enableplagiarism)) {
         $CFG->wwwroot . '/' . $CFG->admin . '/plagiarism.php'));
 
     foreach ($allplugins['plagiarism'] as $plugin) {
+        if (!$plugin->is_updated()) {
+            continue;
+        }
         $plugin->load_settings($ADMIN, 'plagiarism', $hassiteconfig);
     }
 }
