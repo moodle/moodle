@@ -212,7 +212,7 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage implements f
 
         $this->filepath = restore_controller::get_tempdir_name($this->contextid, $USER->id);
 
-        $fb = get_file_packer();
+        $fb = get_file_packer('application/vnd.moodle.backup');
         $result = $fb->extract_to_pathname("$CFG->tempdir/backup/".$this->filename,
                 "$CFG->tempdir/backup/$this->filepath/", null, $this);
 

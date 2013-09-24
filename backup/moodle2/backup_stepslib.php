@@ -1704,7 +1704,7 @@ class backup_zip_contents extends backup_execution_step implements file_progress
         $zipfile = $basepath . '/backup.mbz';
 
         // Get the zip packer
-        $zippacker = get_file_packer('application/zip');
+        $zippacker = get_file_packer('application/vnd.moodle.backup');
 
         // Zip files
         $zippacker->archive_to_pathname($files, $zipfile, true, $this);
