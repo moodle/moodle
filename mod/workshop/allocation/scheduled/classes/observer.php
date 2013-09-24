@@ -45,7 +45,9 @@ class observer {
      * @return bool
      */
     public static function workshop_viewed($event) {
-        global $DB;
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 
         $workshop = $event->get_record_snapshot('workshop', $event->objectid);
         $course   = $event->get_record_snapshot('course', $event->courseid);
