@@ -53,9 +53,6 @@ require_once($CFG->dirroot.'/group/lib.php');
 
 class enrol_imsenterprise_plugin extends enrol_plugin {
 
-var $log;
-
-
 /**
 * Read in an IMS Enterprise file.
 * Originally designed to handle v1.1 files but should be able to handle
@@ -74,7 +71,6 @@ function cron() {
     $prev_path          = $this->get_config('prev_path');
 
     if (empty($imsfilelocation)) {
-        // $filename = "$CFG->dirroot/enrol/imsenterprise/example.xml";  // Default location
         $filename = "$CFG->dataroot/1/imsenterprise-enrol.xml";  // Default location
     } else {
         $filename = $imsfilelocation;
@@ -120,7 +116,7 @@ function cron() {
             $listoftags = array('group', 'person', 'member', 'membership', 'comments', 'properties'); // The list of tags which should trigger action (even if only cache trimming)
             $this->continueprocessing = true; // The <properties> tag is allowed to halt processing if we're demanding a matching target
 
-            // FIRST PASS: Run through the file and process the group/person entries
+            // Run through the file and process the group/person entries.
             if (($fh = fopen($filename, "r")) != false) {
 
                 $line = 0;
@@ -154,53 +150,10 @@ function cron() {
                 } // end of while loop
                 fclose($fh);
                 fix_course_sortorder();
-            } // end of if(file_open) for first pass
-
-            /*
-
-
-            SECOND PASS REMOVED
-            Since the IMS specification v1.1 insists that "memberships" should come last,
-            and since vendors seem to have done this anyway (even with 1.0),
-            we can sensibly perform the import in one fell swoop.
-
-
-            // SECOND PASS: Now go through the file and process the membership entries
-            $this->xmlcache = '';
-            if (($fh = fopen($filename, "r")) != false) {
-                $line = 0;
-                while ((!feof($fh)) && $this->continueprocessing) {
-                    $line++;
-                    $curline = fgets($fh);
-                    $this->xmlcache .= $curline; // Add a line onto the XML cache
-
-                    while(true){
-                  // Must always make sure to remove tags from cache so they don't clog up our memory
-                  if($tagcontents = $this->full_tag_found_in_cache('group', $curline)){
-                          $this->remove_tag_from_cache('group');
-                      }elseif($tagcontents = $this->full_tag_found_in_cache('person', $curline)){
-                          $this->remove_tag_from_cache('person');
-                      }elseif($tagcontents = $this->full_tag_found_in_cache('membership', $curline)){
-                          $this->process_membership_tag($tagcontents);
-                          $this->remove_tag_from_cache('membership');
-                      }elseif($tagcontents = $this->full_tag_found_in_cache('comments', $curline)){
-                          $this->remove_tag_from_cache('comments');
-                      }elseif($tagcontents = $this->full_tag_found_in_cache('properties', $curline)){
-                          $this->remove_tag_from_cache('properties');
-                      }else{
-                    break;
-                  }
-                }
-                } // end of while loop
-                fclose($fh);
-            } // end of if(file_open) for second pass
-
-
-           */
+            } // End of if(file_open).
 
             $timeelapsed = time() - $starttime;
             $this->log_line('Process has completed. Time taken: '.$timeelapsed.' seconds.');
-
 
         } // END of "if file is new"
 
@@ -209,8 +162,6 @@ function cron() {
         $this->set_config('prev_time', $filemtime);
         $this->set_config('prev_md5',  $md5);
         $this->set_config('prev_path', $filename);
-
-
 
     }else{ // end of if(file_exists)
         $this->log_line('File not found: '.$filename);
@@ -331,7 +282,6 @@ function process_group_tag($tagcontents) {
     }
 
     $recstatus = ($this->get_recstatus($tagcontents, 'group'));
-    //echo "<p>get_recstatus for this group returned $recstatus</p>";
 
     if (!(strlen($group->coursecode)>0)) {
         $this->log_line('Error at line '.$line.': Unable to find course code in \'group\' element.');
@@ -342,16 +292,6 @@ function process_group_tag($tagcontents) {
                      ? substr($group->coursecode, 0, intval($truncatecoursecodes))
                      : $group->coursecode;
         }
-
-        /* -----------Course aliasing is DEACTIVATED until a more general method is in place---------------
-
-       // Second, look in the course alias table to see if the code should be translated to something else
-        if($aliases = $DB->get_field('enrol_coursealias', 'toids', array('fromid'=>$group->coursecode))){
-            $this->log_line("Found alias of course code: Translated $group->coursecode to $aliases");
-            // Alias is allowed to be a comma-separated list, so let's split it
-            $group->coursecode = explode(',', $aliases);
-        }
-       */
 
         // For compatibility with the (currently inactive) course aliasing, we need this to be an array
         $group->coursecode = array($group->coursecode);
@@ -549,24 +489,6 @@ function process_person_tag($tagcontents){
             $person->timemodified = time();
             $person->mnethostid = $CFG->mnet_localhost_id;
             $id = $DB->insert_record('user', $person);
-    /*
-    Photo processing is deactivated until we hear from Moodle dev forum about modification to gdlib.
-
-                                 //Antoni Mas. 07/12/2005. If a photo URL is specified then we might want to load
-                                 // it into the user's profile. Beware that this may cause a heavy overhead on the server.
-                                 if($CFG->enrol_processphoto){
-                                   if(preg_match('{<photo>.*?<extref>(.*?)</extref>.*?</photo>}is', $tagcontents, $matches)){
-                                     $person->urlphoto = trim($matches[1]);
-                                   }
-                                   //Habilitam el flag que ens indica que el personatge t foto prpia.
-                                   $person->picture = 1;
-                                   //Llibreria creada per nosaltres mateixos.
-                                   require_once($CFG->dirroot.'/lib/gdlib.php');
-                                   if ($usernew->picture = save_profile_image($id, $person->urlphoto,'user')) { TODO: use process_new_icon() instead
-                                     $DB->set_field('user', 'picture', $usernew->picture, array('id'=>$id));  /// Note picture in DB
-                                   }
-                                 }
-    */
                 $this->log_line("Created user record for user '$person->username' (ID number $person->idnumber).");
             }
         } elseif ($createnewusers) {
@@ -631,7 +553,6 @@ function process_membership_tag($tagcontents){
             $recstatus = ($this->get_recstatus($mmatch[1], 'role'));
             if($recstatus==3){
               $member->status = 0; // See above - recstatus of 3 (==delete) is treated the same as status of 0
-              //echo "<p>process_membership_tag: unenrolling member due to recstatus of 3</p>";
             }
 
             $timeframe = new stdClass();
@@ -647,8 +568,6 @@ function process_membership_tag($tagcontents){
 
             $rolecontext = context_course::instance($ship->courseid);
             $rolecontext = $rolecontext->id; // All we really want is the ID
-//$this->log_line("Context instance for course $ship->courseid is...");
-//print_r($rolecontext);
 
             // Add or remove this student or teacher to the course...
             $memberstoreobj->userid = $DB->get_field('user', 'id', array('idnumber'=>$member->idnumber));
