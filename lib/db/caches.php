@@ -104,7 +104,7 @@ $definitions = array(
         'simplekeys' => true, // The course id the groupings exist for.
         'simpledata' => true, // Array of stdClass objects containing only strings.
         'staticacceleration' => true, // Likely there will be a couple of calls to this.
-        'persistmaxsize' => 2, // The original cache used 1, we've increased that to two.
+        'staticaccelerationsize' => 2, // The original cache used 1, we've increased that to two.
     ),
 
     // Used to cache calendar subscriptions.
@@ -129,8 +129,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true, // 0 or 1 depending on the requested location type.
         'simpledata' => true, // Array of strings.
-        'persistent' => true, // Likely there will be a couple of calls to this.
-        'persistmaxsize' => 2, // Both arrays should stay loaded in memory.
+        'staticacceleration' => true, // Likely there will be a couple of calls to this.
+        'staticaccelerationsize' => 2, // Both arrays should stay loaded in memory.
     ),
 
     // Cache for the list of installed plugins - {@see get_plugin_list()}.

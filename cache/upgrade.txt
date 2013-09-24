@@ -1,7 +1,7 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
-=== 2.6 ===
+=== 2.5.3 ===
 * All cache instances are recorded and subsequent requests are given a reference to the original instance.
 * The persistent option for the cache definition has been deprecated. Please use the staticacceleration option instead.
 * There is a new static acceleration option. If enabled data passing through the cache is held onto.
