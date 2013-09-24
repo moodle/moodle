@@ -116,14 +116,9 @@ function badge_message_cron() {
  * @param object $badge A badge which is notified about.
  */
 function badge_assemble_notification(stdClass $badge) {
-    global $CFG, $DB;
+    global $DB;
 
-    $admin = get_admin();
-    $userfrom = new stdClass();
-    $userfrom->id = $admin->id;
-    $userfrom->email = !empty($CFG->badges_defaultissuercontact) ? $CFG->badges_defaultissuercontact : $admin->email;
-    $userfrom->firstname = !empty($CFG->badges_defaultissuername) ? $CFG->badges_defaultissuername : $admin->firstname;
-    $userfrom->lastname = !empty($CFG->badges_defaultissuername) ? '' : $admin->lastname;
+    $userfrom = core_user::get_noreply_user();
     $userfrom->maildisplay = true;
 
     if ($msgs = $DB->get_records_select('badge_issued', 'issuernotified IS NULL AND badgeid = ?', array($badge->id))) {
@@ -147,15 +142,15 @@ function badge_assemble_notification(stdClass $badge) {
         // Create a message object.
         $eventdata = new stdClass();
         $eventdata->component         = 'moodle';
-        $eventdata->name              = 'instantmessage';
+        $eventdata->name              = 'badgecreatornotice';
         $eventdata->userfrom          = $userfrom;
         $eventdata->userto            = $creator;
         $eventdata->notification      = 1;
         $eventdata->subject           = $creatorsubject;
-        $eventdata->fullmessage       = $creatormessage;
+        $eventdata->fullmessage       = format_text_email($creatormessage, FORMAT_HTML);
         $eventdata->fullmessageformat = FORMAT_PLAIN;
-        $eventdata->fullmessagehtml   = format_text($creatormessage, FORMAT_HTML);
-        $eventdata->smallmessage      = '';
+        $eventdata->fullmessagehtml   = $creatormessage;
+        $eventdata->smallmessage      = $creatorsubject;
 
         message_send($eventdata);
     }
