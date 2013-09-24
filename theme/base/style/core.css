@@ -529,6 +529,7 @@ body.tag .managelink {padding: 5px;}
 .path-backup .mform .grouped_settings .fitem .fitemtitle {width:40%;padding-right:10px;}
 .path-backup.dir-rtl .mform .grouped_settings .fitem .fitemtitle {width: 60%;}
 .path-backup .mform .grouped_settings .fitem .felement {width:50%;}
+.path-backup .mform .grouped_settings .fitem.backup_selector .felement {width:100%;}
 .path-backup.dir-rtl .mform .grouped_settings .fitem .felement {width: 99%;}
 .path-backup .mform .grouped_settings.section_level .include_setting {width:50%;margin:0;float:left;clear:left;font-weight:bold;}
 .path-backup.dir-rtl  .mform .grouped_settings.section_level .include_setting {float: right; clear: right;}
