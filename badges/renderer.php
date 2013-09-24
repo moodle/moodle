@@ -228,12 +228,16 @@ class core_badges_renderer extends plugin_renderer_base {
     public function print_badge_table_actions($badge, $context) {
         $actions = "";
 
-        if (has_capability('moodle/badges:configuredetails', $context)) {
+        if (has_capability('moodle/badges:configuredetails', $context) && $badge->has_criteria()) {
             // Activate/deactivate badge.
             if ($badge->status == BADGE_STATUS_INACTIVE || $badge->status == BADGE_STATUS_INACTIVE_LOCKED) {
-                $url = new moodle_url(qualified_me());
-                $url->param('activate', $badge->id);
+                // "Activate" will go to another page and ask for confirmation.
+                $url = new moodle_url('/badges/action.php');
+                $url->param('id', $badge->id);
+                $url->param('activate', true);
                 $url->param('sesskey', sesskey());
+                $return = new moodle_url(qualified_me());
+                $url->param('return', $return->out_as_local_url(false));
                 $actions .= $this->output->action_icon($url, new pix_icon('t/show', get_string('activate', 'badges'))) . " ";
             } else {
                 $url = new moodle_url(qualified_me());

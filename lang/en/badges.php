@@ -139,6 +139,9 @@ $string['createbutton'] = 'Create badge';
 $string['creatorbody'] = '<p>{$a->user} has completed all badge requirements and has been awarded the badge. View issued badge at {$a->link} </p>';
 $string['creatorsubject'] = '\'{$a}\' has been awarded!';
 $string['criteriasummary'] = 'Criteria summary';
+$string['criteriacreated'] = 'Badge criteria successfully created';
+$string['criteriadeleted'] = 'Badge criteria successfully deleted';
+$string['criteriaupdated'] = 'Badge criteria successfully updated';
 $string['criteria_descr'] = 'Users are awarded this badge when they complete the following requirement:';
 $string['criteria_descr_bydate'] = ' by <em>{$a}</em> ';
 $string['criteria_descr_grade'] = ' with minimum grade of <em>{$a}</em> ';
@@ -313,9 +316,14 @@ $string['recipientidentificationproblem'] = 'Cannot find a recipient of this bad
 $string['recipientvalidationproblem'] = 'Current user cannot be verified as a recipient of this badge.';
 $string['relative'] = 'Relative date';
 $string['requiredcourse'] = 'At least one course should be added to the courseset criterion.';
-$string['reviewbadge'] = 'Review badge criteria';
-$string['reviewconfirm'] = '<p>This action will perform a check if any of the users have already completed all the requirements for \'{$a}\' badge?</p>
-<p>Would you like to proceed?</p>';
+$string['reviewbadge'] = 'Changes in badge access';
+$string['reviewconfirm'] = '<p>This will make your badge visible to users and allow them to start earning it.</p>
+
+<p>It is possible that some users already meet this badge\'s criteria and will be issued this badge immediately after you enable it.</p>
+
+<p>Once a badge has been issued it will be <strong>locked</strong> - certain settings including the criteria and expiry settings can no longer be changed.</p>
+
+<p>Are you sure you want to enable access to the badge \'{$a}\'?</p>';
 $string['save'] = 'Save';
 $string['searchname'] = 'Search by name';
 $string['selectaward'] = 'Please select the role you would like to use to award this badge: ';
