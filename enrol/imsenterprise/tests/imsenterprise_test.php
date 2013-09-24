@@ -96,6 +96,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $prevnusers = $DB->count_records('user');
 
         $user1 = new StdClass();
+        $user1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $user1->username = 'u1';
         $user1->email = 'u1@example.com';
         $user1->firstname = 'U';
@@ -107,6 +108,72 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
 
         $this->assertEquals(($prevnusers + 1), $DB->count_records('user'));
     }
+
+    /**
+     * Add new users and set an auth type
+     */
+    public function test_users_add_with_auth() {
+        global $DB;
+
+        $prevnusers = $DB->count_records('user');
+
+        $user2 = new StdClass();
+        $user2->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $user2->username = 'u2';
+        $user2->auth = 'cas';
+        $user2->email = 'u2@u2.org';
+        $user2->firstname = 'U';
+        $user2->lastname = '2';
+
+        $users = array($user2);
+        $this->set_xml_file($users);
+        $this->imsplugin->cron();
+
+        $dbuser = $DB->get_record('user', array('username' => $user2->username));
+        // TODO: MDL-15863 this needs more work due to multiauth changes, use first auth for now.
+        $dbauth = explode(',', $dbuser->auth);
+        $dbauth = reset($dbauth);
+
+        $this->assertEquals(($prevnusers + 1), $DB->count_records('user'));
+        $this->assertEquals($dbauth, $user2->auth);
+    }
+
+
+    /**
+     * Update user
+     */
+    public function test_user_update() {
+        global $DB;
+
+        $user3 = new StdClass();
+        $user3->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $user3->username = 'u3';
+        $user3->email = 'u3@u3.org';
+        $user3->firstname = 'U';
+        $user3->lastname = '3';
+
+        $users = array($user3);
+        $this->set_xml_file($users);
+        $this->imsplugin->cron();
+
+        $user3u = $DB->get_record('user', array('username' => $user3->username));
+
+        $user3u->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_UPDATE;
+        $user3u->email = 'updated_u3@updated_u3.org';
+        $user3u->firstname = 'updated_U';
+        $user3u->lastname = 'updated_3';
+
+        $users = array($user3u);
+        $this->set_xml_file($users);
+        $this->imsplugin->cron();
+
+        $dbuser = $DB->get_record('user', array('username' => $user3->username));
+
+        $this->assertEquals($dbuser->email, $user3u->email);
+        $this->assertEquals($dbuser->firstname, $user3u->firstname);
+        $this->assertEquals($dbuser->lastname, $user3u->lastname);
+    }
+
 
     /**
      * Existing courses are not created again
@@ -139,11 +206,13 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $prevncourses = $DB->count_records('course');
 
         $course1 = new StdClass();
+        $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course1->idnumber = 'id1';
         $course1->imsshort = 'id1';
         $course1->category = 'DEFAULT CATNAME';
 
         $course2 = new StdClass();
+        $course2->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course2->idnumber = 'id2';
         $course2->imsshort = 'id2';
         $course2->category = 'DEFAULT CATNAME';
@@ -194,6 +263,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->imsplugin->set_config('imscoursemapsummary', 'coursecode');
 
         $course1 = new StdClass();
+        $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course1->idnumber = 'id1';
         $course1->imsshort = 'description_short1';
         $course1->imslong = 'description_long';
@@ -215,6 +285,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->imsplugin->set_config('imscoursemapsummary', 'full');
 
         $course2 = new StdClass();
+        $course2->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course2->idnumber = 'id2';
         $course2->imsshort = 'description_short2';
         $course2->imslong = 'description_long';
@@ -236,6 +307,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->imsplugin->set_config('imscoursemapsummary', 'full');
 
         $course3 = new StdClass();
+        $course3->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
         $course3->idnumber = 'id3';
         $course3->imsshort = 'description_short3';
         $course3->category = 'DEFAULT CATNAME';
@@ -252,13 +324,147 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
     }
 
     /**
+     * Course updates
+     */
+    public function test_course_update() {
+        global $DB;
+
+        $course4 = new StdClass();
+        $course4->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course4->idnumber = 'id4';
+        $course4->imsshort = 'id4';
+        $course4->imsfull = 'id4';
+        $course4->category = 'DEFAULT CATNAME';
+
+        $this->set_xml_file(false, array($course4));
+        $this->imsplugin->cron();
+
+        $course4u = $DB->get_record('course', array('idnumber' => $course4->idnumber));
+
+        $course4u->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_UPDATE;
+        $course4u->imsshort = 'description_short_updated';
+        $course4u->imsfull = 'description_full_updated';
+
+        $this->set_xml_file(false, array($course4u));
+        $this->imsplugin->cron();
+
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course4->idnumber));
+        $this->assertFalse(!$dbcourse);
+        $this->assertEquals($dbcourse->shortname, $course4u->imsshort);
+        $this->assertEquals($dbcourse->fullname, $course4u->imsfull);
+    }
+
+
+    /**
+     * Nested categories during course creation
+     */
+    public function test_nested_categories() {
+        global $DB;
+
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $topcat = 'DEFAULT CATNAME';
+        $subcat = 'DEFAULT SUB CATNAME';
+
+        $fullcat = $topcat.$catsep.$subcat;
+
+        $course5 = new StdClass();
+        $course5->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course5->idnumber = 'id5';
+        $course5->imsshort = 'description_short';
+        $course5->imslong = 'description_long';
+        $course5->imsfull = 'description_full';
+        $course5->category = $fullcat;
+
+        $this->set_xml_file(false, array($course5));
+        $this->imsplugin->cron();
+
+        $parentcatid = $DB->get_field('course_categories', 'id', array('name' => $topcat));
+        $subcatid = $DB->get_field('course_categories', 'id', array('name' => $subcat,'parent' => $parentcatid));
+
+        $this->assertTrue(isset($subcatid));
+        $this->assertTrue($subcatid > 0);
+
+        # Change the category separator character
+        $this->imsplugin->set_config('categoryseparator', ':');
+
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $topcat = 'DEFAULT CATNAME';
+        $subcat = 'DEFAULT SUB CATNAME TEST2';
+
+        $fullcat = $topcat.$catsep.$subcat;
+
+        $course6 = new StdClass();
+        $course6->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course6->idnumber = 'id6';
+        $course6->imsshort = 'description_short';
+        $course6->imslong = 'description_long';
+        $course6->imsfull = 'description_full';
+        $course6->category = $fullcat;
+
+        $this->set_xml_file(false, array($course6));
+        $this->imsplugin->cron();
+
+        $parentcatid = $DB->get_field('course_categories', 'id', array('name' => $topcat));
+        $subcatid = $DB->get_field('course_categories', 'id', array('name' => $subcat,'parent' => $parentcatid));
+
+        $this->assertTrue(isset($subcatid));
+        $this->assertTrue($subcatid > 0);
+    }
+
+
+    /**
+     * Test that duplicate nested categories are not created
+     */
+    public function test_nested_categories_for_dups() {
+        global $DB;
+
+        $catsep = trim($this->imsplugin->get_config('categoryseparator'));
+
+        $topcat = 'DEFAULT CATNAME';
+        $subcat = 'DEFAULT SUB CATNAME DUPTEST';
+
+        $fullcat = $topcat.$catsep.$subcat;
+
+        $course7 = new StdClass();
+        $course7->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course7->idnumber = 'id7';
+        $course7->imsshort = 'description_short';
+        $course7->imslong = 'description_long';
+        $course7->imsfull = 'description_full';
+        $course7->category = $fullcat;
+
+        $this->set_xml_file(false, array($course7));
+        $this->imsplugin->cron();
+
+        $prevncategories = $DB->count_records('course_categories');
+
+        $course8 = new StdClass();
+        $course8->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course8->idnumber = 'id8';
+        $course8->imsshort = 'description_short';
+        $course8->imslong = 'description_long';
+        $course8->imsfull = 'description_full';
+        $course8->category = $fullcat;
+
+        $this->set_xml_file(false, array($course8));
+        $this->imsplugin->cron();
+
+        $this->assertEquals($prevncategories, $DB->count_records('course_categories'));
+    }
+
+
+    /**
      * Sets the plugin configuration for testing
      */
     public function set_test_config() {
         $this->imsplugin->set_config('mailadmins', false);
         $this->imsplugin->set_config('prev_path', '');
         $this->imsplugin->set_config('createnewusers', true);
+        $this->imsplugin->set_config('imsupdateusers', true);
         $this->imsplugin->set_config('createnewcourses', true);
+        $this->imsplugin->set_config('updatecourses', true);
         $this->imsplugin->set_config('createnewcategories', true);
     }
 
@@ -276,12 +482,26 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         if (!empty($users)) {
             foreach ($users as $user) {
                 $xmlcontent .= '
-  <person>
+  <person';
+
+                // Optional recstatus (1=add, 2=update, 3=delete)
+                if (!empty($user->recstatus)) {
+                    $xmlcontent .= ' recstatus="'.$user->recstatus.'"';
+                }
+
+                $xmlcontent .= '>
     <sourcedid>
       <source>TestSource</source>
       <id>'.$user->username.'</id>
     </sourcedid>
-    <userid>'.$user->username.'</userid>
+    <userid';
+
+            // Optional authentication type
+            if (!empty($user->auth)) {
+                $xmlcontent .= ' authenticationtype="'.$user->auth.'"';
+            }
+
+            $xmlcontent .= '>'.$user->username.'</userid>
     <name>
       <fn>'.$user->firstname.' '.$user->lastname.'</fn>
       <n>
@@ -300,7 +520,14 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
             foreach ($courses as $course) {
 
                 $xmlcontent .= '
-  <group>
+  <group';
+
+                // Optional recstatus (1=add, 2=update, 3=delete)
+                if (!empty($course->recstatus)) {
+                    $xmlcontent .= ' recstatus="'.$course->recstatus.'"';
+                }
+
+                $xmlcontent .= '>
     <sourcedid>
       <source>TestSource</source>
       <id>'.$course->idnumber.'</id>
