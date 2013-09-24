@@ -760,7 +760,7 @@ class cache_definition {
      * Please call {@link cache_definition::get_static_acceleration_size()} instead.
      *
      * @see cache_definition::get_static_acceleration_size()
-     * @deprecated since 2.6
+     * @deprecated since 2.4.7
      * @return int
      */
     public function get_persistent_max_size() {
