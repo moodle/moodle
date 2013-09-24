@@ -194,11 +194,12 @@ class repository_filesystem extends repository {
     }
 
     public static function get_instance_option_names() {
-        return array('fs_path');
+        return array('fs_path', 'relativefiles');
     }
 
     public function set_option($options = array()) {
         $options['fs_path'] = clean_param($options['fs_path'], PARAM_PATH);
+        $options['relativefiles'] = clean_param($options['relativefiles'], PARAM_INT);
         $ret = parent::set_option($options);
         return $ret;
     }
@@ -229,6 +230,10 @@ class repository_filesystem extends repository {
                 }
                 closedir($handle);
             }
+            $mform->addElement('checkbox', 'relativefiles', get_string('relativefiles', 'repository_filesystem'),
+                get_string('relativefiles_desc', 'repository_filesystem'));
+            $mform->setType('relativefiles', PARAM_INT);
+
         } else {
             $mform->addElement('static', null, '',  get_string('nopermissions', 'error', get_string('configplugin', 'repository_filesystem')));
             return false;
@@ -460,6 +465,44 @@ class repository_filesystem extends repository {
         if ($deletedcount) {
             mtrace(" instance {$this->id}: deleted $deletedcount thumbnails");
         }
+    }
+
+    /**
+     *  Gets a file relative to this file in the repository and sends it to the browser.
+     *
+     * @param stored_file $mainfile The main file we are trying to access relative files for.
+     * @param string $relativepath the relative path to the file we are trying to access.
+     */
+    public function send_relative_file(stored_file $mainfile, $relativepath) {
+        global $CFG;
+        // Check if this repository is allowed to use relative linking.
+        $allowlinks = $this->supports_relative_file();
+        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+        if (!empty($allowlinks)) {
+            // Get path to the mainfile.
+            $mainfilepath = $mainfile->get_source();
+
+            // Strip out filename from the path.
+            $filename = $mainfile->get_filename();
+            $basepath = strstr($mainfilepath, $filename, true);
+
+            $fullrelativefilepath = realpath($this->root_path.$basepath.$relativepath);
+
+            // Sanity check to make sure this path is inside this repository and the file exists.
+            if (strpos($fullrelativefilepath, $this->root_path) === 0 && file_exists($fullrelativefilepath)) {
+                send_file($fullrelativefilepath, basename($relativepath), $lifetime, 0);
+            }
+        }
+        send_file_not_found();
+    }
+
+    /**
+     * helper function to check if the repository supports send_relative_file.
+     *
+     * @return true|false
+     */
+    public function supports_relative_file() {
+        return $this->get_option('relativefiles');
     }
 }
 

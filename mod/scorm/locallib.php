@@ -210,6 +210,7 @@ function scorm_parse($scorm, $full) {
 
         $fs = get_file_storage();
         $packagefile = false;
+        $packagefileimsmanifest = false;
 
         if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
             if ($packagefile = $fs->get_file($context->id, 'mod_scorm', 'package', 0, '/', $scorm->reference)) {
@@ -217,6 +218,9 @@ function scorm_parse($scorm, $full) {
                     $packagefile->import_external_file_contents();
                 }
                 $newhash = $packagefile->get_contenthash();
+                if (strtolower($packagefile->get_filename()) == 'imsmanifest.xml') {
+                    $packagefileimsmanifest = true;
+                }
             } else {
                 $newhash = null;
             }
@@ -239,8 +243,8 @@ function scorm_parse($scorm, $full) {
         if ($packagefile) {
             if (!$full and $packagefile and $scorm->sha1hash === $newhash) {
                 if (strpos($scorm->version, 'SCORM') !== false) {
-                    if ($fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
-                        // no need to update
+                    if ($packagefileimsmanifest || $fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
+                        // No need to update.
                         return;
                     }
                 } else if (strpos($scorm->version, 'AICC') !== false) {
@@ -248,18 +252,25 @@ function scorm_parse($scorm, $full) {
                     return;
                 }
             }
+            if (!$packagefileimsmanifest) {
+                // Now extract files.
+                $fs->delete_area_files($context->id, 'mod_scorm', 'content');
 
-            // now extract files
-            $fs->delete_area_files($context->id, 'mod_scorm', 'content');
-
-            $packer = get_file_packer('application/zip');
-            $packagefile->extract_to_storage($packer, $context->id, 'mod_scorm', 'content', 0, '/');
+                $packer = get_file_packer('application/zip');
+                $packagefile->extract_to_storage($packer, $context->id, 'mod_scorm', 'content', 0, '/');
+            }
 
         } else if (!$full) {
             return;
         }
+        if ($packagefileimsmanifest) {
+            require_once("$CFG->dirroot/mod/scorm/datamodels/scormlib.php");
+            // Direct link to imsmanifest.xml file.
+            if (!scorm_parse_scorm($scorm, $packagefile)) {
+                $scorm->version = 'ERROR';
+            }
 
-        if ($manifest = $fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
+        } else if ($manifest = $fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
             require_once("$CFG->dirroot/mod/scorm/datamodels/scormlib.php");
             // SCORM
             if (!scorm_parse_scorm($scorm, $manifest)) {

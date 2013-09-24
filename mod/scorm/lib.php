@@ -958,6 +958,22 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         $fullpath = "/$context->id/mod_scorm/package/0/$relativepath";
         $lifetime = 0; // no caching here
 
+    } else if ($filearea === 'imsmanifest') { // This isn't a real filearea, it's a url parameter for this type of package.
+        $revision = (int)array_shift($args); // Prevents caching problems - ignored here.
+        $relativepath = implode('/', $args);
+
+        // Get imsmanifest file.
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($context->id, 'mod_scorm', 'package', 0, '', false);
+        $file = reset($files);
+
+        // Check that the package file is an imsmanifest.xml file - if not then this method is not allowed.
+        $packagefilename = $file->get_filename();
+        if (strtolower($packagefilename) !== 'imsmanifest.xml') {
+            return false;
+        }
+
+        $file->send_relative_file($relativepath);
     } else {
         return false;
     }
