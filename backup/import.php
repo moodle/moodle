@@ -120,6 +120,10 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Prepare the restore controller. We don't need a UI here as we will just use what
     // ever the restore has (the user has just chosen).
     $rc = new restore_controller($backupid, $course->id, backup::INTERACTIVE_YES, backup::MODE_IMPORT, $USER->id, $restoretarget);
+
+    // Start a progress section for the restore, which will consist of 2 steps
+    // (the precheck and then the actual restore).
+    $progress->start_progress('Restore process', 2);
     $rc->set_progress($progress);
     // Convert the backup if required.... it should NEVER happed
     if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
@@ -154,6 +158,9 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
 
     // Delete the temp directory now
     fulldelete($tempdestination);
+
+    // End restore section of progress tracking (restore/precheck).
+    $progress->end_progress();
 
     // All progress complete. Hide progress area.
     $progress->end_progress();

@@ -594,13 +594,17 @@ class restore_load_included_inforef_records extends restore_execution_step {
 
         // Get all the included tasks
         $tasks = restore_dbops::get_included_tasks($this->get_restoreid());
+        $progress = $this->task->get_progress();
+        $progress->start_progress($this->get_name(), count($tasks));
         foreach ($tasks as $task) {
             // Load the inforef.xml file if exists
             $inforefpath = $task->get_taskbasepath() . '/inforef.xml';
             if (file_exists($inforefpath)) {
-                restore_dbops::load_inforef_to_tempids($this->get_restoreid(), $inforefpath); // Load each inforef file to temp_ids
+                // Load each inforef file to temp_ids.
+                restore_dbops::load_inforef_to_tempids($this->get_restoreid(), $inforefpath, $progress);
             }
         }
+        $progress->end_progress();
     }
 }
 
@@ -687,7 +691,8 @@ class restore_load_included_users extends restore_execution_step {
             return;
         }
         $file = $this->get_basepath() . '/users.xml';
-        restore_dbops::load_users_to_tempids($this->get_restoreid(), $file); // Load needed users to temp_ids
+        // Load needed users to temp_ids.
+        restore_dbops::load_users_to_tempids($this->get_restoreid(), $file, $this->task->get_progress());
     }
 }
 
@@ -708,7 +713,8 @@ class restore_process_included_users extends restore_execution_step {
         if (!$this->task->get_setting_value('users')) { // No userinfo being restored, nothing to do
             return;
         }
-        restore_dbops::process_included_users($this->get_restoreid(), $this->task->get_courseid(), $this->task->get_userid(), $this->task->is_samesite());
+        restore_dbops::process_included_users($this->get_restoreid(), $this->task->get_courseid(),
+                $this->task->get_userid(), $this->task->is_samesite(), $this->task->get_progress());
     }
 }
 
