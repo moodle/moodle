@@ -128,7 +128,7 @@ class quiz_statistics_calculated {
 
         // The statistics.
         foreach ($todisplay as $property => $format) {
-            if (!isset($this->$property)) {
+            if (!isset($this->$property) || !$format) {
                 continue;
             }
             $value = $this->$property;
