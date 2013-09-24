@@ -84,7 +84,7 @@ class core_filelib_testcase extends advanced_testcase {
         global $CFG;
 
         // Test http success first.
-        $testhtml = "http://download.moodle.org/unittest/test.html";
+        $testhtml = $this->getExternalTestFileUrl('/test.html');
 
         $contents = download_file_content($testhtml);
         $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
@@ -109,7 +109,7 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('', $response->error);
 
         // Test https success.
-        $testhtml = "https://download.moodle.org/unittest/test.html";
+        $testhtml = $this->getExternalTestFileUrl('/test.html', true);
 
         $contents = download_file_content($testhtml, null, null, false, 300, 20, true);
         $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
@@ -118,7 +118,7 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
 
         // Now 404.
-        $testhtml = "http://download.moodle.org/unittest/test.html_nonexistent";
+        $testhtml = $this->getExternalTestFileUrl('/test.html_nonexistent');
 
         $contents = download_file_content($testhtml);
         $this->assertFalse($contents);
@@ -133,13 +133,14 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('', $response->error);
 
         // Invalid url.
-        $testhtml = "ftp://download.moodle.org/unittest/test.html";
+        $testhtml = $this->getExternalTestFileUrl('/test.html');
+        $testhtml = str_replace('http://', 'ftp://', $testhtml);
 
         $contents = download_file_content($testhtml);
         $this->assertFalse($contents);
 
         // Test standard redirects.
-        $testurl = 'http://download.moodle.org/unittest/test_redir.php';
+        $testurl = $this->getExternalTestFileUrl('/test_redir.php');
 
         $contents = download_file_content("$testurl?redir=2");
         $this->assertSame('done', $contents);
@@ -152,13 +153,11 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('done', $response->results);
         $this->assertSame('', $response->error);
 
+        // Commented out this block if there are performance problems.
         /*
-        // Commented out for performance reasons.
-
         $contents = download_file_content("$testurl?redir=6");
         $this->assertFalse(false, $contents);
         $this->assertDebuggingCalled();
-
         $response = download_file_content("$testurl?redir=6", null, null, true);
         $this->assertInstanceOf('stdClass', $response);
         $this->assertSame('0', $response->status);
@@ -168,7 +167,7 @@ class core_filelib_testcase extends advanced_testcase {
         */
 
         // Test relative redirects.
-        $testurl = 'http://download.moodle.org/unittest/test_relative_redir.php';
+        $testurl = $this->getExternalTestFileUrl('/test_relative_redir.php');
 
         $contents = download_file_content("$testurl");
         $this->assertSame('done', $contents);
@@ -184,7 +183,7 @@ class core_filelib_testcase extends advanced_testcase {
         global $CFG;
 
         // Test https success.
-        $testhtml = "https://download.moodle.org/unittest/test.html";
+        $testhtml = $this->getExternalTestFileUrl('/test.html');
 
         $curl = new curl();
         $contents = $curl->get($testhtml);
@@ -212,7 +211,7 @@ class core_filelib_testcase extends advanced_testcase {
         @unlink($tofile);
 
         // Test full URL redirects.
-        $testurl = 'http://download.moodle.org/unittest/test_redir.php';
+        $testurl = $this->getExternalTestFileUrl('/test_redir.php');
 
         $curl = new curl();
         $contents = $curl->get("$testurl?redir=2", array(), array('CURLOPT_MAXREDIRS'=>2));
@@ -294,7 +293,7 @@ class core_filelib_testcase extends advanced_testcase {
         @unlink($tofile);
 
         // Test relative location redirects.
-        $testurl = 'http://download.moodle.org/unittest/test_relative_redir.php';
+        $testurl = $this->getExternalTestFileUrl('/test_relative_redir.php');
 
         $curl = new curl();
         $contents = $curl->get($testurl);
@@ -310,7 +309,7 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('done', $contents);
 
         // Test different redirect types.
-        $testurl = 'http://download.moodle.org/unittest/test_relative_redir.php';
+        $testurl = $this->getExternalTestFileUrl('/test_relative_redir.php');
 
         $curl = new curl();
         $contents = $curl->get("$testurl?type=301");

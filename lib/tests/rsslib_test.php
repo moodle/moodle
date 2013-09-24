@@ -35,14 +35,8 @@ global $CFG;
 require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
 
 
-class core_rsslib_testcase extends basic_testcase {
+class core_rsslib_testcase extends advanced_testcase {
 
-    // A url we know exists and is valid.
-    const VALIDURL = 'http://download.moodle.org/unittest/rsstest.xml';
-    // A url which we know doesn't exist.
-    const INVALIDURL = 'http://download.moodle.org/unittest/rsstest-which-doesnt-exist.xml';
-    // This tinyurl redirects to th rsstest.xml file.
-    const REDIRECTURL = 'http://tinyurl.com/lvyslv';
     // The number of seconds tests should wait for the server to respond (high to prevent false positives).
     const TIMEOUT = 10;
 
@@ -51,7 +45,7 @@ class core_rsslib_testcase extends basic_testcase {
     }
 
     public function test_getfeed() {
-        $feed = new moodle_simplepie(self::VALIDURL, self::TIMEOUT);
+        $feed = new moodle_simplepie($this->getExternalTestFileUrl('/rsstest.xml'), self::TIMEOUT);
 
         $this->assertInstanceOf('moodle_simplepie', $feed);
 
@@ -105,7 +99,7 @@ EOD;
      * Test retrieving a url which doesn't exist.
      */
     public function test_failurl() {
-        $feed = @new moodle_simplepie(self::INVALIDURL, self::TIMEOUT); // We do not want this in php error log.
+        $feed = @new moodle_simplepie($this->getExternalTestFileUrl('/rsstest-which-doesnt-exist.xml'), self::TIMEOUT); // We do not want this in php error log.
 
         $this->assertNotEmpty($feed->error());
     }
@@ -119,7 +113,7 @@ EOD;
         $oldproxy = $CFG->proxyhost;
         $CFG->proxyhost = 'xxxxxxxxxxxxxxx.moodle.org';
 
-        $feed = new moodle_simplepie(self::VALIDURL);
+        $feed = new moodle_simplepie($this->getExternalTestFileUrl('/rsstest.xml'));
 
         $this->assertNotEmpty($feed->error());
         $this->assertEmpty($feed->get_title());
@@ -130,7 +124,7 @@ EOD;
      * Test retrieving a url which sends a redirect to another valid feed.
      */
     public function test_redirect() {
-        $feed = new moodle_simplepie(self::REDIRECTURL, self::TIMEOUT);
+        $feed = new moodle_simplepie($this->getExternalTestFileUrl('/rss_redir.php'), self::TIMEOUT);
 
         $this->assertNull($feed->error());
         $this->assertSame('Moodle News', $feed->get_title());
