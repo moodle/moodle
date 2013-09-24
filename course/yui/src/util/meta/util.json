@@ -1,0 +1,26 @@
+{
+  "moodle-course-util": {
+    "requires": [
+        "node"
+    ],
+    "use": [
+        "moodle-course-util-base"
+    ],
+    "submodules": {
+        "moodle-course-util-base": {
+        },
+        "moodle-course-util-section": {
+            "requires": [
+                "node",
+                "moodle-course-util-base"
+            ]
+        },
+        "moodle-course-util-cm": {
+            "requires": [
+                "node",
+                "moodle-course-util-base"
+            ]
+        }
+    }
+  }
+}
