@@ -72,7 +72,7 @@ if ((($update == BADGE_CRITERIA_AGGREGATION_ALL) || ($update == BADGE_CRITERIA_A
     $obj->id = $badge->criteria[BADGE_CRITERIA_TYPE_OVERALL]->id;
     $obj->method = $update;
     if ($DB->update_record('badge_criteria', $obj)) {
-        $msg = get_string('changessaved');
+        $msg = 'criteriaupdated';
     } else {
         $emsg = get_string('error:save', 'badges');
     }
@@ -84,7 +84,7 @@ echo $OUTPUT->heading(print_badge_image($badge, $context, 'small') . ' ' . $badg
 if ($emsg !== '') {
     echo $OUTPUT->notification($emsg);
 } else if ($msg !== '') {
-    echo $OUTPUT->notification($msg, 'notifysuccess');
+    echo $OUTPUT->notification(get_string($msg, 'badges'), 'notifysuccess');
 }
 
 echo $output->print_badge_status_box($badge);
