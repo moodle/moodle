@@ -933,26 +933,27 @@ final class t3lib_div {
 	 * Returns a proper HMAC on a given input string and secret TYPO3 encryption key.
 	 *
 	 * @param string $input Input string to create HMAC from
+	 * @param string $additionalSecret additionalSecret to prevent hmac beeing used in a different context
 	 * @return string resulting (hexadecimal) HMAC currently with a length of 40 (HMAC-SHA-1)
 	 */
-	public static function hmac($input) {
+	public static function hmac($input, $additionalSecret = '') {
 		$hashAlgorithm = 'sha1';
 		$hashBlocksize = 64;
 		$hmac = '';
-
+		$secret = $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] . $additionalSecret;
 		if (extension_loaded('hash') && function_exists('hash_hmac') && function_exists('hash_algos') && in_array($hashAlgorithm, hash_algos())) {
-			$hmac = hash_hmac($hashAlgorithm, $input, $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
+			$hmac = hash_hmac($hashAlgorithm, $input, $secret);
 		} else {
 				// outer padding
 			$opad = str_repeat(chr(0x5C), $hashBlocksize);
 				// inner padding
 			$ipad = str_repeat(chr(0x36), $hashBlocksize);
-			if (strlen($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']) > $hashBlocksize) {
+			if (strlen($secret) > $hashBlocksize) {
 					// keys longer than block size are shorten
-				$key = str_pad(pack('H*', call_user_func($hashAlgorithm, $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'])), $hashBlocksize, chr(0x00));
+				$key = str_pad(pack('H*', call_user_func($hashAlgorithm, $secret)), $hashBlocksize, chr(0));
 			} else {
 					// keys shorter than block size are zero-padded
-				$key = str_pad($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'], $hashBlocksize, chr(0x00));
+				$key = str_pad($secret, $hashBlocksize, chr(0));
 			}
 			$hmac = call_user_func($hashAlgorithm, ($key ^ $opad) . pack('H*', call_user_func($hashAlgorithm, ($key ^ $ipad) . $input)));
 		}
@@ -1860,6 +1861,10 @@ final class t3lib_div {
 	 */
 	public static function array_merge_recursive_overrule(array $arr0, array $arr1, $notAddKeys = FALSE, $includeEmptyValues = TRUE, $enableUnsetFeature = TRUE) {
 		foreach ($arr1 as $key => $val) {
+			if ($enableUnsetFeature && $val === '__UNSET') {
+				unset($arr0[$key]);
+				continue;
+			}
 			if (is_array($arr0[$key])) {
 				if (is_array($arr1[$key])) {
 					$arr0[$key] = self::array_merge_recursive_overrule(
@@ -1870,12 +1875,11 @@ final class t3lib_div {
 						$enableUnsetFeature
 					);
 				}
-			} elseif (!$notAddKeys || isset($arr0[$key])) {
-				if ($enableUnsetFeature && $val === '__UNSET') {
-					unset($arr0[$key]);
-				} elseif ($includeEmptyValues || $val) {
-					$arr0[$key] = $val;
-				}
+			} elseif (
+				(!$notAddKeys || isset($arr0[$key])) &&
+				($includeEmptyValues || $val)
+			) {
+				$arr0[$key] = $val;
 			}
 		}
 
@@ -4014,9 +4018,12 @@ final class t3lib_div {
 	 * @see upload_to_tempfile(), tempnam()
 	 */
 	public static function unlink_tempfile($uploadedTempFileName) {
-		if ($uploadedTempFileName && self::validPathStr($uploadedTempFileName) && self::isFirstPartOfStr($uploadedTempFileName, PATH_site . 'typo3temp/') && @is_file($uploadedTempFileName)) {
-			if (unlink($uploadedTempFileName)) {
-				return TRUE;
+		if ($uploadedTempFileName) {
+			$uploadedTempFileName = self::fixWindowsFilePath($uploadedTempFileName);
+			if (self::validPathStr($uploadedTempFileName) && self::isFirstPartOfStr($uploadedTempFileName, PATH_site . 'typo3temp/') && @is_file($uploadedTempFileName)) {
+				if (unlink($uploadedTempFileName)) {
+					return TRUE;
+				}
 			}
 		}
 	}
@@ -5564,6 +5571,12 @@ final class t3lib_div {
 			return;
 		}
 
+			// This require_once is needed for deprecation calls
+			// thrown early during bootstrap, if the autoloader is
+			// not instantiated yet. This can happen for example if
+			// ext_localconf triggers a deprecation.
+		require_once __DIR__.'/class.t3lib_utility_debug.php';
+
 		$trail = debug_backtrace();
 
 		if ($trail[1]['type']) {
@@ -5700,8 +5713,8 @@ final class t3lib_div {
 	public static function flushOutputBuffers() {
 		$obContent = '';
 
-		while ($obContent .= ob_get_clean()) {
-			;
+		while ($content = ob_get_clean()) {
+			$obContent .= $content;
 		}
 
 			// if previously a "Content-Encoding: whatever" has been set, we have to unset it
