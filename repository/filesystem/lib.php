@@ -56,13 +56,25 @@ class repository_filesystem extends repository {
         parent::__construct($repositoryid, $context, $options);
         $this->subdir = $this->get_option('fs_path');
     }
+
+    /**
+     * Get the list of files and directories in that repository.
+     *
+     * @param string $path to browse.
+     * @param string $page page number.
+     * @return array list of files and folders.
+     */
     public function get_listing($path = '', $page = '') {
-        global $CFG, $OUTPUT;
+        global $OUTPUT;
+
         $list = array();
         $list['list'] = array();
-        // process breacrumb trail
+        $list['manage'] = false;
+        $list['dynload'] = true;
+        $list['nologin'] = true;
+        $list['nosearch'] = true;
         $list['path'] = array(
-            array('name'=>get_string('root', 'repository_filesystem'), 'path'=>'')
+            array('name' => get_string('root', 'repository_filesystem'), 'path' => '')
         );
 
         $path = trim($path, '/');
@@ -72,30 +84,28 @@ class repository_filesystem extends repository {
         }
         $abspath = rtrim($this->get_rootpath() . $path, '/') . '/';
 
+        // Construct the breadcrumb.
         $trail = '';
-        if (!empty($path)) {
+        if ($path !== '') {
             $parts = explode('/', $path);
             if (count($parts) > 1) {
                 foreach ($parts as $part) {
                     if (!empty($part)) {
-                        $trail .= ('/'.$part);
-                        $list['path'][] = array('name'=>$part, 'path'=>$trail);
+                        $trail .= '/' . $part;
+                        $list['path'][] = array('name' => $part, 'path' => $trail);
                     }
                 }
             } else {
-                $list['path'][] = array('name'=>$path, 'path'=>$path);
+                $list['path'][] = array('name' => $path, 'path' => $path);
             }
         }
-        $list['manage'] = false;
-        $list['dynload'] = true;
-        $list['nologin'] = true;
-        $list['nosearch'] = true;
-        // retrieve list of files and directories and sort them
+
+        // Retrieve list of files and directories and sort them.
         $fileslist = array();
         $dirslist = array();
         if ($dh = opendir($abspath)) {
             while (($file = readdir($dh)) != false) {
-                if ( $file != '.' and $file !='..') {
+                if ($file != '.' and $file != '..') {
                     if (is_file($abspath . $file)) {
                         $fileslist[] = $file;
                     } else {
@@ -104,9 +114,10 @@ class repository_filesystem extends repository {
                 }
             }
         }
-        core_collator::asort($fileslist, core_collator::SORT_STRING);
-        core_collator::asort($dirslist, core_collator::SORT_STRING);
-        // fill the $list['list']
+        core_collator::asort($fileslist, core_collator::SORT_NATURAL);
+        core_collator::asort($dirslist, core_collator::SORT_NATURAL);
+
+        // Fill the $list['list'].
         foreach ($dirslist as $file) {
             $list['list'][] = array(
                 'title' => $file,
@@ -120,7 +131,7 @@ class repository_filesystem extends repository {
         foreach ($fileslist as $file) {
             $node = array(
                 'title' => $file,
-                'source' => $path.'/'.$file,
+                'source' => $path . '/' . $file,
                 'size' => filesize($abspath . $file),
                 'datecreated' => filectime($abspath . $file),
                 'datemodified' => filemtime($abspath . $file),
@@ -141,35 +152,49 @@ class repository_filesystem extends repository {
         return $list;
     }
 
+
+    /**
+     * To check whether the user is logged in.
+     *
+     * @return bool
+     */
     public function check_login() {
         return true;
     }
+
+    /**
+     * Show the login screen, if required.
+     *
+     * @return string
+     */
     public function print_login() {
         return true;
     }
+
+    /**
+     * Is it possible to do a global search?
+     *
+     * @return bool
+     */
     public function global_search() {
         return false;
     }
 
     /**
-     * Return file path
+     * Return file path.
      * @return array
      */
     public function get_file($file, $title = '') {
         global $CFG;
+        $file = ltrim($file, '/');
         if (!$this->is_in_repository($file)) {
             throw new repository_exception('Invalid file requested.');
         }
-        if ($file{0} == '/') {
-            $file = $this->get_rootpath() . substr($file, 1, strlen($file)-1);
-        } else {
-            $file = $this->get_rootpath() . $file;
-        }
+        $file = $this->get_rootpath() . $file;
 
-        // this is a hack to prevent move_to_file deleteing files
-        // in local repository
+        // This is a hack to prevent move_to_file deleting files in local repository.
         $CFG->repository_no_delete = true;
-        return array('path'=>$file, 'url'=>'');
+        return array('path' => $file, 'url' => '');
     }
 
     /**
@@ -182,14 +207,30 @@ class repository_filesystem extends repository {
         return $filepath;
     }
 
+    /**
+     * Logout from repository instance
+     *
+     * @return string
+     */
     public function logout() {
         return true;
     }
 
+    /**
+     * Return names of the instance options.
+     *
+     * @return array
+     */
     public static function get_instance_option_names() {
         return array('fs_path', 'relativefiles');
     }
 
+    /**
+     * Save settings for repository instance
+     *
+     * @param array $options settings
+     * @return bool
+     */
     public function set_option($options = array()) {
         $options['fs_path'] = clean_param($options['fs_path'], PARAM_PATH);
         $options['relativefiles'] = clean_param($options['relativefiles'], PARAM_INT);
@@ -197,8 +238,13 @@ class repository_filesystem extends repository {
         return $ret;
     }
 
+    /**
+     * Edit/Create Instance Settings Moodle form
+     *
+     * @param moodleform $mform Moodle form (passed by reference)
+     */
     public static function instance_config_form($mform) {
-        global $CFG, $PAGE;
+        global $CFG;
         if (has_capability('moodle/site:config', context_system::instance())) {
             $path = $CFG->dataroot . '/repository/';
             if (!is_dir($path)) {
@@ -208,7 +254,7 @@ class repository_filesystem extends repository {
                 $fieldname = get_string('path', 'repository_filesystem');
                 $choices = array();
                 while (false !== ($file = readdir($handle))) {
-                    if (is_dir($path.$file) && $file != '.' && $file!= '..') {
+                    if (is_dir($path . $file) && $file != '.' && $file != '..') {
                         $choices[$file] = $file;
                         $fieldname = '';
                     }
@@ -219,7 +265,7 @@ class repository_filesystem extends repository {
                     $mform->setType('fs_path', PARAM_PATH);
                 } else {
                     $mform->addElement('select', 'fs_path', $fieldname, $choices);
-                    $mform->addElement('static', null, '',  get_string('information','repository_filesystem', $path));
+                    $mform->addElement('static', null, '',  get_string('information', 'repository_filesystem', $path));
                 }
                 closedir($handle);
             }
@@ -228,13 +274,24 @@ class repository_filesystem extends repository {
             $mform->setType('relativefiles', PARAM_INT);
 
         } else {
-            $mform->addElement('static', null, '',  get_string('nopermissions', 'error', get_string('configplugin', 'repository_filesystem')));
+            $mform->addElement('static', null, '',  get_string('nopermissions', 'error', get_string('configplugin',
+                'repository_filesystem')));
             return false;
         }
     }
 
+    /**
+     * Create an instance for this plug-in
+     *
+     * @static
+     * @param string $type the type of the repository
+     * @param int $userid the user id
+     * @param stdClass $context the context
+     * @param array $params the options for this instance
+     * @param int $readonly whether to create it readonly or not (defaults to not)
+     * @return mixed
+     */
     public static function create($type, $userid, $context, $params, $readonly=0) {
-        global $PAGE;
         if (has_capability('moodle/site:config', context_system::instance())) {
             return parent::create($type, $userid, $context, $params, $readonly);
         } else {
@@ -242,9 +299,18 @@ class repository_filesystem extends repository {
             return false;
         }
     }
+
+    /**
+     * Validate repository plugin instance form
+     *
+     * @param moodleform $mform moodle form
+     * @param array $data form data
+     * @param array $errors errors
+     * @return array errors
+     */
     public static function instance_form_validation($mform, $data, $errors) {
         $fspath = clean_param(trim($data['fs_path'], '/'), PARAM_PATH);
-        if ((empty($fspath) && !is_numeric($fspath))) {
+        if (empty($fspath) && !is_numeric($fspath)) {
             $errors['fs_path'] = get_string('invalidadminsettingname', 'error', 'fs_path');
         }
         return $errors;
@@ -324,11 +390,7 @@ class repository_filesystem extends repository {
      */
     public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
         $reference = $storedfile->get_reference();
-        if ($reference{0} == '/') {
-            $file = $this->get_rootpath() . substr($reference, 1, strlen($reference)-1);
-        } else {
-            $file = $this->get_rootpath() . $reference;
-        }
+        $file = $this->get_rootpath() . ltrim($reference, '/');
         if ($this->is_in_repository($reference) && is_readable($file)) {
             $filename = $storedfile->get_filename();
             if ($options && isset($options['filename'])) {
@@ -423,7 +485,8 @@ class repository_filesystem extends repository {
 
         // Try to get generated thumbnail for this file.
         $fs = get_file_storage();
-        if (!($file = $fs->get_file(SYSCONTEXTID, 'repository_filesystem', $thumbsize, $this->id, '/' . $filepath . '/', $filename))) {
+        if (!($file = $fs->get_file(SYSCONTEXTID, 'repository_filesystem', $thumbsize, $this->id, '/' . $filepath . '/',
+                $filename))) {
             // Thumbnail not found . Generate and store thumbnail.
             require_once($CFG->libdir . '/gdlib.php');
             if ($thumbsize === 'thumb') {
@@ -467,7 +530,7 @@ class repository_filesystem extends repository {
         $deletedcount = 0;
         foreach ($files as $filepath => $filesinpath) {
             if ($filecontents = @file_get_contents($this->get_rootpath() . trim($filepath, '/'))) {
-                // 'filename' in Moodle file storage is contenthash of the file in filesystem repository.
+                // The 'filename' in Moodle file storage is contenthash of the file in filesystem repository.
                 $filename = sha1($filecontents);
                 foreach ($filesinpath as $file) {
                     if ($file->get_filename() !== $filename && $file->get_filename() !== '.') {
