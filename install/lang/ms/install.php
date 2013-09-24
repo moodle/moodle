@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Direktori admin';
 $string['availablelangs'] = 'Senarai bahasa yang tersedia';
 $string['chooselanguagehead'] = 'Pilih bahasa';
-$string['chooselanguagesub'] = 'Sila pilih bahasa untuk pemasangan. Bahasa ini juga akan digunakan sebagai bahasa lalai untuk laman, ia boleh diubah kemudian.';
+$string['chooselanguagesub'] = 'Sila pilih bahasa untuk pemasangan. Bahasa dipilih akan digunakan sebagai bahasa lalai untuk laman, walau bagaimanapun ia boleh diubah kemudian.';
 $string['clialreadyinstalled'] = 'config.php fail sudah wujud, sila gunakan admin/cli/upgrade.php jika anda mahu menaik taraf laman web anda.';
 $string['cliinstallheader'] = 'Baris arahan pemasangan program Moodle {$a}';
 $string['databasehost'] = 'Hos pangkalan data';
@@ -46,7 +46,7 @@ $string['environmenthead'] = 'Memeriksa persekitaran anda ...';
 $string['environmentsub2'] = 'Setiap pelepasan Moodle mempunyai keperluan minimum versi PHP dan beberapa sambungan mandatori PHP. Persekitaran penuh disemak sebelum setiap pemasangan dan naik taraf. Sila hubungi pentadbir pelayan jika anda tidak tahu bagaimana untuk memasang versi baru atau membolehkan sambungan PHP.';
 $string['errorsinenvironment'] = 'Semakan persekitaran gagal!';
 $string['installation'] = 'Pemasangan';
-$string['langdownloaderror'] = 'Malangnya bahasa "{$a}" tidak boleh dimuat turun. Proses pemasangan akan diteruskan dalam bahasa Bahasa Inggeris.';
+$string['langdownloaderror'] = 'Malangnya fail bahasa "{$a}" tidak dapat dimuat turun. Proses pemasangan akan diteruskan dalam Bahasa Inggeris.';
 $string['memorylimithelp'] = '<p> Had memori PHP untuk pelayan anda  ditetapkan kepada {$a}. </p>
 
 <p> Hal ini akan menyebabkan Moodle untuk mendapat masalah memori di kemudian hari, terutama jika anda mempunyai banyak modul yang diaktifkan dan/atau ramai pengguna. </p>
@@ -63,9 +63,9 @@ $string['pathsrodataroot'] = 'Direktori dataroot tidak dapat ditulis.';
 $string['pathsroparentdataroot'] = 'Direktori induk ({$a->parent}) tidak boleh tulis. Direktori data ({$a->dataroot}) tidak boleh diwujudkan oleh pemasang.';
 $string['pathssubadmindir'] = 'Beberapa webhos menggunakan /admin sebagai URL khas untuk anda akses panel kawalan atau sesuatu yang lain. Malangnya, ini bertentangan dengan lokasi standard untuk halaman pentadbiran Moodle. Anda boleh memperbaiki ini dengan menamakan semula direktori admin dalam pemasangan anda, dan meletakkan nama baru di sini. Sebagai contoh: <br /> <br /> <b> moodleadmin </ b> <br /> <br />
 Ini akan memulihkan pautan admin dalam Moodle.';
-$string['pathssubdataroot'] = 'Anda perlukan lokasi di mana Moodle boleh menyimpan fail yang dimuat naik. Direktori ini sepatutnya boleh dibaca DAN BOLEH DITULIS oleh pengguna web server (biasanya \'nobody\' atau \'apache\'), tetapi ia mestilah tidak boleh diakses secara langsung melalui laman web. Pemasang akan cuba untuk mewujudkannya jika belum ada.';
-$string['pathssubdirroot'] = 'Direktori laluan penuh untuk pemasangan Moodle.';
-$string['pathssubwwwroot'] = 'Alamat penuh web di mana Moodle akan dicapai. Adalah tidak mungkin untuk mengakses Moodle menggunakan pelbagai alamat. Jika laman anda mempunyai beberapa alamat awam, anda mesti menubuhkan pelencongan kekal kepada semua mereka kecuali yang satu ini. Jika laman web anda boleh diakses kedua-duanya dari Intranet dan Internet menggunakan alamat awam di sini dan menubuhkan DNS supaya pengguna Intranet boleh menggunakan alamat awam juga. Jika alamat itu tidak betul, sila ubah URL di pelayar anda untuk memulakan semula pemasangan dengan nilai yang berbeza.';
+$string['pathssubdataroot'] = 'Anda perlukan lokasi di mana Moodle boleh menyimpan fail yang dimuat naik. Direktori ini sepatutnya boleh dibaca DAN DITULIS oleh pengguna web server (biasanya \'nobody\' atau \'apache\'), tetapi ia mestilah tidak boleh diakses secara langsung melalui laman web. Pemasang akan cuba untuk wujudkannya jika belum ada.';
+$string['pathssubdirroot'] = 'Laluan penuh direktori untuk pemasangan Moodle.';
+$string['pathssubwwwroot'] = 'Alamat penuh web di mana Moodle akan dicapai. Ia tidak mungkin untuk mengakses Moodle menggunakan berbilang alamat. Jika laman anda mempunyai pelbagai alamat awam, anda mesti menubuhkan pelencongan kekal kepada yang lain kecuali yang satu ini. Jika laman web anda boleh diakses kedua-dua Intranet dan Internet, gunakan alamat awam di sini dan tubuhkan DNS supaya pengguna Intranet boleh gunakan alamat awam juga. Jika alamat sekarang tidak betul, sila ubah URL di pelayar anda untuk memulakan semula pemasangan dengan nilai yang berbeza.';
 $string['pathsunsecuredataroot'] = 'Lokasi dataroot tidak selamat';
 $string['pathswrongadmindir'] = 'Direktori admin tidak wujud';
 $string['phpextension'] = 'Sambungan PHP {$a}';
