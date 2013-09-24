@@ -39,6 +39,13 @@ require_once($CFG->libdir . '/filelib.php');
 class repository_filesystem extends repository {
 
     /**
+     * The subdirectory of the instance.
+     *
+     * @var string
+     */
+    protected $subdir;
+
+    /**
      * Constructor
      *
      * @param int $repositoryid repository ID
@@ -46,28 +53,8 @@ class repository_filesystem extends repository {
      * @param array $options
      */
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
-        global $CFG;
         parent::__construct($repositoryid, $context, $options);
-        $root = $CFG->dataroot . '/repository/';
-        $subdir = $this->get_option('fs_path');
-
-        $this->root_path = $root;
-        if (!empty($subdir)) {
-            $this->root_path .= $subdir . '/';
-        }
-
-        if (!empty($options['ajax'])) {
-            if (!is_dir($this->root_path)) {
-                $created = mkdir($this->root_path, $CFG->directorypermissions, true);
-                $ret = array();
-                $ret['msg'] = get_string('invalidpath', 'repository_filesystem');
-                $ret['nosearch'] = true;
-                if ($options['ajax'] && !$created) {
-                    echo json_encode($ret);
-                    exit;
-                }
-            }
-        }
+        $this->subdir = $this->get_option('fs_path');
     }
     public function get_listing($path = '', $page = '') {
         global $CFG, $OUTPUT;
@@ -77,6 +64,14 @@ class repository_filesystem extends repository {
         $list['path'] = array(
             array('name'=>get_string('root', 'repository_filesystem'), 'path'=>'')
         );
+
+        $path = trim($path, '/');
+        if (!$this->is_in_repository($path)) {
+            // In case of doubt on the path, reset to default.
+            $path = '';
+        }
+        $abspath = rtrim($this->get_rootpath() . $path, '/') . '/';
+
         $trail = '';
         if (!empty($path)) {
             $parts = explode('/', $path);
@@ -90,7 +85,6 @@ class repository_filesystem extends repository {
             } else {
                 $list['path'][] = array('name'=>$path, 'path'=>$path);
             }
-            $this->root_path .= ($path.'/');
         }
         $list['manage'] = false;
         $list['dynload'] = true;
@@ -99,10 +93,10 @@ class repository_filesystem extends repository {
         // retrieve list of files and directories and sort them
         $fileslist = array();
         $dirslist = array();
-        if ($dh = opendir($this->root_path)) {
+        if ($dh = opendir($abspath)) {
             while (($file = readdir($dh)) != false) {
                 if ( $file != '.' and $file !='..') {
-                    if (is_file($this->root_path.$file)) {
+                    if (is_file($abspath . $file)) {
                         $fileslist[] = $file;
                     } else {
                         $dirslist[] = $file;
@@ -114,27 +108,22 @@ class repository_filesystem extends repository {
         collatorlib::asort($dirslist, collatorlib::SORT_STRING);
         // fill the $list['list']
         foreach ($dirslist as $file) {
-            if (!empty($path)) {
-                $current_path = $path . '/'. $file;
-            } else {
-                $current_path = $file;
-            }
             $list['list'][] = array(
                 'title' => $file,
                 'children' => array(),
-                'datecreated' => filectime($this->root_path.$file),
-                'datemodified' => filemtime($this->root_path.$file),
+                'datecreated' => filectime($abspath . $file),
+                'datemodified' => filemtime($abspath . $file),
                 'thumbnail' => $OUTPUT->pix_url(file_folder_icon(90))->out(false),
-                'path' => $current_path
-                );
+                'path' => $path . '/' . $file
+            );
         }
         foreach ($fileslist as $file) {
             $list['list'][] = array(
                 'title' => $file,
                 'source' => $path.'/'.$file,
-                'size' => filesize($this->root_path.$file),
-                'datecreated' => filectime($this->root_path.$file),
-                'datemodified' => filemtime($this->root_path.$file),
+                'size' => filesize($abspath . $file),
+                'datecreated' => filectime($abspath . $file),
+                'datemodified' => filemtime($abspath . $file),
                 'thumbnail' => $OUTPUT->pix_url(file_extension_icon($file, 90))->out(false),
                 'icon' => $OUTPUT->pix_url(file_extension_icon($file, 24))->out(false)
             );
@@ -158,11 +147,15 @@ class repository_filesystem extends repository {
      */
     public function get_file($file, $title = '') {
         global $CFG;
-        if ($file{0} == '/') {
-            $file = $this->root_path.substr($file, 1, strlen($file)-1);
-        } else {
-            $file = $this->root_path.$file;
+        if (!$this->is_in_repository($file)) {
+            throw new repository_exception('Invalid file requested.');
         }
+        if ($file{0} == '/') {
+            $file = $this->get_rootpath() . substr($file, 1, strlen($file)-1);
+        } else {
+            $file = $this->get_rootpath() . $file;
+        }
+
         // this is a hack to prevent move_to_file deleteing files
         // in local repository
         $CFG->repository_no_delete = true;
@@ -235,7 +228,8 @@ class repository_filesystem extends repository {
         }
     }
     public static function instance_form_validation($mform, $data, $errors) {
-        if (empty($data['fs_path'])) {
+        $fspath = clean_param(trim($data['fs_path'], '/'), PARAM_PATH);
+        if ((empty($fspath) && !is_numeric($fspath))) {
             $errors['fs_path'] = get_string('invalidadminsettingname', 'error', 'fs_path');
         }
         return $errors;
@@ -290,11 +284,11 @@ class repository_filesystem extends repository {
     public function get_file_by_reference($reference) {
         $ref = $reference->reference;
         if ($ref{0} == '/') {
-            $filepath = $this->root_path.substr($ref, 1, strlen($ref)-1);
+            $filepath = $this->get_rootpath() . substr($ref, 1, strlen($ref)-1);
         } else {
-            $filepath = $this->root_path.$ref;
+            $filepath = $this->get_rootpath() . $ref;
         }
-        if (file_exists($filepath) && is_readable($filepath)) {
+        if ($this->is_in_repository($ref) && file_exists($filepath) && is_readable($filepath)) {
             if (file_extension_in_typegroup($filepath, 'web_image')) {
                 // return path to image files so it will be copied into moodle filepool
                 // we need the file in filepool to generate an image thumbnail
@@ -324,11 +318,11 @@ class repository_filesystem extends repository {
     public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
         $reference = $storedfile->get_reference();
         if ($reference{0} == '/') {
-            $file = $this->root_path.substr($reference, 1, strlen($reference)-1);
+            $file = $this->get_rootpath() . substr($reference, 1, strlen($reference)-1);
         } else {
-            $file = $this->root_path.$reference;
+            $file = $this->get_rootpath() . $reference;
         }
-        if (is_readable($file)) {
+        if ($this->is_in_repository($reference) && is_readable($file)) {
             $filename = $storedfile->get_filename();
             if ($options && isset($options['filename'])) {
                 $filename = $options['filename'];
@@ -347,5 +341,43 @@ class repository_filesystem extends repository {
      */
     public function contains_private_data() {
         return false;
+    }
+
+    /**
+     * Return the rootpath of this repository instance.
+     *
+     * Trim() is a necessary step to ensure that the subdirectory is not '/'.
+     *
+     * @return string path
+     * @throws repository_exception If the subdir is unsafe, or invalid.
+     */
+    public function get_rootpath() {
+        global $CFG;
+        $subdir = clean_param(trim($this->subdir, '/'), PARAM_PATH);
+        $path = $CFG->dataroot . '/repository/' . $this->subdir . '/';
+        if ((empty($this->subdir) && !is_numeric($this->subdir)) || $subdir != $this->subdir || !is_dir($path)) {
+            throw new repository_exception('The instance is not properly configured, invalid path.');
+        }
+        return $path;
+    }
+
+    /**
+     * Checks if $path is part of this repository.
+     *
+     * Try to prevent $path hacks such as ../ .
+     *
+     * We do not use clean_param(, PARAM_PATH) here because it also trims down some
+     * characters that are allowed, like < > ' . But we do ensure that the directory
+     * is safe by checking that it starts with $rootpath.
+     *
+     * @param string $path relative path to a file or directory in the repo.
+     * @return boolean false when not.
+     */
+    protected function is_in_repository($path) {
+        $rootpath = $this->get_rootpath();
+        if (strpos(realpath($rootpath . $path), realpath($rootpath)) !== 0) {
+            return false;
+        }
+        return true;
     }
 }
