@@ -68,24 +68,10 @@ function quiz_statistics_question_preview_pluginfile($previewcontext, $questioni
 function quiz_statistics_cron() {
     global $DB;
 
+    mtrace("\n  Cleaning up old quiz statistics cache records...", '');
+
     $expiretime = time() - 5*HOURSECS;
-    $todelete = $DB->get_records_select_menu('quiz_statistics',
-            'timemodified < ?', array($expiretime), '', 'id, 1');
-
-    if (!$todelete) {
-        return true;
-    }
-
-    list($todeletesql, $todeleteparams) = $DB->get_in_or_equal(array_keys($todelete));
-
-    $DB->delete_records_select('quiz_question_statistics',
-            'quizstatisticsid ' . $todeletesql, $todeleteparams);
-
-    $DB->delete_records_select('quiz_question_response_stats',
-            'quizstatisticsid ' . $todeletesql, $todeleteparams);
-
-    $DB->delete_records_select('quiz_statistics',
-            'id ' . $todeletesql, $todeleteparams);
+    $DB->delete_records_select('quiz_statistics', 'timemodified < ?', array($expiretime));
 
     return true;
 }
