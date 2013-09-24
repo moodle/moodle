@@ -25,9 +25,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
+namespace core_question\statistics\responses;
 defined('MOODLE_INTERNAL') || die();
-
 
 /**
  * This class can store and compute the analysis of the responses to a particular
@@ -37,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @author    Jamie Pratt <me@jamiep.org>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_response_analyser {
+class analyser {
     /** @var object the data from the database that defines the question. */
     protected $questiondata;
 
@@ -67,9 +66,7 @@ class question_response_analyser {
     public function __construct($questiondata) {
         $this->questiondata = $questiondata;
 
-        $this->responseclasses =
-                question_bank::get_qtype($questiondata->qtype)->get_possible_responses(
-                        $questiondata);
+        $this->responseclasses = \question_bank::get_qtype($questiondata->qtype)->get_possible_responses($questiondata);
         foreach ($this->responseclasses as $subpartid => $responseclasses) {
             foreach ($responseclasses as $responseclassid => $notused) {
                 $this->responses[$subpartid][$responseclassid] = array();
@@ -121,11 +118,11 @@ class question_response_analyser {
     /**
      * Analyse all the response data for for all the specified attempts at
      * this question.
-     * @param qubaid_condition $qubaids which attempts to consider.
+     * @param \qubaid_condition $qubaids which attempts to consider.
      */
     public function calculate($qubaids) {
         // Load data.
-        $dm = new question_engine_data_mapper();
+        $dm = new \question_engine_data_mapper();
         $questionattempts = $dm->load_attempts_at_question($this->questiondata->id, $qubaids);
 
         // Analyse it.
@@ -138,16 +135,16 @@ class question_response_analyser {
 
     /**
      * Analyse the data from one question attempt.
-     * @param question_attempt $qa the data to analyse.
+     * @param \question_attempt $qa the data to analyse.
      */
-    protected function add_data_from_one_attempt(question_attempt $qa) {
-        $blankresponse = question_classified_response::no_response();
+    protected function add_data_from_one_attempt(\question_attempt $qa) {
+        $blankresponse = \question_classified_response::no_response();
 
         $partresponses = $qa->classify_response();
         foreach ($partresponses as $subpartid => $partresponse) {
             if (!isset($this->responses[$subpartid][$partresponse->responseclassid]
                     [$partresponse->response])) {
-                $resp = new stdClass();
+                $resp = new \stdClass();
                 $resp->count = 0;
                 if (!is_null($partresponse->fraction)) {
                     $resp->fraction = $partresponse->fraction;
@@ -167,7 +164,7 @@ class question_response_analyser {
 
     /**
      * Store the computed response analysis in the question_response_analysis table.
-     * @param qubaid_condition $qubaids
+     * @param \qubaid_condition $qubaids
      * data corresponding to.
      * @return bool true if cached data was found in the database and loaded, otherwise false, to mean no data was loaded.
      */
@@ -181,7 +178,7 @@ class question_response_analyser {
         }
 
         foreach ($rows as $row) {
-            $this->responses[$row->subqid][$row->aid][$row->response] = new stdClass();
+            $this->responses[$row->subqid][$row->aid][$row->response] = new \stdClass();
             $this->responses[$row->subqid][$row->aid][$row->response]->count = $row->rcount;
             $this->responses[$row->subqid][$row->aid][$row->response]->fraction = $row->credit;
         }
@@ -190,7 +187,7 @@ class question_response_analyser {
 
     /**
      * Store the computed response analysis in the question_response_analysis table.
-     * @param qubaid_condition $qubaids
+     * @param \qubaid_condition $qubaids
      */
     public function store_cached($qubaids) {
         global $DB;
@@ -199,7 +196,7 @@ class question_response_analyser {
         foreach ($this->responses as $subpartid => $partdata) {
             foreach ($partdata as $responseclassid => $classdata) {
                 foreach ($classdata as $response => $data) {
-                    $row = new stdClass();
+                    $row = new \stdClass();
                     $row->hashcode = $qubaids->get_hash_code();
                     $row->questionid = $this->questiondata->id;
                     $row->subqid = $subpartid;
