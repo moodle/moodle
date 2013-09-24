@@ -162,8 +162,10 @@ class behat_hooks extends behat_base {
             behat_selectors::register_moodle_selectors($session);
         }
 
-        // Avoid some notices / warnings.
+        // Reset $SESSION.
+        $_SESSION = array();
         $SESSION = new stdClass();
+        $_SESSION['SESSION'] =& $SESSION;
 
         behat_util::reset_database();
         behat_util::reset_dataroot();
@@ -174,7 +176,7 @@ class behat_hooks extends behat_base {
         // Reset the nasty strings list used during the last test.
         nasty_strings::reset_used_strings();
 
-        // Assing valid data to admin user (some generator-related code needs a valid user).
+        // Assign valid data to admin user (some generator-related code needs a valid user).
         $user = $DB->get_record('user', array('username' => 'admin'));
         \core\session\manager::set_user($user);
 

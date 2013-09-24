@@ -155,8 +155,9 @@ class manager {
             $_SESSION['USER']->mnethostid = 1;
         }
 
-        if (PHPUNIT_TEST) {
-            // Phpunit tests use reversed reference.
+        if (PHPUNIT_TEST or defined('BEHAT_TEST')) {
+            // Phpunit tests and behat init use reversed reference,
+            // the reason is we can not point global to $_SESSION outside of global scope.
             global $USER, $SESSION;
             $USER = $_SESSION['USER'];
             $SESSION = $_SESSION['SESSION'];
@@ -597,8 +598,9 @@ class manager {
         }
         sesskey(); // Init session key.
 
-        if (PHPUNIT_TEST) {
-            // Phpunit tests use reversed reference.
+        if (PHPUNIT_TEST or defined('BEHAT_TEST')) {
+            // Phpunit tests and behat init use reversed reference,
+            // the reason is we can not point global to $_SESSION outside of global scope.
             global $USER;
             $USER = $_SESSION['USER'];
             $_SESSION['USER'] =& $USER;
