@@ -96,6 +96,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
         $site = get_site();
         $CASform = get_string('CASform', 'auth_cas');
         $username = optional_param('username', '', PARAM_RAW);
+        $courseid = optional_param('courseid', 0, PARAM_INT);
 
         if (!empty($username)) {
             if (isset($SESSION->wantsurl) && (strstr($SESSION->wantsurl, 'ticket') ||
@@ -117,6 +118,12 @@ class auth_plugin_cas extends auth_plugin_ldap {
             $frm = new stdClass();
             $frm->username = phpCAS::getUser();
             $frm->password = 'passwdCas';
+
+            // Redirect to a course if multi-auth is activated, authCAS is set to CAS and the courseid is specified.
+            if ($this->config->multiauth && !empty($courseid)) {
+                redirect(new moodle_url('/course/view.php', array('id'=>$courseid)));
+            }
+
             return;
         }
 
