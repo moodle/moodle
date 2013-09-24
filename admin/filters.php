@@ -33,6 +33,7 @@
 
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir . '/adminlib.php');
+    require_once($CFG->libdir . '/pluginlib.php');
 
     $action = optional_param('action', '', PARAM_ALPHANUMEXT);
     $filterpath = optional_param('filterpath', '', PARAM_SAFEDIR);
@@ -43,9 +44,6 @@
 
     $returnurl = "$CFG->wwwroot/$CFG->admin/filters.php";
     admin_externalpage_setup('managefilters');
-
-    // Purge all caches related to filter administration.
-    cache::make('core', 'plugininfo_filter')->purge();
 
     $filters = filter_get_global_states();
 
@@ -59,7 +57,7 @@
 /// Process actions ============================================================
 
     if ($action) {
-        if (!isset($filters[$filterpath]) && !isset($newfilters[$filterpath])) {
+        if ($action !== 'delete' and !isset($filters[$filterpath]) and !isset($newfilters[$filterpath])) {
             throw new moodle_exception('filternotinstalled', 'error', $returnurl, $filterpath);
         }
 
@@ -138,6 +136,7 @@
 
     // Reset caches and return
     if ($action) {
+        plugin_manager::reset_caches();
         reset_text_filters_cache();
         redirect($returnurl);
     }

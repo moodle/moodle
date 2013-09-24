@@ -7,6 +7,7 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir.'/pluginlib.php');
 
 $action  = required_param('action', PARAM_ALPHANUMEXT);
 $editor  = required_param('editor', PARAM_PLUGIN);
@@ -93,6 +94,7 @@ if (empty($active_editors)) {
 }
 
 set_config('texteditors', implode(',', $active_editors));
+plugin_manager::reset_caches();
 
 if ($return) {
     redirect ($returnurl);

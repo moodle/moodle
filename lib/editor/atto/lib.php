@@ -74,25 +74,20 @@ class atto_texteditor extends texteditor {
      * @param null $fpoptions
      */
     public function use_editor($elementid, array $options=null, $fpoptions=null) {
-        global $PAGE, $CFG;
+        global $PAGE;
         $PAGE->requires->yui_module('moodle-editor_atto-editor',
                                     'M.editor_atto.init',
                                     array($this->get_init_params($elementid, $options, $fpoptions)), true);
-        require_once($CFG->libdir . '/pluginlib.php');
 
-        $pluginman = plugin_manager::instance();
-        $plugins = $pluginman->get_subplugins_of_plugin('editor_atto');
+        $plugins = core_component::get_plugin_list('atto');
 
-        $sortedplugins = array();
-
-        foreach ($plugins as $id => $plugin) {
-            $sortorder = component_callback($plugin->type . '_' . $plugin->name, 'sort_order', array($elementid));
-            $sortedplugins[$sortorder] = $plugin;
+        foreach ($plugins as $name => $fulldir) {
+            $plugins[$name] = component_callback('atto_' . $name, 'sort_order', array($elementid));
         }
 
-        ksort($sortedplugins);
-        foreach ($sortedplugins as $plugin) {
-            component_callback($plugin->type . '_' . $plugin->name, 'init_editor', array($elementid));
+        asort($plugins);
+        foreach ($plugins as $name => $sort) {
+            component_callback('atto_' . $name, 'init_editor', array($elementid));
         }
 
     }

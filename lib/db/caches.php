@@ -141,58 +141,13 @@ $definitions = array(
         'persistentmaxsize' => 2,
     ),
 
-    // Cache used by the {@link plugininfo_base} class.
-    'plugininfo_base' => array(
+    // Cache used by the {@link plugin_manager} class.
+    // NOTE: this must be a shared cache.
+    'plugin_manager' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 2,
-    ),
-
-    // Cache used by the {@link plugininfo_mod} class.
-    'plugininfo_mod' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
-    ),
-
-    // Cache used by the {@link plugininfo_block} class.
-    'plugininfo_block' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
-    ),
-
-    // Cache used by the {@link plugininfo_filter} class.
-    'plugininfo_filter' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
-    ),
-
-    // Cache used by the {@link plugininfo_repository} class.
-    'plugininfo_repository' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
-    ),
-
-    // Cache used by the {@link plugininfo_portfolio} class.
-    'plugininfo_portfolio' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
+        'persistent' => false,
     ),
 
     // Used to store the full tree of course categories

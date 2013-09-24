@@ -4,6 +4,7 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->libdir . '/portfolio/forms.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/pluginlib.php');
 
 $portfolio     = optional_param('pf', '', PARAM_ALPHANUMEXT);
 $action        = optional_param('action', '', PARAM_ALPHA);
@@ -42,9 +43,6 @@ $sesskeyurl = "$CFG->wwwroot/$CFG->admin/portfolio.php?sesskey=" . sesskey();
 $configstr  = get_string('manageportfolios', 'portfolio');
 
 $return = true; // direct back to the main page
-
-// Purge all caches related to portfolio administration.
-cache::make('core', 'plugininfo_portfolio')->purge();
 
 /**
  * Helper function that generates a moodle_url object
@@ -91,6 +89,7 @@ if (($action == 'edit') || ($action == 'new')) {
         } else {
             portfolio_static_function($plugin, 'create_instance', $plugin, $fromform->name, $fromform);
         }
+        plugin_manager::reset_caches();
         $savedstr = get_string('instancesaved', 'portfolio');
         redirect($baseurl, $savedstr, 1);
         exit;
@@ -119,6 +118,7 @@ if (($action == 'edit') || ($action == 'new')) {
 
     $instance->set('visible', $visible);
     $instance->save();
+    plugin_manager::reset_caches();
     $return = true;
 } else if ($action == 'delete') {
     $instance = portfolio_instance($portfolio);

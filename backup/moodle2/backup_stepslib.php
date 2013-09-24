@@ -307,6 +307,7 @@ abstract class backup_block_structure_step extends backup_structure_step {
 class backup_module_structure_step extends backup_structure_step {
 
     protected function define_structure() {
+        global $DB;
 
         // Define each element separated
 
@@ -339,12 +340,14 @@ class backup_module_structure_step extends backup_structure_step {
         $availinfo->add_child($availabilityfield);
 
         // Set the sources
-        $module->set_source_sql('
-            SELECT cm.*, m.version, m.name AS modulename, s.id AS sectionid, s.section AS sectionnumber
+        $concat = $DB->sql_concat("'mod_'", 'm.name');
+        $module->set_source_sql("
+            SELECT cm.*, cp.value AS version, m.name AS modulename, s.id AS sectionid, s.section AS sectionnumber
               FROM {course_modules} cm
               JOIN {modules} m ON m.id = cm.module
+              JOIN {config_plugins} cp ON cp.plugin = $concat AND cp.name = 'version'
               JOIN {course_sections} s ON s.id = cm.section
-             WHERE cm.id = ?', array(backup::VAR_MODID));
+             WHERE cm.id = ?", array(backup::VAR_MODID));
 
         $availability->set_source_table('course_modules_availability', array('coursemoduleid' => backup::VAR_MODID));
         $availabilityfield->set_source_sql('
@@ -1363,7 +1366,7 @@ class backup_block_instance_structure_step extends backup_structure_step {
         }
         $blockrec->contextid = $this->task->get_contextid();
         // Get the version of the block
-        $blockrec->version = $DB->get_field('block', 'version', array('name' => $this->task->get_blockname()));
+        $blockrec->version = get_config('block_'.$this->task->get_blockname(), 'version');
 
         // Define sources
 

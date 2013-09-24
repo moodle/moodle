@@ -298,7 +298,10 @@ function uninstall_plugin($type, $name) {
     $DB->delete_records('log_display', array('component' => $component));
 
     // delete the module configuration records
-    unset_all_config_for_plugin($pluginname);
+    unset_all_config_for_plugin($component);
+    if ($type === 'mod') {
+        unset_all_config_for_plugin($pluginname);
+    }
 
     // delete message provider
     message_provider_uninstall($component);
@@ -375,9 +378,11 @@ function get_component_version($component, $source='installed') {
             if (empty($mods[$name]) or !is_readable($mods[$name].'/version.php')) {
                 return false;
             } else {
-                $module = new stdclass();
+                $plugin = new stdClass();
+                $plugin->version = null;
+                $module = $plugin;
                 include($mods[$name].'/version.php');
-                return $module->version;
+                return $plugin->version;
             }
         }
     }
