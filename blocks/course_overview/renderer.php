@@ -108,7 +108,7 @@ class block_course_overview_renderer extends plugin_renderer_base {
                     $attributes['class'] = 'dimmed';
                 }
                 $courseurl = new moodle_url('/course/view.php', array('id' => $course->id));
-                $coursefullname = format_string($course->fullname, true, $course->id);
+                $coursefullname = format_string(get_course_display_name_for_list($course), true, $course->id);
                 $link = html_writer::link($courseurl, $coursefullname, $attributes);
                 $html .= $this->output->heading($link, 2, 'title');
             } else {
