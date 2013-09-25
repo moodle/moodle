@@ -210,15 +210,39 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
          * @return void
          */
         var scorm_fixnav = function() {
-            scorm_buttons[0].set('disabled', ((scorm_skipprev(scorm_current_node) === null) || (scorm_skipprev(scorm_current_node).parent.isRoot()) ||
-                        (scorm_skipprev(scorm_current_node).title === null) || (scoes_nav[launch_sco].hideprevious === 1)));
-            scorm_buttons[1].set('disabled', ((scorm_prev(scorm_current_node) === null) || (scorm_skipprev(scorm_current_node).parent.isRoot()) ||
-                        (scorm_prev(scorm_current_node).title === null) || (scoes_nav[launch_sco].hideprevious === 1)));
-            scorm_buttons[2].set('disabled', (scorm_up(scorm_current_node) === null) || (scorm_up(scorm_current_node).parent.isRoot()) ||
-                         (scorm_up(scorm_current_node).title === null));
-            scorm_buttons[3].set('disabled', ((scorm_next(scorm_current_node) === null) || ((scorm_next(scorm_current_node).title === null) &&
-                        (scoes_nav[launch_sco].flow !== 1)) || (scoes_nav[launch_sco].hidecontinue === 1)));
-            scorm_buttons[4].set('disabled', (scorm_skipnext(scorm_current_node) === null || scorm_skipnext(scorm_current_node).title === null ||
+            var skipprevnode = scorm_skipprev(scorm_current_node);
+            var prevnode = scorm_prev(scorm_current_node);
+            var skipnextnode = scorm_skipnext(scorm_current_node);
+            var nextnode = scorm_next(scorm_current_node);
+            var upnode = scorm_up(scorm_current_node);
+
+            scorm_buttons[0].set('disabled', ((skipprevnode === null) ||
+                        (typeof(skipprevnode.scoid) === 'undefined') ||
+                        (scoes_nav[skipprevnode.scoid].isvisible === "false") ||
+                        (skipprevnode.title === null) ||
+                        (scoes_nav[launch_sco].hideprevious === 1)));
+
+            scorm_buttons[1].set('disabled', ((prevnode === null) ||
+                        (typeof(prevnode.scoid) === 'undefined') ||
+                        (scoes_nav[prevnode.scoid].isvisible === "false") ||
+                        (prevnode.title === null) ||
+                        (scoes_nav[launch_sco].hideprevious === 1)));
+
+            scorm_buttons[2].set('disabled', (upnode === null) ||
+                        (typeof(upnode.scoid) === 'undefined') ||
+                        (scoes_nav[upnode.scoid].isvisible === "false") ||
+                        (upnode.title === null));
+
+            scorm_buttons[3].set('disabled', ((nextnode === null) ||
+                        ((nextnode.title === null) && (scoes_nav[launch_sco].flow !== 1)) ||
+                        (typeof(nextnode.scoid) === 'undefined') ||
+                        (scoes_nav[nextnode.scoid].isvisible === "false") ||
+                        (scoes_nav[launch_sco].hidecontinue === 1)));
+
+            scorm_buttons[4].set('disabled', ((skipnextnode === null) ||
+                        (skipnextnode.title === null) ||
+                        (typeof(skipnextnode.scoid) === 'undefined') ||
+                        (scoes_nav[skipnextnode.scoid].isvisible === "false") ||
                         scoes_nav[launch_sco].hidecontinue === 1));
         };
 
