@@ -231,56 +231,6 @@ function uninstall_plugin($type, $name) {
                 }
             }
         }
-
-    } else if ($type === 'enrol') {
-        // NOTE: this is a bit brute force way - it will not trigger events and hooks properly
-        // nuke all role assignments
-        role_unassign_all(array('component'=>$component));
-        // purge participants
-        $DB->delete_records_select('user_enrolments', "enrolid IN (SELECT id FROM {enrol} WHERE enrol = ?)", array($name));
-        // purge enrol instances
-        $DB->delete_records('enrol', array('enrol'=>$name));
-        // tweak enrol settings
-        if (!empty($CFG->enrol_plugins_enabled)) {
-            $enabledenrols = explode(',', $CFG->enrol_plugins_enabled);
-            $enabledenrols = array_unique($enabledenrols);
-            $enabledenrols = array_flip($enabledenrols);
-            unset($enabledenrols[$name]);
-            $enabledenrols = array_flip($enabledenrols);
-            if (is_array($enabledenrols)) {
-                set_config('enrol_plugins_enabled', implode(',', $enabledenrols));
-            }
-        }
-
-    } else if ($type === 'block') {
-        if ($block = $DB->get_record('block', array('name'=>$name))) {
-            // Inform block it's about to be deleted
-            if (file_exists("$CFG->dirroot/blocks/$block->name/block_$block->name.php")) {
-                $blockobject = block_instance($block->name);
-                if ($blockobject) {
-                    $blockobject->before_delete();  //only if we can create instance, block might have been already removed
-                }
-            }
-
-            // First delete instances and related contexts
-            $instances = $DB->get_records('block_instances', array('blockname' => $block->name));
-            foreach($instances as $instance) {
-                blocks_delete_instance($instance);
-            }
-
-            // Delete block
-            $DB->delete_records('block', array('id'=>$block->id));
-        }
-    } else if ($type === 'format') {
-        if (($defaultformat = get_config('moodlecourse', 'format')) && $defaultformat !== $name) {
-            $courses = $DB->get_records('course', array('format' => $name), 'id');
-            $data = (object)array('id' => null, 'format' => $defaultformat);
-            foreach ($courses as $record) {
-                $data->id = $record->id;
-                update_course($data);
-            }
-        }
-        $DB->delete_records('course_format_options', array('format' => $name));
     }
 
     // Specific plugin type cleanup.

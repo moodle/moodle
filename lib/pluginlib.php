@@ -3267,6 +3267,39 @@ class plugininfo_block extends plugininfo_base {
 
         return '<p>'.get_string('uninstallextraconfirmblock', 'core_plugin', array('instances'=>$count)).'</p>';
     }
+
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB, $CFG;
+
+        if ($block = $DB->get_record('block', array('name'=>$this->name))) {
+            // Inform block it's about to be deleted
+            if (file_exists("$CFG->dirroot/blocks/$block->name/block_$block->name.php")) {
+                $blockobject = block_instance($block->name);
+                if ($blockobject) {
+                    $blockobject->before_delete();  //only if we can create instance, block might have been already removed
+                }
+            }
+
+            // First delete instances and related contexts
+            $instances = $DB->get_records('block_instances', array('blockname' => $block->name));
+            foreach($instances as $instance) {
+                blocks_delete_instance($instance);
+            }
+
+            // Delete block
+            $DB->delete_records('block', array('id'=>$block->id));
+        }
+
+        parent::uninstall_cleanup();
+    }
 }
 
 
@@ -3659,6 +3692,43 @@ class plugininfo_enrol extends plugininfo_base {
         $result .= $button;
 
         return $result;
+    }
+
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB, $CFG;
+
+        // NOTE: this is a bit brute force way - it will not trigger events and hooks properly.
+
+        // Nuke all role assignments.
+        role_unassign_all(array('component'=>'enrol_'.$this->name));
+
+        // Purge participants.
+        $DB->delete_records_select('user_enrolments', "enrolid IN (SELECT id FROM {enrol} WHERE enrol = ?)", array($this->name));
+
+        // Purge enrol instances.
+        $DB->delete_records('enrol', array('enrol'=>$this->name));
+
+        // Tweak enrol settings.
+        if (!empty($CFG->enrol_plugins_enabled)) {
+            $enabledenrols = explode(',', $CFG->enrol_plugins_enabled);
+            $enabledenrols = array_unique($enabledenrols);
+            $enabledenrols = array_flip($enabledenrols);
+            unset($enabledenrols[$this->name]);
+            $enabledenrols = array_flip($enabledenrols);
+            if (is_array($enabledenrols)) {
+                set_config('enrol_plugins_enabled', implode(',', $enabledenrols));
+            }
+        }
+
+        parent::uninstall_cleanup();
     }
 }
 
@@ -4112,5 +4182,30 @@ class plugininfo_format extends plugininfo_base {
             'defaultformat' => $defaultformat));
 
         return $message;
+    }
+
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB;
+
+        if (($defaultformat = get_config('moodlecourse', 'format')) && $defaultformat !== $this->name) {
+            $courses = $DB->get_records('course', array('format' => $this->name), 'id');
+            $data = (object)array('id' => null, 'format' => $defaultformat);
+            foreach ($courses as $record) {
+                $data->id = $record->id;
+                update_course($data);
+            }
+        }
+
+        $DB->delete_records('course_format_options', array('format' => $this->name));
+
+        parent::uninstall_cleanup();
     }
 }
