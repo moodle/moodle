@@ -272,7 +272,12 @@ function get_component_version($component, $source='installed') {
     // activity module
     if ($type === 'mod') {
         if ($source === 'installed') {
-            return $DB->get_field('modules', 'version', array('name'=>$name));
+            if ($CFG->version < 2013092001.02) {
+                return $DB->get_field('modules', 'version', array('name'=>$name));
+            } else {
+                return get_config('mod_'.$name, 'version');
+            }
+
         } else {
             $mods = core_component::get_plugin_list('mod');
             if (empty($mods[$name]) or !is_readable($mods[$name].'/version.php')) {
