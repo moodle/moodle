@@ -39,28 +39,37 @@ class edit_backpack_form extends moodleform {
      * Defines the form
      */
     public function definition() {
-        global $USER;
+        global $USER, $PAGE, $OUTPUT;
         $mform = $this->_form;
 
+        $mform->addElement('html', html_writer::tag('span', '', array('class' => 'notconnected', 'id' => 'connection-error')));
         $mform->addElement('header', 'backpackheader', get_string('backpackconnection', 'badges'));
         $mform->addHelpButton('backpackheader', 'backpackconnection', 'badges');
-        $mform->addElement('static', 'url', get_string('url'), 'http://backpack.openbadges.org');
-        $status = html_writer::tag('span', get_string('notconnected', 'badges'), array('class' => 'notconnected'));
+        $mform->addElement('static', 'url', get_string('url'), BADGE_BACKPACKURL);
+        $status = html_writer::tag('span', get_string('notconnected', 'badges'),
+            array('class' => 'notconnected', 'id' => 'connection-status'));
         $mform->addElement('static', 'status', get_string('status'), $status);
 
-        $mform->addElement('text', 'email', get_string('email'), array('size' => '50'));
-        $mform->setDefault('email', $USER->email);
-        $mform->setType('email', PARAM_RAW);
-        $mform->addRule('email', get_string('required'), 'required', null , 'client');
-        $mform->addHelpButton('email', 'backpackemail', 'badges');
+        $nojs = html_writer::tag('noscript', get_string('error:personaneedsjs', 'badges'),
+            array('class' => 'notconnected'));
+        $personadiv = $OUTPUT->container($nojs, null, 'persona-container');
+
+        $mform->addElement('static', 'persona', '', $personadiv);
+        $mform->addHelpButton('persona', 'personaconnection', 'badges');
+
+        $PAGE->requires->js(new moodle_url('https://login.persona.org/include.js'));
+        $PAGE->requires->js('/badges/backpack.js');
+        $PAGE->requires->js_init_call('badges_init_persona_login_button', null, false);
+        $PAGE->requires->strings_for_js(array('error:backpackloginfailed', 'signinwithyouremail',
+            'error:noassertion', 'error:connectionunknownreason', 'error:badjson', 'connecting',
+            'notconnected'), 'badges');
 
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
 
-        $mform->addElement('hidden', 'backpackurl', 'http://backpack.openbadges.org');
+        $mform->addElement('hidden', 'backpackurl', BADGE_BACKPACKURL);
         $mform->setType('backpackurl', PARAM_URL);
 
-        $this->add_action_buttons(true, get_string('connect', 'badges'));
     }
 
     /**
@@ -70,18 +79,14 @@ class edit_backpack_form extends moodleform {
         global $DB;
         $errors = parent::validation($data, $files);
 
-        if (!validate_email($data['email'])) {
-            $errors['email'] = get_string('invalidemail');
-        } else {
-            $check = new stdClass();
-            $check->backpackurl = $data['backpackurl'];
-            $check->email = $data['email'];
+        $check = new stdClass();
+        $check->backpackurl = $data['backpackurl'];
+        $check->email = $data['email'];
 
-            $bp = new OpenBadgesBackpackHandler($check);
-            $request = $bp->curl_request('user');
-            if (isset($request->status) && $request->status == 'missing') {
-                $errors['email'] = get_string('error:nosuchuser', 'badges');
-            }
+        $bp = new OpenBadgesBackpackHandler($check);
+        $request = $bp->curl_request('user');
+        if (isset($request->status) && $request->status == 'missing') {
+            $errors['email'] = get_string('error:nosuchuser', 'badges');
         }
         return $errors;
     }
@@ -113,7 +118,7 @@ class edit_collections_form extends moodleform {
 
         $mform->addElement('header', 'backpackheader', get_string('backpackconnection', 'badges'));
         $mform->addHelpButton('backpackheader', 'backpackconnection', 'badges');
-        $mform->addElement('static', 'url', get_string('url'), 'http://backpack.openbadges.org');
+        $mform->addElement('static', 'url', get_string('url'), BADGE_BACKPACKURL);
 
         $status = html_writer::tag('span', get_string('connected', 'badges'), array('class' => 'connected'));
         $mform->addElement('static', 'status', get_string('status'), $status);

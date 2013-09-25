@@ -1441,6 +1441,7 @@ div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
 .dir-rtl .activatebadge { text-align: right; }
 .addcourse { float: right; }
 .dir-rtl .addcourse { float: left; }
+img#persona_signin { cursor: pointer; }
 
 /**
  * The date selector popup.
