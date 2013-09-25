@@ -3488,6 +3488,61 @@ class plugininfo_mod extends plugininfo_base {
 
         return '<p>'.get_string('uninstallextraconfirmmod', 'core_plugin', array('instances'=>$count, 'courses'=>$courses)).'</p>';
     }
+
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB, $CFG;
+
+        if (!$module = $DB->get_record('modules', array('name' => $this->name))) {
+            parent::uninstall_cleanup();
+            return;
+        }
+
+        // Delete all the relevant instances from all course sections.
+        if ($coursemods = $DB->get_records('course_modules', array('module' => $module->id))) {
+            foreach ($coursemods as $coursemod) {
+                // Do not verify results, there is not much we can do anyway.
+                delete_mod_from_section($coursemod->id, $coursemod->section);
+            }
+        }
+
+        // Increment course.cacherev for courses that used this module.
+        // This will force cache rebuilding on the next request.
+        increment_revision_number('course', 'cacherev',
+            "id IN (SELECT DISTINCT course
+                      FROM {course_modules}
+                     WHERE module=?)",
+            array($module->id));
+
+        // Delete all the course module records.
+        $DB->delete_records('course_modules', array('module' => $module->id));
+
+        // Delete module contexts.
+        if ($coursemods) {
+            foreach ($coursemods as $coursemod) {
+                context_helper::delete_instance(CONTEXT_MODULE, $coursemod->id);
+            }
+        }
+
+        // Delete the module entry itself.
+        $DB->delete_records('modules', array('name' => $module->name));
+
+        // Cleanup the gradebook.
+        require_once($CFG->libdir.'/gradelib.php');
+        grade_uninstalled_module($module->name);
+
+        // Do not look for legacy $module->name . '_uninstall any more,
+        // they should have migrated to db/uninstall.php by now.
+
+        parent::uninstall_cleanup();
+    }
 }
 
 

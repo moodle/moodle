@@ -167,69 +167,15 @@ function uninstall_plugin($type, $name) {
 
     echo $OUTPUT->heading($pluginname);
 
+    // Custom plugin uninstall.
     $plugindirectory = core_component::get_plugin_directory($type, $name);
     $uninstalllib = $plugindirectory . '/db/uninstall.php';
     if (file_exists($uninstalllib)) {
         require_once($uninstalllib);
         $uninstallfunction = 'xmldb_' . $pluginname . '_uninstall';    // eg. 'xmldb_workshop_uninstall()'
         if (function_exists($uninstallfunction)) {
-            if (!$uninstallfunction()) {
-                echo $OUTPUT->notification('Encountered a problem running uninstall function for '. $pluginname);
-            }
-        }
-    }
-
-    if ($type === 'mod') {
-        // perform cleanup tasks specific for activity modules
-
-        if (!$module = $DB->get_record('modules', array('name' => $name))) {
-            print_error('moduledoesnotexist', 'error');
-        }
-
-        // delete all the relevant instances from all course sections
-        if ($coursemods = $DB->get_records('course_modules', array('module' => $module->id))) {
-            foreach ($coursemods as $coursemod) {
-                if (!delete_mod_from_section($coursemod->id, $coursemod->section)) {
-                    echo $OUTPUT->notification("Could not delete the $strpluginname with id = $coursemod->id from section $coursemod->section");
-                }
-            }
-        }
-
-        // Increment course.cacherev for courses that used this module.
-        // This will force cache rebuilding on the next request.
-        increment_revision_number('course', 'cacherev',
-                "id IN (SELECT DISTINCT course
-                                FROM {course_modules}
-                               WHERE module=?)",
-                array($module->id));
-
-        // delete all the course module records
-        $DB->delete_records('course_modules', array('module' => $module->id));
-
-        // delete module contexts
-        if ($coursemods) {
-            foreach ($coursemods as $coursemod) {
-                context_helper::delete_instance(CONTEXT_MODULE, $coursemod->id);
-            }
-        }
-
-        // delete the module entry itself
-        $DB->delete_records('modules', array('name' => $module->name));
-
-        // cleanup the gradebook
-        require_once($CFG->libdir.'/gradelib.php');
-        grade_uninstalled_module($module->name);
-
-        // Perform any custom uninstall tasks
-        if (file_exists($CFG->dirroot . '/mod/' . $module->name . '/lib.php')) {
-            require_once($CFG->dirroot . '/mod/' . $module->name . '/lib.php');
-            $uninstallfunction = $module->name . '_uninstall';
-            if (function_exists($uninstallfunction)) {
-                debugging("{$uninstallfunction}() has been deprecated. Use the plugin's db/uninstall.php instead", DEBUG_DEVELOPER);
-                if (!$uninstallfunction()) {
-                    echo $OUTPUT->notification('Encountered a problem running uninstall function for '. $module->name.'!');
-                }
-            }
+            // Do not verify result, let plugin complain if necessary.
+            $uninstallfunction();
         }
     }
 
