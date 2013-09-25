@@ -249,6 +249,17 @@ class page_requirements_manager {
             $this->YUI_config->debug = false;
         }
 
+        // Include the YUI config log filters.
+        if (!empty($CFG->yuilogexclude) && is_array($CFG->yuilogexclude)) {
+            $this->YUI_config->logExclude = $CFG->yuilogexclude;
+        }
+        if (!empty($CFG->yuiloginclude) && is_array($CFG->yuiloginclude)) {
+            $this->YUI_config->logInclude = $CFG->yuiloginclude;
+        }
+        if (!empty($CFG->yuiloglevel)) {
+            $this->YUI_config->logLevel = $CFG->yuiloglevel;
+        }
+
         // Add the moodle group's module data.
         $this->YUI_config->add_moodle_metadata();
 

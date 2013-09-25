@@ -489,6 +489,24 @@ $CFG->admin = 'admin';
 // Prevent JS caching
 // $CFG->cachejs = false; // NOT FOR PRODUCTION SERVERS!
 //
+// Restrict which YUI logging statements are shown in the browser console.
+// For details see the upstream documentation:
+//   http://yuilibrary.com/yui/docs/api/classes/config.html#property_logInclude
+//   http://yuilibrary.com/yui/docs/api/classes/config.html#property_logExclude
+// $CFG->yuiloginclude = array(
+//     'moodle-core-dock-loader' => true,
+//     'moodle-course-categoryexpander' => true,
+// );
+// $CFG->yuilogexclude = array(
+//     'moodle-core-dock' => true,
+//     'moodle-core-notification' => true,
+// );
+//
+// Set the minimum log level for YUI logging statements.
+// For details see the upstream documentation:
+//   http://yuilibrary.com/yui/docs/api/classes/config.html#property_logLevel
+// $CFG->yuiloglevel = 'debug';
+//
 // Prevent core_string_manager application caching
 // $CFG->langstringcache = false; // NOT FOR PRODUCTION SERVERS!
 //
