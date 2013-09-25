@@ -49,8 +49,7 @@ class cache_disabled extends cache {
      * @param null $loader Unused.
      */
     public function __construct(cache_definition $definition, cache_store $store, $loader = null) {
-        $this->definition = $definition;
-        $this->store = $store;
+        // Nothing to do here.
     }
 
     /**
@@ -228,7 +227,8 @@ class cache_factory_disabled extends cache_factory {
      * @param array $options An array of options, available options are:
      *   - simplekeys : Set to true if the keys you will use are a-zA-Z0-9_
      *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
-     *   - persistent : If set to true the cache will persist construction requests.
+     *   - staticacceleration : If set to true the cache will hold onto all data passing through it.
+     *   - staticaccelerationsize : Sets the max size of the static acceleration array.
      * @return cache_application|cache_session|cache_request
      */
     public function create_cache_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {

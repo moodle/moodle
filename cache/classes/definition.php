@@ -75,19 +75,14 @@ defined('MOODLE_INTERNAL') || die();
  *          [string] A class to use as the data loader for this definition.
  *          Any class used here must inherit the cache_data_loader interface.
  *     + datasourcefile
- *          [string] Suplements the above setting indicated the file containing the class to be used. This file is included when
+ *          [string] Supplements the above setting indicating the file containing the class to be used. This file is included when
  *          required.
- *     + persistent
- *          [bool] This setting does two important things. First it tells the cache API to only instantiate the cache structure for
- *          this definition once, further requests will be given the original instance.
- *          Second the cache loader will keep an array of the items set and retrieved to the cache during the request.
- *          This has several advantages including better performance without needing to start passing the cache instance between
- *          function calls, the downside is that the cache instance + the items used stay within memory.
- *          Consider using this setting when you know that there are going to be many calls to the cache for the same information
- *          or when you are converting existing code to the cache and need to access the cache within functions but don't want
- *          to add it as an argument to the function.
- *     + persistentmaxsize
- *          [int] This supplements the above setting by limiting the number of items in the caches persistent array of items.
+ *     + staticacceleration
+ *          The cache loader will keep an array of the items set and retrieved to the cache during the request.
+ *          Consider using this setting when you know that there are going to be many calls to the cache for the same information.
+ *          Requests for data in this array will be ultra fast, but it will cost memory.
+ *     + staticaccelerationsize
+ *          [int] This supplements the above setting by limiting the number of items in the static acceleration array.
  *          Tweaking this setting lower will allow you to minimise the memory implications above while hopefully still managing to
  *          offset calls to the cache store.
  *     + ttl
@@ -228,16 +223,16 @@ class cache_definition {
     protected $datasourceaggregate = null;
 
     /**
-     * Set to true if the definitions cache should be persistent
+     * Set to true if the cache should hold onto items passing through it to speed up subsequent requests.
      * @var bool
      */
-    protected $persistent = false;
+    protected $staticacceleration = false;
 
     /**
-     * The persistent item array max size.
+     * The maximum number of items that static acceleration cache should hold onto.
      * @var int
      */
-    protected $persistentmaxsize = false;
+    protected $staticaccelerationsize = false;
 
     /**
      * The TTL for data in this cache. Please don't use this, instead use event driven invalidation.
@@ -320,8 +315,8 @@ class cache_definition {
         $overrideclassfile = null;
         $datasource = null;
         $datasourcefile = null;
-        $persistent = false;
-        $persistentmaxsize = false;
+        $staticacceleration = false;
+        $staticaccelerationsize = false;
         $ttl = 0;
         $mappingsonly = false;
         $invalidationevents = array();
@@ -373,10 +368,18 @@ class cache_definition {
         }
 
         if (array_key_exists('persistent', $definition)) {
-            $persistent = (bool)$definition['persistent'];
+            // Ahhh this is the legacy persistent option.
+            $staticacceleration = (bool)$definition['persistent'];
+        }
+        if (array_key_exists('staticacceleration', $definition)) {
+            $staticacceleration = (bool)$definition['staticacceleration'];
         }
         if (array_key_exists('persistentmaxsize', $definition)) {
-            $persistentmaxsize = (int)$definition['persistentmaxsize'];
+            // Ahhh this is the legacy persistentmaxsize option.
+            $staticaccelerationsize = (int)$definition['persistentmaxsize'];
+        }
+        if (array_key_exists('staticaccelerationsize', $definition)) {
+            $staticaccelerationsize = (int)$definition['staticaccelerationsize'];
         }
         if (array_key_exists('ttl', $definition)) {
             $ttl = (int)$definition['ttl'];
@@ -452,8 +455,8 @@ class cache_definition {
         $cachedefinition->datasource = $datasource;
         $cachedefinition->datasourcefile = $datasourcefile;
         $cachedefinition->datasourceaggregate = $datasourceaggregate;
-        $cachedefinition->persistent = $persistent;
-        $cachedefinition->persistentmaxsize = $persistentmaxsize;
+        $cachedefinition->staticacceleration = $staticacceleration;
+        $cachedefinition->staticaccelerationsize = $staticaccelerationsize;
         $cachedefinition->ttl = $ttl;
         $cachedefinition->mappingsonly = $mappingsonly;
         $cachedefinition->invalidationevents = $invalidationevents;
@@ -474,7 +477,8 @@ class cache_definition {
      *   - simplekeys : Set to true if the keys you will use are a-zA-Z0-9_
      *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
      *   - overrideclass : The class to use as the loader.
-     *   - persistent : If set to true the cache will persist construction requests.
+     *   - staticacceleration : If set to true the cache will hold onto data passing through it.
+     *   - staticaccelerationsize : Set it to an int to limit the size of the staticacceleration cache.
      * @return cache_application|cache_session|cache_request
      */
     public static function load_adhoc($mode, $component, $area, array $options = array()) {
@@ -491,7 +495,14 @@ class cache_definition {
             $definition['simpledata'] = $options['simpledata'];
         }
         if (!empty($options['persistent'])) {
-            $definition['persistent'] = $options['persistent'];
+            // Ahhh this is the legacy persistent option.
+            $definition['staticacceleration'] = (bool)$options['persistent'];
+        }
+        if (!empty($options['staticacceleration'])) {
+            $definition['staticacceleration'] = (bool)$options['staticacceleration'];
+        }
+        if (!empty($options['staticaccelerationsize'])) {
+            $definition['staticaccelerationsize'] = (int)$options['staticaccelerationsize'];
         }
         if (!empty($options['overrideclass'])) {
             $definition['overrideclass'] = $options['overrideclass'];
@@ -716,18 +727,53 @@ class cache_definition {
 
     /**
      * Returns true if this definitions cache should be made persistent.
+     *
+     * Please call {@link cache_definition::use_static_acceleration()} instead.
+     *
+     * @deprecated since 2.4.7
      * @return bool
      */
     public function should_be_persistent() {
-        return $this->persistent || $this->mode === cache_store::MODE_SESSION;
+        debugging('Please upgrade your code to use cache_definition::use_static_acceleration', DEBUG_DEVELOPER);
+        return $this->use_static_acceleration();
     }
 
     /**
-     * Returns the max size for the persistent item array in the cache.
+     * Returns true if we should hold onto the data flowing through the cache.
+     *
+     * If set to true data flowing through the cache will be stored in a static variable
+     * to make subsequent requests for the data much faster.
+     *
+     * @return bool
+     */
+    public function use_static_acceleration() {
+        if ($this->mode === cache_store::MODE_REQUEST) {
+            // Request caches should never use static acceleration - it just doesn't make sense.
+            return false;
+        }
+        return $this->staticacceleration || $this->mode === cache_store::MODE_SESSION;
+    }
+
+    /**
+     * Returns the max size for the static acceleration array.
+     *
+     * Please call {@link cache_definition::get_static_acceleration_size()} instead.
+     *
+     * @see cache_definition::get_static_acceleration_size()
+     * @deprecated since 2.4.7
      * @return int
      */
     public function get_persistent_max_size() {
-        return $this->persistentmaxsize;
+        debugging('Please upgrade your code to call cache_definition::get_static_acceleration_size', DEBUG_DEVELOPER);
+        return $this->get_static_acceleration_size();
+    }
+
+    /**
+     * Returns the max size for the static acceleration array.
+     * @return int
+     */
+    public function get_static_acceleration_size() {
+        return $this->staticaccelerationsize;
     }
 
     /**
