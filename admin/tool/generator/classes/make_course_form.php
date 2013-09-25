@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Course form.
+ *
+ * @package tool_generator
+ * @copyright 2013 The Open University
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/formslib.php');
@@ -25,8 +33,13 @@ require_once($CFG->libdir . '/formslib.php');
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_generator_make_form extends moodleform {
+class tool_generator_make_course_form extends moodleform {
 
+    /**
+     * Course generation tool form definition.
+     *
+     * @return void
+     */
     public function definition() {
         $mform = $this->_form;
 
@@ -41,6 +54,13 @@ class tool_generator_make_form extends moodleform {
         $mform->addElement('submit', 'submit', get_string('createcourse', 'tool_generator'));
     }
 
+    /**
+     * Form validation.
+     *
+     * @param array $data
+     * @param array $files
+     * @return void
+     */
     public function validation($data, $files) {
         global $DB;
         $errors = array();
@@ -48,7 +68,7 @@ class tool_generator_make_form extends moodleform {
         // Check course doesn't already exist.
         if (!empty($data['shortname'])) {
             // Check shortname.
-            $error =  tool_generator_course_backend::check_shortname_available($data['shortname']);
+            $error = tool_generator_course_backend::check_shortname_available($data['shortname']);
             if ($error) {
                 $errors['shortname'] = $error;
             }
