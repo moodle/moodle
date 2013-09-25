@@ -3101,6 +3101,19 @@ abstract class plugininfo_base {
     }
 
     /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        // Override when extending class,
+        // do not forget to call parent::pre_uninstall_cleanup() at the end.
+    }
+
+    /**
      * Returns relative directory of the plugin with heading '/'
      *
      * @return string
@@ -3317,8 +3330,21 @@ class plugininfo_filter extends plugininfo_base {
         return true;
     }
 
-    public function get_uninstall_url() {
-        return new moodle_url('/admin/filters.php', array('sesskey' => sesskey(), 'filterpath' => $this->name, 'action' => 'delete'));
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB;
+
+        $DB->delete_records('filter_active', array('filter' => $this->name));
+        $DB->delete_records('filter_config', array('filter' => $this->name));
+
+        parent::uninstall_cleanup();
     }
 }
 

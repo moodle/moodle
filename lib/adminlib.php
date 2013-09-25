@@ -124,6 +124,7 @@ define('INSECURE_DATAROOT_ERROR', 2);
  */
 function uninstall_plugin($type, $name) {
     global $CFG, $DB, $OUTPUT;
+    require_once($CFG->libdir.'/pluginlib.php');
 
     // This may take a long time.
     @set_time_limit(0);
@@ -281,6 +282,14 @@ function uninstall_plugin($type, $name) {
         }
         $DB->delete_records('course_format_options', array('format' => $name));
     }
+
+    // Specific plugin type cleanup.
+    $plugininfo = plugin_manager::instance()->get_plugin_info($component);
+    if ($plugininfo) {
+        $plugininfo->uninstall_cleanup();
+        plugin_manager::reset_caches();
+    }
+    $plugininfo = null;
 
     // perform clean-up task common for all the plugin/subplugin types
 
