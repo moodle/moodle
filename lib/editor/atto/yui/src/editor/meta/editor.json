@@ -5,6 +5,7 @@
         "io",
         "overlay",
         "escape",
+        "event-key",
         "moodle-core-notification"
       ]
   }
