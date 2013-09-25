@@ -4,6 +4,11 @@ information provided here is intended especially for developers.
 === 2.6 ===
 * Message processor extending message_output, should return true in can_send_to_any_users()
   if it supports message sending to internal (noreply/support) users.
+* Message API has been changed to allow attachments. Message processors that can support
+  attachments can now use additional parameter as a part of $eventdata. To send attachments,
+  $eventdata should contain properties called "attachment" (must be stored_file) and
+  "attachname" (string). Currently, email message processor is the only one to support
+  attachments.
 
 === 2.2 ===
 

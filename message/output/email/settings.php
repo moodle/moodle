@@ -40,6 +40,7 @@ if ($ADMIN->fulltree) {
     $options = array_merge($options, $charsets);
     $settings->add(new admin_setting_configselect('sitemailcharset', get_string('sitemailcharset', 'message_email'), get_string('configsitemailcharset','message_email'), '0', $options));
     $settings->add(new admin_setting_configcheckbox('allowusermailcharset', get_string('allowusermailcharset', 'message_email'), get_string('configallowusermailcharset', 'message_email'), 0));
+    $settings->add(new admin_setting_configcheckbox('allowattachments', get_string('allowattachments', 'message_email'), get_string('configallowattachments', 'message_email'), 1));
     $options = array('LF'=>'LF', 'CRLF'=>'CRLF');
     $settings->add(new admin_setting_configselect('mailnewline', get_string('mailnewline', 'message_email'), get_string('configmailnewline','message_email'), 'LF', $options));
 }
