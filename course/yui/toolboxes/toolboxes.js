@@ -797,7 +797,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 }
                 var activityid = Y.Moodle.core_course.util.cm.getId(node);
 
-                if (Y.Array.indexOf(response.resourcestotoggle, activityid) != -1) {
+                // NOTE: resourcestotoggle is returned as a string instead
+                // of a Number so we must cast our activityid to a String.
+                if (Y.Array.indexOf(response.resourcestotoggle, "" + activityid) != -1) {
                     node.getData('toolbox').handle_resource_dim(button, node, oldstatus);
                 }
             }, this);

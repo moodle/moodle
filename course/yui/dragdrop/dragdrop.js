@@ -135,8 +135,8 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             var dragnode = drag.get('node');
             var dropnode = e.drop.get('node');
             // Prepare some variables
-            var dragnodeid = Number(Y.Moodle.core_course.util.section.getId(dragnode));
-            var dropnodeid = Number(Y.Moodle.core_course.util.section.getId(dropnode));
+            var dragnodeid = Y.Moodle.core_course.util.section.getId(dragnode);
+            var dropnodeid = Y.Moodle.core_course.util.section.getId(dropnode);
 
             var loopstart = dragnodeid;
             var loopend = dropnodeid;
