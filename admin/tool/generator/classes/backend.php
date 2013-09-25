@@ -52,6 +52,11 @@ abstract class tool_generator_backend {
     protected $fixeddataset;
 
     /**
+     * @var int|bool Maximum number of bytes for file.
+     */
+    protected $filesizelimit;
+
+    /**
      * @var bool True if displaying progress
      */
     protected $progress;
@@ -81,10 +86,11 @@ abstract class tool_generator_backend {
      *
      * @param int $size Size as numeric index
      * @param bool $fixeddataset To use fixed or random data
+     * @param int|bool $filesizelimit The max number of bytes for a generated file
      * @param bool $progress True if progress information should be displayed
      * @throws coding_exception If parameters are invalid
      */
-    public function __construct($size, $fixeddataset = false, $progress = true) {
+    public function __construct($size, $fixeddataset = false, $filesizelimit = false, $progress = true) {
 
         // Check parameter.
         if ($size < self::MIN_SIZE || $size > self::MAX_SIZE) {
@@ -94,6 +100,7 @@ abstract class tool_generator_backend {
         // Set parameters.
         $this->size = $size;
         $this->fixeddataset = $fixeddataset;
+        $this->filesizelimit = $filesizelimit;
         $this->progress = $progress;
     }
 
