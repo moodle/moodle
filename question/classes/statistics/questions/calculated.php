@@ -38,7 +38,6 @@ class calculated {
 
     public $questionid;
 
-
     // These first fields are the final fields cached in the db and shown in reports.
 
     // See : http://docs.moodle.org/dev/Quiz_statistics_calculations#Position_statistics .
@@ -174,6 +173,5 @@ class calculated {
         }
         $this->timemodified = $record->timemodified;
     }
-
 
 }

@@ -171,7 +171,7 @@ class calculator {
             foreach ($lateststeps as $step) {
                 $this->secondary_steps_walker($step, $this->questionstats[$step->slot], $summarks, $summarksavg);
 
-                if ($this->questionstats[$step->slot]->subquestion) {
+                if ($this->questionstats[$step->slot]->subquestions) {
                     $this->secondary_steps_walker($step, $this->subquestionstats[$step->questionid], $summarks, $summarksavg);
                 }
             }
@@ -217,7 +217,7 @@ class calculator {
     public function get_cached($qubaids) {
         global $DB;
         $timemodified = time() - self::TIME_TO_CACHE;
-        $questionstatrecs = $DB->get_record_select('question_statistics', 'hashcode = ? AND timemodified > ?',
+        $questionstatrecs = $DB->get_records_select('question_statistics', 'hashcode = ? AND timemodified > ?',
                                          array($qubaids->get_hash_code(), $timemodified));
 
         $questionids = array();
@@ -250,7 +250,8 @@ class calculator {
         global $DB;
 
         $timemodified = time() - self::TIME_TO_CACHE;
-        return $DB->get_field_select('question_statistics', 'timemodified', 'hashcode = ? AND timemodified > ?',
+        return $DB->get_field_select('question_statistics', 'timemodified', 'hashcode = ? AND timemodified > ? '.
+                                                          'ORDER BY timemodified DESC LIMIT 1',
                                      array($qubaids->get_hash_code(), $timemodified));
     }
 
@@ -403,8 +404,6 @@ class calculator {
             $stats->sd = null;
             $stats->negcovar = 0;
         }
-
-
 
         if ($stats->markvariance * $stats->othermarkvariance) {
             $stats->discriminationindex = 100 * $stats->covariance /

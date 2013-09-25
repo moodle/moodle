@@ -90,7 +90,6 @@ class quiz_statistics_calculator {
             }
         }
 
-
         $quizstats->cache(quiz_statistics_qubaids_condition($quizid, $currentgroup, $groupstudents, $useallattempts));
 
         return $quizstats;

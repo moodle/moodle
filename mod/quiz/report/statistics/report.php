@@ -22,7 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_form.php');
@@ -105,7 +104,6 @@ class quiz_statistics_report extends quiz_default_report {
         }
 
         $qubaids = quiz_statistics_qubaids_condition($quiz->id, $currentgroup, $groupstudents, $useallattempts);
-
 
         // If recalculate was requested, handle that.
         if ($recalculate && confirm_sesskey()) {
@@ -531,7 +529,6 @@ class quiz_statistics_report extends quiz_default_report {
 
             $quizstats = $quizcalc->calculate($quiz->id, $currentgroup, $useallattempts,
                                                $groupstudents, count($questions), $qcalc->get_sum_of_mark_variance());
-
 
             if ($quizstats->s()) {
                 $this->calculate_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestionstats);
