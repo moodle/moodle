@@ -29,9 +29,9 @@
 function atto_media_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('media',
+    $icon = $OUTPUT->pix_icon('e/insert_edit_video',
                               get_string('media', 'atto_media'),
-                              'atto_media',
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->strings_for_js(array('createmedia',
@@ -42,14 +42,14 @@ function atto_media_init_editor($elementid) {
                                     'atto_media');
     $PAGE->requires->yui_module('moodle-atto_media-button',
                                 'M.atto_media.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'file')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_media_sort_order() {
     return 14;

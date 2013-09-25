@@ -31,21 +31,21 @@ defined('MOODLE_INTERNAL') || die();
 function atto_strike_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('strike',
+    $icon = $OUTPUT->pix_icon('e/strikethrough',
                               get_string('strike', 'atto_strike'),
-                              'atto_strike',
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->yui_module('moodle-atto_strike-button',
                                 'M.atto_strike.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'style')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int absolute position within the toolbar
  */
 function atto_strike_sort_order() {
     return 3;

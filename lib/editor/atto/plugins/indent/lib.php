@@ -31,21 +31,21 @@ defined('MOODLE_INTERNAL') || die();
 function atto_indent_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('indent',
+    $icon = $OUTPUT->pix_icon('e/increase_indent',
                               get_string('indent', 'atto_indent'),
-                              'atto_indent',
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->yui_module('moodle-atto_indent-button',
                                 'M.atto_indent.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'list')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_indent_sort_order() {
     return 5;

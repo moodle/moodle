@@ -31,9 +31,9 @@ defined('MOODLE_INTERNAL') || die();
 function atto_image_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('image',
+    $icon = $OUTPUT->pix_icon('e/insert_edit_image',
                               get_string('image', 'atto_image'),
-                              'atto_image',
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->strings_for_js(array('createimage',
@@ -46,14 +46,14 @@ function atto_image_init_editor($elementid) {
                                           'height'), 'atto_image');
     $PAGE->requires->yui_module('moodle-atto_image-button',
                                 'M.atto_image.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'file')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_image_sort_order() {
     return 13;

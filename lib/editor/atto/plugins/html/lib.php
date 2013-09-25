@@ -31,18 +31,18 @@ defined('MOODLE_INTERNAL') || die();
 function atto_html_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('html', get_string('html', 'atto_html'), 'atto_html', array('class'=>'icon'));
+    $icon = $OUTPUT->pix_icon('e/source_code', get_string('html', 'atto_html'), 'moodle', array('class'=>'icon'));
 
     $PAGE->requires->yui_module('moodle-atto_html-button',
                                 'M.atto_html.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'html')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return array groupname followed by the absolute position within the toolbar
  */
 function atto_html_sort_order() {
     return 15;

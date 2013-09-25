@@ -31,9 +31,13 @@ defined('MOODLE_INTERNAL') || die();
 function atto_title_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('title',
+    $icon = $OUTPUT->pix_icon('e/styleprops',
                               get_string('title', 'atto_title'),
-                              'atto_title',
+                              'moodle',
+                              array('class'=>'icon'));
+    $icon .= $OUTPUT->pix_icon('t/expanded',
+                              get_string('title', 'atto_title'),
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->strings_for_js(array('h3',
@@ -44,14 +48,14 @@ function atto_title_init_editor($elementid) {
                                           'p'), 'atto_title');
     $PAGE->requires->yui_module('moodle-atto_title-button',
                                 'M.atto_title.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'title')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_title_sort_order() {
     return 9;

@@ -29,21 +29,21 @@
 function atto_unlink_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('unlink',
+    $icon = $OUTPUT->pix_icon('e/remove_link',
                               get_string('unlink', 'atto_unlink'),
-                              'atto_unlink',
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->yui_module('moodle-atto_unlink-button',
                                 'M.atto_unlink.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'link')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_unlink_sort_order() {
     return 12;
