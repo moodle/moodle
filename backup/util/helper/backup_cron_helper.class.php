@@ -391,7 +391,9 @@ abstract class backup_cron_automated_helper {
             );
             foreach ($settings as $setting => $configsetting) {
                 if ($bc->get_plan()->setting_exists($setting)) {
-                    $bc->get_plan()->get_setting($setting)->set_value($config->{$configsetting});
+                    if (isset($config->{$configsetting})) {
+                        $bc->get_plan()->get_setting($setting)->set_value($config->{$configsetting});
+                    }
                 }
             }
 
