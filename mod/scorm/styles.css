@@ -28,7 +28,10 @@
 #page-mod-scorm-player .structlist  {list-style-type: none;white-space: nowrap;}
 #page-mod-scorm-player .structurelist {position: relative;list-style-type: none;width: 96%;margin:0;padding:0;}
 #page-mod-scorm-player .structurelist ul {padding-left: 0.5em;margin-left: 0.5em;}
-#page-mod-scorm-player #scormpage #scorm_toc.disabled {display:none}
+#page-mod-scorm-player #scormpage #scorm_toc.disabled,
+#page-mod-scorm-player #scormpage #scorm_toc_toggle.disabled {
+    display:none
+}
 
 #page-mod-scorm-view .structurelist  {list-style-type: none;white-space: nowrap;}
 #page-mod-scorm-view .structurelist  {list-style-type: none;white-space: nowrap;}

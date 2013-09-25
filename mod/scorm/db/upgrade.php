@@ -149,12 +149,13 @@ function xmldb_scorm_upgrade($oldversion) {
 
         $field = new xmldb_field('hidenav');
         if ($dbman->field_exists($table, $field)) {
-            // Update nav setting to disable navigation buttons.
-            $DB->set_field('scorm', 'nav', 0, array('hidenav' => 1));
             // Update nav setting to show floating navigation buttons under TOC.
             $DB->set_field('scorm', 'nav', 2, array('hidenav' => 0));
-            $DB->set_field('scorm', 'navpositionleft', 215, array('hidenav' => 0));
-            $DB->set_field('scorm', 'navpositiontop', 300, array('hidenav' => 0));
+            $DB->set_field('scorm', 'navpositionleft', 215, array('hidenav' => 2));
+            $DB->set_field('scorm', 'navpositiontop', 300, array('hidenav' => 2));
+
+            // Update nav setting to disable navigation buttons.
+            $DB->set_field('scorm', 'nav', 0, array('hidenav' => 1));
             // Drop hidenav field.
             $dbman->drop_field($table, $field);
         }
