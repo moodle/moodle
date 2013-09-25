@@ -35,8 +35,6 @@ require_capability('moodle/site:config', context_system::instance());
 // Get the submitted params
 $disable    = optional_param('disable', 0, PARAM_INT);
 $enable     = optional_param('enable', 0, PARAM_INT);
-$uninstall  = optional_param('uninstall', 0, PARAM_INT);
-$confirm  = optional_param('confirm', false, PARAM_BOOL);
 
 $headingtitle = get_string('managemessageoutputs', 'message');
 
@@ -56,31 +54,7 @@ if (!empty($enable) && confirm_sesskey()) {
     plugin_manager::reset_caches();
 }
 
-if (!empty($uninstall) && confirm_sesskey()) {
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($headingtitle);
-
-    if (!$processor = $DB->get_record('message_processors', array('id'=>$uninstall))) {
-        print_error('outputdoesnotexist', 'message');
-    }
-
-    $processorname = get_string('pluginname', 'message_'.$processor->name);
-
-    if (!$confirm) {
-        echo $OUTPUT->confirm(get_string('processordeleteconfirm', 'message', $processorname), 'message.php?uninstall='.$processor->id.'&confirm=1', 'message.php');
-        echo $OUTPUT->footer();
-        exit;
-
-    } else {
-        message_processor_uninstall($processor->name);
-        $a = new stdClass();
-        $a->processor = $processorname;
-        $a->directory = $CFG->dirroot.'/message/output/'.$processor->name;
-        notice(get_string('processordeletefiles', 'message', $a), 'message.php');
-    }
-}
-
-if ($disable || $enable || $uninstall) {
+if ($disable || $enable) {
     $url = new moodle_url('message.php');
     redirect($url);
 }

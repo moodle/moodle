@@ -39,6 +39,7 @@ information provided here is intended especially for developers.
 * Use plugin_manager::reset_caches() when changing visibility of plugins.
 * Implement new method get_enabled_plugins() method in subplugin info classes.
 * Each plugin should include version information in version.php.
+* Module and block tables do not contain version column any more, use get_config('xx_yy', 'version') instead.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices

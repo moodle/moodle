@@ -3101,6 +3101,19 @@ abstract class plugininfo_base {
     }
 
     /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        // Override when extending class,
+        // do not forget to call parent::pre_uninstall_cleanup() at the end.
+    }
+
+    /**
      * Returns relative directory of the plugin with heading '/'
      *
      * @return string
@@ -3254,6 +3267,39 @@ class plugininfo_block extends plugininfo_base {
 
         return '<p>'.get_string('uninstallextraconfirmblock', 'core_plugin', array('instances'=>$count)).'</p>';
     }
+
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB, $CFG;
+
+        if ($block = $DB->get_record('block', array('name'=>$this->name))) {
+            // Inform block it's about to be deleted
+            if (file_exists("$CFG->dirroot/blocks/$block->name/block_$block->name.php")) {
+                $blockobject = block_instance($block->name);
+                if ($blockobject) {
+                    $blockobject->before_delete();  //only if we can create instance, block might have been already removed
+                }
+            }
+
+            // First delete instances and related contexts
+            $instances = $DB->get_records('block_instances', array('blockname' => $block->name));
+            foreach($instances as $instance) {
+                blocks_delete_instance($instance);
+            }
+
+            // Delete block
+            $DB->delete_records('block', array('id'=>$block->id));
+        }
+
+        parent::uninstall_cleanup();
+    }
 }
 
 
@@ -3317,8 +3363,21 @@ class plugininfo_filter extends plugininfo_base {
         return true;
     }
 
-    public function get_uninstall_url() {
-        return new moodle_url('/admin/filters.php', array('sesskey' => sesskey(), 'filterpath' => $this->name, 'action' => 'delete'));
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB;
+
+        $DB->delete_records('filter_active', array('filter' => $this->name));
+        $DB->delete_records('filter_config', array('filter' => $this->name));
+
+        parent::uninstall_cleanup();
     }
 }
 
@@ -3428,6 +3487,61 @@ class plugininfo_mod extends plugininfo_base {
         $courses = $DB->count_records_sql($sql, array('mid'=>$module->id));
 
         return '<p>'.get_string('uninstallextraconfirmmod', 'core_plugin', array('instances'=>$count, 'courses'=>$courses)).'</p>';
+    }
+
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB, $CFG;
+
+        if (!$module = $DB->get_record('modules', array('name' => $this->name))) {
+            parent::uninstall_cleanup();
+            return;
+        }
+
+        // Delete all the relevant instances from all course sections.
+        if ($coursemods = $DB->get_records('course_modules', array('module' => $module->id))) {
+            foreach ($coursemods as $coursemod) {
+                // Do not verify results, there is not much we can do anyway.
+                delete_mod_from_section($coursemod->id, $coursemod->section);
+            }
+        }
+
+        // Increment course.cacherev for courses that used this module.
+        // This will force cache rebuilding on the next request.
+        increment_revision_number('course', 'cacherev',
+            "id IN (SELECT DISTINCT course
+                      FROM {course_modules}
+                     WHERE module=?)",
+            array($module->id));
+
+        // Delete all the course module records.
+        $DB->delete_records('course_modules', array('module' => $module->id));
+
+        // Delete module contexts.
+        if ($coursemods) {
+            foreach ($coursemods as $coursemod) {
+                context_helper::delete_instance(CONTEXT_MODULE, $coursemod->id);
+            }
+        }
+
+        // Delete the module entry itself.
+        $DB->delete_records('modules', array('name' => $module->name));
+
+        // Cleanup the gradebook.
+        require_once($CFG->libdir.'/gradelib.php');
+        grade_uninstalled_module($module->name);
+
+        // Do not look for legacy $module->name . '_uninstall any more,
+        // they should have migrated to db/uninstall.php by now.
+
+        parent::uninstall_cleanup();
     }
 }
 
@@ -3634,6 +3748,43 @@ class plugininfo_enrol extends plugininfo_base {
 
         return $result;
     }
+
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB, $CFG;
+
+        // NOTE: this is a bit brute force way - it will not trigger events and hooks properly.
+
+        // Nuke all role assignments.
+        role_unassign_all(array('component'=>'enrol_'.$this->name));
+
+        // Purge participants.
+        $DB->delete_records_select('user_enrolments', "enrolid IN (SELECT id FROM {enrol} WHERE enrol = ?)", array($this->name));
+
+        // Purge enrol instances.
+        $DB->delete_records('enrol', array('enrol'=>$this->name));
+
+        // Tweak enrol settings.
+        if (!empty($CFG->enrol_plugins_enabled)) {
+            $enabledenrols = explode(',', $CFG->enrol_plugins_enabled);
+            $enabledenrols = array_unique($enabledenrols);
+            $enabledenrols = array_flip($enabledenrols);
+            unset($enabledenrols[$this->name]);
+            $enabledenrols = array_flip($enabledenrols);
+            if (is_array($enabledenrols)) {
+                set_config('enrol_plugins_enabled', implode(',', $enabledenrols));
+            }
+        }
+
+        parent::uninstall_cleanup();
+    }
 }
 
 
@@ -3684,20 +3835,24 @@ class plugininfo_message extends plugininfo_base {
     }
 
     public function is_uninstall_allowed() {
-        $processors = get_message_processors();
-        if (isset($processors[$this->name])) {
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
 
     /**
-     * @see plugintype_interface::get_uninstall_url()
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
      */
-    public function get_uninstall_url() {
-        $processors = get_message_processors();
-        return new moodle_url('/admin/message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
+    public function uninstall_cleanup() {
+        global $CFG;
+
+        require_once($CFG->libdir.'/messagelib.php');
+        message_processor_uninstall($this->name);
+
+        parent::uninstall_cleanup();
     }
 }
 
@@ -4000,7 +4155,7 @@ class plugininfo_format extends plugininfo_base {
             if (empty($conf->value)) {
                 continue;
             }
-            list($type, $name) = explode('_', $conf->component, 2);
+            list($type, $name) = explode('_', $conf->plugin, 2);
             unset($plugins[$name]);
         }
 
@@ -4082,5 +4237,30 @@ class plugininfo_format extends plugininfo_base {
             'defaultformat' => $defaultformat));
 
         return $message;
+    }
+
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB;
+
+        if (($defaultformat = get_config('moodlecourse', 'format')) && $defaultformat !== $this->name) {
+            $courses = $DB->get_records('course', array('format' => $this->name), 'id');
+            $data = (object)array('id' => null, 'format' => $defaultformat);
+            foreach ($courses as $record) {
+                $data->id = $record->id;
+                update_course($data);
+            }
+        }
+
+        $DB->delete_records('course_format_options', array('format' => $this->name));
+
+        parent::uninstall_cleanup();
     }
 }
