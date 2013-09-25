@@ -17,6 +17,10 @@
 /**
  * The statistics calculator returns an instance of this class which contains the calculated statistics.
  *
+ * These quiz statistics calculations are described here :
+ *
+ * http://docs.moodle.org/dev/Quiz_statistics_calculations#Test_statistics
+ *
  * @package    quiz_statistics
  * @copyright  2013 The Open University
  * @author     James Pratt me@jamiep.org
@@ -35,6 +39,8 @@ class quiz_statistics_calculated {
      */
     public $allattempts;
 
+    /* Following stats all described here : http://docs.moodle.org/dev/Quiz_statistics_calculations#Test_statistics  */
+
     public $firstattemptscount = 0;
 
     public $allattemptscount = 0;
@@ -42,10 +48,6 @@ class quiz_statistics_calculated {
     public $firstattemptsavg;
 
     public $allattemptsavg;
-
-    public $firstattemptstotal = 0;
-
-    public $allattemptstotal = 0;
 
     public $median;
 
@@ -61,6 +63,9 @@ class quiz_statistics_calculated {
 
     public $standarderror;
 
+    /**
+     * @var int time these stats where calculated and cached.
+     */
     public $timemodified;
 
     public function s() {
@@ -76,14 +81,6 @@ class quiz_statistics_calculated {
             return $this->allattemptsavg;
         } else {
             return $this->firstattemptsavg;
-        }
-    }
-
-    public function total() {
-        if ($this->allattempts) {
-            return $this->allattemptstotal;
-        } else {
-            return $this->firstattemptstotal;
         }
     }
 
@@ -170,11 +167,16 @@ class quiz_statistics_calculated {
     }
 
 
+    /**
+     * @var array of names of properties of this class that are cached in db record.
+     */
     protected $fieldsindb = array('allattempts', 'firstattemptscount', 'allattemptscount', 'firstattemptsavg', 'allattemptsavg',
                                     'median', 'standarddeviation', 'skewness',
                                     'kurtosis', 'cic', 'errorratio', 'standarderror');
 
     /**
+     * Cache the stats contained in this class.
+     *
      * @param $qubaids qubaid_condition
      */
     public function cache($qubaids) {
@@ -202,6 +204,11 @@ class quiz_statistics_calculated {
 
     }
 
+    /**
+     * Given a record from 'quiz_statistics' table load the data into the properties of this class.
+     *
+     * @param $record from db.
+     */
     public function populate_from_record($record) {
         foreach ($this->fieldsindb as $field) {
             $this->$field = $record->$field;

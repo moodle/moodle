@@ -17,6 +17,10 @@
 /**
  * Class to calculate and also manage caching of quiz statistics.
  *
+ * These quiz statistics calculations are described here :
+ *
+ * http://docs.moodle.org/dev/Quiz_statistics_calculations#Test_statistics
+ *
  * @package    quiz_statistics
  * @copyright  2013 The Open University
  * @author     James Pratt me@jamiep.org
@@ -39,7 +43,7 @@ class quiz_statistics_calculator {
      */
     public function calculate($quizid, $currentgroup, $useallattempts, $groupstudents, $p, $sumofmarkvariance) {
 
-        $quizstats = $this->attempt_counts_totals_and_averages($quizid, $currentgroup, $useallattempts, $groupstudents);
+        $quizstats = $this->attempt_counts_and_averages($quizid, $currentgroup, $useallattempts, $groupstudents);
 
         $s = $quizstats->s();
 
@@ -129,20 +133,21 @@ class quiz_statistics_calculator {
     }
 
     /**
+     * Calculating count and mean of marks for first and ALL attempts by students.
+     *
+     * See : http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise
+     *                                      #Calculating_MEAN_of_grades_for_all_attempts_by_students
      * @param int $quizid
      * @param int $currentgroup
      * @param bool $useallattempts
      * @param array $groupstudents
      * @return quiz_statistics_calculated containing calculated counts, totals and averages.
      */
-    protected function attempt_counts_totals_and_averages($quizid, $currentgroup, $useallattempts, $groupstudents) {
+    protected function attempt_counts_and_averages($quizid, $currentgroup, $useallattempts, $groupstudents) {
         global $DB;
 
         $quizstats = new quiz_statistics_calculated($useallattempts);
 
-        // Calculating MEAN of marks for ALL attempts by students
-        // http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise
-        //     #Calculating_MEAN_of_grades_for_all_attempts_by_students.
         list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $currentgroup, $groupstudents, true);
 
         $attempttotals = $DB->get_records_sql("
@@ -155,36 +160,40 @@ class quiz_statistics_calculator {
                 GROUP BY CASE WHEN attempt = 1 THEN 1 ELSE 0 END", $qaparams);
 
         // Above query that returns sums and counts for first attempt and other non first attempts.
-        // We want to work out stats for first attempt or all attempts.
+        // We want to work out stats for first attempt or ALL attempts.
 
         if (isset($attempttotals[1])) {
             $quizstats->firstattemptscount = $attempttotals[1]->countrecs;
-            $quizstats->firstattemptstotal = $attempttotals[1]->total;
+            $firstattemptstotal = $attempttotals[1]->total;
         } else {
             $quizstats->firstattemptscount = 0;
-            $quizstats->firstattemptstotal = 0;
+            $firstattemptstotal = 0;
         }
 
         if (isset($attempttotals[0])) {
             $quizstats->allattemptscount = $quizstats->firstattemptscount + $attempttotals[0]->countrecs;
-            $quizstats->allattemptstotal = $quizstats->firstattemptstotal + $attempttotals[0]->total;
+            $allattemptstotal = $firstattemptstotal + $attempttotals[0]->total;
         } else {
             $quizstats->allattemptscount = $quizstats->firstattemptscount;
-            $quizstats->allattemptstotal = $quizstats->firstattemptstotal;
+            $allattemptstotal = $firstattemptstotal;
         }
 
         if ($quizstats->allattemptscount !== 0) {
-            $quizstats->allattemptsavg = $quizstats->allattemptstotal / $quizstats->allattemptscount;
+            $quizstats->allattemptsavg = $allattemptstotal / $quizstats->allattemptscount;
         }
 
         if ($quizstats->firstattemptscount !== 0) {
-            $quizstats->firstattemptsavg = $quizstats->firstattemptstotal / $quizstats->firstattemptscount;
+            $quizstats->firstattemptsavg = $firstattemptstotal / $quizstats->firstattemptscount;
         }
 
         return $quizstats;
     }
 
     /**
+     * Median mark.
+     *
+     * http://docs.moodle.org/dev/Quiz_statistics_calculations#Median_Score
+     *
      * @param $s integer count of attempts
      * @param $fromqa string
      * @param $whereqa string
@@ -214,6 +223,9 @@ class quiz_statistics_calculator {
 
     /**
      * Fetch the sum of squared, cubed and to the power 4 differences between sumgrade and it's mean.
+     *
+     * Explanation here : http://docs.moodle.org/dev/Quiz_item_analysis_calculations_in_practise
+     *              #Calculating_Standard_Deviation.2C_Skewness_and_Kurtosis_of_grades_for_all_attempts_by_students
      *
      * @param $mean
      * @param $fromqa
