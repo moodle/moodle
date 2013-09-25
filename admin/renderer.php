@@ -135,9 +135,10 @@ class core_admin_renderer extends plugin_renderer_base {
      * during upgrade.
      * @param string $strnewversion
      * @param int $maturity
+     * @param string $testsite
      * @return string HTML to output.
      */
-    public function upgrade_confirm_page($strnewversion, $maturity) {
+    public function upgrade_confirm_page($strnewversion, $maturity, $testsite) {
         $output = '';
 
         $continueurl = new moodle_url('index.php', array('confirmupgrade' => 1));
@@ -145,6 +146,7 @@ class core_admin_renderer extends plugin_renderer_base {
 
         $output .= $this->header();
         $output .= $this->maturity_warning($maturity);
+        $output .= $this->test_site_warning($testsite);
         $output .= $this->confirm(get_string('upgradesure', 'admin', $strnewversion), $continueurl, $cancelurl);
         $output .= $this->footer();
 
@@ -602,6 +604,24 @@ class core_admin_renderer extends plugin_renderer_base {
                     $this->container(get_string('maturitycorewarning', 'admin', $maturitylevel)) .
                     $this->container($this->doc_link('admin/versions', get_string('morehelp'))),
                 'generalbox maturitywarning');
+    }
+
+    /*
+     * If necessary, displays a warning about upgrading a test site.
+     *
+     * @param string $testsite
+     * @return string HTML
+     */
+    protected function test_site_warning($testsite) {
+
+        if (!$testsite) {
+            return '';
+        }
+
+        return $this->box(
+            $this->container(get_string('testsiteupgradewarning', 'admin', $testsite)),
+            'generalbox testsitewarning'
+        );
     }
 
     /**
