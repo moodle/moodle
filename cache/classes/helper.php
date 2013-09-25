@@ -238,19 +238,24 @@ class cache_helper {
         $instance = cache_config::instance();
         $invalidationeventset = false;
         $factory = cache_factory::instance();
+        $inuse = $factory->get_caches_in_use();
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
             if ($definition->invalidates_on_event($event)) {
-                // OK at this point we know that the definition has information to invalidate on the event.
-                // There are two routes, either its an application cache in which case we can invalidate it now.
-                // or it is a persistent cache that also needs to be invalidated now.
-                if ($definition->get_mode() === cache_store::MODE_APPLICATION || $definition->should_be_persistent()) {
-                    $cache = $factory->create_cache_from_definition($definition->get_component(), $definition->get_area());
-                    $cache->delete_many($keys);
+                // First up check if there is a cache loader for this definition already.
+                // If there is we need to invalidate the keys from there.
+                $definitionkey = $definition->get_component().'/'.$definition->get_area();
+                if (isset($inuse[$definitionkey])) {
+                    $inuse[$definitionkey]->delete_many($keys);
                 }
 
-                // We need to flag the event in the "Event invalidation" cache if it hasn't already happened.
-                if ($invalidationeventset === false) {
+                // We should only log events for application and session caches.
+                // Request caches shouldn't have events as all data is lost at the end of the request.
+                // Events should only be logged once of course and likely several definitions are watching so we
+                // track its logging with $invalidationeventset.
+                $logevent = ($invalidationeventset === false && $definition->get_mode() !== cache_store::MODE_REQUEST);
+
+                if ($logevent) {
                     // Get the event invalidation cache.
                     $cache = cache::make('core', 'eventinvalidation');
                     // Get any existing invalidated keys for this cache.
@@ -312,23 +317,25 @@ class cache_helper {
         $instance = cache_config::instance();
         $invalidationeventset = false;
         $factory = cache_factory::instance();
+        $inuse = $factory->get_caches_in_use();
         foreach ($instance->get_definitions() as $name => $definitionarr) {
             $definition = cache_definition::load($name, $definitionarr);
             if ($definition->invalidates_on_event($event)) {
-                // Check if this definition would result in a persistent loader being in use.
-                if ($definition->should_be_persistent()) {
-                    // There may be a persistent cache loader. Lets purge that first so that any persistent data is removed.
-                    $cache = $factory->create_cache_from_definition($definition->get_component(), $definition->get_area());
-                    $cache->purge();
+                // First up check if there is a cache loader for this definition already.
+                // If there is we need to invalidate the keys from there.
+                $definitionkey = $definition->get_component().'/'.$definition->get_area();
+                if (isset($inuse[$definitionkey])) {
+                    $inuse[$definitionkey]->purge();
                 }
-                // Get all of the store instances that are in use for this store.
-                $stores = $factory->get_store_instances_in_use($definition);
-                foreach ($stores as $store) {
-                    // Purge each store individually.
-                    $store->purge();
-                }
+
+                // We should only log events for application and session caches.
+                // Request caches shouldn't have events as all data is lost at the end of the request.
+                // Events should only be logged once of course and likely several definitions are watching so we
+                // track its logging with $invalidationeventset.
+                $logevent = ($invalidationeventset === false && $definition->get_mode() !== cache_store::MODE_REQUEST);
+
                 // We need to flag the event in the "Event invalidation" cache if it hasn't already happened.
-                if ($invalidationeventset === false) {
+                if ($logevent && $invalidationeventset === false) {
                     // Get the event invalidation cache.
                     $cache = cache::make('core', 'eventinvalidation');
                     // Create a key to invalidate all.

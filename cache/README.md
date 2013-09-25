@@ -24,8 +24,8 @@ A definition:
             'overrideclassfile' => null,              // Optional
             'datasource' => null,                     // Optional
             'datasourcefile' => null,                 // Optional
-            'persistent' => false,                    // Optional
-            'persistentmaxsize' => false,             // Optional
+            'staticacceleration' => false,            // Optional
+            'staticaccelerationsize' => false,        // Optional
             'ttl' => 0,                               // Optional
             'mappingsonly' => false                   // Optional
             'invalidationevents' => array(            // Optional
@@ -144,8 +144,8 @@ The following optional settings can also be defined:
 * overrideclassfile - Included if required when using the overrideclass param.
 * datasource - If provided this class will be used as a data source for the definition. It must implement the cache_data_source interface.
 * datasourcefile - Included if required when using the datasource param.
-* persistent - If set to true the loader will be stored when first created and provided to subsequent requests. More on this later.
-* persistentmaxsize - If set to an int this will be the maximum number of items stored in the persistent cache.
+* staticacceleration - Any data passing through the cache will be held onto to make subsequent requests for it faster.
+* staticaccelerationsize - If set to an int this will be the maximum number of items stored in the static acceleration array.
 * ttl - Can be used to set a ttl value for data being set for this cache.
 * mappingsonly - This definition can only be used if there is a store mapping for it. More on this later.
 * invalidationevents - An array of events that should trigger this cache to invalidate.
@@ -154,11 +154,10 @@ The following optional settings can also be defined:
 
 It's important to note that internally the definition is also aware of the component. This is picked up when the definition is read, based upon the location of the caches.php file.
 
-The persistent option.
-As noted the persistent option causes the loader generated for this definition to be stored when first created. Subsequent requests for this definition will be given the original loader instance.
+The staticacceleration option.
 Data passed to or retrieved from the loader and its chained loaders gets cached by the instance.
-This option should be used when you know you will require the loader several times and perhaps in different areas of code.
 Because it caches key=>value data it avoids the need to re-fetch things from stores after the first request. Its good for performance, bad for memory.
+Memory use can be controlled by setting the staticaccelerationsize option.
 It should be used sparingly.
 
 The mappingsonly option.
