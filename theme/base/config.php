@@ -174,7 +174,3 @@ $THEME->hidefromselector = true;
 /** List of javascript files that need to included on each page */
 $THEME->javascripts = array();
 $THEME->javascripts_footer = array();
-
-// Swap side-pre with side-post blocks regions, in RTL mode (can be override on derived themes)
-$THEME->blockrtlmanipulations = array('side-pre'=>'side-post','side-post'=>'side-pre');
-
