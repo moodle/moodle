@@ -4030,7 +4030,7 @@ class plugininfo_format extends plugininfo_base {
             if (empty($conf->value)) {
                 continue;
             }
-            list($type, $name) = explode('_', $conf->component, 2);
+            list($type, $name) = explode('_', $conf->plugin, 2);
             unset($plugins[$name]);
         }
 
