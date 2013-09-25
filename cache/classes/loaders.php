@@ -93,43 +93,46 @@ class cache implements cache_loader {
     private $supportsnativettl = null;
 
     /**
-     * Gets set to true if the cache is going to be using the build in static "persist" cache.
-     * The persist cache statically caches items used during the lifetime of the request. This greatly speeds up interaction
+     * Gets set to true if the cache is going to be using a static array for acceleration.
+     * The array statically caches items used during the lifetime of the request. This greatly speeds up interaction
      * with the cache in areas where it will be repetitively hit for the same information such as with strings.
-     * There are several other variables to control how this persist cache works.
+     * There are several other variables to control how this static acceleration array works.
      * @var bool
      */
-    private $persist = false;
+    private $staticacceleration = false;
 
     /**
-     * The persist cache itself.
+     * The static acceleration array.
      * Items will be stored in this cache as they were provided. This ensure there is no unnecessary processing taking place.
      * @var array
      */
-    private $persistcache = array();
+    private $staticaccelerationarray = array();
 
     /**
-     * The number of items in the persist cache. Avoids count calls like you wouldn't believe.
+     * The number of items in the static acceleration array. Avoids count calls like you wouldn't believe.
      * @var int
      */
-    private $persistcount = 0;
+    private $staticaccelerationcount = 0;
 
     /**
-     * An array containing just the keys being used in the persist cache.
-     * This seems redundant perhaps but is used when managing the size of the persist cache.
+     * An array containing just the keys being used in the static acceleration array.
+     * This seems redundant perhaps but is used when managing the size of the static acceleration array.
      * Items are added to the end of the array and the when we need to reduce the size of the cache we use the
      * key that is first on this array.
      * @var array
      */
-    private $persistkeys = array();
+    private $staticaccelerationkeys = array();
 
     /**
-     * The maximum size of the persist cache. If set to false there is no max size.
-     * Caches that make use of the persist cache should seriously consider setting this to something reasonably small, but
+     * The maximum size of the static acceleration array.
+     *
+     * If set to false there is no max size.
+     * Caches that make use of static acceleration should seriously consider setting this to something reasonably small, but
      * still large enough to offset repetitive calls.
+     *
      * @var int|false
      */
-    private $persistmaxsize = false;
+    private $staticaccelerationsize = false;
 
     /**
      * Gets set to true during initialisation if the definition is making use of a ttl.
@@ -181,7 +184,8 @@ class cache implements cache_loader {
      * @param array $options An array of options, available options are:
      *   - simplekeys : Set to true if the keys you will use are a-zA-Z0-9_
      *   - simpledata : Set to true if the type of the data you are going to store is scalar, or an array of scalar vars
-     *   - persistent : If set to true the cache will persist construction requests.
+     *   - staticacceleration : If set to true the cache will hold onto data passing through it.
+     *   - staticaccelerationsize : The max size for the static acceleration array.
      * @return cache_application|cache_session|cache_store
      */
     public static function make_from_params($mode, $component, $area, array $identifiers = array(), array $options = array()) {
@@ -218,9 +222,9 @@ class cache implements cache_loader {
             $this->datasource = $loader;
         }
         $this->definition->generate_definition_hash();
-        $this->persist = $this->definition->should_be_persistent();
-        if ($this->persist) {
-            $this->persistmaxsize = $this->definition->get_persistent_max_size();
+        $this->staticacceleration = $this->definition->use_static_acceleration();
+        if ($this->staticacceleration) {
+            $this->staticaccelerationsize = $this->definition->get_static_acceleration_size();
         }
         $this->hasattl = ($this->definition->get_ttl() > 0);
     }
@@ -228,7 +232,7 @@ class cache implements cache_loader {
     /**
      * Used to inform the loader of its state as a sub loader, or as the top of the chain.
      *
-     * This is important as it ensures that we do not have more than one loader keeping persistent data.
+     * This is important as it ensures that we do not have more than one loader keeping static acceleration data.
      * Subloaders need to be "pure" loaders in the sense that they are used to store and retrieve information from stores or the
      * next loader/data source in the chain.
      * Nothing fancy, nothing flash.
@@ -238,14 +242,14 @@ class cache implements cache_loader {
     protected function set_is_sub_loader($setting = true) {
         if ($setting) {
             $this->subloader = true;
-            // Subloaders should not keep persistent data.
-            $this->persist = false;
-            $this->persistmaxsize = false;
+            // Subloaders should not keep static acceleration data.
+            $this->staticacceleration = false;
+            $this->staticaccelerationsize = false;
         } else {
             $this->subloader = true;
-            $this->persist = $this->definition->should_be_persistent();
-            if ($this->persist) {
-                $this->persistmaxsize = $this->definition->get_persistent_max_size();
+            $this->staticacceleration = $this->definition->use_static_acceleration();
+            if ($this->staticacceleration) {
+                $this->staticaccelerationsize = $this->definition->get_static_acceleration_size();
             }
         }
     }
@@ -276,7 +280,7 @@ class cache implements cache_loader {
     public function get($key, $strictness = IGNORE_MISSING) {
         // 1. Parse the key.
         $parsedkey = $this->parse_key($key);
-        // 2. Get it from the persist cache if we can (only when persist is enabled and it has already been requested/set).
+        // 2. Get it from the static acceleration array if we can (only when it is enabled and it has already been requested/set).
         $result = false;
         if ($this->is_using_persist_cache()) {
             $result = $this->get_from_persist_cache($parsedkey);
@@ -291,7 +295,7 @@ class cache implements cache_loader {
             }
             return $result;
         }
-        // 3. Get it from the store. Obviously wasn't in the persist cache.
+        // 3. Get it from the store. Obviously wasn't in the static acceleration array.
         $result = $this->store->get($parsedkey);
         if ($result !== false) {
             if ($result instanceof cache_ttl_wrapper) {
@@ -403,6 +407,9 @@ class cache implements cache_loader {
                 }
                 if ($value instanceof cache_cached_object) {
                     $value = $value->restore_object();
+                }
+                if ($value !== false && $this->is_using_persist_cache()) {
+                    $this->set_in_persist_cache($key, $value);
                 }
                 $resultstore[$key] = $value;
             }
@@ -604,7 +611,7 @@ class cache implements cache_loader {
         }
         $data = array();
         $simulatettl = $this->has_a_ttl() && !$this->store_supports_native_ttl();
-        $usepersistcache = $this->is_using_persist_cache();
+        $usestaticaccelerationarray = $this->is_using_persist_cache();
         foreach ($keyvaluearray as $key => $value) {
             if (is_object($value) && $value instanceof cacheable_object) {
                 $value = new cache_cached_object($value);
@@ -622,7 +629,7 @@ class cache implements cache_loader {
                 'key' => $this->parse_key($key),
                 'value' => $value
             );
-            if ($usepersistcache) {
+            if ($usestaticaccelerationarray) {
                 $this->set_in_persist_cache($data[$key]['key'], $value);
             }
         }
@@ -656,7 +663,7 @@ class cache implements cache_loader {
     public function has($key, $tryloadifpossible = false) {
         $parsedkey = $this->parse_key($key);
         if ($this->is_in_persist_cache($parsedkey)) {
-            // Hoorah, that was easy. It exists in the persist cache so we definitely have it.
+            // Hoorah, that was easy. It exists in the static acceleration array so we definitely have it.
             return true;
         }
         if ($this->has_a_ttl() && !$this->store_supports_native_ttl()) {
@@ -798,8 +805,12 @@ class cache implements cache_loader {
      * @return bool True on success, false otherwise
      */
     public function purge() {
-        // 1. Purge the persist cache.
-        $this->persistcache = array();
+        // 1. Purge the static acceleration array.
+        $this->staticaccelerationarray = array();
+        if ($this->staticaccelerationsize !== false) {
+            $this->staticaccelerationkeys = array();
+            $this->staticaccelerationcount = 0;
+        }
         // 2. Purge the store.
         $this->store->purge();
         // 3. Optionally pruge any stacked loaders.
@@ -908,16 +919,16 @@ class cache implements cache_loader {
     }
 
     /**
-     * Returns true if this cache is making use of the persist cache.
+     * Returns true if this cache is making use of the static acceleration array.
      *
      * @return bool
      */
     protected function is_using_persist_cache() {
-        return $this->persist;
+        return $this->staticacceleration;
     }
 
     /**
-     * Returns true if the requested key exists within the persist cache.
+     * Returns true if the requested key exists within the static acceleration array.
      *
      * @param string $key The parsed key
      * @return bool
@@ -929,20 +940,21 @@ class cache implements cache_loader {
         }
         // This could be written as a single line, however it has been split because the ttl check is faster than the instanceof
         // and has_expired calls.
-        if (!$this->persist || !array_key_exists($key, $this->persistcache)) {
+        if (!$this->staticacceleration || !array_key_exists($key, $this->staticaccelerationarray)) {
             return false;
         }
         if ($this->has_a_ttl() && $this->store_supports_native_ttl()) {
-             return !($this->persistcache[$key] instanceof cache_ttl_wrapper && $this->persistcache[$key]->has_expired());
+             return !($this->staticaccelerationarray[$key] instanceof cache_ttl_wrapper &&
+                      $this->staticaccelerationarray[$key]->has_expired());
         }
         return true;
     }
 
     /**
-     * Returns the item from the persist cache if it exists there.
+     * Returns the item from the static acceleration array if it exists there.
      *
      * @param string $key The parsed key
-     * @return mixed|false The data from the persist cache or false if it wasn't there.
+     * @return mixed|false The data from the static acceleration array or false if it wasn't there.
      */
     protected function get_from_persist_cache($key) {
         // This method of checking if an array was supplied is faster than is_array.
@@ -951,12 +963,12 @@ class cache implements cache_loader {
         }
         // This isset check is faster than array_key_exists but will return false
         // for null values, meaning null values will come from backing store not
-        // the persist cache. We think this okay because null usage should be
+        // the static acceleration array. We think this okay because null usage should be
         // very rare (see comment in MDL-39472).
-        if (!$this->persist || !isset($this->persistcache[$key])) {
+        if (!$this->staticacceleration || !isset($this->staticaccelerationarray[$key])) {
             $result = false;
         } else {
-            $data = $this->persistcache[$key];
+            $data = $this->staticaccelerationarray[$key];
             if (!$this->has_a_ttl() || !$data instanceof cache_ttl_wrapper) {
                 if ($data instanceof cache_cached_object) {
                     $data = $data->restore_object();
@@ -974,28 +986,28 @@ class cache implements cache_loader {
         }
         if ($result) {
             if ($this->perfdebug) {
-                cache_helper::record_cache_hit('** static persist **', $this->definition->get_id());
+                cache_helper::record_cache_hit('** static acceleration **', $this->definition->get_id());
             }
-            if ($this->persistmaxsize > 1 && $this->persistcount > 1) {
-                // Check to see if this is the last item on the persist keys array.
-                if (end($this->persistkeys) !== $key) {
+            if ($this->staticaccelerationsize > 1 && $this->staticaccelerationcount > 1) {
+                // Check to see if this is the last item on the static acceleration keys array.
+                if (end($this->staticaccelerationkeys) !== $key) {
                     // It isn't the last item.
                     // Move the item to the end of the array so that it is last to be removed.
-                    unset($this->persistkeys[$key]);
-                    $this->persistkeys[$key] = $key;
+                    unset($this->staticaccelerationkeys[$key]);
+                    $this->staticaccelerationkeys[$key] = $key;
                 }
             }
             return $result;
         } else {
             if ($this->perfdebug) {
-                cache_helper::record_cache_miss('** static persist **', $this->definition->get_id());
+                cache_helper::record_cache_miss('** static acceleration **', $this->definition->get_id());
             }
             return false;
         }
     }
 
     /**
-     * Sets a key value pair into the persist cache.
+     * Sets a key value pair into the static acceleration array.
      *
      * @param string $key The parsed key
      * @param mixed $data
@@ -1006,32 +1018,36 @@ class cache implements cache_loader {
         if ($key === (array)$key) {
             $key = $key['key'];
         }
-        $this->persistcache[$key] = $data;
-        if ($this->persistmaxsize !== false) {
-            $this->persistcount++;
-            $this->persistkeys[$key] = $key;
-            if ($this->persistcount > $this->persistmaxsize) {
-                $dropkey = array_shift($this->persistkeys);
-                unset($this->persistcache[$dropkey]);
-                $this->persistcount--;
+        if ($this->staticaccelerationsize !== false && isset($this->staticaccelerationkeys[$key])) {
+            $this->staticaccelerationcount--;
+            unset($this->staticaccelerationkeys[$key]);
+        }
+        $this->staticaccelerationarray[$key] = $data;
+        if ($this->staticaccelerationsize !== false) {
+            $this->staticaccelerationcount++;
+            $this->staticaccelerationkeys[$key] = $key;
+            if ($this->staticaccelerationcount > $this->staticaccelerationsize) {
+                $dropkey = array_shift($this->staticaccelerationkeys);
+                unset($this->staticaccelerationarray[$dropkey]);
+                $this->staticaccelerationcount--;
             }
         }
         return true;
     }
 
     /**
-     * Deletes an item from the persist cache.
+     * Deletes an item from the static acceleration array.
      *
      * @param string|int $key As given to get|set|delete
      * @return bool True on success, false otherwise.
      */
     protected function delete_from_persist_cache($key) {
-        unset($this->persistcache[$key]);
-        if ($this->persistmaxsize !== false) {
-            $dropkey = array_search($key, $this->persistkeys);
+        unset($this->staticaccelerationarray[$key]);
+        if ($this->staticaccelerationsize !== false) {
+            $dropkey = array_search($key, $this->staticaccelerationkeys);
             if ($dropkey) {
-                unset($this->persistkeys[$dropkey]);
-                $this->persistcount--;
+                unset($this->staticaccelerationkeys[$dropkey]);
+                $this->staticaccelerationcount--;
             }
         }
         return true;
@@ -1448,9 +1464,8 @@ class cache_application extends cache implements cache_loader_with_locking {
  * This class is used for session caches returned by the cache::make methods.
  *
  * It differs from the application loader in a couple of noteable ways:
- *    1. Sessions are always expected to be persistent.
- *       Because of this we don't ever use the persist cache and instead a session array
- *       containing all of the data is maintained by this object.
+ *    1. Sessions are always expected to exist.
+ *       Because of this we don't ever use the static acceleration array.
  *    2. Session data for a loader instance (store + definition) is consolidate into a
  *       single array for storage within the store.
  *       Along with this we embed a lastaccessed time with the data. This way we can
@@ -2063,7 +2078,7 @@ class cache_session extends cache {
     }
 
     /**
-     * The session loader never uses the persist cache.
+     * The session loader never uses static acceleration.
      * Instead it stores things in the static $session variable. Shared between all session loaders.
      *
      * @return bool

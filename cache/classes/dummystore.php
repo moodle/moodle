@@ -46,14 +46,15 @@ class cachestore_dummy extends cache_store {
     protected $name;
 
     /**
-     * Gets set to true if this store is going to persist data.
-     * This happens when the definition doesn't require it as the loader will not be persisting information and something has to.
+     * Gets set to true if this store is going to store data.
+     * This happens when the definition doesn't require static acceleration as the loader will not be storing information and
+     * something has to.
      * @var bool
      */
     protected $persist = false;
 
     /**
-     * The persistent store array
+     * The stored data array
      * @var array
      */
     protected $store = array();
@@ -106,13 +107,13 @@ class cachestore_dummy extends cache_store {
      * @param cache_definition $definition
      */
     public function initialise(cache_definition $definition) {
-        // If the definition isn't persistent then we need to be persistent here.
+        // If the definition isn't using static acceleration then we need to be store data here.
         // The reasoning behind this is that:
-        //   - If the definition is persistent then the cache loader is going to
-        //     store things in its persistent cache.
-        //   - If the definition is not persistent then the cache loader won't try to store anything
+        //   - If the definition is using static acceleration then the cache loader is going to
+        //     store things in its static array.
+        //   - If the definition is not using static acceleration then the cache loader won't try to store anything
         //     and we will need to store it here in order to make sure it is accessible.
-        $this->persist = !$definition->should_be_persistent();
+        $this->persist = !$definition->use_static_acceleration();
     }
 
     /**

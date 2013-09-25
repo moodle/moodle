@@ -1,6 +1,14 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 2.5.3 ===
+* All cache instances are recorded and subsequent requests are given a reference to the original instance.
+* The persistent option for the cache definition has been deprecated. Please use the staticacceleration option instead.
+* There is a new static acceleration option. If enabled data passing through the cache is held onto.
+* The persistentmaxsize option has been renamed to staticaccelerationsize. It does the same thing.
+* cache_definition::should_be_persistent has been deprecated. Please call cache_definition::use_static_acceleration instead.
+* cache_definition::get_persistent_max_size has been deprecated. Please call cache_definition::get_static_acceleration_size instead.
+
 === 2.5 ===
 * cleanup method renamed to instance_deleted.
   It is now called when the store is deleted as all comments suggested anyway.
