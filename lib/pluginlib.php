@@ -3710,20 +3710,24 @@ class plugininfo_message extends plugininfo_base {
     }
 
     public function is_uninstall_allowed() {
-        $processors = get_message_processors();
-        if (isset($processors[$this->name])) {
-            return true;
-        } else {
-            return false;
-        }
+        return true;
     }
 
     /**
-     * @see plugintype_interface::get_uninstall_url()
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
      */
-    public function get_uninstall_url() {
-        $processors = get_message_processors();
-        return new moodle_url('/admin/message.php', array('uninstall' => $processors[$this->name]->id, 'sesskey' => sesskey()));
+    public function uninstall_cleanup() {
+        global $CFG;
+
+        require_once($CFG->libdir.'/messagelib.php');
+        message_processor_uninstall($this->name);
+
+        parent::uninstall_cleanup();
     }
 }
 

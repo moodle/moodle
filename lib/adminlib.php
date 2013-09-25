@@ -315,11 +315,6 @@ function uninstall_plugin($type, $name) {
     // delete message provider
     message_provider_uninstall($component);
 
-    // delete message processor
-    if ($type === 'message') {
-        message_processor_uninstall($name);
-    }
-
     // delete the plugin tables
     $xmldbfilepath = $plugindirectory . '/db/install.xml';
     drop_plugin_tables($component, $xmldbfilepath, false);
