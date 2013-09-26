@@ -99,7 +99,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
             }
         }
         // The YUI2 calendar only supports the gregorian calendar type.
-        if (\core_calendar\type_factory::get_calendar_type() === 'gregorian') {
+        if ($calendartype->get_name() === 'gregorian') {
             form_init_date_js();
         }
     }
@@ -126,7 +126,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
         $this->_elements[] = @MoodleQuickForm::createElement('select', 'month', get_string('month', 'form'), $months, $this->getAttributes(), true);
         $this->_elements[] = @MoodleQuickForm::createElement('select', 'year', get_string('year', 'form'), $years, $this->getAttributes(), true);
         // The YUI2 calendar only supports the gregorian calendar type so only display the calendar image if this is being used.
-        if (\core_calendar\type_factory::get_calendar_type() === 'gregorian') {
+        if ($calendartype->get_name() === 'gregorian') {
             $this->_elements[] = @MoodleQuickForm::createElement('image', 'calendar', $OUTPUT->pix_url('i/calendar', 'moodle'),
                 array('title' => get_string('calendar', 'calendar'), 'class' => 'visibleifjs'));
         }
