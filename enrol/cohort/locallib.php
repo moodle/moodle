@@ -36,10 +36,10 @@ require_once($CFG->dirroot . '/enrol/locallib.php');
 class enrol_cohort_handler {
     /**
      * Event processor - cohort member added.
-     * @param stdClass $ca
+     * @param \core\event\cohort_member_added $event
      * @return bool
      */
-    public static function member_added($ca) {
+    public static function member_added(\core\event\cohort_member_added $event) {
         global $DB, $CFG;
         require_once("$CFG->dirroot/group/lib.php");
 
@@ -53,7 +53,7 @@ class enrol_cohort_handler {
              LEFT JOIN {role} r ON (r.id = e.roleid)
                  WHERE e.customint1 = :cohortid AND e.enrol = 'cohort'
               ORDER BY e.id ASC";
-        if (!$instances = $DB->get_records_sql($sql, array('cohortid'=>$ca->cohortid))) {
+        if (!$instances = $DB->get_records_sql($sql, array('cohortid'=>$event->objectid))) {
             return true;
         }
 
@@ -68,13 +68,13 @@ class enrol_cohort_handler {
             }
             unset($instance->roleexists);
             // No problem if already enrolled.
-            $plugin->enrol_user($instance, $ca->userid, $instance->roleid, 0, 0, ENROL_USER_ACTIVE);
+            $plugin->enrol_user($instance, $event->relateduserid, $instance->roleid, 0, 0, ENROL_USER_ACTIVE);
 
             // Sync groups.
             if ($instance->customint2) {
-                if (!groups_is_member($instance->customint2, $ca->userid)) {
+                if (!groups_is_member($instance->customint2, $event->relateduserid)) {
                     if ($group = $DB->get_record('groups', array('id'=>$instance->customint2, 'courseid'=>$instance->courseid))) {
-                        groups_add_member($group->id, $ca->userid, 'enrol_cohort', $instance->id);
+                        groups_add_member($group->id, $event->relateduserid, 'enrol_cohort', $instance->id);
                     }
                 }
             }
@@ -85,14 +85,14 @@ class enrol_cohort_handler {
 
     /**
      * Event processor - cohort member removed.
-     * @param stdClass $ca
+     * @param \core\event\cohort_member_removed $event
      * @return bool
      */
-    public static function member_removed($ca) {
+    public static function member_removed(\core\event\cohort_member_removed $event) {
         global $DB;
 
         // Does anything want to sync with this cohort?
-        if (!$instances = $DB->get_records('enrol', array('customint1'=>$ca->cohortid, 'enrol'=>'cohort'), 'id ASC')) {
+        if (!$instances = $DB->get_records('enrol', array('customint1'=>$event->objectid, 'enrol'=>'cohort'), 'id ASC')) {
             return true;
         }
 
@@ -100,11 +100,11 @@ class enrol_cohort_handler {
         $unenrolaction = $plugin->get_config('unenrolaction', ENROL_EXT_REMOVED_UNENROL);
 
         foreach ($instances as $instance) {
-            if (!$ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$ca->userid))) {
+            if (!$ue = $DB->get_record('user_enrolments', array('enrolid'=>$instance->id, 'userid'=>$event->relateduserid))) {
                 continue;
             }
             if ($unenrolaction == ENROL_EXT_REMOVED_UNENROL) {
-                $plugin->unenrol_user($instance, $ca->userid);
+                $plugin->unenrol_user($instance, $event->relateduserid);
 
             } else {
                 if ($ue->status != ENROL_USER_SUSPENDED) {
@@ -120,14 +120,14 @@ class enrol_cohort_handler {
 
     /**
      * Event processor - cohort deleted.
-     * @param stdClass $cohort
+     * @param \core\event\cohort_deleted $event
      * @return bool
      */
-    public static function deleted($cohort) {
+    public static function deleted(\core\event\cohort_deleted $event) {
         global $DB;
 
         // Does anything want to sync with this cohort?
-        if (!$instances = $DB->get_records('enrol', array('customint1'=>$cohort->id, 'enrol'=>'cohort'), 'id ASC')) {
+        if (!$instances = $DB->get_records('enrol', array('customint1'=>$event->objectid, 'enrol'=>'cohort'), 'id ASC')) {
             return true;
         }
 
