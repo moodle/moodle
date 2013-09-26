@@ -137,7 +137,7 @@ abstract class quiz_attempts_report_table extends table_sql {
      */
     public function col_fullname($attempt) {
         $html = parent::col_fullname($attempt);
-        if ($this->is_downloading()) {
+        if ($this->is_downloading() || empty($attempt->attempt)) {
             return $html;
         }
 
