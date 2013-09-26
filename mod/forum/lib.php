@@ -6193,7 +6193,7 @@ function forum_update_subscriptions_button($courseid, $forumid) {
 /**
  * This function gets run whenever user is enrolled into course
  *
- * @deprecated deprecating this function as we will be using forum_user_role_assigned
+ * @deprecated deprecating this function as we will be using \mod_forum\observer::role_assigned()
  * @param stdClass $cp
  * @return void
  */
@@ -6213,43 +6213,6 @@ function forum_user_enrolled($cp) {
     $forums = $DB->get_records_sql($sql, $params);
     foreach ($forums as $forum) {
         forum_subscribe($cp->userid, $forum->id);
-    }
-}
-
-/**
- * This function gets run whenever user is assigned role in course
- *
- * @param stdClass $cp
- * @return void
- */
-function forum_user_role_assigned($cp) {
-    global $DB;
-
-    $context = context::instance_by_id($cp->contextid, MUST_EXIST);
-
-    // If contextlevel is course then only subscribe user. Role assignment
-    // at course level means user is enroled in course and can subscribe to forum.
-    if ($context->contextlevel != CONTEXT_COURSE) {
-        return;
-    }
-
-    $sql = "SELECT f.id, cm.id AS cmid
-              FROM {forum} f
-              JOIN {course_modules} cm ON (cm.instance = f.id)
-              JOIN {modules} m ON (m.id = cm.module)
-         LEFT JOIN {forum_subscriptions} fs ON (fs.forum = f.id AND fs.userid = :userid)
-             WHERE f.course = :courseid
-               AND f.forcesubscribe = :initial
-               AND m.name = 'forum'
-               AND fs.id IS NULL";
-    $params = array('courseid'=>$context->instanceid, 'userid'=>$cp->userid, 'initial'=>FORUM_INITIALSUBSCRIBE);
-
-    $forums = $DB->get_records_sql($sql, $params);
-    foreach ($forums as $forum) {
-        // If user doesn't have allowforcesubscribe capability then don't subscribe.
-        if (has_capability('mod/forum:allowforcesubscribe', context_module::instance($forum->cmid), $cp->userid)) {
-            forum_subscribe($cp->userid, $forum->id);
-        }
     }
 }
 
