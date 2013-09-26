@@ -1,4 +1,4 @@
-@media screen and (max-width: 767px) {
+@media screen and (orientation:portrait) and (max-width: 767px) {
    /* Custom Menu
     -------------------------- */
 
@@ -50,7 +50,7 @@
     }
 }
 
-@media screen and (min-width: 768px) and (max-width: 799px) {
+@media screen and (orientation:portrait) and (min-width: 768px) and (max-width: 799px) {
     /* Page Layout
     -------------------------*/
     body.has_dock {
@@ -91,7 +91,7 @@
         right: 10px;
     }
 }
-@media screen and (max-width: 767px) {
+@media only screen and (orientation:portrait) and (max-width:767px) {
     /* Page Layout
     -------------------------*/
     body.has_dock #dock {
