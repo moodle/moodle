@@ -130,6 +130,7 @@ function xmldb_scorm_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013090100) {
+        global $CFG;
         $table = new xmldb_table('scorm');
 
         $field = new xmldb_field('nav', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, true, null, 1, 'hidetoc');
@@ -160,14 +161,17 @@ function xmldb_scorm_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
 
-        $params = array('plugin' => 'scorm', 'name' => 'hidenav');
-        if ($DB->record_exists('config_plugins', $params)) {
-            $DB->delete_records('config_plugins', $params);
+        $hide = get_config('scorm', 'hidenav');
+        unset_config('hidenav', 'scorm');
+        if (!empty($hide)) {
+            require_once($CFG->dirroot . '/mod/scorm/lib.php');
+            set_config('nav', SCORM_NAV_DISABLED, 'scorm');
         }
-        $params = array('plugin' => 'scorm', 'name' => 'hidenav_adv');
-        if ($DB->record_exists('config_plugins', $params)) {
-            $DB->delete_records('config_plugins', $params);
-        }
+
+        $hideadv = get_config('scorm', 'hidenav_adv');
+        unset_config('hidenav_adv', 'scorm');
+        set_config('nav_adv', $hideadv, 'scorm');
+
         upgrade_mod_savepoint(true, 2013090100, 'scorm');
     }
 
