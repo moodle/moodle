@@ -6269,6 +6269,14 @@ function forum_tp_mark_posts_read($user, $postids) {
         $params = array_merge($params, $new_params);
         $params[] = $cutoffdate;
 
+        if ($CFG->forum_allowforcedreadtracking) {
+            $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_ON."
+                            OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND tf.id IS NULL))";
+        } else {
+            $trackingsql = "AND ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL."  OR f.trackingtype = ".FORUM_TRACKING_ON.")
+                                AND tf.id IS NULL)";
+        }
+
         $sql = "INSERT INTO {forum_read} (userid, postid, discussionid, forumid, firstread, lastread)
 
                 SELECT ?, p.id, p.discussion, d.forum, ?, ?
@@ -6278,8 +6286,7 @@ function forum_tp_mark_posts_read($user, $postids) {
                        LEFT JOIN {forum_track_prefs} tf ON (tf.userid = ? AND tf.forumid = f.id)
                  WHERE p.id $usql
                        AND p.modified >= ?
-                       AND (f.trackingtype = ".FORUM_TRACKING_ON."
-                            OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND tf.id IS NULL))";
+                       $trackingsql";
         $status = $DB->execute($sql, $params) && $status;
     }
 
@@ -6602,9 +6609,9 @@ function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
 function forum_tp_get_course_unread_posts($userid, $courseid) {
     global $CFG, $DB;
 
-    $now = round(time(), -2); // db cache friendliness
-    $cutoffdate = $now - ($CFG->forum_oldpostdays*24*60*60);
-    $params = array($userid, $userid, $courseid, $cutoffdate);
+    $now = round(time(), -2); // DB cache friendliness.
+    $cutoffdate = $now - ($CFG->forum_oldpostdays * 24 * 60 * 60);
+    $params = array($userid, $userid, $courseid, $cutoffdate, $userid);
 
     if (!empty($CFG->forum_enabletimedposts)) {
         $timedsql = "AND d.timestart < ? AND (d.timeend = 0 OR d.timeend > ?)";
@@ -6612,6 +6619,16 @@ function forum_tp_get_course_unread_posts($userid, $courseid) {
         $params[] = $now;
     } else {
         $timedsql = "";
+    }
+
+    if ($CFG->forum_allowforcedreadtracking) {
+        $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_ON."
+                            OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND tf.id IS NULL
+                                AND (SELECT trackforums FROM {user} WHERE id = ?) = 1))";
+    } else {
+        $trackingsql = "AND ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL." OR f.trackingtype = ".FORUM_TRACKING_ON.")
+                            AND tf.id IS NULL
+                            AND (SELECT trackforums FROM {user} WHERE id = ?) = 1)";
     }
 
     $sql = "SELECT f.id, COUNT(p.id) AS unread
@@ -6623,8 +6640,7 @@ function forum_tp_get_course_unread_posts($userid, $courseid) {
                    LEFT JOIN {forum_track_prefs} tf ON (tf.userid = ? AND tf.forumid = f.id)
              WHERE f.course = ?
                    AND p.modified >= ? AND r.id is NULL
-                   AND (f.trackingtype = ".FORUM_TRACKING_ON."
-                        OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND tf.id IS NULL))
+                   $trackingsql
                    $timedsql
           GROUP BY f.id";
 
@@ -6767,14 +6783,24 @@ function forum_tp_delete_read_records($userid=-1, $postid=-1, $discussionid=-1, 
 function forum_tp_get_untracked_forums($userid, $courseid) {
     global $CFG, $DB;
 
+    if ($CFG->forum_allowforcedreadtracking) {
+        $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_OFF."
+                            OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND (ft.id IS NOT NULL
+                                OR (SELECT trackforums FROM {user} WHERE id = ?) = 0)))";
+    } else {
+        $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_OFF."
+                            OR ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL." OR f.trackingtype = ".FORUM_TRACKING_ON.")
+                                AND (ft.id IS NOT NULL
+                                    OR (SELECT trackforums FROM {user} WHERE id = ?) = 0)))";
+    }
+
     $sql = "SELECT f.id
               FROM {forum} f
                    LEFT JOIN {forum_track_prefs} ft ON (ft.forumid = f.id AND ft.userid = ?)
              WHERE f.course = ?
-                   AND (f.trackingtype = ".FORUM_TRACKING_OFF."
-                        OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND ft.id IS NOT NULL))";
+                   $trackingsql";
 
-    if ($forums = $DB->get_records_sql($sql, array($userid, $courseid))) {
+    if ($forums = $DB->get_records_sql($sql, array($userid, $courseid, $userid))) {
         foreach ($forums as $forum) {
             $forums[$forum->id] = $forum;
         }
@@ -6815,10 +6841,13 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
     }
 
     if ($forum === false) {
-        // general abitily to track forums
-        return (bool)$user->trackforums;
+        if ($CFG->forum_allowforcedreadtracking) {
+            // Since we can force tracking, assume yes without a specific forum.
+            return true;
+        } else {
+            return (bool)$user->trackforums;
+        }
     }
-
 
     // Work toward always passing an object...
     if (is_numeric($forum)) {
@@ -6829,7 +6858,13 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
     $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
     $forumforced = ($forum->trackingtype == FORUM_TRACKING_ON);
 
-    return ($forumforced || $forumallows)  && !empty($user->trackforums);
+    if ($CFG->forum_allowforcedreadtracking) {
+        // If we allow forcing, then forced forums takes procidence over user setting.
+        return ($forumforced || ($forumallows  && (!empty($user->trackforums) && (bool)$user->trackforums)));
+    } else {
+        // If we don't allow forcing, user setting trumps.
+        return ($forumforced || $forumallows)  && !empty($user->trackforums);
+    }
 }
 
 /**
@@ -6866,9 +6901,13 @@ function forum_tp_is_tracked($forum, $user=false) {
 
     $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
     $forumforced = ($forum->trackingtype == FORUM_TRACKING_ON);
+    $userpref = $DB->get_record('forum_track_prefs', array('userid' => $user->id, 'forumid' => $forum->id));
 
-    return $forumforced ||
-           ($forumallows && $DB->get_record('forum_track_prefs', array('userid' => $user->id, 'forumid' => $forum->id)) === false);
+    if ($CFG->forum_allowforcedreadtracking) {
+        return $forumforced || ($forumallows && $userpref === false);
+    } else {
+        return  ($forumallows || $forumforced) && $userpref === false;
+    }
 }
 
 /**
@@ -7678,10 +7717,8 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
     }
 
     if ($enrolled && forum_tp_can_track_forums($forumobject)) { // keep tracking info for users with suspended enrolments
-        if ($forumobject->trackingtype != FORUM_TRACKING_OPTIONAL) {
-            //tracking forced on or off in forum settings so dont provide a link here to change it
-            //could add unclickable text like for forced subscription but not sure this justifies adding another menu item
-        } else {
+        if ($forumobject->trackingtype == FORUM_TRACKING_OPTIONAL
+                || ((!$CFG->forum_allowforcedreadtracking) && $forumobject->trackingtype == FORUM_TRACKING_ON)) {
             if (forum_tp_is_tracked($forumobject)) {
                 $linktext = get_string('notrackforum', 'forum');
             } else {
@@ -7952,21 +7989,11 @@ class forum_existing_subscriber_selector extends forum_subscriber_selector_base 
 function forum_cm_info_view(cm_info $cm) {
     global $CFG;
 
-    // Get tracking status (once per request)
-    static $initialised;
-    static $usetracking, $strunreadpostsone;
-    if (!isset($initialised)) {
-        if ($usetracking = forum_tp_can_track_forums()) {
-            $strunreadpostsone = get_string('unreadpostsone', 'forum');
-        }
-        $initialised = true;
-    }
-
-    if ($usetracking) {
+    if (forum_tp_can_track_forums()) {
         if ($unread = forum_tp_count_forum_unread_posts($cm, $cm->get_course())) {
             $out = '<span class="unread"> <a href="' . $cm->get_url() . '">';
             if ($unread == 1) {
-                $out .= $strunreadpostsone;
+                $out .= get_string('unreadpostsone', 'forum');
             } else {
                 $out .= get_string('unreadpostsnumber', 'forum', $unread);
             }

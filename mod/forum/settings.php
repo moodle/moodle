@@ -69,6 +69,10 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configcheckbox('forum_trackreadposts', get_string('trackforum', 'forum'),
                        get_string('configtrackreadposts', 'forum'), 1));
 
+    // Default whether user needs to mark a post as read.
+    $settings->add(new admin_setting_configcheckbox('forum_allowforcedreadtracking', get_string('forcedreadtracking', 'forum'),
+                       get_string('forcedreadtracking_desc', 'forum'), 0));
+
     // Default number of days that a post is considered old
     $settings->add(new admin_setting_configtext('forum_oldpostdays', get_string('oldpostdays', 'forum'),
                        get_string('configoldpostdays', 'forum'), 14, PARAM_INT));
