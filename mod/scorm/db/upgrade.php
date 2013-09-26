@@ -160,14 +160,16 @@ function xmldb_scorm_upgrade($oldversion) {
             $dbman->drop_field($table, $field);
         }
 
-        $params = array('plugin' => 'scorm', 'name' => 'hidenav');
-        if ($DB->record_exists('config_plugins', $params)) {
-            $DB->delete_records('config_plugins', $params);
+        $hide = get_config('hidenav', 'scorm');
+        unset_config('hidenav', 'mod_scorm');
+        if (!empty($hide)) {
+            set_config('nav', SCORM_NAV_DISABLED, 'mod_scorm');
         }
-        $params = array('plugin' => 'scorm', 'name' => 'hidenav_adv');
-        if ($DB->record_exists('config_plugins', $params)) {
-            $DB->delete_records('config_plugins', $params);
-        }
+
+        $hideadv = get_config('hidenav_adv', 'scorm');
+        unset_config('hidenav_adv', 'mod_scorm');
+        set_config('nav_adv', $hideadv, 'mod_scorm');
+
         upgrade_mod_savepoint(true, 2013090100, 'scorm');
     }
 
