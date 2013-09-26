@@ -22,18 +22,19 @@
 div.editor_atto_toolbar {
     display: block;
     background: #F2F2F2;
-    min-height: 42px;
+    min-height: 35px;
     border: 1px solid #BBB;
     width: 100%;
     padding: 0 0 9px 0;
 }
 
 div.editor_atto_toolbar button {
-    padding: 5px 9px 4px 9px;
+    padding: 3px 9px;
     background: none;
     border: 0px;
     margin: 0;
     border-radius: 0;
+    cursor: pointer;
  }
 
 div.editor_atto_toolbar button + button {
@@ -42,6 +43,10 @@ div.editor_atto_toolbar button + button {
 
 div.editor_atto_toolbar button[disabled] {
     opacity: .45;
+}
+
+div.editor_atto_toolbar button:active {
+    background: #B7D6FF;
 }
 
 div.editor_atto_toolbar button img {
