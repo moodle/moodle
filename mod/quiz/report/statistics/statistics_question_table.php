@@ -38,8 +38,11 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_question_table extends flexible_table {
-    /** @var object this question. */
+    /** @var object full question object for this question. */
     protected $questiondata;
+
+    /** @var  int no of attempts. */
+    protected $s;
 
     /**
      * Constructor.
@@ -51,12 +54,12 @@ class quiz_statistics_question_table extends flexible_table {
     }
 
     /**
-     * @param moodle_url                                   $reporturl
-     * @param object                                       $questiondata
-     * @param integer                                      $s               number of attempts on this question.
-     * @param \core_question\statistics\responses\analyser $responesstats
+     * @param moodle_url $reporturl
+     * @param object     $questiondata
+     * @param integer    $s             number of attempts on this question.
+     * @param \core_question\statistics\responses\analysis_for_question $responseanalysis
      */
-    public function question_setup($reporturl, $questiondata, $s, \core_question\statistics\responses\analyser $responesstats) {
+    public function question_setup($reporturl, $questiondata, $s, $responseanalysis) {
         $this->questiondata = $questiondata;
         $this->s = $s;
 
@@ -68,16 +71,16 @@ class quiz_statistics_question_table extends flexible_table {
         $columns = array();
         $headers = array();
 
-        if ($responesstats->has_subparts()) {
+        if ($responseanalysis->has_subparts()) {
             $columns[] = 'part';
             $headers[] = get_string('partofquestion', 'quiz_statistics');
         }
 
-        if ($responesstats->has_response_classes()) {
+        if ($responseanalysis->has_multiple_response_classes()) {
             $columns[] = 'responseclass';
             $headers[] = get_string('modelresponse', 'quiz_statistics');
 
-            if ($responesstats->has_actual_responses()) {
+            if ($responseanalysis->has_actual_responses()) {
                 $columns[] = 'response';
                 $headers[] = get_string('actualresponse', 'quiz_statistics');
             }
@@ -129,7 +132,7 @@ class quiz_statistics_question_table extends flexible_table {
 
     /**
      * The frequency with which this response was given.
-     * @param object $response containst the data to display.
+     * @param object $response contains the data to display.
      * @return string contents of this table cell.
      */
     protected function col_frequency($response) {

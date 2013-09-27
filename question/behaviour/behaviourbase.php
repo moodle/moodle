@@ -301,12 +301,7 @@ abstract class question_behaviour {
     }
 
     /**
-     * @return array subpartid => object with fields
-     *      ->responseclassid matches one of the values returned from
-     *                        quetion_type::get_possible_responses.
-     *      ->response the actual response the student gave to this part, as a string.
-     *      ->fraction the credit awarded for this subpart, may be null.
-     *      returns an empty array if no analysis is possible.
+     * @return question_possible_response[] where keys are subpartid or an empty array if no classification is possible.
      */
     public function classify_response() {
         return $this->question->classify_response($this->qa->get_last_qt_data());
