@@ -1,0 +1,17 @@
+{
+  "moodle-assignfeedback_editpdf-editor": {
+    "requires": [
+        "base",
+        "event",
+        "node",
+        "io",
+        "graphics",
+        "json",
+        "event-move",
+        "querystring-stringify-simple",
+        "moodle-core-notification-dialog",
+        "moodle-core-notification-exception",
+        "moodle-core-notification-ajaxexception"
+    ]
+  }
+}
