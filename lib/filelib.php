@@ -2179,7 +2179,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
             print_error('filenotfound', 'error', $CFG->wwwroot.'/');
         }
         // executed after normal finish or abort
-        @register_shutdown_function('send_temp_file_finished', $path);
+        core_shutdown_manager::register_function('send_temp_file_finished', array($path));
     }
 
     // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup

@@ -1257,7 +1257,7 @@ function upgrade_started($preinstall=false) {
         }
 
         ignore_user_abort(true);
-        register_shutdown_function('upgrade_finished_handler');
+        core_shutdown_manager::register_function('upgrade_finished_handler');
         upgrade_setup_debug(true);
         set_config('upgraderunning', time()+300);
         $started = true;

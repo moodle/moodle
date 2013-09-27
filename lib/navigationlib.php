@@ -4668,7 +4668,7 @@ class navigation_cache {
     public function volatile($setting = true) {
         if (self::$volatilecaches===null) {
             self::$volatilecaches = array();
-            register_shutdown_function(array('navigation_cache','destroy_volatile_caches'));
+            core_shutdown_manager::register_function(array('navigation_cache','destroy_volatile_caches'));
         }
 
         if ($setting) {

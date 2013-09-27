@@ -79,8 +79,6 @@ class database extends handler {
         if (!$result) {
             throw new exception('dbsessionhandlerproblem', 'error');
         }
-
-        register_shutdown_function(array($this, 'handler_shutdown'));
     }
 
     /**
@@ -304,12 +302,5 @@ class database extends handler {
         $params = array('purgebefore' => (time() - $stalelifetime));
         $this->database->delete_records_select('sessions', 'userid = 0 AND timemodified < :purgebefore', $params);
         return true;
-    }
-
-    /**
-     * This makes sure the session is written to disk at the end of request.
-     */
-    public function handler_shutdown() {
-        $this->database->dispose();
     }
 }

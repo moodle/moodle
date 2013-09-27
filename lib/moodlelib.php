@@ -8542,58 +8542,6 @@ function fullclone($thing) {
     return unserialize(serialize($thing));
 }
 
-
-/**
- * This function expects to called during shutdown should be set via register_shutdown_function() in lib/setup.php .
- *
- * @return void
- */
-function moodle_request_shutdown() {
-    global $CFG;
-
-    // Help apache server if possible.
-    $apachereleasemem = false;
-    if (function_exists('apache_child_terminate') && function_exists('memory_get_usage')
-            && ini_get_bool('child_terminate')) {
-
-        $limit = (empty($CFG->apachemaxmem) ? 64*1024*1024 : $CFG->apachemaxmem); // 64MB default.
-        if (memory_get_usage() > get_real_size($limit)) {
-            $apachereleasemem = $limit;
-            @apache_child_terminate();
-        }
-    }
-
-    // Deal with perf logging.
-    if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
-        if ($apachereleasemem) {
-            error_log('Mem usage over '.$apachereleasemem.': marking Apache child for reaping.');
-        }
-        if (defined('MDL_PERFTOLOG')) {
-            $perf = get_performance_info();
-            error_log("PERF: " . $perf['txt']);
-        }
-        if (defined('MDL_PERFINC')) {
-            $inc = get_included_files();
-            $ts  = 0;
-            foreach ($inc as $f) {
-                if (preg_match(':^/:', $f)) {
-                    $fs  =  filesize($f);
-                    $ts  += $fs;
-                    $hfs =  display_size($fs);
-                    error_log(substr($f, strlen($CFG->dirroot)) . " size: $fs ($hfs)"
-                              , null, null, 0);
-                } else {
-                    error_log($f , null, null, 0);
-                }
-            }
-            if ($ts > 0 ) {
-                $hts = display_size($ts);
-                error_log("Total size of files included: $ts ($hts)");
-            }
-        }
-    }
-}
-
  /**
   * If new messages are waiting for the current user, then insert
   * JavaScript to pop up the messaging window into the page
