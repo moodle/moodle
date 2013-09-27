@@ -174,6 +174,68 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->assertEquals($dbuser->lastname, $user3u->lastname);
     }
 
+    /**
+     * Update user disabled
+     */
+    public function test_user_update_disabled() {
+        global $DB;
+
+        $this->imsplugin->set_config('imsupdateusers', false);
+        $user = $this->getDataGenerator()->create_user(array('idnumber' => 'test-update-user'));
+        $imsuser = new stdClass();
+        $imsuser ->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_UPDATE;
+        // THIS SHOULD WORK, surely?: $imsuser->username = $user->username;
+        // But this is required...
+        $imsuser->username = $user->idnumber;
+        $imsuser->email = 'u3@u3.org';
+        $imsuser->firstname = 'U';
+        $imsuser->lastname = '3';
+        $this->set_xml_file(array($imsuser));
+        $this->imsplugin->cron();
+        // Verify no changes have been made.
+        $dbuser = $DB->get_record('user', array('id' => $user->id), '*', MUST_EXIST);
+        $this->assertEquals($user->email, $dbuser->email);
+        $this->assertEquals($user->firstname, $dbuser->firstname);
+        $this->assertEquals($user->lastname, $dbuser->lastname);
+    }
+
+    /**
+     * Delete user
+     */
+    public function test_user_delete() {
+        global $DB;
+
+        $this->imsplugin->set_config('imsdeleteusers', true);
+        $user = $this->getDataGenerator()->create_user(array('idnumber' => 'test-update-user'));
+        $imsuser = new stdClass();
+        $imsuser->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_DELETE;
+        $imsuser->username = $user->username;
+        $imsuser->firstname = $user->firstname;
+        $imsuser->lastname = $user->lastname;
+        $imsuser->email = $user->email;
+        $this->set_xml_file(array($imsuser));
+        $this->imsplugin->cron();
+        $this->assertEquals(1, $DB->get_field('user', 'deleted', array('id' => $user->id), '*', MUST_EXIST));
+    }
+
+    /**
+     * Delete user disabled
+     */
+    public function test_user_delete_disabled() {
+        global $DB;
+        $this->imsplugin->set_config('imsdeleteusers', false);
+        $user = $this->getDataGenerator()->create_user(array('idnumber' => 'test-update-user'));
+        $imsuser = new stdClass();
+        $imsuser->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_DELETE;
+        $imsuser->username = $user->username;
+        $imsuser->firstname = $user->firstname;
+        $imsuser->lastname = $user->lastname;
+        $imsuser->email = $user->email;
+        $this->set_xml_file(array($imsuser));
+        $this->imsplugin->cron();
+        $this->assertEquals(0, $DB->get_field('user', 'deleted', array('id' => $user->id), '*', MUST_EXIST));
+    }
+
 
     /**
      * Existing courses are not created again
@@ -222,6 +284,81 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->imsplugin->cron();
 
         $this->assertEquals(($prevncourses + 2), $DB->count_records('course'));
+        $this->assertTrue($DB->record_exists('course', array('idnumber' => $course1->idnumber)));
+        $this->assertTrue($DB->record_exists('course', array('idnumber' => $course2->idnumber)));
+    }
+
+    /**
+     * Verify that courses are not created when createnewcourses
+     * option is diabled.
+     */
+    public function test_courses_add_createnewcourses_disabled() {
+        global $DB;
+
+        $this->imsplugin->set_config('createnewcourses', false);
+        $prevncourses = $DB->count_records('course');
+        $course1 = new StdClass();
+        $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course1->idnumber = 'id1';
+        $course1->imsshort = 'id1';
+        $course1->category = 'DEFAULT CATNAME';
+        $course2 = new StdClass();
+        $course2->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course2->idnumber = 'id2';
+        $course2->imsshort = 'id2';
+        $course2->category = 'DEFAULT CATNAME';
+        $courses = array($course1, $course2);
+        $this->set_xml_file(false, $courses);
+        $this->imsplugin->cron();
+        // Verify the courses have not ben creased.
+        $this->assertEquals($prevncourses , $DB->count_records('course'));
+        $this->assertFalse($DB->record_exists('course', array('idnumber' => $course1->idnumber)));
+        $this->assertFalse($DB->record_exists('course', array('idnumber' => $course2->idnumber)));
+    }
+
+    /**
+     * Test adding a course with no idnumber.
+     */
+    public function test_courses_no_idnumber() {
+        global $DB;
+        $prevncourses = $DB->count_records('course');
+        $course1 = new StdClass();
+        $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course1->idnumber = '';
+        $course1->imsshort = 'id1';
+        $course1->category = 'DEFAULT CATNAME';
+        $this->set_xml_file(false, array($course1));
+        $this->imsplugin->cron();
+        // Verify no action.
+        $this->assertEquals($prevncourses, $DB->count_records('course'));
+    }
+
+    /**
+     * Add new course with the truncateidnumber setting.
+     */
+    public function test_courses_add_truncate_idnumber() {
+        global $DB;
+
+        $truncatelength = 4;
+
+        $this->imsplugin->set_config('truncatecoursecodes', $truncatelength);
+        $prevncourses = $DB->count_records('course');
+
+        $course1 = new StdClass();
+        $course1->recstatus = enrol_imsenterprise_plugin::IMSENTERPRISE_ADD;
+        $course1->idnumber = '123456789';
+        $course1->imsshort = 'id1';
+        $course1->category = 'DEFAULT CATNAME';
+
+        $this->set_xml_file(false, array($course1));
+        $this->imsplugin->cron();
+
+        // Verify the new course has been added.
+        $this->assertEquals(($prevncourses + 1), $DB->count_records('course'));
+
+        $truncatedidnumber = substr($course1->idnumber, 0, $truncatelength);
+
+        $this->assertTrue($DB->record_exists('course', array('idnumber' => $truncatedidnumber)));
     }
 
     /**
