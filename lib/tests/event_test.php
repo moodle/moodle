@@ -619,17 +619,21 @@ class core_event_testcase extends advanced_testcase {
         @$event->trigger();
         $this->assertDebuggingCalled();
 
-        $event = \core_tests\event\bad_event6::create(array('context'=>\context_system::instance()));
+        $event = \core_tests\event\bad_event6::create(array('objectid'=>1, 'context'=>\context_system::instance()));
         $event->trigger();
-        $this->assertDebuggingCalled();
+        $this->assertDebuggingCalled('Unknown table specified in objecttable field');
 
         $event = \core_tests\event\bad_event7::create(array('objectid'=>1, 'context'=>\context_system::instance()));
         try {
             $event->trigger();
-            $this->fail('Exception expected when $data contains objectid by objecttable not specified');
+            $this->fail('Exception expected when $data contains objectid but objecttable not specified');
         } catch (\moodle_exception $e) {
             $this->assertInstanceOf('\coding_exception', $e);
         }
+
+        $event = \core_tests\event\bad_event8::create(array('context'=>\context_system::instance()));
+        $event->trigger();
+        $this->assertDebuggingCalled('Event property objectid must be set when objecttable is defined');
     }
 
     public function test_problematic_events() {
