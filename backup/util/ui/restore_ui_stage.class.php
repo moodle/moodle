@@ -487,6 +487,11 @@ class restore_ui_stage_settings extends restore_ui_stage {
  */
 class restore_ui_stage_schema extends restore_ui_stage {
     /**
+     * @var int Maximum number of settings to add to form at once
+     */
+    const MAX_SETTINGS_BATCH = 1000;
+
+    /**
      * Schema stage constructor
      * @param backup_moodleform $ui
      */
@@ -550,6 +555,12 @@ class restore_ui_stage_schema extends restore_ui_stage {
             $tasks = $this->ui->get_tasks();
             $courseheading = false;
 
+            // Track progress through each stage.
+            $progress = $this->ui->get_progress_reporter();
+            $progress->start_progress('Initialise schema stage form', 3);
+            
+            $progress->start_progress('', count($tasks));
+            $done = 1;
             $allsettings = array();
             foreach ($tasks as $task) {
                 if (!($task instanceof restore_root_task)) {
@@ -576,16 +587,37 @@ class restore_ui_stage_schema extends restore_ui_stage {
                         }
                     }
                 }
+                // Update progress.
+                $progress->progress($done++);
             }
+            $progress->end_progress();
 
-            // Actually add all the settings that we put in the array.
-            $form->add_settings($allsettings);
+            // Add settings for tasks in batches of up to 1000. Adding settings
+            // in larger batches improves performance, but if it takes too long,
+            // we won't be able to update the progress bar so the backup might
+            // time out. 1000 is chosen to balance this.
+            $numsettings = count($allsettings);
+            $progress->start_progress('', ceil($numsettings / self::MAX_SETTINGS_BATCH));
+            $start = 0;
+            $done = 1;
+            while($start < $numsettings) {
+                $length = min(self::MAX_SETTINGS_BATCH, $numsettings - $start);
+                $form->add_settings(array_slice($allsettings, $start, $length));
+                $start += $length;
+                $progress->progress($done++);
+            }
+            $progress->end_progress();
 
             // Add the dependencies for all the settings.
+            $progress->start_progress('', count($allsettings));
+            $done = 1;
             foreach ($allsettings as $settingtask) {
                 $form->add_dependencies($settingtask[0]);
+                $progress->progress($done++);
             }
+            $progress->end_progress();
 
+            $progress->end_progress();
             $this->stageform = $form;
         }
         return $this->stageform;
