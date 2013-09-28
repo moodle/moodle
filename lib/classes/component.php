@@ -24,6 +24,20 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Constants used in version.php files, these must exist when core_component executes.
+
+/** Software maturity level - internals can be tested using white box techniques. */
+define('MATURITY_ALPHA',    50);
+/** Software maturity level - feature complete, ready for preview and testing. */
+define('MATURITY_BETA',     100);
+/** Software maturity level - tested, will be released unless there are fatal bugs. */
+define('MATURITY_RC',       150);
+/** Software maturity level - ready for production deployment. */
+define('MATURITY_STABLE',   200);
+/** Any version - special value that can be used in $plugin->dependencies in version.php files. */
+define('ANY_VERSION', 'any');
+
+
 /**
  * Collection of components related methods.
  */
@@ -268,6 +282,7 @@ $cache = '.var_export($cache, true).';
     protected static function fetch_core_version() {
         global $CFG;
         if (self::$version === null) {
+            $version = null; // Prevent IDE complaints.
             require($CFG->dirroot . '/version.php');
             self::$version = $version;
         }
@@ -912,17 +927,11 @@ $cache = '.var_export($cache, true).';
                 $plugs = self::fetch_plugins($type, $typedir);
             }
             foreach ($plugs as $plug => $fullplug) {
-                if ($type === 'mod') {
-                    $module = new stdClass();
-                    $module->version = null;
-                    include($fullplug.'/version.php');
-                    $versions[$type.'_'.$plug] = $module->version;
-                } else {
-                    $plugin = new stdClass();
-                    $plugin->version = null;
-                    @include($fullplug.'/version.php');
-                    $versions[$type.'_'.$plug] = $plugin->version;
-                }
+                $plugin = new stdClass();
+                $plugin->version = null;
+                $module = $plugin;
+                @include($fullplug.'/version.php');
+                $versions[$type.'_'.$plug] = $plugin->version;
             }
         }
 

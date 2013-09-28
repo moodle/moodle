@@ -44,6 +44,11 @@ class core_backup_display_progress_if_slow extends core_backup_display_progress 
     protected $id;
 
     /**
+     * @var string Text to display in heading if bar appears
+     */
+    protected $heading;
+
+    /**
      * @var int Time at which the progress bar should display (if it isn't yet)
      */
     protected $starttime;
@@ -52,23 +57,38 @@ class core_backup_display_progress_if_slow extends core_backup_display_progress 
      * Constructs the progress reporter. This will not output HTML just yet,
      * until the required delay time expires.
      *
+     * @param string $heading Text to display above bar (if it appears); '' for none
      * @param int $delay Delay time (default 5 seconds)
      */
-    public function __construct($delay = self::DEFAULT_DISPLAY_DELAY) {
+    public function __construct($heading, $delay = self::DEFAULT_DISPLAY_DELAY) {
         // Set start time based on delay.
         $this->starttime = time() + $delay;
+        $this->heading = $heading;
         parent::__construct(false);
     }
 
     /**
-     * Adds a div around the parent display so it can be hidden.
+     * Starts displaying the progress bar, with optional heading and a special
+     * div so it can be hidden later.
      *
      * @see core_backup_display_progress::start_html()
      */
     public function start_html() {
+        global $OUTPUT;
         $this->id = 'core_backup_display_progress_if_slow' . self::$nextid;
         self::$nextid++;
-        echo html_writer::start_div('', array('id' => $this->id));
+
+        // Containing div includes a CSS class so that it can be themed if required,
+        // and an id so it can be automatically hidden at end.
+        echo html_writer::start_div('core_backup_display_progress_if_slow',
+                array('id' => $this->id));
+
+        // Display optional heading.
+        if ($this->heading !== '') {
+            echo $OUTPUT->heading($this->heading, 3);
+        }
+
+        // Use base class to display progress bar.
         parent::start_html();
     }
 

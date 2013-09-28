@@ -420,7 +420,7 @@ class assignment_online extends assignment_base {
             send_file_not_found();
         }
 
-        session_get_instance()->write_close(); // unlock session during fileserving
+        \core\session\manager::write_close(); // Unlock session during file serving.
 
         send_stored_file($file, 60*60, 0, true, $options);
     }

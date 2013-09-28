@@ -30,14 +30,14 @@ $definitions = array(
 
     // Used to store processed lang files.
     // The keys used are the revision, lang and component of the string file.
-    // The persistent max size has been based upon student access of the site.
+    // The static acceleration size has been based upon student access of the site.
     // NOTE: this data may be safely stored in local caches on cluster nodes.
     'string' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 30
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 30
     ),
 
     // Used to store cache of all available translations.
@@ -46,7 +46,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'staticacceleration' => true,
     ),
 
     // Used to store database meta information.
@@ -58,8 +58,8 @@ $definitions = array(
         'requireidentifiers' => array(
             'dbfamily'
         ),
-        'persistent' => true,
-        'persistentmaxsize' => 15
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 15
     ),
 
     // Event invalidation cache.
@@ -71,7 +71,7 @@ $definitions = array(
     // cache will likely be used either lots or never.
     'eventinvalidation' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
+        'staticacceleration' => true,
         'requiredataguarantee' => true,
         'simpledata' => true,
     ),
@@ -103,7 +103,7 @@ $definitions = array(
     // Persistence is used because normally several settings within a script.
     'config' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
+        'staticacceleration' => true,
         'simpledata' => true
     ),
 
@@ -114,8 +114,8 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true, // The course id the groupings exist for.
         'simpledata' => true, // Array of stdClass objects containing only strings.
-        'persistent' => true, // Likely there will be a couple of calls to this.
-        'persistmaxsize' => 2, // The original cache used 1, we've increased that to two.
+        'staticacceleration' => true, // Likely there will be a couple of calls to this.
+        'staticaccelerationsize' => 2, // The original cache used 1, we've increased that to two.
     ),
 
     // Used to cache calendar subscriptions.
@@ -123,7 +123,7 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
+        'staticacceleration' => true,
     ),
 
     // YUI Module cache.
@@ -137,101 +137,52 @@ $definitions = array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 2,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 2,
     ),
 
-    // Cache used by the {@link plugininfo_base} class.
-    'plugininfo_base' => array(
+    // Cache used by the {@link plugin_manager} class.
+    // NOTE: this must be a shared cache.
+    'plugin_manager' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 2,
     ),
 
-    // Cache used by the {@link plugininfo_mod} class.
-    'plugininfo_mod' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
-    ),
-
-    // Cache used by the {@link plugininfo_block} class.
-    'plugininfo_block' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
-    ),
-
-    // Cache used by the {@link plugininfo_filter} class.
-    'plugininfo_filter' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
-    ),
-
-    // Cache used by the {@link plugininfo_repository} class.
-    'plugininfo_repository' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
-    ),
-
-    // Cache used by the {@link plugininfo_portfolio} class.
-    'plugininfo_portfolio' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => true,
-        'simpledata' => true,
-        'persistent' => true,
-        'persistentmaxsize' => 1,
-    ),
-
-    // Used to store the full tree of course categories
+    // Used to store the full tree of course categories.
     'coursecattree' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
+        'staticacceleration' => true,
         'invalidationevents' => array(
             'changesincoursecat',
         )
     ),
-    // Used to store data for course categories visible to current user. Helps to browse list of categories
+    // Used to store data for course categories visible to current user. Helps to browse list of categories.
     'coursecat' => array(
         'mode' => cache_store::MODE_SESSION,
-        'persistent' => true,
         'invalidationevents' => array(
             'changesincoursecat',
             'changesincourse',
         ),
         'ttl' => 600,
     ),
-    // Used to store data for course categories visible to current user. Helps to browse list of categories
+    // Used to store data for course categories visible to current user. Helps to browse list of categories.
     'coursecatrecords' => array(
         'mode' => cache_store::MODE_REQUEST,
         'simplekeys' => true,
-        'persistent' => true,
         'invalidationevents' => array(
             'changesincoursecat',
         ),
     ),
-    // Cache course contacts for the courses
+    // Cache course contacts for the courses.
     'coursecontacts' => array(
         'mode' => cache_store::MODE_APPLICATION,
-        'persistent' => true,
+        'staticacceleration' => true,
         'simplekeys' => true,
     ),
-    // Used to store data for repositories to avoid repetitive DB queries within one request
+    // Used to store data for repositories to avoid repetitive DB queries within one request.
     'repositories' => array(
         'mode' => cache_store::MODE_REQUEST,
-        'persistent' => true,
     ),
     // Used to store external badges.
     'externalbadges' => array(

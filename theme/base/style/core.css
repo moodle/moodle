@@ -287,7 +287,7 @@ a.skip:active {position: static;display: block;}
 .mform .fitem fieldset.fgroup label,
 .mform .fradio label,
 .mform fieldset.fdate_selector label,
-.mform fieldset.fdate_time_selector label {display:inline; float:none; margin-left:.3em; vertical-align:baseline;}
+.mform fieldset.fdate_time_selector label { display: inline; float: none; margin-left: .3em; vertical-align: text-bottom;}
 .dir-rtl .mform .fcheckbox label,
 .dir-rtl .mform .fduration label,
 .dir-rtl .mform .fitem fieldset.fgroup label,
@@ -529,6 +529,7 @@ body.tag .managelink {padding: 5px;}
 .path-backup .mform .grouped_settings .fitem .fitemtitle {width:40%;padding-right:10px;}
 .path-backup.dir-rtl .mform .grouped_settings .fitem .fitemtitle {width: 60%;}
 .path-backup .mform .grouped_settings .fitem .felement {width:50%;}
+.path-backup .mform .grouped_settings .fitem.backup_selector .felement {width:100%;}
 .path-backup.dir-rtl .mform .grouped_settings .fitem .felement {width: 99%;}
 .path-backup .mform .grouped_settings.section_level .include_setting {width:50%;margin:0;float:left;clear:left;font-weight:bold;}
 .path-backup.dir-rtl  .mform .grouped_settings.section_level .include_setting {float: right; clear: right;}
@@ -1382,30 +1383,39 @@ table.collection td { border-width: 1px; border-style: solid; border-color: #CCC
 table.collection .r1 { background-color: #FFFFFF; }
 table.collection .r0 { background-color: #F6F6F6; }
 table.collection ul { margin: 0.5em 0.5em 0.5em 2em; }
+.dir-rtl table.collection ul { margin: 0.5em 2em 0.5em 0.5em; }
 
 #page-badges-view table.collection .badgeimage,
 #page-badges-index table.collection .status { width: 15%; text-align: center; vertical-align: middle; }
 #page-badges-view table.collection .awards,
 #page-badges-index table.collection .awards { width: 10%; text-align: center; vertical-align: middle; }
 #page-badges-view table.collection .description { width: 25%; text-align: left; }
+#page-badges-view.dir-rtl table.collection .description { width: 25%; text-align: right; }
 
 table.collection .name { text-align: left; vertical-align: middle; }
+.dir-rtl table.collection .name { text-align: right; vertical-align: middle; }
 #page-badges-view table.collection .criteria { width: 35%; text-align: left; vertical-align: top; }
+#page-badges-view.dir-rtl table.collection .criteria { text-align: right;  }
 #page-badges-index table.collection .criteria { width: 40%; text-align: left; vertical-align: top; }
+#page-badges-index.dir-rtl table.collection .criteria { text-align: right;  }
 #page-badges-index table.collection .actions { width: 11em; text-align: center; vertical-align: middle; }
 
 a.criteria-action { padding: 0px 3px; float: right; }
+.dir-rtl a.criteria-action { float: left; }
 table.issuedbadgebox { width: 750px; background-color: white; }
 table.badgeissuedimage { width: 150px; text-align: center; }
 table.badgeissuedinfo { width: 600px; }
 table.badgeissuedinfo .bvalue { text-align: left; vertical-align: middle; }
+.dir-rtl table.badgeissuedinfo .bvalue { text-align: right; }
 table.badgeissuedinfo .bfield { width: 125px; text-align: left; font-style: italic; }
+.dir-rtl table.badgeissuedinfo .bfield { text-align: right; }
 
 ul.badges { margin: 0; list-style: none; }
 .badges li { position: relative; display: inline-block; padding-bottom: 2em; text-align: center; vertical-align: top; width: 150px; }
 .badges li .badge-name { display: block; padding: 5px; }
 .badges li > img { position: absolute; }
 .badges li .badge-image { width: 90px; height: 90px; left: 10px; top: 0px; z-index: 1; }
+.dir-rtl .badges li .badge-image { right: 10px; }
 .badges li .badge-actions { position: relative; }
 
 div.badge { position: relative; display: block; }
@@ -1428,7 +1438,10 @@ div.badge .expireimage { width: 100px; height: 100px; left: 20px; top: 0px; }
 .statusbox.active { background-color: #D9F991; }
 .statusbox.inactive { background-color: #FFEBA8; }
 .activatebadge { margin: 0px; text-align: left; vertical-align: middle; }
+.dir-rtl .activatebadge { text-align: right; }
 .addcourse { float: right; }
+.dir-rtl .addcourse { float: left; }
+img#persona_signin { cursor: pointer; }
 
 /**
  * The date selector popup.

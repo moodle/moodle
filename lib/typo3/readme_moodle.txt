@@ -1,16 +1,11 @@
-Description of Typo3 libraries (v 4.7.4) import into Moodle
+Description of Typo3 libraries (v 4.7.15) import into Moodle
 
-Changes: none
+Changes:
+1/ hacked relative include of class.t3lib_utility_debug.php
 
-skodak, stronk7
+Procedure:
+1/ download latest version form http://typo3.org/download/
+2/ copy csconvtbl/*, unidata/* and all other necessary files we use
+3/ run our phpunit tests with and without mbstring PHP extension
 
-
-Previous changes:
-
-25 June 2010 - Martin D (4.3.0RC1)
-  I renamed getURL to getUrl since it was being called that way everywhere.
-  I added a check to avoid notices on lib/typo3/class.t3lib_cs.php line 976
-
-22 October 2011 - Petr Skoda (4.5.0)
-  reapplied getURL --> getUrl in class.t3lib_div.php line 2992
-  reintroduced check to avoid notices on class.t3lib_cs.php line 1031
+skodak, stronk7, moodler

@@ -1,6 +1,10 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 2.6 ===
+
+* Deprecated /admin/block.php was removed, make sure blocks are using settings.php instead.
+
 === 2.4 ===
 
 Created new capability 'blocks/xxx:myaddinstance' that determines whether a user can add

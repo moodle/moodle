@@ -150,6 +150,17 @@ function scorm_get_popup_display_array() {
 }
 
 /**
+ * Returns an array of the array of navigation buttons display options
+ *
+ * @return array an array of navigation buttons display options
+ */
+function scorm_get_navigation_display_array() {
+    return array(SCORM_NAV_DISABLED => get_string('no'),
+                 SCORM_NAV_UNDER_CONTENT => get_string('undercontent', 'scorm'),
+                 SCORM_NAV_FLOATING => get_string('floating', 'scorm'));
+}
+
+/**
  * Returns an array of the array of attempt options
  *
  * @return array an array of attempt options
@@ -199,6 +210,7 @@ function scorm_parse($scorm, $full) {
 
         $fs = get_file_storage();
         $packagefile = false;
+        $packagefileimsmanifest = false;
 
         if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
             if ($packagefile = $fs->get_file($context->id, 'mod_scorm', 'package', 0, '/', $scorm->reference)) {
@@ -206,6 +218,9 @@ function scorm_parse($scorm, $full) {
                     $packagefile->import_external_file_contents();
                 }
                 $newhash = $packagefile->get_contenthash();
+                if (strtolower($packagefile->get_filename()) == 'imsmanifest.xml') {
+                    $packagefileimsmanifest = true;
+                }
             } else {
                 $newhash = null;
             }
@@ -228,8 +243,8 @@ function scorm_parse($scorm, $full) {
         if ($packagefile) {
             if (!$full and $packagefile and $scorm->sha1hash === $newhash) {
                 if (strpos($scorm->version, 'SCORM') !== false) {
-                    if ($fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
-                        // no need to update
+                    if ($packagefileimsmanifest || $fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
+                        // No need to update.
                         return;
                     }
                 } else if (strpos($scorm->version, 'AICC') !== false) {
@@ -237,18 +252,25 @@ function scorm_parse($scorm, $full) {
                     return;
                 }
             }
+            if (!$packagefileimsmanifest) {
+                // Now extract files.
+                $fs->delete_area_files($context->id, 'mod_scorm', 'content');
 
-            // now extract files
-            $fs->delete_area_files($context->id, 'mod_scorm', 'content');
-
-            $packer = get_file_packer('application/zip');
-            $packagefile->extract_to_storage($packer, $context->id, 'mod_scorm', 'content', 0, '/');
+                $packer = get_file_packer('application/zip');
+                $packagefile->extract_to_storage($packer, $context->id, 'mod_scorm', 'content', 0, '/');
+            }
 
         } else if (!$full) {
             return;
         }
+        if ($packagefileimsmanifest) {
+            require_once("$CFG->dirroot/mod/scorm/datamodels/scormlib.php");
+            // Direct link to imsmanifest.xml file.
+            if (!scorm_parse_scorm($scorm, $packagefile)) {
+                $scorm->version = 'ERROR';
+            }
 
-        if ($manifest = $fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
+        } else if ($manifest = $fs->get_file($context->id, 'mod_scorm', 'content', 0, '/', 'imsmanifest.xml')) {
             require_once("$CFG->dirroot/mod/scorm/datamodels/scormlib.php");
             // SCORM
             if (!scorm_parse_scorm($scorm, $manifest)) {
@@ -1445,7 +1467,7 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
     }
 
     // Get the parent scoes!
-    $result = scorm_get_toc_get_parent_child($result);
+    $result = scorm_get_toc_get_parent_child($result, $currentorg);
 
     // Be safe, prevent warnings from showing up while returning array
     if (!isset($scoid)) {
@@ -1455,10 +1477,15 @@ function scorm_get_toc_object($user, $scorm, $currentorg='', $scoid='', $mode='n
     return array('scoes' => $result, 'usertracks' => $usertracks, 'scoid' => $scoid);
 }
 
-function scorm_get_toc_get_parent_child(&$result) {
+function scorm_get_toc_get_parent_child(&$result, $currentorg) {
     $final = array();
     $level = 0;
-    $prevparent = '/';
+    // Organization is always the root, prevparent.
+    if (!empty($currentorg)) {
+        $prevparent = $currentorg;
+    } else {
+        $prevparent = '/';
+    }
 
     foreach ($result as $sco) {
         if ($sco->parent == '/') {
@@ -1587,7 +1614,7 @@ function scorm_format_toc_for_treeview($user, $scorm, $scoes, $usertracks, $cmid
                             if ($sco->scormtype == 'sco') {
                                 $result->toc .= $sco->statusicon.'&nbsp;<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score."\n";
                             } else {
-                                $result->toc .= '&nbsp;<a href="'.$url.'">'.format_string($sco->title).'</a>'.$score."\n";
+                                $result->toc .= '&nbsp;<a data-scoid="'.$sco->id.'" href="'.$url.'">'.format_string($sco->title).'</a>'.$score."\n";
                             }
                         } else {
                             if ($sco->scormtype == 'sco') {
@@ -1599,9 +1626,9 @@ function scorm_format_toc_for_treeview($user, $scorm, $scoes, $usertracks, $cmid
                     } else {
                         if (!empty($sco->launch)) {
                             if ($sco->scormtype == 'sco') {
-                                $result->toc .= '<a title="'.$sco->url.'">'.$sco->statusicon.'&nbsp;'.format_string($sco->title).'&nbsp;'.$score.'</a>';
+                                $result->toc .= '<a data-scoid="'.$sco->id.'" title="'.$sco->url.'">'.$sco->statusicon.'&nbsp;'.format_string($sco->title).'&nbsp;'.$score.'</a>';
                             } else {
-                                $result->toc .= '<a title="'.$sco->url.'">&nbsp;'.format_string($sco->title).'&nbsp;'.$score.'</a>';
+                                $result->toc .= '<a data-scoid="'.$sco->id.'" title="'.$sco->url.'">&nbsp;'.format_string($sco->title).'&nbsp;'.$score.'</a>';
                             }
                         } else {
                             if ($sco->scormtype == 'sco') {
@@ -1710,8 +1737,9 @@ function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
     $organizationsco = null;
 
     if ($tocheader) {
-        $result->toc = "<div id=\"scorm_layout\">\n";
-        $result->toc .= "<div id=\"scorm_toc\">\n";
+        $result->toc = "<div id=\"scorm_layout\" class=\"yui3-g-r\">\n";
+        $result->toc .= "<div id=\"scorm_toc\" class=\"yui3-u-1-5\">\n";
+        $result->toc .= "<div id=\"scorm_toc_title\"></div>\n";
         $result->toc .= "<div id=\"scorm_tree\">\n";
     }
 
@@ -1761,8 +1789,12 @@ function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
     $result->attemptleft = $treeview->attemptleft;
 
     if ($tocheader) {
-        $result->toc .= "</div></div></div>\n";
+        $result->toc .= "</div></div>\n";
+        $result->toc .= "<div id=\"scorm_toc_toggle\">\n";
+        $result->toc .= "<button id=\"scorm_toc_toggle_btn\"></button></div>\n";
+        $result->toc .= "<div id=\"scorm_content\">";
         $result->toc .= "<div id=\"scorm_navpanel\"></div>\n";
+        $result->toc .= "</div></div>\n";
     }
 
     return $result;

@@ -30,7 +30,7 @@ if (isguestuser()) {
     print_error('noguests');
 }
 
-session_get_instance()->write_close();
+\core\session\manager::write_close();
 
 /// Delete old users now
 
@@ -44,22 +44,10 @@ $chat_message = clean_text($chat_message, FORMAT_MOODLE);  // Strip bad tags
 
 if (!empty($chat_message)) {
 
-    $message = new stdClass();
-    $message->chatid = $chatuser->chatid;
-    $message->userid = $chatuser->userid;
-    $message->groupid = $chatuser->groupid;
-    $message->message = $chat_message;
-    $message->timestamp = time();
-
-    $DB->insert_record('chat_messages', $message);
-    $DB->insert_record('chat_messages_current', $message);
+    chat_send_chatmessage($chatuser, $chat_message, 0, $cm);
 
     $chatuser->lastmessageping = time() - 2;
     $DB->update_record('chat_users', $chatuser);
-
-    if ($cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        add_to_log($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id);
-    }
 }
 
 if ($chatuser->version == 'header_js') {

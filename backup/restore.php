@@ -43,18 +43,15 @@ if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
     }
 }
 
-$heading = $course->fullname;
-
-$PAGE->set_title($heading.': '.$restore->get_stage_name());
-$PAGE->set_heading($heading);
-$PAGE->navbar->add($restore->get_stage_name());
+$PAGE->set_title($course->shortname . ': ' . get_string('restore'));
+$PAGE->set_heading($course->fullname);
 
 $renderer = $PAGE->get_renderer('core','backup');
 echo $OUTPUT->header();
 
 // Prepare a progress bar which can display optionally during long-running
 // operations while setting up the UI.
-$slowprogress = new core_backup_display_progress_if_slow();
+$slowprogress = new core_backup_display_progress_if_slow(get_string('preparingui', 'backup'));
 // Depending on the code branch above, $restore may be a restore_ui or it may
 // be a restore_ui_independent_stage. Either way, this function exists.
 $restore->set_progress_reporter($slowprogress);
@@ -65,13 +62,20 @@ if (!$restore->is_independent() && $restore->enforce_changed_dependencies()) {
 }
 
 if (!$restore->is_independent()) {
+    // Use a temporary (disappearing) progress bar to show the precheck progress if any.
+    $precheckprogress = new core_backup_display_progress_if_slow(get_string('preparingdata', 'backup'));
+    $restore->get_controller()->set_progress($precheckprogress);
     if ($restore->get_stage() == restore_ui::STAGE_PROCESS && !$restore->requires_substage()) {
         try {
-            // Display an extra progress bar so that we can show the progress first.
+            // Div used to hide the 'progress' step once the page gets onto 'finished'.
             echo html_writer::start_div('', array('id' => 'executionprogress'));
+            // Show the current restore state (header with bolded item).
             echo $renderer->progress_bar($restore->get_progress_bar());
-            $restore->get_controller()->set_progress(new core_backup_display_progress());
+            // Start displaying the actual progress bar percentage.
+            $restore->get_controller()->set_progress(new core_backup_display_progress(true));
+            // Do actual restore.
             $restore->execute();
+            // Hide this section because we are now going to make the page show 'finished'.
             echo html_writer::end_div();
             echo html_writer::script('document.getElementById("executionprogress").style.display = "none";');
         } catch(Exception $e) {

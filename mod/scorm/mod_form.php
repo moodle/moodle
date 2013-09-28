@@ -89,7 +89,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         // New local package upload.
         $filemanageroptions = array();
-        $filemanageroptions['accepted_types'] = array('.zip');
+        $filemanageroptions['accepted_types'] = array('.zip', '.xml');
         $filemanageroptions['maxbytes'] = 0;
         $filemanageroptions['maxfiles'] = 1;
         $filemanageroptions['subdirs'] = 0;
@@ -162,11 +162,28 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setAdvanced('hidetoc', $cfgscorm->hidetoc_adv);
         $mform->disabledIf('hidetoc', 'scormtype', 'eq', SCORM_TYPE_AICCURL);
 
-        // Hide Navigation panel.
-        $mform->addElement('selectyesno', 'hidenav', get_string('hidenav', 'scorm'));
-        $mform->setDefault('hidenav', $cfgscorm->hidenav);
-        $mform->setAdvanced('hidenav', $cfgscorm->hidenav_adv);
-        $mform->disabledIf('hidenav', 'hidetoc', 'noteq', 0);
+        // Navigation panel display.
+        $mform->addElement('select', 'nav', get_string('nav', 'scorm'), scorm_get_navigation_display_array());
+        $mform->addHelpButton('nav', 'nav', 'scorm');
+        $mform->setDefault('nav', $cfgscorm->nav);
+        $mform->setAdvanced('nav', $cfgscorm->nav_adv);
+        $mform->disabledIf('nav', 'hidetoc', 'noteq', SCORM_TOC_SIDE);
+
+        // Navigation panel position from left.
+        $mform->addElement('text', 'navpositionleft', get_string('fromleft', 'scorm'), 'maxlength="5" size="5"');
+        $mform->setDefault('navpositionleft', $cfgscorm->navpositionleft);
+        $mform->setType('navpositionleft', PARAM_INT);
+        $mform->setAdvanced('navpositionleft', $cfgscorm->navpositionleft_adv);
+        $mform->disabledIf('navpositionleft', 'hidetoc', 'noteq', SCORM_TOC_SIDE);
+        $mform->disabledIf('navpositionleft', 'nav', 'noteq', SCORM_NAV_FLOATING);
+
+        // Navigation panel position from top.
+        $mform->addElement('text', 'navpositiontop', get_string('fromtop', 'scorm'), 'maxlength="5" size="5"');
+        $mform->setDefault('navpositiontop', $cfgscorm->navpositiontop);
+        $mform->setType('navpositiontop', PARAM_INT);
+        $mform->setAdvanced('navpositiontop', $cfgscorm->navpositiontop_adv);
+        $mform->disabledIf('navpositiontop', 'hidetoc', 'noteq', SCORM_TOC_SIDE);
+        $mform->disabledIf('navpositiontop', 'nav', 'noteq', SCORM_NAV_FLOATING);
 
         // Display attempt status.
         $mform->addElement('select', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'),
@@ -353,7 +370,21 @@ class mod_scorm_mod_form extends moodleform_mod {
                     // Make sure updatefreq is not set if using normal local file.
                     $errors['updatefreq'] = get_string('updatefreq_error', 'mod_scorm');
                 }
-                $errors = array_merge($errors, scorm_validate_package($file));
+                if (strtolower($file->get_filename()) == 'imsmanifest.xml') {
+                    if (!$file->is_external_file()) {
+                        $errors['packagefile'] = get_string('aliasonly', 'mod_scorm');
+                    } else {
+                        $repository = repository::get_repository_by_id($file->get_repository_id(), CONTEXT_SYSTEM);
+                        if (!$repository->supports_relative_file()) {
+                            $errors['packagefile'] = get_string('repositorynotsupported', 'mod_scorm');
+                        }
+                    }
+                } else if (strtolower(substr($file->get_filename(), -3)) == 'xml') {
+                    $errors['packagefile'] = get_string('invalidmanifestname', 'mod_scorm');
+                } else {
+                    // Validate this SCORM package.
+                    $errors = array_merge($errors, scorm_validate_package($file));
+                }
             }
 
         } else if ($type === SCORM_TYPE_EXTERNAL) {

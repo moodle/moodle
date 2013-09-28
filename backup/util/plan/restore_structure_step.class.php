@@ -101,8 +101,14 @@ abstract class restore_structure_step extends restore_step {
             $xmlprocessor->add_path($element->get_path(), $element->is_grouped());
         }
 
+        // Set up progress tracking.
+        $progress = $this->get_task()->get_progress();
+        $progress->start_progress($this->get_name(), core_backup_progress::INDETERMINATE);
+        $xmlparser->set_progress($progress);
+
         // And process it, dispatch to target methods in step will start automatically
         $xmlparser->process();
+        $progress->end_progress();
 
         // Have finished, launch the after_execute method of all the processing objects
         $this->launch_after_execute_methods();

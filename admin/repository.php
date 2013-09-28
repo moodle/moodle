@@ -17,6 +17,7 @@
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
+require_once($CFG->libdir . '/pluginlib.php');
 
 $repository       = optional_param('repos', '', PARAM_ALPHANUMEXT);
 $action           = optional_param('action', '', PARAM_ALPHANUMEXT);
@@ -60,9 +61,6 @@ $return = true;
 if (!empty($action)) {
     require_sesskey();
 }
-
-// Purge all caches related to repositories administration.
-cache::make('core', 'plugininfo_repository')->purge();
 
 /**
  * Helper function that generates a moodle_url object
@@ -151,6 +149,7 @@ if (($action == 'edit') || ($action == 'new')) {
         }
         if ($success) {
             // configs saved
+            plugin_manager::reset_caches();
             redirect($baseurl);
         } else {
             print_error('instancenotsaved', 'repository', $baseurl);
@@ -191,6 +190,7 @@ if (($action == 'edit') || ($action == 'new')) {
         print_error('invalidplugin', 'repository', '', $repository);
     }
     $repositorytype->update_visibility(true);
+    plugin_manager::reset_caches();
     $return = true;
 } else if ($action == 'hide') {
     if (!confirm_sesskey()) {
@@ -201,6 +201,7 @@ if (($action == 'edit') || ($action == 'new')) {
         print_error('invalidplugin', 'repository', '', $repository);
     }
     $repositorytype->update_visibility(false);
+    plugin_manager::reset_caches();
     $return = true;
 } else if ($action == 'delete') {
     $repositorytype = repository::get_type_by_typename($repository);
@@ -211,6 +212,7 @@ if (($action == 'edit') || ($action == 'new')) {
         }
 
         if ($repositorytype->delete($downloadcontents)) {
+            plugin_manager::reset_caches();
             redirect($baseurl);
         } else {
             print_error('instancenotdeleted', 'repository', $baseurl);

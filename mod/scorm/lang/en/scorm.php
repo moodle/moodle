@@ -33,6 +33,7 @@ $string['activityoverview'] = 'You have SCORM packages that need attention';
 $string['activitypleasewait'] = 'Activity loading, please wait ...';
 $string['adminsettings'] = 'Admin settings';
 $string['advanced'] = 'Parameters';
+$string['aliasonly'] = 'When selecting an imsmanifest.xml file from a repository you must use an alias/shortcut for this file.';
 $string['allowapidebug'] = 'Activate API debug and tracing (set the capture mask with apidebugmask)';
 $string['allowtypeexternal'] = 'Enable external package type';
 $string['allowtypeexternalaicc'] = 'Enable direct AICC URL';
@@ -67,6 +68,8 @@ $string['browsemode'] = 'Preview mode';
 $string['browserepository'] = 'Browse repository';
 $string['calculatedweight'] = 'Calculated weight';
 $string['cannotfindsco'] = 'Could not find SCO';
+$string['collapsetocwinsize'] = 'Collapse TOC when window size below';
+$string['collapsetocwinsizedesc'] = 'This setting lets you specify the window size below which the TOC should automatically collapse.';
 $string['compatibilitysettings'] = 'Compatibility settings';
 $string['completed'] = 'Completed';
 $string['completionscorerequired'] = 'Require minimum score';
@@ -118,6 +121,7 @@ $string['finishscorm'] = 'If you have finished viewing this resource, {$a}';
 $string['finishscormlinkname'] = 'click here to return to the course page';
 $string['firstaccess'] = 'First access';
 $string['firstattempt'] = 'First attempt';
+$string['floating'] = 'Floating';
 $string['forcecompleted'] = 'Force completed';
 $string['forcecompleted_help'] = 'If enabled, the status of the current attempt is forced to "completed". (Only applicable to SCORM 1.2 packages.)';
 $string['forcecompleteddesc'] = 'This preference sets the default value for the force completed setting';
@@ -130,6 +134,8 @@ $string['forcejavascriptmessage'] = 'JavaScript is required to view this object,
 $string['found'] = 'Manifest found';
 $string['frameheight'] = 'The height of the stage frame or window.';
 $string['framewidth'] = 'The width of the stage frame or window.';
+$string['fromleft'] = 'From left';
+$string['fromtop'] = 'From top';
 $string['fullscreen'] = 'Fill the whole screen';
 $string['general'] = 'General data';
 $string['gradeaverage'] = 'Average grade';
@@ -155,8 +161,6 @@ $string['hidebrowse'] = 'Disable preview mode';
 $string['hidebrowse_help'] = 'Preview mode allows a student to browse an activity before attempting it. If preview mode is disabled, the preview button is hidden.';
 $string['hidebrowsedesc'] = 'Preview mode allows a student to browse an activity before attempting it.';
 $string['hideexit'] = 'Hide exit link';
-$string['hidenav'] = 'Hide navigation buttons';
-$string['hidenavdesc'] = 'Whether to show or hide the navigation buttons.';
 $string['hidereview'] = 'Hide review button';
 $string['hidetoc'] = 'Display course structure in player';
 $string['hidetoc_help'] = 'How the table of contents is displayed in the SCORM player';
@@ -167,6 +171,7 @@ $string['identifier'] = 'Question identifier';
 $string['incomplete'] = 'Incomplete';
 $string['info'] = 'Info';
 $string['interactions'] = 'Interactions';
+$string['repositorynotsupported'] = 'Only file system repositories are supported when linking directly to an imsmanifest.xml file.';
 $string['trackid'] = 'Id';
 $string['trackid_help'] = 'This is the identifier set by your SCORM package for this question, the SCORM specification doesn\'t allow the full question text to be provided.';
 $string['trackcorrectcount'] = 'Correct count';
@@ -194,6 +199,7 @@ $string['tracktype_help'] = 'Type of the question, for example "choice" or "shor
 $string['trackweight'] = 'Weight';
 $string['trackweight_help'] = 'Weight assigned to the question when calculating score.';
 $string['invalidactivity'] = 'SCORM activity is incorrect';
+$string['invalidmanifestname'] = 'Only imsmanifest.xml or .zip files may be selected';
 $string['invalidurl'] = 'Invalid URL specified';
 $string['invalidurlhttpcheck'] = 'Invalid URL specified. Debug message:<pre>{$a->cmsg}</pre>';
 $string['invalidhacpsession'] = 'Invalid HACP session';
@@ -227,6 +233,17 @@ SCORM activities may be used
 * As an assessment tool';
 $string['modulename_link'] = 'mod/scorm/view';
 $string['modulenameplural'] = 'SCORM packages';
+$string['nav'] = 'Show Navigation';
+$string['nav_help'] = 'This setting specifies wether to show or hide the navigation buttons and their position.
+
+There are 3 options:
+
+* No - Do not show the navigation buttons
+* Under content - Show the navigation buttons under SCORM package content
+* Float - Allows to manually specify the navigation buttons position from left and from top with respect to the window.';
+$string['navdesc'] = 'This setting specifies wether to show/hide navigation buttons and their position.';
+$string['navpositionleft'] = 'Position of navigation buttons from left in pixels.';
+$string['navpositiontop'] = 'Position of navigation buttons from top in pixels.';
 $string['newattempt'] = 'Start a new attempt';
 $string['next'] = 'Continue';
 $string['noactivity'] = 'Nothing to report';
@@ -340,6 +357,7 @@ $string['typeaiccurl'] = 'External AICC URL';
 $string['typeexternal'] = 'External SCORM manifest';
 $string['typelocal'] = 'Uploaded package';
 $string['typelocalsync'] = 'Downloaded package';
+$string['undercontent'] = 'Under content';
 $string['unziperror'] = 'An error occurs during package unzip';
 $string['updatefreq'] = 'Auto-update frequency';
 $string['updatefreq_error'] = 'Auto-update frequency can only be set when the package file is hosted externally';

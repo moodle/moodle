@@ -25,11 +25,9 @@ require_login($course);
 // Must hold restoretargetimport in the current course
 require_capability('moodle/restore:restoretargetimport', $context);
 
-$heading = get_string('import');
-
 // Set up the page
-$PAGE->set_title($heading);
-$PAGE->set_heading($heading);
+$PAGE->set_title($course->shortname . ': ' . get_string('import'));
+$PAGE->set_heading($course->fullname);
 $PAGE->set_url(new moodle_url('/backup/import.php', array('id'=>$courseid)));
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('incourse');
@@ -120,6 +118,10 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Prepare the restore controller. We don't need a UI here as we will just use what
     // ever the restore has (the user has just chosen).
     $rc = new restore_controller($backupid, $course->id, backup::INTERACTIVE_YES, backup::MODE_IMPORT, $USER->id, $restoretarget);
+
+    // Start a progress section for the restore, which will consist of 2 steps
+    // (the precheck and then the actual restore).
+    $progress->start_progress('Restore process', 2);
     $rc->set_progress($progress);
     // Convert the backup if required.... it should NEVER happed
     if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
@@ -155,6 +157,9 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Delete the temp directory now
     fulldelete($tempdestination);
 
+    // End restore section of progress tracking (restore/precheck).
+    $progress->end_progress();
+
     // All progress complete. Hide progress area.
     $progress->end_progress();
     echo html_writer::end_div();
@@ -181,11 +186,6 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Otherwise save the controller and progress
     $backup->save_controller();
 }
-
-// Adjust the page for the stage
-$PAGE->set_title($heading.': '.$backup->get_stage_name());
-$PAGE->set_heading($heading.': '.$backup->get_stage_name());
-$PAGE->navbar->add($backup->get_stage_name());
 
 // Display the current stage
 echo $OUTPUT->header();

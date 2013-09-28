@@ -124,6 +124,7 @@ define('INSECURE_DATAROOT_ERROR', 2);
  */
 function uninstall_plugin($type, $name) {
     global $CFG, $DB, $OUTPUT;
+    require_once($CFG->libdir.'/pluginlib.php');
 
     // This may take a long time.
     @set_time_limit(0);
@@ -166,121 +167,25 @@ function uninstall_plugin($type, $name) {
 
     echo $OUTPUT->heading($pluginname);
 
+    // Custom plugin uninstall.
     $plugindirectory = core_component::get_plugin_directory($type, $name);
     $uninstalllib = $plugindirectory . '/db/uninstall.php';
     if (file_exists($uninstalllib)) {
         require_once($uninstalllib);
         $uninstallfunction = 'xmldb_' . $pluginname . '_uninstall';    // eg. 'xmldb_workshop_uninstall()'
         if (function_exists($uninstallfunction)) {
-            if (!$uninstallfunction()) {
-                echo $OUTPUT->notification('Encountered a problem running uninstall function for '. $pluginname);
-            }
+            // Do not verify result, let plugin complain if necessary.
+            $uninstallfunction();
         }
     }
 
-    if ($type === 'mod') {
-        // perform cleanup tasks specific for activity modules
-
-        if (!$module = $DB->get_record('modules', array('name' => $name))) {
-            print_error('moduledoesnotexist', 'error');
-        }
-
-        // delete all the relevant instances from all course sections
-        if ($coursemods = $DB->get_records('course_modules', array('module' => $module->id))) {
-            foreach ($coursemods as $coursemod) {
-                if (!delete_mod_from_section($coursemod->id, $coursemod->section)) {
-                    echo $OUTPUT->notification("Could not delete the $strpluginname with id = $coursemod->id from section $coursemod->section");
-                }
-            }
-        }
-
-        // Increment course.cacherev for courses that used this module.
-        // This will force cache rebuilding on the next request.
-        increment_revision_number('course', 'cacherev',
-                "id IN (SELECT DISTINCT course
-                                FROM {course_modules}
-                               WHERE module=?)",
-                array($module->id));
-
-        // delete all the course module records
-        $DB->delete_records('course_modules', array('module' => $module->id));
-
-        // delete module contexts
-        if ($coursemods) {
-            foreach ($coursemods as $coursemod) {
-                context_helper::delete_instance(CONTEXT_MODULE, $coursemod->id);
-            }
-        }
-
-        // delete the module entry itself
-        $DB->delete_records('modules', array('name' => $module->name));
-
-        // cleanup the gradebook
-        require_once($CFG->libdir.'/gradelib.php');
-        grade_uninstalled_module($module->name);
-
-        // Perform any custom uninstall tasks
-        if (file_exists($CFG->dirroot . '/mod/' . $module->name . '/lib.php')) {
-            require_once($CFG->dirroot . '/mod/' . $module->name . '/lib.php');
-            $uninstallfunction = $module->name . '_uninstall';
-            if (function_exists($uninstallfunction)) {
-                debugging("{$uninstallfunction}() has been deprecated. Use the plugin's db/uninstall.php instead", DEBUG_DEVELOPER);
-                if (!$uninstallfunction()) {
-                    echo $OUTPUT->notification('Encountered a problem running uninstall function for '. $module->name.'!');
-                }
-            }
-        }
-
-    } else if ($type === 'enrol') {
-        // NOTE: this is a bit brute force way - it will not trigger events and hooks properly
-        // nuke all role assignments
-        role_unassign_all(array('component'=>$component));
-        // purge participants
-        $DB->delete_records_select('user_enrolments', "enrolid IN (SELECT id FROM {enrol} WHERE enrol = ?)", array($name));
-        // purge enrol instances
-        $DB->delete_records('enrol', array('enrol'=>$name));
-        // tweak enrol settings
-        if (!empty($CFG->enrol_plugins_enabled)) {
-            $enabledenrols = explode(',', $CFG->enrol_plugins_enabled);
-            $enabledenrols = array_unique($enabledenrols);
-            $enabledenrols = array_flip($enabledenrols);
-            unset($enabledenrols[$name]);
-            $enabledenrols = array_flip($enabledenrols);
-            if (is_array($enabledenrols)) {
-                set_config('enrol_plugins_enabled', implode(',', $enabledenrols));
-            }
-        }
-
-    } else if ($type === 'block') {
-        if ($block = $DB->get_record('block', array('name'=>$name))) {
-            // Inform block it's about to be deleted
-            if (file_exists("$CFG->dirroot/blocks/$block->name/block_$block->name.php")) {
-                $blockobject = block_instance($block->name);
-                if ($blockobject) {
-                    $blockobject->before_delete();  //only if we can create instance, block might have been already removed
-                }
-            }
-
-            // First delete instances and related contexts
-            $instances = $DB->get_records('block_instances', array('blockname' => $block->name));
-            foreach($instances as $instance) {
-                blocks_delete_instance($instance);
-            }
-
-            // Delete block
-            $DB->delete_records('block', array('id'=>$block->id));
-        }
-    } else if ($type === 'format') {
-        if (($defaultformat = get_config('moodlecourse', 'format')) && $defaultformat !== $name) {
-            $courses = $DB->get_records('course', array('format' => $name), 'id');
-            $data = (object)array('id' => null, 'format' => $defaultformat);
-            foreach ($courses as $record) {
-                $data->id = $record->id;
-                update_course($data);
-            }
-        }
-        $DB->delete_records('course_format_options', array('format' => $name));
+    // Specific plugin type cleanup.
+    $plugininfo = plugin_manager::instance()->get_plugin_info($component);
+    if ($plugininfo) {
+        $plugininfo->uninstall_cleanup();
+        plugin_manager::reset_caches();
     }
+    $plugininfo = null;
 
     // perform clean-up task common for all the plugin/subplugin types
 
@@ -298,15 +203,13 @@ function uninstall_plugin($type, $name) {
     $DB->delete_records('log_display', array('component' => $component));
 
     // delete the module configuration records
-    unset_all_config_for_plugin($pluginname);
+    unset_all_config_for_plugin($component);
+    if ($type === 'mod') {
+        unset_all_config_for_plugin($pluginname);
+    }
 
     // delete message provider
     message_provider_uninstall($component);
-
-    // delete message processor
-    if ($type === 'message') {
-        message_processor_uninstall($name);
-    }
 
     // delete the plugin tables
     $xmldbfilepath = $plugindirectory . '/db/install.xml';
@@ -369,15 +272,22 @@ function get_component_version($component, $source='installed') {
     // activity module
     if ($type === 'mod') {
         if ($source === 'installed') {
-            return $DB->get_field('modules', 'version', array('name'=>$name));
+            if ($CFG->version < 2013092001.02) {
+                return $DB->get_field('modules', 'version', array('name'=>$name));
+            } else {
+                return get_config('mod_'.$name, 'version');
+            }
+
         } else {
             $mods = core_component::get_plugin_list('mod');
             if (empty($mods[$name]) or !is_readable($mods[$name].'/version.php')) {
                 return false;
             } else {
-                $module = new stdclass();
+                $plugin = new stdClass();
+                $plugin->version = null;
+                $module = $plugin;
                 include($mods[$name].'/version.php');
-                return $module->version;
+                return $plugin->version;
             }
         }
     }
@@ -6414,8 +6324,10 @@ function admin_get_root($reload=false, $requirefulltree=true) {
  */
 function admin_apply_default_settings($node=NULL, $unconditional=true) {
     global $CFG;
+    require_once($CFG->libdir.'/pluginlib.php');
 
     if (is_null($node)) {
+        plugin_manager::reset_caches();
         $node = admin_get_root(true, true);
     }
 
@@ -6440,6 +6352,8 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
                 $setting->write_setting_flags(null);
             }
         }
+    // Just in case somebody modifies the list of active plugins directly.
+    plugin_manager::reset_caches();
 }
 
 /**

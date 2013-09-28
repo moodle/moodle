@@ -320,6 +320,36 @@ class core_weblib_testcase extends advanced_testcase {
         $url4->out_as_local_url();
     }
 
+    public function test_moodle_url_get_scheme() {
+        // Should return the scheme only.
+        $url = new moodle_url('http://www.example.org:447/my/file/is/here.txt?really=1');
+        $this->assertSame('http', $url->get_scheme());
+
+        // Should work for secure URLs.
+        $url = new moodle_url('https://www.example.org:447/my/file/is/here.txt?really=1');
+        $this->assertSame('https', $url->get_scheme());
+
+        // Should return an empty string if no scheme is specified.
+        $url = new moodle_url('www.example.org:447/my/file/is/here.txt?really=1');
+        $this->assertSame('', $url->get_scheme());
+    }
+
+    public function test_moodle_url_get_host() {
+        // Should return the host part only.
+        $url = new moodle_url('http://www.example.org:447/my/file/is/here.txt?really=1');
+        $this->assertSame('www.example.org', $url->get_host());
+    }
+
+    public function test_moodle_url_get_port() {
+        // Should return the port if one provided.
+        $url = new moodle_url('http://www.example.org:447/my/file/is/here.txt?really=1');
+        $this->assertSame(447, $url->get_port());
+
+        // Should return an empty string if port not specified.
+        $url = new moodle_url('http://www.example.org/some/path/here.php');
+        $this->assertSame('', $url->get_port());
+    }
+
     public function test_clean_text() {
         $text = "lala <applet>xx</applet>";
         $this->assertSame($text, clean_text($text, FORMAT_PLAIN));

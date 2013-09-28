@@ -161,6 +161,7 @@ if (!empty($_POST)) {
 }
 
 // Fake some settings so that we can use selected functions from moodlelib.php, weblib.php and filelib.php.
+global $CFG;
 $CFG = new stdClass();
 $CFG->lang                 = $config->lang;
 $CFG->dirroot              = dirname(__FILE__);
@@ -221,20 +222,36 @@ ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include
 //point zend include path to moodles lib/zend so that includes and requires will search there for files before anywhere else
 ini_set('include_path', $CFG->libdir.'/zend' . PATH_SEPARATOR . ini_get('include_path'));
 
+// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
+// Required because the database checks below lead to session interaction which is going to lead us to requiring autoloaded classes.
+if (defined('COMPONENT_CLASSLOADER')) {
+    spl_autoload_register(COMPONENT_CLASSLOADER);
+} else {
+    spl_autoload_register('core_component::classloader');
+}
+
 require('version.php');
 $CFG->target_release = $release;
 
-$SESSION = new stdClass();
-$SESSION->lang = $CFG->lang;
+$_SESSION = array();
+$_SESSION['SESSION'] = new stdClass();
+$_SESSION['SESSION']->lang = $CFG->lang;
+$_SESSION['USER'] = new stdClass();
+$_SESSION['USER']->id = 0;
+$_SESSION['USER']->mnethostid = 1;
 
-$USER = new stdClass();
-$USER->id = 0;
+global $SESSION;
+global $USER;
+$SESSION = &$_SESSION['SESSION'];
+$USER    = &$_SESSION['USER'];
 
+global $COURSE;
 $COURSE = new stdClass();
-$COURSE->id = 0;
+$COURSE->id = 1;
 
+global $SITE;
 $SITE = $COURSE;
-define('SITEID', 0);
+define('SITEID', 1);
 
 $hint_dataroot = '';
 $hint_admindir = '';

@@ -125,7 +125,7 @@ function booktool_exportimscp_prepare_files($book, $context) {
     // Moodle and Book version
     $moodle_release = $CFG->release;
     $moodle_version = $CFG->version;
-    $book_version   = $DB->get_field('modules', 'version', array('name'=>'book'));
+    $book_version   = get_config('mod_book', 'version');
     $bookname       = format_string($book->name, true, array('context'=>$context));
 
     // Load manifest header

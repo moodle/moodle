@@ -92,6 +92,7 @@ if (($disable = optional_param('disable', '', PARAM_PLUGIN)) && confirm_sesskey(
         $disabledbehaviours[] = $disable;
         set_config('disabledbehaviours', implode(',', $disabledbehaviours), 'question');
     }
+    plugin_manager::reset_caches();
     redirect($thispageurl);
 }
 
@@ -109,6 +110,7 @@ if (($enable = optional_param('enable', '', PARAM_PLUGIN)) && confirm_sesskey())
         unset($disabledbehaviours[$key]);
         set_config('disabledbehaviours', implode(',', $disabledbehaviours), 'question');
     }
+    plugin_manager::reset_caches();
     redirect($thispageurl);
 }
 

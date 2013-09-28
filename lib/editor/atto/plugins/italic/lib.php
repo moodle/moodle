@@ -31,21 +31,21 @@ defined('MOODLE_INTERNAL') || die();
 function atto_italic_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('italic',
+    $icon = $OUTPUT->pix_icon('e/italic',
                               get_string('italic', 'atto_italic'),
-                              'atto_italic',
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->yui_module('moodle-atto_italic-button',
                                 'M.atto_italic.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'style')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_italic_sort_order() {
     return 1;

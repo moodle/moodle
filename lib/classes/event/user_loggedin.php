@@ -96,7 +96,7 @@ class user_loggedin extends \core\event\base {
     /**
      * Custom validation.
      *
-     * @throws coding_exception when validation does not pass.
+     * @throws \coding_exception when validation does not pass.
      * @return void
      */
     protected function validate_data() {

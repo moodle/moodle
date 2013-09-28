@@ -42,8 +42,13 @@ define('MAX_COURSE_CATEGORIES', 10000);
 
 /**
  * Number of seconds to wait before updating lastaccess information in DB.
+ *
+ * We allow overwrites from config.php, useful to ensure coherence in performance
+ * tests results.
  */
-define('LASTACCESS_UPDATE_SECS', 60);
+if (!defined('LASTACCESS_UPDATE_SECS')) {
+    define('LASTACCESS_UPDATE_SECS', 60);
+}
 
 /**
  * Returns $user object of the main admin user
@@ -1645,7 +1650,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     if ($user) {
         $userid = $user;
     } else {
-        if (session_is_loggedinas()) {  // Don't log
+        if (\core\session\manager::is_loggedinas()) {  // Don't log
             return;
         }
         $userid = empty($USER->id) ? '0' : $USER->id;
@@ -1727,7 +1732,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 function user_accesstime_log($courseid=0) {
     global $USER, $CFG, $DB;
 
-    if (!isloggedin() or session_is_loggedinas()) {
+    if (!isloggedin() or \core\session\manager::is_loggedinas()) {
         // no access tracking
         return;
     }

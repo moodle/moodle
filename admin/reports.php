@@ -30,6 +30,7 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
+require_once($CFG->libdir.'/pluginlib.php');
 
 admin_externalpage_setup('managereports');
 

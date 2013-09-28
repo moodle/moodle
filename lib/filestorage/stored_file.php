@@ -997,4 +997,19 @@ class stored_file {
             $this->repository->import_external_file_contents($this, $maxbytes);
         }
     }
+
+    /**
+     * Gets a file relative to this file in the repository and sends it to the browser.
+     * Checks the function repository::supports_relative_file() to make sure it can be used.
+     *
+     * @param string $relativepath the relative path to the file we are trying to access
+     */
+    public function send_relative_file($relativepath) {
+        if ($this->repository && $this->repository->supports_relative_file()) {
+            $relativepath = clean_param($relativepath, PARAM_PATH);
+            $this->repository->send_relative_file($this, $relativepath);
+        } else {
+            send_file_not_found();
+        }
+    }
 }

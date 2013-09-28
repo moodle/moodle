@@ -822,6 +822,39 @@ class moodle_url {
             return null;
         }
     }
+
+    /**
+     * Returns the 'scheme' portion of a URL. For example, if the URL is
+     * http://www.example.org:447/my/file/is/here.txt?really=1 then this will
+     * return 'http' (without the colon).
+     *
+     * @return string Scheme of the URL.
+     */
+    public function get_scheme() {
+        return $this->scheme;
+    }
+
+    /**
+     * Returns the 'host' portion of a URL. For example, if the URL is
+     * http://www.example.org:447/my/file/is/here.txt?really=1 then this will
+     * return 'www.example.org'.
+     *
+     * @return string Host of the URL.
+     */
+    public function get_host() {
+        return $this->host;
+    }
+
+    /**
+     * Returns the 'port' portion of a URL. For example, if the URL is
+     * http://www.example.org:447/my/file/is/here.txt?really=1 then this will
+     * return '447'.
+     *
+     * @return string Port of the URL.
+     */
+    public function get_port() {
+        return $this->port;
+    }
 }
 
 /**
@@ -1794,9 +1827,10 @@ function markdown_to_html($text) {
         return $text;
     }
 
-    require_once($CFG->libdir .'/markdown.php');
+    require_once($CFG->libdir .'/markdown/Markdown.php');
+    require_once($CFG->libdir .'/markdown/MarkdownExtra.php');
 
-    return Markdown($text);
+    return \Michelf\MarkdownExtra::defaultTransform($text);
 }
 
 /**
@@ -2588,12 +2622,11 @@ function redirect($url, $message='', $delay=-1) {
         }
     }
 
-    if ($delay == 0 && !$debugdisableredirect && !headers_sent()) {
-        // Workaround for IIS bug http://support.microsoft.com/kb/q176113/.
-        if (session_id()) {
-            session_get_instance()->write_close();
-        }
+    // Make sure the session is closed properly, this prevents problems in IIS
+    // and also some potential PHP shutdown issues.
+    \core\session\manager::write_close();
 
+    if ($delay == 0 && !$debugdisableredirect && !headers_sent()) {
         // 302 might not work for POST requests, 303 is ignored by obsolete clients.
         @header($_SERVER['SERVER_PROTOCOL'] . ' 303 See Other');
         @header('Location: '.$url);

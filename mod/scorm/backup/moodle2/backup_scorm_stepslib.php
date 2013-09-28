@@ -42,7 +42,7 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
             'whatgrade', 'maxattempt', 'forcecompleted', 'forcenewattempt',
             'lastattemptlock', 'displayattemptstatus', 'displaycoursestructure', 'updatefreq',
             'sha1hash', 'md5hash', 'revision', 'launch',
-            'skipview', 'hidebrowse', 'hidetoc', 'hidenav',
+            'skipview', 'hidebrowse', 'hidetoc', 'nav', 'navpositionleft', 'navpositiontop',
             'auto', 'popup', 'options', 'width',
             'height', 'timeopen', 'timeclose', 'timemodified',
             'completionstatusrequired', 'completionscorerequired'));

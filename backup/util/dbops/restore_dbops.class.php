@@ -109,18 +109,34 @@ abstract class restore_dbops {
 
     /**
      * Load one inforef.xml file to backup_ids table for future reference
+     *
+     * @param string $restoreid Restore id
+     * @param string $inforeffile File path
+     * @param core_backup_progress $progress Progress tracker
      */
-    public static function load_inforef_to_tempids($restoreid, $inforeffile) {
+    public static function load_inforef_to_tempids($restoreid, $inforeffile,
+            core_backup_progress $progress = null) {
 
         if (!file_exists($inforeffile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_inforef_xml_file', $inforeffile);
         }
+
+        // Set up progress tracking (indeterminate).
+        if (!$progress) {
+            $progress = new core_backup_null_progress();
+        }
+        $progress->start_progress('Loading inforef.xml file');
+
         // Let's parse, custom processor will do its work, sending info to DB
         $xmlparser = new progressive_parser();
         $xmlparser->set_file($inforeffile);
         $xmlprocessor = new restore_inforef_parser_processor($restoreid);
         $xmlparser->set_processor($xmlprocessor);
+        $xmlparser->set_progress($progress);
         $xmlparser->process();
+
+        // Finish progress
+        $progress->end_progress();
     }
 
     /**
@@ -400,18 +416,34 @@ abstract class restore_dbops {
 
     /**
      * Load the needed users.xml file to backup_ids table for future reference
+     *
+     * @param string $restoreid Restore id
+     * @param string $usersfile File path
+     * @param core_backup_progress $progress Progress tracker
      */
-    public static function load_users_to_tempids($restoreid, $usersfile) {
+    public static function load_users_to_tempids($restoreid, $usersfile,
+            core_backup_progress $progress = null) {
 
         if (!file_exists($usersfile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_users_xml_file', $usersfile);
         }
+
+        // Set up progress tracking (indeterminate).
+        if (!$progress) {
+            $progress = new core_backup_null_progress();
+        }
+        $progress->start_progress('Loading users into temporary table');
+
         // Let's parse, custom processor will do its work, sending info to DB
         $xmlparser = new progressive_parser();
         $xmlparser->set_file($usersfile);
         $xmlprocessor = new restore_users_parser_processor($restoreid);
         $xmlparser->set_processor($xmlprocessor);
+        $xmlparser->set_progress($progress);
         $xmlparser->process();
+
+        // Finish progress.
+        $progress->end_progress();
     }
 
     /**
@@ -1385,8 +1417,15 @@ abstract class restore_dbops {
      * for each one (mapping / creation) and returning one array
      * of problems in case something is wrong (lack of permissions,
      * conficts)
+     *
+     * @param string $restoreid Restore id
+     * @param int $courseid Course id
+     * @param int $userid User id
+     * @param bool $samesite True if restore is to same site
+     * @param core_backup_progress $progress Progress reporter
      */
-    public static function precheck_included_users($restoreid, $courseid, $userid, $samesite) {
+    public static function precheck_included_users($restoreid, $courseid, $userid, $samesite,
+            core_backup_progress $progress) {
         global $CFG, $DB;
 
         // To return any problem found
@@ -1409,8 +1448,14 @@ abstract class restore_dbops {
             $cancreateuser = true;
         }
 
+        // Prepare for reporting progress.
+        $conditions = array('backupid' => $restoreid, 'itemname' => 'user');
+        $max = $DB->count_records('backup_ids_temp', $conditions);
+        $done = 0;
+        $progress->start_progress('Checking users', $max);
+
         // Iterate over all the included users
-        $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'user'), '', 'itemid, info');
+        $rs = $DB->get_recordset('backup_ids_temp', $conditions, '', 'itemid, info');
         foreach ($rs as $recuser) {
             $user = (object)backup_controller_dbops::decode_backup_temp_info($recuser->info);
 
@@ -1447,8 +1492,11 @@ abstract class restore_dbops {
             } else { // Shouldn't arrive here ever, something is for sure wrong. Exception
                 throw new restore_dbops_exception('restore_error_processing_user', $user->username);
             }
+            $done++;
+            $progress->progress($done);
         }
         $rs->close();
+        $progress->end_progress();
         return $problems;
     }
 
@@ -1458,12 +1506,19 @@ abstract class restore_dbops {
      *
      * Just wrap over precheck_included_users(), returning
      * exception if any problem is found
+     *
+     * @param string $restoreid Restore id
+     * @param int $courseid Course id
+     * @param int $userid User id
+     * @param bool $samesite True if restore is to same site
+     * @param core_backup_progress $progress Optional progress tracker
      */
-    public static function process_included_users($restoreid, $courseid, $userid, $samesite) {
+    public static function process_included_users($restoreid, $courseid, $userid, $samesite,
+            core_backup_progress $progress = null) {
         global $DB;
 
         // Just let precheck_included_users() to do all the hard work
-        $problems = self::precheck_included_users($restoreid, $courseid, $userid, $samesite);
+        $problems = self::precheck_included_users($restoreid, $courseid, $userid, $samesite, $progress);
 
         // With problems, throw exception, shouldn't happen if prechecks were originally
         // executed, so be radical here.

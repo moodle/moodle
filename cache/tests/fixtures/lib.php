@@ -251,6 +251,17 @@ class cache_phpunit_application extends cache_application {
     public function phpunit_get_store_implements() {
         return class_implements($this->get_store());
     }
+
+    /**
+     * Returns the given key directly from the static acceleration array.
+     *
+     * @param string $key
+     * @return false|mixed
+     */
+    public function phpunit_static_acceleration_get($key) {
+        $key = $this->parse_key($key);
+        return $this->static_acceleration_get($key);
+    }
 }
 
 /**

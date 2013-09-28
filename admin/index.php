@@ -163,7 +163,7 @@ if (!core_tables_exist()) {
     $strinstallation = get_string('installation', 'install');
 
     // remove current session content completely
-    session_get_instance()->terminate_current();
+    \core\session\manager::terminate_current();
 
     if (empty($agreelicense)) {
         $strlicense = get_string('license');
@@ -249,6 +249,13 @@ if ($CFG->version != $DB->get_field('config', 'value', array('name'=>'version'))
 }
 
 if (!$cache and $version > $CFG->version) {  // upgrade
+
+    // Warning about upgrading a test site.
+    $testsite = false;
+    if (defined('BEHAT_SITE_RUNNING')) {
+        $testsite = 'behat';
+    }
+
     // We purge all of MUC's caches here.
     // Caches are disabled for upgrade by CACHE_DISABLE_ALL so we must set the first arg to true.
     // This ensures a real config object is loaded and the stores will be purged.
@@ -283,7 +290,7 @@ if (!$cache and $version > $CFG->version) {  // upgrade
 
         /** @var core_admin_renderer $output */
         $output = $PAGE->get_renderer('core', 'admin');
-        echo $output->upgrade_confirm_page($a->newversion, $maturity);
+        echo $output->upgrade_confirm_page($a->newversion, $maturity, $testsite);
         die();
 
     } else if (empty($confirmrelease)){

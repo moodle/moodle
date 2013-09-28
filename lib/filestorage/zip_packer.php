@@ -122,7 +122,7 @@ class zip_packer extends file_packer {
                 }
 
             } else if (is_string($file)) {
-                if (!$this->archive_pathname($ziparch, $archivepath, $file)) {
+                if (!$this->archive_pathname($ziparch, $archivepath, $file, $progress)) {
                     debugging("Can not zip '$archivepath' file", DEBUG_DEVELOPER);
                     if (!$ignoreinvalidfiles) {
                         $abort = true;
@@ -141,7 +141,7 @@ class zip_packer extends file_packer {
                 }
 
             } else {
-                if (!$this->archive_stored($ziparch, $archivepath, $file)) {
+                if (!$this->archive_stored($ziparch, $archivepath, $file, $progress)) {
                     debugging("Can not zip '$archivepath' file", DEBUG_DEVELOPER);
                     if (!$ignoreinvalidfiles) {
                         $abort = true;
@@ -242,7 +242,7 @@ class zip_packer extends file_packer {
                     continue;
                 }
                 $newpath = $archivepath.'/'.$file->getFilename();
-                $this->archive_pathname($ziparch, $newpath, $file->getPathname());
+                $this->archive_pathname($ziparch, $newpath, $file->getPathname(), $progress);
             }
             unset($files); // Release file handles.
             return true;

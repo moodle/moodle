@@ -34,6 +34,7 @@ list($options, $unrecognized) = cli_get_params(
         'help' => false,
         'size' => false,
         'fixeddataset' => false,
+        'filesizelimit' => false,
         'bypasscheck' => false,
         'quiet' => false
     ),
@@ -57,10 +58,11 @@ Consider that, depending on the size you select, this CLI tool can really genera
 $sitesizes
 
 Options:
---size         Size of the generated site, this value affects the number of courses and their size. Accepted values: XS, S, M, L, XL, or XXL (required)
---fixeddataset Use a fixed data set instead of randomly generated data
---bypasscheck  Bypasses the developer-mode check (be careful!)
---quiet        Do not show any output
+--size           Size of the generated site, this value affects the number of courses and their size. Accepted values: XS, S, M, L, XL, or XXL (required)
+--fixeddataset   Use a fixed data set instead of randomly generated data
+--filesizelimit  Limits the size of the generated files to the specified bytes
+--bypasscheck    Bypasses the developer-mode check (be careful!)
+--quiet          Do not show any output
 
 -h, --help     Print out this help
 
@@ -79,6 +81,7 @@ if (empty($options['bypasscheck']) && !$CFG->debugdeveloper) {
 // Get options.
 $sizename = $options['size'];
 $fixeddataset = $options['fixeddataset'];
+$filesizelimit = $options['filesizelimit'];
 
 // Check size.
 try {
@@ -88,8 +91,8 @@ try {
 }
 
 // Switch to admin user account.
-session_set_user(get_admin());
+\core\session\manager::set_user(get_admin());
 
 // Do backend code to generate site.
-$backend = new tool_generator_site_backend($size, $options['bypasscheck'], $fixeddataset, empty($options['quiet']));
+$backend = new tool_generator_site_backend($size, $options['bypasscheck'], $fixeddataset, $filesizelimit, empty($options['quiet']));
 $backend->make();

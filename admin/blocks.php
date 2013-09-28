@@ -5,6 +5,7 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
+    require_once($CFG->libdir.'/pluginlib.php');
 
     admin_externalpage_setup('manageblocks');
 
@@ -29,9 +30,6 @@
     $strprotect = get_string('blockprotect', 'admin');
     $strunprotect = get_string('blockunprotect', 'admin');
 
-    // Purge all caches related to blocks administration.
-    cache::make('core', 'plugininfo_block')->purge();
-
 /// If data submitted, then process and store.
 
     if (!empty($hide) && confirm_sesskey()) {
@@ -39,6 +37,7 @@
             print_error('blockdoesnotexist', 'error');
         }
         $DB->set_field('block', 'visible', '0', array('id'=>$block->id));      // Hide block
+        plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -47,6 +46,7 @@
             print_error('blockdoesnotexist', 'error');
         }
         $DB->set_field('block', 'visible', '1', array('id'=>$block->id));      // Show block
+        plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -120,12 +120,13 @@
     foreach ($blocknames as $blockid=>$strblockname) {
         $block = $blocks[$blockid];
         $blockname = $block->name;
+        $dbversion = get_config('block_'.$block->name, 'version');
 
         if (!file_exists("$CFG->dirroot/blocks/$blockname/block_$blockname.php")) {
             $blockobject  = false;
             $strblockname = '<span class="notifyproblem">'.$strblockname.' ('.get_string('missingfromdisk').')</span>';
             $plugin = new stdClass();
-            $plugin->version = $block->version;
+            $plugin->version = $dbversion;
 
         } else {
             $plugin = new stdClass();
@@ -186,10 +187,10 @@
             $class = ' class="dimmed_text"'; // Leading space required!
         }
 
-        if ($block->version == $plugin->version) {
-            $version = $block->version;
+        if ($dbversion == $plugin->version) {
+            $version = $dbversion;
         } else {
-            $version = "$block->version ($plugin->version)";
+            $version = "$dbversion ($plugin->version)";
         }
 
         if (!$blockobject) {

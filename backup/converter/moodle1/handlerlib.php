@@ -866,9 +866,11 @@ class moodle1_course_outline_handler extends moodle1_xml_handler {
         // host...
         $versionfile = $CFG->dirroot.'/mod/'.$data['modulename'].'/version.php';
         if (file_exists($versionfile)) {
-            $module = new stdClass();
+            $plugin = new stdClass();
+            $plugin->version = null;
+            $module = $plugin;
             include($versionfile);
-            $data['version'] = $module->version;
+            $data['version'] = $plugin->version;
         } else {
             $data['version'] = null;
         }

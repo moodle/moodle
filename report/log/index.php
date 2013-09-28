@@ -135,7 +135,7 @@ $adminediting = optional_param('adminedit', -1, PARAM_BOOL);
 if ($PAGE->user_allowed_editing() && $adminediting != -1) {
     $USER->editing = $adminediting;
 }
-session_get_instance()->write_close();
+\core\session\manager::write_close();
 
 if (!empty($chooselog)) {
     $userinfo = get_string('allparticipants');

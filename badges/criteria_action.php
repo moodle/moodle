@@ -80,6 +80,7 @@ if ($delete && has_capability('moodle/badges:configurecriteria', $context)) {
     } else {
         $badge->criteria[$type]->delete();
     }
+    $return->param('msg', 'criteriadeleted');
     redirect($return);
 }
 

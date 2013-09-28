@@ -37,9 +37,21 @@ class backup_structure_processor extends base_processor {
     protected $writer; // xml_writer where the processor is going to output data
     protected $vars;   // array of backup::VAR_XXX => helper value pairs to be used by source specifications
 
-    public function __construct(xml_writer $writer) {
+    /**
+     * @var core_backup_progress Progress tracker (null if none)
+     */
+    protected $progress;
+
+    /**
+     * Constructor.
+     *
+     * @param xml_writer $writer XML writer to save data
+     * @param core_backup_progress $progress Progress tracker (optional)
+     */
+    public function __construct(xml_writer $writer, core_backup_progress $progress = null) {
         $this->writer = $writer;
-        $this->vars   = array();
+        $this->progress = $progress;
+        $this->vars = array();
     }
 
     public function set_var($key, $value) {
@@ -83,6 +95,9 @@ class backup_structure_processor extends base_processor {
     public function post_process_nested_element(base_nested_element $nested) {
         // Send close tag to xml_writer
         $this->writer->end_tag($nested->get_name());
+        if ($this->progress) {
+            $this->progress->progress();
+        }
     }
 
     public function process_final_element(base_final_element $final) {
@@ -93,6 +108,9 @@ class backup_structure_processor extends base_processor {
                 $attrarr[$attribute->get_name()] = $attribute->get_value();
             }
             $this->writer->full_tag($final->get_name(), $final->get_value(), $attrarr);
+            if ($this->progress) {
+                $this->progress->progress();
+            }
             // Annotate current value if configured to do so
             $final->annotate($this->get_var(backup::VAR_BACKUPID));
         }

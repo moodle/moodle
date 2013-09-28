@@ -422,7 +422,7 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         unset($user->access);
         unset($user->preference);
 
-        session_set_user($user);
+        \core\session\manager::set_user($user);
     }
 
     /**

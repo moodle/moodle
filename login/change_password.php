@@ -73,7 +73,7 @@ if (!get_user_preferences('auth_forcepasswordchange', false)) {
 }
 
 // do not allow "Logged in as" users to change any passwords
-if (session_is_loggedinas()) {
+if (\core\session\manager::is_loggedinas()) {
     print_error('cannotcallscript');
 }
 

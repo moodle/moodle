@@ -322,7 +322,7 @@ umask($CFG->umaskpermissions);
 
 // exact version of currently used yui2 and 3 library
 $CFG->yui2version = '2.9.0';
-$CFG->yui3version = '3.9.1';
+$CFG->yui3version = '3.12.0';
 
 // Store settings from config.php in array in $CFG - we can use it later to detect problems and overrides.
 if (!isset($CFG->config_php_settings)) {
@@ -728,7 +728,7 @@ if (!defined('SYSCONTEXTID')) {
 // Defining the site - aka frontpage course
 try {
     $SITE = get_site();
-} catch (dml_exception $e) {
+} catch (moodle_exception $e) {
     $SITE = null;
     if (empty($CFG->version)) {
         $SITE = new stdClass();
@@ -760,10 +760,15 @@ if (CLI_SCRIPT) {
     }
 }
 
-// start session and prepare global $SESSION, $USER
-session_get_instance();
-$SESSION = &$_SESSION['SESSION'];
-$USER    = &$_SESSION['USER'];
+// Start session and prepare global $SESSION, $USER.
+if (empty($CFG->sessiontimeout)) {
+    $CFG->sessiontimeout = 7200;
+}
+\core\session\manager::start();
+if (!PHPUNIT_TEST and !defined('BEHAT_TEST')) {
+    $SESSION =& $_SESSION['SESSION'];
+    $USER    =& $_SESSION['USER'];
+}
 
 // Late profiling, only happening if early one wasn't started
 if (!empty($CFG->profilingenabled)) {
@@ -848,7 +853,7 @@ if (!empty($CFG->debugvalidators) and !empty($CFG->guestloginbutton)) {
                 } else {
                     $user = guest_user();
                 }
-                session_set_user($user);
+                \core\session\manager::set_user($user);
             }
         }
     }
@@ -867,8 +872,8 @@ if ($USER && function_exists('apache_note')
         $apachelog_name = clean_filename($USER->firstname . " " .
                                          $USER->lastname);
     }
-    if (session_is_loggedinas()) {
-        $realuser = session_get_realuser();
+    if (\core\session\manager::is_loggedinas()) {
+        $realuser = \core\session\manager::get_realuser();
         $apachelog_username = clean_filename($realuser->username." as ".$apachelog_username);
         $apachelog_name = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$apachelog_name);
         $apachelog_userid = clean_filename($realuser->id." as ".$apachelog_userid);

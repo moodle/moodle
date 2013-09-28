@@ -110,6 +110,7 @@ if ($activate) {
     if ($confirm == 1) {
         require_sesskey();
         $badge->set_status($status);
+        $returnurl->param('msg', 'activatesuccess');
 
         if ($badge->type == BADGE_TYPE_SITE) {
             // Review on cron if there are more than 1000 users who can earn a site-level badge.

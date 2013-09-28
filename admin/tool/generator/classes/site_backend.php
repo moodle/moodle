@@ -61,15 +61,16 @@ class tool_generator_site_backend extends tool_generator_backend {
      * @param int $size Size as numeric index
      * @param bool $bypasscheck If debugging level checking was skipped.
      * @param bool $fixeddataset To use fixed or random data
+     * @param int|bool $filesizelimit The max number of bytes for a generated file
      * @param bool $progress True if progress information should be displayed
      * @return int Course id
      */
-    public function __construct($size, $bypasscheck, $fixeddataset = false, $progress = true) {
+    public function __construct($size, $bypasscheck, $fixeddataset = false, $filesizelimit = false, $progress = true) {
 
         // Set parameters.
         $this->bypasscheck = $bypasscheck;
 
-        parent::__construct($size, $fixeddataset, $progress);
+        parent::__construct($size, $fixeddataset, $filesizelimit, $progress);
     }
 
     /**
@@ -104,7 +105,7 @@ class tool_generator_site_backend extends tool_generator_backend {
         // Create courses.
         $prevchdir = getcwd();
         chdir($CFG->dirroot);
-        $ncourse = $this->get_last_testcourse_id();
+        $ncourse = self::get_last_testcourse_id();
         foreach (self::$sitecourses as $coursesize => $ncourses) {
             for ($i = 1; $i <= $ncourses[$this->size]; $i++) {
                 // Non language-dependant shortname.
@@ -148,6 +149,10 @@ class tool_generator_site_backend extends tool_generator_backend {
             $options[] = '--quiet';
         }
 
+        if ($this->filesizelimit) {
+            $options[] = '--filesizelimit="' . $this->filesizelimit . '"';
+        }
+
         // Extend options.
         $optionstoextend = array(
             'fixeddataset' => 'fixeddataset',
@@ -177,26 +182,30 @@ class tool_generator_site_backend extends tool_generator_backend {
      *
      * @return int The last generated numeric value.
      */
-    protected function get_last_testcourse_id() {
+    protected static function get_last_testcourse_id() {
         global $DB;
 
         $params = array();
         $params['shortnameprefix'] = $DB->sql_like_escape(self::SHORTNAMEPREFIX) . '%';
         $like = $DB->sql_like('shortname', ':shortnameprefix');
 
-        if (!$testcourses = $DB->get_records_select('course', $like, $params, 'shortname DESC')) {
+        if (!$testcourses = $DB->get_records_select('course', $like, $params, '', 'shortname')) {
             return 0;
         }
+        // SQL order by is not appropiate here as is ordering strings.
+        $shortnames = array_keys($testcourses);
+        core_collator::asort($shortnames, core_collator::SORT_NATURAL);
+        $shortnames = array_reverse($shortnames);
 
         // They come ordered by shortname DESC, so non-numeric values will be the first ones.
-        foreach ($testcourses as $testcourse) {
-            $sufix = substr($testcourse->shortname, strlen(self::SHORTNAMEPREFIX));
-            if (is_numeric($sufix)) {
+        $prefixnchars = strlen(self::SHORTNAMEPREFIX);
+        foreach ($shortnames as $shortname) {
+            $sufix = substr($shortname, $prefixnchars);
+            if (preg_match('/^[\d]+$/', $sufix)) {
                 return $sufix;
             }
         }
-
-        // If all sufixes are not numeric this is the fist make test site run.
+        // If all sufixes are not numeric this is the first make test site run.
         return 0;
     }
 

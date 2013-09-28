@@ -29,21 +29,21 @@
 function atto_outdent_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = $OUTPUT->pix_icon('outdent',
+    $icon = $OUTPUT->pix_icon('e/decrease_indent',
                               get_string('outdent', 'atto_outdent'),
-                              'atto_outdent',
+                              'moodle',
                               array('class'=>'icon'));
 
     $PAGE->requires->yui_module('moodle-atto_outdent-button',
                                 'M.atto_outdent.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon)),
+                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'list')),
                                 true);
 
 }
 
 /**
  * Return the order this plugin should be displayed in the toolbar
- * @return int
+ * @return int the absolute position within the toolbar
  */
 function atto_outdent_sort_order() {
     return 4;

@@ -89,7 +89,7 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertEquals(3, $_SESSION['USER']->id);
         $this->assertSame($_SESSION['USER'], $USER);
 
-        session_set_user($user);
+        \core\session\manager::set_user($user);
         $this->assertEquals(2, $USER->id);
         $this->assertEquals(2, $_SESSION['USER']->id);
         $this->assertSame($_SESSION['USER'], $USER);

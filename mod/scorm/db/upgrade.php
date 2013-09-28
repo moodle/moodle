@@ -129,6 +129,52 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013081303, 'scorm');
     }
 
+    if ($oldversion < 2013090100) {
+        global $CFG;
+        $table = new xmldb_table('scorm');
+
+        $field = new xmldb_field('nav', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, true, null, 1, 'hidetoc');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('navpositionleft', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, -100, 'nav');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('navpositiontop', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, -100, 'navpositionleft');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new xmldb_field('hidenav');
+        if ($dbman->field_exists($table, $field)) {
+            // Update nav setting to show floating navigation buttons under TOC.
+            $DB->set_field('scorm', 'nav', 2, array('hidenav' => 0));
+            $DB->set_field('scorm', 'navpositionleft', 215, array('hidenav' => 2));
+            $DB->set_field('scorm', 'navpositiontop', 300, array('hidenav' => 2));
+
+            // Update nav setting to disable navigation buttons.
+            $DB->set_field('scorm', 'nav', 0, array('hidenav' => 1));
+            // Drop hidenav field.
+            $dbman->drop_field($table, $field);
+        }
+
+        $hide = get_config('scorm', 'hidenav');
+        unset_config('hidenav', 'scorm');
+        if (!empty($hide)) {
+            require_once($CFG->dirroot . '/mod/scorm/lib.php');
+            set_config('nav', SCORM_NAV_DISABLED, 'scorm');
+        }
+
+        $hideadv = get_config('scorm', 'hidenav_adv');
+        unset_config('hidenav_adv', 'scorm');
+        set_config('nav_adv', $hideadv, 'scorm');
+
+        upgrade_mod_savepoint(true, 2013090100, 'scorm');
+    }
+
     return true;
 }
 
