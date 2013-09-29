@@ -39,7 +39,7 @@ class core_user {
     const NOREPLY_USER = -10;
 
     /**
-     * Suppport user id.
+     * Support user id.
      */
     const SUPPORT_USER = -20;
 
@@ -160,9 +160,11 @@ class core_user {
             self::$supportuser = self::get_dummy_user_record();
             self::$supportuser->id = self::SUPPORT_USER;
             self::$supportuser->email = $CFG->supportemail;
-            self::$supportuser->firstname = $CFG->supportname ? $CFG->supportname : $supportuser->firstname;
+            if ($CFG->supportname) {
+                self::$supportuser->firstname = $CFG->supportname;
+            }
             self::$supportuser->username = 'support';
-            self::$supportuser->maildisplay = true;
+            self::$supportuser->maildisplay = '1'; // Show to all.
         }
 
         // Send support msg to admin user if nothing is set above.
@@ -191,7 +193,7 @@ class core_user {
 
     /**
      * Return true is user id is greater than self::NOREPLY_USER and
-     * alternetely check db.
+     * alternatively check db.
      *
      * @param int $userid user id.
      * @param bool $checkdb if true userid will be checked in db. By default it's false, and
@@ -199,6 +201,8 @@ class core_user {
      * @return bool true is real user else false.
      */
     public static function is_real_user($userid, $checkdb = false) {
+        global $DB;
+
         if ($userid < 0) {
             return false;
         }

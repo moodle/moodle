@@ -240,6 +240,10 @@ if ($usernew = $userform->get_data()) {
     if ($user->id == $USER->id) {
         // Override old $USER session variable
         foreach ((array)$usernew as $variable => $value) {
+            if ($variable === 'description' or $variable === 'password') {
+                // These are not set for security nad perf reasons.
+                continue;
+            }
             $USER->$variable = $value;
         }
         // preload custom fields

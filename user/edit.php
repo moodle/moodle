@@ -236,15 +236,15 @@ if ($usernew = $userform->get_data()) {
     // save custom profile fields data
     profile_save_data($usernew);
 
-    // If email was changed and confirmation is required, send confirmation email now
+    // If email was changed and confirmation is required, send confirmation email now to the new address.
     if ($email_changed && $CFG->emailchangeconfirmation) {
-        $temp_user = fullclone($user);
+        $temp_user = $DB->get_record('user', array('id'=>$user->id), '*', MUST_EXIST);
         $temp_user->email = $usernew->preference_newemail;
 
         $a = new stdClass();
         $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $usernew->preference_newemailkey . '&id=' . $user->id;
         $a->site = format_string($SITE->fullname, true, array('context' => context_course::instance(SITEID)));
-        $a->fullname = fullname($user, true);
+        $a->fullname = fullname($temp_user, true);
 
         $emailupdatemessage = get_string('emailupdatemessage', 'auth', $a);
         $emailupdatetitle = get_string('emailupdatetitle', 'auth', $a);
@@ -256,12 +256,16 @@ if ($usernew = $userform->get_data()) {
         }
     }
 
-    // reload from db
-    $usernew = $DB->get_record('user', array('id'=>$user->id));
+    // Reload from db, we need new full name on this page if we do not redirect.
+    $user = $DB->get_record('user', array('id'=>$user->id), '*', MUST_EXIST);
 
     if ($USER->id == $user->id) {
         // Override old $USER session variable if needed
-        foreach ((array)$usernew as $variable => $value) {
+        foreach ((array)$user as $variable => $value) {
+            if ($variable === 'description' or $variable === 'password') {
+                // These are not set for security nad perf reasons.
+                continue;
+            }
             $USER->$variable = $value;
         }
         // preload custom fields
