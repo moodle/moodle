@@ -46,6 +46,9 @@ class enrol_cohort_plugin extends enrol_plugin {
         } else if (empty($instance->name)) {
             $enrol = $this->get_name();
             $cohort = $DB->get_record('cohort', array('id'=>$instance->customint1));
+            if (!$cohort) {
+                return get_string('pluginname', 'enrol_'.$enrol);
+            }
             $cohortname = format_string($cohort->name, true, array('context'=>context::instance_by_id($cohort->contextid)));
             if ($role = $DB->get_record('role', array('id'=>$instance->roleid))) {
                 $role = role_get_name($role, context_course::instance($instance->courseid, IGNORE_MISSING));
