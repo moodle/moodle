@@ -170,11 +170,13 @@ class qformat_xml extends qformat_default {
         }
         $fs = get_file_storage();
         $itemid = file_get_unused_draft_itemid();
-        $filenames = array();
+        $filepaths = array();
         foreach ($xml as $file) {
-            $filename = $file['@']['name'];
-            if (in_array($filename, $filenames)) {
-                debugging('Duplicate file in XML: ' . $filename, DEBUG_DEVELOPER);
+            $filename = $this->getpath($file, array('@', 'name'), '', true);
+            $filepath = $this->getpath($file, array('@', 'path'), '/', true);
+            $fullpath = $filepath . $filename;
+            if (in_array($fullpath, $filepaths)) {
+                debugging('Duplicate file in XML: ' . $fullpath, DEBUG_DEVELOPER);
                 continue;
             }
             $filerecord = array(
@@ -182,11 +184,11 @@ class qformat_xml extends qformat_default {
                 'component' => 'user',
                 'filearea'  => 'draft',
                 'itemid'    => $itemid,
-                'filepath'  => '/',
+                'filepath'  => $filepath,
                 'filename'  => $filename,
             );
             $fs->create_file_from_string($filerecord, base64_decode($file['#']));
-            $filenames[] = $filename;
+            $filepaths[] = $fullpath;
         }
         return $itemid;
     }
@@ -1093,9 +1095,9 @@ class qformat_xml extends qformat_default {
             if ($file->is_directory()) {
                 continue;
             }
-            $string .= '<file name="' . $file->get_filename() . '" encoding="base64">';
+            $string .= '<file name="' . $file->get_filename() . '" path="' . $file->get_filepath() . '" encoding="base64">';
             $string .= base64_encode($file->get_content());
-            $string .= '</file>';
+            $string .= "</file>\n";
         }
         return $string;
     }
