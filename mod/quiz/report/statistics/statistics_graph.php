@@ -64,8 +64,7 @@ $qubaids = quiz_statistics_qubaids_condition($quizid, $currentgroup, $groupstude
 // Load the rest of the required data.
 $questions = quiz_report_get_significant_questions($quiz);
 
-// Load enough data to check permissions.
-$quizstatistics = $DB->get_record('quiz_statistics', array('hashcode' => $qubaids->get_hash_code()));
+// Only load main question not sub questions.
 $questionstatistics = $DB->get_records_select('question_statistics', 'hashcode = ? AND slot IS NOT NULL',
                                               array($qubaids->get_hash_code()));
 
