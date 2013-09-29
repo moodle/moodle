@@ -1613,8 +1613,7 @@ class core_course_renderer extends plugin_renderer_base {
         if (!$coursecat->id) {
             if (can_edit_in_category()) {
                 // add 'Manage' button instead of course search form
-                $managebutton = $this->single_button(new moodle_url('/course/manage.php'),
-                                get_string('managecourses'), 'get');
+                $managebutton = $this->single_button(new moodle_url('/course/management.php'), get_string('managecourses'), 'get');
                 $this->page->set_button($managebutton);
             }
             if (coursecat::count_all() == 1) {

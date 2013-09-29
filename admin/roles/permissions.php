@@ -33,6 +33,7 @@ $prevent    = optional_param('prevent', 0, PARAM_BOOL);
 $allow      = optional_param('allow', 0, PARAM_BOOL);
 $unprohibit = optional_param('unprohibit', 0, PARAM_BOOL);
 $prohibit   = optional_param('prohibit', 0, PARAM_BOOL);
+$return     = optional_param('return', null, PARAM_ALPHANUMEXT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -201,8 +202,15 @@ echo $OUTPUT->box_end();
 
 
 if ($context->contextlevel > CONTEXT_USER) {
+
+    if ($context->contextlevel === CONTEXT_COURSECAT && $return === 'management') {
+        $url = new moodle_url('/course/management.php', array('categoryid' => $context->instanceid));
+    } else {
+        $url = $context->get_url();
+    }
+
     echo html_writer::start_tag('div', array('class'=>'backlink'));
-    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href'=>$context->get_url()));
+    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href' => $url));
     echo html_writer::end_tag('div');
 }
 

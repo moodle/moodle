@@ -1,83 +1,82 @@
 <?php
-      // Admin-only code to delete a course utterly
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-    require_once(dirname(__FILE__) . '/../config.php');
-    require_once($CFG->dirroot . '/course/lib.php');
+/**
+ * Admin-only code to delete a course utterly.
+ *
+ * @package core_course
+ * @copyright 2002 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-    $id     = required_param('id', PARAM_INT);              // course id
-    $delete = optional_param('delete', '', PARAM_ALPHANUM); // delete confirmation hash
+require_once(dirname(__FILE__) . '/../config.php');
+require_once($CFG->dirroot . '/course/lib.php');
 
-    $PAGE->set_url('/course/delete.php', array('id' => $id));
-    $PAGE->set_context(context_system::instance());
-    require_login();
+$id = required_param('id', PARAM_INT); // Course ID.
+$delete = optional_param('delete', '', PARAM_ALPHANUM); // Confirmation hash.
 
-    $site = get_site();
+$PAGE->set_url('/course/delete.php', array('id' => $id));
+$PAGE->set_context(context_system::instance());
+require_login();
 
-    $strdeletecourse = get_string("deletecourse");
-    $stradministration = get_string("administration");
-    $strcategories = get_string("categories");
+$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
+$coursecontext = context_course::instance($course->id);
 
-    if (! $course = $DB->get_record("course", array("id"=>$id))) {
-        print_error("invalidcourseid");
-    }
-    if ($site->id == $course->id) {
-        // can not delete frontpage!
-        print_error("invalidcourseid");
-    }
+if ((int)$SITE->id === (int)$course->id || !can_delete_course($id)) {
+    // Can not delete frontpage or don't have permission to delete the course.
+    print_error('cannotdeletecourse');
+}
 
-    $coursecontext = context_course::instance($course->id);
+$courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
+$coursefullname = format_string($course->fullname, true, array('context' => $coursecontext));
+$categoryurl = new moodle_url('/course/management.php', array('categoryid' => $course->category));
 
-    if (!can_delete_course($id)) {
-        print_error('cannotdeletecourse');
-    }
+navigation_node::override_active_url(new moodle_url('/course/management.php'));
 
-    $category = $DB->get_record("course_categories", array("id"=>$course->category));
-    $courseshortname = format_string($course->shortname, true, array('context' => context_course::instance($course->id)));
-    $categoryname = format_string($category->name, true, array('context' => context_coursecat::instance($category->id)));
-
-    $PAGE->navbar->add($stradministration, new moodle_url('/admin/index.php/'));
-    $PAGE->navbar->add($strcategories, new moodle_url('/course/index.php'));
-    $PAGE->navbar->add($categoryname, new moodle_url('/course/index.php', array('categoryid' => $course->category)));
-    if (! $delete) {
-        $strdeletecheck = get_string("deletecheck", "", $courseshortname);
-        $strdeletecoursecheck = get_string("deletecoursecheck");
-
-        $PAGE->navbar->add($strdeletecheck);
-        $PAGE->set_title("$site->shortname: $strdeletecheck");
-        $PAGE->set_heading($site->fullname);
-        echo $OUTPUT->header();
-
-        $message = "$strdeletecoursecheck<br /><br />" . format_string($course->fullname, true, array('context' => $coursecontext)) .  " (" . $courseshortname . ")";
-
-        echo $OUTPUT->confirm($message, "delete.php?id=$course->id&delete=".md5($course->timemodified), "manage.php?categoryid=$course->category");
-
-        echo $OUTPUT->footer();
-        exit;
-    }
-
-    if ($delete != md5($course->timemodified)) {
-        print_error("invalidmd5");
-    }
-
-    if (!confirm_sesskey()) {
-        print_error('confirmsesskeybad', 'error');
-    }
+// Check if we've got confirmation.
+if ($delete === md5($course->timemodified)) {
+    // We do - time to delete the course.
+    require_sesskey();
+    delete_course($course);
+    // Update course count in categories.
+    fix_course_sortorder();
 
     $strdeletingcourse = get_string("deletingcourse", "", $courseshortname);
 
     $PAGE->navbar->add($strdeletingcourse);
-    $PAGE->set_title("$site->shortname: $strdeletingcourse");
-    $PAGE->set_heading($site->fullname);
+    $PAGE->set_title("$SITE->shortname: $strdeletingcourse");
+    $PAGE->set_heading($SITE->fullname);
+
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strdeletingcourse);
-
-    delete_course($course);
-    fix_course_sortorder(); //update course count in catagories
-
     echo $OUTPUT->heading( get_string("deletedcourse", "", $courseshortname) );
-
-    echo $OUTPUT->continue_button("manage.php?categoryid=$course->category");
-
+    echo $OUTPUT->continue_button($categoryurl);
     echo $OUTPUT->footer();
+}
 
+$strdeletecheck = get_string("deletecheck", "", $courseshortname);
+$strdeletecoursecheck = get_string("deletecoursecheck");
+$message = "{$strdeletecoursecheck}<br /><br />{$coursefullname} ({$courseshortname})";
 
+$continueurl = new moodle_url('/course/delete.php', array('id' => $course->id, 'delete' => md5($course->timemodified)));
+
+$PAGE->navbar->add($strdeletecheck);
+$PAGE->set_title("$SITE->shortname: $strdeletecheck");
+$PAGE->set_heading($SITE->fullname);
+echo $OUTPUT->header();
+echo $OUTPUT->confirm($message, $continueurl, $categoryurl);
+echo $OUTPUT->footer();
+exit;

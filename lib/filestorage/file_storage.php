@@ -550,7 +550,7 @@ class file_storage {
      * @param int $itemid item ID or all files if not specified
      * @param string $sort A fragment of SQL to use for sorting
      * @param bool $includedirs whether or not include directories
-     * @return array of stored_files indexed by pathanmehash
+     * @return stored_file[] array of stored_files indexed by pathanmehash
      */
     public function get_area_files($contextid, $component, $filearea, $itemid = false, $sort = "itemid, filepath, filename", $includedirs = true) {
         global $DB;

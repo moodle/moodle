@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->dirroot.'/course/tests/fixtures/course_capability_assignment.php');
 
 class core_course_courselib_testcase extends advanced_testcase {
 
@@ -2182,5 +2183,163 @@ class core_course_courselib_testcase extends advanced_testcase {
         } catch (coding_exception $e) {
             $this->assertContains("Field other['modulename'] cannot be empty", $e->getMessage());
         }
+    }
+
+    /**
+     * Returns a user object and its assigned new role.
+     *
+     * @param testing_data_generator $generator
+     * @param $contextid
+     * @return array The user object and the role ID
+     */
+    protected function get_user_objects(testing_data_generator $generator, $contextid) {
+        global $USER;
+
+        if (empty($USER->id)) {
+            $user  = $generator->create_user();
+            $this->setUser($user);
+        }
+        $roleid = create_role('Test role', 'testrole', 'Test role description');
+        if (!is_array($contextid)) {
+            $contextid = array($contextid);
+        }
+        foreach ($contextid as $cid) {
+            $assignid = role_assign($roleid, $user->id, $cid);
+        }
+        return array($user, $roleid);
+    }
+
+    /**
+     * Test course move after course.
+     */
+    public function test_course_move_after_course() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $category = $generator->create_category();
+        $course3 = $generator->create_course(array('category' => $category->id));
+        $course2 = $generator->create_course(array('category' => $category->id));
+        $course1 = $generator->create_course(array('category' => $category->id));
+        $context = $category->get_context();
+
+        list($user, $roleid) = $this->get_user_objects($generator, $context->id);
+        $caps = course_capability_assignment::allow('moodle/category:manage', $roleid, $context->id);
+
+        $courses = $category->get_courses();
+        $this->assertInternalType('array', $courses);
+        $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
+        $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
+        $this->assertEquals(array_keys($dbcourses), array_keys($courses));
+
+        // Test moving down.
+        $this->assertTrue(course_move_after_course($course1->id, $course3->id));
+        $courses = $category->get_courses();
+        $this->assertInternalType('array', $courses);
+        $this->assertEquals(array($course2->id, $course3->id, $course1->id), array_keys($courses));
+        $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
+        $this->assertEquals(array_keys($dbcourses), array_keys($courses));
+
+        // Test moving up.
+        $this->assertTrue(course_move_after_course($course1->id, $course2->id));
+        $courses = $category->get_courses();
+        $this->assertInternalType('array', $courses);
+        $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
+        $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
+        $this->assertEquals(array_keys($dbcourses), array_keys($courses));
+
+        // Test moving to the top.
+        $this->assertTrue(course_move_after_course($course1->id, 0));
+        $courses = $category->get_courses();
+        $this->assertInternalType('array', $courses);
+        $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
+        $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
+        $this->assertEquals(array_keys($dbcourses), array_keys($courses));
+    }
+
+    /**
+     * Tests changing the visibility of a course.
+     */
+    public function test_course_change_visibility() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $category = $generator->create_category();
+        $course = $generator->create_course(array('category' => $category->id));
+
+        $this->assertEquals('1', $course->visible);
+        $this->assertEquals('1', $course->visibleold);
+
+        $this->assertTrue(course_change_visibility($course->id, false));
+        $course = $DB->get_record('course', array('id' => $course->id));
+        $this->assertEquals('0', $course->visible);
+        $this->assertEquals('0', $course->visibleold);
+
+        $this->assertTrue(course_change_visibility($course->id, true));
+        $course = $DB->get_record('course', array('id' => $course->id));
+        $this->assertEquals('1', $course->visible);
+        $this->assertEquals('1', $course->visibleold);
+    }
+
+    /**
+     * Tests moving the course up and down by one.
+     */
+    public function test_course_move_by_one() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $generator = $this->getDataGenerator();
+        $category = $generator->create_category();
+        $course3 = $generator->create_course(array('category' => $category->id));
+        $course2 = $generator->create_course(array('category' => $category->id));
+        $course1 = $generator->create_course(array('category' => $category->id));
+
+        $courses = $category->get_courses();
+        $this->assertInternalType('array', $courses);
+        $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
+        $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
+        $this->assertEquals(array_keys($dbcourses), array_keys($courses));
+
+        // Test moving down.
+        $course1 = get_course($course1->id);
+        $this->assertTrue(course_move_by_one($course1, false));
+        $courses = $category->get_courses();
+        $this->assertInternalType('array', $courses);
+        $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
+        $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
+        $this->assertEquals(array_keys($dbcourses), array_keys($courses));
+
+        // Test moving up.
+        $course1 = get_course($course1->id);
+        $this->assertTrue(course_move_by_one($course1, true));
+        $courses = $category->get_courses();
+        $this->assertInternalType('array', $courses);
+        $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
+        $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
+        $this->assertEquals(array_keys($dbcourses), array_keys($courses));
+
+        // Test moving the top course up one.
+        $course1 = get_course($course1->id);
+        $this->assertFalse(course_move_by_one($course1, true));
+        // Check nothing changed.
+        $courses = $category->get_courses();
+        $this->assertInternalType('array', $courses);
+        $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
+        $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
+        $this->assertEquals(array_keys($dbcourses), array_keys($courses));
+
+        // Test moving the bottom course up down.
+        $course3 = get_course($course3->id);
+        $this->assertFalse(course_move_by_one($course3, false));
+        // Check nothing changed.
+        $courses = $category->get_courses();
+        $this->assertInternalType('array', $courses);
+        $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
+        $dbcourses = $DB->get_records('course', array('category' => $category->id), 'sortorder', 'id');
+        $this->assertEquals(array_keys($dbcourses), array_keys($courses));
     }
 }

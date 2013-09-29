@@ -425,3 +425,42 @@
       margin-bottom: 2em;
   }
 }
+
+// All widths between 1200px and 1600px
+@media (min-width: 1200px) and (max-width: 1600px) {
+    // CSS for the course management pages.
+    #course-category-listings.columns-3 {
+        background-color:transparent;
+        border:0;
+
+        #category-listing,
+        #course-listing {
+            .fluid-span(6);
+            margin-left: @fluidGridGutterWidth;
+            *margin-left: @fluidGridGutterWidth - (.5 / @gridRowWidth * 100 * 1%);
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+        #course-detail {
+            .fluid-span(12);
+            margin: 1em 0 0;
+        }
+    }
+
+}
+
+// All widths up to 1199px.
+@media (max-width: 1199px) {
+    // CSS for the course management pages.
+    #course-category-listings.columns-3 {
+        background-color:transparent;
+        border:0;
+        #category-listing,
+        #course-listing,
+        #course-detail {
+            .fluid-span(12);
+            margin: 0 0 1em 0;
+        }
+    }
+}
