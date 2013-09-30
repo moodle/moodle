@@ -87,6 +87,9 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configtext('recaptchaprivatekey', new lang_string('recaptchaprivatekey', 'admin'), new lang_string('configrecaptchaprivatekey', 'admin'), '', PARAM_NOTAGS));
     $ADMIN->add('authsettings', $temp);
 
+    $temp = new admin_externalpage('authtestsettings', get_string('testsettings', 'core_auth'), new moodle_url("/auth/test_settings.php"), 'moodle/site:config', true);
+    $ADMIN->add('authsettings', $temp);
+
     foreach (core_plugin_manager::instance()->get_plugins_of_type('auth') as $plugin) {
         /** @var \core\plugininfo\auth $plugin */
         $plugin->load_settings($ADMIN, 'authsettings', $hassiteconfig);
@@ -97,6 +100,10 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('manageenrols', new lang_string('manageenrols', 'enrol'));
     $temp->add(new admin_setting_manageenrols());
     $ADMIN->add('enrolments', $temp);
+
+    $temp = new admin_externalpage('enroltestsettings', get_string('testsettings', 'core_enrol'), new moodle_url("/enrol/test_settings.php"), 'moodle/site:config', true);
+    $ADMIN->add('enrolments', $temp);
+
     foreach(core_plugin_manager::instance()->get_plugins_of_type('enrol') as $plugin) {
         /** @var \core\plugininfo\enrol $plugin */
         $plugin->load_settings($ADMIN, 'enrolments', $hassiteconfig);

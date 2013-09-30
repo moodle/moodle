@@ -134,6 +134,11 @@ class auth_plugin_db extends auth_plugin_base {
         }
     }
 
+    /**
+     * Connect to external database.
+     *
+     * @return ADOConnection
+     */
     function db_init() {
         // Connect to the external database (forcing new connection).
         $authdb = ADONewConnection($this->config->type);
@@ -780,6 +785,76 @@ class auth_plugin_db extends auth_plugin_base {
             $text = str_replace("'", "''", $text);
         }
         return $text;
+    }
+
+    /**
+     * Test if settings are ok, print info to output.
+     * @private
+     */
+    public function test_settings() {
+        global $CFG, $OUTPUT;
+
+        // NOTE: this is not localised intentionally, admins are supposed to understand English at least a bit...
+
+        raise_memory_limit(MEMORY_HUGE);
+
+        if (empty($this->config->table)) {
+            echo $OUTPUT->notification('External table not specified.', 'notifyproblem');
+            return;
+        }
+
+        if (empty($this->config->fielduser)) {
+            echo $OUTPUT->notification('External user field not specified.', 'notifyproblem');
+            return;
+        }
+
+        $olddebug = $CFG->debug;
+        $olddisplay = ini_get('display_errors');
+        ini_set('display_errors', '1');
+        $CFG->debug = DEBUG_DEVELOPER;
+        $olddebugauthdb = $this->config->debugauthdb;
+        $this->config->debugauthdb = 1;
+        error_reporting($CFG->debug);
+
+        $adodb = $this->db_init();
+
+        if (!$adodb or !$adodb->IsConnected()) {
+            $this->config->debugauthdb = $olddebugauthdb;
+            $CFG->debug = $olddebug;
+            ini_set('display_errors', $olddisplay);
+            error_reporting($CFG->debug);
+            ob_end_flush();
+
+            echo $OUTPUT->notification('Cannot connect the database.', 'notifyproblem');
+            return;
+        }
+
+        $rs = $adodb->Execute("SELECT *
+                                 FROM {$this->config->table}
+                                WHERE {$this->config->fielduser} <> 'random_unlikely_username'"); // Any unlikely name is ok here.
+
+        if (!$rs) {
+            echo $OUTPUT->notification('Can not read external table.', 'notifyproblem');
+
+        } else if ($rs->EOF) {
+            echo $OUTPUT->notification('External table is empty.', 'notifyproblem');
+            $rs->close();
+
+        } else {
+            $fields_obj = $rs->FetchObj();
+            $columns = array_keys((array)$fields_obj);
+
+            echo $OUTPUT->notification('External table contains following columns:<br />'.implode(', ', $columns), 'notifysuccess');
+            $rs->close();
+        }
+
+        $adodb->Close();
+
+        $this->config->debugauthdb = $olddebugauthdb;
+        $CFG->debug = $olddebug;
+        ini_set('display_errors', $olddisplay);
+        error_reporting($CFG->debug);
+        ob_end_flush();
     }
 }
 

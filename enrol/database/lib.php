@@ -938,4 +938,99 @@ class enrol_database_plugin extends enrol_plugin {
         }
         role_assign($roleid, $userid, $contextid, 'enrol_'.$this->get_name(), $instance->id);
     }
+
+    /**
+     * Test plugin settings, print info to output.
+     */
+    public function test_settings() {
+        global $CFG, $OUTPUT;
+
+        // NOTE: this is not localised intentionally, admins are supposed to understand English at least a bit...
+
+        raise_memory_limit(MEMORY_HUGE);
+
+        $this->load_config();
+
+        $enroltable = $this->get_config('remoteenroltable');
+        $coursetable = $this->get_config('newcoursetable');
+
+        if (empty($enroltable)) {
+            echo $OUTPUT->notification('External enrolment table not specified.', 'notifyproblem');
+        }
+
+        if (empty($coursetable)) {
+            echo $OUTPUT->notification('External course table not specified.', 'notifyproblem');
+        }
+
+        if (empty($coursetable) and empty($enroltable)) {
+            return;
+        }
+
+        $olddebug = $CFG->debug;
+        $olddisplay = ini_get('display_errors');
+        ini_set('display_errors', '1');
+        $CFG->debug = DEBUG_DEVELOPER;
+        $olddebugdb = $this->config->debugdb;
+        $this->config->debugdb = 1;
+        error_reporting($CFG->debug);
+
+        $adodb = $this->db_init();
+
+        if (!$adodb or !$adodb->IsConnected()) {
+            $this->config->debugdb = $olddebugdb;
+            $CFG->debug = $olddebug;
+            ini_set('display_errors', $olddisplay);
+            error_reporting($CFG->debug);
+            ob_end_flush();
+
+            echo $OUTPUT->notification('Cannot connect the database.', 'notifyproblem');
+            return;
+        }
+
+        if (!empty($enroltable)) {
+            $rs = $adodb->Execute("SELECT *
+                                     FROM $enroltable");
+            if (!$rs) {
+                echo $OUTPUT->notification('Can not read external enrol table.', 'notifyproblem');
+
+            } else if ($rs->EOF) {
+                echo $OUTPUT->notification('External enrol table is empty.', 'notifyproblem');
+                $rs->Close();
+
+            } else {
+                $fields_obj = $rs->FetchObj();
+                $columns = array_keys((array)$fields_obj);
+
+                echo $OUTPUT->notification('External enrolment table contains following columns:<br />'.implode(', ', $columns), 'notifysuccess');
+                $rs->Close();
+            }
+        }
+
+        if (!empty($coursetable)) {
+            $rs = $adodb->Execute("SELECT *
+                                     FROM $coursetable");
+            if (!$rs) {
+                echo $OUTPUT->notification('Can not read external course table.', 'notifyproblem');
+
+            } else if ($rs->EOF) {
+                echo $OUTPUT->notification('External course table is empty.', 'notifyproblem');
+                $rs->Close();
+
+            } else {
+                $fields_obj = $rs->FetchObj();
+                $columns = array_keys((array)$fields_obj);
+
+                echo $OUTPUT->notification('External course table contains following columns:<br />'.implode(', ', $columns), 'notifysuccess');
+                $rs->Close();
+            }
+        }
+
+        $adodb->Close();
+
+        $this->config->debugdb = $olddebugdb;
+        $CFG->debug = $olddebug;
+        ini_set('display_errors', $olddisplay);
+        error_reporting($CFG->debug);
+        ob_end_flush();
+    }
 }

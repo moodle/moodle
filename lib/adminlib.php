@@ -5045,6 +5045,7 @@ class admin_setting_manageenrols extends admin_setting {
         $struninstall = get_string('uninstallplugin', 'core_admin');
         $strusage     = get_string('enrolusage', 'enrol');
         $strversion   = get_string('version');
+        $strtest      = get_string('testsettings', 'core_enrol');
 
         $pluginmanager = core_plugin_manager::instance();
 
@@ -5070,8 +5071,8 @@ class admin_setting_manageenrols extends admin_setting {
         $return .= $OUTPUT->box_start('generalbox enrolsui');
 
         $table = new html_table();
-        $table->head  = array(get_string('name'), $strusage, $strversion, $strenable, $strup.'/'.$strdown, $strsettings, $struninstall);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = array(get_string('name'), $strusage, $strversion, $strenable, $strup.'/'.$strdown, $strsettings, $strtest, $struninstall);
+        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->id = 'courseenrolmentplugins';
         $table->attributes['class'] = 'admintable generaltable';
         $table->data  = array();
@@ -5159,8 +5160,14 @@ class admin_setting_manageenrols extends admin_setting {
                 $uninstall = html_writer::link($uninstallurl, $struninstall);
             }
 
+            $test = '';
+            if (!empty($enrols_available[$enrol]) and method_exists($enrols_available[$enrol], 'test_settings')) {
+                $url = new moodle_url('/enrol/test_settings.php', array('enrol'=>$enrol, 'sesskey'=>sesskey()));
+                $test = html_writer::link($url, $strtest);
+            }
+
             // Add a row to the table.
-            $row = new html_table_row(array($icon.$displayname, $usage, $version, $hideshow, $updown, $settings, $uninstall));
+            $row = new html_table_row(array($icon.$displayname, $usage, $version, $hideshow, $updown, $settings, $test, $uninstall));
             if ($class) {
                 $row->attributes['class'] = $class;
             }
@@ -5582,6 +5589,7 @@ class admin_setting_manageauths extends admin_setting {
             'up', 'down', 'none', 'users'));
         $txt->updown = "$txt->up/$txt->down";
         $txt->uninstall = get_string('uninstallplugin', 'core_admin');
+        $txt->testsettings = get_string('testsettings', 'core_auth');
 
         $authsavailable = core_component::get_plugin_list('auth');
         get_enabled_auth_plugins(true); // fix the list of enabled auths
@@ -5595,8 +5603,10 @@ class admin_setting_manageauths extends admin_setting {
         $displayauths = array();
         $registrationauths = array();
         $registrationauths[''] = $txt->disable;
+        $authplugins = array();
         foreach ($authsenabled as $auth) {
             $authplugin = get_auth_plugin($auth);
+            $authplugins[$auth] = $authplugin;
             /// Get the auth title (from core or own auth lang files)
             $authtitle = $authplugin->get_title();
             /// Apply titles
@@ -5611,6 +5621,7 @@ class admin_setting_manageauths extends admin_setting {
                 continue; //already in the list
             }
             $authplugin = get_auth_plugin($auth);
+            $authplugins[$auth] = $authplugin;
             /// Get the auth title (from core or own auth lang files)
             $authtitle = $authplugin->get_title();
             /// Apply titles
@@ -5624,8 +5635,8 @@ class admin_setting_manageauths extends admin_setting {
         $return .= $OUTPUT->box_start('generalbox authsui');
 
         $table = new html_table();
-        $table->head  = array($txt->name, $txt->users, $txt->enable, $txt->updown, $txt->settings, $txt->uninstall);
-        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
+        $table->head  = array($txt->name, $txt->users, $txt->enable, $txt->updown, $txt->settings, $txt->testsettings, $txt->uninstall);
+        $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->data  = array();
         $table->attributes['class'] = 'admintable generaltable';
         $table->id = 'manageauthtable';
@@ -5635,11 +5646,11 @@ class admin_setting_manageauths extends admin_setting {
         $settings = "<a href=\"auth_config.php?auth=manual\">{$txt->settings}</a>";
         //$settings = "<a href=\"settings.php?section=authsettingmanual\">{$txt->settings}</a>";
         $usercount = $DB->count_records('user', array('auth'=>'manual', 'deleted'=>0));
-        $table->data[] = array($displayname, $usercount, '', '', $settings, '');
+        $table->data[] = array($displayname, $usercount, '', '', $settings, '', '');
         $displayname = $displayauths['nologin'];
         $settings = "<a href=\"auth_config.php?auth=nologin\">{$txt->settings}</a>";
         $usercount = $DB->count_records('user', array('auth'=>'nologin', 'deleted'=>0));
-        $table->data[] = array($displayname, $usercount, '', '', $settings, '');
+        $table->data[] = array($displayname, $usercount, '', '', $settings, '', '');
 
 
         // iterate through auth plugins and add to the display table
@@ -5703,8 +5714,14 @@ class admin_setting_manageauths extends admin_setting {
                 $uninstall = html_writer::link($uninstallurl, $txt->uninstall);
             }
 
+            $test = '';
+            if (!empty($authplugins[$auth]) and method_exists($authplugins[$auth], 'test_settings')) {
+                $url = new moodle_url('/auth/test_settings.php', array('auth'=>$auth, 'sesskey'=>sesskey()));
+                $test = html_writer::link($url, $txt->testsettings);
+            }
+
             // Add a row to the table.
-            $row = new html_table_row(array($displayname, $usercount, $hideshow, $updown, $settings, $uninstall));
+            $row = new html_table_row(array($displayname, $usercount, $hideshow, $updown, $settings, $test, $uninstall));
             if ($class) {
                 $row->attributes['class'] = $class;
             }
