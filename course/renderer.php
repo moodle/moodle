@@ -637,7 +637,8 @@ class core_course_renderer extends plugin_renderer_base {
             $conditionalhidden = $mod->availablefrom > time() ||
                 ($mod->availableuntil && $mod->availableuntil < time()) ||
                 count($mod->conditionsgrade) > 0 ||
-                count($mod->conditionscompletion) > 0;
+                count($mod->conditionscompletion) > 0 ||
+                count($mod->conditionsfield);
         }
         return $conditionalhidden;
     }
@@ -688,25 +689,27 @@ class core_course_renderer extends plugin_renderer_base {
         // viewhiddenactivities, so that teachers see 'items which might not
         // be available to some students' dimmed but students do not see 'item
         // which is actually available to current student' dimmed.
-        $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
-        $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
-                (!$mod->uservisible || has_capability('moodle/course:viewhiddenactivities',
-                        context_course::instance($mod->course)));
-
         $linkclasses = '';
         $accesstext = '';
         $textclasses = '';
-        if ($accessiblebutdim) {
-            $linkclasses .= ' dimmed';
-            $textclasses .= ' dimmed_text';
-            if ($conditionalhidden) {
-                $linkclasses .= ' conditionalhidden';
-                $textclasses .= ' conditionalhidden';
-            }
-            if ($mod->uservisible) {
-                // show accessibility note only if user can access the module himself
+        if ($mod->uservisible) {
+            $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
+            $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
+                has_capability('moodle/course:viewhiddenactivities',
+                        context_course::instance($mod->course));
+            if ($accessiblebutdim) {
+                $linkclasses .= ' dimmed';
+                $textclasses .= ' dimmed_text';
+                if ($conditionalhidden) {
+                    $linkclasses .= ' conditionalhidden';
+                    $textclasses .= ' conditionalhidden';
+                }
+                // Show accessibility note only if user can access the module himself.
                 $accesstext = get_accesshide(get_string('hiddenfromstudents').':'. $mod->modfullname);
             }
+        } else {
+            $linkclasses .= ' dimmed';
+            $textclasses .= ' dimmed_text';
         }
 
         // Get on-click attribute value if specified and decode the onclick - it
@@ -751,28 +754,23 @@ class core_course_renderer extends plugin_renderer_base {
             return $output;
         }
         $content = $mod->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
-        if ($this->page->user_is_editing()) {
-            // In editing mode, when an item is conditionally hidden from some users
-            // we show it as greyed out.
-            $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
-            $dim = !$mod->visible || $conditionalhidden;
-        } else {
-            // When not in editing mode, we only show item as hidden if it is
-            // actually not available to the user
-            $conditionalhidden = false;
-            $dim = !$mod->uservisible;
-        }
-        $textclasses = '';
         $accesstext = '';
-        if ($dim) {
+        $textclasses = '';
+        if ($mod->uservisible) {
+            $conditionalhidden = $this->is_cm_conditionally_hidden($mod);
+            $accessiblebutdim = (!$mod->visible || $conditionalhidden) &&
+                has_capability('moodle/course:viewhiddenactivities',
+                        context_course::instance($mod->course));
+            if ($accessiblebutdim) {
+                $textclasses .= ' dimmed_text';
+                if ($conditionalhidden) {
+                    $textclasses .= ' conditionalhidden';
+                }
+                // Show accessibility note only if user can access the module himself.
+                $accesstext = get_accesshide(get_string('hiddenfromstudents').':'. $mod->modfullname);
+            }
+        } else {
             $textclasses .= ' dimmed_text';
-            if ($conditionalhidden) {
-                $textclasses .= ' conditionalhidden';
-            }
-            if ($mod->uservisible) {
-                // show accessibility note only if user can access the module himself
-                $accesstext = get_accesshide(get_string('hiddenfromstudents').': ');
-            }
         }
         if ($mod->get_url()) {
             if ($content) {
