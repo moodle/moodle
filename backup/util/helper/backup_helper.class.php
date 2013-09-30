@@ -41,10 +41,16 @@ abstract class backup_helper {
 
     /**
      * Given one backupid, ensure its temp dir is completely empty
+     *
+     * If supplied, progress object should be ready to receive indeterminate
+     * progress reports.
+     *
+     * @param string $backupid Backup id
+     * @param core_backup_progress $progress Optional progress reporting object
      */
-    static public function clear_backup_dir($backupid) {
+    static public function clear_backup_dir($backupid, core_backup_progress $progress = null) {
         global $CFG;
-        if (!self::delete_dir_contents($CFG->tempdir . '/backup/' . $backupid)) {
+        if (!self::delete_dir_contents($CFG->tempdir . '/backup/' . $backupid, '', $progress)) {
             throw new backup_helper_exception('cannot_empty_backup_temp_dir');
         }
         return true;
@@ -52,10 +58,16 @@ abstract class backup_helper {
 
     /**
      * Given one backupid, delete completely its temp dir
+     *
+     * If supplied, progress object should be ready to receive indeterminate
+     * progress reports.
+     *
+     * @param string $backupid Backup id
+     * @param core_backup_progress $progress Optional progress reporting object
      */
-     static public function delete_backup_dir($backupid) {
+     static public function delete_backup_dir($backupid, core_backup_progress $progress = null) {
          global $CFG;
-         self::clear_backup_dir($backupid);
+         self::clear_backup_dir($backupid, $progress);
          return rmdir($CFG->tempdir . '/backup/' . $backupid);
      }
 
@@ -63,9 +75,20 @@ abstract class backup_helper {
      * Given one fullpath to directory, delete its contents recursively
      * Copied originally from somewhere in the net.
      * TODO: Modernise this
+     *
+     * If supplied, progress object should be ready to receive indeterminate
+     * progress reports.
+     *
+     * @param string $dir Directory to delete
+     * @param string $excludedir Exclude this directory
+     * @param core_backup_progress $progress Optional progress reporting object
      */
-    static public function delete_dir_contents($dir, $excludeddir='') {
+    static public function delete_dir_contents($dir, $excludeddir='', core_backup_progress $progress = null) {
         global $CFG;
+
+        if ($progress) {
+            $progress->progress();
+        }
 
         if (!is_dir($dir)) {
             // if we've been given a directory that doesn't exist yet, return true.
@@ -108,7 +131,7 @@ abstract class backup_helper {
         // Empty sub directories and then remove the directory
         for ($i=0; $i<count($dir_subdirs); $i++) {
             chmod($dir_subdirs[$i], $CFG->directorypermissions);
-            if (self::delete_dir_contents($dir_subdirs[$i]) == false) {
+            if (self::delete_dir_contents($dir_subdirs[$i], '', $progress) == false) {
                 return false;
             } else {
                 if (remove_dir($dir_subdirs[$i]) == false) {
@@ -125,9 +148,15 @@ abstract class backup_helper {
     }
 
     /**
-     * Delete all the temp dirs older than the time specified
+     * Delete all the temp dirs older than the time specified.
+     *
+     * If supplied, progress object should be ready to receive indeterminate
+     * progress reports.
+     *
+     * @param int $deletefrom Time to delete from
+     * @param core_backup_progress $progress Optional progress reporting object
      */
-    static public function delete_old_backup_dirs($deletefrom) {
+    static public function delete_old_backup_dirs($deletefrom, core_backup_progress $progress = null) {
         global $CFG;
 
         $status = true;
@@ -140,7 +169,7 @@ abstract class backup_helper {
                 //If directory, recurse
                 if (is_dir($file_path)) {
                     // $file is really the backupid
-                    $status = self::delete_backup_dir($file);
+                    $status = self::delete_backup_dir($file, $progress);
                 //If file
                 } else {
                     unlink($file_path);
