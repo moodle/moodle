@@ -386,7 +386,9 @@ class workshop_best_evaluation extends workshop_evaluation {
             $n     += $weight;
 
             // variations very close to zero are too sensitive to a small change of data values
-            if ($var > 0.01 and $agrade != $rgrade) {
+            $var = max($var, 0.01);
+
+            if ($agrade != $rgrade) {
                 $absdelta   = abs($agrade - $rgrade);
                 $reldelta   = pow($agrade - $rgrade, 2) / ($settings->comparison * $var);
                 $distance  += $absdelta * $reldelta * $weight;
