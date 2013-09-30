@@ -152,5 +152,10 @@ class backup_root_task extends backup_task {
         $gradehistories->set_ui(new backup_setting_ui_checkbox($gradehistories, get_string('rootsettinggradehistories', 'backup')));
         $this->add_setting($gradehistories);
         $users->add_dependency($gradehistories);
+
+        // Define question bank inclusion setting.
+        $questionbank = new backup_generic_setting('questionbank', base_setting::IS_BOOLEAN, true);
+        $questionbank->set_ui(new backup_setting_ui_checkbox($questionbank, get_string('rootsettingquestionbank', 'backup')));
+        $this->add_setting($questionbank);
     }
 }

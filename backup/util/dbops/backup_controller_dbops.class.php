@@ -544,11 +544,18 @@ abstract class backup_controller_dbops extends backup_dbops {
             'backup_general_badges'             => 'badges',
             'backup_general_userscompletion'    => 'userscompletion',
             'backup_general_logs'               => 'logs',
-            'backup_general_histories'          => 'grade_histories'
+            'backup_general_histories'          => 'grade_histories',
+            'backup_general_questionbank'       => 'questionbank'
         );
         $plan = $controller->get_plan();
         foreach ($settings as $config=>$settingname) {
             $value = get_config('backup', $config);
+            if ($value === false) {
+                // Ignore this because the config has not been set. get_config
+                // returns false if a setting doesn't exist, '0' is returned when
+                // the configuration is set to false.
+                continue;
+            }
             $locked = (get_config('backup', $config.'_locked') == true);
             if ($plan->setting_exists($settingname)) {
                 $setting = $plan->get_setting($settingname);
