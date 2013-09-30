@@ -56,5 +56,5 @@ Feature: Students can edit or delete their forum posts within a set time limit
   Scenario: Time limit expires
     When I wait "70" seconds
     And I follow "Forum post subject"
-    Then I should not see "Edit"
-    And I should not see "Delete"
+    Then I should not see "Edit" in the "region-main" "region"
+    And I should not see "Delete" in the "region-main" "region"
