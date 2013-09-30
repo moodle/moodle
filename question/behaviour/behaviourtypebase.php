@@ -86,8 +86,6 @@ abstract class question_behaviour_type {
      * and their unit tests.
      *
      * @param question_usage_by_activity $quba the usage to provide summary data for.
-     * @param question_display_options $options display options. Indicates what types
-     *      of information should, or should not, be returned.
      * @return array as described above.
      */
     public function summarise_usage(question_usage_by_activity $quba,

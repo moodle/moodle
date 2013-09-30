@@ -656,6 +656,19 @@ abstract class question_cbm {
     );
     /**#@-*/
 
+    /**#@+ @var array upper and lower limits of the optimal window. */
+    protected static $lowlimit = array(
+        self::LOW  => 0,
+        self::MED  => 0.666666666666667,
+        self::HIGH => 0.8,
+    );
+    protected static $highlimit = array(
+        self::LOW  => 0.666666666666667,
+        self::MED  => 0.8,
+        self::HIGH => 1,
+    );
+    /**#@-*/
+
     /**
      * @return int the default certaintly level that should be assuemd if
      * the student does not choose one.
@@ -686,10 +699,39 @@ abstract class question_cbm {
         return get_string('certainty' . $certainty, 'qbehaviour_deferredcbm');
     }
 
+    /**
+     * @param int $certainty one of the LOW/MED/HIGH constants.
+     * @return string a short textual description of this certainty.
+     */
+    public static function get_short_string($certainty) {
+        return get_string('certaintyshort' . $certainty, 'qbehaviour_deferredcbm');
+    }
+
+    /**
+     * Add information about certainty to a response summary.
+     * @param string $summary the response summary.
+     * @param int $certainty the level of certainty to add.
+     */
     public static function summary_with_certainty($summary, $certainty) {
         if (is_null($certainty)) {
             return $summary;
         }
         return $summary . ' [' . self::get_string($certainty) . ']';
+    }
+
+    /**
+     * @param int $certainty one of the LOW/MED/HIGH constants.
+     * @return float the lower limit of the optimal probability range for this certainty.
+     */
+    public static function optimal_probablility_low($certainty) {
+        return self::$lowlimit[$certainty];
+    }
+
+    /**
+     * @param int $certainty one of the LOW/MED/HIGH constants.
+     * @return float the upper limit of the optimal probability range for this certainty.
+     */
+    public static function optimal_probablility_high($certainty) {
+        return self::$highlimit[$certainty];
     }
 }

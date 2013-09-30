@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../immediatefeedback/behaviourtype.php');
+require_once(dirname(__FILE__) . '/../deferredcbm/behaviourtype.php');
 
 
 /**
@@ -34,8 +34,9 @@ require_once(dirname(__FILE__) . '/../immediatefeedback/behaviourtype.php');
  * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_immediatecbm_type extends qbehaviour_immediatefeedback_type {
-    public function adjust_random_guess_score($fraction) {
-        return question_cbm::adjust_fraction($fraction, question_cbm::default_certainty());
+class qbehaviour_immediatecbm_type extends qbehaviour_deferredcbm_type {
+
+    public function get_unused_display_options() {
+        return array();
     }
 }

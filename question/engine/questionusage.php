@@ -340,8 +340,6 @@ class question_usage_by_activity {
      * The values are arrays with two items, title and content. Each of these
      * will be either a string, or a renderable.
      *
-     * @param question_display_options $options display options. Indicates what types
-     *      of information should, or should not, be returned.
      * @return array as described above.
      */
     public function get_summary_information(question_display_options $options) {
