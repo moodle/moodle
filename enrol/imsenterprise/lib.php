@@ -233,7 +233,7 @@ function cron() {
 
         $eventdata = new stdClass();
         $eventdata->modulename        = 'moodle';
-        $eventdata->component         = 'imsenterprise';
+        $eventdata->component         = 'enrol_imsenterprise';
         $eventdata->name              = 'imsenterprise_enrolment';
         $eventdata->userfrom          = get_admin();
         $eventdata->userto            = get_admin();
