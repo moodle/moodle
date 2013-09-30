@@ -4679,3 +4679,16 @@ function generate_email_supportuser() {
     debugging('generate_email_supportuser is deprecated, please use core_user::get_support_user');
     return core_user::get_support_user();
 }
+
+/**
+ * Get issued badge details for assertion URL
+ *
+ * @deprecated since Moodle 2.6
+ * @param string $hash Unique hash of a badge
+ * @return array Information about issued badge.
+ */
+function badges_get_issued_badge_info($hash) {
+    debugging('Function badges_get_issued_badge_info() is deprecated. Please use core_badges_assertion class and methods to generate badge assertion.', DEBUG_DEVELOPER);
+    $assertion = new core_badges_assertion($hash);
+    return $assertion->get_badge_assertion();
+}

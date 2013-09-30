@@ -120,25 +120,11 @@ class PNG_MetaDataHandler
             debugging('Key is too big');
         }
 
-        if ($type == 'iTXt') {
-            // iTXt International textual data.
-            // Keyword:             1-79 bytes (character string)
-            // Null separator:      1 byte
-            // Compression flag:    1 byte
-            // Compression method:  1 byte
-            // Language tag:        0 or more bytes (character string)
-            // Null separator:      1 byte
-            // Translated keyword:  0 or more bytes
-            // Null separator:      1 byte
-            // Text:                0 or more bytes
-            $data = $key . "\000'json'\0''\0\"{'method': 'hosted', 'assertionUrl': '" . $value . "'}\"";
-        } else {
-            // tEXt Textual data.
-            // Keyword:        1-79 bytes (character string)
-            // Null separator: 1 byte
-            // Text:           n bytes (character string)
-            $data = $key . "\0" . $value;
-        }
+        // tEXt Textual data.
+        // Keyword:        1-79 bytes (character string)
+        // Null separator: 1 byte
+        // Text:           n bytes (character string)
+        $data = $key . "\0" . $value;
         $crc = pack("N", crc32($type . $data));
         $len = pack("N", strlen($data));
 
