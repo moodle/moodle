@@ -628,7 +628,7 @@ abstract class question_behaviour_with_save extends question_behaviour {
 
 /**
  * This helper class contains the constants and methods required for
- * manipulating scores for certainly based marking.
+ * manipulating scores for certainty based marking.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -665,10 +665,10 @@ abstract class question_cbm {
     }
 
     /**
-     * Given a fraction, and a certainly, compute the adjusted fraction.
+     * Given a fraction, and a certainty, compute the adjusted fraction.
      * @param number $fraction the raw fraction for this question.
-     * @param int $certainty one of the certainly level constants.
-     * @return number the adjusted fraction taking the certainly into account.
+     * @param int $certainty one of the certainty level constants.
+     * @return number the adjusted fraction taking the certainty into account.
      */
     public static function adjust_fraction($fraction, $certainty) {
         return self::$offset[$certainty] + self::$factor[$certainty] * $fraction;
@@ -676,7 +676,7 @@ abstract class question_cbm {
 
     /**
      * @param int $certainty one of the LOW/MED/HIGH constants.
-     * @return string a textual desciption of this certainly.
+     * @return string a textual description of this certainty.
      */
     public static function get_string($certainty) {
         return get_string('certainty' . $certainty, 'qbehaviour_deferredcbm');

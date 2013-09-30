@@ -154,7 +154,7 @@ abstract class question_definition {
      * one asked for. For example, you migth want to return a
      * qbehaviour_interactive_adapted_for_myqtype.
      *
-     * @param question_attempt $qa the attempt we are creating an behaviour for.
+     * @param question_attempt $qa the attempt we are creating a behaviour for.
      * @param string $preferredbehaviour the requested type of behaviour.
      * @return question_behaviour the new behaviour object.
      */

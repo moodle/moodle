@@ -16,7 +16,7 @@
 
 /**
  * Question behaviour that is like the deferred feedback model, but with
- * certainly based marking. That is, in addition to the other controls, there are
+ * certainty based marking. That is, in addition to the other controls, there are
  * where the student can indicate how certain they are that their answer is right.
  *
  * @package    qbehaviour

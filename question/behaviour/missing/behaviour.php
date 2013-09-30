@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * is not available.
  *
  * Imagine, for example, that a quiz attempt has been restored from another
- * Moodle site with more behaviours installed, or an behaviour
+ * Moodle site with more behaviours installed, or a behaviour
  * that used to be available in this site has been uninstalled. Obviously all we
  * can do is have some code to prevent fatal errors.
  *

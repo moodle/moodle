@@ -295,7 +295,7 @@ class question_attempt_step {
     }
 
     /**
-     * @param string $name the name of an behaviour variable to look for in the submitted data.
+     * @param string $name the name of a behaviour variable to look for in the submitted data.
      * @return bool whether a variable with this name exists in the question type data.
      */
     public function has_behaviour_var($name) {
@@ -303,7 +303,7 @@ class question_attempt_step {
     }
 
     /**
-     * @param string $name the name of an behaviour variable to look for in the submitted data.
+     * @param string $name the name of a behaviour variable to look for in the submitted data.
      * @return string the requested variable, or null if the variable is not set.
      */
     public function get_behaviour_var($name) {

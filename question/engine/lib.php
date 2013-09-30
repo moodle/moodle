@@ -189,7 +189,7 @@ abstract class question_engine {
     }
 
     /**
-     * Create an behaviour for a particular type. If that type cannot be
+     * Create a behaviour for a particular type. If that type cannot be
      * found, return an instance of qbehaviour_missing.
      *
      * Normally you should use {@link make_archetypal_behaviour()}, or
@@ -239,7 +239,7 @@ abstract class question_engine {
     }
 
     /**
-     * Create an behaviour for a particular type. If that type cannot be
+     * Create a behaviour for a particular type. If that type cannot be
      * found, return an instance of qbehaviour_missing.
      *
      * Normally you should use {@link make_archetypal_behaviour()}, or
@@ -394,7 +394,7 @@ abstract class question_engine {
     }
 
     /**
-     * Get the translated name of an behaviour, for display in the UI.
+     * Get the translated name of a behaviour, for display in the UI.
      * @param string $behaviour the internal name of the model.
      * @return string name from the current language pack.
      */

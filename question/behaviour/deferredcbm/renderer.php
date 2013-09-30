@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_deferredcbm_renderer extends qbehaviour_renderer {
-    protected function certainly_choices($controlname, $selected, $readonly) {
+    protected function certainty_choices($controlname, $selected, $readonly) {
         $attributes = array(
             'type' => 'radio',
             'name' => $controlname,
@@ -64,7 +64,7 @@ class qbehaviour_deferredcbm_renderer extends qbehaviour_renderer {
 
     public function controls(question_attempt $qa, question_display_options $options) {
         return html_writer::tag('div', get_string('howcertainareyou', 'qbehaviour_deferredcbm',
-                $this->certainly_choices($qa->get_behaviour_field_name('certainty'),
+                $this->certainty_choices($qa->get_behaviour_field_name('certainty'),
                 $qa->get_last_behaviour_var('certainty'), $options->readonly)),
                 array('class' => 'certaintychoices'));
     }

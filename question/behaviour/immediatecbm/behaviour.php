@@ -34,10 +34,10 @@ require_once(dirname(__FILE__) . '/../immediatefeedback/behaviour.php');
  * Question behaviour for immediate feedback with CBM.
  *
  * Each question has a submit button next to it along with some radio buttons
- * to input a certainly, that is, how sure they are that they are right.
+ * to input a certainty, that is, how sure they are that they are right.
  * The student can submit their answer at any time for immediate feedback.
  * Once the qustion is submitted, it is not possible for the student to change
- * their answer any more. The student's degree of certainly affects their score.
+ * their answer any more. The student's degree of certainty affects their score.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
