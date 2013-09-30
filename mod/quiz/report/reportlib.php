@@ -137,52 +137,64 @@ function quiz_report_can_filter_only_graded($quiz) {
 }
 
 /**
- * Given the quiz grading method return sub select sql to find the id of the
- * one attempt that will be graded for each user. Or return
- * empty string if all attempts contribute to final grade.
+ * This is a wrapper for {@link quiz_report_grade_method_sql} that takes the whole quiz object instead of just the grading method
+ * as a param. See definition for {@link quiz_report_grade_method_sql} below.
+ *
+ * @param object $quiz
+ * @param string $quizattemptsalias sql alias for 'quiz_attempts' table
+ * @return string sql to test if this is an attempt that will contribute towards the grade of the user
  */
 function quiz_report_qm_filter_select($quiz, $quizattemptsalias = 'quiza') {
     if ($quiz->attempts == 1) {
         // This quiz only allows one attempt.
         return '';
     }
+    return quiz_report_grade_method_sql($quiz->grademethod, $quizattemptsalias);
+}
 
-    switch ($quiz->grademethod) {
+/**
+ * Given a quiz grading method return sql to test if this is an
+ * attempt that will be contribute towards the grade of the user. Or return an
+ * empty string if the grading method is QUIZ_GRADEAVERAGE and thus all attempts
+ * contribute to final grade.
+ *
+ * @param string $grademethod quiz grading method.
+ * @param string $quizattemptsalias sql alias for 'quiz_attempts' table
+ * @return string sql to test if this is an attempt that will contribute towards the graded of the user
+ */
+function quiz_report_grade_method_sql($grademethod, $quizattemptsalias = 'quiza') {
+    switch ($grademethod) {
         case QUIZ_GRADEHIGHEST :
             return "$quizattemptsalias.id = (
-                    SELECT MIN(qa2.id)
-                    FROM {quiz_attempts} qa2
-                    WHERE qa2.quiz = $quizattemptsalias.quiz AND
-                        qa2.userid = $quizattemptsalias.userid AND
-                        COALESCE(qa2.sumgrades, 0) = (
-                            SELECT MAX(COALESCE(qa3.sumgrades, 0))
-                            FROM {quiz_attempts} qa3
-                            WHERE qa3.quiz = $quizattemptsalias.quiz AND
-                                qa3.userid = $quizattemptsalias.userid
-                        )
-                    )";
+                            SELECT MIN(qa2.id)
+                            FROM {quiz_attempts} qa2
+                            WHERE qa2.quiz = $quizattemptsalias.quiz AND
+                                qa2.userid = $quizattemptsalias.userid AND
+                                COALESCE(qa2.sumgrades, 0) = (
+                                    SELECT MAX(COALESCE(qa3.sumgrades, 0))
+                                    FROM {quiz_attempts} qa3
+                                    WHERE qa3.quiz = $quizattemptsalias.quiz AND
+                                        qa3.userid = $quizattemptsalias.userid
+                                )
+                            )";
 
         case QUIZ_GRADEAVERAGE :
             return '';
 
         case QUIZ_ATTEMPTFIRST :
-            return "$quizattemptsalias.id = (
-                    SELECT MIN(qa2.id)
-                    FROM {quiz_attempts} qa2
-                    WHERE qa2.quiz = $quizattemptsalias.quiz AND
-                        qa2.userid = $quizattemptsalias.userid)";
+            return "$quizattemptsalias.attempt = 1";
 
         case QUIZ_ATTEMPTLAST :
             return "$quizattemptsalias.id = (
-                    SELECT MAX(qa2.id)
-                    FROM {quiz_attempts} qa2
-                    WHERE qa2.quiz = $quizattemptsalias.quiz AND
-                        qa2.userid = $quizattemptsalias.userid)";
+                            SELECT MAX(qa2.id)
+                            FROM {quiz_attempts} qa2
+                            WHERE qa2.quiz = $quizattemptsalias.quiz AND
+                                qa2.userid = $quizattemptsalias.userid)";
     }
 }
 
 /**
- * Get the nuber of students whose score was in a particular band for this quiz.
+ * Get the number of students whose score was in a particular band for this quiz.
  * @param number $bandwidth the width of each band.
  * @param int $bands the number of bands
  * @param int $quizid the quiz id.
@@ -225,10 +237,10 @@ ORDER BY
     $data = $DB->get_records_sql_menu($sql, $params);
 
     // We need to create array elements with values 0 at indexes where there is no element.
-    $data =  $data + array_fill(0, $bands + 1, 0);
+    $data = $data + array_fill(0, $bands + 1, 0);
     ksort($data);
 
-    // Place the maximum (prefect grade) into the last band i.e. make last
+    // Place the maximum (perfect grade) into the last band i.e. make last
     // band for example 9 <= g <=10 (where 10 is the perfect grade) rather than
     // just 9 <= g <10.
     $data[$bands - 1] += $data[$bands];

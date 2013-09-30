@@ -28,16 +28,24 @@
  */
 class quiz_statistics_calculated {
 
-    public function __construct($allattempts = null) {
-        if ($allattempts !== null) {
-            $this->allattempts = $allattempts;
+    /**
+     * @param  string $whichattempts which attempts to use, represented internally as one of the constants as used in
+     *                                   $quiz->grademethod ie.
+     *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST
+     *                                   we calculate stats based on which attempts would affect the grade for each student,
+     *                                   the default null value is used when constructing an instance whose values will be
+     *                                   populated from a db record.
+     */
+    public function __construct($whichattempts = null) {
+        if ($whichattempts !== null) {
+            $this->whichattempts = $whichattempts;
         }
     }
 
     /**
-     * @var bool whether we are calculating calculate stats from all attempts.
+     * @var int which attempts we are calculating calculate stats from.
      */
-    public $allattempts;
+    public $whichattempts;
 
     /* Following stats all described here : http://docs.moodle.org/dev/Quiz_statistics_calculations#Test_statistics  */
 
@@ -45,9 +53,17 @@ class quiz_statistics_calculated {
 
     public $allattemptscount = 0;
 
+    public $lastattemptscount = 0;
+
+    public $highestattemptscount = 0;
+
     public $firstattemptsavg;
 
     public $allattemptsavg;
+
+    public $lastattemptsavg;
+
+    public $highestattemptsavg;
 
     public $median;
 
@@ -68,20 +84,34 @@ class quiz_statistics_calculated {
      */
     public $timemodified;
 
+    /**
+     * Count of attempts selected by $this->whichattempts
+     *
+     * @return int
+     */
     public function s() {
-        if ($this->allattempts) {
-            return $this->allattemptscount;
-        } else {
-            return $this->firstattemptscount;
-        }
+        return $this->get_field('count');
     }
 
+    /**
+     * Average grade for the attempts selected by $this->whichattempts
+     *
+     * @return float
+     */
     public function avg() {
-        if ($this->allattempts) {
-            return $this->allattemptsavg;
-        } else {
-            return $this->firstattemptsavg;
-        }
+        return $this->get_field('avg');
+    }
+
+    /**
+     * Get the right field name to fetch a stat for these attempts that is calculated for more than one $whichattempts (count or
+     * avg).
+     *
+     * @param string $field name of field
+     * @return int|float
+     */
+    protected function get_field($field) {
+        $fieldname = quiz_statistics_calculator::using_attempts_string_id($this->whichattempts).$field;
+        return $this->{$fieldname};
     }
 
     /**
@@ -97,6 +127,8 @@ class quiz_statistics_calculated {
                            'allattemptscount' => 'number',
                            'firstattemptsavg' => 'summarks_as_percentage',
                            'allattemptsavg' => 'summarks_as_percentage',
+                           'lastattemptsavg' => 'summarks_as_percentage',
+                           'highestattemptsavg' => 'summarks_as_percentage',
                            'median' => 'summarks_as_percentage',
                            'standarddeviation' => 'summarks_as_percentage',
                            'skewness' => 'number_format',
@@ -149,27 +181,18 @@ class quiz_statistics_calculated {
                     $formattedvalue = $value;
             }
 
-            $quizinfo[get_string($property, 'quiz_statistics', $this->using_attempts_string())] = $formattedvalue;
+            $quizinfo[get_string($property, 'quiz_statistics',
+                                 quiz_statistics_calculator::using_attempts_lang_string($this->whichattempts))] = $formattedvalue;
         }
 
         return $quizinfo;
     }
 
     /**
-     * @return string the appropriate lang string to describe this option.
-     */
-    protected function using_attempts_string() {
-        if ($this->allattempts) {
-            return get_string('allattempts', 'quiz_statistics');
-        } else {
-            return get_string('firstattempts', 'quiz_statistics');
-        }
-    }
-
-    /**
      * @var array of names of properties of this class that are cached in db record.
      */
-    protected $fieldsindb = array('allattempts', 'firstattemptscount', 'allattemptscount', 'firstattemptsavg', 'allattemptsavg',
+    protected $fieldsindb = array('whichattempts', 'firstattemptscount', 'allattemptscount', 'firstattemptsavg', 'allattemptsavg',
+                                    'lastattemptscount', 'highestattemptscount', 'lastattemptsavg', 'highestattemptsavg',
                                     'median', 'standarddeviation', 'skewness',
                                     'kurtosis', 'cic', 'errorratio', 'standarderror');
 

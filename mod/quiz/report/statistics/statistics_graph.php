@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/statisticslib.php');
 // Get the parameters.
 $quizid = required_param('quizid', PARAM_INT);
 $currentgroup = required_param('currentgroup', PARAM_INT);
-$useallattempts = required_param('useallattempts', PARAM_INT);
+$whichattempts = required_param('whichattempts', PARAM_INT);
 
 $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
 $cm = get_coursemodule_from_instance('quiz', $quiz->id);
@@ -55,10 +55,14 @@ if (groups_get_activity_groupmode($cm)) {
 if ($currentgroup && !in_array($currentgroup, array_keys($groups))) {
     print_error('groupnotamember', 'group');
 }
-$groupstudents = get_users_by_capability($modcontext, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
-                                         '', '', '', '', $currentgroup, '', false);
 
-$qubaids = quiz_statistics_qubaids_condition($quizid, $currentgroup, $groupstudents, $useallattempts);
+if (empty($currentgroup)) {
+    $groupstudents = array();
+} else {
+    $groupstudents = get_users_by_capability($modcontext, array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'),
+                                             '', '', '', '', $currentgroup, '', false);
+}
+$qubaids = quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattempts);
 
 // Load the rest of the required data.
 $questions = quiz_report_get_significant_questions($quiz);
