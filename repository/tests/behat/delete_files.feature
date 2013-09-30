@@ -13,7 +13,9 @@ Feature: Delete files and folders from the file manager
     And I create "Delete me" folder in "Files" filepicker
     And I press "Save changes"
     When I delete "empty.txt" from "Files" filepicker
+    And I press "Save changes"
     Then I should not see "empty.txt"
     And I delete "Delete me" from "Files" filepicker
+    And I press "Save changes"
     And I should not see "Delete me"
     And I press "Cancel"
