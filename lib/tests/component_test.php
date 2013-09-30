@@ -341,11 +341,17 @@ class core_component_testcase extends advanced_testcase {
     }
 
     public function test_get_plugin_list_with_file() {
-        // Force the cache reset.
-        phpunit_util::reset_all_data();
         $this->resetAfterTest(true);
 
-        $expected = array('completion', 'log', 'loglive', 'outline', 'participation', 'progress', 'stats');
+        // No extra reset here because core_component reset automatically.
+
+        $expected = array();
+        $reports = core_component::get_plugin_list('report');
+        foreach ($reports as $name => $fulldir) {
+            if (file_exists("$fulldir/lib.php")) {
+                $expected[] = $name;
+            }
+        }
 
         // Test cold.
         $list = core_component::get_plugin_list_with_file('report', 'lib.php', false);
