@@ -1372,18 +1372,20 @@ class grade_item extends grade_object {
 
             if ($grade_category->aggregatesubcats) {
                 // return all children excluding category items
+                $params[] = $this->courseid;
                 $params[] = '%/' . $grade_category->id . '/%';
                 $sql = "SELECT gi.id
                           FROM {grade_items} gi
+                          JOIN {grade_categories} gc ON gi.categoryid = gc.id
                          WHERE $gtypes
                                $outcomes_sql
-                               AND gi.categoryid IN (
-                                  SELECT gc.id
-                                    FROM {grade_categories} gc
-                                   WHERE gc.path LIKE ?)";
+                               AND gi.courseid = ?
+                               AND gc.path LIKE ?";
             } else {
                 $params[] = $grade_category->id;
+                $params[] = $this->courseid;
                 $params[] = $grade_category->id;
+                $params[] = $this->courseid;
                 if (empty($CFG->grade_includescalesinaggregation)) {
                     $params[] = GRADE_TYPE_VALUE;
                 } else {
@@ -1394,6 +1396,7 @@ class grade_item extends grade_object {
                           FROM {grade_items} gi
                          WHERE $gtypes
                                AND gi.categoryid = ?
+                               AND gi.courseid = ?
                                $outcomes_sql
                         UNION
 
@@ -1401,6 +1404,7 @@ class grade_item extends grade_object {
                           FROM {grade_items} gi, {grade_categories} gc
                          WHERE (gi.itemtype = 'category' OR gi.itemtype = 'course') AND gi.iteminstance=gc.id
                                AND gc.parent = ?
+                               AND gi.courseid = ?
                                AND $gtypes
                                $outcomes_sql";
             }
