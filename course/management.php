@@ -146,13 +146,13 @@ if ($action !== false && confirm_sesskey()) {
             // They must have specified a category and a course.
             required_param('categoryid', PARAM_INT);
             required_param('courseid', PARAM_INT);
-            $redirectback = \core_course\management\helper::action_course_moveup($course, $category);
+            $redirectback = \core_course\management\helper::action_course_change_sortorder_up_one($course, $category);
             break;
         case 'movecoursedown' :
             // They must have specified a category and a course.
             required_param('categoryid', PARAM_INT);
             required_param('courseid', PARAM_INT);
-            $redirectback = \core_course\management\helper::action_course_movedown($course, $category);
+            $redirectback = \core_course\management\helper::action_course_change_sortorder_down_one($course, $category);
             break;
         case 'showcategory' :
             // They must have specified a category.
@@ -167,12 +167,12 @@ if ($action !== false && confirm_sesskey()) {
         case 'movecategoryup' :
             // They must have specified a category.
             required_param('categoryid', PARAM_INT);
-            $redirectback = \core_course\management\helper::action_category_moveup($category);
+            $redirectback = \core_course\management\helper::action_category_change_sortorder_up_one($category);
             break;
         case 'movecategorydown' :
             // They must have specified a category.
             required_param('categoryid', PARAM_INT);
-            $redirectback = \core_course\management\helper::action_category_movedown($category);
+            $redirectback = \core_course\management\helper::action_category_change_sortorder_down_one($category);
             break;
         case 'deletecategory':
             // They must have specified a category.

@@ -3382,13 +3382,13 @@ function course_change_visibility($courseid, $show = true) {
 }
 
 /**
- * Moves the course up or down one in respect to sort order.
+ * Changes the course sortorder by one, moving it up or down one in respect to sort order.
  *
  * @param stdClass|course_in_list $course
  * @param bool $up If set to true the course will be moved up one. Otherwise down one.
  * @return bool
  */
-function course_move_by_one($course, $up) {
+function course_change_sortorder_by_one($course, $up) {
     global $DB;
     $params = array($course->sortorder, $course->category);
     if ($up) {
@@ -3413,13 +3413,13 @@ function course_move_by_one($course, $up) {
 }
 
 /**
- * Move one course after another.
+ * Changes the sort order of courses in a category so that the first course appears after the second.
  *
- * @param int|stdClass $courseorid The course to move.
- * @param int $moveaftercourseid The course to move after or 0 if you want it to be the first course in the category.
+ * @param int|stdClass $courseorid The course to focus on.
+ * @param int $moveaftercourseid The course to shifter after or 0 if you want it to be the first course in the category.
  * @return bool
  */
-function course_move_after_course($courseorid, $moveaftercourseid) {
+function course_change_sortorder_after_course($courseorid, $moveaftercourseid) {
     global $DB;
 
     if (!is_object($courseorid)) {

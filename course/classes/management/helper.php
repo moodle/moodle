@@ -310,83 +310,83 @@ class helper {
     }
 
     /**
-     * Moves the provided course up one place in the sort order given a \course_in_list object.
+     * Resorts the courses within a category moving the given course up by one.
      *
      * @param \course_in_list $course
      * @param \coursecat $category
      * @return bool
      * @throws \moodle_exception
      */
-    public static function action_course_moveup(\course_in_list $course, \coursecat $category) {
+    public static function action_course_change_sortorder_up_one(\course_in_list $course, \coursecat $category) {
         if (!$category->can_resort_courses()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
         }
-        return course_move_by_one($course, true);
+        return \course_change_sortorder_by_one($course, true);
     }
 
     /**
-     * Moves the provided course down one place in the sort order given a \course_in_list object.
+     * Resorts the courses within a category moving the given course down by one.
      *
      * @param \course_in_list $course
      * @param \coursecat $category
      * @return bool
      * @throws \moodle_exception
      */
-    public static function action_course_movedown(\course_in_list $course, \coursecat $category) {
+    public static function action_course_change_sortorder_down_one(\course_in_list $course, \coursecat $category) {
         if (!$category->can_resort_courses()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
         }
-        return course_move_by_one($course, false);
+        return \course_change_sortorder_by_one($course, false);
     }
 
     /**
-     * Moves the provided course up one place in the sort order given an id or database record.
+     * Resorts the courses within a category moving the given course up by one.
      *
      * @global \moodle_database $DB
      * @param int|\stdClass $courserecordorid
      * @return bool
      */
-    public static function action_course_moveup_by_record($courserecordorid) {
+    public static function action_course_change_sortorder_up_one_by_record($courserecordorid) {
         if (is_int($courserecordorid)) {
             $courserecordorid = get_course($courserecordorid);
         }
         $course = new \course_in_list($courserecordorid);
         $category = \coursecat::get($course->category);
-        return self::action_course_moveup($course, $category);
+        return self::action_course_change_sortorder_up_one($course, $category);
     }
 
     /**
-     * Moves the provided course down one place in the sort order given an id or database record.
+     * Resorts the courses within a category moving the given course down by one.
      *
      * @global \moodle_database $DB
      * @param int|\stdClass $courserecordorid
      * @return bool
      */
-    public static function action_course_movedown_by_record($courserecordorid) {
+    public static function action_course_change_sortorder_down_one_by_record($courserecordorid) {
         if (is_int($courserecordorid)) {
             $courserecordorid = get_course($courserecordorid);
         }
         $course = new \course_in_list($courserecordorid);
         $category = \coursecat::get($course->category);
-        return self::action_course_movedown($course, $category);
+        return self::action_course_change_sortorder_down_one($course, $category);
     }
 
     /**
      * Changes the sort order so that the first course appears after the second course.
      *
-     * @param int|stdClass $courserecordorid
+     * @param int|\stdClass $courserecordorid
      * @param int $moveaftercourseid
      * @return bool
      * @throws \moodle_exception
      */
-    public static function action_course_move_after_course($courserecordorid, $moveaftercourseid) {
+    public static function action_course_change_sortorder_after_course($courserecordorid, $moveaftercourseid) {
         $course = \get_course($courserecordorid);
         $category = \coursecat::get($course->category);
         if (!$category->can_resort_courses()) {
             $url = '/course/management.php?categoryid='.$course->category;
             throw new \moodle_exception('nopermissions', 'error', $url, \get_string('resortcourses', 'moodle'));
         }
-        return \course_move_after_course($course, $moveaftercourseid);
+        return \course_change_sortorder_after_course($course, $moveaftercourseid);
     }
 
     /**
@@ -448,53 +448,53 @@ class helper {
     }
 
     /**
-     * Moves a category up one spot in the sort order given a \coursecat object.
+     * Resort a categories subcategories shifting the given category up one.
      *
      * @param \coursecat $category
      * @return bool
      * @throws \moodle_exception
      */
-    public static function action_category_moveup(\coursecat $category) {
+    public static function action_category_change_sortorder_up_one(\coursecat $category) {
         if (!$category->can_change_sortorder()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_change_sortorder');
         }
-        return $category->move_by_one(true);
+        return $category->change_sortorder_by_one(true);
     }
 
     /**
-     * Moves a category down one spot in the sort order given a \coursecat object.
+     * Resort a categories subcategories shifting the given category down one.
      *
      * @param \coursecat $category
      * @return bool
      * @throws \moodle_exception
      */
-    public static function action_category_movedown(\coursecat $category) {
+    public static function action_category_change_sortorder_down_one(\coursecat $category) {
         if (!$category->can_change_sortorder()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_change_sortorder');
         }
-        return $category->move_by_one(false);
+        return $category->change_sortorder_by_one(false);
     }
 
     /**
-     * Moves a category up one spot in the sort order given a category id.
+     * Resort a categories subcategories shifting the given category up one.
      *
      * @param int $categoryid
      * @return bool
      */
-    public static function action_category_moveup_by_id($categoryid) {
+    public static function action_category_change_sortorder_up_one_by_id($categoryid) {
         $category = \coursecat::get($categoryid);
-        return self::action_category_moveup($category);
+        return self::action_category_change_sortorder_up_one($category);
     }
 
     /**
-     * Moves a category down one spot in the sort order given a category id.
+     * Resort a categories subcategories shifting the given category down one.
      *
      * @param int $categoryid
      * @return bool
      */
-    public static function action_category_movedown_by_id($categoryid) {
+    public static function action_category_change_sortorder_down_one_by_id($categoryid) {
         $category = \coursecat::get($categoryid);
-        return self::action_category_movedown($category);
+        return self::action_category_change_sortorder_down_one($category);
     }
 
     /**
@@ -589,7 +589,7 @@ class helper {
      * @param \coursecat $newcategory The category we are moving courses into.
      * @param array $courseids The ID's of the courses we want to move.
      * @return bool True on success.
-     * @throws moodle_exception
+     * @throws \moodle_exception
      */
     public static function action_category_move_courses_into(\coursecat $oldcategory, \coursecat $newcategory, array $courseids) {
         global $DB;
@@ -665,9 +665,10 @@ class helper {
      * This function works much the same way as action_category_move_courses_into however it allows courses from multiple
      * categories to be moved into a single category.
      *
-     * @param int|coursecat $categoryid The category to move them into.
+     * @param int|\coursecat $categoryorid The category to move them into.
      * @param array|int $courseids An array of course id's or optionally just a single course id.
      * @return bool True on success or false on failure.
+     * @throws \moodle_exception
      */
     public static function move_courses_into_category($categoryorid, $courseids = array()) {
         global $DB;

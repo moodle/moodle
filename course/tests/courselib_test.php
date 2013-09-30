@@ -2212,7 +2212,7 @@ class core_course_courselib_testcase extends advanced_testcase {
     /**
      * Test course move after course.
      */
-    public function test_course_move_after_course() {
+    public function test_course_change_sortorder_after_course() {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -2234,7 +2234,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(array_keys($dbcourses), array_keys($courses));
 
         // Test moving down.
-        $this->assertTrue(course_move_after_course($course1->id, $course3->id));
+        $this->assertTrue(course_change_sortorder_after_course($course1->id, $course3->id));
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
         $this->assertEquals(array($course2->id, $course3->id, $course1->id), array_keys($courses));
@@ -2242,7 +2242,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(array_keys($dbcourses), array_keys($courses));
 
         // Test moving up.
-        $this->assertTrue(course_move_after_course($course1->id, $course2->id));
+        $this->assertTrue(course_change_sortorder_after_course($course1->id, $course2->id));
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
         $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
@@ -2250,7 +2250,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals(array_keys($dbcourses), array_keys($courses));
 
         // Test moving to the top.
-        $this->assertTrue(course_move_after_course($course1->id, 0));
+        $this->assertTrue(course_change_sortorder_after_course($course1->id, 0));
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
         $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
@@ -2287,7 +2287,7 @@ class core_course_courselib_testcase extends advanced_testcase {
     /**
      * Tests moving the course up and down by one.
      */
-    public function test_course_move_by_one() {
+    public function test_course_change_sortorder_by_one() {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -2306,7 +2306,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Test moving down.
         $course1 = get_course($course1->id);
-        $this->assertTrue(course_move_by_one($course1, false));
+        $this->assertTrue(course_change_sortorder_by_one($course1, false));
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
         $this->assertEquals(array($course2->id, $course1->id, $course3->id), array_keys($courses));
@@ -2315,7 +2315,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Test moving up.
         $course1 = get_course($course1->id);
-        $this->assertTrue(course_move_by_one($course1, true));
+        $this->assertTrue(course_change_sortorder_by_one($course1, true));
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
         $this->assertEquals(array($course1->id, $course2->id, $course3->id), array_keys($courses));
@@ -2324,7 +2324,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Test moving the top course up one.
         $course1 = get_course($course1->id);
-        $this->assertFalse(course_move_by_one($course1, true));
+        $this->assertFalse(course_change_sortorder_by_one($course1, true));
         // Check nothing changed.
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
@@ -2334,7 +2334,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         // Test moving the bottom course up down.
         $course3 = get_course($course3->id);
-        $this->assertFalse(course_move_by_one($course3, false));
+        $this->assertFalse(course_change_sortorder_by_one($course3, false));
         // Check nothing changed.
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);

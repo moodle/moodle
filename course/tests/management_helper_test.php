@@ -545,7 +545,7 @@ class core_course_management_helper_test extends advanced_testcase {
         );
 
         // Move the top category down one.
-        $this->assertTrue(\core_course\management\helper::action_category_movedown($cat1));
+        $this->assertTrue(\core_course\management\helper::action_category_change_sortorder_down_one($cat1));
         // Reload out objects.
         $cat1 = coursecat::get($cat1->id);
         $cat2 = coursecat::get($cat2->id);
@@ -561,7 +561,7 @@ class core_course_management_helper_test extends advanced_testcase {
         );
 
         // Move the bottom category up one.
-        $this->assertTrue(\core_course\management\helper::action_category_moveup($cat3));
+        $this->assertTrue(\core_course\management\helper::action_category_change_sortorder_up_one($cat3));
         // Reload out objects.
         $cat1 = coursecat::get($cat1->id);
         $cat2 = coursecat::get($cat2->id);
@@ -577,14 +577,14 @@ class core_course_management_helper_test extends advanced_testcase {
         );
 
         // Move the top category down one.
-        $this->assertTrue(\core_course\management\helper::action_category_movedown_by_id($cat2->id));
+        $this->assertTrue(\core_course\management\helper::action_category_change_sortorder_down_one_by_id($cat2->id));
         $this->assertEquals(
             array('Three', 'Two', 'One'),
             array_keys($DB->get_records('course_categories', array('parent' => $parent->id), 'sortorder', 'name'))
         );
 
         // Move the top category down one.
-        $this->assertTrue(\core_course\management\helper::action_category_moveup_by_id($cat1->id));
+        $this->assertTrue(\core_course\management\helper::action_category_change_sortorder_up_one_by_id($cat1->id));
         $this->assertEquals(
             array('Three', 'One', 'Two'),
             array_keys($DB->get_records('course_categories', array('parent' => $parent->id), 'sortorder', 'name'))
@@ -601,7 +601,7 @@ class core_course_management_helper_test extends advanced_testcase {
         // Verify sorting.
 
         // Test moving the top category up one. Nothing should change but it should return false.
-        $this->assertFalse(\core_course\management\helper::action_category_moveup($cat3));
+        $this->assertFalse(\core_course\management\helper::action_category_change_sortorder_up_one($cat3));
         // Reload out objects.
         $cat1 = coursecat::get($cat1->id);
         $cat2 = coursecat::get($cat2->id);
@@ -617,7 +617,7 @@ class core_course_management_helper_test extends advanced_testcase {
         );
 
         // Test moving the bottom category down one. Nothing should change but it should return false.
-        $this->assertFalse(\core_course\management\helper::action_category_movedown($cat2));
+        $this->assertFalse(\core_course\management\helper::action_category_change_sortorder_down_one($cat2));
         // Reload out objects.
         $cat1 = coursecat::get($cat1->id);
         $cat2 = coursecat::get($cat2->id);
@@ -635,7 +635,7 @@ class core_course_management_helper_test extends advanced_testcase {
         // Prevent moving on the parent.
         course_capability_assignment::prevent(self::CATEGORY_MANAGE, $roleid, $parent->get_context()->id);
         try {
-            \core_course\management\helper::action_category_moveup($cat1);
+            \core_course\management\helper::action_category_change_sortorder_up_one($cat1);
         } catch (moodle_exception $exception) {
             // Check everything is still where it should be.
             $this->assertEquals(
@@ -644,7 +644,7 @@ class core_course_management_helper_test extends advanced_testcase {
             );
         }
         try {
-            \core_course\management\helper::action_category_movedown($cat3);
+            \core_course\management\helper::action_category_change_sortorder_down_one($cat3);
         } catch (moodle_exception $exception) {
             // Check everything is still where it should be.
             $this->assertEquals(
@@ -1009,7 +1009,7 @@ class core_course_management_helper_test extends advanced_testcase {
 
         // Move a course down.
         $this->assertTrue(
-            \core_course\management\helper::action_course_movedown(new course_in_list(get_course($course1->id)), $category)
+            \core_course\management\helper::action_course_change_sortorder_down_one(new course_in_list(get_course($course1->id)), $category)
         );
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
@@ -1019,7 +1019,7 @@ class core_course_management_helper_test extends advanced_testcase {
 
         // Move a course up.
         $this->assertTrue(
-            \core_course\management\helper::action_course_moveup(new course_in_list(get_course($course3->id)), $category)
+            \core_course\management\helper::action_course_change_sortorder_up_one(new course_in_list(get_course($course3->id)), $category)
         );
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
@@ -1029,7 +1029,7 @@ class core_course_management_helper_test extends advanced_testcase {
 
         // Move a course down by record.
         $this->assertTrue(
-            \core_course\management\helper::action_course_movedown_by_record(get_course($course2->id), $category)
+            \core_course\management\helper::action_course_change_sortorder_down_one_by_record(get_course($course2->id), $category)
         );
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
@@ -1039,7 +1039,7 @@ class core_course_management_helper_test extends advanced_testcase {
 
         // Move a course up by record.
         $this->assertTrue(
-            \core_course\management\helper::action_course_moveup_by_record(get_course($course2->id), $category)
+            \core_course\management\helper::action_course_change_sortorder_up_one_by_record(get_course($course2->id), $category)
         );
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
@@ -1049,7 +1049,7 @@ class core_course_management_helper_test extends advanced_testcase {
 
         // Try move the bottom course down. This should return false and nothing changes.
         $this->assertFalse(
-            \core_course\management\helper::action_course_movedown(new course_in_list(get_course($course1->id)), $category)
+            \core_course\management\helper::action_course_change_sortorder_down_one(new course_in_list(get_course($course1->id)), $category)
         );
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
@@ -1059,7 +1059,7 @@ class core_course_management_helper_test extends advanced_testcase {
 
         // Try move the top course up. This should return false and nothing changes.
         $this->assertFalse(
-            \core_course\management\helper::action_course_moveup(new course_in_list(get_course($course2->id)), $category)
+            \core_course\management\helper::action_course_change_sortorder_up_one(new course_in_list(get_course($course2->id)), $category)
         );
         $courses = $category->get_courses();
         $this->assertInternalType('array', $courses);
@@ -1073,7 +1073,7 @@ class core_course_management_helper_test extends advanced_testcase {
         $category = coursecat::get($category->id);
 
         try {
-            \core_course\management\helper::action_course_movedown(new course_in_list(get_course($course2->id)), $category);
+            \core_course\management\helper::action_course_change_sortorder_down_one(new course_in_list(get_course($course2->id)), $category);
             $this->fail('Course moved without having the required permissions.');
         } catch (moodle_exception $exception) {
             // Check nothing has changed.

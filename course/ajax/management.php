@@ -44,11 +44,11 @@ echo $OUTPUT->header();
 switch ($action) {
     case 'movecourseup' :
         $courseid = required_param('courseid', PARAM_INT);
-        $outcome->outcome = \core_course\management\helper::action_course_moveup_by_record($courseid);
+        $outcome->outcome = \core_course\management\helper::action_course_change_sortorder_up_one_by_record($courseid);
         break;
     case 'movecoursedown' :
         $courseid = required_param('courseid', PARAM_INT);
-        $outcome->outcome = \core_course\management\helper::action_course_movedown_by_record($courseid);
+        $outcome->outcome = \core_course\management\helper::action_course_change_sortorder_down_one_by_record($courseid);
         break;
     case 'movecourseintocategory':
         $courseid = required_param('courseid', PARAM_INT);
@@ -58,7 +58,8 @@ switch ($action) {
     case 'movecourseafter' :
         $courseid = required_param('courseid', PARAM_INT);
         $moveaftercourseid = required_param('moveafter', PARAM_INT);
-        $outcome->outcome = \core_course\management\helper::action_course_move_after_course($courseid, $moveaftercourseid);
+        $outcome->outcome = \core_course\management\helper::action_course_change_sortorder_after_course(
+            $courseid, $moveaftercourseid);
         break;
     case 'hidecourse' :
         $courseid = required_param('courseid', PARAM_INT);
@@ -70,11 +71,11 @@ switch ($action) {
         break;
     case 'movecategoryup' :
         $categoryid = required_param('categoryid', PARAM_INT);
-        $outcome->outcome = \core_course\management\helper::action_category_moveup_by_id($categoryid);
+        $outcome->outcome = \core_course\management\helper::action_category_change_sortorder_up_one_by_id($categoryid);
         break;
     case 'movecategorydown' :
         $categoryid = required_param('categoryid', PARAM_INT);
-        $outcome->outcome = \core_course\management\helper::action_category_movedown_by_id($categoryid);
+        $outcome->outcome = \core_course\management\helper::action_category_change_sortorder_down_one_by_id($categoryid);
         break;
     case 'hidecategory' :
         $categoryid = required_param('categoryid', PARAM_INT);

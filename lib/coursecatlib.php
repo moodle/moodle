@@ -2420,13 +2420,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
-     * Moves a category up or down one spot in the sort order.
+     * Changes the sort order of this categories parent shifting this category up or down one.
      *
      * @global \moodle_database $DB
-     * @param bool $up If set to true the category is moved up one spot, else its moved down.
+     * @param bool $up If set to true the category is shifted up one spot, else its moved down.
      * @return bool True on success, false otherwise.
      */
-    public function move_by_one($up) {
+    public function change_sortorder_by_one($up) {
         global $DB;
         $params = array($this->sortorder, $this->parent);
         if ($up) {
