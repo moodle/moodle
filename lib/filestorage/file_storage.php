@@ -1400,10 +1400,6 @@ class file_storage {
             $filerecord->sortorder = 0;
         }
 
-        // TODO MDL-33416 [2.4] fields referencelastsync and referencelifetime to be removed from {files} table completely
-        unset($filerecord->referencelastsync);
-        unset($filerecord->referencelifetime);
-
         $filerecord->mimetype          = empty($filerecord->mimetype) ? $this->mimetype($filerecord->filename) : $filerecord->mimetype;
         $filerecord->userid            = empty($filerecord->userid) ? null : $filerecord->userid;
         $filerecord->source            = empty($filerecord->source) ? null : $filerecord->source;
@@ -2345,7 +2341,7 @@ class file_storage {
                     'lastsync' => $lastsync,
                     'lifetime' => $lifetime);
         $DB->execute('UPDATE {files} SET contenthash = :contenthash, filesize = :filesize,
-            status = :status, referencelastsync = :lastsync, referencelifetime = :lifetime
+            status = :status
             WHERE referencefileid = :referencefileid', $params);
         $data = array('id' => $referencefileid, 'lastsync' => $lastsync, 'lifetime' => $lifetime);
         $DB->update_record('files_reference', (object)$data);
