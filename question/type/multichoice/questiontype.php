@@ -39,8 +39,8 @@ require_once($CFG->libdir . '/questionlib.php');
 class qtype_multichoice extends question_type {
     public function get_question_options($question) {
         global $DB, $OUTPUT;
-        $question->options = $DB->get_record('question_multichoice',
-                array('question' => $question->id), '*', MUST_EXIST);
+        $question->options = $DB->get_record('qtype_multichoice_options',
+                array('questionid' => $question->id), '*', MUST_EXIST);
         parent::get_question_options($question);
     }
 
@@ -67,7 +67,6 @@ class qtype_multichoice extends question_type {
         // Insert all the new answers.
         $totalfraction = 0;
         $maxfraction = -1;
-        $answers = array();
         foreach ($question->answer as $key => $answerdata) {
             if (trim($answerdata['text']) == '') {
                 continue;
@@ -93,7 +92,6 @@ class qtype_multichoice extends question_type {
             $answer->feedbackformat = $question->feedback[$key]['format'];
 
             $DB->update_record('question_answers', $answer);
-            $answers[] = $answer->id;
 
             if ($question->fraction[$key] > 0) {
                 $totalfraction += $question->fraction[$key];
@@ -110,17 +108,16 @@ class qtype_multichoice extends question_type {
             $DB->delete_records('question_answers', array('id' => $oldanswer->id));
         }
 
-        $options = $DB->get_record('question_multichoice', array('question' => $question->id));
+        $options = $DB->get_record('qtype_multichoice_options', array('questionid' => $question->id));
         if (!$options) {
             $options = new stdClass();
-            $options->question = $question->id;
+            $options->questionid = $question->id;
             $options->correctfeedback = '';
             $options->partiallycorrectfeedback = '';
             $options->incorrectfeedback = '';
-            $options->id = $DB->insert_record('question_multichoice', $options);
+            $options->id = $DB->insert_record('qtype_multichoice_options', $options);
         }
 
-        $options->answers = implode(',', $answers);
         $options->single = $question->single;
         if (isset($question->layout)) {
             $options->layout = $question->layout;
@@ -128,7 +125,7 @@ class qtype_multichoice extends question_type {
         $options->answernumbering = $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
         $options = $this->save_combined_feedback_helper($options, $question, $context, true);
-        $DB->update_record('question_multichoice', $options);
+        $DB->update_record('qtype_multichoice_options', $options);
 
         $this->save_hints($question, true);
 
@@ -179,7 +176,7 @@ class qtype_multichoice extends question_type {
 
     public function delete_question($questionid, $contextid) {
         global $DB;
-        $DB->delete_records('question_multichoice', array('question' => $questionid));
+        $DB->delete_records('qtype_multichoice_options', array('question' => $questionid));
 
         parent::delete_question($questionid, $contextid);
     }

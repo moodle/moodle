@@ -139,7 +139,7 @@ class qtype_multichoice_test extends advanced_testcase {
         }
 
         foreach ($questiondata->options as $optionname => $value) {
-            if (!in_array($optionname, array('answers'))) {
+            if ($optionname != 'answers') {
                 $this->assertAttributeEquals($value, $optionname, $actualquestiondata->options);
             }
         }

@@ -53,7 +53,7 @@ class backup_qtype_multichoice_plugin extends backup_qtype_plugin {
 
         // Now create the qtype own structures.
         $multichoice = new backup_nested_element('multichoice', array('id'), array(
-            'layout', 'answers', 'single', 'shuffleanswers',
+            'layout', 'single', 'shuffleanswers',
             'correctfeedback', 'correctfeedbackformat',
             'partiallycorrectfeedback', 'partiallycorrectfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat', 'answernumbering', 'shownumcorrect'));
@@ -62,8 +62,8 @@ class backup_qtype_multichoice_plugin extends backup_qtype_plugin {
         $pluginwrapper->add_child($multichoice);
 
         // Set source to populate the data.
-        $multichoice->set_source_table('question_multichoice',
-                array('question' => backup::VAR_PARENTID));
+        $multichoice->set_source_table('qtype_multichoice_options',
+                array('questionid' => backup::VAR_PARENTID));
 
         // Don't need to annotate ids nor files.
 
