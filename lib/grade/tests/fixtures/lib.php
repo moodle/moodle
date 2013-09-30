@@ -171,13 +171,13 @@ abstract class grade_base_testcase extends advanced_testcase {
      * category structure:
                               course category
                                     |
-                           +--------+-------------+
-                           |                      |
-             unittestcategory1               level1category
-                  |
-         +--------+-------------+
-         |                      |
-        unittestcategory2  unittestcategory3
+                           +--------+-------------+-----------------------+
+                           |                      |                       |
+             unittestcategory1               level1category       aggregatesubcatscategory
+                  |                                                          |
+         +--------+-------------+                               +------------+---------------+
+         |                      |                               |                            |
+        unittestcategory2  unittestcategory3          unittestcategory5               unittestcategory6
      */
     private function load_grade_categories() {
         global $DB;
@@ -257,6 +257,61 @@ abstract class grade_base_testcase extends advanced_testcase {
         $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
         $DB->update_record('grade_categories', $grade_category);
         $this->grade_categories[3] = $grade_category;
+
+        $grade_category = new stdClass();
+
+        $grade_category->fullname    = 'aggregatesubcatscategory';
+        $grade_category->courseid    = $this->course->id;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregateonlygraded = 1;
+        $grade_category->aggregatesubcats = 1;
+        $grade_category->keephigh    = 0;
+        $grade_category->droplow     = 0;
+        $grade_category->parent      = $course_category->id;
+        $grade_category->timecreated = time();
+        $grade_category->timemodified = time();
+        $grade_category->depth = 2;
+
+        $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
+        $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
+        $DB->update_record('grade_categories', $grade_category);
+        $this->grade_categories[4] = $grade_category;
+
+        $grade_category = new stdClass();
+
+        $grade_category->fullname    = 'unittestcategory5';
+        $grade_category->courseid    = $this->course->id;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregateonlygraded = 1;
+        $grade_category->keephigh    = 0;
+        $grade_category->droplow     = 0;
+        $grade_category->parent      = $this->grade_categories[4]->id;
+        $grade_category->timecreated = time();
+        $grade_category->timemodified = time();
+        $grade_category->depth = 3;
+
+        $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
+        $grade_category->path = $this->grade_categories[4]->path.$grade_category->id.'/';
+        $DB->update_record('grade_categories', $grade_category);
+        $this->grade_categories[5] = $grade_category;
+
+        $grade_category = new stdClass();
+
+        $grade_category->fullname    = 'unittestcategory6';
+        $grade_category->courseid    = $this->course->id;
+        $grade_category->aggregation = GRADE_AGGREGATE_MEAN;
+        $grade_category->aggregateonlygraded = 1;
+        $grade_category->keephigh    = 0;
+        $grade_category->droplow     = 0;
+        $grade_category->parent      = $this->grade_categories[4]->id;
+        $grade_category->timecreated = time();
+        $grade_category->timemodified = time();
+        $grade_category->depth = 3;
+
+        $grade_category->id = $DB->insert_record('grade_categories', $grade_category);
+        $grade_category->path = $this->grade_categories[4]->path.$grade_category->id.'/';
+        $DB->update_record('grade_categories', $grade_category);
+        $this->grade_categories[6] = $grade_category;
     }
 
     /**
@@ -520,6 +575,107 @@ abstract class grade_base_testcase extends advanced_testcase {
 
         $grade_item->id = $DB->insert_record('grade_items', $grade_item);
         $this->grade_items[11] = $grade_item;
+
+        // id = 12
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->course->id;
+        $grade_item->iteminstance = $this->grade_categories[4]->id;
+        $grade_item->itemname = 'unittestgradeitemaggregatesubcats';
+        $grade_item->itemtype = 'category';
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
+        $grade_item->needsupdate = true;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
+        $grade_item->iteminfo = 'Grade item 12 used for unit testing';
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
+        $grade_item->sortorder = 12;
+
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[12] = $grade_item;
+
+        // id = 13
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->course->id;
+        $grade_item->iteminstance = $this->grade_categories[5]->id;
+        $grade_item->itemname = 'unittestgradeitemcategory5';
+        $grade_item->itemtype = 'category';
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
+        $grade_item->needsupdate = true;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
+        $grade_item->iteminfo = 'Grade item 13 used for unit testing';
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
+        $grade_item->sortorder = 13;
+
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[13] = $grade_item;
+
+        // id = 14
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->course->id;
+        $grade_item->iteminstance = $this->grade_categories[6]->id;
+        $grade_item->itemname = 'unittestgradeitemcategory6';
+        $grade_item->itemtype = 'category';
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
+        $grade_item->needsupdate = true;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
+        $grade_item->iteminfo = 'Grade item 14 used for unit testing';
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
+        $grade_item->sortorder = 14;
+
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[14] = $grade_item;
+
+        // Manual grade_item
+        // id = 15
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->course->id;
+        $grade_item->categoryid = $this->grade_categories[5]->id;
+        $grade_item->itemname = 'manual grade_item';
+        $grade_item->itemtype = 'manual';
+        $grade_item->itemnumber = 0;
+        $grade_item->needsupdate = false;
+        $grade_item->gradetype = GRADE_TYPE_VALUE;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
+        $grade_item->iteminfo = 'Manual grade item 15 used for unit testing';
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
+        $grade_item->sortorder = 15;
+
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[15] = $grade_item;
+
+        // Manual grade_item
+        // id = 16
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->course->id;
+        $grade_item->categoryid = $this->grade_categories[6]->id;
+        $grade_item->itemname = 'manual grade_item';
+        $grade_item->itemtype = 'manual';
+        $grade_item->itemnumber = 0;
+        $grade_item->needsupdate = false;
+        $grade_item->gradetype = GRADE_TYPE_SCALE;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
+        $grade_item->iteminfo = 'Manual grade item 16 used for unit testing';
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
+        $grade_item->sortorder = 16;
+
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[16] = $grade_item;
+
+        // $this->grade_items[17] loaded in load_grade_outcomes() in order to use an outcome id.
     }
 
     /**
@@ -796,5 +952,26 @@ abstract class grade_base_testcase extends advanced_testcase {
 
         $grade_outcome->id = $DB->insert_record('grade_outcomes', $grade_outcome);
         $this->grade_outcomes[] = $grade_outcome;
+
+        // Manual grade_item with outcome
+        $grade_item = new stdClass();
+
+        $grade_item->courseid = $this->course->id;
+        $grade_item->categoryid = $this->grade_categories[6]->id;
+        $grade_item->itemname = 'manual grade_item';
+        $grade_item->itemtype = 'manual';
+        $grade_item->itemnumber = 0;
+        $grade_item->needsupdate = false;
+        $grade_item->gradetype = GRADE_TYPE_SCALE;
+        $grade_item->grademin = 0;
+        $grade_item->grademax = 100;
+        $grade_item->iteminfo = 'Manual grade item 16 with outcome used for unit testing';
+        $grade_item->timecreated = time();
+        $grade_item->timemodified = time();
+        $grade_item->outcomeid = $this->grade_outcomes[2]->id;
+        $grade_item->sortorder = 17;
+
+        $grade_item->id = $DB->insert_record('grade_items', $grade_item);
+        $this->grade_items[17] = $grade_item;
     }
 }
