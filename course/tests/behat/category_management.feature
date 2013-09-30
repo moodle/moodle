@@ -1,4 +1,4 @@
-@core @core_course  @MDL-31830
+@core @core_course
 Feature: Test category management actions
   As a moodle admin
   Test we can create a category
@@ -174,3 +174,39 @@ Feature: Test category management actions
     # Redirect
     And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#course-listing h3" "css_element"
+
+  @javascript @MDL-31830
+  Scenario: Test that I can create a category and view it in the management interface
+    Given the following "categories" exists:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+    And I log in as "admin"
+    And I go to the courses management page
+    And I should see the "Course categories" management page
+    And I click on "Create new" "link" in the ".category-listing-actions" "css_element"
+    And I click on "Top level category" "link" in the ".category-listing-actions" "css_element"
+    # Redirect.
+    And I should see "Add new category"
+    And I fill the moodle form with:
+      | Category name | Test category 2 |
+      | Category ID number | TC2 |
+    And I press "Create category"
+    # Redirect
+    And I should see the "Course categories and courses" management page
+    And I should see "Test category 2" in the "#course-listing h3" "css_element"
+    And I should see category listing "Cat 1" before "Test category 2"
+    And I should see "No courses in this category"
+    And I click on "Create new" "link" in the ".category-listing-actions" "css_element"
+    And I click on "Sub category" "link" in the ".category-listing-actions" "css_element"
+    # Redirect
+    And I should see "Add new category"
+    And I fill the moodle form with:
+      | Category name | Test category 3 |
+      | Category ID number | TC3 |
+    And I press "Create category"
+    # Redirect
+    And I should see the "Course categories and courses" management page
+    And I should see "Test category 3" in the "#course-listing h3" "css_element"
+    And I should see category listing "Cat 1" before "Test category 2"
+    And I should see "No courses in this category"
+
