@@ -57,8 +57,13 @@ if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             $serviceuser->externalserviceid = $id;
             $serviceuser->userid = $adduser->id;
             $webservicemanager->add_ws_authorised_user($serviceuser);
-            add_to_log(SITEID, 'core', 'assign', $CFG->admin . '/webservice/service_users.php?id='
-                    . $id, 'add', '', $adduser->id);
+
+            $params = array(
+                'objectid' => $serviceuser->externalserviceid,
+                'relateduserid' => $serviceuser->userid
+            );
+            $event = \core\event\webservice_service_user_added::create($params);
+            $event->trigger();
         }
         $potentialuserselector->invalidate_selected_users();
         $alloweduserselector->invalidate_selected_users();
@@ -71,8 +76,13 @@ if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
     if (!empty($userstoremove)) {
         foreach ($userstoremove as $removeuser) {
             $webservicemanager->remove_ws_authorised_user($removeuser, $id);
-            add_to_log(SITEID, 'core', 'assign', $CFG->admin . '/webservice/service_users.php?id='
-                    . $id, 'remove', '', $removeuser->id);
+
+            $params = array(
+                'objectid' => $id,
+                'relateduserid' => $removeuser->id
+            );
+            $event = \core\event\webservice_service_user_removed::create($params);
+            $event->trigger();
         }
         $potentialuserselector->invalidate_selected_users();
         $alloweduserselector->invalidate_selected_users();

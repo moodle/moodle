@@ -69,16 +69,36 @@ class webservice {
             throw new moodle_exception('invalidtoken', 'webservice');
         }
 
+        $loginfaileddefaultparams = array(
+            'other' => array(
+                'method' => WEBSERVICE_AUTHMETHOD_PERMANENT_TOKEN,
+                'reason' => null,
+                'tokenid' => $token->id
+            )
+        );
+
         // Validate token date
         if ($token->validuntil and $token->validuntil < time()) {
-            add_to_log(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '', get_string('invalidtimedtoken', 'webservice'), 0);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'token_expired';
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->add_record_snapshot('external_tokens', $token);
+            $event->set_legacy_logdata(array(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '',
+                get_string('invalidtimedtoken', 'webservice'), 0));
+            $event->trigger();
             $DB->delete_records('external_tokens', array('token' => $token->token));
             throw new webservice_access_exception('Invalid token - token expired - check validuntil time for the token');
         }
 
         // Check ip
         if ($token->iprestriction and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
-            add_to_log(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '', get_string('failedtolog', 'webservice') . ": " . getremoteaddr(), 0);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'ip_restricted';
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->add_record_snapshot('external_tokens', $token);
+            $event->set_legacy_logdata(array(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '',
+                get_string('failedtolog', 'webservice') . ": " . getremoteaddr(), 0));
+            $event->trigger();
             throw new webservice_access_exception('Invalid token - IP:' . getremoteaddr()
                     . ' is not supported');
         }
@@ -141,19 +161,34 @@ class webservice {
 
         //only confirmed user should be able to call web service
         if (empty($user->confirmed)) {
-            add_to_log(SITEID, 'webservice', 'user unconfirmed', '', $user->username);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'user_unconfirmed';
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->add_record_snapshot('external_tokens', $token);
+            $event->set_legacy_logdata(array(SITEID, 'webservice', 'user unconfirmed', '', $user->username));
+            $event->trigger();
             throw new moodle_exception('usernotconfirmed', 'moodle', '', $user->username);
         }
 
         //check the user is suspended
         if (!empty($user->suspended)) {
-            add_to_log(SITEID, 'webservice', 'user suspended', '', $user->username);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'user_suspended';
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->add_record_snapshot('external_tokens', $token);
+            $event->set_legacy_logdata(array(SITEID, 'webservice', 'user suspended', '', $user->username));
+            $event->trigger();
             throw new webservice_access_exception('Refused web service access for suspended username: ' . $user->username);
         }
 
         //check if the auth method is nologin (in this case refuse connection)
         if ($user->auth == 'nologin') {
-            add_to_log(SITEID, 'webservice', 'nologin auth attempt with web service', '', $user->username);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'nologin';
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->add_record_snapshot('external_tokens', $token);
+            $event->set_legacy_logdata(array(SITEID, 'webservice', 'nologin auth attempt with web service', '', $user->username));
+            $event->trigger();
             throw new webservice_access_exception('Refused web service access for nologin authentication username: ' . $user->username);
         }
 
@@ -162,7 +197,12 @@ class webservice {
         if (!empty($auth->config->expiration) and $auth->config->expiration == 1) {
             $days2expire = $auth->password_expire($user->username);
             if (intval($days2expire) < 0) {
-                add_to_log(SITEID, 'webservice', 'expired password', '', $user->username);
+                $params = $loginfaileddefaultparams;
+                $params['other']['reason'] = 'password_expired';
+                $event = \core\event\webservice_login_failed::create($params);
+                $event->add_record_snapshot('external_tokens', $token);
+                $event->set_legacy_logdata(array(SITEID, 'webservice', 'expired password', '', $user->username));
+                $event->trigger();
                 throw new moodle_exception('passwordisexpired', 'webservice');
             }
         }
@@ -822,6 +862,15 @@ abstract class webservice_server implements webservice_server_interface {
             throw new coding_exception('Cookies must be disabled in WS servers!');
         }
 
+        $loginfaileddefaultparams = array(
+            'context' => context_system::instance(),
+            'other' => array(
+                'method' => $this->authmethod,
+                'reason' => null,
+                'token' => $this->token
+            )
+        );
+
         if ($this->authmethod == WEBSERVICE_AUTHMETHOD_USERNAME) {
 
             //we check that authentication plugin is enabled
@@ -845,8 +894,16 @@ abstract class webservice_server implements webservice_server_interface {
             }
 
             if (!$auth->user_login_webservice($this->username, $this->password)) {
-                // log failed login attempts
-                add_to_log(SITEID, 'webservice', get_string('simpleauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->username."/".$this->password." - ".getremoteaddr() , 0);
+
+                // Log failed login attempts.
+                $params = $loginfaileddefaultparams;
+                $params['other']['reason'] = 'password';
+                $params['other']['username'] = $this->username;
+                $event = \core\event\webservice_login_failed::create($params);
+                $event->set_legacy_logdata(array(SITEID, 'webservice', get_string('simpleauthlog', 'webservice'), '' ,
+                    get_string('failedtolog', 'webservice').": ".$this->username."/".$this->password." - ".getremoteaddr() , 0));
+                $event->trigger();
+
                 throw new moodle_exception('wrongusernamepassword', 'webservice');
             }
 
@@ -866,19 +923,37 @@ abstract class webservice_server implements webservice_server_interface {
 
         //only confirmed user should be able to call web service
         if (!empty($user->deleted)) {
-            add_to_log(SITEID, '', '', '', get_string('wsaccessuserdeleted', 'webservice', $user->username) . " - ".getremoteaddr(), 0, $user->id);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'user_deleted';
+            $params['other']['username'] = $user->username;
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->set_legacy_logdata(array(SITEID, '', '', '', get_string('wsaccessuserdeleted', 'webservice',
+                $user->username) . " - ".getremoteaddr(), 0, $user->id));
+            $event->trigger();
             throw new webservice_access_exception('Refused web service access for deleted username: ' . $user->username);
         }
 
         //only confirmed user should be able to call web service
         if (empty($user->confirmed)) {
-            add_to_log(SITEID, '', '', '', get_string('wsaccessuserunconfirmed', 'webservice', $user->username) . " - ".getremoteaddr(), 0, $user->id);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'user_unconfirmed';
+            $params['other']['username'] = $user->username;
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->set_legacy_logdata(array(SITEID, '', '', '', get_string('wsaccessuserunconfirmed', 'webservice',
+                $user->username) . " - ".getremoteaddr(), 0, $user->id));
+            $event->trigger();
             throw new moodle_exception('wsaccessuserunconfirmed', 'webservice', '', $user->username);
         }
 
         //check the user is suspended
         if (!empty($user->suspended)) {
-            add_to_log(SITEID, '', '', '', get_string('wsaccessusersuspended', 'webservice', $user->username) . " - ".getremoteaddr(), 0, $user->id);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'user_unconfirmed';
+            $params['other']['username'] = $user->username;
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->set_legacy_logdata(array(SITEID, '', '', '', get_string('wsaccessusersuspended', 'webservice',
+                $user->username) . " - ".getremoteaddr(), 0, $user->id));
+            $event->trigger();
             throw new webservice_access_exception('Refused web service access for suspended username: ' . $user->username);
         }
 
@@ -891,14 +966,26 @@ abstract class webservice_server implements webservice_server_interface {
         if (!empty($auth->config->expiration) and $auth->config->expiration == 1) {
             $days2expire = $auth->password_expire($user->username);
             if (intval($days2expire) < 0 ) {
-                add_to_log(SITEID, '', '', '', get_string('wsaccessuserexpired', 'webservice', $user->username) . " - ".getremoteaddr(), 0, $user->id);
+                $params = $loginfaileddefaultparams;
+                $params['other']['reason'] = 'password_expired';
+                $params['other']['username'] = $user->username;
+                $event = \core\event\webservice_login_failed::create($params);
+                $event->set_legacy_logdata(array(SITEID, '', '', '', get_string('wsaccessuserexpired', 'webservice',
+                    $user->username) . " - ".getremoteaddr(), 0, $user->id));
+                $event->trigger();
                 throw new webservice_access_exception('Refused web service access for password expired username: ' . $user->username);
             }
         }
 
         //check if the auth method is nologin (in this case refuse connection)
         if ($user->auth=='nologin') {
-            add_to_log(SITEID, '', '', '', get_string('wsaccessusernologin', 'webservice', $user->username) . " - ".getremoteaddr(), 0, $user->id);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'login';
+            $params['other']['username'] = $user->username;
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->set_legacy_logdata(array(SITEID, '', '', '', get_string('wsaccessusernologin', 'webservice',
+                $user->username) . " - ".getremoteaddr(), 0, $user->id));
+            $event->trigger();
             throw new webservice_access_exception('Refused web service access for nologin authentication username: ' . $user->username);
         }
 
@@ -923,9 +1010,24 @@ abstract class webservice_server implements webservice_server_interface {
      */
     protected function authenticate_by_token($tokentype){
         global $DB;
+
+        $loginfaileddefaultparams = array(
+            'context' => context_system::instance(),
+            'other' => array(
+                'method' => $this->authmethod,
+                'reason' => null,
+                'token' => $this->token
+            )
+        );
+
         if (!$token = $DB->get_record('external_tokens', array('token'=>$this->token, 'tokentype'=>$tokentype))) {
-            // log failed login attempts
-            add_to_log(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".$this->token. " - ".getremoteaddr() , 0);
+            // Log failed login attempts.
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'invalid_token';
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->set_legacy_logdata(array(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '' ,
+                get_string('failedtolog', 'webservice').": ".$this->token. " - ".getremoteaddr() , 0));
+            $event->trigger();
             throw new moodle_exception('invalidtoken', 'webservice');
         }
 
@@ -942,7 +1044,14 @@ abstract class webservice_server implements webservice_server_interface {
         }
 
         if ($token->iprestriction and !address_in_subnet(getremoteaddr(), $token->iprestriction)) {
-            add_to_log(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '' , get_string('failedtolog', 'webservice').": ".getremoteaddr() , 0);
+            $params = $loginfaileddefaultparams;
+            $params['other']['reason'] = 'ip_restricted';
+            $params['other']['tokenid'] = $token->id;
+            $event = \core\event\webservice_login_failed::create($params);
+            $event->add_record_snapshot('external_tokens', $token);
+            $event->set_legacy_logdata(array(SITEID, 'webservice', get_string('tokenauthlog', 'webservice'), '' ,
+                get_string('failedtolog', 'webservice').": ".getremoteaddr() , 0));
+            $event->trigger();
             throw new webservice_access_exception('Invalid service - IP:' . getremoteaddr()
                     . ' is not supported - check this allowed user');
         }
@@ -1055,8 +1164,15 @@ abstract class webservice_zend_server extends webservice_server {
         // tell server what functions are available
         $this->zend_server->setClass($this->service_class);
 
-        //log the web service request
-        add_to_log(SITEID, 'webservice', '', '' , $this->zend_class." ".getremoteaddr() , 0, $this->userid);
+        // Log the web service request.
+        $params = array(
+            'other' => array(
+                'function' => 'unknown'
+            )
+        );
+        $event = \core\event\webservice_function_called::create($params);
+        $event->set_legacy_logdata(array(SITEID, 'webservice', '', '', $this->zend_class.' '.getremoteaddr(), 0, $this->userid));
+        $event->trigger();
 
         //send headers
         $this->send_headers();
@@ -1516,8 +1632,15 @@ abstract class webservice_base_server extends webservice_server {
         // find all needed function info and make sure user may actually execute the function
         $this->load_function_info();
 
-        //log the web service request
-        add_to_log(SITEID, 'webservice', $this->functionname, '' , getremoteaddr() , 0, $this->userid);
+        // Log the web service request.
+        $params = array(
+            'other' => array(
+                'function' => $this->functionname
+            )
+        );
+        $event = \core\event\webservice_function_called::create($params);
+        $event->set_legacy_logdata(array(SITEID, 'webservice', $this->functionname, '' , getremoteaddr() , 0, $this->userid));
+        $event->trigger();
 
         // finally, execute the function - any errors are catched by the default exception handler
         $this->execute();

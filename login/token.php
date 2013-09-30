@@ -150,7 +150,8 @@ if (!empty($user)) {
                 or (!is_siteadmin($user) && has_capability('moodle/webservice:createtoken', context_system::instance()))) {
             // if service doesn't exist, dml will throw exception
             $service_record = $DB->get_record('external_services', array('shortname'=>$serviceshortname, 'enabled'=>1), '*', MUST_EXIST);
-            // create a new token
+
+            // Create a new token.
             $token = new stdClass;
             $token->token = md5(uniqid(rand(), 1));
             $token->userid = $user->id;
@@ -159,9 +160,18 @@ if (!empty($user)) {
             $token->creatorid = $user->id;
             $token->timecreated = time();
             $token->externalserviceid = $service_record->id;
-            $tokenid = $DB->insert_record('external_tokens', $token);
-            add_to_log(SITEID, 'webservice', 'automatically create user token', '' , 'User ID: ' . $user->id);
-            $token->id = $tokenid;
+            $token->id = $DB->insert_record('external_tokens', $token);
+
+            $params = array(
+                'objectid' => $token->id,
+                'relateduserid' => $user->id,
+                'other' => array(
+                    'auto' => true
+                )
+            );
+            $event = \core\event\webservice_token_created::create($params);
+            $event->add_record_snapshot('external_tokens', $token);
+            $event->trigger();
         } else {
             throw new moodle_exception('cannotcreatetoken', 'webservice', '', $serviceshortname);
         }
@@ -170,7 +180,12 @@ if (!empty($user)) {
     // log token access
     $DB->set_field('external_tokens', 'lastaccess', time(), array('id'=>$token->id));
 
-    add_to_log(SITEID, 'webservice', 'sending requested user token', '' , 'User ID: ' . $user->id);
+    $params = array(
+        'objectid' => $token->id,
+    );
+    $event = \core\event\webservice_token_sent::create($params);
+    $event->add_record_snapshot('external_tokens', $token);
+    $event->trigger();
 
     $usertoken = new stdClass;
     $usertoken->token = $token->token;
