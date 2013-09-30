@@ -848,6 +848,9 @@ abstract class restore_dbops {
      * optionally one source itemname to match itemids
      * put the corresponding files in the pool
      *
+     * If you specify a progress reporter, it will get called once per file with
+     * indeterminate progress.
+     *
      * @param string $basepath the full path to the root of unzipped backup file
      * @param string $restoreid the restore job's identification
      * @param string $component
@@ -858,9 +861,13 @@ abstract class restore_dbops {
      * @param int|null $olditemid
      * @param int|null $forcenewcontextid explicit value for the new contextid (skip mapping)
      * @param bool $skipparentitemidctxmatch
+     * @param core_backup_progress $progress Optional progress reporter
      * @return array of result object
      */
-    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null, $forcenewcontextid = null, $skipparentitemidctxmatch = false) {
+    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea,
+            $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null,
+            $forcenewcontextid = null, $skipparentitemidctxmatch = false,
+            core_backup_progress $progress = null) {
         global $DB, $CFG;
 
         $backupinfo = backup_general_helper::get_backup_information(basename($basepath));
@@ -924,8 +931,17 @@ abstract class restore_dbops {
 
         $fs = get_file_storage();         // Get moodle file storage
         $basepath = $basepath . '/files/';// Get backup file pool base
+        // Report progress before query.
+        if ($progress) {
+            $progress->progress();
+        }
         $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $rec) {
+            // Report progress each time around loop.
+            if ($progress) {
+                $progress->progress();
+            }
+
             $file = (object)backup_controller_dbops::decode_backup_temp_info($rec->info);
 
             // ignore root dirs (they are created automatically)

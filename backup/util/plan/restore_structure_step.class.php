@@ -108,10 +108,10 @@ abstract class restore_structure_step extends restore_step {
 
         // And process it, dispatch to target methods in step will start automatically
         $xmlparser->process();
-        $progress->end_progress();
 
         // Have finished, launch the after_execute method of all the processing objects
         $this->launch_after_execute_methods();
+        $progress->end_progress();
     }
 
     /**
@@ -223,9 +223,20 @@ abstract class restore_structure_step extends restore_step {
      * Add all the existing file, given their component and filearea and one backup_ids itemname to match with
      */
     public function add_related_files($component, $filearea, $mappingitemname, $filesctxid = null, $olditemid = null) {
+        // If the current progress object is set up and ready to receive
+        // indeterminate progress, then use it, otherwise don't. (This check is
+        // just in case this function is ever called from somewhere not within
+        // the execute() method here, which does set up progress like this.)
+        $progress = $this->get_task()->get_progress();
+        if (!$progress->is_in_progress_section() ||
+                $progress->get_current_max() !== core_backup_progress::INDETERMINATE) {
+            $progress = null;
+        }
+
         $filesctxid = is_null($filesctxid) ? $this->task->get_old_contextid() : $filesctxid;
         $results = restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component,
-                $filearea, $filesctxid, $this->task->get_userid(), $mappingitemname, $olditemid);
+                $filearea, $filesctxid, $this->task->get_userid(), $mappingitemname, $olditemid, null, false,
+                $progress);
         $resultstoadd = array();
         foreach ($results as $result) {
             $this->log($result->message, $result->level);
