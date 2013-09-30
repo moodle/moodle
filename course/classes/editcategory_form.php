@@ -76,7 +76,6 @@ class core_course_editcategory_form extends moodleform {
 
         $mform->addElement('editor', 'description_editor', get_string('description'), null,
             $this->get_description_editor_options());
-        $mform->setType('description_editor', PARAM_RAW);
 
         if (!empty($CFG->allowcategorythemes)) {
             $themes = array(''=>get_string('forceno'));

@@ -73,7 +73,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 $select = new single_select($this->page->url, 'categoryid', $categories, $categoryid, $nothing);
                 $html .= $this->render($select);
             }
-            $html .= $this->view_mode_selector(core_course\management\helper::get_management_viewmodes(), $viewmode);
+            $html .= $this->view_mode_selector(\core_course\management\helper::get_management_viewmodes(), $viewmode);
         }
         $html .= html_writer::end_div();
         return $html;
@@ -119,7 +119,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
         $catatlevel = array_shift($selectedparents);
 
-        $listing = \coursecat::get(0)->get_children();
+        $listing = coursecat::get(0)->get_children();
 
         $html  = html_writer::start_div('category-listing');
         $html .= html_writer::tag('h3', get_string('categories'));
@@ -258,7 +258,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $menu->actionicon = new pix_icon('t/add', ' ', 'moodle', array('class' => 'iconsmall'));
             $actions[] = $this->render($menu);
         }
-        if ($category->can_resort()) {
+        if ($category->can_resort_subcategories()) {
             $hasitems = true;
             $params = $this->page->url->params();
             $params['action'] = 'resortcategories';
@@ -504,7 +504,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html  = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
 
-        if ($category->can_resort()) {
+        if ($category->can_resort_courses()) {
             // In order for dnd to be available the user must be able to resort the category children..
             $html .= html_writer::div($this->output->pix_icon('i/dragdrop', get_string('dndcourse')), 'float-left drag-handle');
         }
@@ -538,7 +538,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $url = new moodle_url('/course/edit.php', array('category' => $category->id, 'returnto' => 'catmanage'));
             $actions[] = html_writer::link($url, get_string('newcourse'));
         }
-        if ($category->can_resort()) {
+        if ($category->can_resort_courses()) {
             $params = $this->page->url->params();
             $params['action'] = 'resortcourses';
             $params['sesskey'] = sesskey();
@@ -614,7 +614,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             );
         }
         // Move up/down.
-        if ($category->can_resort()) {
+        if ($category->can_resort_courses()) {
             if (!$firstincategory) {
                 $actions[] = $this->action_icon(
                     new moodle_url($baseurl, array('action' => 'movecourseup')),

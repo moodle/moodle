@@ -58,7 +58,7 @@ switch ($action) {
     case 'movecourseafter' :
         $courseid = required_param('courseid', PARAM_INT);
         $moveaftercourseid = required_param('moveafter', PARAM_INT);
-        $outcome->outcome = course_move_after_course($courseid, $moveaftercourseid);
+        $outcome->outcome = \core_course\management\helper::action_course_move_after_course($courseid, $moveaftercourseid);
         break;
     case 'hidecourse' :
         $courseid = required_param('courseid', PARAM_INT);

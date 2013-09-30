@@ -1094,83 +1094,59 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
+     * Returns true if the user has the manage capability on any category.
+     *
+     * This method uses the coursecat cache and an entry `has_manage_capability` to speed up
+     * calls to this method.
+     *
+     * @return bool
+     */
+    protected static function has_manage_capability_on_any() {
+        global $DB;
+        if (!isloggedin() || isguestuser()) {
+            return false;
+        }
+        $cache = cache::make('core', 'coursecat');
+        $has = $cache->get('has_manage_capability');
+        if ($has !== false) {
+            return ((int)$has === 1);
+        }
+
+        $has = false;
+        $fields = context_helper::get_preload_record_columns_sql('ctx');
+        $sql = "SELECT ctx.instanceid AS categoryid, $fields
+                      FROM {context} ctx
+                     WHERE contextlevel = :contextlevel
+                  ORDER BY depth ASC";
+        $params = array('contextlevel' => CONTEXT_COURSECAT);
+        $recordset = $DB->get_recordset_sql($sql, $params);
+        foreach ($recordset as $context) {
+            context_helper::preload_from_record($context);
+            $context = context_coursecat::instance($context->categoryid);
+            if (has_capability('moodle/category:manage', $context)) {
+                $has = true;
+                break;
+            }
+        }
+        $recordset->close();
+        $cache->set('has_manage_capability', ($has) ? '1' : '0');
+        return $has;
+    }
+
+    /**
      * Returns true if the user can resort any category.
      * @return bool
      */
     public static function can_resort_any() {
-        global $DB;
-        if (!isloggedin() || isguestuser()) {
-            return false;
-        }
-        $cache = cache::make('core', 'coursecat');
-        $canresortany = $cache->get('can_resort_any');
-        if ($canresortany !== false) {
-            return ((int)$canresortany === 1);
-        }
-        $canresortany = false;
-        if (self::get(0)->can_resort()) {
-            $canresortany = true;
-        } else {
-            $fields = context_helper::get_preload_record_columns_sql('ctx');
-            $sql = "SELECT ctx.instanceid AS categoryid, $fields
-                      FROM {context} ctx
-                     WHERE contextlevel = :contextlevel
-                  ORDER BY depth ASC";
-            $params = array('contextlevel' => CONTEXT_COURSECAT);
-            $recordset = $DB->get_recordset_sql($sql, $params);
-            foreach ($recordset as $context) {
-                context_helper::preload_from_record($context);
-                $context = context_coursecat::instance($context->categoryid);
-                if (has_capability('moodle/category:manage', $context)) {
-                    $canresortany = true;
-                    break;
-                }
-            }
-            $recordset->close();
-        }
-        $cache->set('can_resort_any', $canresortany ? 1 : 0);
-        $cache->set('can_change_parent_any', $canresortany ? 1 : 0);
-        return $canresortany;
+        return self::has_manage_capability_on_any();
     }
 
     /**
-     * Returns trye if the user can change the parent of any category.
+     * Returns true if the user can change the parent of any category.
      * @return bool
      */
     public static function can_change_parent_any() {
-        global $DB;
-        if (!isloggedin() || isguestuser()) {
-            return false;
-        }
-        $cache = cache::make('core', 'coursecat');
-        $canchangeany = $cache->get('can_change_parent_any');
-        if ($canchangeany !== false) {
-            return ((int)$canchangeany === 1);
-        }
-        $canchangeany = false;
-        if (self::get(0)->has_manage_capability()) {
-            $canchangeany = true;
-        } else {
-            $fields = context_helper::get_preload_record_columns_sql('ctx');
-            $sql = "SELECT ctx.instanceid AS categoryid, $fields
-                      FROM {context} ctx
-                     WHERE contextlevel = :contextlevel
-                  ORDER BY depth ASC";
-            $params = array('contextlevel' => CONTEXT_COURSECAT);
-            $recordset = $DB->get_recordset_sql($sql, $params);
-            foreach ($recordset as $context) {
-                context_helper::preload_from_record($context);
-                $context = context_coursecat::instance($context->categoryid);
-                if (has_capability('moodle/category:manage', $context)) {
-                    $canchangeany = true;
-                    break;
-                }
-            }
-            $recordset->close();
-        }
-        $cache->set('can_resort_any', $canchangeany ? 1 : 0);
-        $cache->set('can_change_parent_any', $canchangeany ? 1 : 0);
-        return $canchangeany;
+        return self::has_manage_capability_on_any();
     }
 
     /**
@@ -2246,12 +2222,20 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      * Returns true if the user can resort this categories sub categories and courses.
      * @return bool
      */
-    public function can_resort() {
+    public function can_resort_subcategories() {
         return $this->has_manage_capability();
     }
 
     /**
-     * Returns true of the user can change the sortorder of this category.
+     * Returns true if the user can resort the courses within this category.
+     * @return bool
+     */
+    public function can_resort_courses() {
+        return $this->has_manage_capability();
+    }
+
+    /**
+     * Returns true of the user can change the sortorder of this category (resort the parent category)
      * @return bool
      */
     public function can_change_sortorder() {

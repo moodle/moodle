@@ -181,7 +181,7 @@ if ($action !== false && confirm_sesskey()) {
                 throw new moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
             }
             require_once($CFG->dirroot.'/course/delete_category_form.php');
-            $mform = new delete_category_form(null, $category);
+            $mform = new core_course_deletecategory_form(null, $category);
             if ($mform->is_cancelled()) {
                 redirect(new moodle_url('/course/management.php'));
             }
@@ -233,7 +233,14 @@ if ($action !== false && confirm_sesskey()) {
                     break;
                 }
                 $moveto = coursecat::get($movetoid);
-                $redirectback = \core_course\management\helper::action_category_move_courses_into($category, $moveto, $courseids);
+                try {
+                    // If this fails we want to catch the exception and report it.
+                    $redirectback = \core_course\management\helper::action_category_move_courses_into($category, $moveto,
+                        $courseids);
+                } catch (moodle_exception $ex) {
+                    $redirectback = false;
+                    $notificationsfail[] = $ex->getMessage();
+                }
             } else if ($bulkmovecategories) {
                 $categoryids = optional_param_array('bcat', false, PARAM_INT);
                 $movetocatid = required_param('movecategoriesto', PARAM_INT);

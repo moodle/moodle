@@ -176,7 +176,7 @@ class helper {
         }
 
         // Move up/down.
-        if ($category->can_resort()) {
+        if ($category->can_change_sortorder()) {
             $actions['moveup'] = array(
                 'url' => new \moodle_url($baseurl, array('action' => 'movecategoryup')),
                 'icon' => new \pix_icon('t/up', new \lang_string('up')),
@@ -318,7 +318,7 @@ class helper {
      * @throws \moodle_exception
      */
     public static function action_course_moveup(\course_in_list $course, \coursecat $category) {
-        if (!$category->can_resort()) {
+        if (!$category->can_resort_courses()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
         }
         return course_move_by_one($course, true);
@@ -333,7 +333,7 @@ class helper {
      * @throws \moodle_exception
      */
     public static function action_course_movedown(\course_in_list $course, \coursecat $category) {
-        if (!$category->can_resort()) {
+        if (!$category->can_resort_courses()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
         }
         return course_move_by_one($course, false);
@@ -347,9 +347,8 @@ class helper {
      * @return bool
      */
     public static function action_course_moveup_by_record($courserecordorid) {
-        global $DB;
         if (is_int($courserecordorid)) {
-            $courserecordorid = $DB->get_record('course', array('id' => $courserecordorid), '*', MUST_EXIST);
+            $courserecordorid = get_course($courserecordorid);
         }
         $course = new \course_in_list($courserecordorid);
         $category = \coursecat::get($course->category);
@@ -364,13 +363,30 @@ class helper {
      * @return bool
      */
     public static function action_course_movedown_by_record($courserecordorid) {
-        global $DB;
         if (is_int($courserecordorid)) {
-            $courserecordorid = $DB->get_record('course', array('id' => $courserecordorid), '*', MUST_EXIST);
+            $courserecordorid = get_course($courserecordorid);
         }
         $course = new \course_in_list($courserecordorid);
         $category = \coursecat::get($course->category);
         return self::action_course_movedown($course, $category);
+    }
+
+    /**
+     * Changes the sort order so that the first course appears after the second course.
+     *
+     * @param int|stdClass $courserecordorid
+     * @param int $moveaftercourseid
+     * @return bool
+     * @throws \moodle_exception
+     */
+    public static function action_course_move_after_course($courserecordorid, $moveaftercourseid) {
+        $course = \get_course($courserecordorid);
+        $category = \coursecat::get($course->category);
+        if (!$category->can_resort_courses()) {
+            $url = '/course/management.php?categoryid='.$course->category;
+            throw new \moodle_exception('nopermissions', 'error', $url, \get_string('resortcourses', 'moodle'));
+        }
+        return \course_move_after_course($course, $moveaftercourseid);
     }
 
     /**
@@ -409,9 +425,8 @@ class helper {
      * @return bool
      */
     public static function action_course_show_by_record($courserecordorid) {
-        global $DB;
         if (is_int($courserecordorid)) {
-            $courserecordorid = $DB->get_record('course', array('id' => $courserecordorid), '*', MUST_EXIST);
+            $courserecordorid = get_course($courserecordorid);
         }
         $course = new \course_in_list($courserecordorid);
         return self::action_course_show($course);
@@ -425,9 +440,8 @@ class helper {
      * @return bool
      */
     public static function action_course_hide_by_record($courserecordorid) {
-        global $DB;
         if (is_int($courserecordorid)) {
-            $courserecordorid = $DB->get_record('course', array('id' => $courserecordorid), '*', MUST_EXIST);
+            $courserecordorid = get_course($courserecordorid);
         }
         $course = new \course_in_list($courserecordorid);
         return self::action_course_hide($course);
@@ -442,7 +456,7 @@ class helper {
      */
     public static function action_category_moveup(\coursecat $category) {
         if (!$category->can_change_sortorder()) {
-            throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
+            throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_change_sortorder');
         }
         return $category->move_by_one(true);
     }
@@ -456,7 +470,7 @@ class helper {
      */
     public static function action_category_movedown(\coursecat $category) {
         if (!$category->can_change_sortorder()) {
-            throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
+            throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_change_sortorder');
         }
         return $category->move_by_one(false);
     }
@@ -547,7 +561,7 @@ class helper {
      * @throws \moodle_exception
      */
     public static function action_category_resort_subcategories(\coursecat $category, $sort, $cleanup = true) {
-        if (!$category->can_resort()) {
+        if (!$category->can_resort_subcategories()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
         }
         return $category->resort_subcategories($sort, $cleanup);
@@ -562,7 +576,7 @@ class helper {
      * @throws \moodle_exception
      */
     public static function action_category_resort_courses(\coursecat $category, $sort) {
-        if (!$category->can_resort()) {
+        if (!$category->can_resort_courses()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
         }
         return $category->resort_courses($sort);
@@ -671,8 +685,7 @@ class helper {
             $moveto = \coursecat::get($categoryorid);
         }
         if (!$moveto->can_move_courses_out_of() || !$moveto->can_move_courses_into()) {
-            \debugging('Cannot move courses into the requested category.');
-            return false;
+            throw new \moodle_exception('cannotmovecourses');
         }
 
         list($where, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED);
@@ -682,8 +695,7 @@ class helper {
         $checks = array();
         foreach ($courseids as $id) {
             if (!isset($courses[$id])) {
-                \debugging('Invalid course id given.', DEBUG_DEVELOPER);
-                return false;
+                throw new \moodle_exception('invalidcourseid');
             }
             $catid = $courses[$id]->category;
             if (!isset($checks[$catid])) {
@@ -691,8 +703,7 @@ class helper {
                 $checks[$catid] = $coursecat->can_move_courses_out_of() && $coursecat->can_move_courses_into();
             }
             if (!$checks[$catid]) {
-                \debugging("Cannot move course {$id} out of its category.", DEBUG_DEVELOPER);
-                return false;
+                throw new \moodle_exception('cannotmovecourses');
             }
         }
         return \move_courses($courseids, $moveto->id);

@@ -491,9 +491,12 @@ class core_course_management_helper_test extends advanced_testcase {
 
         // Try to move a course into sub2. This shouldn't be possible because you should always be able to undo what you've done.
         // Try moving just one course.
-        $this->assertFalse(
-            \core_course\management\helper::action_category_move_courses_into($sub1, $sub2, array($course2->id))
-        );
+        try {
+            \core_course\management\helper::action_category_move_courses_into($sub1, $sub2, array($course2->id));
+            $this->fail('Invalid move of course between categories, action can\'t be undone.');
+        } catch (moodle_exception $ex) {
+            $this->assertEquals(get_string('cannotmovecourses', 'error'), $ex->getMessage());
+        }
         // Nothing should have changed.
         $this->assertEquals(1, $cat1->get_courses_count());
         $this->assertEquals(0, $cat2->get_courses_count());
@@ -503,9 +506,12 @@ class core_course_management_helper_test extends advanced_testcase {
         // Now try moving a course out of sub2. Again should not be possible.
         // Try to move a course into sub2. This shouldn't be possible because you should always be able to undo what you've done.
         // Try moving just one course.
-        $this->assertFalse(
-            \core_course\management\helper::action_category_move_courses_into($sub2, $cat2, array($course4->id))
-        );
+        try {
+            \core_course\management\helper::action_category_move_courses_into($sub2, $cat2, array($course4->id));
+            $this->fail('Invalid move of course between categories, action can\'t be undone.');
+        } catch (moodle_exception $ex) {
+            $this->assertEquals(get_string('cannotmovecourses', 'error'), $ex->getMessage());
+        }
         // Nothing should have changed.
         $this->assertEquals(1, $cat1->get_courses_count());
         $this->assertEquals(0, $cat2->get_courses_count());
@@ -1259,9 +1265,12 @@ class core_course_management_helper_test extends advanced_testcase {
 
         // Try to move a course into sub2. This shouldn't be possible because you should always be able to undo what you've done.
         // Try moving just one course.
-        $this->assertFalse(
-            \core_course\management\helper::move_courses_into_category($sub2->id, array($course2->id))
-        );
+        try {
+            \core_course\management\helper::move_courses_into_category($sub2->id, array($course2->id));
+            $this->fail('Invalid move of course between categories, action can\'t be undone.');
+        } catch (moodle_exception $ex) {
+            $this->assertEquals(get_string('cannotmovecourses', 'error'), $ex->getMessage());
+        }
         // Nothing should have changed.
         $this->assertEquals(1, $cat1->get_courses_count());
         $this->assertEquals(0, $cat2->get_courses_count());
@@ -1271,9 +1280,12 @@ class core_course_management_helper_test extends advanced_testcase {
         // Now try moving a course out of sub2. Again should not be possible.
         // Try to move a course into sub2. This shouldn't be possible because you should always be able to undo what you've done.
         // Try moving just one course.
-        $this->assertFalse(
-            \core_course\management\helper::move_courses_into_category($cat2->id, array($course4->id))
-        );
+        try {
+            \core_course\management\helper::move_courses_into_category($cat2->id, array($course4->id));
+            $this->fail('Invalid move of course between categories, action can\'t be undone.');
+        } catch (moodle_exception $ex) {
+            $this->assertEquals(get_string('cannotmovecourses', 'error'), $ex->getMessage());
+        }
         // Nothing should have changed.
         $this->assertEquals(1, $cat1->get_courses_count());
         $this->assertEquals(0, $cat2->get_courses_count());

@@ -3366,10 +3366,8 @@ function compare_activities_by_time_asc($a, $b) {
 }
 
 /**
+ * Changes the visibility of a course.
  *
- */
-/**
- * Changes the visibility of a course
  * @param int $courseid The course to change.
  * @param bool $show True to make it visible, false otherwise.
  * @return bool
@@ -3417,7 +3415,7 @@ function course_move_by_one($course, $up) {
 /**
  * Move one course after another.
  *
- * @param int $courseid The course to move.
+ * @param int|stdClass $courseorid The course to move.
  * @param int $moveaftercourseid The course to move after or 0 if you want it to be the first course in the category.
  * @return bool
  */
@@ -3428,12 +3426,6 @@ function course_move_after_course($courseorid, $moveaftercourseid) {
         $course = get_course($courseorid);
     } else {
         $course = $courseorid;
-    }
-    $category = coursecat::get($course->category);
-    if (!$category->can_resort()) {
-        // The user must be able to resort within the selected category.
-        \debugging('Cannot move courses within this category', DEBUG_DEVELOPER);
-        return false;
     }
 
     if ((int)$moveaftercourseid === 0) {
