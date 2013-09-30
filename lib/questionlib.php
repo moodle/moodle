@@ -2054,3 +2054,23 @@ function question_page_type_list($pagetype, $parentcontext, $currentcontext) {
         return $types;
     }
 }
+
+/**
+ * Does an activity module use the question bank?
+ *
+ * @param string $modname The name of the module (without mod_ prefix).
+ * @return bool true if the module uses questions.
+ */
+function question_module_uses_questions($modname) {
+    if (plugin_supports('mod', $modname, FEATURE_USES_QUESTIONS)) {
+        return true;
+    }
+
+    $component = 'mod_'.$modname;
+    if (component_callback_exists($component, 'question_pluginfile')) {
+        debugging("{$component} uses questions but doesn't declare FEATURE_USES_QUESTIONS", DEBUG_DEVELOPER);
+        return true;
+    }
+
+    return false;
+}

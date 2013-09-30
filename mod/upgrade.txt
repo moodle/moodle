@@ -3,6 +3,8 @@ information provided here is intended especially for developers.
 
 === 2.6 ===
 
+* Modules using the question bank MUST now declare their use of it with the xxx_supports()
+  flag FEATURE_USES_QUESTIONS.
 * xxx_get_types() module callback can now return subtypes that have
   a custom help text set. Also instead of array it can now return
   MOD_SUBTYPE_NO_CHILDREN. This is optional and still defaults to prior

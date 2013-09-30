@@ -2,7 +2,11 @@ This files describes API changes for code that uses the question API.
 
 === 2.6 ===
 
-1) It is sometimes necessary to display bits of question content without having
+1) Modules using the question bank MUST now declare their use of it with the xxx_supports()
+   flag FEATURE_USES_QUESTIONS. question_module_uses_questions() should be used to determine
+   if a module uses questions.
+
+2) It is sometimes necessary to display bits of question content without having
    and attempt (question_usage) in progress. Two examples of this are the option
    in the question bank to display the questiontext, and in the quiz statistics
    report, where it displays the question text above the report.

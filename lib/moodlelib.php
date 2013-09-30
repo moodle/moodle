@@ -433,6 +433,9 @@ define('FEATURE_BACKUP_MOODLE2', 'backup_moodle2');
 /** True if module can show description on course main page */
 define('FEATURE_SHOW_DESCRIPTION', 'showdescription');
 
+/** True if module uses the question bank */
+define('FEATURE_USES_QUESTIONS', 'usesquestions');
+
 /** Unspecified module archetype */
 define('MOD_ARCHETYPE_OTHER', 0);
 /** Resource-like type module */
@@ -7250,10 +7253,35 @@ function plugin_callback($type, $name, $feature, $action, $params = null, $defau
  * @param array $params parameters of callback function
  * @param mixed $default default value if callback function hasn't been defined, or if it retursn null.
  * @return mixed
- * @throws coding_exception
  */
 function component_callback($component, $function, array $params = array(), $default = null) {
-    global $CFG; // This is needed for require_once() below.
+
+    $functionname = component_callback_exists($component, $function);
+
+    if ($functionname) {
+        // Function exists, so just return function result.
+        $ret = call_user_func_array($functionname, $params);
+        if (is_null($ret)) {
+            return $default;
+        } else {
+            return $ret;
+        }
+    }
+    return $default;
+}
+
+/**
+ * Determine if a component callback exists and return the function name to call. Note that this
+ * function will include the required library files so that the functioname returned can be
+ * called directly.
+ *
+ * @param string $component frankenstyle component name, e.g. 'mod_quiz'
+ * @param string $function the rest of the function name, e.g. 'cron' will end up calling 'mod_quiz_cron'
+ * @return mixed Complete function name to call if the callback exists or false if it doesn't.
+ * @throws coding_exception if invalid component specfied
+ */
+function component_callback_exists($component, $function) {
+    global $CFG; // This is needed for the inclusions.
 
     $cleancomponent = clean_param($component, PARAM_COMPONENT);
     if (empty($cleancomponent)) {
@@ -7279,21 +7307,15 @@ function component_callback($component, $function, array $params = array(), $def
 
     if (!function_exists($function) and function_exists($oldfunction)) {
         if ($type !== 'mod' and $type !== 'core') {
-            debugging("Please use new function name $function instead of legacy $oldfunction");
+            debugging("Please use new function name $function instead of legacy $oldfunction", DEBUG_DEVELOPER);
         }
         $function = $oldfunction;
     }
 
     if (function_exists($function)) {
-        // Function exists, so just return function result.
-        $ret = call_user_func_array($function, $params);
-        if (is_null($ret)) {
-            return $default;
-        } else {
-            return $ret;
-        }
+        return $function;
     }
-    return $default;
+    return false;
 }
 
 /**
