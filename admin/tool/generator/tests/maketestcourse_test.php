@@ -112,7 +112,6 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
      * Creates an small test course with fixed data set and checks the used sections and users.
      */
     public function test_fixed_data_set() {
-        global $DB;
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -127,14 +126,12 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
 
         // Check module instances belongs to section 1.
         $instances = $modinfo->get_instances_of('page');
-        $npageinstances = count($instances);
         foreach ($instances as $instance) {
             $this->assertEquals(1, $instance->sectionnum);
         }
 
         // Users that started discussions are the same.
         $forums = $modinfo->get_instances_of('forum');
-        $nforuminstances = count($forums);
         $discussions = forum_get_discussions(reset($forums), 'd.timemodified ASC');
         $lastusernumber = 0;
         $discussionstarters = array();
