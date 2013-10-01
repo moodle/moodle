@@ -153,7 +153,7 @@ if (!empty($CFG->enablecalendarexport)) {
         echo $OUTPUT->single_button(new moodle_url('/calendar/managesubscriptions.php', array('course'=>$courseid)), get_string('managesubscriptions', 'calendar'));
     }
     if (isloggedin()) {
-        $authtoken = sha1($USER->id . $USER->password . $CFG->calendar_exportsalt);
+        $authtoken = sha1($USER->id . $DB->get_field('user', 'password', array('id'=>$USER->id)) . $CFG->calendar_exportsalt);
         $link = new moodle_url('/calendar/export_execute.php', array('preset_what'=>'all', 'preset_time'=>'recentupcoming', 'userid' => $USER->id, 'authtoken'=>$authtoken));
         $icon = html_writer::empty_tag('img', array('src'=>$OUTPUT->pix_url('i/ical'), 'height'=>'14', 'width'=>'36', 'alt'=>get_string('ical', 'calendar'), 'title'=>get_string('quickdownloadcalendar', 'calendar')));
         echo html_writer::tag('a', $icon, array('href'=>$link));
