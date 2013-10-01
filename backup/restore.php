@@ -17,6 +17,23 @@ $PAGE->set_pagelayout('standard');
 require_login($course, null, $cm);
 require_capability('moodle/restore:restorecourse', $context);
 
+// Show page header.
+$PAGE->set_title($course->shortname . ': ' . get_string('restore'));
+$PAGE->set_heading($course->fullname);
+
+$renderer = $PAGE->get_renderer('core','backup');
+echo $OUTPUT->header();
+
+// Prepare a progress bar which can display optionally during long-running
+// operations while setting up the UI.
+$slowprogress = new core_backup_display_progress_if_slow(get_string('preparingui', 'backup'));
+
+// Overall, allow 10 units of progress.
+$slowprogress->start_progress('', 10);
+
+// This progress section counts for loading the restore controller.
+$slowprogress->start_progress('', 1, 1);
+
 // Restore of large courses requires extra memory. Use the amount configured
 // in admin settings.
 raise_memory_limit(MEMORY_EXTRA);
@@ -43,15 +60,12 @@ if ($stage & restore_ui::STAGE_CONFIRM + restore_ui::STAGE_DESTINATION) {
     }
 }
 
-$PAGE->set_title($course->shortname . ': ' . get_string('restore'));
-$PAGE->set_heading($course->fullname);
+// End progress section for loading restore controller.
+$slowprogress->end_progress();
 
-$renderer = $PAGE->get_renderer('core','backup');
-echo $OUTPUT->header();
+// This progress section is for the 'process' function below.
+$slowprogress->start_progress('', 1, 9);
 
-// Prepare a progress bar which can display optionally during long-running
-// operations while setting up the UI.
-$slowprogress = new core_backup_display_progress_if_slow(get_string('preparingui', 'backup'));
 // Depending on the code branch above, $restore may be a restore_ui or it may
 // be a restore_ui_independent_stage. Either way, this function exists.
 $restore->set_progress_reporter($slowprogress);
@@ -62,6 +76,10 @@ if (!$restore->is_independent() && $restore->enforce_changed_dependencies()) {
 }
 
 $loghtml = '';
+// Finish the 'process' progress reporting section, and the overall count.
+$slowprogress->end_progress();
+$slowprogress->end_progress();
+
 if (!$restore->is_independent()) {
     // Use a temporary (disappearing) progress bar to show the precheck progress if any.
     $precheckprogress = new core_backup_display_progress_if_slow(get_string('preparingdata', 'backup'));
