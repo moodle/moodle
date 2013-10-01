@@ -57,6 +57,15 @@ $functions = array(
                 'type' => 'read'
         ),
 
+        'mod_assign_set_user_flags' => array(
+                'classname'   => 'mod_assign_external',
+                'methodname'  => 'set_user_flags',
+                'classpath'   => 'mod/assign/externallib.php',
+                'description' => 'Creates or updates user flags',
+                'type'        => 'write',
+                'capabilities'=> 'mod/assign:grade'
+        ),
+
         'mod_assign_get_user_mappings' => array(
                 'classname' => 'mod_assign_external',
                 'methodname' => 'get_user_mappings',

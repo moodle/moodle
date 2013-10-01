@@ -737,6 +737,149 @@ class mod_assign_external extends external_api {
     }
 
     /**
+     * Describes the parameters for set_user_flags
+     * @return external_function_parameters
+     * @since  Moodle 2.6
+     */
+    public static function set_user_flags_parameters() {
+        return new external_function_parameters(
+            array(
+                'assignmentid'    => new external_value(PARAM_INT, 'assignment id'),
+                'userflags' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'userid'           => new external_value(PARAM_INT, 'student id'),
+                            'locked'           => new external_value(PARAM_INT, 'locked', VALUE_OPTIONAL),
+                            'mailed'           => new external_value(PARAM_INT, 'mailed', VALUE_OPTIONAL),
+                            'extensionduedate' => new external_value(PARAM_INT, 'extension due date', VALUE_OPTIONAL),
+                            'workflowstate'    => new external_value(PARAM_TEXT, 'marking workflow state', VALUE_OPTIONAL),
+                            'allocatedmarker'  => new external_value(PARAM_INT, 'allocated marker', VALUE_OPTIONAL)
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /**
+     * Create or update user_flags records
+     *
+     * @param int $assignmentid the assignment for which the userflags are created or updated
+     * @param array $userflags  An array of userflags to create or update
+     * @return array containing success or failure information for each record
+     * @since Moodle 2.6
+     */
+    public static function set_user_flags($assignmentid, $userflags = array()) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . "/mod/assign/locallib.php");
+
+        $params = self::validate_parameters(self::set_user_flags_parameters(),
+                                            array('assignmentid' => $assignmentid,
+                                                  'userflags' => $userflags));
+
+        // Load assignment if it exists and if the user has the capability.
+        $cm = get_coursemodule_from_instance('assign', $params['assignmentid'], 0, false, MUST_EXIST);
+        $context = context_module::instance($cm->id);
+        self::validate_context($context);
+        require_capability('mod/assign:grade', $context);
+        $assign = new assign($context, null, null);
+
+        $results = array();
+        foreach ($params['userflags'] as $userflag) {
+            $success = true;
+            $result = array();
+
+            $record = $assign->get_user_flags($userflag['userid'], false);
+            if ($record) {
+                if (isset($userflag['locked'])) {
+                    $record->locked = $userflag['locked'];
+                }
+                if (isset($userflag['mailed'])) {
+                    $record->mailed = $userflag['mailed'];
+                }
+                if (isset($userflag['extensionduedate'])) {
+                    $record->extensionduedate = $userflag['extensionduedate'];
+                }
+                if (isset($userflag['workflowstate'])) {
+                    $record->workflowstate = $userflag['workflowstate'];
+                }
+                if (isset($userflag['allocatedmarker'])) {
+                    $record->allocatedmarker = $userflag['allocatedmarker'];
+                }
+                if ($assign->update_user_flags($record)) {
+                    $result['id'] = $record->id;
+                    $result['userid'] = $userflag['userid'];
+                } else {
+                    $result['id'] = $record->id;
+                    $result['userid'] = $userflag['userid'];
+                    $result['errormessage'] = 'Record created but values could not be set';
+                }
+            } else {
+                $record = $assign->get_user_flags($userflag['userid'], true);
+                $setfields = isset($userflag['locked'])
+                             || isset($userflag['mailed'])
+                             || isset($userflag['extensionduedate'])
+                             || isset($userflag['workflowstate'])
+                             || isset($userflag['allocatedmarker']);
+                if ($record) {
+                    if ($setfields) {
+                        if (isset($userflag['locked'])) {
+                            $record->locked = $userflag['locked'];
+                        }
+                        if (isset($userflag['mailed'])) {
+                            $record->mailed = $userflag['mailed'];
+                        }
+                        if (isset($userflag['extensionduedate'])) {
+                            $record->extensionduedate = $userflag['extensionduedate'];
+                        }
+                        if (isset($userflag['workflowstate'])) {
+                            $record->workflowstate = $userflag['workflowstate'];
+                        }
+                        if (isset($userflag['allocatedmarker'])) {
+                            $record->allocatedmarker = $userflag['allocatedmarker'];
+                        }
+                        if ($assign->update_user_flags($record)) {
+                            $result['id'] = $record->id;
+                            $result['userid'] = $userflag['userid'];
+                        } else {
+                            $result['id'] = $record->id;
+                            $result['userid'] = $userflag['userid'];
+                            $result['errormessage'] = 'Record created but values could not be set';
+                        }
+                    } else {
+                        $result['id'] = $record->id;
+                        $result['userid'] = $userflag['userid'];
+                    }
+                } else {
+                    $result['id'] = -1;
+                    $result['userid'] = $userflag['userid'];
+                    $result['errormessage'] = 'Record could not be created';
+                }
+            }
+
+            $results[] = $result;
+        }
+        return $results;
+    }
+
+    /**
+     * Describes the set_user_flags return value
+     * @return external_multiple_structure
+     * @since  Moodle 2.6
+     */
+    public static function set_user_flags_returns() {
+        return new external_multiple_structure(
+            new external_single_structure(
+                array(
+                    'id' => new external_value(PARAM_INT, 'id of record if successful, -1 for failure'),
+                    'userid' => new external_value(PARAM_INT, 'userid of record'),
+                    'errormessage' => new external_value(PARAM_TEXT, 'Failure error message', VALUE_OPTIONAL)
+                )
+            )
+        );
+    }
+
+    /**
      * Describes the parameters for get_user_flags
      * @return external_function_parameters
      * @since  Moodle 2.6
