@@ -76,13 +76,6 @@ if ($mform->is_cancelled()) {
 if (isset($formdata->confirmdelete) AND $formdata->confirmdelete == 1) {
     if ($completed = $DB->get_record('feedback_completed', array('id'=>$completedid))) {
         feedback_delete_completed($completedid);
-        add_to_log($course->id,
-                   'feedback',
-                   'delete',
-                   'view.php?id='.$cm->id,
-                   $feedback->id,
-                   $cm->id);
-
         if ($return == 'entriesanonym') {
             redirect('show_entries_anonym.php?id='.$id);
         } else {

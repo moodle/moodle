@@ -17,19 +17,21 @@
 /**
  * Genarator tests.
  *
- * @package    mod_chat
- * @copyright  2013 Frédéric Massart
+ * @package    mod_feedback
+ * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+global $CFG;
 
 /**
  * Genarator tests class.
  *
- * @package    mod_chat
- * @copyright  2013 Frédéric Massart
+ * @package    mod_feedback
+ * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_chat_generator_testcase extends advanced_testcase {
+class mod_feedback_generator_testcase extends advanced_testcase {
 
     public function test_create_instance() {
         global $DB;
@@ -38,16 +40,18 @@ class mod_chat_generator_testcase extends advanced_testcase {
 
         $course = $this->getDataGenerator()->create_course();
 
-        $this->assertFalse($DB->record_exists('chat', array('course' => $course->id)));
-        $chat = $this->getDataGenerator()->create_module('chat', array('course' => $course->id));
-        $this->assertEquals(1, $DB->count_records('chat', array('course' => $course->id)));
-        $this->assertTrue($DB->record_exists('chat', array('course' => $course->id)));
-        $this->assertTrue($DB->record_exists('chat', array('id' => $chat->id)));
+        $this->assertFalse($DB->record_exists('feedback', array('course' => $course->id)));
+        $feedback = $this->getDataGenerator()->create_module('feedback', array('course' => $course->id));
+        $this->assertEquals(1, $DB->count_records('feedback', array('course' => $course->id)));
+        $this->assertTrue($DB->record_exists('feedback', array('course' => $course->id)));
+        $this->assertTrue($DB->record_exists('feedback', array('id' => $feedback->id)));
 
-        $params = array('course' => $course->id, 'name' => 'One more chat');
-        $chat = $this->getDataGenerator()->create_module('chat', $params);
-        $this->assertEquals(2, $DB->count_records('chat', array('course' => $course->id)));
-        $this->assertEquals('One more chat', $DB->get_field_select('chat', 'name', 'id = :id', array('id' => $chat->id)));
+        $params = array('course' => $course->id, 'name' => 'One more feedback');
+        $feedback = $this->getDataGenerator()->create_module('feedback', $params);
+        $this->assertEquals(2, $DB->count_records('feedback', array('course' => $course->id)));
+        $this->assertEquals('One more feedback', $DB->get_field_select('feedback', 'name', 'id = :id',
+                array('id' => $feedback->id)));
     }
 
 }
+

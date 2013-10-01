@@ -40,8 +40,9 @@ $context = context_course::instance($course->id);
 require_login($course);
 $PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, 'feedback', 'view all', $url->out(false), $course->id);
-
+// Trigger instances list viewed event.
+$event = \mod_feedback\event\instances_list_viewed::create(array('context' => $context));
+$event->trigger();
 
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");

@@ -96,9 +96,21 @@ if ($courseid AND $courseid != SITEID) {
     }
 }
 
-if ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
-    add_to_log($course->id, 'feedback', 'view', 'view.php?id='.$cm->id, $feedback->id, $cm->id);
-}
+// Trigger module viewed event.
+$event = \mod_feedback\event\course_module_viewed::create(array(
+    'objectid' => $feedback->id,
+    'context' => $context,
+    'other' => array(
+        'cmid' => $cm->id,
+        'instanceid' => $feedback->id,
+        'anonymous' => $feedback->anonymous,
+        'content' => 'feedbackmoduleview'
+        )
+    ));
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('feedback', $feedback);
+$event->trigger();
 
 /// Print the page header
 $strfeedbacks = get_string("modulenameplural", "feedback");
