@@ -29,7 +29,7 @@
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_chat_genarator_testcase extends advanced_testcase {
+class mod_chat_generator_testcase extends advanced_testcase {
 
     public function test_create_instance() {
         global $DB;
