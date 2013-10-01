@@ -193,6 +193,7 @@ class phpunit_util extends testing_util {
         reset_text_filters_cache(true);
         events_get_handlers('reset');
         textlib::reset_caches();
+        get_message_processors(false, true);
         if (class_exists('repository')) {
             repository::reset_caches();
         }
