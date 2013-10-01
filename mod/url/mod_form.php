@@ -51,7 +51,7 @@ class mod_url_mod_form extends moodleform_mod {
         //-------------------------------------------------------
         $mform->addElement('header', 'content', get_string('contentheader', 'url'));
         $mform->addElement('url', 'externalurl', get_string('externalurl', 'url'), array('size'=>'60'), array('usefilepicker'=>true));
-        $mform->setType('externalurl', PARAM_URL);
+        $mform->setType('externalurl', PARAM_RAW_TRIMMED);
         $mform->addRule('externalurl', null, 'required', null, 'client');
         $mform->setExpanded('content');
 
@@ -174,15 +174,9 @@ class mod_url_mod_form extends moodleform_mod {
 
         // NOTE: do not try to explain the difference between URL and URI, people would be only confused...
 
-        if (empty($data['externalurl'])) {
-            $errors['externalurl'] = get_string('required');
-
-        } else {
-            $url = trim($data['externalurl']);
-            if (empty($url)) {
-                $errors['externalurl'] = get_string('required');
-
-            } else if (preg_match('|^/|', $url)) {
+        if (!empty($data['externalurl'])) {
+            $url = $data['externalurl'];
+            if (preg_match('|^/|', $url)) {
                 // links relative to server root are ok - no validation necessary
 
             } else if (preg_match('|^[a-z]+://|i', $url) or preg_match('|^https?:|i', $url) or preg_match('|^ftp:|i', $url)) {
