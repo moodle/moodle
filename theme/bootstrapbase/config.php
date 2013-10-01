@@ -129,12 +129,11 @@ $THEME->layouts = array(
         'regions' => array()
     ),
     // Used during upgrade and install, and for the 'This site is undergoing maintenance' message.
-    // This must not have any blocks, and it is good idea if it does not have links to
-    // other places - for example there should not be a home link in the footer...
+    // This must not have any blocks, links, or API calls that would lead to database or cache interaction.
+    // Please be extremely careful if you are modifying this layout.
     'maintenance' => array(
-        'file' => 'columns1.php',
+        'file' => 'maintenance.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true, 'nocoursefooter'=>true, 'nocourseheader'=>true),
     ),
     // Should display the content and basic headers only.
     'print' => array(

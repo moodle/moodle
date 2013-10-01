@@ -1,6 +1,11 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 2.5.3 ===
+
+Notes:
+* For themes based on bootstrapbase please also read theme/bootstrapbase/upgrade.txt
+
 === 2.5.1 ===
 
 Notes:

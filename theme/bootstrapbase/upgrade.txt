@@ -1,0 +1,9 @@
+This file describes API changes in /theme/bootstrapbase
+information provided here is intended especially for theme designers.
+
+=== 2.5.3 ===
+Notes:
+* A new maintenance layout file was introduced.
+  If you have a theme based upon bootstrapbase that implements its own layouts but
+  does not define the maintenance layout in its config.php then you may want to
+  create your own maintenance layout file and apply your customisations to that.
