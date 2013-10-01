@@ -216,7 +216,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_OFF); // Off.
         $forumoff = $this->getDataGenerator()->create_module('forum', $options);
 
-        $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_ON); // On.
+        $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_FORCED); // On.
         $forumforce = $this->getDataGenerator()->create_module('forum', $options);
 
         $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_OPTIONAL); // Optional.
@@ -292,7 +292,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_OFF); // Off.
         $forumoff = $this->getDataGenerator()->create_module('forum', $options);
 
-        $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_ON); // On.
+        $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_FORCED); // On.
         $forumforce = $this->getDataGenerator()->create_module('forum', $options);
 
         $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_OPTIONAL); // Optional.
@@ -411,7 +411,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_OFF); // Off.
         $forumoff = $this->getDataGenerator()->create_module('forum', $options);
 
-        $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_ON); // On.
+        $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_FORCED); // On.
         $forumforce = $this->getDataGenerator()->create_module('forum', $options);
 
         $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_OPTIONAL); // Optional.
@@ -534,7 +534,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_OFF); // Off.
         $forumoff = $this->getDataGenerator()->create_module('forum', $options);
 
-        $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_ON); // On.
+        $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_FORCED); // On.
         $forumforce = $this->getDataGenerator()->create_module('forum', $options);
 
         $options = array('course' => $course->id, 'trackingtype' => FORUM_TRACKING_OPTIONAL); // Optional.

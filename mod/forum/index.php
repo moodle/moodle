@@ -230,7 +230,7 @@ if ($generalforums) {
                     $unreadlink = '<span class="read">0</span>';
                 }
 
-                if (($forum->trackingtype == FORUM_TRACKING_ON) && ($CFG->forum_allowforcedreadtracking)) {
+                if (($forum->trackingtype == FORUM_TRACKING_FORCED) && ($CFG->forum_allowforcedreadtracking)) {
                     $trackedlink = $stryes;
                 } else if ($forum->trackingtype === FORUM_TRACKING_OFF || ($USER->trackforums == 0)) {
                     $trackedlink = '-';
@@ -369,7 +369,7 @@ if ($course->id != SITEID) {    // Only real courses have learning forums
                         $unreadlink = '<span class="read">0</span>';
                     }
 
-                    if (($forum->trackingtype == FORUM_TRACKING_ON) && ($CFG->forum_allowforcedreadtracking)) {
+                    if (($forum->trackingtype == FORUM_TRACKING_FORCED) && ($CFG->forum_allowforcedreadtracking)) {
                         $trackedlink = $stryes;
                     } else if ($forum->trackingtype === FORUM_TRACKING_OFF || ($USER->trackforums == 0)) {
                         $trackedlink = '-';

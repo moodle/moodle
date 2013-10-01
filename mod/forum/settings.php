@@ -61,7 +61,7 @@ if ($ADMIN->fulltree) {
     $options = array();
     $options[FORUM_TRACKING_OPTIONAL] = get_string('trackingoptional', 'forum');
     $options[FORUM_TRACKING_OFF] = get_string('trackingoff', 'forum');
-    $options[FORUM_TRACKING_ON] = get_string('trackingon', 'forum');
+    $options[FORUM_TRACKING_FORCED] = get_string('trackingon', 'forum');
     $settings->add(new admin_setting_configselect('forum_trackingtype', get_string('trackingtype', 'forum'),
                        get_string('configtrackingtype', 'forum'), FORUM_TRACKING_OPTIONAL, $options));
 

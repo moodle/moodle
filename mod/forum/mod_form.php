@@ -87,12 +87,12 @@ class mod_forum_mod_form extends moodleform_mod {
         $options[FORUM_TRACKING_OPTIONAL] = get_string('trackingoptional', 'forum');
         $options[FORUM_TRACKING_OFF] = get_string('trackingoff', 'forum');
         if ($CFG->forum_allowforcedreadtracking) {
-            $options[FORUM_TRACKING_ON] = get_string('trackingon', 'forum');
+            $options[FORUM_TRACKING_FORCED] = get_string('trackingon', 'forum');
         }
         $mform->addElement('select', 'trackingtype', get_string('trackingtype', 'forum'), $options);
         $mform->addHelpButton('trackingtype', 'trackingtype', 'forum');
         $default = $CFG->forum_trackingtype;
-        if ((!$CFG->forum_allowforcedreadtracking) && ($default == FORUM_TRACKING_ON)) {
+        if ((!$CFG->forum_allowforcedreadtracking) && ($default == FORUM_TRACKING_FORCED)) {
             $default = FORUM_TRACKING_OPTIONAL;
         }
         $mform->setDefault('trackingtype', $default);

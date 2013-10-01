@@ -40,8 +40,26 @@ define('FORUM_FORCESUBSCRIBE', 1);
 define('FORUM_INITIALSUBSCRIBE', 2);
 define('FORUM_DISALLOWSUBSCRIBE',3);
 
+/**
+ * FORUM_TRACKING_OFF - Tracking is not available for this forum.
+ */
 define('FORUM_TRACKING_OFF', 0);
+
+/**
+ * FORUM_TRACKING_OPTIONAL - Tracking is based on user preference.
+ */
 define('FORUM_TRACKING_OPTIONAL', 1);
+
+/**
+ * FORUM_TRACKING_FORCED - Tracking is on, regardless of user setting.
+ * Treated as FORUM_TRACKING_OPTIONAL if $CFG->forum_allowforcedreadtracking is off.
+ */
+define('FORUM_TRACKING_FORCED', 2);
+
+/**
+ * FORUM_TRACKING_ON - deprecated alias for FORUM_TRACKING_FORCED.
+ * @deprecated since 2.6
+ */
 define('FORUM_TRACKING_ON', 2);
 
 define('FORUM_MAILED_PENDING', 0);
@@ -6270,10 +6288,10 @@ function forum_tp_mark_posts_read($user, $postids) {
         $params[] = $cutoffdate;
 
         if ($CFG->forum_allowforcedreadtracking) {
-            $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_ON."
+            $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_FORCED."
                             OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND tf.id IS NULL))";
         } else {
-            $trackingsql = "AND ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL."  OR f.trackingtype = ".FORUM_TRACKING_ON.")
+            $trackingsql = "AND ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL."  OR f.trackingtype = ".FORUM_TRACKING_FORCED.")
                                 AND tf.id IS NULL)";
         }
 
@@ -6622,11 +6640,11 @@ function forum_tp_get_course_unread_posts($userid, $courseid) {
     }
 
     if ($CFG->forum_allowforcedreadtracking) {
-        $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_ON."
+        $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_FORCED."
                             OR (f.trackingtype = ".FORUM_TRACKING_OPTIONAL." AND tf.id IS NULL
                                 AND (SELECT trackforums FROM {user} WHERE id = ?) = 1))";
     } else {
-        $trackingsql = "AND ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL." OR f.trackingtype = ".FORUM_TRACKING_ON.")
+        $trackingsql = "AND ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL." OR f.trackingtype = ".FORUM_TRACKING_FORCED.")
                             AND tf.id IS NULL
                             AND (SELECT trackforums FROM {user} WHERE id = ?) = 1)";
     }
@@ -6789,7 +6807,7 @@ function forum_tp_get_untracked_forums($userid, $courseid) {
                                 OR (SELECT trackforums FROM {user} WHERE id = ?) = 0)))";
     } else {
         $trackingsql = "AND (f.trackingtype = ".FORUM_TRACKING_OFF."
-                            OR ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL." OR f.trackingtype = ".FORUM_TRACKING_ON.")
+                            OR ((f.trackingtype = ".FORUM_TRACKING_OPTIONAL." OR f.trackingtype = ".FORUM_TRACKING_FORCED.")
                                 AND (ft.id IS NOT NULL
                                     OR (SELECT trackforums FROM {user} WHERE id = ?) = 0)))";
     }
@@ -6856,7 +6874,7 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
     }
 
     $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
-    $forumforced = ($forum->trackingtype == FORUM_TRACKING_ON);
+    $forumforced = ($forum->trackingtype == FORUM_TRACKING_FORCED);
 
     if ($CFG->forum_allowforcedreadtracking) {
         // If we allow forcing, then forced forums takes procidence over user setting.
@@ -6900,7 +6918,7 @@ function forum_tp_is_tracked($forum, $user=false) {
     }
 
     $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
-    $forumforced = ($forum->trackingtype == FORUM_TRACKING_ON);
+    $forumforced = ($forum->trackingtype == FORUM_TRACKING_FORCED);
     $userpref = $DB->get_record('forum_track_prefs', array('userid' => $user->id, 'forumid' => $forum->id));
 
     if ($CFG->forum_allowforcedreadtracking) {
@@ -7718,7 +7736,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
 
     if ($enrolled && forum_tp_can_track_forums($forumobject)) { // keep tracking info for users with suspended enrolments
         if ($forumobject->trackingtype == FORUM_TRACKING_OPTIONAL
-                || ((!$CFG->forum_allowforcedreadtracking) && $forumobject->trackingtype == FORUM_TRACKING_ON)) {
+                || ((!$CFG->forum_allowforcedreadtracking) && $forumobject->trackingtype == FORUM_TRACKING_FORCED)) {
             if (forum_tp_is_tracked($forumobject)) {
                 $linktext = get_string('notrackforum', 'forum');
             } else {

@@ -44,7 +44,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Specific values to the Forum module.
         $moduleinfo->forcesubscribe = FORUM_INITIALSUBSCRIBE;
         $moduleinfo->type = 'single';
-        $moduleinfo->trackingtype = FORUM_TRACKING_ON;
+        $moduleinfo->trackingtype = FORUM_TRACKING_FORCED;
         $moduleinfo->maxbytes = 10240;
         $moduleinfo->maxattachments = 2;
 
@@ -360,7 +360,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Specific values to the Forum module.
         $moduleinfo->forcesubscribe = FORUM_INITIALSUBSCRIBE;
         $moduleinfo->type = 'single';
-        $moduleinfo->trackingtype = FORUM_TRACKING_ON;
+        $moduleinfo->trackingtype = FORUM_TRACKING_FORCED;
         $moduleinfo->maxbytes = 10240;
         $moduleinfo->maxattachments = 2;
 
