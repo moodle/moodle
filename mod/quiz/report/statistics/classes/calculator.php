@@ -37,9 +37,7 @@ class quiz_statistics_calculator {
      * @param array $groupstudents     students in this group.
      * @param int   $p                 number of positions (slots).
      * @param float $sumofmarkvariance sum of mark variance, calculated as part of question statistics
-     * @return array with two elements:
-     *      - integer $s Number of attempts included in the stats.
-     *      - object $quizstats The statistics for overall attempt scores.
+     * @return quiz_statistics_calculated $quizstats The statistics for overall attempt scores.
      */
     public function calculate($quizid, $currentgroup, $useallattempts, $groupstudents, $p, $sumofmarkvariance) {
 
@@ -91,7 +89,6 @@ class quiz_statistics_calculator {
 
             }
         }
-
 
         $quizstats->cache(quiz_statistics_qubaids_condition($quizid, $currentgroup, $groupstudents, $useallattempts));
 

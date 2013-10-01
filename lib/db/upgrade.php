@@ -864,10 +864,8 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012062000.01);
     }
 
-
     // Moodle v2.3.0 release upgrade line
     // Put any upgrade step following this
-
 
     if ($oldversion < 2012062500.02) {
         // Drop some old backup tables, not used anymore
@@ -1496,7 +1494,6 @@ function xmldb_main_upgrade($oldversion) {
 
     // Moodle v2.4.0 release upgrade line
     // Put any upgrade step following this
-
 
     if ($oldversion < 2012120300.01) {
         // Make sure site-course has format='site' //MDL-36840

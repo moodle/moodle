@@ -15,30 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Functions common to the question usage statistics code.
+ * Class for storing calculated sub question statistics and intermediate calculation values.
  *
- * @package    moodlecore
- * @subpackage questionbank
+ * @package    core_question
  * @copyright  2013 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
+ * @author     James Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_question\statistics\questions;
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Question statistics cron code. Deletes cached stats more than a certain age.
- */
-function question_usage_statistics_cron() {
-    global $DB;
+class calculated_for_subquestion extends calculated {
+    public $subquestion = true;
 
-    $expiretime = time() - 5*HOURSECS;
+    public $usedin = array();
 
-    mtrace("\n  Cleaning up old question statistics cache records...", '');
+    public $differentweights = false;
 
-    $DB->delete_records_select('question_statistics', 'timemodified < ?', array($expiretime));
-    $DB->delete_records_select('question_response_analysis', 'timemodified < ?', array($expiretime));
-
-    mtrace('done.');
-    return true;
+    public $negcovar = 0;
 }

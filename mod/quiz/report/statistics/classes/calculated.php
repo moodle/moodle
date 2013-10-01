@@ -166,7 +166,6 @@ class quiz_statistics_calculated {
         }
     }
 
-
     /**
      * @var array of names of properties of this class that are cached in db record.
      */
