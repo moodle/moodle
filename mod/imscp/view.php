@@ -67,6 +67,7 @@ $PAGE->set_title($course->shortname.': '.$imscp->name);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_activity_record($imscp);
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($imscp->name));
 
 // verify imsmanifest was parsed properly
 if (!$imscp->structure) {

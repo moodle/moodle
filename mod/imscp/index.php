@@ -47,6 +47,7 @@ $PAGE->set_title($course->shortname.': '.$strimscps);
 $PAGE->set_heading($course->fullname);
 $PAGE->navbar->add($strimscps);
 echo $OUTPUT->header();
+echo $OUTPUT->heading($strimscps);
 
 if (!$imscps = get_all_instances_in_course('imscp', $course)) {
     notice(get_string('thereareno', 'moodle', $strimscps), "$CFG->wwwroot/course/view.php?id=$course->id");
