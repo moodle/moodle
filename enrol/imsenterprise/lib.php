@@ -85,6 +85,7 @@ function cron() {
         $this->logfp = fopen($logtolocation, 'a');
     }
 
+    $fileisnew = false;
     if ( file_exists($filename) ) {
         @set_time_limit(0);
         $starttime = time();
@@ -107,10 +108,8 @@ function cron() {
         if(empty($prev_path)  || ($filename != $prev_path)) {
             $fileisnew = true;
         } elseif(isset($prev_time) && ($filemtime <= $prev_time)) {
-            $fileisnew = false;
             $this->log_line('File modification time is not more recent than last update - skipping processing.');
         } elseif(isset($prev_md5) && ($md5 == $prev_md5)) {
-            $fileisnew = false;
             $this->log_line('File MD5 hash is same as on last update - skipping processing.');
         } else {
             $fileisnew = true; // Let's process it!
@@ -217,7 +216,7 @@ function cron() {
         $this->log_line('File not found: '.$filename);
     }
 
-    if (!empty($mailadmins)) {
+    if (!empty($mailadmins) && $fileisnew) {
         $msg = "An IMS enrolment has been carried out within Moodle.\nTime taken: $timeelapsed seconds.\n\n";
         if(!empty($logtolocation)){
             if($this->logfp){
