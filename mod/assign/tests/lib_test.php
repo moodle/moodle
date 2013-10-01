@@ -73,6 +73,18 @@ class mod_assign_lib_testcase extends mod_assign_base_testcase {
         assign_print_recent_activity($this->course, true, time() - 3600);
     }
 
+    /** Make sure fullname dosn't trigger any warnings when assign_print_recent_activity is triggered. */
+    public function test_print_recent_activity_fullname() {
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance();
+
+        $assign->get_user_submission($this->students[0]->id, true);
+
+        $this->expectOutputRegex('/submitted:/');
+        set_config('fullnamedisplay', 'firstname, lastnamephonetic');
+        assign_print_recent_activity($this->course, false, time() - 3600);
+    }
+
     public function test_assign_get_recent_mod_activity() {
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
