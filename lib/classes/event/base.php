@@ -463,6 +463,9 @@ abstract class base implements \IteratorAggregate {
                 if (!$DB->get_manager()->table_exists($this->data['objecttable'])) {
                     debugging('Unknown table specified in objecttable field', DEBUG_DEVELOPER);
                 }
+                if (!isset($this->data['objectid'])) {
+                    debugging('Event property objectid must be set when objecttable is defined', DEBUG_DEVELOPER);
+                }
             }
         }
     }

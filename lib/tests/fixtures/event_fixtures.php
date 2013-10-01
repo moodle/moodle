@@ -174,6 +174,14 @@ class bad_event7 extends \core\event\base {
     }
 }
 
+class bad_event8 extends \core\event\base {
+    protected function init() {
+        $this->data['crud'] = 'c';
+        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['objecttable'] = 'user';
+    }
+}
+
 class problematic_event1 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
