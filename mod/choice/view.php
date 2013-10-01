@@ -78,7 +78,15 @@
 
 
 /// Display the choice and possibly results
-    add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", $choice->id, $cm->id);
+    $eventdata = array();
+    $eventdata['objectid'] = $choice->id;
+    $eventdata['context'] = $context;
+    $eventdata['courseid'] = $course->id;
+    $eventdata['other']['content'] = 'pageresourceview';
+
+    $event = \mod_choice\event\course_module_viewed::create($eventdata);
+    $event->set_page_detail();
+    $event->trigger();
 
     /// Check to see if groups are being used in this choice
     $groupmode = groups_get_activity_groupmode($cm);
