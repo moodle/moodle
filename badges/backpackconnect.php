@@ -34,6 +34,7 @@ require_sesskey();
 require_login();
 $PAGE->set_url('/badges/backpackconnect.php');
 $PAGE->set_context(context_system::instance());
+echo $OUTPUT->header();
 
 // Use PHP input filtering as there is no PARAM type for
 // the type of cleaning that is required (ASCII chars 32-127 only).

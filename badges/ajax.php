@@ -41,6 +41,8 @@ $result = badges_check_backpack_accessibility();
 $outcome = new stdClass();
 $outcome->code = $result;
 $outcome->response = get_string('error:backpacknotavailable', 'badges') . $OUTPUT->help_icon('backpackavailability', 'badges');
+
+echo $OUTPUT->header();
 echo json_encode($outcome);
 
 die();
