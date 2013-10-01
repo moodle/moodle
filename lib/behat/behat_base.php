@@ -241,48 +241,56 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * closure exception will be used, but you must provide an exception if the closure does not throws
      * an exception.
      *
-     * @throws Exception            If it timeouts without receiving something != false from the closure
-     * @param  Closure   $lambda    The function to execute.
-     * @param  mixed     $args      Arguments to pass to the closure
-     * @param  int       $timeout   Timeout
-     * @param  Exception $exception The exception to throw in case it time outs.
+     * @throws Exception If it timeouts without receiving something != false from the closure
+     * @param Function|array|string $lambda The function to execute or an array passed to call_user_func (maps to a class method)
+     * @param mixed $args Arguments to pass to the closure
+     * @param int $timeout Timeout in seconds
+     * @param Exception $exception The exception to throw in case it time outs.
+     * @param bool $microsleep If set to true it'll sleep micro seconds rather than seconds.
      * @return mixed The value returned by the closure
      */
-    protected function spin($lambda, $args = false, $timeout = false, $exception = false) {
+    protected function spin($lambda, $args = false, $timeout = false, $exception = false, $microsleep = false) {
 
         // Using default timeout which is pretty high.
         if (!$timeout) {
             $timeout = self::TIMEOUT;
         }
+        if ($microsleep) {
+            // Will sleep 1/10th of a second by default for self::TIMEOUT seconds.
+            $loops = $timeout * 10;
+        } else {
+            // Will sleep for self::TIMEOUT seconds.
+            $loops = $timeout;
+        }
 
-        for ($i = 0; $i < $timeout; $i++) {
-
+        for ($i = 0; $i < $loops; $i++) {
             // We catch the exception thrown by the step definition to execute it again.
             try {
-
                 // We don't check with !== because most of the time closures will return
                 // direct Behat methods returns and we are not sure it will be always (bool)false
                 // if it just runs the behat method without returning anything $return == null.
-                if ($return = $lambda($this, $args)) {
+                if ($return = call_user_func($lambda, $this, $args)) {
                     return $return;
                 }
             } catch (Exception $e) {
-
                 // We would use the first closure exception if no exception has been provided.
                 if (!$exception) {
                     $exception = $e;
                 }
-
                 // We wait until no exception is thrown or timeout expires.
                 continue;
             }
 
-            sleep(1);
+            if ($microsleep) {
+                usleep(100000);
+            } else {
+                sleep(1);
+            }
         }
 
         // Using coding_exception as is a development issue if no exception has been provided.
         if (!$exception) {
-            $exception = new coding_exception('spin method requires an exception if the closure doesn\'t throw an exception itself');
+            $exception = new coding_exception('spin method requires an exception if the callback does not throw an exception');
         }
 
         // Throwing exception to the user.
