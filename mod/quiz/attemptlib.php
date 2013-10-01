@@ -1422,7 +1422,7 @@ class quiz_attempt {
             quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
 
             // Trigger event.
-            $this->fire_state_transition_event('quiz_attempt_submitted', $timestamp);
+            $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp);
 
             // Tell any access rules that care that the attempt is over.
             $this->get_access_manager($timestamp)->current_attempt_finished();
@@ -1459,7 +1459,7 @@ class quiz_attempt {
         $this->attempt->timecheckstate = $timestamp;
         $DB->update_record('quiz_attempts', $this->attempt);
 
-        $this->fire_state_transition_event('quiz_attempt_overdue', $timestamp);
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_becameoverdue', $timestamp);
 
         $transaction->allow_commit();
     }
@@ -1478,45 +1478,35 @@ class quiz_attempt {
         $this->attempt->timecheckstate = null;
         $DB->update_record('quiz_attempts', $this->attempt);
 
-        $this->fire_state_transition_event('quiz_attempt_abandoned', $timestamp);
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp);
 
         $transaction->allow_commit();
     }
 
     /**
      * Fire a state transition event.
-     * @param string $event the type of event. Should be listed in db/events.php.
+     * the same event information.
+     * @param string $eventclass the event class name.
      * @param int $timestamp the timestamp to include in the event.
+     * @return void
      */
-    protected function fire_state_transition_event($event, $timestamp) {
+    protected function fire_state_transition_event($eventclass, $timestamp) {
         global $USER;
 
-        // Trigger event.
-        $eventdata = new stdClass();
-        $eventdata->component   = 'mod_quiz';
-        $eventdata->attemptid   = $this->attempt->id;
-        $eventdata->timestamp   = $timestamp;
-        $eventdata->userid      = $this->attempt->userid;
-        $eventdata->quizid      = $this->get_quizid();
-        $eventdata->cmid        = $this->get_cmid();
-        $eventdata->courseid    = $this->get_courseid();
+        $params = array(
+            'context' => $this->get_quizobj()->get_context(),
+            'courseid' => $this->get_courseid(),
+            'objectid' => $this->attempt->id,
+            'relateduserid' => $this->attempt->userid,
+            'other' => array(
+                'submitterid' => CLI_SCRIPT ? null : $USER->id
+            )
+        );
 
-        // I don't think if (CLI_SCRIPT) is really the right logic here. The
-        // question is really 'is $USER currently set to a real user', but I cannot
-        // see standard Moodle function to answer that question. For example,
-        // cron fakes $USER.
-        if (CLI_SCRIPT) {
-            $eventdata->submitterid = null;
-        } else {
-            $eventdata->submitterid = $USER->id;
-        }
-
-        if ($event == 'quiz_attempt_submitted') {
-            // Backwards compatibility for this event type. $eventdata->timestamp is now preferred.
-            $eventdata->timefinish = $timestamp;
-        }
-
-        events_trigger($event, $eventdata);
+        $event = $eventclass::create($params);
+        $event->add_record_snapshot('quiz', $this->get_quiz());
+        $event->add_record_snapshot('quiz_attempts', $this->get_attempt());
+        $event->trigger();
     }
 
     /**
