@@ -396,7 +396,7 @@ function process_group_tag($tagcontents) {
                     // Insert default names for teachers/students, from the current language
 
                     // Handle course categorisation (taken from the group.org.orgunit field if present)
-                    if (strlen($group->category)>0) {
+                    if (!empty($group->category)) {
                         // If the category is defined and exists in Moodle, we want to store it in that one
                         if ($catid = $DB->get_field('course_categories', 'id', array('name'=>$group->category))) {
                             $course->category = $catid;
