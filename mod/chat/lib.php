@@ -1315,11 +1315,12 @@ function chat_extend_settings_navigation(settings_navigation $settings, navigati
 /**
  * user logout event handler
  *
- * @param object $user full $USER object
+ * @param \core\event\user_loggedout $event The event.
+ * @return void
  */
-function chat_user_logout($user) {
+function chat_user_logout(\core\event\user_loggedout $event) {
     global $DB;
-    $DB->delete_records('chat_users', array('userid'=>$user->id));
+    $DB->delete_records('chat_users', array('userid' => $event->objectid));
 }
 
 /**
