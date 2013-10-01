@@ -1057,10 +1057,20 @@ abstract class restore_dbops {
      * in backup_ids having newitemid = 0, as far as
      * precheck_included_users() have left them there
      * ready to be created. Also, annotate their newids
-     * once created for later reference
+     * once created for later reference.
+     *
+     * This function will start and end a new progress section in the progress
+     * object.
+     *
+     * @param string $basepath Base path of unzipped backup
+     * @param string $restoreid Restore ID
+     * @param int $userid Default userid for files
+     * @param core_backup_progress $progress Object used for progress tracking
      */
-    public static function create_included_users($basepath, $restoreid, $userid) {
+    public static function create_included_users($basepath, $restoreid, $userid,
+            core_backup_progress $progress) {
         global $CFG, $DB;
+        $progress->start_progress('Creating included users');
 
         $authcache = array(); // Cache to get some bits from authentication plugins
         $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search later
@@ -1069,6 +1079,7 @@ abstract class restore_dbops {
         // Iterate over all the included users with newitemid = 0, have to create them
         $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'user', 'newitemid' => 0), '', 'itemid, parentitemid, info');
         foreach ($rs as $recuser) {
+            $progress->progress();
             $user = (object)backup_controller_dbops::decode_backup_temp_info($recuser->info);
 
             // if user lang doesn't exist here, use site default
@@ -1208,11 +1219,14 @@ abstract class restore_dbops {
                 }
 
                 // Create user files in pool (profile, icon, private) by context
-                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon', $recuser->parentitemid, $userid);
-                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile', $recuser->parentitemid, $userid);
+                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon',
+                        $recuser->parentitemid, $userid, null, null, null, false, $progress);
+                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile',
+                        $recuser->parentitemid, $userid, null, null, null, false, $progress);
             }
         }
         $rs->close();
+        $progress->end_progress();
     }
 
     /**
