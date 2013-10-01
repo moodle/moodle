@@ -50,6 +50,8 @@ echo $OUTPUT->doctype() ?>
 <head>
     <title><?php echo $PAGE->title ?></title>
     <link rel="shortcut icon" href="<?php echo $OUTPUT->pix_url('favicon', 'theme')?>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <?php echo $OUTPUT->standard_head_html() ?>
 </head>
 

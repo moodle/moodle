@@ -35,7 +35,8 @@ Page
 -----------------------*/
 #page {
     font-size: 108%;
-    font-family: Helvetica, Arial, sans-serif
+    font-family: Helvetica, Arial, sans-serif;
+    background-color: #fff;
 }
 #page-content {
     border-bottom: 1px solid #ddd;
@@ -46,28 +47,33 @@ Header and Logo
 #page-header {
     height: 100px;
     width: 100%;
-    background: #fff;
+    background-color: #fff;
 }
 a.logo {
     background: url([[setting:logo]]) no-repeat 0 0;
     width: 320px;
     height: 75px;
-    display: block;
-    margin: 15px 10px 10px;
-    float: left;
-}
-.headermenu,
-.langmenu {
-    float:right;
-    clear: right;
-    font-size: 1em;
     margin: 0;
-    text-align: right;
+    float: left;
     position: relative;
     top: 10px;
+    left: 10px;
 }
 .headermenu {
-    right: 10px;
+    float: right;
+    clear: right;
+    margin: 0;
+    padding: 10px;
+    position: relative;
+    top: 0;
+    right: 0;
+}
+.headermenu .logininfo,
+.headermenu .langmenu {
+    font-size: 1em;
+}
+#navcontainer {
+    clear: both;
 }
 /*
 Page Footer

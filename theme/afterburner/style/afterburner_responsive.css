@@ -1,4 +1,4 @@
-@media screen and (orientation:portrait) and (max-width: 767px) {
+@media screen and (max-width: 767px) {
    /* Custom Menu
     -------------------------- */
 
@@ -86,19 +86,20 @@
         border-bottom: 1px solid #c3d9e1;
         color: #50646d;
     }
-    .headermenu {
-        top: 10px;
-        right: 10px;
-    }
 }
-@media only screen and (orientation:portrait) and (max-width:767px) {
+@media screen and (max-width:767px) {
     /* Page Layout
     -------------------------*/
-    body.has_dock #dock {
-        display: none;
+    body.has_dock {
+        margin-left: 3%;
+        width: 97%;
+    }
+    #dock {
+        width: 30px;
     }
     #page-wrapper {
-        width: 96%;
+        width: 100%;
+        margin: 0;
     }
     #region-main-box,
     .side-pre-only #region-main-box,
@@ -134,20 +135,13 @@
         color:#50646d;
     }
     #page-header {
-        height: 100px;
-        background: #fff;
+        height: 110px;
     }
     a.logo {
-        background-size: 75% 75%;
+        background-size: 60%;
+        overflow: hidden;
     }
     .headermenu {
-        display: none;
+        padding-top: 0;
     }
-}
-@media screen and (max-width: 320px) {
-
-    a.logo {
-        background-size: 50% 50%;
-    }
-
 }
