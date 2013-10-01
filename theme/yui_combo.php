@@ -81,6 +81,9 @@ foreach ($parts as $part) {
     }
     //debug($bits);
     $version = array_shift($bits);
+    if ($version === 'm') {
+        $version = 'moodle';
+    }
     if ($version === 'moodle') {
         if (count($bits) <= 3) {
             // This is an invalid module load attempt.
