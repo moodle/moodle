@@ -1,24 +1,29 @@
-div.editor_atto {
+.editor_atto_content_wrap {
     background-color: white;
-    border: 1px solid #BBB;
-    width: 100%;
+}
+.editor_atto_content {
+    padding: 4px;
 }
 
+.editor_atto_content_wrap,
 .editor_atto + textarea {
     width: 100%;
     padding: 0;
-    resize: vertical;
-    border-radius: 0;
     border: 1px solid #BBB;
+    border-top: none;
+}
+
+.editor_atto + textarea {
+    border-radius: 0;
+    resize: vertical;
+    margin-top: -1px;
 }
 
 div.editor_atto_toolbar {
     display: block;
     background: #F2F2F2;
     min-height: 42px;
-    border-top: 1px solid #BBB;
-    border-left: 1px solid #BBB;
-    border-right: 1px solid #BBB;
+    border: 1px solid #BBB;
     width: 100%;
     padding: 0 0 9px 0;
 }
@@ -53,7 +58,7 @@ div.editor_atto_toolbar div.atto_group {
     background: #FFF;
 }
 
-.editor_atto img {
+.editor_atto_content img {
     resize: both; overflow: auto;
 }
 
