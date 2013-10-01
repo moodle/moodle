@@ -37,41 +37,31 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class analyser {
-    /** @var object the data from the database that defines the question. */
+    /** @var object full question data from db. */
     protected $questiondata;
 
     /**
-     * @var array This is a multi-dimensional array that stores the results of
-     * the analysis.
-     *
-     * The description of {@link question_type::get_possible_responses()} should
-     * help understand this description.
-     *
-     * $this->responses[$subpartid][$responseclassid][$response] is an
-     * object with two fields, ->count and ->fraction.
+     * @var analysis_for_question
      */
-    public $responses = array();
+    public $analysis;
 
     /**
-     * @var array $this->fractions[$subpartid][$responseclassid] is an object
-     * with two fields, ->responseclass and ->fraction.
+     * @var array Two index array first index is unique for each sub question part, the second index is the 'class' that this sub
+     *          question part can be classified into. This is the return value from {@link \question_type::get_possible_responses()}
      */
     public $responseclasses = array();
 
     /**
      * Create a new instance of this class for holding/computing the statistics
      * for a particular question.
-     * @param object $questiondata the data from the database defining this question.
+     *
+     * @param object $questiondata the full question data from the database defining this question.
      */
     public function __construct($questiondata) {
         $this->questiondata = $questiondata;
+        $qtypeobj = \question_bank::get_qtype($this->questiondata->qtype);
+        $this->analysis = new analysis_for_question($qtypeobj->get_possible_responses($this->questiondata));
 
-        $this->responseclasses = \question_bank::get_qtype($questiondata->qtype)->get_possible_responses($questiondata);
-        foreach ($this->responseclasses as $subpartid => $responseclasses) {
-            foreach ($responseclasses as $responseclassid => $notused) {
-                $this->responses[$subpartid][$responseclassid] = array();
-            }
-        }
     }
 
     /**
@@ -82,8 +72,7 @@ class analyser {
     }
 
     /**
-     * @return bool whether this analysis has (a subpart with) more than one
-     *      response class.
+     * @return bool whether this analysis has (a subpart with) more than one response class.
      */
     public function has_response_classes() {
         foreach ($this->responseclasses as $partclasses) {
@@ -119,6 +108,7 @@ class analyser {
      * Analyse all the response data for for all the specified attempts at
      * this question.
      * @param \qubaid_condition $qubaids which attempts to consider.
+     * @return analysis_for_question
      */
     public function calculate($qubaids) {
         // Load data.
@@ -127,91 +117,53 @@ class analyser {
 
         // Analyse it.
         foreach ($questionattempts as $qa) {
-            $this->add_data_from_one_attempt($qa);
+            $responseparts = $qa->classify_response();
+            $this->analysis->count_response_parts($responseparts);
         }
-        $this->store_cached($qubaids);
-
+        $this->analysis->cache($qubaids, $this->questiondata->id);
+        return $this->analysis;
     }
 
-    /**
-     * Analyse the data from one question attempt.
-     * @param \question_attempt $qa the data to analyse.
-     */
-    protected function add_data_from_one_attempt(\question_attempt $qa) {
-        $blankresponse = \question_classified_response::no_response();
+    /** @var integer Time after which responses are automatically reanalysed. */
+    const TIME_TO_CACHE = 900; // 15 minutes.
 
-        $partresponses = $qa->classify_response();
-        foreach ($partresponses as $subpartid => $partresponse) {
-            if (!isset($this->responses[$subpartid][$partresponse->responseclassid]
-                    [$partresponse->response])) {
-                $resp = new \stdClass();
-                $resp->count = 0;
-                if (!is_null($partresponse->fraction)) {
-                    $resp->fraction = $partresponse->fraction;
-                } else {
-                    $resp->fraction = $this->responseclasses[$subpartid]
-                            [$partresponse->responseclassid]->fraction;
-                }
-
-                $this->responses[$subpartid][$partresponse->responseclassid]
-                        [$partresponse->response] = $resp;
-            }
-
-            $this->responses[$subpartid][$partresponse->responseclassid]
-                    [$partresponse->response]->count += 1;
-        }
-    }
 
     /**
-     * Store the computed response analysis in the question_response_analysis table.
-     * @param \qubaid_condition $qubaids
-     * data corresponding to.
-     * @return bool true if cached data was found in the database and loaded, otherwise false, to mean no data was loaded.
+     * Retrieve the computed response analysis from the question_response_analysis table.
+     *
+     * @param \qubaid_condition $qubaids which attempts to get cached response analysis for.
+     * @return analysis_for_question|boolean analysis or false if no cached analysis found.
      */
     public function load_cached($qubaids) {
         global $DB;
 
-        $rows = $DB->get_records('question_response_analysis',
-                array('hashcode' => $qubaids->get_hash_code(), 'questionid' => $this->questiondata->id));
+        $timemodified = time() - self::TIME_TO_CACHE;
+        $rows = $DB->get_records_select('question_response_analysis', 'hashcode = ? AND questionid = ? AND timemodified > ? ',
+                                        array($qubaids->get_hash_code(), $this->questiondata->id, $timemodified));
         if (!$rows) {
             return false;
         }
 
         foreach ($rows as $row) {
-            $this->responses[$row->subqid][$row->aid][$row->response] = new \stdClass();
-            $this->responses[$row->subqid][$row->aid][$row->response]->count = $row->rcount;
-            $this->responses[$row->subqid][$row->aid][$row->response]->fraction = $row->credit;
+            $class = $this->analysis->get_subpart($row->subqid)->get_response_class($row->aid);
+            $class->add_response_and_count($row->response, $row->credit, $row->rcount);
         }
-        return true;
+        return $this->analysis;
     }
 
+
     /**
-     * Store the computed response analysis in the question_response_analysis table.
-     * @param \qubaid_condition $qubaids
+     * Find time of non-expired analysis in the database.
+     *
+     * @param $qubaids \qubaid_condition
+     * @return integer|boolean Time of cached record that matches this qubaid_condition or false if none found.
      */
-    public function store_cached($qubaids) {
+    public function get_last_analysed_time($qubaids) {
         global $DB;
 
-        $cachetime = time();
-        foreach ($this->responses as $subpartid => $partdata) {
-            foreach ($partdata as $responseclassid => $classdata) {
-                foreach ($classdata as $response => $data) {
-                    $row = new \stdClass();
-                    $row->hashcode = $qubaids->get_hash_code();
-                    $row->questionid = $this->questiondata->id;
-                    $row->subqid = $subpartid;
-                    if ($responseclassid === '') {
-                        $row->aid = null;
-                    } else {
-                        $row->aid = $responseclassid;
-                    }
-                    $row->response = $response;
-                    $row->rcount = $data->count;
-                    $row->credit = $data->fraction;
-                    $row->timemodified = $cachetime;
-                    $DB->insert_record('question_response_analysis', $row, false);
-                }
-            }
-        }
+        $timemodified = time() - self::TIME_TO_CACHE;
+        return $DB->get_field_select('question_response_analysis', 'timemodified', 'hashcode = ? AND timemodified > ? '.
+                                                          'ORDER BY timemodified DESC LIMIT 1',
+                                     array($qubaids->get_hash_code(), $timemodified));
     }
 }

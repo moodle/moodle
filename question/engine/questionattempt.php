@@ -1242,11 +1242,11 @@ class question_attempt {
     }
 
     /**
-     * @return array subpartid => object with fields
-     *      ->responseclassid matches one of the values returned from quetion_type::get_possible_responses.
-     *      ->response the actual response the student gave to this part, as a string.
-     *      ->fraction the credit awarded for this subpart, may be null.
-     *      returns an empty array if no analysis is possible.
+     * Break down a student response by sub part and classification.
+     * See also {@link question_type::get_possible_responses()}
+     * Used for response analysis.
+     *
+     * @return question_possible_response[] where keys are subpartid.
      */
     public function classify_response() {
         return $this->behaviour->classify_response();
