@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
  * Event observer for mod_forum.
  */
 class mod_forum_observer {
+
     /**
      * Triggered via user_enrolment_deleted event.
      *
@@ -47,6 +48,47 @@ class mod_forum_observer {
             $DB->delete_records_select('forum_subscriptions', 'userid = :userid AND forum '.$forumselect, $params);
             $DB->delete_records_select('forum_track_prefs', 'userid = :userid AND forumid '.$forumselect, $params);
             $DB->delete_records_select('forum_read', 'userid = :userid AND forumid '.$forumselect, $params);
+        }
+    }
+
+    /**
+     * Observer for role_assigned event.
+     *
+     * @param \core\event\role_assigned $event
+     * @return void
+     */
+    public static function role_assigned(\core\event\role_assigned $event) {
+        global $CFG, $DB;
+
+        $context = context::instance_by_id($event->contextid, MUST_EXIST);
+
+        // If contextlevel is course then only subscribe user. Role assignment
+        // at course level means user is enroled in course and can subscribe to forum.
+        if ($context->contextlevel != CONTEXT_COURSE) {
+            return;
+        }
+
+        // Forum lib required for the constant used below.
+        require_once($CFG->dirroot . '/mod/forum/lib.php');
+
+        $userid = $event->relateduserid;
+        $sql = "SELECT f.id, cm.id AS cmid
+                  FROM {forum} f
+                  JOIN {course_modules} cm ON (cm.instance = f.id)
+                  JOIN {modules} m ON (m.id = cm.module)
+             LEFT JOIN {forum_subscriptions} fs ON (fs.forum = f.id AND fs.userid = :userid)
+                 WHERE f.course = :courseid
+                   AND f.forcesubscribe = :initial
+                   AND m.name = 'forum'
+                   AND fs.id IS NULL";
+        $params = array('courseid' => $context->instanceid, 'userid' => $userid, 'initial' => FORUM_INITIALSUBSCRIBE);
+
+        $forums = $DB->get_records_sql($sql, $params);
+        foreach ($forums as $forum) {
+            // If user doesn't have allowforcesubscribe capability then don't subscribe.
+            if (has_capability('mod/forum:allowforcesubscribe', context_module::instance($forum->cmid), $userid)) {
+                forum_subscribe($userid, $forum->id);
+            }
         }
     }
 }
