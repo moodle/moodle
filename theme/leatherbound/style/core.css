@@ -150,8 +150,10 @@ a:active {
 
 /* Course
 ---------------------------*/
-
-h2.headingblock {
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {
     border-width: 0 0 1px 0;
     padding: 5px 5px 2px;
     font-weight: normal;
@@ -160,6 +162,9 @@ h2.headingblock {
     color: #251c17;
 }
 
+.course_category_tree .coursebox > .info > .categoryname {
+    margin: 10px;
+}
 .course-content .main {
     background: #f7f5f1;
     border: 1px solid #ddd

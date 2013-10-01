@@ -276,7 +276,10 @@ h2,h3,h4,h5,h6{
     margin:0 0 10px;
     padding:3px;
 }
-#region-main h2.headingblock{
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {
     font-size:1.6em;
     font-weight:400;
     line-height:1.6em;

@@ -263,9 +263,13 @@ td.eventskey {
 }
 
 /* Course */
-
-h2.headingblock {
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {
     font-weight: normal;
+    border-bottom: 1px solid #eee;
+    font-size: 1.5em;
 }
 
 .coursebox {
@@ -284,18 +288,13 @@ h2.headingblock {
     width: 61%;
 }
 
-.coursebox > .info > h3.name {
+.coursebox > .info > h3.coursename {
     font-size: 1.2em;
     line-height: 1.4;
 }
 
 .coursebox .content .teachers {
     font-size: 0.95em;
-}
-
-h2.headingblock {
-    border-bottom: 1px solid #eee;
-    font-size: 1.5em;
 }
 
 #page-course-index-category .categorypicker {

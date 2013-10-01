@@ -32,8 +32,10 @@
   -webkit-border-radius: 0;
   border-radius: 0;
 }
-
-.headingblock,
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2,
 table.minicalendar td,
 .path-calendar .maincalendar .filters table,
 .path-calendar .sidecalendar .filters table,

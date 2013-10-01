@@ -90,7 +90,7 @@ if ($tag->flag > 0 && has_capability('moodle/tag:manage', $systemcontext)) {
     $tagname =  '<span class="flagged-tag">' . $tagname . '</span>';
 }
 
-echo $OUTPUT->heading($tagname, 2, 'headingblock header tag-heading');
+echo $OUTPUT->heading($tagname, 2);
 tag_print_management_box($tag);
 tag_print_description_box($tag);
 // Check what type of results are avaialable

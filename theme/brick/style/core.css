@@ -272,8 +272,8 @@ div.block.hidden div.header {
 
 /** main headings **/
 
-.generalbox h2,h3.sectionname, h2.headingblock, div.loginpanel h2, div.signuppanel h2, div.userprofile h2 {
-    font-weight: 600;
+.generalbox h2, h3.sectionname, div.loginpanel h2, div.signuppanel h2,  div.userprofile h2,
+#site-news-forum h2, #frontpage-course-list h2, #frontpage-category-names h2, #frontpage-category-combo h2 {
     letter-spacing: -1px;
     line-height: 1.3em;
     font-size: 28px;

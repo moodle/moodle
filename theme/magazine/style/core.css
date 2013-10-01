@@ -696,8 +696,8 @@ html>
 }
 
 /** main headings **/
-
-.generalbox h2,h3.sectionname, h2.headingblock,h2,h3, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2 {
+.generalbox h2,h3.sectionname, div.loginpanel h2, div.signuppanel h2,
+#site-news-forum h2, #frontpage-course-list h2, #frontpage-category-names h2, #frontpage-category-combo h2 {
     font-size: 30px;
     padding-bottom: 2px;
     margin: 3px 0 2px;
@@ -708,9 +708,13 @@ html>
     letter-spacing: -1px;
     line-height: 1em;
     background: url([[pix:theme|hr_grid]]) repeat-x 0% 89%
-    }
+}
 
-.generalbox h2, h3.sectionname, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2, div.hd h3 {
+.course_category_tree .info > .categoryname {
+    display: inline;
+}
+
+.generalbox h2, h3.sectionname, div.loginpanel h2, div.signuppanel h2, div.hd h3 {
     font-size: 22px;
     background: none;
 }
@@ -791,10 +795,6 @@ td.author {
 .forumpost .author a {
     font-style: normal;
     font-weight: 800;
-}
-
-.info .name a {
-    font-weight: bold;
 }
 
 .indent {
@@ -901,11 +901,11 @@ div.coursebox.collapsed {
     margin-bottom: 0;
 }
 
-div.coursebox > .info > .name a {
+div.coursebox > .info > .coursename {
     font-weight: inherit;
 }
 
-div.coursebox > .info > h3.name a {
+div.coursebox > .info > h3.coursename a {
     font-size: 16px;
     font-weight: 400;
 }
@@ -937,7 +937,7 @@ div.course_category_tree div.coursebox.odd {
     background: #eee;
 }
 
-div.course_category_tree div.coursebox > .info > .name > a {
+div.course_category_tree div.coursebox > .info > .categoryname > a {
     font-size: 14px;
 }
 

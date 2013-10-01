@@ -28,11 +28,6 @@ ul {
     margin: 0.5em 0;
     padding: 0;
 }
-.headingblock {
-    border-bottom:0px solid #DDDDDD;
-    color:inherit;
-    font-size:inherit;
-}
 h1.helpheading,
 h2.helpheading {
     font-size: 1.6em;
@@ -165,7 +160,7 @@ ul.section li.activity .mod-indent {
  .category a .ui-li-count {
     right: 1em;
 }
-.coursebox > .info > .name {
+.coursebox > .info > .coursename {
     font-size: 1.2em;
 }
 .coursebox div.summary {

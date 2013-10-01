@@ -27,14 +27,14 @@ var CSS = {
     SELECTORS = {
         LOADEDTREES: '.with_children.loaded',
         CONTENTNODE: '.content',
-        CATEGORYLISTENLINK: '.category .info .name',
-        CATEGORYSPINNERLOCATION: '.name',
+        CATEGORYLISTENLINK: '.category .info .categoryname',
+        CATEGORYSPINNERLOCATION: '.categoryname',
         CATEGORYWITHCOLLAPSEDLOADEDCHILDREN: '.category.with_children.loaded.collapsed',
         CATEGORYWITHMAXIMISEDLOADEDCHILDREN: '.category.with_children.loaded:not(.collapsed)',
         COLLAPSEEXPAND: '.collapseexpand',
         COURSEBOX: '.coursebox',
         COURSEBOXLISTENLINK: '.coursebox .moreinfo',
-        COURSEBOXSPINNERLOCATION: '.name a',
+        COURSEBOXSPINNERLOCATION: '.categoryname a',
         COURSECATEGORYTREE: '.course_category_tree',
         PARENTWITHCHILDREN: '.category'
     },

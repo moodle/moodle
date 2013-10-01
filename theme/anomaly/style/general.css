@@ -106,7 +106,11 @@ h2.tagline {
 .sitetopic {
     border-width: 0;
 }
-.headingblock {
+.navigationtitle,
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {
     margin-bottom: 10px;
     border-bottom: 1px solid #697F55;
     background-color: #E3E3E3;
@@ -144,9 +148,6 @@ h2.tagline {
     border:none;
 }
 
-.course-content .headingblock.outline {
-    margin-top: 0;
-}
 .course-content .section.main {
     border:1px solid #E3E3E3;
     margin-bottom: 10px;
@@ -165,6 +166,9 @@ h2.tagline {
 }
 .course-content .section.main .content .section_add_menus {
     text-align: right;
+}
+#region-main .course-content .single-section .section-navigation h3 {
+    font-size: 1.3em;
 }
 #page-report-outline-user .section {
     border: 1px solid #DDD;

@@ -116,13 +116,19 @@ a:hover {
 
 /* Course
 ----------------------------*/
-
-.headingblock {
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2,
+.course-content .single-section .section-navigation.navigationtitle {
     background: url([[pix:theme|headingblock]]) repeat-x 0 0;
     color: #fff;
     font-weight: normal;
     border: none;
     padding: 2px 5px;
+}
+.course-content .single-section .navigationtitle h3 {
+    color: #FFF;
 }
 
 .course-content .main {

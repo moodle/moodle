@@ -22,7 +22,10 @@ hr {
     border-bottom: 1px dotted #808080;
     border-top: 0px;
 }
-h2.headingblock {
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {
     border-bottom: 1px solid #ddd;
     font-size: 1.4em;
     font-weight: bold;
@@ -253,10 +256,6 @@ Course Section Topic & Weekly
 }
 .course-content ul.topics li.section {
   padding-top: 1em;
-}
-.path-course-view .headingblock {
-    display: none; /* hides topic items title or weekly itens title */
-    margin-bottom: 9px;
 }
 /*Login (Login page)*/
 .loginbox .loginform .form-label {

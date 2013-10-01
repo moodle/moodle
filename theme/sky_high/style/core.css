@@ -184,7 +184,10 @@ p.helplink a {
 
 /* @group Course */
 
-.headingblock {
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {
     border: 0px none;
     border-bottom: 1px solid #98bcd6;
     padding-bottom: 0px;

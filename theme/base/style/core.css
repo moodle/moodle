@@ -91,7 +91,10 @@ a.autolink.glossary:hover {cursor: help;}
 .errorbox .title,
 .pagingbar .title,
 .pagingbar .thispage,
-.headingblock {font-weight: bold;}
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {font-weight: bold;}
 img.resize {height: 1em;width: 1em;}
 .block img.resize,
 .breadcrumb img.resize {height: 0.9em;width: 0.8em;}

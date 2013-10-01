@@ -1147,9 +1147,8 @@ class core_course_renderer extends plugin_renderer_base {
         // course name
         $coursename = $chelper->get_course_formatted_name($course);
         $coursenamelink = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)),
-                $coursename, array('class' => $course->visible ? '' : 'dimmed'));
-        $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'name'));
-
+                                            $coursename, array('class' => $course->visible ? 'courseicon' : 'courseicon dimmed'));
+        $content .= html_writer::tag($nametag, $coursenamelink, array('class' => 'coursename'));
         // If we display course in collapsed form but the course has summary or course contacts, display the link to the info page.
         $content .= html_writer::start_tag('div', array('class' => 'moreinfo'));
         if ($chelper->get_show_courses() < self::COURSECAT_SHOW_COURSES_EXPANDED) {
@@ -1542,7 +1541,8 @@ class core_course_renderer extends plugin_renderer_base {
                     array('title' => get_string('numberofcourses'), 'class' => 'numberofcourse'));
         }
         $content .= html_writer::start_tag('div', array('class' => 'info'));
-        $content .= html_writer::tag(($depth > 1) ? 'h4' : 'h3', $categoryname, array('class' => 'name'));
+
+        $content .= html_writer::tag(($depth > 1) ? 'h4' : 'h3', $categoryname, array('class' => 'categoryname'));
         $content .= html_writer::end_tag('div'); // .info
 
         // add category content to the output

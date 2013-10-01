@@ -4,6 +4,9 @@ information provided here is intended especially for theme designer.
 === 2.6 ===
 
 Notes:
+* There have been several changes made to the classes used on headings throughout Moodle.
+  This was done as per the Moodle HTML guidelines. h1 and h2 elements should have no classes, h3 and lower headings
+  may have descriptive classes only (any classes must properly describe the relation between the header and its content).
 * The parameters value for the following functions have been modified: core_renderer::heading() and core_renderer::heading_with_help().
   This means that headings using the default options will no longer have the class "main" which was the previous default.
 * The file picker and activity chooser have been converted to use M.core.dialogue. This means the styles
@@ -19,6 +22,14 @@ Renderer changes:
 * core_renderer::block_controls has a new optional argument (the block id) and has been altered to use the new action_menu component.
 * core_renderer::block_header has been altered to give core_renderer::block_controls the new second argument, the block id.
 * core_renderer::action_link has a new argument, and optional icon that can be rendererd into the link.
+
+Selector changes:
+* Changes to the classes given to the header produced when rendering a single section within a course.
+  .section-navigation.header.headingblock => .section-navigation.navigationtitle
+* Changes to the classes used when producing the course information box that lists courses.
+  The name (h3|div} of both courses and categories used to have .name, for courses in the list this was changed to .coursename and for categories in the list this was changed to .categoryname.
+* Classes ".header and .headingblock" were removed from all front page content headings.
+* Classes ".headingblock .header .tag-header" were removed from the tag index page
 
 === 2.5.1 ===
 

@@ -27,7 +27,8 @@ div.block {
 	border-bottom: 1px solid [[setting:maincolor]];
 }
 
-.generalbox h2,h3.sectionname, h2.headingblock,h2,h3, h2 a, h3 a, div.loginpanel h2, div.signuppanel h2, .forumpost .subject {
+.generalbox h2, h3.sectionname, div.loginpanel h2, div.signuppanel h2, .forumpost .subject,
+#site-news-forum h2, #frontpage-course-list h2, #frontpage-category-names h2, #frontpage-category-combo h2 {
 	color: [[setting:headingcolor]];
 }
 

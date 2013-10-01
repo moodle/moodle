@@ -79,7 +79,10 @@ h1.headermain {
 
 /* Content */
 
-h2.headingblock {
+#site-news-forum h2,
+#frontpage-course-list h2,
+#frontpage-category-names h2,
+#frontpage-category-combo h2 {
     text-shadow: 1px 1px 3px #aaa;
     color: #445566;
 }

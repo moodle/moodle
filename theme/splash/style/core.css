@@ -340,13 +340,16 @@ img.icon {
 li.activity {
     padding-bottom:5px;
 }
-.coursebox > .info > .name, #region-main .coursebox > .info > h3.name {
+.coursebox > .info > .coursename, #region-main .coursebox > .info > .coursename {
     margin: 5px;
     padding: 0;
 }
-#region-main .course_category_tree .category > .info h3.name,
-#region-main .course_category_tree .category > .info h4.name {
+#region-main .course_category_tree .category > .info > .categoryname {
     padding: 2px 18px;
+}
+#region-main .course-content .single-section .section-navigation h3 {
+    font-size: 1.7em;
+    font-weight: bold;
 }
 .que .info{
     width: 10em;
