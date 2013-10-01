@@ -17,7 +17,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/backend.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/course_backend.php');
 
 /**
  * Automated unit testing. This tests the 'make large course' backend,
@@ -38,7 +38,7 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         // Create the XS course.
-        $backend = new tool_generator_backend('TOOL_MAKELARGECOURSE_XS', 0, false, false);
+        $backend = new tool_generator_course_backend('TOOL_MAKELARGECOURSE_XS', 0, false, false);
         $courseid = $backend->make();
 
         // Get course details.
@@ -120,7 +120,7 @@ class tool_generator_maketestcourse_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         // Create the S course (more sections and activities than XS).
-        $backend = new tool_generator_backend('TOOL_S_COURSE_1', 1, true, false);
+        $backend = new tool_generator_course_backend('TOOL_S_COURSE_1', 1, true, false);
         $courseid = $backend->make();
 
         // Get course details.

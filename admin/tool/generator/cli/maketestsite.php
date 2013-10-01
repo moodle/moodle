@@ -15,25 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CLI interface for creating a test course.
+ * CLI interface for creating a test site.
  *
  * @package tool_generator
- * @copyright 2013 The Open University
+ * @copyright 2013 David Monllaó
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 define('CLI_SCRIPT', true);
 define('NO_OUTPUT_BUFFERING', true);
 
-require(dirname(__FILE__) . '/../../../../config.php');
+require(__DIR__ . '/../../../../config.php');
 require_once($CFG->libdir. '/clilib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/course_backend.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/site_backend.php');
 
 // CLI options.
 list($options, $unrecognized) = cli_get_params(
     array(
         'help' => false,
-        'shortname' => false,
         'size' => false,
         'fixeddataset' => false,
         'bypasscheck' => false,
@@ -44,17 +43,22 @@ list($options, $unrecognized) = cli_get_params(
     )
 );
 
+$sitesizes = '* ' . implode(PHP_EOL . '* ', tool_generator_site_backend::get_size_choices());
+
 // Display help.
-if (!empty($options['help']) || empty($options['shortname']) || empty($options['size'])) {
+if (!empty($options['help']) || empty($options['size'])) {
     echo "
-Utility to create standard test course. (Also available in GUI interface.)
+Utility to generate a standard test site data set.
 
 Not for use on live sites; only normally works if debugging is set to DEVELOPER
 level.
 
+Consider that, depending on the size you select, this CLI tool can really generate a lot of data, aproximated sizes:
+
+$sitesizes
+
 Options:
---shortname    Shortname of course to create (required)
---size         Size of course to create XS, S, M, L, XL, or XXL (required)
+--size         Size of the generated site, this value affects the number of courses and their size. Accepted values: XS, S, M, L, XL, or XXL (required)
 --fixeddataset Use a fixed data set instead of randomly generated data
 --bypasscheck  Bypasses the developer-mode check (be careful!)
 --quiet        Do not show any output
@@ -62,7 +66,7 @@ Options:
 -h, --help     Print out this help
 
 Example from Moodle root directory:
-\$sudo -u www-data /usr/bin/php admin/tool/generator/cli/maketestcourse.php --shortname=SIZE_S --size=S
+\$sudo -u www-data /usr/bin/php admin/tool/generator/cli/maketestsite.php --size=S
 ";
     // Exit with error unless we're showing this because they asked for it.
     exit(empty($options['help']) ? 1 : 0);
@@ -74,25 +78,19 @@ if (empty($options['bypasscheck']) && !debugging('', DEBUG_DEVELOPER)) {
 }
 
 // Get options.
-$shortname = $options['shortname'];
 $sizename = $options['size'];
 $fixeddataset = $options['fixeddataset'];
 
 // Check size.
 try {
-    $size = tool_generator_course_backend::size_for_name($sizename);
+    $size = tool_generator_site_backend::size_for_name($sizename);
 } catch (coding_exception $e) {
     cli_error("Invalid size ($sizename). Use --help for help.");
-}
-
-// Check shortname.
-if ($error = tool_generator_course_backend::check_shortname_available($shortname)) {
-    cli_error($error);
 }
 
 // Switch to admin user account.
 session_set_user(get_admin());
 
-// Do backend code to generate course.
-$backend = new tool_generator_course_backend($shortname, $size, $fixeddataset, empty($options['quiet']));
-$id = $backend->make();
+// Do backend code to generate site.
+$backend = new tool_generator_site_backend($size, $options['bypasscheck'], $fixeddataset, empty($options['quiet']));
+$backend->make();

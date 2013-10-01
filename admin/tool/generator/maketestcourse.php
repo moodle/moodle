@@ -30,7 +30,7 @@ define('NO_OUTPUT_BUFFERING', true);
 require('../../../config.php');
 
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/backend.php');
+require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/course_backend.php');
 require_once($CFG->dirroot . '/' . $CFG->admin . '/tool/generator/classes/make_form.php');
 
 // Initialise page and check permissions.
@@ -57,7 +57,7 @@ $mform = new tool_generator_make_form('maketestcourse.php');
 if ($data = $mform->get_data()) {
     // Do actual work.
     echo $OUTPUT->heading(get_string('creating', 'tool_generator'));
-    $backend = new tool_generator_backend($data->shortname, $data->size);
+    $backend = new tool_generator_course_backend($data->shortname, $data->size);
     $id = $backend->make();
 
     echo html_writer::div(
