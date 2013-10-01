@@ -55,10 +55,10 @@ if (!$course = $DB->get_record('course', array('id'=>$chatuser->course))) {
 
 //Get the user theme and enough info to be used in chat_format_message() which passes it along to
 // chat_format_message_manually() -- and only id and timezone are used.
-if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) { // no optimisation here, it would break again in future!
+if (!$user = $DB->get_record('user', array('id'=>$chatuser->userid, 'deleted'=>0, 'suspended'=>0))) { // no optimisation here, it would break again in future!
     print_error('invaliduser');
 }
-$USER->description = '';
+\core\session\manager::set_user($user);
 
 //Setup course, lang and theme
 $PAGE->set_course($course);
