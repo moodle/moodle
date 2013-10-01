@@ -412,10 +412,10 @@ function process_group_tag($tagcontents) {
                         } else {
                             // If not found and not allowed to create, stick with default
                             $this->log_line('Category '.$group->category.' not found in Moodle database, so using default category instead.');
-                            $course->category = 1;
+                            $course->category = $this->get_default_category_id();
                         }
                     } else {
-                        $course->category = 1;
+                        $course->category = $this->get_default_category_id();
                     }
                     $course->timecreated = time();
                     $course->startdate = time();
@@ -809,6 +809,24 @@ function load_role_mappings() {
     function enrol_imsenterprise_allow_group_member_remove($itemid, $groupid, $userid) {
         return false;
     }
+
+    /**
+     * Get the default category id (often known as 'Miscellaneous'),
+     * statically cached to avoid multiple DB lookups on big imports.
+     *
+     * @return int id of default category.
+     */
+    private function get_default_category_id() {
+        static $defaultcategoryid = null;
+
+        if ($defaultcategoryid === null) {
+            $category = get_course_category();
+            $defaultcategoryid = $category->id;
+        }
+
+        return $defaultcategoryid;
+    }
+
 
 } // end of class
 
