@@ -1058,28 +1058,63 @@ class core_cache_testcase extends advanced_testcase {
      */
     public function test_disable_stores() {
         $instance = cache_config_phpunittest::instance();
-        $instance->phpunit_add_definition('phpunit/disabletest', array(
+        $instance->phpunit_add_definition('phpunit/disabletest1', array(
             'mode' => cache_store::MODE_APPLICATION,
             'component' => 'phpunit',
-            'area' => 'disabletest'
+            'area' => 'disabletest1'
         ));
-        $cache = cache::make('phpunit', 'disabletest');
-        $this->assertInstanceOf('cache_phpunit_application', $cache);
-        $this->assertEquals('cachestore_file', $cache->phpunit_get_store_class());
+        $instance->phpunit_add_definition('phpunit/disabletest2', array(
+            'mode' => cache_store::MODE_SESSION,
+            'component' => 'phpunit',
+            'area' => 'disabletest2'
+        ));
+        $instance->phpunit_add_definition('phpunit/disabletest3', array(
+            'mode' => cache_store::MODE_REQUEST,
+            'component' => 'phpunit',
+            'area' => 'disabletest3'
+        ));
 
-        $this->assertFalse($cache->get('test'));
-        $this->assertTrue($cache->set('test', 'test'));
-        $this->assertEquals('test', $cache->get('test'));
+        $caches = array(
+            'disabletest1' => cache::make('phpunit', 'disabletest1'),
+            'disabletest2' => cache::make('phpunit', 'disabletest2'),
+            'disabletest3' => cache::make('phpunit', 'disabletest3')
+        );
+
+        $this->assertInstanceOf('cache_phpunit_application', $caches['disabletest1']);
+        $this->assertInstanceOf('cache_phpunit_session', $caches['disabletest2']);
+        $this->assertInstanceOf('cache_phpunit_request', $caches['disabletest3']);
+
+        $this->assertEquals('cachestore_file', $caches['disabletest1']->phpunit_get_store_class());
+        $this->assertEquals('cachestore_session', $caches['disabletest2']->phpunit_get_store_class());
+        $this->assertEquals('cachestore_static', $caches['disabletest3']->phpunit_get_store_class());
+
+        foreach ($caches as $cache) {
+            $this->assertFalse($cache->get('test'));
+            $this->assertTrue($cache->set('test', 'test'));
+            $this->assertEquals('test', $cache->get('test'));
+        }
 
         cache_factory::disable_stores();
 
-        $cache = cache::make('phpunit', 'disabletest');
-        $this->assertInstanceOf('cache_phpunit_application', $cache);
-        $this->assertEquals('cachestore_dummy', $cache->phpunit_get_store_class());
+        $caches = array(
+            'disabletest1' => cache::make('phpunit', 'disabletest1'),
+            'disabletest2' => cache::make('phpunit', 'disabletest2'),
+            'disabletest3' => cache::make('phpunit', 'disabletest3')
+        );
 
-        $this->assertFalse($cache->get('test'));
-        $this->assertTrue($cache->set('test', 'test'));
-        $this->assertEquals('test', $cache->get('test'));
+        $this->assertInstanceOf('cache_phpunit_application', $caches['disabletest1']);
+        $this->assertInstanceOf('cache_phpunit_session', $caches['disabletest2']);
+        $this->assertInstanceOf('cache_phpunit_request', $caches['disabletest3']);
+
+        $this->assertEquals('cachestore_dummy', $caches['disabletest1']->phpunit_get_store_class());
+        $this->assertEquals('cachestore_dummy', $caches['disabletest2']->phpunit_get_store_class());
+        $this->assertEquals('cachestore_dummy', $caches['disabletest3']->phpunit_get_store_class());
+
+        foreach ($caches as $cache) {
+            $this->assertFalse($cache->get('test'));
+            $this->assertTrue($cache->set('test', 'test'));
+            $this->assertEquals('test', $cache->get('test'));
+        }
     }
 
     /**
@@ -1108,7 +1143,30 @@ class core_cache_testcase extends advanced_testcase {
         $cache = cache::make('phpunit', 'disable');
         $this->assertInstanceOf('cache_disabled', $cache);
 
+        // Test an application cache.
         $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'phpunit', 'disable');
+        $this->assertInstanceOf('cache_disabled', $cache);
+
+        $this->assertFalse(file_exists($configfile));
+
+        $this->assertFalse($cache->get('test'));
+        $this->assertFalse($cache->set('test', 'test'));
+        $this->assertFalse($cache->delete('test'));
+        $this->assertTrue($cache->purge());
+
+        // Test a session cache.
+        $cache = cache::make_from_params(cache_store::MODE_SESSION, 'phpunit', 'disable');
+        $this->assertInstanceOf('cache_disabled', $cache);
+
+        $this->assertFalse(file_exists($configfile));
+
+        $this->assertFalse($cache->get('test'));
+        $this->assertFalse($cache->set('test', 'test'));
+        $this->assertFalse($cache->delete('test'));
+        $this->assertTrue($cache->purge());
+
+        // Finally test a request cache.
+        $cache = cache::make_from_params(cache_store::MODE_REQUEST, 'phpunit', 'disable');
         $this->assertInstanceOf('cache_disabled', $cache);
 
         $this->assertFalse(file_exists($configfile));

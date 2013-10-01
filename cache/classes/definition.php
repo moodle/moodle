@@ -824,7 +824,7 @@ class cache_definition {
             // Request caches should never use static acceleration - it just doesn't make sense.
             return false;
         }
-        return $this->staticacceleration || $this->mode === cache_store::MODE_SESSION;
+        return $this->staticacceleration;
     }
 
     /**
