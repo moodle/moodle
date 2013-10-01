@@ -7,3 +7,10 @@ Notes:
   made to the grade report to make it work with Bootstrapbase.
   Theme developers need to alter config.php and update $THEME->plugins_exclude_sheets
   to not to list stylesheet from gradereport_grade any more. See MDL-40347
+
+=== 2.5.3 ===
+Notes:
+* A new maintenance layout file was introduced.
+  If you have a theme based upon bootstrapbase that implements its own layouts but
+  does not define the maintenance layout in its config.php then you may want to
+  create your own maintenance layout file and apply your customisations to that.
