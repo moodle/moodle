@@ -90,6 +90,11 @@ class tool_generator_backend {
     private $size;
 
     /**
+     * @var bool True if we want a fixed dataset or false to generate random data
+     */
+    private $fixeddataset;
+
+    /**
      * @var bool True if displaying progress
      */
     private $progress;
@@ -129,11 +134,12 @@ class tool_generator_backend {
      *
      * @param string $shortname Course shortname
      * @param int $size Size as numeric index
+     * @param bool $fixeddataset To use fixed or random data
      * @param bool $progress True if progress information should be displayed
      * @return int Course id
      * @throws coding_exception If parameters are invalid
      */
-    public function __construct($shortname, $size, $progress = true) {
+    public function __construct($shortname, $size, $fixeddataset = false, $progress = true) {
         // Check parameter.
         if ($size < self::MIN_SIZE || $size > self::MAX_SIZE) {
             throw new coding_exception('Invalid size');
@@ -142,6 +148,7 @@ class tool_generator_backend {
         // Set parameters.
         $this->shortname = $shortname;
         $this->size = $size;
+        $this->fixeddataset = $fixeddataset;
         $this->progress = $progress;
     }
 
@@ -317,6 +324,9 @@ class tool_generator_backend {
             $this->dot($number, $count);
         }
 
+        // Sets the pointer at the beginning to be aware of the users we use.
+        reset($this->userids);
+
         $this->end_log();
     }
 
@@ -360,7 +370,7 @@ class tool_generator_backend {
         $this->log('createpages', $number, true);
         for ($i=0; $i<$number; $i++) {
             $record = array('course' => $this->course->id);
-            $options = array('section' => $this->get_random_section());
+            $options = array('section' => $this->get_target_section());
             $pagegenerator->create_instance($record, $options);
             $this->dot($i, $number);
         }
@@ -445,7 +455,7 @@ class tool_generator_backend {
             // Create resource.
             $record = array('course' => $this->course->id,
                     'name' => get_string('bigfile', 'tool_generator', $i));
-            $options = array('section' => $this->get_random_section());
+            $options = array('section' => $this->get_target_section());
             $resource = $resourcegenerator->create_instance($record, $options);
 
             // Write file.
@@ -495,13 +505,13 @@ class tool_generator_backend {
         $sofar = 0;
         for ($i=0; $i < $discussions; $i++) {
             $record = array('forum' => $forum->id, 'course' => $this->course->id,
-                    'userid' => $this->get_random_user());
+                    'userid' => $this->get_target_user());
             $discussion = $forumgenerator->create_discussion($record);
             $parentid = $DB->get_field('forum_posts', 'id', array('discussion' => $discussion->id), MUST_EXIST);
             $sofar++;
             for ($j=0; $j < $posts - 1; $j++, $sofar++) {
                 $record = array('discussion' => $discussion->id,
-                        'userid' => $this->get_random_user(), 'parent' => $parentid);
+                        'userid' => $this->get_target_user(), 'parent' => $parentid);
                 $forumgenerator->create_post($record);
                 $this->dot($sofar, $totalposts);
             }
@@ -511,21 +521,44 @@ class tool_generator_backend {
     }
 
     /**
-     * Gets a random section number.
+     * Gets a section number.
+     *
+     * Depends on $this->fixeddataset.
      *
      * @return int A section number from 1 to the number of sections
      */
-    private function get_random_section() {
-        return rand(1, self::$paramsections[$this->size]);
+    private function get_target_section() {
+
+        if (!$this->fixeddataset) {
+            $key = rand(1, self::$paramsections[$this->size]);
+        } else {
+            // Using section 1.
+            $key = 1;
+        }
+
+        return $key;
     }
 
     /**
-     * Gets a random user id.
+     * Gets a user id.
+     *
+     * Depends on $this->fixeddataset.
      *
      * @return int A user id for a random created user
      */
-    private function get_random_user() {
-        return $this->userids[rand(1, self::$paramusers[$this->size])];
+    private function get_target_user() {
+
+        if (!$this->fixeddataset) {
+            $userid = $this->userids[rand(1, self::$paramusers[$this->size])];
+        } else if ($userid = current($this->userids)) {
+            // Moving pointer to the next user.
+            next($this->userids);
+        } else {
+            // Returning to the beginning if we reached the end.
+            $userid = reset($this->userids);
+        }
+
+        return $userid;
     }
 
     /**
