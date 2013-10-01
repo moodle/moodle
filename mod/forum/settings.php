@@ -57,6 +57,14 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('forum_maxattachments', get_string('maxattachments', 'forum'),
                        get_string('configmaxattachments', 'forum'), 9, PARAM_INT));
 
+    // Default Read Tracking setting.
+    $options = array();
+    $options[FORUM_TRACKING_OPTIONAL] = get_string('trackingoptional', 'forum');
+    $options[FORUM_TRACKING_OFF] = get_string('trackingoff', 'forum');
+    $options[FORUM_TRACKING_ON] = get_string('trackingon', 'forum');
+    $settings->add(new admin_setting_configselect('forum_trackingtype', get_string('trackingtype', 'forum'),
+                       get_string('configtrackingtype', 'forum'), FORUM_TRACKING_OPTIONAL, $options));
+
     // Default whether user needs to mark a post as read
     $settings->add(new admin_setting_configcheckbox('forum_trackreadposts', get_string('trackforum', 'forum'),
                        get_string('configtrackreadposts', 'forum'), 1));

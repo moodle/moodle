@@ -100,6 +100,7 @@ $string['configmaxbytes'] = 'Default maximum size for all forum attachments on t
 $string['configoldpostdays'] = 'Number of days old any post is considered read.';
 $string['configreplytouser'] = 'When a forum post is mailed out, should it contain the user\'s email address so that recipients can reply personally rather than via the forum? Even if set to \'Yes\' users can choose in their profile to keep their email address secret.';
 $string['configshortpost'] = 'Any post under this length (in characters not including HTML) is considered short (see below).';
+$string['configtrackingtype'] = 'Default setting for read tracking.';
 $string['configtrackreadposts'] = 'Set to \'yes\' if you want to track read/unread for each user.';
 $string['configusermarksread'] = 'If \'yes\', the user must manually mark a post as read. If \'no\', when the post is viewed it is marked as read.';
 $string['confirmsubscribe'] = 'Do you really want to subscribe to forum \'{$a}\'?';
