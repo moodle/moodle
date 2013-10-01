@@ -185,6 +185,16 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage implements f
     protected $contextid;
     protected $filename = null;
     protected $filepath = null;
+
+    /**
+     * @var string Content hash of archive file to restore (if specified by hash)
+     */
+    protected $contenthash = null;
+    /**
+     * @var string Pathname hash of stored_file object to restore
+     */
+    protected $pathnamehash = null;
+
     protected $details;
 
     /**
@@ -194,27 +204,54 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage implements f
 
     public function __construct($contextid) {
         $this->contextid = $contextid;
-        $this->filename = required_param('filename', PARAM_FILE);
+        $this->filename = optional_param('filename', null, PARAM_FILE);
+        if ($this->filename === null) {
+            // Identify file object by its pathname hash.
+            $this->pathnamehash = required_param('pathnamehash', PARAM_ALPHANUM);
+
+            // The file content hash is also passed for security; users
+            // cannot guess the content hash (unless they know the file contents),
+            // so this guarantees that either the system generated this link or
+            // else the user has access to the restore archive anyhow.
+            $this->contenthash = required_param('contenthash', PARAM_ALPHANUM);
+        }
     }
+
     public function process() {
         global $CFG;
-        if (!file_exists("$CFG->tempdir/backup/".$this->filename)) {
-            throw new restore_ui_exception('invalidrestorefile');
-        }
-        $outcome = $this->extract_file_to_dir();
-        if ($outcome) {
-            fulldelete($this->filename);
+        if ($this->filename) {
+            $archivepath = $CFG->tempdir . '/backup/' . $this->filename;
+            if (!file_exists($archivepath)) {
+                throw new restore_ui_exception('invalidrestorefile');
+            }
+            $outcome = $this->extract_file_to_dir($archivepath);
+            if ($outcome) {
+                fulldelete($archivepath);
+            }
+        } else {
+            $fs = get_file_storage();
+            $storedfile = $fs->get_file_by_hash($this->pathnamehash);
+            if (!$storedfile || $storedfile->get_contenthash() !== $this->contenthash) {
+                throw new restore_ui_exception('invalidrestorefile');
+            }
+            $outcome = $this->extract_file_to_dir($storedfile);
         }
         return $outcome;
     }
-    protected function extract_file_to_dir() {
+
+    /**
+     * Extracts the file.
+     *
+     * @param string|stored_file $source Archive file to extract
+     */
+    protected function extract_file_to_dir($source) {
         global $CFG, $USER;
 
         $this->filepath = restore_controller::get_tempdir_name($this->contextid, $USER->id);
 
         $fb = get_file_packer('application/vnd.moodle.backup');
-        $result = $fb->extract_to_pathname("$CFG->tempdir/backup/".$this->filename,
-                "$CFG->tempdir/backup/$this->filepath/", null, $this);
+        $result = $fb->extract_to_pathname($source,
+                $CFG->tempdir . '/backup/' . $this->filepath . '/', null, $this);
 
         // If any progress happened, end it.
         if ($this->startedprogress) {
