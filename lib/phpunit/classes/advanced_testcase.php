@@ -453,6 +453,46 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * Returns UTL of the external test file.
+     *
+     * The result depends on the value of following constants:
+     *  - TEST_EXTERNAL_FILES_HTTP_URL
+     *  - TEST_EXTERNAL_FILES_HTTPS_URL
+     *
+     * They should point to standard external test files repository,
+     * it defaults to 'http://download.moodle.org/unittest'.
+     *
+     * False value means skip tests that require external files.
+     *
+     * @param string $path
+     * @param bool $https true if https required
+     * @return string url
+     */
+    public function getExternalTestFileUrl($path, $https = false) {
+        $path = ltrim($path, '/');
+        if ($path) {
+            $path = '/'.$path;
+        }
+        if ($https) {
+            if (defined('TEST_EXTERNAL_FILES_HTTPS_URL')) {
+                if (!TEST_EXTERNAL_FILES_HTTPS_URL) {
+                    $this->markTestSkipped('Tests using external https test files are disabled');
+                }
+                return TEST_EXTERNAL_FILES_HTTPS_URL.$path;
+            }
+            return 'https://download.moodle.org/unittest'.$path;
+        }
+
+        if (defined('TEST_EXTERNAL_FILES_HTTP_URL')) {
+            if (!TEST_EXTERNAL_FILES_HTTP_URL) {
+                $this->markTestSkipped('Tests using external http test files are disabled');
+            }
+            return TEST_EXTERNAL_FILES_HTTP_URL.$path;
+        }
+        return 'http://download.moodle.org/unittest'.$path;
+    }
+
+    /**
      * Recursively visit all the files in the source tree. Calls the callback
      * function with the pathname of each file found.
      *

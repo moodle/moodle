@@ -15,13 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * These tests rely on the rsstest.xml file on download.moodle.org,
- * from eloys listing:
- *   rsstest.xml: One valid rss feed.
- *   md5:  8fd047914863bf9b3a4b1514ec51c32c
- *   size: 32188
- *
- * If networking/proxy configuration is wrong these tests will fail..
+ * Weblib tests.
  *
  * @package    core
  * @category   phpunit

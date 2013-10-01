@@ -33,7 +33,8 @@ class core_componentlib_testcase extends advanced_testcase {
     public function test_component_installer() {
         global $CFG;
 
-        $ci = new component_installer('http://download.moodle.org', 'unittest', 'downloadtests.zip');
+        $url = $this->getExternalTestFileUrl('');
+        $ci = new component_installer($url, '', 'downloadtests.zip');
         $this->assertTrue($ci->check_requisites());
 
         $destpath = $CFG->dataroot.'/downloadtests';

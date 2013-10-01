@@ -865,7 +865,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
             'itemid'    => 0,
             'filepath'  => '/downloadtest/',
         );
-        $url = 'http://download.moodle.org/unittest/test.html';
+        $url = $this->getExternalTestFileUrl('/test.html');
 
         $fs = get_file_storage();
 

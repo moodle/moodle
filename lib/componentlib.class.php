@@ -220,12 +220,12 @@ class component_installer {
         $this->requisitesok = false;
 
     /// Check that everything we need is present
-        if (empty($this->sourcebase) || empty($this->zippath) || empty($this->zipfilename)) {
+        if (empty($this->sourcebase) || empty($this->zipfilename)) {
             $this->errorstring='missingrequiredfield';
             return false;
         }
     /// Check for correct sourcebase (this will be out in the future)
-        if ($this->sourcebase != 'http://download.moodle.org') {
+        if (!PHPUNIT_TEST and $this->sourcebase != 'http://download.moodle.org') {
             $this->errorstring='wrongsourcebase';
             return false;
         }
@@ -286,7 +286,12 @@ class component_installer {
              return COMPONENT_ERROR;
         }
     /// Download zip file and save it to temp
-        $source = $this->sourcebase.'/'.$this->zippath.'/'.$this->zipfilename;
+        if ($this->zippath) {
+            $source = $this->sourcebase.'/'.$this->zippath.'/'.$this->zipfilename;
+        } else {
+            $source = $this->sourcebase.'/'.$this->zipfilename;
+        }
+
         $zipfile= $CFG->tempdir.'/'.$this->zipfilename;
 
         if($contents = download_file_content($source)) {
@@ -474,7 +479,11 @@ class component_installer {
         $comp_arr = array();
 
     /// Define and retrieve the full md5 file
-        $source = $this->sourcebase.'/'.$this->zippath.'/'.$this->md5filename;
+        if ($this->zippath) {
+            $source = $this->sourcebase.'/'.$this->zippath.'/'.$this->md5filename;
+        } else {
+            $source = $this->sourcebase.'/'.$this->md5filename;
+        }
 
     /// Check if we have downloaded the md5 file before (per request cache)
         if (!empty($this->cachedmd5components[$source])) {
