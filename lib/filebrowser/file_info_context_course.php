@@ -357,7 +357,7 @@ class file_info_context_course extends file_info {
      * @return string
      */
     public function get_visible_name() {
-        return ($this->course->id == SITEID) ? get_string('frontpage', 'admin') : format_string($this->course->fullname, true, array('context'=>$this->context));
+        return ($this->course->id == SITEID) ? get_string('frontpage', 'admin') : format_string(get_course_display_name_for_list($this->course), true, array('context'=>$this->context));
     }
 
     /**
