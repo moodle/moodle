@@ -153,6 +153,32 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->assertEquals(($prevncourses + 2), $DB->count_records('course'));
     }
 
+    /**
+     * Add new course without a category.
+     */
+    public function test_course_add_default_category() {
+        global $DB, $CFG;
+        require_once($CFG->libdir.'/coursecatlib.php');
+
+        $this->imsplugin->set_config('createnewcategories', false);
+
+        // Delete the default category, to ensure the plugin handles this gracefully.
+        $defaultcat = coursecat::get_default();
+        $defaultcat->delete_full(false);
+
+        // Create an course with the IMS plugin without a category.
+        $course1 = new stdClass();
+        $course1->idnumber = 'id1';
+        $course1->imsshort = 'id1';
+        $course1->category = '';
+        $this->set_xml_file(false, array($course1));
+        $this->imsplugin->cron();
+
+        // Check the course has been created.
+        $dbcourse = $DB->get_record('course', array('idnumber' => $course1->idnumber), '*', MUST_EXIST);
+        // Check that it belongs to a category which exists.
+        $this->assertTrue($DB->record_exists('course_categories', array('id' => $dbcourse->category)));
+    }
 
     /**
      * Course attributes mapping to IMS enterprise group description tags
