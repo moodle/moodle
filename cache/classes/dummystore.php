@@ -113,7 +113,12 @@ class cachestore_dummy extends cache_store {
         //     store things in its static array.
         //   - If the definition is not using static acceleration then the cache loader won't try to store anything
         //     and we will need to store it here in order to make sure it is accessible.
-        $this->persist = !$definition->use_static_acceleration();
+        if ($definition->get_mode() !== self::MODE_APPLICATION) {
+            // Neither the request cache nor the session cache provide static acceleration.
+            $this->persist = true;
+        } else {
+            $this->persist = !$definition->use_static_acceleration();
+        }
     }
 
     /**
