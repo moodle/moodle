@@ -81,6 +81,9 @@ function workshop_add_instance(stdclass $workshop) {
     $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
     $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
+    $workshop->teammode              = (int)!empty($workshop->teammode);
+    $workshop->examplescompare       = (int)!empty($workshop->examplescompare);
+    $workshop->examplesreassess      = (int)!empty($workshop->examplesreassess);
     $workshop->evaluation            = 'best';
 
     // insert the new record so we get the id
@@ -142,6 +145,10 @@ function workshop_update_instance(stdclass $workshop) {
     $workshop->useselfassessment     = (int)!empty($workshop->useselfassessment);
     $workshop->latesubmissions       = (int)!empty($workshop->latesubmissions);
     $workshop->phaseswitchassessment = (int)!empty($workshop->phaseswitchassessment);
+    $workshop->teammode              = (int)!empty($workshop->teammode);
+    $workshop->examplescompare       = (int)!empty($workshop->examplescompare);
+    $workshop->examplesreassess      = (int)!empty($workshop->examplesreassess);
+    $workshop->evaluation            = 'best';
 
     // todo - if the grading strategy is being changed, we may want to replace all aggregated peer grades with nulls
 
@@ -1087,27 +1094,94 @@ function workshop_update_grades(stdclass $workshop, $userid=0) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
-    $whereuser = $userid ? ' AND authorid = :userid' : '';
-    $params = array('workshopid' => $workshop->id, 'userid' => $userid);
-    $sql = 'SELECT authorid, grade, gradeover, gradeoverby, feedbackauthor, feedbackauthorformat, timemodified, timegraded
-              FROM {workshop_submissions}
-             WHERE workshopid = :workshopid AND example=0' . $whereuser;
-    $records = $DB->get_records_sql($sql, $params);
-    $submissiongrades = array();
-    foreach ($records as $record) {
-        $grade = new stdclass();
-        $grade->userid = $record->authorid;
-        if (!is_null($record->gradeover)) {
-            $grade->rawgrade = grade_floatval($workshop->grade * $record->gradeover / 100);
-            $grade->usermodified = $record->gradeoverby;
+    //todo: this ignores userid
+    if($workshop->teammode) {
+        //this is necessary because we need data like the grouping id
+        $course     = $DB->get_record('course', array('id' => $workshop->course), '*', MUST_EXIST);
+        $cm         = get_coursemodule_from_instance('workshop', $workshop->id, $course->id, false, MUST_EXIST);
+        $whereuser  = '';
+        $whereuserparams = array();
+        if ($userid) {
+            $groups = groups_get_all_groups($cm->course, $userid, $cm->groupingid);
+            if(count($groups) > 1) {
+                print_error('teammode_multiplegroupswarning','workshop',new moodle_url('/group/groupings.php',array('id' => $workshop->course->id)),implode($users,', '));
+            } else if (count($groups) == 1) {
+                $group = key($groups);
+                list($whereuser, $whereuserparams) = $DB->get_in_or_equal(array_keys(groups_get_members($group,'u.id','')),SQL_PARAMS_NAMED);
+            }
+            //if a user isn't in a team for team mode, they can't have submitted anything
         } else {
-            $grade->rawgrade = grade_floatval($workshop->grade * $record->grade / 100);
+            $allgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
+            //todo: on duplicate key error out
+            $groupmembers = $DB->get_records_list('groups_members','groupid',array_keys($allgroups),'','userid,groupid');
+            //invert this array for use later
+            $membergroups = array();
+            foreach($groupmembers as $i) {
+                $membergroups[$i->groupid][] = $i->userid;
+            }
         }
-        $grade->feedback = $record->feedbackauthor;
-        $grade->feedbackformat = $record->feedbackauthorformat;
-        $grade->datesubmitted = $record->timemodified;
-        $grade->dategraded = $record->timegraded;
-        $submissiongrades[$record->authorid] = $grade;
+        
+        $params = array('workshopid' => $workshop->id, 'userid' => $userid) + $whereuserparams;
+        $sql = 'SELECT authorid, grade, gradeover, gradeoverby, feedbackauthor, feedbackauthorformat, timemodified, timegraded
+                  FROM {workshop_submissions}
+                 WHERE workshopid = :workshopid AND example=0 ' . $whereuser . ' ORDER BY timemodified DESC';
+
+        $records = $DB->get_records_sql($sql, $params);
+        $submissions = array();
+        
+        //this hinges on ORDER BY timemodified DESC
+        if ( isset($allgroups) ) {
+            foreach($records as $r) {
+                $grp = $groupmembers[$r->authorid]->groupid;
+                if (isset($submissions[$grp])) continue;
+                $submissions[$grp] = $r;
+            }
+        }
+        
+//        print_r($submissions);
+        
+        
+        foreach($submissions as $grp => $s) {
+            $members = $membergroups[$grp];
+            foreach($members as $m) {
+                $grade = new stdclass();
+                $grade->userid = $m;
+                if (!is_null($s->gradeover)) {
+                    $grade->rawgrade = grade_floatval($workshop->grade * $s->gradeover / 100);
+                    $grade->usermodified = $s->gradeoverby;
+                } else {
+                    $grade->rawgrade = grade_floatval($workshop->grade * $s->grade / 100);
+                }
+                $grade->feedback = $s->feedbackauthor;
+                $grade->feedbackformat = $s->feedbackauthorformat;
+                $grade->datesubmitted = $s->timemodified;
+                $grade->dategraded = $s->timegraded;
+                $submissiongrades[$m] = $grade;
+            }
+        }
+    } else {
+        $whereuser = $userid ? ' AND authorid = :userid' : '';
+        $params = array('workshopid' => $workshop->id, 'userid' => $userid);
+        $sql = 'SELECT authorid, grade, gradeover, gradeoverby, feedbackauthor, feedbackauthorformat, timemodified, timegraded
+                  FROM {workshop_submissions}
+                 WHERE workshopid = :workshopid AND example=0' . $whereuser;
+        $records = $DB->get_records_sql($sql, $params);
+        $submissiongrades = array();
+        foreach ($records as $record) {
+            $grade = new stdclass();
+            $grade->userid = $record->authorid;
+            if (!is_null($record->gradeover)) {
+                $grade->rawgrade = grade_floatval($workshop->grade * $record->gradeover / 100);
+                $grade->usermodified = $record->gradeoverby;
+            } else {
+                $grade->rawgrade = grade_floatval($workshop->grade * $record->grade / 100);
+            }
+            $grade->feedback = $record->feedbackauthor;
+            $grade->feedbackformat = $record->feedbackauthorformat;
+            $grade->datesubmitted = $record->timemodified;
+            $grade->dategraded = $record->timegraded;
+            $submissiongrades[$record->authorid] = $grade;
+        }
     }
 
     $whereuser = $userid ? ' AND userid = :userid' : '';

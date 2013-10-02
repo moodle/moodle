@@ -216,6 +216,56 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $o .= $this->output->container_end(); // end of the main wrapper
         return $o;
     }
+    
+    protected function render_workshop_group_submission_summary(workshop_group_submission_summary $summary) {
+        $o  = '';    // output HTML code
+        $anonymous = $summary->is_anonymous();
+        $classes = 'submission-summary group-submission-summary';
+    
+        if ($anonymous) {
+            $classes .= ' anonymous';
+        }
+    
+        $gradestatus = '';
+    
+        if ($summary->status == 'notgraded') {
+            $classes    .= ' notgraded';
+            $gradestatus = $this->output->container(get_string('nogradeyet', 'workshop'), 'grade-status');
+    
+        } else if ($summary->status == 'graded') {
+            $classes    .= ' graded';
+            $gradestatus = $this->output->container(get_string('alreadygraded', 'workshop'), 'grade-status');
+        }
+    
+        $o .= $this->output->container_start($classes);  // main wrapper
+        $o .= html_writer::link($summary->url, format_string($summary->title), array('class' => 'title'));
+    
+        if (!$anonymous) {
+            $a                  = new stdClass();
+    		$url				= new moodle_url('/group/overview.php',
+                                            array('id' => $this->page->course->id, 'group' => $summary->group->id));
+            $a->name            = $summary->group->name;
+    		$a->url				= $url->out();
+    										
+            $byfullname         = get_string('byfullname', 'workshop', $a);
+    
+            $oo = $this->output->container($byfullname, 'fullname');
+            $o  .= $this->output->container($oo, 'author');
+        }
+    
+        $created = get_string('userdatecreated', 'workshop', userdate($summary->timecreated));
+        $o .= $this->output->container($created, 'userdate created');
+    
+        if ($summary->timemodified > $summary->timecreated) {
+            $modified = get_string('userdatemodified', 'workshop', userdate($summary->timemodified));
+            $o .= $this->output->container($modified, 'userdate modified');
+        }
+    
+        $o .= $gradestatus;
+        $o .= $this->output->container_end(); // end of the main wrapper
+        return $o;
+    
+    }
 
     /**
      * Renders full workshop example submission
@@ -522,7 +572,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
                     $assessment = self::array_nth($participant->reviewerof, $idx);
                     $cell = new html_table_cell();
                     $cell->text = $this->helper_grading_report_assessment($assessment, $options->showauthornames, $userinfo,
-                            get_string('gradegivento', 'workshop'));
+                            get_string('gradegivento', 'workshop'), true);
                     $cell->rowspan = $spangiven;
                     $cell->attributes['class'] = 'givengrade';
                     if (is_null($assessment) or is_null($assessment->grade)) {
@@ -547,6 +597,128 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
         return html_writer::table($table);
     }
+    
+    
+    /**
+    * Renders the workshop grading report for visible groups mode
+    *
+    * @param workshop_grouped_grading_report $gradingreport
+    * @return string HTML
+    */
+    
+    protected function render_workshop_grouped_grading_report(workshop_grouped_grading_report $gradingreport) {
+        //todo
+        $data       = $gradingreport->get_data();
+        $options    = $gradingreport->get_options();
+        $grades     = $data->grades;
+        $userinfo   = $data->userinfo;
+    
+        if (empty($grades)) {
+            return '';
+        }
+    
+        $table = new html_table();
+        $table->attributes['class'] = 'grading-report grouped';
+    
+        $table->head = array();
+    	$table->head[] = $this->helper_sortable_heading(get_string('groupname','group'), 'name', $options->sortby, $options->sorthow);
+        $table->head[] = $this->helper_sortable_heading(get_string('submission', 'workshop'), 'submissiontitle',
+                $options->sortby, $options->sorthow);
+        $table->head[] = $this->helper_sortable_heading(get_string('receivedgrades', 'workshop'));
+        if ($options->showgradinggrade) {
+            $table->head[] = $this->helper_sortable_heading(get_string('gradinggradeof', 'workshop', $data->maxgradinggrade),
+                    'gradinggrade', $options->sortby, $options->sorthow);
+        }
+        if ($options->showsubmissiongrade) {
+            $table->head[] = $this->helper_sortable_heading(get_string('submissiongradeof', 'workshop', $data->maxgrade),
+                    'submissiongrade', $options->sortby, $options->sorthow);
+        }
+    
+        $table->rowclasses  = array();
+        $table->colclasses  = array();
+        $table->data        = array();
+    
+        foreach ($grades as $participant) {
+            $numofreceived  = count($participant->reviewedby);
+            $published      = $participant->submissionpublished;
+    
+            // compute the number of <tr> table rows needed to display this participant
+            if ($numofreceived > 0) {
+                $numoftrs       = $numofreceived;
+                $spanreceived   = $numoftrs / $numofreceived;
+            } else {
+                $numoftrs       = 1;
+                $spanreceived   = 1;
+            }
+    
+            for ($tr = 0; $tr < $numoftrs; $tr++) {
+                $row = new html_table_row();
+                if ($published) {
+                    $row->attributes['class'] = 'published';
+                }
+                // column #1 - participant - spans over all rows
+                if ($tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $participant->name;
+                    $cell->rowspan = $numoftrs;
+                    $cell->attributes['class'] = 'participant';
+                    $row->cells[] = $cell;
+                }
+                // column #2 - submission - spans over all rows
+                if ($tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $this->helper_grading_report_submission($participant);
+                    $cell->rowspan = $numoftrs;
+                    $cell->attributes['class'] = 'submission';
+                    $row->cells[] = $cell;
+                }
+                // column #3 - received grades
+                if ($tr % $spanreceived == 0) {
+                    $idx = intval($tr / $spanreceived);
+                    $assessment = self::array_nth($participant->reviewedby, $idx);
+                    $cell = new html_table_cell();
+                    $cell->text = $this->helper_grading_report_assessment($assessment, $options->showreviewernames, $userinfo,
+                            get_string('gradereceivedfrom', 'workshop'));
+                    $cell->rowspan = $spanreceived;
+                    $cell->attributes['class'] = 'receivedgrade';
+                    if (is_null($assessment) or is_null($assessment->grade)) {
+                        $cell->attributes['class'] .= ' null';
+                    } else {
+                        $cell->attributes['class'] .= ' notnull';
+                    }
+                    $row->cells[] = $cell;
+                }
+                // column #6 - total grade for assessment for markers
+                if ($options->showgradinggrade and $tr % $spanreceived == 0) {
+    				$idx = intval($tr / $spanreceived);
+    				$assessment = self::array_nth($participant->reviewedby, $idx);
+                    $cell = new html_table_cell();
+    				
+    				if($assessment) {
+    					$gradinggrade =	empty($userinfo[$assessment->userid]->gradinggrade) ? null : $userinfo[$assessment->userid]->gradinggrade;
+    				
+                       $cell->text = $this->helper_grading_report_grade($gradinggrade);
+                       $cell->rowspan = $spanreceived;
+                       $cell->attributes['class'] = 'gradinggrade';
+    				}
+                    $row->cells[] = $cell;
+                }
+                // column #4 - total grade for submission
+                if ($options->showsubmissiongrade and $tr == 0) {
+                    $cell = new html_table_cell();
+                    $cell->text = $this->helper_grading_report_grade($participant->submissiongrade, $participant->submissiongradeover);
+                    $cell->rowspan = $numoftrs;
+                    $cell->attributes['class'] = 'submissiongrade';
+                    $row->cells[] = $cell;
+                }
+    
+                $table->data[] = $row;
+            }
+        }
+    
+        return html_writer::table($table);
+    }
+    
 
     /**
      * Renders the feedback for the author of the submission
@@ -567,7 +739,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
     protected function render_workshop_feedback_reviewer(workshop_feedback_reviewer $feedback) {
         return $this->helper_render_feedback($feedback);
     }
-
+    
     /**
      * Helper method to rendering feedback
      *
@@ -659,6 +831,14 @@ class mod_workshop_renderer extends plugin_renderer_base {
                 );
             }
         }
+        
+        $created = get_string('userdatecreated', 'workshop', userdate($assessment->timecreated));
+        $o .= $this->output->container($created, 'userdate created');
+        
+        if ($assessment->timemodified > $assessment->timecreated) {
+            $modified = get_string('userdatemodified', 'workshop', userdate($assessment->timemodified));
+            $o .= $this->output->container($modified, 'userdate modified');
+        }
 
         $o .= $this->output->container_start('actions');
         foreach ($assessment->actions as $action) {
@@ -671,7 +851,23 @@ class mod_workshop_renderer extends plugin_renderer_base {
         if (!is_null($assessment->form)) {
             $o .= print_collapsible_region_start('assessment-form-wrapper', uniqid('workshop-assessment'),
                     get_string('assessmentform', 'workshop'), '', false, true);
-            $o .= $this->output->container(self::moodleform($assessment->form), 'assessment-form');
+            if (isset($assessment->reference_form)) {
+                $o .= $this->output->container_start('center');
+                
+                $o .= $this->output->container_start('inline-block');
+                $o .= $this->output->heading(get_string('assessmentreference','workshop'));
+                $o .= $this->output->container(self::moodleform($assessment->reference_form));
+                $o .= $this->output->container_end();
+                
+                $o .= $this->output->container_start('inline-block');
+                $o .= $this->output->heading(get_string('assessmentbyfullname','workshop', fullname($assessment->reviewer)));
+                $o .= $this->output->container(self::moodleform($assessment->form));
+                $o .= $this->output->container_end();
+                
+                $o .= $this->output->container_end();
+            } else {
+                $o .= $this->output->container(self::moodleform($assessment->form), 'assessment-form');
+            }
             $o .= print_collapsible_region_end(true);
 
             if (!$assessment->form->is_editable()) {
@@ -1017,7 +1213,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
      * @param string $separator between the grade and the reviewer/author
      * @return string
      */
-    protected function helper_grading_report_assessment($assessment, $shownames, array $userinfo, $separator) {
+    protected function helper_grading_report_assessment($assessment, $shownames, array $userinfo, $separator, $suppressgradinggrade = false) {
         global $CFG;
 
         if (is_null($assessment)) {
@@ -1029,22 +1225,36 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $a->weight = $assessment->weight;
         // grrr the following logic should really be handled by a future language pack feature
         if (is_null($assessment->gradinggradeover)) {
-            if ($a->weight == 1) {
-                $grade = get_string('formatpeergrade', 'workshop', $a);
+            if ($suppressgradinggrade == true) {
+                if ($a->weight == 1) {
+                    $grade = get_string('formatpeergradenograding', 'workshop', $a);
+                    $gradehelp = get_string('formatpeergradenogradinghovertext', 'workshop');
+                } else {
+                    $grade = get_string('formatpeergradeweightednograding', 'workshop', $a);
+                    $gradehelp = get_string('formatpeergradeweightednogradinghovertext', 'workshop');
+                }
             } else {
-                $grade = get_string('formatpeergradeweighted', 'workshop', $a);
+                if ($a->weight == 1) {
+                    $grade = get_string('formatpeergrade', 'workshop', $a);
+                    $gradehelp = get_string('formatpeergradehovertext', 'workshop');
+                } else {
+                    $grade = get_string('formatpeergradeweighted', 'workshop', $a);
+                    $gradehelp = get_string('formatpeergradeweightedhovertext', 'workshop');
+                }
             }
         } else {
             $a->gradinggradeover = $assessment->gradinggradeover;
             if ($a->weight == 1) {
                 $grade = get_string('formatpeergradeover', 'workshop', $a);
+                $gradehelp = get_string('formatpeergradeoverhovertext', 'workshop');
             } else {
                 $grade = get_string('formatpeergradeoverweighted', 'workshop', $a);
+                $gradehelp = get_string('formatpeergradeoverweightedhovertext', 'workshop');
             }
         }
         $url = new moodle_url('/mod/workshop/assessment.php',
                               array('asid' => $assessment->assessmentid));
-        $grade = html_writer::link($url, $grade, array('class'=>'grade'));
+        $grade = html_writer::link($url, $grade, array('class'=>'grade', 'title'=>$gradehelp));
 
         if ($shownames) {
             $userid = $assessment->userid;
@@ -1072,6 +1282,40 @@ class mod_workshop_renderer extends plugin_renderer_base {
         }
         return $text;
     }
+    
+    protected function render_workshop_random_examples_helper(workshop_random_examples_helper $helper) {
+        $precision = ini_set('precision',4);
+        $o = '';
+        $infos = array();
+        $problems = array();
+        $titles = workshop_random_examples_helper::$descriptors[count($helper->slices)];
+        
+        $helptext = $this->output->heading_with_help("What does this mean?","randomexampleshelp",'workshop');
+        
+        foreach($helper->slices as $i => $s) {
+            $o .= "<div class='slice' style='background-color: #$s->colour; width: $s->width; left: $s->min%'></div>";
+            $o .= "<div class='mean' style='background-color: #$s->meancolour; left: $s->mean%'></div>";
+            $count = count($s->submissions);
+            $infos[] = "<div class='info'><h3 style='color:#$s->meancolour'>$titles[$i]</h3>Range $s->min% to $s->max% | Average $s->mean%</div>";
+            if (isset($s->warnings))
+                $problems = array_merge($problems, $s->warnings);
+            foreach($s->submissions as $a) {
+                $o .= "<div class='submission' style='background-color: #$s->subcolour; left:$a->grade%'></div>";
+            }
+        }
+        $problemstr = "";
+        if (count($problems)) {
+            $problemstr = print_collapsible_region_start('random-examples-problems','random_examples_problems','Warnings','',true,true);
+            $problemstr .= "<ul>";
+            foreach($problems as $p)
+                $problemstr .= "<li>$p</li>";
+            $problemstr .= print_collapsible_region_end(true);
+            $problemstr .= "</ul>";
+        }
+        ini_set('precision',$precision);
+        return "$helptext<div class='random-examples-helper'>$o</div> <div class='random-examples-info'>" . implode($infos) . "</div>$problemstr";
+    }
+    
 
     ////////////////////////////////////////////////////////////////////////////
     // Static helpers

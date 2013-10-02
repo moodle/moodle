@@ -34,11 +34,12 @@ $confirm    = optional_param('confirm', false, PARAM_BOOL); // confirmation
 $page       = optional_param('page', 0, PARAM_INT);
 $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
 $sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
+$method		= required_param('methodname', PARAM_ALPHA);
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
-$workshop   = new workshop($workshop, $cm, $course);
+$workshop_r = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
+$workshop   = new workshop($workshop_r, $cm, $course);
 
 $PAGE->set_url($workshop->aggregate_url(), compact('confirm', 'page', 'sortby', 'sorthow'));
 
@@ -46,6 +47,11 @@ require_login($course, false, $cm);
 require_capability('mod/workshop:overridegrades', $PAGE->context);
 
 // load and init the grading evaluator
+
+$workshop->evaluation = $method;
+$workshop_r->evaluation = $method;
+$rslt = $DB->update_record('workshop', $workshop_r); //todo: find out if passing back $workshop would work
+
 $evaluator = $workshop->grading_evaluation_instance();
 $settingsform = $evaluator->get_settings_form($PAGE->url);
 
@@ -54,6 +60,11 @@ if ($settingsdata = $settingsform->get_data()) {
     $evaluator->update_grading_grades($settingsdata);   // updates 'gradinggrade' in {workshop_assessments}
     $workshop->aggregate_grading_grades();              // updates 'gradinggrade' in {workshop_aggregations}
     $workshop->log('update aggregate grades');
+    
+    //New functionality: calibrated plugin needs to update submission grades based on calibration scores
+    if (method_exists($evaluator, "update_submission_grades")) {
+        $evaluator->update_submission_grades($settingsdata);
+    }
 }
 
 redirect(new moodle_url($workshop->view_url(), compact('page', 'sortby', 'sorthow')));

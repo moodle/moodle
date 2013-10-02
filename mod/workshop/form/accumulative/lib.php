@@ -298,7 +298,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
     /**
      * @see parent::get_assessments_recordset()
      */
-    public function get_assessments_recordset($restrict=null) {
+    public function get_assessments_recordset($restrict=null,$include_examples=false) {
         global $DB;
 
         $sql = 'SELECT s.id AS submissionid,
@@ -307,9 +307,13 @@ class workshop_accumulative_strategy implements workshop_strategy {
                   FROM {workshop_submissions} s
                   JOIN {workshop_assessments} a ON (a.submissionid = s.id)
                   JOIN {workshop_grades} g ON (g.assessmentid = a.id AND g.strategy = :strategy)
-                 WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
+                 WHERE s.workshopid=:workshopid'; // to be cont.
         $params = array('workshopid' => $this->workshop->id, 'strategy' => $this->workshop->strategy);
 
+        if ($include_examples == false) {
+            $sql .= " AND s.example=0";
+        }
+        
         if (is_null($restrict)) {
             // update all users - no more conditions
         } elseif (!empty($restrict)) {
@@ -331,7 +335,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
     public function get_dimensions_info() {
         global $DB;
 
-        $sql = 'SELECT d.id, d.grade, d.weight, s.scale
+        $sql = 'SELECT d.id, d.grade, d.weight, d.description AS title, s.scale
                   FROM {workshopform_accumulative} d
              LEFT JOIN {scale} s ON (d.grade < 0 AND -d.grade = s.id)
                  WHERE d.workshopid = :workshopid';
@@ -342,6 +346,7 @@ class workshop_accumulative_strategy implements workshop_strategy {
             $diminfo[$dimid] = new stdclass();
             $diminfo[$dimid]->id = $dimid;
             $diminfo[$dimid]->weight = $dimrecord->weight;
+            $diminfo[$dimid]->title = $dimrecord->title;
             if ($dimrecord->grade < 0) {
                 // the dimension uses a scale
                 $diminfo[$dimid]->min = 1;

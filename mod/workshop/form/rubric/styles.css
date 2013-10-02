@@ -57,6 +57,7 @@
 .path-mod-workshop .assessmentform.rubric.grid #id_rubric-grid-wrapper .fitem .felement span label {
     display: block;
     text-align: center;
+    color: black;
 }
 
 /* Rubric - list layout */

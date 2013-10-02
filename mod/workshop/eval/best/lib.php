@@ -121,6 +121,14 @@ class workshop_best_evaluation extends workshop_evaluation {
 
         return new workshop_best_evaluation_settings_form($actionurl, $customdata, 'post', '', $attributes);
     }
+    
+    public function has_messages() {
+        return false;
+    }
+    
+    public function display_messages() {
+        
+    }
 
     /**
      * Delete all data related to a given workshop module instance

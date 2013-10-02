@@ -61,3 +61,7 @@
     font-size: 90%;
     margin-top: 1em;
 }
+
+.path-mod-workshop .upload-form-example td {
+    border:1px solid #CCC;
+}

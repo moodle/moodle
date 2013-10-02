@@ -79,7 +79,7 @@ echo $output->heading(get_string('assessedexample', 'workshop'), 2);
 echo $output->render($workshop->prepare_example_submission($example));
 
 // if the reference assessment is available, display it
-if (!empty($mformreference)) {
+if (!empty($mformreference) && $workshop->examplescompare) {
     $options = array(
         'showreviewer'  => false,
         'showauthor'    => false,
@@ -101,14 +101,14 @@ if ($isreviewer) {
     );
     $assessment = $workshop->prepare_example_assessment($assessment, $mformassessment, $options);
     $assessment->title = get_string('assessmentbyyourself', 'workshop');
-    if ($workshop->assessing_examples_allowed()) {
+    if ($workshop->assessing_examples_allowed() && $workshop->examplesreassess) {
         $assessment->add_action(
             new moodle_url($workshop->exsubmission_url($example->id), array('assess' => 'on', 'sesskey' => sesskey())),
             get_string('reassess', 'workshop')
         );
     }
     echo $output->render($assessment);
-
+    echo $output->continue_button(new moodle_url($workshop->view_url()));
 } elseif ($canmanage) {
     $options = array(
         'showreviewer'  => true,

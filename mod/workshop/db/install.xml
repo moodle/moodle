@@ -39,6 +39,10 @@
         <FIELD NAME="overallfeedbackmode" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Mode of the overall feedback support."/>
         <FIELD NAME="overallfeedbackfiles" TYPE="int" LENGTH="3" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of allowed attachments to the overall feedback."/>
         <FIELD NAME="overallfeedbackmaxbytes" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="100000" SEQUENCE="false" COMMENT="Maximum size of one file attached to the overall feedback."/>
+        <FIELD NAME="examplescompare" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Allow students to compare their assessment to the example assessments." />
+        <FIELD NAME="examplesreassess" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="1" SEQUENCE="false" COMMENT="Allow students to re-assess example submissions"/>
+        <FIELD NAME="numexamples" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Number of example submissions to show. 0 means all."/>
+        <FIELD NAME="teammode" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="One submission per group"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -315,6 +319,17 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
         <INDEX NAME="mailed" UNIQUE="false" FIELDS="mailed"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="workshop_user_examples" COMMENT="When using randomised examples, stores the example submissions a user will be assessing.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="submissionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="workshopid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>

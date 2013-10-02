@@ -32,7 +32,7 @@ require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/allocation/lib.php');
 
 $cmid       = required_param('cmid', PARAM_INT);                    // course module
-$method     = optional_param('method', 'manual', PARAM_ALPHA);      // method to use
+$method     = optional_param('method', 'manual', PARAM_ALPHAEXT);      // method to use
 
 $cm         = get_coursemodule_from_id('workshop', $cmid, 0, false, MUST_EXIST);
 $course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -65,6 +65,7 @@ if (!empty($allocators)) {
     $inactive   = array();
     $activated  = array();
     foreach ($allocators as $methodid => $methodname) {
+			
         $row[] = new tabobject($methodid, $workshop->allocation_url($methodid)->out(), $methodname);
         if ($methodid == $method) {
             $currenttab = $methodid;

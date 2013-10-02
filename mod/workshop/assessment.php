@@ -96,6 +96,8 @@ if ($isreviewer and $workshop->assessing_allowed($USER->id)) {
     $assessmenteditable = false;
 }
 
+$output = $PAGE->get_renderer('mod_workshop');      // workshop renderer
+
 // check that all required examples have been assessed by the user
 if ($assessmenteditable and $workshop->useexamples and $workshop->examplesmode == workshop::EXAMPLES_BEFORE_ASSESSMENT
         and !has_capability('mod/workshop:manageexamples', $workshop->context)) {
@@ -234,7 +236,6 @@ if ($canoverridegrades or $cansetassessmentweight) {
 }
 
 // output starts here
-$output = $PAGE->get_renderer('mod_workshop');      // workshop renderer
 echo $output->header();
 echo $output->heading(get_string('assessedsubmission', 'workshop'), 2);
 
@@ -249,6 +250,30 @@ if (trim($workshop->instructreviewers)) {
     print_collapsible_region_start('', 'workshop-viewlet-instructreviewers', get_string('instructreviewers', 'workshop'));
     echo $output->box(format_text($instructions, $workshop->instructreviewersformat, array('overflowdiv'=>true)), array('generalbox', 'instructions'));
     print_collapsible_region_end();
+}
+
+// display example assessments
+if ($workshop->useexamples && (($isreviewer && (($workshop->phase == workshop::PHASE_CLOSED) || ($workshop->phase == workshop::PHASE_EVALUATION))) || $canviewallassessments))
+{
+    $reviewer = $DB->get_record('user', array('id' => $assessment->reviewerid));
+    
+    echo $output->heading(html_writer::link($workshop->all_exassess_url($reviewer->id), get_string('showexamples','workshop',fullname($reviewer))));
+
+    $eval = $workshop->grading_evaluation_instance();
+
+    if (method_exists($eval, 'prepare_explanation_for_assessor')) {    
+        print_collapsible_region_start('', uniqid('workshop-grading-evaluation-explanation'), get_string('explanation', 'workshop', fullname($reviewer)), '', true);
+        echo $output->box_start();
+    
+
+        $eval_output = $PAGE->get_renderer('workshopeval_calibrated');
+        $renderable = $eval->prepare_explanation_for_assessor($assessment->reviewerid);
+        echo $eval_output->render($renderable);
+        
+        echo $output->box_end();
+        print_collapsible_region_end();
+    }
+    
 }
 
 // extend the current assessment record with user details

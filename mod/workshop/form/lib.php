@@ -99,9 +99,10 @@ interface workshop_strategy {
      * assessments info.
      *
      * @param array|int|null $restrict optional id or ids of the reviewer
+     * @param bool $include_examples optional should include assessments of example submissions?
      * @return moodle_recordset
      */
-    public function get_assessments_recordset($restrict=null);
+    public function get_assessments_recordset($restrict=null,$include_examples=false);
 
     /**
      * Is a given scale used by the instance of workshop?

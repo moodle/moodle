@@ -246,6 +246,10 @@ class workshop_scheduled_allocator implements workshop_allocator {
             $DB->update_record('workshopallocation_scheduled', $data);
         }
     }
+    
+    public static function teammode_class() {
+        return null;
+    }
 }
 
 /**

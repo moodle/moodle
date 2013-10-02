@@ -39,6 +39,9 @@ class workshop_random_allocator implements workshop_allocator {
 
     /** constants used to pass status messages between init() and ui() */
     const MSG_SUCCESS       = 1;
+    
+    //some consts to differentiate teammode and normal mode
+    protected $form_class = 'workshop_random_allocator_form';
 
     /** workshop instance */
     protected $workshop;
@@ -64,7 +67,7 @@ class workshop_random_allocator implements workshop_allocator {
         $result = new workshop_allocation_result($this);
         $customdata = array();
         $customdata['workshop'] = $this->workshop;
-        $this->mform = new workshop_random_allocator_form($PAGE->url, $customdata);
+        $this->mform = new $this->form_class($PAGE->url, $customdata);
         if ($this->mform->is_cancelled()) {
             redirect($this->workshop->view_url());
         } else if ($settings = $this->mform->get_data()) {
@@ -88,8 +91,7 @@ class workshop_random_allocator implements workshop_allocator {
      */
     public function execute(workshop_random_allocator_setting $settings, workshop_allocation_result $result) {
 
-        $authors        = $this->workshop->get_potential_authors();
-        $authors        = $this->workshop->get_grouped($authors);
+        $authors        = $this->get_authors();
         $reviewers      = $this->workshop->get_potential_reviewers(!$settings->assesswosubmission);
         $reviewers      = $this->workshop->get_grouped($reviewers);
         $assessments    = $this->workshop->get_all_assessments();
@@ -102,10 +104,7 @@ class workshop_random_allocator implements workshop_allocator {
             } else {
                 $curassessments = $assessments;
             }
-            $options                     = array();
-            $options['numofreviews']     = $settings->numofreviews;
-            $options['numper']           = $settings->numper;
-            $options['excludesamegroup'] = $settings->excludesamegroup;
+            $options            = $this->get_options_from_settings($settings);
             $randomallocations  = $this->random_allocation($authors, $reviewers, $curassessments, $result, $options);
             $newallocations     = array_merge($newallocations, $randomallocations);
             $result->log(get_string('numofrandomlyallocatedsubmissions', 'workshopallocation_random', count($randomallocations)));
@@ -208,28 +207,16 @@ class workshop_random_allocator implements workshop_allocator {
         ob_end_clean();
 
         // if there are some not-grouped participant in a group mode, warn the user
-        $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->course);
+        $gmode = $this->get_group_mode();
         if (VISIBLEGROUPS == $gmode or SEPARATEGROUPS == $gmode) {
-            $users = $this->workshop->get_potential_authors() + $this->workshop->get_potential_reviewers();
-            $users = $this->workshop->get_grouped($users);
-            if (isset($users[0])) {
-                $nogroupusers = $users[0];
-                foreach ($users as $groupid => $groupusers) {
-                    if ($groupid == 0) {
-                        continue;
-                    }
-                    foreach ($groupusers as $groupuserid => $groupuser) {
-                        unset($nogroupusers[$groupuserid]);
-                    }
+            $nogroupusers = $this->workshop->get_ungrouped_users(); //this function exists for a reason
+            if (!empty($nogroupusers)) {
+                $list = array();
+                foreach ($nogroupusers as $nogroupuser) {
+                    $list[] = fullname($nogroupuser);
                 }
-                if (!empty($nogroupusers)) {
-                    $list = array();
-                    foreach ($nogroupusers as $nogroupuser) {
-                        $list[] = fullname($nogroupuser);
-                    }
-                    $a = implode(', ', $list);
-                    $out .= $output->box(get_string('nogroupusers', 'workshopallocation_random', $a), 'generalbox warning nogroupusers');
-                }
+                $a = implode(', ', $list);
+                $out .= $output->box(get_string('nogroupusers', 'workshopallocation_random', $a), 'generalbox warning nogroupusers');
             }
         }
 
@@ -464,6 +451,7 @@ class workshop_random_allocator implements workshop_allocator {
         } else {
             throw new moodle_exception('unknownusertypepassed', 'workshop');
         }
+
         // get the users that are not in any group. in visible groups mode, these users are exluded
         // from allocation by this method
         // $nogroupcircles is array (int)$userid => undefined
@@ -498,7 +486,7 @@ class workshop_random_allocator implements workshop_allocator {
         unset($squaregroupsworkload[0]);    // [0] is not real group, it contains all users
         // $result->log('square workload = ' . json_encode($squareworkload), 'debug');
         // $result->log('square group workload = ' . json_encode($squaregroupsworkload), 'debug');
-        $gmode = groups_get_activity_groupmode($this->workshop->cm, $this->workshop->course);
+        $gmode = $this->get_group_mode();
         if (SEPARATEGROUPS == $gmode) {
             // shuffle all groups but [0] which means "all users"
             $circlegroups = array_keys(array_diff_key($allcircles, array(0 => null)));
@@ -519,7 +507,7 @@ class workshop_random_allocator implements workshop_allocator {
                 $this->shuffle_assoc($circles);
                 $result->log('iteration ' . $requiredreviews, 'debug');
                 foreach ($circles as $circleid => $circle) {
-                    if (VISIBLEGROUPS == $gmode and isset($nogroupcircles[$circleid])) {
+                    if ((VISIBLEGROUPS == $gmode) and isset($nogroupcircles[$circleid])) {
                         $result->log('skipping circle id ' . $circleid, 'debug');
                         continue;
                     }
@@ -562,6 +550,7 @@ class workshop_random_allocator implements workshop_allocator {
                             }
                             $targetgroup = $this->get_element_with_lowest_workload($trygroups);
                         }
+                        
                         if ($targetgroup === false) {
                             $keeptrying = false;
                             $result->log(get_string('resultnotenoughpeers', 'workshopallocation_random'), 'error', 1);
@@ -698,6 +687,32 @@ class workshop_random_allocator implements workshop_allocator {
             $newallocations = array_diff_key($newallocations, array_flip($foundat));
         }
     }
+    
+    /**
+    * This exists because teammode treats options slightly differently from normal mode
+    *
+    * @param stdclass $settings settings object from mform
+    * @return array $options same data as associative array
+    */
+    protected function get_options_from_settings($settings) {
+        $options                     = array();
+        $options['numofreviews']     = $settings->numofreviews;
+        $options['numper']           = $settings->numper;
+        $options['excludesamegroup'] = $settings->excludesamegroup;
+        return $options;
+    }
+    
+    protected function get_group_mode() {
+        return groups_get_activity_groupmode($this->workshop->cm, $this->workshop->course);
+    }
+    
+    protected function get_authors() {
+        return $this->workshop->get_grouped($this->workshop->get_potential_authors());
+    }
+
+    public static function teammode_class() {
+        return "workshop_teammode_random_allocator";
+    }
 }
 
 
@@ -788,3 +803,5 @@ class workshop_random_allocator_setting {
         return json_encode($getvars($this));
     }
 }
+
+require_once("teamlib.php");

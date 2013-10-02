@@ -62,6 +62,13 @@ if (($canmanage and $assessment->weight == 1) or ($isreviewer and $workshop->ass
     $assessmenteditable = false;
 }
 
+// CALIBRATION
+// this stops users from re-assessing example submissions if they're not allowed to
+if (!($canmanage and $assessment->weight == 1) and !empty($assessment->grade) and !$workshop->examplesreassess)
+{
+    $assessmenteditable = false;
+}
+
 // load the grading strategy logic
 $strategy = $workshop->grading_strategy_instance();
 
@@ -161,7 +168,6 @@ if (trim($workshop->instructreviewers)) {
 
 // extend the current assessment record with user details
 $assessment = $workshop->get_assessment_by_id($assessment->id);
-
 if ($canmanage and $assessment->weight == 1) {
     $options = array(
         'showreviewer'  => false,
@@ -192,5 +198,4 @@ if ($canmanage and $assessment->weight == 1) {
     $assessment = $workshop->prepare_example_assessment($assessment, $mform, $options);
     echo $output->render($assessment);
 }
-
 echo $output->footer();

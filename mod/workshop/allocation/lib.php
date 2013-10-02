@@ -69,6 +69,13 @@ interface workshop_allocator {
      * @return void
      */
     public static function delete_instance($workshopid);
+    
+    /**
+     * Return the class of the teammode version of this plugin.
+     */
+    
+    public static function teammode_class();
+    
 }
 
 

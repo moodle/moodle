@@ -132,9 +132,17 @@ $string['feedbacksettings'] = 'Feedback';
 $string['formataggregatedgrade'] = '{$a->grade}';
 $string['formataggregatedgradeover'] = '<del>{$a->grade}</del><br /><ins>{$a->over}</ins>';
 $string['formatpeergrade'] = '<span class="grade">{$a->grade}</span> <span class="gradinggrade">({$a->gradinggrade})</span>';
+$string['formatpeergradehovertext'] = 'Grade Given (Grade for Assessment)';
 $string['formatpeergradeover'] = '<span class="grade">{$a->grade}</span> <span class="gradinggrade">(<del>{$a->gradinggrade}</del> / <ins>{$a->gradinggradeover}</ins>)</span>';
+$string['formatpeergradeoverhovertext'] = 'Grade Given (~~Grade for Assessment~~ / Overridden Grade for Assessment)';
 $string['formatpeergradeoverweighted'] = '<span class="grade">{$a->grade}</span> <span class="gradinggrade">(<del>{$a->gradinggrade}</del> / <ins>{$a->gradinggradeover}</ins>)</span> @ <span class="weight">{$a->weight}</span>';
+$string['formatpeergradeoverweightedhovertext'] = 'Grade Given (~~Grade for Assessment~~ / Overridden Grade for Assessment) @ Assessment Weight';
 $string['formatpeergradeweighted'] = '<span class="grade">{$a->grade}</span> <span class="gradinggrade">({$a->gradinggrade})</span> @ <span class="weight">{$a->weight}</span>';
+$string['formatpeergradeweightedhovertext'] = 'Grade Given (Grade for Assessment) @ Assessment Weight';
+$string['formatpeergradenograding'] = '<span class="grade">{$a->grade}</span>';
+$string['formatpeergradenogradinghovertext'] = 'Grade Given';
+$string['formatpeergradeweightednograding'] = '<span class="grade">{$a->grade}</span> @ <span class="weight">{$a->weight}</span>';
+$string['formatpeergradeweightednogradinghovertext'] = 'Grade Given @ Assessment Weight';
 $string['givengrades'] = 'Grades given';
 $string['gradecalculated'] = 'Calculated grade for submission';
 $string['gradedecimals'] = 'Decimal places in grades';
@@ -212,6 +220,7 @@ $string['publishedsubmissions'] = 'Published submissions';
 $string['publishsubmission'] = 'Publish submission';
 $string['publishsubmission_help'] = 'Published submissions are available to the others when the workshop is closed.';
 $string['reassess'] = 'Re-assess';
+$string['review'] = 'Review';
 $string['receivedgrades'] = 'Grades received';
 $string['recentassessments'] = 'Workshop assessments:';
 $string['recentsubmissions'] = 'Workshop submissions:';
@@ -313,3 +322,62 @@ $string['workshop:viewreviewernames'] = 'View reviewer names';
 $string['yourassessment'] = 'Your assessment';
 $string['yourgrades'] = 'Your grades';
 $string['yoursubmission'] = 'Your submission';
+
+//Additions: Team Mode
+$string['teammode'] = 'Team mode';
+$string['teammode_desc'] = 'Allow students to submit work as a team.';
+$string['teammode_help'] = <<<MDOWN
+Allows students to submit work as a team.
+
+Enabling team mode means that work is treated as being submitted by a whole group. When one student submits work, that submission counts for everyone in that student's team, and everyone in their team can edit that submission as if it were their own. Teams are the same as groups; when you make a workshop in Team Mode, you must ensure that every student belongs to exactly one group. The teams are scoped by the grouping you select for the workshop at the bottom of this page, so if your students belong to more than one group, make a grouping with groups such that they only belong to one.
+
+If self-assessment is disabled, students are prevented from marking their own team's work.
+MDOWN;
+$string['teammode_disabled'] = 'Team mode is disabled because you have no groups in your course.';
+$string['teammode_ungroupedwarning'] = 'Warning: If the workshop is in Team mode, then users MUST be part of at least one group to submit work.<br/>
+	<br/>
+These users are currently not in a group: {$a}';
+$string['teammode_notingroupwarning'] = 'You are not in any groups. You cannot submit work for this assessment.';
+$string['teammode_duplicategroupnameswarning'] = 'You have some groups with the same name, so you can\'t upload data. You need to change their names or allocate manually. (Duplicate names: {$a})';
+$string['teammode_multiplegroupswarning'] = 'You have users in multiple groups ({$a}). Please select a grouping with unique groups.';
+$string['teammode_nogroupswarning'] = 'There are no groups in your course, or in the selected grouping. <strong>Team mode has been disabled</strong>. If you wish to continue in team mode, create some groups, then edit the settings this workshop and re-enabled team mode.';
+
+//Additions: Calibration
+$string['examplescompare'] = 'Example comparison';
+$string['examplescompare_desc'] = 'Allow comparison of example submissions with reference assessments';
+$string['examplescompare_warn'] = 'Do not check both of these if you are using <strong>Calibrated</strong> grading.';
+$string['examplesreassess'] = 'Example reassessment';
+$string['examplesreassess_desc'] = 'Allow students to reassess example submissions';
+$string['examplesrequired'] = 'You must select <strong>Use examples</strong> to set up <strong>Calibrated</strong> grading.';
+$string['examplesmoderequired'] = 'Do not use <strong>voluntary</strong> example assessment when using <strong>Calibrated</strong> grading.';
+$string['exampleassessmentsname'] = '{$a}\'s example assessments';
+$string['explanation'] = 'Assessment grade breakdown for {$a}';
+$string['showexamples'] = 'Show {$a}\'s examples assessments';
+$string['showsubmission'] = 'Show Submission';
+
+//Additions: Random Examples
+$string['numexamples'] = 'Number of examples';
+$string['numexamples_help'] = <<<MDOWN
+This allows you to provide more example submissions than are presented to your students.
+
+If you set this, the students are presented examples pseudo-randomly; they will be shown a roughly even spread of poor to good submissions. This is useful to prevent cheating when using the Calibrated evaluation method.
+
+If you leave this at zero, all of your example submissions will be shown to your students.
+MDOWN;
+
+$string['randomexamplesoverlapwarning'] = 'The {$a->prev} and {$a->next} brackets overlap. There might be little or no differentiation between these brackets.';
+$string['randomexampleshelp'] = 'Random Examples: What does this mean?';
+$string['randomexampleshelp_help'] = <<<MDOWN
+
+When you choose to show your students more than one example assessment (and not all of them), Workshop attempts to give them a good spread of examples, choosing poor, average and good assessments evenly. It also picks assessments semi-randomly, to prevent students cheating off each other. This is especially useful for the Calibration evaluation method.
+
+In order to help you create better examples, we've got this handy tool. It gives you a quick and easy visual representation of your example assessments.
+
+When Workshop is picking example assessments for a student, it divides all the assessments into n even brackets, where n is the number of example assessments you chose for each student to do. You can see these brackets here, represented by the coloured bars. These represent the range of the lowest to the highest mark in that bracket.
+
+The small bars are the individual example assessments, while the tall, thick bars are the average mark for that bracket.
+
+You can use this tool to help you create an even spread of example assessments.
+MDOWN;
+
+

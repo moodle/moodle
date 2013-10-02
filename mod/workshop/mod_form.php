@@ -56,7 +56,7 @@ class mod_workshop_mod_form extends moodleform_mod {
      * @return void
      */
     public function definition() {
-        global $CFG;
+        global $CFG, $DB;
 
         $workshopconfig = get_config('workshop');
         $mform = $this->_form;
@@ -144,11 +144,27 @@ class mod_workshop_mod_form extends moodleform_mod {
         $label = get_string('instructreviewers', 'workshop');
         $mform->addElement('editor', 'instructreviewerseditor', $label, null,
                             workshop::instruction_editors_options($this->context));
+                            
+        $text = get_string('examplesmoderequired', 'workshop');
+        $mform->addElement('static', 'examplesmoderequired', '', $text);
 
         $label = get_string('useselfassessment', 'workshop');
         $text = get_string('useselfassessment_desc', 'workshop');
         $mform->addElement('checkbox', 'useselfassessment', $label, $text);
         $mform->addHelpButton('useselfassessment', 'useselfassessment', 'workshop');
+
+  		$numgroups = $DB->count_records('groups',array('courseid' => $this->course->id));
+        $disabled = (bool)($numgroups == 0);
+        
+        $label = get_string('teammode', 'workshop');
+        if ($disabled) {
+            $text = get_string('teammode_disabled','workshop');
+        } else {
+            $text = get_string('teammode_desc', 'workshop');
+        }
+        $params = $disabled ? array('disabled' => 'disabled') : array();
+        $mform->addElement('checkbox','teammode',$label,$text,$params);
+        $mform->addHelpButton('teammode','teammode','workshop');
 
         // Feedback -------------------------------------------------------------------
         $mform->addElement('header', 'feedbacksettings', get_string('feedbacksettings', 'workshop'));
@@ -182,6 +198,10 @@ class mod_workshop_mod_form extends moodleform_mod {
         // Example submissions --------------------------------------------------------
         $mform->addElement('header', 'examplesubmissionssettings', get_string('examplesubmissions', 'workshop'));
 
+		$text = get_string('examplesrequired', 'workshop');
+        $mform->addElement('static', 'useexamplesrequired', '', $text);
+
+
         $label = get_string('useexamples', 'workshop');
         $text = get_string('useexamples_desc', 'workshop');
         $mform->addElement('checkbox', 'useexamples', $label, $text);
@@ -193,7 +213,28 @@ class mod_workshop_mod_form extends moodleform_mod {
         $mform->setDefault('examplesmode', $workshopconfig->examplesmode);
         $mform->disabledIf('examplesmode', 'useexamples');
 
-        // Availability ---------------------------------------------------------------
+        $label = get_string('numexamples', 'workshop');
+        $mform->addElement('select', 'numexamples', $label, array('All',1,2,3,4,5,6,7,8,9,10,11,12,13,14,15));
+        $mform->disabledIf('numexamples', 'useexamples');
+        $mform->setDefault('numexamples', 0);
+        $mform->addHelpButton('numexamples','numexamples','workshop');
+        
+        $text = get_string('examplescompare_warn', 'workshop');
+        $mform->addElement('static', 'examplescomparelabel', '', $text);
+        
+        $label = get_string('examplescompare', 'workshop');
+        $text = get_string('examplescompare_desc', 'workshop');
+        $mform->addElement('checkbox', 'examplescompare', $label, $text);
+        $mform->disabledIf('examplescompare', 'useexamples');
+        $mform->setDefault('examplescompare', true);
+
+        $label = get_string('examplesreassess', 'workshop');
+        $text = get_string('examplesreassess_desc', 'workshop');
+        $mform->addElement('checkbox', 'examplesreassess', $label, $text);
+        $mform->disabledIf('examplesreassess', 'useexamples');
+        $mform->setDefault('examplesreassess', true);
+
+        // Access control -------------------------------------------------------------
         $mform->addElement('header', 'accesscontrol', get_string('availability', 'core'));
 
         $label = get_string('submissionstart', 'workshop');

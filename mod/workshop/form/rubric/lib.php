@@ -319,6 +319,7 @@ class workshop_rubric_strategy implements workshop_strategy {
             $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
             $chosenlevel = $data->{'chosenlevelid__idx_'.$i};
             $grade->grade = $this->dimensions[$grade->dimensionid]->levels[$chosenlevel]->grade;
+            $grade->peercomment = $data->{'peercomment__idx_'.$i};
 
             if (empty($grade->id)) {
                 // new grade
@@ -346,7 +347,7 @@ class workshop_rubric_strategy implements workshop_strategy {
     /**
      * @see parent::get_assessments_recordset()
      */
-    public function get_assessments_recordset($restrict=null) {
+    public function get_assessments_recordset($restrict=null,$include_examples=false) {
         global $DB;
 
         $sql = 'SELECT s.id AS submissionid,
@@ -355,8 +356,12 @@ class workshop_rubric_strategy implements workshop_strategy {
                   FROM {workshop_submissions} s
                   JOIN {workshop_assessments} a ON (a.submissionid = s.id)
                   JOIN {workshop_grades} g ON (g.assessmentid = a.id AND g.strategy = :strategy)
-                 WHERE s.example=0 AND s.workshopid=:workshopid'; // to be cont.
+                 WHERE s.workshopid=:workshopid'; // to be cont.
         $params = array('workshopid' => $this->workshop->id, 'strategy' => $this->workshop->strategy);
+
+        if ($include_examples == false) {
+            $sql .= " AND s.example=0";
+        }
 
         if (is_null($restrict)) {
             // update all users - no more conditions
@@ -379,7 +384,7 @@ class workshop_rubric_strategy implements workshop_strategy {
     public function get_dimensions_info() {
         global $DB;
 
-        $sql = 'SELECT d.id AS id, MIN(l.grade) AS min, MAX(l.grade) AS max, 1 AS weight
+        $sql = 'SELECT d.id AS id, d.description AS title, MIN(l.grade) AS min, MAX(l.grade) AS max, 1 AS weight
                   FROM {workshopform_rubric} d
             INNER JOIN {workshopform_rubric_levels} l ON (d.id = l.dimensionid)
                  WHERE d.workshopid = :workshopid

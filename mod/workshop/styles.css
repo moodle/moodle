@@ -364,6 +364,26 @@
     margin: 0px 0px 0px 5px;
 }
 
+.path-mod-workshop .assessment-full .header .userdate.created {
+    padding-right: 10px;
+}
+
+.path-mod-workshop .assessment-full .header .userdate.modified {
+    padding-left: 10px;
+    margin-left: 0px;
+    border-left: 1px solid #000;
+}
+
+.path-mod-workshop .assessment-full .header .userdate {
+    font-size: x-small;
+    color: #333;
+    display: inline;
+}
+
+.path-mod-workshop .assessment-full .header .userdate span {
+    font-style: italic;
+}
+
 .path-mod-workshop .assessment-full .header .reviewer .picture {
     position: absolute;
     top: 3px;
@@ -485,6 +505,10 @@
     white-space: nowrap;
 }
 
+.path-mod-workshop .grading-report.grouped .gradinggrade.cell {
+	font-size:150%;
+}
+
 .path-mod-workshop .grading-report .givengrade.null .user,
 .path-mod-workshop .grading-report .receivedgrade.null .user {
     color: #ee0000;
@@ -591,3 +615,109 @@
 }
 
 .path-mod-workshop .workshop-risk-dataloss { vertical-align: text-bottom; }
+
+.path-mod-workshop .no-competent-reviewers {
+    border: 1px solid #FD0;
+    background-color: #FCFCF0;
+    margin:10px 0px;
+    padding:10px;
+    font-size:1.1em;
+    font-weight: bold;
+}
+
+.path-mod-workshop .random-examples-helper {
+  height: 70px;
+  width:80%;
+  margin:auto;
+  border:1px solid black;
+  position: relative;
+  background-color:#888;
+  background-image:url([[pix:mod_workshop|stripe]]);
+  overflow:hidden;
+}
+
+.path-mod-workshop .random-examples-helper .slice {
+  position:absolute;
+  height: 100%;
+  box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -webkit-box-sizing:border-box;
+  overflow:hidden;
+  box-shadow:0 0 5px #333;
+}
+
+.path-mod-workshop .random-examples-helper .submission
+{
+  position: absolute;
+  top:50%;
+  height:50%;
+  width: 0.5%;
+  margin-left:-0.25%;
+}
+
+.path-mod-workshop .random-examples-helper .mean
+{
+  position: absolute;
+  top:0;
+  height:100%;
+  width: 1%;
+  margin-left:-0.5%;
+  border-left:1px solid #777;
+  border-right:1px solid #777;
+}
+
+.path-mod-workshop .random-examples-info
+{
+  margin:auto;
+  text-align:center;
+}
+
+.path-mod-workshop .random-examples-info .info
+{
+  display:inline-block;
+  margin:10px;
+}
+
+.path-mod-workshop .random-examples-info h3
+{
+  text-shadow:0px 1px #333;
+}
+
+.path-mod-workshop .inline-block
+{
+  display:inline-block;
+  vertical-align: text-top;
+}
+
+.path-mod-workshop table.explanation td,
+.path-mod-workshop table.explanation th
+{
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.path-mod-workshop table.explanation small
+{
+  color: #887799;
+}
+
+.path-mod-workshop table.explanation .subheading
+{
+  background-color:#eee;
+}
+
+.path-mod-workshop table.explanation .big
+{
+  font-size: 1.5em;
+}
+
+.path-mod-workshop table.explanation .bold
+{
+  font-weight: bold;
+  background-color:#EEE;
+}
+
+.path-mod-workshop .center
+{
+  text-align:center;
+}

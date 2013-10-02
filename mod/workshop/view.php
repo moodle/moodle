@@ -110,6 +110,18 @@ echo $output->render($userplan);
 
 switch ($workshop->phase) {
 case workshop::PHASE_SETUP:
+    if ($workshop->teammode) {
+    	$nogroupusers = $workshop->get_ungrouped_users();
+    	if (!empty($nogroupusers)) {
+    	    $list = array();
+    	    foreach ($nogroupusers as $nogroupuser) {
+    	        $list[] = fullname($nogroupuser);
+    	    }
+    	    $a = implode(', ', $list);
+    	    echo $output->box(get_string('teammode_ungroupedwarning', 'workshop', $a), 'generalbox warning nogroupusers');
+    	}
+    }
+    
     if (trim($workshop->intro)) {
         print_collapsible_region_start('', 'workshop-viewlet-intro', get_string('introduction', 'workshop'));
         echo $output->box(format_module_intro('workshop', $workshop, $workshop->cm->id), 'generalbox');
@@ -119,8 +131,13 @@ case workshop::PHASE_SETUP:
         print_collapsible_region_start('', 'workshop-viewlet-allexamples', get_string('examplesubmissions', 'workshop'));
         echo $output->box_start('generalbox examples');
         if ($workshop->grading_strategy_instance()->form_ready()) {
-            if (! $examples = $workshop->get_examples_for_manager()) {
+            $orderby = $workshop->numexamples > 1 ? 'a.grade, s.title, s.id' : 's.title';
+            if (! $examples = $workshop->get_examples_for_manager($orderby)) {
                 echo $output->container(get_string('noexamples', 'workshop'), 'noexamples');
+            }
+            if (($workshop->numexamples > 1) && ($workshop->numexamples < count($examples))) {
+                $helper = new workshop_random_examples_helper($examples,$workshop->numexamples);
+                echo $output->render($helper);
             }
             foreach ($examples as $example) {
                 $summary = $workshop->prepare_example_summary($example);
@@ -187,22 +204,28 @@ case workshop::PHASE_SUBMISSION:
     if (has_capability('mod/workshop:submit', $PAGE->context) and (!$examplesmust or $examplesdone)) {
         print_collapsible_region_start('', 'workshop-viewlet-ownsubmission', get_string('yoursubmission', 'workshop'));
         echo $output->box_start('generalbox ownsubmission');
-        if ($submission = $workshop->get_submission_by_author($USER->id)) {
-            echo $output->render($workshop->prepare_submission_summary($submission, true));
-            if ($workshop->modifying_submission_allowed($USER->id)) {
-                $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
-                $btntxt = get_string('editsubmission', 'workshop');
-            }
+
+        if ($workshop->teammode && is_null($workshop->user_group($USER->id))) {
+        	echo $output->box(get_string('teammode_notingroupwarning', 'workshop'), 'generalbox warning nogroupusers');
         } else {
-            echo $output->container(get_string('noyoursubmission', 'workshop'));
-            if ($workshop->creating_submission_allowed($USER->id)) {
-                $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
-                $btntxt = get_string('createsubmission', 'workshop');
+            if ($submission = $workshop->get_submission_by_author($USER->id)) {
+                echo $output->render($workshop->prepare_submission_summary($submission, true));
+                if ($workshop->modifying_submission_allowed($USER->id)) {
+                    $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
+                    $btntxt = get_string('editsubmission', 'workshop');
+                }
+            } else {
+                echo $output->container(get_string('noyoursubmission', 'workshop'));
+                if ($workshop->creating_submission_allowed($USER->id)) {
+                    $btnurl = new moodle_url($workshop->submission_url(), array('edit' => 'on'));
+                    $btntxt = get_string('createsubmission', 'workshop');
+                }
+            }
+            if (!empty($btnurl)) {
+                echo $output->single_button($btnurl, $btntxt, 'get');
             }
         }
-        if (!empty($btnurl)) {
-            echo $output->single_button($btnurl, $btntxt, 'get');
-        }
+
         echo $output->box_end();
         print_collapsible_region_end();
     }
@@ -235,7 +258,11 @@ case workshop::PHASE_SUBMISSION:
             echo $output->container(get_string('nosubmissions', 'workshop'), 'nosubmissions');
 
         } else {
-            $submissions = $workshop->get_submissions('all', $groupid, $page * $perpage, $perpage);
+            if ($workshop->teammode) {
+                $submissions = $workshop->get_submissions_grouped('all', $groupid);
+            } else {
+                $submissions = $workshop->get_submissions('all', $groupid, $page * $perpage, $perpage);
+            }
             $shownames = has_capability('mod/workshop:viewauthornames', $workshop->context);
             echo $output->render($pagingbar);
             foreach ($submissions as $submission) {
@@ -280,7 +307,11 @@ case workshop::PHASE_ASSESSMENT:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
         $perpage = get_user_preferences('workshop_perpage', 10);
         $groupid = groups_get_activity_group($workshop->cm, true);
-        $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+		if ($workshop->teammode) {
+			$data = $workshop->prepare_grading_report_data_grouped($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+		} else {
+	        $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+		}
         if ($data) {
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
@@ -302,7 +333,11 @@ case workshop::PHASE_ASSESSMENT:
             echo $output->box_start('generalbox gradesreport');
             echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
             echo $output->render($pagingbar);
-            echo $output->render(new workshop_grading_report($data, $reportopts));
+            if($workshop->teammode) {
+            	echo $output->render(new workshop_grouped_grading_report($data, $reportopts));
+            } else {
+                echo $output->render(new workshop_grading_report($data, $reportopts));
+            }
             echo $output->render($pagingbar);
             echo $output->perpage_selector($perpage);
             echo $output->box_end();
@@ -415,7 +450,11 @@ case workshop::PHASE_EVALUATION:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
         $perpage = get_user_preferences('workshop_perpage', 10);
         $groupid = groups_get_activity_group($workshop->cm, true);
-        $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+        if ($workshop->teammode) {
+        	$data = $workshop->prepare_grading_report_data_grouped($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+        } else {
+         	$data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+        }
         if ($data) {
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
@@ -433,6 +472,10 @@ case workshop::PHASE_EVALUATION:
                 $form = $evaluator->get_settings_form(new moodle_url($workshop->aggregate_url(),
                         compact('sortby', 'sorthow', 'page')));
                 $form->display();
+            }
+            
+            if ($evaluator->has_messages()) {
+                $evaluator->display_messages();
             }
 
             // prepare paging bar
@@ -452,7 +495,11 @@ case workshop::PHASE_EVALUATION:
             echo $output->box_start('generalbox gradesreport');
             echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
             echo $output->render($pagingbar);
-            echo $output->render(new workshop_grading_report($data, $reportopts));
+            if($workshop->teammode) {
+            	echo $output->render(new workshop_grouped_grading_report($data, $reportopts));
+            } else {
+                echo $output->render(new workshop_grading_report($data, $reportopts));
+            }
             echo $output->render($pagingbar);
             echo $output->perpage_selector($perpage);
             echo $output->box_end();
@@ -549,7 +596,12 @@ case workshop::PHASE_CLOSED:
     if (has_capability('mod/workshop:viewallassessments', $PAGE->context)) {
         $perpage = get_user_preferences('workshop_perpage', 10);
         $groupid = groups_get_activity_group($workshop->cm, true);
-        $data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+        $groupmode = groups_get_activity_groupmode($workshop->cm);
+        if ($workshop->teammode) {
+        	$data = $workshop->prepare_grading_report_data_grouped($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+        } else {
+         	$data = $workshop->prepare_grading_report_data($USER->id, $groupid, $page, $perpage, $sortby, $sorthow);
+        }
         if ($data) {
             $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
             $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
@@ -571,7 +623,11 @@ case workshop::PHASE_CLOSED:
             echo $output->box_start('generalbox gradesreport');
             echo $output->container(groups_print_activity_menu($workshop->cm, $PAGE->url, true), 'groupwidget');
             echo $output->render($pagingbar);
-            echo $output->render(new workshop_grading_report($data, $reportopts));
+            if($workshop->teammode) {
+            	echo $output->render(new workshop_grouped_grading_report($data, $reportopts));
+            } else {
+                echo $output->render(new workshop_grading_report($data, $reportopts));
+            }
             echo $output->render($pagingbar);
             echo $output->perpage_selector($perpage);
             echo $output->box_end();

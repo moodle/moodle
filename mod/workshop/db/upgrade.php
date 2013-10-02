@@ -118,6 +118,11 @@ function xmldb_workshop_upgrade($oldversion) {
     if ($oldversion < 2013032500) {
         $table = new xmldb_table('workshop');
 
+		if (! $dbman->field_exists('workshop','teammode')) {
+			$field = new xmldb_field('teammode', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '0');
+			$dbman->add_field($table, $field);
+		}
+
         $field = new xmldb_field('overallfeedbackmode', XMLDB_TYPE_INTEGER, '3', null, null, null, '1', 'conclusionformat');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
@@ -140,18 +145,49 @@ function xmldb_workshop_upgrade($oldversion) {
      * Add feedbackauthorattachment field into the workshop_assessments table.
      */
     if ($oldversion < 2013032501) {
+
         $table = new xmldb_table('workshop_assessments');
         $field = new xmldb_field('feedbackauthorattachment', XMLDB_TYPE_INTEGER, '3', null, null, null, '0', 'feedbackauthorformat');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
 
+
+        if (!$dbman->field_exists('workshop', 'examplescompare')) {
+            $field = new xmldb_field('examplescompare', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '1');
+            $dbman->add_field($table, $field);
+        }
+
+        if (!$dbman->field_exists('workshop', 'examplesreassess')) {
+            $field = new xmldb_field('examplesreassess', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '1');
+            $dbman->add_field($table, $field);
+        }
+       
+        $field = new xmldb_field('numexamples', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, false, '0');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define table workshop_user_examples to be created
+        $table = new xmldb_table('workshop_user_examples');
+
+        // Adding fields to table workshop_user_examples
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('submissionid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('workshopid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table workshop_user_examples
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Conditionally launch create table for workshop_user_examples
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
         upgrade_mod_savepoint(true, 2013032501, 'workshop');
+         
     }
-
-
-    // Moodle v2.5.0 release upgrade line.
-    // Put any upgrade step following this.
 
 
     return true;

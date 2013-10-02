@@ -36,7 +36,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
  * @copyright 2009 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class workshop_random_allocator_form extends moodleform {
+class workshop_teammode_random_allocator_form extends moodleform {
 
     /**
      * Definition of the setting form elements
@@ -47,20 +47,6 @@ class workshop_random_allocator_form extends moodleform {
         $plugindefaults = get_config('workshopallocation_random');
 
         $mform->addElement('header', 'randomallocationsettings', get_string('allocationsettings', 'workshopallocation_random'));
-
-        $gmode = groups_get_activity_groupmode($workshop->cm, $workshop->course);
-        switch ($gmode) {
-        case NOGROUPS:
-            $grouplabel = get_string('groupsnone', 'group');
-            break;
-        case VISIBLEGROUPS:
-            $grouplabel = get_string('groupsvisible', 'group');
-            break;
-        case SEPARATEGROUPS:
-            $grouplabel = get_string('groupsseparate', 'group');
-            break;
-        }
-        $mform->addElement('static', 'groupmode', get_string('groupmode', 'group'), $grouplabel);
 
         $options_numper = array(
             workshop_random_allocator_setting::NUMPER_SUBMISSION => get_string('numperauthor', 'workshopallocation_random'),
@@ -75,23 +61,10 @@ class workshop_random_allocator_form extends moodleform {
         $mform->addGroup($grpnumofreviews, 'grpnumofreviews', get_string('numofreviews', 'workshopallocation_random'),
                 array(' '), false);
 
-        if (VISIBLEGROUPS == $gmode) {
-            $mform->addElement('checkbox', 'excludesamegroup', get_string('excludesamegroup', 'workshopallocation_random'));
-            $mform->setDefault('excludesamegroup', 0);
-        } else {
-            $mform->addElement('hidden', 'excludesamegroup', 0);
-            $mform->setType('excludesamegroup', PARAM_BOOL);
-        }
-
         $mform->addElement('checkbox', 'removecurrent', get_string('removecurrentallocations', 'workshopallocation_random'));
         $mform->setDefault('removecurrent', 0);
 
-        $options = array(); $label = '';
-        if ($workshop->examplesmode == workshop::EXAMPLES_BEFORE_ASSESSMENT) {
-            $options['disabled'] = 'disabled';
-            $label = ' <em>Workshop settings require submission before assessment</em>';
-        }
-        $mform->addElement('checkbox', 'assesswosubmission', get_string('assesswosubmission', 'workshopallocation_random'), $label, $options);
+        $mform->addElement('checkbox', 'assesswosubmission', get_string('assesswosubmission', 'workshopallocation_random'));
         $mform->setDefault('assesswosubmission', 0);
 
         if (empty($workshop->useselfassessment)) {
@@ -102,5 +75,6 @@ class workshop_random_allocator_form extends moodleform {
         }
 
         $this->add_action_buttons();
+
     }
 }

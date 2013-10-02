@@ -1,74 +1,15 @@
 <?php
+// This gets included into lib.php
 
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+//TODO: Reduce code repetition between this and workshop_manual_allocator
 
-/**
- * Allows user to allocate the submissions manually
- *
- * @package    workshopallocation
- * @subpackage manual
- * @copyright  2009 David Mudrak <david.mudrak@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(dirname(dirname(__FILE__)) . '/lib.php');                  // interface definition
-require_once(dirname(dirname(dirname(__FILE__))) . '/locallib.php');    // workshop internal API
-
-/**
- * Allows users to allocate submissions for review manually
- */
-class workshop_manual_allocator implements workshop_allocator {
-
-    /** constants that are used to pass status messages between init() and ui() */
-    const MSG_ADDED         = 1;
-    const MSG_NOSUBMISSION  = 2;
-    const MSG_EXISTS        = 3;
-    const MSG_CONFIRM_DEL   = 4;
-    const MSG_DELETED       = 5;
-    const MSG_DELETE_ERROR  = 6;
-
-    /** @var workshop instance */
-    protected $workshop;
-
-    /**
-     * @param workshop $workshop Workshop API object
-     */
-    public function __construct(workshop $workshop) {
-        $this->workshop = $workshop;
-    }
-
-    /**
-     * Allocate submissions as requested by user
-     *
-     * @return workshop_allocation_result
-     */
+class workshop_teammode_manual_allocator extends workshop_manual_allocator {
+    
     public function init() {
         global $PAGE, $SESSION;
 
         $mode = optional_param('mode', 'display', PARAM_ALPHA);
-        $perpage = optional_param('perpage', null, PARAM_INT);
-
-        if ($perpage and $perpage > 0 and $perpage <= 1000) {
-            require_sesskey();
-            set_user_preference('workshopallocation_manual_perpage', $perpage);
-            redirect($PAGE->url);
-        }
-
+        
         $result = new workshop_allocation_result($this);
 
         switch ($mode) {
@@ -135,7 +76,9 @@ class workshop_manual_allocator implements workshop_allocator {
             }
             break;
         }
+
         
+
         if(!empty($SESSION->workshop_upload_messages)) {
             $messages = $SESSION->workshop_upload_messages;
             unset($SESSION->workshop_upload_messages);
@@ -150,7 +93,6 @@ class workshop_manual_allocator implements workshop_allocator {
             } else {
                 $result->set_status(workshop_allocation_result::STATUS_EXECUTED);
             }
-            
         } else {
             $result->set_status(workshop_allocation_result::STATUS_VOID);
         }
@@ -166,9 +108,9 @@ class workshop_manual_allocator implements workshop_allocator {
 
         $output     = $PAGE->get_renderer('workshopallocation_manual');
 
-        $page       = optional_param('page', 0, PARAM_INT);
-        $perpage    = get_user_preferences('workshopallocation_manual_perpage', 10);
-        $groupid    = groups_get_activity_group($this->workshop->cm, true);
+        $pagingvar  = 'page';
+        $page       = optional_param($pagingvar, 0, PARAM_INT);
+        $perpage    = 10;   // todo let the user modify this
 
         $hlauthorid     = -1;           // highlight this author
         $hlreviewerid   = -1;           // highlight this reviewer
@@ -225,23 +167,55 @@ class workshop_manual_allocator implements workshop_allocator {
             }
         }
 
-        // fetch the list of ids of all workshop participants
-        $numofparticipants = $this->workshop->count_participants(false, $groupid);
-        $participants = $this->workshop->get_participants(false, $groupid, $perpage * $page, $perpage);
+        // fetch the list of ids of all workshop participants - this may get really long so fetch just id
+        $participants = get_users_by_capability($PAGE->context, array('mod/workshop:submit', 'mod/workshop:peerassess'),
+                                            'u.id', 'u.lastname,u.firstname,u.id', '', '', '', '', false, false, true);
+
+		// TEAMMODE :: Morgan Harris
+		// this introduces a new variable, $gradeitems, that replaces $participants in some cases
+		// basically in team mode you get a list of *groups* not people
+		
+        list($insql, $params) = $DB->get_in_or_equal(array_keys($participants));
+        
+        
+        if($this->workshop->cm->groupingid) {
+            $groupinggroups = groups_get_all_groups($this->workshop->cm->course, 0, $this->workshop->cm->groupingid, 'g.id');
+            list($groupingsql, $params2) = $DB->get_in_or_equal(array_keys($groupinggroups));
+            $groupingsql = " AND g.id $groupingsql";
+        }
+        
+		$sql = <<<SQL
+SELECT g.id, g.name
+FROM {groups} g
+JOIN {groups_members} m ON m.groupid = g.id
+WHERE g.courseid = {$this->workshop->cm->course} AND m.userid $insql $groupingsql
+GROUP BY g.id, g.name
+ORDER BY g.name
+SQL;
+
+		$rslt = $DB->get_records_sql($sql, array_merge($params, $params2));
+			
+		$gradeitems = $rslt;
+
+        $numofparticipants = count($gradeitems);  // we will need later for the pagination
 
         if ($hlauthorid > 0 and $hlreviewerid > 0) {
             // display just those two users
+            // todo: figure out a sensible way to GROUPMOD this
             $participants = array_intersect_key($participants, array($hlauthorid => null, $hlreviewerid => null));
             $button = $output->single_button($PAGE->url, get_string('showallparticipants', 'workshopallocation_manual'), 'get');
         } else {
+            // slice the list of participants according to the current page
+            $gradeitems = array_slice($gradeitems, $page * $perpage, $perpage, true);
             $button = '';
         }
 
         // this will hold the information needed to display user names and pictures
-        $userinfo = $participants;
+        $userinfo = $DB->get_records_list('user', 'id', array_keys($participants), '', user_picture::fields());
 
         // load the participants' submissions
-        $submissions = $this->workshop->get_submissions(array_keys($participants));
+	    $submissions = $this->workshop->get_submissions_grouped();
+        
         foreach ($submissions as $submission) {
             if (!isset($userinfo[$submission->authorid])) {
                 $userinfo[$submission->authorid]            = new stdclass();
@@ -257,7 +231,8 @@ class workshop_manual_allocator implements workshop_allocator {
         // get current reviewers
         $reviewers = array();
         if ($submissions) {
-            list($submissionids, $params) = $DB->get_in_or_equal(array_keys($submissions), SQL_PARAMS_NAMED);
+			$keys = array_keys( $submissions );
+            list($submissionids, $params) = $DB->get_in_or_equal($keys, SQL_PARAMS_NAMED);
             $sql = "SELECT a.id AS assessmentid, a.submissionid,
                            r.id AS reviewerid, r.lastname, r.firstname, r.picture, r.imagealt, r.email,
                            s.id AS submissionid, s.authorid
@@ -266,6 +241,7 @@ class workshop_manual_allocator implements workshop_allocator {
                       JOIN {workshop_submissions} s ON (a.submissionid = s.id)
                      WHERE a.submissionid $submissionids";
             $reviewers = $DB->get_records_sql($sql, $params);
+
             foreach ($reviewers as $reviewer) {
                 if (!isset($userinfo[$reviewer->reviewerid])) {
                     $userinfo[$reviewer->reviewerid]            = new stdclass();
@@ -279,81 +255,64 @@ class workshop_manual_allocator implements workshop_allocator {
             }
         }
 
-        // get current reviewees
-        $reviewees = array();
-        if ($participants) {
-            list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
-            $params['workshopid'] = $this->workshop->id;
-            $sql = "SELECT a.id AS assessmentid, a.submissionid,
-                           u.id AS reviewerid,
-                           s.id AS submissionid,
-                           e.id AS revieweeid, e.lastname, e.firstname, e.picture, e.imagealt, e.email
-                      FROM {user} u
-                      JOIN {workshop_assessments} a ON (a.reviewerid = u.id)
-                      JOIN {workshop_submissions} s ON (a.submissionid = s.id)
-                      JOIN {user} e ON (s.authorid = e.id)
-                     WHERE u.id $participantids AND s.workshopid = :workshopid AND s.example = 0";
-            $reviewees = $DB->get_records_sql($sql, $params);
-            foreach ($reviewees as $reviewee) {
-                if (!isset($userinfo[$reviewee->revieweeid])) {
-                    $userinfo[$reviewee->revieweeid]            = new stdclass();
-                    $userinfo[$reviewee->revieweeid]->id        = $reviewee->revieweeid;
-                    $userinfo[$reviewee->revieweeid]->firstname = $reviewee->firstname;
-                    $userinfo[$reviewee->revieweeid]->lastname  = $reviewee->lastname;
-                    $userinfo[$reviewee->revieweeid]->picture   = $reviewee->picture;
-                    $userinfo[$reviewee->revieweeid]->imagealt  = $reviewee->imagealt;
-                    $userinfo[$reviewee->revieweeid]->email     = $reviewee->email;
-                }
-            }
-        }
-
         // the information about the allocations
         $allocations = array();
 
-        foreach ($participants as $participant) {
+        foreach ($gradeitems as $participant) {
             $allocations[$participant->id] = new stdClass();
-            $allocations[$participant->id]->userid = $participant->id;
+        	$allocations[$participant->id]->groupid = $participant->id;
+        	$allocations[$participant->id]->group = $participant;
             $allocations[$participant->id]->submissionid = null;
             $allocations[$participant->id]->reviewedby = array();
             $allocations[$participant->id]->reviewerof = array();
+            
         }
         unset($participants);
 
+		//as we're iterating over this list, we also need to check if all the names are unique for our upload script
+		$allgroupnames = array();
+
         foreach ($submissions as $submission) {
-            $allocations[$submission->authorid]->submissionid = $submission->id;
-            $allocations[$submission->authorid]->submissiontitle = $submission->title;
-            $allocations[$submission->authorid]->submissiongrade = $submission->grade;
+	        $id = $submission->group->id;
+            $allocations[$id]->submissionid = $submission->id;
+            $allocations[$id]->submissiontitle = $submission->title;
+            $allocations[$id]->submissiongrade = $submission->grade;
+            $allocations[$id]->userid = $submission->authorid;
+			$allgroupnames[$id] = $submission->group->name;
         }
-        unset($submissions);
+		
+		$duplicategroupnames = array_unique(array_diff_assoc($allgroupnames,array_unique($allgroupnames)));
+        
         foreach($reviewers as $reviewer) {
-            $allocations[$reviewer->authorid]->reviewedby[$reviewer->reviewerid] = $reviewer->assessmentid;
+			$id = $submissions[$reviewer->submissionid];
+            $allocations[$id->group->id]->reviewedby[$reviewer->reviewerid] = $reviewer->assessmentid;
         }
         unset($reviewers);
-        foreach($reviewees as $reviewee) {
-            $allocations[$reviewee->reviewerid]->reviewerof[$reviewee->revieweeid] = $reviewee->assessmentid;
+
+		unset($submissions);
+        
+        foreach($userinfo as $k => $u) {
+	        $userinfo[$k]->groups = groups_get_all_groups($this->workshop->cm->course, $u->id, $this->workshop->cm->groupingid, 'g.id');
         }
-        unset($reviewees);
 
         // prepare data to be rendered
-        $data                   = new workshopallocation_manual_allocations();
-        $data->workshop         = $this->workshop;
+        $data                   = new workshopallocation_teammode_manual_allocations();
         $data->allocations      = $allocations;
+        $data->gradeitems		= $gradeitems;
         $data->userinfo         = $userinfo;
+		$data->groupduplicates  = $duplicategroupnames;
         $data->authors          = $this->workshop->get_potential_authors();
         $data->reviewers        = $this->workshop->get_potential_reviewers();
         $data->hlauthorid       = $hlauthorid;
         $data->hlreviewerid     = $hlreviewerid;
         $data->selfassessment   = $this->workshop->useselfassessment;
-
-        // prepare the group selector
-        $groupselector = $output->container(groups_print_activity_menu($this->workshop->cm, $PAGE->url, true), 'groupwidget');
+        $data->gradeitems		= $gradeitems;
 
         // prepare paging bar
-        $pagingbar              = new paging_bar($numofparticipants, $page, $perpage, $PAGE->url, 'page');
+        $pagingbar              = new paging_bar($numofparticipants, $page, $perpage, $PAGE->url, $pagingvar);
         $pagingbarout           = $output->render($pagingbar);
-        $perpageselector        = $output->perpage_selector($perpage);
 
-        return $groupselector . $pagingbarout . $output->render($message) . $output->render($data) . $button . $pagingbarout . $perpageselector;
+        return $pagingbarout . $output->render($message) . $output->render($data) . $button . $pagingbarout;
     }
 
     /**
@@ -370,8 +329,9 @@ class workshop_manual_allocator implements workshop_allocator {
     }
     
     public static function teammode_class() {
-        return "workshop_teammode_manual_allocator"; //no forward dec, so this class isn't yet declared
+        return null;
     }
+    
 }
 
 /**
@@ -379,32 +339,14 @@ class workshop_manual_allocator implements workshop_allocator {
  *
  * @see workshop_manual_allocator::ui()
  */
-class workshopallocation_manual_allocations implements renderable {
-
-    /** @var workshop module instance */
-    public $workshop;
-
-    /** @var array of stdClass, indexed by userid, properties userid, submissionid, (array)reviewedby, (array)reviewerof */
+class workshopallocation_teammode_manual_allocations implements renderable {
     public $allocations;
-
-    /** @var array of stdClass contains the data needed to display the user name and picture */
+    public $gradeitems;
     public $userinfo;
-
-    /* var array of stdClass potential authors */
+	public $groupduplicates;
     public $authors;
-
-    /* var array of stdClass potential reviewers */
     public $reviewers;
-
-    /* var int the id of the user to highlight as the author */
     public $hlauthorid;
-
-    /* var int the id of the user to highlight as the reviewer */
     public $hlreviewerid;
-
-    /* var bool should the selfassessment be allowed */
     public $selfassessment;
 }
-
-//This goes at the end because PHP does not have forward declaration
-require_once('teamlib.php');
