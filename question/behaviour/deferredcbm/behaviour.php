@@ -49,6 +49,10 @@ class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
         return question_cbm::adjust_fraction(parent::get_min_fraction(), question_cbm::HIGH);
     }
 
+    public function get_max_fraction() {
+        return question_cbm::adjust_fraction(parent::get_max_fraction(), question_cbm::HIGH);
+    }
+
     public function get_expected_data() {
         if ($this->qa->get_state()->is_active()) {
             return array('certainty' => PARAM_INT);

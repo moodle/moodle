@@ -112,6 +112,16 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
         return $fractionsum / $fractionmax;
     }
 
+    public function get_max_fraction() {
+        $fractionsum = 0;
+        $fractionmax = 0;
+        foreach ($this->subquestions as $i => $subq) {
+            $fractionmax += $subq->defaultmark;
+            $fractionsum += $subq->defaultmark * $subq->get_max_fraction();
+        }
+        return $fractionsum / $fractionmax;
+    }
+
     public function get_expected_data() {
         $expected = array();
         foreach ($this->subquestions as $i => $subq) {

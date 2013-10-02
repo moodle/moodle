@@ -140,11 +140,15 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 'type' => 'hidden',
                 'name' => $qa->get_control_field_name('minfraction'),
                 'value' => $qa->get_min_fraction(),
+            )) . html_writer::empty_tag('input', array(
+                'type' => 'hidden',
+                'name' => $qa->get_control_field_name('maxfraction'),
+                'value' => $qa->get_max_fraction(),
             ));
 
             $errorclass = '';
             $error = '';
-            if ($currentmark > $maxmark || $currentmark < $maxmark * $qa->get_min_fraction()) {
+            if ($currentmark > $maxmark * $qa->get_max_fraction() || $currentmark < $maxmark * $qa->get_min_fraction()) {
                 $errorclass = ' error';
                 $error = html_writer::tag('span', get_string('manualgradeoutofrange', 'question'),
                         array('class' => 'error')) . html_writer::empty_tag('br');

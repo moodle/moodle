@@ -231,10 +231,22 @@ abstract class question_definition {
      * This method returns the lowest mark the question can return, on the
      * fraction scale. that is, where the maximum possible mark is 1.0.
      *
-     * @return number minimum fraction this question will ever return.
+     * @return float minimum fraction this question will ever return.
      */
     public function get_min_fraction() {
         return 0;
+    }
+
+    /**
+     * Some questions can return a mark greater than the maximum.
+     *
+     * This method returns the lowest highest the question can return, on the
+     * fraction scale. that is, where the nominal maximum mark is 1.0.
+     *
+     * @return float maximum fraction this question will ever return.
+     */
+    public function get_max_fraction() {
+        return 1;
     }
 
     /**
@@ -521,11 +533,11 @@ interface question_automatically_gradable extends question_manually_gradable {
 
     /**
      * Grade a response to the question, returning a fraction between
-     * get_min_fraction() and 1.0, and the corresponding {@link question_state}
+     * get_min_fraction() and get_max_fraction(), and the corresponding {@link question_state}
      * right, partial or wrong.
      * @param array $response responses, as returned by
      *      {@link question_attempt_step::get_qt_data()}.
-     * @return array (number, integer) the fraction, and the state.
+     * @return array (float, integer) the fraction, and the state.
      */
     public function grade_response(array $response);
 

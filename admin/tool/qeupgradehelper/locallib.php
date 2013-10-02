@@ -572,6 +572,7 @@ function tool_qeupgradehelper_generate_unit_test($questionsessionid, $namesuffix
             'variant' => 1,
             'maxmark' => {$question->maxmark},
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => '',
             'rightanswer' => '',

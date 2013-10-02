@@ -68,4 +68,9 @@ class qbehaviour_missing extends question_behaviour {
         throw new coding_exception('The behaviour used for this question is not available. ' .
                 'No processing is possible.');
     }
+
+    public function get_max_fraction() {
+        throw new coding_exception('The behaviour used for this question is not available. ' .
+                'No processing is possible.');
+    }
 }

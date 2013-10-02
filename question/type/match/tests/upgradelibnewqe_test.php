@@ -224,6 +224,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'variant' => 1,
             'maxmark' => 3,
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'Associate the appropriate definition with each term. ' .
                     '{Active adjacent system; Autonomous adjacent system; ' .
@@ -455,6 +456,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'Which of the following statements about subject ' .
                     'gateways are true, and which are false? {Subject gateways ' .
@@ -731,6 +733,7 @@ class qtype_match_attempt_upgrader_test extends question_attempt_upgrader_test_b
             'variant' => 1,
             'maxmark' => 1,
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'Which of the following statements about subject gateways are true, and which are false? ' .
                     '{Subject gateways provide links to sites that have been quality checked; ' .

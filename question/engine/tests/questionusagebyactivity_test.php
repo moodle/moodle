@@ -173,13 +173,13 @@ class question_usage_db_test extends data_loading_method_test_base {
         $records = new question_test_recordset(array(
         array('qubaid', 'contextid', 'component', 'preferredbehaviour',
                                                'questionattemptid', 'questionusageid', 'slot',
-                                                              'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
+                                                              'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'maxfraction', 'flagged',
                                                                                                              'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
                                                                                                                                      'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                                                                                                                                      'timecreated', 'userid', 'name', 'value'),
-        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',             null, 1256233700, 1,       null, null),
-        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233705, 1,   'answer',  '1'),
-        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 2, 'gradedright', 1.0000000, 1256233720, 1,  '-finish',  '1'),
+        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',             null, 1256233700, 1,       null, null),
+        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233705, 1,   'answer',  '1'),
+        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', -1, 1, 2.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 5, 2, 'gradedright', 1.0000000, 1256233720, 1,  '-finish',  '1'),
         ));
 
         $question = test_question_maker::make_question('truefalse', 'true');
@@ -231,13 +231,13 @@ class question_usage_db_test extends data_loading_method_test_base {
         $records = new question_test_recordset(array(
         array('qubaid', 'contextid', 'component', 'preferredbehaviour',
                                                    'questionattemptid', 'questionusageid', 'slot',
-                                                             'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
+                                                             'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'maxfraction', 'flagged',
                                                                                                             'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
                                                                                                                                                                                'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                                                                                                                                                                          'timecreated', 'userid', 'name', 'value'),
-        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', 0, 1, 1.0000000, 0.0000000, 0, 'This question is missing. Unable to display anything.', '', '', 0, null, null, null, null, null, null, null, null),
-        array(1, $scid, 'unit_test', 'interactive', 2, 1, 2, 'interactive', 0, 1, 1.0000000, 0.0000000, 0, 'This question is missing. Unable to display anything.', '', '', 0, null, null, null, null, null, null, null, null),
-        array(1, $scid, 'unit_test', 'interactive', 3, 1, 3, 'interactive', 0, 1, 1.0000000, 0.0000000, 0, 'This question is missing. Unable to display anything.', '', '', 0, null, null, null, null, null, null, null, null),
+        array(1, $scid, 'unit_test', 'interactive', 1, 1, 1, 'interactive', 0, 1, 1.0000000, 0.0000000, 1.0000000, 0, 'This question is missing. Unable to display anything.', '', '', 0, null, null, null, null, null, null, null, null),
+        array(1, $scid, 'unit_test', 'interactive', 2, 1, 2, 'interactive', 0, 1, 1.0000000, 0.0000000, 1.0000000, 0, 'This question is missing. Unable to display anything.', '', '', 0, null, null, null, null, null, null, null, null),
+        array(1, $scid, 'unit_test', 'interactive', 3, 1, 3, 'interactive', 0, 1, 1.0000000, 0.0000000, 1.0000000, 0, 'This question is missing. Unable to display anything.', '', '', 0, null, null, null, null, null, null, null, null),
         ));
 
         question_bank::start_unit_test();
@@ -263,11 +263,11 @@ class question_usage_db_test extends data_loading_method_test_base {
         $records = new question_test_recordset(array(
         array('qubaid', 'contextid', 'component', 'preferredbehaviour',
                                                    'questionattemptid', 'questionusageid', 'slot',
-                                                                        'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
+                                                                        'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'maxfraction', 'flagged',
                                                                                                                'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
                                                                                                                                          'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                                                                                                                                    'timecreated', 'userid', 'name', 'value'),
-        array(1, $scid, 'unit_test', 'interactive', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
+        array(1, $scid, 'unit_test', 'interactive', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null),
         ));
 
         question_bank::start_unit_test();

@@ -160,13 +160,25 @@ abstract class question_behaviour {
     /**
      * What is the minimum fraction that can be scored for this question.
      * Normally this will be based on $this->question->get_min_fraction(),
-     * but may be modified in some way by the model.
+     * but may be modified in some way by the behaviour.
      *
      * @return number the minimum fraction when this question is attempted under
-     * this model.
+     * this behaviour.
      */
     public function get_min_fraction() {
         return 0;
+    }
+
+    /**
+     * Return the maximum possible fraction that can be scored for this question.
+     * Normally this will be based on $this->question->get_max_fraction(),
+     * but may be modified in some way by the behaviour.
+     *
+     * @return number the maximum fraction when this question is attempted under
+     * this behaviour.
+     */
+    public function get_max_fraction() {
+        return $this->question->get_max_fraction();
     }
 
     /**
@@ -432,7 +444,7 @@ abstract class question_behaviour {
                             $pendingstep->get_behaviour_var('maxmark');
             if ($pendingstep->get_behaviour_var('mark') === '') {
                 $fraction = null;
-            } else if ($fraction > 1 || $fraction < $this->qa->get_min_fraction()) {
+            } else if ($fraction > $this->qa->get_max_fraction() || $fraction < $this->qa->get_min_fraction()) {
                 throw new coding_exception('Score out of range when processing ' .
                         'a manual grading action.', 'Question ' . $this->question->id .
                                 ', slot ' . $this->qa->get_slot() . ', fraction ' . $fraction);

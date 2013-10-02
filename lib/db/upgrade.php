@@ -2576,5 +2576,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013092700.01);
     }
 
+    if ($oldversion < 2013100400.01) {
+
+        // Define field maxfraction to be added to question_attempts.
+        $table = new xmldb_table('question_attempts');
+        $field = new xmldb_field('maxfraction', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '1', 'minfraction');
+
+        // Conditionally launch add field maxfraction.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013100400.01);
+    }
+
     return true;
 }

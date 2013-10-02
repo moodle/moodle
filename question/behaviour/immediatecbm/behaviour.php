@@ -47,6 +47,10 @@ class qbehaviour_immediatecbm extends qbehaviour_immediatefeedback {
         return question_cbm::adjust_fraction(parent::get_min_fraction(), question_cbm::HIGH);
     }
 
+    public function get_max_fraction() {
+        return question_cbm::adjust_fraction(parent::get_max_fraction(), question_cbm::HIGH);
+    }
+
     public function get_expected_data() {
         if ($this->qa->get_state()->is_active()) {
             return array(

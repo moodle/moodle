@@ -43,6 +43,9 @@ class testable_question_attempt extends question_attempt {
     public function set_min_fraction($fraction) {
         $this->minfraction = $fraction;
     }
+    public function set_max_fraction($fraction) {
+        $this->maxfraction = $fraction;
+    }
     public function set_behaviour(question_behaviour $behaviour) {
         $this->behaviour = $behaviour;
     }
