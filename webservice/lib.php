@@ -866,8 +866,7 @@ abstract class webservice_server implements webservice_server_interface {
             'context' => context_system::instance(),
             'other' => array(
                 'method' => $this->authmethod,
-                'reason' => null,
-                'token' => $this->token
+                'reason' => null
             )
         );
 
@@ -1015,8 +1014,7 @@ abstract class webservice_server implements webservice_server_interface {
             'context' => context_system::instance(),
             'other' => array(
                 'method' => $this->authmethod,
-                'reason' => null,
-                'token' => $this->token
+                'reason' => null
             )
         );
 

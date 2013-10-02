@@ -92,6 +92,15 @@ class webservice_login_failed extends \core\event\base {
     /**
      * Custom validation.
      *
+     * It is recommended to set the properties:
+     * - $other['tokenid']
+     * - $other['username']
+     *
+     * However they are not mandatory as they are not always known.
+     *
+     * Please note that the token CANNOT be specified, it is considered
+     * as a password and should never be displayed.
+     *
      * @throws \coding_exception
      * @return void
      */
@@ -100,8 +109,8 @@ class webservice_login_failed extends \core\event\base {
            throw new \coding_exception('The key \'reason\' needs to be set in $other.');
         } else if (!isset($this->other['method'])) {
            throw new \coding_exception('The key \'method\' needs to be set in $other.');
-        } else if (!isset($this->other['token']) && !isset($this->other['tokenid']) && !isset($this->other['username'])) {
-           throw new \coding_exception('The keys \'username\', \'token\' or \'tokenid\' need to be set in $other.');
+        } else if (isset($this->other['token'])) {
+           throw new \coding_exception('The token cannot be set in $other.');
         }
     }
 }
