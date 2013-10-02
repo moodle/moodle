@@ -289,7 +289,9 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 #course-category-listings .listitem > div .item-actions .action-show,
 #course-category-listings .listitem[data-visible="0"] > div .item-actions .action-hide,
 #course-category-listings .listitem[data-visible="0"] > ul .item-actions.category-item-actions .action-hide,
-#course-category-listings .listitem[data-visible="0"] > ul .item-actions.category-item-actions .action-show {display: none;}
+#course-category-listings .listitem[data-visible="0"] > ul .item-actions.category-item-actions .action-show,
+#course-category-listings .listitem:first-child > div .item-actions .action-moveup,
+#course-category-listings .listitem:last-child > div .item-actions .action-movedown {display: none;}
 
 #course-listing li > div {padding-left:1em;}
 

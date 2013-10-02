@@ -111,11 +111,12 @@ class core_course_management_renderer extends plugin_renderer_base {
     public function category_listing(coursecat $category = null) {
 
         if ($category === null) {
-            $category = coursecat::get_default();
             $selectedparents = array();
+            $selectedcategory = null;
         } else {
             $selectedparents = $category->get_parents();
             $selectedparents[] = $category->id;
+            $selectedcategory = $category->id;
         }
         $catatlevel = array_shift($selectedparents);
 
@@ -123,7 +124,9 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         $html  = html_writer::start_div('category-listing');
         $html .= html_writer::tag('h3', get_string('categories'));
-        $html .= $this->category_listing_actions($category);
+        if ($category !== null) {
+            $html .= $this->category_listing_actions($category);
+        }
         $html .= html_writer::start_tag('ul', array('class' => 'ml'));
         foreach ($listing as $listitem) {
             // Render each category in the listing.
@@ -135,7 +138,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 $listitem,
                 $subcategories,
                 $listitem->get_children_count(),
-                $category->id,
+                $selectedcategory,
                 $selectedparents
             );
         }
@@ -161,7 +164,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                                       $selectedcategory = null, $selectedcategories = array()) {
         $isexpandable = ($totalsubcategories > 0);
         $isexpanded = (!empty($subcategories));
-        $activecategory = ($selectedcategory == $category->id);
+        $activecategory = ($selectedcategory === $category->id);
         $attributes = array(
             'class' => 'listitem listitem-category',
             'data-id' => $category->id,
@@ -379,9 +382,6 @@ class core_course_management_renderer extends plugin_renderer_base {
             'limit' => $perpage
         );
         $courseid = isset($course) ? $course->id : null;
-        $first = true;
-        $last = false;
-        $i = $page * $perpage;
 
         $html  = html_writer::start_div('course-listing', array(
             'data-category' => $category->id,
@@ -395,12 +395,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= $this->listing_pagination($category, $page, $perpage);
         $html .= html_writer::start_tag('ul', array('class' => 'ml'));
         foreach ($category->get_courses($options) as $listitem) {
-            $i++;
-            if ($i == $totalcourses) {
-                $last = true;
-            }
-            $html .= $this->course_listitem($category, $listitem, $courseid, $first, $last);
-            $first = false;
+            $html .= $this->course_listitem($category, $listitem, $courseid);
         }
         $html .= html_writer::end_tag('ul');
         $html .= $this->listing_pagination($category, $page, $perpage, true);
@@ -483,12 +478,9 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param coursecat $category The currently selected category and the category the course belongs to.
      * @param course_in_list $course The course to produce HTML for.
      * @param int $selectedcourse The id of the currently selected course.
-     * @param bool $firstincategory True if this course is the first course in the category.
-     * @param bool $lastincategory True if this course is the last course in the category.
      * @return string
      */
-    public function course_listitem(coursecat $category, course_in_list $course, $selectedcourse,
-                                    $firstincategory = false, $lastincategory = false) {
+    public function course_listitem(coursecat $category, course_in_list $course, $selectedcourse) {
 
         $text = $course->get_formatted_name();
         $attributes = array(
@@ -514,8 +506,8 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::end_div();
         $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename'));
         $html .= html_writer::start_div('float-right');
-        $html .= $this->course_listitem_actions($category, $course, $firstincategory, $lastincategory);
         $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'dimmed idnumber'));
+        $html .= $this->course_listitem_actions($category, $course);
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
         $html .= html_writer::end_tag('li');
@@ -578,12 +570,9 @@ class core_course_management_renderer extends plugin_renderer_base {
      *
      * @param coursecat $category The currently selected category.
      * @param course_in_list $course The course to renderer actions for.
-     * @param bool $firstincategory True if the course is the first course in the category.
-     * @param bool $lastincategory True if the course is the last course in the category.
      * @return string
      */
-    public function course_listitem_actions(coursecat $category, course_in_list $course,
-                                            $firstincategory = false, $lastincategory = false) {
+    public function course_listitem_actions(coursecat $category, course_in_list $course) {
         $baseurl = new moodle_url(
             '/course/management.php',
             array('courseid' => $course->id, 'categoryid' => $course->category, 'sesskey' => sesskey())
@@ -615,22 +604,18 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
         // Move up/down.
         if ($category->can_resort_courses()) {
-            if (!$firstincategory) {
-                $actions[] = $this->action_icon(
-                    new moodle_url($baseurl, array('action' => 'movecourseup')),
-                    new pix_icon('t/up', get_string('up')),
-                    null,
-                    array('data-action' => 'moveup', 'class' => 'action-moveup')
-                );
-            }
-            if (!$lastincategory) {
-                $actions[] = $this->action_icon(
-                    new moodle_url($baseurl, array('action' => 'movecoursedown')),
-                    new pix_icon('t/down', get_string('down')),
-                    null,
-                    array('data-action' => 'movedown', 'class' => 'action-movedown')
-                );
-            }
+            $actions[] = $this->action_icon(
+                new moodle_url($baseurl, array('action' => 'movecourseup')),
+                new pix_icon('t/up', get_string('up')),
+                null,
+                array('data-action' => 'moveup', 'class' => 'action-moveup')
+            );
+            $actions[] = $this->action_icon(
+                new moodle_url($baseurl, array('action' => 'movecoursedown')),
+                new pix_icon('t/down', get_string('down')),
+                null,
+                array('data-action' => 'movedown', 'class' => 'action-movedown')
+            );
         }
         if (empty($actions)) {
             return '';

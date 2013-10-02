@@ -1114,6 +1114,9 @@ Category.prototype = {
         }
         node.append(outcome.html);
         console.initialise_categories(node);
+        if (M.core && M.core.actionmenu && M.core.actionmenu.newDOMNode) {
+            M.core.actionmenu.newDOMNode(node);
+        }
     },
 
     /**
