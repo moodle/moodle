@@ -643,16 +643,16 @@ abstract class question_cbm {
     /** @var array list of all the certainty levels. */
     public static $certainties = array(self::LOW, self::MED, self::HIGH);
 
-    /**#@+ @var array coefficients used to adjust the fraction based on certainty.. */
-    protected static $factor = array(
-        self::LOW => 0.333333333333333,
-        self::MED => 1.333333333333333,
+    /**#@+ @var array coefficients used to adjust the fraction based on certainty. */
+    protected static $rightscore = array(
+        self::LOW  => 1,
+        self::MED  => 2,
         self::HIGH => 3,
     );
-    protected static $offset = array(
-        self::LOW => 0,
-        self::MED => -0.666666666666667,
-        self::HIGH => -2,
+    protected static $wrongscore = array(
+        self::LOW  =>  0,
+        self::MED  => -2,
+        self::HIGH => -6,
     );
     /**#@-*/
 
@@ -671,7 +671,11 @@ abstract class question_cbm {
      * @return number the adjusted fraction taking the certainty into account.
      */
     public static function adjust_fraction($fraction, $certainty) {
-        return self::$offset[$certainty] + self::$factor[$certainty] * $fraction;
+        if ($fraction <= 0.00000005) {
+            return self::$wrongscore[$certainty];
+        } else {
+            return self::$rightscore[$certainty] * $fraction;
+        }
     }
 
     /**

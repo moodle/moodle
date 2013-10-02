@@ -84,7 +84,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
-        $this->check_current_mark(2/3);
+        $this->check_current_mark(2);
         $this->check_current_output(
                 $this->get_contains_mc_radio_expectation($rightindex, false, true),
                 $this->get_contains_mc_radio_expectation(($rightindex + 1) % 3, false, false),
@@ -101,7 +101,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
         // Verify.
         $this->assertEquals($numsteps, $this->get_step_count());
         $this->check_current_state(question_state::$gradedright);
-        $this->check_current_mark(2/3);
+        $this->check_current_mark(2);
         $this->check_current_output(
                 $this->get_contains_mc_radio_expectation($rightindex, false, true),
                 $this->get_contains_mc_radio_expectation(($rightindex + 1) % 3, false, false),
@@ -130,7 +130,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
                 $this->get_contains_partcorrect_expectation());
 
         $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertEquals($autogradedstep->get_fraction(), -10/9, '', 0.0000001);
+        $this->assertEquals($autogradedstep->get_fraction(), -2, '', 0.0000001);
     }
 
     public function test_immediatecbm_feedback_multichoice_try_to_submit_blank() {
@@ -215,7 +215,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
-        $this->check_current_mark(1);
+        $this->check_current_mark(3);
         $this->check_current_output(
                 $this->get_does_not_contain_validation_error_expectation());
     }
@@ -258,7 +258,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
 
         // Verify.
         $this->check_current_state(question_state::$gradedwrong);
-        $this->check_current_mark(-3);
+        $this->check_current_mark(-6);
         $this->check_current_output(
                 $this->get_contains_mc_radio_expectation($wrongindex, false, true),
                 $this->get_contains_mc_radio_expectation(($wrongindex + 1) % 3, false, false),
@@ -270,7 +270,7 @@ class qbehaviour_immediatecbm_walkthrough_test extends qbehaviour_walkthrough_te
 
         // Create a true-false question with correct answer true.
         $tf = test_question_maker::make_question('truefalse', 'true');
-        $this->start_attempt_at_question($tf, 'deferredcbm', 2);
+        $this->start_attempt_at_question($tf, 'immediatecbm', 2);
 
         // Verify.
         $this->check_current_state(question_state::$todo);

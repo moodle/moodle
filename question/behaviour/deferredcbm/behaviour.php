@@ -46,11 +46,11 @@ class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
     const IS_ARCHETYPAL = true;
 
     public function get_min_fraction() {
-        return question_cbm::adjust_fraction(parent::get_min_fraction(), question_cbm::HIGH);
+        return question_cbm::adjust_fraction(0, question_cbm::HIGH);
     }
 
     public function get_max_fraction() {
-        return question_cbm::adjust_fraction(parent::get_max_fraction(), question_cbm::HIGH);
+        return question_cbm::adjust_fraction(1, question_cbm::HIGH);
     }
 
     public function get_expected_data() {
