@@ -293,6 +293,8 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 #course-category-listings .listitem:first-child > div .item-actions .action-moveup,
 #course-category-listings .listitem:last-child > div .item-actions .action-movedown {display: none;}
 
+#course-category-listings .listitem > div a.without-actions {color: #333;}
+
 #course-listing li > div {padding-left:1em;}
 
 #course-category-listings .detail-pair {border-bottom:1px solid #e1e1e8;margin:0 1em;}

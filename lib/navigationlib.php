@@ -4191,9 +4191,8 @@ class settings_navigation extends navigation_node {
 
         $categorynode = $this->add($this->context->get_context_name(), null, null, null, 'categorysettings');
         $categorynode->force_open();
-        $onmanagepage = $this->page->url->compare(new moodle_url('/course/management.php'), URL_MATCH_BASE);
 
-        if (can_edit_in_category($this->context->instanceid) && !$onmanagepage) {
+        if (can_edit_in_category($this->context->instanceid)) {
             $url = new moodle_url('/course/management.php', array('categoryid' => $this->context->instanceid));
             $editstring = get_string('managecategorythis');
             $categorynode->add($editstring, $url, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));

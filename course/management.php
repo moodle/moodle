@@ -45,16 +45,19 @@ if ($issearching) {
 
 $url = new moodle_url('/course/management.php');
 navigation_node::override_active_url($url);
+$systemcontext = $context = context_system::instance();
 if ($courseid) {
     $record = get_course($courseid);
     $course = new course_in_list($record);
     $category = coursecat::get($course->category);
     $categoryid = $category->id;
+    $context = context_coursecat::instance($category->id);
     $url->param('courseid', $course->id);
 } else if ($categoryid) {
     $courseid = null;
     $course = null;
     $category = coursecat::get($categoryid);
+    $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $category->id);
 } else {
     $course = null;
@@ -64,6 +67,7 @@ if ($courseid) {
     if ($viewmode === 'default') {
         $viewmode = 'categories';
     }
+    $context = $systemcontext;
 }
 if ($page !== 0) {
     $url->param('page', $page);
@@ -81,8 +85,7 @@ if ($modulelist !== '') {
     $url->param('modulelist', $search);
 }
 
-$context = context_system::instance();
-$title = format_string($SITE->fullname, true, array('context' => $context));
+$title = format_string($SITE->fullname, true, array('context' => $systemcontext));
 
 $PAGE->set_context($context);
 $PAGE->set_url($url);
@@ -90,7 +93,23 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
-if (!$issearching && $category !== null) {
+// If the user poses any of these capabilities then they will be able to see the admin
+// tree and the management link within it.
+// This is the most accurate form of navigation.
+$capabilities = array(
+    'moodle/site:config',
+    'moodle/backup:backupcourse',
+    'moodle/category:manage',
+    'moodle/course:create',
+    'moodle/site:approvecourse'
+);
+if ($category && !has_any_capability($capabilities, $systemcontext)) {
+    // If the user doesn't poses any of these system capabilities then we're going to trigger
+    // the page to set the specific category being viewed.
+    // This will at least give the page some relevant navigation.
+    $PAGE->set_category_by_id($category->id);
+    navigation_node::override_active_url(new moodle_url('/course/management.php', array('categoryid' => $category->id)));
+} else if (!$issearching && $category !== null) {
     $parents = coursecat::get_many($category->get_parents());
     foreach ($parents as $parent) {
         $PAGE->navbar->add($parent->get_formatted_name());
@@ -102,6 +121,7 @@ if (!$issearching && $category !== null) {
     }
 }
 
+// This is a system level page that operates on other contexts.
 require_login();
 
 $notificationspass = array();
@@ -128,7 +148,8 @@ if ($action !== false && confirm_sesskey()) {
     switch ($action) {
         case 'resortcategories' :
             $sort = required_param('resort', PARAM_ALPHA);
-            \core_course\management\helper::action_category_resort_subcategories(coursecat::get(0), $sort);
+            $cattosort = coursecat::get((int)optional_param('categoryid', 0, PARAM_INT));
+            $redirectback = \core_course\management\helper::action_category_resort_subcategories($cattosort, $sort);
             break;
         case 'resortcourses' :
             // They must have specified a category.
@@ -289,6 +310,11 @@ if ($action !== false && confirm_sesskey()) {
                     \core_course\management\helper::action_category_resort_subcategories($cat, $sort, false);
                 }
                 coursecat::resort_categories_cleanup();
+                if ($category === null && count($categoryids) === 1) {
+                    // They're bulk sorting just a single category and they've not selected a category.
+                    // Lets for convenience sake auto-select the category that has been resorted for them.
+                    redirect(new moodle_url($PAGE->url, array('categoryid' => reset($categoryids))));
+                }
             }
     }
     if ($redirectback) {

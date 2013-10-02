@@ -124,9 +124,7 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         $html  = html_writer::start_div('category-listing');
         $html .= html_writer::tag('h3', get_string('categories'));
-        if ($category !== null) {
-            $html .= $this->category_listing_actions($category);
-        }
+        $html .= $this->category_listing_actions($category);
         $html .= html_writer::start_tag('ul', array('class' => 'ml'));
         foreach ($listing as $listitem) {
             // Render each category in the listing.
@@ -176,6 +174,12 @@ class core_course_management_renderer extends plugin_renderer_base {
         $text = $category->get_formatted_name();
         $courseicon = $this->output->pix_icon('i/course', get_string('courses'));
         $bcatinput = array('type' => 'checkbox', 'name' => 'bcat[]', 'value' => $category->id, 'class' => 'bulk-action-checkbox');
+
+        if (!$category->can_resort_subcategories() && !$category->has_manage_capability()) {
+            // Very very hardcoded here.
+            $bcatinput['style'] = 'visibility:hidden';
+        }
+
         $viewcaturl = new moodle_url('/course/management.php', array('categoryid' => $category->id));
         if ($isexpanded) {
             $icon = $this->output->pix_icon('t/switch_minus', get_string('collapse'), 'moodle', array('class' => 'tree-icon'));
@@ -187,6 +191,8 @@ class core_course_management_renderer extends plugin_renderer_base {
             $icon = $this->output->pix_icon('i/navigationitem', '', 'moodle', array('class' => 'tree-icon'));
             $icon = html_writer::link($viewcaturl, $icon, array('class' => 'float-left'));
         }
+        $actions = \core_course\management\helper::get_category_listitem_actions($category);
+        $hasactions = !empty($actions);
 
         $html = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
@@ -194,9 +200,15 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::empty_tag('input', $bcatinput).'&nbsp;';
         $html .= html_writer::end_div();
         $html .= $icon;
-        $html .= html_writer::link($viewcaturl, $text, array('class' => 'float-left categoryname'));
+        if ($hasactions) {
+            $html .= html_writer::link($viewcaturl, $text, array('class' => 'float-left categoryname'));
+        } else {
+            $html .= html_writer::link($viewcaturl, $text, array('class' => 'float-left categoryname without-actions'));
+        }
         $html .= html_writer::start_div('float-right');
-        $html .= $this->category_listitem_actions($category);
+        if ($hasactions) {
+            $html .= $this->category_listitem_actions($category, $actions);
+        }
         $html .= html_writer::span($category->coursecount.$courseicon, 'course-count dimmed');
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
@@ -228,10 +240,13 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param coursecat $category
      * @return string
      */
-    public function category_listing_actions(coursecat $category) {
+    public function category_listing_actions(coursecat $category = null) {
         $actions = array();
         $createtoplevel = coursecat::can_create_top_level_category();
-        $createsubcategory = $category->can_create_subcategory();
+        $createsubcategory = $category && $category->can_create_subcategory();
+        if ($category === null) {
+            $category = coursecat::get(0);
+        }
 
         $hasitems = false;
         if ($createtoplevel || $createsubcategory) {
@@ -279,7 +294,11 @@ class core_course_management_renderer extends plugin_renderer_base {
                     get_string('resortbyidnumber')
                 )
             ));
-            $menu->actiontext = get_string('resortcategories');
+            if ($category->id === 0) {
+                $menu->actiontext = get_string('resortcategories');
+            } else {
+                $menu->actiontext = get_string('resortsubcategories');
+            }
             $menu->actionicon = new pix_icon('t/sort', ' ', 'moodle', array('class' => 'iconsmall'));
             $actions[] = $this->render($menu);
         }
@@ -295,11 +314,14 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @param coursecat $category
      * @return string
      */
-    public function category_listitem_actions(coursecat $category) {
+    public function category_listitem_actions(coursecat $category, array $actions = null) {
+        if ($actions === null) {
+            $actions = \core_course\management\helper::get_category_listitem_actions($category);
+        }
         $menu = new action_menu();
         $menu->attributes['class'] .= ' category-item-actions item-actions';
         $hasitems = false;
-        foreach (\core_course\management\helper::get_category_listitem_actions($category) as $key => $action) {
+        foreach ($actions as $key => $action) {
             $hasitems = true;
             $menu->add(new action_menu_link(
                 $action['url'],

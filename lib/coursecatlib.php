@@ -1101,7 +1101,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      *
      * @return bool
      */
-    protected static function has_manage_capability_on_any() {
+    public static function has_manage_capability_on_any() {
         global $DB;
         if (!isloggedin() || isguestuser()) {
             return false;

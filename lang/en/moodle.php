@@ -1438,6 +1438,7 @@ $string['resetstatus'] = 'Status';
 $string['resettask'] = 'Task';
 $string['resettodefaults'] = 'Reset to defaults';
 $string['resortcategories'] = 'Re-sort categories';
+$string['resortsubcategories'] = 'Re-sort subcategories';
 $string['resortcourses'] = 'Re-sort courses';
 $string['resortcoursesbyname'] = 'Re-sort courses by name';
 $string['resortbyname'] = 'By name';
