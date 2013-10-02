@@ -77,7 +77,7 @@ class webservice_events_testcase extends advanced_testcase {
             'other' => array(
                 'reason' => 'Unit Test',
                 'method' => 'Some method',
-                'token' => 'A fake token'
+                'tokenid' => '123'
             )
         );
         $event = \core\event\webservice_login_failed::create($params);
@@ -91,8 +91,16 @@ class webservice_events_testcase extends advanced_testcase {
         $this->assertEquals(context_system::instance(), $event->get_context());
         $this->assertEquals($params['other']['reason'], $event->other['reason']);
         $this->assertEquals($params['other']['method'], $event->other['method']);
-        $this->assertEquals($params['other']['token'], $event->other['token']);
+        $this->assertEquals($params['other']['tokenid'], $event->other['tokenid']);
         $this->assertEventLegacyLogData($fakelogdata, $event);
+
+        // We cannot set the token in the other properties.
+        $params['other']['token'] = 'I should not be set';
+        try {
+            $event = \core\event\webservice_login_failed::create($params);
+            $this->fail('The token cannot be allowed in \core\event\webservice_login_failed');
+        } catch (coding_exception $e) {
+        }
     }
 
     public function test_service_created() {
