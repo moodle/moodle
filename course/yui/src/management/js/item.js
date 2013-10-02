@@ -1,7 +1,7 @@
 /**
  * A managed course.
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class Item
  * @constructor
  * @extends Y.Base
@@ -50,20 +50,20 @@ Item.prototype = {
     /**
      * Checks and parses an AJAX response for an item.
      *
-     * @method check_ajax_response
+     * @method checkAjaxResponse
      * @protected
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Object|Boolean}
      */
-    check_ajax_response : function(transactionid, response, args) {
+    checkAjaxResponse : function(transactionid, response, args) {
         if (response.status !== 200) {
-            Y.log('Error: AJAX response resulted in non 200 status.', 'error', 'Item.check_ajax_response');
+            Y.log('Error: AJAX response resulted in non 200 status.', 'error', 'Item.checkAjaxResponse');
             return false;
         }
         if (transactionid === null || args === null) {
-            Y.log('Error: Invalid AJAX response details provided.', 'error', 'Item.check_ajax_response');
+            Y.log('Error: Invalid AJAX response details provided.', 'error', 'Item.checkAjaxResponse');
             return false;
         }
         var outcome = Y.JSON.parse(response.responseText);
@@ -80,7 +80,7 @@ Item.prototype = {
      * Moves an item up by one.
      *
      * @method moveup
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
@@ -93,9 +93,9 @@ Item.prototype = {
             previousup,
             previousdown,
             tmpnode,
-            outcome = this.check_ajax_response(transactionid, response, args);
+            outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
-            Y.log('AJAX request to move '+this.get('itemname')+' up failed by outcome.', 'warn', 'core_course');
+            Y.log('AJAX request to move '+this.get('itemname')+' up failed by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
         node = this.get('node');
@@ -124,9 +124,9 @@ Item.prototype = {
                 }
             }
             this.updated(true);
-            Y.log('Success: '+this.get('itemname')+' moved up by AJAX.', 'info', 'core_course');
+            Y.log('Success: '+this.get('itemname')+' moved up by AJAX.', 'info', 'moodle-course-management');
         } else {
-            Y.log(this.get('itemname')+' cannot be moved up as its the top item', 'warn', 'core_course');
+            Y.log(this.get('itemname')+' cannot be moved up as its the top item', 'warn', 'moodle-course-management');
         }
     },
 
@@ -134,7 +134,7 @@ Item.prototype = {
      * Moves an item down by one.
      *
      * @method movedown
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
@@ -147,9 +147,9 @@ Item.prototype = {
             nextup,
             nextdown,
             tmpnode,
-            outcome = this.check_ajax_response(transactionid, response, args);
+            outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
-            Y.log('AJAX request to move '+this.get('itemname')+' down failed by outcome.', 'warn', 'core_course');
+            Y.log('AJAX request to move '+this.get('itemname')+' down failed by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
         node = this.get('node');
@@ -178,9 +178,9 @@ Item.prototype = {
                 }
             }
             this.updated(true);
-            Y.log('Success: '+this.get('itemname')+' moved down by AJAX.', 'info', 'core_course');
+            Y.log('Success: '+this.get('itemname')+' moved down by AJAX.', 'info', 'moodle-course-management');
         } else {
-            Y.log(this.get('itemname')+' cannot be moved down as its the last item', 'warn', 'core_course');
+            Y.log(this.get('itemname')+' cannot be moved down as its the last item', 'warn', 'moodle-course-management');
         }
     },
 
@@ -188,21 +188,21 @@ Item.prototype = {
      * Makes an item visible.
      *
      * @method show
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     show : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
-            Y.log('AJAX request to show '+this.get('itemname')+' by outcome.', 'warn', 'core_course');
+            Y.log('AJAX request to show '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
 
         this.markVisible();
         this.updated();
-        Y.log('Success: '+this.get('itemname')+' made visible by AJAX.', 'info', 'core_course');
+        Y.log('Success: '+this.get('itemname')+' made visible by AJAX.', 'info', 'moodle-course-management');
     },
 
     /**
@@ -211,7 +211,7 @@ Item.prototype = {
      */
     markVisible : function() {
         this.get('node').setAttribute('data-visible', '1');
-        Y.log('Marked '+this.get('itemname')+' as visible', 'note', 'core_course');
+        Y.log('Marked '+this.get('itemname')+' as visible', 'info', 'moodle-course-management');
         return true;
     },
 
@@ -219,20 +219,20 @@ Item.prototype = {
      * Hides an item.
      *
      * @method hide
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     hide : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
-            Y.log('AJAX request to hide '+this.get('itemname')+' by outcome.', 'warn', 'core_course');
+            Y.log('AJAX request to hide '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
         this.markHidden();
         this.updated();
-        Y.log('Success: '+this.get('itemname')+' made hidden by AJAX.', 'info', 'core_course');
+        Y.log('Success: '+this.get('itemname')+' made hidden by AJAX.', 'info', 'moodle-course-management');
     },
 
     /**
@@ -241,7 +241,7 @@ Item.prototype = {
      */
     markHidden : function() {
         this.get('node').setAttribute('data-visible', '0');
-        Y.log('Marked '+this.get('itemname')+' as hidden', 'note', 'core_course');
+        Y.log('Marked '+this.get('itemname')+' as hidden', 'info', 'moodle-course-management');
         return true;
     },
 

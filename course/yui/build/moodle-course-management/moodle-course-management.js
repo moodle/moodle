@@ -3,7 +3,7 @@ YUI.add('moodle-course-management', function (Y, NAME) {
 /**
  * Provides drop down menus for list of action links.
  *
- * @module moodle-core_course-management
+ * @module moodle-course-management
  */
 
 /**
@@ -11,7 +11,7 @@ YUI.add('moodle-course-management', function (Y, NAME) {
  *
  * Provides the organisation for course and category management JS.
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class Console
  * @constructor
  * @extends Y.Base
@@ -29,7 +29,7 @@ Console.ATTRS = {
      */
     element : {
         setter : function(node) {
-            if (typeof(node) === 'string') {
+            if (typeof node === 'string') {
                 node = Y.one('#'+node);
             }
             return node;
@@ -40,15 +40,21 @@ Console.ATTRS = {
      * The category listing container node.
      * @attribute categorylisting
      * @type Node
+     * @default null
      */
-    categorylisting : {},
+    categorylisting : {
+        value : null
+    },
 
     /**
      * The course listing container node.
      * @attribute courselisting
      * @type Node
+     * @default null
      */
-    courselisting : {},
+    courselisting : {
+        value : null
+    },
 
     /**
      * The course details container node.
@@ -57,22 +63,28 @@ Console.ATTRS = {
      * @default null
      */
     coursedetails : {
-        value: null
+        value : null
     },
 
     /**
      * The id of the currently active category.
      * @attribute activecategoryid
-     * @type Int
+     * @type Number
+     * @default null
      */
-    activecategoryid : {},
+    activecategoryid : {
+        value : null
+    },
 
     /**
      * The id of the currently active course.
      * @attribute activecourseid
-     * @type Int
+     * @type Number
+     * @default Null
      */
-    activecourseid : {},
+    activecourseid : {
+        value : null
+    },
 
     /**
      * The categories that are currently available through the management interface.
@@ -95,17 +107,12 @@ Console.ATTRS = {
     /**
      * The courses that are currently available through the management interface.
      * @attribute courses
-     * @type Array
-     * @default []
+     * @type Course[]
+     * @default Array
      */
     courses : {
-        setter : function(item, name) {
-            if (Y.Lang.isArray(item)) {
-                return item;
-            }
-            var items = this.get(name);
-            items.push(item);
-            return items;
+        validator : function(val) {
+            return Y.Lang.isArray(val);
         },
         value : []
     },
@@ -113,7 +120,7 @@ Console.ATTRS = {
     /**
      * The currently displayed page of courses.
      * @attribute page
-     * @type Int
+     * @type Number
      * @default null
      */
     page : {
@@ -130,7 +137,7 @@ Console.ATTRS = {
     /**
      * The total pages of courses that can be shown for this category.
      * @attribute totalpages
-     * @type Int
+     * @type Number
      * @default null
      */
     totalpages : {
@@ -147,7 +154,7 @@ Console.ATTRS = {
     /**
      * The total number of courses belonging to this category.
      * @attribute totalcourses
-     * @type Int
+     * @type Number
      * @default null
      */
     totalcourses : {
@@ -224,8 +231,8 @@ Console.prototype = {
         if (selectedcourse) {
             this.set('activecourseid', selectedcourse.getData('id'));
         }
-        this.initialise_categories(categorylisting);
-        this.initialise_courses();
+        this.initialiseCategories(categorylisting);
+        this.initialiseCourses();
 
         if (courselisting) {
             // No need for dragdrop if we don't have a course listing.
@@ -235,11 +242,11 @@ Console.prototype = {
 
     /**
      * Initialises all the categories being shown.
-     * @method initialise_categories
+     * @method initialiseCategories
      * @private
      * @returns {boolean}
      */
-    initialise_categories : function(listing) {
+    initialiseCategories : function(listing) {
         var count = 0;
         if (!listing) {
             return false;
@@ -252,7 +259,7 @@ Console.prototype = {
             count++;
         }, this);
         if (!this.categoriesinit) {
-            this.get('categorylisting').delegate('click', this.handle_category_delegation, 'a[data-action]', this);
+            this.get('categorylisting').delegate('click', this.handleCategoryDelegation, 'a[data-action]', this);
             this.categoriesinit = true;
         } else {
         }
@@ -260,99 +267,129 @@ Console.prototype = {
 
     /**
      * Initialises all the categories being shown.
-     * @method initialise_courses
+     * @method initialiseCourses
      * @private
      * @returns {boolean}
      */
-    initialise_courses : function() {
-        var category = this.get_category_by_id(this.get('activecategoryid')),
+    initialiseCourses : function() {
+        var category = this.getCategoryById(this.get('activecategoryid')),
             listing = this.get('courselisting'),
             count = 0;
         if (!listing) {
             return false;
         }
+        if (!category) {
+            return false;
+        }
         listing.all('.listitem[data-id]').each(function(node){
-            this.set('courses', new Course({
+            this.registerCourse(new Course({
                 node : node,
                 console : this,
                 category : category
             }));
             count++;
         }, this);
-        listing.delegate('click', this.handle_course_delegation, 'a[data-action]', this);
+        listing.delegate('click', this.handleCourseDelegation, 'a[data-action]', this);
+    },
+
+    /**
+     * Registers a course within the management display.
+     * @method registerCourse
+     * @param {Course} course
+     */
+    registerCourse : function(course) {
+        var courses = this.get('courses');
+        courses.push(course);
+        this.set('courses', courses);
     },
 
     /**
      * Handles the event fired by a delegated course listener.
      *
-     * @method handle_course_delegation
+     * @method handleCourseDelegation
      * @protected
      * @param {EventFacade} e
      */
-    handle_course_delegation : function(e) {
+    handleCourseDelegation : function(e) {
         var target = e.currentTarget,
             action = target.getData('action'),
             courseid = target.ancestor('.listitem').getData('id'),
-            course = this.get_course_by_id(courseid);
-        course.handle(action, e);
+            course = this.getCourseById(courseid);
+        if (course) {
+            course.handle(action, e);
+        } else {
+        }
     },
 
     /**
      * Handles the event fired by a delegated course listener.
      *
-     * @method handle_category_delegation
+     * @method handleCategoryDelegation
      * @protected
      * @param {EventFacade} e
      */
-    handle_category_delegation : function(e) {
+    handleCategoryDelegation : function(e) {
         var target = e.currentTarget,
             action = target.getData('action'),
             categoryid = target.ancestor('.listitem').getData('id'),
-            category = this.get_category_by_id(categoryid);
-        category.handle(action, e);
+            category = this.getCategoryById(categoryid);
+        if (category) {
+            category.handle(action, e);
+        } else {
+        }
     },
 
     /**
      * Returns the category with the given ID.
-     * @method get_category_by_id
-     * @param {Int} id
-     * @returns {Category|Int} The category or the categoryid given if there is no matching category.
+     * @method getCategoryById
+     * @param {Number} id
+     * @returns {Category|Boolean} The category or false if it can't be found.
      */
-    get_category_by_id : function(id) {
-        var i, category, categories = this.get('categories'), length = categories.length;
+    getCategoryById : function(id) {
+        var i,
+            category,
+            categories = this.get('categories'),
+            length = categories.length;
         for (i = 0; i < length; i++) {
             category = categories[i];
             if (category.get('categoryid') === id) {
                 return category;
             }
         }
-        return id;
-    },
-
-    /**
-     * Returns the course with the given id.
-     * @method get_course_by_id
-     * @param {Int} id
-     * @returns {Category|Int} The course or the courseid given if there is no matching category.
-     */
-    get_course_by_id : function(id) {
-        var i, course, courses = this.get('courses'), length = courses.length;
-        for (i = 0; i < length; i++) {
-            course = courses[i];
-            if (course.get('courseid') === id) {
-                return course;
-            }
-        }
         return false;
     },
 
     /**
-     * Removes the course with the given ID.
-     * @method remove_course_by_id
-     * @param {Int} id
+     * Returns the course with the given id.
+     * @method getCourseById
+     * @param {Number} id
+     * @returns {Course|Boolean} The course or false if not found/
      */
-    remove_course_by_id : function() {
+    getCourseById : function(id) {
+        var i,
+            course,
+            courses = this.get('courses'),
+            length = courses.length;
+        for (i = 0; i < length; i++) {
+            if (!courses.hadOwnPropery(i)) {
+                course = courses[i];
+                if (course.get('courseid') === id) {
+                    return course;
+                }
+            }
+        }
+        return id;
+    },
+
+    /**
+     * Removes the course with the given ID.
+     * @method removeCourseById
+     * @param {Number} id
+     */
+    removeCourseById : function() {
         var courses = this.get('courses'),
+            length = courses.length,
+            course,
             i;
         for (i = 0; i < length; i++) {
             course = courses[i];
@@ -366,13 +403,13 @@ Console.prototype = {
     /**
      * Performs an AJAX action.
      *
-     * @method perform_ajax_action
+     * @method performAjaxAction
      * @param {String} action The action to perform.
      * @param {Object} args The arguments to pass through with teh request.
      * @param {Function} callback The function to call when all is done.
      * @param {Object} context The object to use as the context for the callback.
      */
-    perform_ajax_action : function(action, args, callback, context) {
+    performAjaxAction : function(action, args, callback, context) {
         var io = new Y.IO();
         args.action = action;
         args.ajax = '1';
@@ -390,25 +427,21 @@ Console.prototype = {
 };
 Y.extend(Console, Y.Base, Console.prototype);
 
-/**
- * Course namespace.
- * @static
- * @namespace M
- * @class course
- */
 M.course = M.course || {};
+M.course.management = M.course.management || {};
+M.course.management.console = null;
 
 /**
  * Initalises the course management console.
  * @static
  * @param {Object} config
  */
-M.course.init_management = function(config) {
-    M.course.console = new Console(config);
+M.course.management.init = function(config) {
+    M.course.management.console = new Console(config);
 };/**
  * Drag and Drop handler
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class DragDrop
  * @constructor
  * @extends Y.Base
@@ -650,13 +683,14 @@ DragDrop.prototype = {
             return false;
         }
         courseid = drag.getData('id');
-        course = console.get_course_by_id(courseid);
-
         if (iscategory) {
             categoryid = drop.ancestor('.listitem-category').getData('id');
-            category = console.get_category_by_id(categoryid);
+            category = console.getCategoryById(categoryid);
             if (category) {
-                category.moveCourseTo(course);
+                course = console.getCourseById(courseid);
+                if (course) {
+                    category.moveCourseTo(course);
+                }
             }
         } else if (iscourse || drop.ancestor('#course-listing')) {
             previoussibling = drag.get('previousSibling');
@@ -672,7 +706,7 @@ DragDrop.prototype = {
 Y.extend(DragDrop, Y.Base, DragDrop.prototype);/**
  * A managed course.
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class Item
  * @constructor
  * @extends Y.Base
@@ -721,14 +755,14 @@ Item.prototype = {
     /**
      * Checks and parses an AJAX response for an item.
      *
-     * @method check_ajax_response
+     * @method checkAjaxResponse
      * @protected
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Object|Boolean}
      */
-    check_ajax_response : function(transactionid, response, args) {
+    checkAjaxResponse : function(transactionid, response, args) {
         if (response.status !== 200) {
             return false;
         }
@@ -749,7 +783,7 @@ Item.prototype = {
      * Moves an item up by one.
      *
      * @method moveup
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
@@ -762,7 +796,7 @@ Item.prototype = {
             previousup,
             previousdown,
             tmpnode,
-            outcome = this.check_ajax_response(transactionid, response, args);
+            outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
             return false;
         }
@@ -800,7 +834,7 @@ Item.prototype = {
      * Moves an item down by one.
      *
      * @method movedown
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
@@ -813,7 +847,7 @@ Item.prototype = {
             nextup,
             nextdown,
             tmpnode,
-            outcome = this.check_ajax_response(transactionid, response, args);
+            outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
             return false;
         }
@@ -851,13 +885,13 @@ Item.prototype = {
      * Makes an item visible.
      *
      * @method show
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     show : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
             return false;
         }
@@ -879,13 +913,13 @@ Item.prototype = {
      * Hides an item.
      *
      * @method hide
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     hide : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
             return false;
         }
@@ -934,7 +968,7 @@ Item.prototype = {
 Y.extend(Item, Y.Base, Item.prototype);/**
  * A managed category.
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class Category
  * @constructor
  * @extends Item
@@ -948,9 +982,21 @@ Category.ATTRS = {
     /**
      * The category ID relating to this category.
      * @attribute categoryid
-     * @type Int
+     * @type Number
+     * @writeOnce
+     * @default null
      */
-    categoryid : {},
+    categoryid : {
+        getter : function (value, name) {
+            if (value === null) {
+                value = this.get('node').getData('id');
+                this.set(name, value);
+            }
+            return value;
+        },
+        value : null,
+        writeOnce : true
+    },
 
     /**
      * True if this category is the currently selected category.
@@ -973,19 +1019,14 @@ Category.ATTRS = {
     },
 
     /**
-     * An array fo courses belonging to this category
+     * An array of courses belonging to this category.
      * @attribute courses
      * @type Course[]
-     * @default []
+     * @default Array
      */
     courses : {
-        setter : function(item, name) {
-            if (Y.Lang.isArray(item)) {
-                return item;
-            }
-            var items = this.get(name);
-            items.push(item);
-            return items;
+        validator : function(val) {
+            return Y.Lang.isArray(val);
         },
         value : []
     }
@@ -996,8 +1037,6 @@ Category.prototype = {
      * @method initializer
      */
     initializer : function() {
-        var node = this.get('node');
-        this.set('categoryid', node.getData('id'));
         this.set('itemname', 'category');
     },
 
@@ -1012,11 +1051,13 @@ Category.prototype = {
 
     /**
      * Registers a course as belonging to this category.
-     * @method register_course
+     * @method registerCourse
      * @param {Course} course
      */
-    register_course : function(course) {
-        this.set('courses', course);
+    registerCourse : function(course) {
+        var courses = this.get('courses');
+        courses.push(course);
+        this.set('courses', courses);
     },
 
     /**
@@ -1031,31 +1072,31 @@ Category.prototype = {
         var catarg = {categoryid : this.get('categoryid')};
         switch (action) {
             case 'moveup':
-                e.halt();
-                this.get('console').perform_ajax_action('movecategoryup', catarg, this.moveup, this);
+                e.preventDefault();
+                this.get('console').performAjaxAction('movecategoryup', catarg, this.moveup, this);
                 break;
             case 'movedown':
-                e.halt();
-                this.get('console').perform_ajax_action('movecategorydown', catarg, this.movedown, this);
+                e.preventDefault();
+                this.get('console').performAjaxAction('movecategorydown', catarg, this.movedown, this);
                 break;
             case 'show':
-                e.halt();
-                this.get('console').perform_ajax_action('showcategory', catarg, this.show, this);
+                e.preventDefault();
+                this.get('console').performAjaxAction('showcategory', catarg, this.show, this);
                 break;
             case 'hide':
-                e.halt();
-                this.get('console').perform_ajax_action('hidecategory', catarg, this.hide, this);
+                e.preventDefault();
+                this.get('console').performAjaxAction('hidecategory', catarg, this.hide, this);
                 break;
             case 'expand':
-                e.halt();
+                e.preventDefault();
                 if (this.get('node').getData('expanded') === '0') {
-                    this.get('node').setData('expanded', true);
-                    this.get('console').perform_ajax_action('getsubcategorieshtml', catarg, this.loadSubcategories, this);
+                    this.get('node').setAttribute('data-expanded', '1').setData('expanded', 'true');
+                    this.get('console').performAjaxAction('getsubcategorieshtml', catarg, this.loadSubcategories, this);
                 }
                 this.expand();
                 break;
             case 'collapse':
-                e.halt();
+                e.preventDefault();
                 this.collapse();
                 break;
             default:
@@ -1071,8 +1112,7 @@ Category.prototype = {
         var node = this.get('node'),
             action = node.one('a[data-action=expand]');
         node.removeClass('collapsed');
-        action.setAttribute('data-action', 'collapse');
-        action.one('img').setAttrs({
+        action.setAttribute('data-action', 'collapse').one('img').setAttrs({
             src : M.util.image_url('t/switch_minus', 'moodle'),
             title : M.util.get_string('collapse', 'moodle'),
             alt : M.util.get_string('collapse', 'moodle')
@@ -1087,8 +1127,7 @@ Category.prototype = {
         var node = this.get('node'),
             action = node.one('a[data-action=collapse]');
         node.addClass('collapsed');
-        action.setAttribute('data-action', 'expand');
-        action.one('img').setAttrs({
+        action.setAttribute('data-action', 'expand').one('img').setAttrs({
             src : M.util.image_url('t/switch_plus', 'moodle'),
             title : M.util.get_string('expand', 'moodle'),
             alt : M.util.get_string('expand', 'moodle')
@@ -1100,23 +1139,24 @@ Category.prototype = {
      *
      * @method loadSubcategories
      * @protected
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean} Returns true on success - false otherwise.
      */
     loadSubcategories : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args),
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
             node = this.get('node'),
             console = this.get('console');
         if (outcome === false) {
             return false;
         }
         node.append(outcome.html);
-        console.initialise_categories(node);
+        console.initialiseCategories(node);
         if (M.core && M.core.actionmenu && M.core.actionmenu.newDOMNode) {
             M.core.actionmenu.newDOMNode(node);
         }
+        return true;
     },
 
     /**
@@ -1140,7 +1180,7 @@ Category.prototype = {
             confirm.on('complete-yes', function() {
                 confirm.hide();
                 confirm.destroy();
-                this.get('console').perform_ajax_action('movecourseintocategory', {
+                this.get('console').performAjaxAction('movecourseintocategory', {
                     categoryid : this.get('categoryid'),
                     courseid : course.get('courseid')
                 }, this.completeMoveCourse, this);
@@ -1153,18 +1193,21 @@ Category.prototype = {
      * Completes moving a course to this category.
      * @method completeMoveCourse
      * @protected
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     completeMoveCourse : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args),
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
             course;
         if (outcome === false) {
             return false;
         }
-        course = this.get('console').get_course_by_id(args.courseid);
+        course = this.get('console').getCourseById(args.courseid);
+        if (!course) {
+            return false;
+        }
         this.highlight();
         if (course) {
             course.remove();
@@ -1176,13 +1219,13 @@ Category.prototype = {
      * Makes an item visible.
      *
      * @method show
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     show : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
             return false;
         }
@@ -1201,13 +1244,13 @@ Category.prototype = {
      * Hides an item.
      *
      * @method hide
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     hide : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
             return false;
         }
@@ -1224,6 +1267,7 @@ Category.prototype = {
     /**
      * Updates the visibility of child courses if required.
      * @method updateCourseVisiblity
+     * @chainable
      * @param courses
      */
     updateCourseVisiblity : function(courses) {
@@ -1232,22 +1276,26 @@ Category.prototype = {
             course;
         try {
             for (key in courses) {
-                course = console.get_course_by_id(courses[key].id);
-                if (course.get) {
-                    if (courses[key].show === "1") {
-                        course.markVisible();
-                    } else {
-                        course.markHidden();
+                if (courses.hasOwnProperty[key]) {
+                    course = console.getCourseById(courses[key].id);
+                    if (course) {
+                        if (courses[key].show === "1") {
+                            course.markVisible();
+                        } else {
+                            course.markHidden();
+                        }
                     }
                 }
             }
         } catch (err) {
         }
+        return this;
     },
 
     /**
      * Updates the visibility of subcategories if required.
      * @method updateChildVisibility
+     * @chainable
      * @param categories
      */
     updateChildVisibility : function(categories) {
@@ -1256,23 +1304,26 @@ Category.prototype = {
             category;
         try {
             for (key in categories) {
-                category = console.get_category_by_id(categories[key].id);
-                if (category.get) {
-                    if (categories[key].show === "1") {
-                        category.markVisible();
-                    } else {
-                        category.markHidden();
+                if (categories.hasOwnProperty[key]) {
+                    category = console.getCategoryById(categories[key].id);
+                    if (category) {
+                        if (categories[key].show === "1") {
+                            category.markVisible();
+                        } else {
+                            category.markHidden();
+                        }
                     }
                 }
             }
         } catch (err) {
         }
+        return this;
     }
 };
 Y.extend(Category, Item, Category.prototype);/**
  * A managed course.
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class Course
  * @constructor
  * @extends Item
@@ -1287,7 +1338,7 @@ Course.ATTRS = {
     /**
      * The course ID of this course.
      * @attribute courseid
-     * @type Int
+     * @type Number
      */
     courseid : {},
 
@@ -1339,8 +1390,8 @@ Course.prototype = {
         var node = this.get('node'),
             category = this.get('category');
         this.set('courseid', node.getData('id'));
-        if (category && category.register_course) {
-            category.register_course(this);
+        if (category && category.registerCourse) {
+            category.registerCourse(this);
         }
         this.set('itemname', 'course');
     },
@@ -1367,19 +1418,19 @@ Course.prototype = {
         switch (action) {
             case 'moveup':
                 e.halt();
-                console.perform_ajax_action('movecourseup', args, this.moveup, this);
+                console.performAjaxAction('movecourseup', args, this.moveup, this);
                 break;
             case 'movedown':
                 e.halt();
-                console.perform_ajax_action('movecoursedown', args, this.movedown, this);
+                console.performAjaxAction('movecoursedown', args, this.movedown, this);
                 break;
             case 'show':
                 e.halt();
-                console.perform_ajax_action('showcourse', args, this.show, this);
+                console.performAjaxAction('showcourse', args, this.show, this);
                 break;
             case 'hide':
                 e.halt();
-                console.perform_ajax_action('hidecourse', args, this.hide, this);
+                console.performAjaxAction('hidecourse', args, this.hide, this);
                 break;
             default:
                 return false;
@@ -1391,7 +1442,7 @@ Course.prototype = {
      * @method remove
      */
     remove : function() {
-        this.get('console').remove_course_by_id(this.get('courseid'));
+        this.get('console').removeCourseById(this.get('courseid'));
         this.get('node').remove();
     },
 
@@ -1399,8 +1450,8 @@ Course.prototype = {
      * Moves this course after another course.
      *
      * @method moveAfter
-     * @param {Int} moveaftercourse The course to move after or 0 to put it at the top.
-     * @param {Int} previousid the course it was previously after in case we need to revert.
+     * @param {Number} moveaftercourse The course to move after or 0 to put it at the top.
+     * @param {Number} previousid the course it was previously after in case we need to revert.
      */
     moveAfter : function(moveaftercourse, previousid) {
         var console = this.get('console'),
@@ -1409,7 +1460,7 @@ Course.prototype = {
                 moveafter : moveaftercourse,
                 previous : previousid
             };
-        console.perform_ajax_action('movecourseafter', args, this.moveAfterResponse, this);
+        console.performAjaxAction('movecourseafter', args, this.moveAfterResponse, this);
     },
 
     /**
@@ -1417,13 +1468,13 @@ Course.prototype = {
      *
      * @method moveAfterResponse
      * @protected
-     * @param {Int} transactionid The transaction ID for the request.
+     * @param {Number} transactionid The transaction ID for the request.
      * @param {Object} response The response to the request.
      * @param {Objects} args The arguments that were given with the request.
      * @returns {Boolean}
      */
     moveAfterResponse : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args),
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
             node = this.get('node'),
             previous;
         if (outcome === false) {

@@ -1,7 +1,7 @@
 /**
  * A managed category.
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class Category
  * @constructor
  * @extends Item
@@ -15,9 +15,21 @@ Category.ATTRS = {
     /**
      * The category ID relating to this category.
      * @attribute categoryid
-     * @type Int
+     * @type Number
+     * @writeOnce
+     * @default null
      */
-    categoryid : {},
+    categoryid : {
+        getter : function (value, name) {
+            if (value === null) {
+                value = this.get('node').getData('id');
+                this.set(name, value);
+            }
+            return value;
+        },
+        value : null,
+        writeOnce : true
+    },
 
     /**
      * True if this category is the currently selected category.
@@ -40,19 +52,14 @@ Category.ATTRS = {
     },
 
     /**
-     * An array fo courses belonging to this category
+     * An array of courses belonging to this category.
      * @attribute courses
      * @type Course[]
-     * @default []
+     * @default Array
      */
     courses : {
-        setter : function(item, name) {
-            if (Y.Lang.isArray(item)) {
-                return item;
-            }
-            var items = this.get(name);
-            items.push(item);
-            return items;
+        validator : function(val) {
+            return Y.Lang.isArray(val);
         },
         value : []
     }
@@ -63,8 +70,6 @@ Category.prototype = {
      * @method initializer
      */
     initializer : function() {
-        var node = this.get('node');
-        this.set('categoryid', node.getData('id'));
         this.set('itemname', 'category');
     },
 
@@ -79,11 +84,13 @@ Category.prototype = {
 
     /**
      * Registers a course as belonging to this category.
-     * @method register_course
+     * @method registerCourse
      * @param {Course} course
      */
-    register_course : function(course) {
-        this.set('courses', course);
+    registerCourse : function(course) {
+        var courses = this.get('courses');
+        courses.push(course);
+        this.set('courses', courses);
     },
 
     /**
@@ -98,35 +105,35 @@ Category.prototype = {
         var catarg = {categoryid : this.get('categoryid')};
         switch (action) {
             case 'moveup':
-                e.halt();
-                this.get('console').perform_ajax_action('movecategoryup', catarg, this.moveup, this);
+                e.preventDefault();
+                this.get('console').performAjaxAction('movecategoryup', catarg, this.moveup, this);
                 break;
             case 'movedown':
-                e.halt();
-                this.get('console').perform_ajax_action('movecategorydown', catarg, this.movedown, this);
+                e.preventDefault();
+                this.get('console').performAjaxAction('movecategorydown', catarg, this.movedown, this);
                 break;
             case 'show':
-                e.halt();
-                this.get('console').perform_ajax_action('showcategory', catarg, this.show, this);
+                e.preventDefault();
+                this.get('console').performAjaxAction('showcategory', catarg, this.show, this);
                 break;
             case 'hide':
-                e.halt();
-                this.get('console').perform_ajax_action('hidecategory', catarg, this.hide, this);
+                e.preventDefault();
+                this.get('console').performAjaxAction('hidecategory', catarg, this.hide, this);
                 break;
             case 'expand':
-                e.halt();
+                e.preventDefault();
                 if (this.get('node').getData('expanded') === '0') {
-                    this.get('node').setData('expanded', true);
-                    this.get('console').perform_ajax_action('getsubcategorieshtml', catarg, this.loadSubcategories, this);
+                    this.get('node').setAttribute('data-expanded', '1').setData('expanded', 'true');
+                    this.get('console').performAjaxAction('getsubcategorieshtml', catarg, this.loadSubcategories, this);
                 }
                 this.expand();
                 break;
             case 'collapse':
-                e.halt();
+                e.preventDefault();
                 this.collapse();
                 break;
             default:
-                Y.log('Invalid AJAX action requested of managed category.', 'warn', 'core_course');
+                Y.log('Invalid AJAX action requested of managed category.', 'warn', 'moodle-course-management');
                 return false;
         }
     },
@@ -139,8 +146,7 @@ Category.prototype = {
         var node = this.get('node'),
             action = node.one('a[data-action=expand]');
         node.removeClass('collapsed');
-        action.setAttribute('data-action', 'collapse');
-        action.one('img').setAttrs({
+        action.setAttribute('data-action', 'collapse').one('img').setAttrs({
             src : M.util.image_url('t/switch_minus', 'moodle'),
             title : M.util.get_string('collapse', 'moodle'),
             alt : M.util.get_string('collapse', 'moodle')
@@ -155,8 +161,7 @@ Category.prototype = {
         var node = this.get('node'),
             action = node.one('a[data-action=collapse]');
         node.addClass('collapsed');
-        action.setAttribute('data-action', 'expand');
-        action.one('img').setAttrs({
+        action.setAttribute('data-action', 'expand').one('img').setAttrs({
             src : M.util.image_url('t/switch_plus', 'moodle'),
             title : M.util.get_string('expand', 'moodle'),
             alt : M.util.get_string('expand', 'moodle')
@@ -168,25 +173,26 @@ Category.prototype = {
      *
      * @method loadSubcategories
      * @protected
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
-     * @returns {Boolean}
+     * @return {Boolean} Returns true on success - false otherwise.
      */
     loadSubcategories : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args),
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
             node = this.get('node'),
             console = this.get('console');
         if (outcome === false) {
-            Y.log('AJAX failed to load sub categories for '+this.get('itemname'), 'warn', 'core_course');
+            Y.log('AJAX failed to load sub categories for '+this.get('itemname'), 'warn', 'moodle-course-management');
             return false;
         }
-        Y.log('AJAX loaded subcategories for '+this.get('itemname'), 'info', 'core_course');
+        Y.log('AJAX loaded subcategories for '+this.get('itemname'), 'info', 'moodle-course-management');
         node.append(outcome.html);
-        console.initialise_categories(node);
+        console.initialiseCategories(node);
         if (M.core && M.core.actionmenu && M.core.actionmenu.newDOMNode) {
             M.core.actionmenu.newDOMNode(node);
         }
+        return true;
     },
 
     /**
@@ -210,7 +216,7 @@ Category.prototype = {
             confirm.on('complete-yes', function() {
                 confirm.hide();
                 confirm.destroy();
-                this.get('console').perform_ajax_action('movecourseintocategory', {
+                this.get('console').performAjaxAction('movecourseintocategory', {
                     categoryid : this.get('categoryid'),
                     courseid : course.get('courseid')
                 }, this.completeMoveCourse, this);
@@ -223,20 +229,24 @@ Category.prototype = {
      * Completes moving a course to this category.
      * @method completeMoveCourse
      * @protected
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     completeMoveCourse : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args),
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
             course;
         if (outcome === false) {
-            Y.log('AJAX failed to move courses into this category: '+this.get('itemname'), 'warn', 'core_course');
+            Y.log('AJAX failed to move courses into this category: '+this.get('itemname'), 'warn', 'moodle-course-management');
             return false;
         }
-        course = this.get('console').get_course_by_id(args.courseid);
-        Y.log('Moved the course ('+course.getName()+') into this category ('+this.getName()+')', 'info', 'core_course');
+        course = this.get('console').getCourseById(args.courseid);
+        if (!course) {
+            Y.log('Course was moved but the course listing could not be found to reflect this', 'warn', 'moodle-course-management');
+            return false;
+        }
+        Y.log('Moved the course ('+course.getName()+') into this category ('+this.getName()+')', 'info', 'moodle-course-management');
         this.highlight();
         if (course) {
             course.remove();
@@ -248,15 +258,15 @@ Category.prototype = {
      * Makes an item visible.
      *
      * @method show
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     show : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
-            Y.log('AJAX request to show '+this.get('itemname')+' by outcome.', 'warn', 'core_course');
+            Y.log('AJAX request to show '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
 
@@ -268,22 +278,22 @@ Category.prototype = {
             this.updateCourseVisiblity(outcome.coursevisibility);
         }
         this.updated();
-        Y.log('Success: category made visible by AJAX.', 'info', 'core_course');
+        Y.log('Success: category made visible by AJAX.', 'info', 'moodle-course-management');
     },
 
     /**
      * Hides an item.
      *
      * @method hide
-     * @param {Int} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
      * @param {Object} response The response from the AJAX request.
      * @param {Object} args The arguments given to the request.
      * @returns {Boolean}
      */
     hide : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
         if (outcome === false) {
-            Y.log('AJAX request to hide '+this.get('itemname')+' by outcome.', 'warn', 'core_course');
+            Y.log('AJAX request to hide '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
         this.markHidden();
@@ -294,12 +304,13 @@ Category.prototype = {
             this.updateCourseVisiblity(outcome.coursevisibility);
         }
         this.updated();
-        Y.log('Success: '+this.get('itemname')+' made hidden by AJAX.', 'info', 'core_course');
+        Y.log('Success: '+this.get('itemname')+' made hidden by AJAX.', 'info', 'moodle-course-management');
     },
 
     /**
      * Updates the visibility of child courses if required.
      * @method updateCourseVisiblity
+     * @chainable
      * @param courses
      */
     updateCourseVisiblity : function(courses) {
@@ -308,23 +319,27 @@ Category.prototype = {
             course;
         try {
             for (key in courses) {
-                course = console.get_course_by_id(courses[key].id);
-                if (course.get) {
-                    if (courses[key].show === "1") {
-                        course.markVisible();
-                    } else {
-                        course.markHidden();
+                if (courses.hasOwnProperty[key]) {
+                    course = console.getCourseById(courses[key].id);
+                    if (course) {
+                        if (courses[key].show === "1") {
+                            course.markVisible();
+                        } else {
+                            course.markHidden();
+                        }
                     }
                 }
             }
         } catch (err) {
-            Y.log('Error trying to update course visibility: ' + err.message, 'warn', 'core_course');
+            Y.log('Error trying to update course visibility: ' + err.message, 'warn', 'moodle-course-management');
         }
+        return this;
     },
 
     /**
      * Updates the visibility of subcategories if required.
      * @method updateChildVisibility
+     * @chainable
      * @param categories
      */
     updateChildVisibility : function(categories) {
@@ -333,18 +348,21 @@ Category.prototype = {
             category;
         try {
             for (key in categories) {
-                category = console.get_category_by_id(categories[key].id);
-                if (category.get) {
-                    if (categories[key].show === "1") {
-                        category.markVisible();
-                    } else {
-                        category.markHidden();
+                if (categories.hasOwnProperty[key]) {
+                    category = console.getCategoryById(categories[key].id);
+                    if (category) {
+                        if (categories[key].show === "1") {
+                            category.markVisible();
+                        } else {
+                            category.markHidden();
+                        }
                     }
                 }
             }
         } catch (err) {
-            Y.log('Error trying to update category visibility: ' + err.message, 'warn', 'core_course');
+            Y.log('Error trying to update category visibility: ' + err.message, 'warn', 'moodle-course-management');
         }
+        return this;
     }
 };
 Y.extend(Category, Item, Category.prototype);

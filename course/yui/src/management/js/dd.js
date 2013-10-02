@@ -1,7 +1,7 @@
 /**
  * Drag and Drop handler
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class DragDrop
  * @constructor
  * @extends Y.Base
@@ -239,19 +239,20 @@ DragDrop.prototype = {
             previousid;
 
         if (!drag.test('.listitem-course')) {
-            Y.log('Wasn\'t what I expected', 'warn', 'core_course');
+            Y.log('Wasn\'t what I expected', 'warn', 'moodle-course-management');
             alert(drag);
             return false;
         }
         courseid = drag.getData('id');
-        course = console.get_course_by_id(courseid);
-
         if (iscategory) {
             categoryid = drop.ancestor('.listitem-category').getData('id');
             Y.log('Course ' + courseid + ' dragged into category ' + categoryid);
-            category = console.get_category_by_id(categoryid);
+            category = console.getCategoryById(categoryid);
             if (category) {
-                category.moveCourseTo(course);
+                course = console.getCourseById(courseid);
+                if (course) {
+                    category.moveCourseTo(course);
+                }
             }
         } else if (iscourse || drop.ancestor('#course-listing')) {
             previoussibling = drag.get('previousSibling');
@@ -261,7 +262,7 @@ DragDrop.prototype = {
                 course.moveAfter(aftercourseid, previousid);
             }
         } else {
-            Y.log('Course dropped over unhandled target.', 'info', 'core_course');
+            Y.log('Course dropped over unhandled target.', 'info', 'moodle-course-management');
         }
     }
 };

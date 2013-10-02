@@ -1,7 +1,7 @@
 /**
  * A managed course.
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class Course
  * @constructor
  * @extends Item
@@ -16,7 +16,7 @@ Course.ATTRS = {
     /**
      * The course ID of this course.
      * @attribute courseid
-     * @type Int
+     * @type Number
      */
     courseid : {},
 
@@ -68,8 +68,8 @@ Course.prototype = {
         var node = this.get('node'),
             category = this.get('category');
         this.set('courseid', node.getData('id'));
-        if (category && category.register_course) {
-            category.register_course(this);
+        if (category && category.registerCourse) {
+            category.registerCourse(this);
         }
         this.set('itemname', 'course');
     },
@@ -96,22 +96,22 @@ Course.prototype = {
         switch (action) {
             case 'moveup':
                 e.halt();
-                console.perform_ajax_action('movecourseup', args, this.moveup, this);
+                console.performAjaxAction('movecourseup', args, this.moveup, this);
                 break;
             case 'movedown':
                 e.halt();
-                console.perform_ajax_action('movecoursedown', args, this.movedown, this);
+                console.performAjaxAction('movecoursedown', args, this.movedown, this);
                 break;
             case 'show':
                 e.halt();
-                console.perform_ajax_action('showcourse', args, this.show, this);
+                console.performAjaxAction('showcourse', args, this.show, this);
                 break;
             case 'hide':
                 e.halt();
-                console.perform_ajax_action('hidecourse', args, this.hide, this);
+                console.performAjaxAction('hidecourse', args, this.hide, this);
                 break;
             default:
-                Y.log('Invalid AJAX action requested of managed course.', 'warn', 'core_course');
+                Y.log('Invalid AJAX action requested of managed course.', 'warn', 'moodle-course-management');
                 return false;
         }
     },
@@ -121,7 +121,7 @@ Course.prototype = {
      * @method remove
      */
     remove : function() {
-        this.get('console').remove_course_by_id(this.get('courseid'));
+        this.get('console').removeCourseById(this.get('courseid'));
         this.get('node').remove();
     },
 
@@ -129,8 +129,8 @@ Course.prototype = {
      * Moves this course after another course.
      *
      * @method moveAfter
-     * @param {Int} moveaftercourse The course to move after or 0 to put it at the top.
-     * @param {Int} previousid the course it was previously after in case we need to revert.
+     * @param {Number} moveaftercourse The course to move after or 0 to put it at the top.
+     * @param {Number} previousid the course it was previously after in case we need to revert.
      */
     moveAfter : function(moveaftercourse, previousid) {
         var console = this.get('console'),
@@ -139,7 +139,7 @@ Course.prototype = {
                 moveafter : moveaftercourse,
                 previous : previousid
             };
-        console.perform_ajax_action('movecourseafter', args, this.moveAfterResponse, this);
+        console.performAjaxAction('movecourseafter', args, this.moveAfterResponse, this);
     },
 
     /**
@@ -147,18 +147,18 @@ Course.prototype = {
      *
      * @method moveAfterResponse
      * @protected
-     * @param {Int} transactionid The transaction ID for the request.
+     * @param {Number} transactionid The transaction ID for the request.
      * @param {Object} response The response to the request.
      * @param {Objects} args The arguments that were given with the request.
      * @returns {Boolean}
      */
     moveAfterResponse : function(transactionid, response, args) {
-        var outcome = this.check_ajax_response(transactionid, response, args),
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
             node = this.get('node'),
             previous;
         if (outcome === false) {
             previous = node.ancestor('ul').one('li[data-id='+args.previous+']');
-            Y.log('AJAX failed to move this course after the requested course', 'warn', 'core_course');
+            Y.log('AJAX failed to move this course after the requested course', 'warn', 'moodle-course-management');
             if (previous) {
                 // After the last previous.
                 previous.insertAfter(node, 'after');
@@ -168,7 +168,7 @@ Course.prototype = {
             }
             return false;
         }
-        Y.log('AJAX successfully moved course ('+this.getName()+')', 'info', 'core_course');
+        Y.log('AJAX successfully moved course ('+this.getName()+')', 'info', 'moodle-course-management');
         this.highlight();
     }
 };

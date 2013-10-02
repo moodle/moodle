@@ -1,7 +1,7 @@
 /**
  * Provides drop down menus for list of action links.
  *
- * @module moodle-core_course-management
+ * @module moodle-course-management
  */
 
 /**
@@ -9,7 +9,7 @@
  *
  * Provides the organisation for course and category management JS.
  *
- * @namespace M.core_course.management
+ * @namespace M.course.management
  * @class Console
  * @constructor
  * @extends Y.Base
@@ -27,7 +27,7 @@ Console.ATTRS = {
      */
     element : {
         setter : function(node) {
-            if (typeof(node) === 'string') {
+            if (typeof node === 'string') {
                 node = Y.one('#'+node);
             }
             return node;
@@ -38,15 +38,21 @@ Console.ATTRS = {
      * The category listing container node.
      * @attribute categorylisting
      * @type Node
+     * @default null
      */
-    categorylisting : {},
+    categorylisting : {
+        value : null
+    },
 
     /**
      * The course listing container node.
      * @attribute courselisting
      * @type Node
+     * @default null
      */
-    courselisting : {},
+    courselisting : {
+        value : null
+    },
 
     /**
      * The course details container node.
@@ -55,22 +61,28 @@ Console.ATTRS = {
      * @default null
      */
     coursedetails : {
-        value: null
+        value : null
     },
 
     /**
      * The id of the currently active category.
      * @attribute activecategoryid
-     * @type Int
+     * @type Number
+     * @default null
      */
-    activecategoryid : {},
+    activecategoryid : {
+        value : null
+    },
 
     /**
      * The id of the currently active course.
      * @attribute activecourseid
-     * @type Int
+     * @type Number
+     * @default Null
      */
-    activecourseid : {},
+    activecourseid : {
+        value : null
+    },
 
     /**
      * The categories that are currently available through the management interface.
@@ -93,17 +105,12 @@ Console.ATTRS = {
     /**
      * The courses that are currently available through the management interface.
      * @attribute courses
-     * @type Array
-     * @default []
+     * @type Course[]
+     * @default Array
      */
     courses : {
-        setter : function(item, name) {
-            if (Y.Lang.isArray(item)) {
-                return item;
-            }
-            var items = this.get(name);
-            items.push(item);
-            return items;
+        validator : function(val) {
+            return Y.Lang.isArray(val);
         },
         value : []
     },
@@ -111,7 +118,7 @@ Console.ATTRS = {
     /**
      * The currently displayed page of courses.
      * @attribute page
-     * @type Int
+     * @type Number
      * @default null
      */
     page : {
@@ -128,7 +135,7 @@ Console.ATTRS = {
     /**
      * The total pages of courses that can be shown for this category.
      * @attribute totalpages
-     * @type Int
+     * @type Number
      * @default null
      */
     totalpages : {
@@ -145,7 +152,7 @@ Console.ATTRS = {
     /**
      * The total number of courses belonging to this category.
      * @attribute totalcourses
-     * @type Int
+     * @type Number
      * @default null
      */
     totalcourses : {
@@ -200,7 +207,7 @@ Console.prototype = {
      * @method initializer
      */
     initializer : function() {
-        Y.log('Initialising course category management console', 'note', 'core_course');
+        Y.log('Initialising course category management console', 'info', 'moodle-course-management');
         this.set('element', 'coursecat-management');
         var element = this.get('element'),
             categorylisting = element.one('#category-listing'),
@@ -223,8 +230,8 @@ Console.prototype = {
         if (selectedcourse) {
             this.set('activecourseid', selectedcourse.getData('id'));
         }
-        this.initialise_categories(categorylisting);
-        this.initialise_courses();
+        this.initialiseCategories(categorylisting);
+        this.initialiseCourses();
 
         if (courselisting) {
             // No need for dragdrop if we don't have a course listing.
@@ -234,11 +241,11 @@ Console.prototype = {
 
     /**
      * Initialises all the categories being shown.
-     * @method initialise_categories
+     * @method initialiseCategories
      * @private
      * @returns {boolean}
      */
-    initialise_categories : function(listing) {
+    initialiseCategories : function(listing) {
         var count = 0;
         if (!listing) {
             return false;
@@ -251,110 +258,143 @@ Console.prototype = {
             count++;
         }, this);
         if (!this.categoriesinit) {
-            this.get('categorylisting').delegate('click', this.handle_category_delegation, 'a[data-action]', this);
+            this.get('categorylisting').delegate('click', this.handleCategoryDelegation, 'a[data-action]', this);
             this.categoriesinit = true;
-            Y.log(count+' categories being managed', 'note', 'core_course');
+            Y.log(count+' categories being managed', 'info', 'moodle-course-management');
         } else {
-            Y.log(count+' new categories being managed', 'note', 'core_course');
+            Y.log(count+' new categories being managed', 'info', 'moodle-course-management');
         }
     },
 
     /**
      * Initialises all the categories being shown.
-     * @method initialise_courses
+     * @method initialiseCourses
      * @private
      * @returns {boolean}
      */
-    initialise_courses : function() {
-        var category = this.get_category_by_id(this.get('activecategoryid')),
+    initialiseCourses : function() {
+        var category = this.getCategoryById(this.get('activecategoryid')),
             listing = this.get('courselisting'),
             count = 0;
         if (!listing) {
             return false;
         }
+        if (!category) {
+            Y.log('Couldn\'t find the current category object.', 'warn', 'moodle-course-management');
+            return false;
+        }
         listing.all('.listitem[data-id]').each(function(node){
-            this.set('courses', new Course({
+            this.registerCourse(new Course({
                 node : node,
                 console : this,
                 category : category
             }));
             count++;
         }, this);
-        listing.delegate('click', this.handle_course_delegation, 'a[data-action]', this);
-        Y.log(count+' courses being managed', 'note', 'core_course');
+        listing.delegate('click', this.handleCourseDelegation, 'a[data-action]', this);
+        Y.log(count+' courses being managed', 'info', 'moodle-course-management');
+    },
+
+    /**
+     * Registers a course within the management display.
+     * @method registerCourse
+     * @param {Course} course
+     */
+    registerCourse : function(course) {
+        var courses = this.get('courses');
+        courses.push(course);
+        this.set('courses', courses);
     },
 
     /**
      * Handles the event fired by a delegated course listener.
      *
-     * @method handle_course_delegation
+     * @method handleCourseDelegation
      * @protected
      * @param {EventFacade} e
      */
-    handle_course_delegation : function(e) {
+    handleCourseDelegation : function(e) {
         var target = e.currentTarget,
             action = target.getData('action'),
             courseid = target.ancestor('.listitem').getData('id'),
-            course = this.get_course_by_id(courseid);
-        course.handle(action, e);
+            course = this.getCourseById(courseid);
+        if (course) {
+            course.handle(action, e);
+        } else {
+            Y.log('Course with ID '+courseid+' could not be found for delegation', 'error', 'moodle-course-management');
+        }
     },
 
     /**
      * Handles the event fired by a delegated course listener.
      *
-     * @method handle_category_delegation
+     * @method handleCategoryDelegation
      * @protected
      * @param {EventFacade} e
      */
-    handle_category_delegation : function(e) {
+    handleCategoryDelegation : function(e) {
         var target = e.currentTarget,
             action = target.getData('action'),
             categoryid = target.ancestor('.listitem').getData('id'),
-            category = this.get_category_by_id(categoryid);
-        category.handle(action, e);
+            category = this.getCategoryById(categoryid);
+        if (category) {
+            category.handle(action, e);
+        } else {
+            Y.log('Could not find category to delegate to.', 'error', 'moodle-course-management');
+        }
     },
 
     /**
      * Returns the category with the given ID.
-     * @method get_category_by_id
-     * @param {Int} id
-     * @returns {Category|Int} The category or the categoryid given if there is no matching category.
+     * @method getCategoryById
+     * @param {Number} id
+     * @returns {Category|Boolean} The category or false if it can't be found.
      */
-    get_category_by_id : function(id) {
-        var i, category, categories = this.get('categories'), length = categories.length;
+    getCategoryById : function(id) {
+        var i,
+            category,
+            categories = this.get('categories'),
+            length = categories.length;
         for (i = 0; i < length; i++) {
             category = categories[i];
             if (category.get('categoryid') === id) {
                 return category;
             }
         }
-        return id;
-    },
-
-    /**
-     * Returns the course with the given id.
-     * @method get_course_by_id
-     * @param {Int} id
-     * @returns {Category|Int} The course or the courseid given if there is no matching category.
-     */
-    get_course_by_id : function(id) {
-        var i, course, courses = this.get('courses'), length = courses.length;
-        for (i = 0; i < length; i++) {
-            course = courses[i];
-            if (course.get('courseid') === id) {
-                return course;
-            }
-        }
         return false;
     },
 
     /**
-     * Removes the course with the given ID.
-     * @method remove_course_by_id
-     * @param {Int} id
+     * Returns the course with the given id.
+     * @method getCourseById
+     * @param {Number} id
+     * @returns {Course|Boolean} The course or false if not found/
      */
-    remove_course_by_id : function() {
+    getCourseById : function(id) {
+        var i,
+            course,
+            courses = this.get('courses'),
+            length = courses.length;
+        for (i = 0; i < length; i++) {
+            if (!courses.hadOwnPropery(i)) {
+                course = courses[i];
+                if (course.get('courseid') === id) {
+                    return course;
+                }
+            }
+        }
+        return id;
+    },
+
+    /**
+     * Removes the course with the given ID.
+     * @method removeCourseById
+     * @param {Number} id
+     */
+    removeCourseById : function() {
         var courses = this.get('courses'),
+            length = courses.length,
+            course,
             i;
         for (i = 0; i < length; i++) {
             course = courses[i];
@@ -368,13 +408,13 @@ Console.prototype = {
     /**
      * Performs an AJAX action.
      *
-     * @method perform_ajax_action
+     * @method performAjaxAction
      * @param {String} action The action to perform.
      * @param {Object} args The arguments to pass through with teh request.
      * @param {Function} callback The function to call when all is done.
      * @param {Object} context The object to use as the context for the callback.
      */
-    perform_ajax_action : function(action, args, callback, context) {
+    performAjaxAction : function(action, args, callback, context) {
         var io = new Y.IO();
         args.action = action;
         args.ajax = '1';
@@ -392,19 +432,15 @@ Console.prototype = {
 };
 Y.extend(Console, Y.Base, Console.prototype);
 
-/**
- * Course namespace.
- * @static
- * @namespace M
- * @class course
- */
 M.course = M.course || {};
+M.course.management = M.course.management || {};
+M.course.management.console = null;
 
 /**
  * Initalises the course management console.
  * @static
  * @param {Object} config
  */
-M.course.init_management = function(config) {
-    M.course.console = new Console(config);
+M.course.management.init = function(config) {
+    M.course.management.console = new Console(config);
 };
