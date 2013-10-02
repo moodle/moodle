@@ -63,15 +63,16 @@ class tool_generator_site_backend extends tool_generator_backend {
      * @param int $size Size as numeric index
      * @param bool $bypasscheck If debugging level checking was skipped.
      * @param bool $fixeddataset To use fixed or random data
+     * @param int|bool $filesizelimit The max number of bytes for a generated file
      * @param bool $progress True if progress information should be displayed
      * @return int Course id
      */
-    public function __construct($size, $bypasscheck, $fixeddataset = false, $progress = true) {
+    public function __construct($size, $bypasscheck, $fixeddataset = false, $filesizelimit = false, $progress = true) {
 
         // Set parameters.
         $this->bypasscheck = $bypasscheck;
 
-        parent::__construct($size, $fixeddataset, $progress);
+        parent::__construct($size, $fixeddataset, $filesizelimit, $progress);
     }
 
     /**
@@ -155,6 +156,10 @@ class tool_generator_site_backend extends tool_generator_backend {
             'fixeddataset' => 'fixeddataset',
             'bypasscheck' => 'bypasscheck',
         );
+
+        if ($this->filesizelimit) {
+            $options[] = '--filesizelimit="' . $this->filesizelimit . '"';
+        }
 
         // Getting an options string.
         foreach ($optionstoextend as $attribute => $option) {

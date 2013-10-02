@@ -102,15 +102,15 @@ class tool_generator_course_backend extends tool_generator_backend {
      * @param string $shortname Course shortname
      * @param int $size Size as numeric index
      * @param bool $fixeddataset To use fixed or random data
+     * @param int|bool $filesizelimit The max number of bytes for a generated file
      * @param bool $progress True if progress information should be displayed
-     * @return int Course id
      */
-    public function __construct($shortname, $size, $fixeddataset = false, $progress = true) {
+    public function __construct($shortname, $size, $fixeddataset = false, $filesizelimit = false, $progress = true) {
 
         // Set parameters.
         $this->shortname = $shortname;
 
-        parent::__construct($size, $fixeddataset, $progress);
+        parent::__construct($size, $fixeddataset, $filesizelimit, $progress);
     }
 
     /**
@@ -364,7 +364,7 @@ class tool_generator_course_backend extends tool_generator_backend {
 
             // Generate random binary data (different for each file so it
             // doesn't compress unrealistically).
-            $data = self::get_random_binary(self::$paramsmallfilesize[$this->size]);
+            $data = self::get_random_binary($this->limit_filesize(self::$paramsmallfilesize[$this->size]));
 
             $fs->create_file_from_string($filerecord, $data);
             $this->dot($i, $count);
@@ -381,6 +381,7 @@ class tool_generator_course_backend extends tool_generator_backend {
      * @return Random data
      */
     private static function get_random_binary($length) {
+
         $data = microtime(true);
         if (strlen($data) > $length) {
             // Use last digits of data.
@@ -401,8 +402,9 @@ class tool_generator_course_backend extends tool_generator_backend {
 
         // Work out how many files and how many blocks to use (up to 64KB).
         $count = self::$parambigfilecount[$this->size];
-        $blocks = ceil(self::$parambigfilesize[$this->size] / 65536);
-        $blocksize = floor(self::$parambigfilesize[$this->size] / $blocks);
+        $filesize = $this->limit_filesize(self::$parambigfilesize[$this->size]);
+        $blocks = ceil($filesize / 65536);
+        $blocksize = floor($filesize / $blocks);
 
         $this->log('createbigfiles', $count, true);
 
@@ -521,6 +523,22 @@ class tool_generator_course_backend extends tool_generator_backend {
         }
 
         return $userid;
+    }
+
+    /**
+     * Restricts the binary file size if necessary
+     *
+     * @param int $length The total length
+     * @return int The limited length if a limit was specified.
+     */
+    private function limit_filesize($length) {
+
+        // Limit to $this->filesizelimit.
+        if (is_numeric($this->filesizelimit) && $length > $this->filesizelimit) {
+            $length = floor($this->filesizelimit);
+        }
+
+        return $length;
     }
 
 }
