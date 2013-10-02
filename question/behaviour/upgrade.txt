@@ -11,16 +11,22 @@ class qbehaviour_mybehaviour_type extends question_behaviour_type {
    question_attempt. That is like the difference between the qtype_mytype and
    the qtype_mytype_question classes.
 
-Practically, what this means is that any of the methods that used to be
-static methods of qbehaviour_mybehaviour class are now normal instance methods
-of the qbehaviour_mybehaviour_type class. Specifically.
+   Practically, what this means is that any of the methods that used to be
+   static methods of qbehaviour_mybehaviour class are now normal instance
+   methods of the qbehaviour_mybehaviour_type class. Specifically.
     2.5 / qbehaviour_mybehaviour -> 2.6 / qbehaviour_mybehaviour_type
     IS_ARCHETYPAL                -> is_archetypal()
     adjust_random_guess_score()  -> adjust_random_guess_score()
     get_unused_display_options() -> get_unused_display_options()
 
-3) The static method is_manual_grade_in_range has move from the
+3) The static method is_manual_grade_in_range has moved from the
    question_behaviour class to the question_engine class.
+
+4) Behaviours can now control how the marks information is displayed in the
+   grey info area to the left of the question. There is a new method
+   mark_summary that you can override, although the default implementation is
+   fine in most cases. it uses the marked_out_of_max and mark_out_of_max methods
+   as appropriate, so you may just wish to override those.
 
 
 === 2.3 ===
