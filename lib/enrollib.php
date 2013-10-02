@@ -1462,6 +1462,7 @@ abstract class enrol_plugin {
                     'courseid' => $courseid,
                     'context' => $context,
                     'relateduserid' => $ue->userid,
+                    'objectid' => $ue->id,
                     'other' => array(
                         'userenrolment' => (array)$ue,
                         'enrol' => $name
