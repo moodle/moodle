@@ -315,4 +315,11 @@
     <version>1.2</version>
     <licenseversion></licenseversion>
   </library>
+  <library>
+    <location>mod/assign/feedback/editpdf/fpdi</location>
+    <name>FPDI</name>
+    <license>Apache</license>
+    <version>1.4.4</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
 </libraries>

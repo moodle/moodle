@@ -1,0 +1,102 @@
+var DROPDOWN_NAME = "Dropdown menu",
+    DROPDOWN;
+
+/**
+ * DROPDOWN
+ * This is a drop down list of buttons triggered (and aligned to) a button.
+ *
+ * @namespace M.assignfeedback_editpdf.widget.dropdown
+ * @class dropdown
+ * @constructor
+ * @extends Y.Base
+ */
+DROPDOWN = function(config) {
+    config.draggable = false;
+    config.centered = false;
+    config.width = 'auto';
+    config.lightbox = false;
+    config.visible = false;
+    config.zIndex = 100;
+    config.footerContent = '';
+    DROPDOWN.superclass.constructor.apply(this, [config]);
+};
+
+Y.extend(DROPDOWN, M.core.dialogue, {
+    /**
+     * Initialise the menu.
+     *
+     * @method initializer
+     * @return void
+     */
+    initializer : function(config) {
+        var button, body, headertext, bb;
+        DROPDOWN.superclass.initializer.call(this, config);
+
+        bb = this.get('boundingBox');
+        bb.addClass('assignfeedback_editpdf_dropdown');
+
+        // Align the menu to the button that opens it.
+        button = this.get('buttonNode');
+
+        // Close the menu when clicked outside (excluding the button that opened the menu).
+        body = this.bodyNode;
+
+        headertext = Y.Node.create('<h3/>');
+        headertext.addClass('accesshide');
+        headertext.setHTML(this.get('headerText'));
+        body.prepend(headertext);
+
+        body.on('clickoutside', function(e) {
+            if (this.get('visible')) {
+                if (e.target !== button && e.target.ancestor() !== button) {
+                    e.preventDefault();
+                    this.hide();
+                }
+            }
+        }, this);
+
+        button.on('click', this.show, this);
+        button.on('key', this.show, 'enter,space', this);
+    },
+
+    /**
+     * Override the show method to align to the button.
+     *
+     * @method show
+     * @return void
+     */
+    show : function() {
+        var button = this.get('buttonNode');
+
+        result = DROPDOWN.superclass.show.call(this);
+        this.align(button, [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]);
+    }
+}, {
+    NAME : DROPDOWN_NAME,
+    ATTRS : {
+        /**
+         * The header for the drop down (only accessible to screen readers).
+         *
+         * @attribute headerText
+         * @type String
+         * @default ''
+         */
+        headerText : {
+            value : ''
+        },
+
+        /**
+         * The button used to show/hide this drop down menu.
+         *
+         * @attribute buttonNode
+         * @type Y.Node
+         * @default null
+         */
+        buttonNode : {
+            value : null
+        }
+    }
+});
+
+M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};
+M.assignfeedback_editpdf.dropdown = DROPDOWN;

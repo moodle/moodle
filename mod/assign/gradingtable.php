@@ -1160,6 +1160,7 @@ class assign_grading_table extends table_sql implements renderable {
                         $submission->timemodified = $row->timesubmitted;
                         $submission->assignment = $this->assignment->get_instance()->id;
                         $submission->userid = $row->userid;
+                        $submission->attemptnumber = $row->attemptnumber;
                     }
                     // Field is used for only for import/export and refers the the fieldname for the text editor.
                     if (isset($field)) {
@@ -1185,6 +1186,7 @@ class assign_grading_table extends table_sql implements renderable {
                     $grade->userid = $row->userid;
                     $grade->grade = $row->grade;
                     $grade->mailed = $row->mailed;
+                    $grade->attemptnumber = $row->attemptnumber;
                 }
                 if ($this->quickgrading && $plugin->supports_quickgrading()) {
                     return $plugin->get_quickgrading_html($row->userid, $grade);

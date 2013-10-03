@@ -2293,7 +2293,7 @@ class assign {
      *
      * @return bool
      */
-    protected function can_grade() {
+    public function can_grade() {
         // Permissions check.
         if (!has_capability('mod/assign:grade', $this->context)) {
             return false;
