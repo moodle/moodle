@@ -718,12 +718,13 @@ abstract class question_cbm {
      * Add information about certainty to a response summary.
      * @param string $summary the response summary.
      * @param int $certainty the level of certainty to add.
+     * @return string the summary with information about the certainty added.
      */
     public static function summary_with_certainty($summary, $certainty) {
         if (is_null($certainty)) {
             return $summary;
         }
-        return $summary . ' [' . self::get_string($certainty) . ']';
+        return $summary . ' [' . self::get_short_string($certainty) . ']';
     }
 
     /**

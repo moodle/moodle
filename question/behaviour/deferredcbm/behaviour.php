@@ -62,7 +62,7 @@ class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
 
     public function get_right_answer_summary() {
         $summary = parent::get_right_answer_summary();
-        return $summary . ' [' . question_cbm::get_string(question_cbm::HIGH) . ']';
+        return question_cbm::summary_with_certainty($summary, question_cbm::HIGH);
     }
 
     public function get_correct_response() {
