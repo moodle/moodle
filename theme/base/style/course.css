@@ -217,8 +217,3 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 .dndupload-progress-outer {width:70px;border:1px solid black;border-radius:4px;height:10px;display:inline-block;margin:0;padding:0;overflow:hidden;position:relative;}
 .dndupload-progress-inner {width:0%;height:100%;background-color:green;display:inline-block;margin:0;padding:0;float:left;box-shadow: 0 0 4px #229b15;border-radius:2px;background-repeat:repeat-x;background-position:top;background-image:url([[pix:theme_base|progress]])}
 .dndupload-hidden {display:none;}
-
-/* activity label  */
-.modtype_label .no-overflow > p:last-child {
-    margin-bottom: 0;
-}
