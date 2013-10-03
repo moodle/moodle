@@ -18,7 +18,7 @@
  * IMS Enterprise enrolment tests.
  *
  * @package    enrol_imsenterprise
- * @category   phpunit
+ * @category   test
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,14 +33,20 @@ require_once($CFG->dirroot . '/enrol/imsenterprise/lib.php');
  * IMS Enterprise test case
  *
  * @package    enrol_imsenterprise
- * @category   phpunit
+ * @category   test
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class enrol_imsenterprise_testcase extends advanced_testcase {
 
+    /**
+     * @var $imsplugin enrol_imsenterprise_plugin IMS plugin instance.
+     */
     protected $imsplugin;
 
+    /**
+     * Setup required for all tests.
+     */
     protected function setUp() {
         $this->resetAfterTest(true);
         $this->imsplugin = enrol_get_plugin('imsenterprise');
@@ -63,7 +69,6 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->assertEquals($prevnusers, $DB->count_records('user'));
     }
 
-
     /**
      * Existing users are not created again
      */
@@ -81,7 +86,6 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
 
         $this->assertEquals($prevnusers, $DB->count_records('user'));
     }
-
 
     /**
      * Add new users
@@ -104,7 +108,6 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->assertEquals(($prevnusers + 1), $DB->count_records('user'));
     }
 
-
     /**
      * Existing courses are not created again
      */
@@ -126,7 +129,6 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
 
         $this->assertEquals($prevncourses, $DB->count_records('course'));
     }
-
 
     /**
      * Add new courses
@@ -207,7 +209,6 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->assertEquals($dbcourse->fullname, $course1->idnumber);
         $this->assertEquals($dbcourse->summary, $course1->idnumber);
 
-
         // Setting a mapping using all the description tags.
         $this->imsplugin->set_config('imscoursemapshortname', 'short');
         $this->imsplugin->set_config('imscoursemapfullname', 'long');
@@ -228,7 +229,6 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->assertEquals($dbcourse->shortname, $course2->imsshort);
         $this->assertEquals($dbcourse->fullname, $course2->imslong);
         $this->assertEquals($dbcourse->summary, $course2->imsfull);
-
 
         // Setting a mapping where the specified description tags doesn't exist in the XML file (must delegate into idnumber).
         $this->imsplugin->set_config('imscoursemapshortname', 'short');
@@ -251,7 +251,6 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
 
     }
 
-
     /**
      * Sets the plugin configuration for testing
      */
@@ -263,15 +262,13 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
         $this->imsplugin->set_config('createnewcategories', true);
     }
 
-
     /**
-     * Creates an IMS enterprise XML file and adds it's path to config settings
+     * Creates an IMS enterprise XML file and adds it's path to config settings.
      *
-     * @param array Array of users StdClass
-     * @param array Array of courses StdClass
+     * @param bool|array $users false or array of users StdClass
+     * @param bool|array $courses false or of courses StdClass
      */
     protected function set_xml_file($users = false, $courses = false) {
-        global $DB;
 
         $xmlcontent = '<enterprise>';
 
@@ -328,7 +325,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
       <full>'.$course->imsfull.'</full>';
                 }
 
-                // orgunit tag value is used by moodle as category name.
+                // The orgunit tag value is used by moodle as category name.
                 $xmlcontent .= '
     </description>
     <org>

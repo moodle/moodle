@@ -24,6 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Post installation procedure
+ */
 function xmldb_enrol_imsenterprise_install() {
     global $CFG, $DB;
 
