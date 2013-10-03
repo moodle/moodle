@@ -351,9 +351,11 @@ Console.prototype = {
             categories = this.get('categories'),
             length = categories.length;
         for (i = 0; i < length; i++) {
-            category = categories[i];
-            if (category.get('categoryid') === id) {
-                return category;
+            if (categories.hasOwnProperty(i)) {
+                category = categories[i];
+                if (category.get('categoryid') === id) {
+                    return category;
+                }
             }
         }
         return false;
@@ -371,14 +373,14 @@ Console.prototype = {
             courses = this.get('courses'),
             length = courses.length;
         for (i = 0; i < length; i++) {
-            if (!courses.hadOwnPropery(i)) {
+            if (courses.hasOwnProperty(i)) {
                 course = courses[i];
                 if (course.get('courseid') === id) {
                     return course;
                 }
             }
         }
-        return id;
+        return false;
     },
 
     /**
@@ -827,6 +829,9 @@ Item.prototype = {
             }
             this.updated(true);
         } else {
+            // Aha it succeeded but this is the top item in the list. Pagination is in play!
+            // Refresh to update the state of things.
+            window.location.reload();
         }
     },
 
@@ -878,6 +883,9 @@ Item.prototype = {
             }
             this.updated(true);
         } else {
+            // Aha it succeeded but this is the bottom item in the list. Pagination is in play!
+            // Refresh to update the state of things.
+            window.location.reload();
         }
     },
 

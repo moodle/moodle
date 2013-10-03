@@ -42,7 +42,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * course management pages that much cooler.
      */
     public function enhance_management_interface() {
-        $this->page->requires->yui_module('moodle-course-management', 'M.course.init_management');
+        $this->page->requires->yui_module('moodle-course-management', 'M.course.management.init');
         $this->page->requires->strings_for_js(
             array('show', 'hide', 'expand', 'collapse', 'confirmcoursemove', 'yes', 'no', 'confirm'),
             'moodle'
@@ -64,7 +64,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
         if ($viewmode !== null) {
             if ($viewmode === 'courses') {
-                $categories = coursecat::make_categories_list();
+                $categories = coursecat::make_categories_list(array('moodle/category:manage', 'moodle/course:create'));
                 $nothing = false;
                 if ($categoryid === null) {
                     $nothing = array('' => get_string('selectacategory'));
@@ -192,7 +192,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $icon = html_writer::link($viewcaturl, $icon, array('class' => 'float-left'));
         }
         $actions = \core_course\management\helper::get_category_listitem_actions($category);
-        $hasactions = !empty($actions);
+        $hasactions = !empty($actions) || $category->can_create_course();
 
         $html = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
@@ -275,6 +275,9 @@ class core_course_management_renderer extends plugin_renderer_base {
             $menu->actiontext = get_string('createnew');
             $menu->actionicon = new pix_icon('t/add', ' ', 'moodle', array('class' => 'iconsmall'));
             $actions[] = $this->render($menu);
+        }
+        if (coursecat::can_approve_course_requests()) {
+            $actions[] = html_writer::link(new moodle_url('/course/pending.php'), get_string('coursespending'));
         }
         if ($category->can_resort_subcategories()) {
             $hasitems = true;
@@ -404,8 +407,15 @@ class core_course_management_renderer extends plugin_renderer_base {
             'limit' => $perpage
         );
         $courseid = isset($course) ? $course->id : null;
+        $class = '';
+        if ($page === 0) {
+            $class .= ' firstpage';
+        }
+        if ($page + 1 === (int)$totalpages) {
+            $class .= ' lastpage';
+        }
 
-        $html  = html_writer::start_div('course-listing', array(
+        $html  = html_writer::start_div('course-listing'.$class, array(
             'data-category' => $category->id,
             'data-page' => $page,
             'data-totalpages' => $totalpages,
@@ -513,6 +523,11 @@ class core_course_management_renderer extends plugin_renderer_base {
         );
 
         $bulkcourseinput = array('type' => 'checkbox', 'name' => 'bc[]', 'value' => $course->id, 'class' => 'bulk-action-checkbox');
+        if (!$category->has_manage_capability()) {
+            // Very very hardcoded here.
+            $bulkcourseinput['style'] = 'visibility:hidden';
+        }
+
         $viewcourseurl = new moodle_url($this->page->url, array('courseid' => $course->id));
 
         $html  = html_writer::start_tag('li', $attributes);
@@ -551,6 +566,11 @@ class core_course_management_renderer extends plugin_renderer_base {
         if ($category->can_create_course()) {
             $url = new moodle_url('/course/edit.php', array('category' => $category->id, 'returnto' => 'catmanage'));
             $actions[] = html_writer::link($url, get_string('newcourse'));
+        }
+        if ($category->can_request_course()) {
+            // Request a new course.
+            $url = new moodle_url('/course/request.php', array('return' => 'management'));
+            $actions[] = html_writer::link($url, get_string('requestcourse'));
         }
         if ($category->can_resort_courses()) {
             $params = $this->page->url->params();
@@ -595,54 +615,15 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @return string
      */
     public function course_listitem_actions(coursecat $category, course_in_list $course) {
-        $baseurl = new moodle_url(
-            '/course/management.php',
-            array('courseid' => $course->id, 'categoryid' => $course->category, 'sesskey' => sesskey())
-        );
-        $actions = array();
-        // Edit.
-        if ($course->can_edit()) {
-            $actions[] = $this->output->action_icon(
-                new moodle_url('/course/edit.php', array('id' => $course->id)),
-                new pix_icon('t/edit', get_string('edit')),
-                null,
-                array('class' => 'action-edit')
-            );
-        }
-        // Show/Hide.
-        if ($course->can_change_visibility()) {
-            $actions[] = $this->output->action_icon(
-                new moodle_url($baseurl, array('action' => 'hidecourse')),
-                new pix_icon('t/hide', get_string('hide')),
-                null,
-                array('data-action' => 'hide', 'class' => 'action-hide')
-            );
-            $actions[] = $this->output->action_icon(
-                new moodle_url($baseurl, array('action' => 'showcourse')),
-                new pix_icon('t/show', get_string('show')),
-                null,
-                array('data-action' => 'show', 'class' => 'action-show')
-            );
-        }
-        // Move up/down.
-        if ($category->can_resort_courses()) {
-            $actions[] = $this->action_icon(
-                new moodle_url($baseurl, array('action' => 'movecourseup')),
-                new pix_icon('t/up', get_string('up')),
-                null,
-                array('data-action' => 'moveup', 'class' => 'action-moveup')
-            );
-            $actions[] = $this->action_icon(
-                new moodle_url($baseurl, array('action' => 'movecoursedown')),
-                new pix_icon('t/down', get_string('down')),
-                null,
-                array('data-action' => 'movedown', 'class' => 'action-movedown')
-            );
-        }
+        $actions = \core_course\management\helper::get_course_listitem_actions($category, $course);
         if (empty($actions)) {
             return '';
         }
-        return html_writer::span(join('', $actions), 'course-item-actions item-actions');
+        $actionshtml = array();
+        foreach ($actions as $action) {
+            $actionshtml[] = $this->output->action_icon($action['url'], $action['icon'], null, $action['attributes']);
+        }
+        return html_writer::span(join('', $actionshtml), 'course-item-actions item-actions');
     }
 
     /**
@@ -696,9 +677,9 @@ class core_course_management_renderer extends plugin_renderer_base {
      * @return string
      */
     protected function detail_pair($key, $value, $class ='') {
-        $html = html_writer::start_div('detail-pair yui3-g '.preg_replace('#[^a-zA-Z0-9_\-]#', '-', $class));
-        $html .= html_writer::div(html_writer::span($key), 'pair-key yui3-u-1-4');
-        $html .= html_writer::div(html_writer::span($value), 'pair-value yui3-u-3-4');
+        $html = html_writer::start_div('detail-pair row yui3-g '.preg_replace('#[^a-zA-Z0-9_\-]#', '-', $class));
+        $html .= html_writer::div(html_writer::span($key), 'pair-key span3 yui3-u-1-4');
+        $html .= html_writer::div(html_writer::span($value), 'pair-value span9 yui3-u-3-4');
         $html .= html_writer::end_div();
         return $html;
     }
@@ -716,9 +697,9 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
         $options = array();
         foreach ($actions as $action) {
-            $options[] = $this->action_button($action['url'], $action['string']);
+            $options[] = $this->action_link($action['url'], $action['string']);
         }
-        return html_writer::div(join('', $options), 'listing-actions course-detail-listing-actions');
+        return html_writer::div(join(' | ', $options), 'listing-actions course-detail-listing-actions');
     }
 
     /**
@@ -1073,30 +1054,32 @@ class core_course_management_renderer extends plugin_renderer_base {
         );
         $actions = array();
         // Edit.
-        if ($course->can_edit()) {
-            $actions[] = $this->output->action_icon(
-                new moodle_url('/course/edit.php', array('id' => $course->id)),
-                new pix_icon('t/edit', get_string('edit')),
-                null,
-                array('class' => 'action-edit')
-            );
-        }
-        // Show/Hide.
-        if ($course->can_change_visibility()) {
-            if ($course->visible) {
+        if ($course->can_access()) {
+            if ($course->can_edit()) {
                 $actions[] = $this->output->action_icon(
-                    new moodle_url($baseurl, array('action' => 'hidecourse')),
-                    new pix_icon('t/show', get_string('hide')),
+                    new moodle_url('/course/edit.php', array('id' => $course->id)),
+                    new pix_icon('t/edit', get_string('edit')),
                     null,
-                    array('data-action' => 'hide', 'class' => 'action-hide')
+                    array('class' => 'action-edit')
                 );
-            } else {
-                $actions[] = $this->output->action_icon(
-                    new moodle_url($baseurl, array('action' => 'showcourse')),
-                    new pix_icon('t/hide', get_string('show')),
-                    null,
-                    array('data-action' => 'show', 'class' => 'action-show')
-                );
+            }
+            // Show/Hide.
+            if ($course->can_change_visibility()) {
+                if ($course->visible) {
+                    $actions[] = $this->output->action_icon(
+                        new moodle_url($baseurl, array('action' => 'hidecourse')),
+                        new pix_icon('t/show', get_string('hide')),
+                        null,
+                        array('data-action' => 'hide', 'class' => 'action-hide')
+                    );
+                } else {
+                    $actions[] = $this->output->action_icon(
+                        new moodle_url($baseurl, array('action' => 'showcourse')),
+                        new pix_icon('t/hide', get_string('show')),
+                        null,
+                        array('data-action' => 'show', 'class' => 'action-show')
+                    );
+                }
             }
         }
         if (empty($actions)) {

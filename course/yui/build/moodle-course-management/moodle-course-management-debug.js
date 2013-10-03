@@ -358,9 +358,11 @@ Console.prototype = {
             categories = this.get('categories'),
             length = categories.length;
         for (i = 0; i < length; i++) {
-            category = categories[i];
-            if (category.get('categoryid') === id) {
-                return category;
+            if (categories.hasOwnProperty(i)) {
+                category = categories[i];
+                if (category.get('categoryid') === id) {
+                    return category;
+                }
             }
         }
         return false;
@@ -378,14 +380,14 @@ Console.prototype = {
             courses = this.get('courses'),
             length = courses.length;
         for (i = 0; i < length; i++) {
-            if (!courses.hadOwnPropery(i)) {
+            if (courses.hasOwnProperty(i)) {
                 course = courses[i];
                 if (course.get('courseid') === id) {
                     return course;
                 }
             }
         }
-        return id;
+        return false;
     },
 
     /**
@@ -841,7 +843,10 @@ Item.prototype = {
             this.updated(true);
             Y.log('Success: '+this.get('itemname')+' moved up by AJAX.', 'info', 'moodle-course-management');
         } else {
-            Y.log(this.get('itemname')+' cannot be moved up as its the top item', 'warn', 'moodle-course-management');
+            // Aha it succeeded but this is the top item in the list. Pagination is in play!
+            // Refresh to update the state of things.
+            Y.log(this.get('itemname')+' cannot be moved up as its the top item on this page.', 'info', 'moodle-course-management');
+            window.location.reload();
         }
     },
 
@@ -895,7 +900,10 @@ Item.prototype = {
             this.updated(true);
             Y.log('Success: '+this.get('itemname')+' moved down by AJAX.', 'info', 'moodle-course-management');
         } else {
-            Y.log(this.get('itemname')+' cannot be moved down as its the last item', 'warn', 'moodle-course-management');
+            // Aha it succeeded but this is the bottom item in the list. Pagination is in play!
+            // Refresh to update the state of things.
+            Y.log(this.get('itemname')+' cannot be moved down as its the top item on this page.', 'info', 'moodle-course-management');
+            window.location.reload();
         }
     },
 

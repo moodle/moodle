@@ -269,7 +269,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      *
      * @global moodle_database $DB
      * @param array $ids An array of category ID's to load.
-     * @return array
+     * @return coursecat[]
      */
     public static function get_many(array $ids) {
         global $DB;
@@ -1102,17 +1102,46 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      * @return bool
      */
     public static function has_manage_capability_on_any() {
+        return self::has_capability_on_any('moodle/category:manage');
+    }
+
+    /**
+     * Checks if the user has at least one of the given capabilities on any category.
+     *
+     * @param array|string $capabilities One or more capabilities to check. Check made is an OR.
+     * @return bool
+     */
+    public static function has_capability_on_any($capabilities) {
         global $DB;
         if (!isloggedin() || isguestuser()) {
             return false;
         }
-        $cache = cache::make('core', 'coursecat');
-        $has = $cache->get('has_manage_capability');
-        if ($has !== false) {
-            return ((int)$has === 1);
+
+        if (!is_array($capabilities)) {
+            $capabilities = array($capabilities);
+        }
+        $keys = array();
+        foreach ($capabilities as $capability) {
+            $keys[$capability] = sha1($capability);
         }
 
-        $has = false;
+        /* @var cache_session $cache */
+        $cache = cache::make('core', 'coursecat');
+        $hascapability = $cache->get_many($keys);
+        $needtoload = false;
+        foreach ($hascapability as $capability) {
+            if ($capability === '1') {
+                return true;
+            } else if ($capability === false) {
+                $needtoload = true;
+            }
+        }
+        if ($needtoload === false) {
+            // All capabilities were retrieved and the user didn't have any.
+            return false;
+        }
+
+        $haskey = null;
         $fields = context_helper::get_preload_record_columns_sql('ctx');
         $sql = "SELECT ctx.instanceid AS categoryid, $fields
                       FROM {context} ctx
@@ -1123,14 +1152,25 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         foreach ($recordset as $context) {
             context_helper::preload_from_record($context);
             $context = context_coursecat::instance($context->categoryid);
-            if (has_capability('moodle/category:manage', $context)) {
-                $has = true;
-                break;
+            foreach ($capabilities as $capability) {
+                if (has_capability($capability, $context)) {
+                    $haskey = $capability;
+                    break 2;
+                }
             }
         }
         $recordset->close();
-        $cache->set('has_manage_capability', ($has) ? '1' : '0');
-        return $has;
+        if ($haskey === null) {
+            $data = array();
+            foreach ($keys as $key) {
+                $data[$key] = '0';
+            }
+            $cache->set_many($data);
+            return false;
+        } else {
+            $cache->set($haskey, '1');
+            return true;
+        }
     }
 
     /**
@@ -1766,8 +1806,9 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      * @see coursecat::update()
      *
      * @param coursecat $newparentcat
+     * @throws moodle_exception
      */
-     protected function change_parent_raw(coursecat $newparentcat) {
+    protected function change_parent_raw(coursecat $newparentcat) {
         global $DB;
 
         $context = $this->get_context();
@@ -2458,7 +2499,39 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      * @return coursecat
      */
     public function get_parent_coursecat() {
-        return coursecat::get($this->parent);
+        return self::get($this->parent);
+    }
+
+
+    /**
+     * Returns true if the user is able to request a new course be created.
+     * @return bool
+     */
+    public function can_request_course() {
+        global $CFG;
+        if (empty($CFG->enablecourserequests) || $this->id != $CFG->defaultrequestcategory) {
+            return false;
+        }
+        return !$this->can_create_course() && has_capability('moodle/course:request', $this->get_context());
+    }
+
+    /**
+     * Returns true if the user can approve course requests.
+     * @return bool
+     */
+    public static function can_approve_course_requests() {
+        global $CFG, $DB;
+        if (empty($CFG->enablecourserequests)) {
+            return false;
+        }
+        $context = context_system::instance();
+        if (!has_capability('moodle/site:approvecourse', $context)) {
+            return false;
+        }
+        if (!$DB->record_exists('course_request', array())) {
+            return false;
+        }
+        return true;
     }
 }
 
@@ -2518,6 +2591,9 @@ class course_in_list implements IteratorAggregate {
 
     /** @var array array of course contacts - stores result of call to get_course_contacts() */
     protected $coursecontacts;
+
+    /** @var bool true if the current user can access the course, false otherwise. */
+    protected $canaccess = null;
 
     /**
      * Creates an instance of the class from record
@@ -2775,11 +2851,18 @@ class course_in_list implements IteratorAggregate {
      * @return bool
      */
     public function can_access() {
-        return can_access_course($this->record);
+        if ($this->canaccess === null) {
+            $this->canaccess = can_access_course($this->record);
+        }
+        return $this->canaccess;
     }
 
     /**
      * Returns true if the user can edit this courses settings.
+     *
+     * Note: this function does not check that the current user can access the course.
+     * To do that please call require_login with the course, or if not possible call {@see course_in_list::can_access()}
+     *
      * @return bool
      */
     public function can_edit() {
@@ -2788,6 +2871,10 @@ class course_in_list implements IteratorAggregate {
 
     /**
      * Returns true if the user can change the visibility of this course.
+     *
+     * Note: this function does not check that the current user can access the course.
+     * To do that please call require_login with the course, or if not possible call {@see course_in_list::can_access()}
+     *
      * @return bool
      */
     public function can_change_visibility() {
@@ -2804,7 +2891,19 @@ class course_in_list implements IteratorAggregate {
     }
 
     /**
+     * Returns true if this course is visible to the current user.
+     * @return bool
+     */
+    public function is_uservisible() {
+        return $this->visible || has_capability('moodle/course:viewhiddencourses', $this->get_context());
+    }
+
+    /**
      * Returns true if the current user can review enrolments for this course.
+     *
+     * Note: this function does not check that the current user can access the course.
+     * To do that please call require_login with the course, or if not possible call {@see course_in_list::can_access()}
+     *
      * @return bool
      */
     public function can_review_enrolments() {
@@ -2813,6 +2912,10 @@ class course_in_list implements IteratorAggregate {
 
     /**
      * Returns true if the current user can delete this course.
+     *
+     * Note: this function does not check that the current user can access the course.
+     * To do that please call require_login with the course, or if not possible call {@see course_in_list::can_access()}
+     *
      * @return bool
      */
     public function can_delete() {
@@ -2821,6 +2924,10 @@ class course_in_list implements IteratorAggregate {
 
     /**
      * Returns true if the current user can backup this course.
+     *
+     * Note: this function does not check that the current user can access the course.
+     * To do that please call require_login with the course, or if not possible call {@see course_in_list::can_access()}
+     *
      * @return bool
      */
     public function can_backup() {
@@ -2829,6 +2936,10 @@ class course_in_list implements IteratorAggregate {
 
     /**
      * Returns true if the current user can restore this course.
+     *
+     * Note: this function does not check that the current user can access the course.
+     * To do that please call require_login with the course, or if not possible call {@see course_in_list::can_access()}
+     *
      * @return bool
      */
     public function can_restore() {

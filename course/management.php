@@ -38,6 +38,10 @@ $search = optional_param('search', '', PARAM_RAW); // Search words. Shortname, f
 $blocklist = optional_param('blocklist', 0, PARAM_INT); // Find courses containing this block.
 $modulelist = optional_param('modulelist', '', PARAM_PLUGIN); // Find courses containing the given modules.
 
+if (!in_array($viewmode, array('default', 'combined', 'courses', 'categories'))) {
+    $viewmode = 'default';
+}
+
 $issearching = ($search !== '' || $blocklist !== 0 || $modulelist !== '');
 if ($issearching) {
     $viewmode = 'courses';
@@ -69,6 +73,7 @@ if ($courseid) {
     }
     $context = $systemcontext;
 }
+
 if ($page !== 0) {
     $url->param('page', $page);
 }
@@ -93,6 +98,15 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
+if (!coursecat::has_capability_on_any(array('moodle/category:manage', 'moodle/course:create'))) {
+    // The user isn't able to manage any categories. Lets redirect them to the relevant course/index.php page.
+    $url = new moodle_url('/course/index.php');
+    if ($categoryid) {
+        $url->param('categoryid', $categoryid);
+    }
+    redirect($url);
+}
+
 // If the user poses any of these capabilities then they will be able to see the admin
 // tree and the management link within it.
 // This is the most accurate form of navigation.
@@ -104,17 +118,23 @@ $capabilities = array(
     'moodle/site:approvecourse'
 );
 if ($category && !has_any_capability($capabilities, $systemcontext)) {
-    // If the user doesn't poses any of these system capabilities then we're going to trigger
-    // the page to set the specific category being viewed.
+    // If the user doesn't poses any of these system capabilities then we're going to mark the manage link in the settings block
+    // as active, tell the page to ignore the active path and just build what the user would expect.
     // This will at least give the page some relevant navigation.
-    $PAGE->set_category_by_id($category->id);
     navigation_node::override_active_url(new moodle_url('/course/management.php', array('categoryid' => $category->id)));
-} else if (!$issearching && $category !== null) {
+    $PAGE->set_category_by_id($category->id);
+    $PAGE->navbar->ignore_active(true);
+    $PAGE->navbar->add(get_string('coursemgmt', 'admin'), $PAGE->url->out_omit_querystring());
+}
+if (!$issearching && $category !== null) {
     $parents = coursecat::get_many($category->get_parents());
+    $parents[] = $category;
     foreach ($parents as $parent) {
-        $PAGE->navbar->add($parent->get_formatted_name());
+        $PAGE->navbar->add(
+            $parent->get_formatted_name(),
+            new moodle_url('/course/management.php', array('categoryid' => $parent->id))
+        );
     }
-    $PAGE->navbar->add($category->get_formatted_name());
     if ($course instanceof course_in_list) {
         // Use the list name so that it matches whats being displayed below.
         $PAGE->navbar->add($course->get_formatted_name());
@@ -204,7 +224,7 @@ if ($action !== false && confirm_sesskey()) {
             require_once($CFG->dirroot.'/course/delete_category_form.php');
             $mform = new core_course_deletecategory_form(null, $category);
             if ($mform->is_cancelled()) {
-                redirect(new moodle_url('/course/management.php'));
+                redirect($PAGE->url);
             }
             // Start output.
             /* @var core_course_management_renderer|core_renderer $renderer */
@@ -355,6 +375,14 @@ if ($viewmode === 'default' || $viewmode === 'combined') {
         $class = 'columns-1';
     }
 }
+if ($viewmode === 'default' || $viewmode === 'combined') {
+    $class .= ' viewmode-cobmined';
+} else {
+    $class .= ' viewmode-'.$viewmode;
+}
+if (($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'courses') && !empty($courseid)) {
+    $class .= ' course-selected';
+}
 
 /* @var core_course_management_renderer|core_renderer $renderer */
 $renderer = $PAGE->get_renderer('core_course', 'management');
@@ -401,10 +429,6 @@ if ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'course
     }
 }
 echo $renderer->grid_end();
-
-if (!empty($CFG->enablecourserequests) && $id == $CFG->defaultrequestcategory) {
-    print_course_request_buttons(context_system::instance());
-}
 
 // End of the management form.
 echo $renderer->management_form_end();

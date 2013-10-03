@@ -710,17 +710,22 @@ span.editinstructions {
             vertical-align:text-top;
             margin: 2px 6px 0 0;
         }
-        &[data-selected='1'] > div {
-            background-color:#f7f7f9;
-            border-top-color: #e1e1e8;
-            border-bottom-color:#f7f7f9;
-        }
-        &[data-selected='1'] li:first-of-type > div,
-        &[data-selected='1'][data-expandable='0']+li > div {
-            border-top-color:#e1e1e8;
-        }
-        &[data-selected='1']:last-of-type > div {
-            -bottom-color:#e1e1e8;
+        &[data-selected='1'] {
+            > div {
+                background-color:#f7f7f9;
+                border-top-color: #e1e1e8;
+                border-bottom-color:#f7f7f9;
+            }
+            &.highlight > div {
+                background-color:#ddffaa;
+            }
+            li:first-of-type > div,
+            &[data-expandable='0']+li > div {
+                border-top-color:#e1e1e8;
+            }
+            &:last-of-type > div {
+                border-bottom-color:#e1e1e8;
+            }
         }
 
         // Tree item indenting to represent depth.
@@ -811,10 +816,6 @@ span.editinstructions {
                 }
             }
         }
-        &:first-child > div .item-actions .action-moveup,
-        &:last-child > div .item-actions .action-movedown {
-            display: none;
-        }
     }
 
     #course-listing {
@@ -837,6 +838,8 @@ span.editinstructions {
                 margin: 0 6px 0 0;
             }
         }
+        > .firstpage .listitem:first-child > div .item-actions .action-moveup,
+        > .lastpage .listitem:last-child > div .item-actions .action-movedown {display: none;}
         .bulk-action-checkbox {
             vertical-align:middle;
             margin:-2px 6px 0 0;
@@ -845,6 +848,10 @@ span.editinstructions {
     #category-listing {
         .listitem.collapsed > ul.ml {
             display: none;
+        }
+        .listitem {
+            &:first-child > div .item-actions .action-moveup,
+            &:last-child > div .item-actions .action-movedown {display: none;}
         }
         .course-count {
             color:#a1a1a8;
@@ -974,7 +981,7 @@ span.editinstructions {
         }
         #category-listing > div,
         #course-listing > div,
-        #course-detail {
+        #course-detail > div {
             border:1px solid #e1e1e8;
             background-color:#FFF;
         }
@@ -987,6 +994,7 @@ span.editinstructions {
 }
 
 @media (max-width: 1199px) {
+    #course-category-listings.columns-2,
     #course-category-listings.columns-3 {
         background-color:transparent;
         border:0;
@@ -994,7 +1002,7 @@ span.editinstructions {
         #course-listing,
         #course-detail {
             width:100%;
-            margin-bottom:1em;
+            margin:0 0 1em;
         }
         #category-listing > div,
         #course-listing > div,

@@ -50,33 +50,8 @@ class helper {
      */
     public static function get_course_detail_array(\course_in_list $course) {
         global $DB;
-        $names = \role_get_names($course->get_context());
-        $sql = 'SELECT ra.roleid, COUNT(ra.id) AS rolecount
-                  FROM {role_assignments} ra
-                 WHERE ra.contextid = :contextid
-              GROUP BY ra.roleid';
-        $rolecounts = $DB->get_records_sql($sql, array('contextid' => $course->get_context()->id));
-        $roledetails = array();
-        foreach ($rolecounts as $result) {
-            $a = new \stdClass;
-            $a->role = $names[$result->roleid]->localname;
-            $a->count = $result->rolecount;
-            $roledetails[] = \get_string('assignedrolecount', 'moodle', $a);
-        }
 
-        $groups = \groups_get_course_data($course->id);
-
-        $enrolmentlines = array();
-        $instances = \enrol_get_instances($course->id, true);
-        $plugins = \enrol_get_plugins(true);
-        foreach ($instances as $instance) {
-            if (!isset($plugins[$instance->enrol])) {
-                // Weird.
-                continue;
-            }
-            $plugin = $plugins[$instance->enrol];
-            $enrolmentlines[] = $plugin->get_instance_name($instance);
-        }
+        $canaccess = $course->can_access();
 
         $format = \course_get_format($course->id);
         $modinfo = \get_fast_modinfo($course->id);
@@ -84,7 +59,9 @@ class helper {
         $sections = array();
         if ($format->uses_sections()) {
             foreach ($modinfo->get_section_info_all() as $section) {
-                $sections[] = $format->get_section_name($section);
+                if ($section->uservisible) {
+                    $sections[] = $format->get_section_name($section);
+                }
             }
         }
 
@@ -93,10 +70,6 @@ class helper {
         $categoryname = $category->get_formatted_name();
 
         $details = array(
-            'format' => array(
-                'key' => \get_string('format'),
-                'value' => \course_get_format($course)->get_format_name()
-            ),
             'fullname' => array(
                 'key' => \get_string('fullname'),
                 'value' => $course->get_formatted_fullname()
@@ -112,33 +85,72 @@ class helper {
             'category' => array(
                 'key' => \get_string('category'),
                 'value' => \html_writer::link($categoryurl, $categoryname)
-            ),
-            'groupings' => array(
-                'key' => \get_string('groupings', 'group'),
-                'value' => count($groups->groupings)
-            ),
-            'groups' => array(
-                'key' => \get_string('groups'),
-                'value' => count($groups->groups)
-            ),
-            'roleassignments' => array(
-                'key' => \get_string('roleassignments'),
-                'value' => join('<br />', $roledetails)
-            ),
-            'enrolmentmethods' => array(
-                'key' => \get_string('enrolmentmethods'),
-                'value' => join('<br />', $enrolmentlines)
-            ),
-            'sections' => array(
-                'key' => \get_string('sections'),
-                'value' => join('<br />', $sections)
-            ),
-            'modulesused' => array(
-                'key' => \get_string('modulesused'),
-                'value' => join('<br />', $modules)
             )
         );
+        if (has_capability('moodle/site:accessallgroups', $course->get_context())) {
+            $groups = \groups_get_course_data($course->id);
+            $details += array(
+                'groupings' => array(
+                    'key' => \get_string('groupings', 'group'),
+                    'value' => count($groups->groupings)
+                ),
+                'groups' => array(
+                    'key' => \get_string('groups'),
+                    'value' => count($groups->groups)
+                )
+            );
+        }
+        if ($canaccess) {
+            $names = \role_get_names($course->get_context());
+            $sql = 'SELECT ra.roleid, COUNT(ra.id) AS rolecount
+                      FROM {role_assignments} ra
+                     WHERE ra.contextid = :contextid
+                  GROUP BY ra.roleid';
+            $rolecounts = $DB->get_records_sql($sql, array('contextid' => $course->get_context()->id));
+            $roledetails = array();
+            foreach ($rolecounts as $result) {
+                $a = new \stdClass;
+                $a->role = $names[$result->roleid]->localname;
+                $a->count = $result->rolecount;
+                $roledetails[] = \get_string('assignedrolecount', 'moodle', $a);
+            }
 
+            $details['roleassignments'] = array(
+                'key' => \get_string('roleassignments'),
+                'value' => join('<br />', $roledetails)
+            );
+        }
+        if ($course->can_review_enrolments()) {
+            $enrolmentlines = array();
+            $instances = \enrol_get_instances($course->id, true);
+            $plugins = \enrol_get_plugins(true);
+            foreach ($instances as $instance) {
+                if (!isset($plugins[$instance->enrol])) {
+                    // Weird.
+                    continue;
+                }
+                $plugin = $plugins[$instance->enrol];
+                $enrolmentlines[] = $plugin->get_instance_name($instance);
+            }
+            $details['enrolmentmethods'] = array(
+                'key' => \get_string('enrolmentmethods'),
+                'value' => join('<br />', $enrolmentlines)
+            );
+        }
+        if ($canaccess) {
+            $details['format'] = array(
+                'key' => \get_string('format'),
+                'value' => \course_get_format($course)->get_format_name()
+            );
+            $details['sections'] = array(
+                'key' => \get_string('sections'),
+                'value' => join('<br />', $sections)
+            );
+            $details['modulesused'] = array(
+                'key' => \get_string('modulesused'),
+                'value' =>  join('<br />', $modules)
+            );
+        }
         return $details;
     }
 
@@ -241,6 +253,56 @@ class helper {
     }
 
     /**
+     * Returns an array of actions for a course listitem.
+     *
+     * @param \coursecat $category
+     * @param \course_in_list $course
+     * @return string
+     */
+    public static function get_course_listitem_actions(\coursecat $category, \course_in_list $course) {
+        $baseurl = new \moodle_url(
+            '/course/management.php',
+            array('courseid' => $course->id, 'categoryid' => $course->category, 'sesskey' => \sesskey())
+        );
+        $actions = array();
+        // Edit.
+        if ($course->can_edit()) {
+            $actions[] = array(
+                'url' => new \moodle_url('/course/edit.php', array('id' => $course->id)),
+                'icon' => new \pix_icon('t/edit', \get_string('edit')),
+                'attributes' => array('class' => 'action-edit')
+            );
+        }
+        // Show/Hide.
+        if ($course->can_change_visibility()) {
+            $actions[] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'hidecourse')),
+                'icon' => new \pix_icon('t/hide', \get_string('hide')),
+                'attributes' => array('data-action' => 'hide', 'class' => 'action-hide')
+            );
+            $actions[] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'showcourse')),
+                'icon' => new \pix_icon('t/show', \get_string('show')),
+                'attributes' => array('data-action' => 'show', 'class' => 'action-show')
+            );
+        }
+        // Move up/down.
+        if ($category->can_resort_courses()) {
+            $actions[] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'movecourseup')),
+                'icon' => new \pix_icon('t/up', \get_string('up')),
+                'attributes' => array('data-action' => 'moveup', 'class' => 'action-moveup')
+            );
+            $actions[] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'movecoursedown')),
+                'icon' => new \pix_icon('t/down', \get_string('down')),
+                'attributes' => array('data-action' => 'movedown', 'class' => 'action-movedown')
+            );
+        }
+        return $actions;
+    }
+
+    /**
      * Returns an array of actions that can be performed on the course being displayed.
      *
      * @param \course_in_list $course
@@ -251,7 +313,7 @@ class helper {
         $baseurl = new \moodle_url('/course/management.php', $params);
         $actions = array();
         // View.
-        if ($course->can_access()) {
+        if ($course->is_uservisible()) {
             $actions['view'] = array(
                 'url' => new \moodle_url('/course/view.php', array('id' => $course->id)),
                 'string' => \get_string('view')

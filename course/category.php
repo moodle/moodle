@@ -24,7 +24,7 @@
 
 require_once("../config.php");
 
-$categoryid = required_param('id', PARAM_INT); // Category id
+$categoryid = required_param('id', PARAM_INT); // Category id.
 
 debugging('Please use URL /course/index.php?categoryid=XXX instead of /course/category.php?id=XXX', DEBUG_DEVELOPER);
 
