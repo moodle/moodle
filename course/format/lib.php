@@ -251,6 +251,24 @@ abstract class format_base {
     }
 
     /**
+     * Returns true if the course has a front page.
+     *
+     * This function is called to determine if the course has a view page, whether or not
+     * it contains a listing of activities. It can be useful to set this to false when the course
+     * format has only one activity and ignores the course page. Or if there are multiple
+     * activities but no page to see the centralised information.
+     *
+     * Initially this was created to know if forms should add a button to return to the course page.
+     * So if 'Return to course' does not make sense in your format your should probably return false.
+     *
+     * @return boolean
+     * @since 2.6
+     */
+    public function has_view_page() {
+        return true;
+    }
+
+    /**
      * Returns true if this course format uses sections
      *
      * This function may be called without specifying the course id

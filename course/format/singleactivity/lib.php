@@ -457,4 +457,14 @@ class format_singleactivity extends format_base {
             $activitynode->remove();
         }
     }
+
+    /**
+     * Returns true if the course has a front page.
+     *
+     * @return boolean false
+     */
+    public function has_view_page() {
+        return false;
+    }
+
 }
