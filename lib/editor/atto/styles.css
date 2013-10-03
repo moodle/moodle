@@ -43,10 +43,18 @@ div.editor_atto_toolbar button + button {
 
 div.editor_atto_toolbar button[disabled] {
     opacity: .45;
+    background: none;
+    cursor: default;
 }
 
-div.editor_atto_toolbar button:active {
-    background: #B7D6FF;
+.editor_atto_toolbar button:active {
+    background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
+    background-color: #dfdfdf;
+}
+
+.editor_atto_toolbar button:hover {
+    background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
+    background-color: #ebebeb;
 }
 
 div.editor_atto_toolbar button img {
