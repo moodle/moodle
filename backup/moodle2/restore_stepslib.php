@@ -3551,6 +3551,10 @@ class restore_create_question_files extends restore_execution_step {
     protected function define_execution() {
         global $DB;
 
+        // Track progress, as this task can take a long time.
+        $progress = $this->task->get_progress();
+        $progress->start_progress($this->get_name(), core_backup_progress::INDETERMINATE);
+
         // Let's process only created questions
         $questionsrs = $DB->get_recordset_sql("SELECT bi.itemid, bi.newitemid, bi.parentitemid, q.qtype
                                                FROM {backup_ids_temp} bi
@@ -3558,6 +3562,9 @@ class restore_create_question_files extends restore_execution_step {
                                               WHERE bi.backupid = ?
                                                 AND bi.itemname = 'question_created'", array($this->get_restoreid()));
         foreach ($questionsrs as $question) {
+            // Report progress for each question.
+            $progress->progress();
+
             // Get question_category mapping, it contains the target context for the question
             if (!$qcatmapping = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'question_category', $question->parentitemid)) {
                 // Something went really wrong, cannot find the question_category for the question
@@ -3570,21 +3577,22 @@ class restore_create_question_files extends restore_execution_step {
 
             // Add common question files (question and question_answer ones)
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'questiontext',
-                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
+                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'generalfeedback',
-                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
+                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'answer',
-                                              $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true);
+                    $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true, $progress);
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'answerfeedback',
-                                              $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true);
+                    $oldctxid, $this->task->get_userid(), 'question_answer', null, $newctxid, true, $progress);
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'hint',
-                                              $oldctxid, $this->task->get_userid(), 'question_hint', null, $newctxid, true);
+                    $oldctxid, $this->task->get_userid(), 'question_hint', null, $newctxid, true, $progress);
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'correctfeedback',
-                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
+                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'partiallycorrectfeedback',
-                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
+                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
             restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), 'question', 'incorrectfeedback',
-                                              $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true);
+                    $oldctxid, $this->task->get_userid(), 'question_created', $question->itemid, $newctxid, true, $progress);
+
             // Add qtype dependent files
             $components = backup_qtype_plugin::get_components_and_fileareas($question->qtype);
             foreach ($components as $component => $fileareas) {
@@ -3592,11 +3600,12 @@ class restore_create_question_files extends restore_execution_step {
                     // Use itemid only if mapping is question_created
                     $itemid = ($mapping == 'question_created') ? $question->itemid : null;
                     restore_dbops::send_files_to_pool($this->get_basepath(), $this->get_restoreid(), $component, $filearea,
-                                                      $oldctxid, $this->task->get_userid(), $mapping, $itemid, $newctxid, true);
+                            $oldctxid, $this->task->get_userid(), $mapping, $itemid, $newctxid, true, $progress);
                 }
             }
         }
         $questionsrs->close();
+        $progress->end_progress();
     }
 }
 
