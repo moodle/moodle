@@ -75,7 +75,7 @@
 
 /* Courses and categories lists */
 
-.coursebox {border:1px solid #DDD;border-color:#DDDDDD;}
+.coursebox {border:1px solid #DDD;border-color:#DDDDDD;padding:3px 0;}
 #page-enrol-index .generalbox.info,
 #page-course-info .generalbox.info {border:none;}
 .coursebox .content .teachers,
