@@ -43,9 +43,11 @@ Probability correct |  <67%        | 67-80%    |    >80%
 Best marks are gained by acknowledging uncertainty. For example, if you think there is more than a 1 in 3 chance of being wrong, you should enter C=1 and avoid the risk of a negative mark.
 ';
 $string['certainty_link'] = 'qbehaviour/deferredcbm/certainty';
+$string['certainty-1'] = 'No Idea';
 $string['certainty1'] = 'C=1 (Unsure: <67%)';
 $string['certainty2'] = 'C=2 (Mid: >67%)';
 $string['certainty3'] = 'C=3 (Quite sure: >80%)';
+$string['certaintyshort-1'] = 'No Idea';
 $string['certaintyshort1'] = 'C=1';
 $string['certaintyshort2'] = 'C=2';
 $string['certaintyshort3'] = 'C=3';

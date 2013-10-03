@@ -85,7 +85,11 @@ class qbehaviour_deferredcbm_type extends qbehaviour_deferredfeedback_type {
             }
 
             $certainty = $qa->get_last_behaviour_var('certainty');
-            if (is_null($certainty)) {
+            if (is_null($certainty) || $certainty == -1) {
+                // Certainty -1 has never been used in standard Moodle, but is
+                // used in Tony-Gardiner Medwin's patches to mean 'No idea' which
+                // we intend to implement: MDL-42077. In the mean time, avoid
+                // errors for people who have used TGM's patches.
                 $certainty = question_cbm::default_certainty();
             }
 

@@ -684,6 +684,13 @@ abstract class question_cbm {
      * @return number the adjusted fraction taking the certainty into account.
      */
     public static function adjust_fraction($fraction, $certainty) {
+        if ($certainty == -1) {
+            // Certainty -1 has never been used in standard Moodle, but is
+            // used in Tony-Gardiner Medwin's patches to mean 'No idea' which
+            // we intend to implement: MDL-42077. In the mean time, avoid
+            // errors for people who have used TGM's patches.
+            return 0;
+        }
         if ($fraction <= 0.00000005) {
             return self::$wrongscore[$certainty];
         } else {
