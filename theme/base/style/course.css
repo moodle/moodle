@@ -118,7 +118,7 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 .coursebox {width: 100%;margin-bottom:15px;}
 .coursebox.collapsed {margin-bottom:0}
 .coursebox.collapsed > .content {display:none;}
-.coursebox > .info a.courseicon {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:21px;background-position: left top;}
+.coursebox > .info > .coursename a {display:block;background-image:url([[pix:moodle|i/course]]);background-repeat: no-repeat;padding-left:21px;background-position: left top;}
 .coursebox.remotehost .coursename a {background-image:url([[pix:moodle|i/mnethost]]);}
 .coursebox > .info > .coursename,
 .coursebox .content .teachers,
@@ -136,7 +136,7 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 .coursebox.remotecoursebox .remotecourseinfo {float:left;width: 40%;}
 .coursebox .content .courseimage img {max-width:100px;max-height:100px;}
 
-.coursebox >.info >.categoryname {margin: 5px;padding:0;}
+.coursebox >.info >.coursename {margin: 5px;padding:0;}
 .coursebox .content .teachers,
 .coursebox .content .coursecat,
 .coursebox .content .summary,
