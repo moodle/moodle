@@ -69,7 +69,7 @@
 .moodleSkin .mceSplitButtonActive {background-position:0 -44px}
 
 /* ColorSplitButton */
-.moodleSkin div.mceColorSplitMenu table {background:#FFF;}
+.moodleSkin div.mceColorSplitMenu table {background:#FFF; border: 1px solid #808080;}
 .moodleSkin .mceColorSplitMenu td {padding:2px}
 .moodleSkin .mceColorSplitMenu a {display:block; width:18px; height:18px; overflow:hidden; border:1px solid #808080}
 .moodleSkin .mceColorSplitMenu td.mceMoreColors {padding:1px 3px 1px 1px}
