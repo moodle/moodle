@@ -67,14 +67,16 @@ class annotation {
      * Convert a compatible stdClass into an instance of this class.
      * @param stdClass $record
      */
-    public function __construct(\stdClass $record) {
-        $intcols = array('endx', 'endy', 'x', 'y');
-        foreach ($this as $key => $value) {
-            if (isset($record->$key)) {
-                if (in_array($key, $intcols)) {
-                    $this->$key = intval($record->$key);
-                } else {
-                    $this->$key = $record->$key;
+    public function __construct(\stdClass $record = null) {
+        if ($record) {
+            $intcols = array('endx', 'endy', 'x', 'y');
+            foreach ($this as $key => $value) {
+                if (isset($record->$key)) {
+                    if (in_array($key, $intcols)) {
+                        $this->$key = intval($record->$key);
+                    } else {
+                        $this->$key = $record->$key;
+                    }
                 }
             }
         }

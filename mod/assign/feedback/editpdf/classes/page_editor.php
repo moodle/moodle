@@ -73,7 +73,11 @@ class page_editor {
         $added = 0;
         foreach ($comments as $record) {
             // Force these.
-            $comment = new comment($record);
+            if ($record instanceof stdClass) {
+                $comment = new comment($record);
+            } else {
+                $comment = $record;
+            }
             if (trim($comment->rawtext) === '') {
                 continue;
             }
@@ -159,7 +163,11 @@ class page_editor {
         $added = 0;
         foreach ($annotations as $record) {
             // Force these.
-            $annotation = new annotation($record);
+            if ($record instanceof stdClass) {
+                $annotation = new annotation($record);
+            } else {
+                $annotation = $record;
+            }
             $annotation->gradeid = $gradeid;
             $annotation->pageno = $pageno;
             $annotation->draft = 1;
