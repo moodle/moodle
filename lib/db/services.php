@@ -437,6 +437,15 @@ $functions = array(
         'capabilities'=> 'moodle/user:update',
     ),
 
+    'core_user_add_user_device' => array(
+        'classname'   => 'core_user_external',
+        'methodname'  => 'add_user_device',
+        'classpath'   => 'user/externallib.php',
+        'description' => 'Store mobile user devices information for PUSH Notifications.',
+        'type'        => 'write',
+        'capabilities'=> '',
+    ),
+
     // === enrol related functions ===
 
     'core_enrol_get_enrolled_users_with_capability' => array(
@@ -895,7 +904,8 @@ $services = array(
             'moodle_user_get_users_by_courseid',
             'moodle_message_send_instantmessages',
             'core_course_get_contents',
-            'core_get_component_strings'),
+            'core_get_component_strings',
+            'core_user_add_user_device'),
         'enabled' => 0,
         'restrictedusers' => 0,
         'shortname' => MOODLE_OFFICIAL_MOBILE_SERVICE,
