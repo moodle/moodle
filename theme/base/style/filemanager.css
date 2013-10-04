@@ -34,7 +34,7 @@ background: #E2E2E2;filter: progid:DXImageTransform.Microsoft.gradient(startColo
 .dir-rtl .file-picker .fp-repo-items {float:right;}
 .file-picker .fp-navbar {background: #F2F2F2;min-height:22px;border-bottom: 1px solid #BBBBBB;padding: 5px 8px;}
 .file-picker .fp-content {background: #FFFFFF;clear: both;overflow:auto;height: 468px;}
-.filepicker.moodle-dialogue-fullscreen .file-picker .fp-content { width: 100%; height: 100%; }
+.filepicker.moodle-dialogue-fullscreen .file-picker .fp-content { width: 100%; }
 
 .file-picker .fp-content-loading {height: 100%;width: 100%;display: table;text-align:center;}
 .file-picker .fp-content .fp-object-container {width:98%;height:98%;}
