@@ -482,6 +482,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame('forum', clean_param('forum', PARAM_COMPONENT));
         $this->assertSame('user', clean_param('user', PARAM_COMPONENT));
         $this->assertSame('rating', clean_param('rating', PARAM_COMPONENT));
+        $this->assertSame('feedback360', clean_param('feedback360', PARAM_COMPONENT));
+        $this->assertSame('mod_feedback360', clean_param('mod_feedback360', PARAM_COMPONENT));
         $this->assertSame('', clean_param('mod_2something', PARAM_COMPONENT));
         $this->assertSame('', clean_param('2mod_something', PARAM_COMPONENT));
         $this->assertSame('', clean_param('mod_something_xx', PARAM_COMPONENT));
@@ -501,6 +503,7 @@ class core_moodlelib_testcase extends advanced_testcase {
     public function test_is_valid_plugin_name() {
         $this->assertTrue(is_valid_plugin_name('forum'));
         $this->assertTrue(is_valid_plugin_name('forum2'));
+        $this->assertTrue(is_valid_plugin_name('feedback360'));
         $this->assertTrue(is_valid_plugin_name('online_users'));
         $this->assertTrue(is_valid_plugin_name('blond_online_users'));
         $this->assertFalse(is_valid_plugin_name('online__users'));
@@ -517,6 +520,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Please note the cleaning of plugin names is very strict, no guessing here.
         $this->assertSame('forum', clean_param('forum', PARAM_PLUGIN));
         $this->assertSame('forum2', clean_param('forum2', PARAM_PLUGIN));
+        $this->assertSame('feedback360', clean_param('feedback360', PARAM_PLUGIN));
         $this->assertSame('online_users', clean_param('online_users', PARAM_PLUGIN));
         $this->assertSame('blond_online_users', clean_param('blond_online_users', PARAM_PLUGIN));
         $this->assertSame('', clean_param('online__users', PARAM_PLUGIN));
@@ -535,6 +539,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame('something2', clean_param('something2', PARAM_AREA));
         $this->assertSame('some_thing', clean_param('some_thing', PARAM_AREA));
         $this->assertSame('some_thing_xx', clean_param('some_thing_xx', PARAM_AREA));
+        $this->assertSame('feedback360', clean_param('feedback360', PARAM_AREA));
         $this->assertSame('', clean_param('_something', PARAM_AREA));
         $this->assertSame('', clean_param('something_', PARAM_AREA));
         $this->assertSame('', clean_param('2something', PARAM_AREA));
