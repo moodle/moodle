@@ -29,6 +29,7 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir.'/gradelib.php');
 require_once($CFG->dirroot.'/mod/quiz/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
+require_once($CFG->dirroot . '/course/format/lib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
@@ -224,6 +225,9 @@ if (!$viewobj->quizhasquestions) {
         }
     }
 }
+
+$viewobj->showbacktocourse = ($viewobj->buttontext === '' &&
+        course_get_format($course)->has_view_page());
 
 echo $OUTPUT->header();
 
