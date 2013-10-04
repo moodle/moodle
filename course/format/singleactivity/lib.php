@@ -154,7 +154,7 @@ class format_singleactivity extends format_base {
             );
         }
         if ($foreditform && !isset($courseformatoptions['activitytype']['label'])) {
-            $availabletypes = get_module_types_names();
+            $availabletypes = $this->get_supported_activities();
             $courseformatoptionsedit = array(
                 'activitytype' => array(
                     'label' => new lang_string('activitytype', 'format_singleactivity'),
@@ -270,7 +270,7 @@ class format_singleactivity extends format_base {
      */
     protected function get_activitytype() {
         $options = $this->get_format_options();
-        $availabletypes = get_module_types_names();
+        $availabletypes = $this->get_supported_activities();
         if (!empty($options['activitytype']) &&
                 array_key_exists($options['activitytype'], $availabletypes)) {
             return $options['activitytype'];
@@ -289,6 +289,23 @@ class format_singleactivity extends format_base {
             $this->activity = $this->reorder_activities();
         }
         return $this->activity;
+    }
+
+    /**
+     * Get the activities supported by the format.
+     *
+     * Here we ignore the modules that do not have a page of their own, like the label.
+     *
+     * @return array array($module => $name of the module).
+     */
+    public static function get_supported_activities() {
+        $availabletypes = get_module_types_names();
+        foreach ($availabletypes as $module => $name) {
+            if (plugin_supports('mod', $module, FEATURE_NO_VIEW_LINK, false)) {
+                unset($availabletypes[$module]);
+            }
+        }
+        return $availabletypes;
     }
 
     /**
