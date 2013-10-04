@@ -178,11 +178,16 @@ class textlib {
             return '';
         }
 
-        if ($toCS === 'utf-8' and $fromCS === 'utf-8') {
-            return fix_utf8($text);
+        if ($fromCS === 'utf-8') {
+            $text = fix_utf8($text);
+            if ($toCS === 'utf-8') {
+                return $text;
+            }
         }
 
-        $result = iconv($fromCS, $toCS.'//TRANSLIT', $text);
+        // Prevent any error notices, do not use //IGNORE so that we get
+        // consistent result from Typo3 if iconv fails.
+        $result = @iconv($fromCS, $toCS.'//TRANSLIT', $text);
 
         if ($result === false or $result === '') {
             // note: iconv is prone to return empty string when invalid char encountered, or false if encoding unsupported
