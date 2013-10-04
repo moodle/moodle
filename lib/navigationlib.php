@@ -29,6 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  * The name that will be used to separate the navigation cache within SESSION
  */
 define('NAVIGATION_CACHE_NAME', 'navigation');
+define('NAVIGATION_SITE_ADMIN_CACHE_NAME', 'navigationsiteadmin');
 
 /**
  * This class is used to represent a node in a navigation tree
@@ -71,6 +72,8 @@ class navigation_node implements renderable {
     const TYPE_CUSTOM =     60;
     /** @var int Setting node type, used only within settings nav 70 */
     const TYPE_SETTING =    70;
+    /** @var int site admin branch node type, used only within settings nav 71 */
+    const TYPE_SITE_ADMIN = 71;
     /** @var int Setting node type, used only within settings nav 80 */
     const TYPE_USER =       80;
     /** @var int Setting node type, used for containers of no importance 90 */
@@ -129,7 +132,7 @@ class navigation_node implements renderable {
     /** @var bool Set to true if we KNOW that this node can be expanded.  */
     public $isexpandable = false;
     /** @var array */
-    protected $namedtypes = array(0=>'system',10=>'category',20=>'course',30=>'structure',40=>'activity',50=>'resource',60=>'custom',70=>'setting', 80=>'user');
+    protected $namedtypes = array(0=>'system',10=>'category',20=>'course',30=>'structure',40=>'activity',50=>'resource',60=>'custom',70=>'setting',71=>'siteadmin', 80=>'user');
     /** @var moodle_url */
     protected static $fullmeurl = null;
     /** @var bool toogles auto matching of active node */
@@ -324,7 +327,8 @@ class navigation_node implements renderable {
         // If added node is a category node or the user is logged in and it's a course
         // then mark added node as a branch (makes it expandable by AJAX)
         $type = $childnode->type;
-        if (($type == self::TYPE_CATEGORY) || (isloggedin() && ($type == self::TYPE_COURSE)) || ($type == self::TYPE_MY_CATEGORY)) {
+        if (($type == self::TYPE_CATEGORY) || (isloggedin() && ($type == self::TYPE_COURSE)) || ($type == self::TYPE_MY_CATEGORY) ||
+                ($type === self::TYPE_SITE_ADMIN)) {
             $node->nodetype = self::NODETYPE_BRANCH;
         }
         // If this node is hidden mark it's children as hidden also
@@ -3333,11 +3337,28 @@ class settings_navigation extends navigation_node {
 
         $settings = $this->load_user_settings($this->page->course->id);
 
+        $admin = false;
         if (isloggedin() && !isguestuser() && (!property_exists($SESSION, 'load_navigation_admin') || $SESSION->load_navigation_admin)) {
-            $admin = $this->load_administration_settings();
-            $SESSION->load_navigation_admin = ($admin->has_children());
-        } else {
-            $admin = false;
+            // If admin page or user logged in, then load admin settings.
+            $isadminpage = ((strpos($this->page->pagetype, 'admin-') === 0) || ($this->page->pagelayout === 'admin'));
+            if ($isadminpage || !isset($SESSION->load_navigation_admin)) {
+                $admin = $this->load_administration_settings();
+                $SESSION->load_navigation_admin = ($admin->children->count() > 0);
+
+                // Don't load navigation on login, for performance reasons.
+                if (!$isadminpage) {
+                    $admin->remove();
+                    $admin = false;
+                }
+            }
+
+            // Print empty navigation node, if needed.
+            if (!$admin && $SESSION->load_navigation_admin) {
+                $admin = false;
+                $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin'), self::TYPE_SITE_ADMIN, null, 'siteadministration');
+                $siteadminnode->id = 'expandable_branch_'.$siteadminnode->type.'_'.clean_param($siteadminnode->key, PARAM_ALPHANUMEXT);
+                $this->page->requires->data_for_js('siteadminexpansion', $siteadminnode);
+            }
         }
 
         if ($context->contextlevel == CONTEXT_SYSTEM && $admin) {
@@ -3360,6 +3381,10 @@ class settings_navigation extends navigation_node {
 
         foreach ($this->children as $key=>$node) {
             if ($node->nodetype != self::NODETYPE_BRANCH || $node->children->count()===0) {
+                // Site administration is shown as link.
+                if (!empty($SESSION->load_navigation_admin) && ($node->type === self::TYPE_SITE_ADMIN)) {
+                    continue;
+                }
                 $node->remove();
             }
         }
@@ -3435,7 +3460,7 @@ class settings_navigation extends navigation_node {
 
             // Disable the navigation from automatically finding the active node
             navigation_node::$autofindactive = false;
-            $referencebranch = $this->add(get_string('administrationsite'), null, self::TYPE_SETTING, null, 'root');
+            $referencebranch = $this->add(get_string('administrationsite'), null, self::TYPE_SITE_ADMIN, null, 'root');
             foreach ($adminroot->children as $adminbranch) {
                 $this->load_administration_settings($referencebranch, $adminbranch);
             }
@@ -4376,6 +4401,41 @@ class settings_navigation extends navigation_node {
 }
 
 /**
+ * Class used to populate site admin navigation for ajax.
+ *
+ * @package   core
+ * @category  navigation
+ * @copyright 2013 Rajesh Taneja <rajesh@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class settings_navigation_ajax extends settings_navigation {
+    /**
+     * Constructs the navigation for use in an AJAX request
+     *
+     * @param moodle_page $page
+     */
+    public function __construct(moodle_page &$page) {
+        $this->page = $page;
+        $this->cache = new navigation_cache(NAVIGATION_CACHE_NAME);
+        $this->children = new navigation_node_collection();
+        $this->initialise();
+    }
+
+    /**
+     * Initialise the site admin navigation.
+     *
+     * @return array An array of the expandable nodes
+     */
+    public function initialise() {
+        if ($this->initialised || during_initial_install()) {
+            return false;
+        }
+        $this->load_administration_settings();
+        $this->initialised = true;
+    }
+}
+
+/**
  * Simple class used to output a navigation branch in XML
  *
  * @package   core
@@ -4421,7 +4481,7 @@ class navigation_json {
         }
         $attributes = array();
         $attributes['id'] = $child->id;
-        $attributes['name'] = $child->text;
+        $attributes['name'] = (string)$child->text; // This can be lang_string object so typecast it.
         $attributes['type'] = $child->type;
         $attributes['key'] = $child->key;
         $attributes['class'] = $child->get_css_type();
