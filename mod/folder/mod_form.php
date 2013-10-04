@@ -54,6 +54,10 @@ class mod_folder_mod_form extends moodleform_mod {
                 array(FOLDER_DISPLAY_PAGE => get_string('displaypage', 'mod_folder'),
                     FOLDER_DISPLAY_INLINE => get_string('displayinline', 'mod_folder')));
         $mform->addHelpButton('display', 'display', 'mod_folder');
+        if (!$this->courseformat->has_view_page()) {
+            $mform->setConstant('display', FOLDER_DISPLAY_PAGE);
+            $mform->hardFreeze('display');
+        }
         $mform->setExpanded('content');
 
         // Adding option to show sub-folders expanded or collapsed by default.
