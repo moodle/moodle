@@ -28,7 +28,6 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/pluginlib.php');
 require_once($CFG->libdir . '/tablelib.php');
 
 // Check permissions.
@@ -41,7 +40,7 @@ admin_externalpage_setup('manageqtypes');
 $thispageurl = new moodle_url('/admin/qtypes.php');
 
 $qtypes = question_bank::get_all_qtypes();
-$pluginmanager = plugin_manager::instance();
+$pluginmanager = core_plugin_manager::instance();
 
 // Get some data we will need - question counts and which types are needed.
 $counts = $DB->get_records_sql("
@@ -122,58 +121,6 @@ if (($down = optional_param('down', '', PARAM_PLUGIN)) && confirm_sesskey()) {
     redirect($thispageurl);
 }
 
-// Delete.
-if (($delete = optional_param('delete', '', PARAM_PLUGIN)) && confirm_sesskey()) {
-    // Check it is OK to delete this question type.
-    if ($delete == 'missingtype') {
-        print_error('cannotdeletemissingqtype', 'question', $thispageurl);
-    }
-
-    if (!isset($qtypes[$delete]) && !get_config('qtype_' . $delete, 'version')) {
-        print_error('unknownquestiontype', 'question', $thispageurl, $delete);
-    }
-
-    $qtypename = $qtypes[$delete]->local_name();
-    if ($counts[$delete]->numquestions + $counts[$delete]->numhidden > 0) {
-        print_error('cannotdeleteqtypeinuse', 'question', $thispageurl, $qtypename);
-    }
-
-    if ($needed[$delete] > 0) {
-        print_error('cannotdeleteqtypeneeded', 'question', $thispageurl, $qtypename);
-    }
-
-    // If not yet confirmed, display a confirmation message.
-    if (!optional_param('confirm', '', PARAM_BOOL)) {
-        $qtypename = $qtypes[$delete]->local_name();
-        echo $OUTPUT->header();
-        echo $OUTPUT->heading(get_string('deleteqtypeareyousure', 'question', $qtypename));
-        echo $OUTPUT->confirm(get_string('deleteqtypeareyousuremessage', 'question', $qtypename),
-                new moodle_url($thispageurl, array('delete' => $delete, 'confirm' => 1)),
-                $thispageurl);
-        echo $OUTPUT->footer();
-        exit;
-    }
-
-    // Do the deletion.
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading(get_string('deletingqtype', 'question', $qtypename));
-
-    // Delete any questoin configuration records mentioning this plugin.
-    unset_config($delete . '_disabled', 'question');
-    unset_config($delete . '_sortorder', 'question');
-
-    // Then uninstall the plugin.
-    uninstall_plugin('qtype', $delete);
-
-    $a = new stdClass();
-    $a->qtype = $qtypename;
-    $a->directory = $qtypes[$delete]->plugin_dir();
-    echo $OUTPUT->box(get_string('qtypedeletefiles', 'question', $a), 'generalbox', 'notice');
-    echo $OUTPUT->continue_button($thispageurl);
-    echo $OUTPUT->footer();
-    exit;
-}
-
 // End of process actions ==================================================
 
 // Print the page heading.
@@ -184,10 +131,10 @@ echo $OUTPUT->heading(get_string('manageqtypes', 'admin'));
 $table = new flexible_table('qtypeadmintable');
 $table->define_baseurl($thispageurl);
 $table->define_columns(array('questiontype', 'numquestions', 'version', 'requires',
-        'availableto', 'delete', 'settings'));
+        'availableto', 'uninstall', 'settings'));
 $table->define_headers(array(get_string('questiontype', 'question'), get_string('numquestions', 'question'),
         get_string('version'), get_string('requires', 'admin'), get_string('availableq', 'question'),
-        get_string('delete'), get_string('settings')));
+        get_string('settings'), get_string('uninstallplugin', 'core_admin')));
 $table->set_attribute('id', 'qtypes');
 $table->set_attribute('class', 'admintable generaltable');
 $table->setup();
@@ -259,15 +206,6 @@ foreach ($sortedqtypes as $qtypename => $localname) {
     $icons .= question_type_icon_html('down', $qtypename, 't/down', get_string('down'), '');
     $row[] = $icons;
 
-    // Delete link, if available.
-    if ($needed[$qtypename]) {
-        $row[] = '';
-    } else {
-        $row[] = html_writer::link(new moodle_url($thispageurl,
-                array('delete' => $qtypename, 'sesskey' => sesskey())), get_string('delete'),
-                array('title' => get_string('uninstallqtype', 'question')));
-    }
-
     // Settings link, if available.
     $settings = admin_get_root()->locate('qtypesetting' . $qtypename);
     if ($settings instanceof admin_externalpage) {
@@ -277,6 +215,17 @@ foreach ($sortedqtypes as $qtypename => $localname) {
                 array('section' => 'qtypesetting' . $qtypename)), get_string('settings'));
     } else {
         $row[] = '';
+    }
+
+    // Uninstall link, if available.
+    if ($needed[$qtypename]) {
+        $row[] = '';
+    } else {
+        $uninstallurl = core_plugin_manager::instance()->get_uninstall_url('qtype_'.$qtypename, 'manage');
+        if ($uninstallurl) {
+            $row[] = html_writer::link($uninstallurl, get_string('uninstallplugin', 'core_admin'),
+                array('title' => get_string('uninstallqtype', 'question')));
+        }
     }
 
     $table->add_data($row, $rowclass);

@@ -47,8 +47,8 @@ fontselect,fontsizeselect,wrap,code,search,replace,|,cleanup,removeformat,pastet
 $ADMIN->add('editortinymce', $settings);
 unset($settings);
 
-require_once("$CFG->libdir/pluginlib.php");
-foreach (plugin_manager::instance()->get_plugins_of_type('tinymce') as $plugin) {
+foreach (core_plugin_manager::instance()->get_plugins_of_type('tinymce') as $plugin) {
+    /** @var \editor_tinymce\plugininfo\tinymce $plugin */
     $plugin->load_settings($ADMIN, 'editortinymce', $hassiteconfig);
 }
 

@@ -46,7 +46,7 @@ class core_message_renderer extends plugin_renderer_base {
         global $CFG;
         // Display the current workflows
         $table = new html_table();
-        $table->attributes['class'] = 'generaltable';
+        $table->attributes['class'] = 'admintable generaltable';
         $table->data        = array();
         $table->head        = array(
             get_string('name'),
@@ -81,7 +81,7 @@ class core_message_renderer extends plugin_renderer_base {
                     )
                 ));
             } else {
-                $name->attributes['class'] = 'dimmed_text';
+                $row->attributes['class'] = 'dimmed_text';
                 $url = new moodle_url('/admin/message.php', array('enable' => $processor->id, 'sesskey' => sesskey()));
                 $enable->text = html_writer::link($url, html_writer::empty_tag('img',
                     array('src'   => $this->output->pix_url('t/show'),

@@ -24,7 +24,6 @@
 
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/pluginlib.php');
 
 $disable = optional_param('disable', '', PARAM_PLUGIN);
 $enable  = optional_param('enable', '', PARAM_PLUGIN);
@@ -62,6 +61,6 @@ if ($disable) {
 }
 
 set_config('disabledsubplugins', implode(',', $disabled), 'editor_tinymce');
-plugin_manager::reset_caches();
+core_plugin_manager::reset_caches();
 
 redirect($returnurl);

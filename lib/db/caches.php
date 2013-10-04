@@ -141,7 +141,7 @@ $definitions = array(
         'staticaccelerationsize' => 2,
     ),
 
-    // Cache used by the {@link plugin_manager} class.
+    // Cache used by the {@link core_plugin_manager} class.
     // NOTE: this must be a shared cache.
     'plugin_manager' => array(
         'mode' => cache_store::MODE_APPLICATION,

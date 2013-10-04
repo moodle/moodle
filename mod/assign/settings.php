@@ -26,17 +26,9 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot . '/mod/assign/adminlib.php');
 
-$ADMIN->add('modules', new admin_category('assignmentplugins',
-                new lang_string('assignmentplugins', 'assign'), $module->is_enabled() === false));
-$ADMIN->add('assignmentplugins', new admin_category('assignsubmissionplugins',
-                new lang_string('submissionplugins', 'assign'), $module->is_enabled() === false));
-$ADMIN->add('assignsubmissionplugins', new assign_admin_page_manage_assign_plugins('assignsubmission'));
-$ADMIN->add('assignmentplugins', new admin_category('assignfeedbackplugins',
-                new lang_string('feedbackplugins', 'assign'), $module->is_enabled() === false));
-$ADMIN->add('assignfeedbackplugins', new assign_admin_page_manage_assign_plugins('assignfeedback'));
+$ADMIN->add('modsettings', new admin_category('modassignfolder', new lang_string('pluginname', 'mod_assign'), $module->is_enabled() === false));
 
-assign_plugin_manager::add_admin_assign_plugin_settings('assignsubmission', $ADMIN, $settings, $module);
-assign_plugin_manager::add_admin_assign_plugin_settings('assignfeedback', $ADMIN, $settings, $module);
+$settings = new admin_settingpage($section, get_string('settings', 'mod_assign'), 'moodle/site:config', $module->is_enabled() === false);
 
 if ($ADMIN->fulltree) {
     $menu = array();
@@ -250,4 +242,25 @@ if ($ADMIN->fulltree) {
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
+}
+
+$ADMIN->add('modassignfolder', $settings);
+// Tell core we already added the settings structure.
+$settings = null;
+
+$ADMIN->add('modassignfolder', new admin_category('assignsubmissionplugins',
+    new lang_string('submissionplugins', 'assign'), !$module->is_enabled()));
+$ADMIN->add('assignsubmissionplugins', new assign_admin_page_manage_assign_plugins('assignsubmission'));
+$ADMIN->add('modassignfolder', new admin_category('assignfeedbackplugins',
+    new lang_string('feedbackplugins', 'assign'), !$module->is_enabled()));
+$ADMIN->add('assignfeedbackplugins', new assign_admin_page_manage_assign_plugins('assignfeedback'));
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('assignsubmission') as $plugin) {
+    /** @var \mod_assign\plugininfo\assignsubmission $plugin */
+    $plugin->load_settings($ADMIN, 'assignsubmissionplugins', $hassiteconfig);
+}
+
+foreach (core_plugin_manager::instance()->get_plugins_of_type('assignfeedback') as $plugin) {
+    /** @var \mod_assign\plugininfo\assignfeedback $plugin */
+    $plugin->load_settings($ADMIN, 'assignfeedbackplugins', $hassiteconfig);
 }

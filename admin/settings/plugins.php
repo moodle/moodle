@@ -1,23 +1,38 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/*
- * Please note that is file is always loaded last - it means that you can inject entries into other categories too.
- */
+/**
+ * Load all plugins into the admin tree.
+ *
+* Please note that is file is always loaded last - it means that you can inject entries into other categories too.
+*
+* @package    core
+* @copyright  2007 Petr Skoda {@link http://skodak.org}
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+*/
 
 if ($hassiteconfig) {
-    require_once("$CFG->libdir/pluginlib.php");
-    $allplugins = plugin_manager::instance()->get_plugins();
-
     $ADMIN->add('modules', new admin_page_pluginsoverview());
 
     // activity modules
     $ADMIN->add('modules', new admin_category('modsettings', new lang_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());
-    foreach ($allplugins['mod'] as $module) {
-        if (!$module->is_updated()) {
-            continue;
-        }
-        $module->load_settings($ADMIN, 'modsettings', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('mod') as $plugin) {
+        /** @var \core\plugininfo\mod $plugin */
+        $plugin->load_settings($ADMIN, 'modsettings', $hassiteconfig);
     }
 
     // course formats
@@ -25,32 +40,26 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('manageformats', new lang_string('manageformats', 'core_admin'));
     $temp->add(new admin_setting_manageformats());
     $ADMIN->add('formatsettings', $temp);
-    foreach ($allplugins['format'] as $format) {
-        if (!$format->is_updated()) {
-            continue;
-        }
-        $format->load_settings($ADMIN, 'formatsettings', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('format') as $plugin) {
+        /** @var \core\plugininfo\format $plugin */
+        $plugin->load_settings($ADMIN, 'formatsettings', $hassiteconfig);
     }
 
     // blocks
     $ADMIN->add('modules', new admin_category('blocksettings', new lang_string('blocks')));
     $ADMIN->add('blocksettings', new admin_page_manageblocks());
-    foreach ($allplugins['block'] as $block) {
-        if (!$block->is_updated()) {
-            continue;
-        }
-        $block->load_settings($ADMIN, 'blocksettings', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('block') as $plugin) {
+        /** @var \core\plugininfo\block $plugin */
+        $plugin->load_settings($ADMIN, 'blocksettings', $hassiteconfig);
     }
 
     // message outputs
     $ADMIN->add('modules', new admin_category('messageoutputs', new lang_string('messageoutputs', 'message')));
     $ADMIN->add('messageoutputs', new admin_page_managemessageoutputs());
     $ADMIN->add('messageoutputs', new admin_page_defaultmessageoutputs());
-    foreach ($allplugins['message'] as $processor) {
-        if (!$processor->is_updated()) {
-            continue;
-        }
-        $processor->load_settings($ADMIN, 'messageoutputs', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('message') as $plugin) {
+        /** @var \core\plugininfo\message $plugin */
+        $plugin->load_settings($ADMIN, 'messageoutputs', $hassiteconfig);
     }
 
     // authentication plugins
@@ -78,11 +87,9 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configtext('recaptchaprivatekey', new lang_string('recaptchaprivatekey', 'admin'), new lang_string('configrecaptchaprivatekey', 'admin'), '', PARAM_NOTAGS));
     $ADMIN->add('authsettings', $temp);
 
-    foreach ($allplugins['auth'] as $auth) {
-        if (!$auth->is_updated()) {
-            continue;
-        }
-        $auth->load_settings($ADMIN, 'authsettings', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('auth') as $plugin) {
+        /** @var \core\plugininfo\auth $plugin */
+        $plugin->load_settings($ADMIN, 'authsettings', $hassiteconfig);
     }
 
     // Enrolment plugins
@@ -90,11 +97,9 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('manageenrols', new lang_string('manageenrols', 'enrol'));
     $temp->add(new admin_setting_manageenrols());
     $ADMIN->add('enrolments', $temp);
-    foreach($allplugins['enrol'] as $enrol) {
-        if (!$enrol->is_updated()) {
-            continue;
-        }
-        $enrol->load_settings($ADMIN, 'enrolments', $hassiteconfig);
+    foreach(core_plugin_manager::instance()->get_plugins_of_type('enrol') as $plugin) {
+        /** @var \core\plugininfo\enrol $plugin */
+        $plugin->load_settings($ADMIN, 'enrolments', $hassiteconfig);
     }
 
 
@@ -103,11 +108,9 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('manageeditors', new lang_string('editorsettings', 'editor'));
     $temp->add(new admin_setting_manageeditors());
     $ADMIN->add('editorsettings', $temp);
-    foreach ($allplugins['editor'] as $editor) {
-        if (!$editor->is_updated()) {
-            continue;
-        }
-        $editor->load_settings($ADMIN, 'editorsettings', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('editor') as $plugin) {
+        /** @var \core\plugininfo\editor $plugin */
+        $plugin->load_settings($ADMIN, 'editorsettings', $hassiteconfig);
     }
 
 /// License types
@@ -168,11 +171,9 @@ if ($hassiteconfig) {
     }
     $ADMIN->add('filtersettings', $temp);
 
-    foreach ($allplugins['filter'] as $filter) {
-        if (!$filter->is_updated()) {
-            continue;
-        }
-        $filter->load_settings($ADMIN, 'filtersettings', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('filter') as $plugin) {
+        /** @var \core\plugininfo\filter $plugin */
+        $plugin->load_settings($ADMIN, 'filtersettings', $hassiteconfig);
     }
 
 
@@ -262,11 +263,9 @@ if ($hassiteconfig) {
         new lang_string('createrepository', 'repository'), $url, 'moodle/site:config', true));
     $ADMIN->add('repositorysettings', new admin_externalpage('repositoryinstanceedit',
         new lang_string('editrepositoryinstance', 'repository'), $url, 'moodle/site:config', true));
-    foreach ($allplugins['repository'] as $repositorytype) {
-        if (!$repositorytype->is_updated()) {
-            continue;
-        }
-        $repositorytype->load_settings($ADMIN, 'repositorysettings', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('repository') as $plugin) {
+        /** @var \core\plugininfo\repository $plugin */
+        $plugin->load_settings($ADMIN, 'repositorysettings', $hassiteconfig);
     }
 
 /// Web services
@@ -314,11 +313,9 @@ if ($hassiteconfig) {
                         'admin'), new lang_string('configenablewsdocumentation', 'admin', $wsdoclink), false));
     $ADMIN->add('webservicesettings', $temp);
     /// links to protocol pages
-    foreach ($allplugins['webservice'] as $webservice) {
-        if (!$webservice->is_updated()) {
-            continue;
-        }
-        $webservice->load_settings($ADMIN, 'webservicesettings', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('webservice') as $plugin) {
+        /** @var \core\plugininfo\webservice $plugin */
+        $plugin->load_settings($ADMIN, 'webservicesettings', $hassiteconfig);
     }
     /// manage token page link
     $ADMIN->add('webservicesettings', new admin_externalpage('addwebservicetoken', new lang_string('managetokens', 'webservice'), "$CFG->wwwroot/$CFG->admin/webservice/tokens.php", 'moodle/site:config', true));
@@ -332,10 +329,6 @@ if ($hassiteconfig) {
 
 // Question type settings
 if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
-    if (!$hassiteconfig) {
-        require_once("$CFG->libdir/pluginlib.php");
-        $allplugins = plugin_manager::instance()->get_plugins();
-    }
 
     // Question behaviour settings.
     $ADMIN->add('modules', new admin_category('qbehavioursettings', new lang_string('questionbehaviours', 'admin')));
@@ -392,11 +385,9 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
             get_string('responsehistory', 'question'), '', 0, $hiddenofvisible));
 
     // Settings for particular question types.
-    foreach ($allplugins['qtype'] as $qtype) {
-        if (!$qtype->is_updated()) {
-            continue;
-        }
-        $qtype->load_settings($ADMIN, 'qtypesettings', $hassiteconfig);
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('qtype') as $plugin) {
+        /** @var \core\plugininfo\qtype $plugin */
+        $plugin->load_settings($ADMIN, 'qtypesettings', $hassiteconfig);
     }
 }
 
@@ -406,10 +397,8 @@ if ($hassiteconfig && !empty($CFG->enableplagiarism)) {
     $ADMIN->add('plagiarism', new admin_externalpage('manageplagiarismplugins', new lang_string('manageplagiarism', 'plagiarism'),
         $CFG->wwwroot . '/' . $CFG->admin . '/plagiarism.php'));
 
-    foreach ($allplugins['plagiarism'] as $plugin) {
-        if (!$plugin->is_updated()) {
-            continue;
-        }
+    foreach (core_plugin_manager::instance()->get_plugins_of_type('plagiarism') as $plugin) {
+        /** @var \core\plugininfo\plagiarism $plugin */
         $plugin->load_settings($ADMIN, 'plagiarism', $hassiteconfig);
     }
 }
@@ -466,12 +455,10 @@ if ($hassiteconfig) {
                                                      $CFG->wwwroot . '/' . $CFG->admin . '/tools.php'));
 }
 
-// Now add various admin tools
-foreach (core_component::get_plugin_list('tool') as $plugin => $plugindir) {
-    $settings_path = "$plugindir/settings.php";
-    if (file_exists($settings_path)) {
-        include($settings_path);
-    }
+// Now add various admin tools.
+foreach (core_plugin_manager::instance()->get_plugins_of_type('tool') as $plugin) {
+    /** @var \core\plugininfo\tool $plugin */
+    $plugin->load_settings($ADMIN, null, $hassiteconfig);
 }
 
 // Now add the Cache plugins
@@ -497,12 +484,9 @@ if ($hassiteconfig) {
                                                         $CFG->wwwroot . '/' . $CFG->admin . '/localplugins.php'));
 }
 
-// extend settings for each local plugin. Note that their settings may be in any part of the
-// settings tree and may be visible not only for administrators. We can not use $allplugins here
-foreach (core_component::get_plugin_list('local') as $plugin => $plugindir) {
-    $settings_path = "$plugindir/settings.php";
-    if (file_exists($settings_path)) {
-        include($settings_path);
-        continue;
-    }
+// Extend settings for each local plugin. Note that their settings may be in any part of the
+// settings tree and may be visible not only for administrators.
+foreach (core_plugin_manager::instance()->get_plugins_of_type('local') as $plugin) {
+    /** @var \core\plugininfo\local $plugin */
+    $plugin->load_settings($ADMIN, null, $hassiteconfig);
 }

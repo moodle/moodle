@@ -5,7 +5,6 @@
     require_once('../config.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
-    require_once($CFG->libdir.'/pluginlib.php');
 
     admin_externalpage_setup('manageblocks');
 
@@ -37,7 +36,7 @@
             print_error('blockdoesnotexist', 'error');
         }
         $DB->set_field('block', 'visible', '0', array('id'=>$block->id));      // Hide block
-        plugin_manager::reset_caches();
+        core_plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -46,7 +45,7 @@
             print_error('blockdoesnotexist', 'error');
         }
         $DB->set_field('block', 'visible', '1', array('id'=>$block->id));      // Show block
-        plugin_manager::reset_caches();
+        core_plugin_manager::reset_caches();
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -97,8 +96,8 @@
 
     $table = new flexible_table('admin-blocks-compatible');
 
-    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'undeletable', 'uninstall', 'settings'));
-    $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strprotecthdr, $struninstall, $strsettings));
+    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'undeletable', 'settings', 'uninstall'));
+    $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strprotecthdr, $strsettings, $struninstall));
     $table->define_baseurl($CFG->wwwroot.'/'.$CFG->admin.'/blocks.php');
     $table->set_attribute('class', 'admintable blockstable generaltable');
     $table->set_attribute('id', 'compatibleblockstable');
@@ -141,7 +140,7 @@
             }
         }
 
-        if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('block_'.$blockname)) {
+        if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('block_'.$blockname, 'manage')) {
             $uninstall = html_writer::link($uninstallurl, $struninstall);
         } else {
             $uninstall = '';
@@ -184,7 +183,7 @@
         } else {
             $visible = '<a href="blocks.php?show='.$blockid.'&amp;sesskey='.sesskey().'" title="'.$strshow.'">'.
                        '<img src="'.$OUTPUT->pix_url('t/show') . '" class="iconsmall" alt="'.$strshow.'" /></a>';
-            $class = ' class="dimmed_text"'; // Leading space required!
+            $class = 'dimmed_text';
         }
 
         if ($dbversion == $plugin->version) {
@@ -205,15 +204,15 @@
         }
 
         $row = array(
-            '<span'.$class.'>'.$strblockname.'</span>',
+            $strblockname,
             $blocklist,
-            '<span'.$class.'>'.$version.'</span>',
+            $version,
             $visible,
             $undeletable,
+            $settings,
             $uninstall,
-            $settings
         );
-        $table->add_data($row);
+        $table->add_data($row, $class);
     }
 
     $table->print_html();
@@ -232,7 +231,7 @@
         $table->setup();
 
         foreach ($incompatible as $block) {
-            if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('block_'.$block->name)) {
+            if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('block_'.$block->name, 'manage')) {
                 $uninstall = html_writer::link($uninstallurl, $struninstall);
             } else {
                 $uninstall = '';

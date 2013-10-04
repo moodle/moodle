@@ -24,7 +24,6 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/message/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/pluginlib.php');
 
 // This is an admin page
 admin_externalpage_setup('managemessageoutputs');
@@ -43,7 +42,7 @@ if (!empty($disable) && confirm_sesskey()) {
         print_error('outputdoesnotexist', 'message');
     }
     $DB->set_field('message_processors', 'enabled', '0', array('id'=>$processor->id));      // Disable output
-    plugin_manager::reset_caches();
+    core_plugin_manager::reset_caches();
 }
 
 if (!empty($enable) && confirm_sesskey()) {
@@ -51,7 +50,7 @@ if (!empty($enable) && confirm_sesskey()) {
         print_error('outputdoesnotexist', 'message');
     }
     $DB->set_field('message_processors', 'enabled', '1', array('id'=>$processor->id));      // Enable output
-    plugin_manager::reset_caches();
+    core_plugin_manager::reset_caches();
 }
 
 if ($disable || $enable) {

@@ -36,7 +36,7 @@ information provided here is intended especially for developers.
   Use core_user::get_noreply_user() and core_user::get_support_user() to get noreply and support user's respectively.
   Real users can be used as noreply/support users by setting $CFG->noreplyuserid and $CFG->supportuserid
 * New function readfile_allow_large() in filelib.php for use when very large files may need sending to user.
-* Use plugin_manager::reset_caches() when changing visibility of plugins.
+* Use core_plugin_manager::reset_caches() when changing visibility of plugins.
 * Implement new method get_enabled_plugins() method in subplugin info classes.
 * Each plugin should include version information in version.php.
 * Module and block tables do not contain version column any more, use get_config('xx_yy', 'version') instead.
@@ -221,9 +221,9 @@ Event triggering and event handlers:
 * Additional (optional) param $onlyactive has been added to get_enrolled_users, count_enrolled_users
   functions to get information for only active (excluding suspended enrolments) users. Included two
   helper functions extract_suspended_users, get_suspended_userids to extract suspended user information.
-* The plugin_manager class now provides two new helper methods for getting information
+* The core_plugin_manager class now provides two new helper methods for getting information
   about known plugins: get_plugins_of_type() and get_subplugins_of_plugin().
-* The get_uninstall_url() method of all subclasses of plugininfo_base class is now expected
+* The get_uninstall_url() method of all subclasses of \core\plugininfo\base class is now expected
   to always return moodle_url. Subclasses can use the new method is_uninstall_allowed()
   to control the availability of the 'Uninstall' link at the Plugins overview page (previously
   they would do it by get_uninstall_url() returning null). By default, URL to a new general plugin

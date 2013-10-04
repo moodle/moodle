@@ -30,7 +30,6 @@
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
-require_once($CFG->libdir.'/pluginlib.php');
 
 admin_externalpage_setup('managereports');
 
@@ -46,7 +45,7 @@ $table->define_columns(array('name', 'version', 'uninstall'));
 $table->define_headers(array(get_string('plugin'), get_string('version'), $struninstall));
 $table->define_baseurl($PAGE->url);
 $table->set_attribute('id', 'reportplugins');
-$table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
+$table->set_attribute('class', 'admintable generaltable');
 $table->setup();
 
 $plugins = array();
@@ -74,7 +73,7 @@ foreach ($installed as $config) {
 
 foreach ($plugins as $plugin => $name) {
     $uninstall = '';
-    if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('report_'.$plugin)) {
+    if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('report_'.$plugin, 'manage')) {
         $uninstall = html_writer::link($uninstallurl, $struninstall);
     }
 

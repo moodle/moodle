@@ -24,7 +24,6 @@
 
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/pluginlib.php');
 
 $action  = required_param('action', PARAM_ALPHANUMEXT);
 $formatname   = required_param('format', PARAM_PLUGIN);
@@ -39,7 +38,7 @@ require_sesskey();
 
 $return = new moodle_url('/admin/settings.php', array('section' => 'manageformats'));
 
-$formatplugins = plugin_manager::instance()->get_plugins_of_type('format');
+$formatplugins = core_plugin_manager::instance()->get_plugins_of_type('format');
 $sortorder = array_flip(array_keys($formatplugins));
 
 if (!isset($formatplugins[$formatname])) {
@@ -53,13 +52,13 @@ switch ($action) {
                 print_error('cannotdisableformat', 'error', $return);
             }
             set_config('disabled', 1, 'format_'. $formatname);
-            plugin_manager::reset_caches();
+            core_plugin_manager::reset_caches();
         }
         break;
     case 'enable':
         if (!$formatplugins[$formatname]->is_enabled()) {
             unset_config('disabled', 'format_'. $formatname);
-            plugin_manager::reset_caches();
+            core_plugin_manager::reset_caches();
         }
         break;
     case 'up':

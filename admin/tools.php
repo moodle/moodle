@@ -45,7 +45,7 @@ $table->define_columns(array('name', 'version', 'uninstall'));
 $table->define_headers(array(get_string('plugin'), get_string('version'), $struninstall));
 $table->define_baseurl($PAGE->url);
 $table->set_attribute('id', 'toolplugins');
-$table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
+$table->set_attribute('class', 'admintable generaltable');
 $table->setup();
 
 $plugins = array();
@@ -73,7 +73,7 @@ foreach ($installed as $config) {
 
 foreach ($plugins as $plugin => $name) {
     $uninstall = '';
-    if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('tool_'.$plugin)) {
+    if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('tool_'.$plugin, 'manage')) {
         $uninstall = html_writer::link($uninstallurl, $struninstall);
     }
 
