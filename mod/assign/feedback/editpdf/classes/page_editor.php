@@ -73,7 +73,7 @@ class page_editor {
         $added = 0;
         foreach ($comments as $record) {
             // Force these.
-            if ($record instanceof stdClass) {
+            if (!($record instanceof comment)) {
                 $comment = new comment($record);
             } else {
                 $comment = $record;
@@ -163,7 +163,7 @@ class page_editor {
         $added = 0;
         foreach ($annotations as $record) {
             // Force these.
-            if ($record instanceof stdClass) {
+            if (!($record instanceof annotation)) {
                 $annotation = new annotation($record);
             } else {
                 $annotation = $record;
