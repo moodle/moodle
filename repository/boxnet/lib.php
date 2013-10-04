@@ -267,34 +267,34 @@ class repository_boxnet extends repository {
         return $source;
     }
 
-    /**
-     * Returns information about file in this repository by reference
-     * {@link repository::get_file_reference()}
-     * {@link repository::get_file()}
-     *
-     * Returns null if file not found or is not readable
-     *
-     * @param stdClass $reference file reference db record
-     * @return null|stdClass with attribute 'filepath'
-     */
-    public function get_file_by_reference($reference) {
-        $array = explode('/', $reference->reference);
-        $fileid = array_pop($array);
-        $fileinfo = $this->boxclient->get_file_info($fileid, self::SYNCFILE_TIMEOUT);
-        if ($fileinfo) {
-            $size = (int)$fileinfo->size;
-            if (file_extension_in_typegroup($fileinfo->file_name, 'web_image')) {
-                // this is an image - download it to moodle
-                $path = $this->prepare_file('');
-                $c = new curl;
-                $result = $c->download_one($reference->reference, null, array('filepath' => $path, 'timeout' => self::SYNCIMAGE_TIMEOUT));
-                if ($result === true) {
-                    return (object)array('filepath' => $path);
-                }
-            }
-            return (object)array('filesize' => $size);
+    public function sync_reference(stored_file $file) {
+        if ($file->get_referencelastsync() + DAYSECS > time()) {
+            // Synchronise not more often than once a day.
+            return false;
         }
-        return null;
+        $c = new curl;
+        if (file_extension_in_typegroup($file->get_filename(), 'web_image')) {
+            $path = $this->prepare_file('');
+            $result = $c->download_one($file->get_reference(), null, array('filepath' => $path, 'timeout' => self::SYNCIMAGE_TIMEOUT));
+            $info = $c->get_info();
+            if ($result === true && isset($info['http_code']) && $info['http_code'] == 200) {
+                $fs = get_file_storage();
+                list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($path);
+                $file->set_synchronized($contenthash, $filesize);
+                return true;
+            }
+        }
+        $c->get($file->get_reference(), null, array('timeout' => self::SYNCIMAGE_TIMEOUT, 'followlocation' => true, 'nobody' => true));
+        $info = $c->get_info();
+        if (isset($info['http_code']) && $info['http_code'] == 200 &&
+                array_key_exists('download_content_length', $info) &&
+                $info['download_content_length'] >= 0) {
+            $filesize = (int)$info['download_content_length'];
+            $file->set_synchronized(null, $filesize);
+            return true;
+        }
+        $file->set_missingsource();
+        return true;
     }
 
     /**
@@ -307,14 +307,8 @@ class repository_boxnet extends repository {
      */
     public function get_reference_details($reference, $filestatus = 0) {
         // Indicate it's from box.net repository + secure URL
-        $array = explode('/', $reference);
-        $fileid = array_pop($array);
-        $fileinfo = $this->boxclient->get_file_info($fileid, self::SYNCFILE_TIMEOUT);
-        if (!empty($fileinfo)) {
-            $reference = (string)$fileinfo->file_name;
-        }
         $details = $this->get_name() . ': ' . $reference;
-        if (!empty($fileinfo)) {
+        if (!$filestatus) {
             return $details;
         } else {
             return get_string('lostsource', 'repository', $details);

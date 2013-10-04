@@ -266,17 +266,6 @@ class repository_filesystem extends repository {
     }
 
     /**
-     * Return reference file life time
-     *
-     * @param string $ref
-     * @return int
-     */
-    public function get_reference_file_lifetime($ref) {
-        // Does not cost us much to synchronise within our own filesystem, set to 1 minute
-        return 60;
-    }
-
-    /**
      * Return human readable reference information
      *
      * @param string $reference value of DB field files_reference.reference
@@ -292,37 +281,40 @@ class repository_filesystem extends repository {
         }
     }
 
-    /**
-     * Returns information about file in this repository by reference
-     *
-     * Returns null if file not found or is not readable
-     *
-     * @param stdClass $reference file reference db record
-     * @return stdClass|null contains one of the following:
-     *   - 'filesize' if file should not be copied to moodle filepool
-     *   - 'filepath' if file should be copied to moodle filepool
-     */
-    public function get_file_by_reference($reference) {
-        $ref = $reference->reference;
-        if ($ref{0} == '/') {
-            $filepath = $this->root_path.substr($ref, 1, strlen($ref)-1);
-        } else {
-            $filepath = $this->root_path.$ref;
+    public function sync_reference(stored_file $file) {
+        if ($file->get_referencelastsync() + 60 > time()) {
+            // Does not cost us much to synchronise within our own filesystem, check every 1 minute.
+            return false;
         }
+        static $issyncing = false;
+        if ($issyncing) {
+            // Avoid infinite recursion when calling $file->get_filesize() and get_contenthash().
+            return;
+        }
+        $filepath = $this->root_path.ltrim($file->get_reference(), '/');
         if (file_exists($filepath) && is_readable($filepath)) {
+            $fs = get_file_storage();
+            $issyncing = true;
             if (file_extension_in_typegroup($filepath, 'web_image')) {
-                // return path to image files so it will be copied into moodle filepool
-                // we need the file in filepool to generate an image thumbnail
-                return (object)array('filepath' => $filepath);
+                $contenthash = sha1_file($filepath);
+                if ($file->get_contenthash() == $contenthash) {
+                    // File did not change since the last synchronisation.
+                    $filesize = filesize($filepath);
+                } else {
+                    // Copy file into moodle filepool (used to generate an image thumbnail).
+                    list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($filepath);
+                }
             } else {
-                // return just the file size so file will NOT be copied into moodle filepool
-                return (object)array(
-                    'filesize' => filesize($filepath)
-                );
+                // Update only file size so file will NOT be copied into moodle filepool.
+                $contenthash = null;
+                $filesize = filesize($filepath);
             }
+            $issyncing = false;
+            $file->set_synchronized($contenthash, $filesize);
         } else {
-            return null;
+            $file->set_missingsource();
         }
+        return true;
     }
 
     /**

@@ -546,25 +546,18 @@ class repository_dropbox extends repository {
         return serialize($reference);
     }
 
-    /**
-     * Returns information about file in this repository by reference
-     * {@link repository::get_file_reference()}
-     * {@link repository::get_file()}
-     *
-     * Returns null if file not found or is not readable
-     *
-     * @param stdClass $reference file reference db record
-     * @return null|stdClass that has 'filepath' property
-     */
-    public function get_file_by_reference($reference) {
-        global $USER;
-        $ref = unserialize($reference->reference);
+    public function sync_reference(stored_file $file) {
+        if ($file->get_referencelastsync() + DAYSECS > time()) {
+            // Synchronise not more often than once a day.
+            return false;
+        }
+        $ref = unserialize($file->get_reference());
         if (!isset($ref->url)) {
             // this is an old-style reference in DB. We need to fix it
-            $ref = unserialize($this->fix_old_style_reference($reference->reference));
+            $ref = unserialize($this->fix_old_style_reference($file->get_reference()));
         }
         if (!isset($ref->url)) {
-            return null;
+            return false;
         }
         $c = new curl;
         $url = $this->get_file_download_link($ref->url);
@@ -574,7 +567,10 @@ class repository_dropbox extends repository {
                 $result = $c->download_one($url, array(), array('filepath' => $saveas, 'timeout' => self::SYNCIMAGE_TIMEOUT, 'followlocation' => true));
                 $info = $c->get_info();
                 if ($result === true && isset($info['http_code']) && $info['http_code'] == 200) {
-                    return (object)array('filepath' => $saveas);
+                    $fs = get_file_storage();
+                    list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($saveas);
+                    $file->set_synchronized($contenthash, $filesize);
+                    return true;
                 }
             } catch (Exception $e) {}
         }
@@ -583,9 +579,12 @@ class repository_dropbox extends repository {
         if (isset($info['http_code']) && $info['http_code'] == 200 &&
                 array_key_exists('download_content_length', $info) &&
                 $info['download_content_length'] >= 0) {
-            return (object)array('filesize' => (int)$info['download_content_length']);
+            $filesize = (int)$info['download_content_length'];
+            $file->set_synchronized(null, $filesize);
+            return true;
         }
-        return null;
+        $file->set_missingsource();
+        return true;
     }
 
     /**
@@ -648,8 +647,7 @@ class repository_dropbox extends repository {
     /**
      * Returns the maximum size of the Dropbox files to cache in moodle
      *
-     * Note that {@link repository_dropbox::get_file_by_reference()} called by
-     * {@link repository::sync_external_file()} will try to cache images even
+     * Note that {@link repository_dropbox::sync_reference()} will try to cache images even
      * when they are bigger in order to generate thumbnails. However there is
      * a small timeout for downloading images for synchronisation and it will
      * probably fail if the image is too big.
