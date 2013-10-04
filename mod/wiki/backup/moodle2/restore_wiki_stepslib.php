@@ -74,10 +74,14 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $data = (object)$data;
         $oldid = $data->id;
         $data->wikiid = $this->get_new_parentid('wiki');
-        $data->groupid = $this->get_mappingid('group', $data->groupid);
-        $data->userid = $this->get_mappingid('user', $data->userid);
+        if($data->groupid !== '0') $data->groupid = $this->get_mappingid('group', $data->groupid);
+        if($date->userid !== '0') $data->userid = $this->get_mappingid('user', $data->userid);
 
-        $newitemid = $DB->insert_record('wiki_subwikis', $data);
+        if($data->groupid !== false && $data->userid !== false) {
+            $newitemid = $DB->insert_record('wiki_subwikis', $data);
+        } else {
+            $newitemid = false;
+        }
         $this->set_mapping('wiki_subwiki', $oldid, $newitemid);
     }
     protected function process_wiki_page($data) {
@@ -91,7 +95,11 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timerendered = $this->apply_date_offset($data->timerendered);
 
-        $newitemid = $DB->insert_record('wiki_pages', $data);
+        if($data->subwikiid !== false) {
+            $newitemid = $DB->insert_record('wiki_pages', $data);
+        } else {
+            $newitemid = false;
+        }
         $this->set_mapping('wiki_page', $oldid, $newitemid, true); // There are files related to this
     }
     protected function process_wiki_version($data) {
