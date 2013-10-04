@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20130927" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20131004" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3046,6 +3046,27 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_backpackid" TYPE="foreign" FIELDS="backpackid" REFTABLE="badge_backpack" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="user_devices" COMMENT="This table stores user's mobile devices information in order to send PUSH notifications">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="appid" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false" COMMENT="the app id, usually something like com.moodle.moodlemobile"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="the device name, occam or iPhone etc.."/>
+        <FIELD NAME="model" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="the device model, Nexus 4 or iPad 1,1"/>
+        <FIELD NAME="platform" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="the device platform, Android or iOS etc"/>
+        <FIELD NAME="version" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The device version, 6.1.2, 4.2.2 etc.."/>
+        <FIELD NAME="pushid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="the device PUSH token/key/identifier/registration id"/>
+        <FIELD NAME="uuid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The device vendor UUID"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="pushid-userid" TYPE="unique" FIELDS="pushid, userid"/>
+        <KEY NAME="pushid-platform" TYPE="unique" FIELDS="pushid, platform"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
