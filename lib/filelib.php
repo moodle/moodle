@@ -1495,6 +1495,7 @@ function &get_mimetypes_array() {
         'jcw'  => array ('type'=>'text/xml', 'icon'=>'markup'),
         'jmt'  => array ('type'=>'text/xml', 'icon'=>'markup'),
         'jmx'  => array ('type'=>'text/xml', 'icon'=>'markup'),
+        'jnlp' => array ('type'=>'application/x-java-jnlp-file', 'icon'=>'markup'),
         'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'jpeg', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
         'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'jpeg', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
         'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'jpeg', 'groups'=>array('image', 'web_image'), 'string'=>'image'),
