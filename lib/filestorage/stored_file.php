@@ -97,6 +97,7 @@ class stored_file {
      */
     protected function update($dataobject) {
         global $DB;
+        $updatereferencesneeded = false;
         $keys = array_keys((array)$this->file_record);
         foreach ($dataobject as $field => $value) {
             if (in_array($field, $keys)) {
@@ -156,6 +157,10 @@ class stored_file {
                     }
                 }
 
+                if (($field == 'contenthash' || $field == 'filesize') && $this->file_record->$field != $value) {
+                    $updatereferencesneeded = true;
+                }
+
                 // adding the field
                 $this->file_record->$field = $value;
             } else {
@@ -175,6 +180,10 @@ class stored_file {
         $this->file_record->mimetype = $mimetype;
 
         $DB->update_record('files', $this->file_record);
+        if ($updatereferencesneeded) {
+            // Either filesize or contenthash of this file have changed. Update all files that reference to it.
+            $this->fs->update_references_to_storedfile($this);
+        }
     }
 
     /**
@@ -198,12 +207,21 @@ class stored_file {
     /**
      * Replace the content by providing another stored_file instance
      *
+     * @deprecated since 2.6
+     * @see stored_file::replace_file_with()
      * @param stored_file $storedfile
      */
     public function replace_content_with(stored_file $storedfile) {
+        debugging('Function stored_file::replace_content_with() is deprecated. Please use stored_file::replace_file_with()', DEBUG_DEVELOPER);
+        $filerecord = new stdClass;
         $contenthash = $storedfile->get_contenthash();
-        $this->set_contenthash($contenthash);
-        $this->set_filesize($storedfile->get_filesize());
+        if ($this->fs->content_exists($contenthash)) {
+            $filerecord->contenthash = $contenthash;
+        } else {
+            throw new file_exception('storedfileproblem', 'Invalid contenthash, content must be already in filepool', $contenthash);
+        }
+        $filerecord->filesize = $storedfile->get_filesize();
+        $this->update($filerecord);
     }
 
     /**
@@ -684,12 +702,13 @@ class stored_file {
         return $this->file_record->filesize;
     }
 
-    /**
+     /**
      * Returns the size of file in bytes.
      *
      * @param int $filesize bytes
      */
     public function set_filesize($filesize) {
+        debugging('Function stored_file::set_filesize() is deprecated. Please use stored_file::replace_file_with()', DEBUG_DEVELOPER);
         $filerecord = new stdClass;
         $filerecord->filesize = $filesize;
         $this->update($filerecord);
@@ -760,22 +779,6 @@ class stored_file {
     public function get_contenthash() {
         $this->sync_external_file();
         return $this->file_record->contenthash;
-    }
-
-    /**
-     * Set contenthash
-     *
-     * @param string $contenthash
-     */
-    protected function set_contenthash($contenthash) {
-        // make sure the content exists in moodle file pool
-        if ($this->fs->content_exists($contenthash)) {
-            $filerecord = new stdClass;
-            $filerecord->contenthash = $contenthash;
-            $this->update($filerecord);
-        } else {
-            throw new file_exception('storedfileproblem', 'Invalid contenthash, content must be already in filepool', $contenthash);
-        }
     }
 
     /**

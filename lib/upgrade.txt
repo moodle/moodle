@@ -100,6 +100,10 @@ Navigation:
     * settings_navigation::
           get_course_modules()              -> (no replacement)
 
+Files and repositories:
+    * stored_file::replace_content_with()   -> stored_file::replace_file_with()
+    * stored_file::set_filesize()           -> stored_file::replace_file_with()
+
 Calendar:
     * add_event()                           -> calendar_event::create()
     * update_event()                        -> calendar_event->update()

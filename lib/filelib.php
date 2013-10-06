@@ -928,8 +928,6 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
                     $oldfile->get_referencefileid() != $newfile->get_referencefileid() ||
                     $oldfile->get_userid() != $newfile->get_userid())) {
                 $oldfile->replace_file_with($newfile);
-                // push changes to all local files that are referencing this file
-                $fs->update_references_to_storedfile($oldfile);
             }
 
             // unchanged file or directory - we keep it as is

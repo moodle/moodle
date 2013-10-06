@@ -212,17 +212,6 @@ class repository_coursefiles extends repository {
     }
 
     /**
-     * Return reference file life time
-     *
-     * @param string $ref
-     * @return int
-     */
-    public function get_reference_file_lifetime($ref) {
-        // this should be realtime
-        return 0;
-    }
-
-    /**
      * Is this repository accessing private data?
      *
      * @return bool
