@@ -235,7 +235,10 @@ if ($action !== false && confirm_sesskey()) {
             if ($data = $mform->get_data()) {
                 // The form has been submit handle it.
                 if ($data->fulldelete == 1 && $category->can_delete_full()) {
-                    $continueurl = new moodle_url('/course/management.php', array('categoryid' => $category->parent));
+                    $continueurl = new moodle_url('/course/management.php');
+                    if ($category->parent != '0') {
+                        $continueurl->param('categoryid', $category->parent);
+                    }
                     $notification = get_string('coursecategorydeleted', '', $category->get_formatted_name());
                     $deletedcourses = $category->delete_full(true);
                     foreach ($deletedcourses as $course) {

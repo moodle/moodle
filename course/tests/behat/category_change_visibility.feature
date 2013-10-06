@@ -59,7 +59,7 @@ Feature: We can change the visibility of categories in the management interface.
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
     And I should not see "Cat 2" in the "#category-listing ul.ml" "css_element"
     And category in management listing should be visible "CAT1"
-    And I click on "Cat 1" category listing
+    And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
@@ -95,7 +95,7 @@ Feature: We can change the visibility of categories in the management interface.
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
     And I should not see "Cat 2" in the "#category-listing ul.ml" "css_element"
     And category in management listing should be visible "CAT1"
-    And I click to toggle subcategories expansion "CAT1"
+    And I click to expand category "CAT1" in the management interface
     # AJAX loads sub category.
     And category in management listing should be visible "CAT1"
     And category in management listing should be visible "CAT2"
@@ -125,7 +125,7 @@ Feature: We can change the visibility of categories in the management interface.
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Cat 1" category listing
+    And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
@@ -200,7 +200,7 @@ Feature: We can change the visibility of categories in the management interface.
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Cat 1" category listing
+    And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"

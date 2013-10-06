@@ -18,7 +18,7 @@ Feature: Test we can resort course in the management interface.
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Cat 1" category listing
+    And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Re-sort courses" in the ".course-listing-actions" "css_element"
@@ -51,7 +51,7 @@ Feature: Test we can resort course in the management interface.
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Cat 1" category listing
+    And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Re-sort courses" in the ".course-listing-actions" "css_element"
@@ -87,7 +87,7 @@ Feature: Test we can resort course in the management interface.
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Cat 1" category listing
+    And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"
@@ -124,7 +124,7 @@ Feature: Test we can resort course in the management interface.
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Cat 1" category listing
+    And I click on category "Cat 1" in the management interface
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"

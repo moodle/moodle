@@ -65,7 +65,7 @@ Feature: Test category management actions
     And I should see "This category is empty"
     And I press "Cancel"
     # Redirect
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
     And I should see "Cat 2" in the "#category-listing ul.ml" "css_element"
     And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
@@ -175,7 +175,7 @@ Feature: Test category management actions
     And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#course-listing h3" "css_element"
 
-  @javascript @MDL-31830
+  @javascript
   Scenario: Test that I can create a category and view it in the management interface
     Given the following "categories" exists:
       | name | category | idnumber |

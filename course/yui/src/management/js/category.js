@@ -317,9 +317,10 @@ Category.prototype = {
         var console = this.get('console'),
             key,
             course;
+        Y.log('Changing categories course visibility', 'info', 'moodle-course-management');
         try {
             for (key in courses) {
-                if (courses.hasOwnProperty[key]) {
+                if (typeof courses[key] === 'object') {
                     course = console.getCourseById(courses[key].id);
                     if (course) {
                         if (courses[key].show === "1") {
@@ -346,9 +347,10 @@ Category.prototype = {
         var console = this.get('console'),
             key,
             category;
+        Y.log('Changing categories subcategory visibility', 'info', 'moodle-course-management');
         try {
             for (key in categories) {
-                if (categories.hasOwnProperty[key]) {
+                if (typeof categories[key] === 'object') {
                     category = console.getCategoryById(categories[key].id);
                     if (category) {
                         if (categories[key].show === "1") {

@@ -69,10 +69,10 @@ class behat_course extends behat_base {
     public function i_create_a_course_with(TableNode $table) {
         return array(
             new Given('I go to the courses management page'),
-            new Given('I should see the "Course categories" management page'),
-            new Given('I click on "Miscellaneous" category listing'),
-            new Given('I should see the "Course categories and courses" management page'),
-            new Given('I click on "New course" "link" in the "#course-listing" "css_element"'),
+            new Given('I should see the "'.get_string('categories').'" management page'),
+            new Given('I click on category "'.get_string('miscellaneous').'" in the management interface'),
+            new Given('I should see the "'.get_string('categoriesandcoures').'" management page'),
+            new Given('I click on "'.get_string('newcourse').'" "link" in the "#course-listing" "css_element"'),
             new Given('I fill the moodle form with:', $table),
             new Given('I press "' . get_string('savechanges') . '"')
         );
@@ -812,22 +812,38 @@ class behat_course extends behat_base {
 
     /**
      * Returns the id of the category with the given idnumber.
+     *
+     * Please note that this function requires the category to exist. If it does not exist an ExpectationException is thrown.
+     *
      * @param string $idnumber
      * @return string
+     * @throws ExpectationException
      */
     protected function get_category_id($idnumber) {
         global $DB;
-        return $DB->get_field('course_categories', 'id', array('idnumber' => $idnumber), MUST_EXIST);
+        try {
+            return $DB->get_field('course_categories', 'id', array('idnumber' => $idnumber), MUST_EXIST);
+        } catch (dml_missing_record_exception $ex) {
+            throw new ExpectationException(sprintf("There is no category in the database with the idnumber '%s'", $idnumber));
+        }
     }
 
     /**
      * Returns the id of the course with the given idnumber.
+     *
+     * Please note that this function requires the category to exist. If it does not exist an ExpectationException is thrown.
+     *
      * @param string $idnumber
      * @return string
+     * @throws ExpectationException
      */
     protected function get_course_id($idnumber) {
         global $DB;
-        return $DB->get_field('course', 'id', array('idnumber' => $idnumber), MUST_EXIST);
+        try {
+            return $DB->get_field('course', 'id', array('idnumber' => $idnumber), MUST_EXIST);
+        } catch (dml_missing_record_exception $ex) {
+            throw new ExpectationException(sprintf("There is no course in the database with the idnumber '%s'", $idnumber));
+        }
     }
 
     /**
@@ -843,7 +859,9 @@ class behat_course extends behat_base {
     }
 
     /**
-     * @param $name
+     * Returns a category node from within the management interface.
+     *
+     * @param string $name The name of the category.
      * @return \Behat\Mink\Element\NodeElement
      */
     protected function get_management_category_listing_node_by_name($name) {
@@ -852,7 +870,9 @@ class behat_course extends behat_base {
     }
 
     /**
-     * @param $name
+     * Returns a course node from within the management interface.
+     *
+     * @param string $name The name of the course.
      * @return \Behat\Mink\Element\NodeElement
      */
     protected function get_management_course_listing_node_by_name($name) {
@@ -873,29 +893,34 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Toggle the expansion of a category revealing its sub categories within the management UI.
+     * Clicks on a category in the management interface.
      *
-     * @Given /^I click on "(?P<name>[^"]*)" (?P<listing>course|category) listing$/
+     * @Given /^I click on category "(?P<name>[^"]*)" in the management interface$/
      * @param string $name
-     * @param string $listing
      */
-    public function i_click_on_listing($name, $listing) {
-        if ($listing === 'course') {
-            $node = $this->get_management_course_listing_node_by_name($name);
-            $node->find('css', 'a.coursename')->click();
-        } else {
-            $node = $this->get_management_category_listing_node_by_name($name);
-            $node->find('css', 'a.categoryname')->click();
-        }
+    public function i_click_on_category_in_the_management_interface($name) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+        $node->find('css', 'a.categoryname')->click();
     }
 
     /**
-     * Toggle the expansion of a category revealing its sub categories within the management UI.
+     * Clicks on a course in the management interface.
      *
-     * @Given /^I click to toggle subcategories expansion "(?P<idnumber>[^"]*)"$/
+     * @Given /^I click on course "(?P<name>[^"]*)" in the management interface$/
+     * @param string $name
+     */
+    public function i_click_on_course_in_the_management_interface($name) {
+        $node = $this->get_management_course_listing_node_by_name($name);
+        $node->find('css', 'a.coursename')->click();
+    }
+
+    /**
+     * Click to expand a category revealing its sub categories within the management UI.
+     *
+     * @Given /^I click to expand category "(?P<idnumber>[^"]*)" in the management interface$/
      * @param string $idnumber
      */
-    public function i_click_to_toggle_subcategories_expansion($idnumber) {
+    public function i_click_to_expand_category_in_the_management_interface($idnumber) {
         $categorynode = $this->get_management_category_listing_node_by_idnumber($idnumber);
         $exception = new ExpectationException('Category "' . $idnumber . '" does not contain an expand or collapse toggle.', $this->getSession());
         $togglenode = $this->find('css', 'a[data-action=collapse],a[data-action=expand]', $exception, $categorynode);
@@ -903,7 +928,7 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Throws an exception if the category with the matching idnumber is not "visible" in the management UI.
+     * Checks that a category within the management interface is visible.
      *
      * @Given /^category in management listing should be visible "(?P<idnumber>[^"]*)"$/
      * @param string $idnumber
@@ -916,7 +941,7 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Throws an exception if the category with the matching idnumber is "visible" in the management UI.
+     * Checks that a category within the management interface is dimmed.
      *
      * @Given /^category in management listing should be dimmed "(?P<idnumber>[^"]*)"$/
      * @param string $idnumber
@@ -929,7 +954,7 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Throws an exception if the course with the matching idnumber is not "visible" in the management UI.
+     * Checks that a course within the management interface is visible.
      *
      * @Given /^course in management listing should be visible "(?P<idnumber>[^"]*)"$/
      * @param string $idnumber
@@ -942,7 +967,7 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Throws an exception if the course with the matching idnumber is "visible" in the management UI.
+     * Checks that a course within the management interface is dimmed.
      *
      * @Given /^course in management listing should be dimmed "(?P<idnumber>[^"]*)"$/
      * @param string $idnumber
@@ -996,36 +1021,62 @@ class behat_course extends behat_base {
     }
 
     /**
-     * @Given /^I click to move (?P<listing>category|course) "(?P<idnumber>[^"]*)" (?P<direction>up|down) one(?P<nohighlight> without highlight)?$/
-     * @param $listing
-     * @param $idnumber
-     * @param $direction
+     * Moves a category displayed in the management interface up or down one place.
+     *
+     * @Given /^I click to move category "(?P<idnumber>[^"]*)" (?P<direction>up|down) one$/
+     *
+     * @param string $idnumber The category idnumber
+     * @param string $direction The direction to move in, either up or down
      */
-    public function i_click_to_move_listing_by_one($listing, $idnumber, $direction, $nohighlight = false) {
-        $up = ($direction === 'up');
-        if ($listing === 'category') {
-            $node = $this->get_management_category_listing_node_by_idnumber($idnumber);
-        } else {
-            $node = $this->get_management_course_listing_node_by_idnumber($idnumber);
-        }
+    public function i_click_to_move_category_by_one($idnumber, $direction) {
+        $node = $this->get_management_category_listing_node_by_idnumber($idnumber);
+        $this->user_moves_listing_by_one('category', $node, $direction);
+    }
+
+    /**
+     * Moves a course displayed in the management interface up or down one place.
+     *
+     * @Given /^I click to move course "(?P<idnumber>[^"]*)" (?P<direction>up|down) one$/
+     *
+     * @param string $idnumber The course idnumber
+     * @param string $direction The direction to move in, either up or down
+     */
+    public function i_click_to_move_course_by_one($idnumber, $direction) {
+        $node = $this->get_management_course_listing_node_by_idnumber($idnumber);
+        $this->user_moves_listing_by_one('course', $node, $direction);
+    }
+
+    /**
+     * Moves a course or category listing within the management interface up or down by one.
+     *
+     * @param string $listingtype One of course or category
+     * @param \Behat\Mink\Element\NodeElement $listingnode
+     * @param string $direction One of up or down.
+     * @param bool $highlight If set to false we don't check the node has been highlighted.
+     */
+    protected function user_moves_listing_by_one($listingtype, $listingnode, $direction, $highlight = true) {
+        $up = (strtolower($direction) === 'up');
         if ($up) {
-            $exception = new ExpectationException($listing.' listing "' . $idnumber . '" does not contain a moveup button.', $this->getSession());
-            $button = $this->find('css', 'a.action-moveup', $exception, $node);
+            $exception = new ExpectationException($listingtype.' listing does not contain a moveup button.', $this->getSession());
+            $button = $this->find('css', 'a.action-moveup', $exception, $listingnode);
         } else {
-            $exception = new ExpectationException($listing.' listing "' . $idnumber . '" does not contain a movedown button.', $this->getSession());
-            $button = $this->find('css', 'a.action-movedown', $exception, $node);
+            $exception = new ExpectationException($listingtype.' listing does not contain a movedown button.', $this->getSession());
+            $button = $this->find('css', 'a.action-movedown', $exception, $listingnode);
         }
         $button->click();
-        if ($this->running_javascript() && empty($nohighlight)) {
-            $listitem = $node->getParent();
+        if ($this->running_javascript() && $highlight) {
+            $listitem = $listingnode->getParent();
             $exception = new ExpectationException('Nothing was highlighted, ajax didn\'t occur or didn\'t succeed.', $this->getSession());
             $this->spin(array($this, 'listing_is_highlighted'), $listitem->getTagName().'#'.$listitem->getAttribute('id'), 2, $exception, true);
         }
     }
 
     /**
-     * @param \Behat\Mink\Element\NodeElement $listitem
-     * @return mixed
+     * Used by spin to determine the callback has been highlighted.
+     *
+     * @param behat_course $self A self reference (default first arg from a spin callback)
+     * @param \Behat\Mink\Element\NodeElement $selector
+     * @return bool
      */
     protected function listing_is_highlighted($self, $selector) {
         $listitem = $this->find('css', $selector);
@@ -1033,30 +1084,47 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Confirms that listings appear in a specific order.
+     * Check that one course appears before another in the course category management listings.
      *
-     * @Given /^I should see (?P<listing>category|course) listing "(?P<before>[^"]*)" before "(?P<after>[^"]*)"$/
-     * @param string $listing Is either category or course
-     * @param string $before The name of the before listitem.
-     * @string string $after The name of the after listitem.
+     * @Given /^I should see course listing "(?P<preceedingcourse>[^"]*)" before "(?P<followingcourse>[^"]*)"$/
+     *
+     * @param string $preceedingcourse The first course to find
+     * @param string $followingcourse The second course to find (should be AFTER the first course)
+     * @throws ExpectationException
      */
-    public function i_should_see_listing_before($listing, $before, $after) {
-        $xpath = "//div[@id='{$listing}-listing']//li[contains(concat(' ', @class, ' '), ' listitem-{$listing} ')]//a[text()='{$before}']/ancestor::li[@data-id]//following::a[text()='{$after}']";
-        $msg = "{$before} {$listing} does not appear before {$after} {$listing}";
+    public function i_should_see_course_listing_before($preceedingcourse, $followingcourse) {
+        $xpath = "//div[@id='course-listing']//li[contains(concat(' ', @class, ' '), ' listitem-course ')]//a[text()='{$preceedingcourse}']/ancestor::li[@data-id]//following::a[text()='{$followingcourse}']";
+        $msg = "{$preceedingcourse} course does not appear before {$followingcourse} course";
         if (!$this->getSession()->getDriver()->find($xpath)) {
             throw new ExpectationException($msg, $this->getSession());
         }
     }
 
     /**
-     * Returns an array of checks to be performed to make sure we are on the management page with the expected components.
+     * Check that one category appears before another in the course category management listings.
      *
-     * @Given /^I should see the "(?P<mode>[^"]*)" management page(?P<withcourse> with a course selected)?$/
-     * @param string $mode
-     * @param bool $withcourse
+     * @Given /^I should see category listing "(?P<preceedingcategory>[^"]*)" before "(?P<followingcategory>[^"]*)"$/
+     *
+     * @param string $preceedingcategory The first category to find
+     * @param string $followingcategory The second category to find (should be after the first category)
+     * @throws ExpectationException
+     */
+    public function i_should_see_category_listing_before($preceedingcategory, $followingcategory) {
+        $xpath = "//div[@id='category-listing']//li[contains(concat(' ', @class, ' '), ' listitem-category ')]//a[text()='{$preceedingcategory}']/ancestor::li[@data-id]//following::a[text()='{$followingcategory}']";
+        $msg = "{$preceedingcategory} category does not appear before {$followingcategory} category";
+        if (!$this->getSession()->getDriver()->find($xpath)) {
+            throw new ExpectationException($msg, $this->getSession());
+        }
+    }
+
+    /**
+     * Checks that we are on the course management page that we expect to be on and that no course has been selected.
+     *
+     * @Given /^I should see the "(?P<mode>[^"]*)" management page$/
+     * @param string $mode The mode to expected. One of 'Courses', 'Course categories' or 'Course categories and courses'
      * @return Given[]
      */
-    public function i_should_see_the_courses_management_page($mode, $withcourse = false) {
+    public function i_should_see_the_courses_management_page($mode) {
         $return = array(
             new Given('I should see "Course and category management" in the "h2" "css_element"')
         );
@@ -1075,33 +1143,68 @@ class behat_course extends behat_base {
                 $return[] = new Given('"#course-listing" "css_element" should exists');
                 break;
         }
-        if (!empty($withcourse)) {
-            $return[] = new Given('"#course-detail" "css_element" should exists');
-        } else {
-            $return[] = new Given('"#course-detail" "css_element" should not exists');
-        }
+        $return[] = new Given('"#course-detail" "css_element" should not exists');
         return $return;
     }
 
     /**
-     * @Given /^I click on "(?P<action>[^"]*)" action for "(?P<name>[^"]*)" in management (?P<listing>course|category) listing$/
+     * Checks that we are on the course management page that we expect to be on and that a course has been selected.
+     *
+     * @Given /^I should see the "(?P<mode>[^"]*)" management page with a course selected$/
+     * @param string $mode The mode to expected. One of 'Courses', 'Course categories' or 'Course categories and courses'
+     * @return Given[]
      */
-    public function i_click_on_action_for_item_in_management_course_listing($action, $name, $listing) {
-        if ($listing === 'category') {
-            $node = $this->get_management_category_listing_node_by_name($name);
-        } else {
-            $node = $this->get_management_course_listing_node_by_name($name);
-            $listing = 'course';
-        }
-        $actionsnode = $node->find('xpath', "//*[contains(concat(' ', normalize-space(@class), ' '), '{$listing}-item-actions')]");
+    public function i_should_see_the_courses_management_page_with_a_course_selected($mode) {
+        $return = $this->i_should_see_the_courses_management_page($mode);
+        array_pop($return);
+        $return[] = new Given('"#course-detail" "css_element" should exists');
+        return $return;
+    }
+
+    /**
+     * Locates a course in the course category management interface and then triggers an action for it.
+     *
+     * @Given /^I click on "(?P<action>[^"]*)" action for "(?P<name>[^"]*)" in management course listing$/
+     *
+     * @param string $action The action to take. One of
+     * @param string $name The name of the course as it is displayed in the management interface.
+     */
+    public function i_click_on_action_for_item_in_management_course_listing($action, $name) {
+        $node = $this->get_management_course_listing_node_by_name($name);
+        $this->user_clicks_on_management_listing_action('course', $node, $action);
+    }
+
+    /**
+     * Locates a category in the course category management interface and then triggers an action for it.
+     *
+     * @Given /^I click on "(?P<action>[^"]*)" action for "(?P<name>[^"]*)" in management category listing$/
+     *
+     * @param string $action The action to take. One of
+     * @param string $name The name of the category as it is displayed in the management interface.
+     */
+    public function i_click_on_action_for_item_in_management_category_listing($action, $name) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+        $this->user_clicks_on_management_listing_action('category', $node, $action);
+    }
+
+    /**
+     * Finds the node to use for a management listitem action and clicks it.
+     *
+     * @param string $listingtype Either course or category.
+     * @param \Behat\Mink\Element\NodeElement $listingnode
+     * @param string $action The action being taken
+     * @throws Behat\Mink\Exception\ExpectationException
+     */
+    protected function user_clicks_on_management_listing_action($listingtype, $listingnode, $action) {
+        $actionsnode = $listingnode->find('xpath', "//*[contains(concat(' ', normalize-space(@class), ' '), '{$listingtype}-item-actions')]");
         if (!$actionsnode) {
-            throw new ExpectationException("Could not find the actions for $listing $name", $this->getSession());
+            throw new ExpectationException("Could not find the actions for $listingtype", $this->getSession());
         }
         $actionnode = $actionsnode->find('css', '.action-'.$action);
         if ($actionnode === null && $this->running_javascript()) {
             $actionsnode->find('css', 'a.toggle-display')->click();
             if ($actionnode) {
-                $actionnode = $node->find('css', '.action-'.$action);
+                $actionnode = $listingnode->find('css', '.action-'.$action);
             }
         }
         if (!$actionnode) {
