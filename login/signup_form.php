@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->dirroot.'/user/profile/lib.php');
+require_once($CFG->dirroot . '/user/editlib.php');
 
 class login_signup_form extends moodleform {
     function definition() {
@@ -59,22 +60,16 @@ class login_signup_form extends moodleform {
         $mform->setType('email2', PARAM_NOTAGS);
         $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
 
-        $nameordercheck = new stdClass();
-        $nameordercheck->firstname = 'a';
-        $nameordercheck->lastname  = 'b';
-        if (fullname($nameordercheck) == 'b a' ) {  // See MDL-4325
-            $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
-            $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
-        } else {
-            $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
-            $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
+        $namefields = useredit_get_required_name_fields();
+        foreach ($namefields as $field) {
+            $mform->addElement('text', $field, get_string($field), 'maxlength="100" size="30"');
+            $mform->setType($field, PARAM_TEXT);
+            $stringid = 'missing' . $field;
+            if (!get_string_manager()->string_exists($stringid, 'moodle')) {
+                $stringid = 'required';
+            }
+            $mform->addRule($field, get_string($stringid), 'required', null, 'server');
         }
-
-        $mform->setType('firstname', PARAM_TEXT);
-        $mform->addRule('firstname', get_string('missingfirstname'), 'required', null, 'server');
-
-        $mform->setType('lastname', PARAM_TEXT);
-        $mform->addRule('lastname', get_string('missinglastname'), 'required', null, 'server');
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="20"');
         $mform->setType('city', PARAM_TEXT);
