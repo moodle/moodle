@@ -145,7 +145,7 @@ Category.prototype = {
     expand : function() {
         var node = this.get('node'),
             action = node.one('a[data-action=expand]');
-        node.removeClass('collapsed');
+        node.removeClass('collapsed').setAttribute('aria-expanded', 'true');
         action.setAttribute('data-action', 'collapse').one('img').setAttrs({
             src : M.util.image_url('t/switch_minus', 'moodle'),
             title : M.util.get_string('collapse', 'moodle'),
@@ -160,7 +160,7 @@ Category.prototype = {
     collapse : function() {
         var node = this.get('node'),
             action = node.one('a[data-action=collapse]');
-        node.addClass('collapsed');
+        node.addClass('collapsed').setAttribute('aria-expanded', 'false');
         action.setAttribute('data-action', 'expand').one('img').setAttrs({
             src : M.util.image_url('t/switch_plus', 'moodle'),
             title : M.util.get_string('expand', 'moodle'),

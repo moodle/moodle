@@ -393,7 +393,7 @@ Console.prototype = {
      * @method removeCourseById
      * @param {Number} id
      */
-    removeCourseById : function() {
+    removeCourseById : function(id) {
         var courses = this.get('courses'),
             length = courses.length,
             course,

@@ -255,6 +255,7 @@ DragDrop.prototype = {
                 }
             }
         } else if (iscourse || drop.ancestor('#course-listing')) {
+            course = console.getCourseById(courseid);
             previoussibling = drag.get('previousSibling');
             aftercourseid = (previoussibling) ? previoussibling.getData('id') || 0 : 0;
             previousid = (this.previoussibling) ?  this.previoussibling.getData('id') : 0;

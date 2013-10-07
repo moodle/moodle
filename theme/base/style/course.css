@@ -258,17 +258,18 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 #course-category-listings li[data-selected='1']:last-of-type > div {border-bottom-color:#e1e1e8;}
 #course-category-listings > div > div > ul.ml > li:first-child > div {border-top:0;}
 
+.jsenabled #course-category-listings .category-item-actions .menu-action-text {padding-left:0.3em;}
+
 #course-category-listings .listing-actions .moodle-actionmenu:not([data-enhanced]) li {line-height:normal;}
 #course-category-listings .listing-actions .moodle-actionmenu:not([data-enhanced]) > .menubar a,
 #course-category-listings .listing-actions .moodle-actionmenu:not([data-enhanced]) > .menu .menu-action-text {display:inline-block;}
 #course-category-listings .listing-actions .moodle-actionmenu:not([data-enhanced]) > .menubar a {color:inherit;}
 #course-category-listings .listing-actions .moodle-actionmenu:not([data-enhanced]) > .menubar a > img {display:none;}
 
-#course-category-listings li > div:hover,
 #course-category-listings li[data-selected='1'] > div {background-image:url([[pix:t/collapsed]]);background-repeat: no-repeat; background-position: right center;}
 
 #course-category-listings .item-actions {margin-right:1em;display:inline-block;display:initial;}
-#course-category-listings .item-actions img {margin: 0 0.2em;}
+#course-category-listings .item-actions img {margin: 0 0.3em;}
 #course-category-listings .item-actions .menu .menu-action {margin-right:1em;}
 
 #course-category-listings li .tree-icon {margin-left:1em;}
@@ -280,7 +281,7 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 #course-listing .listitem .drag-handle {margin-right:0.5em;}
 #course-listing .listitem .idnumber {color:#a1a1a8;margin-right:2em;}
 #course-listing .listitem .categoryname {display:inline-block;margin-left:1em;color:#a1a1a8;}
-#course-listing .listitem .coursename {display:inline-block;min-width:50%;}
+#course-listing .listitem .coursename {display:inline-block;}
 
 #category-listing .course-count {color:#a1a1a8;margin-right:2em;min-width:35px;display:inline-block;}
 #category-listing .listitem.collapsed > ul.ml {display: none;}

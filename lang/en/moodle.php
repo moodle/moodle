@@ -1295,6 +1295,7 @@ $string['other'] = 'Other';
 $string['outline'] = 'Outline';
 $string['outlinereport'] = 'Outline report';
 $string['page'] = 'Page';
+$string['pagea'] = 'Page {$a}';
 $string['pageheaderconfigablock'] = 'Configuring a block in {$a->fullname}';
 $string['pagepath'] = 'Page path';
 $string['pageshouldredirect'] = 'This page should automatically redirect. If nothing is happening please use the continue link below.';
