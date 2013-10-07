@@ -90,8 +90,12 @@ class core_text_testcase extends advanced_testcase {
         $this->assertSame($utf8, core_text::convert($utf8, 'utf-8', 'utf-8'));
 
         $utf8 = "Žluťoučký koníček";
-        $this->assertSame('Zlutouck\'y kon\'icek', core_text::convert($utf8, 'utf-8', 'ascii'));
+        $this->assertSame('Zlutoucky konicek', core_text::convert($utf8, 'utf-8', 'ascii'));
         $this->assertSame($utf8, core_text::convert($utf8.chr(130), 'utf-8', 'utf-8'));
+        $utf8 = "Der eine stößt den Speer zum Mann";
+        $this->assertSame('Der eine stoesst den Speer zum Mann', core_text::convert($utf8, 'utf-8', 'ascii'));
+        $iso1 = core_text::convert($utf8, 'utf-8', 'iso-8859-1');
+        $this->assertSame('Der eine stoesst den Speer zum Mann', core_text::convert($iso1, 'iso-8859-1', 'ascii'));
     }
 
     /**
