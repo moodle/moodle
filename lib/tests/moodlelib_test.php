@@ -2517,4 +2517,44 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($user2->email, $result[1]->to);
         $this->assertSame($user1->email, $result[1]->from);
     }
+
+    /**
+     * Test user_updated event trigger by various apis.
+     */
+    public function test_user_updated_event() {
+        global $DB, $CFG;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        // Set config to allow email_to_user() to be called.
+        $CFG->noemailever = false;
+
+        // Update user password.
+        $sink = $this->redirectEvents();
+        $sink2 = $this->redirectEmails(); // Make sure we are redirecting emails.
+        setnew_password_and_mail($user);
+        update_internal_user_password($user, 'randompass');
+        $events = $sink->get_events();
+        $sink->close();
+        $sink2->close();
+
+        // Test updated value.
+        $dbuser = $DB->get_record('user', array('id' => $user->id));
+        $this->assertSame($user->firstname, $dbuser->firstname);
+        $this->assertNotSame('M00dLe@T', $dbuser->password);
+
+        // Test event.
+        foreach ($events as $event) {
+            $this->assertInstanceOf('\core\event\user_updated', $event);
+            $this->assertSame($user->id, $event->objectid);
+            $this->assertSame('user_updated', $event->get_legacy_eventname());
+            $this->assertEventLegacyData($user, $event);
+            $this->assertEquals(context_user::instance($user->id), $event->get_context());
+            $expectedlogdata = array(SITEID, 'user', 'update', 'view.php?id='.$user->id, '');
+            $this->assertEventLegacyLogData($expectedlogdata, $event);
+        }
+    }
+
 }
