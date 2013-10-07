@@ -285,7 +285,7 @@ class behat_general extends behat_base {
     public function assert_page_contains_text($text) {
 
         $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
-        $xpath = "/descendant::*[contains(., $xpathliteral)]";
+        $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]";
 
         // Wait until it finds the text, otherwise custom exception.
         try {
@@ -304,45 +304,69 @@ class behat_general extends behat_base {
      */
     public function assert_page_not_contains_text($text) {
 
-        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
-        $xpath = "/descendant::*[not(contains(., $xpathliteral))]";
-
-        // Wait until it finds the text, otherwise custom exception.
+        // Delegating the process to assert_page_contains_text.
         try {
-            $this->find('xpath', $xpath);
-        } catch (ElementNotFoundException $e) {
-            throw new ExpectationException('"' . $text . '" text was found in the page', $this->getSession());
+            $this->assert_page_contains_text($text);
+        } catch (ExpectationException $e) {
+            // It should not appear, so this is good.
+            return;
         }
+
+        // If the page contains the text this is failing.
+        throw new ExpectationException('"' . $text . '" text was found in the page', $this->getSession());
     }
 
     /**
      * Checks, that element with specified CSS selector or XPath contains specified text.
      *
      * @Then /^I should see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)"$/
+     * @throws ElementNotFoundException
+     * @throws ExpectationException
      * @param string $text
      * @param string $element Element we look in.
      * @param string $selectortype The type of element where we are looking in.
      */
     public function assert_element_contains_text($text, $element, $selectortype) {
 
-        // Transforming from steps definitions selector/locator format to Mink format.
-        list($selector, $locator) = $this->transform_text_selector($selectortype, $element);
-        $this->assertSession()->elementTextContains($selector, $locator, $text);
+        // Getting the container where the text should be found.
+        $container = $this->get_selected_node($selectortype, $element);
+
+        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]";
+
+        // Wait until it finds the text inside the container, otherwise custom exception.
+        try {
+            $this->find('xpath', $xpath, false, $container);
+        } catch (ElementNotFoundException $e) {
+            throw new ExpectationException('"' . $text . '" text was not found in the ' . $element . ' element', $this->getSession());
+        }
+
     }
 
     /**
      * Checks, that element with specified CSS selector or XPath doesn't contain specified text.
      *
      * @Then /^I should not see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)"$/
+     * @throws ElementNotFoundException
+     * @throws ExpectationException
      * @param string $text
      * @param string $element Element we look in.
      * @param string $selectortype The type of element where we are looking in.
      */
     public function assert_element_not_contains_text($text, $element, $selectortype) {
 
-        // Transforming from steps definitions selector/locator format to mink format.
-        list($selector, $locator) = $this->transform_text_selector($selectortype, $element);
-        $this->assertSession()->elementTextNotContains($selector, $locator, $text);
+        // Delegating the process to assert_element_contains_text.
+        try {
+            $this->assert_element_contains_text($text, $element, $selectortype);
+        } catch (ExpectationException $e) {
+            // It should not appear, so this is good.
+            // We only catch ExpectationException as ElementNotFoundException
+            // will be thrown if the container does not exist.
+            return;
+        }
+
+        // If the element contains the text this is failing.
+        throw new ExpectationException('"' . $text . '" text was found in the ' . $element . ' element', $this->getSession());
     }
 
     /**
