@@ -499,7 +499,7 @@ EDITOR.prototype = {
                     }
                     filename = stamp.substr(stamp.lastIndexOf('/'));
                     this.currentedit.stamp = filename;
-                    this.refresh_button_state();
+                    this.handle_tool_button(e, "stamp");
                 },
                 context: this
             });
@@ -522,7 +522,7 @@ EDITOR.prototype = {
         currenttoolnode.removeClass('assignfeedback_editpdf_selectedbutton');
         currenttoolnode.setAttribute('aria-pressed', 'false');
         this.currentedit.tool = tool;
-        if (tool !== "comment" && tool !== "select") {
+        if (tool !== "comment" && tool !== "select" && tool !== "stamp") {
             this.lastannotationtool = tool;
         }
         this.refresh_button_state();
