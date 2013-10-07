@@ -94,10 +94,8 @@
         $DB->set_field('forum_read', 'forumid', $forumto->id, array('discussionid' => $discussion->id));
         add_to_log($course->id, 'forum', 'move discussion', "discuss.php?d=$discussion->id", $discussion->id, $cmto->id);
 
-        require_once($CFG->libdir.'/rsslib.php');
-        require_once($CFG->dirroot.'/mod/forum/rsslib.php');
-
         // Delete the RSS files for the 2 forums to force regeneration of the feeds
+        require_once($CFG->dirroot.'/mod/forum/rsslib.php');
         forum_rss_delete_file($forum);
         forum_rss_delete_file($forumto);
 

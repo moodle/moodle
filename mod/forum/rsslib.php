@@ -24,6 +24,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/* Include the core RSS lib */
+require_once($CFG->libdir.'/rsslib.php');
+
 /**
  * Returns the path to the cached rss feed contents. Creates/updates the cache if necessary.
  * @param stdClass $context the context
@@ -68,9 +71,10 @@ function forum_rss_get_feed($context, $args) {
         $cachedfilelastmodified = filemtime($cachedfilepath);
     }
     // Used to determine if we need to generate a new RSS feed.
-    $dontrecheckcutoff = time()-60;
-    // If it hasn't been generated we will need to create it, otherwise only update
-    // if there is new stuff to show and it is older than the cut off date set above.
+    $dontrecheckcutoff = time() - 60; // Sixty seconds ago.
+
+    // If it hasn't been generated we need to create it.
+    // Otherwise, if it has been > 60 seconds since we last updated, check for new items.
     if (($cachedfilelastmodified == 0) || (($dontrecheckcutoff > $cachedfilelastmodified) &&
         forum_rss_newstuff($forum, $cm, $cachedfilelastmodified))) {
         // Need to regenerate the cached version.
