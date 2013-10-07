@@ -93,8 +93,8 @@ class core_textlib_testcase extends advanced_testcase {
         $this->assertSame(textlib::convert($utf8, 'utf-8', 'utf-8'), $utf8);
 
         $utf8 = "Žluťoučký koníček";
-        $this->assertSame('Zlutouck\'y kon\'icek', core_text::convert($utf8, 'utf-8', 'ascii'));
-        $this->assertSame($utf8, core_text::convert($utf8.chr(130), 'utf-8', 'utf-8'));
+        $this->assertSame('Zlutoucky konicek', textlib::convert($utf8, 'utf-8', 'ascii'));
+        $this->assertSame($utf8, textlib::convert($utf8.chr(130), 'utf-8', 'utf-8'));
     }
 
     /**
