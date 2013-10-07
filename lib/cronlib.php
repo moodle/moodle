@@ -415,8 +415,7 @@ function cron_run() {
 
     // If enabled, fetch information about available updates and eventually notify site admins
     if (empty($CFG->disableupdatenotifications)) {
-        require_once($CFG->libdir.'/pluginlib.php');
-        $updateschecker = available_update_checker::instance();
+        $updateschecker = \core\update\checker::instance();
         $updateschecker->cron();
     }
 

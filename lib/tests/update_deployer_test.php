@@ -25,14 +25,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
-require_once($CFG->libdir.'/pluginlib.php');
-
 
 /**
- * Test cases for {@link available_update_deployer} class.
+ * Test cases for {@link \core\update\deployer} class.
  */
-class core_available_update_deployer_testcase extends advanced_testcase {
+class core_update_deployer_testcase extends advanced_testcase {
 
     public function test_magic_setters() {
         $deployer = testable_available_update_deployer::instance();
@@ -58,9 +55,9 @@ class core_available_update_deployer_testcase extends advanced_testcase {
 
 
 /**
- * Modified version of {@link available_update_checker} suitable for testing.
+ * Modified version of {@link \core\update\checker} suitable for testing.
  */
-class testable_available_update_checker extends available_update_checker {
+class testable_available_update_checker extends \core\update\checker {
 
     /** @var replaces the default DB table storage for the fetched response */
     protected $fakeresponsestorage;
@@ -197,13 +194,13 @@ class testable_available_update_checker extends available_update_checker {
 
 
 /**
- * Exception used to detect {@link available_update_checker::cron_execute()} calls.
+ * Exception used to detect {@link \core\update\checker::cron_execute()} calls.
  */
 class testable_available_update_checker_cron_executed extends Exception {
 }
 
 /**
- * Modified {@link available_update_deployer} suitable for testing purposes.
+ * Modified {@link \core\update\deployer} suitable for testing purposes.
  */
-class testable_available_update_deployer extends available_update_deployer {
+class testable_available_update_deployer extends \core\update\deployer {
 }

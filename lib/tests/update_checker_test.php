@@ -26,18 +26,17 @@
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
-require_once($CFG->libdir.'/pluginlib.php');
-require_once(__DIR__.'/available_update_deployer_test.php');
+require_once(__DIR__.'/update_deployer_test.php');
 
 
 /**
  * Tests of the basic API of the available update checker.
  */
-class core_available_update_checker_testcase extends advanced_testcase {
+class core_update_checker_testcase extends advanced_testcase {
 
     public function test_core_available_update() {
         $provider = testable_available_update_checker::instance();
-        $this->assertInstanceOf('available_update_checker', $provider);
+        $this->assertInstanceOf('\core\update\checker', $provider);
 
         $provider->fake_current_environment(2012060102.00, '2.3.2 (Build: 20121012)', '2.3', array());
         $updates = $provider->get_update_info('core');
@@ -261,7 +260,7 @@ class core_available_update_checker_testcase extends advanced_testcase {
         $broken = array(
             'status' => 'ERROR' // No 'updates' key here.
         );
-        $this->setExpectedException('available_update_checker_exception');
+        $this->setExpectedException('\core\update\checker_exception');
         $cmp = $provider->compare_responses($broken, $broken);
     }
 

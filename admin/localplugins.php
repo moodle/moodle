@@ -30,7 +30,6 @@
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
-require_once($CFG->libdir.'/pluginlib.php');
 
 admin_externalpage_setup('managelocalplugins');
 
@@ -60,7 +59,7 @@ core_collator::asort($plugins);
 
 foreach ($plugins as $plugin => $name) {
     $uninstall = '';
-    if ($uninstallurl = plugin_manager::instance()->get_uninstall_url('local_'.$plugin)) {
+    if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url('local_'.$plugin, 'manage')) {
         $uninstall = html_writer::link($uninstallurl, get_string('uninstallplugin', 'core_admin'));
     }
 

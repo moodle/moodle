@@ -27,7 +27,6 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
-require_once($CFG->libdir.'/pluginlib.php');
 
 $action  = required_param('action', PARAM_ALPHANUMEXT);
 $enrol   = required_param('enrol', PARAM_PLUGIN);
@@ -51,7 +50,7 @@ switch ($action) {
     case 'disable':
         unset($enabled[$enrol]);
         set_config('enrol_plugins_enabled', implode(',', array_keys($enabled)));
-        plugin_manager::reset_caches();
+        core_plugin_manager::reset_caches();
         $syscontext->mark_dirty(); // resets all enrol caches
         break;
 
@@ -62,7 +61,7 @@ switch ($action) {
         $enabled = array_keys($enabled);
         $enabled[] = $enrol;
         set_config('enrol_plugins_enabled', implode(',', $enabled));
-        plugin_manager::reset_caches();
+        core_plugin_manager::reset_caches();
         $syscontext->mark_dirty(); // resets all enrol caches
         break;
 
@@ -122,7 +121,7 @@ switch ($action) {
 
         echo $OUTPUT->notification(get_string('success'), 'notifysuccess');
 
-        if (!$return = plugin_manager::instance()->get_uninstall_url('enrol_'.$enrol)) {
+        if (!$return = core_plugin_manager::instance()->get_uninstall_url('enrol_'.$enrol, 'manage')) {
             $return = new moodle_url('/admin/plugins.php');
         }
         echo $OUTPUT->continue_button($return);

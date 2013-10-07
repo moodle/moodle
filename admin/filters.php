@@ -33,7 +33,6 @@
 
     require_once(dirname(__FILE__) . '/../config.php');
     require_once($CFG->libdir . '/adminlib.php');
-    require_once($CFG->libdir . '/pluginlib.php');
 
     $action = optional_param('action', '', PARAM_ALPHANUMEXT);
     $filterpath = optional_param('filterpath', '', PARAM_SAFEDIR);
@@ -104,7 +103,7 @@
 
     // Reset caches and return
     if ($action) {
-        plugin_manager::reset_caches();
+        core_plugin_manager::reset_caches();
         reset_text_filters_cache();
         redirect($returnurl);
     }
@@ -137,7 +136,7 @@
 
     $table = new html_table();
     $table->head  = array(get_string('filter'), get_string('isactive', 'filters'),
-            get_string('order'), get_string('applyto', 'filters'), get_string('settings'), get_string('delete'));
+            get_string('order'), get_string('applyto', 'filters'), get_string('settings'), get_string('uninstallplugin', 'core_admin'));
     $table->colclasses = array ('leftalign', 'leftalign', 'centeralign', 'leftalign', 'leftalign', 'leftalign');
     $table->attributes['class'] = 'admintable generaltable';
     $table->id = 'filterssetting';
@@ -180,7 +179,7 @@
 
 function filters_action_url($filterpath, $action) {
     if ($action === 'delete') {
-        return new moodle_url('/admin/plugins.php', array('sesskey'=>sesskey(), 'uninstall'=>'filter_'.$filterpath));
+        return core_plugin_manager::instance()->get_uninstall_url('filter_'.$filterpath, 'manage');
     }
     return new moodle_url('/admin/filters.php', array('sesskey'=>sesskey(), 'filterpath'=>$filterpath, 'action'=>$action));
 }
@@ -233,7 +232,7 @@ function get_table_row($filterinfo, $isfirstrow, $islastactive, $applytostrings)
     }
 
     // Delete
-    $row[] = '<a href="' . filters_action_url($filter, 'delete') . '">' . get_string('delete') . '</a>';
+    $row[] = '<a href="' . filters_action_url($filter, 'delete') . '">' . get_string('uninstallplugin', 'core_admin') . '</a>';
 
     return $row;
 }

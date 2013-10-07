@@ -139,16 +139,26 @@ class assign_plugin_manager {
      * Util function for writing an action icon link
      *
      * @param string $action URL parameter to include in the link
-     * @param string $plugintype URL parameter to include in the link
+     * @param string $plugin URL parameter to include in the link
      * @param string $icon The key to the icon to use (e.g. 't/up')
      * @param string $alt The string description of the link used as the title and alt text
      * @return string The icon/link
      */
-    private function format_icon_link($action, $plugintype, $icon, $alt) {
+    private function format_icon_link($action, $plugin, $icon, $alt) {
         global $OUTPUT;
 
-        return $OUTPUT->action_icon(new moodle_url($this->pageurl,
-                array('action' => $action, 'plugin'=> $plugintype, 'sesskey' => sesskey())),
+        $url = $this->pageurl;
+
+        if ($action === 'delete') {
+            $url = core_plugin_manager::instance()->get_uninstall_url($this->subtype.'_'.$plugin, 'manage');
+            if (!$url) {
+                return '&nbsp;';
+            }
+            return html_writer::link($url, get_string('uninstallplugin', 'core_admin'));
+        }
+
+        return $OUTPUT->action_icon(new moodle_url($url,
+                array('action' => $action, 'plugin'=> $plugin, 'sesskey' => sesskey())),
                 new pix_icon($icon, $alt, 'moodle', array('title' => $alt)),
                 null, array('title' => $alt)) . ' ';
     }
@@ -167,12 +177,12 @@ class assign_plugin_manager {
         $table = new flexible_table($this->subtype . 'pluginsadminttable');
         $table->define_baseurl($this->pageurl);
         $table->define_columns(array('pluginname', 'version', 'hideshow', 'order',
-                'delete', 'settings'));
+                'settings', 'uninstall'));
         $table->define_headers(array(get_string($this->subtype . 'pluginname', 'assign'),
                 get_string('version'), get_string('hideshow', 'assign'),
-                get_string('order'), get_string('delete'), get_string('settings')));
+                get_string('order'), get_string('settings'), get_string('uninstallplugin', 'core_admin')));
         $table->set_attribute('id', $this->subtype . 'plugins');
-        $table->set_attribute('class', 'generaltable generalbox boxaligncenter boxwidthwide');
+        $table->set_attribute('class', 'admintable generaltable');
         $table->setup();
 
         $plugins = $this->get_sorted_plugins_list();
@@ -180,6 +190,7 @@ class assign_plugin_manager {
 
         foreach ($plugins as $idx => $plugin) {
             $row = array();
+            $class = '';
 
             $row[] = get_string('pluginname', $this->subtype . '_' . $plugin);
             $row[] = get_config($this->subtype . '_' . $plugin, 'version');
@@ -190,6 +201,7 @@ class assign_plugin_manager {
                 $row[] = $this->format_icon_link('hide', $plugin, 't/hide', get_string('disable'));
             } else {
                 $row[] = $this->format_icon_link('show', $plugin, 't/show', get_string('enable'));
+                $class = 'dimmed_text';
             }
 
             $movelinks = '';
@@ -203,11 +215,6 @@ class assign_plugin_manager {
             }
             $row[] = $movelinks;
 
-            if ($row[1] != '') {
-                $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('delete'));
-            } else {
-                $row[] = '&nbsp;';
-            }
             $exists = file_exists($CFG->dirroot . '/mod/assign/' . $shortsubtype . '/' . $plugin . '/settings.php');
             if ($row[1] != '' && $exists) {
                 $row[] = html_writer::link(new moodle_url('/admin/settings.php',
@@ -215,7 +222,10 @@ class assign_plugin_manager {
             } else {
                 $row[] = '&nbsp;';
             }
-            $table->add_data($row);
+
+            $row[] = $this->format_icon_link('delete', $plugin, 't/delete', get_string('uninstallplugin', 'core_admin'));
+
+            $table->add_data($row, $class);
         }
 
         $table->finish_output();
@@ -258,88 +268,6 @@ class assign_plugin_manager {
     }
 
     /**
-     * Delete the database and files associated with this plugin.
-     *
-     * @param string $plugin - The type of the plugin to delete
-     * @return string the name of the next page to display
-     */
-    public function delete_plugin($plugin) {
-        global $CFG, $DB, $OUTPUT;
-        $confirm = optional_param('confirm', null, PARAM_BOOL);
-
-        if ($confirm) {
-            // Delete any configuration records.
-            if (!unset_all_config_for_plugin($this->subtype . '_' . $plugin)) {
-                $this->error = $OUTPUT->notification(get_string('errordeletingconfig', 'admin', $this->subtype . '_' . $plugin));
-            }
-
-            // Should be covered by the previous function - but just in case.
-            unset_config('disabled', $this->subtype . '_' . $plugin);
-            unset_config('sortorder', $this->subtype . '_' . $plugin);
-
-            // Delete the plugin specific config settings.
-            $DB->delete_records('assign_plugin_config', array('plugin'=>$plugin, 'subtype'=>$this->subtype));
-
-            // Then the tables themselves.
-            $shortsubtype = substr($this->subtype, strlen('assign'));
-            $installxml = $CFG->dirroot . '/mod/assign/' . $shortsubtype . '/' . $plugin . '/db/install.xml';
-            drop_plugin_tables($this->subtype . '_' . $plugin,
-                               $installxml,
-                               false);
-
-            // Remove event handlers and dequeue pending events.
-            events_uninstall($this->subtype . '_' . $plugin);
-
-            // The page to display.
-            return 'plugindeleted';
-        } else {
-            // The page to display.
-            return 'confirmdelete';
-        }
-
-    }
-
-    /**
-     * Show the page that gives the details of the plugin that was just deleted.
-     *
-     * @param string $plugin - The plugin that was just deleted
-     * @return None
-     */
-    private function view_plugin_deleted($plugin) {
-        global $OUTPUT;
-        $this->view_header();
-        $pluginname = get_string('pluginname', $this->subtype . '_' . $plugin);
-        echo $OUTPUT->heading(get_string('deletingplugin', 'assign', $pluginname));
-        echo $this->error;
-        $messageparams = array('name'=>$pluginname,
-                               'directory'=>('/mod/assign/' . $this->subtype . '/'.$plugin));
-        echo $OUTPUT->notification(get_string('plugindeletefiles', 'moodle', $messageparams));
-        echo $OUTPUT->continue_button($this->pageurl);
-        $this->view_footer();
-    }
-
-    /**
-     * Show the page that asks the user to confirm they want to delete a plugin.
-     *
-     * @param string $plugin - The plugin that will be deleted
-     * @return None
-     */
-    private function view_confirm_delete($plugin) {
-        global $OUTPUT;
-        $this->view_header();
-        $pluginname = get_string('pluginname', $this->subtype . '_' . $plugin);
-        echo $OUTPUT->heading(get_string('deletepluginareyousure', 'assign', $pluginname));
-        $urlparams = array('action' => 'delete', 'plugin'=>$plugin, 'confirm' => 1);
-        $confirmurl = new moodle_url($this->pageurl, $urlparams);
-        echo $OUTPUT->confirm(get_string('deletepluginareyousuremessage', 'assign', $pluginname),
-                $confirmurl,
-                $this->pageurl);
-        $this->view_footer();
-    }
-
-
-
-    /**
      * Hide this plugin.
      *
      * @param string $plugin - The plugin to hide
@@ -347,6 +275,7 @@ class assign_plugin_manager {
      */
     public function hide_plugin($plugin) {
         set_config('disabled', 1, $this->subtype . '_' . $plugin);
+        core_plugin_manager::reset_caches();
         return 'view';
     }
 
@@ -405,6 +334,7 @@ class assign_plugin_manager {
      */
     public function show_plugin($plugin) {
         set_config('disabled', 0, $this->subtype . '_' . $plugin);
+        core_plugin_manager::reset_caches();
         return 'view';
     }
 
@@ -424,9 +354,7 @@ class assign_plugin_manager {
         $this->check_permissions();
 
         // Process.
-        if ($action == 'delete' && $plugin != null) {
-            $action = $this->delete_plugin($plugin);
-        } else if ($action == 'hide' && $plugin != null) {
+        if ($action == 'hide' && $plugin != null) {
             $action = $this->hide_plugin($plugin);
         } else if ($action == 'show' && $plugin != null) {
             $action = $this->show_plugin($plugin);
@@ -437,51 +365,8 @@ class assign_plugin_manager {
         }
 
         // View.
-        if ($action == 'confirmdelete' && $plugin != null) {
-            $this->view_confirm_delete($plugin);
-        } else if ($action == 'plugindeleted' && $plugin != null) {
-            $this->view_plugin_deleted($plugin);
-        } else if ($action == 'view') {
+        if ($action == 'view') {
             $this->view_plugins_table();
         }
-    }
-
-    /**
-     * This function adds plugin pages to the navigation menu.
-     *
-     * @static
-     * @param string $subtype - The type of plugin (submission or feedback)
-     * @param part_of_admin_tree $admin - The handle to the admin menu
-     * @param admin_settingpage $settings - The handle to current node in the navigation tree
-     * @param stdClass|plugininfo_mod $module - The handle to the current module
-     * @return None
-     */
-    public static function add_admin_assign_plugin_settings($subtype,
-                                                            part_of_admin_tree $admin,
-                                                            admin_settingpage $settings,
-                                                            $module) {
-        global $CFG;
-
-        $plugins = core_component::get_plugin_list_with_file($subtype, 'settings.php', false);
-        $pluginsbyname = array();
-        foreach ($plugins as $plugin => $plugindir) {
-            $pluginname = get_string('pluginname', $subtype . '_'.$plugin);
-            $pluginsbyname[$pluginname] = $plugin;
-        }
-        ksort($pluginsbyname);
-
-        foreach ($pluginsbyname as $pluginname => $plugin) {
-            $settings = new admin_settingpage($subtype . '_' . $plugin,
-                                              $pluginname,
-                                              'moodle/site:config',
-                                              $module->is_enabled() === false);
-            if ($admin->fulltree) {
-                $shortsubtype = substr($subtype, strlen('assign'));
-                include($CFG->dirroot . "/mod/assign/$shortsubtype/$plugin/settings.php");
-            }
-
-            $admin->add($subtype . 'plugins', $settings);
-        }
-
     }
 }

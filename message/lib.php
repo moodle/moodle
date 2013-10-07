@@ -2350,8 +2350,8 @@ function get_message_processors($ready = false, $reset = false) {
  */
 function get_message_providers() {
     global $CFG, $DB;
-    require_once($CFG->libdir . '/pluginlib.php');
-    $pluginman = plugin_manager::instance();
+
+    $pluginman = core_plugin_manager::instance();
 
     $providers = $DB->get_records('message_providers', null, 'name');
 
@@ -2359,7 +2359,7 @@ function get_message_providers() {
     foreach ($providers as $providerid => $provider) {
         $plugin = $pluginman->get_plugin_info($provider->component);
         if ($plugin) {
-            if ($plugin->get_status() === plugin_manager::PLUGIN_STATUS_MISSING) {
+            if ($plugin->get_status() === core_plugin_manager::PLUGIN_STATUS_MISSING) {
                 unset($providers[$providerid]);   // Plugins does not exist
                 continue;
             }

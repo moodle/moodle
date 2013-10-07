@@ -25,7 +25,6 @@
 
 require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/pluginlib.php');
 
 $contextid = required_param('contextid',PARAM_INT);
 $forfilter = optional_param('filter', '', PARAM_SAFEDIR);

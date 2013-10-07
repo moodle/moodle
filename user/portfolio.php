@@ -29,7 +29,6 @@ if (empty($CFG->enableportfolios)) {
     print_error('disabled', 'portfolio');
 }
 
-require_once($CFG->libdir . '/pluginlib.php');
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->libdir . '/portfolio/forms.php');
 
@@ -82,7 +81,7 @@ if (!empty($config)) {
         $success = $instance->set_user_config($fromform, $USER->id);
             //$success = $success && $instance->save();
         if ($success) {
-            plugin_manager::reset_caches();
+            core_plugin_manager::reset_caches();
             redirect($baseurl, get_string('instancesaved', 'portfolio'), 3);
         } else {
             print_error('instancenotsaved', 'portfolio', $baseurl);
@@ -99,7 +98,7 @@ if (!empty($config)) {
 } else if (!empty($hide)) {
     $instance = portfolio_instance($hide);
     $instance->set_user_config(array('visible' => !$instance->get_user_config('visible', $USER->id)), $USER->id);
-    plugin_manager::reset_caches();
+    core_plugin_manager::reset_caches();
 }
 
 if ($display) {

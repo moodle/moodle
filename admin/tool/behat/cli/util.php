@@ -164,7 +164,6 @@ require("$CFG->dirroot/lib/setup.php");
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/upgradelib.php');
 require_once($CFG->libdir.'/clilib.php');
-require_once($CFG->libdir.'/pluginlib.php');
 require_once($CFG->libdir.'/installlib.php');
 require_once($CFG->libdir.'/testing/classes/test_lock.php');
 
