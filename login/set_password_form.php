@@ -43,13 +43,19 @@ class login_set_password_form extends moodleform {
      */
     public function definition() {
         global $USER, $CFG;
+        // Prepare a string showing whether the site wants login password autocompletion to be available to user.
+        if (empty($CFG->loginpasswordautocomplete)) {
+            $autocomplete = 'autocomplete="on"';
+        } else {
+            $autocomplete = '';
+        }
 
         $mform = $this->_form;
         $mform->setDisableShortforms(true);
         $mform->addElement('header', 'setpassword', get_string('setpassword'), '');
 
         // Include the username in the form so browsers will recognise that a password is being set.
-        $mform->addElement('text', 'username', '', 'style="display: none;" autocomplete="on"');
+        $mform->addElement('text', 'username', '', 'style="display: none;" ' . $autocomplete);
         $mform->setType('username', PARAM_RAW);
         // Token gives authority to change password.
         $mform->addElement('hidden', 'token', '');
@@ -61,12 +67,12 @@ class login_set_password_form extends moodleform {
         if (!empty($CFG->passwordpolicy)) {
             $mform->addElement('static', 'passwordpolicyinfo', '', print_password_policy());
         }
-        $mform->addElement('password', 'password', get_string('newpassword'), 'autocomplete="on"');
+        $mform->addElement('password', 'password', get_string('newpassword'), $autocomplete);
         $mform->addRule('password', get_string('required'), 'required', null, 'client');
         $mform->setType('password', PARAM_RAW);
 
         $strpasswordagain = get_string('newpassword') . ' (' . get_string('again') . ')';
-        $mform->addElement('password', 'password2', $strpasswordagain, 'autocomplete="on"');
+        $mform->addElement('password', 'password2', $strpasswordagain, $autocomplete);
         $mform->addRule('password2', get_string('required'), 'required', null, 'client');
         $mform->setType('password2', PARAM_RAW);
 
