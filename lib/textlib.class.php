@@ -185,6 +185,11 @@ class textlib {
             }
         }
 
+        if ($toCS === 'ascii') {
+            // Try to normalize the conversion a bit.
+            $text = self::specialtoascii($text, $fromCS);
+        }
+
         // Prevent any error notices, do not use //IGNORE so that we get
         // consistent result from Typo3 if iconv fails.
         $result = @iconv($fromCS, $toCS.'//TRANSLIT', $text);
