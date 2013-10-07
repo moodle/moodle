@@ -1,76 +1,66 @@
 <?php
-if (!defined('MOODLE_INTERNAL')) {
-    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
-}
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once ($CFG->dirroot.'/course/moodleform_mod.php');
-require_once ($CFG->libdir.'/coursecatlib.php');
-class editcategory_form extends moodleform {
+/**
+ * Edit category form.
+ *
+ * This file and class have been deprecated, the form has been renamed to core_course_editcategory_form and is not autoloaded when
+ * first used. Please update your code to use this new form.
+ *
+ * @deprecated since 2.6
+ * @todo remove in 2.7 MDL-41502
+ *
+ * @package core_course
+ * @copyright 2002 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
-    // form definition
-    function definition() {
-        global $CFG, $DB;
-        $mform =& $this->_form;
-        $category = $this->_customdata['category'];
-        $editoroptions = $this->_customdata['editoroptions'];
+defined('MOODLE_INTERNAL') || die;
 
-        // get list of categories to use as parents, with site as the first one
-        $options = array();
-        if (has_capability('moodle/category:manage', context_system::instance()) || $category->parent == 0) {
-            $options[0] = get_string('top');
-        }
-        if ($category->id) {
-            // Editing an existing category.
-            $options += coursecat::make_categories_list('moodle/category:manage', $category->id);
-            if (empty($options[$category->parent])) {
-                $options[$category->parent] = $DB->get_field('course_categories', 'name', array('id'=>$category->parent));
-            }
-            $strsubmit = get_string('savechanges');
-        } else {
-            // Making a new category
-            $options += coursecat::make_categories_list('moodle/category:manage');
-            $strsubmit = get_string('createcategory');
-        }
+debugging('Please update your code to use core_course_editcategory_form (autloaded). This file will be removed in 2.7');
 
-        $mform->addElement('select', 'parent', get_string('parentcategory'), $options);
-        $mform->addElement('text', 'name', get_string('categoryname'), array('size'=>'30'));
-        $mform->addRule('name', get_string('required'), 'required', null);
-        $mform->setType('name', PARAM_TEXT);
-        $mform->addElement('text', 'idnumber', get_string('idnumbercoursecategory'),'maxlength="100"  size="10"');
-        $mform->addHelpButton('idnumber', 'idnumbercoursecategory');
-        $mform->setType('idnumber', PARAM_RAW);
-        $mform->addElement('editor', 'description_editor', get_string('description'), null, $editoroptions);
-        $mform->setType('description_editor', PARAM_RAW);
-        if (!empty($CFG->allowcategorythemes)) {
-            $themes = array(''=>get_string('forceno'));
-            $allthemes = get_list_of_themes();
-            foreach ($allthemes as $key=>$theme) {
-                if (empty($theme->hidefromselector)) {
-                    $themes[$key] = get_string('pluginname', 'theme_'.$theme->name);
-                }
-            }
-            $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
-        }
+/**
+ * Class editcategory_form.
+ *
+ * This file and class have been deprecated, the form has been renamed to core_course_editcategory_form and is not autoloaded when
+ * first used. Please update your code to use this new form.
+ *
+ * @deprecated since 2.6
+ * @todo remove in 2.7 MDL-41502
+ * @package core_course
+ * @copyright 2002 onwards Martin Dougiamas (http://dougiamas.com)
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class editcategory_form extends core_course_editcategory_form {
 
-        $mform->addElement('hidden', 'id', 0);
-        $mform->setType('id', PARAM_INT);
-        $mform->setDefault('id', $category->id);
-
-        $this->add_action_buttons(true, $strsubmit);
+    /**
+     * Constructs the form.
+     * @param null $action
+     * @param null $customdata
+     * @param string $method
+     * @param string $target
+     * @param null $attributes
+     * @param bool $editable
+     */
+    public function __construct($action = null, $customdata = null, $method = 'post', $target = '', $attributes = null,
+                                $editable = true) {
+        $customdata['categoryid'] = $customdata['category']->id;
+        $customdata['parent'] = $customdata['category']->parent;
+        unset($customdata['category']);
+        parent::moodleform($action, $customdata, $method, $target, $attributes, $editable);
     }
 
-    function validation($data, $files) {
-        global $DB;
-        $errors = parent::validation($data, $files);
-        if (!empty($data['idnumber'])) {
-            if ($existing = $DB->get_record('course_categories', array('idnumber' => $data['idnumber']))) {
-                if (!$data['id'] || $existing->id != $data['id']) {
-                    $errors['idnumber']= get_string('idnumbertaken');
-                }
-            }
-        }
-
-        return $errors;
-    }
-}
-
+};

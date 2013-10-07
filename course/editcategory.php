@@ -16,107 +16,106 @@
 
 /**
  * Page for creating or editing course category name/parent/description.
+ *
  * When called with an id parameter, edits the category with that id.
  * Otherwise it creates a new category with default parent from the parent
  * parameter, which may be 0.
  *
- * @package    core
- * @subpackage course
+ * @package    core_course
  * @copyright  2007 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
-require_once($CFG->dirroot.'/course/editcategory_form.php');
 require_once($CFG->libdir.'/coursecatlib.php');
 
 require_login();
 
 $id = optional_param('id', 0, PARAM_INT);
-$itemid = 0; //initalise itemid, as all files in category description has item id 0
 
+$url = new moodle_url('/course/editcategory.php');
 if ($id) {
-    if (!$category = $DB->get_record('course_categories', array('id' => $id))) {
-        print_error('unknowcategory');
-    }
-    $PAGE->set_url('/course/editcategory.php', array('id' => $id));
-    $categorycontext = context_coursecat::instance($id);
-    $PAGE->set_context($categorycontext);
-    require_capability('moodle/category:manage', $categorycontext);
-    $strtitle = get_string('editcategorysettings');
-    $editorcontext = $categorycontext;
+    $coursecat = coursecat::get($id, MUST_EXIST, true);
+    $category = $coursecat->get_db_record();
+    $context = context_coursecat::instance($id);
+
+    $url->param('id', $id);
+    $strtitle = new lang_string('editcategorysettings');
+    $itemid = 0; // Initialise itemid, as all files in category description has item id 0.
     $title = $strtitle;
-    $fullname = $category->name;
+    $fullname = $coursecat->get_formatted_name();
 } else {
     $parent = required_param('parent', PARAM_INT);
-    $PAGE->set_url('/course/editcategory.php', array('parent' => $parent));
+    $url->param('parent', $parent);
     if ($parent) {
-        if (!$DB->record_exists('course_categories', array('id' => $parent))) {
-            print_error('unknowcategory');
-        }
+        $DB->record_exists('course_categories', array('id' => $parent), '*', MUST_EXIST);
         $context = context_coursecat::instance($parent);
     } else {
         $context = context_system::instance();
     }
-    $PAGE->set_context($context);
+
     $category = new stdClass();
     $category->id = 0;
     $category->parent = $parent;
-    require_capability('moodle/category:manage', $context);
-    $strtitle = get_string("addnewcategory");
-    $editorcontext = $context;
-    $itemid = null; //set this explicitly, so files for parent category should not get loaded in draft area.
+    $strtitle = new lang_string("addnewcategory");
+    $itemid = null; // Set this explicitly, so files for parent category should not get loaded in draft area.
     $title = "$SITE->shortname: ".get_string('addnewcategory');
     $fullname = $SITE->fullname;
 }
 
-$PAGE->set_pagelayout('admin');
-
-$editoroptions = array(
-    'maxfiles'  => EDITOR_UNLIMITED_FILES,
-    'maxbytes'  => $CFG->maxbytes,
-    'trusttext' => true,
-    'context'   => $editorcontext,
-    'subdirs'   => file_area_contains_subdirs($editorcontext, 'coursecat', 'description', $itemid),
-);
-$category = file_prepare_standard_editor($category, 'description', $editoroptions, $editorcontext, 'coursecat', 'description', $itemid);
-
-$mform = new editcategory_form('editcategory.php', compact('category', 'editoroptions'));
-$mform->set_data($category);
-
-if ($mform->is_cancelled()) {
-    if ($id) {
-        redirect($CFG->wwwroot . '/course/manage.php?categoryid=' . $id);
-    } else if ($parent) {
-        redirect($CFG->wwwroot .'/course/manage.php?categoryid=' . $parent);
-    } else {
-        redirect($CFG->wwwroot .'/course/manage.php');
-    }
-} else if ($data = $mform->get_data()) {
-    if ($id) {
-        $newcategory = coursecat::get($id);
-        if ($data->parent != $category->parent && !$newcategory->can_change_parent($data->parent)) {
-            print_error('cannotmovecategory');
-        }
-        $newcategory->update($data, $editoroptions);
-    } else {
-        $newcategory = coursecat::create($data, $editoroptions);
-    }
-
-    redirect('manage.php?categoryid='.$newcategory->id);
-}
+require_capability('moodle/category:manage', $context);
 
 // Page "Add new category" (with "Top" as a parent) does not exist in navigation.
 // We pretend we are on course management page.
-if (empty($id) && empty($parent)) {
-    navigation_node::override_active_url(new moodle_url('/course/manage.php'));
+if ($id !== 0) {
+    navigation_node::override_active_url(new moodle_url('/course/management.php'));
 }
 
+$PAGE->set_context($context);
+$PAGE->set_url($url);
+$PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->set_heading($fullname);
+
+$mform = new core_course_editcategory_form(null, array(
+    'categoryid' => $id,
+    'parent' => $category->parent,
+    'context' => $context,
+    'itemid' => $itemid
+));
+$mform->set_data(file_prepare_standard_editor(
+    $category,
+    'description',
+    $mform->get_description_editor_options(),
+    $context,
+    'coursecat',
+    'description',
+    $itemid
+));
+
+$manageurl = new moodle_url('/course/management.php');
+if ($mform->is_cancelled()) {
+    if ($id) {
+        $manageurl->param('categoryid', $id);
+    } else if ($parent) {
+        $manageurl->param('categoryid', $parent);
+    }
+    redirect($manageurl);
+} else if ($data = $mform->get_data()) {
+    if (isset($coursecat)) {
+        if ((int)$data->parent !== (int)$coursecat->parent && !$coursecat->can_change_parent($data->parent)) {
+            print_error('cannotmovecategory');
+        }
+        $coursecat->update($data, $mform->get_description_editor_options());
+    } else {
+        $category = coursecat::create($data, $mform->get_description_editor_options());
+    }
+    $manageurl->param('categoryid', $category->id);
+    redirect($manageurl);
+}
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strtitle);
 $mform->display();
 echo $OUTPUT->footer();
-

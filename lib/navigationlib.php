@@ -4191,10 +4191,9 @@ class settings_navigation extends navigation_node {
 
         $categorynode = $this->add($this->context->get_context_name(), null, null, null, 'categorysettings');
         $categorynode->force_open();
-        $onmanagepage = $this->page->url->compare(new moodle_url('/course/manage.php'), URL_MATCH_BASE);
 
-        if (can_edit_in_category($this->context->instanceid) && !$onmanagepage) {
-            $url = new moodle_url('/course/manage.php', array('categoryid' => $this->context->instanceid));
+        if (can_edit_in_category($this->context->instanceid)) {
+            $url = new moodle_url('/course/management.php', array('categoryid' => $this->context->instanceid));
             $editstring = get_string('managecategorythis');
             $categorynode->add($editstring, $url, self::TYPE_SETTING, null, null, new pix_icon('i/edit', ''));
         }
@@ -4225,7 +4224,7 @@ class settings_navigation extends navigation_node {
         }
 
         // Cohorts
-        if (has_capability('moodle/cohort:manage', $this->context) or has_capability('moodle/cohort:view', $this->context)) {
+        if (has_any_capability(array('moodle/cohort:view', 'moodle/cohort:manage'), $this->context)) {
             $categorynode->add(get_string('cohorts', 'cohort'), new moodle_url('/cohort/index.php', array('contextid' => $this->context->id)), self::TYPE_SETTING, null, 'cohort', new pix_icon('i/cohort', ''));
         }
 

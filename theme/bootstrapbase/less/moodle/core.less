@@ -23,11 +23,6 @@
     width:100%;
 }
 
-.fluid-span (@columns) {
-    width: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1));
-    *width: (@fluidGridColumnWidth * @columns) + (@fluidGridGutterWidth * (@columns - 1)) - (.5 / @gridRowWidth * 100 * 1%);
-}
-
 .empty-region-side-post.used-region-side-pre #region-main.span8 {
     /** increase the span size by 1 **/
     .fluid-span(9);
@@ -2056,6 +2051,7 @@ img#persona_signin {
         .box-shadow(5px 5px 20px 0 #666);
 
         a {
+            white-space:nowrap;
             display: block;
             color: @dropdownLinkColor;
             padding:2px 1em 2px 0.5em;

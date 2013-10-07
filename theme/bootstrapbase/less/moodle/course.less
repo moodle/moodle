@@ -610,3 +610,407 @@ span.editinstructions {
     height:1rem;
     padding:0.3em;
 }
+
+
+
+/**
+ * Course management page
+ * Palette
+ *
+ * Background (reg)         #f7f7f9
+ * Background (light        #fafafa
+ * Background (highlight)   #ddffaa
+ * Borders                  #e1e1e8
+ */
+#course-category-listings {
+    background-color:#fff;
+    margin-bottom:200px;
+
+    /** Two column layout */
+    &.columns-2 {
+        > #course-listing > div {
+            position:relative;
+            left:-1px;
+        }
+    }
+    /** Three column layout */
+    &.columns-3 > #course-listing > div {
+        height:100%;
+    }
+
+    > div > div {
+        min-height:300px;
+        border:1px solid #e1e1e8;
+        > ul.ml > li:first-child > div {
+            border-top:0;
+        }
+    }
+    h3 {
+        margin:0;
+        padding:0.4rem 0.6rem 0.3rem;
+        background-color:#f7f7f9;
+        border-bottom:1px solid #e1e1e8;
+    }
+    h4 {
+        margin:1rem 0 0;
+        padding:0.6rem 1rem 0.5rem;
+    }
+    .listing-actions {
+        text-align:center;
+        > * {
+            margin:0.4rem 0.3rem 0.3rem;
+        }
+        > .moodle-actionmenu {
+            display:inline-block;
+            .menu a {
+                padding-left:1rem;
+            }
+        }
+        .iconsmall {
+            vertical-align:text-bottom;
+        }
+        .moodle-actionmenu:not([data-enhanced]) {
+            li {line-height:normal;}
+            > .menubar a {
+                color:inherit;
+                display:inline-block;
+                > img {
+                    display:none;
+                }
+            }
+            > .menu .menu-action-text {
+                display:inline-block;
+            }
+        }
+    }
+    ul.ml {
+        list-style: none;
+        margin:1rem 0;
+        ul.ml {
+            margin:0;
+        }
+    }
+    li {
+        line-height:2.2em;
+        > div {
+            border-bottom:1px solid #fff;
+            border-top:1px solid #fff;
+            padding-left:1rem;
+            &:hover {
+                background-color:#fafafa;
+            }
+        }
+        &.highlight > div {
+            background-color:#ddffaa;
+            &:hover {
+                background-color:#ddffaa;
+            }
+        }
+        .tree-icon {
+            vertical-align:text-top;
+            margin: 2px 6px 0 0;
+        }
+        &[data-selected='1'] {
+            > div {
+                background-color:#f7f7f9;
+                border-top-color: #e1e1e8;
+                border-bottom-color:#f7f7f9;
+            }
+            &.highlight > div {
+                background-color:#ddffaa;
+            }
+            li:first-of-type > div,
+            &[data-expandable='0']+li > div {
+                border-top-color:#e1e1e8;
+            }
+            &:last-of-type > div {
+                border-bottom-color:#e1e1e8;
+            }
+        }
+
+        // Tree item indenting to represent depth.
+        .tree-icon {
+            margin-left:1em;
+        }
+        li {
+            .tree-icon {
+                margin-left:2em;
+            }
+            li {
+                .tree-icon {
+                    margin-left:3em;
+                }
+                li {
+                    .tree-icon {
+                        margin-left:4em;
+                    }
+                    li {
+                        .tree-icon {
+                            margin-left:5em;
+                        }
+                    }
+                }
+            }
+        }
+
+        &+li > div,
+        &:first-child > div {
+            border-top-color:#f7f7f9;
+        }
+    }
+
+    .item-actions {
+        margin-right:1em;
+        display:inline-block;
+        display:initial;
+        img {
+            margin: 0 0.3em;
+        }
+    }
+
+    .listitem {
+        > div {
+            > .float-left {
+                float:left;
+            }
+            > .float-right {
+                float:right;
+                text-align:right;
+            }
+            .item-actions {
+                .action-show {
+                    display:none;
+                }
+                .action-hide {
+                    display:inline;
+                }
+            }
+            .without-actions {
+                color: #333;
+            }
+        }
+        // The category or course is hidden.
+        &[data-visible="0"] {
+            .muted;
+            a.categoryname {
+                .muted;
+            }
+            > div {
+                > a {
+                    .muted;
+                }
+                .item-actions {
+                    .action-show {
+                        display:inline;
+                    }
+                    .action-hide {
+                        display:none;
+                    }
+                }
+            }
+            > ul .item-actions.category-item-actions {
+                // If the category is hidden hide both show and hide icons for sub categories.
+                .action-hide,
+                .action-show {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    #course-listing {
+        .listitem {
+            .idnumber {
+                color:#a1a1a8;
+                margin-right:2em;
+            }
+            .categoryname {
+                display:inline-block;
+                margin-left:1em;
+                color:#a1a1a8;
+            }
+            .coursename {
+                display:inline-block;
+            }
+            .drag-handle {
+                display:inline-block;
+                margin: 0 6px 0 0;
+            }
+        }
+        > .firstpage .listitem:first-child > div .item-actions .action-moveup,
+        > .lastpage .listitem:last-child > div .item-actions .action-movedown {display: none;}
+        .bulk-action-checkbox {
+            vertical-align:middle;
+            margin:-2px 6px 0 0;
+        }
+    }
+    #category-listing {
+        .listitem.collapsed > ul.ml {
+            display: none;
+        }
+        .listitem {
+            &:first-child > div .item-actions .action-moveup,
+            &:last-child > div .item-actions .action-movedown {display: none;}
+        }
+        .course-count {
+            color:#a1a1a8;
+            margin-right:2rem;
+            min-width:35px;
+            display:inline-block;
+            .smallicon {
+                width:0.8rem;
+                height:0.8rem;
+                vertical-align:middle;
+                margin:0 0.3rem;
+            }
+        }
+        .bulk-action-checkbox {
+            vertical-align:middle;
+            margin:-6px 6px 0 0;
+            cursor: pointer;
+        }
+    }
+
+    .detail-pair {
+        border-bottom:1px solid #e1e1e8;
+        margin:0 1rem;
+        > * {
+            display:inline-block;
+            line-height:2.2rem;
+        }
+        .pair-key {
+            color:#075698;
+            font-weight:bold;
+            text-align:right;
+            vertical-align: top;
+            span {
+                margin-right: 1rem;
+                display:block;
+            }
+        }
+        .pair-value select {
+            max-width:100%;
+        }
+        &:last-child {
+            border-bottom-width:0;
+        }
+    }
+
+    .bulk-actions .detail-pair {
+        > * {
+            display:block;
+            width:100%;
+            text-align:left;
+        }
+    }
+
+    .listing-pagination {
+        text-align:center;
+        .yui3-button {
+            background-color:#FFF;
+            border:0;
+            margin:0.4rem 0.2rem 0.45rem;
+            font-size:10.4px;
+            &.active-page {
+                background-color:#E5EFFD;
+            }
+        }
+    }
+    .listing-pagination-totals {
+        text-align:center;
+        &.dimmed {
+            .muted;
+            margin:0.4rem 1rem 0.45rem;
+        }
+    }
+    .select-a-category .notifymessage,
+    .select-a-category .alert {
+        margin: 1em;
+    }
+}
+/** JS MUST be enabled for this next style **/
+.jsenabled #course-category-listings .category-item-actions .menu-action-text {padding-left:0.3em;}
+
+/** Management header styling **/
+.coursecat-management-header {
+    vertical-align:middle;
+    h2 {
+        display:inline-block;
+        text-align:left;
+    }
+    > div {
+        display:inline-block;
+        float:right;
+        margin-left:1em;
+        margin: 10px 0;
+        line-height:40px;
+    }
+    select {
+        max-width: 300px;
+        cursor: pointer;
+        padding: 0.4em 0.5em 0.45em 1em;
+        vertical-align: baseline;
+        white-space: nowrap;
+    }
+}
+
+.course-being-dragged-proxy {
+    border: 0;
+    color: @linkColor;
+    vertical-align:middle;
+    padding: 0 0 0 4em;
+}
+.course-being-dragged {
+    .opacity(50);
+}
+
+/**
+ * Display sizes:
+ * Large displays                   1200        +
+ * Default displays                  980     1199
+ * Tablets                           768      979
+ * Small tablets and large phones    481      767
+ * Phones                              0      480
+ */
+@media (min-width: 1200px) and (max-width: 1600px) {
+    #course-category-listings.columns-3 {
+        background-color:transparent;
+        border:0;
+
+        #category-listing,
+        #course-listing {
+            width:50%;
+        }
+        #category-listing > div,
+        #course-listing > div,
+        #course-detail > div {
+            border:1px solid #e1e1e8;
+            background-color:#FFF;
+        }
+        #course-detail {
+            width:100%;
+            margin-top:1em;
+        }
+    }
+
+}
+
+@media (max-width: 1199px) {
+    #course-category-listings.columns-2,
+    #course-category-listings.columns-3 {
+        background-color:transparent;
+        border:0;
+        #category-listing,
+        #course-listing,
+        #course-detail {
+            width:100%;
+            margin:0 0 1em;
+        }
+        #category-listing > div,
+        #course-listing > div,
+        #course-detail > div {
+            border:1px solid #e1e1e8;
+            background-color:#FFF;
+        }
+    }
+}

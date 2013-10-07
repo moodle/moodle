@@ -366,6 +366,78 @@ class core_coursecatlib_testcase extends advanced_testcase {
         $this->assertEquals(4, $category1->get_children_count());
     }
 
+    /**
+     * Test the countall function
+     */
+    public function test_count_all() {
+        // There should be just the default category.
+        $this->assertEquals(1, coursecat::count_all());
+        $category1 = coursecat::create(array('name' => 'Cat1'));
+        $category2 = coursecat::create(array('name' => 'Cat2', 'parent' => $category1->id));
+        $category3 = coursecat::create(array('name' => 'Cat3', 'parent' => $category2->id, 'visible' => 0));
+        // Now we've got four.
+        $this->assertEquals(4, coursecat::count_all());
+        cache_helper::purge_by_event('changesincoursecat');
+        // We should still have 4.
+        $this->assertEquals(4, coursecat::count_all());
+    }
+
+    /**
+     * Test a categories ability to resort courses.
+     */
+    public function test_resort_courses() {
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+        $category = $generator->create_category();
+        $course1 = $generator->create_course(array(
+            'category' => $category->id,
+            'idnumber' => '006-01',
+            'shortname' => 'Biome Study',
+            'fullname' => '<span lang="ar" class="multilang">'.'دراسة منطقة إحيائية'.'</span><span lang="en" class="multilang">Biome Study</span>'
+        ));
+        $course2 = $generator->create_course(array(
+            'category' => $category->id,
+            'idnumber' => '007-02',
+            'shortname' => 'Chemistry Revision',
+            'fullname' => 'Chemistry Revision'
+        ));
+        $course3 = $generator->create_course(array(
+            'category' => $category->id,
+            'idnumber' => '007-03',
+            'shortname' => 'Swiss Rolls and Sunflowers',
+            'fullname' => 'Aarkvarks guide to Swiss Rolls and Sunflowers'
+        ));
+        $course4 = $generator->create_course(array(
+            'category' => $category->id,
+            'idnumber' => '006-04',
+            'shortname' => 'Scratch',
+            'fullname' => '<a href="test.php">Basic Scratch</a>'
+        ));
+        $c1 = (int)$course1->id;
+        $c2 = (int)$course2->id;
+        $c3 = (int)$course3->id;
+        $c4 = (int)$course4->id;
+
+        $coursecat = coursecat::get($category->id);
+        $this->assertTrue($coursecat->resort_courses('idnumber'));
+        $this->assertSame(array($c1, $c4, $c2, $c3), array_keys($coursecat->get_courses()));
+
+        $this->assertTrue($coursecat->resort_courses('shortname'));
+        $this->assertSame(array($c1, $c2, $c4, $c3), array_keys($coursecat->get_courses()));
+
+
+        try {
+            // Enable the multilang filter and set it to apply to headings and content.
+            filter_set_global_state('multilang', TEXTFILTER_ON);
+            filter_set_applies_to_strings('multilang', true);
+            $expected = array($c3, $c4, $c1, $c2);
+        } catch (coding_exception $ex) {
+            $expected = array($c3, $c4, $c2, $c1);
+        }
+        $this->assertTrue($coursecat->resort_courses('fullname'));
+        $this->assertSame($expected, array_keys($coursecat->get_courses()));
+    }
+
     public function test_get_search_courses() {
         $cat1 = coursecat::create(array('name' => 'Cat1'));
         $cat2 = coursecat::create(array('name' => 'Cat2', 'parent' => $cat1->id));

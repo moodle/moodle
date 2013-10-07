@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,8 +19,7 @@
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package core
- * @subpackage course
+ * @package core_course
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -30,8 +28,8 @@ require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/course/format/lib.php');
 
-define('COURSE_MAX_LOGS_PER_PAGE', 1000);       // records
-define('COURSE_MAX_RECENT_PERIOD', 172800);     // Two days, in seconds
+define('COURSE_MAX_LOGS_PER_PAGE', 1000);       // Records.
+define('COURSE_MAX_RECENT_PERIOD', 172800);     // Two days, in seconds.
 
 /**
  * Number of courses to display when summaries are included.
@@ -40,17 +38,20 @@ define('COURSE_MAX_RECENT_PERIOD', 172800);     // Two days, in seconds
  */
 define('COURSE_MAX_SUMMARIES_PER_PAGE', 10);
 
-define('COURSE_MAX_COURSES_PER_DROPDOWN',1000); //  max courses in log dropdown before switching to optional
-define('COURSE_MAX_USERS_PER_DROPDOWN',1000);   //  max users in log dropdown before switching to optional
-define('FRONTPAGENEWS',           '0');
-define('FRONTPAGECOURSELIST',     '1');         // Not used. TODO MDL-38832 remove
-define('FRONTPAGECATEGORYNAMES',  '2');
-define('FRONTPAGETOPICONLY',      '3');         // Not used. TODO MDL-38832 remove
-define('FRONTPAGECATEGORYCOMBO',  '4');
+// Max courses in log dropdown before switching to optional.
+define('COURSE_MAX_COURSES_PER_DROPDOWN', 1000);
+// Max users in log dropdown before switching to optional.
+define('COURSE_MAX_USERS_PER_DROPDOWN', 1000);
+define('FRONTPAGENEWS', '0');
+define('FRONTPAGECOURSELIST', '1'); // Not used. TODO MDL-38832 remove.
+define('FRONTPAGECATEGORYNAMES', '2');
+define('FRONTPAGETOPICONLY', '3'); // Not used. TODO MDL-38832 remove.
+define('FRONTPAGECATEGORYCOMBO', '4');
 define('FRONTPAGEENROLLEDCOURSELIST', '5');
-define('FRONTPAGEALLCOURSELIST',  '6');
-define('FRONTPAGECOURSESEARCH',   '7');
-define('FRONTPAGECOURSELIMIT',    200);         // Important! Replaced with $CFG->frontpagecourselimit - maximum number of courses displayed on the frontpage. TODO MDL-38832 remove
+define('FRONTPAGEALLCOURSELIST', '6');
+define('FRONTPAGECOURSESEARCH', '7');
+// Important! Replaced with $CFG->frontpagecourselimit - maximum number of courses displayed on the frontpage.
+define('FRONTPAGECOURSELIMIT',    200); // TODO MDL-38832 remove.
 define('EXCELROWS', 65535);
 define('FIRSTUSEDEXCELROW', 3);
 
@@ -1360,7 +1361,7 @@ function get_module_metadata($course, $modnames, $sectionreturn = null) {
  * that if $categoryid is 0, return the system context.
  *
  * @param integer $categoryid a category id or 0.
- * @return object the corresponding context
+ * @return context the corresponding context
  */
 function get_category_or_system_context($categoryid) {
     if ($categoryid) {
@@ -2179,7 +2180,7 @@ function move_courses($courseids, $categoryid) {
 
     if (empty($courseids)) {
         // Nothing to do.
-        return;
+        return false;
     }
 
     if (!$category = $DB->get_record('course_categories', array('id' => $categoryid))) {
@@ -3362,4 +3363,117 @@ function compare_activities_by_time_asc($a, $b) {
         return 0;
     }
     return ($a->timestamp < $b->timestamp) ? -1 : 1;
+}
+
+/**
+ * Changes the visibility of a course.
+ *
+ * @param int $courseid The course to change.
+ * @param bool $show True to make it visible, false otherwise.
+ * @return bool
+ */
+function course_change_visibility($courseid, $show = true) {
+    $course = new stdClass;
+    $course->id = $courseid;
+    $course->visible = ($show) ? '1' : '0';
+    $course->visibleold = $course->visible;
+    update_course($course);
+    return true;
+}
+
+/**
+ * Changes the course sortorder by one, moving it up or down one in respect to sort order.
+ *
+ * @param stdClass|course_in_list $course
+ * @param bool $up If set to true the course will be moved up one. Otherwise down one.
+ * @return bool
+ */
+function course_change_sortorder_by_one($course, $up) {
+    global $DB;
+    $params = array($course->sortorder, $course->category);
+    if ($up) {
+        $select = 'sortorder < ? AND category = ?';
+        $sort = 'sortorder DESC';
+    } else {
+        $select = 'sortorder > ? AND category = ?';
+        $sort = 'sortorder ASC';
+    }
+    fix_course_sortorder();
+    $swapcourse = $DB->get_records_select('course', $select, $params, $sort, '*', 0, 1);
+    if ($swapcourse) {
+        $swapcourse = reset($swapcourse);
+        $DB->set_field('course', 'sortorder', $swapcourse->sortorder, array('id' => $course->id));
+        $DB->set_field('course', 'sortorder', $course->sortorder, array('id' => $swapcourse->id));
+        // Finally reorder courses.
+        fix_course_sortorder();
+        cache_helper::purge_by_event('changesincourse');
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Changes the sort order of courses in a category so that the first course appears after the second.
+ *
+ * @param int|stdClass $courseorid The course to focus on.
+ * @param int $moveaftercourseid The course to shifter after or 0 if you want it to be the first course in the category.
+ * @return bool
+ */
+function course_change_sortorder_after_course($courseorid, $moveaftercourseid) {
+    global $DB;
+
+    if (!is_object($courseorid)) {
+        $course = get_course($courseorid);
+    } else {
+        $course = $courseorid;
+    }
+
+    if ((int)$moveaftercourseid === 0) {
+        // We've moving the course to the start of the queue.
+        $sql = 'SELECT c.sortorder
+                      FROM {course} c
+                     WHERE c.category = :categoryid
+                  ORDER BY c.sortorder';
+        $params = array(
+            'categoryid' => $course->category
+        );
+        $sortorder = $DB->get_field_sql($sql, $params, IGNORE_MULTIPLE);
+
+        $sql = 'UPDATE {course} c
+                   SET sortorder = sortorder + 1
+                 WHERE c.category = :categoryid
+                   AND c.id <> :id';
+        $params = array(
+            'categoryid' => $course->category,
+            'id' => $course->id,
+        );
+        $DB->execute($sql, $params);
+        $DB->set_field('course', 'sortorder', $sortorder, array('id' => $course->id));
+    } else if ($course->id === $moveaftercourseid) {
+        // They're the same - moronic.
+        debugging("Invalid move after course given.", DEBUG_DEVELOPER);
+        return false;
+    } else {
+        // Moving this course after the given course. It could be before it could be after.
+        $moveaftercourse = get_course($moveaftercourseid);
+        if ($course->category !== $moveaftercourse->category) {
+            debugging("Cannot re-order courses. The given courses do not belong to the same category.", DEBUG_DEVELOPER);
+            return false;
+        }
+        // Increment all courses in the same category that are ordered after the moveafter course.
+        // This makes a space for the course we're moving.
+        $sql = 'UPDATE {course} c
+                       SET sortorder = sortorder + 1
+                     WHERE c.category = :categoryid
+                       AND sortorder > :sortorder';
+        $params = array(
+            'categoryid' => $moveaftercourse->category,
+            'sortorder' => $moveaftercourse->sortorder
+        );
+        $DB->execute($sql, $params);
+        $DB->set_field('course', 'sortorder', $moveaftercourse->sortorder + 1, array('id' => $course->id));
+    }
+    fix_course_sortorder();
+    cache_helper::purge_by_event('changesincourse');
+    return true;
 }

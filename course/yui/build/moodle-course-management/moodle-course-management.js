@@ -1,0 +1,1518 @@
+YUI.add('moodle-course-management', function (Y, NAME) {
+
+/**
+ * Provides drop down menus for list of action links.
+ *
+ * @module moodle-course-management
+ */
+
+/**
+ * Management JS console.
+ *
+ * Provides the organisation for course and category management JS.
+ *
+ * @namespace M.course.management
+ * @class Console
+ * @constructor
+ * @extends Y.Base
+ */
+function Console() {
+    Console.superclass.constructor.apply(this, arguments);
+}
+Console.NAME = 'moodle-course-management';
+Console.CSS_PREFIX = 'management';
+Console.ATTRS = {
+    /**
+     * The HTML element containing the management interface.
+     * @attribute element
+     * @type Node
+     */
+    element : {
+        setter : function(node) {
+            if (typeof node === 'string') {
+                node = Y.one('#'+node);
+            }
+            return node;
+        }
+    },
+
+    /**
+     * The category listing container node.
+     * @attribute categorylisting
+     * @type Node
+     * @default null
+     */
+    categorylisting : {
+        value : null
+    },
+
+    /**
+     * The course listing container node.
+     * @attribute courselisting
+     * @type Node
+     * @default null
+     */
+    courselisting : {
+        value : null
+    },
+
+    /**
+     * The course details container node.
+     * @attribute coursedetails
+     * @type Node|null
+     * @default null
+     */
+    coursedetails : {
+        value : null
+    },
+
+    /**
+     * The id of the currently active category.
+     * @attribute activecategoryid
+     * @type Number
+     * @default null
+     */
+    activecategoryid : {
+        value : null
+    },
+
+    /**
+     * The id of the currently active course.
+     * @attribute activecourseid
+     * @type Number
+     * @default Null
+     */
+    activecourseid : {
+        value : null
+    },
+
+    /**
+     * The categories that are currently available through the management interface.
+     * @attribute categories
+     * @type Array
+     * @default []
+     */
+    categories : {
+        setter : function(item, name) {
+            if (Y.Lang.isArray(item)) {
+                return item;
+            }
+            var items = this.get(name);
+            items.push(item);
+            return items;
+        },
+        value : []
+    },
+
+    /**
+     * The courses that are currently available through the management interface.
+     * @attribute courses
+     * @type Course[]
+     * @default Array
+     */
+    courses : {
+        validator : function(val) {
+            return Y.Lang.isArray(val);
+        },
+        value : []
+    },
+
+    /**
+     * The currently displayed page of courses.
+     * @attribute page
+     * @type Number
+     * @default null
+     */
+    page : {
+        getter : function(value, name) {
+            if (value === null) {
+                value = this.get('element').getData(name);
+                this.set(name, value);
+            }
+            return value;
+        },
+        value : null
+    },
+
+    /**
+     * The total pages of courses that can be shown for this category.
+     * @attribute totalpages
+     * @type Number
+     * @default null
+     */
+    totalpages : {
+        getter : function(value, name) {
+            if (value === null) {
+                value = this.get('element').getData(name);
+                this.set(name, value);
+            }
+            return value;
+        },
+        value : null
+    },
+
+    /**
+     * The total number of courses belonging to this category.
+     * @attribute totalcourses
+     * @type Number
+     * @default null
+     */
+    totalcourses : {
+        getter : function(value, name) {
+            if (value === null) {
+                value = this.get('element').getData(name);
+                this.set(name, value);
+            }
+            return value;
+        },
+        value : null
+    },
+
+    /**
+     * The URL to use for AJAX actions/requests.
+     * @attribute ajaxurl
+     * @type String
+     * @default /course/ajax/management.php
+     */
+    ajaxurl : {
+        getter : function(value) {
+            if (value === null) {
+                value = M.cfg.wwwroot + '/course/ajax/management.php';
+            }
+            return value;
+        },
+        value : null
+    },
+
+    /**
+     * The drag drop handler
+     * @attribute dragdrop
+     * @type DragDrop
+     * @default null
+     */
+    dragdrop : {
+        value : null
+    }
+};
+Console.prototype = {
+
+    /**
+     * Gets set to true once the first categories have been initialised.
+     * @property categoriesinit
+     * @private
+     * @type {boolean}
+     */
+    categoriesinit : false,
+
+    /**
+     * Initialises a new instance of the Console.
+     * @method initializer
+     */
+    initializer : function() {
+        this.set('element', 'coursecat-management');
+        var element = this.get('element'),
+            categorylisting = element.one('#category-listing'),
+            courselisting = element.one('#course-listing'),
+            selectedcategory = null,
+            selectedcourse = null;
+
+        if (categorylisting) {
+            selectedcategory = categorylisting.one('.listitem[data-selected="1"]');
+        }
+        if (courselisting) {
+            selectedcourse = courselisting.one('.listitem[data-selected="1"]');
+        }
+        this.set('categorylisting', categorylisting);
+        this.set('courselisting', courselisting);
+        this.set('coursedetails', element.one('#course-detail'));
+        if (selectedcategory) {
+            this.set('activecategoryid', selectedcategory.getData('id'));
+        }
+        if (selectedcourse) {
+            this.set('activecourseid', selectedcourse.getData('id'));
+        }
+        this.initialiseCategories(categorylisting);
+        this.initialiseCourses();
+
+        if (courselisting) {
+            // No need for dragdrop if we don't have a course listing.
+            this.set('dragdrop', new DragDrop({console:this}));
+        }
+    },
+
+    /**
+     * Initialises all the categories being shown.
+     * @method initialiseCategories
+     * @private
+     * @returns {boolean}
+     */
+    initialiseCategories : function(listing) {
+        var count = 0;
+        if (!listing) {
+            return false;
+        }
+        listing.all('.listitem[data-id]').each(function(node){
+            this.set('categories', new Category({
+                node : node,
+                console : this
+            }));
+            count++;
+        }, this);
+        if (!this.categoriesinit) {
+            this.get('categorylisting').delegate('click', this.handleCategoryDelegation, 'a[data-action]', this);
+            this.categoriesinit = true;
+        } else {
+        }
+    },
+
+    /**
+     * Initialises all the categories being shown.
+     * @method initialiseCourses
+     * @private
+     * @returns {boolean}
+     */
+    initialiseCourses : function() {
+        var category = this.getCategoryById(this.get('activecategoryid')),
+            listing = this.get('courselisting'),
+            count = 0;
+        if (!listing) {
+            return false;
+        }
+        if (!category) {
+            return false;
+        }
+        listing.all('.listitem[data-id]').each(function(node){
+            this.registerCourse(new Course({
+                node : node,
+                console : this,
+                category : category
+            }));
+            count++;
+        }, this);
+        listing.delegate('click', this.handleCourseDelegation, 'a[data-action]', this);
+    },
+
+    /**
+     * Registers a course within the management display.
+     * @method registerCourse
+     * @param {Course} course
+     */
+    registerCourse : function(course) {
+        var courses = this.get('courses');
+        courses.push(course);
+        this.set('courses', courses);
+    },
+
+    /**
+     * Handles the event fired by a delegated course listener.
+     *
+     * @method handleCourseDelegation
+     * @protected
+     * @param {EventFacade} e
+     */
+    handleCourseDelegation : function(e) {
+        var target = e.currentTarget,
+            action = target.getData('action'),
+            courseid = target.ancestor('.listitem').getData('id'),
+            course = this.getCourseById(courseid);
+        if (course) {
+            course.handle(action, e);
+        } else {
+        }
+    },
+
+    /**
+     * Handles the event fired by a delegated course listener.
+     *
+     * @method handleCategoryDelegation
+     * @protected
+     * @param {EventFacade} e
+     */
+    handleCategoryDelegation : function(e) {
+        var target = e.currentTarget,
+            action = target.getData('action'),
+            categoryid = target.ancestor('.listitem').getData('id'),
+            category = this.getCategoryById(categoryid);
+        if (category) {
+            category.handle(action, e);
+        } else {
+        }
+    },
+
+    /**
+     * Returns the category with the given ID.
+     * @method getCategoryById
+     * @param {Number} id
+     * @returns {Category|Boolean} The category or false if it can't be found.
+     */
+    getCategoryById : function(id) {
+        var i,
+            category,
+            categories = this.get('categories'),
+            length = categories.length;
+        for (i = 0; i < length; i++) {
+            if (categories.hasOwnProperty(i)) {
+                category = categories[i];
+                if (category.get('categoryid') === id) {
+                    return category;
+                }
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Returns the course with the given id.
+     * @method getCourseById
+     * @param {Number} id
+     * @returns {Course|Boolean} The course or false if not found/
+     */
+    getCourseById : function(id) {
+        var i,
+            course,
+            courses = this.get('courses'),
+            length = courses.length;
+        for (i = 0; i < length; i++) {
+            if (courses.hasOwnProperty(i)) {
+                course = courses[i];
+                if (course.get('courseid') === id) {
+                    return course;
+                }
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Removes the course with the given ID.
+     * @method removeCourseById
+     * @param {Number} id
+     */
+    removeCourseById : function(id) {
+        var courses = this.get('courses'),
+            length = courses.length,
+            course,
+            i;
+        for (i = 0; i < length; i++) {
+            course = courses[i];
+            if (course.get('courseid') === id) {
+                courses.splice(i, 1);
+                break;
+            }
+        }
+    },
+
+    /**
+     * Performs an AJAX action.
+     *
+     * @method performAjaxAction
+     * @param {String} action The action to perform.
+     * @param {Object} args The arguments to pass through with teh request.
+     * @param {Function} callback The function to call when all is done.
+     * @param {Object} context The object to use as the context for the callback.
+     */
+    performAjaxAction : function(action, args, callback, context) {
+        var io = new Y.IO();
+        args.action = action;
+        args.ajax = '1';
+        args.sesskey = M.cfg.sesskey;
+        io.send(this.get('ajaxurl'), {
+            method : 'POST',
+            on : {
+                complete : callback
+            },
+            context : context,
+            data : build_querystring(args),
+            'arguments' : args
+        });
+    }
+};
+Y.extend(Console, Y.Base, Console.prototype);
+
+M.course = M.course || {};
+M.course.management = M.course.management || {};
+M.course.management.console = null;
+
+/**
+ * Initalises the course management console.
+ * @static
+ * @param {Object} config
+ */
+M.course.management.init = function(config) {
+    M.course.management.console = new Console(config);
+};/**
+ * Drag and Drop handler
+ *
+ * @namespace M.course.management
+ * @class DragDrop
+ * @constructor
+ * @extends Y.Base
+ */
+function DragDrop(config) {
+    Console.superclass.constructor.apply(this, [config]);
+}
+DragDrop.NAME = 'moodle-course-management-dd';
+DragDrop.CSS_PREFIX = 'management-dd';
+DragDrop.ATTRS = {
+    /**
+     * The management console this drag and drop has been set up for.
+     * @attribute console
+     * @type Console
+     * @writeOnce
+     */
+    console : {
+        writeOnce : 'initOnly'
+    }
+};
+DragDrop.prototype = {
+    /**
+     * True if the user is dragging a course upwards.
+     * @property goingup
+     * @protected
+     * @default false
+     */
+    goingup : false,
+
+    /**
+     * The last Y position of the course being dragged
+     * @property lasty
+     * @protected
+     * @default null
+     */
+    lasty : null,
+
+    /**
+     * The sibling above the course being dragged currently (tracking its original position).
+     *
+     * @property previoussibling
+     * @protected
+     * @default false
+     */
+    previoussibling : null,
+
+    /**
+     * Initialises the DragDrop instance.
+     * @method initializer
+     */
+    initializer : function() {
+        var console = this.get('console'),
+            container = console.get('element'),
+            categorylisting = container.one('#category-listing'),
+            courselisting = container.one('#course-listing > .course-listing'),
+            categoryul = (categorylisting) ? categorylisting.one('ul.ml') : null,
+            courseul = (courselisting) ? courselisting.one('ul.ml') : null,
+            canmoveoutof = (courselisting) ? courselisting.getData('canmoveoutof') : false,
+            contstraint = (canmoveoutof) ? container : courseul;
+
+        if (!courseul) {
+            // No course listings found.
+            return false;
+        }
+
+        courseul.all('> li').each(function(li){
+            this.initCourseListing(li, contstraint);
+        }, this);
+        courseul.setData('dd', new Y.DD.Drop({
+            node: courseul
+        }));
+        if (canmoveoutof && categoryul) {
+            // Category UL may not be there if viewmode is just courses.
+            categoryul.all('li > div').each(function(div){
+                this.initCategoryListitem(div);
+            }, this);
+        }
+        Y.DD.DDM.on('drag:start', this.dragStart, this);
+        Y.DD.DDM.on('drag:end', this.dragEnd, this);
+        Y.DD.DDM.on('drag:drag', this.dragDrag, this);
+        Y.DD.DDM.on('drop:over', this.dropOver, this);
+        Y.DD.DDM.on('drop:enter', this.dropEnter, this);
+        Y.DD.DDM.on('drop:exit', this.dropExit, this);
+        Y.DD.DDM.on('drop:hit', this.dropHit, this);
+
+    },
+
+    /**
+     * Initialises a course listing.
+     * @method initCourseListing
+     * @param Node
+     */
+    initCourseListing : function(node, contstraint) {
+        node.setData('dd', new Y.DD.Drag({
+            node : node,
+            target : {
+                padding: '0 0 0 20'
+            }
+        }).addHandle(
+            '.drag-handle'
+        ).plug(Y.Plugin.DDProxy, {
+            moveOnEnd: false,
+            borderStyle: false
+        }).plug(Y.Plugin.DDConstrained, {
+            constrain2node: contstraint
+        }));
+    },
+
+    /**
+     * Initialises a category listing.
+     * @method initCategoryListitem
+     * @param Node
+     */
+    initCategoryListitem : function(node) {
+        node.setData('dd', new Y.DD.Drop({
+            node: node
+        }));
+    },
+
+    /**
+     * Dragging has started.
+     * @method dragStart
+     * @private
+     * @param {EventFacade} e
+     */
+    dragStart : function(e) {
+        var drag = e.target,
+            node = drag.get('node'),
+            dragnode = drag.get('dragNode');
+        node.addClass('course-being-dragged');
+        dragnode.addClass('course-being-dragged-proxy').set('innerHTML', node.one('a.coursename').get('innerHTML'));
+        this.previoussibling = node.get('previousSibling');
+    },
+
+    /**
+     * Dragging has ended.
+     * @method dragEnd
+     * @private
+     * @param {EventFacade} e
+     */
+    dragEnd : function(e) {
+        var drag = e.target,
+            node = drag.get('node');
+        node.removeClass('course-being-dragged');
+        this.get('console').get('element').all('#category-listing li.highlight').removeClass('highlight');
+    },
+
+    /**
+     * Dragging in progress.
+     * @method dragDrag
+     * @private
+     * @param {EventFacade} e
+     */
+    dragDrag : function(e) {
+        var y = e.target.lastXY[1];
+        if (y < this.lasty) {
+            this.goingup = true;
+        } else {
+            this.goingup = false;
+        }
+        this.lasty = y;
+    },
+
+    /**
+     * The course has been dragged over a drop target.
+     * @method dropOver
+     * @private
+     * @param {EventFacade} e
+     */
+    dropOver : function(e) {
+        //Get a reference to our drag and drop nodes
+        var drag = e.drag.get('node'),
+            drop = e.drop.get('node'),
+            tag = drop.get('tagName').toLowerCase();
+        if (tag === 'li' && drop.hasClass('listitem-course')) {
+            if (!this.goingup) {
+                drop = drop.get('nextSibling');
+                if (!drop) {
+                    drop = e.drop.get('node');
+                    drop.get('parentNode').append(drag);
+                    return false;
+                }
+            }
+            drop.get('parentNode').insertBefore(drag, drop);
+            e.drop.sizeShim();
+        }
+    },
+
+    /**
+     * The course has been dragged over a drop target.
+     * @method dropEnter
+     * @private
+     * @param {EventFacade} e
+     */
+    dropEnter : function(e) {
+        var drop = e.drop.get('node'),
+            tag = drop.get('tagName').toLowerCase();
+        if (tag === 'div') {
+            drop.ancestor('li.listitem-category').addClass('highlight');
+        }
+    },
+
+    /**
+     * The course has been dragged off a drop target.
+     * @method dropExit
+     * @private
+     * @param {EventFacade} e
+     */
+    dropExit : function(e) {
+        var drop = e.drop.get('node'),
+            tag = drop.get('tagName').toLowerCase();
+        if (tag === 'div') {
+            drop.ancestor('li.listitem-category').removeClass('highlight');
+        }
+    },
+
+    /**
+     * The course has been dropped on a target.
+     * @method dropHit
+     * @private
+     * @param {EventFacade} e
+     */
+    dropHit : function(e) {
+        var drag = e.drag.get('node'),
+            drop = e.drop.get('node'),
+            iscategory = (drop.ancestor('.listitem-category') !== null),
+            iscourse = !iscategory && (drop.test('.listitem-course')),
+            console = this.get('console'),
+            categoryid,
+            category,
+            courseid,
+            course,
+            aftercourseid,
+            previoussibling,
+            previousid;
+
+        if (!drag.test('.listitem-course')) {
+            alert(drag);
+            return false;
+        }
+        courseid = drag.getData('id');
+        if (iscategory) {
+            categoryid = drop.ancestor('.listitem-category').getData('id');
+            category = console.getCategoryById(categoryid);
+            if (category) {
+                course = console.getCourseById(courseid);
+                if (course) {
+                    category.moveCourseTo(course);
+                }
+            }
+        } else if (iscourse || drop.ancestor('#course-listing')) {
+            course = console.getCourseById(courseid);
+            previoussibling = drag.get('previousSibling');
+            aftercourseid = (previoussibling) ? previoussibling.getData('id') || 0 : 0;
+            previousid = (this.previoussibling) ?  this.previoussibling.getData('id') : 0;
+            if (aftercourseid !== previousid) {
+                course.moveAfter(aftercourseid, previousid);
+            }
+        } else {
+        }
+    }
+};
+Y.extend(DragDrop, Y.Base, DragDrop.prototype);/**
+ * A managed course.
+ *
+ * @namespace M.course.management
+ * @class Item
+ * @constructor
+ * @extends Y.Base
+ * @abstract
+ */
+function Item() {
+    Item.superclass.constructor.apply(this, arguments);
+}
+Item.NAME = 'moodle-course-management-item';
+Item.CSS_PREFIX = 'management-item';
+Item.ATTRS = {
+    /**
+     * The node for this item.
+     * @attribute node
+     * @type Node
+     */
+    node : {},
+
+    /**
+     * The management console.
+     * @attribute console
+     * @type Console
+     */
+    console : {},
+
+    /**
+     * Describes the type of this item. Should be set by the extending class.
+     * @attribute itemname
+     * @type {String}
+     * @default item
+     */
+    itemname : {
+        value : 'item'
+    }
+};
+Item.prototype = {
+    /**
+     * The highlight timeout for this item if there is one.
+     * @property highlighttimeout
+     * @protected
+     * @type Timeout
+     * @default null
+     */
+    highlighttimeout : null,
+
+    /**
+     * Checks and parses an AJAX response for an item.
+     *
+     * @method checkAjaxResponse
+     * @protected
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Object} response The response from the AJAX request.
+     * @param {Object} args The arguments given to the request.
+     * @returns {Object|Boolean}
+     */
+    checkAjaxResponse : function(transactionid, response, args) {
+        if (response.status !== 200) {
+            return false;
+        }
+        if (transactionid === null || args === null) {
+            return false;
+        }
+        var outcome = Y.JSON.parse(response.responseText);
+        if (outcome.error !== false) {
+            new M.core.exception(outcome);
+        }
+        if (outcome.outcome === false) {
+            return false;
+        }
+        return outcome;
+    },
+
+    /**
+     * Moves an item up by one.
+     *
+     * @method moveup
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Object} response The response from the AJAX request.
+     * @param {Object} args The arguments given to the request.
+     * @returns {Boolean}
+     */
+    moveup : function(transactionid, response, args) {
+        var node,
+            nodeup,
+            nodedown,
+            previous,
+            previousup,
+            previousdown,
+            tmpnode,
+            outcome = this.checkAjaxResponse(transactionid, response, args);
+        if (outcome === false) {
+            return false;
+        }
+        node = this.get('node');
+        previous = node.previous('.listitem');
+        if (previous) {
+            previous.insert(node, 'before');
+            previousup = previous.one(' > div a.action-moveup');
+            nodedown = node.one(' > div a.action-movedown');
+            if (!previousup || !nodedown) {
+                // We can have two situations here:
+                //   1. previousup is not set and nodedown is not set. This happens when there are only two courses.
+                //   2. nodedown is not set. This happens when they are moving the bottom course up.
+                // node up and previous down should always be there. They would be required to trigger the action.
+                nodeup = node.one(' > div a.action-moveup');
+                previousdown = previous.one(' > div a.action-movedown');
+                if (!previousup && !nodedown) {
+                    // Ok, must be two courses. We need to switch the up and down icons.
+                    tmpnode = Y.Node.create('<a style="visibility:hidden;">&nbsp;</a>');
+                    previousdown.replace(tmpnode);
+                    nodeup.replace(previousdown);
+                    tmpnode.replace(nodeup);
+                    tmpnode.destroy();
+                } else if (!nodedown) {
+                    // previous down needs to be given to node.
+                    nodeup.insert(previousdown, 'after');
+                }
+            }
+            this.updated(true);
+        } else {
+            // Aha it succeeded but this is the top item in the list. Pagination is in play!
+            // Refresh to update the state of things.
+            window.location.reload();
+        }
+    },
+
+    /**
+     * Moves an item down by one.
+     *
+     * @method movedown
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Object} response The response from the AJAX request.
+     * @param {Object} args The arguments given to the request.
+     * @returns {Boolean}
+     */
+    movedown : function(transactionid, response, args) {
+        var node,
+            next,
+            nodeup,
+            nodedown,
+            nextup,
+            nextdown,
+            tmpnode,
+            outcome = this.checkAjaxResponse(transactionid, response, args);
+        if (outcome === false) {
+            return false;
+        }
+        node = this.get('node');
+        next = node.next('.listitem');
+        if (next) {
+            node.insert(next, 'before');
+            nextdown = next.one(' > div a.action-movedown');
+            nodeup = node.one(' > div a.action-moveup');
+            if (!nextdown || !nodeup) {
+                // next up and node down should always be there. They would be required to trigger the action.
+                nextup = next.one(' > div a.action-moveup');
+                nodedown = node.one(' > div a.action-movedown');
+                if (!nextdown && !nodeup) {
+                    // We can have two situations here:
+                    //   1. nextdown is not set and nodeup is not set. This happens when there are only two courses.
+                    //   2. nodeup is not set. This happens when we are moving the first course down.
+                    // Ok, must be two courses. We need to switch the up and down icons.
+                    tmpnode = Y.Node.create('<a style="visibility:hidden;">&nbsp;</a>');
+                    nextup.replace(tmpnode);
+                    nodedown.replace(nextup);
+                    tmpnode.replace(nodedown);
+                    tmpnode.destroy();
+                } else if (!nodeup) {
+                    // next up needs to be given to node.
+                    nodedown.insert(nextup, 'before');
+                }
+            }
+            this.updated(true);
+        } else {
+            // Aha it succeeded but this is the bottom item in the list. Pagination is in play!
+            // Refresh to update the state of things.
+            window.location.reload();
+        }
+    },
+
+    /**
+     * Makes an item visible.
+     *
+     * @method show
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Object} response The response from the AJAX request.
+     * @param {Object} args The arguments given to the request.
+     * @returns {Boolean}
+     */
+    show : function(transactionid, response, args) {
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        if (outcome === false) {
+            return false;
+        }
+
+        this.markVisible();
+        this.updated();
+    },
+
+    /**
+     * Marks the item as visible
+     * @method markVisible
+     */
+    markVisible : function() {
+        this.get('node').setAttribute('data-visible', '1');
+        return true;
+    },
+
+    /**
+     * Hides an item.
+     *
+     * @method hide
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Object} response The response from the AJAX request.
+     * @param {Object} args The arguments given to the request.
+     * @returns {Boolean}
+     */
+    hide : function(transactionid, response, args) {
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        if (outcome === false) {
+            return false;
+        }
+        this.markHidden();
+        this.updated();
+    },
+
+    /**
+     * Marks the item as hidden.
+     * @method makeHidden
+     */
+    markHidden : function() {
+        this.get('node').setAttribute('data-visible', '0');
+        return true;
+    },
+
+    /**
+     * Called when ever a node is updated.
+     *
+     * @method updated
+     * @param {Boolean} moved True if this item was moved.
+     */
+    updated : function(moved) {
+        if (moved) {
+            this.highlight();
+        }
+    },
+
+    /**
+     * Highlights this option for a breif time.
+     *
+     * @method highlight
+     */
+    highlight : function() {
+        var node = this.get('node');
+        node.siblings('.highlight').removeClass('highlight');
+        node.addClass('highlight');
+        if (this.highlighttimeout) {
+            window.clearTimeout(this.highlighttimeout);
+        }
+        this.highlighttimeout = window.setTimeout(function(){
+            node.removeClass('highlight');
+        }, 2500);
+    }
+};
+Y.extend(Item, Y.Base, Item.prototype);/**
+ * A managed category.
+ *
+ * @namespace M.course.management
+ * @class Category
+ * @constructor
+ * @extends Item
+ */
+function Category() {
+    Category.superclass.constructor.apply(this, arguments);
+}
+Category.NAME = 'moodle-course-management-category';
+Category.CSS_PREFIX = 'management-category';
+Category.ATTRS = {
+    /**
+     * The category ID relating to this category.
+     * @attribute categoryid
+     * @type Number
+     * @writeOnce
+     * @default null
+     */
+    categoryid : {
+        getter : function (value, name) {
+            if (value === null) {
+                value = this.get('node').getData('id');
+                this.set(name, value);
+            }
+            return value;
+        },
+        value : null,
+        writeOnce : true
+    },
+
+    /**
+     * True if this category is the currently selected category.
+     * @attribute selected
+     * @type Boolean
+     * @default null
+     */
+    selected : {
+        getter : function(value, name) {
+            if (value === null) {
+                value = this.get('node').getData(name);
+                if (value === null) {
+                    value = false;
+                }
+                this.set(name, value);
+            }
+            return value;
+        },
+        value : null
+    },
+
+    /**
+     * An array of courses belonging to this category.
+     * @attribute courses
+     * @type Course[]
+     * @default Array
+     */
+    courses : {
+        validator : function(val) {
+            return Y.Lang.isArray(val);
+        },
+        value : []
+    }
+};
+Category.prototype = {
+    /**
+     * Initialises an instance of a Category.
+     * @method initializer
+     */
+    initializer : function() {
+        this.set('itemname', 'category');
+    },
+
+    /**
+     * Returns the name of the category.
+     * @method getName
+     * @returns {String}
+     */
+    getName : function() {
+        return this.get('node').one('a.categoryname').get('innerHTML');
+    },
+
+    /**
+     * Registers a course as belonging to this category.
+     * @method registerCourse
+     * @param {Course} course
+     */
+    registerCourse : function(course) {
+        var courses = this.get('courses');
+        courses.push(course);
+        this.set('courses', courses);
+    },
+
+    /**
+     * Handles a category related event.
+     *
+     * @method handle
+     * @param {String} action
+     * @param {EventFacade} e
+     * @returns {Boolean}
+     */
+    handle : function(action, e) {
+        var catarg = {categoryid : this.get('categoryid')};
+        switch (action) {
+            case 'moveup':
+                e.preventDefault();
+                this.get('console').performAjaxAction('movecategoryup', catarg, this.moveup, this);
+                break;
+            case 'movedown':
+                e.preventDefault();
+                this.get('console').performAjaxAction('movecategorydown', catarg, this.movedown, this);
+                break;
+            case 'show':
+                e.preventDefault();
+                this.get('console').performAjaxAction('showcategory', catarg, this.show, this);
+                break;
+            case 'hide':
+                e.preventDefault();
+                this.get('console').performAjaxAction('hidecategory', catarg, this.hide, this);
+                break;
+            case 'expand':
+                e.preventDefault();
+                if (this.get('node').getData('expanded') === '0') {
+                    this.get('node').setAttribute('data-expanded', '1').setData('expanded', 'true');
+                    this.get('console').performAjaxAction('getsubcategorieshtml', catarg, this.loadSubcategories, this);
+                }
+                this.expand();
+                break;
+            case 'collapse':
+                e.preventDefault();
+                this.collapse();
+                break;
+            default:
+                return false;
+        }
+    },
+
+    /**
+     * Expands the category making its sub categories visible.
+     * @method expand
+     */
+    expand : function() {
+        var node = this.get('node'),
+            action = node.one('a[data-action=expand]');
+        node.removeClass('collapsed').setAttribute('aria-expanded', 'true');
+        action.setAttribute('data-action', 'collapse').one('img').setAttrs({
+            src : M.util.image_url('t/switch_minus', 'moodle'),
+            title : M.util.get_string('collapse', 'moodle'),
+            alt : M.util.get_string('collapse', 'moodle')
+        });
+    },
+
+    /**
+     * Collapses the category making its sub categories hidden.
+     * @method collapse
+     */
+    collapse : function() {
+        var node = this.get('node'),
+            action = node.one('a[data-action=collapse]');
+        node.addClass('collapsed').setAttribute('aria-expanded', 'false');
+        action.setAttribute('data-action', 'expand').one('img').setAttrs({
+            src : M.util.image_url('t/switch_plus', 'moodle'),
+            title : M.util.get_string('expand', 'moodle'),
+            alt : M.util.get_string('expand', 'moodle')
+        });
+    },
+
+    /**
+     * Loads sub categories provided by an AJAX request..
+     *
+     * @method loadSubcategories
+     * @protected
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Object} response The response from the AJAX request.
+     * @param {Object} args The arguments given to the request.
+     * @return {Boolean} Returns true on success - false otherwise.
+     */
+    loadSubcategories : function(transactionid, response, args) {
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
+            node = this.get('node'),
+            console = this.get('console');
+        if (outcome === false) {
+            return false;
+        }
+        node.append(outcome.html);
+        console.initialiseCategories(node);
+        if (M.core && M.core.actionmenu && M.core.actionmenu.newDOMNode) {
+            M.core.actionmenu.newDOMNode(node);
+        }
+        return true;
+    },
+
+    /**
+     * Moves the course to this category.
+     *
+     * @method moveCourseTo
+     * @param {Course} course
+     */
+    moveCourseTo : function(course) {
+        var self = this;
+        Y.use('moodle-core-notification-confirm', function() {
+            var confirm = new M.core.confirm({
+                title : M.util.get_string('confirm', 'moodle'),
+                question : M.util.get_string('confirmcoursemove', 'moodle', {
+                    course : course.getName(),
+                    category : self.getName()
+                }),
+                yesLabel : M.util.get_string('yes', 'moodle'),
+                noLabel : M.util.get_string('no', 'moodle')
+            });
+            confirm.on('complete-yes', function() {
+                confirm.hide();
+                confirm.destroy();
+                this.get('console').performAjaxAction('movecourseintocategory', {
+                    categoryid : this.get('categoryid'),
+                    courseid : course.get('courseid')
+                }, this.completeMoveCourse, this);
+            }, self);
+            confirm.show();
+        });
+    },
+
+    /**
+     * Completes moving a course to this category.
+     * @method completeMoveCourse
+     * @protected
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Object} response The response from the AJAX request.
+     * @param {Object} args The arguments given to the request.
+     * @returns {Boolean}
+     */
+    completeMoveCourse : function(transactionid, response, args) {
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
+            course;
+        if (outcome === false) {
+            return false;
+        }
+        course = this.get('console').getCourseById(args.courseid);
+        if (!course) {
+            return false;
+        }
+        this.highlight();
+        if (course) {
+            course.remove();
+        }
+        return true;
+    },
+
+    /**
+     * Makes an item visible.
+     *
+     * @method show
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Object} response The response from the AJAX request.
+     * @param {Object} args The arguments given to the request.
+     * @returns {Boolean}
+     */
+    show : function(transactionid, response, args) {
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        if (outcome === false) {
+            return false;
+        }
+
+        this.markVisible();
+        if (outcome.categoryvisibility) {
+            this.updateChildVisibility(outcome.categoryvisibility);
+        }
+        if (outcome.coursevisibility) {
+            this.updateCourseVisiblity(outcome.coursevisibility);
+        }
+        this.updated();
+    },
+
+    /**
+     * Hides an item.
+     *
+     * @method hide
+     * @param {Number} transactionid The transaction ID of the AJAX request (unique)
+     * @param {Object} response The response from the AJAX request.
+     * @param {Object} args The arguments given to the request.
+     * @returns {Boolean}
+     */
+    hide : function(transactionid, response, args) {
+        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        if (outcome === false) {
+            return false;
+        }
+        this.markHidden();
+        if (outcome.categoryvisibility) {
+            this.updateChildVisibility(outcome.categoryvisibility);
+        }
+        if (outcome.coursevisibility) {
+            this.updateCourseVisiblity(outcome.coursevisibility);
+        }
+        this.updated();
+    },
+
+    /**
+     * Updates the visibility of child courses if required.
+     * @method updateCourseVisiblity
+     * @chainable
+     * @param courses
+     */
+    updateCourseVisiblity : function(courses) {
+        var console = this.get('console'),
+            key,
+            course;
+        try {
+            for (key in courses) {
+                if (typeof courses[key] === 'object') {
+                    course = console.getCourseById(courses[key].id);
+                    if (course) {
+                        if (courses[key].show === "1") {
+                            course.markVisible();
+                        } else {
+                            course.markHidden();
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+        }
+        return this;
+    },
+
+    /**
+     * Updates the visibility of subcategories if required.
+     * @method updateChildVisibility
+     * @chainable
+     * @param categories
+     */
+    updateChildVisibility : function(categories) {
+        var console = this.get('console'),
+            key,
+            category;
+        try {
+            for (key in categories) {
+                if (typeof categories[key] === 'object') {
+                    category = console.getCategoryById(categories[key].id);
+                    if (category) {
+                        if (categories[key].show === "1") {
+                            category.markVisible();
+                        } else {
+                            category.markHidden();
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+        }
+        return this;
+    }
+};
+Y.extend(Category, Item, Category.prototype);/**
+ * A managed course.
+ *
+ * @namespace M.course.management
+ * @class Course
+ * @constructor
+ * @extends Item
+ */
+function Course() {
+    Course.superclass.constructor.apply(this, arguments);
+}
+Course.NAME = 'moodle-course-management-course';
+Course.CSS_PREFIX = 'management-course';
+Course.ATTRS = {
+
+    /**
+     * The course ID of this course.
+     * @attribute courseid
+     * @type Number
+     */
+    courseid : {},
+
+    /**
+     * True if this is the selected course.
+     * @attribute selected
+     * @type Boolean
+     * @default null
+     */
+    selected : {
+        getter : function(value, name) {
+            if (value === null) {
+                value = this.get('node').getData(name);
+                this.set(name, value);
+            }
+            return value;
+        },
+        value : null
+    },
+    node : {
+
+    },
+    /**
+     * The management console tracking this course.
+     * @attribute console
+     * @type Console
+     * @writeOnce
+     */
+    console : {
+        writeOnce : 'initOnly'
+    },
+
+    /**
+     * The category this course belongs to.
+     * @attribute category
+     * @type Category
+     * @writeOnce
+     */
+    category : {
+        writeOnce : 'initOnly'
+    }
+};
+Course.prototype = {
+    /**
+     * Initialises the new course instance.
+     * @method initializer
+     */
+    initializer : function() {
+        var node = this.get('node'),
+            category = this.get('category');
+        this.set('courseid', node.getData('id'));
+        if (category && category.registerCourse) {
+            category.registerCourse(this);
+        }
+        this.set('itemname', 'course');
+    },
+
+    /**
+     * Returns the name of the course.
+     * @method getName
+     * @returns {String}
+     */
+    getName : function() {
+        return this.get('node').one('a.coursename').get('innerHTML');
+    },
+
+    /**
+     * Handles an event relating to this course.
+     * @method handle
+     * @param {String} action
+     * @param {EventFacade} e
+     * @returns {Boolean}
+     */
+    handle : function(action, e) {
+        var console = this.get('console'),
+            args = {courseid : this.get('courseid')};
+        switch (action) {
+            case 'moveup':
+                e.halt();
+                console.performAjaxAction('movecourseup', args, this.moveup, this);
+                break;
+            case 'movedown':
+                e.halt();
+                console.performAjaxAction('movecoursedown', args, this.movedown, this);
+                break;
+            case 'show':
+                e.halt();
+                console.performAjaxAction('showcourse', args, this.show, this);
+                break;
+            case 'hide':
+                e.halt();
+                console.performAjaxAction('hidecourse', args, this.hide, this);
+                break;
+            default:
+                return false;
+        }
+    },
+
+    /**
+     * Removes this course.
+     * @method remove
+     */
+    remove : function() {
+        this.get('console').removeCourseById(this.get('courseid'));
+        this.get('node').remove();
+    },
+
+    /**
+     * Moves this course after another course.
+     *
+     * @method moveAfter
+     * @param {Number} moveaftercourse The course to move after or 0 to put it at the top.
+     * @param {Number} previousid the course it was previously after in case we need to revert.
+     */
+    moveAfter : function(moveaftercourse, previousid) {
+        var console = this.get('console'),
+            args = {
+                courseid : this.get('courseid'),
+                moveafter : moveaftercourse,
+                previous : previousid
+            };
+        console.performAjaxAction('movecourseafter', args, this.moveAfterResponse, this);
+    },
+
+    /**
+     * Performs the actual move.
+     *
+     * @method moveAfterResponse
+     * @protected
+     * @param {Number} transactionid The transaction ID for the request.
+     * @param {Object} response The response to the request.
+     * @param {Objects} args The arguments that were given with the request.
+     * @returns {Boolean}
+     */
+    moveAfterResponse : function(transactionid, response, args) {
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
+            node = this.get('node'),
+            previous;
+        if (outcome === false) {
+            previous = node.ancestor('ul').one('li[data-id='+args.previous+']');
+            if (previous) {
+                // After the last previous.
+                previous.insertAfter(node, 'after');
+            } else {
+                // Start of the list.
+                node.ancestor('ul').one('li').insert(node, 'before');
+            }
+            return false;
+        }
+        this.highlight();
+    }
+};
+Y.extend(Course, Item, Course.prototype);
+
+}, '@VERSION@', {
+    "requires": [
+        "base",
+        "node",
+        "io-base",
+        "moodle-core-notification-exception",
+        "json-parse",
+        "dd-constrain",
+        "dd-proxy",
+        "dd-drop",
+        "dd-delegate",
+        "node-event-delegate"
+    ]
+});

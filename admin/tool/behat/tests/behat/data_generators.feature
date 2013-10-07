@@ -37,9 +37,9 @@ Feature: Set up contextual data for tests
     And I follow "Cat 3"
     And I should see "Course 1"
     And I should see "Course 2"
-    And I select "Cat 1 / Cat 2" from "Course categories:"
+    And I follow "Cat 2"
     And I should see "No courses in this category"
-    And I select "Miscellaneous" from "Course categories:"
+    And I follow "Miscellaneous"
     And I should see "Course 3"
 
   @javascript

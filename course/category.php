@@ -17,15 +17,14 @@
 /**
  * Displays the top level category or all courses
  *
- * @package    core
- * @subpackage course
+ * @package    core_coure
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once("../config.php");
 
-$categoryid = required_param('id', PARAM_INT); // Category id
+$categoryid = required_param('id', PARAM_INT); // Category id.
 
 debugging('Please use URL /course/index.php?categoryid=XXX instead of /course/category.php?id=XXX', DEBUG_DEVELOPER);
 

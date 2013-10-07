@@ -29,6 +29,7 @@ require_once($CFG->libdir . '/pluginlib.php');
 
 $contextid = required_param('contextid',PARAM_INT);
 $forfilter = optional_param('filter', '', PARAM_SAFEDIR);
+$returnto  = optional_param('return', null, PARAM_ALPHANUMEXT);
 
 list($context, $course, $cm) = get_context_info_array($contextid);
 
@@ -43,6 +44,9 @@ if (!empty($forfilter)) {
     $args['filter'] = $forfilter;
 }
 $PAGE->set_url($baseurl, $args);
+if ($returnto !== null) {
+    $baseurl->param('return', $returnto);
+}
 
 // This is a policy decision, rather than something that would be impossible to implement.
 if (!in_array($context->contextlevel, array(CONTEXT_COURSECAT, CONTEXT_COURSE, CONTEXT_MODULE))) {
@@ -102,7 +106,7 @@ if ($forfilter == '' && optional_param('savechanges', false, PARAM_BOOL) && conf
             filter_set_local_state($filter, $context->id, $newstate);
         }
     }
-    redirect($CFG->wwwroot . '/filter/manage.php?contextid=' . $context->id, get_string('changessaved'), 1);
+    redirect($baseurl, get_string('changessaved'), 1);
 }
 
 /// Work out an appropriate page title.
@@ -155,9 +159,12 @@ if (empty($availablefilters)) {
         TEXTFILTER_ON => $stron,
     );
 
-    echo html_writer::start_tag('form', array('action'=>$baseurl->out(), 'method'=>'post'));
+    echo html_writer::start_tag('form', array('action'=>$baseurl->out_omit_querystring(), 'method'=>'post'));
     echo html_writer::start_tag('div');
     echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>'sesskey', 'value'=>sesskey()));
+    foreach ($baseurl->params() as $key => $value) {
+        echo html_writer::empty_tag('input', array('type'=>'hidden', 'name'=>$key, 'value'=>$value));
+    }
 
     $table = new html_table();
     $table->head  = array(get_string('filter'), get_string('isactive', 'filters'));
@@ -209,8 +216,15 @@ if (empty($availablefilters)) {
 
 /// Appropriate back link.
 if (!$isfrontpage) {
+
+    if ($context->contextlevel === CONTEXT_COURSECAT && $returnto === 'management') {
+        $url = new moodle_url('/course/management.php', array('categoryid' => $context->instanceid));
+    } else {
+        $url = $context->get_url();
+    }
+
     echo html_writer::start_tag('div', array('class'=>'backlink'));
-    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href' => $context->get_url()));
+    echo html_writer::tag('a', get_string('backto', '', $contextname), array('href' => $url));
     echo html_writer::end_tag('div');
 }
 
