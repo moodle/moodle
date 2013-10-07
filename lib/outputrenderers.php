@@ -883,9 +883,6 @@ class core_renderer extends renderer_base {
         $performanceinfo = '';
         if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
             $perf = get_performance_info();
-            if (defined('MDL_PERFTOLOG') && !function_exists('register_shutdown_function')) {
-                error_log("PERF: " . $perf['txt']);
-            }
             if (defined('MDL_PERFTOFOOT') || debugging() || $CFG->perfdebug > 7) {
                 $performanceinfo = $perf['html'];
             }

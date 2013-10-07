@@ -2615,13 +2615,6 @@ function redirect($url, $message='', $delay=-1) {
         $delay = 0;
     }
 
-    if (defined('MDL_PERF') || (!empty($CFG->perfdebug) and $CFG->perfdebug > 7)) {
-        if (defined('MDL_PERFTOLOG') && !function_exists('register_shutdown_function')) {
-            $perf = get_performance_info();
-            error_log("PERF: " . $perf['txt']);
-        }
-    }
-
     // Make sure the session is closed properly, this prevents problems in IIS
     // and also some potential PHP shutdown issues.
     \core\session\manager::write_close();
