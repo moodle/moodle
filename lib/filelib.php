@@ -2232,7 +2232,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
 
     header('Content-Disposition: attachment; filename="'.$filename.'"');
     if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
-        header('Cache-Control: max-age=10');
+        header('Cache-Control: private, max-age=10');
         header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
         header('Pragma: ');
     } else { //normal http - prevent caching at all cost
@@ -2318,15 +2318,19 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     }
 
     if ($lifetime > 0) {
+        $private = '';
+        if (isloggedin() and !isguestuser()) {
+            $private = ' private,';
+        }
         $nobyteserving = false;
-        header('Cache-Control: max-age='.$lifetime);
+        header('Cache-Control:'.$private.' max-age='.$lifetime);
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Pragma: ');
 
     } else { // Do not cache files in proxies and browsers
         $nobyteserving = true;
         if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
-            header('Cache-Control: max-age=10');
+            header('Cache-Control: private, max-age=10');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: ');
         } else { //normal http - prevent caching at all cost
@@ -2482,13 +2486,17 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     }
 
     if ($lifetime > 0) {
-        header('Cache-Control: max-age='.$lifetime);
+        $private = '';
+        if (isloggedin() and !isguestuser()) {
+            $private = ' private,';
+        }
+        header('Cache-Control:'.$private.' max-age='.$lifetime);
         header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
         header('Pragma: ');
 
     } else { // Do not cache files in proxies and browsers
         if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
-            header('Cache-Control: max-age=10');
+            header('Cache-Control: private, max-age=10');
             header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
             header('Pragma: ');
         } else { //normal http - prevent caching at all cost
