@@ -316,6 +316,7 @@ class core_datalib_testcase extends advanced_testcase {
         // Incrementing in the same second.
         $rev1 = $DB->get_field('course', 'timemodified', array('id'=>$course1->id));
         $now = time();
+        $DB->set_field('course', 'timemodified', $now, array('id'=>$course1->id));
         increment_revision_number('course', 'timemodified', 'id = :id', array('id'=>$course1->id));
         $this->assertGreaterThan($rev1, $rev1 = $DB->get_field('course', 'timemodified', array('id'=>$course1->id)));
         increment_revision_number('course', 'timemodified', 'id = :id', array('id'=>$course1->id));
