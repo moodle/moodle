@@ -173,10 +173,19 @@ if (!$nothing) {
     foreach ($newchapters as $ch) {
         $ch->pagenum = $i;
         $DB->update_record('book_chapters', $ch);
+
+        $params = array(
+            'context' => $context,
+            'objectid' => $ch->id
+        );
+        $event = \mod_book\event\chapter_updated::create($params);
+        $event->trigger();
+
         $i++;
     }
 }
 
+// MDL-39963 Decide what to do with those logs.
 add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
 add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id);
 

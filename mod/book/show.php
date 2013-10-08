@@ -47,6 +47,13 @@ $chapter->hidden = $chapter->hidden ? 0 : 1;
 
 // Update record.
 $DB->update_record('book_chapters', $chapter);
+$params = array(
+    'context' => $context,
+    'objectid' => $chapter->id
+);
+$event = \mod_book\event\chapter_updated::create($params);
+$event->add_record_snapshot('book_chapters', $chapter);
+$event->trigger();
 
 // Change visibility of subchapters too.
 if (!$chapter->subchapter) {
@@ -58,12 +65,21 @@ if (!$chapter->subchapter) {
         } else if ($found and $ch->subchapter) {
             $ch->hidden = $chapter->hidden;
             $DB->update_record('book_chapters', $ch);
+
+            $params = array(
+                'context' => $context,
+                'objectid' => $ch->id
+            );
+            $event = \mod_book\event\chapter_updated::create($params);
+            $event->trigger();
+
         } else if ($found) {
             break;
         }
     }
 }
 
+// MDL-39963 Decide what to do with those logs.
 add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
 add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id);
 

@@ -52,7 +52,7 @@ $PAGE->set_heading($course->fullname);
 if ($confirm) {  // the operation was confirmed.
     $fs = get_file_storage();
     if (!$chapter->subchapter) { // Delete all its sub-chapters if any
-        $chapters = $DB->get_records('book_chapters', array('bookid'=>$book->id), 'pagenum', 'id, subchapter');
+        $chapters = $DB->get_recordset('book_chapters', array('bookid'=>$book->id), 'pagenum');
         $found = false;
         foreach ($chapters as $ch) {
             if ($ch->id == $chapter->id) {
@@ -60,16 +60,32 @@ if ($confirm) {  // the operation was confirmed.
             } else if ($found and $ch->subchapter) {
                 $fs->delete_area_files($context->id, 'mod_book', 'chapter', $ch->id);
                 $DB->delete_records('book_chapters', array('id'=>$ch->id));
+
+                $params = array(
+                    'context' => $context,
+                    'objectid' => $ch->id
+                );
+                $event = \mod_book\event\chapter_deleted::create($params);
+                $event->add_record_snapshot('book_chapters', $ch);
+                $event->trigger();
             } else if ($found) {
                 break;
             }
         }
+        $chapters->close();
     }
     $fs->delete_area_files($context->id, 'mod_book', 'chapter', $chapter->id);
     $DB->delete_records('book_chapters', array('id'=>$chapter->id));
 
     add_to_log($course->id, 'course', 'update mod', '../mod/book/view.php?id='.$cm->id, 'book '.$book->id);
-    add_to_log($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id);
+    $params = array(
+        'context' => $context,
+        'objectid' => $chapter->id
+    );
+    $event = \mod_book\event\chapter_deleted::create($params);
+    $event->add_record_snapshot('book_chapters', $chapter);
+    $event->set_legacy_logdata(array($course->id, 'book', 'update', 'view.php?id='.$cm->id, $book->id, $cm->id));
+    $event->trigger();
 
     book_preload_chapters($book); // Fix structure.
     $DB->set_field('book', 'revision', $book->revision+1, array('id'=>$book->id));
