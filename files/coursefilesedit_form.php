@@ -19,9 +19,18 @@ require_once($CFG->libdir.'/formslib.php');
 
 class coursefiles_edit_form extends moodleform {
     function definition() {
+        global $CFG;
+
+        $maxfiles = 0;
+        $subdirs = 0;
+        if ($CFG->legacyfilesaddallowed) {
+            $maxfiles = -1;
+            $subdirs = 1;
+        }
+
         $mform =& $this->_form;
         $contextid = $this->_customdata['contextid'];
-        $options = array('subdirs'=>1, 'maxfiles'=>-1, 'accepted_types'=>'*');
+        $options = array('subdirs' => $subdirs, 'maxfiles' => $maxfiles, 'accepted_types'=>'*');
         $mform->addElement('filemanager', 'files_filemanager', '', null, $options);
         $mform->addElement('hidden', 'contextid', $this->_customdata['contextid']);
         $mform->setType('contextid', PARAM_INT);
