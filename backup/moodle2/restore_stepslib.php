@@ -4047,6 +4047,10 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         $data->questionid      = $question->newitemid;
         $data->timemodified    = $this->apply_date_offset($data->timemodified);
 
+        if (!property_exists($data, 'maxfraction')) {
+            $data->maxfraction = 1;
+        }
+
         $newitemid = $DB->insert_record('question_attempts', $data);
 
         $this->set_mapping($nameprefix . 'question_attempt', $oldid, $newitemid);

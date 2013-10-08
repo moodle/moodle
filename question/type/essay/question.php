@@ -43,8 +43,7 @@ class qtype_essay_question extends question_with_responses {
     public $responsetemplateformat;
 
     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
-        question_engine::load_behaviour_class('manualgraded');
-        return new qbehaviour_manualgraded($qa, $preferredbehaviour);
+        return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
     }
 
     /**

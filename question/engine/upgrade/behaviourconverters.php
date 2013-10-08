@@ -137,6 +137,7 @@ abstract class question_behaviour_attempt_updater {
         $qa->rightanswer = $this->qtypeupdater->right_answer($this->question);
         $qa->maxmark = $this->question->maxmark;
         $qa->minfraction = 0;
+        $qa->maxfraction = 1;
         $qa->flagged = 0;
         $qa->responsesummary = '';
         $qa->timemodified = 0;

@@ -82,17 +82,17 @@ class question_engine_unit_of_work_test extends data_loading_method_test_base {
         return array(
         array('qubaid', 'contextid', 'component', 'preferredbehaviour',
                                                 'questionattemptid', 'contextid', 'questionusageid', 'slot',
-                                                               'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'flagged',
+                                                               'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'maxfraction', 'flagged',
                                                                                                               'questionsummary', 'rightanswer', 'responsesummary', 'timemodified',
                                                                                                                                      'attemptstepid', 'sequencenumber', 'state', 'fraction',
                                                                                                                                                                      'timecreated', 'userid', 'name', 'value'),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',             null, 1256233700, 1, '-_triesleft', 3),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233720, 1, 'answer',     'toad'),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233720, 1, '-submit',     1),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233720, 1, '-_triesleft', 1),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 3, 2, 'todo',             null, 1256233740, 1, '-tryagain',   1),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright',      null, 1256233790, 1, 'answer',     'frog'),
-        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright', 1.0000000, 1256233790, 1, '-submit',     1),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 1, 0, 'todo',             null, 1256233700, 1, '-_triesleft', 3),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233720, 1, 'answer',     'toad'),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233720, 1, '-submit',     1),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 2, 1, 'todo',             null, 1256233720, 1, '-_triesleft', 1),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 3, 2, 'todo',             null, 1256233740, 1, '-tryagain',   1),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright',      null, 1256233790, 1, 'answer',     'frog'),
+        array(1, 1, 'unit_test', 'interactive', 1, 123, 1, 1, 'interactive', -1, 1, 1.0000000, 0.0000000, 1.0000000, 0, '', '', '', 1256233790, 5, 3, 'gradedright', 1.0000000, 1256233790, 1, '-submit',     1),
         );
     }
 

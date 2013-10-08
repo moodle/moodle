@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This behaviour is for informaiton items.
+ * This behaviour is for information items.
  *
  * @package    qbehaviour
  * @subpackage informationitem

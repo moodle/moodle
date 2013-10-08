@@ -4,23 +4,49 @@ This files describes API changes for question behaviour plugins.
 
 1) Legacy required_question_definition_type no longer supported. (See 2.2 point 2) below.)
 
+2) Behaviours now have to define an extra class
+class qbehaviour_mybehaviour_type extends question_behaviour_type {
+   This class returns information about the type of behaviour, as opposed to
+   the qbehaviour_mybehaviour class which controls a particular
+   question_attempt. That is like the difference between the qtype_mytype and
+   the qtype_mytype_question classes.
+
+   Practically, what this means is that any of the methods that used to be
+   static methods of qbehaviour_mybehaviour class are now normal instance
+   methods of the qbehaviour_mybehaviour_type class. Specifically.
+    2.5 / qbehaviour_mybehaviour -> 2.6 / qbehaviour_mybehaviour_type
+    IS_ARCHETYPAL                -> is_archetypal()
+    adjust_random_guess_score()  -> adjust_random_guess_score()
+    get_unused_display_options() -> get_unused_display_options()
+
+3) The static method is_manual_grade_in_range has moved from the
+   question_behaviour class to the question_engine class.
+
+4) Behaviours can now control how the marks information is displayed in the
+   grey info area to the left of the question. There is a new method
+   mark_summary that you can override, although the default implementation is
+   fine in most cases. it uses the marked_out_of_max and mark_out_of_max methods
+   as appropriate, so you may just wish to override those.
+
+
 === 2.3 ===
 
 1) This plugin type now supports cron in the standard way. If required, Create a
    lib.php file containing
 function qbehaviour_mypluginname_cron() {};
 
+
 === 2.2 ===
 
 1) The old
     public static function get_required_behaviours()
-method is no more. Instead use the ->dependencies facility in version.php. E.g.
+   method is no more. Instead use the ->dependencies facility in version.php. E.g.
 $plugin->dependencies = array(
     'qbehaviour_immediatefeedback' => 2011102700,
     'qbehaviour_deferredcbm'       => 2011102700
 );
 
 2) The old required_question_definition_type method has been replaced by a new
-is_compatible_question method. You should change your behaviour to override the
-new method, not the old one. This change has been implemented in a
-backwards-compatible way, so behaviours will not break.
+   is_compatible_question method. You should change your behaviour to override
+   the new method, not the old one. This change has been implemented in a
+   backwards-compatible way, so behaviours will not break.

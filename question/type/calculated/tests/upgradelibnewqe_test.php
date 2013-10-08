@@ -204,6 +204,7 @@ class qtype_calculated_attempt_upgrader_test extends question_attempt_upgrader_t
             'variant' => 10,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'What is 7.5 m + 4.9 m?
 
@@ -427,6 +428,7 @@ Remember to type a unit.',
             'variant' => 11,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'What is 5.1 m + 4.5 m?
 
@@ -657,6 +659,7 @@ Remember to type a unit.',
             'variant' => 1,
             'maxmark' => 1.0000000,
             'minfraction' => 0,
+            'maxfraction' => 1,
             'flagged' => 0,
             'questionsummary' => 'What is 9.9 m + 2.5 m?
 

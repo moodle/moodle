@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Defines the quetsion behaviour base class
+ * Defines the question behaviour base class
  *
  * @package    moodlecore
  * @subpackage questionbehaviours
@@ -40,21 +40,10 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class question_behaviour {
-    /**
-     * Certain behaviours are definitive of a  way that questions can
-     * behave when attempted. For example deferredfeedback model, interactive
-     * model, etc. These are the options that should be listed in the
-     * user-interface. These models should define the class constant
-     * IS_ARCHETYPAL as true. Other models are more implementation details, for
-     * example the informationitem model, or a special subclass like
-     * interactive_adapted_for_my_qtype. These models should IS_ARCHETYPAL as
-     * false.
-     * @var boolean
-     */
-    const IS_ARCHETYPAL = false;
 
     /** @var question_attempt the question attempt we are managing. */
     protected $qa;
+
     /** @var question_definition shortcut to $qa->get_question(). */
     protected $question;
 
@@ -93,16 +82,6 @@ abstract class question_behaviour {
      */
     public function get_name() {
         return substr(get_class($this), 11);
-    }
-
-    /**
-     * 'Override' this method if there are some display options that do not make
-     * sense 'during the attempt'.
-     * @return array of {@link question_display_options} field names, that are
-     * not relevant to this behaviour before a 'finish' action.
-     */
-    public static function get_unused_display_options() {
-        return array();
     }
 
     /**
@@ -181,24 +160,25 @@ abstract class question_behaviour {
     /**
      * What is the minimum fraction that can be scored for this question.
      * Normally this will be based on $this->question->get_min_fraction(),
-     * but may be modified in some way by the model.
+     * but may be modified in some way by the behaviour.
      *
      * @return number the minimum fraction when this question is attempted under
-     * this model.
+     * this behaviour.
      */
     public function get_min_fraction() {
         return 0;
     }
 
     /**
-     * Adjust a random guess score for a question using this model. You have to
-     * do this without knowing details of the specific question, or which usage
-     * it is in.
-     * @param number $fraction the random guess score from the question type.
-     * @return number the adjusted fraction.
+     * Return the maximum possible fraction that can be scored for this question.
+     * Normally this will be based on $this->question->get_max_fraction(),
+     * but may be modified in some way by the behaviour.
+     *
+     * @return number the maximum fraction when this question is attempted under
+     * this behaviour.
      */
-    public static function adjust_random_guess_score($fraction) {
-        return $fraction;
+    public function get_max_fraction() {
+        return $this->question->get_max_fraction();
     }
 
     /**
@@ -464,7 +444,7 @@ abstract class question_behaviour {
                             $pendingstep->get_behaviour_var('maxmark');
             if ($pendingstep->get_behaviour_var('mark') === '') {
                 $fraction = null;
-            } else if ($fraction > 1 || $fraction < $this->qa->get_min_fraction()) {
+            } else if ($fraction > $this->qa->get_max_fraction() || $fraction < $this->qa->get_min_fraction()) {
                 throw new coding_exception('Score out of range when processing ' .
                         'a manual grading action.', 'Question ' . $this->question->id .
                                 ', slot ' . $this->qa->get_slot() . ', fraction ' . $fraction);
@@ -475,20 +455,6 @@ abstract class question_behaviour {
         $pendingstep->set_state($this->qa->get_state()->corresponding_commented_state(
                 $pendingstep->get_fraction()));
         return question_attempt::KEEP;
-    }
-
-    /**
-     * Validate that the manual grade submitted for a particular question is in range.
-     * @param int $qubaid the question_usage id.
-     * @param int $slot the slot number within the usage.
-     * @return bool whether the submitted data is in range.
-     */
-    public static function is_manual_grade_in_range($qubaid, $slot) {
-        $prefix = 'q' . $qubaid . ':' . $slot . '_';
-        $mark = question_utils::optional_param_mark($prefix . '-mark');
-        $maxmark = optional_param($prefix . '-maxmark', null, PARAM_FLOAT);
-        $minfraction = optional_param($prefix . ':minfraction', null, PARAM_FLOAT);
-        return is_null($mark) || ($mark >= $minfraction * $maxmark && $mark <= $maxmark);
     }
 
     /**
@@ -662,7 +628,7 @@ abstract class question_behaviour_with_save extends question_behaviour {
 
 /**
  * This helper class contains the constants and methods required for
- * manipulating scores for certainly based marking.
+ * manipulating scores for certainty based marking.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -677,16 +643,29 @@ abstract class question_cbm {
     /** @var array list of all the certainty levels. */
     public static $certainties = array(self::LOW, self::MED, self::HIGH);
 
-    /**#@+ @var array coefficients used to adjust the fraction based on certainty.. */
-    protected static $factor = array(
-        self::LOW => 0.333333333333333,
-        self::MED => 1.333333333333333,
+    /**#@+ @var array coefficients used to adjust the fraction based on certainty. */
+    protected static $rightscore = array(
+        self::LOW  => 1,
+        self::MED  => 2,
         self::HIGH => 3,
     );
-    protected static $offset = array(
-        self::LOW => 0,
-        self::MED => -0.666666666666667,
-        self::HIGH => -2,
+    protected static $wrongscore = array(
+        self::LOW  =>  0,
+        self::MED  => -2,
+        self::HIGH => -6,
+    );
+    /**#@-*/
+
+    /**#@+ @var array upper and lower limits of the optimal window. */
+    protected static $lowlimit = array(
+        self::LOW  => 0,
+        self::MED  => 0.666666666666667,
+        self::HIGH => 0.8,
+    );
+    protected static $highlimit = array(
+        self::LOW  => 0.666666666666667,
+        self::MED  => 0.8,
+        self::HIGH => 1,
     );
     /**#@-*/
 
@@ -699,27 +678,68 @@ abstract class question_cbm {
     }
 
     /**
-     * Given a fraction, and a certainly, compute the adjusted fraction.
+     * Given a fraction, and a certainty, compute the adjusted fraction.
      * @param number $fraction the raw fraction for this question.
-     * @param int $certainty one of the certainly level constants.
-     * @return number the adjusted fraction taking the certainly into account.
+     * @param int $certainty one of the certainty level constants.
+     * @return number the adjusted fraction taking the certainty into account.
      */
     public static function adjust_fraction($fraction, $certainty) {
-        return self::$offset[$certainty] + self::$factor[$certainty] * $fraction;
+        if ($certainty == -1) {
+            // Certainty -1 has never been used in standard Moodle, but is
+            // used in Tony-Gardiner Medwin's patches to mean 'No idea' which
+            // we intend to implement: MDL-42077. In the mean time, avoid
+            // errors for people who have used TGM's patches.
+            return 0;
+        }
+        if ($fraction <= 0.00000005) {
+            return self::$wrongscore[$certainty];
+        } else {
+            return self::$rightscore[$certainty] * $fraction;
+        }
     }
 
     /**
      * @param int $certainty one of the LOW/MED/HIGH constants.
-     * @return string a textual desciption of this certainly.
+     * @return string a textual description of this certainty.
      */
     public static function get_string($certainty) {
         return get_string('certainty' . $certainty, 'qbehaviour_deferredcbm');
     }
 
+    /**
+     * @param int $certainty one of the LOW/MED/HIGH constants.
+     * @return string a short textual description of this certainty.
+     */
+    public static function get_short_string($certainty) {
+        return get_string('certaintyshort' . $certainty, 'qbehaviour_deferredcbm');
+    }
+
+    /**
+     * Add information about certainty to a response summary.
+     * @param string $summary the response summary.
+     * @param int $certainty the level of certainty to add.
+     * @return string the summary with information about the certainty added.
+     */
     public static function summary_with_certainty($summary, $certainty) {
         if (is_null($certainty)) {
             return $summary;
         }
-        return $summary . ' [' . self::get_string($certainty) . ']';
+        return $summary . ' [' . self::get_short_string($certainty) . ']';
+    }
+
+    /**
+     * @param int $certainty one of the LOW/MED/HIGH constants.
+     * @return float the lower limit of the optimal probability range for this certainty.
+     */
+    public static function optimal_probablility_low($certainty) {
+        return self::$lowlimit[$certainty];
+    }
+
+    /**
+     * @param int $certainty one of the LOW/MED/HIGH constants.
+     * @return float the upper limit of the optimal probability range for this certainty.
+     */
+    public static function optimal_probablility_high($certainty) {
+        return self::$highlimit[$certainty];
     }
 }

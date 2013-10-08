@@ -37,6 +37,7 @@ require_once(dirname(__FILE__) . '/bank.php');
 require_once(dirname(__FILE__) . '/../type/questiontypebase.php');
 require_once(dirname(__FILE__) . '/../type/questionbase.php');
 require_once(dirname(__FILE__) . '/../type/rendererbase.php');
+require_once(dirname(__FILE__) . '/../behaviour/behaviourtypebase.php');
 require_once(dirname(__FILE__) . '/../behaviour/behaviourbase.php');
 require_once(dirname(__FILE__) . '/../behaviour/rendererbase.php');
 require_once($CFG->libdir . '/questionlib.php');
@@ -55,6 +56,9 @@ require_once($CFG->libdir . '/questionlib.php');
 abstract class question_engine {
     /** @var array behaviour name => 1. Records which behaviours have been loaded. */
     private static $loadedbehaviours = array();
+
+    /** @var array behaviour name => question_behaviour_type for this behaviour. */
+    private static $behaviourtypes = array();
 
     /**
      * Create a new {@link question_usage_by_activity}. The usage is
@@ -128,6 +132,21 @@ abstract class question_engine {
     }
 
     /**
+     * Validate that the manual grade submitted for a particular question is in range.
+     * @param int $qubaid the question_usage id.
+     * @param int $slot the slot number within the usage.
+     * @return bool whether the submitted data is in range.
+     */
+    public static function is_manual_grade_in_range($qubaid, $slot) {
+        $prefix = 'q' . $qubaid . ':' . $slot . '_';
+        $mark = question_utils::optional_param_mark($prefix . '-mark');
+        $maxmark = optional_param($prefix . '-maxmark', null, PARAM_FLOAT);
+        $minfraction = optional_param($prefix . ':minfraction', null, PARAM_FLOAT);
+        $maxfraction = optional_param($prefix . ':maxfraction', null, PARAM_FLOAT);
+        return is_null($mark) || ($mark >= $minfraction * $maxmark && $mark <= $maxfraction * $maxmark);
+    }
+
+    /**
      * @param array $questionids of question ids.
      * @param qubaid_condition $qubaids ids of the usages to consider.
      * @return boolean whether any of these questions are being used by any of
@@ -150,12 +169,13 @@ abstract class question_engine {
      * @return question_behaviour an instance of appropriate behaviour class.
      */
     public static function make_archetypal_behaviour($preferredbehaviour, question_attempt $qa) {
-        self::load_behaviour_class($preferredbehaviour);
-        $class = 'qbehaviour_' . $preferredbehaviour;
-        if (!constant($class . '::IS_ARCHETYPAL')) {
+        if (!self::is_behaviour_archetypal($preferredbehaviour)) {
             throw new coding_exception('The requested behaviour is not actually ' .
                     'an archetypal one.');
         }
+
+        self::load_behaviour_class($preferredbehaviour);
+        $class = 'qbehaviour_' . $preferredbehaviour;
         return new $class($qa, $preferredbehaviour);
     }
 
@@ -165,16 +185,11 @@ abstract class question_engine {
      * not relevant to this behaviour before a 'finish' action.
      */
     public static function get_behaviour_unused_display_options($behaviour) {
-        self::load_behaviour_class($behaviour);
-        $class = 'qbehaviour_' . $behaviour;
-        if (!method_exists($class, 'get_unused_display_options')) {
-            return question_behaviour::get_unused_display_options();
-        }
-        return call_user_func(array($class, 'get_unused_display_options'));
+        return self::get_behaviour_type($behaviour)->get_unused_display_options();
     }
 
     /**
-     * Create an behaviour for a particular type. If that type cannot be
+     * Create a behaviour for a particular type. If that type cannot be
      * found, return an instance of qbehaviour_missing.
      *
      * Normally you should use {@link make_archetypal_behaviour()}, or
@@ -213,7 +228,65 @@ abstract class question_engine {
             throw new coding_exception('Unknown question behaviour ' . $behaviour);
         }
         include_once($file);
+
+        $class = 'qbehaviour_' . $behaviour;
+        if (!class_exists($class)) {
+            throw new coding_exception('Question behaviour ' . $behaviour .
+                    ' does not define the required class ' . $class . '.');
+        }
+
         self::$loadedbehaviours[$behaviour] = 1;
+    }
+
+    /**
+     * Create a behaviour for a particular type. If that type cannot be
+     * found, return an instance of qbehaviour_missing.
+     *
+     * Normally you should use {@link make_archetypal_behaviour()}, or
+     * call the constructor of a particular model class directly. This method
+     * is only intended for use by {@link question_attempt::load_from_records()}.
+     *
+     * @param string $behaviour the type of model to create.
+     * @param question_attempt $qa the question attempt the model will process.
+     * @param string $preferredbehaviour the preferred behaviour for the containing usage.
+     * @return question_behaviour_type an instance of appropriate behaviour class.
+     */
+    public static function get_behaviour_type($behaviour) {
+
+        if (array_key_exists($behaviour, self::$behaviourtypes)) {
+            return self::$behaviourtypes[$behaviour];
+        }
+
+        self::load_behaviour_type_class($behaviour);
+
+        $class = 'qbehaviour_' . $behaviour . '_type';
+        if (class_exists($class)) {
+            self::$behaviourtypes[$behaviour] = new $class();
+        } else {
+            debugging('Question behaviour ' . $behaviour .
+                    ' does not define the required class ' . $class . '.', DEBUG_DEVELOPER);
+            self::$behaviourtypes[$behaviour] = new question_behaviour_type_fallback($behaviour);
+        }
+
+        return self::$behaviourtypes[$behaviour];
+    }
+
+    /**
+     * Load the behaviour type class for a particular behaviour. That is,
+     * include_once('/question/behaviour/' . $behaviour . '/behaviourtype.php').
+     * @param string $behaviour the behaviour name. For example 'interactive' or 'deferredfeedback'.
+     */
+    protected static function load_behaviour_type_class($behaviour) {
+        global $CFG;
+        if (isset(self::$behaviourtypes[$behaviour])) {
+            return;
+        }
+        $file = $CFG->dirroot . '/question/behaviour/' . $behaviour . '/behaviourtype.php';
+        if (!is_readable($file)) {
+            debugging('Question behaviour ' . $behaviour .
+                    ' is missing the behaviourtype.php file.', DEBUG_DEVELOPER);
+        }
+        include_once($file);
     }
 
     /**
@@ -241,9 +314,7 @@ abstract class question_engine {
      * @return bool whether this is an archetypal behaviour.
      */
     public static function is_behaviour_archetypal($behaviour) {
-        self::load_behaviour_class($behaviour);
-        $plugin = 'qbehaviour_' . $behaviour;
-        return constant($plugin . '::IS_ARCHETYPAL');
+        return self::get_behaviour_type($behaviour)->is_archetypal();
     }
 
     /**
@@ -323,7 +394,7 @@ abstract class question_engine {
     }
 
     /**
-     * Get the translated name of an behaviour, for display in the UI.
+     * Get the translated name of a behaviour, for display in the UI.
      * @param string $behaviour the internal name of the model.
      * @return string name from the current language pack.
      */

@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * The most important attributes of a step are the state, which is one of the
  * {@link question_state} constants, the fraction, which may be null, or a
- * number bewteen the attempt's minfraction and 1.0, and the array of submitted
+ * number bewteen the attempt's minfraction and maxfraction, and the array of submitted
  * data, about which more later.
  *
  * A step also tracks the time it was created, and the user responsible for
@@ -76,7 +76,10 @@ class question_attempt_step {
      */
     private $state;
 
-    /** @var null|number the fraction (grade on a scale of minfraction .. 1.0) or null. */
+    /**
+     * @var null|number the fraction (grade on a scale of
+     * minfraction .. maxfraction, normally 0..1) or null.
+     */
     private $fraction = null;
 
     /** @var integer the timestamp when this step was created. */
@@ -148,7 +151,8 @@ class question_attempt_step {
     }
 
     /**
-     * @return null|number the fraction (grade on a scale of minfraction .. 1.0)
+     * @return null|number the fraction (grade on a scale of
+     * minfraction .. maxfraction, normally 0..1),
      * or null if this step has not been marked.
      */
     public function get_fraction() {
@@ -291,7 +295,7 @@ class question_attempt_step {
     }
 
     /**
-     * @param string $name the name of an behaviour variable to look for in the submitted data.
+     * @param string $name the name of a behaviour variable to look for in the submitted data.
      * @return bool whether a variable with this name exists in the question type data.
      */
     public function has_behaviour_var($name) {
@@ -299,7 +303,7 @@ class question_attempt_step {
     }
 
     /**
-     * @param string $name the name of an behaviour variable to look for in the submitted data.
+     * @param string $name the name of a behaviour variable to look for in the submitted data.
      * @return string the requested variable, or null if the variable is not set.
      */
     public function get_behaviour_var($name) {

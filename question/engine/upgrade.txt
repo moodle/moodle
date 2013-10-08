@@ -1,0 +1,16 @@
+This files describes API changes for the core question system.
+
+
+=== 2.4 ===
+
+1) The method question_behaviour::is_manual_grade_in_range and move and become
+question_engine::is_manual_grade_in_range.
+
+2) The arguments to core_question_renderer::mark_summary changed from
+($qa, $options) to ($qa, $behaviouroutput, $options). If you have overridden
+that method you will need to update your code.
+
+
+=== Earlier changes ===
+
+* Were not documented in this way. Sorry.

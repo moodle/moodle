@@ -40,8 +40,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_interactive extends question_behaviour_with_save {
-    const IS_ARCHETYPAL = true;
-
     /**
      * Special value used for {@link question_display_options::$readonly when
      * we are showing the try again button to the student during an attempt.

@@ -140,11 +140,15 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
                 'type' => 'hidden',
                 'name' => $qa->get_control_field_name('minfraction'),
                 'value' => $qa->get_min_fraction(),
+            )) . html_writer::empty_tag('input', array(
+                'type' => 'hidden',
+                'name' => $qa->get_control_field_name('maxfraction'),
+                'value' => $qa->get_max_fraction(),
             ));
 
             $errorclass = '';
             $error = '';
-            if ($currentmark > $maxmark || $currentmark < $maxmark * $qa->get_min_fraction()) {
+            if ($currentmark > $maxmark * $qa->get_max_fraction() || $currentmark < $maxmark * $qa->get_min_fraction()) {
                 $errorclass = ' error';
                 $error = html_writer::tag('span', get_string('manualgradeoutofrange', 'question'),
                         array('class' => 'error')) . html_writer::empty_tag('br');
@@ -230,5 +234,41 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
      */
     public function head_code(question_attempt $qa) {
         return '';
+    }
+
+    /**
+     * Generate the display of the marks for this question.
+     * @param question_attempt $qa the question attempt to display.
+     * @param core_question_renderer $qoutput the renderer for standard parts of questions.
+     * @param question_display_options $options controls what should and should not be displayed.
+     * @return HTML fragment.
+     */
+    public function mark_summary(question_attempt $qa, core_question_renderer $qoutput,
+            question_display_options $options) {
+        return $qoutput->standard_mark_summary($qa, $this, $options);
+    }
+
+    /**
+     * Generate the display of the available marks for this question.
+     * @param question_attempt $qa the question attempt to display.
+     * @param core_question_renderer $qoutput the renderer for standard parts of questions.
+     * @param question_display_options $options controls what should and should not be displayed.
+     * @return HTML fragment.
+     */
+    public function marked_out_of_max(question_attempt $qa, core_question_renderer $qoutput,
+            question_display_options $options) {
+        return $qoutput->standard_marked_out_of_max($qa, $options);
+    }
+
+    /**
+     * Generate the display of the marks for this question out of the available marks.
+     * @param question_attempt $qa the question attempt to display.
+     * @param core_question_renderer $qoutput the renderer for standard parts of questions.
+     * @param question_display_options $options controls what should and should not be displayed.
+     * @return HTML fragment.
+     */
+    public function mark_out_of_max(question_attempt $qa, core_question_renderer $qoutput,
+            question_display_options $options) {
+        return $qoutput->standard_mark_out_of_max($qa, $options);
     }
 }

@@ -16,7 +16,7 @@
 
 /**
  * Question behaviour that is like the deferred feedback model, but with
- * certainly based marking. That is, in addition to the other controls, there are
+ * certainty based marking. That is, in addition to the other controls, there are
  * where the student can indicate how certain they are that their answer is right.
  *
  * @package    qbehaviour
@@ -45,13 +45,12 @@ require_once(dirname(__FILE__) . '/../deferredfeedback/behaviour.php');
 class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
     const IS_ARCHETYPAL = true;
 
-    public static function get_unused_display_options() {
-        return array('correctness', 'marks', 'specificfeedback', 'generalfeedback',
-                'rightanswer');
+    public function get_min_fraction() {
+        return question_cbm::adjust_fraction(0, question_cbm::HIGH);
     }
 
-    public function get_min_fraction() {
-        return question_cbm::adjust_fraction(parent::get_min_fraction(), question_cbm::HIGH);
+    public function get_max_fraction() {
+        return question_cbm::adjust_fraction(1, question_cbm::HIGH);
     }
 
     public function get_expected_data() {
@@ -63,7 +62,7 @@ class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
 
     public function get_right_answer_summary() {
         $summary = parent::get_right_answer_summary();
-        return $summary . ' [' . question_cbm::get_string(question_cbm::HIGH) . ']';
+        return question_cbm::summary_with_certainty($summary, question_cbm::HIGH);
     }
 
     public function get_correct_response() {
@@ -121,9 +120,5 @@ class qbehaviour_deferredcbm extends qbehaviour_deferredfeedback {
                     $step->get_behaviour_var('certainty'));
         }
         return $summary;
-    }
-
-    public static function adjust_random_guess_score($fraction) {
-        return question_cbm::adjust_fraction($fraction, question_cbm::default_certainty());
     }
 }

@@ -15,30 +15,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question behaviour for the old adaptive mode, with no penalties.
+ * Question behaviour type for immediate feedback with CBM behaviour.
  *
- * @package    qbehaviour
- * @subpackage adaptivenopenalty
- * @copyright  2009 The Open University
+ * @package    qbehaviour_adaptive
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../adaptive/behaviour.php');
+require_once(dirname(__FILE__) . '/../deferredcbm/behaviourtype.php');
 
 
 /**
- * Question behaviour for adaptive mode, with no penalties.
+ * Question behaviour type information for immediate feedback with CBM.
  *
- * This is the old version of interactive mode, without penalties.
- *
- * @copyright  2009 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_adaptivenopenalty extends qbehaviour_adaptive {
-    protected function adjusted_fraction($fraction, $prevtries) {
-        return $fraction;
+class qbehaviour_immediatecbm_type extends qbehaviour_deferredcbm_type {
+
+    public function get_unused_display_options() {
+        return array();
     }
 }

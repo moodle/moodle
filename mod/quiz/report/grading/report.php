@@ -461,7 +461,7 @@ class quiz_grading_report extends quiz_default_report {
 
         foreach ($qubaids as $qubaid) {
             foreach ($slots as $slot) {
-                if (!question_behaviour::is_manual_grade_in_range($qubaid, $slot)) {
+                if (!question_engine::is_manual_grade_in_range($qubaid, $slot)) {
                     return false;
                 }
             }

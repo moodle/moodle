@@ -90,18 +90,18 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
-        $this->check_current_mark(2);
+        $this->check_current_mark(6);
         $this->check_current_output(
                 $this->get_contains_tf_true_radio_expectation(false, true),
                 $this->get_contains_cbm_radio_expectation(3, false, true),
                 $this->get_contains_correct_expectation());
 
         // Process a manual comment.
-        $this->manual_grade('Not good enough!', 1, FORMAT_HTML);
+        $this->manual_grade('Not good enough!', 5, FORMAT_HTML);
 
         // Verify.
-        $this->check_current_state(question_state::$mangrpartial);
-        $this->check_current_mark(1);
+        $this->check_current_state(question_state::$mangrright);
+        $this->check_current_mark(5);
         $this->check_current_output(new question_pattern_expectation('/' .
                 preg_quote('Not good enough!', '/') . '/'));
 
@@ -110,10 +110,10 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->quba->regrade_all_questions();
 
         // Verify.
-        $this->check_current_state(question_state::$mangrpartial);
-        $this->check_current_mark(1);
+        $this->check_current_state(question_state::$mangrright);
+        $this->check_current_mark(5);
         $autogradedstep = $this->get_step($this->get_step_count() - 2);
-        $this->assertEquals($autogradedstep->get_fraction(), -2, '', 0.0000001);
+        $this->assertEquals(-6, $autogradedstep->get_fraction(), '', 0.0000001);
     }
 
     public function test_deferred_cbm_truefalse_low_certainty() {
@@ -147,11 +147,11 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
-        $this->check_current_mark(0.6666667);
+        $this->check_current_mark(2);
         $this->check_current_output($this->get_contains_correct_expectation(),
                 $this->get_contains_cbm_radio_expectation(1, false, true));
         $this->assertEquals(get_string('true', 'qtype_truefalse') . ' [' .
-                question_cbm::get_string(1) . ']',
+                question_cbm::get_short_string(question_cbm::LOW) . ']',
                 $this->quba->get_response_summary($this->slot));
     }
 
@@ -177,7 +177,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         // Verify.
         $qa = $this->quba->get_question_attempt($this->slot);
         $this->check_current_state(question_state::$gradedright);
-        $this->check_current_mark(0.6666667);
+        $this->check_current_mark(2);
         $this->check_current_output($this->get_contains_correct_expectation(),
                 $this->get_contains_cbm_radio_expectation(1, false, false),
                 new question_pattern_expectation('/' . preg_quote(
@@ -194,7 +194,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         $mc = test_question_maker::make_a_multichoice_single_question();
 
         // Attempt it getting it wrong.
-        $this->start_attempt_at_question($mc, 'deferredcbm', 3);
+        $this->start_attempt_at_question($mc, 'deferredcbm', 1);
         $rightindex = $this->get_mc_right_answer_index($mc);
         $wrongindex = ($rightindex + 1) % 3;
         $this->process_submission(array('answer' => $wrongindex, '-certainty' => 2));
@@ -202,16 +202,16 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
 
         // Verify.
         $this->check_current_state(question_state::$gradedwrong);
-        $this->check_current_mark(-3.3333333);
+        $this->check_current_mark(-2);
         $this->check_current_output(
                 $this->get_contains_mc_radio_expectation($wrongindex, false, true),
                 $this->get_contains_cbm_radio_expectation(2, false, true),
                 $this->get_contains_incorrect_expectation());
-        $this->assertEquals('A [' . question_cbm::get_string(question_cbm::HIGH) . ']',
+        $this->assertEquals('A [' . question_cbm::get_short_string(question_cbm::HIGH) . ']',
                 $this->quba->get_right_answer_summary($this->slot));
         $this->assertRegExp('/' . preg_quote($mc->questiontext, '/') . '/',
                 $this->quba->get_question_summary($this->slot));
-        $this->assertRegExp('/(B|C) \[' . preg_quote(question_cbm::get_string(2), '/') . '\]/',
+        $this->assertRegExp('/(B|C) \[' . preg_quote(question_cbm::get_short_string(question_cbm::MED), '/') . '\]/',
                 $this->quba->get_response_summary($this->slot));
 
         // Save the old attempt.
@@ -220,7 +220,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         // Reinitialise.
         $this->setUp();
         $this->quba->set_preferred_behaviour('deferredcbm');
-        $this->slot = $this->quba->add_question($mc, 3);
+        $this->slot = $this->quba->add_question($mc, 1);
         $this->quba->start_question_based_on($this->slot, $oldqa);
 
         // Verify.
@@ -232,7 +232,7 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
                 $this->get_contains_cbm_radio_expectation(2, true, true),
                 $this->get_does_not_contain_feedback_expectation(),
                 $this->get_does_not_contain_correctness_expectation());
-        $this->assertEquals('A [' . question_cbm::get_string(question_cbm::HIGH) . ']',
+        $this->assertEquals('A [' . question_cbm::get_short_string(question_cbm::HIGH) . ']',
                 $this->quba->get_right_answer_summary($this->slot));
         $this->assertRegExp('/' . preg_quote($mc->questiontext, '/') . '/',
                 $this->quba->get_question_summary($this->slot));
@@ -247,9 +247,9 @@ class qbehaviour_deferredcbm_walkthrough_test extends qbehaviour_walkthrough_tes
         $this->check_current_mark(3);
         $this->check_current_output(
                 $this->get_contains_mc_radio_expectation($rightindex, false, true),
-                $this->get_contains_cbm_radio_expectation(3, false, true),
+                $this->get_contains_cbm_radio_expectation(question_cbm::HIGH, false, true),
                 $this->get_contains_correct_expectation());
-        $this->assertRegExp('/(A) \[' . preg_quote(question_cbm::get_string(3), '/') . '\]/',
+        $this->assertRegExp('/(A) \[' . preg_quote(question_cbm::get_short_string(question_cbm::HIGH), '/') . '\]/',
                 $this->quba->get_response_summary($this->slot));
     }
 

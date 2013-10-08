@@ -209,7 +209,7 @@ abstract class backup_questions_activity_structure_step extends backup_activity_
 
         $qas = new backup_nested_element($nameprefix . 'question_attempts');
         $qa = new backup_nested_element($nameprefix . 'question_attempt', array('id'), array(
-                'slot', 'behaviour', 'questionid', 'maxmark', 'minfraction',
+                'slot', 'behaviour', 'questionid', 'maxmark', 'minfraction', 'maxfraction',
                 'flagged', 'questionsummary', 'rightanswer', 'responsesummary',
                 'timemodified'));
 

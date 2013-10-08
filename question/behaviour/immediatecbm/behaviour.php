@@ -34,19 +34,21 @@ require_once(dirname(__FILE__) . '/../immediatefeedback/behaviour.php');
  * Question behaviour for immediate feedback with CBM.
  *
  * Each question has a submit button next to it along with some radio buttons
- * to input a certainly, that is, how sure they are that they are right.
+ * to input a certainty, that is, how sure they are that they are right.
  * The student can submit their answer at any time for immediate feedback.
  * Once the qustion is submitted, it is not possible for the student to change
- * their answer any more. The student's degree of certainly affects their score.
+ * their answer any more. The student's degree of certainty affects their score.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_immediatecbm extends qbehaviour_immediatefeedback {
-    const IS_ARCHETYPAL = true;
-
     public function get_min_fraction() {
         return question_cbm::adjust_fraction(parent::get_min_fraction(), question_cbm::HIGH);
+    }
+
+    public function get_max_fraction() {
+        return question_cbm::adjust_fraction(parent::get_max_fraction(), question_cbm::HIGH);
     }
 
     public function get_expected_data() {
@@ -147,9 +149,5 @@ class qbehaviour_immediatecbm extends qbehaviour_immediatefeedback {
                     $step->get_behaviour_var('certainty'));
         }
         return $summary;
-    }
-
-    public static function adjust_random_guess_score($fraction) {
-        return question_cbm::adjust_fraction($fraction, question_cbm::default_certainty());
     }
 }

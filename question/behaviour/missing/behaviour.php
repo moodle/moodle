@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Fake question behaviour that is used when the actual qim was not
+ * Fake question behaviour that is used when the actual behaviour was not
  * available.
  *
  * @package    qbehaviour
@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * is not available.
  *
  * Imagine, for example, that a quiz attempt has been restored from another
- * Moodle site with more behaviours installed, or an behaviour
+ * Moodle site with more behaviours installed, or a behaviour
  * that used to be available in this site has been uninstalled. Obviously all we
  * can do is have some code to prevent fatal errors.
  *
@@ -65,6 +65,11 @@ class qbehaviour_missing extends question_behaviour {
     }
 
     public function get_min_fraction() {
+        throw new coding_exception('The behaviour used for this question is not available. ' .
+                'No processing is possible.');
+    }
+
+    public function get_max_fraction() {
         throw new coding_exception('The behaviour used for this question is not available. ' .
                 'No processing is possible.');
     }

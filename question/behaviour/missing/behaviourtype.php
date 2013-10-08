@@ -15,30 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Question behaviour for the old adaptive mode, with no penalties.
+ * Fake question behaviour type that is used when the actual behaviour is not
+ * available.
  *
- * @package    qbehaviour
- * @subpackage adaptivenopenalty
- * @copyright  2009 The Open University
+ * @package    qbehaviour_missing
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once(dirname(__FILE__) . '/../adaptive/behaviour.php');
-
 
 /**
- * Question behaviour for adaptive mode, with no penalties.
+ * Fake question behaviour type information that is used when the actual
+ * behaviour is not available.
  *
- * This is the old version of interactive mode, without penalties.
- *
- * @copyright  2009 The Open University
+ * @copyright  2012 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbehaviour_adaptivenopenalty extends qbehaviour_adaptive {
-    protected function adjusted_fraction($fraction, $prevtries) {
-        return $fraction;
-    }
+class qbehaviour_missing_type extends question_behaviour_type {
 }

@@ -746,6 +746,26 @@ class quiz_attempt {
     }
 
     /**
+     * Get extra summary information about this attempt.
+     *
+     * Some behaviours may be able to provide interesting summary information
+     * about the attempt as a whole, and this method provides access to that data.
+     * To see how this works, try setting a quiz to one of the CBM behaviours,
+     * and then look at the extra information displayed at the top of the quiz
+     * review page once you have sumitted an attempt.
+     *
+     * In the return value, the array keys are identifiers of the form
+     * qbehaviour_behaviourname_meaningfullkey. For qbehaviour_deferredcbm_highsummary.
+     * The values are arrays with two items, title and content. Each of these
+     * will be either a string, or a renderable.
+     *
+     * @return array as described above.
+     */
+    public function get_additional_summary_data(question_display_options $options) {
+        return $this->quba->get_summary_information($options);
+    }
+
+    /**
      * Get the overall feedback corresponding to a particular mark.
      * @param $grade a particular grade.
      */
