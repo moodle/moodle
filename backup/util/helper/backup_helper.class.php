@@ -179,17 +179,22 @@ abstract class backup_helper {
      *
      * Note: the $filepath is deleted if the backup file is created successfully
      *
+     * If you specify the progress monitor, this will start a new progress section
+     * to track progress in processing (in case this task takes a long time).
+     *
      * @param int $backupid
      * @param string $filepath zip file containing the backup
+     * @param core_backup_progress $progress Optional progress monitor
      * @return stored_file if created, null otherwise
      *
      * @throws moodle_exception in case of any problems
      */
-    static public function store_backup_file($backupid, $filepath) {
+    static public function store_backup_file($backupid, $filepath, core_backup_progress $progress = null) {
         global $CFG;
 
         // First of all, get some information from the backup_controller to help us decide
-        list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information($backupid);
+        list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information(
+                $backupid, $progress);
 
         // Extract useful information to decide
         $hasusers  = (bool)$sinfo['users']->value;     // Backup has users

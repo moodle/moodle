@@ -74,6 +74,7 @@ require_once($CFG->dirroot . '/backup/util/loggers/output_indented_logger.class.
 require_once($CFG->dirroot . '/backup/util/progress/core_backup_progress.class.php');
 require_once($CFG->dirroot . '/backup/util/progress/core_backup_null_progress.class.php');
 require_once($CFG->dirroot . '/backup/util/progress/core_backup_display_progress.class.php');
+require_once($CFG->dirroot . '/backup/util/progress/core_backup_display_progress_if_slow.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/setting_dependency.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/base_setting.class.php');
 require_once($CFG->dirroot . '/backup/util/settings/backup_setting.class.php');

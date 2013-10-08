@@ -1589,7 +1589,8 @@ class backup_main_structure_step extends backup_structure_step {
         $info['original_system_contextid'] = context_system::instance()->id;
 
         // Get more information from controller
-        list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information($this->get_backupid());
+        list($dinfo, $cinfo, $sinfo) = backup_controller_dbops::get_moodle_backup_information(
+                $this->get_backupid(), $this->get_task()->get_progress());
 
         // Define elements
 
@@ -1753,7 +1754,8 @@ class backup_store_backup_file extends backup_execution_step {
         $has_file_references = backup_controller_dbops::backup_includes_file_references($this->get_backupid());
         // Perform storage and return it (TODO: shouldn't be array but proper result object)
         return array(
-            'backup_destination' => backup_helper::store_backup_file($this->get_backupid(), $zipfile),
+            'backup_destination' => backup_helper::store_backup_file($this->get_backupid(), $zipfile,
+                    $this->task->get_progress()),
             'include_file_references_to_external_content' => $has_file_references
         );
     }
