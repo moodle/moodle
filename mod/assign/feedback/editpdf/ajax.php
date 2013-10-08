@@ -26,11 +26,9 @@ use \assignfeedback_editpdf\document_services;
 use \assignfeedback_editpdf\page_editor;
 use \assignfeedback_editpdf\comments_quick_list;
 
-if (!defined('AJAX_SCRIPT')) {
-    define('AJAX_SCRIPT', true);
-}
+define('AJAX_SCRIPT', true);
 
-require_once('../../../../config.php');
+require('../../../../config.php');
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
 require_sesskey();
@@ -44,6 +42,8 @@ $cm = \get_coursemodule_from_instance('assign', $assignmentid, 0, false, MUST_EX
 $context = \context_module::instance($cm->id);
 
 $assignment = new \assign($context, null, null);
+
+require_login($assignment->get_course(), false, $cm);
 
 if (!$assignment->can_view_submission($userid)) {
     print_error('nopermission');

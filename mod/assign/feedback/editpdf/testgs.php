@@ -22,13 +22,25 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(dirname(__FILE__).'/../../../../config.php');
+require('../../../../config.php');
+
 global $PAGE, $OUTPUT;
 
 $PAGE->set_url(new moodle_url('/mod/assign/feedback/editpdf/testgs.php'));
 $PAGE->set_context(context_system::instance());
 
+require_login();
 require_capability('moodle/site:config', context_system::instance());
+
+$strheading = get_string('testgs', 'assignfeedback_editpdf');
+$PAGE->navbar->add(get_string('administrationsite'));
+$PAGE->navbar->add(get_string('plugins', 'admin'));
+$PAGE->navbar->add(get_string('assignmentplugins', 'mod_assign'));
+$PAGE->navbar->add(get_string('feedbackplugins', 'mod_assign'));
+$PAGE->navbar->add(get_string('pluginname', 'assignfeedback_editpdf'), new moodle_url('/admin/settings.php?section=assignfeedback_editpdf'));
+$PAGE->navbar->add($strheading);
+$PAGE->set_heading($strheading);
+$PAGE->set_title($strheading);
 
 if (optional_param('sendimage', false, PARAM_BOOL)) {
     // Serve the generated test image.
@@ -57,10 +69,6 @@ switch ($result->status) {
 
 $returl = new moodle_url('/admin/settings.php', array('section' => 'assignfeedback_editpdf'));
 $msg .= $OUTPUT->continue_button($returl);
-
-$strheading = get_string('testgs', 'assignfeedback_editpdf');
-$PAGE->set_heading($strheading);
-$PAGE->set_title($strheading);
 
 echo $OUTPUT->header();
 echo $OUTPUT->box($msg, 'generalbox ');
