@@ -190,12 +190,12 @@ class core_calendar_type_testcase extends advanced_testcase {
         // Test the calendar/lib.php functions.
         $this->assertEquals($calendar->get_weekdays(), calendar_get_days());
         $this->assertEquals($calendar->get_starting_weekday(), calendar_get_starting_weekday());
-        $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), calendar_days_in_month('1986', '9'));
-        $this->assertEquals($calendar->get_next_month('1986', '9'), calendar_add_month('1986', '9'));
-        $this->assertEquals($calendar->get_prev_month('1986', '9'), calendar_sub_month('1986', '9'));
+        $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), calendar_days_in_month('9', '1986'));
+        $this->assertEquals($calendar->get_next_month('1986', '9'), calendar_add_month('9', '1986'));
+        $this->assertEquals($calendar->get_prev_month('1986', '9'), calendar_sub_month('9', '1986'));
 
         // Test the lib/moodle.php functions.
-        $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), days_in_month('1986', '9'));
+        $this->assertEquals($calendar->get_num_days_in_month('1986', '9'), days_in_month('9', '1986'));
         $this->assertEquals($calendar->get_weekday('1986', '9', '16'), dayofweek('16', '9', '1986'));
     }
 
