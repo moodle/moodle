@@ -213,6 +213,7 @@ class community_hub_search_form extends moodleform {
             } else {
                 $mform->addElement('hidden', 'downloadable', 0);
             }
+            $mform->setType('downloadable', PARAM_INT);
 
             $options = array();
             $options['all'] = get_string('any');
