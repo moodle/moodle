@@ -62,7 +62,9 @@ class data_field_url extends data_field_base {
             // Just the URL field
             $str .= '<label class="accesshide" for="' . $fieldid . '">'. $this->field->name .'</label>';
             $str .= '<input type="text" name="field_'.$this->field->id.'_0" id="'.$fieldid.'" value="'.s($url).'" size="60" />';
-            $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button>';
+            if (count($options->repositories) > 0) {
+                $str .= '<button id="filepicker-button-'.$options->client_id.'" style="display:none">'.$straddlink.'</button>';
+            }
         }
 
         // print out file picker
