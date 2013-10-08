@@ -2622,5 +2622,25 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013100800.00);
     }
 
+    if ($oldversion < 2013100800.01) {
+        // Create a new 'user_password_resets' table.
+        $table = new xmldb_table('user_password_resets');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null);
+        $table->add_field('timerequested', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null);
+        $table->add_field('timererequested', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, null);
+        $table->add_field('token', XMLDB_TYPE_CHAR, '32', null, XMLDB_NOTNULL, null, null, null);
+
+        // Adding keys to table.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('fk_userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+        // Conditionally launch create table.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+        upgrade_main_savepoint(true, 2013100800.01);
+    }
+
     return true;
 }

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,6 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Forgot password page.
+ *
+ * @package    core
+ * @subpackage auth
+ * @copyright  1999 onwards Martin Dougiamas  http://dougiamas.com
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir.'/formslib.php');
+
+/**
  * Reset forgotten password form definition.
  *
  * @package    core
@@ -23,13 +34,11 @@
  * @copyright  2006 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once $CFG->libdir.'/formslib.php';
-
 class login_forgot_password_form extends moodleform {
 
+    /**
+     * Define the forgot password form.
+     */
     function definition() {
         $mform    = $this->_form;
         $mform->setDisableShortforms(true);
@@ -51,6 +60,12 @@ class login_forgot_password_form extends moodleform {
         $mform->addElement('submit', 'submitbuttonemail', $submitlabel);
     }
 
+    /**
+     * Validate user input from the forgot password form.
+     * @param array $data array of submitted form fields.
+     * @param array $files submitted with the form.
+     * @return array errors occuring during validation.
+     */
     function validation($data, $files) {
         global $CFG, $DB;
 

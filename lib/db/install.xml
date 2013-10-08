@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20131004" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20131008" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -3067,6 +3067,19 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="pushid-userid" TYPE="unique" FIELDS="pushid, userid"/>
         <KEY NAME="pushid-platform" TYPE="unique" FIELDS="pushid, platform"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="user_password_resets" COMMENT="table tracking password reset confirmation tokens">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id of the user account which requester claimed to be"/>
+        <FIELD NAME="timerequested" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The time that the user first requested this password reset"/>
+        <FIELD NAME="timererequested" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time the user re-requested the password reset."/>
+        <FIELD NAME="token" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="secret set and emailed to user"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
