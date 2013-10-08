@@ -3203,11 +3203,11 @@ class assign {
     public function can_view_group_submission($groupid) {
         global $USER;
 
-        if (!is_enrolled($this->get_course_context(), $USER->id)) {
-            return false;
-        }
         if (has_capability('mod/assign:grade', $this->context)) {
             return true;
+        }
+        if (!is_enrolled($this->get_course_context(), $USER->id)) {
+            return false;
         }
         $members = $this->get_submission_group_members($groupid, true);
         foreach ($members as $member) {
@@ -3227,19 +3227,16 @@ class assign {
     public function can_view_submission($userid) {
         global $USER;
 
-        if (is_siteadmin()) {
+        if (!$this->is_active_user($userid) && !has_capability('moodle/course:viewsuspendedusers', $this->context)) {
+            return false;
+        }
+        if (has_capability('mod/assign:grade', $this->context)) {
             return true;
         }
         if (!is_enrolled($this->get_course_context(), $userid)) {
             return false;
         }
         if ($userid == $USER->id && has_capability('mod/assign:submit', $this->context)) {
-            return true;
-        }
-        if (!$this->is_active_user($userid) && !has_capability('moodle/course:viewsuspendedusers', $this->context)) {
-            return false;
-        }
-        if (has_capability('mod/assign:grade', $this->context)) {
             return true;
         }
         return false;
