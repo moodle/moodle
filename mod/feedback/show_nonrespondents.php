@@ -268,7 +268,6 @@ if (!$students) {
         echo $OUTPUT->container(html_writer::link($allurl, get_string('showall', '', $matchcount)), array(), 'showall');
     }
     if (has_capability('moodle/course:bulkmessaging', $coursecontext)) {
-        $usehtmleditor = can_use_html_editor();
         echo '<div class="buttons"><br />';
         echo '<input type="button" id="checkall" value="'.get_string('selectall').'" /> ';
         echo '<input type="button" id="checknone" value="'.get_string('deselectall').'" /> ';
@@ -279,14 +278,9 @@ if (!$students) {
         echo '<label for="feedback_subject">'.get_string('subject', 'feedback').'&nbsp;</label>';
         echo '<input type="text" id="feedback_subject" size="50" maxlength="255" name="subject" value="'.$subject.'" />';
         echo '</div>';
-        print_textarea($usehtmleditor, 15, 25, 30, 10, "message", $message);
-        if ($usehtmleditor) {
-            print_string('formathtml');
-            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
-        } else {
-            echo '<label for="menuformat" class="accesshide">'. get_string('format') .'</label>';
-            choose_from_menu(format_text_menu(), "format", $format, "");
-        }
+        print_textarea(true, 15, 25, 30, 10, "message", $message);
+        print_string('formathtml');
+        echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         echo '<br /><div class="buttons">';
         echo '<input type="submit" name="send_message" value="'.get_string('send', 'feedback').'" />';
         echo '</div>';

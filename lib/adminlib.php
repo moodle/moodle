@@ -3841,8 +3841,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     public function output_html($data, $query='') {
         global $CFG;
 
-        $CFG->adminusehtmleditor = can_use_html_editor();
-        $return = '<div class="form-htmlarea">'.print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, $this->get_full_name(), $data, 0, true, 'summary') .'</div>';
+        $return = '<div class="form-htmlarea">'.print_textarea(true, 15, 60, 0, 0, $this->get_full_name(), $data, 0, true, 'summary') .'</div>';
 
         return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
     }

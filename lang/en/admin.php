@@ -1105,7 +1105,6 @@ $string['upgradingversion'] = 'Upgrading to new version';
 $string['upwards'] = 'upwards';
 $string['useblogassociations'] = 'Enable associations';
 $string['useexternalyui'] = 'Use online YUI libraries';
-$string['usehtmleditor'] = 'Use HTML editor';
 $string['user'] = 'User';
 $string['userbulk'] = 'Bulk user actions';
 $string['userlist'] = 'Browse list of users';

@@ -10,7 +10,7 @@
      <?php print_string("messagebody"); ?>:
      </b></td>
     <td align="left" rowspan="2">
-    <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "messagebody", $messagebody); ?>
+    <?php print_textarea(true, 25, 65, 630, 400, "messagebody", $messagebody); ?>
     </td>
 </tr>
 
@@ -18,12 +18,8 @@
     <td align="right"><label for="menuformat"><b><?php print_string("formattexttype"); ?>:</b></label></td>
     <td>
     <?php
-        if ($usehtmleditor) {   /// Trying this out for a while
-            print_string('formathtml');
-            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
-        } else {
-            choose_from_menu(format_text_menu(), "format", $format, "");
-        }
+        print_string('formathtml');
+        echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
      ?>
     </td>
 </tr>

@@ -10,10 +10,10 @@ Feature: Forms manipulation
     And I follow "Admin User"
     And I follow "Edit profile"
     When I fill in "First name" with "Field value"
-    And I select "Use standard web forms" from "When editing text"
+    And I select "Plain text area" from "Text editor"
     And I check "Unmask"
     Then the "First name" field should match "Field value" value
-    And the "When editing text" select box should contain "Use standard web forms"
+    And the "Text editor" select box should contain "Plain text area"
     And the "Unmask" checkbox should be checked
     And I uncheck "Unmask"
     And the "Unmask" checkbox should not be checked

@@ -1180,6 +1180,16 @@ abstract class restore_dbops {
                         $status = $DB->insert_record('user_preferences', $preference);
                     }
                 }
+                // Special handling for htmleditor which was converted to a preference.
+                if (isset($user->htmleditor)) {
+                    if ($user->htmleditor == 0) {
+                        $preference = new stdClass();
+                        $preference->userid = $newuserid;
+                        $preference->name = 'htmleditor';
+                        $preference->value = 'textarea';
+                        $status = $DB->insert_record('user_preferences', $preference);
+                    }
+                }
 
                 // Create user files in pool (profile, icon, private) by context
                 restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon', $recuser->parentitemid, $userid);
