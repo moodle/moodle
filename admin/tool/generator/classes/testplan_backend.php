@@ -155,6 +155,7 @@ class tool_generator_testplan_backend extends tool_generator_backend {
         }
 
         $replacements = array(
+            $CFG->version,
             self::$users[$size],
             self::$loops[$size],
             self::$rampups[$size],
@@ -169,6 +170,7 @@ class tool_generator_testplan_backend extends tool_generator_backend {
         );
 
         $placeholders = array(
+            '{{MOODLEVERSION_PLACEHOLDER}}',
             '{{USERS_PLACEHOLDER}}',
             '{{LOOPS_PLACEHOLDER}}',
             '{{RAMPUP_PLACEHOLDER}}',
