@@ -44,12 +44,12 @@ class tool_generator_testplan_backend extends tool_generator_backend {
     /**
      * @var Number of users depending on the selected size.
      */
-    protected static $users = array(1, 30, 200, 1000, 5000, 10000);
+    protected static $users = array(1, 30, 100, 1000, 5000, 10000);
 
     /**
      * @var Number of loops depending on the selected size.
      */
-    protected static $loops = array(1, 1, 2, 3, 3, 5);
+    protected static $loops = array(5, 5, 5, 6, 6, 7);
 
     /**
      * @var Rampup period depending on the selected size.
