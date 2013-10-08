@@ -23,7 +23,7 @@
  * this.options.client_id, the instance id
  * this.options.contextid
  * this.options.itemid
- * this.options.repositories, stores all repositories displaied in file picker
+ * this.options.repositories, stores all repositories displayed in file picker
  * this.options.formcallback
  *
  * Active repository options
