@@ -89,9 +89,9 @@ class quiz_grading_report extends quiz_default_report {
         $showidnumbers = has_capability('quiz/grading:viewidnumber', $this->context);
 
         // Validate order.
-        if (!in_array($order, array('random', 'date', 'student', 'idnumber'))) {
+        if (!in_array($order, array('random', 'date', 'studentfirstname', 'studentlastname', 'idnumber'))) {
             $order = self::DEFAULT_ORDER;
-        } else if (!$shownames && $order == 'student') {
+        } else if (!$shownames && ($order == 'studentfirstname' || $order == 'studentlastname')) {
             $order = self::DEFAULT_ORDER;
         } else if (!$showidnumbers && $order == 'idnumber') {
             $order = self::DEFAULT_ORDER;
@@ -547,10 +547,17 @@ class quiz_grading_report extends quiz_default_report {
                     WHERE sortqas.questionattemptid = qa.id
                         AND sortqas.state $statetest
                     )";
-        } else if ($orderby == 'student' || $orderby == 'idnumber') {
+        } else if ($orderby == 'studentfirstname' || $orderby == 'studentlastname' || $orderby == 'idnumber') {
             $qubaids->from .= " JOIN {user} u ON quiza.userid = u.id ";
-            if ($orderby == 'student') {
-                $orderby = $DB->sql_fullname('u.firstname', 'u.lastname');
+            // For name sorting, map orderby form value to
+            // actual column names; 'idnumber' maps naturally
+            switch ($orderby) {
+                case "studentlastname":
+                    $orderby = "u.lastname, u.firstname";
+                    break;
+                case "studentfirstname":
+                    $orderby = "u.firstname, u.lastname";
+                    break;
             }
         }
 
