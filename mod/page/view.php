@@ -51,7 +51,16 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/page:view', $context);
 
-add_to_log($course->id, 'page', 'view', 'view.php?id='.$cm->id, $page->id, $cm->id);
+// Trigger module viewed event.
+$event = \mod_page\event\course_module_viewed::create(array(
+   'objectid' => $page->id,
+   'context' => $context,
+   'other' => array('content' => 'pageresourceview')
+));
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('page', $page);
+$event->trigger();
 
 // Update 'viewed' state if required by completion system
 require_once($CFG->libdir . '/completionlib.php');
