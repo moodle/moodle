@@ -92,6 +92,10 @@ if ($launchcontainer == LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS) {
 
 require_login($course);
 
+// Mark viewed by user (if required).
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
+
 add_to_log($course->id, "lti", "view", "view.php?id=$cm->id", "$lti->id");
 
 $pagetitle = strip_tags($course->shortname.': '.format_string($lti->name));
