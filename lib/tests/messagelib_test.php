@@ -141,6 +141,55 @@ class core_messagelib_testcase extends advanced_testcase {
         // $this->assertFalse($this->message_type_present('moodle', 'backup', $providers));
     }
 
+    public function test_message_attachment_send() {
+        global $CFG;
+        $this->preventResetByRollback();
+        $this->resetAfterTest();
+
+        // Set config setting to allow attachments.
+        $CFG->allowattachments = true;
+        $CFG->noemailever = false;
+
+        $user = $this->getDataGenerator()->create_user();
+        $context = context_user::instance($user->id);
+
+        // Create a test file.
+        $fs = get_file_storage();
+        $filerecord = array(
+                'contextid' => $context->id,
+                'component' => 'core',
+                'filearea'  => 'unittest',
+                'itemid'    => 99999,
+                'filepath'  => '/',
+                'filename'  => 'emailtest.txt'
+        );
+        $file = $fs->create_file_from_string($filerecord, 'Test content');
+
+        $message = new stdClass();
+        $message->component         = 'moodle';
+        $message->name              = 'instantmessage';
+        $message->userfrom          = get_admin();
+        $message->userto            = $user;
+        $message->subject           = 'message subject 1';
+        $message->fullmessage       = 'message body';
+        $message->fullmessageformat = FORMAT_MARKDOWN;
+        $message->fullmessagehtml   = '<p>message body</p>';
+        $message->smallmessage      = 'small message';
+        $message->attachment        = $file;
+        $message->attachname        = 'emailtest.txt';
+
+        // Make sure we are redirecting emails.
+        $sink = $this->redirectEmails();
+        $this->assertTrue(phpunit_util::is_redirecting_phpmailer());
+        message_send($message);
+
+        // Get the email that we just sent.
+        $emails = $sink->get_messages();
+        $email = reset($emails);
+        $this->assertTrue(strpos($email->body, 'Content-Disposition: attachment;') !== false);
+        $this->assertTrue(strpos($email->body, 'emailtest.txt') !== false);
+    }
+
     /**
      * Is a particular message type in the list of message types.
      * @param string $component
