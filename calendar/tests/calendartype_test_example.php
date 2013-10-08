@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace calendartype_test;
+namespace calendartype_test_example;
 use \core_calendar\type_base;
 
 /**
@@ -28,6 +28,15 @@ use \core_calendar\type_base;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class structure extends type_base {
+
+    /**
+     * Returns the name of the calendar.
+     *
+     * @return string the calendar name
+     */
+    public function get_name() {
+        return 'test_example';
+    }
 
     /**
      * Returns a list of all the possible days for all months.
@@ -85,9 +94,89 @@ class structure extends type_base {
     }
 
     /**
+     * Returns the number of days in a week.
+     *
+     * @return int the number of days
+     */
+    public function get_num_weekdays() {
+        return 7;
+    }
+
+    /**
+     * Returns an indexed list of all the names of the weekdays.
+     *
+     * The list starts with the index 0. Each index, representing a
+     * day, must be an array that contains the indexes 'shortname'
+     * and 'fullname'.
+     *
+     * @return array array of days
+     */
+    public function get_weekdays() {
+        return '';
+    }
+
+    /**
+     * Returns the index of the starting week day.
+     *
+     * @return int
+     */
+    public function get_starting_weekday() {
+        return '';
+    }
+
+    /**
+     * Returns the index of the weekday for a specific calendar date.
+     *
+     * @param int $year
+     * @param int $month
+     * @param int $day
+     * @return int
+     */
+    public function get_weekday($year, $month, $day) {
+        return '';
+    }
+
+    /**
+     * Returns the number of days in a given month.
+     *
+     * @param int $year
+     * @param int $month
+     * @return int the number of days
+     */
+    public function get_num_days_in_month($year, $month) {
+        return '';
+    }
+
+    /**
+     * Get the previous month.
+     *
+     * If the current month is January, it will get the last month of the previous year.
+     *
+     * @param int $year
+     * @param int $month
+     * @return array previous month and year
+     */
+    public function get_prev_month($year, $month) {
+        return '';
+    }
+
+    /**
+     * Get the next month.
+     *
+     * If the current month is December, it will get the first month of the following year.
+     *
+     * @param int $year
+     * @param int $month
+     * @return array the following month and year
+     */
+    public function get_next_month($year, $month) {
+        return '';
+    }
+
+    /**
      * Returns a formatted string that represents a date in user time.
      *
-     * @param int $date the timestamp in UTC, as obtained from the database
+     * @param int $time the timestamp in UTC, as obtained from the database
      * @param string $format strftime format
      * @param int|float|string $timezone the timezone to use
      *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
@@ -97,7 +186,7 @@ class structure extends type_base {
      *        if false then the leading zero is maintained
      * @return string the formatted date/time
      */
-    public function timestamp_to_date_string($date, $format, $timezone, $fixday, $fixhour) {
+    public function timestamp_to_date_string($time, $format, $timezone, $fixday, $fixhour) {
         return '';
     }
 
@@ -110,7 +199,7 @@ class structure extends type_base {
      *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
      * @return array an array that represents the date in user time
      */
-    public function timestamp_to_date_array($time, $timezone) {
+    public function timestamp_to_date_array($time, $timezone = 99) {
         $gregoriancalendar = \core_calendar\type_factory::get_calendar_instance('gregorian');
         $date = $gregoriancalendar->timestamp_to_date_array($time, $timezone);
         $newdate = $this->convert_from_gregorian($date['year'], $date['mon'], $date['mday'],
@@ -143,10 +232,10 @@ class structure extends type_base {
         list($year, $month, $day, $hour, $minute) = explode('/', $date);
 
         return array('year' => (int) $year,
-                     'month' => (int) $month,
-                     'day' => (int) $day,
-                     'hour' => (int) $hour,
-                     'minute' => (int) $minute);
+            'month' => (int) $month,
+            'day' => (int) $day,
+            'hour' => (int) $hour,
+            'minute' => (int) $minute);
 
     }
 
@@ -168,9 +257,9 @@ class structure extends type_base {
         list($year, $month, $day, $hour, $minute) = explode('/', $date);
 
         return array('year' => (int) $year,
-                     'month' => (int) $month,
-                     'day' => (int) $day,
-                     'hour' => (int) $hour,
-                     'minute' => (int) $minute);
+            'month' => (int) $month,
+            'day' => (int) $day,
+            'hour' => (int) $hour,
+            'minute' => (int) $minute);
     }
 }

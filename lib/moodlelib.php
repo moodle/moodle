@@ -2685,8 +2685,10 @@ function dst_offset_on($time, $strtimezone = null) {
  * @return int
  */
 function find_day_in_month($startday, $weekday, $month, $year) {
+    $calendartype = \core_calendar\type_factory::get_calendar_instance();
 
     $daysinmonth = days_in_month($month, $year);
+    $daysinweek = count($calendartype->get_weekdays());
 
     if ($weekday == -1) {
         // Don't care about weekday, so return:
@@ -2696,46 +2698,40 @@ function find_day_in_month($startday, $weekday, $month, $year) {
     }
 
     // From now on we 're looking for a specific weekday.
-
     // Give "end of month" its actual value, since we know it.
     if ($startday == -1) {
         $startday = -1 * $daysinmonth;
     }
 
     // Starting from day $startday, the sign is the direction.
-
     if ($startday < 1) {
-
         $startday = abs($startday);
-        $lastmonthweekday  = strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year));
+        $lastmonthweekday = dayofweek($daysinmonth, $month, $year);
 
         // This is the last such weekday of the month.
         $lastinmonth = $daysinmonth + $weekday - $lastmonthweekday;
         if ($lastinmonth > $daysinmonth) {
-            $lastinmonth -= 7;
+            $lastinmonth -= $daysinweek;
         }
 
         // Find the first such weekday <= $startday.
         while ($lastinmonth > $startday) {
-            $lastinmonth -= 7;
+            $lastinmonth -= $daysinweek;
         }
 
         return $lastinmonth;
-
     } else {
-
-        $indexweekday = strftime('%w', mktime(12, 0, 0, $month, $startday, $year));
+        $indexweekday = dayofweek($startday, $month, $year);
 
         $diff = $weekday - $indexweekday;
         if ($diff < 0) {
-            $diff += 7;
+            $diff += $daysinweek;
         }
 
         // This is the first such weekday of the month equal to or after $startday.
         $firstfromindex = $startday + $diff;
 
         return $firstfromindex;
-
     }
 }
 
@@ -2749,7 +2745,8 @@ function find_day_in_month($startday, $weekday, $month, $year) {
  * @return int
  */
 function days_in_month($month, $year) {
-    return intval(date('t', mktime(12, 0, 0, $month, 1, $year)));
+    $calendartype = \core_calendar\type_factory::get_calendar_instance();
+    return $calendartype->get_num_days_in_month($year, $month);
 }
 
 /**
@@ -2763,8 +2760,8 @@ function days_in_month($month, $year) {
  * @return int
  */
 function dayofweek($day, $month, $year) {
-    // I wonder if this is any different from strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year, 0));.
-    return intval(date('w', mktime(12, 0, 0, $month, $day, $year)));
+    $calendartype = \core_calendar\type_factory::get_calendar_instance();
+    return $calendartype->get_weekday($year, $month, $day);
 }
 
 // USER AUTHENTICATION AND LOGIN.

@@ -32,7 +32,7 @@ if (isset($CFG->calendar_maxevents)) {
 
 $prefs = new stdClass;
 $prefs->timeformat = get_user_preferences('calendar_timeformat', '');
-$prefs->startwday  = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
+$prefs->startwday  = calendar_get_starting_weekday();
 $prefs->maxevents  = get_user_preferences('calendar_maxevents', $defaultmaxevents);
 $prefs->lookahead  = get_user_preferences('calendar_lookahead', $defaultlookahead);
 $prefs->persistflt = get_user_preferences('calendar_persistflt', 0);

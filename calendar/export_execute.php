@@ -31,10 +31,14 @@ if (!$authuserid && !$authusername) {
     die('Invalid authentication');
 }
 
+// Get the calendar type we are using.
+$calendartype = \core_calendar\type_factory::get_calendar_instance();
+
 $what = optional_param('preset_what', 'all', PARAM_ALPHA);
 $time = optional_param('preset_time', 'weeknow', PARAM_ALPHA);
 
-$now = usergetdate(time());
+$now = $calendartype->timestamp_to_date_array(time());
+
 // Let's see if we have sufficient and correct data
 $allowed_what = array('all', 'courses');
 $allowed_time = array('weeknow', 'weeknext', 'monthnow', 'monthnext', 'recentupcoming', 'custom');
@@ -74,20 +78,23 @@ if(!empty($what) && !empty($time)) {
             $groups = false;
         }
 
+        // Store the number of days in the week.
+        $numberofdaysinweek = $calendartype->get_num_weekdays();
+
         switch($time) {
             case 'weeknow':
-                $startweekday  = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
-                $startmonthday = find_day_in_month($now['mday'] - 6, $startweekday, $now['mon'], $now['year']);
-                $startmonth    = $now['mon'];
-                $startyear     = $now['year'];
+                $startweekday = calendar_get_starting_weekday();
+                $startmonthday = find_day_in_month($now['mday'] - ($numberofdaysinweek - 1), $startweekday, $now['mon'], $now['year']);
+                $startmonth = $now['mon'];
+                $startyear = $now['year'];
                 if($startmonthday > calendar_days_in_month($startmonth, $startyear)) {
                     list($startmonth, $startyear) = calendar_add_month($startmonth, $startyear);
                     $startmonthday = find_day_in_month(1, $startweekday, $startmonth, $startyear);
                 }
                 $timestart = make_timestamp($startyear, $startmonth, $startmonthday);
-                $endmonthday = $startmonthday + 7;
-                $endmonth    = $startmonth;
-                $endyear     = $startyear;
+                $endmonthday = $startmonthday + $numberofdaysinweek;
+                $endmonth = $startmonth;
+                $endyear = $startyear;
                 if($endmonthday > calendar_days_in_month($endmonth, $endyear)) {
                     list($endmonth, $endyear) = calendar_add_month($endmonth, $endyear);
                     $endmonthday = find_day_in_month(1, $startweekday, $endmonth, $endyear);
@@ -95,18 +102,18 @@ if(!empty($what) && !empty($time)) {
                 $timeend = make_timestamp($endyear, $endmonth, $endmonthday) - 1;
             break;
             case 'weeknext':
-                $startweekday  = get_user_preferences('calendar_startwday', calendar_get_starting_weekday());
+                $startweekday = calendar_get_starting_weekday();
                 $startmonthday = find_day_in_month($now['mday'] + 1, $startweekday, $now['mon'], $now['year']);
-                $startmonth    = $now['mon'];
-                $startyear     = $now['year'];
+                $startmonth = $now['mon'];
+                $startyear = $now['year'];
                 if($startmonthday > calendar_days_in_month($startmonth, $startyear)) {
                     list($startmonth, $startyear) = calendar_add_month($startmonth, $startyear);
                     $startmonthday = find_day_in_month(1, $startweekday, $startmonth, $startyear);
                 }
                 $timestart = make_timestamp($startyear, $startmonth, $startmonthday);
-                $endmonthday = $startmonthday + 7;
-                $endmonth    = $startmonth;
-                $endyear     = $startyear;
+                $endmonthday = $startmonthday + $numberofdaysinweek;
+                $endmonth = $startmonth;
+                $endyear = $startyear;
                 if($endmonthday > calendar_days_in_month($endmonth, $endyear)) {
                     list($endmonth, $endyear) = calendar_add_month($endmonth, $endyear);
                     $endmonthday = find_day_in_month(1, $startweekday, $endmonth, $endyear);
@@ -114,13 +121,24 @@ if(!empty($what) && !empty($time)) {
                 $timeend = make_timestamp($endyear, $endmonth, $endmonthday) - 1;
             break;
             case 'monthnow':
-                $timestart = make_timestamp($now['year'], $now['mon'], 1);
-                $timeend   = make_timestamp($now['year'], $now['mon'], calendar_days_in_month($now['mon'], $now['year']), 23, 59, 59);
+                // Convert to gregorian.
+                $gregoriandate = $calendartype->convert_to_gregorian($now['year'], $now['mon'], 1);
+
+                $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day']);
+                $timeend = make_timestamp($gregoriandate['year'], $gregoriandate['month'],
+                    calendar_days_in_month($now['mon'], $now['year']), 23, 59, 59);
             break;
             case 'monthnext':
+                // Get the next month for this calendar.
                 list($nextmonth, $nextyear) = calendar_add_month($now['mon'], $now['year']);
-                $timestart = make_timestamp($nextyear, $nextmonth, 1);
-                $timeend   = make_timestamp($nextyear, $nextmonth, calendar_days_in_month($nextmonth, $nextyear), 23, 59, 59);
+
+                // Convert to gregorian.
+                $gregoriandate = $calendartype->convert_to_gregorian($nextyear, $nextmonth, 1);
+
+                // Create the timestamps.
+                $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day']);
+                $timeend   = make_timestamp($gregoriandate['year'], $gregoriandate['month'],
+                    calendar_days_in_month($nextmonth, $nextyear), 23, 59, 59);
             break;
             case 'recentupcoming':
                 //Events in the last 5 or next 60 days
