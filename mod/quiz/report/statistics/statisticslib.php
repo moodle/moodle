@@ -23,8 +23,19 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function quiz_statistics_attempts_sql($quizid, $currentgroup, $groupstudents,
-                                      $allattempts = true, $includeungraded = false) {
+/**
+ * SQL to fetch relevant 'quiz_attempts' records.
+ *
+ * @param int    $quizid        quiz id to get attempts for
+ * @param array  $groupstudents empty array if not using groups or array of students in current group.
+ * @param string $whichattempts which attempts to use, represented internally as one of the constants as used in
+ *                                   $quiz->grademethod ie.
+ *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST
+ *                                   we calculate stats based on which attempts would affect the grade for each student.
+ * @param bool   $includeungraded whether to fetch ungraded attempts too
+ * @return array FROM and WHERE sql fragments and sql params
+ */
+function quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false) {
     global $DB;
 
     $fromqa = '{quiz_attempts} quiza ';
@@ -32,15 +43,17 @@ function quiz_statistics_attempts_sql($quizid, $currentgroup, $groupstudents,
     $whereqa = 'quiza.quiz = :quizid AND quiza.preview = 0 AND quiza.state = :quizstatefinished';
     $qaparams = array('quizid' => (int)$quizid, 'quizstatefinished' => quiz_attempt::FINISHED);
 
-    if (!empty($currentgroup) && $groupstudents) {
+    if ($groupstudents) {
+        ksort($groupstudents);
         list($grpsql, $grpparams) = $DB->get_in_or_equal(array_keys($groupstudents),
                                                          SQL_PARAMS_NAMED, 'u');
         $whereqa .= " AND quiza.userid $grpsql";
         $qaparams += $grpparams;
     }
 
-    if (!$allattempts) {
-        $whereqa .= ' AND quiza.attempt = 1';
+    $whichattemptsql = quiz_report_grade_method_sql($whichattempts);
+    if ($whichattemptsql) {
+        $whereqa .= ' AND '.$whichattemptsql;
     }
 
     if (!$includeungraded) {
@@ -54,16 +67,16 @@ function quiz_statistics_attempts_sql($quizid, $currentgroup, $groupstudents,
  * Return a {@link qubaid_condition} from the values returned by {@link quiz_statistics_attempts_sql}.
  *
  * @param int     $quizid
- * @param int     $currentgroup
  * @param array   $groupstudents
- * @param bool    $allattempts
+ * @param string $whichattempts which attempts to use, represented internally as one of the constants as used in
+ *                                   $quiz->grademethod ie.
+ *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST
+ *                                   we calculate stats based on which attempts would affect the grade for each student.
  * @param bool    $includeungraded
  * @return        \qubaid_join
  */
-function quiz_statistics_qubaids_condition($quizid, $currentgroup, $groupstudents,
-                                           $allattempts = true, $includeungraded = false) {
-    list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $currentgroup,
-                                                                      $groupstudents, $allattempts, $includeungraded);
+function quiz_statistics_qubaids_condition($quizid, $groupstudents, $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false) {
+    list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $groupstudents, $whichattempts, $includeungraded);
     return new qubaid_join($fromqa, 'quiza.uniqueid', $whereqa, $qaparams);
 }
 
