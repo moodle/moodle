@@ -871,18 +871,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         return new SECTIONTOOLBOX(config);
     };
 
-    M.course.register_new_module = function(module) {
-        if (typeof module === 'string') {
-            module = Y.one(module);
-        }
-        if (M.course.resource_toolbox !== null) {
-            module.setData('toolbox', M.course.resource_toolbox);
-            module.all(SELECTOR.COMMANDSPAN+ ' ' + SELECTOR.ACTIVITYACTION).each(function(){
-                this.setData('activity', module);
-            });
-        }
-    }
-
 },
 '@VERSION@', {
     requires : ['base', 'node', 'io', 'moodle-course-coursebase']

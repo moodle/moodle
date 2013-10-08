@@ -1055,7 +1055,8 @@ M.course_dndupload = {
     add_editing: function(elementid) {
         var node = Y.one('#' + elementid);
         YUI().use('moodle-course-coursebase', function(Y) {
-            M.course.register_new_module(node);
+            Y.log("Invoking setup_for_resource", 'debug', 'coursedndupload');
+            M.course.coursebase.invoke_function('setup_for_resource', node);
         });
         if (M.core.actionmenu && M.core.actionmenu.newDOMNode) {
             M.core.actionmenu.newDOMNode(node);
