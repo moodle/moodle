@@ -12,6 +12,11 @@
             <stringProp name="Argument.value">${__time()}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
+          <elementProp name="moodleversion" elementType="Argument">
+            <stringProp name="Argument.name">moodleversion</stringProp>
+            <stringProp name="Argument.value">{{MOODLEVERSION_PLACEHOLDER}}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
           <elementProp name="size" elementType="Argument">
             <stringProp name="Argument.name">size</stringProp>
             <stringProp name="Argument.value">{{SIZE_PLACEHOLDER}}</stringProp>
