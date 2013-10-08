@@ -1996,6 +1996,8 @@ function message_format_message($message, $format='', $keywords='', $class='othe
         $messagetext = highlight($keywords, $messagetext);
     }
 
+    $messagetext = clean_text($messagetext, FORMAT_HTML);
+
     return <<<TEMPLATE
 <div class='message $class'>
     <a name="m'.{$message->id}.'"></a>
