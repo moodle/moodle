@@ -73,7 +73,7 @@ class core_backup_renderer extends plugin_renderer_base {
      */
     public function backup_details($details, $nextstageurl) {
         $yestick = $this->output->pix_icon('i/valid', get_string('yes'));
-        $notick = $this->output->pix_icon('i/valid', get_string('no'));
+        $notick = $this->output->pix_icon('i/invalid', get_string('no'));
 
         $html  = html_writer::start_tag('div', array('class'=>'backup-restore'));
 
