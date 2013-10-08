@@ -39,7 +39,6 @@ function report_loglive_extend_navigation_course($navigation, $course, $context)
     global $CFG, $OUTPUT;
     if (has_capability('report/loglive:view', $context)) {
         $url = new moodle_url('/report/loglive/index.php', array('id'=>$course->id, 'inpopup'=>1));
-        $action = new action_link($url, get_string('pluginname', 'report_loglive'), new popup_action('click', $url));
-        $navigation->add('', $action, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
+        $navigation->add(get_string('pluginname', 'report_loglive'), $url, navigation_node::TYPE_SETTING, null, null, new pix_icon('i/report', ''));
     }
 }
