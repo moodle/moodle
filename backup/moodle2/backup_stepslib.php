@@ -1693,7 +1693,25 @@ class backup_zip_contents extends backup_execution_step {
         $zippacker = get_file_packer('application/zip');
 
         // Zip files
-        $zippacker->archive_to_pathname($files, $zipfile);
+        $result = $zippacker->archive_to_pathname($files, $zipfile, true, $this);
+
+        // Something went wrong.
+        if ($result === false) {
+            @unlink($zipfile);
+            throw new backup_step_exception('error_zip_packing', '', 'An error was encountered while trying to generate backup zip');
+        }
+        // Read to make sure it is a valid backup. Refer MDL-37877 . Delete it, if found not to be valid.
+        try {
+            backup_general_helper::get_backup_information_from_mbz($zipfile);
+        } catch (backup_helper_exception $e) {
+            @unlink($zipfile);
+            throw new backup_step_exception('error_zip_packing', '', $e->debuginfo);
+        }
+
+            // If any progress happened, end it.
+        if ($this->startedprogress) {
+            $this->task->get_progress()->end_progress();
+        }
     }
 }
 
