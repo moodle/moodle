@@ -96,6 +96,20 @@ have been fixed <strong><a href="http://third.url/view.php">last week</a></stron
         $this->assertSame(1, preg_match('|^'.preg_quote('[2] http://another.url/?f=a&amp;b=2').'$|m', $result));
         $this->assertSame(1, preg_match('|^'.preg_quote('[3] http://third.url/view.php').'$|m', $result));
         $this->assertSame(false, strpos($result, '[4]'));
+
+        // Test multiple occurrences of the same URL.
+        $text = '<p>See <a href="http://moodle.org">moodle.org</a>,
+            <a href="http://www.google.fr">google</a>, <a href="http://www.univ-lemans.fr">univ-lemans</a>
+            and <a href="http://www.google.fr">google</a>.
+            Also try <a href="https://www.google.fr">google via HTTPS</a>.';
+        $result = html_to_text($text, 5000, true);
+        $this->assertSame(0, strpos($result, 'See moodle.org [1], google [2], univ-lemans [3] and google [2]. Also try google via HTTPS [4].'));
+        $this->assertSame(false, strpos($result, '[0]'));
+        $this->assertSame(1, preg_match('|^'.preg_quote('[1] http://moodle.org').'$|m', $result));
+        $this->assertSame(1, preg_match('|^'.preg_quote('[2] http://www.google.fr').'$|m', $result));
+        $this->assertSame(1, preg_match('|^'.preg_quote('[3] http://www.univ-lemans.fr').'$|m', $result));
+        $this->assertSame(1, preg_match('|^'.preg_quote('[4] https://www.google.fr').'$|m', $result));
+        $this->assertSame(false, strpos($result, '[5]'));
     }
 
     // ======= Standard html2text conversion features =======
