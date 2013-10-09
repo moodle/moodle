@@ -204,12 +204,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          */
         initializer : function(config) {
             M.course.coursebase.register_module(this);
-            Y.all(SELECTOR.ACTIVITYLI).each(function(activity){
-                activity.setData('toolbox', this);
-                activity.all(SELECTOR.COMMANDSPAN+ ' ' + SELECTOR.ACTIVITYACTION).each(function(){
-                    this.setData('activity', activity);
-                });
-            }, this);
             Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
         },
 
@@ -233,7 +227,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // From the anchor we can get both the activity (added during initialisation) and the action being
             // performed (added by the UI as a data attribute).
             var action = node.getData('action'),
-                activity = node.getData('activity');
+                activity = node.ancestor(SELECTOR.ACTIVITYLI);
+
             if (!node.test('a') || !action || !activity) {
                 // It wasn't a valid action node.
                 return;
@@ -689,7 +684,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 action = 'hide';
             }
             if (visible != shouldbevisible) {
-                this.handle_resource_dim(buttonnode, buttonnode.getData('activity'), action);
+                this.handle_resource_dim(buttonnode, element, action);
             }
         }
     }, {
@@ -800,7 +795,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 // NOTE: resourcestotoggle is returned as a string instead
                 // of a Number so we must cast our activityid to a String.
                 if (Y.Array.indexOf(response.resourcestotoggle, "" + activityid) != -1) {
-                    node.getData('toolbox').handle_resource_dim(button, node, action);
+                    M.course.resource_toolbox.handle_resource_dim(button, node, action);
                 }
             }, this);
         },
