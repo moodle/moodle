@@ -27,7 +27,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
     Y.extend(DRAGSECTION, M.core.dragdrop, {
         sectionlistselector : null,
 
-        initializer : function(params) {
+        initializer : function() {
             // Set group for parent class
             this.groups = [ CSS.SECTIONDRAGGABLE ];
             this.samenodeclass = M.course.format.get_sectionwrapperclass();
@@ -163,18 +163,22 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                 loopend = dragnodeid;
             }
 
-            // Get the list of nodes
+            // Get the list of nodes.
             drag.get('dragNode').removeClass(CSS.COURSECONTENT);
             var sectionlist = Y.Node.all(this.sectionlistselector);
 
-            // Add lightbox if it not there
+            // Add a lightbox if it's not there.
             var lightbox = M.util.add_lightbox(Y, dragnode);
 
-            var params = {};
+            // Handle any variables which we must pass via AJAX.
+            var params = {},
+                pageparams = this.get('config').pageparams,
+                varname;
 
-            // Handle any variables which we must pass back through to
-            var pageparams = this.get('config').pageparams;
             for (varname in pageparams) {
+                if (!pageparams.hasOwnProperty(varname)) {
+                    continue;
+                }
                 params[varname] = pageparams[varname];
             }
 
@@ -186,14 +190,13 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             params.id = dragnodeid;
             params.value = dropnodeindex;
 
-            // Do AJAX request
+            // Perform the AJAX request.
             var uri = M.cfg.wwwroot + this.get('ajaxurl');
-
             Y.io(uri, {
                 method: 'POST',
                 data: params,
                 on: {
-                    start : function(tid) {
+                    start : function() {
                         lightbox.show();
                     },
                     success: function(tid, response) {
@@ -240,6 +243,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                             lightbox.hide();
                         }, 250);
                     },
+
                     failure: function(tid, response) {
                         this.ajax_failure(response);
                         lightbox.hide();
