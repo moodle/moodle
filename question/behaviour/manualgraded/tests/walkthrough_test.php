@@ -41,6 +41,7 @@ require_once(dirname(__FILE__) . '/../../../engine/tests/helpers.php');
 class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthrough_test_base {
     public function test_manual_graded_essay() {
 
+        // The current text editor depends on the users profile setting - so it needs a valid user.
         $this->setAdminUser();
 
         // Create an essay question.
@@ -110,6 +111,7 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
 
     public function test_manual_graded_essay_not_answered() {
 
+        // The current text editor depends on the users profile setting - so it needs a valid user.
         $this->setAdminUser();
 
         // Create an essay question.
@@ -272,6 +274,7 @@ class qbehaviour_manualgraded_walkthrough_testcase extends qbehaviour_walkthroug
 
     public function test_manual_graded_essay_can_grade_0() {
 
+        // The current text editor depends on the users profile setting - so it needs a valid user.
         $this->setAdminUser();
 
         // Create an essay question.
