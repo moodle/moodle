@@ -76,7 +76,7 @@ class course_module_viewed extends \core\event\content_viewed {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'page', 'view', 'view.php?id=' . $this->context->instanceid, $this->other['instanceid'],
+        return array($this->courseid, 'page', 'view', 'view.php?id=' . $this->context->instanceid, $this->objectid,
                 $this->context->instanceid);
     }
 }
