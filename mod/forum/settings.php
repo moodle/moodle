@@ -61,13 +61,17 @@ if ($ADMIN->fulltree) {
     $options = array();
     $options[FORUM_TRACKING_OPTIONAL] = get_string('trackingoptional', 'forum');
     $options[FORUM_TRACKING_OFF] = get_string('trackingoff', 'forum');
-    $options[FORUM_TRACKING_ON] = get_string('trackingon', 'forum');
+    $options[FORUM_TRACKING_FORCED] = get_string('trackingon', 'forum');
     $settings->add(new admin_setting_configselect('forum_trackingtype', get_string('trackingtype', 'forum'),
                        get_string('configtrackingtype', 'forum'), FORUM_TRACKING_OPTIONAL, $options));
 
     // Default whether user needs to mark a post as read
     $settings->add(new admin_setting_configcheckbox('forum_trackreadposts', get_string('trackforum', 'forum'),
                        get_string('configtrackreadposts', 'forum'), 1));
+
+    // Default whether user needs to mark a post as read.
+    $settings->add(new admin_setting_configcheckbox('forum_allowforcedreadtracking', get_string('forcedreadtracking', 'forum'),
+                       get_string('forcedreadtracking_desc', 'forum'), 0));
 
     // Default number of days that a post is considered old
     $settings->add(new admin_setting_configtext('forum_oldpostdays', get_string('oldpostdays', 'forum'),

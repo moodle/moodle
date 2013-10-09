@@ -173,6 +173,8 @@ $string['everyoneisnowsubscribed'] = 'Everyone is now subscribed to this forum';
 $string['everyoneissubscribed'] = 'Everyone is subscribed to this forum';
 $string['existingsubscribers'] = 'Existing subscribers';
 $string['exportdiscussion'] = 'Export whole discussion';
+$string['forcedreadtracking'] = 'Allow forced read tracking';
+$string['forcedreadtracking_desc'] = 'Allows forums to be set to forced read tracking. Will result in decreased performance for some users, particularly on courses with many forums and posts. When off, any forums previously set to Forced are treated as optional.';
 $string['forcessubscribe'] = 'This forum forces everyone to be subscribed';
 $string['forum'] = 'Forum';
 $string['forum:addinstance'] = 'Add a new forum';
@@ -430,16 +432,14 @@ $string['timestartenderror'] = 'Display end date cannot be earlier than the star
 $string['trackforum'] = 'Track unread posts';
 $string['tracking'] = 'Track';
 $string['trackingoff'] = 'Off';
-$string['trackingon'] = 'On';
+$string['trackingon'] = 'Forced';
 $string['trackingoptional'] = 'Optional';
 $string['trackingtype'] = 'Read tracking';
 $string['trackingtype_help'] = 'If enabled, participants can track read and unread posts in the forum and in discussions. There are three options:
 
-* Optional - Participants can choose whether to turn tracking on or off via a link in the administration block
-* On - Tracking is always on
-* Off - Read and unread posts are not tracked
-
-Note: Forum tracking must also be enabled in the user\'s profile settings.';
+* Optional - Participants can choose whether to turn tracking on or off via a link in the administration block. Forum tracking must also be enabled in the user\'s profile settings.
+* Forced - Tracking is always on, regardless of user setting. Available depending on administrative setting.
+* Off - Read and unread posts are not tracked.';
 $string['unread'] = 'Unread';
 $string['unreadposts'] = 'Unread posts';
 $string['unreadpostsnumber'] = '{$a} unread posts';

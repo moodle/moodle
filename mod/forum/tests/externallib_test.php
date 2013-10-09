@@ -174,7 +174,7 @@ class mod_forum_external_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->course = $course2->id;
         $record->type = 'qanda';
-        $record->trackingtype = FORUM_TRACKING_ON;
+        $record->trackingtype = FORUM_TRACKING_FORCED;
         $forum2 = self::getDataGenerator()->create_module('forum', $record);
 
         // Third forum where we will only have one discussion with no replies.
