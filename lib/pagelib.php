@@ -769,6 +769,13 @@ class moodle_page {
      * @return renderer_base
      */
     public function get_renderer($component, $subtype = null, $target = null) {
+        $target = null;
+        if ($this->pagelayout === 'maintenance') {
+            // If the page is using the maintenance layout then we're going to force target to maintenance.
+            // This leads to a special core renderer that is designed to block access to API's that are likely unavailable for this
+            // page layout.
+            $target = RENDERER_TARGET_MAINTENANCE;
+        }
         return $this->magic_get_theme()->get_renderer($this, $component, $subtype, $target);
     }
 
@@ -1475,7 +1482,14 @@ class moodle_page {
         }
 
         if ($this === $PAGE) {
-            $OUTPUT = $this->get_renderer('core');
+            $target = null;
+            if ($this->pagelayout === 'maintenance') {
+                // If the page is using the maintenance layout then we're going to force target to maintenance.
+                // This leads to a special core renderer that is designed to block access to API's that are likely unavailable for this
+                // page layout.
+                $target = RENDERER_TARGET_MAINTENANCE;
+            }
+            $OUTPUT = $this->get_renderer('core', null, $target);
         }
 
         $this->_wherethemewasinitialised = debug_backtrace();

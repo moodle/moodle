@@ -199,6 +199,12 @@ class plugin_renderer_base extends renderer_base {
      * @param string $target one of rendering target constants
      */
     public function __construct(moodle_page $page, $target) {
+        if (empty($target) && $page->pagelayout === 'maintenance') {
+            // If the page is using the maintenance layout then we're going to force the target to maintenance.
+            // This way we'll get a special maintenance renderer that is designed to block access to API's that are likely
+            // unavailable for this page layout.
+            $target = RENDERER_TARGET_MAINTENANCE;
+        }
         $this->output = $page->get_renderer('core', null, $target);
         parent::__construct($page, $target);
     }
@@ -3759,5 +3765,203 @@ class core_media_renderer extends plugin_renderer_base {
             $this->embeddablemarkers = $markers;
         }
         return $this->embeddablemarkers;
+    }
+}
+
+/**
+ * The maintenance renderer.
+ *
+ * The purpose of this renderer is to block out the core renderer methods that are not usable when the site
+ * is running a maintenance related task.
+ * It must always extend the core_renderer as we switch from the core_renderer to this renderer in a couple of places.
+ *
+ * @since 2.6
+ * @package core
+ * @category output
+ * @copyright 2013 Sam Hemelryk
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class core_renderer_maintenance extends core_renderer {
+
+    /**
+     * Initialises the renderer instance.
+     * @param moodle_page $page
+     * @param string $target
+     * @throws coding_exception
+     */
+    public function __construct(moodle_page $page, $target) {
+        if ($target !== RENDERER_TARGET_MAINTENANCE || $page->pagelayout !== 'maintenance') {
+            throw new coding_exception('Invalid request for the maintenance renderer.');
+        }
+        parent::__construct($page, $target);
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce blocks.
+     *
+     * @param block_contents $bc
+     * @param string $region
+     * @return string
+     */
+    public function block(block_contents $bc, $region) {
+        // Computer says no blocks.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce blocks.
+     *
+     * @param string $region
+     * @param array $classes
+     * @param string $tag
+     * @return string
+     */
+    public function blocks($region, $classes = array(), $tag = 'aside') {
+        // Computer says no blocks.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce blocks.
+     *
+     * @param string $region
+     * @return string
+     */
+    public function blocks_for_region($region) {
+        // Computer says no blocks for region.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce a course content header.
+     *
+     * @param bool $onlyifnotcalledbefore
+     * @return string
+     */
+    public function course_content_header($onlyifnotcalledbefore = false) {
+        // Computer says no course content header.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce a course content footer.
+     *
+     * @param bool $onlyifnotcalledbefore
+     * @return string
+     */
+    public function course_content_footer($onlyifnotcalledbefore = false) {
+        // Computer says no course content footer.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce a course header.
+     *
+     * @return string
+     */
+    public function course_header() {
+        // Computer says no course header.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce a course footer.
+     *
+     * @return string
+     */
+    public function course_footer() {
+        // Computer says no course footer.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce a custom menu.
+     *
+     * @param string $custommenuitems
+     * @return string
+     */
+    public function custom_menu($custommenuitems = '') {
+        // Computer says no custom menu.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce a file picker.
+     *
+     * @param array $options
+     * @return string
+     */
+    public function file_picker($options) {
+        // Computer says no file picker.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce and HTML file tree.
+     *
+     * @param array $dir
+     * @return string
+     */
+    public function htmllize_file_tree($dir) {
+        // Hell no we don't want no htmllized file tree.
+        // Also why on earth is this function on the core renderer???
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+
+    }
+
+    /**
+     * Does nothing. The maintenance renderer does not support JS.
+     *
+     * @param block_contents $bc
+     */
+    public function init_block_hider_js(block_contents $bc) {
+        // Computer says no JavaScript.
+        // Do nothing, ridiculous method.
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce language menus.
+     *
+     * @return string
+     */
+    public function lang_menu() {
+        // Computer says no lang menu.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer has no need for login information.
+     *
+     * @param null $withlinks
+     * @return string
+     */
+    public function login_info($withlinks = null) {
+        // Computer says no login info.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
+    }
+
+    /**
+     * Does nothing. The maintenance renderer cannot produce user pictures.
+     *
+     * @param stdClass $user
+     * @param array $options
+     * @return string
+     */
+    public function user_picture(stdClass $user, array $options = null) {
+        // Computer says no user pictures.
+        // debugging('Please do not use $OUTPUT->'.__FUNCTION__.'() when performing maintenance tasks.', DEBUG_DEVELOPER);
+        return '';
     }
 }
