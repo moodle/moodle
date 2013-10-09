@@ -148,7 +148,7 @@ class core_messagelib_testcase extends advanced_testcase {
 
         // Set config setting to allow attachments.
         $CFG->allowattachments = true;
-        $CFG->noemailever = false;
+        unset_config('noemailever');
 
         $user = $this->getDataGenerator()->create_user();
         $context = context_user::instance($user->id);
