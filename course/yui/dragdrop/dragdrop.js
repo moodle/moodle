@@ -129,20 +129,37 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             this.drop_hit(e);
         },
 
+        get_section_index: function(node) {
+            var sectionlistselector = '.' + CSS.COURSECONTENT + ' ' + M.course.format.get_section_selector(Y),
+                sectionList = Y.all(sectionlistselector),
+                nodeIndex = sectionList.indexOf(node),
+                zeroIndex = sectionList.indexOf(Y.one('#section-0'));
+
+            return (nodeIndex - zeroIndex);
+        },
+
         drop_hit : function(e) {
             var drag = e.drag;
-            // Get a reference to our drag node
-            var dragnode = drag.get('node');
-            var dropnode = e.drop.get('node');
-            // Prepare some variables
-            var dragnodeid = Y.Moodle.core_course.util.section.getId(dragnode);
-            var dropnodeid = Y.Moodle.core_course.util.section.getId(dropnode);
 
-            var loopstart = dragnodeid;
-            var loopend = dropnodeid;
+            // Get references to our nodes and their IDs.
+            var dragnode = drag.get('node'),
+                dragnodeid = Y.Moodle.core_course.util.section.getId(dragnode),
+                loopstart = dragnodeid,
 
-            if (this.goingup) {
-                loopstart = dropnodeid;
+                dropnodeindex = this.get_section_index(dragnode),
+                loopend = dropnodeindex;
+
+            if (dragnodeid === dropnodeindex) {
+                Y.log("Skipping move - same location moving " + dragnodeid + " to " + dropnodeindex, 'debug', 'moodle-course-dragdrop');
+                return;
+            }
+
+            Y.log("Moving from position " + dragnodeid + " to position " + dropnodeindex, 'debug', 'moodle-course-dragdrop');
+
+            if (loopstart > loopend) {
+                // If we're going up, we need to swap the loop order
+                // because loops can't go backwards.
+                loopstart = dropnodeindex;
                 loopend = dragnodeid;
             }
 
@@ -167,7 +184,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             params['class'] = 'section';
             params.field = 'move';
             params.id = dragnodeid;
-            params.value = dropnodeid;
+            params.value = dropnodeindex;
 
             // Do AJAX request
             var uri = M.cfg.wwwroot + this.get('ajaxurl');
@@ -190,27 +207,36 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                             M.course.format.process_sections(Y, sectionlist, responsetext, loopstart, loopend);
                         } catch (e) {}
 
+                        // Update all of the section IDs - first unset them, then set them
+                        // to avoid duplicates in the DOM.
+                        var index;
+
                         // Classic bubble sort algorithm is applied to the section
                         // nodes between original drag node location and the new one.
+                        var swapped = false;
                         do {
-                            var swapped = false;
-                            for (var i = loopstart; i <= loopend; i++) {
-                                if (Y.Moodle.core_course.util.section.getId(sectionlist.item(i-1)) > Y.Moodle.core_course.util.section.getId(sectionlist.item(i))) {
-                                    // Swap section id
-                                    var sectionid = sectionlist.item(i-1).get('id');
-                                    sectionlist.item(i-1).set('id', sectionlist.item(i).get('id'));
-                                    sectionlist.item(i).set('id', sectionid);
-                                    // See what format needs to swap
-                                    M.course.format.swap_sections(Y, i-1, i);
-                                    // Update flag
+                            swapped = false;
+                            for (index = loopstart; index <= loopend; index++) {
+                                if (Y.Moodle.core_course.util.section.getId(sectionlist.item(index - 1)) >
+                                            Y.Moodle.core_course.util.section.getId(sectionlist.item(index))) {
+                                    Y.log("Swapping " + Y.Moodle.core_course.util.section.getId(sectionlist.item(index - 1)) +
+                                            " with " + Y.Moodle.core_course.util.section.getId(sectionlist.item(index)));
+                                    // Swap section id.
+                                    var sectionid = sectionlist.item(index - 1).get('id');
+                                    sectionlist.item(index - 1).set('id', sectionlist.item(index).get('id'));
+                                    sectionlist.item(index).set('id', sectionid);
+
+                                    // See what format needs to swap.
+                                    M.course.format.swap_sections(Y, index - 1, index);
+
+                                    // Update flag.
                                     swapped = true;
                                 }
                             }
                             loopend = loopend - 1;
                         } while (swapped);
 
-                        // Finally, hide the lightbox
-                        window.setTimeout(function(e) {
+                        window.setTimeout(function() {
                             lightbox.hide();
                         }, 250);
                     },
