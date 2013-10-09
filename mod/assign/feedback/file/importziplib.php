@@ -253,7 +253,7 @@ class assignfeedback_file_zip_importer {
                                                  '/',
                                                  $filename)) {
                         // Update existing feedback file.
-                        $oldfile->replace_content_with($unzippedfile);
+                        $oldfile->replace_file_with($unzippedfile);
                         $feedbackfilesupdated++;
                     } else {
                         // Create a new feedback file.

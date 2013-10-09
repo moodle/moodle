@@ -2655,9 +2655,23 @@ function xmldb_main_upgrade($oldversion) {
         if ($dbman->field_exists($table, $field)) {
             $dbman->drop_field($table, $field);
         }
-
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2013100800.02);
+    }
+
+    if ($oldversion < 2013100900.00) {
+
+        // Define field lifetime to be dropped from files_reference.
+        $table = new xmldb_table('files_reference');
+        $field = new xmldb_field('lifetime');
+
+        // Conditionally launch drop field lifetime.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013100900.00);
     }
 
     return true;

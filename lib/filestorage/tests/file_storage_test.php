@@ -413,7 +413,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         $file2 = clone($file1);
         $file2->filename = '2.txt';
-        $userfile2 = $fs->create_file_from_string($file2, 'file2 content');
+        $userfile2 = $fs->create_file_from_string($file2, 'file2 content longer');
         $this->assertInstanceOf('stored_file', $userfile2);
 
         $file3 = clone($file1);
@@ -1513,6 +1513,113 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $symlink2 = $fs->get_file($aliasrecord->contextid, $aliasrecord->component,
             $aliasrecord->filearea, $aliasrecord->itemid, '/B/', 'symlink.txt');
         $this->assertTrue($symlink2->is_external_file());
+    }
+
+    /**
+     * Make sure that when internal file is updated all references to it are
+     * updated immediately. When it is deleted, the references are converted
+     * to true copies.
+     */
+    public function test_update_reference_internal() {
+        purge_all_caches();
+        $this->resetAfterTest(true);
+        $user = $this->setup_three_private_files();
+        $fs = get_file_storage();
+        $repos = repository::get_instances(array('type' => 'user'));
+        $repo = reset($repos);
+
+        // Create two aliases linking the same original.
+
+        $areafiles = array_values($fs->get_area_files($user->ctxid, 'user', 'private', false, 'filename', false));
+
+        $originalfile = $areafiles[0];
+        $this->assertInstanceOf('stored_file', $originalfile);
+        $contenthash = $originalfile->get_contenthash();
+        $filesize = $originalfile->get_filesize();
+
+        $substitutefile = $areafiles[1];
+        $this->assertInstanceOf('stored_file', $substitutefile);
+        $newcontenthash = $substitutefile->get_contenthash();
+        $newfilesize = $substitutefile->get_filesize();
+
+        $originalrecord = array(
+            'contextid' => $originalfile->get_contextid(),
+            'component' => $originalfile->get_component(),
+            'filearea'  => $originalfile->get_filearea(),
+            'itemid'    => $originalfile->get_itemid(),
+            'filepath'  => $originalfile->get_filepath(),
+            'filename'  => $originalfile->get_filename(),
+        );
+
+        $aliasrecord = $this->generate_file_record();
+        $aliasrecord->filepath = '/A/';
+        $aliasrecord->filename = 'symlink.txt';
+
+        $ref = $fs->pack_reference($originalrecord);
+        $symlink1 = $fs->create_file_from_reference($aliasrecord, $repo->id, $ref);
+        // Make sure created alias is a reference and has the same size and contenthash as source.
+        $this->assertEquals($contenthash, $symlink1->get_contenthash());
+        $this->assertEquals($filesize, $symlink1->get_filesize());
+        $this->assertEquals($repo->id, $symlink1->get_repository_id());
+        $this->assertNotEmpty($symlink1->get_referencefileid());
+        $referenceid = $symlink1->get_referencefileid();
+
+        $aliasrecord->filepath = '/B/';
+        $aliasrecord->filename = 'symlink.txt';
+        $ref = $fs->pack_reference($originalrecord);
+        $symlink2 = $fs->create_file_from_reference($aliasrecord, $repo->id, $ref);
+        // Make sure created alias is a reference and has the same size and contenthash as source.
+        $this->assertEquals($contenthash, $symlink2->get_contenthash());
+        $this->assertEquals($filesize, $symlink2->get_filesize());
+        $this->assertEquals($repo->id, $symlink2->get_repository_id());
+        // Make sure both aliases have the same reference id.
+        $this->assertEquals($referenceid, $symlink2->get_referencefileid());
+
+        // Overwrite ofiginal file.
+        $originalfile->replace_file_with($substitutefile);
+        $this->assertEquals($newcontenthash, $originalfile->get_contenthash());
+        $this->assertEquals($newfilesize, $originalfile->get_filesize());
+
+        // References to the internal files must be synchronised immediately.
+        // Refetch A/symlink.txt file.
+        $symlink1 = $fs->get_file($aliasrecord->contextid, $aliasrecord->component,
+            $aliasrecord->filearea, $aliasrecord->itemid, '/A/', 'symlink.txt');
+        $this->assertTrue($symlink1->is_external_file());
+        $this->assertEquals($newcontenthash, $symlink1->get_contenthash());
+        $this->assertEquals($newfilesize, $symlink1->get_filesize());
+        $this->assertEquals($repo->id, $symlink1->get_repository_id());
+        $this->assertEquals($referenceid, $symlink1->get_referencefileid());
+
+        // Refetch B/symlink.txt file.
+        $symlink2 = $fs->get_file($aliasrecord->contextid, $aliasrecord->component,
+            $aliasrecord->filearea, $aliasrecord->itemid, '/B/', 'symlink.txt');
+        $this->assertTrue($symlink2->is_external_file());
+        $this->assertEquals($newcontenthash, $symlink2->get_contenthash());
+        $this->assertEquals($newfilesize, $symlink2->get_filesize());
+        $this->assertEquals($repo->id, $symlink2->get_repository_id());
+        $this->assertEquals($referenceid, $symlink2->get_referencefileid());
+
+        // Remove original file.
+        $originalfile->delete();
+
+        // References must be converted to independend files.
+        // Refetch A/symlink.txt file.
+        $symlink1 = $fs->get_file($aliasrecord->contextid, $aliasrecord->component,
+            $aliasrecord->filearea, $aliasrecord->itemid, '/A/', 'symlink.txt');
+        $this->assertFalse($symlink1->is_external_file());
+        $this->assertEquals($newcontenthash, $symlink1->get_contenthash());
+        $this->assertEquals($newfilesize, $symlink1->get_filesize());
+        $this->assertNull($symlink1->get_repository_id());
+        $this->assertNull($symlink1->get_referencefileid());
+
+        // Refetch B/symlink.txt file.
+        $symlink2 = $fs->get_file($aliasrecord->contextid, $aliasrecord->component,
+            $aliasrecord->filearea, $aliasrecord->itemid, '/B/', 'symlink.txt');
+        $this->assertFalse($symlink2->is_external_file());
+        $this->assertEquals($newcontenthash, $symlink2->get_contenthash());
+        $this->assertEquals($newfilesize, $symlink2->get_filesize());
+        $this->assertNull($symlink2->get_repository_id());
+        $this->assertNull($symlink2->get_referencefileid());
     }
 
     public function test_get_unused_filename() {

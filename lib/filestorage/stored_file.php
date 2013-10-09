@@ -73,7 +73,7 @@ class stored_file {
             $this->repository = null;
         }
         // make sure all reference fields exist in file_record even when it is not a reference
-        foreach (array('referencelastsync', 'referencelifetime', 'referencefileid', 'reference', 'repositoryid') as $key) {
+        foreach (array('referencelastsync', 'referencefileid', 'reference', 'repositoryid') as $key) {
             if (empty($this->file_record->$key)) {
                 $this->file_record->$key = null;
             }
@@ -97,6 +97,7 @@ class stored_file {
      */
     protected function update($dataobject) {
         global $DB;
+        $updatereferencesneeded = false;
         $keys = array_keys((array)$this->file_record);
         foreach ($dataobject as $field => $value) {
             if (in_array($field, $keys)) {
@@ -156,6 +157,10 @@ class stored_file {
                     }
                 }
 
+                if (($field == 'contenthash' || $field == 'filesize') && $this->file_record->$field != $value) {
+                    $updatereferencesneeded = true;
+                }
+
                 // adding the field
                 $this->file_record->$field = $value;
             } else {
@@ -175,6 +180,10 @@ class stored_file {
         $this->file_record->mimetype = $mimetype;
 
         $DB->update_record('files', $this->file_record);
+        if ($updatereferencesneeded) {
+            // Either filesize or contenthash of this file have changed. Update all files that reference to it.
+            $this->fs->update_references_to_storedfile($this);
+        }
     }
 
     /**
@@ -198,12 +207,21 @@ class stored_file {
     /**
      * Replace the content by providing another stored_file instance
      *
+     * @deprecated since 2.6
+     * @see stored_file::replace_file_with()
      * @param stored_file $storedfile
      */
     public function replace_content_with(stored_file $storedfile) {
+        debugging('Function stored_file::replace_content_with() is deprecated. Please use stored_file::replace_file_with()', DEBUG_DEVELOPER);
+        $filerecord = new stdClass;
         $contenthash = $storedfile->get_contenthash();
-        $this->set_contenthash($contenthash);
-        $this->set_filesize($storedfile->get_filesize());
+        if ($this->fs->content_exists($contenthash)) {
+            $filerecord->contenthash = $contenthash;
+        } else {
+            throw new file_exception('storedfileproblem', 'Invalid contenthash, content must be already in filepool', $contenthash);
+        }
+        $filerecord->filesize = $storedfile->get_filesize();
+        $this->update($filerecord);
     }
 
     /**
@@ -278,7 +296,6 @@ class stored_file {
         $this->file_record->reference = null;
         $this->file_record->referencefileid = null;
         $this->file_record->referencelastsync = null;
-        $this->file_record->referencelifetime = null;
     }
 
     /**
@@ -602,10 +619,8 @@ class stored_file {
      * Updates contenthash and filesize
      */
     public function sync_external_file() {
-        global $CFG;
-        if (!empty($this->file_record->referencefileid)) {
-            require_once($CFG->dirroot.'/repository/lib.php');
-            repository::sync_external_file($this);
+        if (!empty($this->repository)) {
+            $this->repository->sync_reference($this);
         }
     }
 
@@ -684,12 +699,13 @@ class stored_file {
         return $this->file_record->filesize;
     }
 
-    /**
+     /**
      * Returns the size of file in bytes.
      *
      * @param int $filesize bytes
      */
     public function set_filesize($filesize) {
+        debugging('Function stored_file::set_filesize() is deprecated. Please use stored_file::replace_file_with()', DEBUG_DEVELOPER);
         $filerecord = new stdClass;
         $filerecord->filesize = $filesize;
         $this->update($filerecord);
@@ -760,22 +776,6 @@ class stored_file {
     public function get_contenthash() {
         $this->sync_external_file();
         return $this->file_record->contenthash;
-    }
-
-    /**
-     * Set contenthash
-     *
-     * @param string $contenthash
-     */
-    protected function set_contenthash($contenthash) {
-        // make sure the content exists in moodle file pool
-        if ($this->fs->content_exists($contenthash)) {
-            $filerecord = new stdClass;
-            $filerecord->contenthash = $contenthash;
-            $this->update($filerecord);
-        } else {
-            throw new file_exception('storedfileproblem', 'Invalid contenthash, content must be already in filepool', $contenthash);
-        }
     }
 
     /**
@@ -899,11 +899,26 @@ class stored_file {
     }
 
     /**
-     * Get reference last sync time
+     * Get reference life time (in seconds) after which sync is required
+     *
+     * This data is no longer stored in DB or returned by repository. Each
+     * repository should decide by itself when to synchronise the references.
+     *
+     * @deprecated since 2.6
+     * @see repository::sync_reference()
      * @return int
      */
     public function get_referencelifetime() {
-        return $this->file_record->referencelifetime;
+        debugging('Function stored_file::get_referencelifetime() is deprecated.', DEBUG_DEVELOPER);
+        if ($this->repository) {
+            if (method_exists($this->repository, 'get_reference_file_lifetime')) {
+                return $this->repository->get_reference_file_lifetime($this->get_reference());
+            } else {
+                return 24 * 60 * 60;
+            }
+        } else {
+            return 0;
+        }
     }
     /**
      * Returns file reference
@@ -929,31 +944,28 @@ class stored_file {
      * We update contenthash, filesize and status in files table if changed
      * and we always update lastsync in files_reference table
      *
-     * @param string $contenthash
-     * @param int $filesize
-     * @param int $status
-     * @param int $lifetime the life time of this synchronisation results
+     * @param null|string $contenthash if set to null contenthash is not changed
+     * @param int $filesize new size of the file
+     * @param int $status new status of the file (0 means OK, 666 - source missing)
      */
-    public function set_synchronized($contenthash, $filesize, $status = 0, $lifetime = null) {
-        global $DB;
+    public function set_synchronized($contenthash, $filesize, $status = 0) {
         if (!$this->is_external_file()) {
             return;
         }
         $now = time();
+        if ($contenthash === null) {
+            $contenthash = $this->file_record->contenthash;
+        }
         if ($contenthash != $this->file_record->contenthash) {
             $oldcontenthash = $this->file_record->contenthash;
         }
-        if ($lifetime === null) {
-            $lifetime = $this->file_record->referencelifetime;
-        }
         // this will update all entries in {files} that have the same filereference id
-        $this->fs->update_references($this->file_record->referencefileid, $now, $lifetime, $contenthash, $filesize, $status);
+        $this->fs->update_references($this->file_record->referencefileid, $now, null, $contenthash, $filesize, $status);
         // we don't need to call update() for this object, just set the values of changed fields
         $this->file_record->contenthash = $contenthash;
         $this->file_record->filesize = $filesize;
         $this->file_record->status = $status;
         $this->file_record->referencelastsync = $now;
-        $this->file_record->referencelifetime = $lifetime;
         if (isset($oldcontenthash)) {
             $this->fs->deleted_file_cleanup($oldcontenthash);
         }
@@ -961,11 +973,9 @@ class stored_file {
 
     /**
      * Sets the error status for a file that could not be synchronised
-     *
-     * @param int $lifetime the life time of this synchronisation results
      */
-    public function set_missingsource($lifetime = null) {
-        $this->set_synchronized($this->get_contenthash(), $this->get_filesize(), 666, $lifetime);
+    public function set_missingsource() {
+        $this->set_synchronized($this->file_record->contenthash, $this->file_record->filesize, 666);
     }
 
     /**

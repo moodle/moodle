@@ -127,17 +127,6 @@ class repository_local extends repository {
     }
 
     /**
-     * Return reference file life time
-     *
-     * @param string $ref
-     * @return int
-     */
-    public function get_reference_file_lifetime($ref) {
-        // this should be realtime
-        return 0;
-    }
-
-    /**
      * Returns all children elements that have one of the specified extensions
      *
      * This function may skip subfolders and recursively add their children
