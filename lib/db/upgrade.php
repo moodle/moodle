@@ -2674,5 +2674,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013100900.00);
     }
 
+    if ($oldversion < 2013100901.00) {
+        // Fixing possible wrong MIME type for Java Network Launch Protocol (JNLP) files.
+        $select = $DB->sql_like('filename', '?', false);
+        $DB->set_field_select(
+            'files',
+            'mimetype',
+            'application/x-java-jnlp-file',
+            $select,
+            array('%.jnlp')
+        );
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013100901.00);
+    }
+
     return true;
 }
