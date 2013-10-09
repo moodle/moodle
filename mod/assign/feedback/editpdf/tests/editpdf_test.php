@@ -54,7 +54,8 @@ class assignfeedback_editpdf_testcase extends mod_assign_base_testcase {
 
     protected function create_assign_and_submit_pdf() {
         global $CFG;
-        $assign = $this->create_instance(array('assignsubmission_file_enabled' => 1,
+        $assign = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1,
+                                               'assignsubmission_file_enabled' => 1,
                                                'assignsubmission_file_maxfiles' => 1,
                                                'assignfeedback_editpdf_enabled' => 1,
                                                'assignsubmission_file_maxsizebytes' => 1000000));

@@ -117,7 +117,7 @@ class document_services {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
                 $pluginfiles = $plugin->get_files($submission, $user);
                 foreach ($pluginfiles as $filename => $file) {
-                    if ($file->get_mimetype() === 'application/pdf') {
+                    if (($file instanceof \stored_file) && ($file->get_mimetype() === 'application/pdf')) {
                         $files[$filename] = $file;
                     }
                 }
