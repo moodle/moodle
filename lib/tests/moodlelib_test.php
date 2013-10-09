@@ -2485,4 +2485,36 @@ class core_moodlelib_testcase extends advanced_testcase {
             $event->objectid);
         $this->assertEventLegacyLogData($expectedlogdata, $event);
     }
+
+    public function test_email_to_user() {
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $subject = 'subject';
+        $messagetext = 'message text';
+        $subject2 = 'subject 2';
+        $messagetext2 = 'message text 2';
+
+        unset_config('noemailever');
+
+        $sink = $this->redirectEmails();
+        email_to_user($user1, $user2, $subject, $messagetext);
+        email_to_user($user2, $user1, $subject2, $messagetext2);
+        $this->assertSame(2, $sink->count());
+        $result = $sink->get_messages();
+        $this->assertCount(2, $result);
+        $sink->close();
+
+        $this->assertSame($subject, $result[0]->subject);
+        $this->assertSame($messagetext, trim($result[0]->body));
+        $this->assertSame($user1->email, $result[0]->to);
+        $this->assertSame($user2->email, $result[0]->from);
+
+        $this->assertSame($subject2, $result[1]->subject);
+        $this->assertSame($messagetext2, trim($result[1]->body));
+        $this->assertSame($user2->email, $result[1]->to);
+        $this->assertSame($user1->email, $result[1]->from);
+    }
 }
