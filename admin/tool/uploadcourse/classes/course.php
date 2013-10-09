@@ -347,7 +347,8 @@ class tool_uploadcourse_course {
     /**
      * Get the directory of the object to restore.
      *
-     * @return string|false subdirectory in $CFG->tempdir/backup/...
+     * @return string|false|null subdirectory in $CFG->tempdir/backup/..., false when an error occured
+     *                           and null when there is simply nothing.
      */
     protected function get_restore_content_dir() {
         $backupfile = null;
@@ -366,6 +367,9 @@ class tool_uploadcourse_course {
                 $this->error($key, $message);
             }
             return false;
+        } else if ($dir === false) {
+            // We want to return null when nothing was wrong, but nothing was found.
+            $dir = null;
         }
 
         if (empty($dir) && !empty($this->importoptions['restoredir'])) {
@@ -656,8 +660,12 @@ class tool_uploadcourse_course {
         $this->enrolmentdata = tool_uploadcourse_helper::get_enrolment_data($this->rawdata);
 
         // Restore data.
-        // TODO log warnings.
+        // TODO Speed up things by not really extracting the backup just yet, but checking that
+        // the backup file or shortname passed are valid. Extraction should happen in proceed().
         $this->restoredata = $this->get_restore_content_dir();
+        if ($this->restoredata === false) {
+            return false;
+        }
 
         // We can only reset courses when allowed and we are updating the course.
         if ($this->importoptions['reset'] || $this->options['reset']) {
