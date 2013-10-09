@@ -1237,10 +1237,73 @@ class page_requirements_manager {
     protected function get_yui3lib_headcode($page) {
         global $CFG;
 
+        /*
+         * Created via http://yuilibrary.com/yui/configurator/ so that it emulates
+         * original SimpleYUI + all loaders:
+         *
+            "use": [
+                "yui",
+                "oop",
+                "dom",
+                "event-custom-base",
+                "event-base",
+                "pluginhost",
+                "node",
+                "event-delegate",
+                "io-base",
+                "json-parse",
+                "transition",
+                "selector-css3",
+                "dom-style-ie",
+                "querystring-stringify-simple"
+            ]
+         */
+
+
+        $requiremodules = array(
+            // Include everything from original SimpleYUI.
+            'yui',
+            'yui-base',
+            'get',
+            'features',
+            'loader-base',
+            'loader-rollup',
+            'loader-yui3',
+            'oop',
+            'event-custom-base',
+            'dom-core',
+            'dom-base',
+            'color-base',
+            'dom-style',
+            'selector-native',
+            'selector',
+            'node-core',
+            'node-base',
+            'event-base',
+            'event-base-ie',
+            'pluginhost-base',
+            'pluginhost-config',
+            'event-delegate',
+            'node-event-delegate',
+            'node-pluginhost',
+            'dom-screen',
+            'node-screen',
+            'node-style',
+            'querystring-stringify-simple',
+            'io-base',
+            'json-parse',
+            'transition',
+            'selector-css2',
+            'selector-css3',
+            'dom-style-ie',
+            // Some extras we use everywhere.
+            'escape',
+        );
+
         $code = '';
 
-        // Note: SimpleYUI is broken in 3.12 and will not be available in future YUI versions,
-        //       that is why we can not load it from CDN.
+        // Note 1: strlen(implode('&amp;', $modules)) + combo script URL should be kept under 2048 bytes.
+        // Note 2: There are some bogus @version@ in YUI 3.13.0 - always use local files to emulate SimpleYUI.
 
         if ($this->yui3loader->combine) {
             if (!empty($page->theme->yuicssmodules)) {
@@ -1250,17 +1313,21 @@ class page_requirements_manager {
                 }
                 $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->comboBase.implode('&amp;', $modules).'" />';
             }
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
-                     .$CFG->yui3version.'/simpleyui/simpleyui-min.js&amp;'
-                     .$CFG->yui3version.'/loader/loader-min.js"></script>';
+            $modules = array();
+            foreach ($requiremodules as $module) {
+                $modules[] = "$CFG->yui3version/$module/$module-min.js";
+            }
+            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase.implode('&amp;', $modules).'"></script>';
+
         } else {
             if (!empty($page->theme->yuicssmodules)) {
                 foreach ($page->theme->yuicssmodules as $module) {
                     $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.$module.'/'.$module.'-min.css" />';
                 }
             }
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_base.'simpleyui/simpleyui-min.js"></script>';
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_base.'loader/loader-min.js"></script>';
+            foreach ($requiremodules as $module) {
+                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_base.$module.'/'.$module.'-min.js';
+            }
         }
 
 
@@ -1271,6 +1338,9 @@ class page_requirements_manager {
             $code = str_replace('-min.css', '.css', $code);
             $code = str_replace('-min.js', '-debug.js', $code);
         }
+
+        // Emulate SimpleYUI for now.
+        $code .= '<script type="text/javascript">var Y = YUI().use(\'*\');</script>';
 
         return $code;
     }

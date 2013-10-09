@@ -1,0 +1,18 @@
+/*
+YUI 3.13.0 (build 508226d)
+Copyright 2013 Yahoo! Inc. All rights reserved.
+Licensed under the BSD License.
+http://yuilibrary.com/license/
+*/
+
+.yui3-skin-sam .yui3-datatable .yui3-datatable-highlight-row td {
+    background-color: #fef2cd;
+}
+
+.yui3-skin-sam .yui3-datatable tr .yui3-datatable-highlight-col {
+    background-color: #fef2cd;
+}
+
+.yui3-skin-sam .yui3-datatable tr .yui3-datatable-highlight-cell {
+    background-color: #fef2cd;
+}
