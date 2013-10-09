@@ -194,6 +194,10 @@ class tool_uploadcourse_processor {
         $deleted = 0;
         $errors = 0;
 
+        // We will most certainly need extra time and memory to process big files.
+        @set_time_limit(0);
+        raise_memory_limit(MEMORY_EXTRA);
+
         // Loop over the CSV lines.
         while ($line = $this->cir->next()) {
             $this->linenb++;
@@ -329,6 +333,10 @@ class tool_uploadcourse_processor {
             $tracker = new tool_uploadcourse_tracker(tool_uploadcourse_tracker::NO_OUTPUT);
         }
         $tracker->start();
+
+        // We might need extra time and memory depending on the number of rows to preview.
+        @set_time_limit(0);
+        raise_memory_limit(MEMORY_EXTRA);
 
         // Loop over the CSV lines.
         $preview = array();
