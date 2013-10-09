@@ -3559,6 +3559,19 @@ function ismoving($courseid) {
 function fullname($user, $override=false) {
     global $CFG, $SESSION;
 
+    // Get all of the name fields.
+    $allnames = get_all_user_name_fields();
+    if ($CFG->debugdeveloper) {
+        foreach ($allnames as $allname) {
+            if (!array_key_exists($allname, $user)) {
+                // If all the user name fields are not set in the user object, then notify the programmer that it needs to be fixed.
+                debugging('You need to update your sql to include additional name fields in the user object.', DEBUG_DEVELOPER);
+                // Message has been sent, no point in sending the message multiple times.
+                break;
+            }
+        }
+    }
+
     if (!isset($user->firstname) and !isset($user->lastname)) {
         return '';
     }
@@ -3586,17 +3599,11 @@ function fullname($user, $override=false) {
         return get_string('fullnamedisplay', null, $user);
     }
 
-    // Get all of the name fields.
-    $allnames = get_all_user_name_fields();
     $requirednames = array();
     // With each name, see if it is in the display name template, and add it to the required names array if it is.
     foreach ($allnames as $allname) {
         if (strpos($template, $allname) !== false) {
             $requirednames[] = $allname;
-            // If the field is in the template but not set in the user object then notify the programmer that it needs to be fixed.
-            if (!array_key_exists($allname, $user)) {
-                debugging('You need to update your sql to include additional name fields in the user object.', DEBUG_DEVELOPER);
-            }
         }
     }
 

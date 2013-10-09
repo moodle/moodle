@@ -2375,6 +2375,16 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->assertSame($expectedname, $testname);
         }
 
+        // Test debugging message displays when
+        // fullnamedisplay setting is "normal".
+        $CFG->fullnamedisplay = 'firstname lastname';
+        unset($user);
+        $user = new stdClass();
+        $user->firstname = 'Stan';
+        $user->lastname = 'Lee';
+        $namedisplay = fullname($user);
+        $this->assertDebuggingCalled();
+
         // Tidy up after we finish testing.
         $CFG->fullnamedisplay = $originalcfg->fullnamedisplay;
     }

@@ -240,10 +240,11 @@ class mod_forum_external extends external_api {
                     if ($forum->type == 'qanda' && !forum_user_has_posted($discussion->forum, $discussion->id, $USER->id)) {
                         require_capability('mod/forum:viewqandawithoutposting', $modcontext);
                     }
+                    $usernamefields = user_picture::fields();
                     // If we don't have the users details then perform DB call.
                     if (empty($arrusers[$discussion->userid])) {
                         $arrusers[$discussion->userid] = $DB->get_record('user', array('id' => $discussion->userid),
-                            'firstname, lastname, email, picture, imagealt', MUST_EXIST);
+                                $usernamefields, MUST_EXIST);
                     }
                     // Get the subject.
                     $subject = $DB->get_field('forum_posts', 'subject', array('id' => $discussion->firstpost), MUST_EXIST);
@@ -284,7 +285,7 @@ class mod_forum_external extends external_api {
                     $lastpost = $DB->get_record('forum_posts', array('id' => $return->lastpost), '*', MUST_EXIST);
                     if (empty($arrusers[$lastpost->userid])) {
                         $arrusers[$lastpost->userid] = $DB->get_record('user', array('id' => $lastpost->userid),
-                            'firstname, lastname, email, picture, imagealt', MUST_EXIST);
+                                $usernamefields, MUST_EXIST);
                     }
                     $return->lastuserid = $lastpost->userid;
                     $return->lastuserfullname = fullname($arrusers[$lastpost->userid], $canviewfullname);
