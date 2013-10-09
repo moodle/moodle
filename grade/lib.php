@@ -192,7 +192,7 @@ class graded_users_iterator {
                             LEFT JOIN (SELECT * FROM {user_info_data}
                                 WHERE fieldid = :cf$customfieldscount) cf$customfieldscount
                             ON u.id = cf$customfieldscount.userid";
-                    $userfields .= ", cf$customfieldscount.data AS 'customfield_{$field->shortname}'";
+                    $userfields .= ", cf$customfieldscount.data AS customfield_{$field->shortname}";
                     $params['cf'.$customfieldscount] = $field->customid;
                     $customfieldscount++;
                 }
