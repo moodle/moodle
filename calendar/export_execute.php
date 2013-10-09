@@ -91,7 +91,10 @@ if(!empty($what) && !empty($time)) {
                     list($startmonth, $startyear) = calendar_add_month($startmonth, $startyear);
                     $startmonthday = find_day_in_month(1, $startweekday, $startmonth, $startyear);
                 }
-                $timestart = make_timestamp($startyear, $startmonth, $startmonthday);
+                $gregoriandate = $calendartype->convert_to_gregorian($startyear, $startmonth, $startmonthday);
+                $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
+                    $gregoriandate['hour'], $gregoriandate['minute']);
+
                 $endmonthday = $startmonthday + $numberofdaysinweek;
                 $endmonth = $startmonth;
                 $endyear = $startyear;
@@ -99,7 +102,9 @@ if(!empty($what) && !empty($time)) {
                     list($endmonth, $endyear) = calendar_add_month($endmonth, $endyear);
                     $endmonthday = find_day_in_month(1, $startweekday, $endmonth, $endyear);
                 }
-                $timeend = make_timestamp($endyear, $endmonth, $endmonthday) - 1;
+                $gregoriandate = $calendartype->convert_to_gregorian($endyear, $endmonth, $endmonthday);
+                $timeend = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
+                    $gregoriandate['hour'], $gregoriandate['minute']);
             break;
             case 'weeknext':
                 $startweekday = calendar_get_starting_weekday();
@@ -110,7 +115,10 @@ if(!empty($what) && !empty($time)) {
                     list($startmonth, $startyear) = calendar_add_month($startmonth, $startyear);
                     $startmonthday = find_day_in_month(1, $startweekday, $startmonth, $startyear);
                 }
-                $timestart = make_timestamp($startyear, $startmonth, $startmonthday);
+                $gregoriandate = $calendartype->convert_to_gregorian($startyear, $startmonth, $startmonthday);
+                $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
+                    $gregoriandate['hour'], $gregoriandate['minute']);
+
                 $endmonthday = $startmonthday + $numberofdaysinweek;
                 $endmonth = $startmonth;
                 $endyear = $startyear;
@@ -118,15 +126,17 @@ if(!empty($what) && !empty($time)) {
                     list($endmonth, $endyear) = calendar_add_month($endmonth, $endyear);
                     $endmonthday = find_day_in_month(1, $startweekday, $endmonth, $endyear);
                 }
-                $timeend = make_timestamp($endyear, $endmonth, $endmonthday) - 1;
+                $gregoriandate = $calendartype->convert_to_gregorian($endyear, $endmonth, $endmonthday);
+                $timeend = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
+                    $gregoriandate['hour'], $gregoriandate['minute']);
             break;
             case 'monthnow':
                 // Convert to gregorian.
                 $gregoriandate = $calendartype->convert_to_gregorian($now['year'], $now['mon'], 1);
 
-                $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day']);
-                $timeend = make_timestamp($gregoriandate['year'], $gregoriandate['month'],
-                    calendar_days_in_month($now['mon'], $now['year']), 23, 59, 59);
+                $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
+                    $gregoriandate['hour'], $gregoriandate['minute']);
+                $timeend = $timestart + (calendar_days_in_month($now['mon'], $now['year']) * DAYSECS);
             break;
             case 'monthnext':
                 // Get the next month for this calendar.
@@ -136,9 +146,9 @@ if(!empty($what) && !empty($time)) {
                 $gregoriandate = $calendartype->convert_to_gregorian($nextyear, $nextmonth, 1);
 
                 // Create the timestamps.
-                $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day']);
-                $timeend   = make_timestamp($gregoriandate['year'], $gregoriandate['month'],
-                    calendar_days_in_month($nextmonth, $nextyear), 23, 59, 59);
+                $timestart = make_timestamp($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
+                    $gregoriandate['hour'], $gregoriandate['minute']);
+                $timeend = $timestart + (calendar_days_in_month($nextmonth, $nextyear) * DAYSECS);
             break;
             case 'recentupcoming':
                 //Events in the last 5 or next 60 days
