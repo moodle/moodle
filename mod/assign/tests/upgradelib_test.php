@@ -46,7 +46,13 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
     }
 
     public function test_upgrade_upload_assignment() {
-        global $DB;
+        global $DB, $CFG;
+
+        $commentconfig = false;
+        if (!empty($CFG->usecomments)) {
+            $commentconfig = $CFG->usecomments;
+        }
+        $CFG->usecomments = false;
 
         $this->setUser($this->editingteachers[0]);
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
@@ -81,11 +87,18 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
         $plugin = $assign->get_feedback_plugin_by_type('offline');
         $this->assertEmpty($plugin->is_enabled());
 
+        $CFG->usecomments = $commentconfig;
         course_delete_module($cm->id);
     }
 
     public function test_upgrade_uploadsingle_assignment() {
-        global $DB;
+        global $DB, $CFG;
+
+        $commentconfig = false;
+        if (!empty($CFG->usecomments)) {
+            $commentconfig = $CFG->usecomments;
+        }
+        $CFG->usecomments = false;
 
         $this->setUser($this->editingteachers[0]);
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
@@ -120,11 +133,18 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
         $plugin = $assign->get_feedback_plugin_by_type('offline');
         $this->assertEmpty($plugin->is_enabled());
 
+        $CFG->usecomments = $commentconfig;
         course_delete_module($cm->id);
     }
 
     public function test_upgrade_onlinetext_assignment() {
-        global $DB;
+        global $DB, $CFG;
+
+        $commentconfig = false;
+        if (!empty($CFG->usecomments)) {
+            $commentconfig = $CFG->usecomments;
+        }
+        $CFG->usecomments = false;
 
         $this->setUser($this->editingteachers[0]);
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
@@ -159,11 +179,18 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
         $plugin = $assign->get_feedback_plugin_by_type('offline');
         $this->assertEmpty($plugin->is_enabled());
 
+        $CFG->usecomments = $commentconfig;
         course_delete_module($cm->id);
     }
 
     public function test_upgrade_offline_assignment() {
-        global $DB;
+        global $DB, $CFG;
+
+        $commentconfig = false;
+        if (!empty($CFG->usecomments)) {
+            $commentconfig = $CFG->usecomments;
+        }
+        $CFG->usecomments = false;
 
         $this->setUser($this->editingteachers[0]);
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
@@ -198,6 +225,7 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
         $plugin = $assign->get_feedback_plugin_by_type('offline');
         $this->assertEmpty($plugin->is_enabled());
 
+        $CFG->usecomments = $commentconfig;
         course_delete_module($cm->id);
     }
 }

@@ -636,4 +636,14 @@ abstract class assign_plugin {
     public function get_external_parameters() {
         return null;
     }
+
+    /**
+     * If true, the plugin will appear on the module settings page and can be
+     * enabled/disabled per assignment instance.
+     *
+     * @return bool
+     */
+    public function is_configurable() {
+        return true;
+    }
 }

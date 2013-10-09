@@ -253,4 +253,25 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
         return true;
     }
 
+    /**
+     * Automatically enable or disable editpdf feedback plugin based on
+     * whether the ghostscript path is set correctly.
+     *
+     * @return bool
+     */
+    public function is_enabled() {
+        $testpath = assignfeedback_editpdf\pdf::test_gs_path();
+        if ($testpath->status == assignfeedback_editpdf\pdf::GSPATH_OK) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Automatically hide the setting for the editpdf feedback plugin.
+     *
+     * @return bool false
+     */
+    public function is_configurable() {
+        return false;
+    }
 }
