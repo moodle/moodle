@@ -34,10 +34,13 @@ defined('MOODLE_INTERNAL') || die();
 class create_and_clean_temp_stuff extends backup_execution_step {
 
     protected function define_execution() {
+        $progress = $this->task->get_progress();
+        $progress->start_progress('Deleting backup directories');
         backup_helper::check_and_create_backup_dir($this->get_backupid());// Create backup temp dir
-        backup_helper::clear_backup_dir($this->get_backupid());           // Empty temp dir, just in case
-        backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60));    // Delete > 4 hours temp dirs
+        backup_helper::clear_backup_dir($this->get_backupid(), $progress);           // Empty temp dir, just in case
+        backup_helper::delete_old_backup_dirs(time() - (4 * 60 * 60), $progress);    // Delete > 4 hours temp dirs
         backup_controller_dbops::create_backup_ids_temp_table($this->get_backupid()); // Create ids temp table
+        $progress->end_progress();
     }
 }
 
@@ -61,7 +64,10 @@ class drop_and_clean_temp_stuff extends backup_execution_step {
         // 1) If $CFG->keeptempdirectoriesonbackup is not enabled
         // 2) If backup temp dir deletion has been marked to be avoided
         if (empty($CFG->keeptempdirectoriesonbackup) && !$this->skipcleaningtempdir) {
-            backup_helper::delete_backup_dir($this->get_backupid()); // Empty backup dir
+            $progress = $this->task->get_progress();
+            $progress->start_progress('Deleting backup dir');
+            backup_helper::delete_backup_dir($this->get_backupid(), $progress); // Empty backup dir
+            $progress->end_progress();
         }
     }
 

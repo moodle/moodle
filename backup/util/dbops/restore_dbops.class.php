@@ -848,6 +848,9 @@ abstract class restore_dbops {
      * optionally one source itemname to match itemids
      * put the corresponding files in the pool
      *
+     * If you specify a progress reporter, it will get called once per file with
+     * indeterminate progress.
+     *
      * @param string $basepath the full path to the root of unzipped backup file
      * @param string $restoreid the restore job's identification
      * @param string $component
@@ -858,9 +861,13 @@ abstract class restore_dbops {
      * @param int|null $olditemid
      * @param int|null $forcenewcontextid explicit value for the new contextid (skip mapping)
      * @param bool $skipparentitemidctxmatch
+     * @param core_backup_progress $progress Optional progress reporter
      * @return array of result object
      */
-    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea, $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null, $forcenewcontextid = null, $skipparentitemidctxmatch = false) {
+    public static function send_files_to_pool($basepath, $restoreid, $component, $filearea,
+            $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null,
+            $forcenewcontextid = null, $skipparentitemidctxmatch = false,
+            core_backup_progress $progress = null) {
         global $DB, $CFG;
 
         $backupinfo = backup_general_helper::get_backup_information(basename($basepath));
@@ -924,8 +931,17 @@ abstract class restore_dbops {
 
         $fs = get_file_storage();         // Get moodle file storage
         $basepath = $basepath . '/files/';// Get backup file pool base
+        // Report progress before query.
+        if ($progress) {
+            $progress->progress();
+        }
         $rs = $DB->get_recordset_sql($sql, $params);
         foreach ($rs as $rec) {
+            // Report progress each time around loop.
+            if ($progress) {
+                $progress->progress();
+            }
+
             $file = (object)backup_controller_dbops::decode_backup_temp_info($rec->info);
 
             // ignore root dirs (they are created automatically)
@@ -1041,10 +1057,20 @@ abstract class restore_dbops {
      * in backup_ids having newitemid = 0, as far as
      * precheck_included_users() have left them there
      * ready to be created. Also, annotate their newids
-     * once created for later reference
+     * once created for later reference.
+     *
+     * This function will start and end a new progress section in the progress
+     * object.
+     *
+     * @param string $basepath Base path of unzipped backup
+     * @param string $restoreid Restore ID
+     * @param int $userid Default userid for files
+     * @param core_backup_progress $progress Object used for progress tracking
      */
-    public static function create_included_users($basepath, $restoreid, $userid) {
+    public static function create_included_users($basepath, $restoreid, $userid,
+            core_backup_progress $progress) {
         global $CFG, $DB;
+        $progress->start_progress('Creating included users');
 
         $authcache = array(); // Cache to get some bits from authentication plugins
         $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search later
@@ -1053,6 +1079,7 @@ abstract class restore_dbops {
         // Iterate over all the included users with newitemid = 0, have to create them
         $rs = $DB->get_recordset('backup_ids_temp', array('backupid' => $restoreid, 'itemname' => 'user', 'newitemid' => 0), '', 'itemid, parentitemid, info');
         foreach ($rs as $recuser) {
+            $progress->progress();
             $user = (object)backup_controller_dbops::decode_backup_temp_info($recuser->info);
 
             // if user lang doesn't exist here, use site default
@@ -1192,11 +1219,14 @@ abstract class restore_dbops {
                 }
 
                 // Create user files in pool (profile, icon, private) by context
-                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon', $recuser->parentitemid, $userid);
-                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile', $recuser->parentitemid, $userid);
+                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'icon',
+                        $recuser->parentitemid, $userid, null, null, null, false, $progress);
+                restore_dbops::send_files_to_pool($basepath, $restoreid, 'user', 'profile',
+                        $recuser->parentitemid, $userid, null, null, null, false, $progress);
             }
         }
         $rs->close();
+        $progress->end_progress();
     }
 
     /**

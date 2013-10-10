@@ -58,6 +58,11 @@ class restore_controller extends base_controller {
     protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
 
     /**
+     * Constructor.
+     *
+     * If you specify a progress monitor, this will be used to report progress
+     * while loading the plan, as well as for future use. (You can change it
+     * for a different one later using set_progress.)
      *
      * @param string $tempdir Directory under tempdir/backup awaiting restore
      * @param int $courseid Course id where restore is going to happen
@@ -65,8 +70,10 @@ class restore_controller extends base_controller {
      * @param int $mode backup::MODE_[ GENERAL | HUB | IMPORT | SAMESITE ]
      * @param int $userid
      * @param int $target backup::TARGET_[ NEW_COURSE | CURRENT_ADDING | CURRENT_DELETING | EXISTING_ADDING | EXISTING_DELETING ]
+     * @param core_backup_progress $progress Optional progress monitor
      */
-    public function __construct($tempdir, $courseid, $interactive, $mode, $userid, $target){
+    public function __construct($tempdir, $courseid, $interactive, $mode, $userid, $target,
+            core_backup_progress $progress = null) {
         $this->tempdir = $tempdir;
         $this->courseid = $courseid;
         $this->interactive = $interactive;
@@ -99,9 +106,14 @@ class restore_controller extends base_controller {
         // Default logger chain (based on interactive/execution)
         $this->logger = backup_factory::get_logger_chain($this->interactive, $this->execution, $this->restoreid);
 
-        // By default there is no progress reporter. Interfaces that wish to
-        // display progress must set it.
-        $this->progress = new core_backup_null_progress();
+        // By default there is no progress reporter unless you specify one so it
+        // can be used during loading of the plan.
+        if ($progress) {
+            $this->progress = $progress;
+        } else {
+            $this->progress = new core_backup_null_progress();
+        }
+        $this->progress->start_progress('Constructing restore_controller');
 
         // Instantiate the output_controller singleton and active it if interactive and inmediate
         $oc = output_controller::get_instance();
@@ -135,6 +147,9 @@ class restore_controller extends base_controller {
                 $this->set_status(backup::STATUS_NEED_PRECHECK);
             }
         }
+
+        // Tell progress monitor that we finished loading.
+        $this->progress->end_progress();
     }
 
     /**

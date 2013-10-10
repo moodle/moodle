@@ -185,6 +185,16 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage implements f
     protected $contextid;
     protected $filename = null;
     protected $filepath = null;
+
+    /**
+     * @var string Content hash of archive file to restore (if specified by hash)
+     */
+    protected $contenthash = null;
+    /**
+     * @var string Pathname hash of stored_file object to restore
+     */
+    protected $pathnamehash = null;
+
     protected $details;
 
     /**
@@ -194,27 +204,54 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage implements f
 
     public function __construct($contextid) {
         $this->contextid = $contextid;
-        $this->filename = required_param('filename', PARAM_FILE);
+        $this->filename = optional_param('filename', null, PARAM_FILE);
+        if ($this->filename === null) {
+            // Identify file object by its pathname hash.
+            $this->pathnamehash = required_param('pathnamehash', PARAM_ALPHANUM);
+
+            // The file content hash is also passed for security; users
+            // cannot guess the content hash (unless they know the file contents),
+            // so this guarantees that either the system generated this link or
+            // else the user has access to the restore archive anyhow.
+            $this->contenthash = required_param('contenthash', PARAM_ALPHANUM);
+        }
     }
+
     public function process() {
         global $CFG;
-        if (!file_exists("$CFG->tempdir/backup/".$this->filename)) {
-            throw new restore_ui_exception('invalidrestorefile');
-        }
-        $outcome = $this->extract_file_to_dir();
-        if ($outcome) {
-            fulldelete($this->filename);
+        if ($this->filename) {
+            $archivepath = $CFG->tempdir . '/backup/' . $this->filename;
+            if (!file_exists($archivepath)) {
+                throw new restore_ui_exception('invalidrestorefile');
+            }
+            $outcome = $this->extract_file_to_dir($archivepath);
+            if ($outcome) {
+                fulldelete($archivepath);
+            }
+        } else {
+            $fs = get_file_storage();
+            $storedfile = $fs->get_file_by_hash($this->pathnamehash);
+            if (!$storedfile || $storedfile->get_contenthash() !== $this->contenthash) {
+                throw new restore_ui_exception('invalidrestorefile');
+            }
+            $outcome = $this->extract_file_to_dir($storedfile);
         }
         return $outcome;
     }
-    protected function extract_file_to_dir() {
+
+    /**
+     * Extracts the file.
+     *
+     * @param string|stored_file $source Archive file to extract
+     */
+    protected function extract_file_to_dir($source) {
         global $CFG, $USER;
 
         $this->filepath = restore_controller::get_tempdir_name($this->contextid, $USER->id);
 
         $fb = get_file_packer('application/vnd.moodle.backup');
-        $result = $fb->extract_to_pathname("$CFG->tempdir/backup/".$this->filename,
-                "$CFG->tempdir/backup/$this->filepath/", null, $this);
+        $result = $fb->extract_to_pathname($source,
+                $CFG->tempdir . '/backup/' . $this->filepath . '/', null, $this);
 
         // If any progress happened, end it.
         if ($this->startedprogress) {
@@ -487,6 +524,11 @@ class restore_ui_stage_settings extends restore_ui_stage {
  */
 class restore_ui_stage_schema extends restore_ui_stage {
     /**
+     * @var int Maximum number of settings to add to form at once
+     */
+    const MAX_SETTINGS_BATCH = 1000;
+
+    /**
      * Schema stage constructor
      * @param backup_moodleform $ui
      */
@@ -550,6 +592,12 @@ class restore_ui_stage_schema extends restore_ui_stage {
             $tasks = $this->ui->get_tasks();
             $courseheading = false;
 
+            // Track progress through each stage.
+            $progress = $this->ui->get_progress_reporter();
+            $progress->start_progress('Initialise schema stage form', 3);
+            
+            $progress->start_progress('', count($tasks));
+            $done = 1;
             $allsettings = array();
             foreach ($tasks as $task) {
                 if (!($task instanceof restore_root_task)) {
@@ -576,16 +624,37 @@ class restore_ui_stage_schema extends restore_ui_stage {
                         }
                     }
                 }
+                // Update progress.
+                $progress->progress($done++);
             }
+            $progress->end_progress();
 
-            // Actually add all the settings that we put in the array.
-            $form->add_settings($allsettings);
+            // Add settings for tasks in batches of up to 1000. Adding settings
+            // in larger batches improves performance, but if it takes too long,
+            // we won't be able to update the progress bar so the backup might
+            // time out. 1000 is chosen to balance this.
+            $numsettings = count($allsettings);
+            $progress->start_progress('', ceil($numsettings / self::MAX_SETTINGS_BATCH));
+            $start = 0;
+            $done = 1;
+            while($start < $numsettings) {
+                $length = min(self::MAX_SETTINGS_BATCH, $numsettings - $start);
+                $form->add_settings(array_slice($allsettings, $start, $length));
+                $start += $length;
+                $progress->progress($done++);
+            }
+            $progress->end_progress();
 
             // Add the dependencies for all the settings.
+            $progress->start_progress('', count($allsettings));
+            $done = 1;
             foreach ($allsettings as $settingtask) {
                 $form->add_dependencies($settingtask[0]);
+                $progress->progress($done++);
             }
+            $progress->end_progress();
 
+            $progress->end_progress();
             $this->stageform = $form;
         }
         return $this->stageform;
