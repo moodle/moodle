@@ -39,6 +39,9 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
     /** @var moodle_transaction */
     private $testdbtransaction;
 
+    /** @var int timestamp used for current time asserts */
+    private $currenttimestart;
+
     /**
      * Constructs a test case with the given name.
      *
@@ -73,6 +76,7 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         }
 
         try {
+            $this->setCurrentTimeStart();
             parent::runBare();
             // set DB reference in case somebody mocked it in test
             $DB = phpunit_util::get_global_backup('DB');
@@ -339,6 +343,29 @@ abstract class advanced_testcase extends PHPUnit_Framework_TestCase {
         $this->assertEquals($expected, $legacydata, $message);
     }
 
+    /**
+     * Stores current time as the base for assertTimeCurrent().
+     *
+     * Note: this is called automatically before calling individual test methods.
+     * @return int current time
+     */
+    public function setCurrentTimeStart() {
+        $this->currenttimestart = time();
+        return $this->currenttimestart;
+    }
+
+    /**
+     * Assert that: start < $time < time()
+     * @param int $time
+     * @param string $message
+     * @return void
+     */
+    public function assertTimeCurrent($time, $message = '') {
+        $msg =  ($message === '') ? 'Time is lower that allowed start value' : $message;
+        $this->assertGreaterThanOrEqual($this->currenttimestart, $time, $msg);
+        $msg =  ($message === '') ? 'Time is in the future' : $message;
+        $this->assertLessThanOrEqual(time(), $time, $msg);
+    }
 
     /**
      * Starts message redirection.
