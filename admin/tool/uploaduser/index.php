@@ -945,8 +945,23 @@ if ($formdata = $mform2->is_cancelled()) {
                 }
 
                 if ($rid) {
-                    // find duration
-                    $timeend   = 0;
+                    // Find duration and/or enrol status.
+                    $timeend = 0;
+                    $status = null;
+
+                    if (isset($user->{'enrolstatus'.$i})) {
+                        $enrolstatus = trim($user->{'enrolstatus'.$i});
+                        if ($enrolstatus == '') {
+                            $status = null;
+                        } else if ($enrolstatus === (string)ENROL_USER_ACTIVE) {
+                            $status = ENROL_USER_ACTIVE;
+                        } else if ($enrolstatus === (string)ENROL_USER_SUSPENDED) {
+                            $status = ENROL_USER_SUSPENDED;
+                        } else {
+                            debugging('Unknown enrolment status.');
+                        }
+                    }
+
                     if (!empty($user->{'enrolperiod'.$i})) {
                         $duration = (int)$user->{'enrolperiod'.$i} * 60*60*24; // convert days to seconds
                         if ($duration > 0) { // sanity check
@@ -956,7 +971,7 @@ if ($formdata = $mform2->is_cancelled()) {
                         $timeend = $today + $manualcache[$courseid]->enrolperiod;
                     }
 
-                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend);
+                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, $status);
 
                     $a = new stdClass();
                     $a->course = $shortname;
