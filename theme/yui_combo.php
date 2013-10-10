@@ -93,7 +93,7 @@ while (count($parts)) {
             $filesuffix = '-min.js';
         }
 
-        if (strpos($rollupname, 'simpleyui') !== false) {
+        if (strpos($rollupname, 'yui-moodlesimple') !== false) {
             $yuimodules = array(
                 // Include everything from original SimpleYUI,
                 // this list can be built using http://yuilibrary.com/yui/configurator/ by selecting all modules

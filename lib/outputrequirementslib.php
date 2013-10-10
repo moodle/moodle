@@ -1250,7 +1250,7 @@ class page_requirements_manager {
 
         $jsrev = $this->get_jsrev();
         $baserollups = array(
-            'rollup/' . $CFG->yui3version . '/simpleyui-min.js',
+            'rollup/' . $CFG->yui3version . '/yui-moodlesimple-min.js',
         );
         $moodlerollups = array(
             'rollup/' . $jsrev . '/mcore-min.js',
