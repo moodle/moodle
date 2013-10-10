@@ -276,7 +276,7 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Checks, that page contains specified text.
+     * Checks, that page contains specified text. It also checks if the text is visible when running Javascript tests.
      *
      * @Then /^I should see "(?P<text_string>(?:[^"]|\\")*)"$/
      * @throws ExpectationException
@@ -284,19 +284,34 @@ class behat_general extends behat_base {
      */
     public function assert_page_contains_text($text) {
 
+        // Looking for all the matching nodes without any other descendant matching the
+        // same xpath (we are using contains(., ....).
         $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
-        $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]";
+        $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
+            "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
         // Wait until it finds the text, otherwise custom exception.
         try {
-            $this->find('xpath', $xpath);
+            $nodes = $this->find_all('xpath', $xpath);
+
+            // We also check for the element visibility when running JS tests.
+            if ($this->running_javascript()) {
+                foreach ($nodes as $node) {
+                    if ($node->isVisible()) {
+                        return;
+                    }
+                }
+
+                throw new ExpectationException("'{$text}' text was found but was not visible", $this->getSession());
+            }
+
         } catch (ElementNotFoundException $e) {
             throw new ExpectationException('"' . $text . '" text was not found in the page', $this->getSession());
         }
     }
 
     /**
-     * Checks, that page doesn't contain specified text.
+     * Checks, that page doesn't contain specified text. When running Javascript tests it also considers that texts may be hidden.
      *
      * @Then /^I should not see "(?P<text_string>(?:[^"]|\\")*)"$/
      * @throws ExpectationException
@@ -317,7 +332,7 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Checks, that element with specified CSS selector or XPath contains specified text.
+     * Checks, that the specified element contains the specified text. When running Javascript tests it also considers that texts may be hidden.
      *
      * @Then /^I should see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)"$/
      * @throws ElementNotFoundException
@@ -331,12 +346,27 @@ class behat_general extends behat_base {
         // Getting the container where the text should be found.
         $container = $this->get_selected_node($selectortype, $element);
 
+        // Looking for all the matching nodes without any other descendant matching the
+        // same xpath (we are using contains(., ....).
         $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
-        $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]";
+        $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
+            "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
         // Wait until it finds the text inside the container, otherwise custom exception.
         try {
-            $this->find('xpath', $xpath, false, $container);
+            $nodes = $this->find_all('xpath', $xpath, false, $container);
+
+            // We also check for the element visibility when running JS tests.
+            if ($this->running_javascript()) {
+                foreach ($nodes as $node) {
+                    if ($node->isVisible()) {
+                        return;
+                    }
+                }
+
+                throw new ExpectationException("'{$text}' text was found in the {$element} element but was not visible", $this->getSession());
+            }
+
         } catch (ElementNotFoundException $e) {
             throw new ExpectationException('"' . $text . '" text was not found in the ' . $element . ' element', $this->getSession());
         }
@@ -344,7 +374,7 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Checks, that element with specified CSS selector or XPath doesn't contain specified text.
+     * Checks, that the specified element does not contain the specified text. When running Javascript tests it also considers that texts may be hidden.
      *
      * @Then /^I should not see "(?P<text_string>(?:[^"]|\\")*)" in the "(?P<element_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)"$/
      * @throws ElementNotFoundException

@@ -22,8 +22,8 @@ Feature: Allowed blocks controls
     And I turn editing mode on
     When I add the "Course completion status" block
     And I add the "Activities" block
-    Then I should see "Activities"
-    And I should see "Course completion status"
+    Then I should see "Activities" in the "Activities" "block"
+    And I should see "Course completion status" in the "Course completion status" "block"
 
   @javascript
   Scenario: Blocks can not be added when the admin restricts the permissions
