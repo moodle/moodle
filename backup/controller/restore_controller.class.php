@@ -30,7 +30,7 @@
  *
  * TODO: Finish phpdocs
  */
-class restore_controller extends backup implements loggable {
+class restore_controller extends base_controller {
 
     protected $tempdir;   // Directory under tempdir/backup awaiting restore
     protected $restoreid; // Unique identificator for this restore
@@ -54,13 +54,6 @@ class restore_controller extends backup implements loggable {
 
     protected $execution;     // inmediate/delayed
     protected $executiontime; // epoch time when we want the restore to be executed (requires cron to run)
-
-    protected $logger;      // Logging chain object (moodle, inline, fs, db, syslog)
-
-    /**
-     * @var core_backup_progress Progress reporting object.
-     */
-    protected $progress;
 
     protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
 
@@ -305,29 +298,6 @@ class restore_controller extends backup implements loggable {
         return $this->info;
     }
 
-    public function get_logger() {
-        return $this->logger;
-    }
-
-    /**
-     * Gets the progress reporter, which can be used to report progress within
-     * the backup or restore process.
-     *
-     * @return core_backup_progress Progress reporting object
-     */
-    public function get_progress() {
-        return $this->progress;
-    }
-
-    /**
-     * Sets the progress reporter.
-     *
-     * @param core_backup_progress $progress Progress reporting object
-     */
-    public function set_progress(core_backup_progress $progress) {
-        $this->progress = $progress;
-    }
-
     public function execute_plan() {
         // Basic/initial prevention against time/memory limits
         set_time_limit(1 * 60 * 60); // 1 hour for 1 course initially granted
@@ -393,10 +363,6 @@ class restore_controller extends backup implements loggable {
             throw new restore_controller_exception('precheck_not_executed');
         }
         return $this->precheck;
-    }
-
-    public function log($message, $level, $a = null, $depth = null, $display = false) {
-        backup_helper::log($message, $level, $a, $depth, $display, $this->logger);
     }
 
     /**

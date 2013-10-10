@@ -40,7 +40,7 @@
  *
  * TODO: Finish phpdocs
  */
-class backup_controller extends backup implements loggable {
+class backup_controller extends base_controller {
 
     protected $backupid; // Unique identificator for this backup
 
@@ -62,12 +62,6 @@ class backup_controller extends backup implements loggable {
     protected $executiontime; // epoch time when we want the backup to be executed (requires cron to run)
 
     protected $destination; // Destination chain object (fs_moodle, fs_os, db, email...)
-    protected $logger;      // Logging chain object (moodle, inline, fs, db, syslog)
-
-    /**
-     * @var core_backup_progress Progress reporting object.
-     */
-    protected $progress;
 
     protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
 
@@ -307,29 +301,6 @@ class backup_controller extends backup implements loggable {
         return $this->plan;
     }
 
-    public function get_logger() {
-        return $this->logger;
-    }
-
-    /**
-     * Gets the progress reporter, which can be used to report progress within
-     * the backup or restore process.
-     *
-     * @return core_backup_progress Progress reporting object
-     */
-    public function get_progress() {
-        return $this->progress;
-    }
-
-    /**
-     * Sets the progress reporter.
-     *
-     * @param core_backup_progress $progress Progress reporting object
-     */
-    public function set_progress(core_backup_progress $progress) {
-        $this->progress = $progress;
-    }
-
     /**
      * Executes the backup
      * @return void Throws and exception of completes
@@ -351,10 +322,6 @@ class backup_controller extends backup implements loggable {
 
     public function get_results() {
         return $this->plan->get_results();
-    }
-
-    public function log($message, $level, $a = null, $depth = null, $display = false) {
-        backup_helper::log($message, $level, $a, $depth, $display, $this->logger);
     }
 
     /**

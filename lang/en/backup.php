@@ -49,6 +49,7 @@ $string['backupformatmoodle2'] = 'Moodle 2';
 $string['backupformatimscc1'] = 'IMS Common Cartridge 1.0';
 $string['backupformatimscc11'] = 'IMS Common Cartridge 1.1';
 $string['backupformatunknown'] = 'Unknown format';
+$string['backuplog'] = 'Technical information and warnings';
 $string['backupmode'] = 'Mode';
 $string['backupmode10'] = 'General';
 $string['backupmode20'] = 'Import';

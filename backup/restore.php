@@ -61,6 +61,7 @@ if (!$restore->is_independent() && $restore->enforce_changed_dependencies()) {
     debugging('Your settings have been altered due to unmet dependencies', DEBUG_DEVELOPER);
 }
 
+$loghtml = '';
 if (!$restore->is_independent()) {
     // Use a temporary (disappearing) progress bar to show the precheck progress if any.
     $precheckprogress = new core_backup_display_progress_if_slow(get_string('preparingdata', 'backup'));
@@ -72,9 +73,14 @@ if (!$restore->is_independent()) {
             // Show the current restore state (header with bolded item).
             echo $renderer->progress_bar($restore->get_progress_bar());
             // Start displaying the actual progress bar percentage.
-            $restore->get_controller()->set_progress(new core_backup_display_progress(true));
+            $restore->get_controller()->set_progress(new core_backup_display_progress());
+            // Prepare logger.
+            $logger = new core_backup_html_logger($CFG->debugdeveloper ? backup::LOG_DEBUG : backup::LOG_INFO);
+            $restore->get_controller()->add_logger($logger);
             // Do actual restore.
             $restore->execute();
+            // Get HTML from logger.
+            $loghtml = $logger->get_html();
             // Hide this section because we are now going to make the page show 'finished'.
             echo html_writer::end_div();
             echo html_writer::script('document.getElementById("executionprogress").style.display = "none";');
@@ -91,4 +97,10 @@ echo $renderer->progress_bar($restore->get_progress_bar());
 echo $restore->display($renderer);
 $restore->destroy();
 unset($restore);
+
+// Display log data if there was any.
+if ($loghtml != '') {
+    echo $renderer->log_display($loghtml);
+}
+
 echo $OUTPUT->footer();

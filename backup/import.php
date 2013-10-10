@@ -99,6 +99,10 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     $progress->start_progress('', 2);
     $backup->get_controller()->set_progress($progress);
 
+    // Prepare logger for backup.
+    $logger = new core_backup_html_logger($CFG->debugdeveloper ? backup::LOG_DEBUG : backup::LOG_INFO);
+    $backup->get_controller()->add_logger($logger);
+
     // First execute the backup
     $backup->execute();
     $backup->destroy();
@@ -123,6 +127,10 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // (the precheck and then the actual restore).
     $progress->start_progress('Restore process', 2);
     $rc->set_progress($progress);
+
+    // Set logger for restore.
+    $rc->add_logger($logger);
+
     // Convert the backup if required.... it should NEVER happed
     if ($rc->get_status() == backup::STATUS_REQUIRE_CONV) {
         $rc->convert();
@@ -178,6 +186,13 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     }
     echo $OUTPUT->notification(get_string('importsuccess', 'backup'), 'notifysuccess');
     echo $OUTPUT->continue_button(new moodle_url('/course/view.php', array('id'=>$course->id)));
+
+    // Get and display log data if there was any.
+    $loghtml = $logger->get_html();
+    if ($loghtml != '') {
+        echo $renderer->log_display($loghtml);
+    }
+
     echo $OUTPUT->footer();
 
     die();
