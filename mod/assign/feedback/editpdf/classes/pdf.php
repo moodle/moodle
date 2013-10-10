@@ -401,11 +401,16 @@ class pdf extends \FPDI {
                 "-dGraphicsAlphaBits=4 -dTextAlphaBits=4 -sOutputFile=\"$imagefile\" \"$filename\"";
 
             //$command = escapeshellcmd($command);
-            $result = exec($command);
+            $output = null;
+            $result = exec($command, $output);
             if (!file_exists($imagefile)) {
-                $fullerror = 'Command:' . ($command) . '<br/>';
-                $fullerror .= 'Result:' . htmlspecialchars($result) . '<br/>';
-                throw new \moodle_exception('errorgenerateimage', 'assignfeedback_pdf', '', $fullerror);
+                $fullerror = '<pre>'.get_string('command', 'assignfeedback_editpdf')."\n";
+                $fullerror .= $command . "\n\n";
+                $fullerror .= get_string('result', 'assignfeedback_editpdf')."\n";
+                $fullerror .= htmlspecialchars($result) . "\n\n";
+                $fullerror .= get_string('output', 'assignfeedback_editpdf')."\n";
+                $fullerror .= htmlspecialchars(implode("\n",$output)) . '</pre>';
+                throw new \moodle_exception('errorgenerateimage', 'assignfeedback_editpdf', '', $fullerror);
             }
         }
 
