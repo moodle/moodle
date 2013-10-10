@@ -1252,6 +1252,9 @@ class page_requirements_manager {
         $baserollups = array(
             'rollup/' . $CFG->yui3version . '/yui-moodlesimple-min.js',
         );
+        // The reason for separate rollups is that the Y = YUI().use('*') call is run async and
+        // it gets it's knickers in a twist. Putting it in a separate <script>
+        // to the moodle rollup means that it's completed before the moodle one starts.
         $moodlerollups = array(
             'rollup/' . $jsrev . '/mcore-min.js',
         );
