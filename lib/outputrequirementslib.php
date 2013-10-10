@@ -188,13 +188,7 @@ class page_requirements_manager {
         // Enable combo loader? This significantly helps with caching and performance!
         $this->yui3loader->combine = !empty($CFG->yuicomboloading);
 
-        if (empty($CFG->cachejs)) {
-            $jsrev = -1;
-        } else if (empty($CFG->jsrev)) {
-            $jsrev = 1;
-        } else {
-            $jsrev = $CFG->jsrev;
-        }
+        $jsrev = $this->get_jsrev();
 
         // Set up JS YUI loader helper object.
         $this->YUI_config->base         = $this->yui3loader->base;
@@ -287,7 +281,7 @@ class page_requirements_manager {
             'themerev'            => theme_get_revision(),
             'slasharguments'      => (int)(!empty($CFG->slasharguments)),
             'theme'               => $page->theme->name,
-            'jsrev'               => ((empty($CFG->cachejs) or empty($CFG->jsrev)) ? -1 : $CFG->jsrev),
+            'jsrev'               => $this->get_jsrev(),
             'svgicons'            => $page->theme->use_svg_icons()
         );
         if ($CFG->debugdeveloper) {
@@ -327,6 +321,25 @@ class page_requirements_manager {
                                   'moodle');
             $page->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', array($params), null, true);
         }
+    }
+
+    /**
+     * Determine the correct JS Revision to use for this load.
+     *
+     * @return int the jsrev to use.
+     */
+    protected function get_jsrev() {
+        global $CFG;
+
+        if (empty($CFG->cachejs)) {
+            $jsrev = -1;
+        } else if (empty($CFG->jsrev)) {
+            $jsrev = 1;
+        } else {
+            $jsrev = $CFG->jsrev;
+        }
+
+        return $jsrev;
     }
 
     /**
@@ -638,11 +651,7 @@ class page_requirements_manager {
                 }
             }
             if (substr($url, -3) === '.js') {
-                if (empty($CFG->cachejs) or !isset($CFG->jsrev)) {
-                    $jsrev = -1;
-                } else {
-                    $jsrev = (int)$CFG->jsrev;
-                }
+                $jsrev = $this->get_jsrev();
                 if (empty($CFG->slasharguments)) {
                     return new moodle_url($CFG->httpswwwroot.'/lib/javascript.php', array('rev'=>$jsrev, 'jsfile'=>$url));
                 } else {
@@ -1237,87 +1246,29 @@ class page_requirements_manager {
     protected function get_yui3lib_headcode($page) {
         global $CFG;
 
-        /*
-         * Created via http://yuilibrary.com/yui/configurator/ so that it emulates
-         * original SimpleYUI + all loaders:
-         *
-            "use": [
-                "yui",
-                "oop",
-                "dom",
-                "event-custom-base",
-                "event-base",
-                "pluginhost",
-                "node",
-                "event-delegate",
-                "io-base",
-                "json-parse",
-                "transition",
-                "selector-css3",
-                "dom-style-ie",
-                "querystring-stringify-simple"
-            ]
-         */
-
-
-        $requiremodules = array(
-            // Include everything from original SimpleYUI.
-            'yui',
-            'yui-base',
-            'get',
-            'features',
-            'loader-base',
-            'loader-rollup',
-            'loader-yui3',
-            'oop',
-            'event-custom-base',
-            'dom-core',
-            'dom-base',
-            'color-base',
-            'dom-style',
-            'selector-native',
-            'selector',
-            'node-core',
-            'node-base',
-            'event-base',
-            'event-base-ie',
-            'pluginhost-base',
-            'pluginhost-config',
-            'event-delegate',
-            'node-event-delegate',
-            'node-pluginhost',
-            'dom-screen',
-            'node-screen',
-            'node-style',
-            'querystring-stringify-simple',
-            'io-base',
-            'json-parse',
-            'transition',
-            'selector-css2',
-            'selector-css3',
-            'dom-style-ie',
-            // Some extras we use everywhere.
-            'escape',
-        );
-
         $code = '';
 
-        // Note 1: strlen(implode('&amp;', $modules)) + combo script URL should be kept under 2048 bytes.
-        // Note 2: There are some bogus @version@ in YUI 3.13.0 - always use local files to emulate SimpleYUI.
+        $jsrev = $this->get_jsrev();
+        $baserollups = array(
+            'rollup/' . $CFG->yui3version . '/simpleyui-min.js',
+        );
+        $moodlerollups = array(
+            'rollup/' . $jsrev . '/mcore-min.js',
+        );
 
         if ($this->yui3loader->combine) {
             if (!empty($page->theme->yuicssmodules)) {
+                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
+                        . implode('&amp;', $baserollups) . '"></script>';
+                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
+                        . implode('&amp;', $moodlerollups) . '"></script>';
+
                 $modules = array();
                 foreach ($page->theme->yuicssmodules as $module) {
                     $modules[] = "$CFG->yui3version/$module/$module-min.css";
                 }
                 $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->comboBase.implode('&amp;', $modules).'" />';
             }
-            $modules = array();
-            foreach ($requiremodules as $module) {
-                $modules[] = "$CFG->yui3version/$module/$module-min.js";
-            }
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase.implode('&amp;', $modules).'"></script>';
 
         } else {
             if (!empty($page->theme->yuicssmodules)) {
@@ -1325,8 +1276,11 @@ class page_requirements_manager {
                     $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.$module.'/'.$module.'-min.css" />';
                 }
             }
-            foreach ($requiremodules as $module) {
-                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_base.$module.'/'.$module.'-min.js';
+            foreach ($baserollups as $rollup) {
+                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase.$rollup.'"></script>';
+            }
+            foreach ($moodlerollups as $rollup) {
+                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase.$rollup.'"></script>';
             }
         }
 
@@ -1338,9 +1292,6 @@ class page_requirements_manager {
             $code = str_replace('-min.css', '.css', $code);
             $code = str_replace('-min.js', '-debug.js', $code);
         }
-
-        // Emulate SimpleYUI for now.
-        $code .= '<script type="text/javascript">var Y = YUI().use(\'*\');</script>';
 
         return $code;
     }

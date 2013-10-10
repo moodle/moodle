@@ -133,6 +133,48 @@ while (count($parts)) {
 
                 // Some extras we use everywhere.
                 'escape',
+
+                'attribute-core',
+                'event-custom-complex',
+                'base-core',
+                'attribute-base',
+                'attribute-extras',
+                'attribute-observable',
+                'base-observable',
+                'base-base',
+                'base-pluginhost',
+                'base-build',
+                'event-synthetic',
+
+                'attribute-complex',
+                'event-mouseenter',
+                'event-key',
+                'event-outside',
+                'event-autohide',
+                'event-focus',
+                'classnamemanager',
+                'widget-base',
+                'widget-htmlparser',
+                'widget-skin',
+                'widget-uievents',
+                'widget-stdmod',
+                'widget-position',
+                'widget-position-align',
+                'widget-stack',
+                'widget-position-constrain',
+                'overlay',
+
+
+                'widget-autohide',
+                'button-core',
+                'button-plugin',
+                'widget-buttons',
+                'widget-modality',
+                'panel',
+                'yui-throttle',
+                'dd-ddm-base',
+                'dd-drag',
+                'dd-plugin',
             );
 
             // We need to add these new parts to the beginning of the $parts list, not the end.
@@ -140,6 +182,7 @@ while (count($parts)) {
             foreach ($yuimodules as $module) {
                 $newparts[] = $revision . '/' . $module . '/' . $module . $filesuffix;
             }
+            $newparts[] = 'yuiuseall/yuiuseall';
             $parts = array_merge($newparts, $parts);
         }
 
@@ -147,6 +190,7 @@ while (count($parts)) {
         if (strpos($rollupname, 'mcore') !== false) {
             $yuimodules = array(
                 'core/tooltip/tooltip',
+                'core/dock/dock-loader',
                 'core/notification/notification-dialogue',
             );
 
@@ -216,6 +260,9 @@ while (count($parts)) {
 
     } else if ($version == 'gallery') {
         $contentfile = "$CFG->libdir/yui/$part";
+
+    } else if ($version == 'yuiuseall') {
+        $filecontent = "var Y = YUI().use('*');";
 
     } else {
         if ($version != $CFG->yui3version) {
