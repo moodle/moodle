@@ -198,10 +198,14 @@ class core_component_testcase extends advanced_testcase {
 
     public function test_is_valid_plugin_name() {
         $this->assertTrue(core_component::is_valid_plugin_name('mod', 'example1'));
+        $this->assertTrue(core_component::is_valid_plugin_name('mod', 'feedback360'));
+        $this->assertFalse(core_component::is_valid_plugin_name('mod', 'feedback_360'));
+        $this->assertFalse(core_component::is_valid_plugin_name('mod', '2feedback'));
         $this->assertFalse(core_component::is_valid_plugin_name('mod', '1example'));
         $this->assertFalse(core_component::is_valid_plugin_name('mod', 'example.xx'));
         $this->assertFalse(core_component::is_valid_plugin_name('mod', '.example'));
         $this->assertFalse(core_component::is_valid_plugin_name('mod', '_example'));
+        $this->assertFalse(core_component::is_valid_plugin_name('mod', 'example_'));
         $this->assertFalse(core_component::is_valid_plugin_name('mod', 'example_x1'));
         $this->assertFalse(core_component::is_valid_plugin_name('mod', 'example-x1'));
         $this->assertFalse(core_component::is_valid_plugin_name('mod', 'role'));
@@ -209,12 +213,16 @@ class core_component_testcase extends advanced_testcase {
         $this->assertTrue(core_component::is_valid_plugin_name('tool', 'example1'));
         $this->assertTrue(core_component::is_valid_plugin_name('tool', 'example_x1'));
         $this->assertTrue(core_component::is_valid_plugin_name('tool', 'example_x1_xxx'));
+        $this->assertTrue(core_component::is_valid_plugin_name('tool', 'feedback360'));
+        $this->assertTrue(core_component::is_valid_plugin_name('tool', 'feed_back360'));
         $this->assertTrue(core_component::is_valid_plugin_name('tool', 'role'));
         $this->assertFalse(core_component::is_valid_plugin_name('tool', '1example'));
         $this->assertFalse(core_component::is_valid_plugin_name('tool', 'example.xx'));
         $this->assertFalse(core_component::is_valid_plugin_name('tool', 'example-xx'));
         $this->assertFalse(core_component::is_valid_plugin_name('tool', '.example'));
         $this->assertFalse(core_component::is_valid_plugin_name('tool', '_example'));
+        $this->assertFalse(core_component::is_valid_plugin_name('tool', 'example_'));
+        $this->assertFalse(core_component::is_valid_plugin_name('tool', 'example__x1'));
     }
 
     public function test_normalize_component() {
