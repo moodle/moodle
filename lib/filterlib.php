@@ -1124,6 +1124,10 @@ function filter_delete_all_for_context($contextid) {
  */
 function filter_has_global_settings($filter) {
     global $CFG;
+    $settingspath = $CFG->dirroot . '/filter/' . $filter . '/settings.php';
+    if (is_readable($settingspath)) {
+        return true;
+    }
     $settingspath = $CFG->dirroot . '/filter/' . $filter . '/filtersettings.php';
     return is_readable($settingspath);
 }
