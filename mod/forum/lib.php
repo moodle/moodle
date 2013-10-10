@@ -1511,9 +1511,9 @@ function forum_print_recent_activity($course, $viewfullnames, $timestart) {
 
     // do not use log table if possible, it may be huge and is expensive to join with other tables
 
+    $allnamefields = user_picture::fields('u', null, 'duserid');
     if (!$posts = $DB->get_records_sql("SELECT p.*, f.type AS forumtype, d.forum, d.groupid,
-                                              d.timestart, d.timeend, d.userid AS duserid,
-                                              u.firstname, u.lastname, u.email, u.picture
+                                              d.timestart, d.timeend, $allnamefields
                                          FROM {forum_posts} p
                                               JOIN {forum_discussions} d ON d.id = p.discussion
                                               JOIN {forum} f             ON f.id = d.forum
