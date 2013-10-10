@@ -595,7 +595,7 @@ class restore_ui_stage_schema extends restore_ui_stage {
             // Track progress through each stage.
             $progress = $this->ui->get_progress_reporter();
             $progress->start_progress('Initialise schema stage form', 3);
-            
+
             $progress->start_progress('', count($tasks));
             $done = 1;
             $allsettings = array();
