@@ -25,6 +25,7 @@
  */
 
 define('AJAX_SCRIPT', true);
+define('NO_MOODLE_COOKIES', true); // No need for a session here.
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 
