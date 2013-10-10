@@ -68,7 +68,8 @@ $parts = explode('&', $parts);
 $cache = true;
 $lastmodified = 0;
 
-foreach ($parts as $part) {
+while (count($parts)) {
+    $part = array_shift($parts);
     if (empty($part)) {
         continue;
     }
@@ -81,6 +82,88 @@ foreach ($parts as $part) {
     }
     //debug($bits);
     $version = array_shift($bits);
+    if ($version === 'rollup') {
+        $revision = array_shift($bits);
+        $rollupname = array_shift($bits);
+
+        // Determine whether we should minify this rollup.
+        preg_match('/(-min)?\.js/', $rollupname, $matches);
+        $filesuffix = '.js';
+        if (isset($matches[1])) {
+            $filesuffix = '-min.js';
+        }
+
+        if (strpos($rollupname, 'simpleyui') !== false) {
+            $yuimodules = array(
+                // Include everything from original SimpleYUI.
+                'yui',
+                'yui-base',
+                'get',
+                'features',
+                'loader-base',
+                'loader-rollup',
+                'loader-yui3',
+                'oop',
+                'event-custom-base',
+                'dom-core',
+                'dom-base',
+                'color-base',
+                'dom-style',
+                'selector-native',
+                'selector',
+                'node-core',
+                'node-base',
+                'event-base',
+                'event-base-ie',
+                'pluginhost-base',
+                'pluginhost-config',
+                'event-delegate',
+                'node-event-delegate',
+                'node-pluginhost',
+                'dom-screen',
+                'node-screen',
+                'node-style',
+                'querystring-stringify-simple',
+                'io-base',
+                'json-parse',
+                'transition',
+                'selector-css2',
+                'selector-css3',
+                'dom-style-ie',
+
+                // Some extras we use everywhere.
+                'escape',
+            );
+
+            // We need to add these new parts to the beginning of the $parts list, not the end.
+            $newparts = array();
+            foreach ($yuimodules as $module) {
+                $newparts[] = $revision . '/' . $module . '/' . $module . $filesuffix;
+            }
+            $parts = array_merge($newparts, $parts);
+        }
+
+        // Handle the mcore rollup.
+        if (strpos($rollupname, 'mcore') !== false) {
+            $yuimodules = array(
+                'core/tooltip/tooltip',
+                'core/notification/notification-dialogue',
+            );
+
+            $filesuffix = '.js';
+            if (isset($matches[1])) {
+                $filesuffix = '-min.js';
+            }
+
+            // We need to add these new parts to the beginning of the $parts list, not the end.
+            $newparts = array();
+            foreach ($yuimodules as $module) {
+                $newparts[] = 'm/' . $revision . '/' . $module . $filesuffix;
+            }
+            $parts = array_merge($newparts, $parts);
+        }
+        continue;
+    }
     if ($version === 'm') {
         $version = 'moodle';
     }
