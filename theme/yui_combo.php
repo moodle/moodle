@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file is responsible for serving of yui images
+ * This file is responsible for serving of yui Javascript and CSS
  *
  * @package   core
  * @copyright 2009 Petr Skoda (skodak)  {@link http://skodak.org}
@@ -80,7 +80,7 @@ while (count($parts)) {
         $content .= "\n// Wrong combo resource $part!\n";
         continue;
     }
-    //debug($bits);
+
     $version = array_shift($bits);
     if ($version === 'rollup') {
         $revision = array_shift($bits);
@@ -95,7 +95,9 @@ while (count($parts)) {
 
         if (strpos($rollupname, 'simpleyui') !== false) {
             $yuimodules = array(
-                // Include everything from original SimpleYUI.
+                // Include everything from original SimpleYUI,
+                // this list can be built using http://yuilibrary.com/yui/configurator/ by selecting all modules
+                // listed in https://github.com/yui/yui3/blob/v3.12.0/build/simpleyui/simpleyui.js#L21327
                 'yui',
                 'yui-base',
                 'get',
@@ -163,7 +165,6 @@ while (count($parts)) {
                 'widget-stack',
                 'widget-position-constrain',
                 'overlay',
-
 
                 'widget-autohide',
                 'button-core',
@@ -262,6 +263,8 @@ while (count($parts)) {
         $contentfile = "$CFG->libdir/yui/$part";
 
     } else if ($version == 'yuiuseall') {
+        // Create global Y that is available in global scope,
+        // this is the trick behind original SimpleYUI.
         $filecontent = "var Y = YUI().use('*');";
 
     } else {

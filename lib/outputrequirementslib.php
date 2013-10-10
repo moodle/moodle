@@ -1284,7 +1284,6 @@ class page_requirements_manager {
             }
         }
 
-
         if ($this->yui3loader->filter === 'RAW') {
             $code = str_replace('-min.css', '.css', $code);
             $code = str_replace('-min.js', '.js', $code);
