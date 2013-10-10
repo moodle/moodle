@@ -294,9 +294,9 @@ if (($action == 'edit') || ($action == 'new')) {
 
     // Get list of used plug-ins
     $repositorytypes = repository::get_types();
+    // Array to store plugins being used
+    $alreadyplugins = array();
     if (!empty($repositorytypes)) {
-        // Array to store plugins being used
-        $alreadyplugins = array();
         $totalrepositorytypes = count($repositorytypes);
         $updowncount = 1;
         foreach ($repositorytypes as $i) {
