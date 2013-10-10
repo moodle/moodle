@@ -243,7 +243,7 @@ abstract class backup_general_helper extends backup_helper {
         // Extract moodle_backup.xml.
         $tmpname = 'info_from_mbz_' . time() . '_' . random_string(4);
         $tmpdir = $CFG->tempdir . '/backup/' . $tmpname;
-        $packer = get_file_packer('application/vnd.moodle.backup');
+        $fp = get_file_packer('application/vnd.moodle.backup');
 
         $extracted = $fp->extract_to_pathname($filepath, $tmpdir, array('moodle_backup.xml'));
         $moodlefile =  $tmpdir . '/' . 'moodle_backup.xml';
