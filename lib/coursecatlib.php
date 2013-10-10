@@ -1256,6 +1256,15 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             if (!empty($ids)) {
                 list($sql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'id');
                 $records = self::get_course_records("c.id ". $sql, $params, $options);
+                // Preload course contacts if necessary - saves DB queries later to do it for each course separately.
+                if (!empty($options['coursecontacts'])) {
+                    self::preload_course_contacts($records);
+                }
+                // If option 'idonly' is specified no further action is needed, just return list of ids.
+                if (!empty($options['idonly'])) {
+                    return array_keys($records);
+                }
+                // Prepare the list of course_in_list objects.
                 foreach ($ids as $id) {
                     $courses[$id] = new course_in_list($records[$id]);
                 }
@@ -1307,6 +1316,11 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         if (!empty($preloadcoursecontacts)) {
             self::preload_course_contacts($records);
         }
+        // If option 'idonly' is specified no further action is needed, just return list of ids.
+        if (!empty($options['idonly'])) {
+            return array_keys($records);
+        }
+        // Prepare the list of course_in_list objects.
         $courses = array();
         foreach ($records as $record) {
             $courses[$record->id] = new course_in_list($record);
@@ -1335,6 +1349,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             unset($options['limit']);
             unset($options['summary']);
             unset($options['coursecontacts']);
+            $options['idonly'] = true;
             $courses = self::search_courses($search, $options);
             $cnt = count($courses);
         }
@@ -1374,6 +1389,8 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      *             Only cached fields may be used for sorting!
      *    - offset
      *    - limit - maximum number of children to return, 0 or null for no limit
+     *    - idonly - returns the array or course ids instead of array of objects
+     *               used only in get_courses_count()
      * @return course_in_list[]
      */
     public function get_courses($options = array()) {
@@ -1403,6 +1420,15 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             if (!empty($ids)) {
                 list($sql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'id');
                 $records = self::get_course_records("c.id ". $sql, $params, $options);
+                // Preload course contacts if necessary - saves DB queries later to do it for each course separately.
+                if (!empty($options['coursecontacts'])) {
+                    self::preload_course_contacts($records);
+                }
+                // If option 'idonly' is specified no further action is needed, just return list of ids.
+                if (!empty($options['idonly'])) {
+                    return array_keys($records);
+                }
+                // Prepare the list of course_in_list objects.
                 foreach ($ids as $id) {
                     $courses[$id] = new course_in_list($records[$id]);
                 }
@@ -1441,6 +1467,11 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             if (!empty($options['coursecontacts'])) {
                 self::preload_course_contacts($list);
             }
+            // If option 'idonly' is specified no further action is needed, just return list of ids.
+            if (!empty($options['idonly'])) {
+                return array_keys($list);
+            }
+            // Prepare the list of course_in_list objects.
             foreach ($list as $record) {
                 $courses[$record->id] = new course_in_list($record);
             }
@@ -1464,6 +1495,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             unset($options['limit']);
             unset($options['summary']);
             unset($options['coursecontacts']);
+            $options['idonly'] = true;
             $courses = $this->get_courses($options);
             $cnt = count($courses);
         }
