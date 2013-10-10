@@ -22,11 +22,11 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once '../../../config.php';
-require_once $CFG->libdir.'/gradelib.php';
-require_once $CFG->dirroot.'/user/renderer.php';
-require_once $CFG->dirroot.'/grade/lib.php';
-require_once $CFG->dirroot.'/grade/report/grader/lib.php';
+require_once('../../../config.php');
+require_once($CFG->libdir.'/gradelib.php');
+require_once($CFG->dirroot.'/user/renderer.php');
+require_once($CFG->dirroot.'/grade/lib.php');
+require_once($CFG->dirroot.'/grade/report/grader/lib.php');
 
 $courseid      = required_param('id', PARAM_INT);        // course id
 $page          = optional_param('page', 0, PARAM_INT);   // active page
@@ -37,23 +37,23 @@ $action        = optional_param('action', 0, PARAM_ALPHAEXT);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);
 $target        = optional_param('target', 0, PARAM_ALPHANUM);
-$toggle        = optional_param('toggle', NULL, PARAM_INT);
+$toggle        = optional_param('toggle', null, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
-$graderreportsifirst  = optional_param('sifirst', NULL, PARAM_ALPHA);
-$graderreportsilast   = optional_param('silast', NULL, PARAM_ALPHA);
+$graderreportsifirst  = optional_param('sifirst', null, PARAM_ALPHA);
+$graderreportsilast   = optional_param('silast', null, PARAM_ALPHA);
 
 // The report object is recreated each time, save search information to SESSION object for future use.
 if (isset($graderreportsifirst)) {
-    $SESSION->filterfirstname = $graderreportsifirst; 
-}  
+    $SESSION->gradereport['filterfirstname'] = $graderreportsifirst;
+}
 if (isset($graderreportsilast)) {
-    $SESSION->filtersurname = $graderreportsilast;
-} 
+    $SESSION->gradereport['filtersurname'] = $graderreportsilast;
+}
 
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 
-/// basic access checks
+// basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
@@ -63,16 +63,16 @@ $context = context_course::instance($course->id);
 require_capability('gradereport/grader:view', $context);
 require_capability('moodle/grade:viewall', $context);
 
-/// return tracking object
+// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'report', 'plugin'=>'grader', 'courseid'=>$courseid, 'page'=>$page));
 
-/// last selected report session tracking
+// last selected report session tracking
 if (!isset($USER->grade_last_report)) {
     $USER->grade_last_report = array();
 }
 $USER->grade_last_report[$course->id] = 'grader';
 
-/// Build editing on/off buttons
+// Build editing on/off buttons
 
 if (!isset($USER->gradeediting)) {
     $USER->gradeediting = array();
@@ -124,7 +124,7 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 
 $reportname = get_string('pluginname', 'gradereport_grader');
 
-/// Print header
+// Print header
 print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons);
 
 //Initialise the grader report object that produces the table
@@ -139,7 +139,7 @@ if ($report->currentgroup == -2) {
     exit;
 }
 
-/// processing posted grades & feedback here
+// processing posted grades & feedback here
 if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {
     $warnings = $report->process_data($data);
 } else {
@@ -153,14 +153,14 @@ echo $report->group_selector;
 
 // User search
 $url = new moodle_url('/grade/report/grader/index.php', array('id' => $course->id));
-$firstinitial = isset($SESSION->filterfirstname) ? $SESSION->filterfirstname : '';
-$lastinitial  = isset($SESSION->filtersurname) ? $SESSION->filtersurname : '';
+$firstinitial = isset($SESSION->gradereport['filterfirstname']) ? $SESSION->gradereport['filterfirstname'] : '';
+$lastinitial  = isset($SESSION->gradereport['filtersurname']) ? $SESSION->gradereport['filtersurname'] : '';
 $totalusers = $report->get_numusers(true, false);
 $renderer = $PAGE->get_renderer('core_user');
 echo $renderer->user_search($url, $firstinitial, $lastinitial, $numusers, $totalusers, $report->currentgroupname);
 
 //show warnings if any
-foreach($warnings as $warning) {
+foreach ($warnings as $warning) {
     echo $OUTPUT->notification($warning);
 }
 
