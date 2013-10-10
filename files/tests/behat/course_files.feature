@@ -1,4 +1,4 @@
-@files @files_course @_only_local
+@core @core_files @_only_local
 Feature: Course files
   In order to add legacy files
   As a user
@@ -13,13 +13,13 @@ Feature: Course files
     And I set the following administration settings values:
       | Legacy course files in new courses | 1 |
       | Allow adding to legacy course files | 1 |
-    And I follow "Home"
+    When I follow "Home"
     And I follow "Course 1"
     Then I should see "Legacy course files"
     And I follow "Legacy course files"
     And I press "Edit legacy course files"
-    Then I should see "Add..."
-    Then I should see "Create folder"
+    And I should see "Add..."
+    And I should see "Create folder"
 
 ##Commented out pending MDL-42013 visibility checking.
 #  @javascript
@@ -31,10 +31,10 @@ Feature: Course files
 #    And I set the following administration settings values:
 #      | Legacy course files in new courses | 1 |
 #      | Allow adding to legacy course files | 0 |
-#    And I follow "Home"
+#    When I follow "Home"
 #    And I follow "Course 1"
 #    Then I should see "Legacy course files"
 #    And I follow "Legacy course files"
 #    And I press "Edit legacy course files"
-#    Then I should not see "Add..."
-#    Then I should not see "Create folder"
+#    And I should not see "Add..."
+#    And I should not see "Create folder"
