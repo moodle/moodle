@@ -34,7 +34,7 @@ $setting = new admin_setting_configstoredfile($name, $title, $description, 'stam
 $settings->add($setting);
 
 // Ghostscript setting.
-$settings->add(new admin_setting_configtext('assignfeedback_editpdf/gspath',
+$settings->add(new admin_setting_configexecutable('assignfeedback_editpdf/gspath',
                                             get_string('gspath', 'assignfeedback_editpdf'),
                                             get_string('gspath_help', 'assignfeedback_editpdf'), '/usr/bin/gs'));
 
