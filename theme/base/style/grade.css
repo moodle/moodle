@@ -66,3 +66,13 @@
 .path-grade-report-user h2 {
     clear:both;
 }
+
+/** pre-2.6 outcomes **/
+#page-grade-edit-outcome-course .courseoutcomes {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+#page-grade-edit-outcome-course .courseoutcomes td {
+    text-align:center;
+}
