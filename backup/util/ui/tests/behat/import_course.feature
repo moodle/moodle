@@ -31,5 +31,5 @@ Feature: Import course's contents into another course
     When I import "Course 1" course into "Course 2" course using this options:
     Then I should see "Test database name"
     And I should see "Test forum name"
-    And I should see "Comments"
+    And I should see "Comments" in the "Comments" "block"
     And I should see "Recent blog entries"

@@ -23,7 +23,7 @@ Feature: Restore Moodle 2 course backups
       | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into "Course 2" course using this options:
     Then I should see "Course 2"
-    And I should see "Community finder"
+    And I should see "Community finder" in the "Community finder" "block"
     And I should see "Test forum name"
 
   @javascript
@@ -33,7 +33,7 @@ Feature: Restore Moodle 2 course backups
     And I restore "test_backup.mbz" backup into a new course using this options:
       | Course name | Course 1 restored in a new course |
     Then I should see "Course 1 restored in a new course"
-    And I should see "Community finder"
+    And I should see "Community finder" in the "Community finder" "block"
     And I should see "Test forum name"
     And I follow "Edit settings"
     And I expand all fieldsets
@@ -51,7 +51,7 @@ Feature: Restore Moodle 2 course backups
       | setting_section_section_5_userinfo | 0 |
     Then I should see "Course 1"
     And I should not see "Section 3"
-    And I should see "Community finder"
+    And I should see "Community finder" in the "Community finder" "block"
     And I should see "Test forum name"
 
   @javascript
@@ -69,7 +69,7 @@ Feature: Restore Moodle 2 course backups
     Then I should see "Course 1"
     And I should not see "Section 3"
     And I should not see "Test forum post backup name"
-    And I should see "Community finder"
+    And I should see "Community finder" in the "Community finder" "block"
     And I should see "Test forum name"
 
   @javascript
