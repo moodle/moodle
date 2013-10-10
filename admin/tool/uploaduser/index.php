@@ -99,12 +99,16 @@ $STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
 
 $PRF_FIELDS = array();
 
-if ($prof_fields = $DB->get_records('user_info_field')) {
-    foreach ($prof_fields as $prof_field) {
-        $PRF_FIELDS[] = 'profile_field_'.$prof_field->shortname;
+if ($proffields = $DB->get_records('user_info_field')) {
+    foreach ($proffields as $key => $proffield) {
+        $profilefieldname = 'profile_field_'.$proffield->shortname;
+        $PRF_FIELDS[] = $profilefieldname;
+        // Re-index $proffields with key as shortname. This will be
+        // used while checking if profile data is key and needs to be converted (eg. menu profile field)
+        $proffields[$profilefieldname] = $proffield;
+        unset($proffields[$key]);
     }
 }
-unset($prof_fields);
 
 if (empty($iid)) {
     $mform1 = new admin_uploaduser_form1();
@@ -371,6 +375,16 @@ if ($formdata = $mform2->is_cancelled()) {
             if (isset($formdata->$field)) {
                 // process templates
                 $user->$field = uu_process_template($formdata->$field, $user);
+
+                // Form contains key and later code expects value.
+                // Convert key to value for required profile fields.
+                require_once($CFG->dirroot.'/user/profile/field/'.$proffields[$field]->datatype.'/field.class.php');
+                $profilefieldclass = 'profile_field_'.$proffields[$field]->datatype;
+                $profilefield = new $profilefieldclass($proffields[$field]->id);
+                if (method_exists($profilefield, 'convert_external_data')) {
+                    $user->$field = $profilefield->edit_save_data_preprocess($user->$field, null);
+                }
+
                 $formdefaults[$field] = true;
             }
         }
