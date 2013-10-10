@@ -490,6 +490,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame('', clean_param('auth_something__xx', PARAM_COMPONENT));
         $this->assertSame('', clean_param('mod_Something', PARAM_COMPONENT));
         $this->assertSame('', clean_param('mod_somethíng', PARAM_COMPONENT));
+        $this->assertSame('', clean_param('mod__something', PARAM_COMPONENT));
         $this->assertSame('', clean_param('auth_xx-yy', PARAM_COMPONENT));
         $this->assertSame('', clean_param('_auth_xx', PARAM_COMPONENT));
         $this->assertSame('', clean_param('a2uth_xx', PARAM_COMPONENT));
