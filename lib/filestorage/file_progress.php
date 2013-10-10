@@ -38,13 +38,31 @@ interface file_progress {
      * This function will be called periodically during the operation, assuming
      * it is successful.
      *
+     * The $max value will be the same for each call to progress() within an
+     * operation.
+     *
      * If numbers (rather than INDETERMINATE) are provided, then:
      * - The $progress value will either be the same as last call, or increased
-     *   by some value (not necessarily 1).
+     *   by some value (not necessarily 1)
      * - The $progress value will be less than or equal to the $max value.
      *
      * There is no guarantee that this function will be called for every value
      * in the range, or that it will be called with $progress == $max.
+     *
+     * The function may be called very frequently (e.g. after each file) or
+     * quite rarely (e.g. after each large file).
+     *
+     * When creating an implementation of this function, you probably want to
+     * do the following:
+     *
+     * 1. Check the current time and do not do anything if it's less than a
+     *    second since the last time you reported something.
+     * 2. Update the PHP timeout (i.e. set it back to 2 minutes or whatever)
+     *    so that the system will not time out.
+     * 3. If the progress is unchanged since last second, still display some
+     *    output to the user. (Setting PHP timeout is not sufficient; some
+     *    front-end servers require that data is output to the browser every
+     *    minute or so, or they will time out on their own.)
      *
      * @param int $progress Current progress, or INDETERMINATE if unknown
      * @param int $max Max progress, or INDETERMINATE if unknown

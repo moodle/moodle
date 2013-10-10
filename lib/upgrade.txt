@@ -42,6 +42,11 @@ information provided here is intended especially for developers.
 * Module and block tables do not contain version column any more, use get_config('xx_yy', 'version') instead.
 * $USER->password field is intentionally unset so that session data does not contain password hashes.
 * Use core_shutdown_manager::register_function() instead of register_shutdown_function().
+* New file packer for .tar.gz files; obtain by calling get_file_packer('application/x-gzip'). Intended initially
+  for use in backup/restore only, as there are limitations on supported filenames. Also new packer for
+  backups which supports both compression formats; get_file_packer('application/vnd.moodle.backup').
+* New optional parameter to stored_file::get_content_file_handle to open file handle with 'gzopen' instead
+  of 'fopen' to read gzip-compressed files if required.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
