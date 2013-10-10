@@ -47,14 +47,14 @@ div.editor_atto_toolbar button[disabled] {
     cursor: default;
 }
 
-.editor_atto_toolbar button:active {
-    background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
-    background-color: #dfdfdf;
-}
-
 .editor_atto_toolbar button:hover {
     background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
     background-color: #ebebeb;
+}
+
+.editor_atto_toolbar button:active {
+    background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
+    background-color: #dfdfdf;
 }
 
 div.editor_atto_toolbar button img {
