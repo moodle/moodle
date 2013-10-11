@@ -101,7 +101,7 @@ groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/chat/view.php?id=$cm->id")
 $params = array();
 if ($currentgroup) {
     $groupselect = " AND groupid = '$currentgroup'";
-    $groupparam = "&amp;groupid=$currentgroup";
+    $groupparam = "_group{$currentgroup}";
     $params['groupid'] = $currentgroup;
 } else {
     $groupselect = "";
@@ -129,12 +129,12 @@ if (has_capability('mod/chat:chat', $context)) {
     $params['id'] = $chat->id;
     $chattarget = new moodle_url("/mod/chat/gui_$CFG->chat_method/index.php", $params);
     echo '<p>';
-    echo $OUTPUT->action_link($chattarget, $strenterchat, new popup_action('click', $chattarget, "chat$course->id$chat->id$groupparam", array('height' => 500, 'width' => 700)));
+    echo $OUTPUT->action_link($chattarget, $strenterchat, new popup_action('click', $chattarget, "chat{$course->id}_{$chat->id}{$groupparam}", array('height' => 500, 'width' => 700)));
     echo '</p>';
 
     $params['id'] = $chat->id;
     $link = new moodle_url('/mod/chat/gui_basic/index.php', $params);
-    $action = new popup_action('click', $link, "chat{$course->id}{$chat->id}{$groupparam}", array('height' => 500, 'width' => 700));
+    $action = new popup_action('click', $link, "chat{$course->id}_{$chat->id}{$groupparam}", array('height' => 500, 'width' => 700));
     echo '<p>';
     echo $OUTPUT->action_link($link, get_string('noframesjs', 'message'), $action, array('title'=>get_string('modulename', 'chat')));
     echo '</p>';
