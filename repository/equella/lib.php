@@ -170,7 +170,7 @@ class repository_equella extends repository {
      *   url: URL to the source (from parameters)
      */
     public function get_file($reference, $filename = '') {
-        global $USER;
+        global $USER, $CFG;
         $ref = @unserialize(base64_decode($reference));
         if (!isset($ref->url) || !($url = $this->appendtoken($ref->url))) {
             // Occurs when the user isn't known..
@@ -179,7 +179,7 @@ class repository_equella extends repository {
         $path = $this->prepare_file($filename);
         $cookiepathname = $this->prepare_file($USER->id. '_'. uniqid('', true). '.cookie');
         $c = new curl(array('cookie'=>$cookiepathname));
-        $result = $c->download_one($url, null, array('filepath' => $path, 'followlocation' => true, 'timeout' => self::GETFILE_TIMEOUT));
+        $result = $c->download_one($url, null, array('filepath' => $path, 'followlocation' => true, 'timeout' => $CFG->repositorygetfiletimeout));
         // Delete cookie jar.
         if (file_exists($cookiepathname)) {
             unlink($cookiepathname);
@@ -208,7 +208,7 @@ class repository_equella extends repository {
         $c = new curl(array('cookie' => $cookiepathname));
         if (file_extension_in_typegroup($ref->filename, 'web_image')) {
             $path = $this->prepare_file('');
-            $result = $c->download_one($url, null, array('filepath' => $path, 'followlocation' => true, 'timeout' => self::SYNCIMAGE_TIMEOUT));
+            $result = $c->download_one($url, null, array('filepath' => $path, 'followlocation' => true, 'timeout' => $CFG->repositorysyncimagetimeout));
             if ($result === true) {
                 $fs = get_file_storage();
                 list($contenthash, $filesize, $newfile) = $fs->add_file_to_pool($path);
@@ -216,7 +216,7 @@ class repository_equella extends repository {
                 return true;
             }
         } else {
-            $result = $c->head($url, array('followlocation' => true, 'timeout' => self::SYNCFILE_TIMEOUT));
+            $result = $c->head($url, array('followlocation' => true, 'timeout' => $CFG->repositorysyncfiletimeout));
         }
         // Delete cookie jar.
         if (file_exists($cookiepathname)) {

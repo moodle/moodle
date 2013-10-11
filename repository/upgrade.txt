@@ -23,6 +23,9 @@ http://docs.moodle.org/dev/Repository_API
   reset_caches(). Instead there is one method repository::sync_reference() - this simplifies
   the repositories API and reduces the number of DB queries.
 
+* Deprecated const GETFILE_TIMEOUT, SYNCFILE_TIMEOUT and SYNCIMAGE_TIMEOUT and replaced them with
+  config variables repositorygetfiletimeout, repositorysyncfiletimeout and repositorysyncimagetimeout.
+
 === 2.5 ===
 
 * repository::append_suffix() has been deprecated, use repository::get_unused_filename() if you need
