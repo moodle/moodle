@@ -227,10 +227,10 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
 
     list($d, $m, $y) = array($date['mday'], $date['mon'], $date['year']); // This is what we want to display.
 
-    // Get Gregorian date.
+    // Get Gregorian date for the start of the month.
     $gregoriandate = $calendartype->convert_to_gregorian($date['year'], $date['mon'], 1);
 
-    // Store the gregorian year and month to be used later.
+    // Store the gregorian date values to be used later.
     list($gy, $gm, $gd, $gh, $gmin) = array($gregoriandate['year'], $gregoriandate['month'], $gregoriandate['day'],
         $gregoriandate['hour'], $gregoriandate['minute']);
 
@@ -249,7 +249,7 @@ function calendar_get_mini($courses, $groups, $users, $calmonth = false, $calyea
 
     // These are used for DB queries, so we want unixtime, so we need to use Gregorian dates.
     $display->tstart = make_timestamp($gy, $gm, $gd, $gh, $gmin, 0);
-    $display->tend = make_timestamp($gy, $gm, $display->maxdays, 23, 59, 59);
+    $display->tend = $display->tstart + ($display->maxdays * DAYSECS) - 1;
 
     // Align the starting weekday to fall in our display range
     // This is simple, not foolproof.
@@ -860,12 +860,14 @@ function calendar_top_controls($type, $data) {
     // We need to get the previous and next months in certain cases.
     if ($type == 'frontpage' || $type == 'course' || $type == 'month') {
         $prevmonth = calendar_sub_month($date['mon'], $date['year']);
-        $prevmonthtime = $calendartype->convert_to_gregorian($prevmonth[1], $prevmonth[0], $date['mday']);
-        $prevmonthtime = make_timestamp($prevmonthtime['year'], $prevmonthtime['month'], $prevmonthtime['day']);
+        $prevmonthtime = $calendartype->convert_to_gregorian($prevmonth[1], $prevmonth[0], 1);
+        $prevmonthtime = make_timestamp($prevmonthtime['year'], $prevmonthtime['month'], $prevmonthtime['day'],
+            $prevmonthtime['hour'], $prevmonthtime['minute']);
 
         $nextmonth = calendar_add_month($date['mon'], $date['year']);
-        $nextmonthtime = $calendartype->convert_to_gregorian($nextmonth[1], $nextmonth[0], $date['mday']);
-        $nextmonthtime = make_timestamp($nextmonthtime['year'], $nextmonthtime['month'], $nextmonthtime['day']);
+        $nextmonthtime = $calendartype->convert_to_gregorian($nextmonth[1], $nextmonth[0], 1);
+        $nextmonthtime = make_timestamp($nextmonthtime['year'], $nextmonthtime['month'], $nextmonthtime['day'],
+            $nextmonthtime['hour'], $nextmonthtime['minute']);
     }
 
     switch ($type) {
