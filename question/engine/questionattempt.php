@@ -976,7 +976,7 @@ class question_attempt {
      * @param array $postdata (optional, only inteded for testing use) take the
      *      data from this array, instead of from $_POST. At the moment, this
      *      behaves as if there were no files.
-     * @param string $text optional reponse text.
+     * @param string $text optional response text.
      * @return question_file_saver that can be used to save the files later.
      */
     protected function process_response_files($name, $draftidname, $postdata = null, $text = null) {

@@ -1370,7 +1370,7 @@ class CASClient
 	
 	/**
 	 * This method is used to validate a ST; halt on failure, and sets $validate_url,
-	 * $text_reponse and $tree_response on success. These parameters are used later
+	 * $text_response and $tree_response on success. These parameters are used later
 	 * by CASClient::validatePGT() for CAS proxies.
 	 * Used for all CAS 1.0 validations
 	 * @param $validate_url the URL of the request to the CAS server.
@@ -1500,7 +1500,7 @@ class CASClient
 	
 	/**
 	 * This method is used to validate a SAML TICKET; halt on failure, and sets $validate_url,
-	 * $text_reponse and $tree_response on success. These parameters are used later
+	 * $text_response and $tree_response on success. These parameters are used later
 	 * by CASClient::validatePGT() for CAS proxies.
 	 *
 	 * @param $validate_url the URL of the request to the CAS server.

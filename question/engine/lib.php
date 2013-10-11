@@ -446,7 +446,7 @@ class question_display_options {
 
     /**
      * For questions with a number of sub-parts (like matching, or
-     * multiple-choice, multiple-reponse) display the number of sub-parts that
+     * multiple-choice, multiple-response) display the number of sub-parts that
      * were correct.
      * @var integer {@link question_display_options::HIDDEN} or
      * {@link question_display_options::VISIBLE}

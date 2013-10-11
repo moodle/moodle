@@ -206,7 +206,7 @@ class Moodle_Amf_Server extends Zend_Amf_Server{
         // create a response object to place the output from the services.
         $response = $this->getResponse();
 
-        // set reponse encoding
+        // set response encoding
         $response->setObjectEncoding($objectEncoding);
         
         $responseBody = $request->getAmfBodies();
