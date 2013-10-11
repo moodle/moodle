@@ -38,8 +38,8 @@ class analysis_for_subpart {
      */
     public function __construct(array $responseclasses = null) {
         if (is_array($responseclasses)) {
-            foreach ($responseclasses as $responseclassid => $reponseclass) {
-                $this->responseclasses[$responseclassid] = new analysis_for_class($reponseclass, $responseclassid);
+            foreach ($responseclasses as $responseclassid => $responseclass) {
+                $this->responseclasses[$responseclassid] = new analysis_for_class($responseclass, $responseclassid);
             }
         }
     }

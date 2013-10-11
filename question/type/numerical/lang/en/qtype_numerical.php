@@ -55,7 +55,7 @@ The first unit (Unit 1) has a default multiplier of 1. Thus if the correct numer
 If you add the unit kW with a multiplier of 0.001, this will add a correct response of 5.5 kW. This means that the answers 5500W or 5.5kW would be marked correct.
 
 Note that the accepted error is also multiplied, so an allowed error of 100W would become an error of 0.1kW.';
-$string['manynumerical'] = 'Units are optional. If a unit is entered, it is used to convert the reponse to Unit 1 before grading.';
+$string['manynumerical'] = 'Units are optional. If a unit is entered, it is used to convert the response to Unit 1 before grading.';
 $string['nominal'] = 'Nominal';
 $string['onlynumerical'] = 'Units are not used at all. Only the numerical value is graded.';
 $string['oneunitshown'] = 'Unit 1 is automatically displayed beside the answer box.';

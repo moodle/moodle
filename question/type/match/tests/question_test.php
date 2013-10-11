@@ -103,9 +103,9 @@ class qtype_match_question_test extends advanced_testcase {
         $choiceorder = $question->get_choice_order();
         $orderforchoice = array_combine(array_values($choiceorder), array_keys($choiceorder));
 
-        $correctreponse = $question->prepare_simulated_post_data(
+        $correctresponse = $question->prepare_simulated_post_data(
                                                 array(0 => 'Mammal', 1 => 'Amphibian', 2  => 'Amphibian', 3  => 'Mammal'));
-        $this->assertEquals(array(1, question_state::$gradedright), $question->grade_response($correctreponse));
+        $this->assertEquals(array(1, question_state::$gradedright), $question->grade_response($correctresponse));
 
         $partialresponse = $question->prepare_simulated_post_data(array(0 => 'Mammal'));
         $this->assertEquals(array(0.25, question_state::$gradedpartial), $question->grade_response($partialresponse));
