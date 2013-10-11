@@ -137,6 +137,8 @@ class navigation_node implements renderable {
     protected static $fullmeurl = null;
     /** @var bool toogles auto matching of active node */
     public static $autofindactive = true;
+    /** @var bool should we load full admin tree or rely on AJAX for performance reasons */
+    protected static $loadadmintree = false;
     /** @var mixed If set to an int, that section will be included even if it has no activities */
     public $includesectionnum = false;
 
@@ -240,10 +242,25 @@ class navigation_node implements renderable {
      * is either $PAGE->url or if that hasn't been set $FULLME.
      *
      * @param moodle_url $url The url to use for the fullmeurl.
+     * @param bool $loadadmintree use true if the URL point to administration tree
      */
-    public static function override_active_url(moodle_url $url) {
+    public static function override_active_url(moodle_url $url, $loadadmintree = false) {
         // Clone the URL, in case the calling script changes their URL later.
         self::$fullmeurl = new moodle_url($url);
+        // True means we do not want AJAX loaded admin tree, required for all admin pages.
+        if ($loadadmintree) {
+            // Do not change back to false if already set.
+            self::$loadadmintree = true;
+        }
+    }
+
+    /**
+     * Use when page is linked from the admin tree,
+     * if not used navigation could not find the page using current URL
+     * because the tree is not fully loaded.
+     */
+    public static function require_admin_tree() {
+        self::$loadadmintree = true;
     }
 
     /**
@@ -3340,7 +3357,7 @@ class settings_navigation extends navigation_node {
         $admin = false;
         if (isloggedin() && !isguestuser() && (!property_exists($SESSION, 'load_navigation_admin') || $SESSION->load_navigation_admin)) {
             // If admin page or user logged in, then load admin settings.
-            $isadminpage = ((strpos($this->page->pagetype, 'admin-') === 0) || ($this->page->pagelayout === 'admin'));
+            $isadminpage = $this->is_admin_tree_needed();
             if ($isadminpage || !isset($SESSION->load_navigation_admin)) {
                 $admin = $this->load_administration_settings();
                 $SESSION->load_navigation_admin = ($admin->children->count() > 0);
@@ -3433,6 +3450,27 @@ class settings_navigation extends navigation_node {
         }
         return $node;
     }
+
+    /**
+     * Does this page require loading of full admin tree or is
+     * it enough rely on AJAX?
+     * @return bool
+     */
+    protected function is_admin_tree_needed() {
+        if (self::$loadadmintree) {
+            return true;
+        }
+
+        if ($this->page->pagelayout === 'admin' or strpos($this->page->pagetype, 'admin-') === 0) {
+            if ($this->page->context->contextlevel >= CONTEXT_COURSE) {
+                debugging('Course level administration should not be attached to administration tree', DEBUG_DEVELOPER);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Load the site administration tree
      *
