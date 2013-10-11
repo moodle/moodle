@@ -294,7 +294,11 @@ function get_component_version($component, $source='installed') {
     // block
     if ($type === 'block') {
         if ($source === 'installed') {
-            return $DB->get_field('block', 'version', array('name'=>$name));
+            if ($CFG->version < 2013092001.02) {
+                return $DB->get_field('block', 'version', array('name'=>$name));
+            } else {
+                return get_config('block_'.$name, 'version');
+            }
         } else {
             $blocks = core_component::get_plugin_list('block');
             if (empty($blocks[$name]) or !is_readable($blocks[$name].'/version.php')) {
