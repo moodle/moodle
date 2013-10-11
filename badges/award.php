@@ -50,6 +50,9 @@ if ($badge->type == BADGE_TYPE_COURSE) {
     }
     require_login($badge->courseid);
     $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type, 'id' => $badge->courseid));
+    $PAGE->set_pagelayout('standard');
+} else {
+    $PAGE->set_pagelayout('admin');
 }
 
 require_capability('moodle/badges:awardbadge', $context);
@@ -64,7 +67,6 @@ navigation_node::override_active_url($navurl);
 $PAGE->navbar->add($badge->name, new moodle_url('overview.php', array('id' => $badge->id)))->add($strrecipients);
 $PAGE->set_title($strrecipients);
 $PAGE->set_heading($badge->name);
-$PAGE->set_pagelayout('standard');
 
 if (!$badge->is_active()) {
     echo $OUTPUT->header();

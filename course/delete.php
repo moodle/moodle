@@ -44,7 +44,7 @@ $courseshortname = format_string($course->shortname, true, array('context' => $c
 $coursefullname = format_string($course->fullname, true, array('context' => $coursecontext));
 $categoryurl = new moodle_url('/course/management.php', array('categoryid' => $course->category));
 
-navigation_node::override_active_url(new moodle_url('/course/management.php'));
+navigation_node::override_active_url(new moodle_url('/course/management.php', true));
 
 // Check if we've got confirmation.
 if ($delete === md5($course->timemodified)) {
