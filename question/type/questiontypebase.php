@@ -129,7 +129,7 @@ class question_type {
      * method, and the question_definition class must implement the
      * classify_response method.
      *
-     * @return bool whether this report can analyse all the student reponses
+     * @return bool whether this report can analyse all the student responses
      * for things like the quiz statistics report.
      */
     public function can_analyse_responses() {

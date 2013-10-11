@@ -131,7 +131,7 @@ abstract class qtype_renderer extends plugin_renderer_base {
 
     /**
      * Generate the specific feedback. This is feedback that varies according to
-     * the reponse the student gave.
+     * the response the student gave.
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
      */
@@ -158,7 +158,7 @@ abstract class qtype_renderer extends plugin_renderer_base {
 
     /**
      * Gereate the specific feedback. This is feedback that varies according to
-     * the reponse the student gave.
+     * the response the student gave.
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
      */
