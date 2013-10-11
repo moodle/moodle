@@ -739,7 +739,8 @@ function groups_get_potential_members($courseid, $roleid = null, $cohortid = nul
         $cohortjoin = "";
     }
 
-    $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.idnumber
+    $allusernamefields = get_all_user_name_fields(true, 'u');
+    $sql = "SELECT u.id, u.username, $allusernamefields, u.idnumber
               FROM {user} u
               JOIN ($esql) e ON e.id = u.id
        $cohortjoin
