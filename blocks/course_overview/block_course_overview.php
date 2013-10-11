@@ -31,6 +31,11 @@ require_once($CFG->dirroot.'/blocks/course_overview/locallib.php');
  */
 class block_course_overview extends block_base {
     /**
+     * If this is passed as mynumber then showallcourses, irrespective of limit by user.
+     */
+    const SHOW_ALL_COURSES = -2;
+
+    /**
      * Block initialization
      */
     public function init() {
@@ -64,7 +69,9 @@ class block_course_overview extends block_base {
         }
 
         profile_load_custom_fields($USER);
-        list($sortedcourses, $sitecourses, $totalcourses) = block_course_overview_get_sorted_courses();
+
+        $showallcourses = ($updatemynumber === self::SHOW_ALL_COURSES);
+        list($sortedcourses, $sitecourses, $totalcourses) = block_course_overview_get_sorted_courses($showallcourses);
         $overviews = block_course_overview_get_overviews($sitecourses);
 
         $renderer = $this->page->get_renderer('block_course_overview');
