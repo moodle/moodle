@@ -286,7 +286,7 @@ if ($action !== false && confirm_sesskey()) {
                     $notificationsfail[] = $ex->getMessage();
                 }
             } else if ($bulkmovecategories) {
-                $categoryids = optional_param_array('bcat', false, PARAM_INT);
+                $categoryids = optional_param_array('bcat', array(), PARAM_INT);
                 $movetocatid = required_param('movecategoriesto', PARAM_INT);
                 $movetocat = coursecat::get($movetocatid);
                 $movecount = 0;
