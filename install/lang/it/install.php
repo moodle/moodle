@@ -31,7 +31,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['admindirname'] = 'Cartella Admin';
-$string['availablelangs'] = 'Elenco delle lingue disponibili:';
+$string['availablelangs'] = 'Elenco delle lingue disponibili';
 $string['chooselanguagehead'] = 'Scegli la lingua';
 $string['chooselanguagesub'] = 'Scegli la lingua da usare durante l\'installazione. La lingua usata nel sito e dagli utenti potrà essere modificata in seguito.';
 $string['clialreadyconfigured'] = 'Il file config.php esiste già, per favore utilizza admin/cli/install_database.php se desideri installare questo sito.';
