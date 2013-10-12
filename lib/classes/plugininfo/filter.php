@@ -112,10 +112,24 @@ class filter extends base {
      * @private
      */
     public function uninstall_cleanup() {
-        global $DB;
+        global $DB, $CFG;
 
         $DB->delete_records('filter_active', array('filter' => $this->name));
         $DB->delete_records('filter_config', array('filter' => $this->name));
+
+        if (empty($CFG->filterall)) {
+            $stringfilters = array();
+        } else if (!empty($CFG->stringfilters)) {
+            $stringfilters = explode(',', $CFG->stringfilters);
+            $stringfilters = array_combine($stringfilters, $stringfilters);
+        } else {
+            $stringfilters = array();
+        }
+
+        unset($stringfilters[$this->name]);
+
+        set_config('stringfilters', implode(',', $stringfilters));
+        set_config('filterall', !empty($stringfilters));
 
         parent::uninstall_cleanup();
     }
