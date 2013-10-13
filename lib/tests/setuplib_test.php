@@ -152,22 +152,21 @@ class core_setuplib_testcase extends advanced_testcase {
         // Test default location - can not be modified in phpunit tests because we override everything in config.php.
         $this->assertSame("$CFG->dataroot/localcache", $CFG->localcachedir);
 
-        $now = time();
+        $this->setCurrentTimeStart();
         $timestampfile = "$CFG->localcachedir/.lastpurged";
 
         $dir = make_localcache_directory('', false);
         $this->assertSame($CFG->localcachedir, $dir);
         $this->assertFileNotExists("$CFG->localcachedir/.htaccess");
         $this->assertFileExists($timestampfile);
-        $this->assertGreaterThanOrEqual($now, filemtime($timestampfile));
-        $this->assertLessThanOrEqual(time(), filemtime($timestampfile));
+        $this->assertTimeCurrent(filemtime($timestampfile));
 
         $dir = make_localcache_directory('test/test', false);
         $this->assertSame("$CFG->localcachedir/test/test", $dir);
 
         // Test custom location.
         $CFG->localcachedir = "$CFG->dataroot/testlocalcache";
-        $now = time();
+        $this->setCurrentTimeStart();
         $timestampfile = "$CFG->localcachedir/.lastpurged";
         $this->assertFileNotExists($timestampfile);
 
@@ -175,8 +174,7 @@ class core_setuplib_testcase extends advanced_testcase {
         $this->assertSame($CFG->localcachedir, $dir);
         $this->assertFileExists("$CFG->localcachedir/.htaccess");
         $this->assertFileExists($timestampfile);
-        $this->assertGreaterThanOrEqual($now, filemtime($timestampfile));
-        $this->assertLessThanOrEqual(time(), filemtime($timestampfile));
+        $this->assertTimeCurrent(filemtime($timestampfile));
 
         $dir = make_localcache_directory('test', false);
         $this->assertSame("$CFG->localcachedir/test", $dir);
@@ -190,16 +188,14 @@ class core_setuplib_testcase extends advanced_testcase {
         $testfile = "$CFG->localcachedir/test/test.txt";
         $this->assertTrue(touch($testfile));
 
-        $now = time();
+        $now = $this->setCurrentTimeStart();
         set_config('localcachedirpurged', $now - 2);
         purge_all_caches();
         $this->assertFileNotExists($testfile);
         $this->assertFileNotExists(dirname($testfile));
         $this->assertFileExists($timestampfile);
-        $this->assertGreaterThanOrEqual($now, filemtime($timestampfile));
-        $this->assertLessThanOrEqual(time(), filemtime($timestampfile));
-        $this->assertGreaterThanOrEqual($now, $CFG->localcachedirpurged);
-        $this->assertLessThanOrEqual(time(), $CFG->localcachedirpurged);
+        $this->assertTimeCurrent(filemtime($timestampfile));
+        $this->assertTimeCurrent($CFG->localcachedirpurged);
 
         // Simulates purge_all_caches() on another server node.
         make_localcache_directory('test', false);
@@ -209,13 +205,12 @@ class core_setuplib_testcase extends advanced_testcase {
         clearstatcache();
         $this->assertSame($now - 2, filemtime($timestampfile));
 
-        $now = time();
+        $this->setCurrentTimeStart();
         $dir = make_localcache_directory('', false);
         $this->assertSame("$CFG->localcachedir", $dir);
         $this->assertFileNotExists($testfile);
         $this->assertFileNotExists(dirname($testfile));
         $this->assertFileExists($timestampfile);
-        $this->assertGreaterThanOrEqual($now, filemtime($timestampfile));
-        $this->assertLessThanOrEqual(time(), filemtime($timestampfile));
+        $this->assertTimeCurrent(filemtime($timestampfile));
     }
 }

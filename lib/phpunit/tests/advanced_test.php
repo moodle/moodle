@@ -334,6 +334,32 @@ class core_phpunit_advanced_testcase extends advanced_testcase {
         $this->assertTrue($DB->record_exists('user', array('username'=>'onemore')));
     }
 
+    public function test_assert_time_current() {
+        $this->assertTimeCurrent(time());
+
+        $this->setCurrentTimeStart();
+        $this->assertTimeCurrent(time());
+        sleep(2);
+        $this->assertTimeCurrent(time());
+        $this->assertTimeCurrent(time()-1);
+
+        try {
+            $this->setCurrentTimeStart();
+            $this->assertTimeCurrent(time()+10);
+            $this->fail('Failed assert expected');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_ExpectationFailedException', $e);
+        }
+
+        try {
+            $this->setCurrentTimeStart();
+            $this->assertTimeCurrent(time()-10);
+            $this->fail('Failed assert expected');
+        } catch (Exception $e) {
+            $this->assertInstanceOf('PHPUnit_Framework_ExpectationFailedException', $e);
+        }
+    }
+
     public function test_message_processors_reset() {
         global $DB;
 
