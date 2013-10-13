@@ -85,7 +85,7 @@ function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret, $body,
     // Must reject application/x-www-form-urlencoded
     if (isset($request_headers['Content-type'])) {
         if ($request_headers['Content-type'] == 'application/x-www-form-urlencoded' ) {
-            throw new Exception("OAuth request body signing must not use application/x-www-form-urlencoded");
+            throw new OAuthException("OAuth request body signing must not use application/x-www-form-urlencoded");
         }
     }
 
@@ -99,7 +99,7 @@ function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret, $body,
     }
 
     if ( ! isset($oauth_body_hash)  ) {
-        throw new Exception("OAuth request body signing requires oauth_body_hash body");
+        throw new OAuthException("OAuth request body signing requires oauth_body_hash body");
     }
 
     // Verify the message signature
@@ -116,7 +116,7 @@ function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret, $body,
         $server->verify_request($request);
     } catch (Exception $e) {
         $message = $e->getMessage();
-        throw new Exception("OAuth signature failed: " . $message);
+        throw new OAuthException("OAuth signature failed: " . $message);
     }
 
     $postdata = $body;
@@ -125,7 +125,7 @@ function handleOAuthBodyPOST($oauth_consumer_key, $oauth_consumer_secret, $body,
     $hash = base64_encode(sha1($postdata, TRUE));
 
     if ( $hash != $oauth_body_hash ) {
-        throw new Exception("OAuth oauth_body_hash mismatch");
+        throw new OAuthException("OAuth oauth_body_hash mismatch");
     }
 
     return $postdata;
@@ -155,11 +155,11 @@ function sendOAuthBodyPOST($method, $endpoint, $oauth_consumer_key, $oauth_consu
     $ctx = stream_context_create($params);
     $fp = @fopen($endpoint, 'rb', false, $ctx);
     if (!$fp) {
-        throw new Exception("Problem with $endpoint, $php_errormsg");
+        throw new OAuthException("Problem with $endpoint, $php_errormsg");
     }
     $response = @stream_get_contents($fp);
     if ($response === false) {
-        throw new Exception("Problem reading data from $endpoint, $php_errormsg");
+        throw new OAuthException("Problem reading data from $endpoint, $php_errormsg");
     }
     return $response;
 }
