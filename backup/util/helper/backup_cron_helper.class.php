@@ -132,19 +132,23 @@ abstract class backup_cron_automated_helper {
                                             $backupcourse->laststatus == self::BACKUP_STATUS_OK) && (
                                             $backupcourse->laststarttime > 0 && $backupcourse->lastendtime > 0);
 
-                // Skip courses that do not yet need backup.
-                $skipped = !(($backupcourse->nextstarttime > 0 && $backupcourse->nextstarttime < $now) || $rundirective == self::RUN_IMMEDIATELY);
-                $skippedmessage = 'Does not require backup';
+                // Assume that we are not skipping anything.
+                $skipped = false;
+                $skippedmessage = '';
+
+                // Check if we are going to be running the backup now.
+                $shouldrunnow = (($backupcourse->nextstarttime > 0 && $backupcourse->nextstarttime < $now)
+                    || $rundirective == self::RUN_IMMEDIATELY);
 
                 // If config backup_auto_skip_hidden is set to true, skip courses that are not visible.
-                if (!$skipped && $config->backup_auto_skip_hidden) {
+                if ($shouldrunnow && $config->backup_auto_skip_hidden) {
                     $skipped = ($config->backup_auto_skip_hidden && !$course->visible);
                     $skippedmessage = 'Not visible';
                 }
 
                 // If config backup_auto_skip_modif_days is set to true, skip courses
                 // that have not been modified since the number of days defined.
-                if (!$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_days) {
+                if ($shouldrunnow && !$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_days) {
                     $sqlwhere = "course=:courseid AND time>:time AND ".$DB->sql_like('action', ':action', false, true, true);
                     $timenotmodifsincedays = $now - ($config->backup_auto_skip_modif_days * DAYSECS);
                     // Check log if there were any modifications to the course content.
@@ -159,7 +163,7 @@ abstract class backup_cron_automated_helper {
 
                 // If config backup_auto_skip_modif_prev is set to true, skip courses
                 // that have not been modified since previous backup.
-                if (!$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_prev) {
+                if ($shouldrunnow && !$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_prev) {
                     // Check log if there were any modifications to the course content.
                     $params = array('courseid' => $course->id,
                                     'time' => $backupcourse->laststarttime,
@@ -170,16 +174,17 @@ abstract class backup_cron_automated_helper {
                     $skippedmessage = 'Not modified since previous backup';
                 }
 
-                // Skip courses not needed for backup.
-                if ($skipped) {
-                    // Output the next execution time when it has been updated.
-                    if ($backupcourse->nextstarttime != $nextstarttime) {
-                        mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
-                    }
+                // Check if the course is not scheduled to run right now.
+                if (!$shouldrunnow) {
+                    $backupcourse->nextstarttime = $nextstarttime;
+                    $DB->update_record('backup_courses', $backupcourse);
+                    mtrace('Skipping ' . $course->fullname . ' (Not scheduled for backup until ' . $showtime . ')');
+                } else if ($skipped) { // Must have been skipped for a reason.
                     $backupcourse->laststatus = self::BACKUP_STATUS_SKIPPED;
                     $backupcourse->nextstarttime = $nextstarttime;
                     $DB->update_record('backup_courses', $backupcourse);
-                    mtrace('Skipping '.$course->fullname.' ('.$skippedmessage.')');
+                    mtrace('Skipping ' . $course->fullname . ' (' . $skippedmessage . ')');
+                    mtrace('Backup of \'' . $course->fullname . '\' is scheduled on ' . $showtime);
                 } else {
                     // Backup every non-skipped courses.
                     mtrace('Backing up '.$course->fullname.'...');
