@@ -1378,5 +1378,62 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertNotContains($output, get_string('submitassignment', 'assign'),
                                  'Should not be able to submit after cutoff date.');
     }
+    /**
+     * Testing for submission comment plugin settings
+     */
+    public function test_submission_comment_plugin_settings() {
+        global $CFG;
+
+        $commentconfig = false;
+        if (!empty($CFG->usecomments)) {
+            $commentconfig = $CFG->usecomments;
+        }
+
+        $CFG->usecomments = true;
+        $assign = $this->create_instance();
+        $plugin = $assign->get_submission_plugin_by_type('comments');
+        $this->assertEquals(1, $plugin->is_enabled('enabled'));
+
+        $assign = $this->create_instance(array('assignsubmission_comments_enabled' => 0));
+        $plugin = $assign->get_submission_plugin_by_type('comments');
+        $this->assertEquals(1, $plugin->is_enabled('enabled'));
+
+        $assign = $this->create_instance(array('assignsubmission_comments_enabled' => 1));
+        $plugin = $assign->get_submission_plugin_by_type('comments');
+        $this->assertEquals(1, $plugin->is_enabled('enabled'));
+
+        $CFG->usecomments = false;
+        $assign = $this->create_instance();
+        $plugin = $assign->get_submission_plugin_by_type('comments');
+        $this->assertEquals(0, $plugin->is_enabled('enabled'));
+
+        $assign = $this->create_instance(array('assignsubmission_comments_enabled' => 0));
+        $plugin = $assign->get_submission_plugin_by_type('comments');
+        $this->assertEquals(0, $plugin->is_enabled('enabled'));
+
+        $assign = $this->create_instance(array('assignsubmission_comments_enabled' => 1));
+        $plugin = $assign->get_submission_plugin_by_type('comments');
+        $this->assertEquals(0, $plugin->is_enabled('enabled'));
+
+        $CFG->usecomments = $commentconfig;
+    }
+
+    /**
+     * Testing for feedback comment plugin settings
+     */
+    public function test_feedback_plugin_settings() {
+
+        $assign = $this->create_instance();
+        $plugin = $assign->get_feedback_plugin_by_type('comments');
+        $this->assertEquals(0, $plugin->is_enabled('enabled'));
+
+        $assign = $this->create_instance(array('assignfeedback_comments_enabled' => 0));
+        $plugin = $assign->get_feedback_plugin_by_type('comments');
+        $this->assertEquals(0, $plugin->is_enabled('enabled'));
+
+        $assign = $this->create_instance(array('assignfeedback_comments_enabled' => 1));
+        $plugin = $assign->get_feedback_plugin_by_type('comments');
+        $this->assertEquals(1, $plugin->is_enabled('enabled'));
+    }
 }
 
