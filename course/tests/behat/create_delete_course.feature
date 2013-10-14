@@ -33,7 +33,39 @@ Feature: Test we can both create and delete a course.
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "Test course: create a course" in the "#course-listing" "css_element"
 
-  Scenario: Delete a course
+  Scenario: Delete a course via its management listing
+    Given the following "categories" exists:
+      | name | category 0| idnumber |
+      | Cat 1 | 0 | CAT1 |
+    And the following "courses" exists:
+      | category | fullname | shortname | idnumber |
+      | CAT1 | Test course: create a course | TCCAC | TC3401 |
+      | CAT1 | Test course 2: create another course | TC2CAC | TC3402 |
+
+    And I log in as "admin"
+    And I go to the courses management page
+    And I should see the "Course categories" management page
+    And I click on category "Cat 1" in the management interface
+    # Redirect
+    And I should see the "Course categories and courses" management page
+    And I should see "Cat 1" in the "#category-listing" "css_element"
+    And I should see "Test course: create a course" in the "#course-listing" "css_element"
+    And I should see "Test course 2: create another course" in the "#course-listing" "css_element"
+    And I click on "delete" action for "Test course: create a course" in management course listing
+    # Redirect
+    And I should see "Delete TCCAC"
+    And I should see "Test course: create a course (TCCAC)"
+    And I press "Continue"
+    # Redirect
+    And I should see "Deleting TCCAC"
+    And I should see "TCCAC has been completely deleted"
+    And I press "Continue"
+    # Redirect
+    And I should see the "Course categories and courses" management page
+    And I should see "Cat 1" in the "#category-listing" "css_element"
+    And I should see "Test course 2: create another course" in the "#course-listing" "css_element"
+
+  Scenario: Delete a course via its management details page
     Given the following "categories" exists:
       | name | category 0| idnumber |
       | Cat 1 | 0 | CAT1 |
