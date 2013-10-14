@@ -84,7 +84,8 @@ if ($badge->has_manual_award_criteria() && has_capability('moodle/badges:awardba
     echo $OUTPUT->box($OUTPUT->single_button($url, get_string('award', 'badges')), 'clearfix mdl-align');
 }
 
-$sql = "SELECT b.userid, b.dateissued, b.uniquehash, u.firstname, u.lastname
+$namefields = get_all_user_name_fields(true, 'u');
+$sql = "SELECT b.userid, b.dateissued, b.uniquehash, $namefields
     FROM {badge_issued} b INNER JOIN {user} u
         ON b.userid = u.id
     WHERE b.badgeid = :badgeid
