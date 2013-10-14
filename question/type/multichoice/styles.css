@@ -8,6 +8,14 @@
     padding: 0.3em 0 0.3em 25px;
     text-indent: -25px;
 }
+.que.multichoice .answer div.r0 label,
+.que.multichoice .answer div.r1 label,
+.que.multichoice .answer div.r0 div.specificfeedback,
+.que.multichoice .answer div.r1 div.specificfeedback {
+    /* In Chrome and IE, the text-indent above is applied to any embedded table
+       cells or <li>s, which screws up the intended layout. This fixes it again. */
+    text-indent: 0;
+}
 .que.multichoice .answer div.r0 input,
 .que.multichoice .answer div.r1 input {
     margin: 0 5px;
