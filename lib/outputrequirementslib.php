@@ -1261,17 +1261,16 @@ class page_requirements_manager {
 
         if ($this->yui3loader->combine) {
             if (!empty($page->theme->yuicssmodules)) {
-                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
-                        . implode('&amp;', $baserollups) . '"></script>';
-                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
-                        . implode('&amp;', $moodlerollups) . '"></script>';
-
                 $modules = array();
                 foreach ($page->theme->yuicssmodules as $module) {
                     $modules[] = "$CFG->yui3version/$module/$module-min.css";
                 }
                 $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->comboBase.implode('&amp;', $modules).'" />';
             }
+            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
+                    . implode('&amp;', $baserollups) . '"></script>';
+            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
+                    . implode('&amp;', $moodlerollups) . '"></script>';
 
         } else {
             if (!empty($page->theme->yuicssmodules)) {
@@ -1294,7 +1293,6 @@ class page_requirements_manager {
             $code = str_replace('-min.css', '.css', $code);
             $code = str_replace('-min.js', '-debug.js', $code);
         }
-
         return $code;
     }
 
