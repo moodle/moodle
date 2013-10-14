@@ -50,9 +50,6 @@ navigation_node::override_active_url(new moodle_url('/course/management.php'));
 if ($delete === md5($course->timemodified)) {
     // We do - time to delete the course.
     require_sesskey();
-    delete_course($course);
-    // Update course count in categories.
-    fix_course_sortorder();
 
     $strdeletingcourse = get_string("deletingcourse", "", $courseshortname);
 
@@ -62,9 +59,14 @@ if ($delete === md5($course->timemodified)) {
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strdeletingcourse);
+    // We do this here because it spits out feedback as it goes.
+    delete_course($course);
     echo $OUTPUT->heading( get_string("deletedcourse", "", $courseshortname) );
+    // Update course count in categories.
+    fix_course_sortorder();
     echo $OUTPUT->continue_button($categoryurl);
     echo $OUTPUT->footer();
+    exit; // We must exit here!!!
 }
 
 $strdeletecheck = get_string("deletecheck", "", $courseshortname);
