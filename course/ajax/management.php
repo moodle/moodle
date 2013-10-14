@@ -79,15 +79,29 @@ switch ($action) {
         break;
     case 'hidecategory' :
         $categoryid = required_param('categoryid', PARAM_INT);
+        $selectedcategoryid = optional_param('selectedcategory', null, PARAM_INT);
         $outcome->outcome = \core_course\management\helper::action_category_hide_by_id($categoryid);
         $outcome->categoryvisibility = \core_course\management\helper::get_category_children_visibility($categoryid);
         $outcome->coursevisibility = \core_course\management\helper::get_category_courses_visibility($categoryid);
+        if ($selectedcategoryid !== null) {
+            $outcome->coursevisibility = array_merge(
+                $outcome->coursevisibility,
+                \core_course\management\helper::get_category_courses_visibility($selectedcategoryid)
+            );
+        }
         break;
     case 'showcategory' :
         $categoryid = required_param('categoryid', PARAM_INT);
+        $selectedcategoryid = optional_param('selectedcategory', null, PARAM_INT);
         $outcome->outcome = \core_course\management\helper::action_category_show_by_id($categoryid);
         $outcome->categoryvisibility = \core_course\management\helper::get_category_children_visibility($categoryid);
         $outcome->coursevisibility = \core_course\management\helper::get_category_courses_visibility($categoryid);
+        if ($selectedcategoryid !== null) {
+            $outcome->coursevisibility = array_merge(
+                $outcome->coursevisibility,
+                \core_course\management\helper::get_category_courses_visibility($selectedcategoryid)
+            );
+        }
         break;
     case 'getsubcategorieshtml' :
         $categoryid = required_param('categoryid', PARAM_INT);

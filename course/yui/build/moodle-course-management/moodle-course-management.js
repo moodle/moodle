@@ -1078,7 +1078,11 @@ Category.prototype = {
      * @returns {Boolean}
      */
     handle : function(action, e) {
-        var catarg = {categoryid : this.get('categoryid')};
+        var catarg = {categoryid : this.get('categoryid')},
+            selected = this.get('console').get('activecategoryid');
+        if (selected && selected !== catarg.categoryid) {
+            catarg.selectedcategory = selected;
+        }
         switch (action) {
             case 'moveup':
                 e.preventDefault();

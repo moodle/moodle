@@ -779,7 +779,7 @@ class helper {
      */
     public static function get_category_courses_visibility($categoryid) {
         global $DB;
-        $sql = "SELECT c.id, c.visible as show
+        $sql = "SELECT c.id, c.visible
                   FROM {course} c
                  WHERE c.category = :category";
         $params = array('category' => (int)$categoryid);
@@ -797,7 +797,7 @@ class helper {
         $select = $DB->sql_like('path', ':path');
         $path = $category->path . '/%';
 
-        $sql = "SELECT c.id, c.visible as show
+        $sql = "SELECT c.id, c.visible
                   FROM {course_categories} c
                  WHERE ".$select;
         $params = array('path' => $path);
