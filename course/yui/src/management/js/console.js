@@ -421,6 +421,11 @@ Console.prototype = {
         args.action = action;
         args.ajax = '1';
         args.sesskey = M.cfg.sesskey;
+        if (callback === null) {
+            callback = function() {
+                Y.log("'Action '"+action+"' completed", 'debug', 'moodle-course-management');
+            };
+        }
         io.send(this.get('ajaxurl'), {
             method : 'POST',
             on : {

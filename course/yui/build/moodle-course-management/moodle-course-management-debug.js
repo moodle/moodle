@@ -423,6 +423,11 @@ Console.prototype = {
         args.action = action;
         args.ajax = '1';
         args.sesskey = M.cfg.sesskey;
+        if (callback === null) {
+            callback = function() {
+                Y.log("'Action '"+action+"' completed", 'debug', 'moodle-course-management');
+            };
+        }
         io.send(this.get('ajaxurl'), {
             method : 'POST',
             on : {
@@ -1155,6 +1160,7 @@ Category.prototype = {
             title : M.util.get_string('collapse', 'moodle'),
             alt : M.util.get_string('collapse', 'moodle')
         });
+        this.get('console').performAjaxAction('expandcategory', {categoryid : this.get('categoryid')}, null, this);
     },
 
     /**
@@ -1170,6 +1176,7 @@ Category.prototype = {
             title : M.util.get_string('expand', 'moodle'),
             alt : M.util.get_string('expand', 'moodle')
         });
+        this.get('console').performAjaxAction('collapsecategory', {categoryid : this.get('categoryid')}, null, this);
     },
 
     /**
