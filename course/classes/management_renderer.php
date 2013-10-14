@@ -283,7 +283,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 ));
             }
             $menu->actiontext = get_string('createnew');
-            $menu->actionicon = new pix_icon('t/add', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
+            $menu->actionicon = new pix_icon('t/contextmenu', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
             $actions[] = $this->render($menu);
         }
         if (coursecat::can_approve_course_requests()) {
@@ -312,7 +312,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             } else {
                 $menu->actiontext = get_string('resortsubcategories');
             }
-            $menu->actionicon = new pix_icon('t/sort', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
+            $menu->actionicon = new pix_icon('t/contextmenu', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
             $actions[] = $this->render($menu);
         }
         if (!$hasitems) {
@@ -609,7 +609,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 new action_menu_link_secondary($idnumberurl, null, get_string('resortbyidnumber'))
             ));
             $menu->actiontext = get_string('resortcourses');
-            $menu->actionicon = new pix_icon('t/sort', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
+            $menu->actionicon = new pix_icon('t/contextmenu', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
             $actions[] = $this->render($menu);
         }
         $strall = get_string('all');
