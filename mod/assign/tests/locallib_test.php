@@ -250,6 +250,34 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         // Reload the instance data.
         $instance = $DB->get_record('assign', array('id'=>$assign->get_instance()->id));
         $this->assertEquals($now + 24*60*60, $instance->duedate);
+
+        // Test reset using assign_reset_userdata().
+        $assignduedate = $instance->duedate; // Keep old updated value for comparison.
+        $data->timeshift = 2*24*60*60;
+        assign_reset_userdata($data);
+        $instance = $DB->get_record('assign', array('id' => $assign->get_instance()->id));
+        $this->assertEquals($assignduedate + 2*24*60*60, $instance->duedate);
+
+        // Create one more assignment and reset, make sure time shifted for previous assignment is not changed.
+        $assign2 = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1,
+                                               'duedate' => $now));
+        $assignduedate = $instance->duedate;
+        $data->timeshift = 3*24*60*60;
+        $assign2->reset_userdata($data);
+        $instance = $DB->get_record('assign', array('id' => $assign->get_instance()->id));
+        $this->assertEquals($assignduedate, $instance->duedate);
+        $instance2 = $DB->get_record('assign', array('id' => $assign2->get_instance()->id));
+        $this->assertEquals($now + 3*24*60*60, $instance2->duedate);
+
+        // Reset both assignments using assign_reset_userdata() and make sure both assignments have same date.
+        $assignduedate = $instance->duedate;
+        $assign2duedate = $instance2->duedate;
+        $data->timeshift = 4*24*60*60;
+        assign_reset_userdata($data);
+        $instance = $DB->get_record('assign', array('id' => $assign->get_instance()->id));
+        $this->assertEquals($assignduedate + 4*24*60*60, $instance->duedate);
+        $instance2 = $DB->get_record('assign', array('id' => $assign2->get_instance()->id));
+        $this->assertEquals($assign2duedate + 4*24*60*60, $instance2->duedate);
     }
 
     public function test_plugin_settings() {

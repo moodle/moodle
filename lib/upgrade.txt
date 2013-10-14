@@ -47,6 +47,8 @@ information provided here is intended especially for developers.
   backups which supports both compression formats; get_file_packer('application/vnd.moodle.backup').
 * New optional parameter to stored_file::get_content_file_handle to open file handle with 'gzopen' instead
   of 'fopen' to read gzip-compressed files if required.
+* shift_course_mod_dates() has been modified to accept optional mod instance id. If mod instance id is passed then
+  dates changed will happen only on specific module instance and not on all instances of that module in course.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
