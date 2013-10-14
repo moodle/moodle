@@ -126,7 +126,10 @@ if ($mform->is_cancelled()) {
         // Remember the last one who edited the reference assessment.
         $coredata->reviewerid = $USER->id;
     }
-    $DB->update_record('workshop_assessments', $coredata);
+    // Update the assessment data if there is something other than just the 'id'.
+    if (count((array)$coredata) > 1 ) {
+        $DB->update_record('workshop_assessments', $coredata);
+    }
 
     if (!is_null($rawgrade) and isset($data->saveandclose)) {
         if ($canmanage) {
