@@ -1,5 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
+=== 2.5.3 ===
+
+* update_internal_user_password() and setnew_password_and_mail() now trigger user_updated event.
+
 === 2.5.2 ===
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests.
 * Use behat_selectors::get_allowed_text_selectors() and behat_selectors::get_allowed_selectors() instead of
