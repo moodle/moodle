@@ -136,7 +136,6 @@ textarea {
 
 /* Forms
 -----------------------*/
-
 .form-description {
     font-size:95%;
 }
@@ -149,8 +148,8 @@ textarea {
 
 /* needed to vertically align label of mform groups containing, for instance, select and text */
 .mform .fitem {
-    line-height:2.0em;
-    margin-top:0;
+    line-height: 1.4;
+    font-size: 108%;
 }
 
 .mform .btn-cancel {
