@@ -1,5 +1,8 @@
 This files describes API changes in core lbraries and APIs,
 information provided here is intended especially for developers.
+=== 2.4.7 ===
+
+* update_internal_user_password() and setnew_password_and_mail() now trigger user_updated event.
 
 === 2.4.6 ===
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests.
