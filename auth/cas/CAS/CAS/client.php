@@ -2160,7 +2160,7 @@ class CASClient
 		if ($this->_cas_server_cert != '' && $this->_cas_server_ca_cert != '') {
 			// This branch added by IDMS. Seems phpCAS implementor got a bit confused about the curl options CURLOPT_SSLCERT and CURLOPT_CAINFO
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 1);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 			curl_setopt($ch, CURLOPT_SSLCERT, $this->_cas_server_cert);
 			curl_setopt($ch, CURLOPT_CAINFO, $this->_cas_server_ca_cert);
 			curl_setopt($ch, CURLOPT_VERBOSE, '1');
@@ -2172,7 +2172,7 @@ class CASClient
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
 			curl_setopt($ch, CURLOPT_CAINFO, $this->_cas_server_ca_cert);
 		} else {
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 1);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		}
 		
