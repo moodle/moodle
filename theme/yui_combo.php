@@ -255,7 +255,7 @@ while (count($parts)) {
 
         // Submodules are stored in a directory with the full submodule name.
         // We need to remove the -debug.js, -min.js, and .js from the file name to calculate that directory name.
-        $frankenstyledirectoryname = str_replace(array('-min.js', '-debug.js', '.js'), '', $frankenstylefilename);
+        $frankenstyledirectoryname = str_replace(array('-min.js', '-debug.js', '.js', '.css'), '', $frankenstylefilename);
 
         // By default, try and use the /yui/build directory.
         $contentfile = $dir . '/yui/build/' . $frankenstyledirectoryname;
