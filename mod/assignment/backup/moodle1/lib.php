@@ -79,7 +79,7 @@ class moodle1_mod_assignment_handler extends moodle1_mod_handler {
      */
     public function process_assignment($data) {
         global $CFG;
-	
+
         // get the course module id and context id
         $instanceid     = $data['id'];
         $cminfo         = $this->get_cminfo($instanceid);
