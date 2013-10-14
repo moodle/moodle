@@ -188,7 +188,10 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
         if (isset($data->weight) and $cansetassessmentweight) {
             $coredata->weight = $data->weight;
         }
-        $DB->update_record('workshop_assessments', $coredata);
+        // Update the assessment data if there is something other than just the 'id'.
+        if (count((array)$coredata) > 1 ) {
+            $DB->update_record('workshop_assessments', $coredata);
+        }
 
         // And finally redirect the user's browser.
         if (!is_null($rawgrade) and isset($data->saveandclose)) {
