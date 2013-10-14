@@ -4382,6 +4382,9 @@ function update_internal_user_password($user, $password) {
     if ($user->password !== $hashedpassword) {
         $DB->set_field('user', 'password',  $hashedpassword, array('id'=>$user->id));
         $user->password = $hashedpassword;
+
+        // Trigger user updated event
+        events_trigger('user_updated', $user);
     }
 
     return true;
@@ -5597,6 +5600,11 @@ function setnew_password_and_mail($user) {
     $newpassword = generate_password();
 
     $DB->set_field('user', 'password', hash_internal_user_password($newpassword), array('id'=>$user->id));
+
+    $user->password = $hashedpassword;
+
+    // Trigger user updated event
+    events_trigger('user_updated', $user);
 
     $a = new stdClass();
     $a->firstname   = fullname($user, true);
