@@ -945,6 +945,9 @@ SQL;
         // TEAMMODE :: Morgan Harris
         if ($this->teammode) {
            $group = $this->user_group($authorid);
+           if (empty($group)) {
+               return false;
+           }
            $authorids = array_keys( groups_get_members($group->id, "u.id") );
            $authorids[] = $authorid;
            $authorids_str = implode($authorids, ", ");
@@ -1291,7 +1294,7 @@ SQL;
 
 		//todo: give workshop_group_submission_summary a $this param
         if($this->teammode) {
-        	$summary		= new workshop_group_submission_summary($record, $showauthor);
+        	$summary		= new workshop_group_submission_summary($this, $record, $showauthor);
         	$summary->group	= $this->user_group($record->authorid);
         	$summary->url   = $this->submission_url($record->id);
         } else {
@@ -2487,7 +2490,11 @@ SQL;
     	
     	$userinfo = $DB->get_records_list("user","id",$findusers,'','id,firstname,lastname,picture,imagealt,email');
     	
-    	$usergradinggrades = $DB->get_records_list("workshop_aggregations","userid",$findusers,'','userid,gradinggrade');
+//    	$usergradinggrades = $DB->get_records_list("workshop_aggregations","userid",$findusers,'','userid,gradinggrade');
+        list($select, $params) = $DB->get_in_or_equal($findusers, SQL_PARAMS_NAMED);
+        $params['workshopid'] = $this->id;
+        
+        $usergradinggrades = $DB->get_records_select("workshop_aggregations", "workshopid = :workshopid AND userid $select", $params, '', 'userid,gradinggrade');
     	
     	foreach($userinfo as $k => $v) {
     		if(!empty($usergradinggrades[$k]))

@@ -46,8 +46,9 @@ if($form->exportValue('clear'))
 	}
 
 	$users = $DB->get_records_list('user','username',$usernames,'','username,id,firstname,lastname');
-	$groups = groups_get_all_groups($course->id,0,$cm->groupingid,'g.name,g.id');
+	$groups = groups_get_all_groups($course->id,0,$cm->groupingid);
     foreach ($groups as $g) {
+        $groups[$g->name] = $g;
         $g->members = array_keys(groups_get_members($g->id,'u.id','u.id'));
     }
  
@@ -58,10 +59,6 @@ if($form->exportValue('clear'))
     foreach($submissions as $k => $s) {
         $submissions_by_group[$s->group->id] = $s;
     }
-    
-    // echo "<pre>";
-    // print_r($users);
-    // die;
     
 	foreach($csv as $a) {
 		if(!empty($a)) {

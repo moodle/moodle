@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/gradelib.php');
  *
  * @todo the final interface is not decided yet as we have only one implementation so far
  */
-class workshop_calibrated_evaluation implements workshop_evaluation {
+class workshop_calibrated_evaluation extends workshop_evaluation {
 
     /** @var workshop the parent workshop instance */
     protected $workshop;

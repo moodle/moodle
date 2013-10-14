@@ -38,13 +38,6 @@ class workshop_calibrated_evaluation_settings_form extends moodleform {
         $workshop       = $this->_customdata['workshop'];
 
         $mform->addElement('header', 'general', get_string('settings', 'workshopeval_calibrated'));
-        
-        $options = $workshop->available_evaluation_methods_list();
-
-        $label = get_string('evaluationmethod', 'workshop');
-        $el = $mform->addElement('select', 'methodname', $label, $options);
-		$el->setValue('calibrated');
-        $mform->addHelpButton('methodname', 'evaluationmethod', 'workshop');
 
         $options = array();
         for ($i = 9; $i >= 1; $i--) {
