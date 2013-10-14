@@ -42,12 +42,13 @@ $table->headspan = array(1, 3, 1, 1);
 $table->attributes = array('class' => 'generaltable backup-report');
 $table->data = array();
 
-$strftimedatetime = get_string("strftimerecent");
-$strerror = get_string("error");
-$strok = get_string("ok");
-$strunfinished = get_string("unfinished");
-$strskipped = get_string("skipped");
-$strwarning = get_string("warning");
+$strftimedatetime = get_string('strftimerecent');
+$strerror = get_string('error');
+$strok = get_string('ok');
+$strunfinished = get_string('unfinished');
+$strskipped = get_string('skipped');
+$strwarning = get_string('warning');
+$strnotyetrun = get_string('backupnotyetrun');
 
 list($select, $join) = context_instance_preload_sql('c.id', CONTEXT_COURSE, 'ctx');
 $sql = "SELECT bc.*, c.fullname $select
@@ -60,22 +61,25 @@ foreach ($rs as $backuprow) {
     // Cache the course context
     context_instance_preload($backuprow);
 
-    // Prepare a cell to display the status of the entry
+    // Prepare a cell to display the status of the entry.
     if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_OK) {
         $status = $strok;
-        $statusclass = 'backup-ok'; // Green
+        $statusclass = 'backup-ok'; // Green.
     } else if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_UNFINISHED) {
         $status = $strunfinished;
-        $statusclass = 'backup-unfinished'; // Red
+        $statusclass = 'backup-unfinished'; // Red.
     } else if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_SKIPPED) {
         $status = $strskipped;
-        $statusclass = 'backup-skipped'; // Green
+        $statusclass = 'backup-skipped'; // Green.
     } else if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_WARNING) {
         $status = $strwarning;
-        $statusclass = 'backup-warning'; // Orange
+        $statusclass = 'backup-warning'; // Orange.
+    } else if ($backuprow->laststatus == backup_cron_automated_helper::BACKUP_STATUS_NOTYETRUN) {
+        $status = $strnotyetrun;
+        $statusclass = 'backup-notyetrun';
     } else {
         $status = $strerror;
-        $statusclass = 'backup-error'; // Red
+        $statusclass = 'backup-error'; // Red.
     }
     $status = new html_table_cell($status);
     $status->attributes = array('class' => $statusclass);
