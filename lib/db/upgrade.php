@@ -2689,5 +2689,17 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013100901.00);
     }
 
+    if ($oldversion < 2013102100.00) {
+        // Changing default value for the status of a course backup.
+        $table = new xmldb_table('backup_courses');
+        $field = new xmldb_field('laststatus', XMLDB_TYPE_CHAR, '1', null, XMLDB_NOTNULL, null, '5', 'lastendtime');
+
+        // Launch change of precision for field value
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013102100.00);
+    }
+
     return true;
 }
