@@ -515,6 +515,41 @@ Feature: Course category management interface performs as expected
     And I should see "Next" in the "#course-listing .listing-pagination" "css_element"
     And I should see "Last" in the "#course-listing .listing-pagination" "css_element"
 
+  Scenario: Test pagination is only shown when required
+    Given the following "categories" exists:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+    And the following "courses" exists:
+      | category | fullname | shortname | idnumber |
+      | CAT1 | Course 1 | Course 1 | C1 |
+      | CAT1 | Course 2 | Course 2 | C2 |
+      | CAT1 | Course 3 | Course 3 | C3 |
+      | CAT1 | Course 4 | Course 4 | C4 |
+      | CAT1 | Course 5 | Course 5 | C5 |
+    And I log in as "admin"
+    And I go to the courses management page
+    And I should see the "Course categories" management page
+    And I click on "Cat 1" "link"
+    # Redirect.
+    And I should see the "Course categories and courses" management page
+    And I click on "Re-sort courses" "link"
+    And I click on "By idnumber" "link" in the ".course-listing-actions" "css_element"
+    # Redirect.
+    And I should see "Per page: 20" in the ".course-listing-actions" "css_element"
+    And I should see course listing "Course 1" before "Course 2"
+    And I should see course listing "Course 2" before "Course 3"
+    And I should see course listing "Course 3" before "Course 4"
+    And I should see course listing "Course 4" before "Course 5"
+    And "#course-listing .listing-pagination" "css_element" should not exists
+    And I click on "5" "link" in the ".course-listing-actions" "css_element"
+    # Redirect
+    And I should see "Per page: 5" in the ".course-listing-actions" "css_element"
+    And I should see course listing "Course 1" before "Course 2"
+    And I should see course listing "Course 2" before "Course 3"
+    And I should see course listing "Course 3" before "Course 4"
+    And I should see course listing "Course 4" before "Course 5"
+    And "#course-listing .listing-pagination" "css_element" should not exists
+
   # We need at least 30 courses for this next test.
   @javascript
   Scenario: Test many course pagination

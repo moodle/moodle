@@ -486,7 +486,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $html .= html_writer::div($str, 'listing-pagination-totals dimmed');
         }
 
-        if ($totalcourses < $perpage) {
+        if ($totalcourses <= $perpage) {
             return $html;
         }
         $aside = 2;
