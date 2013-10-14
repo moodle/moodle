@@ -580,8 +580,13 @@ class html2text
         }
 
         if (($index = array_search($url, $this->_link_list)) === false) {
+            // Add the link to the list.
             $this->_link_list[] = $url;
             $index = count($this->_link_list);
+        }
+        else {
+            // Use the index of the existing link in the list (we enumerate from 1, not from 0).
+            $index++;
         }
 
         return $display . ' [' . ($index) . ']';
