@@ -270,11 +270,14 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 #course-category-listings .item-actions img {margin: 0 0.3em;}
 #course-category-listings .item-actions .menu .menu-action {margin-right:1em;}
 
-#course-category-listings li .tree-icon {margin-left:1em;}
-#course-category-listings li li .tree-icon {margin-left:2em;}
-#course-category-listings li li li .tree-icon {margin-left:3em;}
-#course-category-listings li li li li .tree-icon {margin-left:4em;}
-#course-category-listings li li li li li .tree-icon {margin-left:5em;}
+#course-category-listings li .tree-icon {margin-left:0;}
+#course-category-listings li li .tree-icon {margin-left:1em;}
+#course-category-listings li li li .tree-icon {margin-left:2em;}
+#course-category-listings li li li li .tree-icon {margin-left:3em;}
+#course-category-listings li li li li li .tree-icon {margin-left:4em;}
+#course-category-listings li li li li li li .tree-icon {margin-left:4.5em;}
+#course-category-listings li li li li li li li .tree-icon {margin-left:5em;}
+#course-category-listings li li li li li li li li .tree-icon {margin-left:5.5em;}
 
 #course-listing .listitem .drag-handle {margin-right:0.5em;}
 #course-listing .listitem .idnumber {color:#a1a1a8;margin-right:2em;}

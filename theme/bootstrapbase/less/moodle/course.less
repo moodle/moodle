@@ -728,29 +728,14 @@ span.editinstructions {
         }
 
         // Tree item indenting to represent depth.
-        .tree-icon {
-            margin-left:1em;
-        }
-        li {
-            .tree-icon {
-                margin-left:2em;
-            }
-            li {
-                .tree-icon {
-                    margin-left:3em;
-                }
-                li {
-                    .tree-icon {
-                        margin-left:4em;
-                    }
-                    li {
-                        .tree-icon {
-                            margin-left:5em;
-                        }
-                    }
-                }
-            }
-        }
+        .tree-icon {margin-left:0;}
+        li .tree-icon {margin-left:1em;}
+        li li .tree-icon {margin-left:2em;}
+        li li li .tree-icon {margin-left:3em;}
+        li li li li .tree-icon {margin-left:4em;}
+        li li li li li .tree-icon {margin-left:4.5em;}
+        li li li li li li .tree-icon {margin-left:5em;}
+        li li li li li li li .tree-icon {margin-left:5.5em;}
 
         &+li > div,
         &:first-child > div {
