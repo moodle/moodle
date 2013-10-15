@@ -61,7 +61,7 @@
 <tr valign="top" class="required">
     <td align="right"><label for="passwd"><?php print_string("auth_fcpasswd_key", "auth_fc") ?>:</label></td>
     <td>
-        <input name="passwd" id="passwd" type="password" size="30" maxlength="12" value="<?php echo $config->passwd?>" />
+        <input name="passwd" id="passwd" type="password" size="30" maxlength="12" value="<?php echo $config->passwd?>" autocomplete="off"/>
     <?php  if (isset($err["passwd"])) echo $OUTPUT->error_text($err["passwd"]); ?>
     </td>
     <td>

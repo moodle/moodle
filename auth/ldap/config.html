@@ -223,7 +223,7 @@ if (!ldap_paged_results_supported($config->ldap_version)) {
         <label for="bind_pw"><?php print_string('auth_ldap_bind_pw_key', 'auth_ldap') ?></label>
     </td>
     <td>
-        <input name="bind_pw" id="bind_pw" type="password" size="30" value="<?php echo $config->bind_pw?>" />
+        <input name="bind_pw" id="bind_pw" type="password" size="30" value="<?php echo $config->bind_pw?>" autocomplete="off"/>
         <?php if (isset($err['bind_pw'])) { echo $OUTPUT->error_text($err['bind_pw']); } ?>
     </td>
     <td>
