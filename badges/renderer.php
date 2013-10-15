@@ -935,10 +935,11 @@ class issued_badge implements renderable {
                 array('hash' => $hash), IGNORE_MISSING);
         if ($rec) {
             // Get a recipient from database.
-            $user = $DB->get_record_sql('SELECT u.id, u.lastname, u.firstname,
+            $namefields = get_all_user_name_fields(true, 'u');
+            $user = $DB->get_record_sql("SELECT u.id, $namefields,
                                                 u.email AS accountemail, b.email AS backpackemail
                         FROM {user} u LEFT JOIN {badge_backpack} b ON u.id = b.userid
-                        WHERE u.id = :userid', array('userid' => $rec->userid));
+                        WHERE u.id = :userid", array('userid' => $rec->userid));
             $this->recipient = $user;
             $this->visible = $rec->visible;
             $this->badgeid = $rec->badgeid;
