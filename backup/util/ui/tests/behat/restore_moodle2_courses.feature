@@ -9,6 +9,11 @@ Feature: Restore Moodle 2 course backups
       | fullname | shortname | category | format | numsections | coursedisplay |
       | Course 1 | C1 | 0 | topics | 15 | 1 |
       | Course 2 | C2 | 0 | topics | 5 | 0 |
+      | Course 3 | C3 | 0 | topics | 2 | 0 |
+    And the following "activities" exists:
+      | activity | course | idnumber | name | intro | section |
+      | assign | C3 | assign1 | Test assign name | Assign description | 1 |
+      | data | C3 | data1 | Test database name | Database description | 2 |
     And I log in as "admin"
     And I follow "Course 1"
     And I turn editing mode on
@@ -44,15 +49,16 @@ Feature: Restore Moodle 2 course backups
 
   @javascript
   Scenario: Restore a backup into the same course
-    When I backup "Course 1" course using this options:
+    When I backup "Course 3" course using this options:
       | Filename | test_backup.mbz |
-    And I merge "test_backup.mbz" backup into the current course using this options:
+    And I restore "test_backup.mbz" backup into "Course 2" course using this options:
+      | setting_section_section_3_included | 0 |
+      | setting_section_section_3_userinfo | 0 |
       | setting_section_section_5_included | 0 |
       | setting_section_section_5_userinfo | 0 |
-    Then I should see "Course 1"
-    And I should not see "Section 3"
-    And I should see "Community finder" in the "Community finder" "block"
-    And I should see "Test forum name"
+    Then I should see "Course 2"
+    And I should see "Test assign name"
+    And I should not see "Test database name"
 
   @javascript
   Scenario: Restore a backup into the same course removing it's contents before that
