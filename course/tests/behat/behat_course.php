@@ -862,10 +862,14 @@ class behat_course extends behat_base {
      * Returns a category node from within the management interface.
      *
      * @param string $name The name of the category.
+     * @param bool $link If set to true we'll resolve to the link rather than just the node.
      * @return \Behat\Mink\Element\NodeElement
      */
-    protected function get_management_category_listing_node_by_name($name) {
-        $selector = "//div[@id='category-listing']//li[contains(concat(' ', normalize-space(@class), ' '), ' listitem-category ')]//a[text()='{$name}']/ancestor::li[@data-id]";
+    protected function get_management_category_listing_node_by_name($name, $link = false) {
+        $selector = "//div[@id='category-listing']//li[contains(concat(' ', normalize-space(@class), ' '), ' listitem-category ')]//a[text()='{$name}']";
+        if ($link === false) {
+            $selector .= "/ancestor::li[@data-id]";
+        }
         return $this->find('xpath', $selector);
     }
 
@@ -873,10 +877,14 @@ class behat_course extends behat_base {
      * Returns a course node from within the management interface.
      *
      * @param string $name The name of the course.
+     * @param bool $link If set to true we'll resolve to the link rather than just the node.
      * @return \Behat\Mink\Element\NodeElement
      */
-    protected function get_management_course_listing_node_by_name($name) {
-        $selector = "//div[@id='course-listing']//li[contains(concat(' ', @class, ' '), ' listitem-course ')]//a[text()='{$name}']/ancestor::li[@data-id]";
+    protected function get_management_course_listing_node_by_name($name, $link = false) {
+        $selector = "//div[@id='course-listing']//li[contains(concat(' ', @class, ' '), ' listitem-course ')]//a[text()='{$name}']";
+        if ($link === false) {
+            $selector .= "/ancestor::li[@data-id]";
+        }
         return $this->find('xpath', $selector);
     }
 
@@ -899,8 +907,8 @@ class behat_course extends behat_base {
      * @param string $name
      */
     public function i_click_on_category_in_the_management_interface($name) {
-        $node = $this->get_management_category_listing_node_by_name($name);
-        $node->find('css', 'a.categoryname')->click();
+        $node = $this->get_management_category_listing_node_by_name($name, true);
+        $node->click();
     }
 
     /**
@@ -910,8 +918,8 @@ class behat_course extends behat_base {
      * @param string $name
      */
     public function i_click_on_course_in_the_management_interface($name) {
-        $node = $this->get_management_course_listing_node_by_name($name);
-        $node->find('css', 'a.coursename')->click();
+        $node = $this->get_management_course_listing_node_by_name($name, true);
+        $node->click();
     }
 
     /**
