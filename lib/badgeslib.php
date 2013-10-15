@@ -411,9 +411,7 @@ class badge {
                 $pathhash = badges_bake($issued->uniquehash, $this->id, $userid, true);
 
                 // Notify recipients and badge creators.
-                if (empty($CFG->noemailever)) {
-                    badges_notify_badge_award($this, $userid, $issued->uniquehash, $pathhash);
-                }
+                badges_notify_badge_award($this, $userid, $issued->uniquehash, $pathhash);
             }
         }
     }
@@ -634,7 +632,9 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $message = badge_message_from_template($badge->message, $params);
     $plaintext = format_text_email($message, FORMAT_HTML);
 
-    if ($badge->attachment && $filepathhash) {
+    // TODO: $filepathhash may be moodle_url instance too...
+
+    if ($badge->attachment && is_string($filepathhash)) {
         $fs = get_file_storage();
         $file = $fs->get_file_by_hash($filepathhash);
         $attachment = $file->copy_content_to_temp();

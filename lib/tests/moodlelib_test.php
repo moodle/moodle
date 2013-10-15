@@ -2493,6 +2493,8 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     public function test_email_to_user() {
+        global $CFG;
+
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -2503,7 +2505,14 @@ class core_moodlelib_testcase extends advanced_testcase {
         $subject2 = 'subject 2';
         $messagetext2 = 'message text 2';
 
+        $this->assertNotEmpty($CFG->noemailever);
+        email_to_user($user1, $user2, $subject, $messagetext);
+        $this->assertDebuggingCalled('Not sending email due to $CFG->noemailever config setting');
+
         unset_config('noemailever');
+
+        email_to_user($user1, $user2, $subject, $messagetext);
+        $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
 
         $sink = $this->redirectEmails();
         email_to_user($user1, $user2, $subject, $messagetext);
@@ -2522,6 +2531,9 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($messagetext2, trim($result[1]->body));
         $this->assertSame($user2->email, $result[1]->to);
         $this->assertSame($user1->email, $result[1]->from);
+
+        email_to_user($user1, $user2, $subject, $messagetext);
+        $this->assertDebuggingCalled('Unit tests must not send real emails! Use $this->redirectEmails()');
     }
 
     /**

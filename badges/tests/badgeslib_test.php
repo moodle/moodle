@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/badgeslib.php');
 
-class core_badgeslib_testcase extends advanced_testcase {
+class core_badges_badgeslib_testcase extends advanced_testcase {
     protected $badgeid;
     protected $course;
     protected $user;
@@ -40,6 +40,8 @@ class core_badgeslib_testcase extends advanced_testcase {
     protected function setUp() {
         global $DB, $CFG;
         $this->resetAfterTest(true);
+
+        unset_config('noemailever');
 
         $user = $this->getDataGenerator()->create_user();
 
@@ -239,7 +241,10 @@ class core_badgeslib_testcase extends advanced_testcase {
         $current = $c->get_data($activities[$this->module->cmid], false, $this->user->id);
         $current->completionstate = COMPLETION_COMPLETE;
         $current->timemodified = time();
+        $sink = $this->redirectEmails();
         $c->internal_set_data($activities[$this->module->cmid], $current);
+        $this->assertCount(1, $sink->get_messages());
+        $sink->close();
 
         // Check if badge is awarded.
         $this->assertDebuggingCalled('Error baking badge image!');
@@ -261,7 +266,10 @@ class core_badgeslib_testcase extends advanced_testcase {
         $ccompletion = new completion_completion(array('course' => $this->course->id, 'userid' => $this->user->id));
 
         // Mark course as complete.
+        $sink = $this->redirectEmails();
         $ccompletion->mark_complete();
+        $this->assertCount(1, $sink->get_messages());
+        $sink->close();
 
         // Check if badge is awarded.
         $this->assertDebuggingCalled('Error baking badge image!');
@@ -281,7 +289,10 @@ class core_badgeslib_testcase extends advanced_testcase {
         $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address'));
 
         $this->user->address = 'Test address';
+        $sink = $this->redirectEmails();
         user_update_user($this->user, false);
+        $this->assertCount(1, $sink->get_messages());
+        $sink->close();
         // Check if badge is awarded.
         $this->assertDebuggingCalled('Error baking badge image!');
         $this->assertTrue($badge->is_issued($this->user->id));
@@ -300,7 +311,10 @@ class core_badgeslib_testcase extends advanced_testcase {
         $criteria_overall1->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL, 'field_address' => 'address'));
 
         $this->user->address = 'Test address';
+        $sink = $this->redirectEmails();
         user_update_user($this->user, false);
+        $this->assertCount(1, $sink->get_messages());
+        $sink->close();
         // Check if badge is awarded.
         $this->assertDebuggingCalled('Error baking badge image!');
         $awards = $badge->get_awards();
