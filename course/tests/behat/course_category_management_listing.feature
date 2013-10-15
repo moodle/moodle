@@ -1,4 +1,4 @@
-@core @core_course
+@core @core_course @test
 Feature: Course category management interface performs as expected
   In order to test JS enhanced display of categories and subcategories.
   As a moodle admin
