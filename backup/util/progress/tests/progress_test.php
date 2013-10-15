@@ -56,9 +56,11 @@ class backup_progress_testcase extends basic_testcase {
 
         // Make some progress and check that the time limit gets added.
         $progress->step_time();
+        core_php_time_limit::get_and_clear_unit_test_data();
         $progress->progress(2);
         $this->assertTrue($progress->was_update_called());
-        $this->assertEquals(120, ini_get('max_execution_time'));
+        $this->assertEquals(array(core_backup_progress::TIME_LIMIT_WITHOUT_PROGRESS),
+                core_php_time_limit::get_and_clear_unit_test_data());
 
         // Check the new value.
         $this->assert_min_max(0.2, 0.2, $progress);
