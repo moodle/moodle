@@ -288,9 +288,9 @@ if (($action == 'edit') || ($action == 'new')) {
 
     // Get list of used plug-ins
     $instances = repository::get_types();
+    // Array to store plugins being used
+    $alreadyplugins = array();
     if (!empty($instances)) {
-        // Array to store plugins being used
-        $alreadyplugins = array();
         $totalinstances = count($instances);
         $updowncount = 1;
         foreach ($instances as $i) {
