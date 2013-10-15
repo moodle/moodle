@@ -62,7 +62,7 @@ if(!empty($safemode)) {
     die("Error: Cannot run with PHP safe_mode = On. Turn off safe_mode in php.ini.\n");
 }
 
-@set_time_limit (0);
+core_php_time_limit::raise(0);
 error_reporting(E_ALL);
 
 function chat_empty_connection() {

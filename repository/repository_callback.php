@@ -40,7 +40,7 @@ header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 
 /// Wait as long as it takes for this script to finish
-set_time_limit(0);
+core_php_time_limit::raise();
 
 /// Get repository instance information
 $sql = 'SELECT i.name, i.typeid, r.type, i.contextid FROM {repository} r, {repository_instances} i '.

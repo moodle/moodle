@@ -581,7 +581,7 @@ function forum_cron() {
 
         foreach ($users as $userto) {
 
-            @set_time_limit(120); // terminate if processing of any account takes longer than 2 minutes
+            core_php_time_limit::raise(120); // terminate if processing of any account takes longer than 2 minutes
 
             mtrace('Processing user '.$userto->id);
 
@@ -816,7 +816,7 @@ function forum_cron() {
 
     mtrace('Starting digest processing...');
 
-    @set_time_limit(300); // terminate if not able to fetch all digests in 5 minutes
+    core_php_time_limit::raise(300); // terminate if not able to fetch all digests in 5 minutes
 
     if (!isset($CFG->digestmailtimelast)) {    // To catch the first time
         set_config('digestmailtimelast', 0);
@@ -894,7 +894,7 @@ function forum_cron() {
             // Data collected, start sending out emails to each user
             foreach ($userdiscussions as $userid => $thesediscussions) {
 
-                @set_time_limit(120); // terminate if processing of any account takes longer than 2 minutes
+                core_php_time_limit::raise(120); // terminate if processing of any account takes longer than 2 minutes
 
                 cron_setup_user();
 
@@ -938,7 +938,7 @@ function forum_cron() {
 
                 foreach ($thesediscussions as $discussionid) {
 
-                    @set_time_limit(120);   // to be reset for each post
+                    core_php_time_limit::raise(120);   // to be reset for each post
 
                     $discussion = $discussions[$discussionid];
                     $forum      = $forums[$discussion->forum];

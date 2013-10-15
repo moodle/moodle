@@ -138,7 +138,7 @@ function simple_get_record_by_id($context) {
 }
 
 function run_tests($function, $contexts, $numcalls, $basetime) {
-    set_time_limit(120);
+    core_php_time_limit::raise(120);
     $startime = microtime(true);
     for ($j = 0; $j < $numcalls; $j++) {
         $function($contexts[array_rand($contexts)]);
@@ -158,7 +158,7 @@ function print_result_line($duration, $basetime, $numcalls, $action1, $action2 =
 
 function populate_test_database($syscontext, $numcategories, $numcourses, $nummodules, $numoverrides, $numconfigs) {
     global $DB, $OUTPUT;
-    set_time_limit(600);
+    core_php_time_limit::raise(600);
     $syscontext->id = $DB->insert_record('context', $syscontext);
 
     // Category contexts.

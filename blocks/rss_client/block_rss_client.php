@@ -304,7 +304,7 @@
             mtrace('    ' . $rec->url . ' ', '');
             // Fetch the rss feed, using standard simplepie caching
             // so feeds will be renewed only if cache has expired
-            @set_time_limit(60);
+            core_php_time_limit::raise(60);
 
             $feed =  new moodle_simplepie();
             // set timeout for longer than normal to be agressive at

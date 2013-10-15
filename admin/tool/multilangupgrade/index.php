@@ -59,7 +59,7 @@ echo $OUTPUT->box_start();
 
 /// Turn off time limits, sometimes upgrades can be slow.
 
-@set_time_limit(0);
+core_php_time_limit::raise();
 
 echo '<strong>Progress:</strong>';
 $i = 0;

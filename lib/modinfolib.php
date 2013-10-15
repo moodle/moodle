@@ -2077,7 +2077,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         $select = array('id'=>$courseid);
     } else {
         $select = array();
-        @set_time_limit(0);  // this could take a while!   MDL-10954
+        core_php_time_limit::raise();  // this could take a while!   MDL-10954
     }
 
     $rs = $DB->get_recordset("course", $select,'','id,'.join(',', course_modinfo::$cachedfields));

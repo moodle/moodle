@@ -94,7 +94,7 @@ class enrol_imsenterprise_plugin extends enrol_plugin {
 
         $fileisnew = false;
         if ( file_exists($filename) ) {
-            @set_time_limit(0);
+            core_php_time_limit::raise();
             $starttime = time();
 
             $this->log_line('----------------------------------------------------------------------');

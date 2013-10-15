@@ -426,7 +426,7 @@ class badge {
         $awards = 0;
 
         // Raise timelimit as this could take a while for big web sites.
-        set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_HUGE);
 
         // For site level badges, get all active site users who can earn this badge and haven't got it yet.

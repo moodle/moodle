@@ -49,7 +49,7 @@ function cron_run() {
         set_debugging(DEBUG_DEVELOPER, true);
     }
 
-    set_time_limit(0);
+    core_php_time_limit::raise();
     $starttime = microtime();
 
     // Increase memory limit
@@ -287,7 +287,7 @@ function cron_run() {
                         mtrace("... used " . (microtime(1) - $pre_time) . " seconds");
                     }
                     // Reset possible changes by modules to time_limit. MDL-11597
-                    @set_time_limit(0);
+                    core_php_time_limit::raise();
                     mtrace("done.");
                 }
             }
@@ -314,7 +314,7 @@ function cron_run() {
                         $DB->set_field('block', 'lastcron', $timenow, array('id'=>$block->id));
                     }
                     // Reset possible changes by blocks to time_limit. MDL-11597
-                    @set_time_limit(0);
+                    core_php_time_limit::raise();
                     mtrace('done.');
                 }
             }
@@ -493,7 +493,7 @@ function cron_run() {
                     }
                 }
             }
-            @set_time_limit(0);
+            core_php_time_limit::raise();
         } else {
             mtrace('Next stats run after:'. userdate($timetocheck));
         }
@@ -575,7 +575,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
                 round(microtime(true) - $pre_time, 2) . " seconds)");
 
         set_config('lastcron', time(), $component);
-        @set_time_limit(0);
+        core_php_time_limit::raise();
     }
 
     if ($description) {

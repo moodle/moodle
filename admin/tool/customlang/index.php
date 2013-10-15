@@ -55,7 +55,7 @@ if ($action === 'checkout') {
     $progressbar->create();         // prints the HTML code of the progress bar
 
     // we may need a bit of extra execution time and memory here
-    @set_time_limit(HOURSECS);
+    core_php_time_limit::raise(HOURSECS);
     raise_memory_limit(MEMORY_EXTRA);
     tool_customlang_utils::checkout($lng, $progressbar);
 
