@@ -94,7 +94,7 @@ if (empty($CFG->tool_generator_users_password) || is_bool($CFG->tool_generator_u
 }
 
 // Switch to admin user account.
-session_set_user(get_admin());
+\core\session\manager::set_user(get_admin());
 
 // Create files.
 $courseid = $DB->get_field('course', 'id', array('shortname' => $shortname));
