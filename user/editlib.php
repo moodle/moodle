@@ -129,38 +129,16 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
 
     $strrequired = get_string('required');
 
-    $nameformat = $CFG->fullnamedisplay;
-    if ($nameformat == 'language') {
-        $nameformat = get_string('fullnamedisplay');
-    }
-
-    $necessarynames = array('firstname', 'lastname');
-    $enablednames = array_diff(get_all_user_name_fields(), $necessarynames);
-    // Get a list of all of the enabled names.
-    $enabledadditionalusernames = array();
-    foreach ($enablednames as $enabledname) {
-        if (strpos($CFG->fullnamedisplay, $enabledname) !== false) {
-            $enabledadditionalusernames[] = $enabledname;
-        }
-    }
-
-    $combinednames = array_merge($necessarynames, $enabledadditionalusernames);
-    $requirednames = order_in_string($combinednames, $nameformat);
-    foreach ($necessarynames as $necessaryname) {
-        if (!in_array($necessaryname, $requirednames)) {
-            $requirednames = order_in_string($combinednames, get_string('fullnamedisplay'));
-        }
-    }
-    foreach ($requirednames as $fullname) {
+    // Add the necessary names.
+    foreach (useredit_get_required_name_fields() as $fullname) {
         $mform->addElement('text', $fullname,  get_string($fullname),  'maxlength="100" size="30"');
+        $mform->addRule($fullname, $strrequired, 'required', null, 'client');
         $mform->setType($fullname, PARAM_NOTAGS);
     }
 
-    $mform->addRule('firstname', $strrequired, 'required', null, 'client');
-    $mform->addRule('lastname', $strrequired, 'required', null, 'client');
-
-    $morenames = array_diff($enabledadditionalusernames, $requirednames);
-    foreach ($morenames as $addname) {
+    $enabledusernamefields = useredit_get_enabled_name_fields();
+    // Add the enabled additional name fields.
+    foreach ($enabledusernamefields as $addname) {
         $mform->addElement('text', $addname,  get_string($addname), 'maxlength="100" size="30"');
         $mform->setType($addname, PARAM_NOTAGS);
     }
@@ -311,16 +289,14 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
 
     }
 
-    $alladditionalnames = array_diff(get_all_user_name_fields(), $necessarynames);
-    if (count($enabledadditionalusernames) < count($alladditionalnames)) {
+    // Display user name fields that are not currenlty enabled here if there are any.
+    $disabledusernamefields = useredit_get_disabled_name_fields($enabledusernamefields);
+    if (isset($disabledusernamefields[0])) {
         $mform->addElement('header', 'moodle_additional_names', get_string('additionalnames'));
-        foreach ($alladditionalnames as $allname) {
-            if (!in_array($allname, $enabledadditionalusernames)) {
-                $mform->addElement('text', $allname, get_string($allname), 'maxlength="100" size="30"');
-                $mform->setType($allname, PARAM_NOTAGS);
-            }
+        foreach ($disabledusernamefields as $allname) {
+            $mform->addElement('text', $allname, get_string($allname), 'maxlength="100" size="30"');
+            $mform->setType($allname, PARAM_NOTAGS);
         }
-
     }
 
     if (!empty($CFG->usetags) and empty($USER->newadminuser)) {
@@ -369,6 +345,80 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->setType('address', PARAM_TEXT);
 
 
+}
+
+/**
+ * Return required user name fields for forms.
+ *
+ * @return array required user name fields in order according to settings.
+ */
+function useredit_get_required_name_fields() {
+    global $CFG;
+
+    // Get the name display format.
+    $nameformat = $CFG->fullnamedisplay;
+
+    // Names that are required fields on user forms.
+    $necessarynames = array('firstname', 'lastname');
+    $languageformat = get_string('fullnamedisplay');
+
+    // Check that the language string and the $nameformat contain the necessary names.
+    foreach ($necessarynames as $necessaryname) {
+        $pattern = "/$necessaryname\b/";
+        if (!preg_match($pattern, $languageformat)) {
+            // If the language string has been altered then fall back on the below order.
+            $languageformat = 'firstname lastname';
+        }
+        if (!preg_match($pattern, $nameformat)) {
+            // If the nameformat doesn't contain the necessary name fields then use the languageformat.
+            $nameformat = $languageformat;
+        }
+    }
+
+    // Order all of the name fields in the postion they are written in the fullnamedisplay setting.
+    $necessarynames = order_in_string($necessarynames, $nameformat);
+    return $necessarynames;
+}
+
+/**
+ * Gets enabled (from fullnameformate setting) user name fields in appropriate order.
+ *
+ * @return array Enabled user name fields.
+ */
+function useredit_get_enabled_name_fields() {
+    global $CFG;
+
+    // Get all of the other name fields which are not ranked as necessary.
+    $additionalusernamefields = array_diff(get_all_user_name_fields(), array('firstname', 'lastname'));
+    // Find out which additional name fields are actually being used from the fullnamedisplay setting.
+    $enabledadditionalusernames = array();
+    foreach ($additionalusernamefields as $enabledname) {
+        if (strpos($CFG->fullnamedisplay, $enabledname) !== false) {
+            $enabledadditionalusernames[] = $enabledname;
+        }
+    }
+
+    // Order all of the name fields in the postion they are written in the fullnamedisplay setting.
+    $enabledadditionalusernames = order_in_string($enabledadditionalusernames, $CFG->fullnamedisplay);
+    return $enabledadditionalusernames;
+}
+
+/**
+ * Gets user name fields not enabled from the setting fullnamedisplay.
+ *
+ * @param array $enabledadditionalusernames Current enabled additional user name fields.
+ * @return array Disabled user name fields.
+ */
+function useredit_get_disabled_name_fields($enabledadditionalusernames = null) {
+    // If we don't have enabled additional user name information then go and fetch it (try to avoid).
+    if (!isset($enabledadditionalusernames)) {
+        $enabledadditionalusernames = useredit_get_enabled_name_fields();
+    }
+
+    // These are the additional fields that are not currently enabled.
+    $nonusednamefields = array_diff(get_all_user_name_fields(),
+            array_merge(array('firstname', 'lastname'), $enabledadditionalusernames));
+    return $nonusednamefields;
 }
 
 
