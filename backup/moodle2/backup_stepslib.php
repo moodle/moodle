@@ -1640,11 +1640,6 @@ class backup_zip_contents extends backup_execution_step {
             @unlink($zipfile);
             throw new backup_step_exception('error_zip_packing', '', $e->debuginfo);
         }
-
-            // If any progress happened, end it.
-        if ($this->startedprogress) {
-            $this->task->get_progress()->end_progress();
-        }
     }
 }
 
