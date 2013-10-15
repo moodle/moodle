@@ -376,7 +376,11 @@ abstract class backup_cron_automated_helper {
 
         $outcome = self::BACKUP_STATUS_OK;
         $config = get_config('backup');
-        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_AUTOMATED, $userid);
+        $dir = $config->backup_auto_destination;
+        $storage = (int)$config->backup_auto_storage;
+
+        $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE, backup::INTERACTIVE_NO,
+                backup::MODE_AUTOMATED, $userid);
 
         try {
 
@@ -397,27 +401,28 @@ abstract class backup_cron_automated_helper {
                 }
             }
 
-            // Set the default filename
+            // Set the default filename.
             $format = $bc->get_format();
             $type = $bc->get_type();
             $id = $bc->get_id();
             $users = $bc->get_plan()->get_setting('users')->get_value();
             $anonymised = $bc->get_plan()->get_setting('anonymize')->get_value();
-            $bc->get_plan()->get_setting('filename')->set_value(backup_plan_dbops::get_default_backup_filename($format, $type, $id, $users, $anonymised));
+            $bc->get_plan()->get_setting('filename')->set_value(backup_plan_dbops::get_default_backup_filename($format, $type,
+                    $id, $users, $anonymised));
 
             $bc->set_status(backup::STATUS_AWAITING);
 
             $bc->execute_plan();
             $results = $bc->get_results();
             $outcome = self::outcome_from_results($results);
-            $file = $results['backup_destination']; // may be empty if file already moved to target location
-            $dir = $config->backup_auto_destination;
-            $storage = (int)$config->backup_auto_storage;
+            $file = $results['backup_destination']; // May be empty if file already moved to target location.
             if (!file_exists($dir) || !is_dir($dir) || !is_writable($dir)) {
                 $dir = null;
             }
-            if ($file && !empty($dir) && $storage !== 0) {
-                $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised, !$config->backup_shortname);
+            // Copy file only if there was no error.
+            if ($file && !empty($dir) && $storage !== 0 && $outcome != self::BACKUP_STATUS_ERROR) {
+                $filename = backup_plan_dbops::get_default_backup_filename($format, $type, $course->id, $users, $anonymised,
+                        !$config->backup_shortname);
                 if (!$file->copy_content_to($dir.'/'.$filename)) {
                     $outcome = self::BACKUP_STATUS_ERROR;
                 }
@@ -431,6 +436,20 @@ abstract class backup_cron_automated_helper {
             $bc->log('Exception: ' . $e->errorcode, backup::LOG_ERROR, $e->a, 1); // Log original exception problem.
             $bc->log('Debug: ' . $e->debuginfo, backup::LOG_DEBUG, null, 1); // Log original debug information.
             $outcome = self::BACKUP_STATUS_ERROR;
+        }
+
+        // Delete the backup file immediately if something went wrong.
+        if ($outcome === self::BACKUP_STATUS_ERROR) {
+
+            // Delete the file from file area if exists.
+            if (!empty($file)) {
+                $file->delete();
+            }
+
+            // Delete file from external storage if exists.
+            if ($storage !== 0 && !empty($filename) && file_exists($dir.'/'.$filename)) {
+                @unlink($dir.'/'.$filename);
+            }
         }
 
         $bc->destroy();
