@@ -1261,14 +1261,12 @@ class behat_course extends behat_base {
             throw new ExpectationException("Could not find the actions for $listingtype", $this->getSession());
         }
         $actionnode = $actionsnode->find('css', '.action-'.$action);
-        if ($this->running_javascript() && !$actionnode->isVisible()) {
-            $actionsnode->find('css', 'a.toggle-display')->click();
-            if ($actionnode) {
-                $actionnode = $listingnode->find('css', '.action-'.$action);
-            }
-        }
         if (!$actionnode) {
             throw new ExpectationException("Expected action was not available or not found ($action)", $this->getSession());
+        }
+        if ($this->running_javascript() && !$actionnode->isVisible()) {
+            $actionsnode->find('css', 'a.toggle-display')->click();
+            $actionnode = $actionsnode->find('css', '.action-'.$action);
         }
         $actionnode->click();
     }

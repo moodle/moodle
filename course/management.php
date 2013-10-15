@@ -27,6 +27,7 @@ require_once($CFG->dirroot.'/lib/coursecatlib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 $categoryid = optional_param('categoryid', null, PARAM_INT);
+$selectedcategoryid = optional_param('selectedcategoryid', null, PARAM_INT);
 $courseid = optional_param('courseid', null, PARAM_INT);
 $action = optional_param('action', false, PARAM_ALPHA);
 $page = optional_param('page', 0, PARAM_INT);
@@ -77,6 +78,11 @@ if ($courseid) {
     }
     $context = $systemcontext;
     navigation_node::override_active_url($url);
+}
+
+// Check if there is a selected category param, and if there is apply it.
+if ($course === null && $selectedcategoryid !== null && $selectedcategoryid !== $categoryid) {
+    $url->param('categoryid', $selectedcategoryid);
 }
 
 if ($page !== 0) {
