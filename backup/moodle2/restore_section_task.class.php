@@ -161,6 +161,9 @@ class restore_section_task extends restore_task {
         $section_included = new restore_section_included_setting($settingname, base_setting::IS_BOOLEAN, true);
         if (is_number($this->info->title)) {
             $label = get_string('includesection', 'backup', $this->info->title);
+        } elseif (empty($this->info->title)) { // Don't throw error if title is empty, gracefully continue restore.
+            $this->log('Section title missing in backup for section id '.$this->info->sectionid, backup::LOG_WARNING, $this->name);
+            $label = get_string('unnamedsection', 'backup');
         } else {
             $label = $this->info->title;
         }
