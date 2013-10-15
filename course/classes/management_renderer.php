@@ -204,7 +204,7 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         $html = html_writer::start_tag('li', $attributes);
         $html .= html_writer::start_div('clearfix');
-        $html .= html_writer::start_div('float-left');
+        $html .= html_writer::start_div('float-left ba-checkbox');
         $html .= html_writer::empty_tag('input', $bcatinput).'&nbsp;';
         $html .= html_writer::end_div();
         $html .= $icon;
@@ -561,7 +561,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $html .= html_writer::div($this->output->pix_icon('i/dragdrop', get_string('dndcourse')), 'float-left drag-handle');
         }
 
-        $html .= html_writer::start_div('float-left');
+        $html .= html_writer::start_div('ba-checkbox float-left');
         $html .= html_writer::empty_tag('input', $bulkcourseinput).'&nbsp;';
         $html .= html_writer::end_div();
         $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename'));
