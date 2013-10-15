@@ -153,7 +153,7 @@ foreach ($submissions as $submission) {
 
 $table = str_replace('<!--table body-->', $rows, $html);
 
-$title = 'Submissions for ' . $lti->name;
+$title = get_string('submissionsfor', 'lti', $lti->name);
 
 $PAGE->set_title(format_string($title , true));
 $PAGE->set_heading($course->fullname);
