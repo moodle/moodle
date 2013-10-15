@@ -12,7 +12,7 @@ To update to the latest release of twitter bootstrap:
 * download the new less files and store them in less/bootstrap
 * regenerate files using recess: recess --compile --compress moodle.less > ../style/moodle.css **
 * regenerate files using recess: recess --compile --compress editor.less > ../style/editor.css **
-* update lib/thirdpartylibs.xml
+* update ./thirdpartylibs.xml
 
 ** If you want to make changes to the .css generated from these .less files then you
 need to install recess (https://github.com/twitter/recess) to compile the .less files,
@@ -28,7 +28,7 @@ https://github.com/aFarkas/html5shiv/blob/master/src/html5shiv.js
 
 To update to the latest release of html5shiv:
 * download and replace: javascript/html5shiv.js
-* update lib/thirdpartylibs.xml
+* update ./thirdpartylibs.xml
 
 bootstrapcollapse.js, bootstrapdropdown.js, bootstrapengine.js
 --------------------------------------------------------------

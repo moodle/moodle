@@ -3,7 +3,7 @@
   <library>
     <location>adodb</location>
     <name>AdoDB</name>
-    <license>GPL/BSD</license>
+    <license>BSD/GPL</license>
     <version>5.18</version>
     <licenseversion>2.1+</licenseversion>
   </library>
@@ -26,14 +26,7 @@
     <name>DragMath</name>
     <license>GPL</license>
     <version>0.7.8.2</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
-    <location>editor/tinymce/tiny_mce</location>
-    <name>TinyMCE</name>
-    <license>LGPL</license>
-    <version>3.5.8</version>
-    <licenseversion>2.1+</licenseversion>
+    <licenseversion>3.0+</licenseversion>
   </library>
   <library>
     <location>evalmath</location>
@@ -50,14 +43,7 @@
     <licenseversion>2.1+</licenseversion>
   </library>
   <library>
-      <location>gallery</location>
-      <name>Gallery Lightbox</name>
-      <license>BSD</license>
-      <version>2010.04.21-21-51</version>
-      <licenseversion></licenseversion>
-  </library>
-  <library>
-    <location>PEAR_GeoIP</location>
+    <location>pear/Net</location>
     <name>GeoIP</name>
     <license>LGPL</license>
     <version>1.0.0</version>
@@ -96,12 +82,19 @@
     <name>Flowplayer</name>
     <license>GPL</license>
     <version>3.2.16</version>
-    <licenseversion>3</licenseversion>
+    <licenseversion>3.0+</licenseversion>
+  </library>
+  <library>
+    <location>password_compat</location>
+    <name>Compatible password hashing</name>
+    <license>MIT</license>
+    <version></version>
+    <licenseversion></licenseversion>
   </library>
   <library>
     <location>pear/Auth/RADIUS.php</location>
     <name>Pear_Auth_Radius</name>
-    <license>?</license>
+    <license>BSD</license>
     <version>1.1</version>
     <licenseversion></licenseversion>
   </library>
@@ -141,7 +134,7 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>pear/OLE</location>
+    <location>pear/OLE.php</location>
     <name>Pear_OLE</name>
     <license>PHP</license>
     <version>1.0.0</version>
@@ -153,13 +146,6 @@
     <license>PHP</license>
     <version>1.4.5</version>
     <licenseversion>3.0</licenseversion>
-  </library>
-  <library>
-    <location>pear/Spreadsheet/Excel</location>
-    <name>Pear_Spreadsheet_Excel</name>
-    <license>LGPL</license>
-    <version>0.9.1</version>
-    <licenseversion>2.1+</licenseversion>
   </library>
   <library>
     <location>pear/XML/Parser</location>
@@ -227,7 +213,7 @@
   <library>
     <location>zend</location>
     <name>Zend Framework</name>
-    <license>new BSD</license>
+    <license>BSD</license>
     <version>1.10.6</version>
     <licenseversion></licenseversion>
   </library>
@@ -255,7 +241,7 @@
   <library>
     <location>recaptchalib.php</location>
     <name>ReCAPTCHA</name>
-    <license>Open Source</license>
+    <license>MIT</license>
     <version>1.10</version>
     <licenseversion></licenseversion>
   </library>
@@ -272,54 +258,5 @@
     <license>GPL</license>
     <version>1.0</version>
     <licenseversion>3.0+</licenseversion>
-  </library>
-  <library>
-    <location>theme/bootstrapbase/less/bootstrap</location>
-    <name>Twitter Bootstrap</name>
-    <license>Apache</license>
-    <version>2.3.0</version>
-    <licenseversion>2.0</licenseversion>
-  </library>
-  <library>
-    <location>theme/bootstrapbase/javascript/html5shiv.js</location>
-    <name>Html5Shiv</name>
-    <license>Apache</license>
-    <version>3.6.2</version>
-    <licenseversion>2.0</licenseversion>
-  </library>
-  <library>
-    <location>theme/bootstrapbase/yui/src/bootstrap/js/bootstrapcollapse.js</location>
-    <name>Gallery Bootstrap Collapse</name>
-    <license>BSD</license>
-    <version>2012.08.22-20-00</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
-    <location>theme/bootstrapbase/yui/src/bootstrap/js/bootstrapdropdown.js</location>
-    <name>Gallery Bootstrap Dropdown</name>
-    <license>BSD</license>
-    <version>2012.08.22-20-00</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
-    <location>theme/bootstrapbase/yui/src/bootstrap/js/bootstrapengine.js</location>
-    <name>Gallery Bootstrap Engine</name>
-    <license>BSD</license>
-    <version>2012.08.22-20-00</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
-    <location>lib/editor/tinymce/plugins/pdw/tinymce</location>
-    <name>PDW Toolbar Toggle</name>
-    <license>MIT</license>
-    <version>1.2</version>
-    <licenseversion></licenseversion>
-  </library>
-  <library>
-    <location>mod/assign/feedback/editpdf/fpdi</location>
-    <name>FPDI</name>
-    <license>Apache</license>
-    <version>1.4.4</version>
-    <licenseversion>2.0</licenseversion>
   </library>
 </libraries>

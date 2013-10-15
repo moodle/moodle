@@ -12,7 +12,7 @@ Upgrade procedure:
 1/ extract standard TinyMCE package into lib/editor/tinymce/tiny_mce/x.y.z/
 2/ bump up editor version in lib.php to match the directory name x.y.z
 3/ bump up main version.php
-4/ update lib/thirdpartylibs.xml
+4/ update ./thirdpartylibs.xml
 5/ execute cli/update_lang_files.php and review changes in lang/en/editor_tinymce.php
 6/ use search/replace to fix oversized zIndexes
 

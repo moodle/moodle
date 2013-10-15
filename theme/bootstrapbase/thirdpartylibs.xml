@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>less/bootstrap</location>
+    <name>Twitter Bootstrap</name>
+    <license>Apache</license>
+    <version>2.3.0</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+  <library>
+    <location>javascript/html5shiv.js</location>
+    <name>Html5Shiv</name>
+    <license>Apache</license>
+    <version>3.6.2</version>
+    <licenseversion>2.0</licenseversion>
+  </library>
+  <library>
+    <location>yui/src/bootstrap/js/bootstrapcollapse.js</location>
+    <name>Gallery Bootstrap Collapse</name>
+    <license>BSD</license>
+    <version>2012.08.22-20-00</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>yui/src/bootstrap/js/bootstrapdropdown.js</location>
+    <name>Gallery Bootstrap Dropdown</name>
+    <license>BSD</license>
+    <version>2012.08.22-20-00</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>yui/src/bootstrap/js/bootstrapengine.js</location>
+    <name>Gallery Bootstrap Engine</name>
+    <license>BSD</license>
+    <version>2012.08.22-20-00</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

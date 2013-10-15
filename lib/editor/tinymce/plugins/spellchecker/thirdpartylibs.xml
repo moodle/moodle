@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>rpc.php</location>
+    <name>TinyMCE spellchecker</name>
+    <license>LGPL</license>
+    <version>2.0.6.1</version>
+    <licenseversion>2.1+</licenseversion>
+  </library>
+</libraries>
