@@ -27,7 +27,9 @@
 .dir-rtl .sitetopic .section .activity .activityinstance,
 .dir-rtl .course-content .section .activity .activityinstance { padding-right: 0; padding-left: 3em;}
 .sitetopic .section .activity .commands,
-.course-content .section .activity .commands { white-space: nowrap; display: inline-block; }
+.course-content .section .activity .commands { white-space: nowrap; display: inline-block; padding: 0 3em 0 0;}
+.dir-rtl .sitetopic .section .activity .commands,
+.dir-rtl .course-content .section .activity .commands { padding: 0 0 0 3em;}
 .section .activity .moodle-actionmenu .menubar > li > * {display:inline-block;min-height:16px;padding: 0.2em;}
 .section .activity .moodle-actionmenu .menubar > li > img {margin: 0.2em;vertical-align: text-bottom;padding:0 3px 0 0;}
 .section .activity .moodle-actionmenu .iconsmall {vertical-align: baseline;width:16px;height:16px;}
