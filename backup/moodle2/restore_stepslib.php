@@ -239,7 +239,8 @@ class restore_gradebook_structure_step extends restore_structure_step {
 
             $newitemid = $DB->insert_record('grade_grades', $data);
         } else {
-            debugging("Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'");
+            $message = "Mapped user id not found for user id '{$olduserid}', grade item id '{$data->itemid}'";
+            $this->log($message, backup::LOG_DEBUG);
         }
     }
 
@@ -937,7 +938,6 @@ class restore_groups_members_structure_step extends restore_structure_step {
                     // Bad luck, plugin could not restore the data, let's add normal membership.
                     groups_add_member($data->groupid, $data->userid);
                     $message = "Restore of '$data->component/$data->itemid' group membership is not supported, using standard group membership instead.";
-                    debugging($message);
                     $this->log($message, backup::LOG_WARNING);
                 }
             }
@@ -1622,7 +1622,6 @@ class restore_ras_and_caps_structure_step extends restore_structure_step {
             // Bad luck, plugin could not restore the data, let's add normal membership.
             role_assign($data->roleid, $data->userid, $data->contextid);
             $message = "Restore of '$data->component/$data->itemid' role assignments is not supported, using manual role assignments instead.";
-            debugging($message);
             $this->log($message, backup::LOG_WARNING);
         }
     }
@@ -1768,7 +1767,6 @@ class restore_enrolments_structure_step extends restore_structure_step {
             if (!enrol_is_enabled($data->enrol) or !isset($this->plugins[$data->enrol])) {
                 $this->set_mapping('enrol', $oldid, 0);
                 $message = "Enrol plugin '$data->enrol' data can not be restored because it is not enabled, use migration to manual enrolments";
-                debugging($message);
                 $this->log($message, backup::LOG_WARNING);
                 return;
             }
