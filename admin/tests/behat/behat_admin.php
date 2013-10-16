@@ -76,11 +76,25 @@ class behat_admin extends behat_base {
             // The argument should be converted to an xpath literal.
             $label = $this->getSession()->getSelectorsHandler()->xpathLiteral($label);
 
-            $fieldxpath = "//*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]" .
-                "[@id=//label[contains(normalize-space(.), $label)]/@for]";
-            $fieldnode = $this->find('xpath', $fieldxpath, $exception);
-            $formfieldtypenode = $this->find('xpath', $fieldxpath . "/ancestor::div[@class='form-setting']" .
-                "/child::div[contains(concat(' ', @class, ' '),  ' form-')]/child::*/parent::div");
+            // Single element settings.
+            try {
+                $fieldxpath = "//*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]" .
+                    "[@id=//label[contains(normalize-space(.), $label)]/@for]";
+                $fieldnode = $this->find('xpath', $fieldxpath, $exception);
+
+                $formfieldtypenode = $this->find('xpath', $fieldxpath . "/ancestor::div[@class='form-setting']" .
+                    "/child::div[contains(concat(' ', @class, ' '),  ' form-')]/child::*/parent::div");
+
+            } catch (ElementNotFoundException $e) {
+
+                // Multi element settings, interacting only the first one.
+                $fieldxpath = "//descendant::label[.= $label]/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' form-item ')]" .
+                    "/descendant::div[@class='form-group']/descendant::*[self::input | self::textarea | self::select][not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]";
+                $fieldnode = $this->find('xpath', $fieldxpath);
+
+                // It is the same one that contains the type.
+                $formfieldtypenode = $fieldnode;
+            }
 
             // Getting the class which contains the field type.
             $classes = explode(' ', $formfieldtypenode->getAttribute('class'));
