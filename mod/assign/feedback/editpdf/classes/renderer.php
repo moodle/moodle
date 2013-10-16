@@ -143,9 +143,9 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
         $iconhtml = $this->pix_icon($nav_prev, $iconalt, 'assignfeedback_editpdf');
         $navigation1 .= html_writer::tag('button', $iconhtml, array('disabled'=>'true',
             'class'=>'navigate-previous-button', 'accesskey' => $this->get_shortcut('navigate-previous-button')));
-        $pageoptions = html_writer::tag('option', get_string('gotopage', 'assignfeedback_editpdf'), array('value'=>''));
-        $navigation1 .= html_writer::tag('select', $pageoptions, array('disabled'=>'true',
-            'class'=>'navigate-page-select', 'accesskey' => $this->get_shortcut('navigate-page-select')));
+        $navigation1 .= html_writer::tag('select', null, array('disabled'=>'true',
+            'aria-label' => get_string('gotopage', 'assignfeedback_editpdf'), 'class'=>'navigate-page-select',
+            'accesskey' => $this->get_shortcut('navigate-page-select')));
         $iconalt = get_string('navigatenext', 'assignfeedback_editpdf');
         $iconhtml = $this->pix_icon($nav_next, $iconalt, 'assignfeedback_editpdf');
         $navigation1 .= html_writer::tag('button', $iconhtml, array('disabled'=>'true',
@@ -239,7 +239,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
             'deleteannotation',
             'stamp',
             'stamppicker',
-            'cannotopenpdf'
+            'cannotopenpdf',
+            'pagenumber'
         ), 'assignfeedback_editpdf');
 
         return $html;

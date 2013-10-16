@@ -62,6 +62,7 @@ $string['navigatenext'] = 'Next page';
 $string['navigateprevious'] = 'Previous page';
 $string['oval'] = 'Oval';
 $string['output'] = 'Output:';
+$string['pagenumber'] = 'Page {$a}';
 $string['pagexofy'] = 'Page {$a->page} of {$a->total}';
 $string['pen'] = 'Pen';
 $string['pluginname'] = 'Annotate PDF';

@@ -879,6 +879,9 @@ EDITOR.prototype = {
         this.loadingicon.hide();
         drawingcanvas.setStyle('backgroundImage', 'url("' + page.url + '")');
 
+        // Update page select.
+        Y.one(SELECTOR.PAGESELECT).set('value', this.currentpage);
+
         this.redraw();
     },
 
@@ -902,7 +905,7 @@ EDITOR.prototype = {
             for (i = 0; i < this.pages.length; i++) {
                 option = Y.Node.create('<option/>');
                 option.setAttribute('value', i);
-                option.setHTML((i+1));
+                option.setHTML(M.util.get_string('pagenumber', 'assignfeedback_editpdf', i+1));
                 pageselect.append(option);
             }
         }
