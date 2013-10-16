@@ -901,13 +901,6 @@ class core_course_management_helper_test extends advanced_testcase {
         $this->assertEquals('1', $course->visible);
         $this->assertEquals('1', $course->visibleold);
 
-        // Try with an invalid object.
-        try {
-            \core_course\management\helper::action_course_show(get_course($course->id));
-        } catch (PHPUnit_Framework_Error $exception) {
-            $this->assertNotEquals(false, strpos($exception->getMessage(), 'must be an instance of course_in_list'));
-        }
-
         // Revoke the permissions.
         $assignment->revoke();
         $course = new course_in_list(get_course($course->id));
