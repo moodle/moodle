@@ -735,6 +735,7 @@ Feature: Course category management interface performs as expected
     And I should see "Cat 2-1-2-1" in the "#course-category-listings ul.ml" "css_element"
     And I click on "Cat 1" "link"
     # Redirect.
+    And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#course-category-listings ul.ml" "css_element"
     And I should see "Cat 2" in the "#course-category-listings ul.ml" "css_element"
     And I should see "Cat 1-1" in the "#course-category-listings ul.ml" "css_element"
@@ -744,3 +745,57 @@ Feature: Course category management interface performs as expected
     And I should see "Cat 2-1-2" in the "#course-category-listings ul.ml" "css_element"
     And I should not see "Cat 2-1-1-1" in the "#course-category-listings ul.ml" "css_element"
     And I should see "Cat 2-1-2-1" in the "#course-category-listings ul.ml" "css_element"
+    And I click on "Re-sort subcategories" "link" in the ".category-listing-actions" "css_element"
+    And I click on "By idnumber" "link" in the ".category-listing-actions" "css_element"
+    # Redirect.
+    And I should see the "Course categories and courses" management page
+    And I should see "Cat 1" in the "#course-category-listings ul.ml" "css_element"
+    And I should see "Cat 2" in the "#course-category-listings ul.ml" "css_element"
+    And I should see "Cat 1-1" in the "#course-category-listings ul.ml" "css_element"
+    And I should see "Cat 1-2" in the "#course-category-listings ul.ml" "css_element"
+    And I should see "Cat 2-1" in the "#course-category-listings ul.ml" "css_element"
+    And I should see "Cat 2-1-1" in the "#course-category-listings ul.ml" "css_element"
+    And I should see "Cat 2-1-2" in the "#course-category-listings ul.ml" "css_element"
+    And I should not see "Cat 2-1-1-1" in the "#course-category-listings ul.ml" "css_element"
+    And I should see "Cat 2-1-2-1" in the "#course-category-listings ul.ml" "css_element"
+
+  @javascript
+  Scenario: Test category expansion after deletion
+    Given the following "categories" exists:
+      | name | category | idnumber |
+      | Cat A (1) | 0 | CAT1 |
+      | Cat B (2) | 0 | CAT2 |
+      | Cat C (1-1) | CAT1 | CAT3 |
+      | Cat D (2-1) | CAT2 | CAT4 |
+      | Cat E (2-1-1) | CAT4 | CAT5 |
+
+    And I log in as "admin"
+    And I go to the courses management page
+    And I should see the "Course categories" management page
+    And I should see "Cat A (1)" in the "#course-category-listings ul.ml" "css_element"
+    And I should see "Cat B (2)" in the "#course-category-listings ul.ml" "css_element"
+    And I should not see "Cat C (1-1)" in the "#course-category-listings ul.ml" "css_element"
+    And I should not see "Cat D (2-1)" in the "#course-category-listings ul.ml" "css_element"
+    And I should not see "Cat E (2-1-1)" in the "#course-category-listings ul.ml" "css_element"
+    And I click to expand category "CAT1" in the management interface
+    And I should see "Cat C (1-1)" in the "#course-category-listings ul.ml" "css_element"
+    # AJAX action - no redirect.
+    And I click to expand category "CAT2" in the management interface
+    And I should see "Cat D (2-1)" in the "#course-category-listings ul.ml" "css_element"
+    # AJAX action - no redirect.
+    And I click to expand category "CAT4" in the management interface
+    And I should see "Cat E (2-1-1)" in the "#course-category-listings ul.ml" "css_element"
+    # AJAX action - no redirect.
+    And I click on "delete" action for "Cat B (2)" in management category listing
+    # Redirect.
+    And I should see "Delete category: Cat B (2)"
+    And I should see "Contents of Cat B (2)"
+    And I press "Delete"
+    # Redirect
+    And I should see "Delete category: Cat B (2)"
+    And I should see "Deleted course category Cat B (2)"
+    And I press "Continue"
+    # Redirect.
+    And I should see the "Course categories and courses" management page
+    And I should see "Cat A (1)" in the "#course-category-listings ul.ml" "css_element"
+    And I should not see "Cat B (2)" in the "#course-category-listings ul.ml" "css_element"

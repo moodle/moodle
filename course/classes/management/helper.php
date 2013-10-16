@@ -823,8 +823,8 @@ class helper {
         $categoryid = $coursecat->id;
         $path = $coursecat->get_parents();
         /* @var \cache_session $cache */
-        $cache = \cache::make('core', 'coursecat');
-        $categories = $cache->get('managementexpanded');
+        $cache = \cache::make('core', 'userselections');
+        $categories = $cache->get('categorymanagementexpanded');
         if (!is_array($categories)) {
             if (!$expanded) {
                 // No categories recorded, nothing to remove.
@@ -858,7 +858,7 @@ class helper {
                 unset($ref[$categoryid]);
             }
         }
-        $cache->set('managementexpanded', $categories);
+        $cache->set('categorymanagementexpanded', $categories);
     }
 
     /**
@@ -870,8 +870,8 @@ class helper {
     public static function get_expanded_categories($withpath = null) {
         if (self::$expandedcategories === null) {
             /* @var \cache_session $cache */
-            $cache = \cache::make('core', 'coursecat');
-            self::$expandedcategories = $cache->get('managementexpanded');
+            $cache = \cache::make('core', 'userselections');
+            self::$expandedcategories = $cache->get('categorymanagementexpanded');
             if (self::$expandedcategories === false) {
                 self::$expandedcategories = array();
             }
