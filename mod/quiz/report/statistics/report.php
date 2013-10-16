@@ -54,6 +54,12 @@ class quiz_statistics_report extends quiz_default_report {
 
         $this->context = context_module::instance($cm->id);
 
+        if (!quiz_questions_in_quiz($quiz->questions)) {
+            $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
+            echo quiz_no_questions_message($quiz, $cm, $this->context);
+            return true;
+        }
+
         // Work out the display options.
         $download = optional_param('download', '', PARAM_ALPHA);
         $everything = optional_param('everything', 0, PARAM_BOOL);
@@ -151,9 +157,7 @@ class quiz_statistics_report extends quiz_default_report {
                 }
             }
 
-            if (!quiz_questions_in_quiz($quiz->questions)) {
-                echo quiz_no_questions_message($quiz, $cm, $this->context);
-            } else if (!$this->table->is_downloading() && $quizstats->s() == 0) {
+            if (!$this->table->is_downloading() && $quizstats->s() == 0) {
                 echo $OUTPUT->notification(get_string('noattempts', 'quiz'));
             }
 
