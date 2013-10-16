@@ -882,9 +882,11 @@ abstract class restore_dbops {
             $newcontextid = $forcenewcontextid;
         } else {
             // Get new context, must exist or this will fail
-            if (!$newcontextid = self::get_backup_ids_record($restoreid, 'context', $oldcontextid)->newitemid) {
+            $newcontextrecord = self::get_backup_ids_record($restoreid, 'context', $oldcontextid);
+            if (!$newcontextrecord || !$newcontextrecord->newitemid) {
                 throw new restore_dbops_exception('unknown_context_mapping', $oldcontextid);
             }
+            $newcontextid = $newcontextrecord->newitemid;
         }
 
         // Sometimes it's possible to have not the oldcontextids stored into backup_ids_temp->parentitemid
