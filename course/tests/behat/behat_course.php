@@ -1220,6 +1220,30 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Clicks to expand or collapse a category displayed on the frontpage
+     *
+     * @Given /^I toggle "(?P<categoryname_string>(?:[^"]|\\")*)" category children visibility in frontpage$/
+     * @throws ExpectationException
+     * @param string $categoryname
+     */
+    public function i_toggle_category_children_visibility_in_frontpage($categoryname) {
+
+        $headingtags = array();
+        for ($i = 1; $i <= 6; $i++) {
+            $headingtags[] = 'self::h' . $i;
+        }
+
+        $exception = new ExpectationException('"' . $categoryname . '" category can not be found', $this->getSession());
+        $categoryliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($categoryname);
+        $xpath = "//div[@class='info']/descendant::*[" . implode(' or ', $headingtags) . "][@class='categoryname'][./descendant::a[.=$categoryliteral]]";
+        $node = $this->find('xpath', $xpath, $exception);
+        $node->click();
+
+        // Smooth expansion.
+        $this->getSession()->wait(1000, false);
+    }
+
+    /**
      * Finds the node to use for a management listitem action and clicks it.
      *
      * @param string $listingtype Either course or category.
