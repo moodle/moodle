@@ -36,6 +36,9 @@ class core_authlib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
+        $oldlog = ini_get('error_log');
+        ini_set('error_log', "$CFG->dataroot/testlog.log"); // Prevent standard logging.
+
         unset_config('noemailever');
 
         set_config('lockoutthreshold', 0);
@@ -107,12 +110,17 @@ class core_authlib_testcase extends advanced_testcase {
         login_attempt_failed($user);
         login_attempt_failed($user);
         $this->assertFalse(login_is_lockedout($user));
+
+        ini_set('error_log', $oldlog);
     }
 
     public function test_authenticate_user_login() {
         global $CFG;
 
         $this->resetAfterTest();
+
+        $oldlog = ini_get('error_log');
+        ini_set('error_log', "$CFG->dataroot/testlog.log"); // Prevent standard logging.
 
         unset_config('noemailever');
 
@@ -178,6 +186,8 @@ class core_authlib_testcase extends advanced_testcase {
         $result = authenticate_user_login('username1', 'password1', true, $reason);
         $this->assertInstanceOf('stdClass', $result);
         $this->assertEquals(AUTH_LOGIN_OK, $reason);
+
+        ini_set('error_log', $oldlog);
     }
 
     public function test_user_loggedin_event_exceptions() {
