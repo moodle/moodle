@@ -8,31 +8,6 @@ Auth/RADIUS
     - From: PEAR::loadExtension('radius'); (in global scope)
     - To: $this->loadExtension('radius'); (in constructor)
 
-Spreadsheet/Excel
-=================
-
-1/ These functions:
-    _calculateSharedStringsSizes()
-    _storeSharedStringsTable()
-have been inserted, replacing the original functions in order to make the function
-work with 2-byte data.  The patch is discussed at this URL:
-    http://pear.php.net/bugs/bug.php?id=1572
-and documented for Moodle at:
-    http://tracker.moodle.org/browse/MDL-9911
-
-2/ Changed ereg_ to preg_
-
-3/ removed deprecated "=& new"
-
-4/ MDL-20876 - replaced deprecated split() with explode() or str_split() where appropriate
-
-Such modifications should be carefully each time the Excel PEAR package is updated
-to a new release within Moodle.
-
-5/ static keywords in OLE.php
-* static function Asc2Ucs()
-* static function LocalDate2OLE()
-
 XML/Parser
 =================
 1/ changed ereg_ to preg_
