@@ -100,7 +100,7 @@ class grade_item_testcase extends grade_base_testcase {
         $last_grade_item = end($this->grade_items);
 
         $this->assertEquals($grade_item->id, $last_grade_item->id + 1);
-        $this->assertEquals(12, $grade_item->sortorder);
+        $this->assertEquals(18, $grade_item->sortorder);
 
         //keep our reference collection the same as what is in the database
         $this->grade_items[] = $grade_item;
@@ -464,6 +464,10 @@ class grade_item_testcase extends grade_base_testcase {
     }
 
     protected function sub_test_grade_item_depends_on() {
+        global $CFG;
+
+        $origenableoutcomes = $CFG->enableoutcomes;
+        $CFG->enableoutcomes = 0;
         $grade_item = new grade_item($this->grade_items[1], false);
 
         // calculated grade dependency
@@ -484,6 +488,37 @@ class grade_item_testcase extends grade_base_testcase {
         sort($deps, SORT_NUMERIC); // for comparison
         $res = array($this->grade_items[4]->id, $this->grade_items[5]->id);
         $this->assertEquals($res, $deps);
+
+        $CFG->enableoutcomes = 1;
+        $origgradeincludescalesinaggregation = $CFG->grade_includescalesinaggregation;
+        $CFG->grade_includescalesinaggregation = 1;
+
+        // Item in category with aggregate sub categories + $CFG->grade_includescalesinaggregation = 1.
+        $grade_item = new grade_item($this->grade_items[12], false);
+        $deps = $grade_item->depends_on();
+        sort($deps, SORT_NUMERIC);
+        $res = array($this->grade_items[15]->id, $this->grade_items[16]->id);
+        $this->assertEquals($res, $deps);
+
+        // Item in category with aggregate sub categories + $CFG->grade_includescalesinaggregation = 0.
+        $CFG->grade_includescalesinaggregation = 0;
+        $grade_item = new grade_item($this->grade_items[12], false);
+        $deps = $grade_item->depends_on();
+        sort($deps, SORT_NUMERIC);
+        $res = array($this->grade_items[15]->id);
+        $this->assertEquals($res, $deps);
+        $CFG->grade_includescalesinaggregation = 1;
+
+        // Outcome item in category with with aggregate sub categories.
+        $CFG->enableoutcomes = 0;
+        $grade_item = new grade_item($this->grade_items[12], false);
+        $deps = $grade_item->depends_on();
+        sort($deps, SORT_NUMERIC);
+        $res = array($this->grade_items[15]->id, $this->grade_items[16]->id, $this->grade_items[17]->id);
+        $this->assertEquals($res, $deps);
+
+        $CFG->enableoutcomes = $origenableoutcomes;
+        $CFG->grade_includescalesinaggregation = $origgradeincludescalesinaggregation;
     }
 
     protected function sub_test_refresh_grades() {
