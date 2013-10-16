@@ -190,7 +190,7 @@ class feedback_item_textarea extends feedback_item_base {
         return $row_offset;
     }
 
-    /**     
+    /**
      * print the item at the edit-page of feedback
      *
      * @global object
@@ -206,7 +206,7 @@ class feedback_item_textarea extends feedback_item_base {
         $presentation = explode ("|", $item->presentation);
         $requiredmark =  ($item->required == 1) ? $str_required_mark : '';
         //print the question and label
-		$inputname = $item->typ . '_' . $item->id;
+        $inputname = $item->typ . '_' . $item->id;
         echo '<div class="feedback_item_label_'.$align.'">';
         echo '<label for="'. $inputname .'">';
         echo '('.$item->label.') ';
@@ -218,7 +218,7 @@ class feedback_item_textarea extends feedback_item_base {
                 echo '</span>';
             }
         }
-		echo '</label>';
+        echo '</label>';
         echo '</div>';
 
         //print the presentation
@@ -233,7 +233,7 @@ class feedback_item_textarea extends feedback_item_base {
         echo '</div>';
     }
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
@@ -256,7 +256,7 @@ class feedback_item_textarea extends feedback_item_base {
         $requiredmark = ($item->required == 1) ? $str_required_mark :'';
 
         //print the question and label
-		$inputname = $item->typ . '_' . $item->id;
+        $inputname = $item->typ . '_' . $item->id;
         echo '<div class="feedback_item_label_'.$align.$highlight.'">';
         echo '<label for="'. $inputname .'">';
             echo format_text($item->name . $requiredmark, true, false, false);
@@ -276,7 +276,7 @@ class feedback_item_textarea extends feedback_item_base {
         echo '</div>';
     }
 
-    /**     
+    /**
      * print the item at the complete-page of feedback
      *
      * @global object
