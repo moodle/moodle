@@ -4,8 +4,7 @@ Feature: Automatic creation of groups
   As a teacher
   I need to create groups automatically and allocate them in groupings if necessary
 
-  @javascript
-  Scenario: Split automatically the course users in groups and add the groups to a new grouping
+  Background:
     Given the following "courses" exists:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -41,7 +40,11 @@ Feature: Automatic creation of groups
     And I follow "Groups"
     When I press "Auto-create groups"
     And I expand all fieldsets
-    And I fill the moodle form with:
+
+  @javascript
+  Scenario: Split automatically the course users in groups and add the groups to a new grouping
+    Given I fill the moodle form with:
+      | Auto create based on | Number of groups |
       | Group/member count | 2 |
       | Grouping of auto-created groups | New grouping |
       | Grouping name | Grouping name |
@@ -55,6 +58,29 @@ Feature: Automatic creation of groups
     And the "groups" select box should contain "Group B (5)"
     And I follow "Groupings"
     And I should see "Grouping name"
-    And I click on "Show groups in grouping" "link" in the "Grouping name" table row
+    And I click on "Show groups in grouping" "link" in the "Grouping name" "table_row"
     And the "removeselect" select box should contain "Group A"
     And the "removeselect" select box should contain "Group B"
+
+  @javascript
+  Scenario: Split automatically the course users in groups based on group member count
+    Given I fill the moodle form with:
+      | Auto create based on | Members per group |
+      | Group/member count | 4 |
+      | Grouping of auto-created groups | New grouping |
+      | Grouping name | Grouping name |
+    And I press "Preview"
+    Then I should see "Group members"
+    And I should see "User count"
+    And I should see "Group A" in the ".generaltable" "css_element"
+    And I should see "Group B" in the ".generaltable" "css_element"
+    And I should see "Group C" in the ".generaltable" "css_element"
+    And I should see "4" in the "Group A" "table_row"
+    And I should see "4" in the "Group B" "table_row"
+    And I should see "2" in the "Group C" "table_row"
+    And I check "Prevent last small group"
+    And I press "Preview"
+    And I should see "Group A" in the ".generaltable" "css_element"
+    And I should see "Group B" in the ".generaltable" "css_element"
+    And I should see "5" in the "Group A" "table_row"
+    And I should see "5" in the "Group B" "table_row"
