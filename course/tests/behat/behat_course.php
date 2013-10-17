@@ -85,13 +85,14 @@ class behat_course extends behat_base {
      * @return Given[]
      */
     public function i_go_to_the_courses_management_page() {
-
-        return array(
-            new Given('I am on homepage'),
-            new Given('I expand "' . get_string('administrationsite') . '" node'),
-            new Given('I expand "' . get_string('courses', 'admin') . '" node'),
-            new Given('I follow "' . get_string('coursemgmt', 'admin') . '"'),
-        );
+        if ($this->running_javascript()) {
+            $scenario = array(new Given('I expand "' . get_string('administrationsite') . '" node'));
+        } else {
+            $scenario = array(new Given('I follow "' . get_string('administrationsite') . '"'));
+        }
+        $scenario[] = new Given('I expand "' . get_string('courses', 'admin') . '" node');
+        $scenario[] = new Given('I follow "' . get_string('coursemgmt', 'admin') . '"');
+        return $scenario;
     }
 
     /**
