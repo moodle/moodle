@@ -179,8 +179,6 @@ if (empty($pageid)) {
         }
     }
 
-    add_to_log($course->id, 'lesson', 'start', 'view.php?id='. $cm->id, $lesson->id, $cm->id);
-
     // if no pageid given see if the lesson has been started
     $retries = $DB->count_records('lesson_grades', array("lessonid" => $lesson->id, "userid" => $USER->id));
     if ($retries > 0) {

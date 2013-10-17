@@ -148,4 +148,22 @@ class mod_lesson_events_testcase extends advanced_testcase {
             $this->lesson->properties()->name, $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the lesson started event.
+     */
+    public function test_lesson_started() {
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $this->lesson->start_timer();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\lesson_started', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $expected = array($this->course->id, 'lesson', 'start', 'view.php?id=' . $this->lesson->properties()->cmid,
+            $this->lesson->properties()->id, $this->lesson->properties()->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
 }
