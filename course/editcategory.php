@@ -69,7 +69,7 @@ require_capability('moodle/category:manage', $context);
 // Page "Add new category" (with "Top" as a parent) does not exist in navigation.
 // We pretend we are on course management page.
 if ($id !== 0) {
-    navigation_node::override_active_url(new moodle_url('/course/management.php', true));
+    navigation_node::override_active_url(new moodle_url('/course/management.php'), true);
 }
 
 $PAGE->set_context($context);

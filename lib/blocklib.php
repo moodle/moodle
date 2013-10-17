@@ -1457,6 +1457,7 @@ class block_manager {
             redirect($this->page->url);
 
         } else {
+            navigation_node::no_admin_navigation_node();
             $strheading = get_string('blockconfiga', 'moodle', $block->get_title());
             $editpage->set_title($strheading);
             $editpage->set_heading($strheading);

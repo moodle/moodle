@@ -55,7 +55,9 @@ if (!has_capability('moodle/role:override', $context)) {
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
-
+if (!$isfrontpage) {
+    navigation_node::no_admin_navigation_node();
+}
 $courseid = $course->id;
 
 $returnurl = new moodle_url('/admin/roles/permissions.php', array('contextid' => $context->id));

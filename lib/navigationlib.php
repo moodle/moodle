@@ -139,6 +139,8 @@ class navigation_node implements renderable {
     public static $autofindactive = true;
     /** @var bool should we load full admin tree or rely on AJAX for performance reasons */
     protected static $loadadmintree = false;
+    /** @var bool no admin navigation node is added for this page */
+    protected static $noadminnavigationnode = false;
     /** @var mixed If set to an int, that section will be included even if it has no activities */
     public $includesectionnum = false;
 
@@ -261,6 +263,14 @@ class navigation_node implements renderable {
      */
     public static function require_admin_tree() {
         self::$loadadmintree = true;
+    }
+
+    /**
+     * Uses when page doesn't have admin navigation node and we need to decide if
+     * site admin should be loaded.
+     */
+    public static function no_admin_navigation_node() {
+        self::$noadminnavigationnode = true;
     }
 
     /**
@@ -3479,6 +3489,10 @@ class settings_navigation extends navigation_node {
         }
 
         if ($this->page->pagelayout === 'admin' or strpos($this->page->pagetype, 'admin-') === 0) {
+            // No navigation node is added for this page, case like block editing page.
+            if (self::$noadminnavigationnode) {
+                return false;
+            }
             // Greater then course context or user context pages add there own navigation node, so don't load site admin.
             if (($this->page->context->contextlevel >= CONTEXT_COURSE) || ($this->page->context->contextlevel === CONTEXT_USER)) {
                 if (($frontpagesettings && $frontpagesettings->contains_active_node()) ||

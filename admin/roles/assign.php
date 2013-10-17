@@ -56,6 +56,10 @@ require_capability('moodle/role:assign', $context);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 
+if ($isfrontpage) {
+    navigation_node::require_admin_tree();
+}
+
 $contextname = $context->get_context_name();
 $courseid = $course->id;
 

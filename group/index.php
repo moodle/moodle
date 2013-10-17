@@ -145,6 +145,7 @@ $strparticipants = get_string('participants');
 $PAGE->set_title($strgroups);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
+navigation_node::require_admin_tree();
 echo $OUTPUT->header();
 
 // Add tabs
