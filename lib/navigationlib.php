@@ -3319,45 +3319,52 @@ class settings_navigation extends navigation_node {
         $this->id = 'settingsnav';
         $this->context = $this->page->context;
 
+        $frontpagesettings = null;
+        $categorysettings = null;
+        $coursesettings = null;
+        $modulesettings = null;
+        $blocksettings = null;
+        $usersettings = null;
+
         $context = $this->context;
         if ($context->contextlevel == CONTEXT_BLOCK) {
-            $this->load_block_settings();
+            $blocksettings = $this->load_block_settings();
             $context = $context->get_parent_context();
         }
-
         switch ($context->contextlevel) {
             case CONTEXT_SYSTEM:
                 if ($this->page->url->compare(new moodle_url('/admin/settings.php', array('section'=>'frontpagesettings')))) {
-                    $this->load_front_page_settings(($context->id == $this->context->id));
+                    $frontpagesettings = $this->load_front_page_settings(($context->id == $this->context->id));
                 }
                 break;
             case CONTEXT_COURSECAT:
-                $this->load_category_settings();
+                $categorysettings = $this->load_category_settings();
                 break;
             case CONTEXT_COURSE:
                 if ($this->page->course->id != $SITE->id) {
-                    $this->load_course_settings(($context->id == $this->context->id));
+                    $coursesettings = $this->load_course_settings(($context->id == $this->context->id));
                 } else {
-                    $this->load_front_page_settings(($context->id == $this->context->id));
+                    $frontpagesettings = $this->load_front_page_settings(($context->id == $this->context->id));
                 }
                 break;
             case CONTEXT_MODULE:
-                $this->load_module_settings();
-                $this->load_course_settings();
+                $modulesettings = $this->load_module_settings();
+                $coursesettings = $this->load_course_settings();
                 break;
             case CONTEXT_USER:
                 if ($this->page->course->id != $SITE->id) {
-                    $this->load_course_settings();
+                    $coursesettings = $this->load_course_settings();
                 }
                 break;
         }
 
-        $settings = $this->load_user_settings($this->page->course->id);
+        $usersettings = $this->load_user_settings($this->page->course->id);
 
         $admin = false;
         if (isloggedin() && !isguestuser() && (!property_exists($SESSION, 'load_navigation_admin') || $SESSION->load_navigation_admin)) {
             // If admin page or user logged in, then load admin settings.
-            $isadminpage = $this->is_admin_tree_needed();
+            $isadminpage = $this->is_admin_tree_needed($frontpagesettings, $categorysettings, $coursesettings, $modulesettings,
+                    $blocksettings, $usersettings);
             if ($isadminpage || !isset($SESSION->load_navigation_admin)) {
                 $admin = $this->load_administration_settings();
                 $SESSION->load_navigation_admin = ($admin->children->count() > 0);
@@ -3380,8 +3387,8 @@ class settings_navigation extends navigation_node {
 
         if ($context->contextlevel == CONTEXT_SYSTEM && $admin) {
             $admin->force_open();
-        } else if ($context->contextlevel == CONTEXT_USER && $settings) {
-            $settings->force_open();
+        } else if ($context->contextlevel == CONTEXT_USER && $usersettings) {
+            $usersettings->force_open();
         }
 
         // Check if the user is currently logged in as another user
@@ -3454,16 +3461,36 @@ class settings_navigation extends navigation_node {
     /**
      * Does this page require loading of full admin tree or is
      * it enough rely on AJAX?
+     *
+     * @param navigation_node $frontpagesettings frontpage settings navigation node.
+     * @param navigation_node $categorysettings category settings navigation node.
+     * @param navigation_node $coursesettings course settings navigation node.
+     * @param navigation_node $modulesettings module settings navigation node.
+     * @param navigation_node $blocksettings block settings navigation node.
+     * @param navigation_node $usersettings user settings navigation node.
      * @return bool
      */
-    protected function is_admin_tree_needed() {
+    protected function is_admin_tree_needed(navigation_node $frontpagesettings = null, navigation_node $categorysettings = null,
+            navigation_node $coursesettings = null, navigation_node $modulesettings = null, navigation_node $blocksettings = null,
+            navigation_node $usersettings = null) {
+
         if (self::$loadadmintree) {
             return true;
         }
 
         if ($this->page->pagelayout === 'admin' or strpos($this->page->pagetype, 'admin-') === 0) {
-            if ($this->page->context->contextlevel >= CONTEXT_COURSE) {
-                debugging('Course level administration should not be attached to administration tree', DEBUG_DEVELOPER);
+            // Greater then course context or user context pages add there own navigation node, so don't load site admin.
+            if (($this->page->context->contextlevel >= CONTEXT_COURSE) || ($this->page->context->contextlevel === CONTEXT_USER)) {
+                if (($frontpagesettings && $frontpagesettings->contains_active_node()) ||
+                    ($categorysettings && $categorysettings->contains_active_node()) ||
+                    ($coursesettings && $coursesettings->contains_active_node()) ||
+                    ($modulesettings && $modulesettings->contains_active_node()) ||
+                    ($blocksettings && $blocksettings->contains_active_node()) ||
+                    ($usersettings && $usersettings->contains_active_node())) {
+                    return false;
+                } else {
+                    debugging('Greater then Course level administration should only be attached to site administration tree', DEBUG_DEVELOPER);
+                }
             }
             return true;
         }
