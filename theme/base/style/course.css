@@ -30,8 +30,10 @@
 .course-content .section .activity .commands { white-space: nowrap; display: inline-block; padding: 0 3em 0 0;}
 .dir-rtl .sitetopic .section .activity .commands,
 .dir-rtl .course-content .section .activity .commands { padding: 0 0 0 3em;}
-.section .activity .moodle-actionmenu .menubar > li > * {display:inline-block;min-height:16px;padding: 0.2em;}
-.section .activity .moodle-actionmenu .menubar > li > img {margin: 0.2em;vertical-align: text-bottom;padding:0 3px 0 0;}
+.section .activity .moodle-actionmenu .menubar > li > * {display:inline-block;min-height:16px;}
+.section .activity .moodle-actionmenu .menubar > li > img {margin: 5px;vertical-align: text-bottom;padding:0 3px 0 0;}
+.section .activity .moodle-actionmenu ul > li > * > * {margin: 5px;}
+.section .activity .moodle-actionmenu[data-enhanced] .menu {margin-left: -2.8em;}
 .section .activity .moodle-actionmenu .iconsmall {vertical-align: baseline;width:16px;height:16px;}
 .single-section h3.sectionname {text-align:center;clear:both;}
 .sitetopic .section li.activity,
