@@ -120,4 +120,32 @@ class mod_lesson_events_testcase extends advanced_testcase {
             'noob', $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the highscores viewed event.
+     *
+     * There is no external API for viewing highscores, so the unit test will simply create
+     * and trigger the event and ensure the legacy log data is returned as expected.
+     */
+    public function test_highscores_viewed() {
+        // Create a highscore viewed event.
+        $event = \mod_lesson\event\highscores_viewed::create(array(
+            'objectid' => $this->lesson->id,
+            'context' => context_module::instance($this->lesson->properties()->cmid),
+            'courseid' => $this->course->id
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\highscores_viewed', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $expected = array($this->course->id, 'lesson', 'view highscores', 'highscores.php?id=' . $this->lesson->properties()->cmid,
+            $this->lesson->properties()->name, $this->lesson->properties()->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
 }
