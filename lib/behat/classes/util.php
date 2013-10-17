@@ -80,6 +80,9 @@ class behat_util extends testing_util {
 
         install_cli_database($options, false);
 
+        $frontpagesummary = new admin_setting_special_frontpagedesc();
+        $frontpagesummary->write_setting(self::BEHATSITENAME);
+
         // Update admin user info.
         $user = $DB->get_record('user', array('username' => 'admin'));
         $user->email = 'moodle@moodlemoodle.com';
