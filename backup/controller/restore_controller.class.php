@@ -422,6 +422,7 @@ class restore_controller extends base_controller {
         // Basic/initial prevention against time/memory limits
         set_time_limit(1 * 60 * 60); // 1 hour for 1 course initially granted
         raise_memory_limit(MEMORY_EXTRA);
+        $this->progress->start_progress('Backup format conversion');
 
         if ($this->status != backup::STATUS_REQUIRE_CONV) {
             throw new restore_controller_exception('cannot_convert_not_required_status');
@@ -452,6 +453,7 @@ class restore_controller extends base_controller {
         } else {
             $this->set_status(backup::STATUS_NEED_PRECHECK);
         }
+        $this->progress->end_progress();
     }
 
 // Protected API starts here
