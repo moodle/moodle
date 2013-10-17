@@ -143,10 +143,15 @@ switch ($mode) {
             $newhighscore->gradeid = $newgrade->id;
             $newhighscore->nickname = $name;
 
-            $DB->insert_record('lesson_high_scores', $newhighscore);
+            $newhighscore->id = $DB->insert_record('lesson_high_scores', $newhighscore);
 
-            // Log it
-            add_to_log($course->id, 'lesson', 'update highscores', "highscores.php?id=$cm->id", $name, $cm->id);
+            // Trigger highscore updated event.
+            $event = \mod_lesson\event\highscore_added::create(array(
+                'objectid' => $newhighscore->id,
+                'context' => $context,
+                'courseid' => $course->id,
+            ));
+            $event->trigger();
 
             $lesson->add_message(get_string('postsuccess', 'lesson'), 'notifysuccess');
             redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id&amp;link=1");
