@@ -15,26 +15,49 @@
 .site-topic ul.section,
 .course-content ul.section { margin: 1em;}
 .sitetopic .section .activity img.activityicon,
-.course-content .section .activity img.activityicon {vertical-align:text-bottom;margin-right: 6px;}
-.dir-rtl .sitetopic .section .activity img.activityicon,
-.dir-rtl .course-content .section .activity img.activityicon {margin-left: 6px; margin-right: 0;}
+.course-content .section .activity img.activityicon {
+    vertical-align: middle;
+    margin-right: 3px;
+    margin-left: 3px;
+    width: 24px;
+    height: 24px;
+}
+.section .activity .activityinstance .instancename {
+    vertical-align: bottom;
+}
 .sitetopic .section .activity .activityinstance,
 .course-content .section .activity .activityinstance,
 .sitetopic .section .activity .activityinstance div,
 .course-content .section .activity .activityinstance div { display: inline;}
 .sitetopic .section .activity .activityinstance,
-.course-content .section .activity .activityinstance { padding-right: 3em; }
+.course-content .section .activity .activityinstance { padding-right: 1em; }
 .dir-rtl .sitetopic .section .activity .activityinstance,
 .dir-rtl .course-content .section .activity .activityinstance { padding-right: 0; padding-left: 3em;}
 .sitetopic .section .activity .commands,
 .course-content .section .activity .commands { white-space: nowrap; display: inline-block; padding: 0 3em 0 0;}
 .dir-rtl .sitetopic .section .activity .commands,
 .dir-rtl .course-content .section .activity .commands { padding: 0 0 0 3em;}
-.section .activity .moodle-actionmenu .menubar > li > * {display:inline-block;min-height:16px;}
-.section .activity .moodle-actionmenu .menubar > li > img {margin: 5px;vertical-align: text-bottom;padding:0 3px 0 0;}
-.section .activity .moodle-actionmenu ul > li > * > * {margin: 5px;}
+
+.section .activity .moodle-actionmenu .menu > li > *,
+.section .activity .moodle-actionmenu .menubar > li > * {
+    display: inline-block;
+    min-height: 16px;
+}
+.section .activity .moodle-actionmenu[data-enhanced] .menu > li > * {
+    display: block;
+}
+.section .activity .moodle-actionmenu .menubar > li > img {
+    margin-right: 5px;
+    vertical-align: text-bottom;
+    padding:0 3px 0 0;
+}
 .section .activity .moodle-actionmenu[data-enhanced] .menu {margin-left: -2.8em;}
-.section .activity .moodle-actionmenu .iconsmall {vertical-align: baseline;width:16px;height:16px;}
+.section img.iconsmall {
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+    margin: 4px;
+}
 .single-section h3.sectionname {text-align:center;clear:both;}
 .sitetopic .section li.activity,
 .course-content .section li.activity {padding: .2em;}
@@ -194,7 +217,7 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 /* Quick edit of module name */
 
 .sitetopic .section .activity form.activityinstance,
-.course-content .section .activity form.activityinstance { display: inline; vertical-align: bottom; }
+.course-content .section .activity form.activityinstance { display: inline; vertical-align: middle; }
 span.editinstructions {
     position: absolute;
     top: 0px;
