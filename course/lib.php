@@ -3242,6 +3242,7 @@ function course_get_url($courseorid, $section = null, $options = array()) {
  *
  * @param object $module
  * @return object the created module info
+ * @throws moodle_exception if user is not allowed to perform the action or module is not allowed in this course
  */
 function create_module($moduleinfo) {
     global $DB, $CFG;
@@ -3263,9 +3264,6 @@ function create_module($moduleinfo) {
     $course = $DB->get_record('course', array('id'=>$moduleinfo->course), '*', MUST_EXIST);
     list($module, $context, $cw) = can_add_moduleinfo($course, $moduleinfo->modulename, $moduleinfo->section);
 
-    // Load module library.
-    include_modulelib($module->name);
-
     // Add the module.
     $moduleinfo->module = $module->id;
     $moduleinfo = add_moduleinfo($moduleinfo, $course, null);
@@ -3282,6 +3280,7 @@ function create_module($moduleinfo) {
  *
  * @param object $module
  * @return object the updated module info
+ * @throws moodle_exception if current user is not allowed to update the module
  */
 function update_module($moduleinfo) {
     global $DB, $CFG;
@@ -3296,9 +3295,6 @@ function update_module($moduleinfo) {
 
     // Some checks (capaibility / existing instances).
     list($cm, $context, $module, $data, $cw) = can_update_moduleinfo($cm);
-
-    // Load module library.
-    include_modulelib($module->name);
 
     // Retrieve few information needed by update_moduleinfo.
     $moduleinfo->modulename = $cm->modname;

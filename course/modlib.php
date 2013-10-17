@@ -44,15 +44,14 @@ require_once($CFG->dirroot.'/course/lib.php');
 function add_moduleinfo($moduleinfo, $course, $mform = null) {
     global $DB, $CFG;
 
+    // Attempt to include module library before we make any changes to DB.
+    include_modulelib($moduleinfo->modulename);
+
     $moduleinfo->course = $course->id;
     $moduleinfo = set_moduleinfo_defaults($moduleinfo);
 
     if (!empty($course->groupmodeforce) or !isset($moduleinfo->groupmode)) {
         $moduleinfo->groupmode = 0; // Do not set groupmode.
-    }
-
-    if (!course_allowed_module($course, $moduleinfo->modulename)) {
-        print_error('moduledisable', '', '', $moduleinfo->modulename);
     }
 
     // First add course_module record because we need the context.
@@ -103,9 +102,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         $DB->delete_records('course_modules', array('id'=>$moduleinfo->coursemodule));
 
         if (!is_number($returnfromfunc)) {
-            print_error('invalidfunction', '', course_get_url($course, $cw->section));
+            print_error('invalidfunction', '', course_get_url($course, $moduleinfo->section));
         } else {
-            print_error('cannotaddnewmodule', '', course_get_url($course, $cw->section), $moduleinfo->modulename);
+            print_error('cannotaddnewmodule', '', course_get_url($course, $moduleinfo->section), $moduleinfo->modulename);
         }
     }
 
@@ -308,7 +307,6 @@ function edit_module_post_actions($moduleinfo, $course) {
  * @return object the completed module info
  */
 function set_moduleinfo_defaults($moduleinfo) {
-    global $DB;
 
     if (empty($moduleinfo->coursemodule)) {
         // Add.
@@ -361,6 +359,7 @@ function set_moduleinfo_defaults($moduleinfo) {
  * @param object $modulename the module name
  * @param object $section the section of the module
  * @return array list containing module, context, course section.
+ * @throws moodle_exception if user is not allowed to perform the action or module is not allowed in this course
  */
 function can_add_moduleinfo($course, $modulename, $section) {
     global $DB;
@@ -385,6 +384,7 @@ function can_add_moduleinfo($course, $modulename, $section) {
  *
  * @param object $cm course module
  * @return array - list of course module, context, module, moduleinfo, and course section.
+ * @throws moodle_exception if user is not allowed to perform the action
  */
 function can_update_moduleinfo($cm) {
     global $DB;
@@ -419,6 +419,9 @@ function can_update_moduleinfo($cm) {
  */
 function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     global $DB, $CFG;
+
+    // Attempt to include module library before we make any changes to DB.
+    include_modulelib($moduleinfo->modulename);
 
     $moduleinfo->course = $course->id;
     $moduleinfo = set_moduleinfo_defaults($moduleinfo);
@@ -515,6 +518,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
  * Include once the module lib file.
  *
  * @param string $modulename module name of the lib to include
+ * @throws moodle_exception if lib.php file for the module does not exist
  */
 function include_modulelib($modulename) {
     global $CFG;
