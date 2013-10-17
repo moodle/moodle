@@ -172,6 +172,7 @@ $string['essayscore'] = 'Essay score';
 $string['eventessayattemptviewed'] = 'Essay attempt viewed';
 $string['eventhighscoreadded'] = 'Highscore added';
 $string['eventhighscoresviewed'] = 'Highscores viewed';
+$string['eventlessonended'] = 'Lesson ended';
 $string['eventlessonstarted'] = 'Lesson started';
 $string['fileformat'] = 'File format';
 $string['finish'] = 'Finish';

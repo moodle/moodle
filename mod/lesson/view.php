@@ -421,9 +421,6 @@ if ($pageid != LESSON_EOL) {
     // Used to check to see if the student ran out of time
     $outoftime = optional_param('outoftime', '', PARAM_ALPHA);
 
-    // Update the clock / get time information for this user
-    add_to_log($course->id, "lesson", "end", "view.php?id=".$PAGE->cm->id, "$lesson->id", $PAGE->cm->id);
-
     // We are using level 3 header because the page title is a sub-heading of lesson title (MDL-30911).
     $lessoncontent .= $OUTPUT->heading(get_string("congratulations", "lesson"), 3);
     $lessoncontent .= $OUTPUT->box_start('generalbox boxaligncenter');
@@ -432,6 +429,7 @@ if ($pageid != LESSON_EOL) {
         $ntries--;  // need to look at the old attempts :)
     }
     if (!$canmanage) {
+        // Update the clock / get time information for this user.
         $lesson->stop_timer();
         $gradeinfo = lesson_grade($lesson, $ntries);
 

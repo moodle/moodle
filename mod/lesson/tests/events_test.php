@@ -166,4 +166,32 @@ class mod_lesson_events_testcase extends advanced_testcase {
             $this->lesson->properties()->id, $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the lesson ended event.
+     */
+    public function test_lesson_ended() {
+        global $DB, $USER;
+
+        // Add a lesson timer so that stop_timer() does not complain.
+        $lessontimer = new stdClass();
+        $lessontimer->lessonid = $this->lesson->properties()->id;
+        $lessontimer->userid = $USER->id;
+        $lessontimer->startime = time();
+        $lessontimer->lessontime = time();
+        $DB->insert_record('lesson_timer', $lessontimer);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $this->lesson->stop_timer();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_lesson\event\lesson_ended', $event);
+        $this->assertEquals(context_module::instance($this->lesson->properties()->cmid), $event->get_context());
+        $expected = array($this->course->id, 'lesson', 'end', 'view.php?id=' . $this->lesson->properties()->cmid,
+            $this->lesson->properties()->id, $this->lesson->properties()->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
 }

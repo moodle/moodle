@@ -1255,6 +1255,18 @@ class lesson extends lesson_base {
     public function stop_timer() {
         global $USER, $DB;
         unset($USER->startlesson[$this->properties->id]);
+
+        $cm = get_coursemodule_from_instance('lesson', $this->properties()->id, $this->properties()->course,
+            false, MUST_EXIST);
+
+        // Trigger lesson ended event.
+        $event = \mod_lesson\event\lesson_ended::create(array(
+            'objectid' => $this->properties()->id,
+            'context' => context_module::instance($cm->id),
+            'courseid' => $this->properties()->course
+        ));
+        $event->trigger();
+
         return $this->update_timer(false, false);
     }
 
