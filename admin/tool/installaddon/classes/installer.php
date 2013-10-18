@@ -143,15 +143,32 @@ class tool_installaddon_installer {
         $fp = get_file_packer('application/zip');
         $files = $fp->extract_to_pathname($zipfilepath, $targetdir);
 
-        if ($files) {
-            if (!empty($rootdir)) {
-                $files = $this->rename_extracted_rootdir($targetdir, $rootdir, $files);
-            }
-            return $files;
-
-        } else {
+        if (!$files) {
             return array();
         }
+
+        if (!empty($rootdir)) {
+            $files = $this->rename_extracted_rootdir($targetdir, $rootdir, $files);
+        }
+
+        // Sometimes zip may not contain all parent directories, add them to make it consistent.
+        foreach ($files as $path => $status) {
+            if ($status !== true) {
+                continue;
+            }
+            $parts = explode('/', trim($path, '/'));
+            while (array_pop($parts)) {
+                if (empty($parts)) {
+                    break;
+                }
+                $dir = implode('/', $parts).'/';
+                if (!isset($files[$dir])) {
+                    $files[$dir] = true;
+                }
+            }
+        }
+
+        return $files;
     }
 
     /**
