@@ -169,6 +169,7 @@ abstract class backup_cron_automated_helper {
                 // that have not been modified since previous backup.
                 if ($shouldrunnow && !$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_prev) {
                     // Check log if there were any modifications to the course content.
+                    $sqlwhere = "course=:courseid AND time>:time AND ".$DB->sql_like('action', ':action', false, true, true);
                     $params = array('courseid' => $course->id,
                                     'time' => $backupcourse->laststarttime,
                                     'action' => '%view%');
