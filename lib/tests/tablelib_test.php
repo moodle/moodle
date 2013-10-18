@@ -263,6 +263,27 @@ class core_tablelib_testcase extends basic_testcase {
         );
     }
 
+    public function test_empty_rows() {
+
+        $data = $this->generate_data(1, 5);
+        $columns = $this->generate_columns(5);
+        $headers = $this->generate_headers(5);
+
+        // Test that we have at least 5 columns generated for each empty row.
+        $this->expectOutputRegex('/emptyrow.*r9_c4/');
+
+        $this->run_table_test(
+            $columns,
+            $headers,
+            true,
+            false,
+            array(),
+            array(),
+            $data,
+            10
+        );
+    }
+
     public function test_5_cols() {
 
         $data = $this->generate_data(100, 5);
