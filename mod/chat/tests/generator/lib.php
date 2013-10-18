@@ -50,34 +50,9 @@ class mod_chat_generator extends testing_module_generator {
         parent::reset();
     }
 
-    /**
-     * Create new chat module instance
-     * @param array|stdClass $record
-     * @param array $options
-     * @return stdClass activity record with extra cmid field
-     */
     public function create_instance($record = null, array $options = null) {
-        global $CFG;
-        require_once("$CFG->dirroot/mod/chat/lib.php");
-
-        $this->instancecount++;
-        $i = $this->instancecount;
-
         $record = (object)(array)$record;
-        $options = (array)$options;
 
-        if (empty($record->course)) {
-            throw new coding_exception('Module generator requires $record->course.');
-        }
-        if (!isset($record->name)) {
-            $record->name = get_string('pluginname', 'chat') . ' ' . $i;
-        }
-        if (!isset($record->intro)) {
-            $record->intro = 'Test chat ' . $i;
-        }
-        if (!isset($record->introformat)) {
-            $record->introformat = FORMAT_MOODLE;
-        }
         if (!isset($record->keepdays)) {
             $record->keepdays = 0;
         }
@@ -94,9 +69,7 @@ class mod_chat_generator extends testing_module_generator {
             $record->timemodified = time();
         }
 
-        $record->coursemodule = $this->precreate_course_module($record->course, $options);
-        $id = chat_add_instance($record);
-        return $this->post_add_instance($id, $record->coursemodule);
+        return parent::create_instance($record, (array)$options);
     }
 
 }

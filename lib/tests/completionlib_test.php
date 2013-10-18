@@ -53,8 +53,11 @@ class core_completionlib_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
+        // Enable completion before creating modules, otherwise the completion data is not written in DB.
+        $CFG->enablecompletion = true;
+
         // Create a course with activities.
-        $this->course = $this->getDataGenerator()->create_course();
+        $this->course = $this->getDataGenerator()->create_course(array('enablecompletion' => true));
         $this->user = $this->getDataGenerator()->create_user();
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->assertNotEmpty($studentrole);
@@ -718,10 +721,14 @@ class core_completionlib_testcase extends advanced_testcase {
     }
 
     public function test_get_activities() {
+        global $CFG;
         $this->resetAfterTest();
 
+        // Enable completion before creating modules, otherwise the completion data is not written in DB.
+        $CFG->enablecompletion = true;
+
         // Create a course with mixed auto completion data.
-        $course = $this->getDataGenerator()->create_course();
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => true));
         $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
         $completionmanual = array('completion' => COMPLETION_TRACKING_MANUAL);
         $completionnone = array('completion' => COMPLETION_TRACKING_NONE);
@@ -734,7 +741,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $data2 = $this->getDataGenerator()->create_module('data', array('course' => $course->id), $completionnone);
 
         // Create data in another course to make sure it's not considered.
-        $course2 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course(array('enablecompletion' => true));
         $c2forum = $this->getDataGenerator()->create_module('forum', array('course' => $course2->id), $completionauto);
         $c2page = $this->getDataGenerator()->create_module('page', array('course' => $course2->id), $completionmanual);
         $c2data = $this->getDataGenerator()->create_module('data', array('course' => $course2->id), $completionnone);
@@ -755,11 +762,15 @@ class core_completionlib_testcase extends advanced_testcase {
     }
 
     public function test_has_activities() {
+        global $CFG;
         $this->resetAfterTest();
 
+        // Enable completion before creating modules, otherwise the completion data is not written in DB.
+        $CFG->enablecompletion = true;
+
         // Create a course with mixed auto completion data.
-        $course = $this->getDataGenerator()->create_course();
-        $course2 = $this->getDataGenerator()->create_course();
+        $course = $this->getDataGenerator()->create_course(array('enablecompletion' => true));
+        $course2 = $this->getDataGenerator()->create_course(array('enablecompletion' => true));
         $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);
         $completionnone = array('completion' => COMPLETION_TRACKING_NONE);
         $c1forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id), $completionauto);
@@ -776,9 +787,10 @@ class core_completionlib_testcase extends advanced_testcase {
      * Test course module completion update event.
      */
     public function test_course_module_completion_updated_event() {
-        global $USER;
+        global $USER, $CFG;
 
         $this->setup_data();
+
         $this->setAdminUser();
 
         $completionauto = array('completion' => COMPLETION_TRACKING_AUTOMATIC);

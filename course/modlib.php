@@ -86,7 +86,8 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         print_error('cannotaddcoursemodule');
     }
 
-    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
+    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true) &&
+            isset($moduleinfo->introeditor)) {
         $introeditor = $moduleinfo->introeditor;
         unset($moduleinfo->introeditor);
         $moduleinfo->intro       = $introeditor['text'];

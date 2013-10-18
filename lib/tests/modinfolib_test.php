@@ -77,6 +77,8 @@ class core_modinfolib_testcase extends advanced_testcase {
         foreach ($conditionsfield as $conditionfield) {
             $ci->add_user_field_condition($conditionfield->fieldname, $conditionfield->operator, $conditionfield->value);
         }
+        // Direct calls to condition_info_section methods do not reset the course cache. Do it manually.
+        rebuild_course_cache($course->id, true);
 
         // Create and enrol a student.
         $studentrole = $DB->get_record('role', array('shortname' => 'student'), '*', MUST_EXIST);
@@ -164,6 +166,8 @@ class core_modinfolib_testcase extends advanced_testcase {
         foreach ($conditionsfield as $conditionfield) {
             $ci->add_user_field_condition($conditionfield->fieldname, $conditionfield->operator, $conditionfield->value);
         }
+        // Direct access to condition_info functions does not reset course cache, do it manually.
+        rebuild_course_cache($course->id, true);
 
         // Retrieve all related records from DB.
         $assigndb = $DB->get_record('assign', array('id' => $assign->id));
@@ -541,6 +545,9 @@ class core_modinfolib_testcase extends advanced_testcase {
         global $DB, $CFG;
 
         $this->resetAfterTest();
+
+        // Enable conditional availability before creating modules, otherwise the condition data is not written in DB.
+        $CFG->enableavailability = true;
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();

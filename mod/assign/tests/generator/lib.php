@@ -26,30 +26,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_assign_generator extends testing_module_generator {
 
-    /**
-     * Create new assign module instance
-     * @param array|stdClass $record
-     * @param array $options (mostly course_module properties)
-     * @return stdClass activity record with extra cmid field
-     */
     public function create_instance($record = null, array $options = null) {
-        global $CFG;
-        require_once("$CFG->dirroot/mod/assign/lib.php");
-
-        $this->instancecount++;
-        $i = $this->instancecount;
-
         $record = (object)(array)$record;
-        $options = (array)$options;
-
-        if (empty($record->course)) {
-            throw new coding_exception('module generator requires $record->course');
-        }
 
         $defaultsettings = array(
-            'name'                              => get_string('pluginname', 'assign').' '.$i,
-            'intro'                             => 'Test assign ' . $i,
-            'introformat'                       => FORMAT_MOODLE,
             'alwaysshowdescription'             => 1,
             'submissiondrafts'                  => 1,
             'requiresubmissionstatement'        => 0,
@@ -63,7 +43,6 @@ class mod_assign_generator extends testing_module_generator {
             'requireallteammemberssubmit'       => 0,
             'teamsubmissiongroupingid'          => 0,
             'blindmarking'                      => 0,
-            'cmidnumber'                        => '',
             'attemptreopenmethod'               => 'none',
             'maxattempts'                       => -1,
             'markingworkflow'                   => 0,
@@ -76,9 +55,6 @@ class mod_assign_generator extends testing_module_generator {
             }
         }
 
-        $record->coursemodule = $this->precreate_course_module($record->course, $options);
-        $id = assign_add_instance($record, null);
-        rebuild_course_cache($record->course, true);
-        return $this->post_add_instance($id, $record->coursemodule);
+        return parent::create_instance($record, (array)$options);
     }
 }

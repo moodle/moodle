@@ -35,38 +35,5 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_label_generator extends testing_module_generator {
-
-    /**
-     * Create new label module instance
-     * @param array|stdClass $record
-     * @param array $options
-     * @return stdClass activity record with extra cmid field
-     */
-    public function create_instance($record = null, array $options = null) {
-        global $CFG;
-        require_once("$CFG->dirroot/mod/label/lib.php");
-
-        $this->instancecount++;
-        $i = $this->instancecount;
-
-        $record = (object)(array)$record;
-        $options = (array)$options;
-
-        if (empty($record->course)) {
-            throw new coding_exception('module generator requires $record->course');
-        }
-        if (!isset($record->name)) {
-            $record->name = get_string('pluginname', 'label').' '.$i;
-        }
-        if (!isset($record->intro)) {
-            $record->intro = 'Test label '.$i;
-        }
-        if (!isset($record->introformat)) {
-            $record->introformat = FORMAT_MOODLE;
-        }
-
-        $record->coursemodule = $this->precreate_course_module($record->course, $options);
-        $id = label_add_instance($record, null);
-        return $this->post_add_instance($id, $record->coursemodule);
-    }
+    // No additional fields in label module.
 }
