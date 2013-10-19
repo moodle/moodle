@@ -49,6 +49,8 @@ function lti_get_response_xml($codemajor, $description, $messageref, $messagetyp
     $statusinfo->addChild('imsx_severity', 'status');
     $statusinfo->addChild('imsx_description', $description);
     $statusinfo->addChild('imsx_messageRefIdentifier', $messageref);
+    $incomingtype = str_replace('Response','Request', $messagetype);
+    $statusinfo->addChild('imsx_operationRefIdentifier', $incomingtype);
 
     $xml->addChild('imsx_POXBody')->addChild($messagetype);
 
