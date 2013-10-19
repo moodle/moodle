@@ -139,8 +139,6 @@ class navigation_node implements renderable {
     public static $autofindactive = true;
     /** @var bool should we load full admin tree or rely on AJAX for performance reasons */
     protected static $loadadmintree = false;
-    /** @var bool no admin navigation node is added for this page */
-    protected static $noadminnavigationnode = false;
     /** @var mixed If set to an int, that section will be included even if it has no activities */
     public $includesectionnum = false;
 
@@ -263,14 +261,6 @@ class navigation_node implements renderable {
      */
     public static function require_admin_tree() {
         self::$loadadmintree = true;
-    }
-
-    /**
-     * Uses when page doesn't have admin navigation node and we need to decide if
-     * site admin should be loaded.
-     */
-    public static function no_admin_navigation_node() {
-        self::$noadminnavigationnode = true;
     }
 
     /**
@@ -3329,74 +3319,77 @@ class settings_navigation extends navigation_node {
         $this->id = 'settingsnav';
         $this->context = $this->page->context;
 
-        $frontpagesettings = null;
-        $categorysettings = null;
-        $coursesettings = null;
-        $modulesettings = null;
-        $blocksettings = null;
-        $usersettings = null;
-
         $context = $this->context;
         if ($context->contextlevel == CONTEXT_BLOCK) {
-            $blocksettings = $this->load_block_settings();
+            $this->load_block_settings();
             $context = $context->get_parent_context();
         }
         switch ($context->contextlevel) {
             case CONTEXT_SYSTEM:
                 if ($this->page->url->compare(new moodle_url('/admin/settings.php', array('section'=>'frontpagesettings')))) {
-                    $frontpagesettings = $this->load_front_page_settings(($context->id == $this->context->id));
+                    $this->load_front_page_settings(($context->id == $this->context->id));
                 }
                 break;
             case CONTEXT_COURSECAT:
-                $categorysettings = $this->load_category_settings();
+                $this->load_category_settings();
                 break;
             case CONTEXT_COURSE:
                 if ($this->page->course->id != $SITE->id) {
-                    $coursesettings = $this->load_course_settings(($context->id == $this->context->id));
+                    $this->load_course_settings(($context->id == $this->context->id));
                 } else {
-                    $frontpagesettings = $this->load_front_page_settings(($context->id == $this->context->id));
+                    $this->load_front_page_settings(($context->id == $this->context->id));
                 }
                 break;
             case CONTEXT_MODULE:
-                $modulesettings = $this->load_module_settings();
-                $coursesettings = $this->load_course_settings();
+                $this->load_module_settings();
+                $this->load_course_settings();
                 break;
             case CONTEXT_USER:
                 if ($this->page->course->id != $SITE->id) {
-                    $coursesettings = $this->load_course_settings();
+                    $this->load_course_settings();
                 }
                 break;
         }
 
         $usersettings = $this->load_user_settings($this->page->course->id);
 
-        $admin = false;
-        if (isloggedin() && !isguestuser() && (!property_exists($SESSION, 'load_navigation_admin') || $SESSION->load_navigation_admin)) {
-            // If admin page or user logged in, then load admin settings.
-            $isadminpage = $this->is_admin_tree_needed($frontpagesettings, $categorysettings, $coursesettings, $modulesettings,
-                    $blocksettings, $usersettings);
-            if ($isadminpage || !isset($SESSION->load_navigation_admin)) {
-                $admin = $this->load_administration_settings();
-                $SESSION->load_navigation_admin = ($admin->children->count() > 0);
+        $adminsettings = false;
+        if (isloggedin() && !isguestuser() && (!isset($SESSION->load_navigation_admin) || $SESSION->load_navigation_admin)) {
+            $isadminpage = $this->is_admin_tree_needed();
 
-                // Don't load navigation on login, for performance reasons.
-                if (!$isadminpage) {
-                    $admin->remove();
-                    $admin = false;
+            if (has_capability('moodle/site:config', context_system::instance())) {
+                // Make sure this works even if config capability changes on the fly
+                // and also make it fast for admin right after login.
+                $SESSION->load_navigation_admin = 1;
+                if ($isadminpage) {
+                    $adminsettings = $this->load_administration_settings();
+                }
+
+            } else if (!isset($SESSION->load_navigation_admin)) {
+                $adminsettings = $this->load_administration_settings();
+                $SESSION->load_navigation_admin = (int)($adminsettings->children->count() > 0);
+
+            } else if ($SESSION->load_navigation_admin) {
+                if ($isadminpage) {
+                    $adminsettings = $this->load_administration_settings();
                 }
             }
 
             // Print empty navigation node, if needed.
-            if (!$admin && $SESSION->load_navigation_admin) {
-                $admin = false;
+            if ($SESSION->load_navigation_admin && !$isadminpage) {
+                if ($adminsettings) {
+                    // Do not print settings tree on pages that do not need it, this helps with performance.
+                    $adminsettings->remove();
+                    $adminsettings = false;
+                }
                 $siteadminnode = $this->add(get_string('administrationsite'), new moodle_url('/admin'), self::TYPE_SITE_ADMIN, null, 'siteadministration');
                 $siteadminnode->id = 'expandable_branch_'.$siteadminnode->type.'_'.clean_param($siteadminnode->key, PARAM_ALPHANUMEXT);
                 $this->page->requires->data_for_js('siteadminexpansion', $siteadminnode);
             }
         }
 
-        if ($context->contextlevel == CONTEXT_SYSTEM && $admin) {
-            $admin->force_open();
+        if ($context->contextlevel == CONTEXT_SYSTEM && $adminsettings) {
+            $adminsettings->force_open();
         } else if ($context->contextlevel == CONTEXT_USER && $usersettings) {
             $usersettings->force_open();
         }
@@ -3472,39 +3465,18 @@ class settings_navigation extends navigation_node {
      * Does this page require loading of full admin tree or is
      * it enough rely on AJAX?
      *
-     * @param navigation_node $frontpagesettings frontpage settings navigation node.
-     * @param navigation_node $categorysettings category settings navigation node.
-     * @param navigation_node $coursesettings course settings navigation node.
-     * @param navigation_node $modulesettings module settings navigation node.
-     * @param navigation_node $blocksettings block settings navigation node.
-     * @param navigation_node $usersettings user settings navigation node.
      * @return bool
      */
-    protected function is_admin_tree_needed(navigation_node $frontpagesettings = null, navigation_node $categorysettings = null,
-            navigation_node $coursesettings = null, navigation_node $modulesettings = null, navigation_node $blocksettings = null,
-            navigation_node $usersettings = null) {
-
+    protected function is_admin_tree_needed() {
         if (self::$loadadmintree) {
+            // Usually external admin page or settings page.
             return true;
         }
 
         if ($this->page->pagelayout === 'admin' or strpos($this->page->pagetype, 'admin-') === 0) {
-            // No navigation node is added for this page, case like block editing page.
-            if (self::$noadminnavigationnode) {
+            // Admin settings tree is intended for system level settings and management only, use navigation for the rest!
+            if ($this->page->context->contextlevel != CONTEXT_SYSTEM) {
                 return false;
-            }
-            // Greater then course context or user context pages add there own navigation node, so don't load site admin.
-            if (($this->page->context->contextlevel >= CONTEXT_COURSE) || ($this->page->context->contextlevel === CONTEXT_USER)) {
-                if (($frontpagesettings && $frontpagesettings->contains_active_node()) ||
-                    ($categorysettings && $categorysettings->contains_active_node()) ||
-                    ($coursesettings && $coursesettings->contains_active_node()) ||
-                    ($modulesettings && $modulesettings->contains_active_node()) ||
-                    ($blocksettings && $blocksettings->contains_active_node()) ||
-                    ($usersettings && $usersettings->contains_active_node())) {
-                    return false;
-                } else {
-                    debugging('Greater then Course level administration should only be attached to site administration tree', DEBUG_DEVELOPER);
-                }
             }
             return true;
         }
@@ -3862,7 +3834,7 @@ class settings_navigation extends navigation_node {
 
         // Settings for the module
         if (has_capability('moodle/course:manageactivities', $this->page->cm->context)) {
-            $url = new moodle_url('/course/modedit.php', array('update' => $this->page->cm->id, 'return' => true, 'sesskey' => sesskey()));
+            $url = new moodle_url('/course/modedit.php', array('update' => $this->page->cm->id, 'return' => 1));
             $modulenode->add(get_string('editsettings'), $url, navigation_node::TYPE_SETTING, null, 'modedit');
         }
         // Assign local roles
@@ -4454,7 +4426,7 @@ class settings_navigation extends navigation_node {
         // Manage files
         if ($course->legacyfiles == 2 and has_capability('moodle/course:managefiles', $this->context)) {
             //hiden in new installs
-            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id, 'itemid'=>0, 'component' => 'course', 'filearea'=>'legacy'));
+            $url = new moodle_url('/files/index.php', array('contextid'=>$coursecontext->id));
             $frontpage->add(get_string('sitelegacyfiles'), $url, self::TYPE_SETTING, null, null, new pix_icon('i/folder', ''));
         }
         return $frontpage;

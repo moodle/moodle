@@ -111,7 +111,6 @@ if ($cmid){
 }
 $contexts = new question_edit_contexts($thiscontext);
 $PAGE->set_pagelayout('admin');
-navigation_node::no_admin_navigation_node();
 
 if (optional_param('addcancel', false, PARAM_BOOL)) {
     redirect($returnurl);

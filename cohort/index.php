@@ -56,7 +56,7 @@ if (!$manager) {
 $strcohorts = get_string('cohorts', 'cohort');
 
 if ($category) {
-    $PAGE->set_pagelayout('report');
+    $PAGE->set_pagelayout('admin');
     $PAGE->set_context($context);
     $PAGE->set_url('/cohort/index.php', array('contextid'=>$context->id));
     $PAGE->set_title($strcohorts);

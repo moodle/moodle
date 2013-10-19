@@ -26,7 +26,7 @@
 
 require('../config.php');
 
-$contextid  = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
+$contextid  = optional_param('contextid', 0, PARAM_INT);
 $filepath   = optional_param('filepath', '', PARAM_PATH);
 $filename   = optional_param('filename', '', PARAM_FILE);
 // hard-coded to course legacy area
@@ -34,7 +34,12 @@ $component = 'course';
 $filearea  = 'legacy';
 $itemid    = 0;
 
+if (empty($contextid)) {
+    $contextid = context_course::instance(SITEID)->id;
+}
+
 $PAGE->set_url('/files/index.php', array('contextid'=>$contextid, 'filepath'=>$filepath, 'filename'=>$filename));
+navigation_node::override_active_url(new moodle_url('/files/index.php', array('contextid'=>$contextid)));
 
 if ($filepath === '') {
     $filepath = null;

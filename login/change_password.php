@@ -36,8 +36,6 @@ $PAGE->https_required();
 
 $PAGE->set_url('/login/change_password.php', array('id'=>$id));
 
-$PAGE->set_context(context_system::instance());
-
 if ($return) {
     // this redirect prevents security warning because https can not POST to http pages
     if (empty($SESSION->wantsurl)
@@ -66,6 +64,10 @@ if (!isloggedin() or isguestuser()) {
     }
     redirect(get_login_url());
 }
+
+$PAGE->set_context(context_user::instance($USER->id));
+$PAGE->set_pagelayout('admin');
+$PAGE->set_course($course);
 
 // do not require change own password cap if change forced
 if (!get_user_preferences('auth_forcepasswordchange', false)) {
@@ -124,8 +126,6 @@ if ($mform->is_cancelled()) {
 
     $fullname = fullname($USER, true);
 
-    $PAGE->navbar->add($fullname, new moodle_url('/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
-    $PAGE->navbar->add($strpasswordchanged);
     $PAGE->set_title($strpasswordchanged);
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
@@ -143,8 +143,6 @@ $strchangepassword = get_string('changepassword');
 
 $fullname = fullname($USER, true);
 
-$PAGE->navbar->add($fullname, new moodle_url('/user/view.php', array('id'=>$USER->id, 'course'=>$course->id)));
-$PAGE->navbar->add($strchangepassword);
 $PAGE->set_title($strchangepassword);
 $PAGE->set_heading($COURSE->fullname);
 echo $OUTPUT->header();

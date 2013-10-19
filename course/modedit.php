@@ -126,6 +126,9 @@ if (!empty($add)) {
     $url->param('update', $update);
     $PAGE->set_url($url);
 
+    // Select the "Edit settings" from navigation.
+    navigation_node::override_active_url(new moodle_url('/course/modedit.php', array('update'=>$update, 'return'=>1)));
+
     // Check the course module exists.
     $cm = get_coursemodule_from_id('', $update, 0, false, MUST_EXIST);
 
@@ -241,7 +244,6 @@ if (!empty($type)) { //TODO: hopefully will be removed in 2.0
 }
 $PAGE->set_pagetype($pagepath);
 $PAGE->set_pagelayout('admin');
-navigation_node::no_admin_navigation_node();
 
 $modmoodleform = "$CFG->dirroot/mod/$module->name/mod_form.php";
 if (file_exists($modmoodleform)) {

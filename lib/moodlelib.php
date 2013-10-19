@@ -4805,6 +4805,7 @@ function set_login_session_preferences() {
     $SESSION->justloggedin = true;
 
     unset($SESSION->lang);
+    unset($SESSION->load_navigation_admin);
 }
 
 

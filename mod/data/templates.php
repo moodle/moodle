@@ -90,7 +90,7 @@ if ($mode == 'singletemplate') {
 $PAGE->requires->js('/mod/data/data.js');
 $PAGE->set_title($data->name);
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('report');
+$PAGE->set_pagelayout('admin');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($data->name), 2);
 echo $OUTPUT->box(format_module_intro('data', $data, $cm->id), 'generalbox', 'intro');

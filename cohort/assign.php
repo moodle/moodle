@@ -36,6 +36,7 @@ require_capability('moodle/cohort:assign', $context);
 
 $PAGE->set_context($context);
 $PAGE->set_url('/cohort/assign.php', array('id'=>$id));
+$PAGE->set_pagelayout('admin');
 
 $returnurl = new moodle_url('/cohort/index.php', array('contextid'=>$cohort->contextid));
 
@@ -51,11 +52,8 @@ if (optional_param('cancel', false, PARAM_BOOL)) {
 if ($context->contextlevel == CONTEXT_COURSECAT) {
     $category = $DB->get_record('course_categories', array('id'=>$context->instanceid), '*', MUST_EXIST);
     navigation_node::override_active_url(new moodle_url('/cohort/index.php', array('contextid'=>$cohort->contextid)));
-    $PAGE->set_pagelayout('report');
-
 } else {
     navigation_node::override_active_url(new moodle_url('/cohort/index.php', array()));
-    $PAGE->set_pagelayout('admin');
 }
 $PAGE->navbar->add(get_string('assign', 'cohort'));
 

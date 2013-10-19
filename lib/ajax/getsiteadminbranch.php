@@ -39,6 +39,9 @@ if ($branchtype !== navigation_node::TYPE_SITE_ADMIN) {
     die('Wrong node type passed.');
 }
 
+$PAGE->set_context(context_system::instance());
+$PAGE->set_url('/lib/ajax/getsiteadminbranch.php', array('type'=>$branchtype));
+
 $sitenavigation = new settings_navigation_ajax($PAGE);
 
 // Set XML headers.

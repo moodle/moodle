@@ -45,7 +45,12 @@ if (!empty($USER->newadminuser)) {
     $PAGE->set_course($SITE);
     $PAGE->set_pagelayout('maintenance');
 } else {
-    require_login($course);
+    if ($course->id == SITEID) {
+        require_login();
+        $PAGE->set_context(context_system::instance());
+    } else {
+        require_login($course);
+    }
     $PAGE->set_pagelayout('admin');
 }
 
@@ -70,13 +75,12 @@ if ($id == -1) {
     require_capability('moodle/user:update', $systemcontext);
     $user = $DB->get_record('user', array('id'=>$id), '*', MUST_EXIST);
     $PAGE->set_context(context_user::instance($user->id));
-    if ($user->id == $USER->id) {
-        if ($course->id != SITEID && $node = $PAGE->navigation->find($course->id, navigation_node::TYPE_COURSE)) {
-            $node->make_active();
-            $PAGE->navbar->includesettingsbase = true;
-        }
-    } else {
+    if ($user->id != $USER->id) {
         $PAGE->navigation->extend_for_user($user);
+    } else {
+        if ($node = $PAGE->navigation->find('myprofile', navigation_node::TYPE_ROOTNODE)) {
+            $node->force_open();
+        }
     }
 }
 

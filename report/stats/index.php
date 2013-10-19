@@ -66,6 +66,7 @@ $PAGE->set_url(new moodle_url('/report/stats/index.php', array('course' => $cour
                                                                'time'   => $time,
                                                                'mode'   => $mode,
                                                                'userid' => $userid)));
+navigation_node::override_active_url(new moodle_url('/report/stats/index.php', array('course' => $course->id)));
 
 // Trigger a content view event.
 $event = \report_stats\event\content_viewed::create(array('courseid' => $course->id,
