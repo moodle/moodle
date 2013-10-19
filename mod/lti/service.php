@@ -106,7 +106,7 @@ switch ($messagetype) {
         $grade = lti_read_grade($ltiinstance, $parsed->userid);
 
         $responsexml = lti_get_response_xml(
-                isset($grade) ? 'success' : 'failure',
+                'success',  // Empty grade is also 'success'
                 'Result read',
                 $parsed->messageid,
                 'readResultResponse'
@@ -159,9 +159,13 @@ switch ($messagetype) {
         global $lti_web_service_handled;
         $lti_web_service_handled = false;
 
-        $event = \mod_lti\event\unknown_service_api_called::create($eventdata);
-        $event->set_legacy_data($eventdata);
-        $event->trigger();
+        try {
+            $event = \mod_lti\event\unknown_service_api_called::create($eventdata);
+            $event->set_legacy_data($eventdata);
+            $event->trigger();
+        } catch (Exception $e) {
+            $lti_web_service_handled = false;
+        }
 
         if (!$lti_web_service_handled) {
             $responsexml = lti_get_response_xml(
