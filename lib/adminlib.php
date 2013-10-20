@@ -5720,8 +5720,8 @@ class admin_setting_manageauths extends admin_setting {
 
             $test = '';
             if (!empty($authplugins[$auth]) and method_exists($authplugins[$auth], 'test_settings')) {
-                $url = new moodle_url('/auth/test_settings.php', array('auth'=>$auth, 'sesskey'=>sesskey()));
-                $test = html_writer::link($url, $txt->testsettings);
+                $testurl = new moodle_url('/auth/test_settings.php', array('auth'=>$auth, 'sesskey'=>sesskey()));
+                $test = html_writer::link($testurl, $txt->testsettings);
             }
 
             // Add a row to the table.
