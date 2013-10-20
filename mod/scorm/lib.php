@@ -942,7 +942,7 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
 
     require_login($course, true, $cm);
 
-    $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+    $lifetime = null;
 
     if ($filearea === 'content') {
         $revision = (int)array_shift($args); // prevents caching problems - ignored here

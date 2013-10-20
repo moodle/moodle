@@ -530,7 +530,7 @@ class pdf extends \FPDI {
 
         $testimagefolder = \make_temp_directory('assignfeedback_editpdf_test');
         $testimage = $testimagefolder.'/image_page0.png';
-        send_file($testimage, basename($testimage));
+        send_file($testimage, basename($testimage), 0);
         die();
     }
 

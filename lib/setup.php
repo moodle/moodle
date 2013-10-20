@@ -766,6 +766,11 @@ if (!PHPUNIT_TEST and !defined('BEHAT_TEST')) {
     $USER    =& $_SESSION['USER'];
 }
 
+// Initialise some variables that are supposed to be set in config.php only.
+if (!isset($CFG->filelifetime)) {
+    $CFG->filelifetime = 60*60*6;
+}
+
 // Late profiling, only happening if early one wasn't started
 if (!empty($CFG->profilingenabled)) {
     require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');

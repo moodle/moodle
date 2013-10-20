@@ -442,8 +442,14 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
         return false;
     }
 
+    // Nasty hack because we do not have file revisions in book yet.
+    $lifetime = $CFG->filelifetime;
+    if ($lifetime > 60*10) {
+        $lifetime = 60*10;
+    }
+
     // finally send the file
-    send_stored_file($file, 360, 0, $forcedownload, $options);
+    send_stored_file($file, $lifetime, 0, $forcedownload, $options);
 }
 
 /**

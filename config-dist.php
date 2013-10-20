@@ -201,7 +201,7 @@ $CFG->admin = 'admin';
 //
 // Seconds for files to remain in caches. Decrease this if you are worried
 // about students being served outdated versions of uploaded files.
-//     $CFG->filelifetime = 86400;
+//     $CFG->filelifetime = 60*60*6;
 //
 // Some web servers can offload the file serving from PHP process,
 // comment out one the following options to enable it in Moodle:

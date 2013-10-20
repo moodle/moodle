@@ -669,12 +669,12 @@ class repository_dropbox extends repository {
      * serves from there.
      *
      * @param stored_file $storedfile the file that contains the reference
-     * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+     * @param int $lifetime Number of seconds before the file should expire from caches (null means $CFG->filelifetime)
      * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
      * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
      * @param array $options additional options affecting the file serving
      */
-    public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
         $ref = unserialize($storedfile->get_reference());
         if ($storedfile->get_filesize() > $this->max_cache_bytes()) {
             header('Location: '.$this->get_file_download_link($ref->url));

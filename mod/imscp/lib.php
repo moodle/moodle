@@ -356,7 +356,7 @@ function imscp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         }
 
         // finally send the file
-        send_stored_file($file, 86400, 0, $forcedownload, $options);
+        send_stored_file($file, null, 0, $forcedownload, $options);
 
     } else if ($filearea === 'backup') {
         if (!has_capability('moodle/course:managefiles', $context)) {
@@ -372,7 +372,7 @@ function imscp_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         }
 
         // finally send the file
-        send_stored_file($file, 86400, 0, $forcedownload, $options);
+        send_stored_file($file, null, 0, $forcedownload, $options);
 
     } else {
         return false;

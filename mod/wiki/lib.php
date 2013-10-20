@@ -464,9 +464,7 @@ function wiki_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
             return false;
         }
 
-        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
-
-        send_stored_file($file, $lifetime, 0, $options);
+        send_stored_file($file, null, 0, $options);
     }
 }
 

@@ -405,7 +405,7 @@ function page_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
         }
 
         // finally send the file
-        send_stored_file($file, 86400, 0, $forcedownload, $options);
+        send_stored_file($file, null, 0, $forcedownload, $options);
     }
 }
 

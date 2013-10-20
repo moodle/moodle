@@ -2226,7 +2226,7 @@ function send_temp_file_finished($path) {
  * @category files
  * @param string $path Path of file on disk (including real filename), or actual content of file as string
  * @param string $filename Filename to send
- * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+ * @param int $lifetime Number of seconds before the file should expire from caches (null means $CFG->filelifetime)
  * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
  * @param bool $pathisstring If true (default false), $path is the content to send and not the pathname
  * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
@@ -2237,20 +2237,15 @@ function send_temp_file_finished($path) {
  *                        and should not be reopened.
  * @return null script execution stopped unless $dontdie is true
  */
-function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='', $dontdie=false) {
+function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='', $dontdie=false) {
     global $CFG, $COURSE;
 
     if ($dontdie) {
         ignore_user_abort(true);
     }
 
-    // MDL-11789, apply $CFG->filelifetime here
-    if ($lifetime === 'default') {
-        if (!empty($CFG->filelifetime)) {
-            $lifetime = $CFG->filelifetime;
-        } else {
-            $lifetime = 86400;
-        }
+    if ($lifetime === 'default' or is_null($lifetime)) {
+        $lifetime = $CFG->filelifetime;
     }
 
     \core\session\manager::write_close(); // Unlock session during file serving.
@@ -2356,13 +2351,13 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
  *
  * @category files
  * @param stored_file $stored_file local file object
- * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+ * @param int $lifetime Number of seconds before the file should expire from caches (null means $CFG->filelifetime)
  * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
  * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
  * @param array $options additional options affecting the file serving
  * @return null script execution stopped unless $options['dontdie'] is true
  */
-function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, array $options=array()) {
+function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownload=false, array $options=array()) {
     global $CFG, $COURSE;
 
     if (empty($options['filename'])) {
@@ -2375,6 +2370,10 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
         $dontdie = false;
     } else {
         $dontdie = true;
+    }
+
+    if ($lifetime === 'default' or is_null($lifetime)) {
+        $lifetime = $CFG->filelifetime;
     }
 
     if (!empty($options['preview'])) {
@@ -4556,10 +4555,8 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null) {
                 send_file_not_found();
             }
 
-            $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
-
             // finally send the file
-            send_stored_file($file, $lifetime, 0, false, array('preview' => $preview));
+            send_stored_file($file, null, 0, false, array('preview' => $preview));
         }
 
         $filefunction = $component.'_pluginfile';
