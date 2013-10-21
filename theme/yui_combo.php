@@ -86,14 +86,21 @@ while (count($parts)) {
         $revision = array_shift($bits);
         $rollupname = array_shift($bits);
 
-        // Determine whether we should minify this rollup.
-        preg_match('/(-min)?\.js/', $rollupname, $matches);
-        $filesuffix = '.js';
-        if (isset($matches[1])) {
-            $filesuffix = '-min.js';
-        }
-
         if (strpos($rollupname, 'yui-moodlesimple') !== false) {
+            if (substr($rollupname, -3) === '.js') {
+                // Determine whether we should minify this rollup.
+                preg_match('/(-min)?\.js/', $rollupname, $matches);
+                $filesuffix = '.js';
+                if (isset($matches[1])) {
+                    $filesuffix = '-min.js';
+                }
+                $type = 'js';
+            } else if (substr($rollupname, -4) === '.css') {
+                $type = 'css';
+            } else {
+                continue;
+            }
+
             $yuimodules = array(
                 // Include everything from original SimpleYUI,
                 // this list can be built using http://yuilibrary.com/yui/configurator/ by selecting all modules
@@ -179,12 +186,26 @@ while (count($parts)) {
             );
 
             // We need to add these new parts to the beginning of the $parts list, not the end.
-            $newparts = array();
-            foreach ($yuimodules as $module) {
-                $newparts[] = $revision . '/' . $module . '/' . $module . $filesuffix;
+            if ($type === 'js') {
+                $newparts = array();
+                foreach ($yuimodules as $module) {
+                    $newparts[] = $revision . '/' . $module . '/' . $module . $filesuffix;
+                }
+                $newparts[] = 'yuiuseall/yuiuseall';
+                $parts = array_merge($newparts, $parts);
+            } else {
+                $newparts = array();
+                foreach ($yuimodules as $module) {
+                    $candidate =  $revision . '/' . $module . '/assets/skins/sam/' . $module . '.css';
+                    if (!file_exists("$CFG->libdir/yuilib/$candidate")) {
+                        continue;
+                    }
+                    $newparts[] = $candidate;
+                }
+                if ($newparts) {
+                    $parts = array_merge($newparts, $parts);
+                }
             }
-            $newparts[] = 'yuiuseall/yuiuseall';
-            $parts = array_merge($newparts, $parts);
         }
 
         // Handle the mcore rollup.
