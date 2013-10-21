@@ -239,12 +239,23 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $data->courseid = $this->course->id;
         $data->timeshift = 24*60*60;
         $this->setUser($this->editingteachers[0]);
-        $assign->reset_userdata($data);
+        assign_reset_userdata($data);
         $this->assertEquals(false, $assign->has_submissions_or_grades());
 
         // Reload the instance data.
         $instance = $DB->get_record('assign', array('id'=>$assign->get_instance()->id));
         $this->assertEquals($now + 24*60*60, $instance->duedate);
+
+        // Create another assignment and make sure both get reset.
+        $assignduedate = $instance->duedate;
+        $assign2 = $this->create_instance(array('assignsubmission_onlinetext_enabled' => 1,
+                                               'duedate' => $now));
+        $data->timeshift = 4*24*60*60;
+        assign_reset_userdata($data);
+        $instance = $DB->get_record('assign', array('id' => $assign->get_instance()->id));
+        $this->assertEquals($assignduedate + 4*24*60*60, $instance->duedate);
+        $instance2 = $DB->get_record('assign', array('id' => $assign2->get_instance()->id));
+        $this->assertEquals($now + 4*24*60*60, $instance2->duedate);
     }
 
     public function test_plugin_settings() {
