@@ -21,6 +21,7 @@ class wiki_parser_proxy {
         }
 
         $type = strtolower($type);
+        self::$parsers[$type] = null; // Reset the current parser because it may have other options.
         if(self::create_parser_instance($type)) {
             return self::$parsers[$type]->parse($string, $options);
         }
@@ -56,15 +57,11 @@ class wiki_parser_proxy {
 
     private static function create_parser_instance($type) {
         if(empty(self::$parsers[$type])) {
-            if(include(self::$basepath."markups/$type.php")) {
-                $class = strtolower($type)."_parser";
-                if(class_exists($class)) {
-                    self::$parsers[$type] = new $class;
-                    return true;
-                }
-                else {
-                    return false;
-                }
+            include_once(self::$basepath."markups/$type.php");
+            $class = strtolower($type)."_parser";
+            if(class_exists($class)) {
+                self::$parsers[$type] = new $class;
+                return true;
             }
             else {
                 return false;
