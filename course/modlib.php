@@ -61,6 +61,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     $newcm->instance         = 0; // Not known yet, will be updated later (this is similar to restore code).
     $newcm->visible          = $moduleinfo->visible;
     $newcm->visibleold       = $moduleinfo->visible;
+    if (isset($moduleinfo->cmidnumber)) {
+        $newcm->idnumber         = $moduleinfo->cmidnumber;
+    }
     $newcm->groupmode        = $moduleinfo->groupmode;
     $newcm->groupingid       = $moduleinfo->groupingid;
     $newcm->groupmembersonly = $moduleinfo->groupmembersonly;
@@ -126,15 +129,6 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     // So we have to update one of them twice.
     $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
 
-    // Make sure visibility is set correctly (in particular in calendar).
-    // Note: allow them to set it even without moodle/course:activityvisibility.
-    set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
-
-    if (isset($moduleinfo->cmidnumber)) { // Label.
-        // Set cm idnumber - uniqueness is already verified by form validation.
-        set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
-    }
-
     // Set up conditions.
     if ($CFG->enableavailability) {
         condition_info::update_cm_from_form((object)array('id'=>$moduleinfo->coursemodule), $moduleinfo, false);
@@ -177,9 +171,11 @@ function edit_module_post_actions($moduleinfo, $course) {
     global $CFG;
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
+    $hasgrades = plugin_supports('mod', $moduleinfo->modulename, FEATURE_GRADE_HAS_GRADE, false);
+    $hasoutcomes = plugin_supports('mod', $moduleinfo->modulename, FEATURE_GRADE_OUTCOMES, true);
 
     // Sync idnumber with grade_item.
-    if ($grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
+    if ($hasgrades && $grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
                  'iteminstance'=>$moduleinfo->instance, 'itemnumber'=>0, 'courseid'=>$course->id))) {
         if ($grade_item->idnumber != $moduleinfo->cmidnumber) {
             $grade_item->idnumber = $moduleinfo->cmidnumber;
@@ -187,8 +183,12 @@ function edit_module_post_actions($moduleinfo, $course) {
         }
     }
 
-    $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
+    if ($hasgrades) {
+        $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
                                          'iteminstance'=>$moduleinfo->instance, 'courseid'=>$course->id));
+    } else {
+        $items = array();
+    }
 
     // Create parent category if requested and move to correct parent category.
     if ($items and isset($moduleinfo->gradecat)) {
@@ -213,7 +213,7 @@ function edit_module_post_actions($moduleinfo, $course) {
     }
 
     // Add outcomes if requested.
-    if ($outcomes = grade_outcome::fetch_all_available($course->id)) {
+    if ($hasoutcomes && $outcomes = grade_outcome::fetch_all_available($course->id)) {
         $grade_items = array();
 
         // Outcome grade_item.itemnumber start at 1000, there is nothing above outcomes.
@@ -292,8 +292,10 @@ function edit_module_post_actions($moduleinfo, $course) {
         $moduleinfo->showgradingmanagement = $showgradingmanagement;
     }
 
-    rebuild_course_cache($course->id);
-    grade_regrade_final_grades($course->id);
+    rebuild_course_cache($course->id, true);
+    if ($hasgrades) {
+        grade_regrade_final_grades($course->id);
+    }
     require_once($CFG->libdir.'/plagiarismlib.php');
     plagiarism_save_form_elements($moduleinfo);
 
