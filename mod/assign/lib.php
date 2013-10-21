@@ -77,6 +77,18 @@ function assign_reset_userdata($data) {
             $status = array_merge($status, $assignment->reset_userdata($data));
         }
     }
+    // Updating dates - shift may be negative too.
+    $componentstr = get_string('modulenameplural', 'assign');
+
+    if ($data->timeshift) {
+        shift_course_mod_dates('assign',
+                                array('duedate', 'allowsubmissionsfromdate', 'cutoffdate'),
+                                $data->timeshift,
+                                $data->courseid);
+        $status[] = array('component' => $componentstr,
+                          'item' => get_string('datechanged'),
+                          'error' => false);
+    }
     return $status;
 }
 
