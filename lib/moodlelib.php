@@ -5148,18 +5148,24 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
  * @param array $fields array of date fields from mod table
  * @param int $timeshift time difference
  * @param int $courseid
+ * @param int $modid (Optional) passed if specific mod instance in course needs to be updated.
  * @return bool success
  */
-function shift_course_mod_dates($modname, $fields, $timeshift, $courseid) {
+function shift_course_mod_dates($modname, $fields, $timeshift, $courseid, $modid = 0) {
     global $CFG, $DB;
     include_once($CFG->dirroot.'/mod/'.$modname.'/lib.php');
 
     $return = true;
+    $params = array($timeshift, $courseid);
     foreach ($fields as $field) {
         $updatesql = "UPDATE {".$modname."}
                           SET $field = $field + ?
                         WHERE course=? AND $field<>0";
-        $return = $DB->execute($updatesql, array($timeshift, $courseid)) && $return;
+        if ($modid) {
+            $updatesql .= ' AND id=?';
+            $params[] = $modid;
+        }
+        $return = $DB->execute($updatesql, $params) && $return;
     }
 
     $refreshfunction = $modname.'_refresh_events';

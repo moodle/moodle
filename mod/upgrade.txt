@@ -9,6 +9,8 @@ information provided here is intended especially for developers.
   a custom help text set. Also instead of array it can now return
   MOD_SUBTYPE_NO_CHILDREN. This is optional and still defaults to prior
   behavior. See get_module_metadata() in course/lib.php for details.
+* shift_course_mod_dates() has been modified to accept optional mod instance id. If mod instance id is passed then
+  dates changed will happen only on specific module instance and not on all instances of that module in course.
 
 === 2.5 ===
 
