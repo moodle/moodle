@@ -31,12 +31,14 @@ require_once($CFG->libdir.'/authlib.php');
 $id     = optional_param('id', SITEID, PARAM_INT); // current course
 $return = optional_param('return', 0, PARAM_BOOL); // redirect after password change
 
+$systemcontext = context_system::instance();
+
 //HTTPS is required in this page when $CFG->loginhttps enabled
 $PAGE->https_required();
 
 $PAGE->set_url('/login/change_password.php', array('id'=>$id));
 
-$PAGE->set_context(context_system::instance());
+$PAGE->set_context($systemcontext);
 
 if ($return) {
     // this redirect prevents security warning because https can not POST to http pages
@@ -52,8 +54,6 @@ if ($return) {
 }
 
 $strparticipants = get_string('participants');
-
-$systemcontext = context_system::instance();
 
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('invalidcourseid');
@@ -119,8 +119,6 @@ if ($mform->is_cancelled()) {
     unset_user_preference('create_password', $USER);
 
     $strpasswordchanged = get_string('passwordchanged');
-
-    add_to_log($course->id, 'user', 'change password', "view.php?id=$USER->id&amp;course=$course->id", "$USER->id");
 
     $fullname = fullname($USER, true);
 

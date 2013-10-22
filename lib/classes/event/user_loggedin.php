@@ -50,7 +50,7 @@ class user_loggedin extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array(SITEID, 'user', 'login', "view.php?id=" . $this->data['objectid'] . "&course=".SITEID,
+        return array(SITEID, 'user', 'login', 'view.php?id=' . $this->data['objectid'] . '&course=' . SITEID,
             $this->data['objectid'], 0, $this->data['objectid']);
     }
 

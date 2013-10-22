@@ -86,7 +86,16 @@
         }
     }
 
-    add_to_log($course->id, 'user', 'view all', 'index.php?id='.$course->id, '');
+    $event = \core\event\user_list_viewed::create(array(
+        'context' => $context,
+        'objectid' => $course->id,
+        'other' => array(
+            'courseid' => $course->id,
+            'courseshortname' => $course->shortname,
+            'coursefullname' => $course->fullname
+        )
+    ));
+    $event->trigger();
 
     $bulkoperations = has_capability('moodle/course:bulkmessaging', $context);
 
