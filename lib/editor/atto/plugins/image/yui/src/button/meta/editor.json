@@ -1,8 +1,0 @@
-{
-  "moodle-atto_image-button": {
-    "requires": [
-        "node",
-        "escape"
-    ]
-  }
-}

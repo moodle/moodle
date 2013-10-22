@@ -1,5 +1,0 @@
-{
-  "moodle-atto_orderedlist-button": {
-    "requires": ["node"]
-  }
-}
