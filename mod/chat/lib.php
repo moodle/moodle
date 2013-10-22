@@ -274,14 +274,13 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
             continue;
         }
         $cm = $modinfo->cms[$cmid];
-        $cm->lasttime = $mcm->lasttime;
         if (!$modinfo->cms[$cm->id]->uservisible) {
             continue;
         }
 
         if (groups_get_activity_groupmode($cm) != SEPARATEGROUPS
          or has_capability('moodle/site:accessallgroups', context_module::instance($cm->id))) {
-            if ($timeout > time() - $cm->lasttime) {
+            if ($timeout > time() - $mcm->lasttime) {
                 $current[] = $cm;
             } else {
                 $past[] = $cm;
@@ -314,8 +313,8 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
              continue;
         }
 
-        $cm->lasttime = $mcm->lasttime;
-        if ($timeout > time() - $cm->lasttime) {
+        $mcms[$cmid]->lasttime = $mcm->lasttime;
+        if ($timeout > time() - $mcm->lasttime) {
             $current[] = $cm;
         } else {
             $past[] = $cm;
@@ -333,7 +332,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
 
         foreach ($past as $cm) {
             $link = $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id;
-            $date = userdate($cm->lasttime, $strftimerecent);
+            $date = userdate($mcms[$cm->id]->lasttime, $strftimerecent);
             echo '<div class="head"><div class="date">'.$date.'</div></div>';
             echo '<div class="info"><a href="'.$link.'">'.format_string($cm->name,true).'</a></div>';
         }
@@ -371,7 +370,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
             }
 
             $link = $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id;
-            $date = userdate($cm->lasttime, $strftimerecent);
+            $date = userdate($mcms[$cm->id]->lasttime, $strftimerecent);
 
             echo '<div class="head"><div class="date">'.$date.'</div></div>';
             echo '<div class="info"><a href="'.$link.'">'.format_string($cm->name,true).'</a></div>';
