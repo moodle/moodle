@@ -2688,6 +2688,43 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2013100901.00);
     }
+    if ($oldversion < 2013102200.00) {
+        $params = array('plugin' => 'editor_atto', 'name' => 'version');
+        $attoversion = $DB->get_record('config_plugins',
+                                       $params,
+                                       'value',
+                                       IGNORE_MISSING);
+
+        if ($attoversion) {
+            $attoversion = floatval($attoversion->value);
+        }
+        // Only these versions that were part of 2.6 beta should be removed.
+        // Manually installed versions of 2.5 - or later releases for 2.6 installed
+        // via the plugins DB should not be uninstalled.
+        if ($attoversion && $attoversion > 2013051500.00 && $attoversion < 2013102200.00) {
+            // Remove all other associated config.
+            unset_all_config_for_plugin('editor_atto');
+            unset_all_config_for_plugin('atto_bold');
+            unset_all_config_for_plugin('atto_clear');
+            unset_all_config_for_plugin('atto_html');
+            unset_all_config_for_plugin('atto_image');
+            unset_all_config_for_plugin('atto_indent');
+            unset_all_config_for_plugin('atto_italic');
+            unset_all_config_for_plugin('atto_link');
+            unset_all_config_for_plugin('atto_media');
+            unset_all_config_for_plugin('atto_orderedlist');
+            unset_all_config_for_plugin('atto_outdent');
+            unset_all_config_for_plugin('atto_strike');
+            unset_all_config_for_plugin('atto_title');
+            unset_all_config_for_plugin('atto_underline');
+            unset_all_config_for_plugin('atto_unlink');
+            unset_all_config_for_plugin('atto_unorderedlist');
+
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013102200.00);
+    }
 
     if ($oldversion < 2013102100.00) {
         // Changing default value for the status of a course backup.

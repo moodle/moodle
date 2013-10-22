@@ -914,12 +914,6 @@ class core_plugin_manager {
                 'comments', 'file', 'offline', 'editpdf'
             ),
 
-            'atto' => array(
-                'bold', 'clear', 'html', 'image', 'indent', 'italic', 'link',
-                'media', 'orderedlist', 'outdent', 'strike', 'title',
-                'underline', 'unlink', 'unorderedlist'
-            ),
-
             'auth' => array(
                 'cas', 'db', 'email', 'fc', 'imap', 'ldap', 'manual', 'mnet',
                 'nntp', 'nologin', 'none', 'pam', 'pop3', 'radius',
@@ -970,7 +964,7 @@ class core_plugin_manager {
             ),
 
             'editor' => array(
-                'textarea', 'tinymce', 'atto'
+                'textarea', 'tinymce'
             ),
 
             'enrol' => array(
