@@ -50,6 +50,7 @@ Y.extend(EVENT, Y.Base, {
                 width : Math.floor(constraint.get('offsetWidth')*0.9)+"px"
             });
             panel.render(td);
+            node.setAttribute('aria-controls', panel.get('id'));
             panel.get('boundingBox').addClass('calendar-event-panel');
             panel.get('boundingBox').setAttribute('aria-live', 'off');
             this.on('showevent', panel.show, panel);

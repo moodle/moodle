@@ -400,7 +400,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             } else if(isset($typesbyday[$day]['startuser'])) {
                 $class .= ' calendar_event_user';
             }
-            $cell = html_writer::link($dayhref, $day, array('aria-controls' => $popupid.'_panel', 'id' => $popupid));
+            $cell = html_writer::link($dayhref, $day, array('id' => $popupid));
         } else {
             $cell = $day;
         }
@@ -443,7 +443,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             if(! isset($eventsbyday[$day])) {
                 $class .= ' eventnone';
                 $popupid = calendar_get_popup(true, false);
-                $cell = html_writer::link('#', $day, array('aria-controls' => $popupid.'_panel', 'id' => $popupid));
+                $cell = html_writer::link('#', $day, array('id' => $popupid));
             }
             $cell = get_accesshide($today.' ').$cell;
         }
