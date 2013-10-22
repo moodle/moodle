@@ -705,49 +705,43 @@ class filter_delete_config_testcase extends advanced_testcase {
 }
 
 class filter_filter_set_applies_to_strings extends advanced_testcase {
-    protected $origcfgstringfilters;
-    protected $origcfgfilterall;
-
-    protected function setUp() {
-        global $DB, $CFG;
-        parent::setUp();
-
-        $DB->delete_records('filter_active', array());
-        $DB->delete_records('filter_config', array());
-        $this->resetAfterTest(false);
-
-        // Store original $CFG;
-        $this->origcfgstringfilters = $CFG->stringfilters;
-        $this->origcfgfilterall = $CFG->filterall;
-    }
-
-    protected function tearDown() {
-        global $CFG;
-        $CFG->stringfilters = $this->origcfgstringfilters;
-        $CFG->filterall = $this->origcfgfilterall;
-
-        parent::tearDown();
-    }
-
     public function test_set() {
         global $CFG;
+        $this->resetAfterTest();
+
+        $this->assertFileExists("$CFG->dirroot/filter/emailprotect"); // Any standard filter.
+        $this->assertFileExists("$CFG->dirroot/filter/tidy");         // Any standard filter.
+        $this->assertFileNotExists("$CFG->dirroot/filter/grgrggr");   // Any non-existent filter
+
         // Setup fixture.
-        $CFG->filterall = 0;
-        $CFG->stringfilters = '';
+        set_config('filterall', 0);
+        set_config('stringfilters', '');
         // Exercise SUT.
-        filter_set_applies_to_strings('filter/name', true);
+        filter_set_applies_to_strings('filter/tidy', true);
         // Validate.
-        $this->assertEquals('filter/name', $CFG->stringfilters);
+        $this->assertEquals('filter/tidy', $CFG->stringfilters);
+        $this->assertEquals(1, $CFG->filterall);
+
+        filter_set_applies_to_strings('filter/grgrggr', true);
+        $this->assertEquals('filter/tidy', $CFG->stringfilters);
+        $this->assertEquals(1, $CFG->filterall);
+
+        filter_set_applies_to_strings('filter/emailprotect', true);
+        $this->assertEquals('filter/tidy,filter/emailprotect', $CFG->stringfilters);
         $this->assertEquals(1, $CFG->filterall);
     }
 
     public function test_unset_to_empty() {
         global $CFG;
+        $this->resetAfterTest();
+
+        $this->assertFileExists("$CFG->dirroot/filter/tidy"); // Any standard filter.
+
         // Setup fixture.
-        $CFG->filterall = 1;
-        $CFG->stringfilters = 'filter/name';
+        set_config('filterall', 1);
+        set_config('stringfilters', 'filter/tidy');
         // Exercise SUT.
-        filter_set_applies_to_strings('filter/name', false);
+        filter_set_applies_to_strings('filter/tidy', false);
         // Validate.
         $this->assertEquals('', $CFG->stringfilters);
         $this->assertEquals('', $CFG->filterall);
@@ -755,13 +749,19 @@ class filter_filter_set_applies_to_strings extends advanced_testcase {
 
     public function test_unset_multi() {
         global $CFG;
+        $this->resetAfterTest();
+
+        $this->assertFileExists("$CFG->dirroot/filter/emailprotect"); // Any standard filter.
+        $this->assertFileExists("$CFG->dirroot/filter/tidy");         // Any standard filter.
+        $this->assertFileExists("$CFG->dirroot/filter/multilang");    // Any standard filter.
+
         // Setup fixture.
-        $CFG->filterall = 1;
-        $CFG->stringfilters = 'filter/name,filter/other';
+        set_config('filterall', 1);
+        set_config('stringfilters', 'filter/emailprotect,filter/tidy,filter/multilang');
         // Exercise SUT.
-        filter_set_applies_to_strings('filter/name', false);
+        filter_set_applies_to_strings('filter/tidy', false);
         // Validate.
-        $this->assertEquals('filter/other', $CFG->stringfilters);
+        $this->assertEquals('filter/emailprotect,filter/multilang', $CFG->stringfilters);
         $this->assertEquals(1, $CFG->filterall);
     }
 }
