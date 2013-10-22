@@ -73,3 +73,49 @@ Feature: Award badges
     And I expand "My profile" node
     And I follow "My badges"
     Then I should see "Site Badge"
+
+  @javascript
+  Scenario: Award course badge
+    Given the following "users" exists:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@asd.com |
+      | student1 | Student | 1 | student1@asd.com |
+      | student2 | Student | 2 | student2@asd.com |
+    And the following "courses" exists:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1 | 0 | 1 |
+    And the following "course enrolments" exists:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student |
+      | student2 | C1 | student |
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
+    And I follow "Add a new badge"
+    And I fill the moodle form with:
+      | Name | Course Badge |
+      | Description | Course badge description |
+      | issuername | Tester of course badge |
+    And I upload "badges/tests/behat/badge.png" file to "Image" filepicker
+    And I press "Create badge"
+    And I select "Manual issue by role" from "type"
+    And I check "Teacher"
+    And I press "Save"
+    And I press "Enable access"
+    And I press "Continue"
+    And I follow "Recipients (0)"
+    And I press "Award badge"
+    And I select "Student 2 (student2@asd.com)" from "potentialrecipients[]"
+    And I press "Award badge"
+    And I select "Student 1 (student1@asd.com)" from "potentialrecipients[]"
+    When I press "Award badge"
+    And I follow "Course Badge"
+    Then I should see "Recipients (2)"
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I expand "My profile" node
+    And I follow "My badges"
+    Then I should see "Course Badge"
