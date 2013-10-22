@@ -1926,6 +1926,8 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
             commentlinks.all('.quicklist_comment').remove(true),
             comment = this.get('comment');
 
+        comment.deleteme = false; // Cancel the deleting of blank comments.
+
         // Now build the list of quicklist comments.
         Y.each(comment.editor.quicklist.comments, function(quickcomment) {
             var listitem = Y.Node.create('<li class="quicklist_comment"></li>'),
