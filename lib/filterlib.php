@@ -721,13 +721,23 @@ function filter_get_string_filters() {
  */
 function filter_set_applies_to_strings($filter, $applytostrings) {
     $stringfilters = filter_get_string_filters();
-    $numstringfilters = count($stringfilters);
+    $prevfilters = $stringfilters;
+    $allfilters = core_component::get_plugin_list('filter');
+
     if ($applytostrings) {
         $stringfilters[$filter] = $filter;
     } else {
         unset($stringfilters[$filter]);
     }
-    if (count($stringfilters) != $numstringfilters) {
+
+    // Remove missing filters.
+    foreach ($stringfilters as $filter) {
+        if (!isset($allfilters[$filter])) {
+            unset($stringfilters[$filter]);
+        }
+    }
+
+    if ($prevfilters != $stringfilters) {
         set_config('stringfilters', implode(',', $stringfilters));
         set_config('filterall', !empty($stringfilters));
     }
