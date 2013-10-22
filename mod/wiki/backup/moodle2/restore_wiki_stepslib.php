@@ -70,24 +70,34 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
     protected function process_wiki_subwiki($data) {
         global $DB;
 
-
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
         $data->wikiid = $this->get_new_parentid('wiki');
-        if($data->groupid !== '0') $data->groupid = $this->get_mappingid('group', $data->groupid);
-        if($date->userid !== '0') $data->userid = $this->get_mappingid('user', $data->userid);
 
-        if($data->groupid !== false && $data->userid !== false) {
+        // If the groupid is not equal to zero, get the mapping for the group.
+        if ((int) $data->groupid !== 0) {
+            $data->groupid = $this->get_mappingid('group', $data->groupid);
+        }
+
+        // If the userid is not equal to zero, get the mapping for the user.
+        if ((int) $data->userid !== 0) {
+            $data->userid = $this->get_mappingid('user', $data->userid);
+        }
+
+        // If these values are not equal to false then a mapping was successfully made.
+        if ($data->groupid !== false && $data->userid !== false) {
             $newitemid = $DB->insert_record('wiki_subwikis', $data);
         } else {
             $newitemid = false;
         }
+
         $this->set_mapping('wiki_subwiki', $oldid, $newitemid);
     }
+
     protected function process_wiki_page($data) {
         global $DB;
 
-        $data = (object)$data;
+        $data = (object) $data;
         $oldid = $data->id;
         $data->subwikiid = $this->get_new_parentid('wiki_subwiki');
         $data->userid = $this->get_mappingid('user', $data->userid);
@@ -95,13 +105,16 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timerendered = $this->apply_date_offset($data->timerendered);
 
-        if($data->subwikiid !== false) {
+        // Check that we were able to get a parentid for this page.
+        if ($data->subwikiid !== false) {
             $newitemid = $DB->insert_record('wiki_pages', $data);
         } else {
             $newitemid = false;
         }
-        $this->set_mapping('wiki_page', $oldid, $newitemid, true); // There are files related to this
+
+        $this->set_mapping('wiki_page', $oldid, $newitemid, true);
     }
+
     protected function process_wiki_version($data) {
         global $DB;
 
