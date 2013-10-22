@@ -949,6 +949,9 @@ sup {vertical-align: super;}
     bottom: -50px;
     position: fixed;
 }
+.moodle-dialogue-base .moodle-dialogue-fullscreen .moodle-dialogue-content {
+    overflow: auto;
+}
 .moodle-dialogue-base .moodle-dialogue-fullscreen .closebutton {
     width: 28px;
     height: 16px;
