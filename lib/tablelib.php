@@ -1040,7 +1040,7 @@ class flexible_table {
             // Print empty rows to fill the table to the current pagesize.
             // This is done so the header aria-controls attributes do not point to
             // non existant elements.
-            $emptyrow = array_fill(0, count($this->columns) - 1, '');
+            $emptyrow = array_fill(0, count($this->columns), '');
             while ($this->currentrow < $this->pagesize) {
                 $this->print_row($emptyrow, 'emptyrow');
             }
