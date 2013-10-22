@@ -219,6 +219,33 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Go to editing section page for specified section number. You need to be in the course page and on editing mode.
+     *
+     * @Given /^I edit the section "(?P<section_number>\d+)"$/
+     * @param int $sectionnumber
+     */
+    public function i_edit_the_section($sectionnumber) {
+        return new Given('I click on "' . get_string('editsummary') . '" "link" in the "#section-' . $sectionnumber . '" "css_element"');
+    }
+
+    /**
+     * Edit specified section and fill the form data with the specified field/value pairs.
+     *
+     * @When /^I edit the section "(?P<section_number>\d+)" and I fill the form with:$/
+     * @param int $sectionnumber The section number
+     * @param TableNode $data The activity field/value data
+     * @return Given[]
+     */
+    public function i_edit_the_section_and_i_fill_the_form_with($sectionnumber, TableNode $data) {
+
+        return array(
+            new Given('I edit the section "' . $sectionnumber . '"'),
+            new Given('I fill the moodle form with:', $data),
+            new Given('I press "' . get_string('savechanges') . '"')
+        );
+    }
+
+    /**
      * Checks if the specified course section hightlighting is turned on. You need to be in the course page on editing mode.
      *
      * @Then /^section "(?P<section_number>\d+)" should be highlighted$/
