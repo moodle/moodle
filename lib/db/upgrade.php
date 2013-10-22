@@ -2688,7 +2688,20 @@ function xmldb_main_upgrade($oldversion) {
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2013100901.00);
     }
-    if ($oldversion < 2013102200.00) {
+
+    if ($oldversion < 2013102100.00) {
+        // Changing default value for the status of a course backup.
+        $table = new xmldb_table('backup_courses');
+        $field = new xmldb_field('laststatus', XMLDB_TYPE_CHAR, '1', null, XMLDB_NOTNULL, null, '5', 'lastendtime');
+
+        // Launch change of precision for field value
+        $dbman->change_field_precision($table, $field);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013102100.00);
+    }
+
+    if ($oldversion < 2013102201.00) {
         $params = array('plugin' => 'editor_atto', 'name' => 'version');
         $attoversion = $DB->get_record('config_plugins',
                                        $params,
@@ -2701,7 +2714,7 @@ function xmldb_main_upgrade($oldversion) {
         // Only these versions that were part of 2.6 beta should be removed.
         // Manually installed versions of 2.5 - or later releases for 2.6 installed
         // via the plugins DB should not be uninstalled.
-        if ($attoversion && $attoversion > 2013051500.00 && $attoversion < 2013102200.00) {
+        if ($attoversion && $attoversion > 2013051500.00 && $attoversion < 2013102201.00) {
             // Remove all other associated config.
             unset_all_config_for_plugin('editor_atto');
             unset_all_config_for_plugin('atto_bold');
@@ -2723,19 +2736,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2013102200.00);
-    }
-
-    if ($oldversion < 2013102100.00) {
-        // Changing default value for the status of a course backup.
-        $table = new xmldb_table('backup_courses');
-        $field = new xmldb_field('laststatus', XMLDB_TYPE_CHAR, '1', null, XMLDB_NOTNULL, null, '5', 'lastendtime');
-
-        // Launch change of precision for field value
-        $dbman->change_field_precision($table, $field);
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2013102100.00);
+        upgrade_main_savepoint(true, 2013102201.00);
     }
 
     return true;
