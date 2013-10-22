@@ -117,6 +117,7 @@ if ($action === 'delete'){
             print_error('nopermissionstodeleteentry', 'blog');
         } else {
             $entry->delete();
+            blog_rss_delete_file($userid);
             redirect($returnurl);
         }
     } else if (blog_user_can_edit_entry($entry)) {

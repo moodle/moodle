@@ -4535,7 +4535,7 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
        }
     }
 
-    //delete ratings
+    // Delete ratings.
     require_once($CFG->dirroot.'/rating/lib.php');
     $delopt = new stdClass;
     $delopt->contextid = $context->id;
@@ -4545,10 +4545,16 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
     $rm = new rating_manager();
     $rm->delete_ratings($delopt);
 
-    //delete attachments
+    // Delete attachments.
     $fs = get_file_storage();
     $fs->delete_area_files($context->id, 'mod_forum', 'attachment', $post->id);
     $fs->delete_area_files($context->id, 'mod_forum', 'post', $post->id);
+
+    // Delete cached RSS feeds.
+    if (!empty($CFG->enablerssfeeds)) {
+        require_once($CFG->dirroot.'/mod/forum/rsslib.php');
+        forum_rss_delete_file($forum);
+    }
 
     if ($DB->delete_records("forum_posts", array("id" => $post->id))) {
 
