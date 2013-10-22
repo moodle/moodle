@@ -667,8 +667,10 @@ Y.extend(ANNOTATION, Y.Base, {
      * @method remove
      * @param event
      */
-    remove : function() {
+    remove : function(e) {
         var annotations;
+
+        e.preventDefault();
 
         annotations = this.editor.pages[this.editor.currentpage].annotations;
         for (i = 0; i < annotations.length; i++) {
@@ -1577,7 +1579,7 @@ Y.extend(DROPDOWN, M.core.dialogue, {
             }
         }, this);
 
-        button.on('click', this.show, this);
+        button.on('click', function(e) {e.preventDefault(); this.show();}, this);
         button.on('key', this.show, 'enter,space', this);
     },
 
@@ -1682,6 +1684,8 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
         COLOURPICKER.superclass.initializer.call(this, config);
     },
     callback_handler : function(e) {
+        e.preventDefault();
+
         var callback = this.get('callback'),
             callbackcontext = this.get('context'),
             bind;
@@ -1798,6 +1802,7 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
         STAMPPICKER.superclass.initializer.call(this, config);
     },
     callback_handler : function(e) {
+        e.preventDefault();
         var callback = this.get('callback'),
             callbackcontext = this.get('context'),
             bind;
@@ -1890,7 +1895,7 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
         commentlinks.append(link);
 
         link = Y.Node.create('<li><a tabindex="-1" href="#">' + M.util.get_string('deletecomment', 'assignfeedback_editpdf') + '</a></li>');
-        link.on('click', function() { comment.menu.hide(); comment.remove(); }, comment);
+        link.on('click', function(e) { e.preventDefault(); this.menu.hide(); this.remove(); }, comment);
         link.on('key', function() { comment.menu.hide(); comment.remove(); }, 'enter,space', comment);
 
         commentlinks.append(link);
@@ -2056,6 +2061,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @method focus_on_comment
      */
     focus_on_comment : function(e) {
+        e.preventDefault();
         var target = e.target.ancestor('li'),
             comment = target.getData('comment'),
             editor = this.get('editor');
@@ -2447,6 +2453,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @method remove_from_quicklist
      */
     this.remove_from_quicklist = function(e, quickcomment) {
+        e.preventDefault();
+
         this.menu.hide();
 
         this.editor.quicklist.remove(quickcomment);
@@ -2460,6 +2468,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @method set_from_quick_comment
      */
     this.set_from_quick_comment = function(e, quickcomment) {
+        e.preventDefault();
+
         this.menu.hide();
 
         this.rawtext = quickcomment.rawtext;
@@ -2477,7 +2487,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @protected
      * @method add_to_quicklist
      */
-    this.add_to_quicklist = function() {
+    this.add_to_quicklist = function(e) {
+        e.preventDefault();
         this.menu.hide();
         this.editor.quicklist.add(this);
     };
@@ -3740,7 +3751,8 @@ EDITOR.prototype = {
      * @protected
      * @method previous_page
      */
-    previous_page : function() {
+    previous_page : function(e) {
+        e.preventDefault();
         this.currentpage--;
         if (this.currentpage < 0) {
             this.currentpage = 0;
@@ -3753,7 +3765,8 @@ EDITOR.prototype = {
      * @protected
      * @method next_page
      */
-    next_page : function() {
+    next_page : function(e) {
+        e.preventDefault();
         this.currentpage++;
         if (this.currentpage >= this.pages.length) {
             this.currentpage = this.pages.length - 1;

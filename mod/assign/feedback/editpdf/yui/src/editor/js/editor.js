@@ -929,7 +929,8 @@ EDITOR.prototype = {
      * @protected
      * @method previous_page
      */
-    previous_page : function() {
+    previous_page : function(e) {
+        e.preventDefault();
         this.currentpage--;
         if (this.currentpage < 0) {
             this.currentpage = 0;
@@ -942,7 +943,8 @@ EDITOR.prototype = {
      * @protected
      * @method next_page
      */
-    next_page : function() {
+    next_page : function(e) {
+        e.preventDefault();
         this.currentpage++;
         if (this.currentpage >= this.pages.length) {
             this.currentpage = this.pages.length - 1;

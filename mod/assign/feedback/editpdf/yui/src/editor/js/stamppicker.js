@@ -52,6 +52,7 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
         STAMPPICKER.superclass.initializer.call(this, config);
     },
     callback_handler : function(e) {
+        e.preventDefault();
         var callback = this.get('callback'),
             callbackcontext = this.get('context'),
             bind;

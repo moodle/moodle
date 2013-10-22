@@ -92,6 +92,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @method focus_on_comment
      */
     focus_on_comment : function(e) {
+        e.preventDefault();
         var target = e.target.ancestor('li'),
             comment = target.getData('comment'),
             editor = this.get('editor');
