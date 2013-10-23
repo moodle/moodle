@@ -98,6 +98,9 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 
+// This is a system level page that operates on other contexts.
+require_login();
+
 if (!coursecat::has_capability_on_any(array('moodle/category:manage', 'moodle/course:create'))) {
     // The user isn't able to manage any categories. Lets redirect them to the relevant course/index.php page.
     $url = new moodle_url('/course/index.php');
@@ -140,9 +143,6 @@ if (!$issearching && $category !== null) {
         $PAGE->navbar->add($course->get_formatted_name());
     }
 }
-
-// This is a system level page that operates on other contexts.
-require_login();
 
 $notificationspass = array();
 $notificationsfail = array();
