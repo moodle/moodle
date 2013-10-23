@@ -131,6 +131,11 @@ class filter_glossary extends moodle_text_filter {
                 foreach ($concepts as $key => $concept) {
                     // Trim empty or unlinkable concepts
                     $currentconcept = trim(strip_tags($concept->concept));
+
+                    // Concept must be HTML-escaped, so do the same as print_string
+                    // to turn ampersands into &amp;.
+                    $currentconcept = replace_ampersands_not_followed_by_entity($currentconcept);
+
                     if (empty($currentconcept)) {
                         unset($concepts[$key]);
                         continue;
@@ -168,10 +173,14 @@ class filter_glossary extends moodle_text_filter {
                                       '&amp;mode=cat&amp;hook='.$concept->id.'">';
                 } else { // Link to entry or alias
                     if (!empty($concept->originalconcept)) {  // We are dealing with an alias (so show and point to original)
-                        $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->originalconcept));
+                        $title = str_replace('"', "'", html_entity_decode(
+                                strip_tags($glossaryname.': '.$concept->originalconcept)));
                         $concept->id = $concept->entryid;
                     } else { // This is an entry
-                        $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->concept));
+                        // We need to remove entities from the content here because it
+                        // will be escaped by html_writer below.
+                        $title = str_replace('"', "'", html_entity_decode(
+                                strip_tags($glossaryname.': '.$concept->concept)));
                     }
                     // hardcoding dictionary format in the URL rather than defaulting
                     // to the current glossary format which may not work in a popup.
