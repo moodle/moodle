@@ -72,17 +72,24 @@ $cache          = optional_param('cache', 0, PARAM_BOOL);
 
 // Set up PAGE.
 $url = new moodle_url('/admin/index.php');
-if (!is_null($newaddonreq)) {
-    // We need to set the eventual add-on installation request in the $PAGE's URL
-    // so that it is stored in $SESSION->wantsurl and the admin is redirected
-    // correctly once they are logged-in.
-    $url->param('installaddonrequest', $newaddonreq);
-}
 if ($cache) {
     $url->param('cache', $cache);
 }
 $PAGE->set_url($url);
 unset($url);
+
+// Are we returning from an add-on installation request at moodle.org/plugins?
+if ($newaddonreq and !$cache and empty($CFG->disableonclickaddoninstall)) {
+    $target = new moodle_url('/admin/tool/installaddon/index.php', array(
+        'installaddonrequest' => $newaddonreq,
+        'confirm' => 0));
+    if (!isloggedin() or isguestuser()) {
+        // Login and go the the add-on tool page.
+        $SESSION->wantsurl = $target->out();
+        redirect(get_login_url());
+    }
+    redirect($target);
+}
 
 $PAGE->set_pagelayout('admin'); // Set a default pagelayout
 
@@ -472,17 +479,6 @@ if (empty($site->shortname)) {
 // Check if we are returning from moodle.org registration and if so, we mark that fact to remove reminders
 if (!empty($id) and $id == $CFG->siteidentifier) {
     set_config('registered', time());
-}
-
-// Check if we are returning from an add-on installation request at moodle.org/plugins
-if (!is_null($newaddonreq)) {
-    if (!empty($CFG->disableonclickaddoninstall)) {
-        // The feature is disabled in config.php, ignore the request.
-    } else {
-        redirect(new moodle_url('/admin/tool/installaddon/index.php', array(
-            'installaddonrequest' => $newaddonreq,
-            'confirm' => 0)));
-    }
 }
 
 // setup critical warnings before printing admin tree block
