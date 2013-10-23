@@ -106,7 +106,7 @@ switch ($messagetype) {
         $grade = lti_read_grade($ltiinstance, $parsed->userid);
 
         $responsexml = lti_get_response_xml(
-                isset($grade) ? 'success' : 'failure',
+                'success',  // Empty grade is also 'success'
                 'Result read',
                 $parsed->messageid,
                 'readResultResponse'
