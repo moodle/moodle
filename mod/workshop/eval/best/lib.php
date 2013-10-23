@@ -163,6 +163,16 @@ class workshop_best_evaluation extends workshop_evaluation {
         // get a hypothetical average assessment
         $average = $this->average_assessment($assessments);
 
+        // if unable to calculate the average assessment, set the grading grades to null
+        if (is_null($average)) {
+            foreach ($assessments as $asid => $assessment) {
+                if (!is_null($assessment->gradinggrade)) {
+                    $DB->set_field('workshop_assessments', 'gradinggrade', null, array('id' => $asid));
+                }
+            }
+            return;
+        }
+
         // calculate variance of dimension grades
         $variances = $this->weighted_variance($assessments);
         foreach ($variances as $dimid => $variance) {
@@ -272,6 +282,8 @@ class workshop_best_evaluation extends workshop_evaluation {
      * Given a set of a submission's assessments, returns a hypothetical average assessment
      *
      * The passed structure must be array of assessments objects with ->weight and ->dimgrades properties.
+     * Returns null if all passed assessments have zero weight as there is nothing to choose
+     * from then.
      *
      * @param array $assessments as prepared by {@link self::prepare_data_from_recordset()}
      * @return null|stdClass
