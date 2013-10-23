@@ -105,6 +105,15 @@ class tool_behat_renderer extends plugin_renderer_base {
                 $stepsdefinitions
             );
 
+            // Replace simple OR options.
+            $regex = '#\(\?P<[^>]+>([^\)|]+\|[^\)]+)\)#';
+            $stepsdefinitions = preg_replace_callback($regex,
+                function($matches){
+                    return html_writer::select(explode('|', $matches[1]), uniqid());
+                },
+                $stepsdefinitions
+            );
+
         }
 
         // Steps definitions.
