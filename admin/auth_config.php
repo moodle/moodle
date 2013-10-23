@@ -78,9 +78,8 @@ echo '<p style="text-align: center"><input type="submit" value="' . get_string("
 echo "</div>\n";
 echo "</form>\n";
 
-$unmask = get_string('unmaskpassword', 'core_form');
-$attributes = array('formid' => 'authmenu', 'checkboxlabel' => $unmask);
-$PAGE->requires->yui_module('moodle-auth-passwordunmask', 'M.auth.passwordunmask', array($attributes));
+$PAGE->requires->string_for_js('unmaskpassword', 'core_form');
+$PAGE->requires->yui_module('moodle-auth-passwordunmask', 'M.auth.passwordunmask');
 
 echo $OUTPUT->footer();
 exit;

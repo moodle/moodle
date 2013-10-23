@@ -6,11 +6,12 @@ YUI.add('moodle-auth-passwordunmask', function(Y) {
     Y.extend(PASSWORDUNMASK, Y.Base, {
         // Initialize checkboxes.
         initializer : function(params) {
-            this.add_checkboxes(params.checkboxlabel);
+            this.add_checkboxes();
         },
         // Create checkboxes for all unmasking passwords.
-        add_checkboxes : function(checkboxlabel) {
+        add_checkboxes : function() {
             Y.all('#authmenu input[type=password]').each(function(node) {
+                var checkboxlabel = M.util.get_string('unmaskpassword', 'core_form');
                 var elementid = node.get('id');
                 var elementname = node.get('name');
 
