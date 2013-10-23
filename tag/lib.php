@@ -324,7 +324,7 @@ function tag_get_tags($record_type, $record_id, $type=null, $userid=0) {
         $params['userid'] = $userid;
     }
 
-    $sql = "SELECT ti.id as taginstanceid, tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
+    $sql = "SELECT ti.id AS taginstanceid, tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
               FROM {tag_instance} ti
               JOIN {tag} tg ON tg.id = ti.tagid
               WHERE ti.itemtype = :recordtype AND ti.itemid = :recordid $u $sql_type
