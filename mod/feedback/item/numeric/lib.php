@@ -252,7 +252,9 @@ class feedback_item_numeric extends feedback_item_base {
 
         $requiredmark =  ($item->required == 1) ? $str_required_mark : '';
         //print the question and label
+        $inputname = $item->typ . '_' . $item->id;
         echo '<div class="feedback_item_label_'.$align.'">';
+        echo '<label for="'. $inputname .'">';
         echo '('.$item->label.') ';
         echo format_text($item->name . $requiredmark, true, false, false);
         if ($item->dependitem) {
@@ -281,13 +283,15 @@ class feedback_item_numeric extends feedback_item_base {
                 break;
         }
         echo '</span>';
+        echo '</label>';
         echo '</div>';
 
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.'">';
         echo '<span class="feedback_item_textfield">';
         echo '<input type="text" '.
-                    'name="'.$item->typ.'_'.$item->id.'" '.
+                    'id="'.$inputname.'" '.
+                    'name="'.$inputname.'" '.
                     'size="10" '.
                     'maxlength="10" '.
                     'value="" />';
@@ -335,7 +339,9 @@ class feedback_item_numeric extends feedback_item_base {
         $requiredmark = ($item->required == 1) ? $str_required_mark : '';
 
         //print the question and label
+        $inputname = $item->typ . '_' . $item->id;
         echo '<div class="feedback_item_label_'.$align.$highlight.'">';
+        echo '<label for="'. $inputname .'">';
         echo format_text($item->name . $requiredmark, true, false, false);
         echo '<span class="feedback_item_numinfo">';
         switch(true) {
@@ -355,12 +361,14 @@ class feedback_item_numeric extends feedback_item_base {
                 break;
         }
         echo '</span>';
+        echo '</label>';
         echo '</div>';
 
         //print the presentation
         echo '<div class="feedback_item_presentation_'.$align.$highlight.'">';
         echo '<span class="feedback_item_textfield">';
         echo '<input type="text" '.
+                     'id="'.$inputname.'" '.
                      'name="'.$item->typ.'_'.$item->id.'" '.
                      'size="10" '.
                      'maxlength="10" '.
