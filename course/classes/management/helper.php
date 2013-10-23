@@ -273,6 +273,14 @@ class helper {
                 'attributes' => array('class' => 'action-edit')
             );
         }
+        // Delete.
+        if ($course->can_delete()) {
+            $actions[] = array(
+                'url' => new \moodle_url('/course/delete.php', array('id' => $course->id)),
+                'icon' => new \pix_icon('t/delete', \get_string('delete')),
+                'attributes' => array('class' => 'action-delete')
+            );
+        }
         // Show/Hide.
         if ($course->can_change_visibility()) {
             $actions[] = array(
