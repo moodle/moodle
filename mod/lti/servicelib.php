@@ -37,7 +37,7 @@ define('LTI_SOURCE', 'mod/lti');
 
 function lti_get_response_xml($codemajor, $description, $messageref, $messagetype) {
     $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><imsx_POXEnvelopeResponse />');
-    $xml->addAttribute('xmlns', 'http://www.imsglobal.org/lis/oms1p0/pox');
+    $xml->addAttribute('xmlns', 'http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0');
 
     $headerinfo = $xml->addChild('imsx_POXHeader')->addChild('imsx_POXResponseHeaderInfo');
 
@@ -49,6 +49,8 @@ function lti_get_response_xml($codemajor, $description, $messageref, $messagetyp
     $statusinfo->addChild('imsx_severity', 'status');
     $statusinfo->addChild('imsx_description', $description);
     $statusinfo->addChild('imsx_messageRefIdentifier', $messageref);
+    $incomingtype = str_replace('Response','Request', $messagetype);
+    $statusinfo->addChild('imsx_operationRefIdentifier', $incomingtype);
 
     $xml->addChild('imsx_POXBody')->addChild($messagetype);
 
