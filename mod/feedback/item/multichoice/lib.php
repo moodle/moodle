@@ -316,6 +316,9 @@ class feedback_item_multichoice extends feedback_item_base {
 
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.'">';
+        if ($info->subtype == 'd') {
+            echo '<label for="'. $item->typ . '_' . $item->id .'">';
+        }
         echo '('.$item->label.') ';
         echo format_text($item->name.$requiredmark, true, false, false);
         if ($item->dependitem) {
@@ -324,6 +327,9 @@ class feedback_item_multichoice extends feedback_item_base {
                 echo '('.$dependitem->label.'-&gt;'.$item->dependvalue.')';
                 echo '</span>';
             }
+        }
+        if ($info->subtype == 'd') {
+            echo '</label>';
         }
         echo '</div>';
 
@@ -420,7 +426,13 @@ class feedback_item_multichoice extends feedback_item_base {
 
         //print the question and label
         echo '<div class="feedback_item_label_'.$align.$highlight.'">';
+        if ($info->subtype == 'd') {
+            echo '<label for="'. $item->typ . '_' . $item->id .'">';
             echo format_text($item->name.$requiredmark, true, false, false);
+            echo '</label>';
+        } else {
+            echo format_text($item->name.$requiredmark, true, false, false);
+        }
         echo '</div>';
 
         //print the presentation
