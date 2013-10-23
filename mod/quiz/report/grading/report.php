@@ -190,8 +190,10 @@ class quiz_grading_report extends quiz_default_report {
         $params[] = quiz_attempt::FINISHED;
         $params[] = $this->quiz->id;
 
+        $fields = 'quiza.*, u.idnumber, ';
+        $fields .= get_all_user_name_fields(true, 'u');
         $attemptsbyid = $DB->get_records_sql("
-                SELECT quiza.*, u.firstname, u.lastname, u.idnumber
+                SELECT $fields
                 FROM {quiz_attempts} quiza
                 JOIN {user} u ON u.id = quiza.userid
                 WHERE quiza.uniqueid $asql AND quiza.state = ? AND quiza.quiz = ?",
