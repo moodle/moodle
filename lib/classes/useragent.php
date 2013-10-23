@@ -499,6 +499,9 @@ class core_useragent {
         // See: http://www.useragentstring.com/pages/Internet%20Explorer/.
         if (preg_match("/MSIE ([0-9\.]+)/", $useragent, $match)) {
             $browser = $match[1];
+        // See: http://msdn.microsoft.com/en-us/library/ie/bg182625%28v=vs.85%29.aspx for IE11+ useragent details.
+        } else if (preg_match("/Trident\/[0-9\.]+/", $useragent) && preg_match("/rv:([0-9\.]+)/", $useragent, $match)) {
+            $browser = $match[1];
         } else {
             return false;
         }
