@@ -142,11 +142,8 @@ class eventslib_testcase extends advanced_testcase {
         $this->assertEquals(1, events_trigger('test_instant', 'fail'), 'fail first event: %s');
         $this->assertEquals(1, events_trigger('test_instant', 'ok'), 'this one should fail too: %s');
 
-        // We disable debugging for this next test. It'll make some noise when it fails to dispatch
-        // so that problems don't go permanently unnoticed.
-        $CFG->debug = 0;
         $this->assertEquals(0, events_cron('test_instant'), 'all events should stay in queue: %s');
-        $CFG->debug = $olddebug;
+        $this->assertDebuggingCalled();
 
         $this->assertEquals(2, events_pending_count('test_instant'), 'two events should in queue: %s');
         $this->assertEquals(0, eventslib_sample_function_handler('status'), 'verify no event dispatched yet: %s');
