@@ -110,16 +110,21 @@ function block_course_overview_get_child_shortnames($courseid) {
 /**
  * Returns maximum number of courses which will be displayed in course_overview block
  *
+ * @param bool $showallcourses if set true all courses will be visible.
  * @return int maximum number of courses
  */
-function block_course_overview_get_max_user_courses() {
+function block_course_overview_get_max_user_courses($showallcourses = false) {
     // Get block configuration
     $config = get_config('block_course_overview');
     $limit = $config->defaultmaxcourses;
 
     // If max course is not set then try get user preference
     if (empty($config->forcedefaultmaxcourses)) {
-        $limit = get_user_preferences('course_overview_number_of_courses', $limit);
+        if ($showallcourses) {
+            $limit = 0;
+        } else {
+            $limit = get_user_preferences('course_overview_number_of_courses', $limit);
+        }
     }
     return $limit;
 }
@@ -127,12 +132,13 @@ function block_course_overview_get_max_user_courses() {
 /**
  * Return sorted list of user courses
  *
+ * @param bool $showallcourses if set true all courses will be visible.
  * @return array list of sorted courses and count of courses.
  */
-function block_course_overview_get_sorted_courses() {
+function block_course_overview_get_sorted_courses($showallcourses = false) {
     global $USER;
 
-    $limit = block_course_overview_get_max_user_courses();
+    $limit = block_course_overview_get_max_user_courses($showallcourses);
 
     $courses = enrol_get_my_courses();
     $site = get_site();
