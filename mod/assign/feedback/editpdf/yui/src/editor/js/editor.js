@@ -279,10 +279,10 @@ EDITOR.prototype = {
                 bodyContent: this.get('body'),
                 footerContent: this.get('footer'),
                 width: '840px',
-                visible: true
+                visible: false,
+                draggable: true
             });
 
-            this.dialogue.centerDialogue();
             // Add custom class for styling.
             this.dialogue.get('boundingBox').addClass(CSS.DIALOGUE);
 
@@ -298,9 +298,9 @@ EDITOR.prototype = {
 
                 this.refresh_button_state();
             }
-        } else {
-            this.dialogue.show();
         }
+        this.dialogue.centerDialogue();
+        this.dialogue.show();
 
         this.load_all_pages();
     },
