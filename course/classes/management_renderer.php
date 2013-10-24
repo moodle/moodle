@@ -384,7 +384,11 @@ class core_course_management_renderer extends plugin_renderer_base {
             );
         }
         if (coursecat::can_change_parent_any()) {
-            $options = coursecat::make_categories_list('moodle/category:manage');
+            $options = array();
+            if (has_capability('moodle/category:manage', context_system::instance())) {
+                $options[0] = coursecat::get(0)->get_formatted_name();
+            }
+            $options += coursecat::make_categories_list('moodle/category:manage');
             $select = html_writer::select(
                 $options,
                 'movecategoriesto',

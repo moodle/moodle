@@ -324,12 +324,20 @@ if ($action !== false && confirm_sesskey()) {
                     $a = new stdClass;
                     $a->count = $movecount;
                     $a->to = $movetocat->get_formatted_name();
-                    $notificationspass[] = get_string('movecategoriessuccess', 'moodle', $a);
+                    $movesuccessstrkey = 'movecategoriessuccess';
+                    if ($movetocatid == 0) {
+                        $movesuccessstrkey = 'movecategoriestotopsuccess';
+                    }
+                    $notificationspass[] = get_string($movesuccessstrkey, 'moodle', $a);
                 } else if ($movecount === 1) {
                     $a = new stdClass;
                     $a->moved = $cattomove->get_formatted_name();
                     $a->to = $movetocat->get_formatted_name();
-                    $notificationspass[] = get_string('movecategorysuccess', 'moodle', $a);
+                    $movesuccessstrkey = 'movecategorysuccess';
+                    if ($movetocatid == 0) {
+                        $movesuccessstrkey = 'movecategorytotopsuccess';
+                    }
+                    $notificationspass[] = get_string($movesuccessstrkey, 'moodle', $a);
                 }
             } else if ($bulkresortcategories) {
                 // Bulk resort selected categories.

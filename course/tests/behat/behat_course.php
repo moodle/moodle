@@ -975,6 +975,80 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Clicks on a category checkbox in the management interface.
+     *
+     * @Given /^I select category "(?P<name>[^"]*)" in the management interface$/
+     * @param string $name
+     */
+    public function i_select_category_in_the_management_interface($name) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+        $node->checkField('bcat[]');
+    }
+
+    /**
+     * Clicks course checkbox in the management interface.
+     *
+     * @Given /^I select course "(?P<name>[^"]*)" in the management interface$/
+     * @param string $name
+     */
+    public function i_select_course_in_the_management_interface($name) {
+        $node = $this->get_management_course_listing_node_by_name($name);
+        $node->checkField('bc[]');
+    }
+
+    /**
+     * Move selected categories to top level in the management interface.
+     *
+     * @Given /^I move category "(?P<idnumber>[^"]*)" to top level in the management interface$/
+     * @param string $idnumber
+     * @return Given[]
+     */
+    public function i_move_category_to_top_level_in_the_management_interface($idnumber) {
+        $id = $this->get_category_id($idnumber);
+        $selector = sprintf('.listitem-category[data-id="%d"] > div', $id);
+        $node = $this->find('css', $selector);
+        $node->checkField('bcat[]');
+        return array(
+            new Given('I select "' .  coursecat::get(0)->get_formatted_name() . '" from "menumovecategoriesto"'),
+            new Given('I press "bulkmovecategories"'),
+        );
+    }
+
+    /**
+     * Checks that a category is a subcategory of specific category.
+     *
+     * @Given /^I should see category "(?P<subcatidnumber>[^"]*)" as subcategory of "(?P<catidnumber>[^"]*)" in the management interface$/
+     * @throws ExpectationException
+     * @param string $subcatidnumber
+     * @param string $catidnumber
+     */
+    public function i_should_see_category_as_subcategory_of_in_the_management_interface($subcatidnumber, $catidnumber) {
+        $categorynodeid = $this->get_category_id($catidnumber);
+        $subcategoryid = $this->get_category_id($subcatidnumber);
+        $exception = new ExpectationException('The category '.$subcatidnumber.' is not a subcategory of '.$catidnumber, $this->getSession());
+        $selector = sprintf('#category-listing .listitem-category[data-id="%d"] .listitem-category[data-id="%d"]', $categorynodeid, $subcategoryid);
+        $this->find('css', $selector, $exception);
+    }
+
+    /**
+     * Checks that a category is not a subcategory of specific category.
+     *
+     * @Given /^I should not see category "(?P<subcatidnumber>[^"]*)" as subcategory of "(?P<catidnumber>[^"]*)" in the management interface$/
+     * @throws ExpectationException
+     * @param string $subcatidnumber
+     * @param string $catidnumber
+     */
+    public function i_should_not_see_category_as_subcategory_of_in_the_management_interface($subcatidnumber, $catidnumber) {
+        try {
+            $this->i_should_see_category_as_subcategory_of_in_the_management_interface($subcatidnumber, $catidnumber);
+        } catch (ExpectationException $e) {
+            // ExpectedException means that it is not highlighted.
+            return;
+        }
+        throw new ExpectationException('The category '.$subcatidnumber.' is a subcategory of '.$catidnumber, $this->getSession());
+    }
+
+    /**
      * Click to expand a category revealing its sub categories within the management UI.
      *
      * @Given /^I click to expand category "(?P<idnumber>[^"]*)" in the management interface$/
