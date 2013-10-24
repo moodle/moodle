@@ -79,6 +79,11 @@ class behat_repository_upload extends behat_files {
         $submit = $this->find_button(get_string('upload', 'repository'));
 
         // Attaching specified file to the node.
+        // Replace 'admin/' if it is in start of path with $CFG->admin .
+        $pos = strpos($filepath, 'admin/');
+        if ($pos === 0) {
+            $filepath = $CFG->admin . DIRECTORY_SEPARATOR . substr($filepath, 6);
+        }
         $filepath = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
         $fileabsolutepath = $CFG->dirroot . DIRECTORY_SEPARATOR . $filepath;
         $file->attachFile($fileabsolutepath);
