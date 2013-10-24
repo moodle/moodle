@@ -3847,21 +3847,29 @@ function get_child_categories($parentid) {
  *
  * coursecat::get($categoryid)->get_children()
  * - returns all children of the specified category as instances of class
- * coursecat, which means on each of them method get_children() can be called again
+ * coursecat, which means on each of them method get_children() can be called again.
+ * Only categories visible to the current user are returned.
  *
- * coursecat::get($categoryid)->get_children(array('recursive' => true))
- * - returns all children of the specified category and all subcategories
- *
- * coursecat::get(0)->get_children(array('recursive' => true))
- * - returns all categories defined in the system
+ * coursecat::get(0)->get_children()
+ * - returns all top-level categories visible to the current user.
  *
  * Sort fields can be specified, see phpdocs to {@link coursecat::get_children()}
+ *
+ * coursecat::make_categories_list()
+ * - returns an array of all categories id/names in the system.
+ * Also only returns categories visible to current user and can additionally be
+ * filetered by capability, see phpdocs to {@link coursecat::make_categories_list()}
+ *
+ * make_categories_options()
+ * - Returns full course categories tree to be used in html_writer::select()
  *
  * Also see functions {@link coursecat::get_children_count()}, {@link coursecat::count_all()},
  * {@link coursecat::get_default()}
  *
  * The code of this deprecated function is left as it is because coursecat::get_children()
- * returns categories as instances of coursecat and not stdClass
+ * returns categories as instances of coursecat and not stdClass. Also there is no
+ * substitute for retrieving the category with all it's subcategories. Plugin developers
+ * may re-use the code/queries from this function in their plugins if really necessary.
  *
  * @param string $parent The parent category if any
  * @param string $sort the sortorder
@@ -3871,7 +3879,7 @@ function get_child_categories($parentid) {
 function get_categories($parent='none', $sort=NULL, $shallow=true) {
     global $DB;
 
-    debugging('Function get_categories() is deprecated. Please use coursecat::get_children(). See phpdocs for more details',
+    debugging('Function get_categories() is deprecated. Please use coursecat::get_children() or see phpdocs for other alternatives',
             DEBUG_DEVELOPER);
 
     if ($sort === NULL) {
