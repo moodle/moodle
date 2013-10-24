@@ -119,3 +119,132 @@ Feature: Award badges
     And I expand "My profile" node
     And I follow "My badges"
     Then I should see "Course Badge"
+
+  @javascript
+  Scenario: Award badge on activity completion
+    Given the following "courses" exists:
+      | fullname | shortname | category |
+      | Course 1 | C1 | 0 |
+    And the following "users" exists:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | Frist | teacher1@asd.com |
+      | student1 | Student | First | student1@asd.com |
+    And the following "course enrolments" exists:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student |
+    And I log out
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | Enable completion tracking | 1 |
+    And I follow "Home"
+    And I follow "Course 1"
+    And I follow "Edit settings"
+    And I fill the moodle form with:
+      | Enable completion tracking | Yes |
+    And I press "Save changes"
+    And I turn editing mode on
+    And I add a "Assignment" to section "1" and I fill the form with:
+      | Assignment name | Test assignment name |
+      | Description | Submit your online text |
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
+    And I follow "Add a new badge"
+    And I fill the moodle form with:
+      | Name | Course Badge |
+      | Description | Course badge description |
+      | issuername | Tester of course badge |
+    And I upload "badges/tests/behat/badge.png" file to "Image" filepicker
+    And I press "Create badge"
+    And I select "Activity completion" from "type"
+    And I check "Test assignment name"
+    And I press "Save"
+    And I press "Enable access"
+    When I press "Continue"
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I expand "My profile" node
+    And I follow "My badges"
+    Then I should see "There are no badges available."
+    And I follow "Home"
+    And I follow "Course 1"
+    And I press "Mark as complete: Test assignment name"
+    And I expand "My profile" node
+    And I follow "My badges"
+    Then I should see "Course Badge"
+
+  @javascript
+  Scenario: Award badge on course completion
+    Given the following "courses" exists:
+      | fullname | shortname | category |
+      | Course 1 | C1 | 0 |
+    And the following "users" exists:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | Frist | teacher1@asd.com |
+      | student1 | Student | First | student1@asd.com |
+    And the following "course enrolments" exists:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+      | student1 | C1 | student |
+    And I log out
+    And I log in as "admin"
+    And I set the following administration settings values:
+      | Enable completion tracking | 1 |
+    And I follow "Home"
+    And I follow "Course 1"
+    And I follow "Edit settings"
+    And I fill the moodle form with:
+      | Enable completion tracking | Yes |
+    And I press "Save changes"
+    And I turn editing mode on
+    And I add a "Assignment" to section "1" and I fill the form with:
+      | Assignment name | Test assignment name |
+      | Description | Submit your online text |
+      | assignsubmission_onlinetext_enabled | 1 |
+    And I follow "Course completion"
+    And I select "2" from "id_overall_aggregation"
+    And I click on "Condition: Activity completion" "link"
+    And I check "Assign - Test assignment name"
+    And I press "Save changes"
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
+    And I follow "Add a new badge"
+    And I fill the moodle form with:
+      | Name | Course Badge |
+      | Description | Course badge description |
+      | issuername | Tester of course badge |
+    And I upload "badges/tests/behat/badge.png" file to "Image" filepicker
+    And I press "Create badge"
+    And I select "Course completion" from "type"
+    And I fill the moodle form with:
+      | grade_2 | 0 |
+    And I press "Save"
+    And I press "Enable access"
+    When I press "Continue"
+    And I log out
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I expand "My profile" node
+    And I follow "My badges"
+    Then I should see "There are no badges available."
+    And I follow "Home"
+    And I follow "Course 1"
+    And I press "Mark as complete: Test assignment name"
+    And I log out
+    And I log in as "admin"
+    # We can't wait for cron to happen, so the admin manually triggers it.
+    And I trigger cron
+    # The admin needs to trigger cron twice to see the completion status as completed.
+    And I trigger cron
+    # Finally the admin goes back to homepage to continue the user story.
+    And I am on homepage
+    And I log out
+    And I log in as "student1"
+    And I expand "My profile" node
+    And I follow "My badges"
+    Then I should see "Course Badge"

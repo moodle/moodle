@@ -529,4 +529,13 @@ class behat_general extends behat_base {
         }
     }
 
+    /**
+     * This step triggers cron like a user would do going to admin/cron.php.
+     *
+     * @Given /^I trigger cron$/
+     */
+    public function i_trigger_cron() {
+        $this->getSession()->visit($this->locate_path('/admin/cron.php'));
+    }
+
 }
