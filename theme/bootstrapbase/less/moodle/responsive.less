@@ -414,6 +414,18 @@
     margin-left: 0;
     .box-sizing(border-box);
   }
+
+  // We need to specify a more specific selector to reset the width for
+  // cases when we have content in the side-pre blockregion but not in the
+  // side-post blockregion as there are more specific selectors in
+  // core.less which take precedence which break responsiveness.
+  .empty-region-side-post.used-region-side-pre {
+      #block-region-side-pre.span4,
+      #region-main.span8.span8 {
+        .fluid-span(12);
+      }
+  }
+
   .row-fluid .span12 {
     width: 100%;
     .box-sizing(border-box);
