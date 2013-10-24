@@ -157,7 +157,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         }
 
         $o.= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
-            'class' => 'section main clearfix'.$sectionstyle));
+            'class' => 'section main clearfix'.$sectionstyle, 'role'=>'region',
+            'aria-label'=> get_section_name($course, $section)));
 
         $leftcontent = $this->section_left_content($section, $course, $onsectionpage);
         $o.= html_writer::tag('div', $leftcontent, array('class' => 'left side'));
@@ -303,14 +304,15 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
             $classattr .= ' current';
         }
 
+        $title = get_section_name($course, $section);
         $o = '';
-        $o .= html_writer::start_tag('li', array('id' => 'section-'.$section->section, 'class' => $classattr));
+        $o .= html_writer::start_tag('li', array('id' => 'section-'.$section->section,
+            'class' => $classattr, 'role'=>'region', 'aria-label'=> $title));
 
         $o .= html_writer::tag('div', '', array('class' => 'left side'));
         $o .= html_writer::tag('div', '', array('class' => 'right side'));
         $o .= html_writer::start_tag('div', array('class' => 'content'));
 
-        $title = get_section_name($course, $section);
         if ($section->uservisible) {
             $title = html_writer::tag('a', $title,
                     array('href' => course_get_url($course, $section->section), 'class' => $linkclasses));
