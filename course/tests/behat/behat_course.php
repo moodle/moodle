@@ -499,11 +499,35 @@ class behat_course extends behat_base {
         // Adding chr(10) to save changes.
         $activity = $this->escape($activityname);
         return array(
-            new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity'),
+            new Given('I open "' . $activity . '" actions menu'),
             new Given('I click on "' . get_string('edittitle') . '" "link" in the "' . $activity .'" activity'),
             new Given('I fill in "title" with "' . $this->escape($newactivityname) . chr(10) . '"'),
             new Given('I wait "2" seconds')
         );
+    }
+
+    /**
+     * Opens an activity actions menu if it is not already opened.
+     *
+     * @Given /^I open "(?P<activity_name_string>(?:[^"]|\\")*)" actions menu$/
+     * @throws DriverException The step is not available when Javascript is disabled
+     * @param string $activityname
+     * @return Given
+     */
+    public function i_open_actions_menu($activityname) {
+
+        if (!$this->running_javascript()) {
+            throw new DriverException('Activities actions menu not available when Javascript is disabled');
+        }
+
+        // If it is already opened we do nothing.
+        $activitynode = $this->get_activity_node($activityname);
+        $classes = array_flip(explode(' ', $activitynode->getAttribute('class')));
+        if (!empty($classes['action-menu-shown'])) {
+            return;
+        }
+
+        return new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $this->escape($activityname) . '" activity');
     }
 
     /**
@@ -518,7 +542,7 @@ class behat_course extends behat_base {
         $steps = array();
         $activity = $this->escape($activityname);
         if ($this->running_javascript()) {
-            $steps[] = new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity');
+            $steps[] = new Given('I open "' . $activity . '" actions menu');
         }
         $steps[] = new Given('I click on "' . get_string('moveright') . '" "link" in the "' . $activity . '" activity');
 
@@ -541,7 +565,7 @@ class behat_course extends behat_base {
         $steps = array();
         $activity = $this->escape($activityname);
         if ($this->running_javascript()) {
-            $steps[] = new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity');
+            $steps[] = new Given('I open "' . $activity . '" actions menu');
         }
         $steps[] = new Given('I click on "' . get_string('moveleft') . '" "link" in the "' . $activity . '" activity');
 
@@ -599,7 +623,7 @@ class behat_course extends behat_base {
         $steps = array();
         $activity = $this->escape($activityname);
         if ($this->running_javascript()) {
-            $steps[] = new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity');
+            $steps[] = new Given('I open "' . $activity . '" actions menu');
         }
         $steps[] = new Given('I click on "' . get_string('duplicate') . '" "link" in the "' . $activity . '" activity');
         $steps[] = new Given('I press "' . get_string('continue') .'"');
@@ -619,7 +643,7 @@ class behat_course extends behat_base {
         $steps = array();
         $activity = $this->escape($activityname);
         if ($this->running_javascript()) {
-            $steps[] = new Given('I click on "' . get_string('actions', 'moodle') . '" "link" in the "' . $activity . '" activity');
+            $steps[] = new Given('I open "' . $activity . '" actions menu');
         }
         $steps[] = new Given('I click on "' . get_string('duplicate') . '" "link" in the "' . $activity . '" activity');
         $steps[] = new Given('I press "' . get_string('continue') .'"');
