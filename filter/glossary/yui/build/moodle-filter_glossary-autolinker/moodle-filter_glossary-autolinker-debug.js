@@ -70,7 +70,8 @@ Y.extend(AUTOLINKER, Y.Base, {
                 for (key in data.entries) {
                     definition = data.entries[key].definition + data.entries[key].attachments;
                     alertpanel = new M.core.alert({title:data.entries[key].concept, message:definition, lightbox:false});
-                    Y.Node.one('#id_yuialertconfirm-' + alertpanel.COUNT).focus();
+                    alertpanel.show();
+                    Y.Node.one('#id_yuialertconfirm-' + alertpanel.get('COUNT')).focus();
                 }
 
                 return true;
@@ -139,6 +140,6 @@ M.filter_glossary.init_filter_autolinking = function(config) {
         "json-parse",
         "event-delegate",
         "overlay",
-        "moodle-core-notification"
+        "moodle-core-notification-alert"
     ]
 });
