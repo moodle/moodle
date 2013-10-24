@@ -118,7 +118,9 @@ class core_course_management_renderer extends plugin_renderer_base {
             $selectedparents[] = $category->id;
             $selectedcategory = $category->id;
         }
-        $catatlevel = array_shift($selectedparents);
+        $catatlevel = \core_course\management\helper::get_expanded_categories('');
+        $catatlevel[] = array_shift($selectedparents);
+        $catatlevel = array_unique($catatlevel);
 
         $listing = coursecat::get(0)->get_children();
 
@@ -135,7 +137,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         foreach ($listing as $listitem) {
             // Render each category in the listing.
             $subcategories = array();
-            if ($listitem->id == $catatlevel) {
+            if (in_array($listitem->id, $catatlevel)) {
                 $subcategories = $listitem->get_children();
             }
             $html .= $this->category_listitem(
@@ -166,6 +168,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      */
     public function category_listitem(coursecat $category, array $subcategories, $totalsubcategories,
                                       $selectedcategory = null, $selectedcategories = array()) {
+
         $isexpandable = ($totalsubcategories > 0);
         $isexpanded = (!empty($subcategories));
         $activecategory = ($selectedcategory === $category->id);
@@ -224,9 +227,11 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::end_div();
         if ($isexpanded) {
             $html .= html_writer::start_tag('ul', array('class' => 'ml', 'role' => 'group'));
-            $catatlevel = array_shift($selectedcategories);
+            $catatlevel = \core_course\management\helper::get_expanded_categories($category->path);
+            $catatlevel[] = array_shift($selectedcategories);
+            $catatlevel = array_unique($catatlevel);
             foreach ($subcategories as $listitem) {
-                $childcategories = ($listitem->id == $catatlevel) ? $listitem->get_children() : array();
+                $childcategories = (in_array($listitem->id, $catatlevel)) ? $listitem->get_children() : array();
                 $html .= $this->category_listitem(
                     $listitem,
                     $childcategories,

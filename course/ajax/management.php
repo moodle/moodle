@@ -104,6 +104,18 @@ switch ($action) {
             );
         }
         break;
+    case 'expandcategory':
+        $categoryid = required_param('categoryid', PARAM_INT);
+        $coursecat = coursecat::get($categoryid);
+        \core_course\management\helper::record_expanded_category($coursecat);
+        $outcome->outcome = true;
+        break;
+    case 'collapsecategory':
+        $categoryid = required_param('categoryid', PARAM_INT);
+        $coursecat = coursecat::get($categoryid);
+        \core_course\management\helper::record_expanded_category($coursecat, false);
+        $outcome->outcome = true;
+        break;
     case 'getsubcategorieshtml' :
         $categoryid = required_param('categoryid', PARAM_INT);
         /* @var core_course_management_renderer $renderer */

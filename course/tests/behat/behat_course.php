@@ -1233,7 +1233,7 @@ class behat_course extends behat_base {
             throw new ExpectationException("Could not find the actions for $listingtype", $this->getSession());
         }
         $actionnode = $actionsnode->find('css', '.action-'.$action);
-        if ($actionnode === null && $this->running_javascript()) {
+        if ($this->running_javascript() && !$actionnode->isVisible()) {
             $actionsnode->find('css', 'a.toggle-display')->click();
             if ($actionnode) {
                 $actionnode = $listingnode->find('css', '.action-'.$action);
