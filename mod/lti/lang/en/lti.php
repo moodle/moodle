@@ -395,6 +395,7 @@ The only case in which this option should be selected is if the tool configurati
 For example, if all launches to the tool provider just take the user to a landing page instead of to a specific resource.';
 $string['size'] = 'Size parameters';
 $string['submission'] = 'Submission';
+$string['submissionsfor'] = 'Submissions for {$a}';
 $string['toggle_debug_data'] = 'Toggle Debug Data';
 $string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
 $string['tool_settings'] = 'Tool Settings';
