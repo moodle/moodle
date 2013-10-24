@@ -224,14 +224,24 @@ class behat_data_generators extends behat_base {
      * @return void
      */
     protected function process_activity($data) {
+        global $DB;
 
         // The the_following_exists() method checks that the field exists.
         $activityname = $data['activity'];
         unset($data['activity']);
 
+        // We split $data in the activity $record and the course module $options.
+        $cmoptions = array();
+        $cmcolumns = $DB->get_columns('course_modules');
+        foreach ($cmcolumns as $key => $value) {
+            if (isset($data[$key])) {
+                $cmoptions[$key] = $data[$key];
+            }
+        }
+
         // Custom exception.
         try {
-            $this->datagenerator->create_module($activityname, $data);
+            $this->datagenerator->create_module($activityname, $data, $cmoptions);
         } catch (coding_exception $e) {
             throw new Exception('\'' . $activityname . '\' activity can not be added using this step,' .
                 ' use the step \'I add a "ACTIVITY_OR_RESOURCE_NAME_STRING" to section "SECTION_NUMBER"\' instead');
