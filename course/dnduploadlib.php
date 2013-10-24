@@ -599,6 +599,8 @@ class dndupload_ajax_processor {
      * Create the coursemodule to hold the file/content that has been uploaded
      */
     protected function create_course_module() {
+        global $CFG;
+
         if (!course_allowed_module($this->course, $this->module->name)) {
             throw new coding_exception("The module {$this->module->name} is not allowed to be added to this course");
         }
@@ -616,7 +618,7 @@ class dndupload_ajax_processor {
         // Set the correct default for completion tracking.
         $this->cm->completion = COMPLETION_TRACKING_NONE;
         $completion = new completion_info($this->course);
-        if ($completion->is_enabled()) {
+        if ($completion->is_enabled() && $CFG->completiondefault) {
             if (plugin_supports('mod', $this->cm->modulename, FEATURE_MODEDIT_DEFAULT_COMPLETION, true)) {
                 $this->cm->completion = COMPLETION_TRACKING_MANUAL;
             }
