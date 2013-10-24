@@ -2133,8 +2133,9 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                         }
                     }
                     //for editor element, [text] is appended to the name.
+                    $fullelementname = $elementName;
                     if ($element->getType() == 'editor') {
-                        $elementName .= '[text]';
+                        $fullelementname .= '[text]';
                         //Add format to rule as moodleform check which format is supported by browser
                         //it is not set anywhere... So small hack to make sure we pass it down to quickform
                         if (is_null($rule['format'])) {
@@ -2142,8 +2143,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                         }
                     }
                     // Fix for bug displaying errors for elements in a group
-                    $test[$elementName][0][] = $registry->getValidationScript($element, $elementName, $rule);
-                    $test[$elementName][1]=$element;
+                    $test[$fullelementname][0][] = $registry->getValidationScript($element, $fullelementname, $rule);
+                    $test[$fullelementname][1]=$element;
                     //end of fix
                 }
             }
