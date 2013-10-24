@@ -74,7 +74,7 @@ class manager {
             self::prepare_cookies();
             $newsid = empty($_COOKIE[session_name()]);
 
-            session_start();
+            self::$handler->start();
 
             self::initialise_user_session($newsid);
             self::check_security();
