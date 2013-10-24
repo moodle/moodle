@@ -22,9 +22,10 @@ class editsection_form extends moodleform {
         $course = $this->_customdata['course'];
 
         $elementgroup = array();
-        $elementgroup[] = $mform->createElement('text', 'name', '', array('size' => '30'));
+        $elementgroup[] = $mform->createElement('text', 'name', '', array('size' => '30', 'maxlength' => '255'));
         $elementgroup[] = $mform->createElement('checkbox', 'usedefaultname', '', get_string('sectionusedefaultname'));
         $mform->addGroup($elementgroup, 'name_group', get_string('sectionname'), ' ', false);
+        $mform->addGroupRule('name_group', array('name' => array(array(get_string('maximumchars', '', 255), 'maxlength', 255))));
 
         $mform->setDefault('usedefaultname', true);
         $mform->setType('name', PARAM_TEXT);
