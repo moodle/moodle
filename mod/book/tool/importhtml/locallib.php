@@ -138,7 +138,7 @@ function toolbook_importhtml_import_chapters($package, $type, $book, $context, $
                 foreach ($allchapters as $target) {
                     if ($target->importsrc === $chapterpath) {
                         $newcontent = str_replace($match, 'href="'.new moodle_url('/mod/book/view.php',
-                                array('id'=>$context->instanceid, 'chapter'=>$target->id)).'"', $newcontent);
+                                array('id'=>$context->instanceid, 'chapterid'=>$target->id)).'"', $newcontent);
                     }
                 }
             }
