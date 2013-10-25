@@ -30,13 +30,17 @@ M.mod_quiz.autosave = {
     TINYMCE_DETECTION_DELAY:  500,
     TINYMCE_DETECTION_REPEATS: 20,
     WATCH_HIDDEN_DELAY:      1000,
+    FAILURES_BEFORE_NOTIFY:     1,
+    FIRST_SUCCESSFUL_SAVE:     -1,
 
     /** Selectors. */
     SELECTORS: {
         QUIZ_FORM:             '#responseform',
         VALUE_CHANGE_ELEMENTS: 'input, textarea',
         CHANGE_ELEMENTS:       'input, select',
-        HIDDEN_INPUTS:         'input[type=hidden]'
+        HIDDEN_INPUTS:         'input[type=hidden]',
+        CONNECTION_ERROR:      '#connection-error',
+        CONNECTION_OK:         '#connection-ok'
     },
 
     /** Script that handles the auto-saves. */
@@ -57,9 +61,13 @@ M.mod_quiz.autosave = {
     /** Y.io transaction for the save ajax request. */
     save_transaction: null,
 
+    /** @property Failed saves count. */
+    savefailures: 0,
+
     /** Properly bound key change handler. */
     editor_change_handler: null,
 
+    /** Record of the value of all the hidden fields, last time they were checked. */
     hidden_field_values: {},
 
     /**
@@ -202,7 +210,10 @@ M.mod_quiz.autosave = {
         this.save_transaction = Y.io(this.AUTOSAVE_HANDLER, {
             method:  'POST',
             form:    {id: this.form},
-            on:      {complete: this.save_done},
+            on:      {
+                success: this.save_done,
+                failure: this.save_failed
+            },
             context: this
         });
     },
@@ -214,6 +225,29 @@ M.mod_quiz.autosave = {
         if (this.dirty) {
             Y.log('Dirty after save.');
             this.start_save_timer();
+        }
+
+        if (this.savefailures > 0) {
+            Y.one(this.SELECTORS.CONNECTION_ERROR).hide();
+            Y.one(this.SELECTORS.CONNECTION_OK).show();
+            this.savefailures = this.FIRST_SUCCESSFUL_SAVE;
+        } else if (this.savefailures === this.FIRST_SUCCESSFUL_SAVE) {
+            Y.one(this.SELECTORS.CONNECTION_OK).hide();
+            this.savefailures = 0;
+        }
+    },
+
+    save_failed: function() {
+        Y.log('Save failed.');
+        this.save_transaction = null;
+
+        // We want to retry soon.
+        this.start_save_timer();
+
+        this.savefailures = Math.max(1, this.savefailures + 1);
+        if (this.savefailures === this.FAILURES_BEFORE_NOTIFY) {
+            Y.one(this.SELECTORS.CONNECTION_ERROR).show();
+            Y.one(this.SELECTORS.CONNECTION_OK).hide();
         }
     },
 

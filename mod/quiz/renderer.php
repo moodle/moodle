@@ -493,6 +493,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $output .= html_writer::end_tag('div');
         $output .= html_writer::end_tag('form');
 
+        $output .= $this->connection_warning();
+
         return $output;
     }
 
@@ -1162,6 +1164,18 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $graph = html_writer::empty_tag('img', array('src' => $url, 'alt' => $title));
 
         return $this->heading($title, 3) . html_writer::tag('div', $graph, array('class' => 'graph'));
+    }
+
+    /**
+     * Output the connection warning messages, which are initially hidden, and
+     * only revealed by JavaScript if necessary.
+     */
+    public function connection_warning() {
+        $options = array('filter' => false, 'newlines' => false);
+        $warning = format_text(get_string('connectionerror', 'quiz'), FORMAT_MARKDOWN, $options);
+        $ok = format_text(get_string('connectionok', 'quiz'), FORMAT_MARKDOWN, $options);
+        return html_writer::tag('div', $warning, array('id' => 'connection-error', 'style' => 'display: none;', 'role' => 'alert')) .
+                html_writer::tag('div', $ok, array('id' => 'connection-ok', 'style' => 'display: none;', 'role' => 'alert'));
     }
 }
 
