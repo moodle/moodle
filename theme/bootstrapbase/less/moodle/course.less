@@ -38,7 +38,21 @@
 .course-content ul.section {
     margin: 1em;
 }
-.section .activity img.activityicon {
+.section {
+    .spinner {
+        height: 16px;
+        width: 16px;
+    }
+    .activity {
+        .spinner {
+            margin: 4px;
+            left: 0;
+            position: absolute;
+        }
+    }
+}
+
+.activity img.activityicon {
     margin-right: 6px;
 }
 .dir-rtl .section .activity img.activityicon {

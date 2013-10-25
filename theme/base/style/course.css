@@ -221,6 +221,14 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 
 .path-course .clearfloat {float:none; clear:both;height:0px;}
 
+.section .spinner {
+    height: 16px;
+    width: 16px;
+}
+.section .activity .spinner {
+    margin: 4px;
+}
+
 /* Quick edit of module name */
 
 .sitetopic .section .activity form.activityinstance,

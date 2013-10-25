@@ -28,6 +28,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_title',
         ACTIVITYFORM : '.' + CSS.ACTIVITYINSTANCE + ' form',
         ACTIVITYICON : 'img.activityicon',
+        ACTIVITYINSTANCE : '.' + CSS.ACTIVITYINSTANCE,
+        ACTIVITYLINK: '.' + CSS.ACTIVITYINSTANCE + ' > a',
         ACTIVITYLI : 'li.activity',
         ACTIVITYTITLE : 'input[name=title]',
         COMMANDSPAN : '.commands',
@@ -57,7 +59,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
      */
     var TOOLBOX = function() {
         TOOLBOX.superclass.constructor.apply(this, arguments);
-    }
+    };
 
     Y.extend(TOOLBOX, Y.Base, {
         /**
@@ -74,7 +76,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 data = {};
             }
             // Handle any variables which we must pass back through to
-            var pageparams = this.get('config').pageparams;
+            var pageparams = this.get('config').pageparams,
+                varname;
             for (varname in pageparams) {
                 data[varname] = pageparams[varname];
             }
@@ -98,7 +101,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                             }
                         } catch (e) {}
                         if (statusspinner) {
-                            window.setTimeout(function(e) {
+                            window.setTimeout(function() {
                                 statusspinner.hide();
                             }, 400);
                         }
@@ -112,7 +115,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 },
                 context: this,
                 sync: true
-            }
+            };
 
             // Apply optional config
             if (optionalconfig) {
@@ -275,6 +278,15 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                     break;
             }
         },
+        add_spinner: function(activity) {
+            var instance = activity.one(SELECTOR.ACTIVITYINSTANCE);
+
+            if (instance) {
+                return M.util.add_spinner(Y, instance);
+            } else {
+                return M.util.add_spinner(Y, activity);
+            }
+        },
 
         /**
          * Change the indent of the activity or resource.
@@ -301,7 +313,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             if (indent) {
                 oldindent = parseInt(indent[1], 10);
             }
-            newindent = Math.max(0, (oldindent + parseInt(direction, 10)));
+            newindent = oldindent + parseInt(direction, 10);
 
             if (newindent < INDENTLIMITS.MIN || newindent > INDENTLIMITS.MAX) {
                 return;
@@ -319,11 +331,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'value' : newindent,
                 'id'    : Y.Moodle.core_course.util.cm.getId(activity)
             };
-            var commands = activity.one(SELECTOR.COMMANDSPAN);
-            var spinner = M.util.add_spinner(Y, commands).setStyles({
-                position: 'absolute',
-                top: 0
-            });
+            var spinner = this.add_spinner(activity);
             if (BODY.hasClass('dir-ltr')) {
                 spinner.setStyle('left', '100%');
             }  else {
@@ -432,7 +440,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'value' : value,
                 'id'    : Y.Moodle.core_course.util.cm.getId(element)
             };
-            var spinner = M.util.add_spinner(Y, element.one(SELECTOR.COMMANDSPAN));
+            var spinner = this.add_spinner(element);
             this.send_request(data, spinner);
             return false; // Need to return false to stop the delegate for the new state firing
         },
@@ -537,7 +545,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'id'    : Y.Moodle.core_course.util.cm.getId(activity)
             };
 
-            spinner = M.util.add_spinner(Y, activity.one(SELECTOR.COMMANDSPAN));
+            spinner = this.add_spinner(activity);
             this.send_request(data, spinner);
             return false; // Need to return false to stop the delegate for the new state firing
         },
@@ -629,7 +637,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
             var newtitle = Y.Lang.trim(activity.one(SELECTOR.ACTIVITYFORM + ' ' + SELECTOR.ACTIVITYTITLE).get('value'));
             this.edit_title_clear(activity);
-            var spinner = M.util.add_spinner(Y, activity.one(SELECTOR.INSTANCENAME));
+            var spinner = this.add_spinner(activity);
             if (newtitle != null && newtitle != "" && newtitle != originaltitle) {
                 var data = {
                     'class'   : 'resource',
