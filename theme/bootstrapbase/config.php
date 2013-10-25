@@ -35,7 +35,7 @@ $THEME->name = 'bootstrapbase';
 $THEME->parents = array();
 $THEME->sheets = array('moodle');
 $THEME->supportscssoptimisation = false;
-
+$THEME->enable_dock = false;
 $THEME->editor_sheets = array('editor');
 
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
@@ -154,7 +154,7 @@ $THEME->layouts = array(
 $THEME->javascripts = array(
 );
 $THEME->javascripts_footer = array(
-    'moodlebootstrap',
+    'moodlebootstrap', 'dockmod'
 );
 
 if (core_useragent::is_ie() && !core_useragent::check_ie_version('9.0')) {
