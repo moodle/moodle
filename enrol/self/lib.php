@@ -180,7 +180,7 @@ class enrol_self_plugin extends enrol_plugin {
      * @return bool|array true if enroled else eddor code and messege
      */
     public function enrol_self(stdClass $instance, $data = null) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
 
         // Don't enrol user if password is not passed when required.
         if ($instance->password && !isset($data->enrolpassword)) {
@@ -205,6 +205,8 @@ class enrol_self_plugin extends enrol_plugin {
                     continue;
                 }
                 if ($group->enrolmentkey === $data->enrolpassword) {
+                    // Add user to group.
+                    require_once($CFG->dirroot.'/group/lib.php');
                     groups_add_member($group->id, $USER->id);
                     break;
                 }
