@@ -208,4 +208,27 @@ class mod_forum_generator extends testing_module_generator {
 
         return $record;
     }
+
+    public function create_content($instance, $record = array()) {
+        global $USER, $DB;
+        $record = (array)$record + array(
+            'forum' => $instance->id,
+            'userid' => $USER->id,
+            'course' => $instance->course
+        );
+        if (empty($record['discussion']) && empty($record['parent'])) {
+            // Create discussion.
+            $discussion = $this->create_discussion($record);
+            $post = $DB->get_record('forum_posts', array('id' => $discussion->firstpost));
+        } else {
+            // Create post.
+            if (empty($record['parent'])) {
+                $record['parent'] = $DB->get_field('forum_discussions', 'firstpost', array('id' => $record['discussion']), MUST_EXIST);
+            } else if (empty($record['discussion'])) {
+                $record['discussion'] = $DB->get_field('forum_posts', 'discussion', array('id' => $record['parent']), MUST_EXIST);
+            }
+            $post = $this->create_post($record);
+        }
+        return $post;
+    }
 }

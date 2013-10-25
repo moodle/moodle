@@ -120,4 +120,11 @@ class mod_book_generator extends testing_module_generator {
         return $record;
     }
 
+    public function create_content($instance, $record = array()) {
+        $record = (array)$record + array(
+            'bookid' => $instance->id
+        );
+        return $this->create_chapter($record);
+    }
+
 }

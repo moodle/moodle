@@ -269,6 +269,18 @@ abstract class testing_module_generator extends component_generator_base {
         $instance->cmid = $moduleinfo->coursemodule;
         return $instance;
     }
+
+    /**
+     * Generates a piece of content for the module.
+     * User is usually taken from global $USER variable.
+     * @param stdClass $instance object returned from create_instance() call
+     * @param stdClass|array $record
+     * @return stdClass generated object
+     * @throws coding_exception if function is not implemented by module
+     */
+    public function create_content($instance, $record = array()) {
+        throw new coding_exception('Module generator for '.$this->get_modulename().' does not implement method create_content()');
+    }
 }
 
 /**
