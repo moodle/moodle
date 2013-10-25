@@ -436,7 +436,8 @@ class portfolio_exporter {
     public function process_stage_queueorwait() {
         $wait = $this->instance->get_export_config('wait');
         if (empty($wait)) {
-            events_trigger('portfolio_send', $this->id);
+            // TODO MDL-42541 Removing usage of events_trigger().
+            events_trigger_legacy('portfolio_send', $this->id);
             $this->queued = true;
             return $this->process_stage_finished(true);
         }
