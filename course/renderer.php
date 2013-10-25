@@ -365,8 +365,36 @@ class core_course_renderer extends plugin_renderer_base {
         $menu->set_owner_selector($ownerselector);
         $menu->set_constraint($constraint);
         $menu->set_alignment(action_menu::TL, action_menu::TR);
+        $menu->set_menu_trigger(get_string('edit'));
         if (isset($CFG->modeditingmenu) && !$CFG->modeditingmenu || !empty($displayoptions['donotenhance'])) {
             $menu->do_not_enhance();
+
+            // Swap the left/right icons.
+            // Normally we have have right, then left but this does not
+            // make sense when modactionmenu is disabled.
+            $moveright = null;
+            $_actions = array();
+            foreach ($actions as $key => $value) {
+                if ($key === 'moveright') {
+
+                    // Save moveright for later.
+                    $moveright = $value;
+                } else if ($moveright) {
+
+                    // This assumes that the order was moveright, moveleft.
+                    // If we have a moveright, then we should place it immediately after the current value.
+                    $_actions[$key] = $value;
+                    $_actions['moveright'] = $moveright;
+
+                    // Clear the value to prevent it being used multiple times.
+                    $moveright = null;
+                } else {
+
+                    $_actions[$key] = $value;
+                }
+            }
+            $actions = $_actions;
+            unset($_actions);
         }
         foreach ($actions as $action) {
             if ($action instanceof action_menu_link) {
@@ -375,6 +403,10 @@ class core_course_renderer extends plugin_renderer_base {
             $menu->add($action);
         }
         $menu->attributes['class'] .= ' section-cm-edit-actions commands';
+
+        // Prioritise the menu ahead of all other actions.
+        $menu->prioritise = true;
+
         return $this->render($menu);
     }
 
@@ -940,6 +972,9 @@ class core_course_renderer extends plugin_renderer_base {
 
         // Display the link to the module (or do nothing if module has no url)
         $output .= $this->course_section_cm_name($mod, $displayoptions);
+        if ($this->page->user_is_editing()) {
+            $output .= ' ' . course_get_cm_rename_action($mod, $sectionreturn);
+        }
 
         // Module can put text after the link (e.g. forum unread)
         $output .= $mod->get_after_link();

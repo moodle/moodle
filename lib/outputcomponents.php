@@ -3109,9 +3109,21 @@ class action_menu implements renderable {
 
     /**
      * An icon to use for the toggling the secondary menu (dropdown).
-     * @var pix_icon
+     * @var actionicon
      */
     public $actionicon;
+
+    /**
+     * Any text to use for the toggling the secondary menu (dropdown).
+     * @var menutrigger
+     */
+    public $menutrigger = '';
+
+    /**
+     * Place the action menu before all other actions.
+     * @var prioritise
+     */
+    public $prioritise = false;
 
     /**
      * Constructs the action menu with the given items.
@@ -3140,16 +3152,14 @@ class action_menu implements renderable {
             'aria-labelledby' => 'action-menu-toggle-'.$this->instance,
             'role' => 'menu'
         );
-        $this->actionicon = new pix_icon(
-            't/contextmenu',
-            new lang_string('actions', 'moodle'),
-            'moodle',
-            array('class' => 'iconsmall', 'title' => '')
-        );
         $this->set_alignment(self::TR, self::BR);
         foreach ($actions as $action) {
             $this->add($action);
         }
+    }
+
+    public function set_menu_trigger($trigger) {
+        $this->menutrigger = $trigger;
     }
 
     /**
@@ -3227,7 +3237,28 @@ class action_menu implements renderable {
             $output = $OUTPUT;
         }
         $pixicon = $this->actionicon;
-        $title = new lang_string('actions', 'moodle');
+        $linkclasses = array('toggle-display');
+
+        if (!empty($this->menutrigger)) {
+            // Chagne the pixicon.
+            $pixicon = new pix_icon(
+                't/dropdown',
+                '',
+                'moodle',
+                array('class' => 'iconsmall', 'title' => '')
+            );
+            $title = $this->menutrigger;
+            $linkclasses[] = 'textmenu';
+        } else {
+            $title = new lang_string('actions', 'moodle');
+            $this->actionicon = new pix_icon(
+                'i/dropdown',
+                $title,
+                'moodle',
+                array('class' => 'iconsmall', 'title' => '')
+            );
+            $pixicon = $this->actionicon;
+        }
         if ($pixicon instanceof renderable) {
             $pixicon = $output->render($pixicon);
             if ($pixicon instanceof pix_icon && isset($pixicon->attributes['alt'])) {
@@ -3240,12 +3271,17 @@ class action_menu implements renderable {
         }
         $actions = $this->primaryactions;
         $attributes = array(
-            'class' => 'toggle-display',
+            'class' => implode(' ', $linkclasses),
             'title' => $title,
             'id' => 'action-menu-toggle-'.$this->instance,
             'role' => 'menuitem'
         );
-        $actions[] = html_writer::link('#', $string.$pixicon, $attributes);
+        $link = html_writer::link('#', $string . $this->menutrigger . $pixicon, $attributes);
+        if ($this->prioritise) {
+            array_unshift($actions, $link);
+        } else {
+            $actions[] = $link;
+        }
         return $actions;
     }
 

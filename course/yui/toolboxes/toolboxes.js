@@ -25,13 +25,14 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     // The CSS selectors we use.
     SELECTOR = {
         ACTIONLINKTEXT : '.actionlinktext',
-        ACTIVITYACTION : 'a.cm-edit-action[data-action]',
-        ACTIVITYFORM : 'form.'+CSS.ACTIVITYINSTANCE,
+        ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_title',
+        ACTIVITYFORM : '.' + CSS.ACTIVITYINSTANCE + ' form',
         ACTIVITYICON : 'img.activityicon',
         ACTIVITYLI : 'li.activity',
         ACTIVITYTITLE : 'input[name=title]',
         COMMANDSPAN : '.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
+        EDITTITLE: 'a.editing_title',
         HIDE : 'a.editing_hide',
         HIGHLIGHT : 'a.editing_highlight',
         INSTANCENAME : 'span.instancename',
@@ -40,6 +41,10 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         SECTIONLI : 'li.section',
         SHOW : 'a.'+CSS.SHOW,
         SHOWHIDE : 'a.editing_showhide'
+    },
+    INDENTLIMITS = {
+        MIN: 0,
+        MAX: 16
     },
     BODY = Y.one(document.body);
 
@@ -288,16 +293,22 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var direction = (action === 'moveleft') ? -1 : 1;
 
             // And we need to determine the current and new indent level
-            var indentdiv = activity.one(SELECTOR.MODINDENTDIV);
-            var indent = indentdiv.getAttribute('class').match(/mod-indent-(\d{1,})/);
+            var indentdiv = activity.one(SELECTOR.MODINDENTDIV),
+                indent = indentdiv.getAttribute('class').match(/mod-indent-(\d{1,})/),
+                oldindent = 0,
+                newindent;
 
             if (indent) {
-                var oldindent = parseInt(indent[1]);
-                var newindent = Math.max(0, (oldindent + parseInt(direction)));
+                oldindent = parseInt(indent[1], 10);
+            }
+            newindent = Math.max(0, (oldindent + parseInt(direction, 10)));
+
+            if (newindent < INDENTLIMITS.MIN || newindent > INDENTLIMITS.MAX) {
+                return;
+            }
+
+            if (indent) {
                 indentdiv.removeClass(indent[0]);
-            } else {
-                var oldindent = 0;
-                var newindent = 1;
             }
 
             // Perform the move
@@ -321,10 +332,16 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             this.send_request(data, spinner);
 
             // Handle removal/addition of the moveleft button.
-            if (newindent == 0) {
+            if (newindent === INDENTLIMITS.MIN) {
                 button.addClass('hidden');
-            } else if (newindent == 1 && oldindent == 0) {
+            } else if (newindent > INDENTLIMITS.MIN && oldindent === INDENTLIMITS.MIN) {
                 button.ancestor('.menu').one('[data-action=moveleft]').removeClass('hidden');
+            }
+
+            if (newindent === INDENTLIMITS.MAX) {
+                button.addClass('hidden');
+            } else if (newindent < INDENTLIMITS.MAX && oldindent === INDENTLIMITS.MAX) {
+                button.ancestor('.menu').one('[data-action=moveright]').removeClass('hidden');
             }
 
             // Handle massive indentation to match non-ajax display
@@ -562,7 +579,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             }
 
             // Create the editor and submit button
-            var editform = Y.Node.create('<form class="'+CSS.ACTIVITYINSTANCE+'" action="#" />');
+            var editform = Y.Node.create('<form action="#" />');
             var editinstructions = Y.Node.create('<span class="'+CSS.EDITINSTRUCTIONS+'" id="id_editinstructions" />')
                 .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
             var editor = Y.Node.create('<input name="title" type="text" class="'+CSS.TITLEEDITOR+'" />').setAttrs({
@@ -570,7 +587,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'autocomplete' : 'off',
                 'aria-describedby' : 'id_editinstructions',
                 'maxLength' : '255'
-            })
+            });
 
             // Clear the existing content and put the editor in
             editform.appendChild(activity.one(SELECTOR.ACTIVITYICON).cloneNode());
@@ -579,6 +596,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             anchor.replace(editform);
             activity.one('div').appendChild(editinstructions);
             ev.preventDefault();
+
+            // Hide the button while we edit.
+            button.hide();
 
             // Focus and select the editor text
             editor.focus().select();
@@ -661,6 +681,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             if (instructions) {
                 instructions.remove();
             }
+
+            // And unhide the edit title button.
+            activity.one(SELECTOR.EDITTITLE).show();
         },
 
         /**

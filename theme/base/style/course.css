@@ -29,6 +29,7 @@
 .course-content .section .activity .activityinstance,
 .sitetopic .section .activity .activityinstance div,
 .course-content .section .activity .activityinstance div { display: inline;}
+.course-content .section .activity .activityinstance form { display: inline;}
 .sitetopic .section .activity .activityinstance,
 .course-content .section .activity .activityinstance { padding-right: 1em; }
 .dir-rtl .sitetopic .section .activity .activityinstance,
@@ -58,6 +59,12 @@
     height: 16px;
     margin: 4px;
 }
+.section .editing_title img.iconsmall {
+    width: 12px;
+    height: 12px;
+    margin: 8px 8px 0 0;
+}
+
 .single-section h3.sectionname {text-align:center;clear:both;}
 .sitetopic .section li.activity,
 .course-content .section li.activity {padding: .2em;}

@@ -529,6 +529,7 @@ $string['edita'] = 'Edit {$a}';
 $string['editcategorysettings'] = 'Edit category settings';
 $string['editcategorythis'] = 'Edit this category';
 $string['editcoursesettings'] = 'Edit course settings';
+$string['editsettings'] = 'Edit settings';
 $string['editfiles'] = 'Edit files';
 $string['editgroupprofile'] = 'Edit group profile';
 $string['editinga'] = 'Editing {$a}';

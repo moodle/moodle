@@ -2031,6 +2031,15 @@ img#persona_signin {
             display: inline; /** JS is enabled, we'll be using it so return display to normal **/
             .opacity(50);
         }
+        .toggle-display.textmenu {
+            display: block;
+            margin-left: 4px;
+            padding-left: 4px;
+
+            .iconsmall {
+                padding-left: 0;
+            }
+        }
     }
     .moodle-actionmenu[data-enhanced] {
         .toggle-display {
@@ -2038,6 +2047,7 @@ img#persona_signin {
         }
         .menu-action-text  {
             display:inline;
+            vertical-align: middle;
         }
     }
 }
@@ -2080,7 +2090,7 @@ img#persona_signin {
             vertical-align: middle;
         }
         .iconsmall {
-            margin-left:-20px;
+            margin: 4px 4px 4px -20px;
         }
         > li {
             display:block;

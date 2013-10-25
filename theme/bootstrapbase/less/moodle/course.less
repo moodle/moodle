@@ -52,9 +52,6 @@
 .editing .section .activity .activityinstance {
     min-width: 40%;
 }
-.section .activity .activityinstance > a {
-    display: block;
-}
 .editing_show + .editing_assign,
 .editing_hide + .editing_assign {
     // if roles icon missing, add space
@@ -620,7 +617,21 @@ span.editinstructions {
     padding:0.3em;
 }
 
-
+.section {
+    .activity {
+        .iconsmall {
+            margin: 4px;
+        }
+    }
+    .editing_title {
+        .iconsmall {
+            width: 12px;
+            height: 12px;
+            margin: 4px 8px 0 0;
+            padding: 4px 8px 0 0;
+        }
+    }
+}
 
 /**
  * Course management page
