@@ -1,0 +1,157 @@
+.dockbutton {
+    .btn;
+    display: list-item;
+    padding: 0;
+}
+
+body.has_dock {
+   margin-left: 20px;
+   div#dock {
+       display: inline;
+   }
+}
+
+#dock {
+    width: 36px;
+    position: fixed;
+    top: 68px;
+    left: 0px;
+    height: 90%;
+    background-color: transparent;
+    border-right: 0 none;
+    .nothingdocked {
+        visibility: hidden;
+        display: none;
+    }
+    .dockeditem .firstdockitem {
+        margin-top: 1em;
+    }
+    .dockedtitle {
+        .dockbutton;
+        cursor: pointer;
+        margin: 2px;
+        h2 {
+            font-family: @sansFontFamily;
+            font-size: 1em;
+            line-height: 100%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .filterrotate {
+            margin-left: 8px;
+        }
+    }
+    .dockeditempanel_hd h2 {
+      .nav-header;
+      font-size: 1.1em;
+    }
+    .controls {
+        position: absolute;
+        bottom: 1em;
+        text-align: center;
+        width: 100%;
+        img {
+            cursor: pointer;
+        }
+    }
+}
+
+#dockeditempanel {
+    min-width: 200px;
+    position: relative;
+    z-index: 12000;
+    left: 100%;
+    padding-left: 5px;
+    .dockeditempanel_content {
+        z-index: 12050;
+        background-color: @wellBackground;
+        width: 220px;
+        box-shadow: 2px 4px 4px 2px #CCCCCC;
+    }
+    .dockeditempanel_bd {
+        overflow: auto;
+        width: auto;
+        .block_navigation .block_tree li {
+            overflow: visible;
+        }
+    }
+    .dockeditempanel_hd {
+        h2 {
+            padding: 10px;
+            margin: 0;
+            border-bottom: 1px solid @white;
+        }
+        .commands {
+            width: 60px;
+            float: right;
+            position: absolute;
+            right: 0px;
+            display: block;
+            text-align: right;
+            top: 6px;
+        }
+        .commands > a,
+        .commands > span {
+            margin-left: 3px;
+            cursor: pointer;
+        }
+        a.editing_move,
+        a.editing_edit,
+        a.editing_roles,
+        a.editing_delete,
+        a.editing_hide {
+            display: none;
+        }
+        .commands img,
+        .commands input {
+            vertical-align: middle;
+            margin-right: 1px;
+        }
+        .commands .hidepanemicon img {
+            cursor: pointer;
+        }
+    }
+
+}
+
+#dockeditempanel.dockitempanel_hidden {
+        display: none;
+}
+
+.dir-rtl {
+    #dockeditempanel {
+    right: 100%;
+        .dockeditempanel_hd .commands {
+            text-align: left;
+        }
+    }
+    #dock {
+        left: auto;
+        right: 0%;
+        .dockedtitle {
+            border-bottom: 1px solid #DDD;
+            border-top: 1px solid #EEE;
+            cursor: pointer;
+        }
+    }
+    .dockeditempanel_hd {
+        h2 {
+            padding: 10px;
+            margin: 0;
+            border-bottom: 1px solid @white;
+        }
+        .commands {
+            float: left;
+            right: auto;
+            left: 0px;
+            text-align: left;
+            top: 6px;
+        }
+    }
+}
+
+body.dir-rtl.has_dock  {
+    margin-left: 0px;
+    margin-right: 20px;
+}
