@@ -2013,9 +2013,16 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
 
     // Move.
     if ($hasmanageactivities) {
+        $pixicon = 'i/dragdrop';
+
+        if ($mod->course == SITEID) {
+            // Override for course frontpage until we get drag/drop working there.
+            $pixicon = 't/move';
+        }
+
         $actions['move'] = new action_menu_link_primary(
             new moodle_url($baseurl, array('copy' => $mod->id)),
-            new pix_icon('t/move', $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+            new pix_icon($pixicon, $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
             $str->move,
             array('class' => 'editing_move status', 'data-action' => 'move')
         );
