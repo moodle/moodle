@@ -14,16 +14,6 @@ the standard PHP directories and use the PEAR libraries there instead.
 
 In detail, the libraries added here are:
 
-- PEAR Spreadsheet_Excel_Writer classes:
-    - Current version: 0.9.1
-    - by Xavier Noguer and Mika Tuupola
-    - License: LGPL
-    - http://pear.php.net/package/Spreadsheet_Excel_Writer
-- PEAR OLE classes:
-    - Current version: 0.5
-    - by Xavier Noguer
-    - License: PHP (Permission given to Moodle to redistribute under GPL)
-    - http://pear.php.net/package/OLE
 - PEAR HTML_Quickform:
     - Current version: 3.2.6
     - by Bertrand Mansion, Adam Daniel, Alexey Borzov

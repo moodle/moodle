@@ -134,13 +134,6 @@
     <licenseversion></licenseversion>
   </library>
   <library>
-    <location>pear/OLE.php</location>
-    <name>Pear_OLE</name>
-    <license>PHP</license>
-    <version>1.0.0</version>
-    <licenseversion>2.02</licenseversion>
-  </library>
-  <library>
     <location>pear/PEAR.php</location>
     <name>Pear.php</name>
     <license>PHP</license>
