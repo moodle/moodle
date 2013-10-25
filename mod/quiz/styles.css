@@ -28,6 +28,28 @@ body.jsenabled .questionflagcheckbox {
     display: none;
 }
 
+#page-mod-quiz-attempt #connection-ok,
+#page-mod-quiz-attempt #connection-error {
+    position: fixed;
+    top: 0;
+    width: 80%;
+    left: 10%;
+    color: #555;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 5px 5px 20px 0 #666666;
+    padding: 1em 1em 0;
+    z-index: 10000;
+}
+
+#page-mod-quiz-attempt #connection-error {
+    background-color: #fcc;
+}
+#page-mod-quiz-attempt #connection-ok {
+    background-color: #cfb;
+    width: 60%;
+    left: 20%;
+}
+
 /** Mod quiz attempt **/
 .generalbox#passwordbox {
     /* Should probably match .generalbox#intro above */
