@@ -218,13 +218,13 @@ class block_course_overview_renderer extends plugin_renderer_base {
         $config = get_config('block_course_overview');
         // Show view all course link to user if forcedefaultmaxcourses is not empty.
         if (!empty($config->forcedefaultmaxcourses)) {
-            $output .= get_string('hiddencoursecountwithshowall'.$plural, 'block_course_overview', $total);
+            $output .= get_string('hiddencoursecount'.$plural, 'block_course_overview', $total);
         } else {
             $a = new stdClass();
             $a->coursecount = $total;
             $a->showalllink = html_writer::link(new moodle_url('/my/index.php', array('mynumber' => block_course_overview::SHOW_ALL_COURSES)),
                     get_string('showallcourses'));
-            $output .= get_string('hiddencoursecount'.$withshowall.$plural, 'block_course_overview', $a);
+            $output .= get_string('hiddencoursecountwithshowall'.$plural, 'block_course_overview', $a);
         }
 
         $output .= $this->output->box_end();
