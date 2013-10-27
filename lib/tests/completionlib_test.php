@@ -803,6 +803,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertEquals(context_module::instance($forum->id), $event->get_context());
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals($this->user->id, $event->other['relateduserid']);
+        $this->assertInstanceOf('moodle_url', $event->get_url());
         $this->assertEventLegacyData($current, $event);
     }
 
@@ -830,6 +831,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals($this->user->id, $event->other['relateduserid']);
         $this->assertEquals(context_course::instance($this->course->id), $event->get_context());
+        $this->assertInstanceOf('moodle_url', $event->get_url());
         $data = $ccompletion->get_record_data();
         $this->assertEventLegacyData($data, $event);
     }
@@ -857,6 +859,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\course_completion_updated', $event);
         $this->assertEquals($this->course->id, $event->courseid);
         $this->assertEquals($coursecontext, $event->get_context());
+        $this->assertInstanceOf('moodle_url', $event->get_url());
         $expectedlegacylog = array($this->course->id, 'course', 'completion updated', 'completion.php?id='.$this->course->id);
         $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
