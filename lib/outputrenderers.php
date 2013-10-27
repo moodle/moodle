@@ -2064,7 +2064,7 @@ class core_renderer extends renderer_base {
     public function heading_with_help($text, $helpidentifier, $component = 'moodle', $icon = '', $iconalt = '', $level = 2, $classnames = null) {
         $image = '';
         if ($icon) {
-            $image = $this->pix_icon($icon, $iconalt, $component, array('class'=>'icon'));
+            $image = $this->pix_icon($icon, $iconalt, $component, array('class'=>'icon iconlarge'));
         }
 
         $help = '';
