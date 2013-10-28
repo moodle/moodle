@@ -1247,6 +1247,7 @@ $string['options'] = 'options';
 $string['order'] = 'Order';
 $string['originalpath'] = 'Original path';
 $string['orphanedactivities'] = 'Orphaned activities';
+$string['orphanedactivitiesinsectionno'] = 'Orphaned activities (section {$a})';
 $string['other'] = 'Other';
 $string['outline'] = 'Outline';
 $string['outlinereport'] = 'Outline report';
