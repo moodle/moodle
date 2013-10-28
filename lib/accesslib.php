@@ -1528,7 +1528,6 @@ function delete_role($roleid) {
             'objectid' => $roleid,
             'other' =>
                 array(
-                    'name' => $role->name,
                     'shortname' => $role->shortname,
                     'description' => $role->description,
                     'archetype' => $role->archetype

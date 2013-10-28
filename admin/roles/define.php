@@ -201,8 +201,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey() && $de
     $event = \core\event\role_capabilities_updated::create(
         array(
             'context' => $systemcontext,
-            'objectid' => $roleid,
-            'other' => array('name' => $definitiontable->get_role_name())
+            'objectid' => $roleid
         )
     );
     $event->set_legacy_logdata(array(SITEID, 'role', $action, 'admin/roles/define.php?action=view&roleid=' . $tableroleid,

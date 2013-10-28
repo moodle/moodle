@@ -699,7 +699,6 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertSame('role', $event->objecttable);
         $this->assertSame($role->id, $event->objectid);
         $this->assertEquals(context_system::instance(), $event->get_context());
-        $this->assertSame($role->name, $event->other['name']);
         $this->assertSame($role->shortname, $event->other['shortname']);
         $this->assertSame($role->description, $event->other['description']);
         $this->assertSame($role->archetype, $event->other['archetype']);
