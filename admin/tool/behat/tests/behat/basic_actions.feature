@@ -39,7 +39,7 @@ Feature: Page contents assertions
       | Course 1 | C1 | 0 |
     And I log in as "admin"
     And I follow "Course 1"
-    When I click on "Move this to the dock" "button" in the "Administration" "block"
+    When I dock "Administration" block
     Then I should not see "Question bank" in the "region-pre" "region"
     And I click on "//div[@id='dock']/descendant::h2[normalize-space(.)='Administration']" "xpath_element"
 
@@ -49,5 +49,5 @@ Feature: Page contents assertions
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"
-    When I click on "Move this to the dock" "button" in the "Administration" "block"
+    When I dock "Administration" block
     Then I should not see "Turn editing on" in the "region-pre" "region"
