@@ -460,7 +460,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var toggleclass = CSS.DIMCLASS,
                 dimarea = activity.one('a'),
                 availabilityinfo = activity.one(CSS.AVAILABILITYINFODIV),
-                nextaction = (action === 'hide') ? 'show' : 'hide';
+                nextaction = (action === 'hide') ? 'show' : 'hide',
+                buttontext = button.one('span'),
                 newstring = M.util.get_string(nextaction, 'moodle');
 
             // Update button info.
@@ -471,9 +472,12 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             button.set('title', newstring);
             button.replaceClass('editing_'+action, 'editing_'+nextaction);
             button.setData('action', nextaction);
+            if (buttontext) {
+                buttontext.set('text', newstring);
+            }
 
             // If activity is conditionally hidden, then don't toggle.
-            if (Y.Moodle.core_course.util.cm.getName(activity) == null) {
+            if (Y.Moodle.core_course.util.cm.getName(activity) === null) {
                 toggleclass = CSS.DIMMEDTEXT;
                 dimarea = activity.all(SELECTOR.MODINDENTDIV + ' > div').item(1);
             }
