@@ -764,7 +764,6 @@ $string['followingoptional'] = 'The following items are optional';
 $string['followingrequired'] = 'The following items are required';
 $string['for'] = 'For';
 $string['force'] = 'Force';
-$string['forcedmodeinbrackets'] = '{$a} (forced mode)';
 $string['forcelanguage'] = 'Force language';
 $string['forceno'] = 'Do not force';
 $string['forcepasswordchange'] = 'Force password change';
