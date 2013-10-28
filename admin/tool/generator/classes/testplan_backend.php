@@ -320,7 +320,7 @@ class tool_generator_testplan_backend extends tool_generator_backend {
 
         // Checks that the selected course has enough users.
         $coursesizes = tool_generator_course_backend::get_users_per_size();
-        if (count($users) < $coursesizes[$size]) {
+        if (count($users) < self::$users[$size]) {
             $errors['size'] = get_string('notenoughusers', 'tool_generator');
         }
 
