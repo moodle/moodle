@@ -1534,6 +1534,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEquals($coursecontext->id, $event->contextid);
         $this->assertEquals($course, $event->get_record_snapshot('course', $course->id));
         $this->assertEquals('course_deleted', $event->get_legacy_eventname());
+        $eventdata = $event->get_data();
+        $this->assertSame($course->idnumber, $eventdata['other']['idnumber']);
+        $this->assertSame($course->fullname, $eventdata['other']['fullname']);
+        $this->assertSame($course->shortname, $eventdata['other']['shortname']);
         // The legacy data also passed the context in the course object.
         $course->context = $coursecontext;
         $this->assertEventLegacyData($course, $event);
