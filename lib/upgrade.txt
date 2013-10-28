@@ -3,6 +3,9 @@ information provided here is intended especially for developers.
 === 2.4.7 ===
 
 * update_internal_user_password() and setnew_password_and_mail() now trigger user_updated event.
+* The library to interact with Box.net (class boxclient) is only compatible with their APIv1 which
+  reaches its end of life on the 14th of Dec. You should migrate your scripts to make usage of the
+  new class boxnet_client(). Note that the method names and return values have changed.
 
 === 2.4.6 ===
 * Use new function moodleform::mock_submit() to simulate form submission in unit tests.

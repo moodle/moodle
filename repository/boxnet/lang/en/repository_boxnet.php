@@ -25,15 +25,12 @@
 
 $string['apikey'] = 'API key';
 $string['boxnet:view'] = 'View box.net repository';
+$string['cannotcreatereference'] = 'Cannot create a reference, not enough permissions to share the file on Box.net.';
+$string['clientid'] = 'Client ID';
+$string['clientsecret'] = 'Client secret';
 $string['configplugin'] = 'Box.net configuration';
-$string['callbackurl'] = 'Redirect URL';
-$string['callbackurltext'] = '1. Visit <a href="http://www.box.net/developers/services">www.box.net/developers/services</a> again.
-2. Make sure you set the redirect URL of this box.net service to {$a}.';
-$string['callbackwarning'] = '1. Get a Box.net API from <a href="http://www.box.net/developers/services">www.box.net/developers/services</a> for this Moodle site.
-2. Enter the Box.net API key here, then click Save and then return to this page. You will see that Moodle has generated a redirect URL for you.
-3. Edit your Box.net details on the box.net website again and set the redirect URL.';
-
-$string['information'] = 'Get an API key from the <a href="http://www.box.net/developers/services">Box.net developer page</a> for your Moodle site.';
+$string['filesourceinfo'] = 'Box.net ({$a->fullname}): {$a->filename}';
+$string['information'] = 'Get a client ID and secret from the <a href="https://app.box.com/developers/services">Box.net developer page</a> for your Moodle site.';
 $string['invalidpassword'] = 'Invalid password';
 $string['nullfilelist'] = 'There are no files in this repository';
 $string['password'] = 'Password';
@@ -42,3 +39,4 @@ $string['pluginname'] = 'Box.net';
 $string['saved'] = 'Box.net data saved';
 $string['shareurl'] = 'Share URL';
 $string['username'] = 'Username for Box.net';
+$string['warninghttps'] = 'Box.net requires your website to be using HTTPS in order for the repository to work.';
