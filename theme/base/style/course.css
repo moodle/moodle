@@ -65,6 +65,11 @@
     margin: 8px 8px 0 0;
 }
 
+.section .activity.editor_displayed a.editing_title,
+.section .activity.editor_displayed .moodle-actionmenu {
+    display: none;
+}
+
 .single-section h3.sectionname {text-align:center;clear:both;}
 .sitetopic .section li.activity,
 .course-content .section li.activity {padding: .2em;}
@@ -250,7 +255,10 @@ span.editinstructions {
     border:1px solid #ddd;
 }
 .dir-rtl span.editinstructions { left: auto; right: 32px;}
-input.titleeditor { width: 330px; vertical-align: text-bottom; }
+input.titleeditor { vertical-align: text-bottom; }
+.editing .course-content .section .activity.editor_displayed .activityinstance {
+    padding: initial;
+}
 
 /* Course drag and drop upload styles */
 #dndupload-status {width:40%;margin:0 30%;padding:6px;border:1px solid #ddd;text-align:center;background:#ffc;position:absolute;z-index:9999;box-shadow:2px 2px 5px 1px #ccc;border-radius:0px 0px 8px 8px;z-index: 0;}

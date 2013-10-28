@@ -13,6 +13,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         DIMCLASS : 'dimmed',
         DIMMEDTEXT : 'dimmed_text',
         EDITINSTRUCTIONS : 'editinstructions',
+        EDITINGTITLE: 'editor_displayed',
         HIDE : 'hide',
         MODINDENTCOUNT : 'mod-indent-',
         MODINDENTHUGE : 'mod-indent-huge',
@@ -605,8 +606,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             activity.one('div').appendChild(editinstructions);
             ev.preventDefault();
 
-            // Hide the button while we edit.
-            button.hide();
+            // We hide various components whilst editing:
+            activity.addClass(CSS.EDITINGTITLE);
 
             // Focus and select the editor text
             editor.focus().select();
@@ -690,8 +691,13 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 instructions.remove();
             }
 
-            // And unhide the edit title button.
-            activity.one(SELECTOR.EDITTITLE).show();
+            // Remove the editing class again to revert the display.
+            activity.removeClass(CSS.EDITINGTITLE);
+
+            // Refocus the link which was clicked originally so the user can continue using keyboard nav.
+            Y.later(100, this, function() {
+                activity.one(SELECTOR.EDITTITLE).focus();
+            });
         },
 
         /**
