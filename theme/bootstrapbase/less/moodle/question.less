@@ -62,8 +62,7 @@
     border-top: 0 none;
     .box-shadow(5px 5px 20px 0 #666);
 }
-//#qtypechoicecontainer
-#chooseqtype {
+#qtypechoicecontainer #chooseqtype {
     width: 40em;
 }
 #chooseqtypehead h3 {
@@ -74,6 +73,17 @@
     position: relative;
     border-bottom: 1px solid #bbb;
     padding: 0.24em 0;
+}
+#chooseqtype .alloptions {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 400px;
+    max-height: calc(100vh - 15em);
+ /* The next line is a workaround because recess is crap. Delete ththe following line once
+  * https://github.com/twitter/recess/issues/59 / https://github.com/twitter/recess/issues/75
+  * is fixed. The previous line is the right one. */
+    max-height: 60vh;
+    width: 60%;
 }
 #chooseqtype .qtypeoption {
     margin-bottom: 0;
@@ -97,6 +107,8 @@
     bottom: 0;
     left: 60%;
     margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
     padding: 1.5em 1.6em;
     background-color: #fff;
     overflow-y: auto;
