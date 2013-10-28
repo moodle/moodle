@@ -1168,7 +1168,7 @@ function lti_ensure_url_is_https($url) {
     } else {
         //If the URL starts with http, replace with https
         if (stripos($url, 'http://') === 0) {
-            $url = 'https://' . substr($url, 8);
+            $url = 'https://' . substr($url, 7);
         }
     }
 
