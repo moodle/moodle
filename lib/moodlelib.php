@@ -4131,6 +4131,9 @@ function delete_user(stdClass $user) {
         return false;
     }
 
+    // Keep user record before updating it, as we have to pass this to user_deleted event.
+    $olduser = clone $user;
+
     // Keep a copy of user context, we need it for event.
     $usercontext = context_user::instance($user->id);
 
@@ -4210,10 +4213,16 @@ function delete_user(stdClass $user) {
             array(
                 'objectid' => $user->id,
                 'context' => $usercontext,
-                'other' => array('user' => (array)clone $user)
+                'other' => array(
+                    'username' => $user->username,
+                    'email' => $user->email,
+                    'idnumber' => $user->idnumber,
+                    'picture' => $user->picture,
+                    'mnethostid' => $user->mnethostid
+                    )
                 )
             );
-    $event->add_record_snapshot('user', $updateuser);
+    $event->add_record_snapshot('user', $olduser);
     $event->trigger();
 
     // We will update the user's timemodified, as it will be passed to the user_deleted event, which
