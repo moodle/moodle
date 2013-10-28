@@ -253,6 +253,7 @@ $string['skipmodifprevhelp'] = 'Choose whether or not to skip courses that have 
 $string['title'] = 'Title';
 $string['totalcategorysearchresults'] = 'Total categories: {$a}';
 $string['totalcoursesearchresults'] = 'Total courses: {$a}';
+$string['unnamedsection'] = 'Unnamed section';
 $string['userinfo'] = 'Userinfo';
 $string['module'] = 'Module';
 $string['morecoursesearchresults'] = 'More than {$a} courses found, showing first {$a} results';
