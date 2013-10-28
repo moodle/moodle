@@ -239,10 +239,21 @@
 .path-site li.activity > div,
 .path-course-view li.activity > div {
     position: relative;
+    padding: 0 16px 0 0; /* to accommodate the floated completion icon with highlighting */
+}
+.dir-rtl.path-site li.activity > div,
+.dir-rtl.path-course-view li.activity > div {
+    position: relative;
+    padding: 0 0 0 16px;
 }
 .path-course-view li.activity span.autocompletion,
 .path-course-view li.activity form.togglecompletion {
     float: right;
+    width: 0; /* Reduce the width of the control to 0 and rely on natural overflow */
+}
+.path-course-view li.activity span.autocompletion img,
+.path-course-view li.activity form.togglecompletion img {
+    max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
 }
 .path-course-view li.activity form.togglecompletion .ajaxworking {
     width: 16px;
@@ -606,8 +617,6 @@ span.editinstructions {
     max-width: none !important; /** reset sets 100% !important which breaks on IE8 without this !important */
     width:16px;
     height:16px;
-    width:1rem;
-    height:1rem;
     padding:0.3em;
 }
 
