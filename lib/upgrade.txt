@@ -49,6 +49,8 @@ information provided here is intended especially for developers.
   of 'fopen' to read gzip-compressed files if required.
 * update_internal_user_password() and setnew_password_and_mail() now trigger user_updated event.
 * Add thirdpartylibs.xml file to plugins that bundle any 3rd party libraries.
+* New class introduced to help auto generate zIndex values for modals - "moodle-has-zindex" can be given as a 
+  class for any element that needs it's zIndex to be considered when creating a modal dialogue.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
