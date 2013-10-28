@@ -64,6 +64,9 @@ class core_useragent_testcase extends basic_testcase {
             '10.0i' => array(
                 'Windows 8' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; Trident/6.0; Touch; .NET4.0E; .NET4.0C; Tablet PC 2.0)'
             ),
+            '11.0' => array(
+                'Windows 8.1' => 'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0)'
+            ),
         ),
         'Firefox' => array(
             '1.0.6' => array(
@@ -257,6 +260,16 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertTrue(core_useragent::check_ie_version('9.0'));
         $this->assertTrue(core_useragent::check_ie_version('10'));
         $this->assertFalse(core_useragent::check_ie_version('11'));
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['11.0']['Windows 8.1']);
+        $this->assertTrue(core_useragent::is_ie());
+        $this->assertTrue(core_useragent::check_ie_version());
+        $this->assertTrue(core_useragent::check_ie_version(0));
+        $this->assertTrue(core_useragent::check_ie_version('5.0'));
+        $this->assertTrue(core_useragent::check_ie_version('9.0'));
+        $this->assertTrue(core_useragent::check_ie_version('10'));
+        $this->assertTrue(core_useragent::check_ie_version('11'));
+        $this->assertFalse(core_useragent::check_ie_version('12'));
 
         core_useragent::instance(true, $this->user_agents['Firefox']['2.0']['Windows XP']);
         $this->assertTrue(core_useragent::is_firefox());
