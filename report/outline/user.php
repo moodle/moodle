@@ -48,6 +48,7 @@ if ($USER->id != $user->id and has_capability('moodle/user:viewuseractivitiesrep
 } else {
     require_login($course);
 }
+$PAGE->set_url('/report/outline/user.php', array('id'=>$userid, 'course'=>$courseid, 'mode'=>$mode));
 
 if (!report_outline_can_access_user_report($user, $course, true)) {
     require_capability('report/outline:view', $coursecontext);
@@ -55,7 +56,7 @@ if (!report_outline_can_access_user_report($user, $course, true)) {
 
 $stractivityreport = get_string('activityreport');
 
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('report');
 $PAGE->set_url('/report/outline/user.php', array('id'=>$user->id, 'course'=>$course->id, 'mode'=>$mode));
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.

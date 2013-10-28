@@ -48,14 +48,17 @@ if ($badge->is_active() || $badge->is_locked()) {
 if ($badge->type == BADGE_TYPE_COURSE) {
     require_login($badge->courseid);
     $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type, 'id' => $badge->courseid));
+    $PAGE->set_pagelayout('standard');
+    navigation_node::override_active_url($navurl);
+} else {
+    $PAGE->set_pagelayout('admin');
+    navigation_node::override_active_url($navurl, true);
 }
 
 $PAGE->set_context($context);
 $PAGE->set_url('/badges/criteria_action.php');
-$PAGE->set_pagelayout('standard');
 $PAGE->set_heading($badge->name);
 $PAGE->set_title($badge->name);
-navigation_node::override_active_url($navurl);
 
 if ($delete && has_capability('moodle/badges:configurecriteria', $context)) {
     if (!$confirm) {

@@ -48,7 +48,6 @@ if ($issearching) {
 }
 
 $url = new moodle_url('/course/management.php');
-navigation_node::override_active_url($url);
 $systemcontext = $context = context_system::instance();
 if ($courseid) {
     $record = get_course($courseid);
@@ -56,13 +55,18 @@ if ($courseid) {
     $category = coursecat::get($course->category);
     $categoryid = $category->id;
     $context = context_coursecat::instance($category->id);
+    $url->param('categoryid', $categoryid);
+    navigation_node::override_active_url($url);
     $url->param('courseid', $course->id);
+
 } else if ($categoryid) {
     $courseid = null;
     $course = null;
     $category = coursecat::get($categoryid);
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $category->id);
+    navigation_node::override_active_url($url);
+
 } else {
     $course = null;
     $courseid = null;
@@ -72,6 +76,7 @@ if ($courseid) {
         $viewmode = 'categories';
     }
     $context = $systemcontext;
+    navigation_node::override_active_url($url);
 }
 
 if ($page !== 0) {

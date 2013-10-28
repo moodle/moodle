@@ -126,6 +126,9 @@ if (!empty($add)) {
     $url->param('update', $update);
     $PAGE->set_url($url);
 
+    // Select the "Edit settings" from navigation.
+    navigation_node::override_active_url(new moodle_url('/course/modedit.php', array('update'=>$update, 'return'=>1)));
+
     // Check the course module exists.
     $cm = get_coursemodule_from_id('', $update, 0, false, MUST_EXIST);
 

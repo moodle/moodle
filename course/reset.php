@@ -37,6 +37,7 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 }
 
 $PAGE->set_url('/course/reset.php', array('id'=>$id));
+$PAGE->set_pagelayout('admin');
 
 require_login($course);
 require_capability('moodle/course:reset', context_course::instance($course->id));

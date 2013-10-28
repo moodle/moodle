@@ -58,7 +58,7 @@ $personalcontext = context_user::instance($user->id);
 $PAGE->set_url('/course/user.php', array('id'=>$id, 'user'=>$user->id, 'mode'=>$mode));
 
 require_login();
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('report');
 if (has_capability('moodle/user:viewuseractivitiesreport', $personalcontext) and !is_enrolled($coursecontext)) {
     // do not require parents to be enrolled in courses ;-)
     $PAGE->set_course($course);

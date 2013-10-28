@@ -46,18 +46,19 @@ if ($badge->type == BADGE_TYPE_COURSE) {
     }
     require_login($badge->courseid);
     $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type, 'id' => $badge->courseid));
+    $PAGE->set_pagelayout('standard');
+    navigation_node::override_active_url($navurl);
+} else {
+    $PAGE->set_pagelayout('admin');
+    navigation_node::override_active_url($navurl, true);
 }
 
 $currenturl = new moodle_url('/badges/overview.php', array('id' => $badge->id));
 
 $PAGE->set_context($context);
 $PAGE->set_url($currenturl);
-$PAGE->set_pagelayout('standard');
 $PAGE->set_heading($badge->name);
 $PAGE->set_title($badge->name);
-
-// Set up navigation and breadcrumbs.
-navigation_node::override_active_url($navurl);
 $PAGE->navbar->add($badge->name);
 
 echo $OUTPUT->header();

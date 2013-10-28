@@ -45,6 +45,7 @@ if ($id) {
     $itemid = 0; // Initialise itemid, as all files in category description has item id 0.
     $title = $strtitle;
     $fullname = $coursecat->get_formatted_name();
+
 } else {
     $parent = required_param('parent', PARAM_INT);
     $url->param('parent', $parent);
@@ -54,6 +55,7 @@ if ($id) {
     } else {
         $context = context_system::instance();
     }
+    navigation_node::override_active_url(new moodle_url('/course/editcategory.php', array('parent' => $parent)));
 
     $category = new stdClass();
     $category->id = 0;
@@ -65,12 +67,6 @@ if ($id) {
 }
 
 require_capability('moodle/category:manage', $context);
-
-// Page "Add new category" (with "Top" as a parent) does not exist in navigation.
-// We pretend we are on course management page.
-if ($id !== 0) {
-    navigation_node::override_active_url(new moodle_url('/course/management.php'));
-}
 
 $PAGE->set_context($context);
 $PAGE->set_url($url);

@@ -24,6 +24,7 @@
 require(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/locallib.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/filter_form.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 require_login(SITEID, false);
 require_capability('tool/customlang:edit', context_system::instance());
@@ -32,11 +33,10 @@ $lng                    = required_param('lng', PARAM_LANG);
 $currentpage            = optional_param('p', 0, PARAM_INT);
 $translatorsubmitted    = optional_param('translatorsubmitted', 0, PARAM_BOOL);
 
-$PAGE->set_pagelayout('report'); // Allows for wide page contents.
-$PAGE->set_url('/admin/tool/customlang/edit.php', array('lng' => $lng));
-navigation_node::override_active_url(new moodle_url('/admin/tool/customlang/index.php'));
-$PAGE->set_title(get_string('pluginname', 'tool_customlang'));
-$PAGE->set_heading(get_string('pluginname', 'tool_customlang'));
+admin_externalpage_setup('toolcustomlang', '', null,
+    new moodle_url('/admin/tool/customlang/edit.php', array('lng' => $lng)),
+    array('pagelayout' => 'report')); // Hack: allows for wide page contents.
+
 $PAGE->requires->js_init_call('M.tool_customlang.init_editor', array(), true);
 
 if (empty($lng)) {

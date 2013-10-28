@@ -14,6 +14,7 @@ $PAGE->set_url('/admin/settings.php', array('section' => $section));
 $PAGE->set_pagetype('admin-setting-' . $section);
 $PAGE->set_pagelayout('admin');
 $PAGE->navigation->clear_cache();
+navigation_node::require_admin_tree();
 
 $adminroot = admin_get_root(); // need all settings
 $settingspage = $adminroot->locate($section, true);

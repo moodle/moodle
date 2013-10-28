@@ -28,23 +28,25 @@ require_once($CFG->dirroot . '/course/lib.php');
 $id = required_param('id', PARAM_INT); // Course ID.
 $delete = optional_param('delete', '', PARAM_ALPHANUM); // Confirmation hash.
 
-$PAGE->set_url('/course/delete.php', array('id' => $id));
-$PAGE->set_context(context_system::instance());
-require_login();
-
 $course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 $coursecontext = context_course::instance($course->id);
 
-if ((int)$SITE->id === (int)$course->id || !can_delete_course($id)) {
+require_login();
+
+if ($SITE->id == $course->id || !can_delete_course($id)) {
     // Can not delete frontpage or don't have permission to delete the course.
     print_error('cannotdeletecourse');
 }
 
+$categorycontext = context_coursecat::instance($course->category);
+$PAGE->set_url('/course/delete.php', array('id' => $id));
+$PAGE->set_context($categorycontext);
+$PAGE->set_pagelayout('admin');
+navigation_node::override_active_url(new moodle_url('/course/management.php', array('categoryid'=>$course->category)));
+
 $courseshortname = format_string($course->shortname, true, array('context' => $coursecontext));
 $coursefullname = format_string($course->fullname, true, array('context' => $coursecontext));
 $categoryurl = new moodle_url('/course/management.php', array('categoryid' => $course->category));
-
-navigation_node::override_active_url(new moodle_url('/course/management.php'));
 
 // Check if we've got confirmation.
 if ($delete === md5($course->timemodified)) {

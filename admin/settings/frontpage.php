@@ -69,29 +69,6 @@ if (!during_initial_install()) { //do not use during installation
         }
         $temp->add(new admin_setting_configselect('defaultfrontpageroleid', new lang_string('frontpagedefaultrole', 'admin'), '', $defaultfrontpageroleid, $options));
 
-
         $ADMIN->add('frontpage', $temp);
-
-        $ADMIN->add('frontpage', new admin_externalpage('frontpageroles', new lang_string('frontpageroles', 'admin'), "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=" . $frontpagecontext->id, 'moodle/role:assign', false, $frontpagecontext));
-
-        $ADMIN->add('frontpage', new admin_externalpage('frontpagefilters', new lang_string('frontpagefilters', 'admin'), "$CFG->wwwroot/filter/manage.php?contextid=" . $frontpagecontext->id, 'moodle/filter:manage', false, $frontpagecontext));
-
-        $ADMIN->add('frontpage', new admin_externalpage('frontpagebackup', new lang_string('frontpagebackup', 'admin'), $CFG->wwwroot.'/backup/backup.php?id='.SITEID, 'moodle/backup:backupcourse', false, $frontpagecontext));
-
-        $ADMIN->add('frontpage', new admin_externalpage('frontpagerestore', new lang_string('frontpagerestore', 'admin'), $CFG->wwwroot.'/backup/restorefile.php?contextid='.$frontpagecontext->id, 'moodle/restore:restorecourse', false, $frontpagecontext));
-
-        $questioncapabilities = array(
-                'moodle/question:add',
-                'moodle/question:editmine',
-                'moodle/question:editall',
-                'moodle/question:viewmine',
-                'moodle/question:viewall',
-                'moodle/question:movemine',
-                'moodle/question:moveall');
-        $ADMIN->add('frontpage', new admin_externalpage('frontpagequestions', new lang_string('frontpagequestions', 'admin'), $CFG->wwwroot.'/question/edit.php?courseid='.SITEID, $questioncapabilities, false, $frontpagecontext));
-
-        if (!empty($SITE->legacyfiles) and $SITE->legacyfiles === 2) {
-            $ADMIN->add('frontpage', new admin_externalpage('sitefiles', new lang_string('sitelegacyfiles'), $CFG->wwwroot . '/files/index.php?id=' . SITEID, 'moodle/course:managefiles', false, $frontpagecontext));
-        }
     }
 }

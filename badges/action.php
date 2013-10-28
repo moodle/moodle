@@ -44,12 +44,15 @@ $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type));
 if ($badge->type == BADGE_TYPE_COURSE) {
     require_login($badge->courseid);
     $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type, 'id' => $badge->courseid));
+    $PAGE->set_pagelayout('standard');
+    navigation_node::override_active_url($navurl);
+} else {
+    $PAGE->set_pagelayout('admin');
+    navigation_node::override_active_url($navurl, true);
 }
 
 $PAGE->set_context($context);
 $PAGE->set_url('/badges/action.php', array('id' => $badge->id));
-$PAGE->set_pagelayout('standard');
-navigation_node::override_active_url($navurl);
 
 if ($return !== 0) {
     $returnurl = new moodle_url($return);

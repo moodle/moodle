@@ -182,6 +182,8 @@ var NODETYPE = {
     CUSTOM : 60,
     // @type int Setting = 70
     SETTING : 70,
+    // @type int site administration = 71
+    SITEADMIN : 71,
     // @type int User context = 80
     USER : 80,
     // @type int Container = 90
@@ -258,6 +260,26 @@ TREE.prototype = {
             }).wire();
             M.block_navigation.expandablebranchcount++;
             this.branches[branch.get('id')] = branch;
+        }
+        // Create siteadmin branch.
+        if (window.siteadminexpansion) {
+            var siteadminbranch = new BRANCH({
+                tree: this,
+                branchobj: window.siteadminexpansion,
+                overrides : {
+                    expandable : true,
+                    children : [],
+                    haschildren : true
+                }
+            }).wire();
+            M.block_navigation.expandablebranchcount++;
+            this.branches[siteadminbranch.get('id')] = siteadminbranch;
+            // Remove link on site admin with JS to keep old UI.
+            var siteadminlinknode = siteadminbranch.node.get('childNodes').item(0);
+            if (siteadminlinknode) {
+                var siteadminnode = Y.Node.create('<span tabindex="0">'+siteadminlinknode.get('innerHTML')+'</span>');
+                siteadminbranch.node.replaceChild(siteadminnode, siteadminlinknode);
+            }
         }
         if (M.block_navigation.expandablebranchcount > 0) {
             // Delegate some events to handle AJAX loading.
@@ -588,7 +610,13 @@ BRANCH.prototype = {
             instance : this.get('tree').get('instance')
         };
 
-        Y.io(M.cfg.wwwroot+'/lib/ajax/getnavbranch.php', {
+        var ajaxfile = '/lib/ajax/getnavbranch.php';
+        // For siteadmin navigation get tree from getsiteadminbranch.php.
+        if (this.get('type') === NODETYPE.SITEADMIN) {
+            ajaxfile = '/lib/ajax/getsiteadminbranch.php';
+        }
+
+        Y.io(M.cfg.wwwroot + ajaxfile, {
             method:'POST',
             data:  build_querystring(params),
             on: {

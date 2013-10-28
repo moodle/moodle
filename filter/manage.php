@@ -57,7 +57,7 @@ $isfrontpage = ($context->contextlevel == CONTEXT_COURSE && $context->instanceid
 $contextname = $context->get_context_name();
 
 if ($context->contextlevel == CONTEXT_COURSECAT) {
-    $heading = "$SITE->fullname: ".get_string("categories");
+    $heading = $SITE->fullname;
 } else if ($context->contextlevel == CONTEXT_COURSE) {
     $heading = $course->fullname;
 } else if ($context->contextlevel == CONTEXT_MODULE) {
@@ -119,16 +119,11 @@ if ($forfilter) {
 }
 $straction = get_string('filters', 'admin'); // Used by tabs.php
 
-/// Print the header and tabs
-if ($isfrontpage) {
-    admin_externalpage_setup('frontpagefilters');
-    echo $OUTPUT->header();
-} else {
-    $PAGE->set_cacheable(false);
-    $PAGE->set_title($title);
-    $PAGE->set_pagelayout('admin');
-    echo $OUTPUT->header();
-}
+// Print the header and tabs.
+$PAGE->set_cacheable(false);
+$PAGE->set_title($title);
+$PAGE->set_pagelayout('admin');
+echo $OUTPUT->header();
 
 /// Print heading.
 echo $OUTPUT->heading_with_help($title, 'filtersettings', 'filters');
