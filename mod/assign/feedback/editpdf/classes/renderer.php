@@ -198,7 +198,16 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
                                        'pageheader');
         $body = $pageheader;
 
-        $loading = $this->pix_icon('i/loading', get_string('loadingeditor', 'assignfeedback_editpdf'), 'moodle', array('class'=>'loading'));
+        // Loading progress bar.
+        $progressbar = html_writer::div('', 'bar', array('style' => 'width: 0%'));
+        $progressbar = html_writer::div($progressbar, 'progress progress-info progress-striped active',
+            array('title' => get_string('loadingeditor', 'assignfeedback_editpdf'),
+                  'role'=> 'progressbar', 'aria-valuenow' => 0, 'aria-valuemin' => 0,
+                  'aria-valuemax' => 100));
+        $progressbarlabel = html_writer::div(get_string('generatingpdf', 'assignfeedback_editpdf'),
+            'progressbarlabel');
+        $loading = html_writer::div($progressbar . $progressbarlabel, 'loading');
+
         $canvas = html_writer::div($loading, 'drawingcanvas');
         $body .= html_writer::div($canvas, 'drawingregion');
 
@@ -214,7 +223,8 @@ class assignfeedback_editpdf_renderer extends plugin_renderer_base {
                                     'userid'=>$widget->userid,
                                     'attemptnumber'=>$widget->attemptnumber,
                                     'stampfiles'=>$widget->stampfiles,
-                                    'readonly'=>$widget->readonly));
+                                    'readonly'=>$widget->readonly,
+                                    'pagetotal'=>$widget->pagetotal));
 
         $this->page->requires->yui_module('moodle-assignfeedback_editpdf-editor',
                                           'M.assignfeedback_editpdf.editor.init',

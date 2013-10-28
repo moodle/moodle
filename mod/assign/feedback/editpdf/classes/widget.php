@@ -47,6 +47,8 @@ class assignfeedback_editpdf_widget implements renderable {
     public $stampfiles = array();
     /** @var bool $readonly */
     public $readonly = true;
+    /** @var integer $pagetotal */
+    public $pagetotal = 0;
 
     /**
      * Constructor
@@ -57,8 +59,10 @@ class assignfeedback_editpdf_widget implements renderable {
      * @param string $downloadfilename - Name of the generated pdf.
      * @param string[] $stampfiles - The file names of the stamps.
      * @param bool $readonly - Show the readonly interface (no tools).
+     * @param integer $pagetotal - The total number of pages.
      */
-    public function __construct($assignment, $userid, $attemptnumber, $downloadurl, $downloadfilename, $stampfiles, $readonly) {
+    public function __construct($assignment, $userid, $attemptnumber, $downloadurl,
+                                $downloadfilename, $stampfiles, $readonly, $pagetotal) {
         $this->assignment = $assignment;
         $this->userid = $userid;
         $this->attemptnumber = $attemptnumber;
@@ -66,5 +70,6 @@ class assignfeedback_editpdf_widget implements renderable {
         $this->downloadfilename = $downloadfilename;
         $this->stampfiles = $stampfiles;
         $this->readonly = $readonly;
+        $this->pagetotal = $pagetotal;
     }
 }
