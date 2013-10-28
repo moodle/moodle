@@ -243,6 +243,47 @@ class document_services {
     }
 
     /**
+     * This function will return the number of pages of a pdf.
+     * @param int|\assign $assignment
+     * @param int $userid
+     * @param int $attemptnumber (-1 means latest attempt)
+     * @return int number of pages
+     */
+    public static function page_number_for_attempt($assignment, $userid, $attemptnumber) {
+        global $CFG;
+
+        require_once($CFG->libdir . '/pdflib.php');
+
+        $assignment = self::get_assignment_from_param($assignment);
+
+        if (!$assignment->can_view_submission($userid)) {
+            \print_error('nopermission');
+        }
+
+        // Get a combined pdf file from all submitted pdf files.
+        $file = self::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
+        if (!$file) {
+            \print_error('Could not generate combined pdf.');
+        }
+
+        // Store the combined pdf file somewhere to be opened by tcpdf.
+        $tmpdir = \make_temp_directory('assignfeedback_editpdf/pagetotal/'
+            . self::hash($assignment, $userid, $attemptnumber));
+        $combined = $tmpdir . '/' . self::COMBINED_PDF_FILENAME;
+        $file->copy_content_to($combined); // Copy the file.
+
+        // Get the total number of pages.
+        $pdf = new pdf();
+        $pagecount = $pdf->set_pdf($combined);
+
+        // Delete temporary folders and files.
+        @unlink($combined);
+        @rmdir($tmpdir);
+
+        return $pagecount;
+    }
+
+    /**
      * This function will generate and return a list of the page images from a pdf.
      * @param int|\assign $assignment
      * @param int $userid
@@ -263,7 +304,7 @@ class document_services {
         // Need to generate the page images - first get a combined pdf.
         $file = self::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
         if (!$file) {
-            throw \moodle_exception('Could not generate combined pdf.');
+            throw new \moodle_exception('Could not generate combined pdf.');
         }
 
         $tmpdir = \make_temp_directory('assignfeedback_editpdf/pageimages/' . self::hash($assignment, $userid, $attemptnumber));
@@ -275,14 +316,8 @@ class document_services {
         $pdf->set_image_folder($tmpdir);
         $pagecount = $pdf->set_pdf($combined);
 
-        $i = 0;
-        $images = array();
-        for ($i = 0; $i < $pagecount; $i++) {
-            $images[$i] = $pdf->get_image($i);
-        }
         $grade = $assignment->get_user_grade($userid, true, $attemptnumber);
 
-        $files = array();
         $record = new \stdClass();
         $record->contextid = $assignment->get_context()->id;
         $record->component = 'assignfeedback_editpdf';
@@ -291,11 +326,14 @@ class document_services {
         $record->filepath = '/';
         $fs = \get_file_storage();
 
-        foreach ($images as $index => $image) {
+        $files = array();
+        for ($i = 0; $i < $pagecount; $i++) {
+            $image = $pdf->get_image($i);
             $record->filename = basename($image);
-            $files[$index] = $fs->create_file_from_pathname($record, $tmpdir . '/' . $image);
+            $files[$i] = $fs->create_file_from_pathname($record, $tmpdir . '/' . $image);
             @unlink($tmpdir . '/' . $image);
         }
+
         @unlink($combined);
         @rmdir($tmpdir);
 
@@ -407,7 +445,7 @@ class document_services {
         // Need to generate the page images - first get a combined pdf.
         $file = self::get_combined_pdf_for_attempt($assignment, $userid, $attemptnumber);
         if (!$file) {
-            throw \moodle_exception('Could not generate combined pdf.');
+            throw new \moodle_exception('Could not generate combined pdf.');
         }
 
         $tmpdir = \make_temp_directory('assignfeedback_editpdf/final/' . self::hash($assignment, $userid, $attemptnumber));
