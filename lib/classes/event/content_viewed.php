@@ -87,7 +87,7 @@ abstract class content_viewed extends base {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed content ' . $this->get_url();
+        return 'User with id ' . $this->userid . ' viewed content';
     }
 
     /**

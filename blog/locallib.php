@@ -265,8 +265,7 @@ class blog_entry implements renderable {
         // Trigger an event for the new entry.
         $event = \core\event\blog_entry_created::create(array(
             'objectid'      => $this->id,
-            'relateduserid' => $this->userid,
-            'other'         => array('subject' => $this->subject)
+            'relateduserid' => $this->userid
         ));
         $event->set_custom_data($this);
         $event->trigger();
@@ -308,8 +307,7 @@ class blog_entry implements renderable {
 
         $event = \core\event\blog_entry_updated::create(array(
             'objectid'      => $entry->id,
-            'relateduserid' => $entry->userid,
-            'other'         => array('subject' => $entry->subject)
+            'relateduserid' => $entry->userid
         ));
         $event->set_custom_data($entry);
         $event->trigger();
@@ -333,9 +331,8 @@ class blog_entry implements renderable {
 
         $event = \core\event\blog_entry_deleted::create(array(
             'objectid'      => $this->id,
-            'relateduserid' => $this->userid,
-            'other'         => array('record' => (array) $record)
-        ));
+            'relateduserid' => $this->userid
+            ));
         $event->add_record_snapshot("post", $record);
         $event->set_custom_data($this);
         $event->trigger();
