@@ -1882,6 +1882,13 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($user, $event);
         $expectedlogdata = array(SITEID, 'user', 'delete', "view.php?id=$user->id", $user->firstname.' '.$user->lastname);
         $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], $user->username);
+        $this->assertSame($eventdata['other']['email'], $user->email);
+        $this->assertSame($eventdata['other']['idnumber'], $user->idnumber);
+        $this->assertSame($eventdata['other']['picture'], $user->picture);
+        $this->assertSame($eventdata['other']['mnethostid'], $user->mnethostid);
+        $this->assertEquals($user, $event->get_record_snapshot('user', $event->objectid));
 
         // Try invalid params.
         $record = new stdClass();
