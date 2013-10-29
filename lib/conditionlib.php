@@ -1184,10 +1184,12 @@ abstract class condition_info_base {
     private function get_cached_grade_score($gradeitemid, $grabthelot=false, $userid=0) {
         global $USER, $DB, $SESSION;
         if ($userid==0 || $userid==$USER->id) {
-            // For current user, go via cache in session
-            if (empty($SESSION->gradescorecache) || $SESSION->gradescorecacheuserid!=$USER->id) {
+            // For current user, go via cache in session. Force reset it every 10 minutes.
+            if (empty($SESSION->gradescorecache) || $SESSION->gradescorecacheuserid!=$USER->id
+                    || !isset($SESSION->gradescorecachereset) || $SESSION->gradescorecachereset+600<time()) {
                 $SESSION->gradescorecache = array();
                 $SESSION->gradescorecacheuserid = $USER->id;
+                $SESSION->gradescorecachereset = time();
             }
             if (!array_key_exists($gradeitemid, $SESSION->gradescorecache)) {
                 if ($grabthelot) {
