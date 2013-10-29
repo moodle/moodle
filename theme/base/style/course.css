@@ -47,14 +47,9 @@
 .section .activity .moodle-actionmenu[data-enhanced] .menu > li > * {
     display: block;
 }
-.section .activity .moodle-actionmenu .menubar > li > img {
-    margin-right: 5px;
-    vertical-align: text-bottom;
-    padding:0 3px 0 0;
-}
 .section .activity .moodle-actionmenu[data-enhanced] .menu {margin-left: -2.8em;}
 .section img.iconsmall {
-    vertical-align: middle;
+    vertical-align: text-bottom;
     width: 16px;
     height: 16px;
     margin: 4px;
@@ -62,7 +57,7 @@
 .section .editing_title img.iconsmall {
     width: 12px;
     height: 12px;
-    margin: 8px 8px 0 0;
+    margin: 4px 8px 4px 0;
 }
 
 .section .activity.editor_displayed a.editing_title,

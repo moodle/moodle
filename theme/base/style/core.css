@@ -1481,16 +1481,12 @@ img#persona_signin { cursor: pointer; }
 
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu {
     display: block;
-    vertical-align: bottom;
     margin-left: 4px;
     padding-left: 4px;
 }
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .iconsmall {
-    margin: 8px 4px 0px 4px;
-}
-
-.jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .iconsmall {
-    padding-left: 0;
+    margin: 4px 8px 4px 0px;
+    padding: 4px;
 }
 
 .jsenabled .moodle-actionmenu[data-enhanced] .toggle-display {opacity: 1;filter: alpha(opacity=100);}
