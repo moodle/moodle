@@ -16,22 +16,71 @@
 .course-content ul.section { margin: 1em;}
 .sitetopic .section .activity img.activityicon,
 .course-content .section .activity img.activityicon {
-    vertical-align: middle;
+    vertical-align: text-bottom;
     margin-right: 3px;
     margin-left: 3px;
     width: 24px;
     height: 24px;
 }
-.section .activity .activityinstance .instancename {
-    vertical-align: bottom;
-}
+
 .sitetopic .section .activity .activityinstance,
 .course-content .section .activity .activityinstance,
+.section .activity .activityinstance {
+    display: inline-block;
+}
+
+.section .activity .editing_move {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.dir-rtl .section .activity .editing_move {
+    left: auto;
+    right: 0;
+}
+
+.section .activity .mod-indent {
+    padding-left: 24px;
+}
+
+.dir-rtl .section .activity .mod-indent {
+    padding-left: auto;
+    padding-right: 24px;
+}
+
+.section .activity .actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.dir-rtl .section .activity .actions {
+    left: 0;
+    right: auto;
+}
+
 .sitetopic .section .activity .activityinstance div,
 .course-content .section .activity .activityinstance div { display: inline;}
 .course-content .section .activity .activityinstance form { display: inline;}
 .sitetopic .section .activity .activityinstance,
-.course-content .section .activity .activityinstance { padding-right: 1em; }
+.course-content .section .activity .activityinstance {
+    height: 2em;
+}
+
+.editing .sitetopic .section .activity .activityinstance,
+.editing .course-content .section .activity .activityinstance {
+    padding-right: 200px;
+    height: 2em;
+    display: table-cell;
+}
+
+.dir-rtl.editing .sitetopic .section .activity .activityinstance,
+.dir-rtl.editing .course-content .section .activity .activityinstance {
+    padding-left: 200px;
+    padding-right: auto;
+}
+
 .course-content .section .activity .filler {
     width: 16px;
     height: 16px;
@@ -43,7 +92,10 @@
 .dir-rtl .sitetopic .section .activity .activityinstance,
 .dir-rtl .course-content .section .activity .activityinstance { padding-right: 0; padding-left: 3em;}
 .sitetopic .section .activity .commands,
-.course-content .section .activity .commands { white-space: nowrap; display: inline-block; padding: 0 3em 0 0;}
+.course-content .section .activity .commands {
+    white-space: nowrap;
+    display: inline-block;
+}
 .dir-rtl .sitetopic .section .activity .commands,
 .dir-rtl .course-content .section .activity .commands { padding: 0 0 0 3em;}
 
@@ -122,9 +174,7 @@
 
 .path-site li.activity > div,
 .path-course-view li.activity > div {position:relative;}
-.path-course-view li.activity span.autocompletion,
 .path-course-view li.activity form.togglecompletion {position: absolute; top: 0; right: .2em;}
-.path-course-view li.activity span.autocompletion img,
 .path-course-view li.activity form.togglecompletion input {position:absolute; top: .25em; right: 0px;}
 .path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute; right: 22px; top: 5px; width: 16px; height: 16px; background: url([[pix:i/ajaxloader]]) no-repeat;}
 .path-course-view li.activity form.togglecompletion div {display:inline;}

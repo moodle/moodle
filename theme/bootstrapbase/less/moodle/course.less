@@ -49,6 +49,28 @@
             left: 0;
             position: absolute;
         }
+
+        .editing_move {
+            /* Move the move icon to the start of the line */
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .mod-indent {
+            /**
+             * Add appropriate padding such that nothing overlaps the
+             * absolute positioned move icon.
+             */
+            padding-left: 32px;
+        }
+
+        /* The command block for each activity */
+        .actions {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
     }
 
     .filler {
@@ -76,6 +98,35 @@
     }
 }
 
+.dir-rtl .section {
+    .activity {
+        .spinner {
+            left: 0;
+        }
+
+        .editing_move {
+            /* Move the move icon to the start of the line */
+            left: auto;
+            right: 0;
+        }
+
+        .mod-indent {
+            /**
+             * Add appropriate padding such that nothing overlaps the
+             * absolute positioned move icon.
+             */
+            padding-left: auto;
+            padding-right: 32px;
+        }
+
+        /* The command block for each activity */
+        .actions {
+            left: 0;
+            right: auto;
+        }
+    }
+}
+
 .activity img.activityicon {
     margin-right: 6px;
     vertical-align: text-bottom;
@@ -88,9 +139,30 @@
 .section .activity .activityinstance div {
     display: inline-block;
 }
-.editing .section .activity .activityinstance {
-    min-width: 40%;
+.editing {
+    .section {
+        .activity {
+            .activityinstance {
+                min-width: 40%;
+                display: table-cell;
+                padding-right: 200px;
+                min-height: 2em;
+            }
+        }
+    }
 }
+
+.dir-rtl.editing {
+    .section {
+        .activity {
+            .activityinstance {
+                padding-left: 200px;
+                padding-right: 0;
+            }
+        }
+    }
+}
+
 .editing_show + .editing_assign,
 .editing_hide + .editing_assign {
     // if roles icon missing, add space
