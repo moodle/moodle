@@ -4852,10 +4852,6 @@ function delete_course($courseorid, $showfeedback = true) {
     // Delete the course and related context instance.
     context_helper::delete_instance(CONTEXT_COURSE, $courseid);
 
-    // We will update the course's timemodified, as it will be passed to the course_deleted event,
-    // which should know about this updated property, as this event is meant to pass the full course record.
-    $course->timemodified = time();
-
     $DB->delete_records("course", array("id" => $courseid));
     $DB->delete_records("course_format_options", array("courseid" => $courseid));
 
@@ -4863,8 +4859,11 @@ function delete_course($courseorid, $showfeedback = true) {
     $event = \core\event\course_deleted::create(array(
         'objectid' => $course->id,
         'context' => $context,
-        'other' => array('shortname' => $course->shortname,
-                         'fullname' => $course->fullname)
+        'other' => array(
+            'shortname' => $course->shortname,
+            'fullname' => $course->fullname,
+            'idnumber' => $course->idnumber
+            )
     ));
     $event->add_record_snapshot('course', $course);
     $event->trigger();
