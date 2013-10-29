@@ -3239,21 +3239,21 @@ class action_menu implements renderable {
         $pixicon = $this->actionicon;
         $linkclasses = array('toggle-display');
 
+        $title = '';
         if (!empty($this->menutrigger)) {
-            // Chagne the pixicon.
+            // Change the pixicon.
             $pixicon = new pix_icon(
                 't/dropdown',
                 '',
                 'moodle',
                 array('class' => 'iconsmall', 'title' => '')
             );
-            $title = $this->menutrigger;
             $linkclasses[] = 'textmenu';
         } else {
             $title = new lang_string('actions', 'moodle');
             $this->actionicon = new pix_icon(
                 'i/dropdown',
-                $title,
+                '',
                 'moodle',
                 array('class' => 'iconsmall', 'title' => '')
             );
