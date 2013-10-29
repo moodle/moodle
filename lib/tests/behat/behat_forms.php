@@ -61,6 +61,30 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Try a few times to set a field value as it may not be visible yet (TinyMCE).
+     *
+     * @param string $field
+     * @param string $value
+     */
+    public function set_field_value($field, $value) {
+        $lastexception = null;
+        // Spin on this - certain fields, e.g. text editors (I'm looking at you TinyMCE) load slowly and randomly.
+        $retries = 5;
+        while ($retries > 0) {
+            try {
+                $field->set_value($value);
+                return;
+            } catch (Exception $e) {
+                usleep(100000);
+                $retries--;
+                $lastexception = $e;
+            }
+        }
+        // If we timeout - throw the last exception.
+        throw $lastexception;
+    }
+
+    /**
      * Fills a moodle form with field/value data.
      *
      * @Given /^I fill the moodle form with:$/
@@ -84,7 +108,7 @@ class behat_forms extends behat_base {
             $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
 
             // Delegates to the field class.
-            $field->set_value($value);
+            $this->set_field_value($field, $value);
         }
     }
 

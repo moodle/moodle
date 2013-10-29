@@ -222,42 +222,32 @@ class behat_hooks extends behat_base {
     }
 
     /**
-     * Checks that all DOM is ready.
+     * Wait for JS to comlete.
      *
      * Executed only when running against a real browser.
      *
-     * @AfterStep @javascript
+     * @BeforeStep @javascript
      */
-    public function after_step_javascript($event) {
-
-        // If it doesn't have definition or it fails there is no need to check it.
-        if ($event->getResult() != StepEvent::PASSED ||
-            !$event->hasDefinition()) {
-            return;
-        }
-
-       // Wait until the page is ready.
-       // We are already checking that we use a JS browser, this could
-       // change in case we use another JS driver.
-       try {
-
-            // Safari and Internet Explorer requires time between steps,
-            // otherwise Selenium tries to click in the previous page's DOM.
-            if ($this->getSession()->getDriver()->getBrowserName() == 'safari' ||
-                    $this->getSession()->getDriver()->getBrowserName() == 'internet explorer') {
-                $this->getSession()->wait(self::TIMEOUT * 1000, false);
-
-            } else {
-                // With other browsers we just wait for the DOM ready.
-                $this->getSession()->wait(self::TIMEOUT * 1000, '(document.readyState === "complete")');
+    public function before_step_javascript($event) {
+        $lastpending = '';
+        // Wait for all pending JS to complete (max 10 seconds).
+        for ($i = 0; $i < 100; $i++) {
+            $pending = '';
+            try {
+                $pending = ($this->getSession()->evaluateScript('return (M && M.util && M.util.pending_js) ? M.util.pending_js.join(":") : "not loaded";'));
+            } catch (NoSuchWindow $nsw) {
+                // No javascript is running if there is no window right?
+                $pending = '';
             }
-
-        } catch (NoSuchWindow $e) {
-            // If we were interacting with a popup window it will not exists after closing it.
-        } catch (UnknownError $e) {
-            // Custom exception to provide more feedback about possible solutions.
-            $this->throw_unknown_exception($e);
+            if ($pending === '') {
+                return;
+            }
+            $lastpending = $pending;
+            // 0.1 seconds.
+            usleep(100000);
         }
+        // Timeout waiting for JS to complete.
+        // We could throw an exception here - as this is a likely indicator of slow JS or JS errors.
     }
 
     /**
