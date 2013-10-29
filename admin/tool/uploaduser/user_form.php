@@ -376,11 +376,14 @@ class admin_uploaduser_form2 extends moodleform {
         // look for other required data
         if ($optype != UU_USER_UPDATE) {
             $requiredusernames = useredit_get_required_name_fields();
-            $errors['uutype'] = '';
+            $missing = array();
             foreach ($requiredusernames as $requiredusername) {
                 if (!in_array($requiredusername, $columns)) {
-                    $errors['uutype'] .= ' ' . get_string('missingfield', 'error', $requiredusername);
+                    $missing[] = get_string('missingfield', 'error', $requiredusername);;
                 }
+            }
+            if ($missing) {
+                $errors['uutype'] = implode('<br />',  $missing);
             }
             if (!in_array('email', $columns) and empty($data['email'])) {
                 $errors['email'] = get_string('requiredtemplate', 'tool_uploaduser');
