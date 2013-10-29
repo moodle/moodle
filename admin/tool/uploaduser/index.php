@@ -85,7 +85,7 @@ $today = time();
 $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 
 // array of all valid fields for validation
-$STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
+$STD_FIELDS = array('id', 'username', 'email',
         'city', 'country', 'lang', 'timezone', 'mailformat',
         'maildisplay', 'maildigest', 'htmleditor', 'autosubscribe',
         'institution', 'department', 'idnumber', 'skype',
@@ -97,6 +97,8 @@ $STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
         'deleted',     // 1 means delete user
         'mnethostid',  // Can not be used for adding, updating or deleting of users - only for enrolments, groups, cohorts and suspending.
     );
+// Include all name fields.
+$STD_FIELDS = array_merge($STD_FIELDS, get_all_user_name_fields());
 
 $PRF_FIELDS = array();
 
