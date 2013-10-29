@@ -1229,6 +1229,24 @@ abstract class condition_info_base {
     }
 
     /**
+     * Called by grade code to inform the completion system when a grade has
+     * been changed. Grades can be used to determine condition for
+     * the course-module or section.
+     *
+     * Note that this function may be called twice for one changed grade object.
+     *
+     * @param grade_grade $grade
+     * @param bool $deleted
+     */
+    public static function inform_grade_changed($grade, $deleted) {
+        global $USER, $SESSION;
+        // In case of self-grading we can purge cache immediately.
+        if ($USER->id == $grade->userid) {
+            unset($SESSION->gradescorecache[$grade->itemid]);
+        }
+    }
+
+    /**
      * Returns true if a field meets the required conditions, false otherwise.
      *
      * @param string $operator the requirement/condition
