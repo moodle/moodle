@@ -1410,6 +1410,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
         position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node = Y.Node.create('<div/>');
         node.setStyles({
+            'position': 'absolute',
             'display': 'inline-block',
             'backgroundImage': 'url(' + this.editor.get_stamp_image_url(this.path) + ')',
             'width': (this.endx - this.x),
@@ -1452,6 +1453,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
 
         node = Y.Node.create('<div/>');
         node.setStyles({
+            'position': 'absolute',
             'display': 'inline-block',
             'backgroundImage': 'url(' + this.editor.get_stamp_image_url(edit.stamp) + ')',
             'width': bounds.width,
@@ -2308,6 +2310,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         });
 
         drawingregion.append(container);
+        container.setStyle('position', 'absolute');
         container.setX(position.x);
         container.setY(position.y);
         drawable.nodes.push(container);

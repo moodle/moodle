@@ -189,6 +189,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         });
 
         drawingregion.append(container);
+        container.setStyle('position', 'absolute');
         container.setX(position.x);
         container.setY(position.y);
         drawable.nodes.push(container);
