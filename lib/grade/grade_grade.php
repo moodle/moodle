@@ -772,7 +772,7 @@ class grade_grade extends grade_object {
      * @param bool $deleted True if grade was actually deleted
      */
     function notify_changed($deleted) {
-        global $CFG,$COURSE, $DB;
+        global $CFG;
 
         // Ignore during restore
         // TODO There should be a proper way to determine when we are in restore
@@ -805,11 +805,7 @@ class grade_grade extends grade_object {
         }
 
         // Use $COURSE if available otherwise get it via item fields
-        if(!empty($COURSE) && $COURSE->id == $this->grade_item->courseid) {
-            $course = $COURSE;
-        } else {
-            $course = $DB->get_record('course', array('id'=>$this->grade_item->courseid));
-        }
+        $course = get_course($this->grade_item->courseid, false);
 
         // Bail out if completion is not enabled for course
         $completion = new completion_info($course);
