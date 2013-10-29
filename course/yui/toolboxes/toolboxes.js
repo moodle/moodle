@@ -66,12 +66,14 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         /**
          * Send a request using the REST API
          *
+         * @method send_request
          * @param data The data to submit
          * @param statusspinner (optional) A statusspinner which may contain a section loader
+         * @param {Function} success_callback The callback to use on success
          * @param optionalconfig (optional) Any additional configuration to submit
-         * @return response responseText field from responce
+         * @return response responseText field from response - please use success_callback instead
          */
-        send_request : function(data, statusspinner, optionalconfig) {
+        send_request : function(data, statusspinner, success_callback, optionalconfig) {
             // Default data structure
             if (!data) {
                 data = {};
@@ -101,6 +103,12 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                                 new M.core.ajaxException(responsetext);
                             }
                         } catch (e) {}
+
+                        // Run the callback if we have one.
+                        if (success_callback) {
+                            Y.bind(success_callback, this, responsetext)();
+                        }
+
                         if (statusspinner) {
                             window.setTimeout(function() {
                                 statusspinner.hide();
@@ -114,8 +122,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                         new M.core.ajaxException(response);
                     }
                 },
-                context: this,
-                sync: true
+                context: this
             };
 
             // Apply optional config
@@ -579,52 +586,55 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                     'class'   : 'resource',
                     'field'   : 'gettitle',
                     'id'      : activityid
-                },
-                response = this.send_request(data);
+                };
 
-            if (M.core.actionmenu && M.core.actionmenu.instance) {
-                M.core.actionmenu.instance.hideMenu();
-            }
-
-            // Try to retrieve the existing string from the server
-            if (response.instancename) {
-                titletext = response.instancename;
-            }
-
-            // Create the editor and submit button
-            var editform = Y.Node.create('<form action="#" />');
-            var editinstructions = Y.Node.create('<span class="'+CSS.EDITINSTRUCTIONS+'" id="id_editinstructions" />')
-                .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
-            var editor = Y.Node.create('<input name="title" type="text" class="'+CSS.TITLEEDITOR+'" />').setAttrs({
-                'value' : titletext,
-                'autocomplete' : 'off',
-                'aria-describedby' : 'id_editinstructions',
-                'maxLength' : '255'
-            });
-
-            // Clear the existing content and put the editor in
-            editform.appendChild(activity.one(SELECTOR.ACTIVITYICON).cloneNode());
-            editform.appendChild(editor);
-            editform.setData('anchor', anchor);
-            anchor.replace(editform);
-            activity.one('div').appendChild(editinstructions);
+            // Prevent the default actions.
             ev.preventDefault();
 
-            // We hide various components whilst editing:
-            activity.addClass(CSS.EDITINGTITLE);
+            this.send_request(data, null, function(response) {
+                if (M.core.actionmenu && M.core.actionmenu.instance) {
+                    M.core.actionmenu.instance.hideMenu();
+                }
 
-            // Focus and select the editor text
-            editor.focus().select();
+                // Try to retrieve the existing string from the server
+                if (response.instancename) {
+                    titletext = response.instancename;
+                }
 
-            // Cancel the edit if we lose focus or the escape key is pressed.
-            thisevent = editor.on('blur', this.edit_title_cancel, this, activity, false);
-            this.edittitleevents.push(thisevent);
-            thisevent = editor.on('key', this.edit_title_cancel, 'esc', this, activity, true);
-            this.edittitleevents.push(thisevent);
+                // Create the editor and submit button
+                var editform = Y.Node.create('<form action="#" />');
+                var editinstructions = Y.Node.create('<span class="'+CSS.EDITINSTRUCTIONS+'" id="id_editinstructions" />')
+                    .set('innerHTML', M.util.get_string('edittitleinstructions', 'moodle'));
+                var editor = Y.Node.create('<input name="title" type="text" class="'+CSS.TITLEEDITOR+'" />').setAttrs({
+                    'value' : titletext,
+                    'autocomplete' : 'off',
+                    'aria-describedby' : 'id_editinstructions',
+                    'maxLength' : '255'
+                });
 
-            // Handle form submission.
-            thisevent = editform.on('submit', this.edit_title_submit, this, activity, oldtitle);
-            this.edittitleevents.push(thisevent);
+                // Clear the existing content and put the editor in
+                editform.appendChild(activity.one(SELECTOR.ACTIVITYICON).cloneNode());
+                editform.appendChild(editor);
+                editform.setData('anchor', anchor);
+                anchor.replace(editform);
+                activity.one('div').appendChild(editinstructions);
+
+                // We hide various components whilst editing:
+                activity.addClass(CSS.EDITINGTITLE);
+
+                // Focus and select the editor text
+                editor.focus().select();
+
+                // Cancel the edit if we lose focus or the escape key is pressed.
+                thisevent = editor.on('blur', this.edit_title_cancel, this, activity, false);
+                this.edittitleevents.push(thisevent);
+                thisevent = editor.on('key', this.edit_title_cancel, 'esc', this, activity, true);
+                this.edittitleevents.push(thisevent);
+
+                // Handle form submission.
+                thisevent = editform.on('submit', this.edit_title_submit, this, activity, oldtitle);
+                this.edittitleevents.push(thisevent);
+            });
         },
 
         /**
@@ -650,10 +660,11 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                     'title'   : newtitle,
                     'id'      : Y.Moodle.core_course.util.cm.getId(activity)
                 };
-                var response = this.send_request(data, spinner);
-                if (response.instancename) {
-                    activity.one(SELECTOR.INSTANCENAME).setContent(response.instancename);
-                }
+                this.send_request(data, spinner, function(response) {
+                    if (response.instancename) {
+                        activity.one(SELECTOR.INSTANCENAME).setContent(response.instancename);
+                    }
+                });
             }
         },
 
@@ -822,23 +833,24 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var lightbox = M.util.add_lightbox(Y, section);
             lightbox.show();
 
-            var response = this.send_request(data, lightbox);
+            this.send_request(data, lightbox, function(response) {
+                var activities = section.all(SELECTOR.ACTIVITYLI);
+                activities.each(function(node) {
+                    var button;
+                    if (node.one(SELECTOR.SHOW)) {
+                        button = node.one(SELECTOR.SHOW);
+                    } else {
+                        button = node.one(SELECTOR.HIDE);
+                    }
+                    var activityid = Y.Moodle.core_course.util.cm.getId(node);
 
-            var activities = section.all(SELECTOR.ACTIVITYLI);
-            activities.each(function(node) {
-                if (node.one(SELECTOR.SHOW)) {
-                    var button = node.one(SELECTOR.SHOW);
-                } else {
-                    var button = node.one(SELECTOR.HIDE);
-                }
-                var activityid = Y.Moodle.core_course.util.cm.getId(node);
-
-                // NOTE: resourcestotoggle is returned as a string instead
-                // of a Number so we must cast our activityid to a String.
-                if (Y.Array.indexOf(response.resourcestotoggle, "" + activityid) != -1) {
-                    M.course.resource_toolbox.handle_resource_dim(button, node, action);
-                }
-            }, this);
+                    // NOTE: resourcestotoggle is returned as a string instead
+                    // of a Number so we must cast our activityid to a String.
+                    if (Y.Array.indexOf(response.resourcestotoggle, "" + activityid) !== -1) {
+                        M.course.resource_toolbox.handle_resource_dim(button, node, action);
+                    }
+                }, this);
+            });
         },
         toggle_highlight : function(e) {
             // Prevent the default button action
