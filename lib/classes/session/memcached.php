@@ -40,6 +40,13 @@ class memcached extends handler {
     protected $servers;
     /** @var string $prefix session key prefix  */
     protected $prefix;
+    /** @var int $acquiretimeout how long to wait for session lock */
+    protected $acquiretimeout = 120;
+    /**
+     * @var int $lockexpire how long to wait before expiring the lock so that other requests
+     * may continue execution, ignored if memcached <= 2.1.0.
+     */
+    protected $lockexpire = 7200;
 
     /**
      * Create new instance of handler.
@@ -64,6 +71,32 @@ class memcached extends handler {
         } else {
             $this->prefix = $CFG->session_memcached_prefix;
         }
+
+        if (!empty($CFG->session_memcached_acquire_lock_timeout)) {
+            $this->acquiretimeout = (int)$CFG->session_memcached_acquire_lock_timeout;
+        }
+
+        if (!empty($CFG->session_memcached_lock_expire)) {
+            $this->lockexpire = (int)$CFG->session_memcached_lock_expire;
+        }
+    }
+
+    /**
+     * Start the session.
+     * @return bool success
+     */
+    public function start() {
+        // NOTE: memcached <= 2.1.0 expires session locks automatically after max_execution_time,
+        //       this leads to major difference compared to other session drivers that timeout
+        //       and stop the second request execution instead.
+
+        $default = ini_get('max_execution_time');
+        set_time_limit($this->acquiretimeout);
+
+        $result = parent::start();
+
+        set_time_limit($default);
+        return $result;
     }
 
     /**
@@ -81,11 +114,14 @@ class memcached extends handler {
             throw new exception('sessionhandlerproblem', 'error', '', null, '$CFG->session_memcached_save_path must be specified in config.php');
         }
 
-        // NOTE: we cannot set any lock acquiring timeout here - bad luck.
         ini_set('session.save_handler', 'memcached');
         ini_set('session.save_path', $this->savepath);
         ini_set('memcached.sess_prefix', $this->prefix);
         ini_set('memcached.sess_locking', '1'); // Locking is required!
+
+        // Try to configure lock and expire timeouts - ignored if memcached <=2.1.0.
+        ini_set('memcached.sess_lock_max_wait', $this->acquiretimeout);
+        ini_set('memcached.sess_lock_expire', $this->lockexpire);
     }
 
     /**
