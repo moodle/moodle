@@ -246,12 +246,8 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        $this->setAdminUser();
-
-        $user = clone($USER);
-
-        // The USER variable no longer stores the password hash, so set it here.
-        $user->password = 'password';
+        $this->assertFalse(isloggedin());
+        $user = $DB->get_record('user', array('username'=>'admin'));
 
         // Note: we are just going to trigger the function that calls the event,
         // not actually perform a LDAP login, for the sake of sanity.
@@ -271,23 +267,6 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $sink->close();
 
-        // Unset the password now.
-        unset($user->password);
-
-        // Get the user from the DB and set the expected variables.
-        $dbuser = $DB->get_record('user', array('id' => $user->id), '*', MUST_EXIST);
-        $user->firstaccess = (int) $dbuser->firstaccess;
-        $user->lastaccess = (int) $dbuser->lastaccess;
-        $user->currentlogin = (int) $dbuser->currentlogin;
-        $user->sesskey = sesskey();
-        $user->lastcourseaccess = array();
-        $user->currentcourseaccess = array();
-        $user->groupmember = array();
-        $user->profile = array();
-        $user->preference = array(
-            '_lastloaded' => time()
-        );
-
         // Check that the event is valid.
         $this->assertCount(2, $events);
         $event = $events[0];
@@ -297,7 +276,6 @@ class auth_ldap_plugin_testcase extends advanced_testcase {
         $this->assertEquals('user', $event->objecttable);
         $this->assertEquals('2', $event->objectid);
         $this->assertEquals(context_system::instance()->id, $event->contextid);
-        $this->assertEquals($user, $event->get_record_snapshot('user', 2));
         $expectedlog = array(SITEID, 'user', 'login', 'view.php?id=' . $USER->id . '&course=' . SITEID, $user->id,
             0, $user->id);
         $this->assertEventLegacyLogData($expectedlog, $event);
