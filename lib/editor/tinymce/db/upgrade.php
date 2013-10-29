@@ -122,5 +122,18 @@ fontselect,fontsizeselect,wrap,code,search,replace,|,cleanup,removeformat,pastet
         upgrade_plugin_savepoint(true, 2013070500, 'editor', 'tinymce');
     }
 
+    if ($oldversion < 2013102900) {
+        // Reset redesigned editor toolbar setting.
+        $currentorder = get_config('editor_tinymce', 'customtoolbar');
+        // Start with a wrap.
+        $neworder = "wrap,". $currentorder;
+        // Replace all separators with wraps to allow for proper display of groups.
+        $neworder = preg_replace('/\|\|*/', "wrap", $neworder);
+        // Insert a wrap between the format selector and the bold button.
+        $neworder = str_replace("formatselect,bold", "formatselect,wrap,bold", $neworder);
+        set_config('customtoolbar', $neworder, 'editor_tinymce');
+        upgrade_plugin_savepoint(true, 2013102900, 'editor', 'tinymce');
+    }
+
     return true;
 }

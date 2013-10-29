@@ -36,8 +36,6 @@ class tinymce_pdw extends editor_tinymce_plugin {
 
         $rowsnumber = $this->count_button_rows($params);
         if ($rowsnumber > 1) {
-            // Add button before 'undo' in advancedbuttons1.
-            $this->add_button_before($params, 1, '|', '');
             $this->add_button_before($params, 1, 'pdw_toggle', '');
             $params['pdw_toggle_on'] = 1;
             $params['pdw_toggle_toolbars'] = join(',', range(2, $rowsnumber));
