@@ -209,7 +209,9 @@ if (!($quizobj->get_quiz()->attemptonlast && $lastattempt)) {
         $variantoffset = $attemptnumber;
     }
     $quba->start_all_questions(
-            new question_variant_pseudorandom_no_repeats_strategy($variantoffset), $timenow);
+            new question_variant_pseudorandom_no_repeats_strategy(
+                    $variantoffset, $attempt->userid, $quizobj->get_quizid()),
+            $timenow);
 
     // Update attempt layout.
     $newlayout = array();
