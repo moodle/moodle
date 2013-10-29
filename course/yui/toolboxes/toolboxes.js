@@ -36,7 +36,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         HIDE : 'a.editing_hide',
         HIGHLIGHT : 'a.editing_highlight',
         INSTANCENAME : 'span.instancename',
-        MODINDENTDIV : 'div.mod-indent',
+        MODINDENTDIV : '.mod-indent',
         PAGECONTENT : 'div#page-content',
         SECTIONLI : 'li.section',
         SHOW : 'a.'+CSS.SHOW,

@@ -2034,23 +2034,6 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
         }
     }
 
-    // Move.
-    if ($hasmanageactivities) {
-        $pixicon = 'i/dragdrop';
-
-        if ($mod->course == SITEID) {
-            // Override for course frontpage until we get drag/drop working there.
-            $pixicon = 't/move';
-        }
-
-        $actions['move'] = new action_menu_link_primary(
-            new moodle_url($baseurl, array('copy' => $mod->id)),
-            new pix_icon($pixicon, $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-            $str->move,
-            array('class' => 'editing_move status', 'data-action' => 'move')
-        );
-    }
-
     // Duplicate (require both target import caps to be able to duplicate and backup2 support, see modduplicate.php)
     // Note that restoring on front page is never allowed.
     if ($mod->course != SITEID && has_all_capabilities($dupecaps, $coursecontext) &&
@@ -2161,6 +2144,51 @@ function course_get_cm_rename_action(cm_info $mod, $sr = null) {
                     'title' => $str->edittitle,
                 )
             )
+        );
+    }
+    return '';
+}
+
+/**
+ * Returns the move action.
+ *
+ * @param cm_info $mod The module to produce a move button for
+ * @param int $sr The section to link back to (used for creating the links)
+ * @return The markup for the move action, or an empty string if not available.
+ */
+function course_get_cm_move(cm_info $mod, $sr = null) {
+    global $OUTPUT;
+
+    static $str;
+    static $baseurl;
+
+    $modcontext = context_module::instance($mod->id);
+    $hasmanageactivities = has_capability('moodle/course:manageactivities', $modcontext);
+
+    if (!isset($str)) {
+        $str = get_strings(array('move'));
+    }
+
+    if (!isset($baseurl)) {
+        $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
+
+        if ($sr !== null) {
+            $baseurl->param('sr', $sr);
+        }
+    }
+
+    if ($hasmanageactivities) {
+        $pixicon = 'i/dragdrop';
+
+        if ($mod->course == SITEID) {
+            // Override for course frontpage until we get drag/drop working there.
+            $pixicon = 't/move';
+        }
+
+        return html_writer::link(
+            new moodle_url($baseurl, array('copy' => $mod->id)),
+            $OUTPUT->pix_icon($pixicon, $str->move, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+            array('class' => 'editing_move', 'data-action' => 'move')
         );
     }
     return '';

@@ -965,7 +965,14 @@ class core_course_renderer extends plugin_renderer_base {
                 $indentclasses .= ' mod-indent-huge';
             }
         }
-        $output .= html_writer::start_tag('div', array('class' => $indentclasses));
+
+        $output .= html_writer::start_tag('div');
+
+        if ($this->page->user_is_editing()) {
+            $output .= course_get_cm_move($mod, $sectionreturn);
+        }
+
+        $output .= html_writer::start_tag('span', array('class' => $indentclasses));
 
         // Start the div for the activity title, excluding the edit icons.
         $output .= html_writer::start_tag('div', array('class' => 'activityinstance'));
@@ -1011,7 +1018,9 @@ class core_course_renderer extends plugin_renderer_base {
         // show availability info (if module is not available)
         $output .= $this->course_section_cm_availability($mod, $displayoptions);
 
-        $output .= html_writer::end_tag('div'); // $indentclasses
+        $output .= html_writer::end_tag('span'); // $indentclasses
+
+        $output .= html_writer::end_tag('div');
         return $output;
     }
 
