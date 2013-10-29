@@ -3291,8 +3291,7 @@ EDITOR.prototype = {
 
         stampfiles = this.get('stampfiles');
         if (stampfiles.length <= 0) {
-            Y.one(SELECTOR.STAMPSBUTTON).hide();
-            Y.one(TOOLSELECTOR.stamp).hide();
+            Y.one(TOOLSELECTOR.stamp).ancestor().hide();
         } else {
             filename = stampfiles[0].substr(stampfiles[0].lastIndexOf('/') + 1);
             this.currentedit.stamp = filename;
