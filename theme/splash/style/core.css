@@ -509,3 +509,19 @@ strong em, em strong{
 .initialbar a {
     padding:0 2px;
 }
+
+/* fix some layout issues for Grades table */
+.generaltable img.icon {
+    height: 24px;
+}
+
+.path-grade-report-grader .left_scroller {
+    padding: 0;
+}
+#page-grade-report-grader-index #fixed_column td {
+    padding-bottom: 10px;
+}
+
+#page-grade-report-grader-index .right_scroller #user-grades td {
+    padding-bottom: 10px;
+}
