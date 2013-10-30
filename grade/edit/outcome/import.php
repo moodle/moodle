@@ -33,6 +33,7 @@ $action   = optional_param('action', '', PARAM_ALPHA);
 $scope    = optional_param('scope', 'custom', PARAM_ALPHA);
 
 $PAGE->set_url('/grade/edit/outcome/import.php', array('courseid' => $courseid));
+$PAGE->set_pagelayout('admin');
 
 /// Make sure they can even access this course
 if ($courseid) {
