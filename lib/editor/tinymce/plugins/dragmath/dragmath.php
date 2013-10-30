@@ -59,7 +59,7 @@ header('Content-Type: text/html; charset=utf-8');
 header('X-UA-Compatible: IE=edge');
 ?>
 <!DOCTYPE html>
-<html <?php echo $htmllang ?>
+<html <?php echo $htmllang ?>>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title><?php print_string('title', 'tinymce_dragmath')?></title>
@@ -78,8 +78,8 @@ header('X-UA-Compatible: IE=edge');
 </object>
 <form name="form" action="#">
     <div class="mceActionPanel">
-        <input type="submit" id="insert" name="insert" value="{#insert}" onclick="return DragMathDialog.insert();" />
-        <input type="button" id="cancel" name="cancel" value="{#cancel}" onclick="return tinyMCEPopup.close();" />
+        <input type="submit" id="insert" name="insert" value="<?php print_string('common:insert', 'editor_tinymce'); ?>" onclick="return DragMathDialog.insert();" />
+        <input type="button" id="cancel" name="cancel" value="<?php print_string('cancel'); ?>" onclick="return tinyMCEPopup.close();" />
     </div>
 </form>
 
