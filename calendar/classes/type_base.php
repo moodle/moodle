@@ -27,12 +27,6 @@ namespace core_calendar;
  */
 abstract class type_base {
 
-    /** string $minyear Minimum year we are using. */
-    protected $minyear = 1900;
-
-    /** string $maxyear Maximum year we are using. */
-    protected $maxyear = 2050;
-
     /**
      * Returns the name of the calendar.
      *
@@ -65,11 +59,27 @@ abstract class type_base {
     public abstract function get_months();
 
     /**
-     * Returns a list of all of the years being used.
+     * Returns the minimum year for the calendar.
      *
-     * @return array the years.
+     * @return int The minimum year
      */
-    public abstract function get_years();
+    public abstract function get_min_year();
+
+    /**
+     * Returns the maximum year for the calendar
+     *
+     * @return int The maximum year
+     */
+    public abstract function get_max_year();
+
+    /**
+     * Returns an array of years.
+     *
+     * @param int $minyear
+     * @param int $maxyear
+     * @return array the years
+     */
+    public abstract function get_years($minyear = null, $maxyear = null);
 
     /**
      * Returns a multidimensional array with information for day, month, year
@@ -77,11 +87,11 @@ abstract class type_base {
      * The order in the array will be the order displayed when selecting a date.
      * Override this function to change the date selector order.
      *
-     * @param int $minyear The year to start with.
-     * @param int $maxyear The year to finish with.
-     * @return array Full date information.
+     * @param int $minyear The year to start with
+     * @param int $maxyear The year to finish with
+     * @return array Full date information
      */
-    public abstract function date_order($minyear = null, $maxyear = null);
+    public abstract function get_date_order($minyear = null, $maxyear = null);
 
     /**
      * Returns the number of days in a week.

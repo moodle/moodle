@@ -29,9 +29,6 @@ use \core_calendar\type_base;
  */
 class structure extends type_base {
 
-    /** string $minyear Minimum year we are using. */
-    protected $minyear = 1970;
-
     /**
      * Returns the name of the calendar.
      *
@@ -79,14 +76,41 @@ class structure extends type_base {
     }
 
     /**
-     * Returns a list of all of the years being used.
+     * Returns the minimum year for the calendar.
      *
+     * @return int The minimum year
+     */
+    public function get_min_year() {
+        return 1900;
+    }
+
+    /**
+     * Returns the maximum year for the calendar
+     *
+     * @return int The maximum year
+     */
+    public function get_max_year() {
+        return 2050;
+    }
+
+    /**
+     * Returns an array of years.
+     *
+     * @param int $minyear
+     * @param int $maxyear
      * @return array the years.
      */
-    public function get_years() {
-        $years = array();
+    public function get_years($minyear = null, $maxyear = null) {
+        if (is_null($minyear)) {
+            $minyear = $this->get_min_year();
+        }
 
-        for ($i = $this->minyear; $i <= $this->maxyear; $i++) {
+        if (is_null($maxyear)) {
+            $maxyear = $this->get_max_year();
+        }
+
+        $years = array();
+        for ($i = $minyear; $i <= $maxyear; $i++) {
             $years[$i] = $i;
         }
 
@@ -103,17 +127,11 @@ class structure extends type_base {
      * @param int $maxyear The year to finish with.
      * @return array Full date information.
      */
-    public function date_order($minyear = null, $maxyear = null) {
-        if (!empty($minyear)) {
-            $this->minyear = $minyear;
-        }
-        if (!empty($maxyear)) {
-            $this->maxyear = $maxyear;
-        }
+    public function get_date_order($minyear = null, $maxyear = null) {
         $dateinfo = array();
         $dateinfo['day'] = $this->get_days();
         $dateinfo['month'] = $this->get_months();
-        $dateinfo['year'] = $this->get_years();
+        $dateinfo['year'] = $this->get_years($minyear, $maxyear);
 
         return $dateinfo;
     }
