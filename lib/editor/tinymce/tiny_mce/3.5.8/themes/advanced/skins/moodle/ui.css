@@ -196,12 +196,12 @@
 .moodleSkin span.mce_image {background:url(img/insert_edit_image.png) center center no-repeat;}
 .moodleSkin span.mce_help {background:url(img/help.png) center center no-repeat;}
 .moodleSkin span.mce_code {background:url(img/source_code.png) center center no-repeat;}
-.moodleSkin span.mce_hr {background:url(img/insert_horizontal_rule.png) center center no-repeat;}
+.moodleSkin span.mce_hr {background:url(img/insert_horizontal_ruler.png) center center no-repeat;}
 .moodleSkin span.mce_charmap {background:url(img/special_character.png) center center no-repeat;}
 .moodleSkin span.mce_paste {background:url(img/paste.png) center center no-repeat;}
 .moodleSkin span.mce_copy {background:url(img/copy.png) center center no-repeat;}
 .moodleSkin span.mce_cut {background:url(img/cut.png) center center no-repeat;}
-.moodleSkin span.mce_blockquote {background:url(img/blockquote.png) center center no-repeat;}
+.moodleSkin span.mce_blockquote {background:url(img/toggle_blockquote.png) center center no-repeat;}
 .moodleSkin span.mce_removeformat {background:url(img/clear_formatting.png) center center no-repeat;}
 .moodleSkin span.mce_cleanup {background:url(img/cleanup_messy_code.png) center center no-repeat;}
 .moodleSkin span.mce_ltr {background:url(img/left_to_right.png) center center no-repeat;}
