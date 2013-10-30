@@ -40,7 +40,7 @@ class user_enrolment_updated extends base {
     protected function init() {
         $this->data['objecttable'] = 'user_enrolments';
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['level'] = self::LEVEL_OTHER;
     }
 
     /**
