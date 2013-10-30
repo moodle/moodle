@@ -78,9 +78,11 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 .dir-rtl .fp-navbar .filemanager-toolbar .fp-toolbar div {margin:9px 9px 9px 0;}
 .file-picker .fp-toolbar div.disabled {display:none;}
 .fp-toolbar img {vertical-align:-15%;margin:7px 12px;}
-.fp-toolbar .fp-tb-search {width:228px;height:14px;}
-.fp-toolbar .fp-tb-search input {background:#FFFFFF url('[[pix:a/search]]') no-repeat 3px 3px;padding:2px 6px 1px 20px;width:200px;height:16px;border:1px solid #BBBBBB;}
-.fp-navbar .filemanager-toolbar .fp-toolbar
+.file-picker .fp-toolbar .fp-tb-search {width:235px;height:30px;}
+.file-picker .fp-toolbar .fp-tb-search .fp-def-search {border:0;background:transparent;margin:0;padding:0;width:235px;}
+.dir-rtl .file-picker .fp-toolbar .fp-tb-search {width:242px;}
+.dir-rtl .file-picker .fp-toolbar .fp-tb-search .fp-def-search {width:242px;}
+.fp-toolbar .fp-tb-search input {background:transparent url('[[pix:a/search]]') no-repeat 7px 7px;padding:2px 6px 1px 27px;width:210px;height:27px;border:0;}
 .dir-rtl .fp-toolbar img {vertical-align:-35%;}
 .dir-rtl .file-picker .fp-viewbar, .dir-rtl .fp-navbar .filemanager-toolbar .fp-viewbar {float:left;}
 .dir-rtl .file-picker .fp-viewbar {margin-left:0;}
@@ -282,7 +284,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
  */
 .fp-restrictions{text-align:right;}
 .filemanager .fp-navbar {background:#F2F2F2;border-top:1px solid #BBBBBB;border-left:1px solid #BBBBBB;border-right:1px solid #BBBBBB;}
-.filemanager-toolbar{min-height:48px;}
+.filemanager-toolbar {min-height:50px;}
 .fp-pathbar {border-top:1px solid #BBBBBB;padding:5px 8px 1px;min-height:20px;}
 
 .filemanager .fp-pathbar.empty {display:none;}

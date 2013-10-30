@@ -120,9 +120,6 @@
 .filepicker.moodle-dialogue-fullscreen .file-picker .fp-content {
     width: 100%;
 }
-.dir-rtl .file-picker .fp-repo-items {
-    margin-right: 181px;
-}
 .file-picker .fp-content-loading {
     height: 100%;
     width: 100%;
@@ -137,7 +134,7 @@
     text-align: right;
 }
 .dir-rtl .file-picker .fp-toolbar {
-    padding: 0;
+    padding: 9px;
 }
 .dir-rtl .file-picker .fp-list {
     text-align: right;
@@ -198,6 +195,7 @@
 .fp-toolbar.empty {
     display: none;
 }
+.dir-rtl .fp-toolbar div.disabled,
 .fp-toolbar .disabled {
     display: none;
 }
@@ -210,20 +208,21 @@
     display: block;
     float: right;
     margin-left: 9px;
+    margin-right: 0px;
 }
 .fp-toolbar img {
     vertical-align: -15%;
     margin-right: 5px;
 }
 .fp-toolbar .fp-tb-search {
-    width: 228px;
-    height: 14px;
+    width: 235px;
+    height: 27px;
 }
 .fp-toolbar .fp-tb-search input {
-    background: #FFFFFF url('[[pix:a/search]]') no-repeat 3px 3px;
-    padding: 2px 6px 1px 20px;
+    background: #FFFFFF url('[[pix:a/search]]') no-repeat 7px 7px;
+    padding: 2px 6px 1px 27px;
     width: 200px;
-    height: 16px;
+    height: 27px;
     border: 1px solid #BBBBBB;
 }
 .fp-viewbar {

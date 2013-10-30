@@ -535,7 +535,7 @@ class core_files_renderer extends plugin_renderer_base {
                     <div class="{!}fp-tb-back"><a href="#">'.get_string('back', 'repository').'</a></div>
                     <div class="{!}fp-tb-search"><form></form></div>
                     <div class="{!}fp-tb-refresh"><a href="#"><img alt="'. get_string('refresh', 'repository') .'"  src="'.$this->pix_url('a/refresh').'" /></a></div>
-                    <div class="{!}fp-tb-logout"><img alt="'. get_string('logout', 'repository') .'" src="'.$this->pix_url('a/logout').'" /><a href="#"></a></div>
+                    <div class="{!}fp-tb-logout"><a href="#"><img alt="'. get_string('logout', 'repository') .'" src="'.$this->pix_url('a/logout').'" /></a></div>
                     <div class="{!}fp-tb-manage"><a href="#"><img alt="'. get_string('settings', 'repository') .'" src="'.$this->pix_url('a/setting').'" /></a></div>
                     <div class="{!}fp-tb-help"><a href="#"><img alt="'. get_string('help', 'repository') .'" src="'.$this->pix_url('a/help').'" /></a></div>
                     <div class="{!}fp-tb-message"></div>
