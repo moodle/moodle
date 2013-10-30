@@ -20,6 +20,10 @@ Feature: Page contents assertions
     And I wait "2" seconds
     And I hover ".region-content .generaltable td span" "css_element"
     Then I should see "I'm the description"
+    And "Grouping" "select" in the "region-main" "region" should be visible
+    And "Group" "select" should be visible
+    And "Messaging" "link" in the "Administration" "block" should not be visible
+    And "Change password" "link" should not be visible
     And I should see "Filter groups by"
     And I should not see "Filter groupssss by"
     And I should see "Group members" in the ".region-content table th.c1" "css_element"
