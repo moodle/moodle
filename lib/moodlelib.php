@@ -3658,6 +3658,8 @@ function fullname($user, $override=false) {
  *
  * @param bool $returnsql True for an sql select field snippet.
  * @param string $alias table alias to use in front of each field.
+ * @param string $prefix prefix added to the name fields e.g. authorfirstname.
+ * @param string $title sql column alias e.g. id AS userid.
  * @return array|string All name fields.
  */
 function get_all_user_name_fields($returnsql = false, $alias = null) {
