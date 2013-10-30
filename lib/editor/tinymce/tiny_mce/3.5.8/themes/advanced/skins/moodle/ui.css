@@ -212,7 +212,7 @@
 .moodleSkin span.mce_table {background:url(img/table.png) center center no-repeat;}
 .moodleSkin span.mce_nonbreaking {background:url(img/insert_nonbreaking_space.png) center center no-repeat;}
 .moodleSkin span.mce_search {background:url(img/search.png) center center no-repeat;}
-.moodleSkin span.mce_pagebreak {background:url(img/search.png) center center no-repeat;}
+.moodleSkin span.mce_pagebreak {background:url(img/page_break.png) center center no-repeat;}
 .moodleSkin span.mce_visualchars {background:url(img/show_invisible_characters.png) center center no-repeat;}
 .moodleSkin span.mce_template {background:url(img/template.png) center center no-repeat;}
 .moodleSkin span.mce_media {background:url(img/insert_edit_video.png) center center no-repeat;}
@@ -228,7 +228,7 @@
 .moodleSkin span.mce_moveforward {background:url(img/layers_over.png) center center no-repeat;}
 .moodleSkin span.mce_styleprops {background:url(img/styleprops.png) center center no-repeat;}
 .moodleSkin span.mce_insertdate {background:url(img/insert_date.png) center center no-repeat;}
-.moodleSkin span.mce_cancel {background:url(img/delete.png) center center no-repeat;}
+.moodleSkin span.mce_cancel {background:url(img/cancel.png) center center no-repeat;}
 .moodleSkin span.mce_merge_cells {background:url(img/merge_cells.png) center center no-repeat;}
 .moodleSkin span.mce_split_cells {background:url(img/split_cells.png) center center no-repeat;}
 .moodleSkin span.mce_advhr {background:url(img/advance_hr.png) center center no-repeat;}
@@ -246,7 +246,7 @@
 .moodleSkin span.mce_visualaid {background:url(img/visual_aid.png) center center no-repeat;}
 .moodleSkin span.mce_table_props {background:url(img/table_props.png) center center no-repeat;}
 .moodleSkin span.mce_row_props {background:url(img/row_props.png) center center no-repeat;}
-.moodleSkin span.mce_selectall {background:url(img/text_highlight.png) center center no-repeat;}
+.moodleSkin span.mce_selectall {background:url(img/select_all.png) center center no-repeat;}
 .moodleSkin span.mce_cite {background:url(img/cite.png) center center no-repeat;}
 .moodleSkin span.mce_del {background:url(img/delete.png) center center no-repeat;}
 .moodleSkin span.mce_ins {background:url(img/insert.png) center center no-repeat;}
