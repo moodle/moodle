@@ -182,9 +182,10 @@ function forum_rss_feed_discussions_sql($forum, $cm, $newsince=0) {
 
     $forumsort = "d.timemodified DESC";
     $postdata = "p.id AS postid, p.subject, p.created as postcreated, p.modified, p.discussion, p.userid, p.message as postmessage, p.messageformat AS postformat, p.messagetrust AS posttrust";
+    $userpicturefields = user_picture::fields('u', null, 'userid');
 
-    $sql = "SELECT $postdata, d.id as discussionid, d.name as discussionname, d.timemodified, d.usermodified, d.groupid, d.timestart, d.timeend,
-                   u.firstname as userfirstname, u.lastname as userlastname, u.email, u.picture, u.imagealt
+    $sql = "SELECT $postdata, d.id as discussionid, d.name as discussionname, d.timemodified, d.usermodified, d.groupid,
+                   d.timestart, d.timeend, $userpicturefields
               FROM {forum_discussions} d
                    JOIN {forum_posts} p ON p.discussion = d.id
                    JOIN {user} u ON p.userid = u.id
@@ -223,12 +224,12 @@ function forum_rss_feed_posts_sql($forum, $cm, $newsince=0) {
         $newsince = '';
     }
 
+    $usernamefields = get_all_user_name_fields(true, 'u');
     $sql = "SELECT p.id AS postid,
                  d.id AS discussionid,
                  d.name AS discussionname,
                  u.id AS userid,
-                 u.firstname AS userfirstname,
-                 u.lastname AS userlastname,
+                 $usernamefields,
                  p.subject AS postsubject,
                  p.message AS postmessage,
                  p.created AS postcreated,
@@ -313,7 +314,6 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
     $items = array();
     foreach ($recs as $rec) {
             $item = new stdClass();
-            $user = new stdClass();
 
             if ($isdiscussion && !forum_user_can_see_discussion($forum, $rec->discussionid, $context)) {
                 // This is a discussion which the user has no permission to view
@@ -335,9 +335,7 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
                     //we should have an item title by now but if we dont somehow then substitute something somewhat meaningful
                     $item->title = format_string($forum->name.' '.userdate($rec->postcreated,get_string('strftimedatetimeshort', 'langconfig')));
                 }
-                $user->firstname = $rec->userfirstname;
-                $user->lastname = $rec->userlastname;
-                $item->author = fullname($user);
+                $item->author = fullname($rec);
                 $message = file_rewrite_pluginfile_urls($rec->postmessage, 'pluginfile.php', $context->id,
                         'mod_forum', 'post', $rec->postid);
                 $formatoptions->trusted = $rec->posttrust;
