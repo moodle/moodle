@@ -38,7 +38,7 @@ class import_outcomes_form extends moodleform {
         $mform->addElement('hidden', 'action', 'upload');
         $mform->setType('action', PARAM_ALPHANUMEXT);
         $mform->addElement('hidden', 'courseid', $PAGE->course->id);
-        $mform->setType('id', PARAM_INT);
+        $mform->setType('courseid', PARAM_INT);
 
         $scope = array();
         if (($PAGE->course->id > 1) && has_capability('moodle/grade:manage', context_system::instance())) {
