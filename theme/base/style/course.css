@@ -174,9 +174,7 @@
 
 .path-site li.activity > div,
 .path-course-view li.activity > div {position:relative;}
-.path-course-view li.activity form.togglecompletion {position: absolute; top: 0; right: .2em;}
-.path-course-view li.activity form.togglecompletion input {position:absolute; top: .25em; right: 0px;}
-.path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute; right: 22px; top: 5px; width: 16px; height: 16px; background: url([[pix:i/ajaxloader]]) no-repeat;}
+.path-course-view li.activity form.togglecompletion .ajaxworking {position:absolute; right: 22px; width: 16px; height: 16px; background: url([[pix:i/ajaxloader]]) no-repeat;}
 .path-course-view li.activity form.togglecompletion div {display:inline;}
 .dir-rtl.path-course-view li.activity form.togglecompletion,
 .dir-rtl.path-course-view li.activity span.autocompletion {left:1.7em;right:auto;padding:0px;}

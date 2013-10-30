@@ -647,7 +647,14 @@ class core_course_renderer extends plugin_renderer_base {
         if ($completionicon) {
             $formattedname = $mod->get_formatted_name();
             $imgalt = get_string('completion-alt-' . $completionicon, 'completion', $formattedname);
-            if ($completion == COMPLETION_TRACKING_MANUAL && !$this->page->user_is_editing()) {
+
+            if ($this->page->user_is_editing()) {
+                // When editing, the icon is just an image.
+                $completionpixicon = new pix_icon('i/completion-'.$completionicon, $imgalt, '',
+                        array('title' => $imgalt, 'class' => 'iconsmall'));
+                $output .= html_writer::tag('span', $this->output->render($completionpixicon),
+                        array('class' => 'autocompletion'));
+            } else if ($completion == COMPLETION_TRACKING_MANUAL) {
                 $imgtitle = get_string('completion-title-' . $completionicon, 'completion', $formattedname);
                 $newstate =
                     $completiondata->completionstate == COMPLETION_COMPLETE
@@ -683,7 +690,7 @@ class core_course_renderer extends plugin_renderer_base {
                 $output .= html_writer::end_tag('div');
                 $output .= html_writer::end_tag('form');
             } else {
-                // In auto mode, or when editing, the icon is just an image
+                // In auto mode, the icon is just an image.
                 $completionpixicon = new pix_icon('i/completion-'.$completionicon, $imgalt, '',
                         array('title' => $imgalt));
                 $output .= html_writer::tag('span', $this->output->render($completionpixicon),

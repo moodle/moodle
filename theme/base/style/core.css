@@ -1485,8 +1485,7 @@ img#persona_signin { cursor: pointer; }
     padding-left: 4px;
 }
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .iconsmall {
-    margin: 4px 8px 4px 0px;
-    padding: 4px;
+    margin: 8px 4px 0px 2px;
 }
 
 .jsenabled .moodle-actionmenu[data-enhanced] .toggle-display {opacity: 1;filter: alpha(opacity=100);}

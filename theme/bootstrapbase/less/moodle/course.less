@@ -354,23 +354,19 @@
     position: relative;
     padding: 0 0 0 16px;
 }
-.path-course-view li.activity span.autocompletion,
-.path-course-view li.activity form.togglecompletion {
-    float: right;
-    width: 0; /* Reduce the width of the control to 0 and rely on natural overflow */
+.path-course-view li.activity span.autocompletion img {
+    vertical-align: text-bottom;
 }
-.path-course-view li.activity span.autocompletion img,
 .path-course-view li.activity form.togglecompletion img {
     max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
 }
 .path-course-view li.activity form.togglecompletion .ajaxworking {
     width: 16px;
     height: 16px;
+    position: absolute;
+    right: 22px;
+    top: 3px;
     background: url([[pix:i/ajaxloader]]) no-repeat;
-}
-.dir-rtl.path-course-view li.activity form.togglecompletion,
-.dir-rtl.path-course-view li.activity span.autocompletion {
-    float: left;
 }
 .dir-rtl.path-course-view .completionprogress {
     float: none;
