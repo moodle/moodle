@@ -1,0 +1,7 @@
+{
+  "moodle-format_grid-gridkeys": {
+    "requires": [
+        "gallery-event-nav-keys"
+    ]
+  }
+}
