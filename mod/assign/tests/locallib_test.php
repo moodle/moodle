@@ -450,16 +450,17 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $data = new stdClass();
         $data->grade = '50.0';
         $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
+        $assign->testable_apply_grade_to_user($data, $this->students[1]->id, 0);
 
         // Now run cron and see that one message was sent.
         $this->preventResetByRollback();
         $sink = $this->redirectMessages();
         cron_setup_user();
-        $this->expectOutputRegex('/Done processing 1 assignment submissions/');
+        $this->expectOutputRegex('/Done processing 2 assignment submissions/');
         assign::cron();
 
         $messages = $sink->get_messages();
-        $this->assertEquals(1, count($messages));
+        $this->assertEquals(2, count($messages));
         $this->assertEquals(1, $messages[0]->notification);
         $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
     }
