@@ -1162,6 +1162,16 @@ class core_renderer extends renderer_base {
     }
 
     /**
+     * Renders a primary action_menu_filler item.
+     *
+     * @param action_menu_link_filler $action
+     * @return string HTML fragment
+     */
+    protected function render_action_menu_filler(action_menu_filler $action) {
+        return html_writer::span('&nbsp;', 'filler');
+    }
+
+    /**
      * Renders a primary action_menu_link item.
      *
      * @param action_menu_link_primary $action

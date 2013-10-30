@@ -2044,30 +2044,34 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
 
     // Groupmode.
-    if ($hasmanageactivities && !$mod->coursegroupmodeforce && plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
-        if ($mod->effectivegroupmode == SEPARATEGROUPS) {
-            $nextgroupmode = VISIBLEGROUPS;
-            $grouptitle = $str->groupsseparate;
-            $actionname = 'groupsseparate';
-            $groupimage = 't/groups';
-        } else if ($mod->effectivegroupmode == VISIBLEGROUPS) {
-            $nextgroupmode = NOGROUPS;
-            $grouptitle = $str->groupsvisible;
-            $actionname = 'groupsvisible';
-            $groupimage = 't/groupv';
-        } else {
-            $nextgroupmode = SEPARATEGROUPS;
-            $grouptitle = $str->groupsnone;
-            $actionname = 'groupsnone';
-            $groupimage = 't/groupn';
-        }
+    if ($hasmanageactivities && !$mod->coursegroupmodeforce) {
+        if (plugin_supports('mod', $mod->modname, FEATURE_GROUPS, 0)) {
+            if ($mod->effectivegroupmode == SEPARATEGROUPS) {
+                $nextgroupmode = VISIBLEGROUPS;
+                $grouptitle = $str->groupsseparate;
+                $actionname = 'groupsseparate';
+                $groupimage = 't/groups';
+            } else if ($mod->effectivegroupmode == VISIBLEGROUPS) {
+                $nextgroupmode = NOGROUPS;
+                $grouptitle = $str->groupsvisible;
+                $actionname = 'groupsvisible';
+                $groupimage = 't/groupv';
+            } else {
+                $nextgroupmode = SEPARATEGROUPS;
+                $grouptitle = $str->groupsnone;
+                $actionname = 'groupsnone';
+                $groupimage = 't/groupn';
+            }
 
-        $actions[$actionname] = new action_menu_link_primary(
-            new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $nextgroupmode)),
-            new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => '')),
-            $grouptitle,
-            array('class' => 'editing_'. $actionname, 'data-action' => $actionname, 'data-nextgroupmode' => $nextgroupmode)
-        );
+            $actions[$actionname] = new action_menu_link_primary(
+                new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $nextgroupmode)),
+                new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                $grouptitle,
+                array('class' => 'editing_'. $actionname, 'data-action' => $actionname, 'data-nextgroupmode' => $nextgroupmode)
+            );
+        } else {
+            $actions['nogroupsupport'] = new action_menu_filler();
+        }
     }
 
     // Assign.

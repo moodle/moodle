@@ -3182,7 +3182,7 @@ class action_menu implements renderable {
      * @param action_menu_link|pix_icon|string $action
      */
     public function add($action) {
-        if ($action instanceof action_menu_link) {
+        if ($action instanceof action_link) {
             if ($action->primary) {
                 $this->add_primary_action($action);
             } else {
@@ -3368,6 +3368,29 @@ class action_menu implements renderable {
      */
     public function will_be_enhanced() {
         return isset($this->attributes['data-enhance']);
+    }
+}
+
+/**
+ * An action menu filler
+ *
+ * @package core
+ * @category output
+ * @copyright 2013 Andrew Nicols
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class action_menu_filler extends action_link implements renderable {
+
+    /**
+     * True if this is a primary action. False if not.
+     * @var bool
+     */
+    public $primary = true;
+
+    /**
+     * Constructs the object.
+     */
+    public function __construct() {
     }
 }
 

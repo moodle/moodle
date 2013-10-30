@@ -32,6 +32,14 @@
 .course-content .section .activity .activityinstance form { display: inline;}
 .sitetopic .section .activity .activityinstance,
 .course-content .section .activity .activityinstance { padding-right: 1em; }
+.course-content .section .activity .filler {
+    width: 16px;
+    height: 16px;
+    margin: 4px;
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+
 .dir-rtl .sitetopic .section .activity .activityinstance,
 .dir-rtl .course-content .section .activity .activityinstance { padding-right: 0; padding-left: 3em;}
 .sitetopic .section .activity .commands,
