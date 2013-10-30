@@ -258,7 +258,7 @@
 .moodleSkin span.mce_backward {background:url(img/backward.png) center center no-repeat;}
 .moodleSkin span.mce_forward {background:url(img/forward.png) center center no-repeat;}
 
-.moodleSkin span.mce_forecolorpicker {background: #300 url(img/text_color.png) center center no-repeat;}
+.moodleSkin span.mce_forecolorpicker {background:url(img/text_color.png) center center no-repeat;}
 .moodleSkin span.mce_backcolorpicker {background:url(img/text_highlight.png) center center no-repeat;}
 .moodleSkin .mce_forecolor span.mceAction {background:url(img/text_color.png) center center no-repeat;}
 .moodleSkin .mce_backcolor span.mceAction {background:url(img/text_highlight.png) center center no-repeat;}
