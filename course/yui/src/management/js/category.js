@@ -136,6 +136,20 @@ Category.prototype = {
                 e.preventDefault();
                 this.collapse();
                 break;
+            case 'select':
+                var c = this.get('console'),
+                    movecategoryto = c.get('categorylisting').one('#menumovecategoriesto');
+                // If any category is selected and there are more then one categories.
+                if (movecategoryto) {
+                    if (c.isCategorySelected(e.currentTarget) &&
+                            c.get('categories').length > 1) {
+                        movecategoryto.removeAttribute('disabled');
+                    } else {
+                        movecategoryto.setAttribute('disabled', true);
+                    }
+                    c.handleBulkSortByaction();
+                }
+                break;
             default:
                 Y.log('Invalid AJAX action requested of managed category.', 'warn', 'moodle-course-management');
                 return false;

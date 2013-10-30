@@ -110,6 +110,17 @@ Course.prototype = {
                 e.halt();
                 managementconsole.performAjaxAction('hidecourse', args, this.hide, this);
                 break;
+            case 'select':
+                var c = this.get('console'),
+                    movetonode = c.get('courselisting').one('#menumovecoursesto');
+                if (movetonode) {
+                    if (c.isCourseSelected(e.currentTarget)) {
+                        movetonode.removeAttribute('disabled');
+                    } else {
+                        movetonode.setAttribute('disabled', true);
+                    }
+                }
+                break;
             default:
                 Y.log('Invalid AJAX action requested of managed course.', 'warn', 'moodle-course-management');
                 return false;
