@@ -2422,7 +2422,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $teststring = 't.firstnamephonetic,t.lastnamephonetic,t.middlename,t.alternatename,t.firstname,t.lastname';
         $this->assertEquals($teststring, get_all_user_name_fields(true, 't'));
 
-        // Additional name fields with a prefix - object
+        // Additional name fields with a prefix - object.
         $testarray = array('firstnamephonetic' => 'authorfirstnamephonetic',
                 'lastnamephonetic' => 'authorlastnamephonetic',
                 'middlename' => 'authormiddlename',
@@ -2431,7 +2431,7 @@ class core_moodlelib_testcase extends advanced_testcase {
                 'lastname' => 'authorlastname');
         $this->assertEquals($testarray, get_all_user_name_fields(false, null, 'author'));
 
-        // Additional name fields with an alias and a title - string
+        // Additional name fields with an alias and a title - string.
         $teststring = 'u.firstnamephonetic AS authorfirstnamephonetic,u.lastnamephonetic AS authorlastnamephonetic,u.middlename AS authormiddlename,u.alternatename AS authoralternatename,u.firstname AS authorfirstname,u.lastname AS authorlastname';
         $this->assertEquals($teststring, get_all_user_name_fields(true, 'u', null, 'author'));
     }
@@ -2630,7 +2630,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $userinfo->alternatename = '';
         $userinfo->email = '';
         $userinfo->picture = 23;
-        $userinfo->imagealt = 'Michael Jordon draining another basket.';
+        $userinfo->imagealt = 'Michael Jordan draining another basket.';
         $userinfo->idnumber = 3982;
 
 
@@ -2660,7 +2660,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $expectedarray->alternatename = '';
         $expectedarray->email = '';
         $expectedarray->picture = 23;
-        $expectedarray->imagealt = 'Michael Jordon draining another basket.';
+        $expectedarray->imagealt = 'Michael Jordan draining another basket.';
         $this->assertEquals($user, $expectedarray);
 
         // Alter the userinfo object to have a prefix.
@@ -2684,7 +2684,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $expectedarray->alternatename = '';
         $expectedarray->email = '';
         $expectedarray->picture = 23;
-        $expectedarray->imagealt = 'Michael Jordon draining another basket.';
+        $expectedarray->imagealt = 'Michael Jordan draining another basket.';
         $this->assertEquals($user, $expectedarray);
     }
 }

@@ -102,14 +102,7 @@ $sql = "SELECT g.id AS groupid, gg.groupingid, u.id AS userid, $allnames, u.idnu
 $rs = $DB->get_recordset_sql($sql, array_merge($params, $sortparams));
 foreach ($rs as $row) {
     $user = new stdClass();
-    $user->id        = $row->userid;
-    $user->firstname = $row->firstname;
-    $user->lastname  = $row->lastname;
-    $user->username  = $row->username;
-    $user->idnumber  = $row->idnumber;
-    foreach (get_all_user_name_fields() as $addname) {
-        $user->$addname = $row->$addname;
-    }
+    $user = username_load_fields_from_object($user, $row, null, array('id' => 'userid', 'username', 'idnumber'));
     if (!$row->groupingid) {
         $row->groupingid = -1;
     }
