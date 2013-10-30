@@ -1,0 +1,16 @@
+{
+  "name": "moodle-format_grid-gridkeys",
+  "builds": {
+    "moodle-format_grid-gridkeys": {
+        "prependfiles": [
+            "gallery-event-nav-keys.js" 
+        ],
+        "jsfiles": [
+            "gridkeys.js"
+        ],
+        "postexec": [
+            "./scripts/backport.js moodle-format_grid-gridkeys"
+        ]
+    }
+  }
+}

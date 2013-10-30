@@ -1,0 +1,236 @@
+/* This file is part of Moodle - http://moodle.org/
+
+   Moodle is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Moodle is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Moodle.  If not, see <http://www.gnu.org/licenses/>. */
+
+/**
+ * Grid Format - A topics based format that uses a grid of user selectable images to popup a light box of the section.
+ *
+ * @package    course/format
+ * @subpackage grid
+ * @copyright  &copy; 2012 onwards G J Barnard in respect to modifications of standard topics format.
+ * @author     G J Barnard - gjbarnard at gmail dot com and {@link http://moodle.org/user/profile.php?id=442195}
+ * @author     Based on code originally written by Paul Krix and Julian Ridden.
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+ .course-content a {
+    outline: none;
+}
+.course-content .grid_title {
+    font-size: 160%;
+    font-weight: bold;
+}
+.course-content ul.gtopics h3.sectionname {
+    background: transparent;
+    font-weight: normal;
+    border: 0px none;
+    border-bottom: dashed 1px #000;
+    padding: 0px;
+    padding-bottom: 5px;
+}
+.course-content ul.gtopics-0 #section-0 {
+    background: transparent;
+    border: 0px none;
+}
+
+.course-content ul.gtopics-0 #section-0 .side {
+    width: 28px;
+}
+
+/* Change of logic such that topics are hidden by default and then shown to prevent 'flash' whilst JavaScript kicks in. */
+body.jsenabled li.grid_section.hide_section {
+    display: none;
+}
+
+div#gridmiddle-column ul {
+    list-style-type: none;
+}
+
+.course-content ul.gtopics {
+    margin:0;
+}
+
+.course-content ul.gtopics li.section {
+    list-style: none;
+    margin:5px 0 0 0;
+    padding:0;
+}
+
+.course-content ul.gtopics li.section .content {
+    margin:0 40px;
+}
+
+.course-content ul.gtopics li.section .side {
+    width:40px;
+    text-align:center;
+}
+
+.course-content ul.gtopics li.section .left {
+    float:left;
+    padding: 0px;
+}
+
+.course-content ul.gtopics li.section .right {
+    float:right;
+}
+
+/* @group Topic Icons */
+#gridiconcontainer {
+    width: 100%;
+    margin: 20px auto;
+    padding: 10px;
+    text-align: center;
+    height: auto;
+}
+#gridiconcontainer ul.gridicons {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+#gridiconcontainer ul.gridicons li {
+    height: auto;
+    padding: 10px;
+    margin: 5px;
+    text-align: left;
+    display: inline-table;
+}
+.course-content ul.gridicons li:hover {
+    background-color: #f1f2f2;
+    color: #333;
+}
+
+/* Over ride in theme CSS if you want a different colour. */
+.course-content ul.gridicons li.current {
+    background-color: #d9edf7;
+}
+
+/* Over ride in theme CSS if you want a different colour. */
+.course-content ul.gridicons li.currentselected {
+    background: #0C0;
+    filter:alpha(opacity=70); /* IE */
+    -moz-opacity:0.7; /* Mozilla */
+    opacity: 0.7; /* CSS3 */
+}
+
+.course-content ul.gridicons img.new_activity {
+    position: absolute;
+    margin-top: 86px;
+    margin-left: 116px;
+}
+.course-content .gridicon_link {
+    cursor: pointer;
+}
+.course-content ul.gridicons li p.icon_content {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    width: 212px;
+    white-space: nowrap;
+    overflow: hidden;
+    color: black;
+    height: 20px;
+    text-align: center;
+}
+.course-content ul.gridicons li .image_holder {
+    width: 210px;
+    height: 140px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    background-color: #f1f2f2;
+    text-align: center;
+    vertical-align: middle;
+}
+.course-content ul.gridicons li:hover .image_holder {
+    border: 1px dashed #dededf;
+}
+.course-content ul.gridicons li img {
+    margin-top: 0;
+}
+.course-content li.grid_section {
+    clear: both;
+}
+/* @end */
+
+/* @group Shadebox */
+
+div#gridshadebox_overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 500px;
+    background: black;
+    /* for IE */
+    filter: alpha(opacity=70);
+    /* CSS3 standard */
+    opacity: 0.7;
+    z-index: 100000;
+    cursor: pointer;
+}
+#gridshadebox_content {
+    background: #fff;
+    min-height: 200px;
+    border: solid 2px #a71e38;
+}
+body.jsenabled #gridshadebox_content.hide_content {
+    display: none;
+}
+#gridshadebox_content .activity {
+    list-style: none;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 4px;
+    padding-top: 2px;
+}
+#gridshadebox_content ul li {
+    list-style: none;
+}
+#gridshadebox_content ul li ul li {
+    list-style: circle;
+    border-bottom: none;
+    padding-bottom: 4px;
+    padding-top: 2px;
+}
+
+#gridshadebox_close {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    cursor: pointer;
+}
+
+.gridshadebox_arrow {
+    position: absolute;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .25s ease-in-out;
+    -moz-transition: opacity .25s ease-in-out;
+    -webkit-transition: opacity .25s ease-in-out;
+}
+.gridshadebox_arrow:hover {
+    opacity: 0.8;
+}
+#gridshadebox_left {
+    top: 92px;  /* Done here so that JS can change it. */
+    left: -24px;
+}
+#gridshadebox_right {
+    top: 92px;  /* Done here so that JS can change it. */
+    right: -24px;
+}
+
+#gridshadebox_content ul.gtopics {
+    margin: 0 15px 10px;
+}
+
+/* @end */
