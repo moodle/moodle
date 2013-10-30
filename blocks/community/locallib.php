@@ -38,6 +38,7 @@ class block_community_manager {
         $community = $this->block_community_get_course($course->url, $userid);
 
         if (empty($community)) {
+            $community = new stdClass();
             $community->userid = $userid;
             $community->coursename = $course->name;
             $community->coursedescription = $course->description;
