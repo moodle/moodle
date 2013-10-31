@@ -317,13 +317,9 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 #category-listing .listitem.collapsed > ul.ml {display: none;}
 #category-listing .course-count .smallicon {width:0.8em;height:0.8em;vertical-align:middle;margin:0 0.3em;}
 
-#category-listing .category-listing > ul > .listitem:first-child {position:relative;}
-#category-listing .category-listing > ul > .listitem:first-child .ba-checkbox:before {content: '.';background-color: #FaFaFb; color: #FaFaFb; position:absolute;top:-0.2em;line-height:0.2em;border: 1px solid #EFEFF4;border-width:1px 1px 0;margin:-1px;width:2.2em;display:block;border-radius: 2px 2px 0 0;}
-#category-listing .listitem > div {margin-left:0.5em;}
-#category-listing .listitem > div > .ba-checkbox {background-color: #FaFaFb;border-right: 1px solid #EFEFF4;border-left: 1px solid #EFEFF4;vertical-align:middle;width:2.2em;text-align:center;margin:-1px 0;padding-top:2px;margin-right:0.5em;}
-#category-listing .listitem[data-selected='1'] > div > .ba-checkbox {margin:0 0.5em 0 0;padding:0;background-color: inherit;}
-.category-bulk-actions {margin: 0 0.5em 0.5em; background-color: #FaFaFb; border: 1px solid #EFEFF4;position:relative;}
-.category-bulk-actions:before {content: '.';background-color: #FaFaFb; color: #FaFaFb; position:relative;top:-1em;line-height:110%;border: 1px solid #EFEFF4;border-width:0 1px;margin:-1px;width:2.2em;display:block;}
+#category-listing .listitem > div > .ba-checkbox {vertical-align:middle;width:2.2em;text-align:center;margin:-1px 0;padding-top:2px;margin-right:0.5em;}
+#category-listing .listitem[data-selected='1'] > div > .ba-checkbox {margin:0 0.5em 0 0;padding:0;}
+.category-bulk-actions {margin: 0 0.5em 0.5em;}
 
 #course-category-listings .listitem > div > .float-left {float:left;}
 #course-category-listings .listitem > div > .float-right {float:right;text-align:right;}
@@ -348,7 +344,7 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 
 #course-category-listings .detail-pair {border-bottom:1px solid #e1e1e8;margin:0 1em;}
 #course-category-listings .detail-pair > * {display:inline-block;line-height:2.2em;}
-#course-category-listings .detail-pair .pair-key {color:#075698;font-weight:bold;text-align:right;}
+#course-category-listings .detail-pair .pair-key {font-weight:bold;text-align:right;}
 #course-category-listings .detail-pair .pair-key span {margin-right: 1em;display:block;}
 #course-category-listings .detail-pair:last-child {border-bottom-width:0;}
 

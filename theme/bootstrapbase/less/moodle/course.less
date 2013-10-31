@@ -626,7 +626,7 @@ span.editinstructions {
  * Course management page
  * Palette
  *
- * Background (reg)         #f7f7f9
+ * Background (reg)         #F5F5F5
  * Background (light        #fafafa
  * Background (highlight)   #ddffaa
  * Borders                  #e1e1e8
@@ -657,7 +657,7 @@ span.editinstructions {
     h3 {
         margin:0;
         padding:0.4rem 0.6rem 0.3rem;
-        background-color:#f7f7f9;
+        background-color:#F5F5F5;
         border-bottom:1px solid #e1e1e8;
     }
     h4 {
@@ -715,7 +715,7 @@ span.editinstructions {
             > div {
                 background-color:#FFFFD8;
                 border-top-color: #e1e1e8;
-                border-bottom-color:#f7f7f9;
+                border-bottom-color:#F5F5F5;
             }
             li:first-of-type > div,
             &[data-expandable='0']+li > div {
@@ -738,7 +738,7 @@ span.editinstructions {
 
         &+li > div,
         &:first-child > div {
-            border-top-color:#f7f7f9;
+            border-top-color:#F5F5F5;
         }
     }
 
@@ -844,11 +844,7 @@ span.editinstructions {
         }
         .listitem {
             > div {
-                margin-left:0.5em;
                 > .ba-checkbox {
-                    background-color: #FaFaFb;
-                    border-right: 1px solid #EFEFF4;
-                    border-left: 1px solid #EFEFF4;
                     vertical-align:middle;
                     width:2.2em;
                     text-align:center;
@@ -885,40 +881,10 @@ span.editinstructions {
         }
         .category-listing > ul > .listitem:first-child {
             position:relative;
-            .ba-checkbox:before {
-                content: '.';
-                background-color: #FaFaFb;
-                color: #FaFaFb;
-                position:absolute;
-                top:-0.2em;
-                line-height:0.2em;
-                border: 1px solid #EFEFF4;
-                border-width:1px 1px 0;
-                margin:-1px;
-                width:2.2em;
-                display:block;
-                border-radius: 2px 2px 0 0;
-            }
         }
         .category-bulk-actions {
             margin: 0 0.5em 0.5em;
-            background-color: #FaFaFb;
-            border: 1px solid #EFEFF4;
             position:relative;
-
-            &:before {
-                content: '.';
-                background-color: #FaFaFb;
-                color: #FaFaFb;
-                position:relative;
-                top:-1em;
-                line-height:110%;
-                border: 1px solid #EFEFF4;
-                border-width:0 1px;
-                margin:-1px;
-                width:2.2em;
-                display:block;
-            }
         }
     }
 
@@ -930,7 +896,6 @@ span.editinstructions {
             line-height:2.2rem;
         }
         .pair-key {
-            color:#075698;
             font-weight:bold;
             text-align:right;
             vertical-align: top;
