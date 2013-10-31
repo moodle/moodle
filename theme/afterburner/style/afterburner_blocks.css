@@ -179,13 +179,6 @@ img.iconsmall,
     padding: 0;
     border-radius: 0;
 }
-.block .header .commands {
-    text-align: center;
-}
-.block-control-actions span.moodle-core-dragdrop-draghandle {
-    position: relative;
-    top: 5px;
-}
 .moodle-actionmenu.show[data-enhanced] .menu a {
     color: #333333;
     display: block;
