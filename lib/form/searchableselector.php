@@ -64,7 +64,7 @@ class MoodleQuickForm_searchableselector extends MoodleQuickForm_select{
      */
     function toHtml(){
         global $OUTPUT;
-        if ($this->_hiddenLabel){
+        if ($this->_hiddenLabel || $this->_flagFrozen) {
             return parent::toHtml();
         } else {
             // Javascript for the search/selection fields
