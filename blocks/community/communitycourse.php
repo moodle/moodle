@@ -130,7 +130,7 @@ $communityid = optional_param('communityid', '', PARAM_INT);
 if ($remove != -1 and !empty($communityid) and confirm_sesskey()) {
     $communitymanager->block_community_remove_course($communityid, $USER->id);
     echo $OUTPUT->header();
-    echo $renderer->remove_success(new moodle_url(get_referer(false)));
+    echo $renderer->remove_success(new moodle_url('/course/view.php', array('id' => $courseid)));
     echo $OUTPUT->footer();
     die();
 }
