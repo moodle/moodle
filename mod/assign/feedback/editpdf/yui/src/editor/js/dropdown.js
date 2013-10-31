@@ -55,7 +55,7 @@ Y.extend(DROPDOWN, M.core.dialogue, {
             }
         }, this);
 
-        button.on('click', this.show, this);
+        button.on('click', function(e) {e.preventDefault(); this.show();}, this);
         button.on('key', this.show, 'enter,space', this);
     },
 
