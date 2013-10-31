@@ -38,7 +38,7 @@ Feature: Backup Moodle courses
     And I press "Continue"
     And I click on "Continue" "button" in the ".bcs-current-course" "css_element"
     And "//div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')][contains(., 'Include calendar events')]/descendant::img" "xpath_element" should exists
-    And I check "Include course logs"
+    And "Include course logs" "checkbox" should exists
     And I press "Next"
 
   @javascript

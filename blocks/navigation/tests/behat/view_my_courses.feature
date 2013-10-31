@@ -58,14 +58,11 @@ Feature: View my courses in navigation block
     And I should see "cat3" in the "Navigation" "block"
     And I should not see "cat2" in the "Navigation" "block"
     And I expand "cat3" node
-    And I wait "2" seconds
     And I should see "cat31" in the "Navigation" "block"
     And I should see "cat33" in the "Navigation" "block"
     And I should not see "cat32" in the "Navigation" "block"
     And I expand "cat31" node
-    And I wait "2" seconds
     And I should see "c31" in the "Navigation" "block"
     And I expand "cat33" node
-    And I wait "2" seconds
     And I should see "c331" in the "Navigation" "block"
     And I should not see "c332" in the "Navigation" "block"

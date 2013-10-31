@@ -42,5 +42,4 @@ Feature: Upload users
     And I expand "Users" node
     And I follow "Groups"
     And I select "Section 1 (1)" from "groups"
-    And I wait "4" seconds
     And the "members" select box should contain "Tom Jones"
