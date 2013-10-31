@@ -245,9 +245,9 @@ Feature: Course category management interface performs as expected
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Re-sort categories" "link"
-    And I should see "Re-sort the top level categories by name" in the ".category-listing-actions" "css_element"
-    And I should see "Re-sort the top level categories by idnumber" in the ".category-listing-actions" "css_element"
+    And I click on "Sort categories" "link"
+    And I should see "Sort the top level categories by name" in the ".category-listing-actions" "css_element"
+    And I should see "Sort the top level categories by idnumber" in the ".category-listing-actions" "css_element"
     And I click on <sortby> "link" in the ".category-listing-actions" "css_element"
     # Redirect.
     And I should see the "Course categories" management page
@@ -256,9 +256,9 @@ Feature: Course category management interface performs as expected
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "Re-sort categories" | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Re-sort the top level categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Re-sort the top level categories by idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Sort categories" | "Social studies"          | "Applied sciences"        | "Extended social studies" |
+    | "Sort the top level categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Sort the top level categories by idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   @javascript
   Scenario Outline: Sub categories are displayed correctly when resorted
@@ -303,7 +303,7 @@ Feature: Course category management interface performs as expected
     And I click on "Cat 1" "link"
   # Redirect.
     And I should see the "Course categories and courses" management page
-    And I click on "Re-sort courses" "link"
+    And I click on "Sort courses" "link"
     And I should see "By fullname" in the ".course-listing-actions" "css_element"
     And I should see "By shortname" in the ".course-listing-actions" "css_element"
     And I should see "By idnumber" in the ".course-listing-actions" "css_element"
@@ -345,7 +345,7 @@ Feature: Course category management interface performs as expected
     And I click on "Cat 1" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
-    And I click on "Re-sort courses" "link"
+    And I click on "Sort courses" "link"
     And I click on "By idnumber" "link" in the ".course-listing-actions" "css_element"
     # Redirect.
     And I should see "Per page: 20" in the ".course-listing-actions" "css_element"
@@ -528,7 +528,7 @@ Feature: Course category management interface performs as expected
     And I click on "Cat 1" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
-    And I click on "Re-sort courses" "link"
+    And I click on "Sort courses" "link"
     And I click on "By idnumber" "link" in the ".course-listing-actions" "css_element"
     # Redirect.
     And I should see "Per page: 20" in the ".course-listing-actions" "css_element"
@@ -593,7 +593,7 @@ Feature: Course category management interface performs as expected
     And I click on "Cat 1" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
-    And I click on "Re-sort courses" "link"
+    And I click on "Sort courses" "link"
     And I click on "By idnumber" "link" in the ".course-listing-actions" "css_element"
     # Redirect.
     And I should see the "Course categories and courses" management page
