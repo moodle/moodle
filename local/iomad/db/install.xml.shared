@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/iomad/db" VERSION="20111030" COMMENT="XMLDB file for Moodle local/iomad"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="company" COMMENT="company table retrofitted from MySQL" NEXT="companymanager">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="shortname"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="25" NOTNULL="true" SEQUENCE="false" PREVIOUS="name" NEXT="city"/>
+        <FIELD NAME="city" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="shortname" NEXT="country"/>
+        <FIELD NAME="country" TYPE="char" LENGTH="2" NOTNULL="true" SEQUENCE="false" PREVIOUS="city" NEXT="maildisplay"/>
+        <FIELD NAME="maildisplay" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="2" SEQUENCE="false" PREVIOUS="country" NEXT="mailformat"/>
+        <FIELD NAME="mailformat" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="maildisplay" NEXT="maildigest"/>
+        <FIELD NAME="maildigest" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="mailformat" NEXT="autosubscribe"/>
+        <FIELD NAME="autosubscribe" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="maildigest" NEXT="trackforums"/>
+        <FIELD NAME="trackforums" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="autosubscribe" NEXT="htmleditor"/>
+        <FIELD NAME="htmleditor" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="trackforums" NEXT="screenreader"/>
+        <FIELD NAME="screenreader" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="htmleditor" NEXT="timezone"/>
+        <FIELD NAME="timezone" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="99" SEQUENCE="false" PREVIOUS="screenreader" NEXT="lang"/>
+        <FIELD NAME="lang" TYPE="char" LENGTH="30" NOTNULL="true" DEFAULT="en" SEQUENCE="false" PREVIOUS="timezone" NEXT="bgcolor_header"/>
+        <FIELD NAME="bgcolor_header" TYPE="char" LENGTH="7" NOTNULL="false" SEQUENCE="false" PREVIOUS="lang" NEXT="bgcolor_content"/>
+        <FIELD NAME="bgcolor_content" TYPE="char" LENGTH="7" NOTNULL="false" SEQUENCE="false" PREVIOUS="bgcolor_header" NEXT="theme"/>
+        <FIELD NAME="theme" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="bgcolor_content"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="companymanager" COMMENT="Links managers to companies for Perficio" PREVIOUS="company" NEXT="companycourse">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="companyid"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="companyid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="companyid" UNIQUE="false" FIELDS="companyid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="companycourse" COMMENT="Links Companies to Courses for Perficio" PREVIOUS="companymanager" NEXT="department">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="companyid"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="companyid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="department" COMMENT="Perficio department deginitions" PREVIOUS="companycourse" NEXT="department_users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Department Name" PREVIOUS="id" NEXT="shortname"/>
+        <FIELD NAME="shortname" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="Shortname of department" PREVIOUS="name" NEXT="company"/>
+        <FIELD NAME="company" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Company ID" PREVIOUS="shortname" NEXT="parent"/>
+        <FIELD NAME="parent" TYPE="int" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="ID of parent department" PREVIOUS="company"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="department_users" COMMENT="Perficio department user allocations" PREVIOUS="department" NEXT="department_courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User ID" PREVIOUS="id" NEXT="departmentid"/>
+        <FIELD NAME="departmentid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Perficio Department ID" PREVIOUS="userid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="department_courses" COMMENT="Perficio department courses allocations" PREVIOUS="department_users" NEXT="companylicense">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course ID" PREVIOUS="id" NEXT="departmentid"/>
+        <FIELD NAME="departmentid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Perficio Department ID" PREVIOUS="courseid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="companylicense" COMMENT="To hold the Perficio license allocations" PREVIOUS="department_courses" NEXT="companylicense_users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="license name" PREVIOUS="id" NEXT="allocation"/>
+        <FIELD NAME="allocation" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of designated licenses" PREVIOUS="name" NEXT="validlength"/>
+        <FIELD NAME="validlength" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Days license is usable after allocation" PREVIOUS="allocation" NEXT="expirydate"/>
+        <FIELD NAME="expirydate" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Date licenses can no longer be allocated" PREVIOUS="validlength" NEXT="used"/>
+        <FIELD NAME="used" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of allocated licenses" PREVIOUS="expirydate" NEXT="companyid"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" COMMENT="Company foreign key" PREVIOUS="used"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="companylicense_users" COMMENT="To tie users to licenses" PREVIOUS="companylicense" NEXT="companylicense_courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="licenseid"/>
+        <FIELD NAME="licenseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="License foreign key" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="User foreign key" PREVIOUS="licenseid" NEXT="isusing"/>
+        <FIELD NAME="isusing" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="userid" NEXT="timecompleted"/>
+        <FIELD NAME="timecompleted" TYPE="int" LENGTH="20" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" PREVIOUS="isusing" NEXT="score"/>
+        <FIELD NAME="score" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" DECIMALS="5" PREVIOUS="timecompleted" NEXT="result"/>
+        <FIELD NAME="result" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" PREVIOUS="score"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="companylicense_courses" COMMENT="for keeping track of license course allocations" PREVIOUS="companylicense_users" NEXT="company_course_groups">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="licenseid"/>
+        <FIELD NAME="licenseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="License foreign key" PREVIOUS="id" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Course foreign key" PREVIOUS="licenseid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="company_course_groups" COMMENT="Pivot table to map the groups table to the company table;" PREVIOUS="companylicense_courses" NEXT="iomad_courses">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="companyid"/>
+        <FIELD NAME="companyid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="Foreign key for company table" PREVIOUS="id" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="foreign key for groups table" PREVIOUS="companyid" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="foreign key for course table" PREVIOUS="groupid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="iomad_courses" COMMENT="To hold additional course information" PREVIOUS="company_course_groups">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="courseid"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" COMMENT="foreign key for course table" PREVIOUS="id" NEXT="licensed"/>
+        <FIELD NAME="licensed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Boolean to denote if a course is licensed or not" PREVIOUS="courseid" NEXT="shared"/>
+        <FIELD NAME="shared" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Boolean to denote course is a cross company shared course" PREVIOUS="licensed"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

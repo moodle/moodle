@@ -1,0 +1,46 @@
+.iomad_company_admin_table {
+   width: 90%;
+   margin: auto;
+   text-align: center;
+   top: 30px;
+   bottom: 30px;
+   }
+
+div.iomadlink_container {
+    min-height: 100px;
+    position: relative;
+    }
+
+ul.iomadtab {
+    height: 36px;
+    padding-left: 10px;
+    clear: both;
+    border-bottom: 1px solid black;
+}
+
+ul.iomadtab li {
+    height: 25px;
+    list-style: none;
+    float: left;
+    padding: 5px 15px;
+    background-color: #fad163;
+    border: 1px solid black;
+}
+
+ul.iomadtab li.iomadselected {
+    border-bottom: 1px solid transparent;
+    background-color: #fff7d7;
+}
+
+div.iomadlink a:hover {
+    color: #0000ff;
+    text-decoration: none;
+}
+
+div.iomadlink {
+    width: 100px;
+    min-height: 100px;
+    text-align: center;
+    float:left;
+    position: relative;
+}
