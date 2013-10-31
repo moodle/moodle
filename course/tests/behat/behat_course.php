@@ -946,7 +946,7 @@ class behat_course extends behat_base {
     protected function get_management_category_listing_node_by_name($name, $link = false) {
         $selector = "//div[@id='category-listing']//li[contains(concat(' ', normalize-space(@class), ' '), ' listitem-category ')]//a[text()='{$name}']";
         if ($link === false) {
-            $selector .= "/ancestor::li[@data-id]";
+            $selector .= "/ancestor::li[@data-id][1]";
         }
         return $this->find('xpath', $selector);
     }
@@ -1001,39 +1001,70 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Clicks on a category checkbox in the management interface.
+     * Clicks on a category checkbox in the management interface, if not checked.
      *
      * @Given /^I select category "(?P<name>[^"]*)" in the management interface$/
      * @param string $name
      */
     public function i_select_category_in_the_management_interface($name) {
         $node = $this->get_management_category_listing_node_by_name($name);
-        $node->checkField('bcat[]');
+        $node = $node->findField('bcat[]');
+        if (!$node->isChecked()) {
+            $node->click();
+        }
     }
 
     /**
-     * Clicks course checkbox in the management interface.
+     * Clicks on a category checkbox in the management interface, if checked.
+     *
+     * @Given /^I unselect category "(?P<name>[^"]*)" in the management interface$/
+     * @param string $name
+     */
+    public function i_unselect_category_in_the_management_interface($name) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+        $node = $node->findField('bcat[]');
+        if ($node->isChecked()) {
+            $node->click();
+        }
+    }
+
+    /**
+     * Clicks course checkbox in the management interface, if not checked.
      *
      * @Given /^I select course "(?P<name>[^"]*)" in the management interface$/
      * @param string $name
      */
     public function i_select_course_in_the_management_interface($name) {
         $node = $this->get_management_course_listing_node_by_name($name);
-        $node->checkField('bc[]');
+        $node = $node->findField('bc[]');
+        if (!$node->isChecked()) {
+            $node->click();
+        }
+    }
+
+    /**
+     * Clicks course checkbox in the management interface, if checked.
+     *
+     * @Given /^I unselect course "(?P<name>[^"]*)" in the management interface$/
+     * @param string $name
+     */
+    public function i_unselect_course_in_the_management_interface($name) {
+        $node = $this->get_management_course_listing_node_by_name($name);
+        $node = $node->findField('bc[]');
+        if ($node->isChecked()) {
+            $node->click();
+        }
     }
 
     /**
      * Move selected categories to top level in the management interface.
      *
-     * @Given /^I move category "(?P<idnumber>[^"]*)" to top level in the management interface$/
-     * @param string $idnumber
+     * @Given /^I move category "(?P<name>[^"]*)" to top level in the management interface$/
+     * @param string $name
      * @return Given[]
      */
-    public function i_move_category_to_top_level_in_the_management_interface($idnumber) {
-        $id = $this->get_category_id($idnumber);
-        $selector = sprintf('.listitem-category[data-id="%d"] > div', $id);
-        $node = $this->find('css', $selector);
-        $node->checkField('bcat[]');
+    public function i_move_category_to_top_level_in_the_management_interface($name) {
+        $this->i_select_category_in_the_management_interface($name);
         return array(
             new Given('I select "' .  coursecat::get(0)->get_formatted_name() . '" from "menumovecategoriesto"'),
             new Given('I press "bulkmovecategories"'),

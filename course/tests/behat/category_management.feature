@@ -231,7 +231,104 @@ Feature: Test category management actions
     And I click on category "Cat 1" in the management interface
     # Redirect
     Then I should see category "CAT3" as subcategory of "CAT1" in the management interface
-    And I move category "CAT3" to top level in the management interface
+    And I move category "Cat 3" to top level in the management interface
     # Redirect
     And I should not see category "CAT3" as subcategory of "CAT1" in the management interface
     Then I should see category "CAT2" as subcategory of "CAT1" in the management interface
+
+  @javascript
+  Scenario: Test bulk action is shown only when some category/course is selected
+    Given the following "categories" exists:
+      | name | category | idnumber |
+      | Cat 1 | 0 | CAT1 |
+      | Cat 2 | 0 | CAT2 |
+      | Cat 3 | 0 | CAT3 |
+    And the following "courses" exists:
+      | category | fullname | shortname | idnumber |
+      | CAT3 | Course 1 | Course 1 | C1 |
+      | CAT3 | Course 2 | Course 2 | C2 |
+
+    And I log in as "admin"
+    And I go to the courses management page
+    And I should see the "Course categories" management page
+    And I should see "Cat 1" in the "#category-listing ul.ml" "css_element"
+    And I should see "Cat 2" in the "#category-listing ul.ml" "css_element"
+    And I should see "Cat 3" in the "#category-listing ul.ml" "css_element"
+    And the "movecategoriesto" "select" should be disabled
+    And the "resortcategoriesby" "select" should be disabled
+    And the "resortcoursesby" "select" should be disabled
+    When I select "allcategories" from "selectsortby"
+    Then the "resortcategoriesby" "select" should be enabled
+    And the "resortcoursesby" "select" should be enabled
+    And the "movecategoriesto" "select" should be disabled
+    And I select category "Cat 2" in the management interface
+    And the "movecategoriesto" "select" should be enabled
+    And the "resortcategoriesby" "select" should be enabled
+    And the "resortcoursesby" "select" should be enabled
+    And I select "selectedcategories" from "selectsortby"
+    And the "movecategoriesto" "select" should be enabled
+    And the "resortcategoriesby" "select" should be enabled
+    And the "resortcoursesby" "select" should be enabled
+    And I unselect category "Cat 2" in the management interface
+    And the "movecategoriesto" "select" should be disabled
+    And the "resortcategoriesby" "select" should be disabled
+    And the "resortcoursesby" "select" should be disabled
+    And I select category "Cat 3" in the management interface
+    And the "movecategoriesto" "select" should be enabled
+    And the "resortcategoriesby" "select" should be enabled
+    And the "resortcoursesby" "select" should be enabled
+    And I select category "Cat 2" in the management interface
+    And the "movecategoriesto" "select" should be enabled
+    And the "resortcategoriesby" "select" should be enabled
+    And the "resortcoursesby" "select" should be enabled
+    And I unselect category "Cat 2" in the management interface
+    And I unselect category "Cat 3" in the management interface
+    And the "movecategoriesto" "select" should be disabled
+    And the "resortcategoriesby" "select" should be disabled
+    And the "resortcoursesby" "select" should be disabled
+    And I click on category "Cat 1" in the management interface
+    # Redirect.
+    And I should see the "Course categories and courses" management page
+    And the "movecategoriesto" "select" should be disabled
+    And the "resortcategoriesby" "select" should be disabled
+    And the "resortcoursesby" "select" should be disabled
+    And the "movecoursesto" "select" should be disabled
+    And I click on category "Cat 3" in the management interface
+    #Redirect
+    And I should see the "Course categories and courses" management page
+    And I should see "Course 1" in the "#course-listing ul.ml" "css_element"
+    And I should see "Course 2" in the "#course-listing ul.ml" "css_element"
+    And the "movecategoriesto" "select" should be disabled
+    And the "resortcategoriesby" "select" should be disabled
+    And the "resortcoursesby" "select" should be disabled
+    And the "movecoursesto" "select" should be disabled
+    And I select course "Course 1" in the management interface
+    And the "movecoursesto" "select" should be enabled
+    And the "movecategoriesto" "select" should be disabled
+    And the "resortcategoriesby" "select" should be disabled
+    And the "resortcoursesby" "select" should be disabled
+    And I select course "Course 2" in the management interface
+    And the "movecoursesto" "select" should be enabled
+    And the "movecategoriesto" "select" should be disabled
+    And the "resortcategoriesby" "select" should be disabled
+    And the "resortcoursesby" "select" should be disabled
+    And I select category "Cat 3" in the management interface
+    And the "movecoursesto" "select" should be enabled
+    And the "movecategoriesto" "select" should be enabled
+    And the "resortcategoriesby" "select" should be enabled
+    And the "resortcoursesby" "select" should be enabled
+    And I unselect course "Course 2" in the management interface
+    And the "movecoursesto" "select" should be enabled
+    And the "movecategoriesto" "select" should be enabled
+    And the "resortcategoriesby" "select" should be enabled
+    And the "resortcoursesby" "select" should be enabled
+    And I unselect course "Course 1" in the management interface
+    And the "movecoursesto" "select" should be disabled
+    And the "movecategoriesto" "select" should be enabled
+    And the "resortcategoriesby" "select" should be enabled
+    And the "resortcoursesby" "select" should be enabled
+    And I unselect category "Cat 3" in the management interface
+    And the "movecoursesto" "select" should be disabled
+    And the "movecategoriesto" "select" should be disabled
+    And the "resortcategoriesby" "select" should be disabled
+    And the "resortcoursesby" "select" should be disabled
