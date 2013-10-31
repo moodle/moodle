@@ -31,6 +31,7 @@
 .dir-rtl .block_settings .block_tree .tree_item.branch {background-position: center right;}
 .dir-rtl .block_settings .block_tree .root_node.leaf {padding-right:0px;}
 .dir-rtl .block_settings .block_tree li.item_with_icon > p img { right: 0; left: auto;}
+.jsenabled .block_settings .block_tree .tree_item.branch.loadingbranch {background-image:url([[pix:i/loading_small]]);}
 
 .jsenabled.dir-rtl .block_settings .block_tree .tree_item.emptybranch {background-image: url([[pix:t/collapsed_empty_rtl]]);background-position: center right;}
 .jsenabled.dir-rtl .block_settings .block_tree .collapsed .tree_item.branch {background-image: url([[pix:t/collapsed_rtl]]);}
