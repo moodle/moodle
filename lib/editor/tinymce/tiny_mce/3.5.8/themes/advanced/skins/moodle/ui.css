@@ -258,9 +258,10 @@
 .moodleSkin span.mce_visualblocks {background:url(img/visual_blocks.png) center center no-repeat;}
 .moodleSkin span.mce_backward {background:url(img/backward.png) center center no-repeat;}
 .moodleSkin span.mce_forward {background:url(img/forward.png) center center no-repeat;}
+.moodleSkin span.mce_attribs {background:url(img/attributes.png) center center no-repeat;}
 
-.moodleSkin span.mce_forecolorpicker {background:url(img/text_color.png) center center no-repeat;}
-.moodleSkin span.mce_backcolorpicker {background:url(img/text_highlight.png) center center no-repeat;}
+.moodleSkin span.mce_forecolorpicker {background:url(img/text_color_picker.png) center center no-repeat;}
+.moodleSkin span.mce_backcolorpicker {background:url(img/text_highlight_picker.png) center center no-repeat;}
 .moodleSkin .mce_forecolor span.mceAction {background:url(img/text_color.png) center center no-repeat;}
 .moodleSkin .mce_backcolor span.mceAction {background:url(img/text_highlight.png) center center no-repeat;}
 
