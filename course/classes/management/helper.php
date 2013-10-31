@@ -208,6 +208,14 @@ class helper {
             );
         }
 
+        if ($category->can_create_subcategory()) {
+            $actions['createnewsubcategory'] = array(
+                'url' => new \moodle_url('/course/editcategory.php', array('parent' => $category->id)),
+                'icon' => new \pix_icon('i/withsubcat', new \lang_string('createnewsubcategory')),
+                'string' => new \lang_string('createnewsubcategory')
+            );
+        }
+
         // Resort.
         if ($category->can_resort_subcategories() && $category->has_children()) {
             $actions['resortbyname'] = array(

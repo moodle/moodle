@@ -257,39 +257,17 @@ class core_course_management_renderer extends plugin_renderer_base {
      */
     public function category_listing_actions(coursecat $category = null) {
         $actions = array();
-        $createtoplevel = coursecat::can_create_top_level_category();
-        $createsubcategory = $category && $category->can_create_subcategory();
+
+        $cancreatecategory = $category && $category->can_create_subcategory();
+        $cancreatecategory = $cancreatecategory || coursecat::can_create_top_level_category();
         if ($category === null) {
             $category = coursecat::get(0);
         }
 
         $hasitems = false;
-        if ($createtoplevel) {
-            $hasitems = true;
-            $menu = new action_menu;
-            if ($createtoplevel) {
-                $url = new moodle_url('/course/editcategory.php', array('parent' => 0));
-                $menu->add(new action_menu_link_secondary(
-                    $url,
-                    null,
-                    get_string('toplevelcategory')
-                ));
-            }
-            if ($createsubcategory) {
-                $url = new moodle_url('/course/editcategory.php', array('parent' => $category->id));
-                $attributes = array(
-                    'title' => get_string('createsubcategoryof', 'moodle', $category->get_formatted_name())
-                );
-                $menu->add(new action_menu_link_secondary(
-                    $url,
-                    null,
-                    get_string('subcategory'),
-                    $attributes
-                ));
-            }
-            $menu->actiontext = get_string('createnew');
-            $menu->actionicon = new pix_icon('t/contextmenu', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
-            $actions[] = $this->render($menu);
+        if ($cancreatecategory) {
+            $url = new moodle_url('/course/editcategory.php', array('parent' => $category->id));
+            $actions[] = html_writer::link($url, get_string('createnewcategory'));
         }
         if (coursecat::can_approve_course_requests()) {
             $actions[] = html_writer::link(new moodle_url('/course/pending.php'), get_string('coursespending'));
