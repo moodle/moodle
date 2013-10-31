@@ -76,7 +76,7 @@ class behat_backup extends behat_base {
         $this->find_button(get_string('backupstage4action', 'backup'))->press();
 
         // Waiting for it to finish.
-        $this->wait(10);
+        $this->wait();
 
         // Last backup continue button.
         $this->find_button(get_string('backupstage16action', 'backup'))->press();
@@ -301,7 +301,7 @@ class behat_backup extends behat_base {
 
         // Review, no options here.
         $this->find_button(get_string('restorestage16action', 'backup'))->press();
-        $this->wait(10);
+        $this->wait();
 
         // Last restore continue button, redirected to restore course after this.
         $this->find_button(get_string('restorestage32action', 'backup'))->press();
@@ -343,19 +343,15 @@ class behat_backup extends behat_base {
     /**
      * Waits until the DOM is ready.
      *
-     * @param int To override the default timeout
      * @return void
      */
-    protected function wait($timeout = false) {
+    protected function wait() {
 
         if (!$this->running_javascript()) {
             return;
         }
 
-        if (!$timeout) {
-            $timeout = self::TIMEOUT;
-        }
-        $this->getSession()->wait($timeout, '(document.readyState === "complete")');
+        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
     }
 
 }

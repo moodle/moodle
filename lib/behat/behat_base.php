@@ -55,7 +55,22 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * The timeout for each Behat step (load page, wait for an element to load...).
      */
-    const TIMEOUT = 6;
+    const TIMEOUT = 3;
+
+    /**
+     * And extended timeout for specific cases.
+     */
+    const EXTENDED_TIMEOUT = 10;
+
+    /**
+     * Number of retries to wait for the editor to be ready.
+     */
+    const WAIT_FOR_EDITOR_RETRIES = 10;
+
+    /**
+     * The JS code to check that the page is ready.
+     */
+    const PAGE_READY_JS = '(M && M.util && M.util.pending_js && !Boolean(M.util.pending_js.length)) && (document.readyState === "complete")';
 
     /**
      * Locates url, based on provided path.
@@ -420,4 +435,192 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         return get_class($this->getSession()->getDriver()) !== 'Behat\Mink\Driver\GoutteDriver';
     }
 
+    /**
+     * Spins around an element until it exists
+     *
+     * @throws ExpectationException
+     * @param string $element
+     * @param string $selectortype
+     * @return void
+     */
+    protected function ensure_element_exists($element, $selectortype) {
+
+        // Getting the behat selector & locator.
+        list($selector, $locator) = $this->transform_selector($selectortype, $element);
+
+        // Exception if it timesout and the element is still there.
+        $msg = 'The ' . self::EXTENDED_TIMEOUT . ' seconds timeout expired and the element "' . $element . '" is not there';
+        $exception = new ExpectationException($msg, $this->getSession());
+
+        // Will stop spinning the find() return false.
+        $this->spin(
+            function($context, $args) {
+                // We don't use behat_base::find as it is already spinning.
+                if ($context->getSession()->getPage()->find($args['selector'], $args['locator'])) {
+                    return true;
+                }
+            },
+            array('selector' => $selector, 'locator' => $locator),
+            self::EXTENDED_TIMEOUT,
+            $exception,
+            true
+        );
+
+    }
+
+    /**
+     * Spins until the element does not exist
+     *
+     * @throws ExpectationException
+     * @param string $element
+     * @param string $selectortype
+     * @return void
+     */
+    protected function ensure_element_does_not_exist($element, $selectortype) {
+
+        // Getting the behat selector & locator.
+        list($selector, $locator) = $this->transform_selector($selectortype, $element);
+
+        // Exception if it timesout and the element is still there.
+        $msg = 'The ' . self::EXTENDED_TIMEOUT . ' seconds timeout expired and the "' . $element . '" element is still there';
+        $exception = new ExpectationException($msg, $this->getSession());
+
+        // Will stop spinning the find() return false.
+        $this->spin(
+            function($context, $args) {
+                // We don't use behat_base::find as it is already spinning.
+                if (!$context->getSession()->getPage()->find($args['selector'], $args['locator'])) {
+                    return true;
+                }
+            },
+            array('selector' => $selector, 'locator' => $locator),
+            self::EXTENDED_TIMEOUT,
+            $exception,
+            true
+        );
+    }
+
+    /**
+     * Ensures that the provided node is visible and we can interact with it.
+     *
+     * @throws ExpectationException
+     * @param NodeElement $node
+     * @return void Throws an exception if it times out without the element being visible
+     */
+    protected function ensure_node_is_visible($node) {
+
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        // Exception if it timesout and the element is still there.
+        $msg = 'The ' . self::EXTENDED_TIMEOUT . ' seconds timeout expired and the "' . $node->getXPath() . '" element is not visible';
+        $exception = new ExpectationException($msg, $this->getSession());
+
+        // Will stop spinning the find() return false.
+        $this->spin(
+            function($context, $args) {
+                if ($args->isVisible()) {
+                    return true;
+                }
+            },
+            $node,
+            self::EXTENDED_TIMEOUT,
+            $exception,
+            true
+        );
+    }
+
+    /**
+     * Ensures that the provided element is visible and we can interact with it.
+     *
+     * Returns the node in case other actions are interested in using it.
+     *
+     * @throws ExpectationException
+     * @param string $element
+     * @param string $selectortype
+     * @return NodeElement Throws an exception if it times out without being visible
+     */
+    protected function ensure_element_is_visible($element, $selectortype) {
+
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        $node = $this->get_selected_node($selectortype, $element);
+        $this->ensure_node_is_visible($node);
+
+        return $node;
+    }
+
+    /**
+     * Ensures that all the page's editors are loaded.
+     *
+     * This method is expensive as it waits for .mceEditor CSS
+     * so use with caution and only where there will be editors.
+     *
+     * @throws ElementNotFoundException
+     * @return void
+     */
+    protected function ensure_editors_are_loaded() {
+
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        $lastexception = new Exception('The editors are not properly loaded');
+
+        // If there are no editors we don't need to wait.
+        //$this->getSession()->getPage()->find('css', '.mceEditor');
+        try {
+            $this->find('css', '.mceEditor');
+        } catch (ElementNotFoundException $e) {
+            return;
+        }
+
+        // We loop until we can interact with all the page editors.
+        for ($i = 0; $i < self::WAIT_FOR_EDITOR_RETRIES; $i++) {
+
+            // Here we know that there are .mceEditor editors in the page and we will
+            // probably need to interact with them, if we use tinyMCE JS var before
+            // it exists it will throw an exception and we want to catch it until all
+            // the page's editors are ready to interact with them.
+            try {
+
+                // It may return 0 if tinyMCE is loaded but not the instances, so we just loop again.
+                if ($this->getSession()->evaluateScript('return tinyMCE.editors.length;') > 0) {
+
+                    // It may be there but not ready.
+                    $iframeready = $this->getSession()->evaluateScript('
+                        var readyeditors = new Array;
+                        for (editorid in tinyMCE.editors) {
+                            if (tinyMCE.editors[editorid].getDoc().readyState === "complete") {
+                                readyeditors[editorid] = editorid;
+                            }
+                        }
+                        if (tinyMCE.editors.length === readyeditors.length) {
+                            return "complete";
+                        }
+                        return "";
+                    ');
+
+                    // Now we know that the editors are there.
+                    if ($iframeready) {
+                        return;
+                    }
+                }
+
+            } catch (Exception $e) {
+                // Catching any kind of exception and ignoring it until times out.
+                $lastexception = $e;
+
+                // Waiting 0.1 seconds.
+                usleep(100000);
+            }
+        }
+
+        // If it is not available we throw the last exception.
+        throw $lastexception;
+
+    }
 }
