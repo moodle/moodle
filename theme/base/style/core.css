@@ -1016,7 +1016,6 @@ sup {vertical-align: super;}
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
-    overflow: auto;
     padding: 1em;
     line-height: 2em;
     color: #555;
