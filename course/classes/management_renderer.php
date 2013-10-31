@@ -44,7 +44,7 @@ class core_course_management_renderer extends plugin_renderer_base {
     public function enhance_management_interface() {
         $this->page->requires->yui_module('moodle-course-management', 'M.course.management.init');
         $this->page->requires->strings_for_js(
-            array('show', 'hide', 'expand', 'collapse', 'confirmcoursemove', 'yes', 'no', 'confirm'),
+            array('show', 'hide', 'expand', 'collapse', 'confirmcoursemove', 'move', 'cancel', 'confirm'),
             'moodle'
         );
     }

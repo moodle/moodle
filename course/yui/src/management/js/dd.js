@@ -239,8 +239,7 @@ DragDrop.prototype = {
             previousid;
 
         if (!drag.test('.listitem-course')) {
-            Y.log('Wasn\'t what I expected', 'warn', 'moodle-course-management');
-            alert(drag);
+            Y.log('It was not a course being dragged.', 'warn', 'moodle-course-management');
             return false;
         }
         courseid = drag.getData('id');

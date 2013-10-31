@@ -685,7 +685,6 @@ DragDrop.prototype = {
             previousid;
 
         if (!drag.test('.listitem-course')) {
-            alert(drag);
             return false;
         }
         courseid = drag.getData('id');
@@ -1193,8 +1192,8 @@ Category.prototype = {
                     course : course.getName(),
                     category : self.getName()
                 }),
-                yesLabel : M.util.get_string('yes', 'moodle'),
-                noLabel : M.util.get_string('no', 'moodle')
+                yesLabel : M.util.get_string('move', 'moodle'),
+                noLabel : M.util.get_string('cancel', 'moodle')
             });
             confirm.on('complete-yes', function() {
                 confirm.hide();

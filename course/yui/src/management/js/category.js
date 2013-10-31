@@ -216,8 +216,8 @@ Category.prototype = {
                     course : course.getName(),
                     category : self.getName()
                 }),
-                yesLabel : M.util.get_string('yes', 'moodle'),
-                noLabel : M.util.get_string('no', 'moodle')
+                yesLabel : M.util.get_string('move', 'moodle'),
+                noLabel : M.util.get_string('cancel', 'moodle')
             });
             confirm.on('complete-yes', function() {
                 confirm.hide();
