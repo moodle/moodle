@@ -64,7 +64,7 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
                         'hidden'        => $this->get_export_config('hidden')));
                 if ($return) {
                     // Attach photo to a set if requested
-                    if ($this->get_export_config('set')) {
+                    if ($this->get_export_config('set') && !empty($this->flickr->parsed_response['photoid'])) {
                         $this->flickr->photosets_addPhoto($this->get_export_config('set'),
                             $this->flickr->parsed_response['photoid']);
                     }
