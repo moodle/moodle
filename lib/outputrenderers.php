@@ -1057,6 +1057,7 @@ class core_renderer extends renderer_base {
         if ($blockid !== null) {
             $menu->set_owner_selector('#'.$blockid);
         }
+        $menu->set_constraint('.block-region');
         $menu->attributes['class'] .= ' block-control-actions commands';
         if (isset($CFG->blockeditingmenu) && !$CFG->blockeditingmenu) {
             $menu->do_not_enhance();

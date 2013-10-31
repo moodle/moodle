@@ -363,7 +363,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         $menu = new action_menu();
         $menu->set_owner_selector($ownerselector);
-        $menu->set_contraint($constraint);
+        $menu->set_constraint($constraint);
         $menu->set_alignment(action_menu::TL, action_menu::TR);
         if (isset($CFG->modeditingmenu) && !$CFG->modeditingmenu || !empty($displayoptions['donotenhance'])) {
             $menu->do_not_enhance();

@@ -3312,7 +3312,7 @@ class action_menu implements renderable {
      *
      * @param string $ancestorselector A snippet of CSS used to identify the ancestor to contrain the dialogue to.
      */
-    public function set_contraint($ancestorselector) {
+    public function set_constraint($ancestorselector) {
         $this->attributessecondary['data-constraint'] = $ancestorselector;
     }
 
