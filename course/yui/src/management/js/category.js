@@ -242,12 +242,15 @@ Category.prototype = {
      */
     completeMoveCourse : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
-            course;
+            console = this.get('console'),
+            category,
+            course,
+            totals;
         if (outcome === false) {
             Y.log('AJAX failed to move courses into this category: '+this.get('itemname'), 'warn', 'moodle-course-management');
             return false;
         }
-        course = this.get('console').getCourseById(args.courseid);
+        course = console.getCourseById(args.courseid);
         if (!course) {
             Y.log('Course was moved but the course listing could not be found to reflect this', 'warn', 'moodle-course-management');
             return false;
@@ -255,6 +258,28 @@ Category.prototype = {
         Y.log('Moved the course ('+course.getName()+') into this category ('+this.getName()+')', 'info', 'moodle-course-management');
         this.highlight();
         if (course) {
+            if (outcome.paginationtotals) {
+                totals = console.get('courselisting').one('.listing-pagination-totals');
+                if (totals) {
+                    totals.set('innerHTML', outcome.paginationtotals);
+                }
+            }
+            if (outcome.newcatcourses !== 'undefined') {
+                totals = this.get('node').one('.course-count');
+                if (totals) {
+                    totals.set('innerHTML', totals.get('innerHTML').replace(/^\d+/, outcome.newcatcourses));
+                }
+            }
+            if (outcome.oldcatcourses !== 'undefined') {
+                category = console.get('activecategoryid');
+                category = console.getCategoryById(category);
+                if (category) {
+                    totals = category.get('node').one('.course-count');
+                    if (totals) {
+                        totals.set('innerHTML', totals.get('innerHTML').replace(/^\d+/, outcome.oldcatcourses));
+                    }
+                }
+            }
             course.remove();
         }
         return true;

@@ -1218,16 +1218,41 @@ Category.prototype = {
      */
     completeMoveCourse : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
-            course;
+            console = this.get('console'),
+            category,
+            course,
+            totals;
         if (outcome === false) {
             return false;
         }
-        course = this.get('console').getCourseById(args.courseid);
+        course = console.getCourseById(args.courseid);
         if (!course) {
             return false;
         }
         this.highlight();
         if (course) {
+            if (outcome.paginationtotals) {
+                totals = console.get('courselisting').one('.listing-pagination-totals');
+                if (totals) {
+                    totals.set('innerHTML', outcome.paginationtotals);
+                }
+            }
+            if (outcome.newcatcourses !== 'undefined') {
+                totals = this.get('node').one('.course-count');
+                if (totals) {
+                    totals.set('innerHTML', totals.get('innerHTML').replace(/^\d+/, outcome.newcatcourses));
+                }
+            }
+            if (outcome.oldcatcourses !== 'undefined') {
+                category = console.get('activecategoryid');
+                category = console.getCategoryById(category);
+                if (category) {
+                    totals = category.get('node').one('.course-count');
+                    if (totals) {
+                        totals.set('innerHTML', totals.get('innerHTML').replace(/^\d+/, outcome.oldcatcourses));
+                    }
+                }
+            }
             course.remove();
         }
         return true;
