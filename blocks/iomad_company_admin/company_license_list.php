@@ -48,7 +48,7 @@ $returnurl = $baseurl;
 // Set the companyid to bypass the company select form if possible.
 if (!empty($SESSION->currenteditingcompany)) {
     $companyid = $SESSION->currenteditingcompany;
-} else if (!empty($USER->company)) {
+} else if (iomad::is_company_user()) {
     $companyid = company_user::companyid();
 } else if (!has_capability('block/iomad_company_admin:edit_departments', context_system::instance())) {
     print_error('There has been a configuration error, please contact the site administrator');

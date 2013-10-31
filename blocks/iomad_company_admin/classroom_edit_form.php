@@ -105,7 +105,7 @@ $templatelist = new moodle_url('/blocks/iomad_company_admin/classroom_list.php',
 // Set the companyid to bypass the company select form if possible.
 if (!empty($SESSION->currenteditingcompany)) {
     $companyid = $SESSION->currenteditingcompany;
-} else if (!empty($USER->company)) {
+} else if (iomad::is_company_user()) {
     $companyid = company_user::companyid();
 } else if (
     ($classroomid && !has_capability('block/iomad_company_admin:classrooms_edit', $context))
