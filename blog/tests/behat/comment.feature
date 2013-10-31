@@ -33,11 +33,9 @@ Feature: Comment on a blog entry
     And I follow "Comments (0)"
     When I fill in "content" with "$My own >nasty< \"string\"!"
     And I follow "Save comment"
-    And I wait "4" seconds
     Then I should see "$My own >nasty< \"string\"!"
     And I fill in "content" with "Another $Nasty <string?>"
     And I follow "Save comment"
-    And I wait "4" seconds
     And I should see "Comments (2)" in the ".comment-link" "css_element"
 
   @javascript
@@ -53,9 +51,9 @@ Feature: Comment on a blog entry
     And I follow "Comments (0)"
     And I fill in "content" with "$My own >nasty< \"string\"!"
     And I follow "Save comment"
-    And I wait "4" seconds
     When I click on ".comment-delete a" "css_element"
-    And I wait "4" seconds
+    # Waiting for the animation to finish.
+    And I wait "2" seconds
     Then I should not see "$My own >nasty< \"string\"!"
     And I follow "Blog post from user 1"
     And I click on ".comment-link" "css_element"
@@ -73,5 +71,4 @@ Feature: Comment on a blog entry
     When I follow "Comments (0)"
     And I fill in "content" with "$My own >nasty< \"string\"!"
     And I follow "Save comment"
-    And I wait "4" seconds
     Then I should see "$My own >nasty< \"string\"!"

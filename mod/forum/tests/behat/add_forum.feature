@@ -25,5 +25,4 @@ Feature: Add forum activities and discussions
     When I add a new discussion to "Test forum name" forum with:
       | Subject | Forum post 1 |
       | Message | This is the body |
-    And I wait "6" seconds
     Then I should see "Test forum name"

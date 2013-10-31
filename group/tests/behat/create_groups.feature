@@ -40,12 +40,10 @@ Feature: Organize students into groups
     And I add "student2" user to "Group 2" group
     And I add "student3" user to "Group 2" group
     Then I select "Group 1 (2)" from "groups"
-    And I wait "5" seconds
     And the "members" select box should contain "Student 0"
     And the "members" select box should contain "Student 1"
     And the "members" select box should not contain "Student 2"
     And I select "Group 2 (2)" from "groups"
-    And I wait "5" seconds
     And the "members" select box should contain "Student 2"
     And the "members" select box should contain "Student 3"
     And the "members" select box should not contain "Student 0"

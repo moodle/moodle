@@ -37,7 +37,6 @@ Feature: Allow students to manually mark an activity as complete
     And I log in as "student1"
     And I follow "Course 1"
     And I press "Mark as complete: Test forum name"
-    And I wait "3" seconds
     And I log out
     And I log in as "teacher1"
     And I follow "Course 1"

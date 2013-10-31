@@ -41,7 +41,6 @@ Feature: Teachers can edit or delete any forum post
     And I follow "Teacher post subject"
     And I click on "Delete" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][contains(., 'Student post subject')]" "xpath_element"
     And I press "Continue"
-    And I wait "4" seconds
     Then I should not see "Student post subject"
     And I should not see "Student post message"
 
@@ -56,7 +55,7 @@ Feature: Teachers can edit or delete any forum post
     And I fill the moodle form with:
       | Subject | Edited student subject |
     And I press "Save changes"
-    And I wait "4" seconds
+    And I wait to be redirected
     Then I should see "Edited student subject"
     And I should see "Edited by Teacher 1 - original submission"
 
