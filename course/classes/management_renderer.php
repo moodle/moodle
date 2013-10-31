@@ -574,7 +574,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         $actions = array();
         if ($category->can_create_course()) {
             $url = new moodle_url('/course/edit.php', array('category' => $category->id, 'returnto' => 'catmanage'));
-            $actions[] = html_writer::link($url, get_string('newcourse'));
+            $actions[] = html_writer::link($url, get_string('createnewcourse'));
         }
         if ($category->can_request_course()) {
             // Request a new course.

@@ -378,6 +378,7 @@ $string['createcategory'] = 'Create category';
 $string['createfolder'] = 'Create a folder in {$a}';
 $string['createnew'] = 'Create new';
 $string['createnewcategory'] = 'Create new category';
+$string['createnewcourse'] = 'Create new course';
 $string['createnewsubcategory'] = 'Create new subcategory';
 $string['createsubcategoryof'] = 'Create subcategory of {$a}';
 $string['createuserandpass'] = 'Choose your username and password';
