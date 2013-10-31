@@ -222,32 +222,68 @@ class behat_hooks extends behat_base {
     }
 
     /**
-     * Wait for JS to comlete.
+     * Wait for JS to complete before beginning interacting with the DOM.
      *
      * Executed only when running against a real browser.
      *
      * @BeforeStep @javascript
      */
     public function before_step_javascript($event) {
-        $lastpending = '';
+        $this->wait_for_pending_js();
+    }
+
+    /**
+     * Wait for JS to complete after finishing the step.
+     *
+     * With this we ensure that there are not AJAX calls
+     * still in progress.
+     *
+     * Executed only when running against a real browser.
+     *
+     * @AfterStep @javascript
+     */
+    public function after_step_javascript($event) {
+        $this->wait_for_pending_js();
+    }
+
+    /**
+     * Waits for all the JS to be loaded.
+     *
+     * @throws NoSuchWindow
+     * @throws UnknownError
+     * @return bool True or false depending whether all the JS is loaded or not.
+     */
+    protected function wait_for_pending_js() {
+
         // Wait for all pending JS to complete (max 10 seconds).
         for ($i = 0; $i < 100; $i++) {
             $pending = '';
             try {
-                $pending = ($this->getSession()->evaluateScript('return (M && M.util && M.util.pending_js) ? M.util.pending_js.join(":") : "not loaded";'));
+                $jscode = 'return ' . self::PAGE_READY_JS . ' ? "" : M.util.pending_js.join(":");';
+                $pending = $this->getSession()->evaluateScript($jscode);
             } catch (NoSuchWindow $nsw) {
+                // We catch an exception here, in case we just closed the window we were interacting with.
                 // No javascript is running if there is no window right?
                 $pending = '';
+            } catch (UnknownError $e) {
+                // Same exception as before, but some combinations of browser + OS reports it as an unknown error
+                // exception.
+                $pending = '';
             }
+
+            // If there are no pending JS we stop waiting.
             if ($pending === '') {
-                return;
+                return true;
             }
-            $lastpending = $pending;
+
             // 0.1 seconds.
             usleep(100000);
         }
+
         // Timeout waiting for JS to complete.
         // We could throw an exception here - as this is a likely indicator of slow JS or JS errors.
+        echo ' Slow JS, pending requests:' . $pending . ' ';
+        return false;
     }
 
     /**

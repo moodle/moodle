@@ -124,7 +124,20 @@ class behat_general extends behat_base {
      * @param string $iframename
      */
     public function switch_to_iframe($iframename) {
-        $this->getSession()->switchToIFrame($iframename);
+
+        // We spin to give time to the iframe to be loaded.
+        // Using extended timeout as we don't know about which
+        // kind of iframe will be loaded.
+        $this->spin(
+            function($context, $iframename) {
+                $context->getSession()->switchToIFrame($iframename);
+
+                // If no exception we are done.
+                return true;
+            },
+            $iframename,
+            self::EXTENDED_TIMEOUT
+        );
     }
 
     /**
@@ -173,6 +186,7 @@ class behat_general extends behat_base {
     public function click_link($link) {
 
         $linknode = $this->find_link($link);
+        $this->ensure_node_is_visible($linknode);
         $linknode->click();
     }
 
@@ -202,7 +216,41 @@ class behat_general extends behat_base {
             throw new DriverException('Waits are disabled in scenarios without Javascript support');
         }
 
-        $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+    }
+
+    /**
+     * Waits until the provided element selector exists in the DOM
+     *
+     * Using the protected method as this method will be usually
+     * called by other methods which are not returning a set of
+     * steps and performs the actions directly, so it would not
+     * be executed if it returns another step.
+
+     * @Given /^I wait until "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" exists$/
+     * @param string $element
+     * @param string $selector
+     * @return void
+     */
+    public function wait_until_exists($element, $selectortype) {
+        $this->ensure_element_exists($element, $selectortype);
+    }
+
+    /**
+     * Waits until the provided element does not exist in the DOM
+     *
+     * Using the protected method as this method will be usually
+     * called by other methods which are not returning a set of
+     * steps and performs the actions directly, so it would not
+     * be executed if it returns another step.
+
+     * @Given /^I wait until "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" does not exist$/
+     * @param string $element
+     * @param string $selector
+     * @return void
+     */
+    public function wait_until_does_not_exists($element, $selectortype) {
+        $this->ensure_element_does_not_exist($element, $selectortype);
     }
 
     /**
@@ -230,6 +278,7 @@ class behat_general extends behat_base {
 
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_selected_node($selectortype, $element);
+        $this->ensure_node_is_visible($node);
         $node->click();
     }
 
@@ -245,6 +294,7 @@ class behat_general extends behat_base {
     public function i_click_on_in_the($element, $selectortype, $nodeelement, $nodeselectortype) {
 
         $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
+        $this->ensure_node_is_visible($node);
         $node->click();
     }
 

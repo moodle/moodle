@@ -53,7 +53,7 @@ Feature: Comment on a blog entry
     And I follow "Save comment"
     When I click on ".comment-delete a" "css_element"
     # Waiting for the animation to finish.
-    And I wait "2" seconds
+    And I wait "4" seconds
     Then I should not see "$My own >nasty< \"string\"!"
     And I follow "Blog post from user 1"
     And I click on ".comment-link" "css_element"

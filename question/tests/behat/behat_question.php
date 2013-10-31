@@ -60,7 +60,7 @@ class behat_question extends behat_base {
             new Given('I follow "' . get_string('questionbank', 'question') . '"'),
             new Given('I press "' . get_string('createnewquestion', 'question') . '"'),
             new Given('I click on "' . $this->escape($questiontypexpath) . '" "xpath_element"'),
-            new Given('I click on "Next" "button" in the "#qtypechoicecontainer" "css_element"'),
+            new Given('I click on "#chooseqtype_submit" "css_element"'),
             new Given('I fill the moodle form with:', $questiondata),
             new Given('I press "' . get_string('savechanges') . '"')
         );

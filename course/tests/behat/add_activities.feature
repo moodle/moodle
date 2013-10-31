@@ -40,8 +40,10 @@ Feature: Add activities to courses
   Scenario: Add an activity without the required fields
     When I add a "Database" to section "3" and I fill the form with:
       | Name | Test name |
+    And I press "Save and return to course"
     Then I should see "Adding a new"
     And I should see "Required"
+    And I press "Cancel"
 
   Scenario: Add an activity to a course with Javascript disabled
     Then I should see "Add a resource to section 'Topic 1'"

@@ -61,30 +61,6 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Try a few times to set a field value as it may not be visible yet (TinyMCE).
-     *
-     * @param string $field
-     * @param string $value
-     */
-    public function set_field_value($field, $value) {
-        $lastexception = null;
-        // Spin on this - certain fields, e.g. text editors (I'm looking at you TinyMCE) load slowly and randomly.
-        $retries = 5;
-        while ($retries > 0) {
-            try {
-                $field->set_value($value);
-                return;
-            } catch (Exception $e) {
-                usleep(100000);
-                $retries--;
-                $lastexception = $e;
-            }
-        }
-        // If we timeout - throw the last exception.
-        throw $lastexception;
-    }
-
-    /**
      * Fills a moodle form with field/value data.
      *
      * @Given /^I fill the moodle form with:$/
@@ -92,6 +68,9 @@ class behat_forms extends behat_base {
      * @param TableNode $data
      */
     public function i_fill_the_moodle_form_with(TableNode $data) {
+
+        // We ensure that all the editors are loaded and we can interact with them.
+        $this->ensure_editors_are_loaded();
 
         // Expand all fields in case we have.
         $this->expand_all_fields();
@@ -108,7 +87,7 @@ class behat_forms extends behat_base {
             $field = behat_field_manager::get_form_field($fieldnode, $this->getSession());
 
             // Delegates to the field class.
-            $this->set_field_value($field, $value);
+            $field->set_value($value);
         }
     }
 
@@ -195,31 +174,11 @@ class behat_forms extends behat_base {
     public function select_option($option, $select) {
 
         $selectnode = $this->find_field($select);
-        $selectnode->selectOption($option);
 
-        // Adding a click as Selenium requires it to fire some JS events.
-        if ($this->running_javascript()) {
-
-            // In some browsers the selectOption actions can perform a page reload
-            // so we need to ensure the element is still available to continue interacting
-            // with it. We don't wait here.
-            if (!$this->getSession()->getDriver()->find($selectnode->getXpath())) {
-                return;
-            }
-
-            // Single select needs an extra click in the option.
-            if (!$selectnode->hasAttribute('multiple')) {
-
-                // Avoid quotes problems.
-                $option = $this->getSession()->getSelectorsHandler()->xpathLiteral($option);
-                $xpath = "//option[(./@value=$option or normalize-space(.)=$option)]";
-                $optionnode = $this->find('xpath', $xpath, false, $selectnode);
-                $optionnode->click();
-            } else {
-                // Multiple ones needs the click in the select.
-                $selectnode->click();
-            }
-        }
+        // We delegate to behat_form_field class, it will
+        // guess the type properly as it is a select tag.
+        $selectformfield = behat_field_manager::get_form_field($selectnode, $this->getSession());
+        $selectformfield->set_value($option);
     }
 
     /**
@@ -249,6 +208,8 @@ class behat_forms extends behat_base {
      */
     public function check_option($option) {
 
+        // We don't delegate to behat_form_checkbox as the
+        // step is explicitly saying I check.
         $checkboxnode = $this->find_field($option);
         $checkboxnode->check();
     }
@@ -262,6 +223,8 @@ class behat_forms extends behat_base {
      */
     public function uncheck_option($option) {
 
+        // We don't delegate to behat_form_checkbox as the
+        // step is explicitly saying I uncheck.
         $checkboxnode = $this->find_field($option);
         $checkboxnode->uncheck();
     }

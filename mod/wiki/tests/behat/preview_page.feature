@@ -32,7 +32,8 @@ Feature: Edited wiki pages may be previewed before saving
     And I fill the moodle form with:
       | HTML format | Student page contents to be previewed |
     And I press "Preview"
-    Then I should see "This is a preview. Changes have not been saved yet"
+    Then I expand all fieldsets
+    And I should see "This is a preview. Changes have not been saved yet"
     And I should see "Student page contents to be previewed"
     And I press "Save"
     And I should see "Student page contents to be previewed"
