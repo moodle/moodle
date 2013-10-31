@@ -2922,22 +2922,9 @@ class assign {
                 }
             }
 
-            $showsubmit = ($submission || $teamsubmission) && $showlinks && $this->submissions_open($user->id);
-            if ($teamsubmission && ($teamsubmission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
-                $showsubmit = false;
-            }
-            if ($teamsubmission && $this->submission_empty($teamsubmission)) {
-                $showsubmit = false;
-            }
-            if ($submission && ($submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED)) {
-                $showsubmit = false;
-            }
-            if ($submission && $this->submission_empty($submission)) {
-                $showsubmit = false;
-            }
-            if (!$this->get_instance()->submissiondrafts) {
-                $showsubmit = false;
-            }
+            $showsubmit = ($showlinks && $this->submissions_open($user->id));
+            $showsubmit = ($showsubmit && $this->show_submit_button($submission, $teamsubmission));
+
             $extensionduedate = null;
             if ($grade) {
                 $extensionduedate = $grade->extensionduedate;
@@ -3040,6 +3027,41 @@ class assign {
 
         }
         return $o;
+    }
+
+    /**
+     * Returns true if the submit subsission button should be shown to the user.
+     *
+     * @param stdClass $submission The users own submission record.
+     * @param stdClass $teamsubmission The users team submission record if there is one
+     * @return bool
+     */
+    protected function show_submit_button($submission = null, $teamsubmission = null) {
+        if ($teamsubmission) {
+            if ($teamsubmission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                // The assignment submission has been completed.
+                return false;
+            } else if ($this->submission_empty($teamsubmission)) {
+                // There is nothing to submit yet.
+                return false;
+            } else if ($submission && $submission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                // The user has already clicked the submit button on the team submission.
+                return false;
+            }
+        } else if ($submission) {
+            if ($submission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                // The assignment submission has been completed.
+                return false;
+            } else if ($this->submission_empty($submission)) {
+                // There is nothing to submit.
+                return false;
+            }
+        } else {
+            // We've not got a valid submission or team submission.
+            return false;
+        }
+        // Last check is that this instance allows drafts.
+        return $this->get_instance()->submissiondrafts;
     }
 
     /**
