@@ -101,13 +101,14 @@ if ($modulelist !== '') {
     $url->param('modulelist', $search);
 }
 
+$strmanagement = new lang_string('coursecatmanagement');
 $title = format_string($SITE->fullname, true, array('context' => $systemcontext));
 
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($title);
-$PAGE->set_heading($title);
+$PAGE->set_heading($strmanagement);
 
 // This is a system level page that operates on other contexts.
 require_login();
@@ -413,7 +414,7 @@ $renderer->enhance_management_interface();
 echo $renderer->header();
 
 if (!$issearching) {
-    echo $renderer->management_heading(new lang_string('coursecatmanagement'), $viewmode, $categoryid);
+    echo $renderer->management_heading($strmanagement, $viewmode, $categoryid);
 } else {
     echo $renderer->management_heading(new lang_string('searchresults'));
 }
