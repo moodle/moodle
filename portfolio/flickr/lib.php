@@ -183,10 +183,12 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
 
         $mform->setDefaults(array('plugin_is_public' => true));
 
-        $sets = $this->get_sets();
-
-        if (!empty($sets)) {
-            $sets[0] = '----';
+        $rawsets = $this->get_sets();
+        if (!empty($rawsets)) {
+            $sets = array('0' => '----');
+            foreach ($rawsets as $key => $value) {
+                $sets[$key] = $value;
+            }
             $mform->addElement('select', 'plugin_set', get_string('set', 'portfolio_flickr'), $sets);
         }
     }
