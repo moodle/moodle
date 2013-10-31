@@ -36,14 +36,8 @@ class profile_define_datetime extends profile_define_base {
         list($year, $month, $day) = explode('_', date('Y_m_d'));
         $currentdate = $calendartype->convert_from_gregorian($year, $month, $day);
         $currentyear = $currentdate['year'];
-        $startyear = $calendartype->get_min_year();
-        $endyear = $calendartype->get_max_year();
 
-        // Create array for the years.
-        $arryears = array();
-        for ($i = $startyear; $i <= $endyear; $i++) {
-            $arryears[$i] = $i;
-        }
+        $arryears = $calendartype->get_years();
 
         // Add elements.
         $form->addElement('select', 'param1', get_string('startyear', 'profilefield_datetime'), $arryears);
