@@ -205,4 +205,11 @@ $definitions = array(
         'simplekeys' => true,
         'simpledata' => true
     ),
+    // Used to cache user grades for conditional availability purposes.
+    'gradecondition' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'staticacceleration' => true,
+        'staticaccelerationsize' => 2, // Should not be required for more than one user at a time.
+        'ttl' => 3600,
+    ),
 );

@@ -44,6 +44,10 @@ class core_conditionlib_testcase extends advanced_testcase {
         $this->setUser($user);
     }
 
+    protected function wipe_condition_cache() {
+        cache::make('core', 'gradecondition')->purge();
+    }
+
     public function test_constructor() {
         global $DB;
         $cm = new stdClass;
@@ -480,7 +484,7 @@ class core_conditionlib_testcase extends advanced_testcase {
 
         $ci = new condition_info((object)array('id'=>$cmid), CONDITION_MISSING_EVERYTHING);
         $ci->add_completion_condition($oldid, COMPLETION_COMPLETE);
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
 
         $this->assertFalse($ci->is_available($text, false));
         $this->assertEquals(get_string('requires_completion_1', 'condition', 'xxx'), $text);
@@ -488,23 +492,23 @@ class core_conditionlib_testcase extends advanced_testcase {
         $completion = new completion_info($DB->get_record('course', array('id'=>$courseid)));
         $completion->update_state($oldcm, COMPLETION_COMPLETE);
         completion_info::wipe_session_cache();
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
 
         $this->assertTrue($ci->is_available($text));
         $this->assertFalse($ci->is_available($text, false, $USER->id+1));
         completion_info::wipe_session_cache();
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $completion = new completion_info($DB->get_record('course', array('id'=>$courseid)));
         $completion->update_state($oldcm, COMPLETION_INCOMPLETE);
         $this->assertFalse($ci->is_available($text));
 
         $ci->wipe_conditions();
         $ci->add_completion_condition($oldid, COMPLETION_INCOMPLETE);
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
         $this->assertTrue($ci->is_available($text, false, $USER->id+1));
 
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text, true));
 
         // Grade.
@@ -520,48 +524,48 @@ class core_conditionlib_testcase extends advanced_testcase {
         // Fake it existing.
         $DB->insert_record('grade_grades', (object)array(
             'itemid'=>$gradeitemid, 'userid'=>$USER->id, 'finalgrade'=>3.78));
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
 
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text, true));
 
         // Now require that user gets more than 3.78001.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 3.78001, null, true);
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(get_string('requires_grade_min', 'condition', 'frog'), $text);
 
         // ...just on 3.78...
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 3.78, null, true);
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
 
         // ...less than 3.78.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, null, 3.78, true);
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(get_string('requires_grade_max', 'condition', 'frog'), $text);
 
         // ...less than 3.78001.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, null, 3.78001, true);
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
 
         // ...in a range that includes it.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 3, 4, true);
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
 
         // ...in a range that doesn't include it.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 4, 5, true);
-        condition_info::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(get_string('requires_grade_range', 'condition', 'frog'), $text);
     }
@@ -630,7 +634,7 @@ class core_conditionlib_testcase extends advanced_testcase {
         $ci = new condition_info_section((object)array('id' => $sectionid),
                 CONDITION_MISSING_EVERYTHING);
         $ci->add_completion_condition($cmid, COMPLETION_COMPLETE);
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
 
         // Completion: Check.
         $this->assertFalse($ci->is_available($text, false));
@@ -639,13 +643,13 @@ class core_conditionlib_testcase extends advanced_testcase {
         $completion = new completion_info($DB->get_record('course', array('id' => $courseid)));
         $completion->update_state($cm, COMPLETION_COMPLETE);
         completion_info::wipe_session_cache();
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
         $this->assertFalse($ci->is_available($text, false, $USER->id + 1));
 
         // Completion: Uncheck.
         completion_info::wipe_session_cache();
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $completion = new completion_info($DB->get_record('course', array('id' => $courseid)));
         $completion->update_state($cm, COMPLETION_INCOMPLETE);
         $this->assertFalse($ci->is_available($text));
@@ -653,10 +657,10 @@ class core_conditionlib_testcase extends advanced_testcase {
         // Completion: Incomplete condition.
         $ci->wipe_conditions();
         $ci->add_completion_condition($cmid, COMPLETION_INCOMPLETE);
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
         $this->assertTrue($ci->is_available($text, false, $USER->id + 1));
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text, true));
 
         // Grade: Add a fake grade item.
@@ -672,47 +676,47 @@ class core_conditionlib_testcase extends advanced_testcase {
         // Grade: Fake it existing.
         $DB->insert_record('grade_grades', (object)array(
             'itemid' => $gradeitemid, 'userid' => $USER->id, 'finalgrade' => 3.78));
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text, true));
 
         // Grade: Now require that user gets more than 3.78001.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 3.78001, null, true);
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(get_string('requires_grade_min', 'condition', 'frog'), $text);
 
         // Grade: ...just on 3.78...
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 3.78, null, true);
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
 
         // Grade: ...less than 3.78.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, null, 3.78, true);
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(get_string('requires_grade_max', 'condition', 'frog'), $text);
 
         // Grade: ...less than 3.78001.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, null, 3.78001, true);
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
 
         // Grade: ...in a range that includes it.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 3, 4, true);
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertTrue($ci->is_available($text));
 
         // Grade: ...in a range that doesn't include it.
         $ci->wipe_conditions();
         $ci->add_grade_condition($gradeitemid, 4, 5, true);
-        condition_info_section::wipe_session_cache();
+        $this->wipe_condition_cache();
         $this->assertFalse($ci->is_available($text));
         $this->assertEquals(get_string('requires_grade_range', 'condition', 'frog'), $text);
 
