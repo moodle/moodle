@@ -91,7 +91,7 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
     this.courseId = courseId;
 
     this.connectCallback = {
-        success: function(o) {
+        success: function(t, o) {
 
             if (o.responseText !== undefined) {
                 var selectEl = document.getElementById("members");
@@ -124,7 +124,7 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
             removeLoaderImgs("membersloader", "memberslabel");
         },
 
-        failure: function(o) {
+        failure: function() {
             removeLoaderImgs("membersloader", "memberslabel");
         }
 
@@ -185,9 +185,13 @@ UpdatableMembersCombo.prototype.refreshMembers = function () {
 
     if(singleSelection) {
         var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="+groupId+"&act_ajax_getmembersingroup";
-        var callback = this.connectCallback;
-        YUI().use('yui2-connection', function (Y) {
-            Y.YUI2.util.Connect.asyncRequest("GET", sUrl, callback, null);
+        var self = this;
+        YUI().use('io', function (Y) {
+            Y.io(sUrl, {
+                method: 'GET',
+                context: this,
+                on: self.connectCallback
+            });
         });
     }
 };
