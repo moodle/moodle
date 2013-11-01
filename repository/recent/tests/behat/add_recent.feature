@@ -22,7 +22,10 @@ Feature: Recent files repository lists the recently used files
     And I fill the moodle form with:
       | Name | Folder name |
       | Description | Folder description |
-    And I add "empty.txt" file from recent files to "Files" filepicker
+    And I add "empty.txt" file from "Recent files" to "Files" filemanager
+    And I add "empty.txt" file from "Recent files" to "Files" filemanager as:
+      | Save as | empty_copy.txt |
     And I press "Save and display"
     Then I should see "empty.txt"
+    And I should see "empty_copy.txt"
     And I should see "Folder description"

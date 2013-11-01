@@ -27,7 +27,8 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
-use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
+    Behat\Behat\Context\Step\Given as Given;
 
 /**
  * Deprecated behat step definitions.
@@ -91,6 +92,27 @@ class behat_deprecated extends behat_base {
         return array(
             new Given($alternative[0]),
             new Given($alternative[1]),
+        );
+    }
+
+    /**
+     * Adds the specified file from the 'Recent files' repository to the specified filepicker of the current page.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_filepicker::i_add_file_from_repository_to_filemanager()
+     *
+     * @When /^I add "(?P<filename_string>(?:[^"]|\\")*)" file from recent files to "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
+     * @param string $filename
+     * @param string $filepickerelement
+     */
+    public function i_add_file_from_recent_files_to_filepicker($filename, $filepickerelement) {
+        $reponame = get_string('pluginname', 'repository_recent');
+        $alternative = 'I add "' . $this->escape($filename) . '" file from "' .
+                $reponame . '" to "' . $this->escape($filepickerelement) . '" filemanager';
+        $this->deprecated_message($alternative);
+        return array(
+            new Given($alternative)
         );
     }
 
