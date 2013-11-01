@@ -32,10 +32,16 @@ $string['configplugin'] = 'Box.net configuration';
 $string['filesourceinfo'] = 'Box.net ({$a->fullname}): {$a->filename}';
 $string['information'] = 'Get a client ID and secret from the <a href="https://app.box.com/developers/services">Box.net developer page</a> for your Moodle site.';
 $string['invalidpassword'] = 'Invalid password';
+$string['migrationinfo'] = '<p>As part of the migration to the new API provided by Box.net, your file references have to be migrated. Unfortunately the reference system is not compatible with the API v2, so we are going to download them and convert them to real files.</p>
+<p>Please also be aware that the migration can <strong>take a very long time</strong>, depending on how many references are used, and how large their files are.</p>
+<p>You can run the migration tool by clicking the button below, or alternatively by executing the CLI script: repository/boxnet/cli/migrationv1.php.</p>
+<p>Find out more <a href="{$a->docsurl}">here</a>.</p>';
+$string['migrationtool'] = 'Box.net APIv1 migration tool';
 $string['nullfilelist'] = 'There are no files in this repository';
 $string['password'] = 'Password';
 $string['pluginname_help'] = 'Repository on Box.net';
 $string['pluginname'] = 'Box.net';
+$string['runthemigrationnow'] = 'Run the migration tool now';
 $string['saved'] = 'Box.net data saved';
 $string['shareurl'] = 'Share URL';
 $string['username'] = 'Username for Box.net';
