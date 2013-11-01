@@ -159,6 +159,7 @@ class mod_forum_post_form extends moodleform {
                 }
                 $mform->addElement('select','groupinfo', get_string('group'), $groupinfo);
                 $mform->setDefault('groupinfo', $post->groupid);
+                $mform->setType('groupinfo', PARAM_INT);
             } else {
                 if (empty($post->groupid)) {
                     $groupname = get_string('allparticipants');

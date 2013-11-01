@@ -71,6 +71,7 @@ class mod_wiki_create_form extends moodleform {
             if (count($groupinfo) > 1) {
                 $mform->addElement('select', 'groupinfo', get_string('group'), $groupinfo);
                 $mform->setDefault('groupinfo', $this->_customdata['groups']->currentgroup);
+                $mform->setType('groupinfo', PARAM_INT);
             } else {
                 $groupid = key($groupinfo);
                 $groupname = $groupinfo[$groupid];
