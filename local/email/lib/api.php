@@ -113,7 +113,7 @@ class EmailTemplate {
     }
 
     public function __construct($templatename, $options = array()) {
-        global $USER, $SESSION, $COURSE;
+        global $USER, $SESSION, $COURSE, $DB;
 
         $user = array_key_exists('user', $options) ? $options['user'] : null;
         $course = array_key_exists('course', $options) ? $options['course'] : null;
@@ -169,7 +169,7 @@ class EmailTemplate {
         } else {
             $this->company = $DB->get_record_sql("SELECT * FROM {company}
                                                   WHERE id = (
-                                                   SELECT companyid FROM {company_user}
+                                                   SELECT companyid FROM {company_users}
                                                    WHERE userid = :userid
                                                   )", array('userid' => $USER->id));
         }
