@@ -341,12 +341,15 @@ class repository_boxnet extends repository {
     }
 
     /**
-     * Box.net supports file linking and copying
+     * Box.net supports copied and links.
+     *
+     * Theoretically this API is ready for references, though it only works for
+     * Box.net Business accounts, but it is not enabled because we are not supporting it.
      *
      * @return int
      */
     public function supported_returntypes() {
-        return FILE_INTERNAL | FILE_EXTERNAL | FILE_REFERENCE;
+        return FILE_INTERNAL | FILE_EXTERNAL;
     }
 
     /**
@@ -384,7 +387,7 @@ class repository_boxnet extends repository {
         $reference->downloadurl = '';
         if (optional_param('usefilereference', false, PARAM_BOOL)) {
             try {
-                $shareinfo = $this->boxnetclient->share_file($reference->fileid, false);
+                $shareinfo = $this->boxnetclient->share_file($reference->fileid);
             } catch (moodle_exception $e) {
                 throw new repository_exception('cannotcreatereference', 'repository_boxnet');
             }
