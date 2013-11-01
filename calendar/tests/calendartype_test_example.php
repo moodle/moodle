@@ -305,4 +305,13 @@ class structure extends type_base {
             'hour' => (int) $hour,
             'minute' => (int) $minute);
     }
+
+    /**
+     * This return locale for windows os.
+     *
+     * @return string locale
+     */
+    public function locale_win_charset() {
+        return get_string('localewincharset', 'langconfig');
+    }
 }

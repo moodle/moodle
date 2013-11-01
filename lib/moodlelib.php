@@ -2187,8 +2187,16 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
  */
 function date_format_string($date, $format, $tz = 99) {
     global $CFG;
+
+    $localewincharset = null;
+    // Get the calendar type user is using.
+    if ($CFG->ostype == 'WINDOWS') {
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
+        $localewincharset = $calendartype->locale_win_charset();
+    }
+
     if (abs($tz) > 13) {
-        if ($CFG->ostype == 'WINDOWS' and $localewincharset = get_string('localewincharset', 'langconfig')) {
+        if ($localewincharset) {
             $format = core_text::convert($format, 'utf-8', $localewincharset);
             $datestring = strftime($format, $date);
             $datestring = core_text::convert($datestring, $localewincharset, 'utf-8');
@@ -2196,7 +2204,7 @@ function date_format_string($date, $format, $tz = 99) {
             $datestring = strftime($format, $date);
         }
     } else {
-        if ($CFG->ostype == 'WINDOWS' and $localewincharset = get_string('localewincharset', 'langconfig')) {
+        if ($localewincharset) {
             $format = core_text::convert($format, 'utf-8', $localewincharset);
             $datestring = gmstrftime($format, $date);
             $datestring = core_text::convert($datestring, $localewincharset, 'utf-8');

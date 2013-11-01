@@ -210,4 +210,11 @@ abstract class type_base {
      * @return array the converted date
      */
     public abstract function convert_from_gregorian($year, $month, $day, $hour = 0, $minute = 0);
+
+    /**
+     * This return locale for windows os.
+     *
+     * @return string locale
+     */
+    public abstract function locale_win_charset();
 }
