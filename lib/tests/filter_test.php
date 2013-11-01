@@ -723,3 +723,22 @@ class filter_filter_set_applies_to_strings extends advanced_testcase {
         $this->assertEquals(1, $CFG->filterall);
     }
 }
+
+
+class filter_manager_testcase extends advanced_testcase {
+    public function test_filter_manager_instance() {
+        $this->resetAfterTest();
+
+        set_config('perfdebug', 7);
+        filter_manager::reset_caches();
+        $filterman = filter_manager::instance();
+        $this->assertInstanceOf('filter_manager', $filterman);
+        $this->assertNotInstanceOf('performance_measuring_filter_manager', $filterman);
+
+        set_config('perfdebug', 15);
+        filter_manager::reset_caches();
+        $filterman = filter_manager::instance();
+        $this->assertInstanceOf('filter_manager', $filterman);
+        $this->assertInstanceOf('performance_measuring_filter_manager', $filterman);
+    }
+}
