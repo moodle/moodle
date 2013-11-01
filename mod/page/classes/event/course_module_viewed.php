@@ -49,7 +49,7 @@ class course_module_viewed extends \core\event\content_viewed {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed page resource with instanceid ' . $this->objectid;
+        return 'User with id ' . $this->userid . ' viewed page resource with instance id ' . $this->objectid;
     }
 
     /**

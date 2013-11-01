@@ -55,7 +55,7 @@ class blog_entry_created extends \core\event\base {
      *
      * @param \blog_entry $data A reference to the active blog_entry object.
      */
-    public function set_custom_data($data) {
+    public function set_custom_data(\blog_entry $data) {
         $this->customobject = $data;
     }
 
@@ -74,7 +74,7 @@ class blog_entry_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'Blog entry "'. $this->other['subject']. '" was created by user with id '. $this->userid;
+        return 'Blog entry id '. $this->objectid. ' was created by userid '. $this->userid;
     }
 
     /**

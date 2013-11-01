@@ -53,7 +53,7 @@ class blog_entry_updated extends base {
      *
      * @param \blog_entry $data A reference to the active blog_entry object.
      */
-    public function set_custom_data($data) {
+    public function set_custom_data(\blog_entry $data) {
         $this->customobject = $data;
     }
 
@@ -72,7 +72,7 @@ class blog_entry_updated extends base {
      * @return string
      */
     public function get_description() {
-        return 'User with id {$this->userid} updated blog entry {$this->other["subject"]';
+        return 'Blog entry id '. $this->objectid. ' was updated by userid '. $this->userid;
     }
 
     /**
@@ -108,7 +108,7 @@ class blog_entry_updated extends base {
      */
     protected function get_legacy_logdata() {
         return array(SITEID, 'blog', 'update', 'index.php?userid=' . $this->relateduserid . '&entryid=' . $this->objectid,
-                 $this->other['subject']);
+                 $this->customobject->subject);
     }
 }
 

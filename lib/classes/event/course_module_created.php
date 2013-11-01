@@ -60,8 +60,8 @@ class course_module_created extends base {
      * @return string
      */
     public function get_description() {
-        return 'The '. $this->other['modulename'] . ' module ' . $this->other['name']. ' was created by user with id '.
-               $this->userid;
+        return 'The '. $this->other['modulename'] . ' module with instance id ' . $this->other['instanceid'] .
+                ' was created by user with id ' . $this->userid;
     }
 
     /**

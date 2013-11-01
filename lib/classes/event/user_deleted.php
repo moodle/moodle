@@ -59,7 +59,7 @@ class user_deleted extends base {
      */
     public function get_description() {
         $user = $this->get_record_snapshot('user', $this->data['objectid']);
-        return 'User profile deleted for user '.$user->firstname.' '.$user->lastname.' id ('.$user->id.')';
+        return 'User profile deleted for userid ' . $user->id;
     }
 
     /**
