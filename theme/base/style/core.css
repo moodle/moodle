@@ -1488,6 +1488,11 @@ img#persona_signin { cursor: pointer; }
     margin: 8px 4px 0px 2px;
 }
 
+.jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .caret {
+    margin-top: 4px;
+    margin-left: 2px;
+}
+
 .jsenabled .moodle-actionmenu[data-enhanced] .toggle-display {opacity: 1;filter: alpha(opacity=100);}
 .jsenabled .moodle-actionmenu[data-enhanced] .menu-action-text {
     display: inline;
@@ -1580,4 +1585,15 @@ a.disabled {
     cursor: default;
     font-style: italic;
     color: #808080;
+}
+
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    vertical-align: top;
+    border-top: 4px solid #000;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+    content: "";
 }

@@ -3241,13 +3241,7 @@ class action_menu implements renderable {
 
         $title = '';
         if (!empty($this->menutrigger)) {
-            // Change the pixicon.
-            $pixicon = new pix_icon(
-                't/dropdown',
-                '',
-                'moodle',
-                array('class' => 'iconsmall', 'title' => '')
-            );
+            $pixicon = '<b class="caret"></b>';
             $linkclasses[] = 'textmenu';
         } else {
             $title = new lang_string('actions', 'moodle');
