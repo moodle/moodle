@@ -577,13 +577,13 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
             if (groupmode === this.GROUPS_NONE) {
                 newtitle = 'groupsnone';
-                iconsrc = M.util.image_url('t/groupn', 'moodle');
+                iconsrc = M.util.image_url('i/groupn', 'moodle');
             } else if (groupmode === this.GROUPS_SEPARATE) {
                 newtitle = 'groupsseparate';
-                iconsrc = M.util.image_url('t/groups', 'moodle');
+                iconsrc = M.util.image_url('i/groups', 'moodle');
             } else if (groupmode === this.GROUPS_VISIBLE) {
                 newtitle = 'groupsvisible';
-                iconsrc = M.util.image_url('t/groupv', 'moodle');
+                iconsrc = M.util.image_url('i/groupv', 'moodle');
             }
             newtitlestr = M.util.get_string(newtitle, 'moodle'),
             newtitlestr = M.util.get_string('clicktochangeinbrackets', 'moodle', newtitlestr);

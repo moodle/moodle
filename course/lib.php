@@ -2050,17 +2050,17 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                 $nextgroupmode = VISIBLEGROUPS;
                 $grouptitle = $str->groupsseparate;
                 $actionname = 'groupsseparate';
-                $groupimage = 't/groups';
+                $groupimage = 'i/groups';
             } else if ($mod->effectivegroupmode == VISIBLEGROUPS) {
                 $nextgroupmode = NOGROUPS;
                 $grouptitle = $str->groupsvisible;
                 $actionname = 'groupsvisible';
-                $groupimage = 't/groupv';
+                $groupimage = 'i/groupv';
             } else {
                 $nextgroupmode = SEPARATEGROUPS;
                 $grouptitle = $str->groupsnone;
                 $actionname = 'groupsnone';
-                $groupimage = 't/groupn';
+                $groupimage = 'i/groupn';
             }
 
             $actions[$actionname] = new action_menu_link_primary(
