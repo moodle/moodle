@@ -169,6 +169,9 @@ img.iconsmall,
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
+.block.block_with_controls div.header div.commands img.iconsmall.actionmenu {
+    width: auto;
+}
 .course-content ul.topics li.section .right img.spacer,
 .course-content ul.topics li.section .left img.spacer {
     height: 1px;

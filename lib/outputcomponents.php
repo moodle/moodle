@@ -3252,10 +3252,10 @@ class action_menu implements renderable {
         } else {
             $title = new lang_string('actions', 'moodle');
             $this->actionicon = new pix_icon(
-                'i/dropdown',
+                't/edit_menu',
                 '',
                 'moodle',
-                array('class' => 'iconsmall', 'title' => '')
+                array('class' => 'iconsmall actionmenu', 'title' => '')
             );
             $pixicon = $this->actionicon;
         }

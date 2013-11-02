@@ -6,6 +6,7 @@
 .block .header .commands { text-align: right; clear: both;}
 .block .header .commands > a { margin:0 3px; }
 .block .header .commands .icon img {width:12px;height:12px;}
+.block .header .commands img.actionmenu {width:auto;}
 .block .content {padding:4px;}
 .block.hidden .content {display: none;}
 .block .content .userpicture {width:16px;height:16px;margin-right:6px;}
