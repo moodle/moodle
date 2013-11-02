@@ -18,8 +18,7 @@
  * This file contains the code to analyse all the responses to a particular
  * question.
  *
- * @package    core
- * @subpackage questionbank
+ * @package    core_question
  * @copyright  2013 Open University
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
