@@ -356,6 +356,13 @@ class core_plugin_manager {
 
         $types = core_component::get_plugin_types();
 
+        if (!isset($types[$type])) {
+            // Orphaned subplugins!
+            $plugintypeclass = self::resolve_plugininfo_class($type);
+            $this->pluginsinfo[$type] = $plugintypeclass::get_plugins($type, null, $plugintypeclass);
+            return $this->pluginsinfo[$type];
+        }
+
         /** @var \core\plugininfo\base $plugintypeclass */
         $plugintypeclass = self::resolve_plugininfo_class($type);
         $plugins = $plugintypeclass::get_plugins($type, $types[$type], $plugintypeclass);
@@ -386,6 +393,14 @@ class core_plugin_manager {
         foreach ($plugintypes as $plugintype => $plugintyperootdir) {
             $this->pluginsinfo[$plugintype] = null;
         }
+
+        // Add orphaned subplugin types.
+        $this->load_installed_plugins();
+        foreach ($this->installedplugins as $plugintype => $unused) {
+            if (!isset($plugintypes[$plugintype])) {
+                $this->pluginsinfo[$plugintype] = null;
+            }
+        }
     }
 
     /**
@@ -395,6 +410,11 @@ class core_plugin_manager {
      * @return string name of pluginfo class for give plugin type
      */
     public static function resolve_plugininfo_class($type) {
+        $plugintypes = core_component::get_plugin_types();
+        if (!isset($plugintypes[$type])) {
+            return '\core\plugininfo\orphaned';
+        }
+
         $parent = core_component::get_subtype_parent($type);
 
         if ($parent) {
