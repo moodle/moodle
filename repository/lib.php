@@ -1275,12 +1275,12 @@ abstract class repository implements cacheable_object {
      * @see send_stored_file
      *
      * @param stored_file $storedfile the file that contains the reference
-     * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+     * @param int $lifetime Number of seconds before the file should expire from caches (null means $CFG->filelifetime)
      * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
      * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
      * @param array $options additional options affecting the file serving
      */
-    public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
         if ($this->has_moodle_files()) {
             $fs = get_file_storage();
             $params = file_storage::unpack_reference($storedfile->get_reference(), true);

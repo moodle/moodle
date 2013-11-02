@@ -36,12 +36,6 @@ define('NO_DEBUG_DISPLAY', true);
 require_once('config.php');
 require_once('lib/filelib.php');
 
-if (!isset($CFG->filelifetime)) {
-    $lifetime = 86400;     // Seconds for files to remain in caches
-} else {
-    $lifetime = $CFG->filelifetime;
-}
-
 $relativepath  = get_file_argument();
 $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
 
@@ -112,6 +106,6 @@ if ($file->get_filename() == '.') {
 // finally send the file
 // ========================================
 \core\session\manager::write_close(); // Unlock session during file serving.
-send_stored_file($file, $lifetime, $CFG->filteruploadedfiles, $forcedownload);
+send_stored_file($file, null, $CFG->filteruploadedfiles, $forcedownload);
 
 

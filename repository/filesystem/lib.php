@@ -323,12 +323,12 @@ class repository_filesystem extends repository {
      * @see send_stored_file
      *
      * @param stored_file $storedfile the file that contains the reference
-     * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+     * @param int $lifetime Number of seconds before the file should expire from caches (null means $CFG->filelifetime)
      * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
      * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
      * @param array $options additional options affecting the file serving
      */
-    public function send_file($storedfile, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
+    public function send_file($storedfile, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
         $reference = $storedfile->get_reference();
         if ($reference{0} == '/') {
             $file = $this->root_path.substr($reference, 1, strlen($reference)-1);
@@ -469,7 +469,6 @@ class repository_filesystem extends repository {
         global $CFG;
         // Check if this repository is allowed to use relative linking.
         $allowlinks = $this->supports_relative_file();
-        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
         if (!empty($allowlinks)) {
             // Get path to the mainfile.
             $mainfilepath = $mainfile->get_source();
@@ -482,7 +481,7 @@ class repository_filesystem extends repository {
 
             // Sanity check to make sure this path is inside this repository and the file exists.
             if (strpos($fullrelativefilepath, $this->root_path) === 0 && file_exists($fullrelativefilepath)) {
-                send_file($fullrelativefilepath, basename($relativepath), $lifetime, 0);
+                send_file($fullrelativefilepath, basename($relativepath), null, 0);
             }
         }
         send_file_not_found();
@@ -511,7 +510,7 @@ class repository_filesystem extends repository {
  * @return bool
  */
 function repository_filesystem_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
-    global $OUTPUT;
+    global $OUTPUT, $CFG;
     // Allowed filearea is either thumb or icon - size of the thumbnail.
     if ($filearea !== 'thumb' && $filearea !== 'icon') {
         return false;
@@ -532,7 +531,12 @@ function repository_filesystem_pluginfile($course, $cm, $context, $filearea, $ar
         // Generation failed, redirect to default icon for file extension.
         redirect($OUTPUT->pix_url(file_extension_icon($file, 90)));
     }
-    send_stored_file($file, 360, 0, $forcedownload, $options);
+    // The thumbnails should not be changing much, but maybe the default lifetime is too long.
+    $lifetime = $CFG->filelifetime;
+    if ($lifetime > 60*10) {
+        $lifetime = 60*10;
+    }
+    send_stored_file($file, $lifetime, 0, $forcedownload, $options);
 }
 
 /**
