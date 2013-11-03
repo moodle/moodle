@@ -251,7 +251,7 @@ class feedback_item_multichoice extends feedback_item_base {
                             -&nbsp;&nbsp;'.trim($val->answertext).':
                       </td>
                       <td align="left" style="width:'.FEEDBACK_MAX_PIX_LENGTH.';">
-                        <img alt="'.$intvalue.'" src="'.$pix.'" height="5" width="'.$pixwidth.'" />
+                        <img class="feedback_bar_image" alt="'.$intvalue.'" src="'.$pix.'" height="5" width="'.$pixwidth.'" />
                         &nbsp;'.$val->answercount.$str_quotient.'
                       </td>';
                 echo '</tr>';
