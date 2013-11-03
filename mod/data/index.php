@@ -41,7 +41,6 @@ $context = context_course::instance($course->id);
 
 add_to_log($course->id, "data", "view all", "index.php?id=$course->id", "");
 
-$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname = get_string('name');
 $strdata = get_string('modulename','data');
 $strdataplural  = get_string('modulenameplural','data');
@@ -66,6 +65,7 @@ $strnumnotapproved = get_string('numnotapproved', 'data');
 $table = new html_table();
 
 if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_'.$course->format);
     $table->head  = array ($strsectionname, $strname, $strdescription, $strentries, $strnumnotapproved);
     $table->align = array ('center', 'center', 'center', 'center', 'center');
 } else {
