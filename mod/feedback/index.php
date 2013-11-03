@@ -66,12 +66,12 @@ $usesections = course_format_uses_sections($course->format);
 
 $timenow = time();
 $strname  = get_string("name");
-$strsectionname = get_string('sectionname', 'format_'.$course->format);
 $strresponses = get_string('responses', 'feedback');
 
 $table = new html_table();
 
 if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_'.$course->format);
     if (has_capability('mod/feedback:viewreports', $context)) {
         $table->head  = array ($strsectionname, $strname, $strresponses);
         $table->align = array ("center", "left", 'center');

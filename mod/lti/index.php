@@ -77,13 +77,13 @@ if (! $basicltis = get_all_instances_in_course("lti", $course)) {
 // Print the list of instances (your module will probably extend this)
 $timenow = time();
 $strname = get_string("name");
-$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $usesections = course_format_uses_sections($course->format);
 
 $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
 
 if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_'.$course->format);
     $table->head  = array ($strsectionname, $strname);
     $table->align = array ("center", "left");
 } else {

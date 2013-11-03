@@ -18,7 +18,6 @@
 
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
-    $strsectionname  = get_string('sectionname', 'format_'.$course->format);
     $PAGE->set_title($strchoices);
     $PAGE->set_heading($course->fullname);
     $PAGE->navbar->add($strchoices);
@@ -49,6 +48,7 @@
     $table = new html_table();
 
     if ($usesections) {
+        $strsectionname = get_string('sectionname', 'format_'.$course->format);
         $table->head  = array ($strsectionname, get_string("question"), get_string("answer"));
         $table->align = array ("center", "left", "left");
     } else {
