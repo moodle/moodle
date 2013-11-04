@@ -3,6 +3,13 @@ information provided here is intended especially for theme designer.
 
 === 2.6 ===
 
+Removed themes:
+* "My Mobile" theme has been removed (see MDL-40874).
+  During the upgrade process "My Mobile" theme will be uninstalled and all its settings will be deleted.
+  "My Mobile" theme and its extending themes will fallback to the mobile friendly "Clean" theme.
+  If you wish to keep "My Mobile" theme and its settings, BEFORE UPGRADING you can copy the files from the
+  unmaintained plugin into theme/mymobile.
+  The unmaintained plugin can be downloaded at https://moodle.org/plugins/pluginversion.php?id=4563
 Notes:
 * There have been several changes made to the classes used on headings throughout Moodle.
   This was done as per the Moodle HTML guidelines. h1 and h2 elements should have no classes, h3 and lower headings
