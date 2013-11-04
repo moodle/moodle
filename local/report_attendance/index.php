@@ -32,18 +32,8 @@ require_login($SITE);
 $context = context_system::instance();
 require_capability('local/report_attendance:view', $context);
 
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (!empty($USER->company)) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:company_add',
-                            context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
-                            'Please select a company from the dropdown first');
-}
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
 
 // Get the associated department id.
 $company = new company($companyid);

@@ -66,7 +66,11 @@ if ($departmentid) {
 
 
 $systemcontext = context_system::instance();
+require_login(); // Adds to $PAGE, creates $OUTPUT.
+require_capability('local/report_completion:view', $systemcontext);
 
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -82,22 +86,7 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'report_users', 'local', 'report_users_title');
 $blockpage->setup();
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-
 $blockpage->display_header();
-
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (!empty($USER->company)) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:company_add', $systemcontext)) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
-                            'Please select a company from the dropdown first');
-}
-
 
 // Get the associated department id.
 $company = new company($companyid);

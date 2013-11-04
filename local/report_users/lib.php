@@ -33,7 +33,7 @@ class userrep {
         if (!$course = $DB->get_record('course', array('id' => $courseid))) {
             error( 'unable to find course record' );
         }
-        $datum = null;
+        $datum = new stdclass();
         $datum->coursename = $course->fullname;
 
         // Instantiate completion info thingy.
@@ -71,11 +71,11 @@ class userrep {
         // array showing completed *tracked* activities.
         $progress = $info->get_progress_all();
 
+        $u = new stdclass();
+
         // Iterate over users to get info.
         if (isset($progress[$userid])) {
             $user = $progress[$userid];
-
-            $u = null;
 
             // Find user's completion info for this course.
             if ($completioninfo = $DB->get_record( 'course_completions',
@@ -117,7 +117,7 @@ class userrep {
         $data[ $courseid ] = $datum;
 
         // Make return object.
-        $returnobj = null;
+        $returnobj = new stdclass();
         $returnobj->data = $data;
         $returnobj->criteria = $criteria;
 

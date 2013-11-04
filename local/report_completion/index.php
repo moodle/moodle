@@ -44,6 +44,9 @@ require_login($SITE);
 $context = context_system::instance();
 require_capability('local/report_completion:view', $context);
 
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
 if ($firstname) {
     $params['firstname'] = $firstname;
 }
@@ -100,17 +103,6 @@ if ($comptoraw) {
     $compto = 0;
 }
 
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (!empty($USER->company)) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'), 'Please select a company from the dropdown first');
-}
-
 // Work out department level.
 $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
@@ -161,6 +153,12 @@ if (!(has_capability('block/iomad_company_admin:editusers', $context) or
 if (!empty($idlist[0])) {
     // Set up the search criteria for the users.
     $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid);
+} else {
+    $searchinfo = new stdclass();
+    $userlevel = company::get_userlevel($USER);
+    $searchinfo->departmentid = $userlevel->id;
+    $searchinfo->sqlsearch = " 1 = 2";
+    $searchinfo->sqlsort = "";
 }
 
 // Create data for form.
