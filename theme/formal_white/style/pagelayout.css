@@ -62,6 +62,18 @@
     background-color:#FFF;
 }
 
+.core_media_preview #page-content #region-post-box {
+    margin-left: 0;
+}
+
+.core_media_preview #page-content #region-main-wrap {
+    width: 100%;
+}
+
+.core_media_preview #page-content #region-main {
+    margin-left: 30px;
+}
+
 #page-content #region-post-box {
     margin-left:[[calculated:minusdoubleblockcolumnwidth]];
     /* arrotonadamento angolo in basso a dx */
