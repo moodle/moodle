@@ -202,7 +202,7 @@ class iomad {
     public static function iomad_filter_categories( $categories ) {
         global $DB, $USER;
 
-        $eldcategories = array();
+        $iomadcategories = array();
         foreach ($categories as $id => $category) {
 
             // Try to find category in company list.
@@ -211,15 +211,15 @@ class iomad {
                 // If this is not the user's company then do not include.
                 if (!empty( $USER->company )) {
                     if ($USER->company->id == $company->id) {
-                        $eldcategories[ $id ] = $category;
+                        $iomadcategories[ $id ] = $category;
                     }
                 }
             } else {
-                $eldcategories[ $id ] = $category;
+                $iomadcategories[ $id ] = $category;
             }
         }
 
-        return $eldcategories;
+        return $iomadcategories;
     }
 
     /** IOMAD:
