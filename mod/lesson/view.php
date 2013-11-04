@@ -191,14 +191,20 @@ if (empty($pageid)) {
         unset($USER->modattempts[$lesson->id]);  // if no pageid, then student is NOT reviewing
     }
 
-    // if there are any questions have been answered correctly in this attempt
-    $corrrectattempts = $lesson->get_attempts($retries, true);
-    if (!empty($corrrectattempts)) {
-        $attempt = end($corrrectattempts);
+    // If there are any questions that have been answered correctly (or not) in this attempt
+    $allattempts = $lesson->get_attempts($retries);
+    if (!empty($allattempts)) {
+        $attempt = end($allattempts);
         $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
         // convert the jumpto to a proper page id
-        if ($jumpto == 0) { // unlikely value!
-            $lastpageseen = $attempt->pageid;
+        if ($jumpto == 0) {
+            // Check if a question has been incorrectly answered AND no more attempts at it are left
+            $nattempts = $DB->count_records("lesson_attempts", array("pageid" => $attempt->pageid, "userid" => $USER->id, "retry" => $attempt->retry));
+            if ($nattempts >= $lesson->maxattempts) {
+                $lastpageseen = $DB->get_field('lesson_pages', 'nextpageid', array('id' => $attempt->pageid));
+            } else {
+                $lastpageseen = $attempt->pageid;
+            }
         } elseif ($jumpto == LESSON_NEXTPAGE) {
             if (!$lastpageseen = $DB->get_field('lesson_pages', 'nextpageid', array('id' => $attempt->pageid))) {
                 // no nextpage go to end of lesson
@@ -209,11 +215,11 @@ if (empty($pageid)) {
         }
     }
 
-    if ($branchtables = $DB->get_records('lesson_branch', array("lessonid"=>$lesson->id, "userid"=>$USER->id, "retry"=>$retries), 'timeseen DESC')) {
+    if ($branchtables = $DB->get_records('lesson_branch', array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries), 'timeseen DESC')) {
         // in here, user has viewed a branch table
         $lastbranchtable = current($branchtables);
-        if (count($corrrectattempts)>0) {
-            foreach($corrrectattempts as $attempt) {
+        if (count($allattempts) > 0) {
+            foreach($allattempts as $attempt) {
                 if ($lastbranchtable->timeseen > $attempt->timeseen) {
                     // branch table was viewed later than the last attempt
                     $lastpageseen = $lastbranchtable->pageid;
