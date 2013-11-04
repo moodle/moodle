@@ -776,3 +776,14 @@ table.quizreviewsummary {
     left:0;
     padding-top:10px;
 }
+
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview #page {
+    width: 100%;
+}
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
+    min-height: 100%;
+    margin-bottom: 0;
+}
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview .mediaplugin {
+    padding-top: 10px;
+}

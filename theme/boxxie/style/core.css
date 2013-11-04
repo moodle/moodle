@@ -1065,3 +1065,10 @@ h2.headingblock {
     padding: 2px; /* adds padding to icon */
     width: 12px;
 }
+
+.core_media_preview #page-wrapper {
+    min-width: 0;
+    background: none;
+    margin: 0;
+    padding: 0 5px;
+}
