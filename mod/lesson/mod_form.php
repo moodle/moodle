@@ -309,21 +309,15 @@ class mod_lesson_mod_form extends moodleform_mod {
      * @return void
      **/
     function data_preprocessing(&$default_values) {
-        global $DB;
-        global $module;
         if (isset($default_values['conditions'])) {
             $conditions = unserialize($default_values['conditions']);
             $default_values['timespent'] = $conditions->timespent;
             $default_values['completed'] = $conditions->completed;
             $default_values['gradebetterthan'] = $conditions->gradebetterthan;
         }
-        // after this passwords are clear text, MDL-11090
-        if (isset($default_values['password']) and ($module->version<2008112600)) {
-            unset($default_values['password']);
-        }
 
         if ($this->current->instance) {
-            // editing existing instance - copy existing files into draft area
+            // Editing existing instance - copy existing files into draft area.
             $draftitemid = file_get_submitted_draft_itemid('mediafile');
             file_prepare_draft_area($draftitemid, $this->context->id, 'mod_lesson', 'mediafile', 0, array('subdirs'=>0, 'maxbytes' => $this->course->maxbytes, 'maxfiles' => 1));
             $default_values['mediafile'] = $draftitemid;
