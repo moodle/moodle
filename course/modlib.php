@@ -44,15 +44,14 @@ require_once($CFG->dirroot.'/course/lib.php');
 function add_moduleinfo($moduleinfo, $course, $mform = null) {
     global $DB, $CFG;
 
+    // Attempt to include module library before we make any changes to DB.
+    include_modulelib($moduleinfo->modulename);
+
     $moduleinfo->course = $course->id;
     $moduleinfo = set_moduleinfo_defaults($moduleinfo);
 
     if (!empty($course->groupmodeforce) or !isset($moduleinfo->groupmode)) {
         $moduleinfo->groupmode = 0; // Do not set groupmode.
-    }
-
-    if (!course_allowed_module($course, $moduleinfo->modulename)) {
-        print_error('moduledisable', '', '', $moduleinfo->modulename);
     }
 
     // First add course_module record because we need the context.
@@ -62,6 +61,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     $newcm->instance         = 0; // Not known yet, will be updated later (this is similar to restore code).
     $newcm->visible          = $moduleinfo->visible;
     $newcm->visibleold       = $moduleinfo->visible;
+    if (isset($moduleinfo->cmidnumber)) {
+        $newcm->idnumber         = $moduleinfo->cmidnumber;
+    }
     $newcm->groupmode        = $moduleinfo->groupmode;
     $newcm->groupingid       = $moduleinfo->groupingid;
     $newcm->groupmembersonly = $moduleinfo->groupmembersonly;
@@ -87,7 +89,8 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         print_error('cannotaddcoursemodule');
     }
 
-    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true)) {
+    if (plugin_supports('mod', $moduleinfo->modulename, FEATURE_MOD_INTRO, true) &&
+            isset($moduleinfo->introeditor)) {
         $introeditor = $moduleinfo->introeditor;
         unset($moduleinfo->introeditor);
         $moduleinfo->intro       = $introeditor['text'];
@@ -103,9 +106,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         $DB->delete_records('course_modules', array('id'=>$moduleinfo->coursemodule));
 
         if (!is_number($returnfromfunc)) {
-            print_error('invalidfunction', '', course_get_url($course, $cw->section));
+            print_error('invalidfunction', '', course_get_url($course, $moduleinfo->section));
         } else {
-            print_error('cannotaddnewmodule', '', course_get_url($course, $cw->section), $moduleinfo->modulename);
+            print_error('cannotaddnewmodule', '', course_get_url($course, $moduleinfo->section), $moduleinfo->modulename);
         }
     }
 
@@ -125,15 +128,6 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     // Course_modules and course_sections each contain a reference to each other.
     // So we have to update one of them twice.
     $sectionid = course_add_cm_to_section($course, $moduleinfo->coursemodule, $moduleinfo->section);
-
-    // Make sure visibility is set correctly (in particular in calendar).
-    // Note: allow them to set it even without moodle/course:activityvisibility.
-    set_coursemodule_visible($moduleinfo->coursemodule, $moduleinfo->visible);
-
-    if (isset($moduleinfo->cmidnumber)) { // Label.
-        // Set cm idnumber - uniqueness is already verified by form validation.
-        set_coursemodule_idnumber($moduleinfo->coursemodule, $moduleinfo->cmidnumber);
-    }
 
     // Set up conditions.
     if ($CFG->enableavailability) {
@@ -177,9 +171,11 @@ function edit_module_post_actions($moduleinfo, $course) {
     global $CFG;
 
     $modcontext = context_module::instance($moduleinfo->coursemodule);
+    $hasgrades = plugin_supports('mod', $moduleinfo->modulename, FEATURE_GRADE_HAS_GRADE, false);
+    $hasoutcomes = plugin_supports('mod', $moduleinfo->modulename, FEATURE_GRADE_OUTCOMES, true);
 
     // Sync idnumber with grade_item.
-    if ($grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
+    if ($hasgrades && $grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
                  'iteminstance'=>$moduleinfo->instance, 'itemnumber'=>0, 'courseid'=>$course->id))) {
         if ($grade_item->idnumber != $moduleinfo->cmidnumber) {
             $grade_item->idnumber = $moduleinfo->cmidnumber;
@@ -187,8 +183,12 @@ function edit_module_post_actions($moduleinfo, $course) {
         }
     }
 
-    $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
+    if ($hasgrades) {
+        $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$moduleinfo->modulename,
                                          'iteminstance'=>$moduleinfo->instance, 'courseid'=>$course->id));
+    } else {
+        $items = array();
+    }
 
     // Create parent category if requested and move to correct parent category.
     if ($items and isset($moduleinfo->gradecat)) {
@@ -213,7 +213,7 @@ function edit_module_post_actions($moduleinfo, $course) {
     }
 
     // Add outcomes if requested.
-    if ($outcomes = grade_outcome::fetch_all_available($course->id)) {
+    if ($hasoutcomes && $outcomes = grade_outcome::fetch_all_available($course->id)) {
         $grade_items = array();
 
         // Outcome grade_item.itemnumber start at 1000, there is nothing above outcomes.
@@ -292,8 +292,10 @@ function edit_module_post_actions($moduleinfo, $course) {
         $moduleinfo->showgradingmanagement = $showgradingmanagement;
     }
 
-    rebuild_course_cache($course->id);
-    grade_regrade_final_grades($course->id);
+    rebuild_course_cache($course->id, true);
+    if ($hasgrades) {
+        grade_regrade_final_grades($course->id);
+    }
     require_once($CFG->libdir.'/plagiarismlib.php');
     plagiarism_save_form_elements($moduleinfo);
 
@@ -308,7 +310,6 @@ function edit_module_post_actions($moduleinfo, $course) {
  * @return object the completed module info
  */
 function set_moduleinfo_defaults($moduleinfo) {
-    global $DB;
 
     if (empty($moduleinfo->coursemodule)) {
         // Add.
@@ -361,6 +362,7 @@ function set_moduleinfo_defaults($moduleinfo) {
  * @param object $modulename the module name
  * @param object $section the section of the module
  * @return array list containing module, context, course section.
+ * @throws moodle_exception if user is not allowed to perform the action or module is not allowed in this course
  */
 function can_add_moduleinfo($course, $modulename, $section) {
     global $DB;
@@ -385,6 +387,7 @@ function can_add_moduleinfo($course, $modulename, $section) {
  *
  * @param object $cm course module
  * @return array - list of course module, context, module, moduleinfo, and course section.
+ * @throws moodle_exception if user is not allowed to perform the action
  */
 function can_update_moduleinfo($cm) {
     global $DB;
@@ -419,6 +422,9 @@ function can_update_moduleinfo($cm) {
  */
 function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     global $DB, $CFG;
+
+    // Attempt to include module library before we make any changes to DB.
+    include_modulelib($moduleinfo->modulename);
 
     $moduleinfo->course = $course->id;
     $moduleinfo = set_moduleinfo_defaults($moduleinfo);
@@ -515,6 +521,7 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
  * Include once the module lib file.
  *
  * @param string $modulename module name of the lib to include
+ * @throws moodle_exception if lib.php file for the module does not exist
  */
 function include_modulelib($modulename) {
     global $CFG;

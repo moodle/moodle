@@ -108,7 +108,7 @@ class core_test_generator_testcase extends advanced_testcase {
     }
 
     public function test_create_module() {
-        global $CFG, $SITE;
+        global $CFG, $SITE, $DB;
         if (!file_exists("$CFG->dirroot/mod/page/")) {
             $this->markTestSkipped('Can not find standard Page module');
         }
@@ -125,6 +125,191 @@ class core_test_generator_testcase extends advanced_testcase {
         $this->assertNotEmpty($page);
         $cm = get_coursemodule_from_instance('page', $page->id, $SITE->id, true);
         $this->assertEquals(3, $cm->sectionnum);
+
+        // Prepare environment to generate modules with all possible options.
+
+        // Enable advanced functionality.
+        $CFG->enablecompletion = 1;
+        $CFG->enableavailability = 1;
+        $CFG->enablegroupmembersonly = 1;
+        $CFG->enableoutcomes = 1;
+        require_once($CFG->libdir.'/gradelib.php');
+        require_once($CFG->libdir.'/completionlib.php');
+        require_once($CFG->dirroot.'/rating/lib.php');
+
+        // Create a course with enabled completion.
+        $course = $generator->create_course(array('enablecompletion' => true));
+
+        // Create new grading category in this course.
+        $grade_category = new grade_category();
+        $grade_category->courseid = $course->id;
+        $grade_category->fullname = 'Grade category';
+        $grade_category->insert();
+
+        // Create group and grouping.
+        $group = $generator->create_group(array('courseid' => $course->id));
+        $grouping = $generator->create_grouping(array('courseid' => $course->id));
+        $generator->create_grouping_group(array('groupid' => $group->id, 'groupingid' => $grouping->id));
+
+        // Prepare arrays with properties that we can both use for creating modules and asserting the data in created modules.
+
+        // General properties.
+        $optionsgeneral = array(
+            'visible' => 0, // Note: 'visibleold' will always be set to the same value as 'visible'.
+            'section' => 3, // Note: section will be created if does not exist.
+            // Module supports FEATURE_IDNUMBER.
+            'cmidnumber' => 'IDNUM', // Note: alternatively can have key 'idnumber'.
+            // Module supports FEATURE_GROUPS;
+            'groupmode' => SEPARATEGROUPS, // Note: will be reset to 0 if course groupmodeforce is set.
+            // Module supports FEATURE_GROUPINGS or module supports FEATURE_GROUPMEMBERSONLY:
+            'groupingid' => $grouping->id,
+            // Module supports FEATURE_GROUPMEMBERSONLY:
+            'groupmembersonly' => 1,
+        );
+
+        // In case completion is enabled on site and for course every module can have manual completion.
+        $featurecompletionmanual = array(
+            'completion' => COMPLETION_TRACKING_MANUAL, // "Students can manually mark activity as completed."
+            'completionexpected' => time() + 7 * DAYSECS,
+        );
+
+        // Automatic completion is possible if module supports FEATURE_COMPLETION_TRACKS_VIEWS or FEATURE_GRADE_HAS_GRADE.
+        // Note: completionusegrade is stored in DB and can be found in cm_info as 'completiongradeitemnumber' - either NULL or 0.
+        // Note: module can have more autocompletion rules as defined in moodleform_mod::add_completion_rules().
+        $featurecompletionautomatic = array(
+            'completion' => COMPLETION_TRACKING_AUTOMATIC, // "Show activity as complete when conditions are met."
+            'completionview' => 1, // "Student must view this activity to complete it"
+            'completionusegrade' => 1, // "Student must receive a grade to complete this activity"
+        );
+
+        // Module supports FEATURE_RATE:
+        $featurerate = array(
+            'assessed' => RATING_AGGREGATE_AVERAGE, // "Aggregate type"
+            'scale' => 100, // Either max grade or negative number for scale id.
+            'ratingtime' => 1, // "Restrict ratings to items with dates in this range".
+            'assesstimestart' => time() - DAYSECS, // Note: Will be ignored if neither 'assessed' nor 'ratingtime' is set.
+            'assesstimefinish' => time() + DAYSECS, // Note: Will be ignored if neither 'assessed' nor 'ratingtime' is set.
+        );
+
+        // Module supports FEATURE_GRADE_HAS_GRADE:
+        $featuregrade = array(
+            'grade' => 10,
+            'gradecat' => $grade_category->id, // Note: if $CFG->enableoutcomes is set, this can be set to -1 to automatically create new grade category.
+        );
+
+        // Now let's create several modules with different options.
+        $m1 = $generator->create_module('assign',
+            array('course' => $course->id) +
+            $optionsgeneral);
+        $m2 = $generator->create_module('data',
+            array('course' => $course->id) +
+            $featurecompletionmanual +
+            $featurerate);
+        $m3 = $generator->create_module('assign',
+            array('course' => $course->id) +
+            $featurecompletionautomatic +
+            $featuregrade);
+
+        // We need id of the grading item for the second module to create availability dependency in the 3rd module.
+        $gradingitem = grade_item::fetch(array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule' => 'assign', 'iteminstance' => $m3->id));
+
+        // Now prepare options to create the 4th module which availability depends on other modules.
+        // Following options available if $CFG->enableavailability is set:
+        $optionsavailability = array(
+            'showavailability' => 1,
+            'availablefrom' => time() - WEEKSECS,
+            'availableuntil' => time() + WEEKSECS,
+            'conditiongradegroup' => array(
+                array(
+                    'conditiongradeitemid' => $gradingitem->id,
+                    'conditiongrademin' => 20,
+                    'conditiongrademax' => 80,
+                )
+            ),
+            'conditionfieldgroup' => array(
+                array(
+                    'conditionfield' => 'address',
+                    'conditionfieldoperator' => 'contains',
+                    'conditionfieldvalue' => 'street',
+                )
+            ),
+            'conditioncompletiongroup' => array(
+                array(
+                    'conditionsourcecmid' => $m2->cmid,
+                    'conditionrequiredcompletion' => 1
+                ),
+                array(
+                    'conditionsourcecmid' => $m3->cmid,
+                    'conditionrequiredcompletion' => 1
+                )
+            )
+        );
+        // The same data for assertion (different format).
+        $optionsavailabilityassertion = array(
+            'conditionsgrade' => array(
+                $gradingitem->id => (object)array(
+                    'min' => 20,
+                    'max' => 80,
+                    'name' => $gradingitem->itemname
+                )
+            ),
+            'conditionsfield' => array(
+                'address' => (object)array(
+                    'fieldname' => 'address',
+                    'operator' => 'contains',
+                    'value' => 'street'
+                )
+            ),
+            'conditionscompletion' => array(
+                $m2->cmid => 1,
+                $m3->cmid => 1
+            )
+        );
+
+        // Create module with conditional availability.
+        $m4 = $generator->create_module('assign',
+                array('course' => $course->id) +
+                $optionsavailability
+        );
+
+        // Verifying that everything is generated correctly.
+        $modinfo = get_fast_modinfo($course->id);
+        $cm1 = $modinfo->cms[$m1->cmid];
+        $this->assertEquals($optionsgeneral['visible'], $cm1->visible);
+        $this->assertEquals($optionsgeneral['section'], $cm1->sectionnum); // Note difference in key.
+        $this->assertEquals($optionsgeneral['cmidnumber'], $cm1->idnumber); // Note difference in key.
+        $this->assertEquals($optionsgeneral['groupmode'], $cm1->groupmode);
+        $this->assertEquals($optionsgeneral['groupingid'], $cm1->groupingid);
+        $this->assertEquals($optionsgeneral['groupmembersonly'], $cm1->groupmembersonly);
+
+        $cm2 = $modinfo->cms[$m2->cmid];
+        $this->assertEquals($featurecompletionmanual['completion'], $cm2->completion);
+        $this->assertEquals($featurecompletionmanual['completionexpected'], $cm2->completionexpected);
+        $this->assertEquals(null, $cm2->completiongradeitemnumber);
+        // Rating info is stored in the module's table (in our test {data}).
+        $data = $DB->get_record('data', array('id' => $m2->id));
+        $this->assertEquals($featurerate['assessed'], $data->assessed);
+        $this->assertEquals($featurerate['scale'], $data->scale);
+        $this->assertEquals($featurerate['assesstimestart'], $data->assesstimestart);
+        $this->assertEquals($featurerate['assesstimefinish'], $data->assesstimefinish);
+        // No validation for 'ratingtime'. It is only used in to enable/disable assesstime* when adding module.
+
+        $cm3 = $modinfo->cms[$m3->cmid];
+        $this->assertEquals($featurecompletionautomatic['completion'], $cm3->completion);
+        $this->assertEquals($featurecompletionautomatic['completionview'], $cm3->completionview);
+        $this->assertEquals(0, $cm3->completiongradeitemnumber); // Zero instead of default null since 'completionusegrade' was set.
+        $gradingitem = grade_item::fetch(array('courseid'=>$course->id, 'itemtype'=>'mod', 'itemmodule' => 'assign', 'iteminstance' => $m3->id));
+        $this->assertEquals(0, $gradingitem->grademin);
+        $this->assertEquals($featuregrade['grade'], $gradingitem->grademax);
+        $this->assertEquals($featuregrade['gradecat'], $gradingitem->categoryid);
+
+        $cm4 = $modinfo->cms[$m4->cmid];
+        $this->assertEquals($optionsavailability['showavailability'], $cm4->showavailability);
+        $this->assertEquals($optionsavailability['availablefrom'], $cm4->availablefrom);
+        $this->assertEquals($optionsavailability['availableuntil'], $cm4->availableuntil);
+        $this->assertEquals($optionsavailabilityassertion['conditionsgrade'], $cm4->conditionsgrade);
+        $this->assertEquals($optionsavailabilityassertion['conditionsfield'], $cm4->conditionsfield);
+        $this->assertEquals($optionsavailabilityassertion['conditionscompletion'], $cm4->conditionscompletion);
     }
 
     public function test_create_block() {

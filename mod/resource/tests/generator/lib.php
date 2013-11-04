@@ -38,44 +38,22 @@ class mod_resource_generator extends testing_module_generator {
      * Creates new resource module instance. By default it contains a short
      * text file.
      *
-     * @param array|stdClass $record Resource module record, as from form
-     * @param array $options Standard options about how to create it
-     * @return stdClass Activity record, with extra cmid field
+     * @param array|stdClass $record data for module being generated. Requires 'course' key
+     *     (an id or the full object). Also can have any fields from add module form.
+     * @param null|array $options general options for course module. Since 2.6 it is
+     *     possible to omit this argument by merging options into $record
+     * @return stdClass record from module-defined table with additional field
+     *     cmid (corresponding id in course_modules table)
      */
     public function create_instance($record = null, array $options = null) {
         global $CFG, $USER;
-        require_once($CFG->dirroot . '/mod/resource/locallib.php');
-
-        // Count generated modules.
-        $this->instancecount++;
-        $i = $this->instancecount;
-
+        require_once($CFG->dirroot . '/lib/resourcelib.php');
         // Ensure the record can be modified without affecting calling code.
         $record = (object)(array)$record;
-        $options = (array)$options;
-
-        // Course is required.
-        if (empty($record->course)) {
-            throw new coding_exception('module generator requires $record->course');
-        }
 
         // Fill in optional values if not specified.
-        if (!isset($record->name)) {
-            $record->name = get_string('pluginname', 'resource') . ' ' . $i;
-        }
-        if (!isset($record->intro)) {
-            $record->intro = 'Test resource ' . $i;
-        }
-        if (!isset($record->introformat)) {
-            $record->introformat = FORMAT_MOODLE;
-        }
         if (!isset($record->display)) {
             $record->display = RESOURCELIB_DISPLAY_AUTO;
-        }
-        if (isset($options['idnumber'])) {
-            $record->cmidnumber = $options['idnumber'];
-        } else {
-            $record->cmidnumber = '';
         }
         if (!isset($record->printintro)) {
             $record->printintro = 0;
@@ -101,14 +79,12 @@ class mod_resource_generator extends testing_module_generator {
             // Add actual file there.
             $filerecord = array('component' => 'user', 'filearea' => 'draft',
                     'contextid' => $usercontext->id, 'itemid' => $record->files,
-                    'filename' => 'resource' . $i . '.txt', 'filepath' => '/');
+                    'filename' => 'resource' . ($this->instancecount+1) . '.txt', 'filepath' => '/');
             $fs = get_file_storage();
-            $fs->create_file_from_string($filerecord, 'Test resource ' . $i . ' file');
+            $fs->create_file_from_string($filerecord, 'Test resource ' . ($this->instancecount+1) . ' file');
         }
 
         // Do work to actually add the instance.
-        $record->coursemodule = $this->precreate_course_module($record->course, $options);
-        $id = resource_add_instance($record, null);
-        return $this->post_add_instance($id, $record->coursemodule);
+        return parent::create_instance($record, (array)$options);
     }
 }
