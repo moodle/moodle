@@ -39,6 +39,7 @@ if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $courseid))
 }
 
 if ($beep) {
+    $message = new stdClass();
     $message->chatid    = $chatuser->chatid;
     $message->userid    = $chatuser->userid;
     $message->groupid   = $chatuser->groupid;
