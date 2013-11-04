@@ -301,7 +301,9 @@ class mod_lesson_renderer extends plugin_renderer_base {
 
             $pagetable = $page->display_answers($pagetable);
 
+            $content .= html_writer::start_tag('div', array('class' => 'no-overflow'));
             $content .= html_writer::table($pagetable);
+            $content .= html_writer::end_tag('div');
 
             if ($canedit) {
                 $content .= $this->add_page_links($lesson, $pageid);

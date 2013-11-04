@@ -591,7 +591,9 @@ if ($action === 'delete') {
         } else {
             $table->data[] = array(get_string('didnotanswerquestion', 'lesson'), " ");
         }
+        echo html_writer::start_tag('div', array('class' => 'no-overflow'));
         echo html_writer::table($table);
+        echo html_writer::end_tag('div');
     }
 } else {
     print_error('unknowaction');
