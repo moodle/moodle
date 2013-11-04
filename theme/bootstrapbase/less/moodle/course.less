@@ -726,18 +726,9 @@ span.editinstructions {
     margin: 10px 0 20px;
 }
 
-.section .activity .moodle-actionmenu .iconsmall {
-    max-width: none !important; /** reset sets 100% !important which breaks on IE8 without this !important */
-    width:16px;
-    height:16px;
-    padding:0.3em;
-    vertical-align: text-bottom;
-}
-
 .section {
     .activity {
         .iconsmall {
-            margin: 4px;
             width: 16px;
             height: 16px;
         }
@@ -749,6 +740,23 @@ span.editinstructions {
             margin: 8px 8px 0px 0;
             padding: 4px 8px 0px 0;
             vertical-align: text-bottom;
+        }
+    }
+    .moodle-actionmenu {
+        .iconsmall {
+            max-width: none !important; /** reset sets 100% !important which breaks on IE8 without this !important */
+            width:16px;
+            height:16px;
+            padding: 4px;
+            vertical-align: text-bottom;
+        }
+    }
+    .moodle-actionmenu[data-enhanced] {
+        .menu {
+            img {
+              width: 12px;
+              height: 12px;
+            }
         }
     }
 }

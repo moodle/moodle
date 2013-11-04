@@ -1502,11 +1502,14 @@ img#persona_signin { cursor: pointer; }
 .moodle-actionmenu[data-enhanced].show .menu {position: absolute;text-align:left;z-index: 1000;display: block;background-color: #fff;border: 1px solid #ccc;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;-webkit-box-shadow: 5px 5px 20px 0 #666666;-moz-box-shadow: 5px 5px 20px 0 #666666;box-shadow: 5px 5px 20px 0 #666666;}
 .moodle-actionmenu[data-enhanced].show .menu a {
     display: block;
-    padding: 4px 1em 4px 24px;
+    padding: 4px 1em 4px 28px;
     color: #333333;
 }
 .moodle-actionmenu[data-enhanced].show .menu a > img {
-    margin: 4px 4px 4px -20px;
+    margin: 4px 4px 4px -24px;
+    padding: 4px;
+    width: 12px;
+    height: 12px;
 }
 .moodle-actionmenu[data-enhanced].show .menu a:hover,
 .moodle-actionmenu[data-enhanced].show .menu a:focus {color: #ffffff;background-color: #0088cc;}
