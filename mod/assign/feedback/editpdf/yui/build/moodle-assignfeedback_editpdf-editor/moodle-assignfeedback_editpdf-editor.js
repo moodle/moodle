@@ -21,6 +21,7 @@ YUI.add('moodle-assignfeedback_editpdf-editor', function (Y, NAME) {
  * @module moodle-assignfeedback_editpdf-editor
  */
 var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
+    AJAXBASEPROGRESS = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax_progress.php',
     CSS = {
         DIALOGUE : 'assignfeedback_editpdf_widget'
     },
@@ -32,6 +33,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         SEARCHCOMMENTSLIST : '.assignfeedback_editpdf_commentsearch ul',
         PAGESELECT : '.' + CSS.DIALOGUE + ' .navigate-page-select',
         LOADINGICON : '.' + CSS.DIALOGUE + ' .loading',
+        PROGRESSBARCONTAINER : '.' + CSS.DIALOGUE + ' .progress-info.progress-striped',
         DRAWINGREGION : '.' + CSS.DIALOGUE + ' .drawingregion',
         DRAWINGCANVAS : '.' + CSS.DIALOGUE + ' .drawingcanvas',
         SAVE : '.' + CSS.DIALOGUE + ' .savebutton',
@@ -667,8 +669,10 @@ Y.extend(ANNOTATION, Y.Base, {
      * @method remove
      * @param event
      */
-    remove : function() {
+    remove : function(e) {
         var annotations;
+
+        e.preventDefault();
 
         annotations = this.editor.pages[this.editor.currentpage].annotations;
         for (i = 0; i < annotations.length; i++) {
@@ -1408,6 +1412,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
         position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node = Y.Node.create('<div/>');
         node.setStyles({
+            'position': 'absolute',
             'display': 'inline-block',
             'backgroundImage': 'url(' + this.editor.get_stamp_image_url(this.path) + ')',
             'width': (this.endx - this.x),
@@ -1450,6 +1455,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
 
         node = Y.Node.create('<div/>');
         node.setStyles({
+            'position': 'absolute',
             'display': 'inline-block',
             'backgroundImage': 'url(' + this.editor.get_stamp_image_url(edit.stamp) + ')',
             'width': bounds.width,
@@ -1577,7 +1583,7 @@ Y.extend(DROPDOWN, M.core.dialogue, {
             }
         }, this);
 
-        button.on('click', this.show, this);
+        button.on('click', function(e) {e.preventDefault(); this.show();}, this);
         button.on('key', this.show, 'enter,space', this);
     },
 
@@ -1682,6 +1688,8 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
         COLOURPICKER.superclass.initializer.call(this, config);
     },
     callback_handler : function(e) {
+        e.preventDefault();
+
         var callback = this.get('callback'),
             callbackcontext = this.get('context'),
             bind;
@@ -1798,6 +1806,7 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
         STAMPPICKER.superclass.initializer.call(this, config);
     },
     callback_handler : function(e) {
+        e.preventDefault();
         var callback = this.get('callback'),
             callbackcontext = this.get('context'),
             bind;
@@ -1890,7 +1899,7 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
         commentlinks.append(link);
 
         link = Y.Node.create('<li><a tabindex="-1" href="#">' + M.util.get_string('deletecomment', 'assignfeedback_editpdf') + '</a></li>');
-        link.on('click', function() { comment.menu.hide(); comment.remove(); }, comment);
+        link.on('click', function(e) { e.preventDefault(); this.menu.hide(); this.remove(); }, comment);
         link.on('key', function() { comment.menu.hide(); comment.remove(); }, 'enter,space', comment);
 
         commentlinks.append(link);
@@ -1920,6 +1929,8 @@ Y.extend(COMMENTMENU, M.assignfeedback_editpdf.dropdown, {
         var commentlinks = this.get('boundingBox').one('ul');
             commentlinks.all('.quicklist_comment').remove(true),
             comment = this.get('comment');
+
+        comment.deleteme = false; // Cancel the deleting of blank comments.
 
         // Now build the list of quicklist comments.
         Y.each(comment.editor.quicklist.comments, function(quickcomment) {
@@ -2056,6 +2067,7 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
      * @method focus_on_comment
      */
     focus_on_comment : function(e) {
+        e.preventDefault();
         var target = e.target.ancestor('li'),
             comment = target.getData('comment'),
             editor = this.get('editor');
@@ -2306,6 +2318,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         });
 
         drawingregion.append(container);
+        container.setStyle('position', 'absolute');
         container.setX(position.x);
         container.setY(position.y);
         drawable.nodes.push(container);
@@ -2447,6 +2460,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @method remove_from_quicklist
      */
     this.remove_from_quicklist = function(e, quickcomment) {
+        e.preventDefault();
+
         this.menu.hide();
 
         this.editor.quicklist.remove(quickcomment);
@@ -2460,6 +2475,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @method set_from_quick_comment
      */
     this.set_from_quick_comment = function(e, quickcomment) {
+        e.preventDefault();
+
         this.menu.hide();
 
         this.rawtext = quickcomment.rawtext;
@@ -2477,7 +2494,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @protected
      * @method add_to_quicklist
      */
-    this.add_to_quicklist = function() {
+    this.add_to_quicklist = function(e) {
+        e.preventDefault();
         this.menu.hide();
         this.editor.quicklist.add(this);
     };
@@ -3090,10 +3108,10 @@ EDITOR.prototype = {
                 bodyContent: this.get('body'),
                 footerContent: this.get('footer'),
                 width: '840px',
-                visible: true
+                visible: false,
+                draggable: true
             });
 
-            this.dialogue.centerDialogue();
             // Add custom class for styling.
             this.dialogue.get('boundingBox').addClass(CSS.DIALOGUE);
 
@@ -3109,9 +3127,9 @@ EDITOR.prototype = {
 
                 this.refresh_button_state();
             }
-        } else {
-            this.dialogue.show();
         }
+        this.dialogue.centerDialogue();
+        this.dialogue.show();
 
         this.load_all_pages();
     },
@@ -3122,30 +3140,88 @@ EDITOR.prototype = {
      */
     load_all_pages : function() {
         var ajaxurl = AJAXBASE,
-            config;
+            config,
+            checkconversionstatus,
+            ajax_error_total;
 
         config = {
             method: 'get',
             context: this,
             sync: false,
             data : {
-                'sesskey' : M.cfg.sesskey,
-                'action' : 'loadallpages',
-                'userid' : this.get('userid'),
-                'attemptnumber' : this.get('attemptnumber'),
-                'assignmentid' : this.get('assignmentid')
+                sesskey : M.cfg.sesskey,
+                action : 'loadallpages',
+                userid : this.get('userid'),
+                attemptnumber : this.get('attemptnumber'),
+                assignmentid : this.get('assignmentid')
             },
             on: {
                 success: function(tid, response) {
                     this.all_pages_loaded(response.responseText);
                 },
                 failure: function(tid, response) {
-                    return M.core.exception(response.responseText);
+                    return new M.core.exception(response.responseText);
                 }
             }
         };
 
         Y.io(ajaxurl, config);
+
+        // If pages are not loaded, check PDF conversion status for the progress bar.
+        if (this.pagecount <= 0) {
+            checkconversionstatus = {
+                method: 'get',
+                context: this,
+                sync: false,
+                data : {
+                    sesskey : M.cfg.sesskey,
+                    action : 'conversionstatus',
+                    userid : this.get('userid'),
+                    attemptnumber : this.get('attemptnumber'),
+                    assignmentid : this.get('assignmentid')
+                },
+                on: {
+                    success: function(tid, response) {
+                        ajax_error_total = 0;
+                        if (this.pagecount === 0) {
+                            var pagetotal = this.get('pagetotal');
+
+                            // Update the progress bar.
+                            var progressbarcontainer = Y.one(SELECTOR.PROGRESSBARCONTAINER);
+                            var progressbar = progressbarcontainer.one('.bar');
+                            if (progressbar) {
+                                // Calculate progress.
+                                var progress = (response.response / pagetotal) * 100;
+                                progressbar.setStyle('width', progress + '%');
+                                progressbarcontainer.setAttribute('aria-valuenow', progress);
+                            }
+
+                            // New ajax request delayed of a second.
+                            Y.later(1000, this, function () {
+                                Y.io(AJAXBASEPROGRESS, checkconversionstatus);
+                            });
+                        }
+                    },
+                    failure: function(tid, response) {
+                        ajax_error_total = ajax_error_total + 1;
+                        // We only continue on error if the all pages were not generated,
+                        // and if the ajax call did not produce 5 errors in the row.
+                        if (this.pagecount === 0 && ajax_error_total < 5) {
+                            Y.later(1000, this, function () {
+                                Y.io(AJAXBASEPROGRESS, checkconversionstatus);
+                            });
+                        }
+                        return new M.core.exception(response.responseText);
+                    }
+                }
+            };
+            // We start the AJAX "generated page total number" call a second later to give a chance to
+            // the AJAX "combined pdf generation" call to clean the previous submission images.
+            Y.later(1000, this, function () {
+                ajax_error_total = 0;
+                Y.io(AJAXBASEPROGRESS, checkconversionstatus);
+            });
+        }
     },
 
     /**
@@ -3291,8 +3367,7 @@ EDITOR.prototype = {
 
         stampfiles = this.get('stampfiles');
         if (stampfiles.length <= 0) {
-            Y.one(SELECTOR.STAMPSBUTTON).hide();
-            Y.one(TOOLSELECTOR.stamp).hide();
+            Y.one(TOOLSELECTOR.stamp).ancestor().hide();
         } else {
             filename = stampfiles[0].substr(stampfiles[0].lastIndexOf('/') + 1);
             this.currentedit.stamp = filename;
@@ -3612,7 +3687,7 @@ EDITOR.prototype = {
                     }
                 },
                 failure: function(tid, response) {
-                    return M.core.exception(response.responseText);
+                    return new M.core.exception(response.responseText);
                 }
             }
         };
@@ -3740,7 +3815,8 @@ EDITOR.prototype = {
      * @protected
      * @method previous_page
      */
-    previous_page : function() {
+    previous_page : function(e) {
+        e.preventDefault();
         this.currentpage--;
         if (this.currentpage < 0) {
             this.currentpage = 0;
@@ -3753,7 +3829,8 @@ EDITOR.prototype = {
      * @protected
      * @method next_page
      */
-    next_page : function() {
+    next_page : function(e) {
+        e.preventDefault();
         this.currentpage++;
         if (this.currentpage >= this.pages.length) {
             this.currentpage = this.pages.length - 1;
@@ -3807,6 +3884,10 @@ Y.extend(EDITOR, Y.Base, EDITOR.prototype, {
         stampfiles : {
             validator : Y.Lang.isArray,
             value : ''
+        },
+        pagetotal : {
+            validator : Y.Lang.isInteger,
+            value : 0
         }
     }
 });

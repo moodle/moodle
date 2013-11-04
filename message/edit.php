@@ -48,7 +48,7 @@ $systemcontext   = context_system::instance();
 $personalcontext = context_user::instance($user->id);
 
 $PAGE->set_context($personalcontext);
-$PAGE->set_pagelayout('course');
+$PAGE->set_pagelayout('admin');
 $PAGE->requires->js_init_call('M.core_message.init_editsettings');
 
 // check access control

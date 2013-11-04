@@ -38,7 +38,12 @@ $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
 
 $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 
-require_login($course);
+if ($course->id == SITEID) {
+    require_login();
+    $PAGE->set_context(context_system::instance());
+} else {
+    require_login($course);
+}
 
 $context = context_course::instance($course->id);
 require_capability('report/loglive:view', $context);

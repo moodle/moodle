@@ -2043,7 +2043,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $context = $this->get_context();
             return format_string($this->name, true, array('context' => $context) + $options);
         } else {
-            return ''; // TODO 'Top'?.
+            return get_string('top');
         }
     }
 

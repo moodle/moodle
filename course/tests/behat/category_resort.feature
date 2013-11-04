@@ -16,8 +16,8 @@ Feature: Test we can resort categories in the management interface.
     And I go to the courses management page
     And I should see the "Course categories" management page
     And I should see "Re-sort categories" in the ".category-listing-actions" "css_element"
-    And I should see "By name" in the ".category-listing-actions" "css_element"
-    And I should see "By idnumber" in the ".category-listing-actions" "css_element"
+    And I should see "Re-sort the top level categories by name" in the ".category-listing-actions" "css_element"
+    And I should see "Re-sort the top level categories by idnumber" in the ".category-listing-actions" "css_element"
     And I click on <sortby> "link" in the ".category-listing-actions" "css_element"
     # Redirect.
     And I should see the "Course categories" management page
@@ -27,8 +27,8 @@ Feature: Test we can resort categories in the management interface.
   Examples:
     | sortby | cat1 | cat2 | cat3 |
     | "Re-sort categories" | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "By name"            | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "By idnumber"        | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Re-sort the top level categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Re-sort the top level categories by idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   @javascript
   Scenario Outline: Test resorting categories with JS enabled.
@@ -45,8 +45,8 @@ Feature: Test we can resort categories in the management interface.
     And I should not see "By name" in the ".category-listing-actions" "css_element"
     And I should not see "By idnumber" in the ".category-listing-actions" "css_element"
     And I click on "Re-sort categories" "link"
-    And I should see "By name" in the ".category-listing-actions" "css_element"
-    And I should see "By idnumber" in the ".category-listing-actions" "css_element"
+    And I should see "Re-sort the top level categories by name" in the ".category-listing-actions" "css_element"
+    And I should see "Re-sort the top level categories by idnumber" in the ".category-listing-actions" "css_element"
     And I click on <sortby> "link" in the ".category-listing-actions" "css_element"
     # Redirect.
     And I should see the "Course categories" management page
@@ -56,8 +56,8 @@ Feature: Test we can resort categories in the management interface.
   Examples:
     | sortby | cat1 | cat2 | cat3 |
     | "Re-sort categories" | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "By name"            | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "By idnumber"        | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Re-sort the top level categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Re-sort the top level categories by idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   Scenario Outline: Test resorting subcategories.
     Given the following "categories" exists:
@@ -73,10 +73,7 @@ Feature: Test we can resort categories in the management interface.
     And I click on "Master cat" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
-    And I should see "Re-sort subcategories" in the ".category-listing-actions" "css_element"
-    And I should see "By name" in the ".category-listing-actions" "css_element"
-    And I should see "By idnumber" in the ".category-listing-actions" "css_element"
-    And I click on <sortby> "link" in the ".category-listing-actions" "css_element"
+    And I click on <sortby> action for "Master cat" in management category listing
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see category listing <cat1> before <cat2>
@@ -84,9 +81,8 @@ Feature: Test we can resort categories in the management interface.
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "Re-sort subcategories" | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "By name"            | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "By idnumber"        | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "resortbyname"            | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "resortbyidnumber"        | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   @javascript
   Scenario Outline: Test resorting subcategories with JS enabled.
@@ -103,13 +99,7 @@ Feature: Test we can resort categories in the management interface.
     And I click on "Master cat" "link"
   # Redirect.
     And I should see the "Course categories and courses" management page
-    And I should see "Re-sort subcategories" in the ".category-listing-actions" "css_element"
-    And I should not see "By name" in the ".category-listing-actions" "css_element"
-    And I should not see "By idnumber" in the ".category-listing-actions" "css_element"
-    And I click on "Re-sort subcategories" "link"
-    And I should see "By name" in the ".category-listing-actions" "css_element"
-    And I should see "By idnumber" in the ".category-listing-actions" "css_element"
-    And I click on <sortby> "link" in the ".category-listing-actions" "css_element"
+    And I click on <sortby> action for "Master cat" in management category listing
   # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see category listing <cat1> before <cat2>
@@ -117,9 +107,8 @@ Feature: Test we can resort categories in the management interface.
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "Re-sort subcategories" | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "By name"            | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "By idnumber"        | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "resortbyname"            | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "resortbyidnumber"        | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   # The scenario below this is the same but with JS enabled.
   Scenario: Test moving categories up and down by one.

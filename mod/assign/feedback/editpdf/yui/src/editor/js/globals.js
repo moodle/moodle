@@ -19,6 +19,7 @@
  * @module moodle-assignfeedback_editpdf-editor
  */
 var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
+    AJAXBASEPROGRESS = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax_progress.php',
     CSS = {
         DIALOGUE : 'assignfeedback_editpdf_widget'
     },
@@ -30,6 +31,7 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
         SEARCHCOMMENTSLIST : '.assignfeedback_editpdf_commentsearch ul',
         PAGESELECT : '.' + CSS.DIALOGUE + ' .navigate-page-select',
         LOADINGICON : '.' + CSS.DIALOGUE + ' .loading',
+        PROGRESSBARCONTAINER : '.' + CSS.DIALOGUE + ' .progress-info.progress-striped',
         DRAWINGREGION : '.' + CSS.DIALOGUE + ' .drawingregion',
         DRAWINGCANVAS : '.' + CSS.DIALOGUE + ' .drawingcanvas',
         SAVE : '.' + CSS.DIALOGUE + ' .savebutton',

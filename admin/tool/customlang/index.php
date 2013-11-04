@@ -29,7 +29,7 @@ require(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->dirroot.'/'.$CFG->admin.'/tool/customlang/locallib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-require_login(SITEID, false);
+require_login(null, false);
 require_capability('tool/customlang:view', context_system::instance());
 
 $action  = optional_param('action', '', PARAM_ALPHA);

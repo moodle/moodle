@@ -1,42 +1,88 @@
 /* Reset */
-.moodleSkin table, .moodleSkin tbody, .moodleSkin a, .moodleSkin img, .moodleSkin tr, .moodleSkin div, .moodleSkin td, .moodleSkin iframe, .moodleSkin span, .moodleSkin *, .moodleSkin .mceText {border:0; margin:0; padding:0; background:transparent; white-space:nowrap; text-decoration:none; font-weight:normal; cursor:default; color:#000; vertical-align:baseline; width:auto; border-collapse:separate; text-align:left}
-.moodleSkin a:hover, .moodleSkin a:link, .moodleSkin a:visited, .moodleSkin a:active {text-decoration:none; font-weight:normal; cursor:default; color:#000}
-.moodleSkin table td {vertical-align:middle}
+.moodleSkin table, .moodleSkin tbody, .moodleSkin a, .moodleSkin img, .moodleSkin tr, .moodleSkin div, .moodleSkin td, .moodleSkin iframe, .moodleSkin span, .moodleSkin *, .moodleSkin .mceText {border:0; margin:0; padding:0; background:transparent; white-space:nowrap; text-decoration:none; font-weight:normal; color:#000; vertical-align:baseline; width:auto; border-collapse:separate; text-align:left}
+.moodleSkin a:hover, .moodleSkin a:link, .moodleSkin a:visited, .moodleSkin a:active {text-decoration:none; font-weight:normal; color:#000}
+.moodleSkin table td {vertical-align:middle;}
 
-/* Containers */
-.moodleSkin table {background:transparent}
+/* New Theme */
+.moodleSkin table {background:transparent; border-spacing: 0; }
 .moodleSkin iframe {display:block;}
-.moodleSkin .mceToolbar {height:26px}
+.moodleSkin .mceToolbar {min-height:30px; margin: 9px;}
+.moodleSkin .mceToolbar td + td { background: #fff; border: 1px solid #CCCCCC; border-right: none; border-bottom: 1px solid #b3b3b3; }
+.moodleSkin .mceToolbar td + td:empty { display: none;}
+.moodleSkin .mceToolbar a.mceButton { display:block; height: 30px; width: 40px; margin: 0; padding: 0; }
+.moodleSkin .mceToolbar a span.mceIcon { height: 30px; width: 40px; margin: 0; }
+.moodleSkin .mceToolbar a span.mceIcon img { padding: 7px 13px; }
+.moodleSkin .mceToolbar .mceGroupStart + td,
+.moodleSkin .mceToolbar .mceToolbarStart + td,
+.moodleSkin .mceToolbar .mceGroupStart + td a,
+.moodleSkin .mceToolbar .mceToolbarStart + td a { border-radius: 4px 0 0 4px; }
+.moodleSkin .mceToolbar .mceGroupStart + td.mceGroupEnd,
+.moodleSkin .mceToolbar .mceGroupStart + td.mceGroupEnd a,
+.moodleSkin .mceToolbar .mceToolbarStart + td.mceGroupEnd,
+.moodleSkin .mceToolbar .mceToolbarStart + td.mceGroupEnd a { border-radius: 4px; }
+.moodleSkin .mceToolbar .mceLast { border: none; }
+.moodleSkin .mceToolbar .mceGroupStart { border: none; width: 9px; background: transparent;}
+.moodleSkin .mceToolbar .mceGroupEnd { border-right: 1px solid #CCCCCC; border-radius: 0 4px 4px 0; border-left: 1px solid #CCCCCC; margin-right: 9px; }
+.moodleSkin .mceToolbar .mceGroupEnd a { border-radius: 0 4px 4px 0; }
+.moodleSkin .mceToolbar td div .mceGroupEnd { border: none;}
+.moodleSkin .mceToolbar .mceListBox td { border: none; border-radius: 0; }
+.moodleSkin .mceToolbar .mceListBox td a { border: none; border-radius: 0; }
+.moodleSkin .mceToolbar .mceToolbarEndPlaceholder { display: none; }
+.moodleSkin .mceToolbar .mceToolbarEnd { background: transparent; border: 0; }
+.moodleSkin.mceListBoxMenu { margin-left: -4px; margin-top: 2px; }
+
+.dir-rtl .moodleSkin table {background:transparent; border-spacing: 0; }
+.dir-rtl .moodleSkin iframe {display:block;}
+.dir-rtl .moodleSkin .mceToolbar {min-height:30px; margin: 9px;}
+.dir-rtl .moodleSkin .mceToolbar td + td { background: #fff; border: 1px solid #CCCCCC; border-left: none; border-bottom: 1px solid #b3b3b3; }
+.dir-rtl .moodleSkin .mceToolbar td + td:empty { display: none;}
+.dir-rtl .moodleSkin .mceToolbar a.mceButton { display:block; height: 30px; width: 40px; margin: 0; padding: 0; }
+.dir-rtl .moodleSkin .mceToolbar a span.mceIcon { height: 30px; width: 40px; margin: 0; }
+.dir-rtl .moodleSkin .mceToolbar a span.mceIcon img { padding: 7px 13px; }
+.dir-rtl .moodleSkin .mceToolbar .mceGroupStart + td,
+.dir-rtl .moodleSkin .mceToolbar .mceToolbarStart + td,
+.dir-rtl .moodleSkin .mceToolbar .mceGroupStart + td a,
+.dir-rtl .moodleSkin .mceToolbar .mceToolbarStart + td a { border-radius: 0 4px 4px 0; }
+.dir-rtl .moodleSkin .mceToolbar .mceGroupStart + td.mceGroupEnd,
+.dir-rtl .moodleSkin .mceToolbar .mceGroupStart + td.mceGroupEnd a,
+.dir-rtl .moodleSkin .mceToolbar .mceToolbarStart + td.mceGroupEnd,
+.dir-rtl .moodleSkin .mceToolbar .mceToolbarStart + td.mceGroupEnd a { border-radius: 4px; }
+.dir-rtl .moodleSkin .mceToolbar .mceLast { border: none; }
+.dir-rtl .moodleSkin .mceToolbar .mceGroupStart { border: none; width: 9px; background: transparent;}
+.dir-rtl .moodleSkin .mceToolbar .mceGroupEnd { border-left: 1px solid #CCCCCC; border-radius: 4px 0 0 4px; border-right: 1px solid #CCCCCC; margin-left: 9px; }
+.dir-rtl .moodleSkin .mceToolbar .mceGroupEnd a { border-radius: 4px 0 0 4px; }
+.dir-rtl .moodleSkin .mceToolbar td div .mceGroupEnd { border: none; }
+.dir-rtl .moodleSkin .mceToolbar .mceListBox td { border: none; border-radius: 0; }
+.dir-rtl .moodleSkin .mceToolbar .mceListBox td a { border: none; border-radius: 0; }
+.dir-rtl .moodleSkin .mceToolbar .mceToolbarEndPlaceholder { display: none; }
+.dir-rtl .moodleSkin .mceToolbar .mceToolbarEnd { background: transparent; border: 0;}
 
 /* External */
-.moodleSkin .mceExternalToolbar {position:absolute; border:1px solid #BBB; border-bottom:0; display:none}
+.moodleSkin .mceExternalToolbar {position:absolute; border:1px solid #BBB; border-bottom:0;}
 .moodleSkin .mceExternalToolbar td.mceToolbar {padding-right:13px;}
 .moodleSkin .mceExternalClose {position:absolute; top:3px; right:3px; width:7px; height:7px; background:url(../../img/icons.gif) -820px 0}
 
 /* Layout */
-.moodleSkin table.mceLayout {border:0; border-left:1px solid #BBB; border-right:1px solid #BBB}
-.moodleSkin table.mceLayout tr.mceFirst td {border-top:1px solid #BBB}
+.moodleSkin table.mceLayout {border:0; border-left:1px solid #BBB; border-right:1px solid #BBB; border-top:1px solid #BBB;}
 .moodleSkin table.mceLayout tr.mceLast td {border-bottom:1px solid #BBB}
-.moodleSkin table.mceToolbar, .moodleSkin tr.mceFirst .mceToolbar tr td, .moodleSkin tr.mceLast .mceToolbar tr td {border:0; margin:0; padding:0}
 .moodleSkin .mceIframeContainer {border-top:1px solid #BBB; border-bottom:1px solid #BBB}
 .moodleSkin .mceStatusbar { display:block; font-family:'MS Sans Serif',sans-serif,Verdana,Arial; font-size:9pt; line-height:16px; overflow:visible; color:#000; height:20px}
 .moodleSkin .mceStatusbar div {float:left; padding:2px}
 .moodleSkin .mceStatusbar a.mceResize {display:block; float:right; background:url(img/resize.png) no-repeat; width:16px; height:16px; cursor:se-resize; outline:0; margin-top: 4px;}
 .moodleSkin .mceStatusbar a:hover {text-decoration:underline}
-.moodleSkin table.mceToolbar {margin-left:3px}
 .moodleSkin .mceToolbar .mceToolbarStart span, .moodleSkin .mceToolbar .mceToolbarEnd span {display:none;}
 .moodleSkin .mceToolbar .mceToolbarEndListBox span, .moodleSkin .mceToolbar .mceToolbarStartListBox span {display:none}
-.moodleSkin span.mceIcon {display:block; width:20px; height:20px;}
+.moodleSkin span.mceIcon {display:block;}
 .moodleSkin img.mceIcon {display:block; width:16px; height:16px; padding: 2px 0 0 2px;}
 .moodleSkin td.mceCenter {text-align:center;}
 .moodleSkin td.mceCenter table {margin:0 auto; text-align:left;}
 .moodleSkin td.mceRight table {margin:0 0 0 auto;}
 
 /* Button */
-.moodleSkin .mceButton {display:block; width:20px; height:20px; padding: 1px; margin: 0 1px 0 0 }
-.moodleSkin a.mceButtonEnabled:hover {background-color:#FFF;}
-.moodleSkin a.mceButtonActive, .moodleSkin a.mceButtonSelected {background-color:#DDD; padding: 0px; border: 1px solid #BBB}
-.moodleSkin .mceButtonDisabled .mceIcon {opacity:0.3}
+.moodleSkin a.mceButtonEnabled:hover {background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);background-color: #ebebeb; cursor: pointer;}
+.moodleSkin a.mceButtonEnabled:active {background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);background-color: #dfdfdf;}
+.moodleSkin a.mceButtonActive, .moodleSkin a.mceButtonSelected {background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);background-color: #dfdfdf;}
+.moodleSkin .mceButtonDisabled .mceIcon {opacity:0.3; cursor: default;}
 .moodleSkin .mceButtonLabeled {width:auto}
 .moodleSkin .mceButtonLabeled span.mceIcon {float:left}
 .moodleSkin span.mceButtonLabel {display:block; font-size:10px; padding:4px 6px 0 22px; font-family:Tahoma,Verdana,Arial,Helvetica}
@@ -46,9 +92,9 @@
 .moodleSkin .mceSeparator {display:block; width:0px; height:22px; margin: 0 2px 0 1px; border-left: 1px solid #BBB }
 
 /* ListBox */
-.moodleSkin .mceListBox {padding-left: 3px}
+.moodleSkin .mceListBox {padding: 0 3px}
 .moodleSkin .mceListBox, .moodleSkin .mceListBox a {display:block}
-.moodleSkin .mceListBox .mceText {padding-left:4px; text-align:left; width:70px; border:1px solid #BBB; border-right:0; background:#eaf2fb; font-family:Tahoma,Verdana,Arial,Helvetica; font-size:11px; height:20px; line-height:20px; overflow:hidden}
+.moodleSkin .mceListBox .mceText {padding-left:4px; text-align:left; width:70px; background:#eaf2fb; font-family:Tahoma,Verdana,Arial,Helvetica; font-size:11px; height:20px; line-height:20px; overflow:hidden}
 .moodleSkin .mceListBox .mceOpen {width:14px; height:22px; background:url(img/button_bg.png) -66px 0}
 .moodleSkin table.mceListBoxEnabled:hover .mceText, .moodleSkin .mceListBoxHover .mceText, .moodleSkin .mceListBoxSelected .mceText {background:#FFF}
 .moodleSkin table.mceListBoxEnabled:hover .mceOpen, .moodleSkin .mceListBoxHover .mceOpen, .moodleSkin .mceListBoxSelected .mceOpen {background-position:-66px -22px}
@@ -58,26 +104,30 @@
 .moodleSkin select.mceListBox {font-family:Tahoma,Verdana,Arial,Helvetica; font-size:12px; border:1px solid #BBB; background:#FFF;}
 
 /* SplitButton */
-.moodleSkin .mceSplitButton {margin-right:2px;}
-.moodleSkin .mceSplitButton, .moodleSkin .mceSplitButton a, .moodleSkin .mceSplitButton span {display:block; height:22px; direction:ltr; }
+.moodleSkin .mceSplitButton a {display:block; direction:ltr; height: 22px;}
+.moodleSkin .mceSplitButton, .moodleSkin .mceSplitButton span {display:block; height:30px; direction:ltr; }
+.moodleSkin .mceSplitButton { width: 50px; }
+.moodleSkin .mceSplitButton:hover {background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%); cursor: pointer;}
+.moodleSkin .mceSplitButton:active {background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);}
+.moodleSkin .mceSplitButton .mceFirst { padding: 4px 0 0 9px; }
+.moodleSkin .mceSplitButton .mceLast { background: transparent;}
 .moodleSkin .mceSplitButton a.mceAction {width:20px}
 .moodleSkin .mceSplitButton a.mceOpen {width:10px; background:url(img/button_bg.png) 44px 0}
 .moodleSkin .mceSplitButton span.mceOpen {display:none}
-.moodleSkin table.mceSplitButtonEnabled:hover a.mceAction, .moodleSkin .mceSplitButtonHover a.mceAction, .moodleSkin .mceSplitButtonSelected {background:url(img/button_bg.png) 0 -22px}
 .moodleSkin table.mceSplitButtonEnabled:hover a.mceOpen, .moodleSkin .mceSplitButtonHover a.mceOpen, .moodleSkin .mceSplitButtonSelected a.mceOpen {background-position:-44px -44px}
 .moodleSkin .mceSplitButtonDisabled .mceAction {opacity:0.3;}
 .moodleSkin .mceSplitButtonActive {background-position:0 -44px}
 
 /* ColorSplitButton */
-.moodleSkin div.mceColorSplitMenu table {background:#FFF; border: 1px solid #808080;}
+.moodleSkin div.mceColorSplitMenu table {background:#FFF; border: 1px solid #BBB;}
 .moodleSkin .mceColorSplitMenu td {padding:2px}
-.moodleSkin .mceColorSplitMenu a {display:block; width:18px; height:18px; overflow:hidden; border:1px solid #808080}
+.moodleSkin .mceColorSplitMenu a {display:block; width:18px; height:18px; overflow:hidden; border:1px solid #BBB}
 .moodleSkin .mceColorSplitMenu td.mceMoreColors {padding:1px 3px 1px 1px}
 .moodleSkin .mceColorSplitMenu a.mceMoreColors {width:100%; height:auto; text-align:center; font-family:Tahoma,Verdana,Arial,Helvetica; font-size:11px; line-height:20px; border:1px solid #FFF}
 .moodleSkin .mceColorSplitMenu a.mceMoreColors:hover {border:1px solid #0A246A; background-color:#B6BDD2}
 .moodleSkin a.mceMoreColors:hover {border:1px solid #0A246A}
 /* Font selector preview stuff */
-.moodleSkin .mce_forecolor span.mceAction, .moodleSkin .mce_backcolor span.mceAction {height:22px;overflow:hidden; position: relative; top: 2px; z-index: 100 }
+.moodleSkin .mce_forecolor span.mceAction, .moodleSkin .mce_backcolor span.mceAction {height:21px;overflow:hidden; position: relative; z-index: 1 }
 .moodleSkin .mceColorPreview {width:16px; height:16px; overflow:hidden; margin-left: 2px; position: relative; top: -18px;}
 
 /* Menu */
@@ -124,97 +174,97 @@
 .moodleSkin .mce_h6 span.mceText {font-weight:bolder; font-size: .75em}
 
 /* Buttons */
-.moodleSkin span.mce_bold {background:url(img/bold.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_underline {background:url(img/underline.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_italic {background:url(img/italic.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_strikethrough {background:url(img/strikethrough.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_undo {background:url(img/undo.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_redo {background:url(img/redo.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_bullist {background:url(img/bullet_list.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_numlist {background:url(img/numbered_list.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_justifyleft {background:url(img/align_left.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_justifyright {background:url(img/align_right.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_justifycenter {background:url(img/align_center.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_justifyfull {background:url(img/justify.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_anchor {background:url(img/anchor.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_indent {background:url(img/increase_indent.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_outdent {background:url(img/decrease_indent.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_link {background:url(img/insert_edit_link.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_unlink {background:url(img/remove_link.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_sub {background:url(img/subscript.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_sup {background:url(img/superscript.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_newdocument {background:url(img/new_document.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_image {background:url(img/insert_edit_image.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_help {background:url(img/help.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_code {background:url(img/source_code.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_hr {background:url(img/insert_horizontal_rule.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_charmap {background:url(img/special_character.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_paste {background:url(img/paste.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_copy {background:url(img/copy.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_cut {background:url(img/cut.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_blockquote {background:url(img/blockquote.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_removeformat {background:url(img/clear_formatting.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_cleanup {background:url(img/cleanup_messy_code.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_ltr {background:url(img/left_to_right.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_rtl {background:url(img/right_to_left.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_emotions {background:url(img/emoticons.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_fullscreen {background:url(img/fullscreen.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_inserttime {background:url(img/insert_time.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_table {background:url(img/table.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_nonbreaking {background:url(img/insert_nonbreaking_space.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_search {background:url(img/search.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_pagebreak {background:url(img/search.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_visualchars {background:url(img/show_invisible_characters.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_template {background:url(img/template.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_media {background:url(img/insert_edit_video.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_preview {background:url(img/preview.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_print {background:url(img/print.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_save {background:url(img/save.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_pastetext {background:url(img/paste_text.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_pasteword {background:url(img/paste_word.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_replace {background:url(img/find_replace.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_insertlayer {background:url(img/layers.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_insert_layer {background:url(img/layers.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_movebackward {background:url(img/layers_under.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_moveforward {background:url(img/layers_over.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_styleprops {background:url(img/styleprops.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_insertdate {background:url(img/insert_date.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_cancel {background:url(img/delete.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_merge_cells {background:url(img/merge_cells.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_split_cells {background:url(img/split_cells.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_advhr {background:url(img/advance_hr.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_absolute {background:url(img/absolute.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_abbr {background:url(img/abbr.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_acronym {background:url(img/acronym.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_delete_table {background:url(img/delete_table.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_delete_col {background:url(img/delete_col.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_delete_row {background:url(img/delete_row.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_cell_props {background:url(img/cell_props.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_col_after {background:url(img/insert_col_after.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_col_before {background:url(img/insert_col_before.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_row_after {background:url(img/insert_row_after.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_row_before {background:url(img/insert_row_before.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_visualaid {background:url(img/visual_aid.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_table_props {background:url(img/table_props.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_row_props {background:url(img/row_props.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_selectall {background:url(img/text_highlight.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_cite {background:url(img/cite.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_del {background:url(img/delete.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_ins {background:url(img/insert.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_fullpage {background:url(img/fullpage.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_iespell {background:url(img/spellcheck.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_restoredraft {background:url(img/restore_draft.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_spellchecker {background:url(img/spellcheck.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_visualblocks {background:url(img/visual_blocks.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_backward {background:url(img/backward.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_forward {background:url(img/forward.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_bold {background:url(img/bold.png) center center no-repeat;}
+.moodleSkin span.mce_underline {background:url(img/underline.png) center center no-repeat;}
+.moodleSkin span.mce_italic {background:url(img/italic.png) center center no-repeat;}
+.moodleSkin span.mce_strikethrough {background:url(img/strikethrough.png) center center no-repeat;}
+.moodleSkin span.mce_undo {background:url(img/undo.png) center center no-repeat;}
+.moodleSkin span.mce_redo {background:url(img/redo.png) center center no-repeat;}
+.moodleSkin span.mce_bullist {background:url(img/bullet_list.png) center center no-repeat;}
+.moodleSkin span.mce_numlist {background:url(img/numbered_list.png) center center no-repeat;}
+.moodleSkin span.mce_justifyleft {background:url(img/align_left.png) center center no-repeat;}
+.moodleSkin span.mce_justifyright {background:url(img/align_right.png) center center no-repeat;}
+.moodleSkin span.mce_justifycenter {background:url(img/align_center.png) center center no-repeat;}
+.moodleSkin span.mce_justifyfull {background:url(img/justify.png) center center no-repeat;}
+.moodleSkin span.mce_anchor {background:url(img/anchor.png) center center no-repeat;}
+.moodleSkin span.mce_indent {background:url(img/increase_indent.png) center center no-repeat;}
+.moodleSkin span.mce_outdent {background:url(img/decrease_indent.png) center center no-repeat;}
+.moodleSkin span.mce_link {background:url(img/insert_edit_link.png) center center no-repeat;}
+.moodleSkin span.mce_unlink {background:url(img/remove_link.png) center center no-repeat;}
+.moodleSkin span.mce_sub {background:url(img/subscript.png) center center no-repeat;}
+.moodleSkin span.mce_sup {background:url(img/superscript.png) center center no-repeat;}
+.moodleSkin span.mce_newdocument {background:url(img/new_document.png) center center no-repeat;}
+.moodleSkin span.mce_image {background:url(img/insert_edit_image.png) center center no-repeat;}
+.moodleSkin span.mce_help {background:url(img/help.png) center center no-repeat;}
+.moodleSkin span.mce_code {background:url(img/source_code.png) center center no-repeat;}
+.moodleSkin span.mce_hr {background:url(img/insert_horizontal_ruler.png) center center no-repeat;}
+.moodleSkin span.mce_charmap {background:url(img/special_character.png) center center no-repeat;}
+.moodleSkin span.mce_paste {background:url(img/paste.png) center center no-repeat;}
+.moodleSkin span.mce_copy {background:url(img/copy.png) center center no-repeat;}
+.moodleSkin span.mce_cut {background:url(img/cut.png) center center no-repeat;}
+.moodleSkin span.mce_blockquote {background:url(img/toggle_blockquote.png) center center no-repeat;}
+.moodleSkin span.mce_removeformat {background:url(img/clear_formatting.png) center center no-repeat;}
+.moodleSkin span.mce_cleanup {background:url(img/cleanup_messy_code.png) center center no-repeat;}
+.moodleSkin span.mce_ltr {background:url(img/left_to_right.png) center center no-repeat;}
+.moodleSkin span.mce_rtl {background:url(img/right_to_left.png) center center no-repeat;}
+.moodleSkin span.mce_emotions {background:url(img/emoticons.png) center center no-repeat;}
+.moodleSkin span.mce_fullscreen {background:url(img/fullscreen.png) center center no-repeat;}
+.moodleSkin span.mce_inserttime {background:url(img/insert_time.png) center center no-repeat;}
+.moodleSkin span.mce_table {background:url(img/table.png) center center no-repeat;}
+.moodleSkin span.mce_nonbreaking {background:url(img/insert_nonbreaking_space.png) center center no-repeat;}
+.moodleSkin span.mce_search {background:url(img/search.png) center center no-repeat;}
+.moodleSkin span.mce_pagebreak {background:url(img/page_break.png) center center no-repeat;}
+.moodleSkin span.mce_visualchars {background:url(img/show_invisible_characters.png) center center no-repeat;}
+.moodleSkin span.mce_template {background:url(img/template.png) center center no-repeat;}
+.moodleSkin span.mce_media {background:url(img/insert_edit_video.png) center center no-repeat;}
+.moodleSkin span.mce_preview {background:url(img/preview.png) center center no-repeat;}
+.moodleSkin span.mce_print {background:url(img/print.png) center center no-repeat;}
+.moodleSkin span.mce_save {background:url(img/save.png) center center no-repeat;}
+.moodleSkin span.mce_pastetext {background:url(img/paste_text.png) center center no-repeat;}
+.moodleSkin span.mce_pasteword {background:url(img/paste_word.png) center center no-repeat;}
+.moodleSkin span.mce_replace {background:url(img/find_replace.png) center center no-repeat;}
+.moodleSkin span.mce_insertlayer {background:url(img/layers.png) center center no-repeat;}
+.moodleSkin span.mce_insert_layer {background:url(img/layers.png) center center no-repeat;}
+.moodleSkin span.mce_movebackward {background:url(img/layers_under.png) center center no-repeat;}
+.moodleSkin span.mce_moveforward {background:url(img/layers_over.png) center center no-repeat;}
+.moodleSkin span.mce_styleprops {background:url(img/styleprops.png) center center no-repeat;}
+.moodleSkin span.mce_insertdate {background:url(img/insert_date.png) center center no-repeat;}
+.moodleSkin span.mce_cancel {background:url(img/cancel.png) center center no-repeat;}
+.moodleSkin span.mce_merge_cells {background:url(img/merge_cells.png) center center no-repeat;}
+.moodleSkin span.mce_split_cells {background:url(img/split_cells.png) center center no-repeat;}
+.moodleSkin span.mce_advhr {background:url(img/advance_hr.png) center center no-repeat;}
+.moodleSkin span.mce_absolute {background:url(img/absolute.png) center center no-repeat;}
+.moodleSkin span.mce_abbr {background:url(img/abbr.png) center center no-repeat;}
+.moodleSkin span.mce_acronym {background:url(img/acronym.png) center center no-repeat;}
+.moodleSkin span.mce_delete_table {background:url(img/delete_table.png) center center no-repeat;}
+.moodleSkin span.mce_delete_col {background:url(img/delete_col.png) center center no-repeat;}
+.moodleSkin span.mce_delete_row {background:url(img/delete_row.png) center center no-repeat;}
+.moodleSkin span.mce_cell_props {background:url(img/cell_props.png) center center no-repeat;}
+.moodleSkin span.mce_col_after {background:url(img/insert_col_after.png) center center no-repeat;}
+.moodleSkin span.mce_col_before {background:url(img/insert_col_before.png) center center no-repeat;}
+.moodleSkin span.mce_row_after {background:url(img/insert_row_after.png) center center no-repeat;}
+.moodleSkin span.mce_row_before {background:url(img/insert_row_before.png) center center no-repeat;}
+.moodleSkin span.mce_visualaid {background:url(img/visual_aid.png) center center no-repeat;}
+.moodleSkin span.mce_table_props {background:url(img/table_props.png) center center no-repeat;}
+.moodleSkin span.mce_row_props {background:url(img/row_props.png) center center no-repeat;}
+.moodleSkin span.mce_selectall {background:url(img/select_all.png) center center no-repeat;}
+.moodleSkin span.mce_cite {background:url(img/cite.png) center center no-repeat;}
+.moodleSkin span.mce_del {background:url(img/delete.png) center center no-repeat;}
+.moodleSkin span.mce_ins {background:url(img/insert.png) center center no-repeat;}
+.moodleSkin span.mce_fullpage {background:url(img/fullpage.png) center center no-repeat;}
+.moodleSkin span.mce_iespell {background:url(img/spellcheck.png) center center no-repeat;}
+.moodleSkin span.mce_restoredraft {background:url(img/restore_draft.png) center center no-repeat;}
+.moodleSkin span.mce_spellchecker {background:url(img/spellcheck.png) center center no-repeat;}
+.moodleSkin span.mce_visualblocks {background:url(img/visual_blocks.png) center center no-repeat;}
+.moodleSkin span.mce_backward {background:url(img/backward.png) center center no-repeat;}
+.moodleSkin span.mce_forward {background:url(img/forward.png) center center no-repeat;}
+.moodleSkin span.mce_attribs {background:url(img/attributes.png) center center no-repeat;}
 
-.moodleSkin span.mce_forecolorpicker {background: #300 url(img/text_color.png) 2px 2px no-repeat;}
-.moodleSkin span.mce_backcolorpicker {background:url(img/text_highlight.png) 2px 2px no-repeat;}
-.moodleSkin .mce_forecolor span.mceAction {background:url(img/text_color.png) 2px 2px no-repeat;}
-.moodleSkin .mce_backcolor span.mceAction {background:url(img/text_highlight.png) 2px 2px no-repeat;}
+.moodleSkin span.mce_forecolorpicker {background:url(img/text_color_picker.png) center center no-repeat;}
+.moodleSkin span.mce_backcolorpicker {background:url(img/text_highlight_picker.png) center center no-repeat;}
+.moodleSkin .mce_forecolor span.mceAction {background:url(img/text_color.png) center center no-repeat;}
+.moodleSkin .mce_backcolor span.mceAction {background:url(img/text_highlight.png) center center no-repeat;}
 
 /* Theme */
 .moodleSkin td.mceToolbar, .moodleSkin td.mceStatusbar, .moodleSkin .mceMenuItemTitle a {background:#F2F2F2}
 .moodleSkin .mceListBox .mceText {background:#FFF}
-.moodleSkin .mceIcon {background:url(../../img/icons.gif) no-repeat 20px 20px}

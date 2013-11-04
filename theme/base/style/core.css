@@ -1016,7 +1016,6 @@ sup {vertical-align: super;}
 }
 
 .moodle-dialogue-base .moodle-dialogue .moodle-dialogue-bd {
-    overflow: auto;
     padding: 1em;
     line-height: 2em;
     color: #555;
@@ -1466,7 +1465,7 @@ img#persona_signin { cursor: pointer; }
 .moodle-actionmenu > ul,
 .moodle-actionmenu > ul > li {display: inline-block;}
 .moodle-actionmenu ul {padding: 0;margin: 0;list-style-type: none;}
-.moodle-actionmenu a.hidden {display: none;}
+#page .moodle-actionmenu a.hidden {display: none;}
 .moodle-actionmenu .toggle-display,
 .moodle-actionmenu .menu-action-text {display: none;}
 
@@ -1495,22 +1494,30 @@ img#persona_signin { cursor: pointer; }
 .dir-rtl .moodle-actionmenu[data-enhanced].show .menu {text-align: right;right: auto;left: 0;}
 .dir-rtl .moodle-actionmenu[data-enhanced].show .menu .iconsmall {margin-right: 0;margin-left: 8px;}
 
-.menu.align-tl-bl {top: 100%;left: 0;margin-top: 4px;}
-.menu.align-tr-bl {top: 100%;right: 100%;}
-.menu.align-bl-bl {bottom: 100%;left: 0;}
-.menu.align-br-bl {right: 100%;bottom: 100%;}
-.menu.align-tl-br {top: 100%;left: 100%;}
-.menu.align-tr-br {top: 100%;right: 0;margin-top: 4px;}
-.menu.align-bl-br {bottom: 100%;left: 100%;}
-.menu.align-br-br {right: 0;bottom: 100%;}
-.menu.align-tl-tl {top: 0;left: 0;}
-.menu.align-tr-tl {top: 0;right: 100%;margin-right: 4px;}
-.menu.align-bl-tl {bottom: 100%;left: 0;margin-bottom: 4px;}
-.menu.align-br-tl {right: 100%;bottom: 100%;}
-.menu.align-tl-tr {top: 0;left: 100%;margin-left: 4px;}
-.menu.align-tr-tr {top: 0;right: 0;}
-.menu.align-bl-tr {bottom: 100%;left: 100%;}
-.menu.align-br-tr {right: 0;bottom: 100%;margin-bottom: 4px;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tl-bl {top: 100%;left: 0;margin-top: 4px;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tr-bl {top: 100%;right: 100%;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-bl-bl {bottom: 100%;left: 0;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-br-bl {right: 100%;bottom: 100%;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tl-br {top: 100%;left: 100%;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tr-br {top: 100%;right: 0;margin-top: 4px;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-bl-br {bottom: 100%;left: 100%;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-br-br {right: 0;bottom: 100%;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tl-tl {top: 0;left: 0;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tr-tl {top: 0;right: 100%;margin-right: 4px;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-bl-tl {bottom: 100%;left: 0;margin-bottom: 4px;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-br-tl {right: 100%;bottom: 100%;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tl-tr {top: 0;left: 100%;margin-left: 4px;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-tr-tr {top: 0;right: 0;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-bl-tr {bottom: 100%;left: 100%;}
+.jsenabled .moodle-actionmenu[data-enhanced] .menu.align-br-tr {right: 0;bottom: 100%;margin-bottom: 4px;}
+
+.moodle-actionmenu > ul > li[role="menuitem"] {
+    display: none;
+}
+
+.jsenabled .moodle-actionmenu[data-enhance="moodle-core-actionmenu"] > ul > li[role="menuitem"] {
+    display: inline-block;
+}
 
 .dir-rtl .menu.align-tl-bl {right: 0;left: auto;}
 .dir-rtl .menu.align-tr-bl {right: auto;left: 100%;}

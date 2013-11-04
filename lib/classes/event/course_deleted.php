@@ -71,7 +71,7 @@ class course_deleted extends base {
     protected function get_legacy_eventdata() {
         $course = $this->get_record_snapshot('course', $this->objectid);
         $course->context = $this->context;
-
+        $course->timemodified = $this->data['timecreated'];
         return $course;
     }
 

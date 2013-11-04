@@ -208,6 +208,20 @@ class helper {
             );
         }
 
+        // Resort.
+        if ($category->can_resort_subcategories() && $category->has_children()) {
+            $actions['resortbyname'] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'name')),
+                'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
+                'string' => new \lang_string('resortsubcategoriesbyname', 'moodle')
+            );
+            $actions['resortbyidnumber'] = array(
+                'url' => new \moodle_url($baseurl, array('action' => 'resortcategories', 'resort' => 'idnumber')),
+                'icon' => new \pix_icon('t/sort', new \lang_string('sort')),
+                'string' => new \lang_string('resortsubcategoriesbyidnumber', 'moodle')
+            );
+        }
+
         // Delete.
         if ($category->can_delete_full()) {
             $actions['delete'] = array(

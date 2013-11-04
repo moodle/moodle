@@ -58,7 +58,7 @@ class course_module_viewed extends \core\event\content_viewed {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed content ' . $this->get_url() . ' In phase ' . $this->other['content'];
+        return 'User with id ' . $this->userid . ' viewed workshop activity with instance id ' . $this->objectid;
     }
 
     /**

@@ -3,8 +3,14 @@
         float: left;
         display: inline-block;
     }
-    .mceToolbar .mceWrap {
+    .moodleSkin .mceLayout .mceToolbar .mceWrap {
         clear: left;
+        width: 100%;
+        height: 8px;
+    }
+    .moodleSkin .mceLayout .mceToolbar .mceNoWrap {
+        clear: none;
+        width: 0px;
     }
 
     .o2k7Skin tr.mceLast .mceToolbar tr td.mceWrap,

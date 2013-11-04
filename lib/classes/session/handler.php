@@ -35,6 +35,14 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class handler {
     /**
+     * Start the session.
+     * @return bool success
+     */
+    public function start() {
+        return session_start();
+    }
+
+    /**
      * Init session handler.
      */
     public abstract function init();

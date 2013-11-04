@@ -40,7 +40,7 @@ class course_module_viewed extends \core\event\content_viewed {
      * @return string
      */
     public function get_description() {
-        return "The user $this->userid has viewed the book $this->objectid.";
+        return 'User with id ' . $this->userid . ' viewed book activity with instance id ' . $this->objectid;
     }
 
     /**

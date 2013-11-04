@@ -873,6 +873,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
 },
 '@VERSION@', {
-    requires : ['base', 'node', 'io', 'moodle-course-coursebase']
+    requires : ['base', 'node', 'io', 'moodle-course-coursebase', 'moodle-course-util']
 }
 );

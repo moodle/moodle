@@ -27,6 +27,7 @@ require_once($CFG->dirroot.'/lib/coursecatlib.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
 $categoryid = optional_param('categoryid', null, PARAM_INT);
+$selectedcategoryid = optional_param('selectedcategoryid', null, PARAM_INT);
 $courseid = optional_param('courseid', null, PARAM_INT);
 $action = optional_param('action', false, PARAM_ALPHA);
 $page = optional_param('page', 0, PARAM_INT);
@@ -48,7 +49,6 @@ if ($issearching) {
 }
 
 $url = new moodle_url('/course/management.php');
-navigation_node::override_active_url($url);
 $systemcontext = $context = context_system::instance();
 if ($courseid) {
     $record = get_course($courseid);
@@ -56,13 +56,18 @@ if ($courseid) {
     $category = coursecat::get($course->category);
     $categoryid = $category->id;
     $context = context_coursecat::instance($category->id);
+    $url->param('categoryid', $categoryid);
+    navigation_node::override_active_url($url);
     $url->param('courseid', $course->id);
+
 } else if ($categoryid) {
     $courseid = null;
     $course = null;
     $category = coursecat::get($categoryid);
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $category->id);
+    navigation_node::override_active_url($url);
+
 } else {
     $course = null;
     $courseid = null;
@@ -72,6 +77,12 @@ if ($courseid) {
         $viewmode = 'categories';
     }
     $context = $systemcontext;
+    navigation_node::override_active_url($url);
+}
+
+// Check if there is a selected category param, and if there is apply it.
+if ($course === null && $selectedcategoryid !== null && $selectedcategoryid !== $categoryid) {
+    $url->param('categoryid', $selectedcategoryid);
 }
 
 if ($page !== 0) {
@@ -313,12 +324,20 @@ if ($action !== false && confirm_sesskey()) {
                     $a = new stdClass;
                     $a->count = $movecount;
                     $a->to = $movetocat->get_formatted_name();
-                    $notificationspass[] = get_string('movecategoriessuccess', 'moodle', $a);
+                    $movesuccessstrkey = 'movecategoriessuccess';
+                    if ($movetocatid == 0) {
+                        $movesuccessstrkey = 'movecategoriestotopsuccess';
+                    }
+                    $notificationspass[] = get_string($movesuccessstrkey, 'moodle', $a);
                 } else if ($movecount === 1) {
                     $a = new stdClass;
                     $a->moved = $cattomove->get_formatted_name();
                     $a->to = $movetocat->get_formatted_name();
-                    $notificationspass[] = get_string('movecategorysuccess', 'moodle', $a);
+                    $movesuccessstrkey = 'movecategorysuccess';
+                    if ($movetocatid == 0) {
+                        $movesuccessstrkey = 'movecategorytotopsuccess';
+                    }
+                    $notificationspass[] = get_string($movesuccessstrkey, 'moodle', $a);
                 }
             } else if ($bulkresortcategories) {
                 // Bulk resort selected categories.

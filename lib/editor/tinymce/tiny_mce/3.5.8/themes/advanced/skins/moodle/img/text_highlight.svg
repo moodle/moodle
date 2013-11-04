@@ -9,6 +9,7 @@
 	 xml:space="preserve" preserveAspectRatio="xMinYMid meet">
 <defs>
 </defs>
-<path style="fill:#999999;" d="M11.3,11.2l1.5,4.8H3.2l1.5-4.8H11.3z M5.6,8h4.7L8.9,3.2H7.1L5.6,8z M10.8,0l4.8,16H16V0H10.8z M0,0
-	v16h0.4L5.2,0H0z"/>
+<polygon style="fill:#FFFFFF;" points="0,0 0,16 8.5,16 16,8.5 16,0 "/>
+<path style="fill:#999999;" d="M5.4,14.5L4.5,16H0v-0.1l1.9-3.3L5.4,14.5z M16,0h-0.3l-4.5,10.3L2.7,5.5l4-5.5H5.5L1.3,5.8L1.6,6
+	c0.4,1,1.2,3.5,0.2,5.3l4.8,2.8c1.1-1.9,3.6-2.4,4.7-2.5l0.4,0.2l4.4-10V0z"/>
 </svg>

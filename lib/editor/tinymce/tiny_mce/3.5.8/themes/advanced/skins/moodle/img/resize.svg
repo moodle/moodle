@@ -5,12 +5,11 @@
 ]>
 <svg version="1.1"
 	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
-	 x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="overflow:visible;enable-background:new 0 0 16 16;"
+	 x="0px" y="0px" width="16px" height="16px" viewBox="-2 -2 16 16" style="overflow:visible;enable-background:new -2 -2 16 16;"
 	 xml:space="preserve" preserveAspectRatio="xMinYMid meet">
 <defs>
 </defs>
-<path style="fill:#999999;" d="M0,14.2h1.8V16H0V14.2z M3.6,10.7h1.8v1.8H3.6V10.7z M3.6,14.2h1.8V16H3.6V14.2z M7.1,7.1h1.8v1.8
-	H7.1V7.1z M7.1,10.7h1.8v1.8H7.1V10.7z M7.1,14.2h1.8V16H7.1V14.2z M10.7,3.6h1.8v1.8h-1.8V3.6z M10.7,7.1h1.8v1.8h-1.8V7.1z
-	 M10.7,10.7h1.8v1.8h-1.8V10.7z M10.7,14.2h1.8V16h-1.8V14.2z M14.2,0H16v1.8h-1.8V0z M14.2,3.6H16v1.8h-1.8V3.6z M14.2,7.1H16v1.8
-	h-1.8V7.1z M14.2,10.7H16v1.8h-1.8V10.7z M14.2,14.2H16V16h-1.8V14.2z"/>
+<path style="fill:#999999;" d="M0,12h2v2H0V12z M3,9h2v2H3V9z M3,12h2v2H3V12z M6,6h2v2H6V6z M6,9h2v2H6V9z M6,12h2v2H6V12z M9,3h2
+	v2H9V3z M9,6h2v2H9V6z M9,9h2v2H9V9z M9,12h2v2H9V12z M12,0h2v2h-2V0z M12,3h2v2h-2V3z M12,6h2v2h-2V6z M12,9h2v2h-2V9z M12,12h2v2
+	h-2V12z"/>
 </svg>

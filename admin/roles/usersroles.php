@@ -41,11 +41,17 @@ $systemcontext = context_system::instance();
 $baseurl = new moodle_url('/admin/roles/usersroles.php', array('userid'=>$userid, 'courseid'=>$courseid));
 
 $PAGE->set_url($baseurl);
-$PAGE->set_context($coursecontext);
 $PAGE->set_pagelayout('admin');
 
 // Check login and permissions.
-require_login($course);
+if ($course->id == SITEID) {
+    require_login();
+    $PAGE->set_context($usercontext);
+} else {
+    require_login($course);
+    $PAGE->set_context($coursecontext);
+}
+
 $canview = has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride',
         'moodle/role:override', 'moodle/role:manage'), $usercontext);
 if (!$canview) {
@@ -120,10 +126,10 @@ $title = get_string('xroleassignments', 'core_role', $fullname);
 
 // Course header.
 $PAGE->set_title($title);
-if ($courseid != SITEID) {
+if ($courseid == SITEID) {
     $PAGE->set_heading($fullname);
 } else {
-    $PAGE->set_heading($course->fullname);
+    $PAGE->set_heading($course->fullname.': '.$fullname);
 }
 echo $OUTPUT->header();
 echo $OUTPUT->heading($title, 3);

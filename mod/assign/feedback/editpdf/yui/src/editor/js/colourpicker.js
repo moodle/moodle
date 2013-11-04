@@ -58,6 +58,8 @@ Y.extend(COLOURPICKER, M.assignfeedback_editpdf.dropdown, {
         COLOURPICKER.superclass.initializer.call(this, config);
     },
     callback_handler : function(e) {
+        e.preventDefault();
+
         var callback = this.get('callback'),
             callbackcontext = this.get('context'),
             bind;

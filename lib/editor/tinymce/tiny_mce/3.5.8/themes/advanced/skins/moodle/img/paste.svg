@@ -5,11 +5,11 @@
 ]>
 <svg version="1.1"
 	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
-	 x="0px" y="0px" width="16px" height="16px" viewBox="-0.5 0 16 16" style="overflow:visible;enable-background:new -0.5 0 16 16;"
+	 x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="overflow:visible;enable-background:new 0 0 16 16;"
 	 xml:space="preserve" preserveAspectRatio="xMinYMid meet">
 <defs>
 </defs>
-<path style="fill:#999999;" d="M15,5v8l-3,3H5v-3H0.5c-0.1,0-0.3,0-0.4-0.1C0,12.8,0,12.6,0,12.5v-10c0-0.1,0-0.3,0.1-0.4
-	C0.2,2,0.4,2,0.5,2H4V1c0-0.3,0.1-0.5,0.3-0.7C4.5,0.1,4.7,0,5,0h2c0.3,0,0.5,0.1,0.7,0.3C7.9,0.5,8,0.7,8,1v1h3.5
-	c0.1,0,0.3,0,0.4,0.1C12,2.2,12,2.4,12,2.5V5H15z M10,4V3H2v1H10z M5,2h2V1H5V2z M14,6H6v9h5v-3h3V6z M13.6,13H12v1.6L13.6,13z"/>
+<path style="fill:#999999;" d="M12,5V2.5C12,2.2,11.8,2,11.5,2H8V1c0-0.6-0.5-1-1-1H5C4.5,0,4,0.4,4,1v1H0.5C0.2,2,0,2.2,0,2.5v10
+	C0,12.8,0.2,13,0.5,13H5v3h7l3-3V5H12z M5,1L5,1l2,0c0,0,0,0,0,0l0,1H5V1z M2,3h8v1H2V3z M12,14.6V13h1.6L12,14.6z M14,12h-3v3H6V6
+	h8V12z"/>
 </svg>

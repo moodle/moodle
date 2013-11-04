@@ -1291,11 +1291,13 @@ function portfolio_include_callback_file($component, $class = null) {
         // Get rid of the first slash (if it exists).
         $component = ltrim($component, '/');
         // Get a list of valid plugin types.
-        $plugintypes = get_plugin_types(false);
+        $plugintypes = core_component::get_plugin_types();
         // Assume it is not valid for now.
         $isvalid = false;
         // Go through the plugin types.
         foreach ($plugintypes as $type => $path) {
+            // Getting the path relative to the dirroot.
+            $path = preg_replace('|^' . preg_quote($CFG->dirroot, '|') . '/|', '', $path);
             if (strrpos($component, $path) === 0) {
                 // Found the plugin type.
                 $isvalid = true;

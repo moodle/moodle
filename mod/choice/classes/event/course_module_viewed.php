@@ -53,6 +53,15 @@ class course_module_viewed extends \core\event\content_viewed {
     }
 
     /**
+     * Returns non-localised description of what happened.
+     *
+     * @return string
+     */
+    public function get_description() {
+        return 'User with id ' . $this->userid . ' viewed choice activity with instance id ' . $this->objectid;
+    }
+
+    /**
      * Returns relevant URL.
      * @return \moodle_url
      */

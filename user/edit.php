@@ -52,7 +52,6 @@ if ($course->id != SITEID) {
     redirect(get_login_url());
 } else {
     $PAGE->set_context(context_system::instance());
-    $PAGE->set_pagelayout('standard');
 }
 
 // Guest can not edit
@@ -104,6 +103,16 @@ if ($course->id == SITEID) {
 }
 $systemcontext   = context_system::instance();
 $personalcontext = context_user::instance($user->id);
+
+$PAGE->set_pagelayout('admin');
+$PAGE->set_context($personalcontext);
+if ($USER->id != $user->id) {
+    $PAGE->navigation->extend_for_user($user);
+} else {
+    if ($node = $PAGE->navigation->find('myprofile', navigation_node::TYPE_ROOTNODE)) {
+        $node->force_open();
+    }
+}
 
 // check access control
 if ($user->id == $USER->id) {

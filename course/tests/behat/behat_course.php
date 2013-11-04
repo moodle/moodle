@@ -85,13 +85,14 @@ class behat_course extends behat_base {
      * @return Given[]
      */
     public function i_go_to_the_courses_management_page() {
-
-        return array(
-            new Given('I am on homepage'),
-            new Given('I expand "' . get_string('administrationsite') . '" node'),
-            new Given('I expand "' . get_string('courses', 'admin') . '" node'),
-            new Given('I follow "' . get_string('coursemgmt', 'admin') . '"'),
-        );
+        if ($this->running_javascript()) {
+            $scenario = array(new Given('I expand "' . get_string('administrationsite') . '" node'));
+        } else {
+            $scenario = array(new Given('I follow "' . get_string('administrationsite') . '"'));
+        }
+        $scenario[] = new Given('I expand "' . get_string('courses', 'admin') . '" node');
+        $scenario[] = new Given('I follow "' . get_string('coursemgmt', 'admin') . '"');
+        return $scenario;
     }
 
     /**
@@ -224,6 +225,33 @@ class behat_course extends behat_base {
         if ($this->running_javascript()) {
             $this->getSession()->wait(5000, false);
         }
+    }
+
+    /**
+     * Go to editing section page for specified section number. You need to be in the course page and on editing mode.
+     *
+     * @Given /^I edit the section "(?P<section_number>\d+)"$/
+     * @param int $sectionnumber
+     */
+    public function i_edit_the_section($sectionnumber) {
+        return new Given('I click on "' . get_string('editsummary') . '" "link" in the "#section-' . $sectionnumber . '" "css_element"');
+    }
+
+    /**
+     * Edit specified section and fill the form data with the specified field/value pairs.
+     *
+     * @When /^I edit the section "(?P<section_number>\d+)" and I fill the form with:$/
+     * @param int $sectionnumber The section number
+     * @param TableNode $data The activity field/value data
+     * @return Given[]
+     */
+    public function i_edit_the_section_and_i_fill_the_form_with($sectionnumber, TableNode $data) {
+
+        return array(
+            new Given('I edit the section "' . $sectionnumber . '"'),
+            new Given('I fill the moodle form with:', $data),
+            new Given('I press "' . get_string('savechanges') . '"')
+        );
     }
 
     /**
@@ -947,6 +975,80 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Clicks on a category checkbox in the management interface.
+     *
+     * @Given /^I select category "(?P<name>[^"]*)" in the management interface$/
+     * @param string $name
+     */
+    public function i_select_category_in_the_management_interface($name) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+        $node->checkField('bcat[]');
+    }
+
+    /**
+     * Clicks course checkbox in the management interface.
+     *
+     * @Given /^I select course "(?P<name>[^"]*)" in the management interface$/
+     * @param string $name
+     */
+    public function i_select_course_in_the_management_interface($name) {
+        $node = $this->get_management_course_listing_node_by_name($name);
+        $node->checkField('bc[]');
+    }
+
+    /**
+     * Move selected categories to top level in the management interface.
+     *
+     * @Given /^I move category "(?P<idnumber>[^"]*)" to top level in the management interface$/
+     * @param string $idnumber
+     * @return Given[]
+     */
+    public function i_move_category_to_top_level_in_the_management_interface($idnumber) {
+        $id = $this->get_category_id($idnumber);
+        $selector = sprintf('.listitem-category[data-id="%d"] > div', $id);
+        $node = $this->find('css', $selector);
+        $node->checkField('bcat[]');
+        return array(
+            new Given('I select "' .  coursecat::get(0)->get_formatted_name() . '" from "menumovecategoriesto"'),
+            new Given('I press "bulkmovecategories"'),
+        );
+    }
+
+    /**
+     * Checks that a category is a subcategory of specific category.
+     *
+     * @Given /^I should see category "(?P<subcatidnumber>[^"]*)" as subcategory of "(?P<catidnumber>[^"]*)" in the management interface$/
+     * @throws ExpectationException
+     * @param string $subcatidnumber
+     * @param string $catidnumber
+     */
+    public function i_should_see_category_as_subcategory_of_in_the_management_interface($subcatidnumber, $catidnumber) {
+        $categorynodeid = $this->get_category_id($catidnumber);
+        $subcategoryid = $this->get_category_id($subcatidnumber);
+        $exception = new ExpectationException('The category '.$subcatidnumber.' is not a subcategory of '.$catidnumber, $this->getSession());
+        $selector = sprintf('#category-listing .listitem-category[data-id="%d"] .listitem-category[data-id="%d"]', $categorynodeid, $subcategoryid);
+        $this->find('css', $selector, $exception);
+    }
+
+    /**
+     * Checks that a category is not a subcategory of specific category.
+     *
+     * @Given /^I should not see category "(?P<subcatidnumber>[^"]*)" as subcategory of "(?P<catidnumber>[^"]*)" in the management interface$/
+     * @throws ExpectationException
+     * @param string $subcatidnumber
+     * @param string $catidnumber
+     */
+    public function i_should_not_see_category_as_subcategory_of_in_the_management_interface($subcatidnumber, $catidnumber) {
+        try {
+            $this->i_should_see_category_as_subcategory_of_in_the_management_interface($subcatidnumber, $catidnumber);
+        } catch (ExpectationException $e) {
+            // ExpectedException means that it is not highlighted.
+            return;
+        }
+        throw new ExpectationException('The category '.$subcatidnumber.' is a subcategory of '.$catidnumber, $this->getSession());
+    }
+
+    /**
      * Click to expand a category revealing its sub categories within the management UI.
      *
      * @Given /^I click to expand category "(?P<idnumber>[^"]*)" in the management interface$/
@@ -1233,14 +1335,12 @@ class behat_course extends behat_base {
             throw new ExpectationException("Could not find the actions for $listingtype", $this->getSession());
         }
         $actionnode = $actionsnode->find('css', '.action-'.$action);
-        if ($this->running_javascript() && !$actionnode->isVisible()) {
-            $actionsnode->find('css', 'a.toggle-display')->click();
-            if ($actionnode) {
-                $actionnode = $listingnode->find('css', '.action-'.$action);
-            }
-        }
         if (!$actionnode) {
             throw new ExpectationException("Expected action was not available or not found ($action)", $this->getSession());
+        }
+        if ($this->running_javascript() && !$actionnode->isVisible()) {
+            $actionsnode->find('css', 'a.toggle-display')->click();
+            $actionnode = $actionsnode->find('css', '.action-'.$action);
         }
         $actionnode->click();
     }

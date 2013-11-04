@@ -189,6 +189,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         });
 
         drawingregion.append(container);
+        container.setStyle('position', 'absolute');
         container.setX(position.x);
         container.setY(position.y);
         drawable.nodes.push(container);
@@ -330,6 +331,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @method remove_from_quicklist
      */
     this.remove_from_quicklist = function(e, quickcomment) {
+        e.preventDefault();
+
         this.menu.hide();
 
         this.editor.quicklist.remove(quickcomment);
@@ -343,6 +346,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @method set_from_quick_comment
      */
     this.set_from_quick_comment = function(e, quickcomment) {
+        e.preventDefault();
+
         this.menu.hide();
 
         this.rawtext = quickcomment.rawtext;
@@ -360,7 +365,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @protected
      * @method add_to_quicklist
      */
-    this.add_to_quicklist = function() {
+    this.add_to_quicklist = function(e) {
+        e.preventDefault();
         this.menu.hide();
         this.editor.quicklist.add(this);
     };

@@ -233,8 +233,10 @@ Y.extend(ANNOTATION, Y.Base, {
      * @method remove
      * @param event
      */
-    remove : function() {
+    remove : function(e) {
         var annotations;
+
+        e.preventDefault();
 
         annotations = this.editor.pages[this.editor.currentpage].annotations;
         for (i = 0; i < annotations.length; i++) {

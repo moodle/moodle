@@ -832,7 +832,7 @@ function file_save_draft_area_files($draftitemid, $contextid, $component, $filea
         $newhashes = array();
         $filecount = 0;
         foreach ($draftfiles as $file) {
-            if (!$options['subdirs'] && ($file->get_filepath() !== '/' or $file->is_directory())) {
+            if (!$options['subdirs'] && $file->get_filepath() !== '/') {
                 continue;
             }
             if (!$allowreferences && $file->is_external_file()) {

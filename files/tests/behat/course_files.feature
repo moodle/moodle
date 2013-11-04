@@ -18,8 +18,8 @@ Feature: Course files
     Then I should see "Legacy course files"
     And I follow "Legacy course files"
     And I press "Edit legacy course files"
-    And I should see "Add..."
-    And I should see "Create folder"
+    And "Add..." "link" should be visible
+    And "Create folder" "link" should be visible
 
   @javascript
   Scenario: Add legacy file disabled
@@ -35,5 +35,5 @@ Feature: Course files
     Then I should see "Legacy course files"
     And I follow "Legacy course files"
     And I press "Edit legacy course files"
-    And I should not see "Add..."
-    And I should not see "Create folder"
+    And "Add..." "link" should not be visible
+    And "Create folder" "link" should not be visible

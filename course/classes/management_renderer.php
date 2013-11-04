@@ -264,7 +264,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
 
         $hasitems = false;
-        if ($createtoplevel || $createsubcategory) {
+        if ($createtoplevel) {
             $hasitems = true;
             $menu = new action_menu;
             if ($createtoplevel) {
@@ -294,29 +294,28 @@ class core_course_management_renderer extends plugin_renderer_base {
         if (coursecat::can_approve_course_requests()) {
             $actions[] = html_writer::link(new moodle_url('/course/pending.php'), get_string('coursespending'));
         }
-        if ($category->can_resort_subcategories()) {
+        if (coursecat::get(0)->can_resort_subcategories()) {
             $hasitems = true;
-            $params = $this->page->url->params();
+            $params = array();
             $params['action'] = 'resortcategories';
             $params['sesskey'] = sesskey();
+            if ($this->page->url->get_param('categoryid') !== null) {
+                $params['selectedcategoryid'] = $this->page->url->get_param('categoryid');
+            }
             $baseurl = new moodle_url('/course/management.php', $params);
             $menu = new action_menu(array(
                 new action_menu_link_secondary(
                     new moodle_url($baseurl, array('resort' => 'name')),
                     null,
-                    get_string('resortbyname')
+                    get_string('resortcategoriesbyname')
                 ),
                 new action_menu_link_secondary(
                     new moodle_url($baseurl, array('resort' => 'idnumber')),
                     null,
-                    get_string('resortbyidnumber')
+                    get_string('resortcategoriesbyidnumber')
                 )
             ));
-            if ($category->id === 0) {
-                $menu->actiontext = get_string('resortcategories');
-            } else {
-                $menu->actiontext = get_string('resortsubcategories');
-            }
+            $menu->actiontext = get_string('resortcategories');
             $menu->actionicon = new pix_icon('t/contextmenu', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
             $actions[] = $this->render($menu);
         }
@@ -385,7 +384,11 @@ class core_course_management_renderer extends plugin_renderer_base {
             );
         }
         if (coursecat::can_change_parent_any()) {
-            $options = coursecat::make_categories_list('moodle/category:manage');
+            $options = array();
+            if (has_capability('moodle/category:manage', context_system::instance())) {
+                $options[0] = coursecat::get(0)->get_formatted_name();
+            }
+            $options += coursecat::make_categories_list('moodle/category:manage');
             $select = html_writer::select(
                 $options,
                 'movecategoriesto',

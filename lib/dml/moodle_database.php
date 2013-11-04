@@ -373,7 +373,6 @@ abstract class moodle_database {
             $this->database_manager = null;
         }
         $this->tables  = null;
-        $this->metacache = null;
     }
 
     /**
@@ -962,24 +961,9 @@ abstract class moodle_database {
      */
     public function reset_caches() {
         $this->tables = null;
-        $this->metacache = null;
         // Purge MUC as well
         $identifiers = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
         cache_helper::purge_by_definition('core', 'databasemeta', $identifiers);
-    }
-
-    /**
-     * Call before using $this->metacache.
-     *
-     * Note: this is necessary because we want to write to database in shutdown handler
-     *       and it needs to use the caches, but MUC would be already disposed.
-     */
-    protected function init_caches() {
-        if ($this->metacache) {
-            return;
-        }
-        $properties = array('dbfamily' => $this->get_dbfamily(), 'settings' => $this->get_settings_hash());
-        $this->metacache = cache::make('core', 'databasemeta', $properties);
     }
 
     /**

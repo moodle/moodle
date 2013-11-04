@@ -5,9 +5,9 @@
 ]>
 <svg version="1.1"
 	 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/"
-	 x="0px" y="0px" width="16px" height="16px" viewBox="0 -2 16 16" style="overflow:visible;enable-background:new 0 -2 16 16;"
+	 x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style="overflow:visible;enable-background:new 0 0 16 16;"
 	 xml:space="preserve" preserveAspectRatio="xMinYMid meet">
 <defs>
 </defs>
-<path style="fill:#999999;" d="M16,6v6H0V6h2v4h12V6H16z M7,5H4V3h3V0h2v3h3v2H9v3H7V5z"/>
+<path style="fill:#999999;" d="M16,10v6H0v-6h2v4h12v-4H16z M7,5H4V3h3V0h2v3h3v2H9v3H7V5z"/>
 </svg>

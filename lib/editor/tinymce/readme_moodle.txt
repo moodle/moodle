@@ -15,6 +15,7 @@ Upgrade procedure:
 4/ update ./thirdpartylibs.xml
 5/ execute cli/update_lang_files.php and review changes in lang/en/editor_tinymce.php
 6/ use search/replace to fix oversized zIndexes
+7/ add moodle-has-zindex to the class definition in createColorSplitButton() in tiny_mce_src.js and tiny_mce.js
 
 
 Changes:

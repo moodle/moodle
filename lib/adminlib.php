@@ -6266,6 +6266,8 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
         die;
     }
 
+    navigation_node::require_admin_tree();
+
     // $PAGE->set_extra_button($extrabutton); TODO
 
     if (!$actualurl) {

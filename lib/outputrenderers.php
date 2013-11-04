@@ -3485,6 +3485,12 @@ class core_renderer_ajax extends core_renderer {
         // unfortunately YUI iframe upload does not support application/json
         if (!empty($_FILES)) {
             @header('Content-type: text/plain; charset=utf-8');
+            if (!core_useragent::supports_json_contenttype()) {
+                @header('X-Content-Type-Options: nosniff');
+            }
+        } else if (!core_useragent::supports_json_contenttype()) {
+            @header('Content-type: text/plain; charset=utf-8');
+            @header('X-Content-Type-Options: nosniff');
         } else {
             @header('Content-type: application/json; charset=utf-8');
         }

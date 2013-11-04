@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_installaddon_installer_test extends advanced_testcase {
+class tool_installaddon_installer_testcase extends advanced_testcase {
 
     public function test_get_addons_repository_url() {
         $installer = testable_tool_installaddon_installer::instance();
@@ -137,7 +137,7 @@ class tool_installaddon_installer_test extends advanced_testcase {
         file_put_contents($contentsdir.'/readme.txt', 'Hello world!');
 
         $installer = tool_installaddon_installer::instance();
-        $installer->move_directory($jobroot.'/contents', $jobroot.'/moved');
+        $installer->move_directory($jobroot.'/contents', $jobroot.'/moved', 0777, 0666);
 
         $this->assertFalse(is_dir($jobroot.'/contents'));
         $this->assertTrue(is_file($jobroot.'/moved/sub/folder/readme.txt'));

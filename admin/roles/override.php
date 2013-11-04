@@ -53,8 +53,18 @@ if (!has_capability('moodle/role:override', $context)) {
     $safeoverridesonly = true;
 }
 $PAGE->set_url($url);
-$PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
+
+if ($context->contextlevel == CONTEXT_USER and $USER->id != $context->instanceid) {
+    $PAGE->navigation->extend_for_user($user);
+    $PAGE->set_context(context_course::instance($course->id));
+    navigation_node::override_active_url(new moodle_url('/admin/roles/permissions.php',
+        array('contextid'=>$context->id, 'userid'=>$context->instanceid, 'courseid'=>$course->id)));
+
+} else {
+    $PAGE->set_context($context);
+    navigation_node::override_active_url(new moodle_url('/admin/roles/permissions.php', array('contextid'=>$context->id)));
+}
 
 $courseid = $course->id;
 
@@ -91,12 +101,11 @@ switch ($context->contextlevel) {
         $showroles = 1;
         break;
     case CONTEXT_COURSECAT:
-        $PAGE->set_heading("$SITE->fullname: ".get_string("categories"));
+        $PAGE->set_heading($SITE->fullname);
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
-            require_once($CFG->libdir.'/adminlib.php');
-            admin_externalpage_setup('frontpageroles', '', array(), $PAGE->url);
+            $PAGE->set_heading(get_string('frontpage', 'admin'));
         } else {
             $PAGE->set_heading($course->fullname);
         }
@@ -130,8 +139,7 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         array(
             'context' => $context,
             'objectid' => $roleid,
-            'courseid' => $courseid,
-            'other' => array('name' => $rolename)
+            'courseid' => $courseid
         )
     );
 

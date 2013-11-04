@@ -59,18 +59,39 @@ abstract class type_base {
     public abstract function get_months();
 
     /**
-     * Returns the minimum year of the calendar.
+     * Returns the minimum year for the calendar.
      *
-     * @return int the minumum year
+     * @return int The minimum year
      */
     public abstract function get_min_year();
 
     /**
-     * Returns the maximum year of the calendar.
+     * Returns the maximum year for the calendar
      *
-     * @return int the max year
+     * @return int The maximum year
      */
     public abstract function get_max_year();
+
+    /**
+     * Returns an array of years.
+     *
+     * @param int $minyear
+     * @param int $maxyear
+     * @return array the years
+     */
+    public abstract function get_years($minyear = null, $maxyear = null);
+
+    /**
+     * Returns a multidimensional array with information for day, month, year
+     * and the order they are displayed when selecting a date.
+     * The order in the array will be the order displayed when selecting a date.
+     * Override this function to change the date selector order.
+     *
+     * @param int $minyear The year to start with
+     * @param int $maxyear The year to finish with
+     * @return array Full date information
+     */
+    public abstract function get_date_order($minyear = null, $maxyear = null);
 
     /**
      * Returns the number of days in a week.

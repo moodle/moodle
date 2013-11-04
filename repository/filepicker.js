@@ -1855,10 +1855,6 @@ M.core_filepicker.init = function(Y, options) {
 
             // login button
             enable_tb_control(toolbar.one('.fp-tb-logout'), !r.nologin);
-            if (!r.nologin) {
-                var label = r.logouttext ? r.logouttext : M.str.repository.logout;
-                toolbar.one('.fp-tb-logout').one('a,button').setContent(label)
-            }
 
             // manage url
             enable_tb_control(toolbar.one('.fp-tb-manage'), r.manage);

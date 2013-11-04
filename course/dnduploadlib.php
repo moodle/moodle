@@ -599,6 +599,8 @@ class dndupload_ajax_processor {
      * Create the coursemodule to hold the file/content that has been uploaded
      */
     protected function create_course_module() {
+        global $CFG;
+
         if (!course_allowed_module($this->course, $this->module->name)) {
             throw new coding_exception("The module {$this->module->name} is not allowed to be added to this course");
         }
@@ -616,7 +618,7 @@ class dndupload_ajax_processor {
         // Set the correct default for completion tracking.
         $this->cm->completion = COMPLETION_TRACKING_NONE;
         $completion = new completion_info($this->course);
-        if ($completion->is_enabled()) {
+        if ($completion->is_enabled() && $CFG->completiondefault) {
             if (plugin_supports('mod', $this->cm->modulename, FEATURE_MODEDIT_DEFAULT_COMPLETION, true)) {
                 $this->cm->completion = COMPLETION_TRACKING_MANUAL;
             }
@@ -625,15 +627,7 @@ class dndupload_ajax_processor {
         if (!$this->cm->id = add_course_module($this->cm)) {
             throw new coding_exception("Unable to create the course module");
         }
-        // The following are used inside some few core functions, so may as well set them here.
         $this->cm->coursemodule = $this->cm->id;
-        $groupbuttons = ($this->course->groupmode or (!$this->course->groupmodeforce));
-        if ($groupbuttons and plugin_supports('mod', $this->module->name, FEATURE_GROUPS, 0)) {
-            $this->cm->groupmodelink = (!$this->course->groupmodeforce);
-        } else {
-            $this->cm->groupmodelink = false;
-            $this->cm->groupmode = false;
-        }
     }
 
     /**
@@ -700,8 +694,6 @@ class dndupload_ajax_processor {
             throw new moodle_exception('errorcreatingactivity', 'moodle', '', $this->module->name);
         }
         $mod = $info->get_cm($this->cm->id);
-        $mod->groupmodelink = $this->cm->groupmodelink;
-        $mod->groupmode = $this->cm->groupmode;
 
         // Trigger course module created event.
         $event = \core\event\course_module_created::create(array(

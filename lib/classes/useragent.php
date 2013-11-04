@@ -475,12 +475,13 @@ class core_useragent {
     }
 
     /**
-     * Checks the user agent is IE and that the version is equal to or greater than that specified.
+     * Checks the user agent is IE and returns its main properties:
+     * - browser version;
+     * - whether running in compatibility view.
      *
-     * @param string|int $version A version to check for, returns true if its equal to or greater than that specified.
-     * @return bool
+     * @return bool|array False if not IE, otherwise an associative array of properties.
      */
-    public static function check_ie_version($version = null) {
+    public static function check_ie_properties() {
         // Internet Explorer.
         $useragent = self::get_user_agent_string();
         if ($useragent === false) {
@@ -490,25 +491,71 @@ class core_useragent {
             // Reject Opera.
             return false;
         }
+        // See: http://www.useragentstring.com/pages/Internet%20Explorer/.
+        if (preg_match("/MSIE ([0-9\.]+)/", $useragent, $match)) {
+            $browser = $match[1];
+        // See: http://msdn.microsoft.com/en-us/library/ie/bg182625%28v=vs.85%29.aspx for IE11+ useragent details.
+        } else if (preg_match("/Trident\/[0-9\.]+/", $useragent) && preg_match("/rv:([0-9\.]+)/", $useragent, $match)) {
+            $browser = $match[1];
+        } else {
+            return false;
+        }
+        $compat_view = false;
+        // IE8 and later versions may pretend to be IE7 for intranet sites, use Trident version instead,
+        // the Trident should always describe the capabilities of IE in any emulation mode.
+        if ($browser === '7.0' and preg_match("/Trident\/([0-9\.]+)/", $useragent, $match)) {
+            $compat_view = true;
+            $browser = $match[1] + 4; // NOTE: Hopefully this will work also for future IE versions.
+        }
+        $browser = round($browser, 1);
+        return array(
+            'version'    => $browser,
+            'compatview' => $compat_view
+        );
+    }
+
+    /**
+     * Checks the user agent is IE and that the version is equal to or greater than that specified.
+     *
+     * @param string|int $version A version to check for, returns true if its equal to or greater than that specified.
+     * @return bool
+     */
+    public static function check_ie_version($version = null) {
+        // Internet Explorer.
+        $properties = self::check_ie_properties();
+        if (!is_array($properties)) {
+            return false;
+        }
         // In case of IE we have to deal with BC of the version parameter.
         if (is_null($version)) {
             $version = 5.5; // Anything older is not considered a browser at all!
         }
         // IE uses simple versions, let's cast it to float to simplify the logic here.
         $version = round($version, 1);
-        // See: http://www.useragentstring.com/pages/Internet%20Explorer/.
-        if (preg_match("/MSIE ([0-9\.]+)/", $useragent, $match)) {
-            $browser = $match[1];
-        } else {
+        return ($properties['version'] >= $version);
+    }
+
+    /**
+     * Checks the user agent is IE and that IE is running under Compatibility View setting.
+     *
+     * @return bool true if internet explorer runs in Compatibility View mode.
+     */
+    public static function check_ie_compatibility_view() {
+        // IE User Agent string when in Compatibility View:
+        // - IE  8: "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; Trident/4.0; ...)".
+        // - IE  9: "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; Trident/5.0; ...)".
+        // - IE 10: "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; Trident/6.0; ...)".
+        // - IE 11: "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.3; Trident/7.0; ...)".
+        // Refs:
+        // - http://blogs.msdn.com/b/ie/archive/2009/01/09/the-internet-explorer-8-user-agent-string-updated-edition.aspx.
+        // - http://blogs.msdn.com/b/ie/archive/2010/03/23/introducing-ie9-s-user-agent-string.aspx.
+        // - http://blogs.msdn.com/b/ie/archive/2011/04/15/the-ie10-user-agent-string.aspx.
+        // - http://msdn.microsoft.com/en-us/library/ie/hh869301%28v=vs.85%29.aspx.
+        $properties = self::check_ie_properties();
+        if (!is_array($properties)) {
             return false;
         }
-        // IE8 and later versions may pretend to be IE7 for intranet sites, use Trident version instead,
-        // the Trident should always describe the capabilities of IE in any emulation mode.
-        if ($browser === '7.0' and preg_match("/Trident\/([0-9\.]+)/", $useragent, $match)) {
-            $browser = $match[1] + 4; // NOTE: Hopefully this will work also for future IE versions.
-        }
-        $browser = round($browser, 1);
-        return ($browser >= $version);
+        return $properties['compatview'];
     }
 
     /**
@@ -828,5 +875,28 @@ class core_useragent {
             }
         }
         return $instance->supportssvg;
+    }
+
+    /**
+     * Returns true if the user agent supports the MIME media type for JSON text, as defined in RFC 4627.
+     *
+     * @return bool
+     */
+    public static function supports_json_contenttype() {
+        // Modern browsers other than IE correctly supports 'application/json' media type.
+        if (!self::is_ie()) {
+            return true;
+        }
+
+        // IE8+ supports 'application/json' media type, when NOT in Compatibility View mode.
+        // Refs:
+        // - http://blogs.msdn.com/b/ie/archive/2008/09/10/native-json-in-ie8.aspx;
+        // - MDL-39810: issues when using 'text/plain' in Compatibility View for the body of an HTTP POST response.
+        if (self::check_ie_version(8) && !self::check_ie_compatibility_view()) {
+            return true;
+        }
+
+        // This browser does not support json.
+        return false;
     }
 }

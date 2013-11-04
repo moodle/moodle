@@ -50,6 +50,14 @@ if (!has_any_capability(array('moodle/role:assign', 'moodle/role:safeoverride', 
     print_error('nopermissions', 'error', '', get_string('checkpermissions', 'core_role'));
 }
 $PAGE->set_url($url);
+
+if ($context->contextlevel == CONTEXT_USER and $USER->id != $context->instanceid) {
+    $PAGE->navigation->extend_for_user($user);
+    $PAGE->set_context(context_course::instance($course->id));
+} else {
+    $PAGE->set_context($context);
+}
+
 $PAGE->set_context($context);
 
 $courseid = $course->id;
@@ -79,12 +87,11 @@ switch ($context->contextlevel) {
         $showroles = 1;
         break;
     case CONTEXT_COURSECAT:
-        $PAGE->set_heading("$SITE->fullname: ".get_string("categories"));
+        $PAGE->set_heading($SITE->fullname);
         break;
     case CONTEXT_COURSE:
         if ($isfrontpage) {
-            require_once($CFG->libdir.'/adminlib.php');
-            admin_externalpage_setup('frontpageroles', '', array('contextid' => $contextid), $CFG->wwwroot . '/' . $CFG->admin . '/roles/check.php');
+            $PAGE->set_heading(get_string('frontpage', 'admin'));
         } else {
             $PAGE->set_heading($course->fullname);
         }
