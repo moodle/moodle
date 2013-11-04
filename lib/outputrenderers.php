@@ -1141,7 +1141,7 @@ class core_renderer extends renderer_base {
                 if ((string)$icon->attributes['alt'] === $comparetoalt) {
                     $icon->attributes['alt'] = ' ';
                 }
-                if ((string)$icon->attributes['title'] === $comparetoalt) {
+                if (isset($icon->attributes['title']) && (string)$icon->attributes['title'] === $comparetoalt) {
                     unset($icon->attributes['title']);
                 }
             }

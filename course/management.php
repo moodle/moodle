@@ -277,7 +277,7 @@ if ($action !== false && confirm_sesskey()) {
         case 'bulkaction':
             $bulkmovecourses = optional_param('bulkmovecourses', false, PARAM_BOOL);
             $bulkmovecategories = optional_param('bulkmovecategories', false, PARAM_BOOL);
-            $bulkresortcategories = optional_param('bulkresortcategories', false, PARAM_BOOL);
+            $bulkresortcategories = optional_param('bulksort', false, PARAM_BOOL);
 
             if ($bulkmovecourses) {
                 // Move courses out of the current category and into a new category.
@@ -341,18 +341,49 @@ if ($action !== false && confirm_sesskey()) {
                     $notificationspass[] = get_string($movesuccessstrkey, 'moodle', $a);
                 }
             } else if ($bulkresortcategories) {
-                // Bulk resort selected categories.
-                $categoryids = optional_param_array('bcat', false, PARAM_INT);
-                $sort = required_param('resortcategoriesby', PARAM_ALPHA);
-                if ($categoryids === false) {
+                $for = required_param('selectsortby', PARAM_ALPHA);
+                $sortcategoriesby = required_param('resortcategoriesby', PARAM_ALPHA);
+                $sortcoursesby = required_param('resortcoursesby', PARAM_ALPHA);
+
+                if ($sortcategoriesby === 'none' && $sortcoursesby === 'none') {
+                    // They're not sorting anything.
                     break;
                 }
-                $categories = coursecat::get_many($categoryids);
-                foreach ($categories as $cat) {
-                    // Don't clean up here, we'll do it once we're all done.
-                    \core_course\management\helper::action_category_resort_subcategories($cat, $sort, false);
+
+                if ($for === 'thiscategory') {
+                    $categoryids = array(
+                        required_param('currentcategoryid', PARAM_INT)
+                    );
+                    $categories = coursecat::get_many($categoryids);
+                } else if ($for === 'selectedcategories') {
+                    // Bulk resort selected categories.
+                    $categoryids = optional_param_array('bcat', false, PARAM_INT);
+                    $sort = required_param('resortcategoriesby', PARAM_ALPHA);
+                    if ($categoryids === false) {
+                        break;
+                    }
+                    $categories = coursecat::get_many($categoryids);
+                } else if ($for === 'allcategories') {
+                    $categories = coursecat::get_all_visible();
+                } else {
+                    break;
                 }
-                coursecat::resort_categories_cleanup();
+                if (!in_array($sortcategoriesby, array('idnumber', 'name'))) {
+                    $sortcategoriesby = false;
+                }
+                if (!in_array($sortcoursesby, array('idnumber', 'fullname', 'shortname'))) {
+                    $sortcoursesby = false;
+                }
+                foreach ($categories as $cat) {
+                    if ($sortcategoriesby) {
+                        // Don't clean up here, we'll do it once we're all done.
+                        \core_course\management\helper::action_category_resort_subcategories($cat, $sortcategoriesby, false);
+                    }
+                    if (in_array($sortcoursesby, array('idnumber', 'fullname', 'shortname'))) {
+                        \core_course\management\helper::action_category_resort_courses($cat, $sortcoursesby, false);
+                    }
+                }
+                coursecat::resort_categories_cleanup($sortcoursesby !== false);
                 if ($category === null && count($categoryids) === 1) {
                     // They're bulk sorting just a single category and they've not selected a category.
                     // Lets for convenience sake auto-select the category that has been resorted for them.

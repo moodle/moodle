@@ -149,7 +149,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             );
         }
         $html .= html_writer::end_tag('ul');
-        $html .= $this->category_bulk_actions();
+        $html .= $this->category_bulk_actions($category);
         $html .= html_writer::end_div();
         return $html;
     }
@@ -217,6 +217,9 @@ class core_course_management_renderer extends plugin_renderer_base {
             $html .= html_writer::link($viewcaturl, $text, array('class' => 'float-left categoryname without-actions'));
         }
         $html .= html_writer::start_div('float-right');
+        if ($category->idnumber) {
+            $html .= html_writer::tag('span', s($category->idnumber), array('class' => 'dimmed idnumber'));
+        }
         if ($hasactions) {
             $html .= $this->category_listitem_actions($category, $actions);
         }
@@ -264,7 +267,6 @@ class core_course_management_renderer extends plugin_renderer_base {
             $category = coursecat::get(0);
         }
 
-        $hasitems = false;
         if ($cancreatecategory) {
             $url = new moodle_url('/course/editcategory.php', array('parent' => $category->id));
             $actions[] = html_writer::link($url, get_string('createnewcategory'));
@@ -272,32 +274,7 @@ class core_course_management_renderer extends plugin_renderer_base {
         if (coursecat::can_approve_course_requests()) {
             $actions[] = html_writer::link(new moodle_url('/course/pending.php'), get_string('coursespending'));
         }
-        if (coursecat::get(0)->can_resort_subcategories()) {
-            $hasitems = true;
-            $params = array();
-            $params['action'] = 'resortcategories';
-            $params['sesskey'] = sesskey();
-            if ($this->page->url->get_param('categoryid') !== null) {
-                $params['selectedcategoryid'] = $this->page->url->get_param('categoryid');
-            }
-            $baseurl = new moodle_url('/course/management.php', $params);
-            $menu = new action_menu(array(
-                new action_menu_link_secondary(
-                    new moodle_url($baseurl, array('resort' => 'name')),
-                    null,
-                    get_string('resortcategoriesbyname')
-                ),
-                new action_menu_link_secondary(
-                    new moodle_url($baseurl, array('resort' => 'idnumber')),
-                    null,
-                    get_string('resortcategoriesbyidnumber')
-                )
-            ));
-            $menu->actiontext = get_string('resortcategories');
-            $menu->actionicon = new pix_icon('t/contextmenu', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
-            $actions[] = $this->render($menu);
-        }
-        if (!$hasitems) {
+        if (count($actions) === 0) {
             return '';
         }
         return html_writer::div(join(' | ', $actions), 'listing-actions category-listing-actions');
@@ -307,6 +284,7 @@ class core_course_management_renderer extends plugin_renderer_base {
      * Renderers the actions for individual category list items.
      *
      * @param coursecat $category
+     * @param array $actions
      * @return string
      */
     public function category_listitem_actions(coursecat $category, array $actions = null) {
@@ -335,30 +313,72 @@ class core_course_management_renderer extends plugin_renderer_base {
     /**
      * Renders bulk actions for categories.
      *
+     * @param coursecat $category The currently selected category if there is one.
      * @return string
      */
-    public function category_bulk_actions() {
+    public function category_bulk_actions(coursecat $category = null) {
         // Resort courses.
         // Change parent.
         $strgo = new lang_string('go');
 
         $html  = html_writer::start_div('category-bulk-actions bulk-actions');
         if (coursecat::can_resort_any()) {
-            $options = array(
-                'name' => get_string('resortbyname'),
-                'idnumber' => get_string('resortbyidnumber'),
+            $selectoptions = array(
+                'selectedcategories' => get_string('selectedcategories'),
+                'allcategories' => get_string('allcategories')
             );
-            $select = html_writer::select(
-                $options,
-                'resortcategoriesby',
-                '',
-                array('' => 'choosedots'),
-                array('aria-labelledby' => 'resortselectedcategoriesby')
+            $form = html_writer::start_div();
+            if ($category) {
+                $selectoptions = array('thiscategory' => get_string('thiscategory')) + $selectoptions;
+                $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'currentcategoryid', 'value' => $category->id));
+            }
+            $form .= html_writer::div(
+                html_writer::span(get_string('for'), '', array('id' => 'selectsortby')) .
+                ' ' .
+                html_writer::select(
+                    $selectoptions,
+                    'selectsortby',
+                    '',
+                    array('' => 'choosedots'),
+                    array('aria-labelledby' => 'selectsortby')
+                )
             );
-            $submit = array('type' => 'submit', 'name' => 'bulkresortcategories', 'value' => $strgo);
+            $form .= html_writer::div(
+                html_writer::span(get_string('sortcategoriesby'), '', array('id' => 'resortselectedcategoriesby')) .
+                ' ' .
+                html_writer::select(
+                    array(
+                        'name' => get_string('resortbyname'),
+                        'idnumber' => get_string('resortbyidnumber'),
+                        'none' => get_string('dontsortcategories')
+                    ),
+                    'resortcategoriesby',
+                    '',
+                    array('none' => 'choosedots'),
+                    array('aria-labelledby' => 'resortselectedcategoriesby')
+                )
+            );
+            $form .= html_writer::div(
+                html_writer::span(get_string('sortcoursesby'), '', array('id' => 'resortselectedcoursesby')) .
+                ' ' .
+                html_writer::select(
+                    array(
+                        'fullname' => get_string('resortbyfullname'),
+                        'shortname' => get_string('resortbyshortname'),
+                        'idnumber' => get_string('resortbyidnumber'),
+                        'none' => get_string('dontsortcourses')
+                    ),
+                    'resortcoursesby',
+                    '',
+                    array('none' => 'choosedots'),
+                    array('aria-labelledby' => 'resortselectedcoursesby')
+                )
+            );
+            $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'bulksort', 'value' => $strgo));
+            $form .= html_writer::end_div();
             $html .= $this->detail_pair(
-                html_writer::span(get_string('resortselectedcategoriesby'), '', array('id' => 'resortselectedcategoriesby')),
-                $select . html_writer::empty_tag('input', $submit)
+                get_string('sorting'),
+                $form
             );
         }
         if (coursecat::can_change_parent_any()) {
@@ -552,7 +572,9 @@ class core_course_management_renderer extends plugin_renderer_base {
         $html .= html_writer::end_div();
         $html .= html_writer::link($viewcourseurl, $text, array('class' => 'float-left coursename'));
         $html .= html_writer::start_div('float-right');
-        $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'dimmed idnumber'));
+        if ($course->idnumber) {
+            $html .= html_writer::tag('span', s($course->idnumber), array('class' => 'dimmed idnumber'));
+        }
         $html .= $this->course_listitem_actions($category, $course);
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();

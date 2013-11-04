@@ -671,14 +671,15 @@ class helper {
      *
      * @param \coursecat $category
      * @param string $sort One of fullname, shortname or idnumber
+     * @param bool $cleanup If true cleanup will be done, if false you will need to do it manually later.
      * @return bool
      * @throws \moodle_exception
      */
-    public static function action_category_resort_courses(\coursecat $category, $sort) {
+    public static function action_category_resort_courses(\coursecat $category, $sort, $cleanup = true) {
         if (!$category->can_resort_courses()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
         }
-        return $category->resort_courses($sort);
+        return $category->resort_courses($sort, $cleanup);
     }
 
     /**
