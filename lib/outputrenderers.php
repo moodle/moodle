@@ -3200,7 +3200,12 @@ EOD;
             'data-blockregion' => $displayregion,
             'data-droptarget' => '1'
         );
-        return html_writer::tag($tag, $this->blocks_for_region($region), $attributes);
+        if ($this->page->blocks->region_has_content($region, $this)) {
+            $content = $this->blocks_for_region($region);
+        } else {
+            $content = '';
+        }
+        return html_writer::tag($tag, $content, $attributes);
     }
 
     /**
