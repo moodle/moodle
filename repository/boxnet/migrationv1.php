@@ -51,9 +51,7 @@ $confirm = optional_param('confirm', false, PARAM_BOOL);
 echo $OUTPUT->header();
 echo $OUTPUT->heading('Reference migration tool');
 
-if (strtotime('15 December 2013') < time()) {
-    echo html_writer::tag('p', 'Sorry, the API v1 has already reached its end of life, the migration is no more possible.');
-} else if ($confirm && confirm_sesskey()) {
+if ($confirm && confirm_sesskey()) {
     echo html_writer::start_tag('pre', array());
     repository_boxnet_migrate_references_from_apiv1();
     echo html_writer::end_tag('pre', array());
