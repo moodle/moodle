@@ -30,7 +30,7 @@ if ($licenses && !$nlicenses) {
 global $DB;
 
 $PAGE->set_url("/blocks/iomad_commerce/buynow.php?courseid=" . $courseid . "&nlicenses=" . $nlicenses);
-$PAGE->set_context(get_system_context());
+$PAGE->set_context(context_system::instance());
 $context = $PAGE->context;
 
 

@@ -111,7 +111,7 @@ class company {
         global $DB;
 
         $fs = get_file_storage();
-        $context = get_system_context();
+        $context = context_system::instance();
 
         $files = $fs->get_area_files($context->id, 'theme_iomad', 'logo', $this->id,
                                      "sortorder, itemid, filepath, filename", false);
