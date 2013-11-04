@@ -2762,21 +2762,6 @@ class assign {
                 $extensionduedate = $flags->extensionduedate;
             }
             $showedit = $this->submissions_open($userid) && ($this->is_any_submission_plugin_enabled());
-
-            if ($teamsubmission) {
-                $showsubmit = $showedit &&
-                              $teamsubmission &&
-                              ($teamsubmission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) &&
-                              !$this->submission_empty($teamsubmission);
-            } else {
-                $showsubmit = $showedit &&
-                              $submission &&
-                              ($submission->status != ASSIGN_SUBMISSION_STATUS_SUBMITTED) &&
-                              !$this->submission_empty($submission);
-            }
-            if (!$this->get_instance()->submissiondrafts) {
-                $showsubmit = false;
-            }
             $viewfullnames = has_capability('moodle/site:viewfullnames', $this->get_course_context());
 
             $submissionstatus = new assign_submission_status($instance->allowsubmissionsfromdate,
@@ -2798,7 +2783,7 @@ class assign {
                                                              $this->get_course()->id,
                                                              assign_submission_status::GRADER_VIEW,
                                                              $showedit,
-                                                             $showsubmit,
+                                                             false,
                                                              $viewfullnames,
                                                              $extensionduedate,
                                                              $this->get_context(),
