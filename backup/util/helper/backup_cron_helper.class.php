@@ -556,7 +556,7 @@ abstract class backup_cron_automated_helper {
     public static function set_state_running($running = true) {
         if ($running === true) {
             if (self::get_automated_backup_state() === self::STATE_RUNNING) {
-                throw new backup_exception('backup_automated_already_running');
+                throw new backup_helper_exception('backup_automated_already_running');
             }
             set_config('backup_auto_running', '1', 'backup');
         } else {
