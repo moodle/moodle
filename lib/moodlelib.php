@@ -8611,7 +8611,8 @@ function message_popup_window() {
     }
 
     // Got unread messages so now do another query that joins with the user table.
-    $messagesql = "SELECT m.id, m.smallmessage, m.fullmessageformat, m.notification, u.firstname, u.lastname
+    $namefields = get_all_user_name_fields(true, 'u');
+    $messagesql = "SELECT m.id, m.smallmessage, m.fullmessageformat, m.notification, $namefields
                      FROM {message} m
                      JOIN {message_working} mw ON m.id=mw.unreadmessageid
                      JOIN {message_processors} p ON mw.processorid=p.id
