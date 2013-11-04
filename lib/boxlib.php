@@ -91,13 +91,13 @@ class boxnet_client extends oauth2_client {
      * @return void
      */
     public function log_out() {
-        if ($this->accesstoken) {
+        if ($accesstoken = $this->get_accesstoken()) {
             $params = array(
-                'client_id' => $this->clientid,
-                'client_secret' => $this->clientsecret,
-                'token' => $this->accesstoken->token
+                'client_id' => $this->get_clientid(),
+                'client_secret' => $this->get_clientsecret(),
+                'token' => $accesstoken->token
             );
-            $this->post($this->get_revoke_url(), $params);
+            $this->post($this->revoke_url(), $params);
         }
         parent::log_out();
     }
