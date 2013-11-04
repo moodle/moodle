@@ -41,6 +41,9 @@ class boxnet_client extends oauth2_client {
     /** @const API URL */
     const API = 'https://api.box.com/2.0';
 
+    /** @const UPLOAD_API URL */
+    const UPLOAD_API = 'https://upload.box.com/api/2.0';
+
     /**
      * Return authorize URL.
      *
@@ -51,6 +54,21 @@ class boxnet_client extends oauth2_client {
     }
 
     /**
+     * Create a folder.
+     *
+     * @param string $foldername The folder name.
+     * @param int $parentid The ID of the parent folder.
+     * @return array Information about the new folder.
+     */
+    public function create_folder($foldername, $parentid = 0) {
+        $params = array('name' => $foldername, 'parent' => array('id' => (string) $parentid));
+        $this->reset_state();
+        $result = $this->post($this->make_url("/folders"), json_encode($params));
+        $result = json_decode($result);
+        return $result;
+    }
+
+    /**
      * Download the file.
      *
      * @param int $fileid File ID.
@@ -58,6 +76,7 @@ class boxnet_client extends oauth2_client {
      * @return bool Success or not.
      */
     public function download_file($fileid, $path) {
+        $this->reset_state();
         $result = $this->download_one($this->make_url("/files/$fileid/content"), array(),
             array('filepath' => $path, 'CURLOPT_FOLLOWLOCATION' => true));
         return ($result === true && $this->info['http_code'] === 200);
@@ -70,6 +89,7 @@ class boxnet_client extends oauth2_client {
      * @return object
      */
     public function get_file_info($fileid) {
+        $this->reset_state();
         $result = $this->request($this->make_url("/files/$fileid"));
         return json_decode($result);
     }
@@ -81,6 +101,7 @@ class boxnet_client extends oauth2_client {
      * @return object
      */
     public function get_folder_items($folderid = 0) {
+        $this->reset_state();
         $result = $this->request($this->make_url("/folders/$folderid/items",
             array('fields' => 'id,name,type,modified_at,size,owned_by')));
         return json_decode($result);
@@ -98,6 +119,7 @@ class boxnet_client extends oauth2_client {
                 'client_secret' => $this->get_clientsecret(),
                 'token' => $accesstoken->token
             );
+            $this->reset_state();
             $this->post($this->revoke_url(), $params);
         }
         parent::log_out();
@@ -108,11 +130,45 @@ class boxnet_client extends oauth2_client {
      *
      * @param string $uri The URI to request.
      * @param array $params Query string parameters.
+     * @param bool $uploadapi Whether this works with the upload API or not.
      * @return string
      */
-    protected function make_url($uri, $params = array()) {
-        $url = new moodle_url(self::API . '/' . ltrim($uri, '/'), $params);
+    protected function make_url($uri, $params = array(), $uploadapi = false) {
+        $api = $uploadapi ? self::UPLOAD_API : self::API;
+        $url = new moodle_url($api . '/' . ltrim($uri, '/'), $params);
         return $url->out(false);
+    }
+
+    /**
+     * Rename a file.
+     *
+     * @param int $fileid The file ID.
+     * @param string $newname The new file name.
+     * @return object Box.net file object.
+     */
+    public function rename_file($fileid, $newname) {
+        // This requires a PUT request with data within it. We cannot use
+        // the standard PUT request 'CURLOPT_PUT' because it expects a file.
+        $data = array('name' => $newname);
+        $options = array(
+            'CURLOPT_CUSTOMREQUEST' => 'PUT',
+            'CURLOPT_POSTFIELDS' => json_encode($data)
+        );
+        $url = $this->make_url("/files/$fileid");
+        $this->reset_state();
+        $result = $this->request($url, $options);
+        $result = json_decode($result);
+        return $result;
+    }
+
+    /**
+     * Resets curl for multiple requests.
+     *
+     * @return void
+     */
+    public function reset_state() {
+        $this->cleanopt();
+        $this->resetHeader();
     }
 
     /**
@@ -140,13 +196,13 @@ class boxnet_client extends oauth2_client {
             'CURLOPT_CUSTOMREQUEST' => 'PUT',
             'CURLOPT_POSTFIELDS' => json_encode($data)
         );
+        $this->reset_state();
         $result = $this->request($this->make_url("/files/$fileid"), $options);
         $result = json_decode($result);
 
         if ($businesscheck) {
             // Checks that the user has the right to share the file. If not, throw an exception.
-            $this->resetopt();
-            $this->resetHeader();
+            $this->reset_state();
             $this->head($result->shared_link->download_url);
             $info = $this->get_info();
             if ($info['http_code'] == 403) {
@@ -163,6 +219,7 @@ class boxnet_client extends oauth2_client {
      * @return object
      */
     public function search($query) {
+        $this->reset_state();
         $result = $this->request($this->make_url('/search', array('query' => $query, 'limit' => 50, 'offset' => 0)));
         return json_decode($result);
     }
@@ -174,6 +231,28 @@ class boxnet_client extends oauth2_client {
      */
     protected function token_url() {
         return 'https://www.box.com/api/oauth2/token';
+    }
+
+    /**
+     * Upload a file.
+     *
+     * Please note that the file is named on Box.net using the path we are providing, and so
+     * the file has the name of the stored_file hash.
+     *
+     * @param stored_file $storedfile A stored_file.
+     * @param integer $parentid The ID of the parent folder.
+     * @return object Box.net file object.
+     */
+    public function upload_file(stored_file $storedfile, $parentid = 0) {
+        $url = $this->make_url('/files/content', array(), true);
+        $options = array(
+            'filename' => $storedfile,
+            'parent_id' => $parentid
+        );
+        $this->reset_state();
+        $result = $this->post($url, $options);
+        $result = json_decode($result);
+        return $result;
     }
 
 }
