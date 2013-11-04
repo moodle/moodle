@@ -17,7 +17,7 @@ Feature: Edit course settings
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
     And I follow "Course 1"
-    When I follow "Edit settings"
+    When I click on "Edit settings" "link" in the "Administration" "block"
     And I fill the moodle form with:
       | Course full name | Edited course fullname |
       | Course short name | Edited course shortname |
@@ -28,7 +28,7 @@ Feature: Edit course settings
     And I should not see "C1"
     And I should see "Edited course fullname"
     And I should see "Edited course shortname"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And the "Course full name" field should match "Edited course fullname" value
     And the "Course short name" field should match "Edited course shortname" value
     And the "Course summary" field should match "Edited course summary" value

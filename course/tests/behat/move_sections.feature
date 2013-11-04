@@ -28,7 +28,7 @@ Feature: Sections can be moved
     And I should see "Test forum name" in the "#section-1" "css_element"
 
   Scenario: Move up and down a section with Javascript disabled in the course home of a course using paged mode
-    Given I follow "Edit settings"
+    Given I click on "Edit settings" "link" in the "Administration" "block"
     And I fill the moodle form with:
       | Course layout | Show one section per page |
     And I press "Save changes"
@@ -41,7 +41,7 @@ Feature: Sections can be moved
     And I should see "Test forum name" in the "#section-1" "css_element"
 
   Scenario: Sections can not be moved with Javascript disabled in a section page of a course using paged mode
-    Given I follow "Edit settings"
+    Given I click on "Edit settings" "link" in the "Administration" "block"
     And I fill the moodle form with:
       | Course layout | Show one section per page |
     And I press "Save changes"

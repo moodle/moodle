@@ -21,7 +21,7 @@ Feature: Guest users can auto-enrol themself in courses where guest access is al
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
 
   @javascript
   Scenario: Allow guest access without password
