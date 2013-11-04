@@ -964,13 +964,15 @@ sup {vertical-align: super;}
     margin-left:-3px;
     background-color: #FFFFFF;
     border: 1px solid #CCCCCC;
-    border-radius:10px;
+    border-radius: 10px;
     box-shadow: 5px 5px 20px 0px #666666;
     -webkit-box-shadow: 5px 5px 20px 0px #666666;
     -moz-box-shadow: 5px 5px 20px 0px #666666;
+    overflow: hidden;
 }
 
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd,
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
     margin:0;
     padding:5px;
     font-size:12px;
