@@ -50,6 +50,10 @@ use Behat\Behat\Exception\PendingException as PendingException;
  */
 class behat_data_generators extends behat_base {
 
+    const cap_allow = 'Allow';
+    const cap_prevent = 'Prevent';
+    const cap_prohibit = 'Prohibit';
+
     /**
      * @var testing_data_generator
      */
@@ -92,6 +96,11 @@ class behat_data_generators extends behat_base {
             'required' => array('user', 'course', 'role'),
             'switchids' => array('user' => 'userid', 'course' => 'courseid', 'role' => 'roleid')
 
+        ),
+        'permission overrides' => array(
+            'datagenerator' => 'permission_override',
+            'required' => array('capability', 'permission', 'role', 'contextlevel', 'reference'),
+            'switchids' => array('role' => 'roleid')
         ),
         'system role assigns' => array(
             'datagenerator' => 'system_role_assign',
@@ -275,6 +284,40 @@ class behat_data_generators extends behat_base {
             $this->datagenerator->enrol_user($data['userid'], $data['courseid'], $data['roleid'], $data['enrol']);
         }
 
+    }
+
+    /**
+     * Allows/denies a capability at the specified context
+     *
+     * @throws Exception
+     * @param array $data
+     * @return void
+     */
+    protected function process_permission_override($data) {
+
+        // Will throw an exception if it does not exist.
+        $context = $this->get_context($data['contextlevel'], $data['reference']);
+
+        switch ($data['permission']) {
+            case self::cap_allow:
+                $permission = CAP_ALLOW;
+                break;
+            case self::cap_prevent:
+                $permission = CAP_PREVENT;
+                break;
+            case self::cap_prohibit:
+                $permission = CAP_PROHIBIT;
+                break;
+            default:
+                throw new Exception('The \'' . $data['permission'] . '\' permission does not exist');
+                break;
+        }
+
+        if (is_null(get_capability_info($data['capability']))) {
+            throw new Exception('The \'' . $data['capability'] . '\' capability does not exist');
+        }
+
+        role_change_permission($data['roleid'], $context, $data['capability'], $permission);
     }
 
     /**
