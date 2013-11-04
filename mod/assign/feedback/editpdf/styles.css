@@ -22,7 +22,7 @@
 .assignfeedback_editpdf_widget .pageheader {
     background-color: #ebebeb;
     border-bottom: 1px solid #cccccc;
-    padding: 4px;
+    padding: 0px;
     padding-left: 20px;
     padding-right: 20px;
     min-height: 50px;
@@ -44,6 +44,9 @@
 .yui3-commentmenu-hidden {
     display: none;
 }
+.assignfeedback_editpdf_widget .pageheader button img {
+    padding-top: 2px;
+}
 .assignfeedback_editpdf_widget .pageheader button:active {
     background-color: #ccc;
 }
@@ -56,6 +59,15 @@
     margin: 0px;
     height: 30px;
     cursor: pointer;
+}
+.assignfeedback_editpdf_widget .pageheader select {
+    vertical-align: top;
+    -webkit-appearance: none;
+    -moz-appearance: menulist-text;
+    background-color: #fff;
+}
+.assignfeedback_editpdf_widget .pageheader select::-ms-expand {
+    display: none;
 }
 
 .assignfeedback_editpdf_widget .pageheader .navigation button + button,
