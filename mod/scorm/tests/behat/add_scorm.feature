@@ -35,4 +35,6 @@ Feature: Add scorm activity
     And I follow "Awesome SCORM package"
     And I should see "Normal"
     And I press "Enter"
-    And I should see "Golf Explained"
+    And I switch to "scorm_object" iframe
+    And I switch to "contentFrame" iframe
+    And I should see "Play of the game"

@@ -118,6 +118,25 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Switches to the specified iframe.
+     *
+     * @Given /^I switch to "(?P<iframe_name_string>(?:[^"]|\\")*)" iframe$/
+     * @param string $iframename
+     */
+    public function switch_to_iframe($iframename) {
+        $this->getSession()->switchToIFrame($iframename);
+    }
+
+    /**
+     * Switches to the main Moodle frame.
+     *
+     * @Given /^I switch to the main frame$/
+     */
+    public function switch_to_the_main_frame() {
+        $this->getSession()->switchToIFrame();
+    }
+
+    /**
      * Switches to the specified window. Useful when interacting with popup windows.
      *
      * @Given /^I switch to "(?P<window_name_string>(?:[^"]|\\")*)" window$/
