@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_installaddon_validator_test extends basic_testcase {
+class tool_installaddon_validator_testcase extends basic_testcase {
 
     public function test_validate_files_layout() {
         $fixtures = dirname(__FILE__).'/fixtures';
@@ -159,8 +159,8 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertEquals('foobar', $validator->get_rootdir());
         $this->assertTrue($this->has_message($validator->get_messages(), $validator::INFO, 'rootdir', 'foobar'));
         $versionphpinfo = $validator->get_versionphp_info();
-        $this->assertEquals('array', gettype($versionphpinfo));
-        $this->assertEquals(4, count($versionphpinfo));
+        $this->assertInternalType('array', $versionphpinfo);
+        $this->assertCount(4, $versionphpinfo);
         $this->assertEquals(2013031900, $versionphpinfo['version']);
         $this->assertEquals(2013031200, $versionphpinfo['requires']);
         $this->assertEquals('local_foobar', $versionphpinfo['component']);
@@ -279,8 +279,8 @@ class tool_installaddon_validator_test extends basic_testcase {
         $this->assertEquals('testable_tool_installaddon_validator', get_class($validator));
 
         $info = $validator->testable_parse_version_php($fixtures.'/version1.php');
-        $this->assertEquals('array', gettype($info));
-        $this->assertEquals(7, count($info));
+        $this->assertInternalType('array', $info);
+        $this->assertCount(7, $info);
         $this->assertEquals('block_foobar', $info['plugin->component']);    // Later in the file.
         $this->assertEquals('2013010100', $info['plugin->version']);        // Numeric wins over strings.
         $this->assertEquals('2012122401', $info['plugin->requires']);       // Commented.
