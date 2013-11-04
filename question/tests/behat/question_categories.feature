@@ -3,7 +3,7 @@ Feature: A teacher can put questions in categories in the question bank
   In order to organize their questions
   As a teacher
   I need to put questions in categories
-  
+
   Background:
     Given the following "users" exists:
       | username | firstname | lastname | email |
@@ -53,7 +53,7 @@ Feature: A teacher can put questions in categories in the question bank
     Then I should see "my test question"
     And the "category" select box should contain "New Category 2 (1)"
     And the "category" select box should not contain "New Category 1 (1)"
-    
+
   @javascript
   Scenario: Delete a question category
     When I follow "Categories"
