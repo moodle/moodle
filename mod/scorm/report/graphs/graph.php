@@ -168,7 +168,7 @@ while ($gridlines >= 10) {
         $gridlines /= 2;
     }
 }
-
-$line->parameter['y_axis_gridlines'] = $gridlines + 1;
+$gridlines = max(2, ($gridlines + 1)); // We need a minimum of two lines.
+$line->parameter['y_axis_gridlines'] = $gridlines;
 
 $line->draw();
