@@ -820,6 +820,7 @@ abstract class condition_info_base {
                 $a = new stdclass;
                 // Display the fieldname into current lang.
                 if (is_numeric($field)) {
+                    // Is a custom profile field (will use multilang).
                     $translatedfieldname = $details->fieldname;
                 } else {
                     $translatedfieldname = get_user_field_name($details->fieldname);
@@ -1046,6 +1047,7 @@ abstract class condition_info_base {
                     $available = false;
                     // Display the fieldname into current lang.
                     if (is_numeric($field)) {
+                        // Is a custom profile field (will use multilang).
                         $translatedfieldname = $details->fieldname;
                     } else {
                         $translatedfieldname = get_user_field_name($details->fieldname);
