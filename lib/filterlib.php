@@ -81,7 +81,7 @@ class filter_manager {
     public static function instance() {
         global $CFG;
         if (is_null(self::$singletoninstance)) {
-            if (!empty($CFG->perfdebug)) {
+            if (!empty($CFG->perfdebug) and $CFG->perfdebug > 7) {
                 self::$singletoninstance = new performance_measuring_filter_manager();
             } else {
                 self::$singletoninstance = new self();
