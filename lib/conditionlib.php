@@ -1035,8 +1035,14 @@ abstract class condition_info_base {
                 if (!$this->is_field_condition_met($details->operator, $uservalue, $details->value)) {
                     // Set available to false
                     $available = false;
+                    // Display the fieldname into current lang.
+                    if (is_numeric($field)) {
+                        $translatedfieldname = $details->fieldname;
+                    } else {
+                        $translatedfieldname = get_user_field_name($details->fieldname);
+                    }
                     $a = new stdClass();
-                    $a->field = format_string($details->fieldname, true, array('context' => $context));
+                    $a->field = format_string($translatedfieldname, true, array('context' => $context));
                     $a->value = s($details->value);
                     $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
                 }
