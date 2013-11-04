@@ -244,6 +244,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
                 Y.later(400, this, this.delete_comment_later);
             }
             this.editor.save_current_page();
+            this.editor.editingcomment = false;
         }, this);
 
         // For delegated event handler.
