@@ -129,9 +129,12 @@ $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-$PAGE->set_context($context);
-
 require_capability('block/iomad_company_admin:createcourse', $context);
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
+$PAGE->set_context($context);
 
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
@@ -151,19 +154,6 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'createcourse_title');
 $blockpage->setup($urlparams);
-
-// Set the company ID.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (iomad::is_company_user()) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:edit_departments', $context)) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
-                             get_string('pleaseselect', 'block_iomad_company_admin'));
-}
-
 
 /* next line copied from /course/edit.php */
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES,

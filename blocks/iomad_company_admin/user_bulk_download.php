@@ -25,8 +25,12 @@ require_once('lib.php');
 $format = optional_param('format', '', PARAM_ALPHA);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
+$context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:user_upload', context_system::instance());
+require_capability('block/iomad_company_admin:user_upload', $context);
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -39,19 +43,7 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'user_bulk_download_title');
 $blockpage->setup();
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 $return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
-
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (iomad::is_company_user()) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'), get_string('pleaseselect', 'block_iomad_company_admin'));
-}
 
 // If company user override the companyid parameter - they can only download their own.
 if (company_user::is_company_user()) {

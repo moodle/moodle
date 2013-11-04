@@ -94,6 +94,10 @@ $classroomid = optional_param('id', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
 $PAGE->set_context($context);
 
 $urlparams = array('id' => $classroomid);
@@ -101,22 +105,6 @@ if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
 $templatelist = new moodle_url('/blocks/iomad_company_admin/classroom_list.php', $urlparams);
-
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (iomad::is_company_user()) {
-    $companyid = company_user::companyid();
-} else if (
-    ($classroomid && !has_capability('block/iomad_company_admin:classrooms_edit', $context))
-    ||
-    (!$classroomid && !has_capability('block/iomad_company_admin:classrooms_add', $context))
-    ) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
-                             get_string('pleaseselect', 'block_iomad_company_admin'));
-}
 
 if ($classroomid) {
     $isadding = false;

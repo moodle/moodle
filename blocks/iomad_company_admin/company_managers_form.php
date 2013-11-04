@@ -294,6 +294,11 @@ $roleid = optional_param('managertype', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
+require_capability('block/iomad_company_admin:company_manager', $context);
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
 $PAGE->set_context($context);
 
 $urlparams = array('companyid' => $companyid);
@@ -311,20 +316,6 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_manager_form_title');
 $blockpage->setup();
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-require_capability('block/iomad_company_admin:company_manager', $context);
-
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (iomad::is_company_user()) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:edit_departments', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'), get_string('pleaseselect', 'block_iomad_company_admin'));
-}
 
 // Set up the allocation form.
 $managersform = new company_managers_form($PAGE->url, $context, $companyid, $departmentid, $roleid);

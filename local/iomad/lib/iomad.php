@@ -19,6 +19,29 @@ require_once(dirname(__FILE__) . '/company.php');
 class iomad {
 
     /**
+     * Gets the current users company ID depending on 
+     * if the user is an admin and editing a company or is a
+     * company user tied to a company.
+     * @param $context - stdclass()
+     * @returns int
+     */
+    public static function get_my_companyid($context) {
+        global $SESSION;
+        // Set the companyid to bypass the company select form if possible.
+        if (!empty($SESSION->currenteditingcompany)) {
+            $companyid = $SESSION->currenteditingcompany;
+        } else if (self::is_company_user()) {
+            $companyid = company_user::companyid();
+        } else if (!has_capability('block/iomad_company_admin:edit_departments', $context)) {
+            print_error('There has been a configuration error, please contact the site administrator');
+        } else {
+            redirect(new moodle_url('/local/iomad_dashboard/index.php'),
+                                     get_string('pleaseselect', 'block_iomad_company_admin'));
+        }
+        return $companyid;
+    }
+
+    /**
      * Check to see if a user is associated to a company.
      *
      * Returns int or false;

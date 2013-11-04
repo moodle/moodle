@@ -35,6 +35,8 @@ $PAGE->https_required();
 
 $id = optional_param('id', $USER->id, PARAM_INT);    // User id; -1 if creating new user.
 
+require_login();
+
 $url = new moodle_url('/blocks/iomad_company_admin/editadvanced.php');
 if ($id !== $USER->id) {
     $url->param('id', $id);
@@ -42,6 +44,9 @@ if ($id !== $USER->id) {
 $PAGE->set_url($url);
 
 $systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
 
 // Correct the navbar .
 // Set the name for the page.
@@ -54,17 +59,6 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 // Print the page header.
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_edit_advanced_title');
 $blockpage->setup();
-
-// Set up the company details.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (iomad::is_company_user()) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:edit_departments', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'), get_string('pleaseselect', 'block_iomad_company_admin'));
-}
 
 if ($id == -1) {
     // Creating new user.

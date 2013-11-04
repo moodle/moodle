@@ -74,6 +74,11 @@ if ($departmentid) {
 
 $systemcontext = context_system::instance();
 
+require_login();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('edit_users_title', 'block_iomad_company_admin');
@@ -92,18 +97,6 @@ $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
 $blockpage->display_header();
-
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (iomad::is_company_user()) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'), get_string('pleaseselect', 'block_iomad_company_admin'));
-}
-
 
 // Get the associated department id.
 $company = new company($companyid);

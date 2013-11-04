@@ -258,6 +258,11 @@ $createcourses = optional_param_array('currentcourses', null, PARAM_INT);
 
 $context = context_system::instance();
 require_login();
+require_capability('block/iomad_company_admin:user_create', $context);
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
 $PAGE->set_context($context);
 
 $urlparams = array('companyid' => $companyid);
@@ -276,21 +281,6 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'user_create_title');
 $blockpage->setup();
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-require_capability('block/iomad_company_admin:user_create', $context);
-
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (iomad::is_company_user()) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:edit_departments', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'), get_string('pleaseselect', 'block_iomad_company_admin'));
-}
-
 
 $companyform = new company_select_form($PAGE->url, $companyid, 'createuserforcompany');
 $mform = new user_edit_form($PAGE->url, $companyid, $departmentid);

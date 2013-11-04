@@ -24,7 +24,13 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
 
-global $DB;
+$context = get_context_instance(CONTEXT_SYSTEM);
+require_login();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
+$PAGE->set_context($context);
 
 // Correct the navbar .
 // Set the name for the page.
@@ -36,9 +42,6 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_list_title');
 $blockpage->setup();
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-$context = $PAGE->context;
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;

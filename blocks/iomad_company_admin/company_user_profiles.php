@@ -31,6 +31,14 @@ $strdefaultcategory = get_string('profiledefaultcategory', 'admin');
 $strnofields        = get_string('profilenofieldsdefined', 'admin');
 $strcreatefield     = get_string('profilecreatefield', 'admin');
 
+$context = context_system::instance();
+require_login();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
+$PAGE->set_context($context);
+
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('userprofiles', 'block_iomad_company_admin');
@@ -41,17 +49,6 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'companyprofilefields');
 $blockpage->setup();
-
-// Set up the company details.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (iomad::is_company_user()) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:edit_departments', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'), get_string('pleaseselect', 'block_iomad_company_admin'));
-}
 
 // Do we have any actions to perform before printing the header?
 

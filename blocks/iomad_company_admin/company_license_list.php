@@ -27,6 +27,15 @@ $companyid    = optional_param('companyid', 0, PARAM_INTEGER);
 
 global $DB;
 
+$context = context_system::instance();
+
+require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
+$PAGE->set_context($context);
+
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('company_license_list_title', 'block_iomad_company_admin');
@@ -38,23 +47,8 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_license_list_title');
 $blockpage->setup();
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-$context = $PAGE->context;
-
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;
-
-
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (iomad::is_company_user()) {
-    $companyid = company_user::companyid();
-} else if (!has_capability('block/iomad_company_admin:edit_departments', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'), get_string('pleaseselect', 'block_iomad_company_admin'));
-}
 
 // Get the appropriate company department.
 $companydepartment = company::get_company_parentnode($companyid);

@@ -298,6 +298,22 @@ $new = optional_param('createnew', 0, PARAM_INT);
 $context = context_system::instance();
 require_login();
 
+if (!$new) {
+    // Set the companyid
+    $companyid = iomad::get_my_companyid($context);
+
+    $isadding = false;
+    $companyrecord = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
+
+    require_capability('block/iomad_company_admin:company_edit', $context);
+} else {
+    $isadding = true;
+    $companyid = 0;
+    $companyrecord = new stdClass;
+
+    require_capability('block/iomad_company_admin:company_add', $context);
+}
+
 $PAGE->set_context($context);
 // Correct the navbar.
 // Set the name for the page.
@@ -321,33 +337,6 @@ if ($returnurl) {
 }
 $companylist = new moodle_url('/local/iomad_dashboard/index.php', $urlparams);
 
-if (!$new) {
-    // Set the companyid to bypass the company select form if possible.
-    if (!empty($SESSION->currenteditingcompany)) {
-        $companyid = $SESSION->currenteditingcompany;
-    } else if (iomad::is_company_user()) {
-        $companyid = company_user::companyid();
-    } else if (!has_capability('block/iomad_company_admin:edit_departments', $context)) {
-        print_error('There has been a configuration error, please contact the site administrator');
-    } else {
-        $blockpage->display_header();
-        redirect(new moodle_url('/local/iomad_dashboard/index.php'),
-                                get_string('pleaseselect', 'block_iomad_company_admin'));
-    }
-
-    $isadding = false;
-    $companyrecord = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
-
-    require_capability('block/iomad_company_admin:company_edit', $context);
-} else {
-    $isadding = true;
-    $companyid = 0;
-    $companyrecord = new stdClass;
-
-    require_capability('block/iomad_company_admin:company_add', $context);
-}
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 // Get the form data.
 $draftitemid = file_get_submitted_draft_itemid('companylogo');
 file_prepare_draft_area($draftitemid,

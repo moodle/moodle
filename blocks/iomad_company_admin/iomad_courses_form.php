@@ -61,7 +61,12 @@ if ($courseid) {
 }
 
 $systemcontext = context_system::instance();
+require_login();
 require_capability('block/iomad_company_admin:managecourses', $systemcontext);
+$PAGE->set_context($systemcontext);
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
 
 if (!empty($update)) {
     // Need to change something.
@@ -202,8 +207,6 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 // Print the page header.
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'iomad_company_courses_title');
 $blockpage->setup();
-
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
