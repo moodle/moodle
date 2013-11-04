@@ -226,12 +226,14 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
 /// Casting $course->modinfo to string prevents one notice when the field is null
     if ($modinfo = unserialize((string)$course->modinfo)) {
         $section = 0;
+        $thissection = array();
         foreach ($modinfo as $mod) {
             if ($mod->mod == "label") {
                 continue;
             }
             if ($mod->section > 0 and $section <> $mod->section) {
-                $activities["section/$mod->section"] = '--- '.get_section_name($course, $mod->section).' ---';
+                $activities[] = $thissection;
+                $thissection = array();
             }
             $section = $mod->section;
             $mod->name = strip_tags(format_string($mod->name, true));
@@ -241,11 +243,18 @@ function report_log_print_mnet_selector_form($hostid, $course, $selecteduser=0, 
             if (!$mod->visible) {
                 $mod->name = "(".$mod->name.")";
             }
-            $activities["$mod->cm"] = $mod->name;
+            $key = get_section_name($course, $mod->section);
+            if (!isset($thissection[$key])) {
+                $thissection[$key] = array();
+            }
+            $thissection[$key][$mod->cm] = $mod->name;
 
             if ($mod->cm == $modid) {
                 $selectedactivity = "$mod->cm";
             }
+        }
+        if (!empty($thissection)) {
+            $activities[] = $thissection;
         }
     }
 
@@ -479,12 +488,14 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
 /// Casting $course->modinfo to string prevents one notice when the field is null
     if ($modinfo = unserialize((string)$course->modinfo)) {
         $section = 0;
+        $thissection = array();
         foreach ($modinfo as $mod) {
             if ($mod->mod == "label") {
                 continue;
             }
             if ($mod->section > 0 and $section <> $mod->section) {
-                $activities["section/$mod->section"] = '--- '.get_section_name($course, $mod->section).' ---';
+                $activities[] = $thissection;
+                $thissection = array();
             }
             $section = $mod->section;
             $mod->name = strip_tags(format_string($mod->name, true));
@@ -494,11 +505,18 @@ function report_log_print_selector_form($course, $selecteduser=0, $selecteddate=
             if (!$mod->visible) {
                 $mod->name = "(".$mod->name.")";
             }
-            $activities["$mod->cm"] = $mod->name;
+            $key = get_section_name($course, $mod->section);
+            if (!isset($thissection[$key])) {
+                $thissection[$key] = array();
+            }
+            $thissection[$key][$mod->cm] = $mod->name;
 
             if ($mod->cm == $modid) {
                 $selectedactivity = "$mod->cm";
             }
+        }
+        if (!empty($thissection)) {
+            $activities[] = $thissection;
         }
     }
 
