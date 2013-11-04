@@ -1136,7 +1136,7 @@ class quiz_question_bank_view extends question_bank_view {
 
     protected function wanted_columns() {
         return array('addtoquizaction', 'checkbox', 'qtype', 'questionnametext',
-                'editaction', 'previewaction');
+                'editaction', 'copyaction', 'previewaction');
     }
 
     /**
