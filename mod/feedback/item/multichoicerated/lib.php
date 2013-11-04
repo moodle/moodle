@@ -223,7 +223,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
                 echo '<td align="left" valign="top">';
                 echo '-&nbsp;&nbsp;'.trim($val->answertext).' ('.$val->value.'):</td>';
                 echo '<td align="left" style="width: '.FEEDBACK_MAX_PIX_LENGTH.'">';
-                echo '<img alt="'.$intvalue.'" src="'.$pix.'" height="5" width="'.$pixwidth.'" />';
+                echo '<img class="feedback_bar_image" alt="'.$intvalue.'" src="'.$pix.'" height="5" width="'.$pixwidth.'" />';
                 echo $val->answercount;
                 if ($val->quotient > 0) {
                     echo '&nbsp;('.$quotient.'&nbsp;%)';
