@@ -660,4 +660,19 @@ class core_filterlib_testcase extends advanced_testcase {
         $this->assertEquals('emailprotect,multilang', $CFG->stringfilters);
         $this->assertEquals(1, $CFG->filterall);
     }
+
+    public function test_filter_manager_instance() {
+
+        set_config('perfdebug', 7);
+        filter_manager::reset_caches();
+        $filterman = filter_manager::instance();
+        $this->assertInstanceOf('filter_manager', $filterman);
+        $this->assertNotInstanceOf('performance_measuring_filter_manager', $filterman);
+
+        set_config('perfdebug', 15);
+        filter_manager::reset_caches();
+        $filterman = filter_manager::instance();
+        $this->assertInstanceOf('filter_manager', $filterman);
+        $this->assertInstanceOf('performance_measuring_filter_manager', $filterman);
+    }
 }
