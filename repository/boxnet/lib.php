@@ -333,7 +333,7 @@ class repository_boxnet extends repository {
         $mform->addElement('static', null, '',  get_string('information', 'repository_boxnet'));
         $mform->addElement('static', null, '',  get_string('warninghttps', 'repository_boxnet'));
 
-        if (get_config('boxnet', 'api_key') && strtotime('15 December 2013') > time()) {
+        if (get_config('boxnet', 'api_key')) {
             $url = new moodle_url('/repository/boxnet/migrationv1.php');
             $url = $url->out();
             $mform->addElement('static', null, '', get_string('migrationadvised', 'repository_boxnet', $url));
