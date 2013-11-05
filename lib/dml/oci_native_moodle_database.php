@@ -565,7 +565,7 @@ class oci_native_moodle_database extends moodle_database {
                         $info->meta_type     = 'I';
                         $info->unique        = null;
                     }
-                    $info->scale = null;
+                    $info->scale = 0;
 
                 } else {
                     //float
