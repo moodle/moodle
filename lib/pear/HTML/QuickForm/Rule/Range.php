@@ -36,7 +36,7 @@ class HTML_QuickForm_Rule_Range extends HTML_QuickForm_Rule
      */
     function validate($value, $options = null)
     {
-        $length = strlen($value);
+        $length = textlib::strlen($value);
         switch ($this->name) {
             case 'minlength': return ($length >= $options);
             case 'maxlength': return ($length <= $options);

@@ -121,6 +121,89 @@ class formslib_testcase extends advanced_testcase {
         }
     }
 
+    public function test_range_rule() {
+        global $CFG;
+
+        require_once('HTML/QuickForm/Rule/Range.php'); // Requires this pear stuff.
+
+        $strictformsrequired = null;
+        if (isset($CFG->strictformsrequired)) {
+            $strictformsrequired = $CFG->strictformsrequired;
+        }
+
+        $rule = new HTML_QuickForm_Rule_Range();
+
+        // First run the tests with strictformsrequired off.
+        $CFG->strictformsrequired = false;
+        // Passes.
+        $rule->setName('minlength'); // Let's verify some min lengths.
+        $this->assertTrue($rule->validate('12', 2));
+        $this->assertTrue($rule->validate('123', 2));
+        $this->assertTrue($rule->validate('áé', 2));
+        $this->assertTrue($rule->validate('áéí', 2));
+        $rule->setName('maxlength'); // Let's verify some max lengths.
+        $this->assertTrue($rule->validate('1', 2));
+        $this->assertTrue($rule->validate('12', 2));
+        $this->assertTrue($rule->validate('á', 2));
+        $this->assertTrue($rule->validate('áé', 2));
+        $rule->setName('----'); // Let's verify some ranges.
+        $this->assertTrue($rule->validate('', array(0, 2)));
+        $this->assertTrue($rule->validate('1', array(0, 2)));
+        $this->assertTrue($rule->validate('12', array(0, 2)));
+        $this->assertTrue($rule->validate('á', array(0, 2)));
+        $this->assertTrue($rule->validate('áé', array(0, 2)));
+
+        // Fail.
+        $rule->setName('minlength'); // Let's verify some min lengths.
+        $this->assertFalse($rule->validate('', 2));
+        $this->assertFalse($rule->validate('1', 2));
+        $this->assertFalse($rule->validate('á', 2));
+        $rule->setName('maxlength'); // Let's verify some max lengths.
+        $this->assertFalse($rule->validate('123', 2));
+        $this->assertFalse($rule->validate('áéí', 2));
+        $rule->setName('----'); // Let's verify some ranges.
+        $this->assertFalse($rule->validate('', array(1, 2)));
+        $this->assertFalse($rule->validate('123', array(1, 2)));
+        $this->assertFalse($rule->validate('áéí', array(1, 2)));
+
+        // Now run the same tests with it on to make sure things work as expected.
+        $CFG->strictformsrequired = true;
+        // Passes.
+        $rule->setName('minlength'); // Let's verify some min lengths.
+        $this->assertTrue($rule->validate('12', 2));
+        $this->assertTrue($rule->validate('123', 2));
+        $this->assertTrue($rule->validate('áé', 2));
+        $this->assertTrue($rule->validate('áéí', 2));
+        $rule->setName('maxlength'); // Let's verify some min lengths.
+        $this->assertTrue($rule->validate('1', 2));
+        $this->assertTrue($rule->validate('12', 2));
+        $this->assertTrue($rule->validate('á', 2));
+        $this->assertTrue($rule->validate('áé', 2));
+        $rule->setName('----'); // Let's verify some ranges.
+        $this->assertTrue($rule->validate('', array(0, 2)));
+        $this->assertTrue($rule->validate('1', array(0, 2)));
+        $this->assertTrue($rule->validate('12', array(0, 2)));
+        $this->assertTrue($rule->validate('á', array(0, 2)));
+        $this->assertTrue($rule->validate('áé', array(0, 2)));
+
+        // Fail.
+        $rule->setName('minlength'); // Let's verify some min lengths.
+        $this->assertFalse($rule->validate('', 2));
+        $this->assertFalse($rule->validate('1', 2));
+        $this->assertFalse($rule->validate('á', 2));
+        $rule->setName('maxlength'); // Let's verify some min lengths.
+        $this->assertFalse($rule->validate('123', 2));
+        $this->assertFalse($rule->validate('áéí', 2));
+        $rule->setName('----'); // Let's verify some ranges.
+        $this->assertFalse($rule->validate('', array(1, 2)));
+        $this->assertFalse($rule->validate('123', array(1, 2)));
+        $this->assertFalse($rule->validate('áéí', array(1, 2)));
+
+        if (isset($strictformsrequired)) {
+            $CFG->strictformsrequired = $strictformsrequired;
+        }
+    }
+
     public function test_generate_id_select() {
         $el = new MoodleQuickForm_select('choose_one', 'Choose one',
             array(1 => 'One', '2' => 'Two'));
