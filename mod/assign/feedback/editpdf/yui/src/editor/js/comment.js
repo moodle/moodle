@@ -185,7 +185,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node.setStyles({
             width: this.width + 'px',
-            backgroundColor: COMMENTCOLOUR[this.colour]
+            backgroundColor: COMMENTCOLOUR[this.colour],
+            color: COMMENTTEXTCOLOUR
         });
 
         drawingregion.append(container);
