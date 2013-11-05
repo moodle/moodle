@@ -368,7 +368,7 @@ input#id_externalurl {direction:ltr;}
 .groupmanagementtable #addselect_wrapper label {font-weight: normal;}
 .dir-rtl .groupmanagementtable p {text-align: right;}
 #group-usersummary {width: 14em;}
-.groupselector {margin-top: 3px;margin-bottom: 3px;}
+.groupselector {margin-top: 3px;margin-bottom: 3px;display: inline-block;}
 
 /**
  * Login

@@ -48,6 +48,7 @@ $PAGE->set_url($quizobj->view_url());
 // Check login and sesskey.
 require_login($quizobj->get_course(), false, $quizobj->get_cm());
 require_sesskey();
+$PAGE->set_heading($quizobj->get_course()->fullname);
 
 // If no questions have been set up yet redirect to edit.php or display an error.
 if (!$quizobj->has_questions()) {

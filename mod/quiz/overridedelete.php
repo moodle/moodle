@@ -80,6 +80,7 @@ $PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
+echo $OUTPUT->heading(format_string($quiz->name, true, array('context' => $context)));
 
 if ($override->groupid) {
     $group = $DB->get_record('groups', array('id' => $override->groupid), 'id, name');

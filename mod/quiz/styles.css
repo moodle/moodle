@@ -333,8 +333,19 @@ table.quizattemptsummary .noreviewmessage {
 .quizattemptcounts {
     clear: left;
     text-align: center;
+    display:inline;
+    margin-left:20%;
 }
-
+.dir-rtl .quizattemptcounts {
+    margin-left:0;
+    margin-right: 20%;
+}
+#page-mod-quiz-view .quizattemptcounts,
+.dir-rtl #page-mod-quiz-view .quizattemptcounts {
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+}
 /** Mod quiz summary **/
 #page-mod-quiz-summary #content {
     text-align: center;
