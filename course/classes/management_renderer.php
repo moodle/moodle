@@ -337,48 +337,39 @@ class core_course_management_renderer extends plugin_renderer_base {
                 $form .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'currentcategoryid', 'value' => $category->id));
             }
             $form .= html_writer::div(
-                html_writer::span(get_string('for'), '', array('id' => 'selectsortby')) .
-                ' ' .
                 html_writer::select(
                     $selectoptions,
                     'selectsortby',
-                    '',
-                    array('' => 'choosedots'),
-                    array('aria-labelledby' => 'selectsortby')
+                    'selectedcategories',
+                    false
                 )
             );
             $form .= html_writer::div(
-                html_writer::span(get_string('sortcategoriesby'), '', array('id' => 'resortselectedcategoriesby')) .
-                ' ' .
                 html_writer::select(
                     array(
-                        'name' => get_string('resortbyname'),
-                        'idnumber' => get_string('resortbyidnumber'),
+                        'name' => get_string('sortcategoriesbyname'),
+                        'idnumber' => get_string('sortcategoriesbyidnumber'),
                         'none' => get_string('dontsortcategories')
                     ),
                     'resortcategoriesby',
-                    '',
-                    array('none' => 'choosedots'),
-                    array('aria-labelledby' => 'resortselectedcategoriesby')
+                    'name',
+                    false
                 )
             );
             $form .= html_writer::div(
-                html_writer::span(get_string('sortcoursesby'), '', array('id' => 'resortselectedcoursesby')) .
-                ' ' .
                 html_writer::select(
                     array(
-                        'fullname' => get_string('resortbyfullname'),
-                        'shortname' => get_string('resortbyshortname'),
-                        'idnumber' => get_string('resortbyidnumber'),
+                        'fullname' => get_string('sortcoursesbyfullname'),
+                        'shortname' => get_string('sortcoursesbyshortname'),
+                        'idnumber' => get_string('sortcoursesbyidnumber'),
                         'none' => get_string('dontsortcourses')
                     ),
                     'resortcoursesby',
-                    '',
-                    array('none' => 'choosedots'),
-                    array('aria-labelledby' => 'resortselectedcoursesby')
+                    'fullname',
+                    false
                 )
             );
-            $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'bulksort', 'value' => $strgo));
+            $form .= html_writer::empty_tag('input', array('type' => 'submit', 'name' => 'bulksort', 'value' => get_string('sort')));
             $form .= html_writer::end_div();
             $html .= $this->detail_pair(
                 get_string('sorting'),
@@ -398,7 +389,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 array('' => 'choosedots'),
                 array('aria-labelledby' => 'moveselectedcategoriesto')
             );
-            $submit = array('type' => 'submit', 'name' => 'bulkmovecategories', 'value' => $strgo);
+            $submit = array('type' => 'submit', 'name' => 'bulkmovecategories', 'value' => get_string('move'));
             $html .= $this->detail_pair(
                 html_writer::span(get_string('moveselectedcategoriesto'), '', array('id' => 'moveselectedcategoriesto')),
                 $select . html_writer::empty_tag('input', $submit)
@@ -680,7 +671,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 array('' => 'choosedots'),
                 array('aria-labelledby' => 'moveselectedcoursesto')
             );
-            $submit = array('type' => 'submit', 'name' => 'bulkmovecourses', 'value' => get_string('go'));
+            $submit = array('type' => 'submit', 'name' => 'bulkmovecourses', 'value' => get_string('move'));
             $html .= $this->detail_pair(
                 html_writer::span(get_string('moveselectedcoursesto'), '', array('id' => 'moveselectedcoursesto')),
                 $select . html_writer::empty_tag('input', $submit)
