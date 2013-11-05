@@ -35,8 +35,16 @@ $settings->add($setting);
 
 // Ghostscript setting.
 $settings->add(new admin_setting_configexecutable('assignfeedback_editpdf/gspath',
-                                            get_string('gspath', 'assignfeedback_editpdf'),
-                                            get_string('gspath_help', 'assignfeedback_editpdf'), '/usr/bin/gs'));
+                                                  get_string('gspath', 'assignfeedback_editpdf'),
+                                                  get_string('gspath_help', 'assignfeedback_editpdf'),
+                                                  '/usr/bin/gs'));
+
+$setting = new admin_setting_php_extension_enabled('assignfeedback_editpdf/zlibenabled',
+                                                   get_string('zlibenabled', 'assignfeedback_editpdf'),
+                                                   get_string('zlibnotavailable', 'assignfeedback_editpdf'),
+                                                   'zlib');
+
+$settings->add($setting);
 
 $url = new moodle_url('/mod/assign/feedback/editpdf/testgs.php');
 $link = html_writer::link($url, get_string('testgs', 'assignfeedback_editpdf'));
