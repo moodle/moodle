@@ -24,6 +24,9 @@
  */
 
 $string['apikey'] = 'API key';
+$string['apiv1migration_message_content'] = 'As part of the recent Moodle upgrade (2.6, 2.5.3, 2.4.7), the Box.net repository plugin has been disabled. To re-enable it, you need to re-configure it as described in the documentation {$a->docsurl}.';
+$string['apiv1migration_message_small'] = 'This plugin has been disabled, as it requires configuration as described in the documentation Box.net APIv1 migration.';
+$string['apiv1migration_message_subject'] = 'Important information regarding Box.net repository plugin';
 $string['boxnet:view'] = 'View box.net repository';
 $string['cannotcreatereference'] = 'Cannot create a reference, not enough permissions to share the file on Box.net.';
 $string['clientid'] = 'Client ID';
