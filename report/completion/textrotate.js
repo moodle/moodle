@@ -26,10 +26,6 @@ function textrotate_make_svg(el)
   text.setAttribute('text-anchor','end');
   text.setAttribute('transform','rotate(90)');
 
-  if (el.className.indexOf('completion-rplheader') != -1) {
-      text.setAttribute('fill','#238E23');
-  }
-
   text.appendChild(document.createTextNode(string));
 
   // Is there an icon near the text?
@@ -52,7 +48,16 @@ function textrotate_make_svg(el)
   el.parentNode.removeChild(el);
 }
 
+function browser_supports_svg() {
+    return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1");
+}
+
 function textrotate_init() {
+    if (!browser_supports_svg()) {
+        // Feature detect, else bail.
+        return;
+    }
+
 YUI().use('yui2-dom', function(Y) {
   var elements= Y.YUI2.util.Dom.getElementsByClassName('completion-criterianame', 'span');
   for(var i=0;i<elements.length;i++)
