@@ -3426,19 +3426,19 @@ function course_change_sortorder_after_course($courseorid, $moveaftercourseid) {
 
     if ((int)$moveaftercourseid === 0) {
         // We've moving the course to the start of the queue.
-        $sql = 'SELECT c.sortorder
-                      FROM {course} c
-                     WHERE c.category = :categoryid
-                  ORDER BY c.sortorder';
+        $sql = 'SELECT sortorder
+                      FROM {course}
+                     WHERE category = :categoryid
+                  ORDER BY sortorder';
         $params = array(
             'categoryid' => $course->category
         );
         $sortorder = $DB->get_field_sql($sql, $params, IGNORE_MULTIPLE);
 
-        $sql = 'UPDATE {course} c
+        $sql = 'UPDATE {course}
                    SET sortorder = sortorder + 1
-                 WHERE c.category = :categoryid
-                   AND c.id <> :id';
+                 WHERE category = :categoryid
+                   AND id <> :id';
         $params = array(
             'categoryid' => $course->category,
             'id' => $course->id,
@@ -3458,9 +3458,9 @@ function course_change_sortorder_after_course($courseorid, $moveaftercourseid) {
         }
         // Increment all courses in the same category that are ordered after the moveafter course.
         // This makes a space for the course we're moving.
-        $sql = 'UPDATE {course} c
+        $sql = 'UPDATE {course}
                        SET sortorder = sortorder + 1
-                     WHERE c.category = :categoryid
+                     WHERE category = :categoryid
                        AND sortorder > :sortorder';
         $params = array(
             'categoryid' => $moveaftercourse->category,
