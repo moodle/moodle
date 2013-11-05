@@ -438,6 +438,7 @@ case workshop::PHASE_ASSESSMENT:
 
                 echo $output->box_start('generalbox assessment-summary' . $class);
                 echo $output->render($submission);
+
                 $aurl = $workshop->assess_url($assessment->id);
                 echo $output->single_button($aurl, $buttontext, 'get');
                 echo $output->box_end();

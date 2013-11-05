@@ -1279,6 +1279,9 @@ SQL;
 
         $submission         = new workshop_submission($this, $record, $showauthor);
         $submission->url    = $this->submission_url($record->id);
+        if($this->teammode) {
+            $submission->group = $this->user_group($record->authorid);
+        }
 
         return $submission;
     }
@@ -2490,11 +2493,12 @@ SQL;
     	
     	$userinfo = $DB->get_records_list("user","id",$findusers,'','id,firstname,lastname,picture,imagealt,email');
     	
-//    	$usergradinggrades = $DB->get_records_list("workshop_aggregations","userid",$findusers,'','userid,gradinggrade');
-        list($select, $params) = $DB->get_in_or_equal($findusers, SQL_PARAMS_NAMED);
-        $params['workshopid'] = $this->id;
+        if (!empty($findusers)) {            
+            list($select, $params) = $DB->get_in_or_equal($findusers, SQL_PARAMS_NAMED);
+            $params['workshopid'] = $this->id;
         
-        $usergradinggrades = $DB->get_records_select("workshop_aggregations", "workshopid = :workshopid AND userid $select", $params, '', 'userid,gradinggrade');
+            $usergradinggrades = $DB->get_records_select("workshop_aggregations", "workshopid = :workshopid AND userid $select", $params, '', 'userid,gradinggrade');
+        }
     	
     	foreach($userinfo as $k => $v) {
     		if(!empty($usergradinggrades[$k]))
@@ -3827,6 +3831,8 @@ class workshop_submission extends workshop_submission_summary implements rendera
     public $contenttrust;
     /** @var array */
     public $attachment;
+    /** @var group */
+    public $group; //set if teammode
 
     /**
      * @var array of columns from workshop_submissions that are assigned as properties

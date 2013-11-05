@@ -87,7 +87,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $o  = '';    // output HTML code
         $anonymous = $submission->is_anonymous();
         $classes = 'submission-full';
-        if ($anonymous) {
+        if ($anonymous || !empty($submission->group)) {
             $classes .= ' anonymous';
         }
         $o .= $this->output->container_start($classes);
@@ -102,22 +102,27 @@ class mod_workshop_renderer extends plugin_renderer_base {
         $o .= $this->output->heading($title, 3, 'title');
 
         if (!$anonymous) {
-            $author             = new stdclass();
-            $author->id         = $submission->authorid;
-            $author->firstname  = $submission->authorfirstname;
-            $author->lastname   = $submission->authorlastname;
-            $author->picture    = $submission->authorpicture;
-            $author->imagealt   = $submission->authorimagealt;
-            $author->email      = $submission->authoremail;
-            $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 64));
-            $userurl            = new moodle_url('/user/view.php',
-                                            array('id' => $author->id, 'course' => $this->page->course->id));
-            $a                  = new stdclass();
-            $a->name            = fullname($author);
-            $a->url             = $userurl->out();
-            $byfullname         = get_string('byfullname', 'workshop', $a);
-            $oo  = $this->output->container($userpic, 'picture');
-            $oo .= $this->output->container($byfullname, 'fullname');
+            if (!empty($submission->group)) {
+                $byfullname = get_string('byfullname', 'workshop', array( "name" => $submission->group->name, "url" => ""));
+                $oo = $this->output->container($byfullname, 'fullname');
+            } else {
+                $author             = new stdclass();
+                $author->id         = $submission->authorid;
+                $author->firstname  = $submission->authorfirstname;
+                $author->lastname   = $submission->authorlastname;
+                $author->picture    = $submission->authorpicture;
+                $author->imagealt   = $submission->authorimagealt;
+                $author->email      = $submission->authoremail;
+                $userpic            = $this->output->user_picture($author, array('courseid' => $this->page->course->id, 'size' => 64));
+                $userurl            = new moodle_url('/user/view.php',
+                                                array('id' => $author->id, 'course' => $this->page->course->id));
+                $a                  = new stdclass();
+                $a->name            = fullname($author);
+                $a->url             = $userurl->out();
+                $byfullname         = get_string('byfullname', 'workshop', $a);
+                $oo  = $this->output->container($userpic, 'picture');
+                $oo .= $this->output->container($byfullname, 'fullname');
+            }
 
             $o .= $this->output->container($oo, 'author');
         }
@@ -239,7 +244,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
     
         $o .= $this->output->container_start($classes);  // main wrapper
         $o .= html_writer::link($summary->url, format_string($summary->title), array('class' => 'title'));
-    
+
         if (!$anonymous) {
             $a                  = new stdClass();
     		$url				= new moodle_url('/group/overview.php',
