@@ -244,7 +244,7 @@ class helper {
             $actions['assignroles'] = array(
                 'url' => new \moodle_url('/admin/roles/assign.php', array('contextid' => $category->get_context()->id,
                     'return' => 'management')),
-                'icon' => new \pix_icon('i/assignroles', new \lang_string('assignroles', 'role')),
+                'icon' => new \pix_icon('t/assignroles', new \lang_string('assignroles', 'role')),
                 'string' => new \lang_string('assignroles', 'role')
             );
         }
@@ -263,7 +263,7 @@ class helper {
         if ($category->can_review_cohorts()) {
             $actions['cohorts'] = array(
                 'url' => new \moodle_url('/cohort/index.php', array('contextid' => $category->get_context()->id)),
-                'icon' => new \pix_icon('i/cohort', new \lang_string('cohorts', 'cohort')),
+                'icon' => new \pix_icon('t/cohort', new \lang_string('cohorts', 'cohort')),
                 'string' => new \lang_string('cohorts', 'cohort')
             );
         }

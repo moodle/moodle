@@ -245,10 +245,9 @@ Feature: Course category management interface performs as expected
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Sort categories" "link"
-    And I should see "Sort the top level categories by name" in the ".category-listing-actions" "css_element"
-    And I should see "Sort the top level categories by idnumber" in the ".category-listing-actions" "css_element"
-    And I click on <sortby> "link" in the ".category-listing-actions" "css_element"
+    And I select "All categories" from "menuselectsortby"
+    And I select <sortby> from "menuresortcategoriesby"
+    And I press "Go"
     # Redirect.
     And I should see the "Course categories" management page
     And I should see category listing <cat1> before <cat2>
@@ -256,9 +255,8 @@ Feature: Course category management interface performs as expected
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "Sort categories" | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Sort the top level categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Sort the top level categories by idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "By name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "By idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   @javascript
   Scenario Outline: Sub categories are displayed correctly when resorted

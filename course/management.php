@@ -177,6 +177,7 @@ if ($action !== false && confirm_sesskey()) {
     //    - bulkmovecategories.
     //    - bulkresortcategories.
     $redirectback = false;
+    $redirectmessage = false;
     switch ($action) {
         case 'resortcategories' :
             $sort = required_param('resort', PARAM_ALPHA);
@@ -293,6 +294,12 @@ if ($action !== false && confirm_sesskey()) {
                     // If this fails we want to catch the exception and report it.
                     $redirectback = \core_course\management\helper::action_category_move_courses_into($category, $moveto,
                         $courseids);
+                    if ($redirectback) {
+                        $a = new stdClass;
+                        $a->category = $moveto->get_formatted_name();
+                        $a->courses = count($courseids);
+                        $redirectmessage = get_string('bulkmovecoursessuccess', 'moodle', $a);
+                    }
                 } catch (moodle_exception $ex) {
                     $redirectback = false;
                     $notificationsfail[] = $ex->getMessage();
@@ -349,6 +356,12 @@ if ($action !== false && confirm_sesskey()) {
                     // They're not sorting anything.
                     break;
                 }
+                if (!in_array($sortcategoriesby, array('idnumber', 'name'))) {
+                    $sortcategoriesby = false;
+                }
+                if (!in_array($sortcoursesby, array('idnumber', 'fullname', 'shortname'))) {
+                    $sortcoursesby = false;
+                }
 
                 if ($for === 'thiscategory') {
                     $categoryids = array(
@@ -364,22 +377,22 @@ if ($action !== false && confirm_sesskey()) {
                     }
                     $categories = coursecat::get_many($categoryids);
                 } else if ($for === 'allcategories') {
-                    $categories = coursecat::get_all_visible();
+                    if ($sortcategoriesby) {
+                        \core_course\management\helper::action_category_resort_subcategories(coursecat::get(0), $sortcategoriesby);
+                    }
+                    $categorieslist = coursecat::make_categories_list('moodle/category:manage');
+                    $categoryids = array_keys($categorieslist);
+                    $categories = coursecat::get_many($categoryids);
+                    unset($categorieslist);
                 } else {
                     break;
-                }
-                if (!in_array($sortcategoriesby, array('idnumber', 'name'))) {
-                    $sortcategoriesby = false;
-                }
-                if (!in_array($sortcoursesby, array('idnumber', 'fullname', 'shortname'))) {
-                    $sortcoursesby = false;
                 }
                 foreach ($categories as $cat) {
                     if ($sortcategoriesby) {
                         // Don't clean up here, we'll do it once we're all done.
                         \core_course\management\helper::action_category_resort_subcategories($cat, $sortcategoriesby, false);
                     }
-                    if (in_array($sortcoursesby, array('idnumber', 'fullname', 'shortname'))) {
+                    if ($sortcoursesby) {
                         \core_course\management\helper::action_category_resort_courses($cat, $sortcoursesby, false);
                     }
                 }
@@ -392,7 +405,11 @@ if ($action !== false && confirm_sesskey()) {
             }
     }
     if ($redirectback) {
-        redirect($PAGE->url);
+        if ($redirectmessage) {
+            redirect($PAGE->url, $redirectmessage, 5);
+        } else {
+            redirect($PAGE->url);
+        }
     }
 }
 

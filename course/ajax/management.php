@@ -72,8 +72,8 @@ switch ($action) {
             $a->total = $totalcourses;
             $str = get_string('showingxofycourses', 'moodle', $a);
         }
-        $outcome->newcatcourses = $category->get_courses_count();
-        $outcome->oldcatcourses = $totalcourses;
+        $outcome->totalcatcourses = $category->get_courses_count();
+        $outcome->fromcatcoursecount = $totalcourses;
         $outcome->paginationtotals = $str;
         break;
     case 'movecourseafter' :

@@ -91,24 +91,24 @@ Course.prototype = {
      * @returns {Boolean}
      */
     handle : function(action, e) {
-        var console = this.get('console'),
+        var managementconsole = this.get('console'),
             args = {courseid : this.get('courseid')};
         switch (action) {
             case 'moveup':
                 e.halt();
-                console.performAjaxAction('movecourseup', args, this.moveup, this);
+                managementconsole.performAjaxAction('movecourseup', args, this.moveup, this);
                 break;
             case 'movedown':
                 e.halt();
-                console.performAjaxAction('movecoursedown', args, this.movedown, this);
+                managementconsole.performAjaxAction('movecoursedown', args, this.movedown, this);
                 break;
             case 'show':
                 e.halt();
-                console.performAjaxAction('showcourse', args, this.show, this);
+                managementconsole.performAjaxAction('showcourse', args, this.show, this);
                 break;
             case 'hide':
                 e.halt();
-                console.performAjaxAction('hidecourse', args, this.hide, this);
+                managementconsole.performAjaxAction('hidecourse', args, this.hide, this);
                 break;
             default:
                 Y.log('Invalid AJAX action requested of managed course.', 'warn', 'moodle-course-management');
@@ -133,13 +133,13 @@ Course.prototype = {
      * @param {Number} previousid the course it was previously after in case we need to revert.
      */
     moveAfter : function(moveaftercourse, previousid) {
-        var console = this.get('console'),
+        var managementconsole = this.get('console'),
             args = {
                 courseid : this.get('courseid'),
                 moveafter : moveaftercourse,
                 previous : previousid
             };
-        console.performAjaxAction('movecourseafter', args, this.moveAfterResponse, this);
+        managementconsole.performAjaxAction('movecourseafter', args, this.moveAfterResponse, this);
     },
 
     /**

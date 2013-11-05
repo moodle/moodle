@@ -225,7 +225,11 @@ class core_course_management_renderer extends plugin_renderer_base {
         }
         $countid = 'course-count-'.$category->id;
         $html .= html_writer::span(get_string('courses'), 'accesshide', array('id' => $countid));
-        $html .= html_writer::span($category->coursecount.$courseicon, 'course-count dimmed', array('aria-labelledby' => $countid));
+        $html .= html_writer::span(
+            html_writer::span($category->coursecount).$courseicon,
+            'course-count dimmed',
+            array('aria-labelledby' => $countid)
+        );
         $html .= html_writer::end_div();
         $html .= html_writer::end_div();
         if ($isexpanded) {

@@ -664,6 +664,9 @@ span.editinstructions {
         margin:1rem 0 0;
         padding:0.6rem 1rem 0.5rem;
     }
+    .moodle-actionmenu {
+        white-space:nowrap;
+    }
     .listing-actions {
         text-align:center;
         padding:0.4rem 0.3rem 0.3rem;
@@ -747,7 +750,16 @@ span.editinstructions {
         display:inline-block;
         display:initial;
         img {
-            margin: 0 0.3em;
+            margin: 0 4px;
+        }
+        .menu {
+            a {
+                padding:4px 1em 4px 4px;
+            }
+            img {
+                width: 12px;
+                max-width:none;
+            }
         }
     }
 
@@ -832,7 +844,9 @@ span.editinstructions {
             }
         }
         > .firstpage .listitem:first-child > div .item-actions .action-moveup,
-        > .lastpage .listitem:last-child > div .item-actions .action-movedown {display: none;}
+        > .lastpage .listitem:last-child > div .item-actions .action-movedown {
+          display: none;
+        }
         .bulk-action-checkbox {
             vertical-align:middle;
             margin:-2px 6px 0 0;
@@ -861,12 +875,14 @@ span.editinstructions {
                 background-color: inherit;
             }
             &:first-child > div .item-actions .action-moveup,
-            &:last-child > div .item-actions .action-movedown {display: none;}
+            &:last-child > div .item-actions .action-movedown {
+              display: none;
+            }
         }
         .course-count {
             color:#a1a1a8;
             margin-right:2rem;
-            min-width:35px;
+            min-width:3.5em;
             display:inline-block;
             .smallicon {
                 width:0.8rem;
@@ -944,8 +960,6 @@ span.editinstructions {
         margin: 1em;
     }
 }
-/** JS MUST be enabled for this next style **/
-.jsenabled #course-category-listings .category-item-actions .menu-action-text {padding-left:0.3em;}
 
 /** Management header styling **/
 .coursecat-management-header {
