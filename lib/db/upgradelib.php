@@ -270,3 +270,81 @@ function upgrade_mssql_varbinarymax() {
         $pbar->update($i, $tablecount, "Converted IMAGE to VARBINARY(MAX) columns in MS SQL Server database - $i/$tablecount.");
     }
 }
+
+/**
+ * This upgrade script fixes the mismatches between DB fields course_modules.section
+ * and course_sections.sequence. It makes sure that each module is included
+ * in the sequence of at least one section.
+ * Note that this script is different from admin/cli/fix_course_sortorder.php
+ * in the following ways:
+ * 1. It does not fix the cases when module appears several times in section(s) sequence(s) -
+ *    it will be done automatically on the next viewing of the course.
+ * 2. It does not remove non-existing modules from section sequences - administrator
+ *    has to run the CLI script to do it.
+ * 3. When this script finds an orphaned module it adds it to the section but makes hidden
+ *    where CLI script does not change the visiblity specified in the course_modules table.
+ */
+function upgrade_course_modules_sequences() {
+    global $DB;
+
+    // Find all modules that point to the section which does not point back to this module.
+    $sequenceconcat = $DB->sql_concat("','", "s.sequence", "','");
+    $moduleconcat = $DB->sql_concat("'%,'", "m.id", "',%'");
+    $sql = "SELECT m.id, m.course, m.section, s.sequence
+        FROM {course_modules} m LEFT OUTER JOIN {course_sections} s
+        ON m.course = s.course and m.section = s.id
+        WHERE s.sequence IS NULL OR ($sequenceconcat NOT LIKE $moduleconcat)
+        ORDER BY m.course";
+    $rs = $DB->get_recordset_sql($sql);
+    $sections = null;
+    foreach ($rs as $cm) {
+        if (!isset($sections[$cm->course])) {
+            // Retrieve all sections for the course (only once for each corrupt course).
+            $sections = array($cm->course =>
+                    $DB->get_records('course_sections', array('course' => $cm->course),
+                            'section', 'id, section, sequence, visible'));
+            if (empty($sections[$cm->course])) {
+                // Very odd - the course has a module in it but has no sections. Create 0-section.
+                $newsection = array('sequence' => '', 'section' => 0, 'visible' => 1);
+                $newsection['id'] = $DB->insert_record('course_sections',
+                        $newsection + array('course' => $cm->course, 'summary' => '', 'summaryformat' => FORMAT_HTML));
+                $sections[$cm->course] = array($newsection['id'] => (object)$newsection);
+            }
+        }
+        // Attempt to find the section that has this module in it's sequence.
+        // If there are several of them, pick the last because this is what get_fast_modinfo() does.
+        $sectionid = null;
+        foreach ($sections[$cm->course] as $section) {
+            if (!empty($section->sequence) && in_array($cm->id, preg_split('/,/', $section->sequence))) {
+                $sectionid = $section->id;
+            }
+        }
+        if ($sectionid) {
+            // Found the section. Update course_module to point to the correct section.
+            $params = array('id' => $cm->id, 'section' => $sectionid);
+            if (!$sections[$cm->course][$sectionid]->visible) {
+                $params['visible'] = 0;
+            }
+            $DB->update_record('course_modules', $params);
+        } else {
+            // No section in the course has this module in it's sequence.
+            if (isset($sections[$cm->course][$cm->section])) {
+                // Try to add module to the section it points to (if it is valid).
+                $sectionid = $cm->section;
+            } else {
+                // Section not found. Just add to the first available section.
+                reset($sections[$cm->course]);
+                $sectionid = key($sections[$cm->course]);
+            }
+            $newsequence = ltrim($sections[$cm->course][$sectionid]->sequence . ',' . $cm->id, ',');
+            $sections[$cm->course][$sectionid]->sequence = $newsequence;
+            $DB->update_record('course_sections', array('id' => $sectionid, 'sequence' => $newsequence));
+            // Make module invisible because it was not displayed at all before this upgrade script.
+            $DB->update_record('course_modules', array('id' => $cm->id, 'section' => $sectionid, 'visible' => 0, 'visibleold' => 0));
+        }
+    }
+    $rs->close();
+    unset($sections);
+
+    // Note that we don't need to reset course cache here because it is reset automatically after upgrade.
+}
