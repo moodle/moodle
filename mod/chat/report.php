@@ -186,7 +186,7 @@
 
     if ($show_all) {
         $headingstr = get_string('listing_all_sessions', 'chat') . '&nbsp;';
-        $headingstr .= html_writer::link("report.php?id={$cm->id}&amp;show_all=0", get_string('list_complete_sessions', 'chat'));
+        $headingstr .= html_writer::link("report.php?id={$cm->id}&show_all=0", get_string('list_complete_sessions', 'chat'));
         echo  $OUTPUT->heading($headingstr, 3);
     }
 
