@@ -72,7 +72,7 @@ class behat_course extends behat_base {
             new Given('I should see the "'.get_string('categories').'" management page'),
             new Given('I click on category "'.get_string('miscellaneous').'" in the management interface'),
             new Given('I should see the "'.get_string('categoriesandcoures').'" management page'),
-            new Given('I click on "'.get_string('newcourse').'" "link" in the "#course-listing" "css_element"'),
+            new Given('I click on "'.get_string('createnewcourse').'" "link" in the "#course-listing" "css_element"'),
             new Given('I fill the moodle form with:', $table),
             new Given('I press "' . get_string('savechanges') . '"')
         );

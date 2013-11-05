@@ -2424,11 +2424,15 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
     /**
      * Cleans things up after categories have been resorted.
+     * @param bool $includecourses If set to true we know courses have been resorted as well.
      */
-    public static function resort_categories_cleanup() {
+    public static function resort_categories_cleanup($includecourses = false) {
         // This should not be needed but we do it just to be safe.
         fix_course_sortorder();
         cache_helper::purge_by_event('changesincoursecat');
+        if ($includecourses) {
+            cache_helper::purge_by_event('changesincourse');
+        }
     }
 
     /**

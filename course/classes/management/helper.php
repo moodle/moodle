@@ -208,6 +208,14 @@ class helper {
             );
         }
 
+        if ($category->can_create_subcategory()) {
+            $actions['createnewsubcategory'] = array(
+                'url' => new \moodle_url('/course/editcategory.php', array('parent' => $category->id)),
+                'icon' => new \pix_icon('i/withsubcat', new \lang_string('createnewsubcategory')),
+                'string' => new \lang_string('createnewsubcategory')
+            );
+        }
+
         // Resort.
         if ($category->can_resort_subcategories() && $category->has_children()) {
             $actions['resortbyname'] = array(
@@ -236,7 +244,7 @@ class helper {
             $actions['assignroles'] = array(
                 'url' => new \moodle_url('/admin/roles/assign.php', array('contextid' => $category->get_context()->id,
                     'return' => 'management')),
-                'icon' => new \pix_icon('i/assignroles', new \lang_string('assignroles', 'role')),
+                'icon' => new \pix_icon('t/assignroles', new \lang_string('assignroles', 'role')),
                 'string' => new \lang_string('assignroles', 'role')
             );
         }
@@ -255,7 +263,7 @@ class helper {
         if ($category->can_review_cohorts()) {
             $actions['cohorts'] = array(
                 'url' => new \moodle_url('/cohort/index.php', array('contextid' => $category->get_context()->id)),
-                'icon' => new \pix_icon('i/cohort', new \lang_string('cohorts', 'cohort')),
+                'icon' => new \pix_icon('t/cohort', new \lang_string('cohorts', 'cohort')),
                 'string' => new \lang_string('cohorts', 'cohort')
             );
         }
@@ -663,14 +671,15 @@ class helper {
      *
      * @param \coursecat $category
      * @param string $sort One of fullname, shortname or idnumber
+     * @param bool $cleanup If true cleanup will be done, if false you will need to do it manually later.
      * @return bool
      * @throws \moodle_exception
      */
-    public static function action_category_resort_courses(\coursecat $category, $sort) {
+    public static function action_category_resort_courses(\coursecat $category, $sort, $cleanup = true) {
         if (!$category->can_resort_courses()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_resort');
         }
-        return $category->resort_courses($sort);
+        return $category->resort_courses($sort, $cleanup);
     }
 
     /**

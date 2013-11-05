@@ -53,8 +53,8 @@ DragDrop.prototype = {
      * @method initializer
      */
     initializer : function() {
-        var console = this.get('console'),
-            container = console.get('element'),
+        var managementconsole = this.get('console'),
+            container = managementconsole.get('element'),
             categorylisting = container.one('#category-listing'),
             courselisting = container.one('#course-listing > .course-listing'),
             categoryul = (categorylisting) ? categorylisting.one('ul.ml') : null,
@@ -229,7 +229,7 @@ DragDrop.prototype = {
             drop = e.drop.get('node'),
             iscategory = (drop.ancestor('.listitem-category') !== null),
             iscourse = !iscategory && (drop.test('.listitem-course')),
-            console = this.get('console'),
+            managementconsole = this.get('console'),
             categoryid,
             category,
             courseid,
@@ -239,23 +239,22 @@ DragDrop.prototype = {
             previousid;
 
         if (!drag.test('.listitem-course')) {
-            Y.log('Wasn\'t what I expected', 'warn', 'moodle-course-management');
-            alert(drag);
+            Y.log('It was not a course being dragged.', 'warn', 'moodle-course-management');
             return false;
         }
         courseid = drag.getData('id');
         if (iscategory) {
             categoryid = drop.ancestor('.listitem-category').getData('id');
             Y.log('Course ' + courseid + ' dragged into category ' + categoryid);
-            category = console.getCategoryById(categoryid);
+            category = managementconsole.getCategoryById(categoryid);
             if (category) {
-                course = console.getCourseById(courseid);
+                course = managementconsole.getCourseById(courseid);
                 if (course) {
                     category.moveCourseTo(course);
                 }
             }
         } else if (iscourse || drop.ancestor('#course-listing')) {
-            course = console.getCourseById(courseid);
+            course = managementconsole.getCourseById(courseid);
             previoussibling = drag.get('previousSibling');
             aftercourseid = (previoussibling) ? previoussibling.getData('id') || 0 : 0;
             previousid = (this.previoussibling) ?  this.previoussibling.getData('id') : 0;

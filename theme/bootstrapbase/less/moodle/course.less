@@ -626,7 +626,7 @@ span.editinstructions {
  * Course management page
  * Palette
  *
- * Background (reg)         #f7f7f9
+ * Background (reg)         #F5F5F5
  * Background (light        #fafafa
  * Background (highlight)   #ddffaa
  * Borders                  #e1e1e8
@@ -657,12 +657,15 @@ span.editinstructions {
     h3 {
         margin:0;
         padding:0.4rem 0.6rem 0.3rem;
-        background-color:#f7f7f9;
+        background-color:#F5F5F5;
         border-bottom:1px solid #e1e1e8;
     }
     h4 {
         margin:1rem 0 0;
         padding:0.6rem 1rem 0.5rem;
+    }
+    .moodle-actionmenu {
+        white-space:nowrap;
     }
     .listing-actions {
         text-align:center;
@@ -715,7 +718,7 @@ span.editinstructions {
             > div {
                 background-color:#FFFFD8;
                 border-top-color: #e1e1e8;
-                border-bottom-color:#f7f7f9;
+                border-bottom-color:#F5F5F5;
             }
             li:first-of-type > div,
             &[data-expandable='0']+li > div {
@@ -738,7 +741,7 @@ span.editinstructions {
 
         &+li > div,
         &:first-child > div {
-            border-top-color:#f7f7f9;
+            border-top-color:#F5F5F5;
         }
     }
 
@@ -747,7 +750,16 @@ span.editinstructions {
         display:inline-block;
         display:initial;
         img {
-            margin: 0 0.3em;
+            margin: 0 4px;
+        }
+        .menu {
+            a {
+                padding:4px 1em 4px 4px;
+            }
+            img {
+                width: 12px;
+                max-width:none;
+            }
         }
     }
 
@@ -770,6 +782,10 @@ span.editinstructions {
             }
             .without-actions {
                 color: #333;
+            }
+            .idnumber {
+                color:#a1a1a8;
+                margin-right:2em;
             }
         }
         // The category or course is hidden.
@@ -811,10 +827,6 @@ span.editinstructions {
 
     #course-listing {
         .listitem {
-            .idnumber {
-                color:#a1a1a8;
-                margin-right:2em;
-            }
             .categoryname {
                 display:inline-block;
                 margin-left:1em;
@@ -832,7 +844,9 @@ span.editinstructions {
             }
         }
         > .firstpage .listitem:first-child > div .item-actions .action-moveup,
-        > .lastpage .listitem:last-child > div .item-actions .action-movedown {display: none;}
+        > .lastpage .listitem:last-child > div .item-actions .action-movedown {
+          display: none;
+        }
         .bulk-action-checkbox {
             vertical-align:middle;
             margin:-2px 6px 0 0;
@@ -844,11 +858,7 @@ span.editinstructions {
         }
         .listitem {
             > div {
-                margin-left:0.5em;
                 > .ba-checkbox {
-                    background-color: #FaFaFb;
-                    border-right: 1px solid #EFEFF4;
-                    border-left: 1px solid #EFEFF4;
                     vertical-align:middle;
                     width:2.2em;
                     text-align:center;
@@ -865,12 +875,14 @@ span.editinstructions {
                 background-color: inherit;
             }
             &:first-child > div .item-actions .action-moveup,
-            &:last-child > div .item-actions .action-movedown {display: none;}
+            &:last-child > div .item-actions .action-movedown {
+              display: none;
+            }
         }
         .course-count {
             color:#a1a1a8;
             margin-right:2rem;
-            min-width:35px;
+            min-width:3.5em;
             display:inline-block;
             .smallicon {
                 width:0.8rem;
@@ -885,40 +897,10 @@ span.editinstructions {
         }
         .category-listing > ul > .listitem:first-child {
             position:relative;
-            .ba-checkbox:before {
-                content: '.';
-                background-color: #FaFaFb;
-                color: #FaFaFb;
-                position:absolute;
-                top:-0.2em;
-                line-height:0.2em;
-                border: 1px solid #EFEFF4;
-                border-width:1px 1px 0;
-                margin:-1px;
-                width:2.2em;
-                display:block;
-                border-radius: 2px 2px 0 0;
-            }
         }
         .category-bulk-actions {
             margin: 0 0.5em 0.5em;
-            background-color: #FaFaFb;
-            border: 1px solid #EFEFF4;
             position:relative;
-
-            &:before {
-                content: '.';
-                background-color: #FaFaFb;
-                color: #FaFaFb;
-                position:relative;
-                top:-1em;
-                line-height:110%;
-                border: 1px solid #EFEFF4;
-                border-width:0 1px;
-                margin:-1px;
-                width:2.2em;
-                display:block;
-            }
         }
     }
 
@@ -930,7 +912,6 @@ span.editinstructions {
             line-height:2.2rem;
         }
         .pair-key {
-            color:#075698;
             font-weight:bold;
             text-align:right;
             vertical-align: top;
@@ -979,8 +960,6 @@ span.editinstructions {
         margin: 1em;
     }
 }
-/** JS MUST be enabled for this next style **/
-.jsenabled #course-category-listings .category-item-actions .menu-action-text {padding-left:0.3em;}
 
 /** Management header styling **/
 .coursecat-management-header {

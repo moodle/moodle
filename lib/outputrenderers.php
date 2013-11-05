@@ -1123,7 +1123,7 @@ class core_renderer extends renderer_base {
                 $text .= $this->render($action->text);
             } else {
                 $text .= $action->text;
-                $comparetoalt = $action->text;
+                $comparetoalt = (string)$action->text;
             }
             $text .= html_writer::end_tag('span');
         }
@@ -1134,8 +1134,16 @@ class core_renderer extends renderer_base {
             if ($action->primary || !$action->actionmenu->will_be_enhanced()) {
                 $action->attributes['title'] = $action->text;
             }
-            if ($icon->attributes['alt'] === $comparetoalt && $action->actionmenu->will_be_enhanced()) {
+            if ((string)$icon->attributes['alt'] === $comparetoalt && $action->actionmenu->will_be_enhanced()) {
                 $icon->attributes['alt'] = ' ';
+            }
+            if (!$action->primary && $action->actionmenu->will_be_enhanced()) {
+                if ((string)$icon->attributes['alt'] === $comparetoalt) {
+                    $icon->attributes['alt'] = ' ';
+                }
+                if (isset($icon->attributes['title']) && (string)$icon->attributes['title'] === $comparetoalt) {
+                    unset($icon->attributes['title']);
+                }
             }
             $icon = $this->render($icon);
         }

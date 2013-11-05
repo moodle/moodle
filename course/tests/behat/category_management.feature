@@ -184,8 +184,7 @@ Feature: Test category management actions
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Create new" "link" in the ".category-listing-actions" "css_element"
-    And I click on "Top level category" "link" in the ".category-listing-actions" "css_element"
+    And I click on "Create new category" "link" in the ".category-listing-actions" "css_element"
     # Redirect.
     And I should see "Add new category"
     And I fill the moodle form with:
@@ -197,8 +196,7 @@ Feature: Test category management actions
     And I should see "Test category 2" in the "#course-listing h3" "css_element"
     And I should see category listing "Cat 1" before "Test category 2"
     And I should see "No courses in this category"
-    And I click on "Create new" "link" in the ".category-listing-actions" "css_element"
-    And I click on "Sub category" "link" in the ".category-listing-actions" "css_element"
+    And I click on "createnewsubcategory" action for "Test category 2" in management category listing
     # Redirect
     And I should see "Add new category"
     And I fill the moodle form with:
