@@ -331,7 +331,10 @@ class repository_boxnet extends repository {
         $mform->setType('clientsecret', PARAM_RAW_TRIMMED);
 
         $mform->addElement('static', null, '',  get_string('information', 'repository_boxnet'));
-        $mform->addElement('static', null, '',  get_string('warninghttps', 'repository_boxnet'));
+
+        if (strpos($CFG->wwwroot, 'https') !== 0) {
+            $mform->addElement('static', null, '',  get_string('warninghttps', 'repository_boxnet'));
+        }
 
         if (get_config('boxnet', 'api_key')) {
             $url = new moodle_url('/repository/boxnet/migrationv1.php');
