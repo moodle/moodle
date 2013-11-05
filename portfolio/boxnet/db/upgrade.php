@@ -15,16 +15,36 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version details
+ * Upgrade.
  *
- * @package    portfolio
- * @subpackage boxnet
+ * @package    portfolio_boxnet
+ * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013110600;        // The current plugin version (Date: YYYYMMDDXX)
-$plugin->requires  = 2013110500;        // Requires this Moodle version
-$plugin->component = 'portfolio_boxnet'; // Full name of the plugin (used for diagnostics)
-$plugin->cron      = 0;
+/**
+ * Upgrade function.
+ *
+ * @param int $oldversion the version we are upgrading from.
+ * @return bool result
+ */
+function xmldb_portfolio_boxnet_upgrade($oldversion) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/portfolio/boxnet/db/upgradelib.php');
+
+    $dbman = $DB->get_manager();
+
+    if ($oldversion < 2013110600) {
+        // Message the admins.
+        $existing = $DB->get_record('portfolio_instance', array('plugin' => 'boxnet'), '*', IGNORE_MULTIPLE);
+        if ($existing) {
+            portfolio_boxnet_admin_upgrade_notification();
+        }
+
+        upgrade_plugin_savepoint(true, 2013110600, 'portfolio', 'boxnet');
+    }
+
+    return true;
+}
