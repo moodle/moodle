@@ -39,8 +39,7 @@ Feature: Backup Moodle courses
     And I click on "Continue" "button" in the ".bcs-current-course" "css_element"
     And "//div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')][contains(., 'Include calendar events')]/descendant::img" "xpath_element" should exists
     And I check "Include course logs"
-    And I press "Cancel"
-    And I click on "Cancel" "button" in the "Cancel backup" "dialogue"
+    And I press "Next"
 
   @javascript
   Scenario: Backup a course without blocks
