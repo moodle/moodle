@@ -45,21 +45,22 @@ var AJAXBASE = M.cfg.wwwroot + '/mod/assign/feedback/editpdf/ajax.php',
     },
     SELECTEDBORDERCOLOUR = 'rgba(200, 200, 255, 0.9)',
     SELECTEDFILLCOLOUR = 'rgba(200, 200, 255, 0.5)',
+    COMMENTTEXTCOLOUR = 'rgb(51, 51, 51)',
     COMMENTCOLOUR = {
         'white' : 'rgb(255,255,255)',
-        'yellow' : 'rgb(255,255,176)',
-        'red' : 'rgb(255,176,176)',
-        'green' : 'rgb(176,255,176)',
-        'blue' : 'rgb(208,208,255)',
+        'yellow' : 'rgb(255,236,174)',
+        'red' : 'rgb(249,181,179)',
+        'green' : 'rgb(214,234,178)',
+        'blue' : 'rgb(203,217,237)',
         'clear' : 'rgba(255,255,255, 0)'
     },
     ANNOTATIONCOLOUR = {
         'white' : 'rgb(255,255,255)',
-        'yellow' : 'rgb(255,255,0)',
-        'red' : 'rgb(255,0,0)',
-        'green' : 'rgb(0,255,0)',
-        'blue' : 'rgb(0,0,255)',
-        'black' : 'rgb(0,0,0)'
+        'yellow' : 'rgb(255,207,53)',
+        'red' : 'rgb(239,69,64)',
+        'green' : 'rgb(152,202,62)',
+        'blue' : 'rgb(125,159,211)',
+        'black' : 'rgb(51,51,51)'
     },
     CLICKTIMEOUT = 300,
     TOOLSELECTOR = {

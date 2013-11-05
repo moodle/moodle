@@ -214,10 +214,15 @@ ul.assignfeedback_editpdf_menu {
     margin: 0px;
 }
 
+.assignfeedback_editpdf_widget .pageheader button:hover {
+    background-color: #ebebeb;
+    background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
+}
+
 .assignfeedback_editpdf_widget .pageheader button.assignfeedback_editpdf_selectedbutton:hover,
 .assignfeedback_editpdf_widget .pageheader button.assignfeedback_editpdf_selectedbutton {
-    background-color: #CCF;
-    background-image: none;
+    background-color: #dfdfdf;
+    background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
 }
 
 .assignfeedback_editpdf_widget .commentdrawable img {
