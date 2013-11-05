@@ -95,10 +95,7 @@ class workshop_rubric_list_assessment_form extends workshop_rubric_assessment_fo
                         format_text($definition, $definitionformat, null, $workshop->course->id), $levelid);
             }
             $mform->addGroup($levelgrp, 'levelgrp__idx_'.$i, '', "<br />\n", false);
-            
-            $label = get_string('dimensioncomment', 'workshopform_rubric');
-            $mform->addElement('textarea', 'peercomment__idx_' . $i, $label, array('cols' => 60, 'rows' => 5));
-            
+                        
         }
         $this->set_data($current);
     }

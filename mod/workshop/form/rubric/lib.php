@@ -319,8 +319,6 @@ class workshop_rubric_strategy implements workshop_strategy {
             $grade->dimensionid = $data->{'dimensionid__idx_' . $i};
             $chosenlevel = $data->{'chosenlevelid__idx_'.$i};
             $grade->grade = $this->dimensions[$grade->dimensionid]->levels[$chosenlevel]->grade;
-            //todo: figure out if this is still necessary
-//            $grade->peercomment = $data->{'peercomment__idx_'.$i};
 
             if (empty($grade->id)) {
                 // new grade
