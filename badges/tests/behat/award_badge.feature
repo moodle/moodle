@@ -172,6 +172,7 @@ Feature: Award badges
     And I follow "Home"
     And I follow "Course 1"
     And I press "Mark as complete: Test assignment name"
+    And I wait "2" seconds
     And I expand "My profile" node
     And I follow "My badges"
     Then I should see "Course Badge"
