@@ -225,11 +225,18 @@ $string['manageassignsubmissionplugins'] = 'Manage assignment submission plugins
 $string['marker'] = 'Marker';
 $string['markerfilter'] = 'Marker filter';
 $string['markingallocation'] = 'Use marking allocation';
-$string['markingallocation_help'] = 'If enabled, allow markers to be allocated to individual students - requires marking workflow to be enabled.';
+$string['markingallocation_help'] = 'If enabled together with marking workflow, markers can be allocated to particular students.';
 $string['markingworkflow'] = 'Use marking workflow';
-$string['markingworkflow_help'] = 'If enabled, marks will go through a series of workflow stages before being released to students. This allows for multiple rounds of marking allows all the marks to be released to all students at one time.';
+$string['markingworkflow_help'] = 'If enabled, marks will go through a series of workflow stages before being released to students. This allows for multiple rounds of marking and allows marks to be released to all students at the same time.';
 $string['markingworkflowstate'] = 'Marking workflow state';
-$string['markingworkflowstate_help'] = 'The list of workflow states you can choose are controlled by your permissions in this assignment. The full list of valid states is:<br><ul><li>In marking - The submissions is currently being marked</li></ul>...';
+$string['markingworkflowstate_help'] = 'Possible workflow states may include (depending on your permissions):
+
+* Not marked - the marker has not yet started
+* In marking - the marker has started but not yet finished
+* Marking completed - the marker has finished but might need to go back for checking/corrections
+* In review - the marking is now with the teacher in charge for quality checking
+* Ready for release - the teacher in charge is satisfied with the marking but wait before giving students access to the marking
+* Released - the student can access the grades/feedback';
 $string['markingworkflowstateinmarking'] = 'In marking';
 $string['markingworkflowstateinreview'] = 'In review';
 $string['markingworkflowstatenotmarked'] = 'Not marked';
