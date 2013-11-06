@@ -150,60 +150,38 @@ function repository_boxnet_migrate_references_from_apiv1() {
             }
         }
 
-        // OK, now that we have a content for that reference we will synchronize the file we are working on.
-        // If we delay this to the next bit of the script, then we would have to redownload everything if
-        // something fails and the script needs to be re-run.
-        try {
-            // Updating source to remove trace of APIv1 URL.
-            $file->set_source('Box APIv1 reference');
-        } catch (moodle_exception $e) {
-            // Do not fail for this lame reason...
-        }
-        try {
-            $fs->import_external_file($file);
-            mtrace('File using reference converted to local file (id: ' . $file->get_id() . ')');
-        } catch (moodle_exception $e) {
-            // Oh well... we tried what we could!
-            $file->delete_reference();
-            mtrace('Failed to convert file from reference to local file, sorry! (id: ' . $file->get_id() . ')');
-        }
-
         // Log the reference IDs.
         $referenceids[$file->get_referencefileid()] = $file->get_referencefileid();
-    }
 
-    // Nothing to do, we can return. And get_in_or_equal() will complain if we do.
-    if (empty($referenceids)) {
-        mtrace('The job is done, we didn\'t find any reference needing import.');
-        return;
-    }
-
-    // Now that we have downloaded the files, we can loop over every single file that was a reference
-    // to convert the remaining ones to local copies.
-    list($refsqlfragment, $refparams) = $DB->get_in_or_equal($referenceids, SQL_PARAMS_NAMED, 'ref');
-    $sql = "SELECT " . $fields . "
-              FROM {files} f
-              LEFT JOIN {files_reference} r
-                   ON f.referencefileid = r.id
-             WHERE f.referencefileid $refsqlfragment
-               AND NOT (f.component = :component
-               AND f.filearea = :filearea)";
-    $filerecords = $DB->get_recordset_sql($sql, array_merge($refparams, array('component' => 'user', 'filearea' => 'draft')));
-    foreach ($filerecords as $filerecord) {
-        $file = $fs->get_file_instance($filerecord);
-        try {
-            // Updating source to remove trace of APIv1 URL.
-            $file->set_source('Box APIv1 reference');
-        } catch (moodle_exception $e) {
-            // Do not fail for this lame reason...
-        }
-        try {
-            $fs->import_external_file($file);
-            mtrace('File using reference converted to local file (id: ' . $file->get_id() . ')');
-        } catch (moodle_exception $e) {
-            // Oh well... we tried what we could!
-            $file->delete_reference();
-            mtrace('Failed to convert file from reference to local file, sorry! (id: ' . $file->get_id() . ')');
+        // Now that the file is downloaded, we can loop over all the files using this reference
+        // to convert them to local copies. We have chosen to do that in this loop so that if the
+        // execution fails in the middle, we would not have to redownload the files again and again.
+        // By the way, we cannot use the records fetched in $filerecords because they will not be updated.
+        $sql = "SELECT " . $fields . "
+                  FROM {files} f
+                  LEFT JOIN {files_reference} r
+                       ON f.referencefileid = r.id
+                 WHERE f.referencefileid = :refid
+                   AND NOT (f.component = :component
+                   AND f.filearea = :filearea)";
+        $reffilerecords = $DB->get_recordset_sql($sql, array('component' => 'user', 'filearea' => 'draft',
+            'refid' => $file->get_referencefileid()));
+        foreach ($reffilerecords as $reffilerecord) {
+            $reffile = $fs->get_file_instance($reffilerecord);
+            try {
+                // Updating source to remove trace of APIv1 URL.
+                $reffile->set_source('Box APIv1 reference');
+            } catch (moodle_exception $e) {
+                // Do not fail for this lame reason...
+            }
+            try {
+                $fs->import_external_file($reffile);
+                mtrace('File using reference converted to local file (id: ' . $reffile->get_id() . ')');
+            } catch (moodle_exception $e) {
+                // Oh well... we tried what we could!
+                $reffile->delete_reference();
+                mtrace('Failed to convert file from reference to local file, sorry! (id: ' . $reffile->get_id() . ')');
+            }
         }
     }
 
