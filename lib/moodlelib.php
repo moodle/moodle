@@ -4450,7 +4450,6 @@ function complete_user_login($user) {
             'other' => array('username' => $USER->username),
         )
     );
-    $event->add_record_snapshot('user', $user);
     $event->trigger();
 
     if (isguestuser()) {
