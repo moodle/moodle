@@ -16,12 +16,13 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-/* if ($ADMIN->fulltree) {
+if ($hassiteconfig) {
+    $settings = new admin_settingpage('local_iomad_settings', get_string('pluginname', 'local_iomad_settings'));
+    $ADMIN->add('localplugins', $settings);
+
     $settings->add(new admin_setting_configtext('establishment_code',
                                                 get_string('establishment_code', 'local_iomad_settings'),
                                                 get_string('establishment_code_help', 'local_iomad_settings'),
                                                 '',
                                                 PARAM_INT));
-} */
-
-
+}
