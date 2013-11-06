@@ -54,7 +54,7 @@
 .assignfeedback_editpdf_widget .pageheader select,
 .assignfeedback_editpdf_widget .pageheader button {
     background: none;
-    padding: 4px 10px;
+    padding: 4px 7px;
     border: 0px;
     border-radius: 0px;
     margin: 0px;
@@ -168,10 +168,7 @@
 .assignfeedback_editpdf_dropdown button {
     border: 0px;
     background: none;
-    padding-left: 10px;
-    padding-right: 10px;
-    padding-top: 6px;
-    padding-bottom: 6px;
+    padding: 6px 7px;
     border-radius: 0px;
     border-top: 1px solid #cccccc;
 }
