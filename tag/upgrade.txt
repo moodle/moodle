@@ -1,7 +1,7 @@
 This files describes API changes in tagging, information provided
 here is intended especially for developers.
 
-=== 2.6 ===
+=== 2.4.7 ===
 
 More cleanup was done to tag cloud sorting which involved some API changes, see MDL_39800
 * tag_print_cloud() arguments were changed.
