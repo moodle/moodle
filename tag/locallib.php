@@ -35,9 +35,10 @@ require_once($CFG->libdir.'/filelib.php');
  * @param    array     $tagset Array of tags to display
  * @param    int       $nr_of_tags Limit for the number of tags to return/display, used if $tagset is null
  * @param    bool      $return     if true the function will return the generated tag cloud instead of displaying it.
+ * @param    string    $sort (optional) selected sorting, default is alpha sort (name) also timemodified or popularity
  * @return string|null a HTML string or null if this function does the output
  */
-function tag_print_cloud($tagset=null, $nr_of_tags=150, $return=false) {
+function tag_print_cloud($tagset=null, $nr_of_tags=150, $return=false, $sort='') {
     global $CFG, $DB;
 
     $can_manage_tags = has_capability('moodle/tag:manage', context_system::instance());
@@ -69,7 +70,19 @@ function tag_print_cloud($tagset=null, $nr_of_tags=150, $return=false) {
         $etags[] = $tag;
     }
 
+    // Set up sort global - used to pass sort type into tag_cloud_sort through usort() avoiding multiple sort functions.
+    // TODO make calling functions pass 'count' or 'timemodified' not 'popularity' or 'date'.
+    $oldsort = empty($CFG->tagsort) ? null : $CFG->tagsort;
+    if ($sort == 'popularity') {
+        $CFG->tagsort = 'count';
+    } else if ($sort == 'date') {
+        $CFG->tagsort = 'timemodified';
+    } else {
+        $CFG->tagsort = 'name';
+    }
     usort($etags, "tag_cloud_sort");
+    $CFG->tagsort = $oldsort;
+
     $output = '';
     $output .= "\n<ul class='tag_cloud inline-list'>\n";
     foreach ($etags as $tag) {
