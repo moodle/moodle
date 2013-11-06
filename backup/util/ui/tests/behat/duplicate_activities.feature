@@ -23,6 +23,7 @@ Feature: Duplicate activities
       | Description | Test database description |
     And I open "Test database name" actions menu
     When I click on "Duplicate" "link" in the "Test database name" activity
+    And I open "Test database name" actions menu
     And I click on "Edit settings" "link" in the "Test database name" activity
     And I fill the moodle form with:
       | Name | Original database name |
