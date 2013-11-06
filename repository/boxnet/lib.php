@@ -466,7 +466,7 @@ class repository_boxnet extends repository {
         if (!$filestatus) {
             return $this->get_name() . ': ' . $reference->filename;
         } else {
-            return get_string('lostsource', 'repository', $details);
+            return get_string('lostsource', 'repository', $reference->filename);
         }
     }
 
