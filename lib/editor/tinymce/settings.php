@@ -33,7 +33,7 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_heading('tinymcegeneralheader', new lang_string('settings'), ''));
     $default = "wrap,formatselect,wrap,bold,italic,wrap,bullist,numlist,wrap,link,unlink,wrap,image
 
-undo,redo,wrap,underline,strikethrough,sub,sup,wrap,justifyleft,justifycenter,justifyright,wrap,outdent,indent,wrap,forecolor,backcolor,wrap,ltr,rtl,wrap
+undo,redo,wrap,underline,strikethrough,sub,sup,wrap,justifyleft,justifycenter,justifyright,wrap,outdent,indent,wrap,forecolor,backcolor,wrap,ltr,rtl
 
 fontselect,fontsizeselect,wrap,code,search,replace,wrap,nonbreaking,charmap,table,wrap,cleanup,removeformat,pastetext,pasteword,wrap,fullscreen";
     $settings->add(new admin_setting_configtextarea('editor_tinymce/customtoolbar',
