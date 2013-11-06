@@ -3140,11 +3140,11 @@ EDITOR.prototype = {
 
                 this.refresh_button_state();
             }
+
+            this.load_all_pages();
         }
         this.dialogue.centerDialogue();
         this.dialogue.show();
-
-        this.load_all_pages();
     },
 
     /**
