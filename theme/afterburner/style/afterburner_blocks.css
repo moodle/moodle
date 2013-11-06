@@ -182,11 +182,11 @@ img.iconsmall,
     padding: 0;
     border-radius: 0;
 }
-.moodle-actionmenu.show[data-enhanced] .menu a {
+.block.block_with_controls .moodle-actionmenu.show[data-enhanced] .menu a {
     color: #333333;
     display: block;
     padding: 2px 0.5em;
 }
-.moodle-actionmenu.show[data-enhanced] .menu {
+.block.block_with_controls .moodle-actionmenu.show[data-enhanced] .menu {
     left: 0;
 }
