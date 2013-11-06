@@ -103,8 +103,15 @@
     overflow-y: auto;
     padding: 1em;
 }
+.assignfeedback_editpdf_commentsearch ul li pre {
+    background-color: #efefef;
+}
+.assignfeedback_editpdf_commentsearch ul li pre:hover {
+    background-color: #ddd;
+}
 .assignfeedback_editpdf_commentsearch ul li {
-    line-height: 1.4em;
+    line-height: 0px;
+    margin: 2px;
 }
 .assignfeedback_editpdf_commentsearch a pre {
     font-family: helvetica;
@@ -198,9 +205,8 @@
 .assignfeedback_editpdf_menu li:hover,
 .assignfeedback_editpdf_menu li:hover a,
 .assignfeedback_editpdf_menu li a:hover {
-    background-color: #08c;
-    color: white;
-    text-decoration: underline;
+    background-color: #ebebeb;
+    background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
 }
 ul.assignfeedback_editpdf_menu {
     margin: 0px;
@@ -210,8 +216,12 @@ ul.assignfeedback_editpdf_menu {
     margin: 0px;
     border-radius: 4px;
 }
+.assignfeedback_editpdf_menu li img {
+    height: auto;
+}
 .assignfeedback_editpdf_menu li button {
     margin: 0px;
+    background: none;
 }
 
 .assignfeedback_editpdf_widget .pageheader button:hover {
