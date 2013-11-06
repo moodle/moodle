@@ -660,6 +660,16 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 anchor.replace(editform);
                 activity.one('div').appendChild(editinstructions);
 
+                // Force the editing instruction to match the mod-indent position.
+                var padside = 'left';
+                if (right_to_left()) {
+                    padside = 'right';
+                }
+                var mi = activity.one('.mod-indent'),
+                    instructionpad = parseInt(mi.getStyle('padding-' + padside), 10) +
+                            parseInt(mi.getStyle('margin-' + padside), 10);
+                editinstructions.setStyle('margin-' + padside, instructionpad + 'px');
+
                 // We hide various components whilst editing:
                 activity.addClass(CSS.EDITINGTITLE);
 
