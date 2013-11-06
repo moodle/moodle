@@ -425,7 +425,7 @@ class repository_boxnet extends repository {
      * @return null|stdClass with attribute 'filepath'
      */
     public function get_file_by_reference($reference) {
-        $reference = unserialize(self::convert_to_valid_reference($file->get_reference()));
+        $reference = unserialize(self::convert_to_valid_reference($reference->reference));
         $url = $reference->downloadurl;
         $c = new curl();
         $c->get($url, null, array('timeout' => self::SYNCIMAGE_TIMEOUT, 'followlocation' => true, 'nobody' => true));
