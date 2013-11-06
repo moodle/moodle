@@ -283,6 +283,13 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 }
 .section .activity .spinner {
     margin: 4px;
+    left: 100%;
+    position: absolute;
+}
+
+.dir-rtl .section .activity .spinner {
+    left: auto;
+    right: 100%;
 }
 
 /* Quick edit of module name */

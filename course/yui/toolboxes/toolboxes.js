@@ -344,11 +344,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'id'    : Y.Moodle.core_course.util.cm.getId(activity)
             };
             var spinner = this.add_spinner(activity);
-            if (BODY.hasClass('dir-ltr')) {
-                spinner.setStyle('left', '100%');
-            }  else {
-                spinner.setStyle('right', '100%');
-            }
             this.send_request(data, spinner);
 
             // Handle removal/addition of the moveleft button.
