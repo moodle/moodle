@@ -40,11 +40,12 @@
     right: 0;
 }
 
-.section .activity .mod-indent {
+.section .activity .mod-indent-outer {
+    display: table;
     padding-left: 24px;
 }
 
-.dir-rtl .section .activity .mod-indent {
+.dir-rtl .section .activity .mod-indent-outer {
     padding-left: auto;
     padding-right: 24px;
 }
@@ -69,16 +70,35 @@
 }
 
 .editing .sitetopic .section .activity .activityinstance,
-.editing .course-content .section .activity .activityinstance {
+.editing .course-content .section .activity .activityinstance,
+.editing .sitetopic .section .activity .contentwithoutlink,
+.editing .course-content .section .activity .contentwithoutlink {
     padding-right: 200px;
+}
+
+.dir-rtl.editing .sitetopic .section .activity .activityinstance,
+.dir-rtl.editing .course-content .section .activity .activityinstance,
+.dir-rtl.editing .sitetopic .section .activity .contentwithoutlink,
+.dir-rtl.editing .course-content .section .activity .contentwithoutlink {
+    padding-left: 200px;
+    padding-right: initial;
+}
+
+.sitetopic .section .activity .activityinstance,
+.course-content .section .activity .activityinstance,
+.sitetopic .section .activity .contentwithoutlink,
+.course-content .section .activity .contentwithoutlink {
+    padding-right: 32px;
     height: 2em;
     display: table-cell;
 }
 
-.dir-rtl.editing .sitetopic .section .activity .activityinstance,
-.dir-rtl.editing .course-content .section .activity .activityinstance {
-    padding-left: 200px;
-    padding-right: auto;
+.dir-rtl .sitetopic .section .activity .activityinstance,
+.dir-rtl .course-content .section .activity .activityinstance,
+.dir-rtl .sitetopic .section .activity .contentwithoutlink,
+.dir-rtl .course-content .section .activity .contentwithoutlink {
+    padding-left: 32px;
+    padding-right: initial;
 }
 
 .course-content .section .activity .filler {
@@ -132,7 +152,7 @@
 .sitetopic .section .activity .availabilityinfo,
 .sitetopic .section .activity .contentafterlink,
 .course-content .section .activity .availabilityinfo,
-.course-content .section .activity .contentafterlink { margin-top: 0.5em; margin-left: 30px;}
+.course-content .section .activity .contentafterlink { margin-top: 0.5em;}
 .dir-rtl .sitetopic .section .activity .availabilityinfo,
 .dir-rtl .sitetopic .section .activity .contentafterlink,
 .dir-rtl .course-content .section .activity .availabilityinfo,

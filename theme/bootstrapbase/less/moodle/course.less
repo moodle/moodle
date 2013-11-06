@@ -57,7 +57,7 @@
             top: 0;
         }
 
-        .mod-indent {
+        .mod-indent-outer {
             /**
              * Add appropriate padding such that nothing overlaps the
              * absolute positioned move icon.
@@ -72,7 +72,14 @@
             top: 0;
         }
 
+        .contentwithoutlink,
         .activityinstance {
+
+            min-width: 40%;
+            display: table-cell;
+            padding-right: 4px;
+            min-height: 2em;
+
             .dimmed {
                 img.activityicon {
                   opacity: 0.5;
@@ -114,12 +121,12 @@
             right: 100%;
         }
 
-        .mod-indent {
+        .mod-indent-outer {
             /**
              * Add appropriate padding such that nothing overlaps the
              * absolute positioned move icon.
              */
-            padding-left: auto;
+            padding-left: initial;
             padding-right: 32px;
         }
 
@@ -127,6 +134,12 @@
         .actions {
             left: 0;
             right: auto;
+        }
+
+        .contentwithoutlink,
+        .activityinstance {
+            padding-left: 4px;
+            padding-right: initial;
         }
     }
 }
@@ -162,11 +175,9 @@
 .editing {
     .section {
         .activity {
+            .contentwithoutlink,
             .activityinstance {
-                min-width: 40%;
-                display: table-cell;
                 padding-right: 200px;
-                min-height: 2em;
             }
         }
     }
@@ -175,6 +186,7 @@
 .dir-rtl.editing {
     .section {
         .activity {
+            .contentwithoutlink,
             .activityinstance {
                 padding-left: 200px;
                 padding-right: 0;

@@ -9,6 +9,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     var CSS = {
         ACTIVITYINSTANCE : 'activityinstance',
         AVAILABILITYINFODIV : 'div.availabilityinfo',
+        CONTENTWITHOUTLINK : 'contentwithoutlink',
         CONDITIONALHIDDEN : 'conditionalhidden',
         DIMCLASS : 'dimmed',
         DIMMEDTEXT : 'dimmed_text',
@@ -25,6 +26,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     },
     // The CSS selectors we use.
     SELECTOR = {
+        ACTIONAREA: '.actions',
         ACTIONLINKTEXT : '.actionlinktext',
         ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_title',
         ACTIVITYFORM : '.' + CSS.ACTIVITYINSTANCE + ' form',
@@ -35,11 +37,13 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         ACTIVITYTITLE : 'input[name=title]',
         COMMANDSPAN : '.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
+        CONTENTWITHOUTLINK : 'div.contentwithoutlink',
         EDITTITLE: 'a.editing_title',
         HIDE : 'a.editing_hide',
         HIGHLIGHT : 'a.editing_highlight',
         INSTANCENAME : 'span.instancename',
         MODINDENTDIV : '.mod-indent',
+        MODINDENTOUTER : '.mod-indent-outer',
         PAGECONTENT : 'div#page-content',
         SECTIONLI : 'li.section',
         SHOW : 'a.'+CSS.SHOW,
@@ -291,13 +295,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             }
         },
         add_spinner: function(activity) {
-            var instance = activity.one(SELECTOR.ACTIVITYINSTANCE);
-
-            if (instance) {
-                return M.util.add_spinner(Y, instance);
-            } else {
-                return M.util.add_spinner(Y, activity);
-            }
+            var actionarea = activity.one(SELECTOR.ACTIONAREA);
+            return M.util.add_spinner(Y, actionarea);
         },
 
         /**
@@ -506,7 +505,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          */
         handle_resource_dim : function(button, activity, action) {
             var toggleclass = CSS.DIMCLASS,
-                dimarea = activity.one('a'),
+                dimarea = activity.one('a, .contentwithoutlink'),
                 availabilityinfo = activity.one(CSS.AVAILABILITYINFODIV),
                 nextaction = (action === 'hide') ? 'show' : 'hide',
                 buttontext = button.one('span'),
@@ -524,11 +523,12 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 buttontext.set('text', newstring);
             }
 
-            // If activity is conditionally hidden, then don't toggle.
-            if (Y.Moodle.core_course.util.cm.getName(activity) === null) {
+            if (activity.one(SELECTOR.CONTENTWITHOUTLINK)) {
+                dimarea = activity.one(SELECTOR.CONTENTWITHOUTLINK);
                 toggleclass = CSS.DIMMEDTEXT;
-                dimarea = activity.all(SELECTOR.MODINDENTDIV + ' > div').item(1);
             }
+
+            // If activity is conditionally hidden, then don't toggle.
             if (!dimarea.hasClass(CSS.CONDITIONALHIDDEN)) {
                 // Change the UI.
                 dimarea.toggleClass(toggleclass);
