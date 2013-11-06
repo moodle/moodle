@@ -283,6 +283,13 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 }
 .section .activity .spinner {
     margin: 4px;
+    left: 100%;
+    position: absolute;
+}
+
+.dir-rtl .section .activity .spinner {
+    left: auto;
+    right: 100%;
 }
 
 /* Quick edit of module name */
@@ -308,7 +315,10 @@ span.editinstructions {
 .dir-rtl span.editinstructions { left: auto; right: 32px;}
 input.titleeditor { vertical-align: text-bottom; }
 .editing .course-content .section .activity.editor_displayed .activityinstance {
-    padding: initial;
+    padding-right: initial;
+}
+.dir-rtl.editing .course-content .section .activity.editor_displayed .activityinstance {
+    padding-left: initial;
 }
 
 /* Course drag and drop upload styles */

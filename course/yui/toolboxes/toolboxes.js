@@ -344,11 +344,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 'id'    : Y.Moodle.core_course.util.cm.getId(activity)
             };
             var spinner = this.add_spinner(activity);
-            if (BODY.hasClass('dir-ltr')) {
-                spinner.setStyle('left', '100%');
-            }  else {
-                spinner.setStyle('right', '100%');
-            }
             this.send_request(data, spinner);
 
             // Handle removal/addition of the moveleft button.
@@ -664,6 +659,16 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 editform.setData('anchor', anchor);
                 anchor.replace(editform);
                 activity.one('div').appendChild(editinstructions);
+
+                // Force the editing instruction to match the mod-indent position.
+                var padside = 'left';
+                if (right_to_left()) {
+                    padside = 'right';
+                }
+                var mi = activity.one('.mod-indent'),
+                    instructionpad = parseInt(mi.getStyle('padding-' + padside), 10) +
+                            parseInt(mi.getStyle('margin-' + padside), 10);
+                editinstructions.setStyle('margin-' + padside, instructionpad + 'px');
 
                 // We hide various components whilst editing:
                 activity.addClass(CSS.EDITINGTITLE);

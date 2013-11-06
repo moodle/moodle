@@ -1595,8 +1595,13 @@ a.disabled {
     width: 0;
     height: 0;
     vertical-align: top;
-    border-top: 4px solid #000;
+    border-top: 4px solid #777;
     border-right: 4px solid transparent;
     border-left: 4px solid transparent;
     content: "";
+}
+
+a:focus .caret,
+a:hover .caret {
+    border-top-color: #555;
 }

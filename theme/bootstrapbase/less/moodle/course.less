@@ -45,9 +45,9 @@
     }
     .activity {
         .spinner {
-            margin: 4px;
-            left: 0;
+            left: 100%;
             position: absolute;
+            vertical-align: text-bottom;
         }
 
         .editing_move {
@@ -95,7 +95,7 @@
             display: none;
         }
         div.activityinstance {
-            padding: initial;
+            padding-right: initial;
 
             input {
                 margin-bottom: initial;
@@ -110,13 +110,8 @@
 .dir-rtl .section {
     .activity {
         .spinner {
-            left: 0;
-        }
-
-        .editing_move {
-            /* Move the move icon to the start of the line */
             left: auto;
-            right: 0;
+            right: 100%;
         }
 
         .mod-indent {
@@ -132,6 +127,22 @@
         .actions {
             left: 0;
             right: auto;
+        }
+    }
+}
+
+.dir-rtl.editing .section {
+    .activity {
+        .editing_move {
+            /* Move the move icon to the start of the line */
+            left: auto;
+            right: 0;
+        }
+
+        &.editor_displayed {
+            div.activityinstance {
+                padding-left: initial;
+            }
         }
     }
 }
@@ -413,7 +424,6 @@ input.titleeditor {
 span.editinstructions {
     position: absolute;
     top: 0;
-    left: 0;
     margin-top: -22px;
     margin-left: 30px;
     line-height: 16px;
@@ -427,8 +437,6 @@ span.editinstructions {
     border: 1px solid @infoBorder;
 }
 .dir-rtl span.editinstructions {
-    left: auto;
-    right: 32px;
 }
 
 /* Course drag and drop upload styles */
@@ -727,6 +735,7 @@ span.editinstructions {
 }
 
 .section {
+    .summary,
     .activity {
         .iconsmall {
             width: 16px;
