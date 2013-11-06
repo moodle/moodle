@@ -736,38 +736,13 @@ M.course_dndupload = {
                     var result = JSON.parse(xhr.responseText);
                     if (result) {
                         if (result.error == 0) {
-                            // All OK - update the dummy element
-                            if (result.content) {
-                                // A label
-                                resel.indentdiv.innerHTML = '<div class="activityinstance" ></div>' + result.content + result.commands;
-                            } else {
-                                // Not a label
-                                resel.icon.src = result.icon;
-                                resel.a.href = result.link;
-                                resel.namespan.innerHTML = result.name;
-
-                                if (!parseInt(result.visible, 10)) {
-                                    resel.a.className = 'dimmed';
-                                }
-
-                                if (result.groupingname) {
-                                    resel.groupingspan.innerHTML = '(' + result.groupingname + ')';
-                                } else {
-                                    resel.div.removeChild(resel.groupingspan);
-                                }
-
-                                resel.div.removeChild(resel.progressouter);
-                                resel.indentdiv.innerHTML += result.commands;
-                                if (result.onclick) {
-                                    resel.a.onclick = result.onclick;
-                                }
-                                if (self.Y.UA.gecko > 0) {
-                                    // Fix a Firefox bug which makes sites with a '~' in their wwwroot
-                                    // log the user out when clicking on the link (before refreshing the page).
-                                    resel.div.innerHTML = unescape(resel.div.innerHTML);
-                                }
+                            // All OK - replace the dummy element.
+                            resel.li.outerHTML = result.fullcontent;
+                            if (self.Y.UA.gecko > 0) {
+                                // Fix a Firefox bug which makes sites with a '~' in their wwwroot
+                                // log the user out when clicking on the link (before refreshing the page).
+                                resel.li.outerHTML = unescape(resel.li.outerHTML);
                             }
-                            resel.li.id = result.elementid;
                             self.add_editing(result.elementid);
                         } else {
                             // Error - remove the dummy element
@@ -986,39 +961,14 @@ M.course_dndupload = {
                     var result = JSON.parse(xhr.responseText);
                     if (result) {
                         if (result.error == 0) {
-                            // All OK - update the dummy element
-                            if (result.content) {
-                                // A label
-                                resel.indentdiv.innerHTML = '<div class="activityinstance" ></div>' + result.content + result.commands;
-                            } else {
-                                // Not a label
-                                resel.icon.src = result.icon;
-                                resel.a.href = result.link;
-                                resel.namespan.innerHTML = result.name;
-
-                                if (!parseInt(result.visible, 10)) {
-                                    resel.a.className = 'dimmed';
-                                }
-
-                                if (result.groupingname) {
-                                    resel.groupingspan.innerHTML = '(' + result.groupingname + ')';
-                                } else {
-                                    resel.div.removeChild(resel.groupingspan);
-                                }
-
-                                resel.div.removeChild(resel.progressouter);
-                                resel.div.innerHTML += result.commands;
-                                if (result.onclick) {
-                                    resel.a.onclick = result.onclick;
-                                }
-                                if (self.Y.UA.gecko > 0) {
-                                    // Fix a Firefox bug which makes sites with a '~' in their wwwroot
-                                    // log the user out when clicking on the link (before refreshing the page).
-                                    resel.div.innerHTML = unescape(resel.div.innerHTML);
-                                }
+                            // All OK - replace the dummy element.
+                            resel.li.outerHTML = result.fullcontent;
+                            if (self.Y.UA.gecko > 0) {
+                                // Fix a Firefox bug which makes sites with a '~' in their wwwroot
+                                // log the user out when clicking on the link (before refreshing the page).
+                                resel.li.outerHTML = unescape(resel.li.outerHTML);
                             }
-                            resel.li.id = result.elementid;
-                            self.add_editing(result.elementid, sectionnumber);
+                            self.add_editing(result.elementid);
                         } else {
                             // Error - remove the dummy element
                             resel.parent.removeChild(resel.li);
