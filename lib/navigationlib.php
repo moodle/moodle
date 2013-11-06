@@ -1136,7 +1136,6 @@ class global_navigation extends navigation_node {
         }
 
         $canviewcourseprofile = true;
-
         // Next load context specific content into the navigation
         switch ($this->page->context->contextlevel) {
             case CONTEXT_SYSTEM :
@@ -1382,7 +1381,7 @@ class global_navigation extends navigation_node {
      * @return array An array of navigation_nodes one for each course
      */
     protected function load_all_courses($categoryids = null) {
-        global $CFG, $DB, $SITE;
+        global $CFG, $DB, $SITE, $USER;
 
         // Work out the limit of courses.
         $limit = 20;
@@ -1403,6 +1402,27 @@ class global_navigation extends navigation_node {
 
         // Check if we need to show categories.
         if ($this->show_categories()) {
+            // IOMAD - If not logged in, don't show any courses in the navigation.
+            if (!isloggedin()) {
+                return array();
+            }
+            if (iomad::is_company_user()) {
+                $company = company::get_company_byuserid($USER->id);
+                $sharedsql = " AND ( c.id IN (
+                                   SELECT courseid FROM {company_course}
+                                   WHERE companyid = $company->id)
+                               OR c.id IN (
+                                   SELECT courseid FROM {iomad_courses}
+                                   WHERE shared=1)
+                               OR c.id IN (
+                                   SELECT courseid FROM {company_shared_courses}
+                                   WHERE companyid = $company->id)) ";
+            } else if (!is_siteadmin()) {
+                $sharedsql = " AND c.id IN (select courseid FROM {iomad_courses} WHERE shared=1) ";
+            } else {
+                $sharedsql = "";
+            }
+
             // Hmmm we need to show categories... this is going to be painful.
             // We now need to fetch up to $limit courses for each category to
             // be displayed.
@@ -1422,10 +1442,13 @@ class global_navigation extends navigation_node {
 
             // First up we are going to get the categories that we are going to
             // need so that we can determine how best to load the courses from them.
+            // IOMAD - Add $sharedsql after $categorywhere to hide other company
+            // categories.
             $sql = "SELECT cc.id, COUNT(c.id) AS coursecount
                         FROM {course_categories} cc
                     LEFT JOIN {course} c ON c.category = cc.id
                             {$categorywhere}
+                            {$sharedsql}
                     GROUP BY cc.id";
             $categories = $DB->get_recordset_sql($sql, $categoryparams);
             $fullfetch = array();
@@ -1589,7 +1612,6 @@ class global_navigation extends navigation_node {
      */
     protected function load_all_categories($categoryid = self::LOAD_ROOT_CATEGORIES, $showbasecategories = false) {
         global $CFG, $DB;
-
         // Check if this category has already been loaded
         if ($this->allcategoriesloaded || ($categoryid < 1 && $this->is_category_fully_loaded($categoryid))) {
             return true;
@@ -1635,8 +1657,16 @@ class global_navigation extends navigation_node {
         }
 
         $categoriesrs = $DB->get_recordset_sql("$sqlselect $sqlwhere $sqlorder", $params);
+
+        // IOMAD - Filter out the unwanted categories
+        if (!is_siteadmin()) {
+            $categoriesiomad = iomad::iomad_filter_categories($categoriesrs);
+        } else {
+            $categoriesiomad = $categoriesrs;
+        }
+
         $categories = array();
-        foreach ($categoriesrs as $category) {
+        foreach ($categoriesiomad as $category) {
             // Preload the context.. we'll need it when adding the category in order
             // to format the category name.
             context_helper::preload_from_record($category);

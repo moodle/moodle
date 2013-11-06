@@ -901,10 +901,29 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         } else {
             $fields[] = $DB->sql_substr('c.summary', 1, 1). ' as hassummary';
         }
+
+        // IOMAD - Remove courses which don't belong to your company
+        // and add in shared courses.
+        if (!is_siteadmin()) {
+            $whereclause .= " AND (
+                               c.id IN (
+                                SELECT courseid FROM {company_course}
+                                WHERE companyid = :companyid
+                               ) OR c.id IN (
+                                SELECT courseid FROM {iomad_courses}
+                                WHERE shared = 2
+                               )
+                              )";
+            $companyid = iomad::get_my_companyid(context_system::instance());
+            $params['companyid'] = $companyid;
+        }
+
         $sql = "SELECT ". join(',', $fields). ", $ctxselect
                 FROM {course} c
                 JOIN {context} ctx ON c.id = ctx.instanceid AND ctx.contextlevel = :contextcourse
                 WHERE ". $whereclause." ORDER BY c.sortorder";
+
+
         $list = $DB->get_records_sql($sql,
                 array('contextcourse' => CONTEXT_COURSE) + $params);
 
@@ -1419,6 +1438,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $courses = array();
             if (!empty($ids)) {
                 list($sql, $params) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'id');
+
                 $records = self::get_course_records("c.id ". $sql, $params, $options);
                 // Preload course contacts if necessary - saves DB queries later to do it for each course separately.
                 if (!empty($options['coursecontacts'])) {
@@ -2189,6 +2209,12 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
                 $names[$id] = join($separator, $namechunks);
             }
         }
+
+        // IOMAD :  Filter the list of categories.
+        if (!is_siteadmin()) {
+            $names = iomad::iomad_filter_categories($names);
+        }
+
         return $names;
     }
 

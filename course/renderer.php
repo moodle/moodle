@@ -1368,6 +1368,12 @@ class core_course_renderer extends plugin_renderer_base {
         if (!$chelper->get_categories_display_option('nodisplay')) {
             $subcategories = $coursecat->get_children($chelper->get_categories_display_options());
         }
+
+        // IOMAD:  Filter out unwanted categories
+        if (!is_siteadmin()) {
+            $subcategories = iomad::iomad_filter_categories($subcategories);
+        }        
+
         $totalcount = $coursecat->get_children_count();
         if (!$totalcount) {
             // Note that we call get_child_categories_count() AFTER get_child_categories() to avoid extra DB requests.
@@ -1566,7 +1572,6 @@ class core_course_renderer extends plugin_renderer_base {
         if (empty($categorycontent)) {
             return '';
         }
-
         // Start content generation
         $content = '';
         $attributes = $chelper->get_and_erase_attributes('course_category_tree clearfix');
@@ -1608,7 +1613,6 @@ class core_course_renderer extends plugin_renderer_base {
         $coursecat = coursecat::get(is_object($category) ? $category->id : $category);
         $site = get_site();
         $output = '';
-
         $this->page->set_button($this->course_search_form('', 'navbar'));
         if (!$coursecat->id) {
             if (can_edit_in_category()) {
