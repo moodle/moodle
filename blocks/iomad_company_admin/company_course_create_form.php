@@ -61,10 +61,18 @@ class course_edit_form extends moodleform {
         $mform->setType('shortname', PARAM_MULTILANG);
 
         // Create course as self enrolable.
+        if (has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+            $selectarray = array(get_string('selfenrolled', 'block_iomad_company_admin'),
+                                 get_string('enrolled', 'block_iomad_company_admin'),
+                                 get_string('licensedcourse', 'block_iomad_company_admin'));
+        } else {
+            $selectarray = array(get_string('selfenrolled', 'block_iomad_company_admin'),
+                                 get_string('enrolled', 'block_iomad_company_admin'));
+        }
         $select = &$mform->addElement('select', 'selfenrol',
-                            get_string('selfenrolcoursetype', 'block_iomad_company_admin'),
-                            array('No', 'Yes'));
-        $mform->addHelpButton('selfenrol', 'selfenrolcourse', 'block_iomad_company_admin');
+                            get_string('enrolcoursetype', 'block_iomad_company_admin'),
+                            $selectarray);
+        $mform->addHelpButton('selfenrol', 'enrolcourse', 'block_iomad_company_admin');
         $select->setSelected('no');
 
         $mform->addElement('editor', 'summary_editor',
@@ -192,7 +200,7 @@ if ($mform->is_cancelled()) {
 
     // If licensed course, turn off all enrolments apart from license enrolment as
     // default  Moving this to a separate page.
-    if ($data->selfenrol) {
+    if ($data->selfenrol == 0 ) {
         if ($instances = $DB->get_records('enrol', array('courseid' => $course->id))) {
             foreach ($instances as $instance) {
                 $updateinstance = (array) $instance;
@@ -201,7 +209,35 @@ if ($mform->is_cancelled()) {
                 } else if ($instance->enrol == 'license') {
                     $updateinstance['status'] = 1;
                 } else if ($instance->enrol == 'manual') {
+                    $updateinstance['status'] = 1;
+                }
+                $DB->update_record('enrol', $updateinstance);
+            }
+        }
+    } else if ($data->selfenrol == 1 ) {
+        if ($instances = $DB->get_records('enrol', array('courseid' => $course->id))) {
+            foreach ($instances as $instance) {
+                $updateinstance = (array) $instance;
+                if ($instance->enrol == 'self') {
+                    $updateinstance['status'] = 1;
+                } else if ($instance->enrol == 'license') {
+                    $updateinstance['status'] = 1;
+                } else if ($instance->enrol == 'manual') {
                     $updateinstance['status'] = 0;
+                }
+                $DB->update_record('enrol', $updateinstance);
+            }
+        }
+    } else if ($data->selfenrol == 2 ) {
+        if ($instances = $DB->get_records('enrol', array('courseid' => $course->id))) {
+            foreach ($instances as $instance) {
+                $updateinstance = (array) $instance;
+                if ($instance->enrol == 'self') {
+                    $updateinstance['status'] = 1;
+                } else if ($instance->enrol == 'license') {
+                    $updateinstance['status'] = 0;
+                } else if ($instance->enrol == 'manual') {
+                    $updateinstance['status'] = 1;
                 }
                 $DB->update_record('enrol', $updateinstance);
             }
@@ -211,10 +247,12 @@ if ($mform->is_cancelled()) {
     // Associate the company with the course.
     $company = new company($companyid);
     // Check if we are a company manager.
-    if ($DB->get_record('company_users', array('companyid' => $companyid,
+    if ($data->selfenrol != 2 && $DB->get_record('company_users', array('companyid' => $companyid,
                                                    'userid' => $USER->id,
                                                    'managertype' => 1))) {
         $company->add_course($course, 0, true);
+    } else if ($data->selfenrol == 2) {
+        $company->add_course($course, 0, false, true);
     } else {
         $company->add_course($course);
     }
