@@ -315,7 +315,10 @@ span.editinstructions {
 .dir-rtl span.editinstructions { left: auto; right: 32px;}
 input.titleeditor { vertical-align: text-bottom; }
 .editing .course-content .section .activity.editor_displayed .activityinstance {
-    padding: initial;
+    padding-right: initial;
+}
+.dir-rtl.editing .course-content .section .activity.editor_displayed .activityinstance {
+    padding-left: initial;
 }
 
 /* Course drag and drop upload styles */

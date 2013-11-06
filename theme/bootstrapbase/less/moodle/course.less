@@ -95,7 +95,7 @@
             display: none;
         }
         div.activityinstance {
-            padding: initial;
+            padding-right: initial;
 
             input {
                 margin-bottom: initial;
@@ -114,12 +114,6 @@
             right: 100%;
         }
 
-        .editing_move {
-            /* Move the move icon to the start of the line */
-            left: auto;
-            right: 0;
-        }
-
         .mod-indent {
             /**
              * Add appropriate padding such that nothing overlaps the
@@ -133,6 +127,22 @@
         .actions {
             left: 0;
             right: auto;
+        }
+    }
+}
+
+.dir-rtl.editing .section {
+    .activity {
+        .editing_move {
+            /* Move the move icon to the start of the line */
+            left: auto;
+            right: 0;
+        }
+
+        &.editor_displayed {
+            div.activityinstance {
+                padding-left: initial;
+            }
         }
     }
 }
