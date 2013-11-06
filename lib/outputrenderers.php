@@ -1057,6 +1057,7 @@ class core_renderer extends renderer_base {
         if ($blockid !== null) {
             $menu->set_owner_selector('#'.$blockid);
         }
+        $menu->set_constraint('.block-region');
         $menu->attributes['class'] .= ' block-control-actions commands';
         if (isset($CFG->blockeditingmenu) && !$CFG->blockeditingmenu) {
             $menu->do_not_enhance();
@@ -1122,7 +1123,7 @@ class core_renderer extends renderer_base {
                 $text .= $this->render($action->text);
             } else {
                 $text .= $action->text;
-                $comparetoalt = $action->text;
+                $comparetoalt = (string)$action->text;
             }
             $text .= html_writer::end_tag('span');
         }
@@ -1133,8 +1134,16 @@ class core_renderer extends renderer_base {
             if ($action->primary || !$action->actionmenu->will_be_enhanced()) {
                 $action->attributes['title'] = $action->text;
             }
-            if ($icon->attributes['alt'] === $comparetoalt && $action->actionmenu->will_be_enhanced()) {
+            if ((string)$icon->attributes['alt'] === $comparetoalt && $action->actionmenu->will_be_enhanced()) {
                 $icon->attributes['alt'] = ' ';
+            }
+            if (!$action->primary && $action->actionmenu->will_be_enhanced()) {
+                if ((string)$icon->attributes['alt'] === $comparetoalt) {
+                    $icon->attributes['alt'] = ' ';
+                }
+                if (isset($icon->attributes['title']) && (string)$icon->attributes['title'] === $comparetoalt) {
+                    unset($icon->attributes['title']);
+                }
             }
             $icon = $this->render($icon);
         }
@@ -1150,6 +1159,16 @@ class core_renderer extends renderer_base {
         $attributes['href'] = $action->url;
 
         return html_writer::tag('a', $icon.$text, $attributes);
+    }
+
+    /**
+     * Renders a primary action_menu_filler item.
+     *
+     * @param action_menu_link_filler $action
+     * @return string HTML fragment
+     */
+    protected function render_action_menu_filler(action_menu_filler $action) {
+        return html_writer::span('&nbsp;', 'filler');
     }
 
     /**
@@ -2055,7 +2074,7 @@ class core_renderer extends renderer_base {
     public function heading_with_help($text, $helpidentifier, $component = 'moodle', $icon = '', $iconalt = '', $level = 2, $classnames = null) {
         $image = '';
         if ($icon) {
-            $image = $this->pix_icon($icon, $iconalt, $component, array('class'=>'icon'));
+            $image = $this->pix_icon($icon, $iconalt, $component, array('class'=>'icon iconlarge'));
         }
 
         $help = '';
@@ -3199,7 +3218,12 @@ EOD;
             'data-blockregion' => $displayregion,
             'data-droptarget' => '1'
         );
-        return html_writer::tag($tag, $this->blocks_for_region($region), $attributes);
+        if ($this->page->blocks->region_has_content($region, $this)) {
+            $content = $this->blocks_for_region($region);
+        } else {
+            $content = '';
+        }
+        return html_writer::tag($tag, $content, $attributes);
     }
 
     /**

@@ -81,8 +81,10 @@ function block_html_pluginfile($course, $birecord_or_cm, $context, $filearea, $a
         $forcedownload = true;
     }
 
+    // NOTE: it woudl be nice to have file revisions here, for now rely on standard file lifetime,
+    //       do not lower it because the files are dispalyed very often.
     \core\session\manager::write_close();
-    send_stored_file($file, 60*60, 0, $forcedownload, $options);
+    send_stored_file($file, null, 0, $forcedownload, $options);
 }
 
 /**

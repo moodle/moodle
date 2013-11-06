@@ -25,38 +25,15 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_quiz_generator extends testing_module_generator {
 
-    /**
-     * Create new quiz module instance.
-     * @param array|stdClass $record
-     * @param array $options (mostly course_module properties)
-     * @return stdClass activity record with extra cmid field
-     */
     public function create_instance($record = null, array $options = null) {
         global $CFG;
-        require_once("$CFG->dirroot/mod/quiz/locallib.php");
-
-        $this->instancecount++;
-        $i = $this->instancecount;
-
+        require_once($CFG->dirroot.'/mod/quiz/locallib.php');
         $record = (object)(array)$record;
-        $options = (array)$options;
-
-        if (empty($record->course)) {
-            throw new coding_exception('module generator requires $record->course');
-        }
-        if (isset($options['idnumber'])) {
-            $record->cmidnumber = $options['idnumber'];
-        } else {
-            $record->cmidnumber = '';
-        }
 
         $alwaysvisible = mod_quiz_display_options::DURING | mod_quiz_display_options::IMMEDIATELY_AFTER |
                 mod_quiz_display_options::LATER_WHILE_OPEN | mod_quiz_display_options::AFTER_CLOSE;
 
         $defaultquizsettings = array(
-            'name'                   => get_string('pluginname', 'quiz').' '.$i,
-            'intro'                  => 'Test quiz ' . $i,
-            'introformat'            => FORMAT_MOODLE,
             'timeopen'               => 0,
             'timeclose'              => 0,
             'preferredbehaviour'     => 'deferredfeedback',
@@ -99,8 +76,6 @@ class mod_quiz_generator extends testing_module_generator {
             }
         }
 
-        $record->coursemodule = $this->precreate_course_module($record->course, $options);
-        $id = quiz_add_instance($record);
-        return $this->post_add_instance($id, $record->coursemodule);
+        return parent::create_instance($record, (array)$options);
     }
 }

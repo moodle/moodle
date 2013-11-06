@@ -56,7 +56,7 @@ Feature: Course activity controls works as expected
     And I indent left "Test forum name 1" activity
     And "#section-2" "css_element" <should_see_other_sections> exists
     And I open "Test forum name 1" actions menu
-    And I click on "Update" "link" in the "Test forum name 1" activity
+    And I click on "Edit settings" "link" in the "Test forum name 1" activity
     And I should see "Updating Forum"
     And I should see "Display description on course page"
     And I press "Save and return to course"
@@ -128,7 +128,7 @@ Feature: Course activity controls works as expected
     And "#section-2" "css_element" <should_see_other_sections> exists
     And I indent left "Test forum name 1" activity
     And "#section-2" "css_element" <should_see_other_sections> exists
-    And I click on "Update" "link" in the "Test forum name 1" activity
+    And I click on "Edit settings" "link" in the "Test forum name 1" activity
     And I should see "Updating Forum"
     And I should see "Display description on course page"
     And I press "Save and return to course"

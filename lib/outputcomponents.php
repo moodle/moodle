@@ -3109,9 +3109,21 @@ class action_menu implements renderable {
 
     /**
      * An icon to use for the toggling the secondary menu (dropdown).
-     * @var pix_icon
+     * @var actionicon
      */
     public $actionicon;
+
+    /**
+     * Any text to use for the toggling the secondary menu (dropdown).
+     * @var menutrigger
+     */
+    public $menutrigger = '';
+
+    /**
+     * Place the action menu before all other actions.
+     * @var prioritise
+     */
+    public $prioritise = false;
 
     /**
      * Constructs the action menu with the given items.
@@ -3140,16 +3152,14 @@ class action_menu implements renderable {
             'aria-labelledby' => 'action-menu-toggle-'.$this->instance,
             'role' => 'menu'
         );
-        $this->actionicon = new pix_icon(
-            't/contextmenu',
-            new lang_string('actions', 'moodle'),
-            'moodle',
-            array('class' => 'iconsmall', 'title' => '')
-        );
         $this->set_alignment(self::TR, self::BR);
         foreach ($actions as $action) {
             $this->add($action);
         }
+    }
+
+    public function set_menu_trigger($trigger) {
+        $this->menutrigger = $trigger;
     }
 
     /**
@@ -3172,7 +3182,7 @@ class action_menu implements renderable {
      * @param action_menu_link|pix_icon|string $action
      */
     public function add($action) {
-        if ($action instanceof action_menu_link) {
+        if ($action instanceof action_link) {
             if ($action->primary) {
                 $this->add_primary_action($action);
             } else {
@@ -3227,7 +3237,22 @@ class action_menu implements renderable {
             $output = $OUTPUT;
         }
         $pixicon = $this->actionicon;
-        $title = new lang_string('actions', 'moodle');
+        $linkclasses = array('toggle-display');
+
+        $title = '';
+        if (!empty($this->menutrigger)) {
+            $pixicon = '<b class="caret"></b>';
+            $linkclasses[] = 'textmenu';
+        } else {
+            $title = new lang_string('actions', 'moodle');
+            $this->actionicon = new pix_icon(
+                't/edit_menu',
+                '',
+                'moodle',
+                array('class' => 'iconsmall actionmenu', 'title' => '')
+            );
+            $pixicon = $this->actionicon;
+        }
         if ($pixicon instanceof renderable) {
             $pixicon = $output->render($pixicon);
             if ($pixicon instanceof pix_icon && isset($pixicon->attributes['alt'])) {
@@ -3240,12 +3265,17 @@ class action_menu implements renderable {
         }
         $actions = $this->primaryactions;
         $attributes = array(
-            'class' => 'toggle-display',
+            'class' => implode(' ', $linkclasses),
             'title' => $title,
             'id' => 'action-menu-toggle-'.$this->instance,
             'role' => 'menuitem'
         );
-        $actions[] = html_writer::link('#', $string.$pixicon, $attributes);
+        $link = html_writer::link('#', $string . $this->menutrigger . $pixicon, $attributes);
+        if ($this->prioritise) {
+            array_unshift($actions, $link);
+        } else {
+            $actions[] = $link;
+        }
         return $actions;
     }
 
@@ -3312,7 +3342,7 @@ class action_menu implements renderable {
      *
      * @param string $ancestorselector A snippet of CSS used to identify the ancestor to contrain the dialogue to.
      */
-    public function set_contraint($ancestorselector) {
+    public function set_constraint($ancestorselector) {
         $this->attributessecondary['data-constraint'] = $ancestorselector;
     }
 
@@ -3332,6 +3362,29 @@ class action_menu implements renderable {
      */
     public function will_be_enhanced() {
         return isset($this->attributes['data-enhance']);
+    }
+}
+
+/**
+ * An action menu filler
+ *
+ * @package core
+ * @category output
+ * @copyright 2013 Andrew Nicols
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class action_menu_filler extends action_link implements renderable {
+
+    /**
+     * True if this is a primary action. False if not.
+     * @var bool
+     */
+    public $primary = true;
+
+    /**
+     * Constructs the object.
+     */
+    public function __construct() {
     }
 }
 

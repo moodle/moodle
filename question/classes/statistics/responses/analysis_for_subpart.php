@@ -18,8 +18,7 @@
  *
  * 'Classes' to classify the sub parts of a question response into.
  *
- * @package    core
- * @subpackage questionbank
+ * @package    core_question
  * @copyright  2013 The Open University
  * @author     James Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

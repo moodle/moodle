@@ -118,6 +118,25 @@ class behat_general extends behat_base {
     }
 
     /**
+     * Switches to the specified iframe.
+     *
+     * @Given /^I switch to "(?P<iframe_name_string>(?:[^"]|\\")*)" iframe$/
+     * @param string $iframename
+     */
+    public function switch_to_iframe($iframename) {
+        $this->getSession()->switchToIFrame($iframename);
+    }
+
+    /**
+     * Switches to the main Moodle frame.
+     *
+     * @Given /^I switch to the main frame$/
+     */
+    public function switch_to_the_main_frame() {
+        $this->getSession()->switchToIFrame();
+    }
+
+    /**
      * Switches to the specified window. Useful when interacting with popup windows.
      *
      * @Given /^I switch to "(?P<window_name_string>(?:[^"]|\\")*)" window$/
@@ -621,6 +640,15 @@ class behat_general extends behat_base {
             // It passes.
             return;
         }
+    }
+
+    /**
+     * This step triggers cron like a user would do going to admin/cron.php.
+     *
+     * @Given /^I trigger cron$/
+     */
+    public function i_trigger_cron() {
+        $this->getSession()->visit($this->locate_path('/admin/cron.php'));
     }
 
 }

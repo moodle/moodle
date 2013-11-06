@@ -432,7 +432,7 @@ function resource_pluginfile($course, $cm, $context, $filearea, $args, $forcedow
     }
 
     // finally send the file
-    send_stored_file($file, 86400, $filter, $forcedownload, $options);
+    send_stored_file($file, null, $filter, $forcedownload, $options);
 }
 
 /**

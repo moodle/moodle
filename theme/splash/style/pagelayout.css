@@ -427,6 +427,7 @@ input[type=text],textarea,select,input[type=password]{
     clear:both;
     margin:0;
     padding:5px 0 0 10px;
+    margin: 0 10px;
 }
 .block-region .block .content .commands{
     border:0 none;
@@ -778,4 +779,16 @@ table.quizreviewsummary {
 .side-post-only #page-content #region-main-box{
     left:0;
     padding-top:10px;
+}
+
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview #page {
+    width: 100%;
+}
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
+    min-height: 100%;
+    margin-bottom: 0;
+}
+
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview .mediaplugin {
+    padding-top: 10px;
 }

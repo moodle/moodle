@@ -52,6 +52,10 @@ information provided here is intended especially for developers.
 * New class introduced to help auto generate zIndex values for modal dialogues. Class "moodle-has-zindex"
   should set on any element which uses a non-default zindex and needs to ensure it doesn't show above a
   dialogue.
+* $CFG->filelifetime is now used consistently for most file serving operations, the default was lowered
+  to 6 hours from 24 hours because etags and x-sendfile support should make file serving less expensive.
+* Date format locale charset for windows server will come from calendar type and for gregorian it will use
+  lang file.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices

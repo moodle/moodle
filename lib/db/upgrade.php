@@ -1600,6 +1600,8 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2013021801.01) {
+        // This upgrade step is re-written under MDL-38228 (see below).
+        /*
         // Retrieve the list of course_sections as a recordset to save memory
         $coursesections = $DB->get_recordset('course_sections', null, 'course, id', 'id, course, sequence');
         foreach ($coursesections as $coursesection) {
@@ -1643,7 +1645,7 @@ function xmldb_main_upgrade($oldversion) {
             }
         }
         $coursesections->close();
-
+        */
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2013021801.01);
     }
@@ -1693,6 +1695,9 @@ function xmldb_main_upgrade($oldversion) {
     // This is checking to see if the site has been running a specific version with a bug in it
     // because this upgrade step is slow and is only needed if the site has been running with the affected versions.
     if ($oldversion >= 2012062504.08 && $oldversion < 2012062504.13) {
+        // This upgrade step is re-written under MDL-38228 (see below).
+
+        /*
         // Retrieve the list of course_sections as a recordset to save memory.
         // This is to fix a regression caused by MDL-37939.
         // In this case the upgrade step is fixing records where:
@@ -1751,6 +1756,7 @@ function xmldb_main_upgrade($oldversion) {
         $coursesections->close();
 
         // No savepoint needed for this change.
+         */
     }
 
     if ($oldversion < 2013032200.01) {
@@ -2772,6 +2778,59 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2013102500.01);
+    }
+
+    if ($oldversion < 2013110400.00) {
+
+        if (!check_dir_exists($CFG->dirroot . '/theme/mymobile', false)) {
+            // Delete from config_plugins.
+            $DB->delete_records('config_plugins', array('plugin' => 'theme_mymobile'));
+            // Delete the config logs.
+            $DB->delete_records('config_log', array('plugin' => 'theme_mymobile'));
+
+            // Replace the mymobile settings.
+            $DB->set_field('course', 'theme', 'clean', array('theme' => 'mymobile'));
+            $DB->set_field('course_categories', 'theme', 'clean', array('theme' => 'mymobile'));
+            $DB->set_field('user', 'theme', 'clean', array('theme' => 'mymobile'));
+            $DB->set_field('mnet_host', 'theme', 'clean', array('theme' => 'mymobile'));
+
+            // Replace the theme configs.
+            if (get_config('core', 'theme') == 'mymobile') {
+                set_config('theme', 'clean');
+            }
+            if (get_config('core', 'thememobile') == 'mymobile') {
+                set_config('thememobile', 'clean');
+            }
+            if (get_config('core', 'themelegacy') == 'mymobile') {
+                set_config('themelegacy', 'clean');
+            }
+            if (get_config('core', 'themetablet') == 'mymobile') {
+                set_config('themetablet', 'clean');
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013110400.00);
+    }
+
+    if ($oldversion < 2013110500.01) {
+        // MDL-38228. Corrected course_modules upgrade script instead of 2013021801.01.
+
+        // This upgrade script fixes the mismatches between DB fields course_modules.section
+        // and course_sections.sequence. It makes sure that each module is included
+        // in the sequence of at least one section.
+        // There is also a separate script for admins: admin/cli/fix_course_sortorder.php
+
+        // This script in included in each major version upgrade process so make sure we don't run it twice.
+        if (empty($CFG->movingmoduleupgradescriptwasrun)) {
+            upgrade_course_modules_sequences();
+
+            // To skip running the same script on the upgrade to the next major release.
+            set_config('movingmoduleupgradescriptwasrun', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013110500.01);
     }
 
     return true;

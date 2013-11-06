@@ -225,6 +225,7 @@ h4 img.iconhelp, h4 img.icon,
 h5 img.iconhelp, h5 img.icon,
 h6 img.iconhelp, h6 img.icon {
   vertical-align: middle;
+  padding: 4px;
 }
 .dir-rtl img.iconhelp, .dir-rtl .helplink img {
     padding-right: 3px;
@@ -1286,8 +1287,11 @@ audio.mediaplugin_html5audio {
 .core_media_preview.pagelayout-embedded #maincontent {
     height: 0;
 }
-.core_media_preview.pagelayout-embedded .mediaplugin {
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
+    padding: 0;
     margin: 0;
+    min-width: 0;
+    background: none;
 }
 /** Fix YUI 2 Treeview for Right to left languages **/
 .dir-rtl .ygtvtn,
@@ -1445,7 +1449,8 @@ audio.mediaplugin_html5audio {
     .border-radius(10px);
     .box-shadow(5px 5px 20px 0 #666);
 }
-.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd {
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd,
+.moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd.yui3-widget-hd {
     margin: 0;
     padding: 5px;
     font-size: 12px;
@@ -1458,7 +1463,7 @@ audio.mediaplugin_html5audio {
     border-bottom: 1px solid #bbb;
     background: #ccc;
     #gradient > .vertical(#fff, #ccc);
-    filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+    filter: 0;
 }
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
     margin: 0;
@@ -2026,6 +2031,27 @@ img#persona_signin {
             display: inline; /** JS is enabled, we'll be using it so return display to normal **/
             .opacity(50);
         }
+        .toggle-display.textmenu {
+            display: block;
+            margin-left: 4px;
+            padding-left: 4px;
+
+            .iconsmall {
+                margin: 4px 4px 4px 0px;
+                padding: 8px 4px 0px 2px;
+                vertical-align: text-bottom;
+            }
+
+            .caret {
+                margin-top: 8px;
+                margin-left: 2px;
+                border-top-color: @navbarLinkColor;
+                &:hover,
+                &:active {
+                    border-top-color: @navbarLinkColorActive;
+                }
+            }
+        }
     }
     .moodle-actionmenu[data-enhanced] {
         .toggle-display {
@@ -2053,10 +2079,9 @@ img#persona_signin {
         .box-shadow(5px 5px 20px 0 #666);
 
         a {
-            white-space:nowrap;
             display: block;
             color: @dropdownLinkColor;
-            padding:2px 1em 2px 0.5em;
+            padding:2px 1em 2px 28px;
             &:hover,
             &:focus {
                 color: @dropdownLinkColorHover;
@@ -2076,7 +2101,7 @@ img#persona_signin {
             vertical-align: middle;
         }
         .iconsmall {
-            margin-right:8px;
+            margin: 4px 4px 4px -24px;
         }
         > li {
             display:block;
@@ -2103,10 +2128,6 @@ img#persona_signin {
         &.align-bl-tr {bottom: 100%;left:100%;}
         &.align-br-tr {bottom: 100%;right: 0;margin-bottom: 4px;}
     }
-}
-
-.action-menu-shown .moodle-actionmenu[data-enhanced] .toggle-display {
-    background-color: #FFF;
 }
 
 .block .moodle-actionmenu {

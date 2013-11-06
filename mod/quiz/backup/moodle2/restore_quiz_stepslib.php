@@ -220,6 +220,10 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
             unset($data->popup);
         }
 
+        if (!isset($data->overduehandling)) {
+            $data->overduehandling = get_config('quiz', 'overduehandling');
+        }
+
         // Insert the quiz record.
         $newitemid = $DB->insert_record('quiz', $data);
         // Immediately after inserting "activity" record, call this.

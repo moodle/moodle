@@ -111,7 +111,6 @@ function note_save(&$note) {
             'context' => context_course::instance($note->courseid),
             'other' => array('publishstate' => $note->publishstate)
         ));
-        $event->add_record_snapshot('post', $note);
         $event->trigger();
     } else {
         // Update old note.
@@ -127,7 +126,6 @@ function note_save(&$note) {
             'context' => context_course::instance($note->courseid),
             'other' => array('publishstate' => $note->publishstate)
         ));
-        $event->add_record_snapshot('post', $note);
         $event->trigger();
     }
     unset($note->module);
@@ -143,9 +141,12 @@ function note_save(&$note) {
 function note_delete($note) {
     global $DB;
     if (is_int($note)) {
-        $note = note_load($note);
-        debugging('Warning: providing note_delete with a note object would improve performance.', DEBUG_DEVELOPER);
+        $noteid = $note;
+    } else {
+        $noteid = $note->id;
     }
+    // Get the full record, note_load doesn't return everything.
+    $note = $DB->get_record('post', array('id' => $noteid), '*', MUST_EXIST);
     $return = $DB->delete_records('post', array('id' => $note->id, 'module' => 'notes'));
 
     // Trigger event.

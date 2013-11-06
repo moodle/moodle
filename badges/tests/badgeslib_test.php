@@ -43,6 +43,8 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
 
         unset_config('noemailever');
 
+        $CFG->enablecompletion = true;
+
         $user = $this->getDataGenerator()->create_user();
 
         $fordb = new stdClass();
@@ -69,7 +71,7 @@ class core_badges_badgeslib_testcase extends advanced_testcase {
         $this->badgeid = $DB->insert_record('badge', $fordb, true);
 
         // Create a course with activity and auto completion tracking.
-        $this->course = $this->getDataGenerator()->create_course();
+        $this->course = $this->getDataGenerator()->create_course(array('enablecompletion' => true));
         $this->user = $this->getDataGenerator()->create_user();
         $studentrole = $DB->get_record('role', array('shortname' => 'student'));
         $this->assertNotEmpty($studentrole);

@@ -30,7 +30,7 @@ Feature: Add activities to courses
     And I turn editing mode off
     Then I should not see "Adding a new"
     And I follow "Test name"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     And the "Name" field should match "Test name" value
     And the "Entries required for completion" field should match "9" value

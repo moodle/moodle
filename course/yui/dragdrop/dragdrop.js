@@ -2,6 +2,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
 
     var CSS = {
         ACTIVITY : 'activity',
+        ACTIVITYINSTANCE : 'activityinstance',
         COMMANDSPAN : '.commands',
         CONTENT : 'content',
         COURSECONTENT : 'course-content',
@@ -277,7 +278,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             this.groups = ['resource'];
             this.samenodeclass = CSS.ACTIVITY;
             this.parentnodeclass = CSS.SECTION;
-            this.resourcedraghandle = this.get_drag_handle(M.str.moodle.move, CSS.EDITINGMOVE, CSS.ICONCLASS);
+            this.resourcedraghandle = this.get_drag_handle(M.str.moodle.move, CSS.EDITINGMOVE, CSS.ICONCLASS, true);
 
             // Go through all sections
             var sectionlistselector = M.course.format.get_section_selector(Y);
@@ -374,12 +375,14 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             var dropnode = e.drop.get('node');
 
             // Add spinner if it not there
-            var spinner = M.util.add_spinner(Y, dragnode.one(CSS.COMMANDSPAN));
+            var activityinstance = dragnode.one('.' + CSS.ACTIVITYINSTANCE);
+            var spinner = M.util.add_spinner(Y, activityinstance);
 
             var params = {};
 
             // Handle any variables which we must pass back through to
             var pageparams = this.get('config').pageparams;
+            var varname;
             for (varname in pageparams) {
                 params[varname] = pageparams[varname];
             }

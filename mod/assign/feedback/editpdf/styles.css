@@ -22,7 +22,7 @@
 .assignfeedback_editpdf_widget .pageheader {
     background-color: #ebebeb;
     border-bottom: 1px solid #cccccc;
-    padding: 4px;
+    padding: 0px;
     padding-left: 20px;
     padding-right: 20px;
     min-height: 50px;
@@ -44,6 +44,10 @@
 .yui3-commentmenu-hidden {
     display: none;
 }
+.assignfeedback_editpdf_widget .pageheader button img {
+    padding-top: 3px;
+    vertical-align: top;
+}
 .assignfeedback_editpdf_widget .pageheader button:active {
     background-color: #ccc;
 }
@@ -55,7 +59,19 @@
     border-radius: 0px;
     margin: 0px;
     height: 30px;
+    line-height: 30px;
+    vertical-align: top;
     cursor: pointer;
+}
+.assignfeedback_editpdf_widget .pageheader select {
+    vertical-align: top;
+    -webkit-appearance: none;
+    -moz-appearance: menulist-text;
+    background-color: #fff;
+    padding: 0px 10px;
+}
+.assignfeedback_editpdf_widget .pageheader select::-ms-expand {
+    display: none;
 }
 
 .assignfeedback_editpdf_widget .pageheader .navigation button + button,
@@ -87,8 +103,15 @@
     overflow-y: auto;
     padding: 1em;
 }
+.assignfeedback_editpdf_commentsearch ul li pre {
+    background-color: #efefef;
+}
+.assignfeedback_editpdf_commentsearch ul li pre:hover {
+    background-color: #ddd;
+}
 .assignfeedback_editpdf_commentsearch ul li {
-    line-height: 1.4em;
+    line-height: 0px;
+    margin: 2px;
 }
 .assignfeedback_editpdf_commentsearch a pre {
     font-family: helvetica;
@@ -104,6 +127,11 @@
 .dir-rtl .assignfeedback_editpdf_widget .navigation-search,
 .dir-rtl .assignfeedback_editpdf_widget .navigation {
     float: right;
+}
+.assignfeedback_editpdf_widget .toolbar button {
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
 }
 .assignfeedback_editpdf_widget .toolbar {
     float: right;
@@ -140,8 +168,8 @@
 .assignfeedback_editpdf_dropdown button {
     border: 0px;
     background: none;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 10px;
+    padding-right: 10px;
     padding-top: 6px;
     padding-bottom: 6px;
     border-radius: 0px;
@@ -154,6 +182,10 @@
     box-shadow: none;
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-top: 0px;
+    border-radius: 4px;
 }
 .moodle-dialogue-base .moodle-dialogue.assignfeedback_editpdf_dropdown .moodle-dialogue-bd {
     padding: 0px;
@@ -173,9 +205,8 @@
 .assignfeedback_editpdf_menu li:hover,
 .assignfeedback_editpdf_menu li:hover a,
 .assignfeedback_editpdf_menu li a:hover {
-    background-color: #08c;
-    color: white;
-    text-decoration: underline;
+    background-color: #ebebeb;
+    background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
 }
 ul.assignfeedback_editpdf_menu {
     margin: 0px;
@@ -185,14 +216,23 @@ ul.assignfeedback_editpdf_menu {
     margin: 0px;
     border-radius: 4px;
 }
+.assignfeedback_editpdf_menu li img {
+    height: auto;
+}
 .assignfeedback_editpdf_menu li button {
     margin: 0px;
+    background: none;
+}
+
+.assignfeedback_editpdf_widget .pageheader button:hover {
+    background-color: #ebebeb;
+    background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
 }
 
 .assignfeedback_editpdf_widget .pageheader button.assignfeedback_editpdf_selectedbutton:hover,
 .assignfeedback_editpdf_widget .pageheader button.assignfeedback_editpdf_selectedbutton {
-    background-color: #CCF;
-    background-image: none;
+    background-color: #dfdfdf;
+    background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
 }
 
 .assignfeedback_editpdf_widget .commentdrawable img {

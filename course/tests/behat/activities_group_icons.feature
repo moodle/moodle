@@ -21,7 +21,7 @@ Feature: Toggle activities groups mode from the course page
     And I add a "Forum" to section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Description | Test forum description |
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I fill the moodle form with:
       | Group mode | No groups |
       | Force group mode | No |

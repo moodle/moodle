@@ -2383,8 +2383,11 @@ abstract class lesson_page extends lesson_base {
                 $this->properties->contentsformat = FORMAT_HTML;
             }
             $context = context_module::instance($PAGE->cm->id);
-            $contents = file_rewrite_pluginfile_urls($this->properties->contents, 'pluginfile.php', $context->id, 'mod_lesson', 'page_contents', $this->properties->id); // must do this BEFORE format_text()!!!!!!
-            return format_text($contents, $this->properties->contentsformat, array('context'=>$context, 'noclean'=>true)); // page edit is marked with XSS, we want all content here
+            $contents = file_rewrite_pluginfile_urls($this->properties->contents, 'pluginfile.php', $context->id, 'mod_lesson',
+                                                     'page_contents', $this->properties->id);  // Must do this BEFORE format_text()!
+            return format_text($contents, $this->properties->contentsformat,
+                               array('context' => $context, 'noclean' => true,
+                                     'overflowdiv' => true));  // Page edit is marked with XSS, we want all content here.
         } else {
             return '';
         }

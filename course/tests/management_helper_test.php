@@ -673,6 +673,9 @@ class core_course_management_helper_test extends advanced_testcase {
             'shortname' => 'Advanced algebra', 'idnumber' => '10002'));
         $syscontext = context_system::instance();
 
+        // Update category object from DB so the course count is correct.
+        $category = coursecat::get($category->id);
+
         list($user, $roleid) = $this->get_user_objects($generator, $syscontext->id);
         $caps = course_capability_assignment::allow(self::CATEGORY_MANAGE, $roleid, $syscontext->id);
 
@@ -990,6 +993,9 @@ class core_course_management_helper_test extends advanced_testcase {
         $course2 = $generator->create_course(array('category' => $category->id));
         $course1 = $generator->create_course(array('category' => $category->id));
         $context = $category->get_context();
+
+        // Update category object from DB so the course count is correct.
+        $category = coursecat::get($category->id);
 
         list($user, $roleid) = $this->get_user_objects($generator, $context->id);
         $caps = course_capability_assignment::allow(self::CATEGORY_MANAGE, $roleid, $context->id);

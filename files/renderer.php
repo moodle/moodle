@@ -201,9 +201,9 @@ class core_files_renderer extends plugin_renderer_base {
     <div class="fp-navbar">
         <div class="filemanager-toolbar">
             <div class="fp-toolbar">
-                <div class="{!}fp-btn-add"><a role="button" href="#"><img src="'.$this->pix_url('a/add_file').'" alt="'.$straddfile.'" /></a></div>
-                <div class="{!}fp-btn-mkdir"><a role="button" href="#"><img src="'.$this->pix_url('a/create_folder').'" alt="'.$strmakedir.'" /></a></div>
-                <div class="{!}fp-btn-download"><a role="button" href="#"><img src="'.$this->pix_url('a/download_all').'" alt="'.$strdownload.'" /></a></div>
+                <div class="{!}fp-btn-add"><a role="button" title="'.$straddfile.'" href="#"><img src="'.$this->pix_url('a/add_file').'" alt="" /></a></div>
+                <div class="{!}fp-btn-mkdir"><a role="button" title="'.$strmakedir.'" href="#"><img src="'.$this->pix_url('a/create_folder').'" alt="" /></a></div>
+                <div class="{!}fp-btn-download"><a role="button" title="'.$strdownload.'" href="#"><img src="'.$this->pix_url('a/download_all').'" alt="" /></a></div>
             </div>
             <div class="{!}fp-viewbar">
                 <a title="'. get_string('displayicons', 'repository') .'" class="{!}fp-vb-icons" href="#"><img alt="" src="'. $this->pix_url('fp/view_icon_active', 'theme') .'" /></a>
@@ -534,10 +534,10 @@ class core_files_renderer extends plugin_renderer_base {
                 <div class="{!}fp-toolbar">
                     <div class="{!}fp-tb-back"><a href="#">'.get_string('back', 'repository').'</a></div>
                     <div class="{!}fp-tb-search"><form></form></div>
-                    <div class="{!}fp-tb-refresh"><a href="#"><img alt="'. get_string('refresh', 'repository') .'"  src="'.$this->pix_url('a/refresh').'" /></a></div>
-                    <div class="{!}fp-tb-logout"><a href="#"><img alt="'. get_string('logout', 'repository') .'" src="'.$this->pix_url('a/logout').'" /></a></div>
-                    <div class="{!}fp-tb-manage"><a href="#"><img alt="'. get_string('settings', 'repository') .'" src="'.$this->pix_url('a/setting').'" /></a></div>
-                    <div class="{!}fp-tb-help"><a href="#"><img alt="'. get_string('help', 'repository') .'" src="'.$this->pix_url('a/help').'" /></a></div>
+                    <div class="{!}fp-tb-refresh"><a title="'. get_string('refresh', 'repository') .'" href="#"><img alt=""  src="'.$this->pix_url('a/refresh').'" /></a></div>
+                    <div class="{!}fp-tb-logout"><a title="'. get_string('logout', 'repository') .'" href="#"><img alt="" src="'.$this->pix_url('a/logout').'" /></a></div>
+                    <div class="{!}fp-tb-manage"><a title="'. get_string('settings', 'repository') .'" href="#"><img alt="" src="'.$this->pix_url('a/setting').'" /></a></div>
+                    <div class="{!}fp-tb-help"><a title="'. get_string('help', 'repository') .'" href="#"><img alt="" src="'.$this->pix_url('a/help').'" /></a></div>
                     <div class="{!}fp-tb-message"></div>
                 </div>
                 <div class="{!}fp-viewbar">

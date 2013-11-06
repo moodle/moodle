@@ -329,7 +329,7 @@ class tool_generator_course_backend extends tool_generator_backend {
         $number = self::$parampages[$this->size];
         $this->log('createpages', $number, true);
         for ($i = 0; $i < $number; $i++) {
-            $record = array('course' => $this->course->id);
+            $record = array('course' => $this->course);
             $options = array('section' => $this->get_target_section());
             $pagegenerator->create_instance($record, $options);
             $this->dot($i, $number);
@@ -347,7 +347,7 @@ class tool_generator_course_backend extends tool_generator_backend {
 
         // Create resource with default textfile only.
         $resourcegenerator = $this->generator->get_plugin_generator('mod_resource');
-        $record = array('course' => $this->course->id,
+        $record = array('course' => $this->course,
                 'name' => get_string('smallfiles', 'tool_generator'));
         $options = array('section' => 0);
         $resource = $resourcegenerator->create_instance($record, $options);
@@ -415,7 +415,7 @@ class tool_generator_course_backend extends tool_generator_backend {
         $resourcegenerator = $this->generator->get_plugin_generator('mod_resource');
         for ($i = 0; $i < $count; $i++) {
             // Create resource.
-            $record = array('course' => $this->course->id,
+            $record = array('course' => $this->course,
                     'name' => get_string('bigfile', 'tool_generator', $i));
             $options = array('section' => $this->get_target_section());
             $resource = $resourcegenerator->create_instance($record, $options);
@@ -458,7 +458,7 @@ class tool_generator_course_backend extends tool_generator_backend {
 
         // Create empty forum.
         $forumgenerator = $this->generator->get_plugin_generator('mod_forum');
-        $record = array('course' => $this->course->id,
+        $record = array('course' => $this->course,
                 'name' => get_string('pluginname', 'forum'));
         $options = array('section' => 0);
         $forum = $forumgenerator->create_instance($record, $options);

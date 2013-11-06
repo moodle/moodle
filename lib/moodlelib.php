@@ -2187,8 +2187,16 @@ function userdate($date, $format = '', $timezone = 99, $fixday = true, $fixhour 
  */
 function date_format_string($date, $format, $tz = 99) {
     global $CFG;
+
+    $localewincharset = null;
+    // Get the calendar type user is using.
+    if ($CFG->ostype == 'WINDOWS') {
+        $calendartype = \core_calendar\type_factory::get_calendar_instance();
+        $localewincharset = $calendartype->locale_win_charset();
+    }
+
     if (abs($tz) > 13) {
-        if ($CFG->ostype == 'WINDOWS' and $localewincharset = get_string('localewincharset', 'langconfig')) {
+        if ($localewincharset) {
             $format = core_text::convert($format, 'utf-8', $localewincharset);
             $datestring = strftime($format, $date);
             $datestring = core_text::convert($datestring, $localewincharset, 'utf-8');
@@ -2196,7 +2204,7 @@ function date_format_string($date, $format, $tz = 99) {
             $datestring = strftime($format, $date);
         }
     } else {
-        if ($CFG->ostype == 'WINDOWS' and $localewincharset = get_string('localewincharset', 'langconfig')) {
+        if ($localewincharset) {
             $format = core_text::convert($format, 'utf-8', $localewincharset);
             $datestring = gmstrftime($format, $date);
             $datestring = core_text::convert($datestring, $localewincharset, 'utf-8');
@@ -4442,7 +4450,6 @@ function complete_user_login($user) {
             'other' => array('username' => $USER->username),
         )
     );
-    $event->add_record_snapshot('user', $user);
     $event->trigger();
 
     if (isguestuser()) {
@@ -8611,7 +8618,8 @@ function message_popup_window() {
     }
 
     // Got unread messages so now do another query that joins with the user table.
-    $messagesql = "SELECT m.id, m.smallmessage, m.fullmessageformat, m.notification, u.firstname, u.lastname
+    $namefields = get_all_user_name_fields(true, 'u');
+    $messagesql = "SELECT m.id, m.smallmessage, m.fullmessageformat, m.notification, $namefields
                      FROM {message} m
                      JOIN {message_working} mw ON m.id=mw.unreadmessageid
                      JOIN {message_processors} p ON mw.processorid=p.id

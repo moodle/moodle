@@ -210,21 +210,22 @@ class pdf extends \FPDI {
         if (!$this->filename) {
             return false;
         }
+        $this->SetDrawColor(51, 51, 51);
         switch ($colour) {
             case 'red':
-                $this->SetFillColor(255, 176, 176);
+                $this->SetFillColor(249, 181, 179);
                 break;
             case 'green':
-                $this->SetFillColor(176, 255, 176);
+                $this->SetFillColor(214, 234, 178);
                 break;
             case 'blue':
-                $this->SetFillColor(208, 208, 255);
+                $this->SetFillColor(203, 217, 237);
                 break;
             case 'white':
                 $this->SetFillColor(255, 255, 255);
                 break;
             default: /* Yellow */
-                $this->SetFillColor(255, 255, 176);
+                $this->SetFillColor(255, 236, 174);
                 break;
         }
 
@@ -266,23 +267,23 @@ class pdf extends \FPDI {
         }
         switch ($colour) {
             case 'yellow':
-                $colourarray = array(255, 255, 0);
+                $colourarray = array(255, 207, 53);
                 break;
             case 'green':
-                $colourarray = array(0, 255, 0);
+                $colourarray = array(153, 202, 62);
                 break;
             case 'blue':
-                $colourarray = array(0, 0, 255);
+                $colourarray = array(125, 159, 211);
                 break;
             case 'white':
                 $colourarray = array(255, 255, 255);
                 break;
             case 'black':
-                $colourarray = array(0, 0, 0);
+                $colourarray = array(51, 51, 51);
                 break;
             default: /* Red */
                 $colour = 'red';
-                $colourarray = array(255, 0, 0);
+                $colourarray = array(239, 69, 64);
                 break;
         }
         $this->SetDrawColorArray($colourarray);
@@ -530,7 +531,7 @@ class pdf extends \FPDI {
 
         $testimagefolder = \make_temp_directory('assignfeedback_editpdf_test');
         $testimage = $testimagefolder.'/image_page0.png';
-        send_file($testimage, basename($testimage));
+        send_file($testimage, basename($testimage), 0);
         die();
     }
 

@@ -172,6 +172,16 @@ EDITOR.prototype = {
     stamps : [],
 
     /**
+     * Prevent new comments from appearing
+     * immediately after clicking off a current
+     * comment
+     * @property editingcomment
+     * @type Boolean
+     * @public
+     */
+    editingcomment : false,
+
+    /**
      * Called during the initialisation process of the object.
      * @method initializer
      */
@@ -298,11 +308,11 @@ EDITOR.prototype = {
 
                 this.refresh_button_state();
             }
+
+            this.load_all_pages();
         }
         this.dialogue.centerDialogue();
         this.dialogue.show();
-
-        this.load_all_pages();
     },
 
     /**
@@ -673,6 +683,10 @@ EDITOR.prototype = {
             return;
         }
 
+        if (this.editingcomment) {
+            return;
+        }
+
         this.currentedit.starttime = new Date().getTime();
         this.currentedit.start = point;
         this.currentedit.end = {x : point.x, y : point.y};
@@ -774,6 +788,7 @@ EDITOR.prototype = {
             comment.init_from_edit(this.currentedit);
             this.pages[this.currentpage].comments.push(comment);
             this.drawables.push(comment.draw(true));
+            this.editingcomment = true;
         } else {
             annotation = this.create_annotation(this.currentedit.tool, {});
             if (annotation) {

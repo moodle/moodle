@@ -38,7 +38,11 @@ class core_notes_events_testcase extends advanced_testcase {
     /** @var  stdClass A note object. */
     private $eventnote;
 
+    /** @var stdClass A complete record from post table */
+    private $noterecord;
+
     public function setUp() {
+        global $DB;
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -47,6 +51,8 @@ class core_notes_events_testcase extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $gen = $this->getDataGenerator()->get_plugin_generator('core_notes');
         $this->eventnote = $gen->create_instance(array('courseid' => $course->id, 'userid' => $user->id));
+        // Get the full record, note_load doesn't return everything.
+        $this->noterecord = $DB->get_record('post', array('id' => $this->eventnote->id), '*', MUST_EXIST);
 
     }
 
@@ -68,7 +74,7 @@ class core_notes_events_testcase extends advanced_testcase {
         $this->assertEquals($this->eventnote->userid, $event->relateduserid);
         $this->assertEquals('post', $event->objecttable);
         $this->assertEquals(null, $event->get_url());
-        $this->assertEquals($this->eventnote, $event->get_record_snapshot('post', $event->objectid));
+        $this->assertEquals($this->noterecord, $event->get_record_snapshot('post', $event->objectid));
         $this->assertEquals(NOTES_STATE_SITE, $event->other['publishstate']);
 
         // Test legacy data.
@@ -99,7 +105,6 @@ class core_notes_events_testcase extends advanced_testcase {
         $this->assertEquals($note->usermodified, $event->userid);
         $this->assertEquals($note->userid, $event->relateduserid);
         $this->assertEquals('post', $event->objecttable);
-        $this->assertEquals($note, $event->get_record_snapshot('post', $event->objectid));
         $this->assertEquals(NOTES_STATE_SITE, $event->other['publishstate']);
 
         // Test legacy data.
@@ -131,7 +136,6 @@ class core_notes_events_testcase extends advanced_testcase {
         $this->assertEquals($note->usermodified, $event->userid);
         $this->assertEquals($note->userid, $event->relateduserid);
         $this->assertEquals('post', $event->objecttable);
-        $this->assertEquals($note, $event->get_record_snapshot('post', $event->objectid));
         $this->assertEquals(NOTES_STATE_DRAFT, $event->other['publishstate']);
 
         // Test legacy data.

@@ -230,7 +230,6 @@
         border-bottom: thin solid #eee;
     }
     .course-content .section .activity .commands {
-        display: block;
         text-align: right;
     }
     /** Handles display of the activity chooser on small screens **/
@@ -375,18 +374,6 @@
         float: left;
     }
 
-// Hide broken drag'n'drop options on touch devices MDL-38371
-// Not a great workaround, landscape iPads are wider than this,
-// and a resized window on a netbook could be smaller, but best
-// we can do with CSS. There might be a JS-based solution.
-    .section .side,
-    .editing_move {
-        display: none;
-    }
-    .activityinstance > a {
-        display: block;
-    }
-
   // GRID & CONTAINERS
   // -----------------
   // Remove width from containers
@@ -414,6 +401,18 @@
     margin-left: 0;
     .box-sizing(border-box);
   }
+
+  // We need to specify a more specific selector to reset the width for
+  // cases when we have content in the side-pre blockregion but not in the
+  // side-post blockregion as there are more specific selectors in
+  // core.less which take precedence which break responsiveness.
+  .empty-region-side-post.used-region-side-pre {
+      #block-region-side-pre.span4,
+      #region-main.span8.span8 {
+        .fluid-span(12);
+      }
+  }
+
   .row-fluid .span12 {
     width: 100%;
     .box-sizing(border-box);
@@ -422,7 +421,7 @@
     margin-left: 0;
   }
   div[role=main] {
-      margin-bottom: 2em;
+      margin-bottom: 1em;
   }
 }
 

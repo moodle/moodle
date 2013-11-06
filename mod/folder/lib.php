@@ -317,7 +317,7 @@ function folder_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
 
     // finally send the file
     // for folder module, we force download file all the time
-    send_stored_file($file, 86400, 0, true, $options);
+    send_stored_file($file, 0, 0, true, $options);
 }
 
 /**

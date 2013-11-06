@@ -772,12 +772,7 @@ class grade_grade extends grade_object {
      * @param bool $deleted True if grade was actually deleted
      */
     function notify_changed($deleted) {
-        global $USER, $SESSION, $CFG,$COURSE, $DB;
-
-        // Grades may be cached in user session
-        if ($USER->id == $this->userid) {
-            unset($SESSION->gradescorecache[$this->itemid]);
-        }
+        global $CFG;
 
         // Ignore during restore
         // TODO There should be a proper way to determine when we are in restore
@@ -785,6 +780,12 @@ class grade_grade extends grade_object {
         global $restore;
         if (!empty($restore->backup_unique_code)) {
             return;
+        }
+
+        // Inform conditionlib since it may cache the grades for conditional availability of modules or sections.
+        if (!empty($CFG->enableavailability)) {
+            require_once($CFG->libdir.'/conditionlib.php');
+            condition_info_base::inform_grade_changed($this, $deleted);
         }
 
         require_once($CFG->libdir.'/completionlib.php');
@@ -804,11 +805,7 @@ class grade_grade extends grade_object {
         }
 
         // Use $COURSE if available otherwise get it via item fields
-        if(!empty($COURSE) && $COURSE->id == $this->grade_item->courseid) {
-            $course = $COURSE;
-        } else {
-            $course = $DB->get_record('course', array('id'=>$this->grade_item->courseid));
-        }
+        $course = get_course($this->grade_item->courseid, false);
 
         // Bail out if completion is not enabled for course
         $completion = new completion_info($course);

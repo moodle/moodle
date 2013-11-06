@@ -33,7 +33,7 @@ Feature: Activities can be moved between sections
     And I should not see "Test forum name" in the "#section-1" "css_element"
 
   Scenario: Move activities in the course home with Javascript disabled using paged mode
-    Given I follow "Edit settings"
+    Given I click on "Edit settings" "link" in the "Administration" "block"
     And I fill the moodle form with:
       | Course layout | Show one section per page |
     And I press "Save changes"
@@ -42,7 +42,7 @@ Feature: Activities can be moved between sections
     And I should not see "Test forum name" in the "#section-1" "css_element"
 
   Scenario: Move activities in a course section with Javascript disabled using paged mode
-    Given I follow "Edit settings"
+    Given I click on "Edit settings" "link" in the "Administration" "block"
     And I fill the moodle form with:
       | Course layout | Show one section per page |
     And I press "Save changes"

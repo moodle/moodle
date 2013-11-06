@@ -36,34 +36,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mod_assignment_generator extends testing_module_generator {
 
-    /**
-     * Create new assignment module instance
-     * @param array|stdClass $record
-     * @param array $options (mostly course_module properties)
-     * @return stdClass activity record with extra cmid field
-     */
     public function create_instance($record = null, array $options = null) {
-        global $CFG;
-        require_once("$CFG->dirroot/mod/assignment/locallib.php");
-
-        $this->instancecount++;
-        $i = $this->instancecount;
-
         $record = (object)(array)$record;
-        $options = (array)$options;
 
-        if (empty($record->course)) {
-            throw new coding_exception('module generator requires $record->course');
-        }
-        if (!isset($record->name)) {
-            $record->name = get_string('pluginname', 'assignment').' '.$i;
-        }
-        if (!isset($record->intro)) {
-            $record->intro = 'Test assignment '.$i;
-        }
-        if (!isset($record->introformat)) {
-            $record->introformat = FORMAT_MOODLE;
-        }
         if (!isset($record->assignmenttype)) {
             $record->assignmenttype = 'upload';
         }
@@ -73,14 +48,7 @@ class mod_assignment_generator extends testing_module_generator {
         if (!isset($record->timedue)) {
             $record->timedue = 0;
         }
-        if (isset($options['idnumber'])) {
-            $record->cmidnumber = $options['idnumber'];
-        } else {
-            $record->cmidnumber = '';
-        }
 
-        $record->coursemodule = $this->precreate_course_module($record->course, $options);
-        $id = assignment_add_instance($record, null);
-        return $this->post_add_instance($id, $record->coursemodule);
+        return parent::create_instance($record, (array)$options);
     }
 }

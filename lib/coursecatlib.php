@@ -2319,26 +2319,28 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
     /**
      * Returns true if the user can resort this categories sub categories and courses.
+     * Must have manage capability and be able to see all subcategories.
      * @return bool
      */
     public function can_resort_subcategories() {
-        return $this->has_manage_capability();
+        return $this->has_manage_capability() && !$this->get_not_visible_children_ids();
     }
 
     /**
      * Returns true if the user can resort the courses within this category.
+     * Must have manage capability and be able to see all courses.
      * @return bool
      */
     public function can_resort_courses() {
-        return $this->has_manage_capability();
+        return $this->has_manage_capability() && $this->coursecount == $this->get_courses_count();
     }
 
     /**
-     * Returns true of the user can change the sortorder of this category (resort the parent category)
+     * Returns true of the user can change the sortorder of this category (resort in the parent category)
      * @return bool
      */
     public function can_change_sortorder() {
-        return $this->parent_has_manage_capability();
+        return $this->id && $this->get_parent_coursecat()->can_resort_subcategories();
     }
 
     /**
@@ -2448,11 +2450,15 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
     /**
      * Cleans things up after categories have been resorted.
+     * @param bool $includecourses If set to true we know courses have been resorted as well.
      */
-    public static function resort_categories_cleanup() {
+    public static function resort_categories_cleanup($includecourses = false) {
         // This should not be needed but we do it just to be safe.
         fix_course_sortorder();
         cache_helper::purge_by_event('changesincoursecat');
+        if ($includecourses) {
+            cache_helper::purge_by_event('changesincourse');
+        }
     }
 
     /**

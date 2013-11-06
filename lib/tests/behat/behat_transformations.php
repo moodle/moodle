@@ -56,6 +56,9 @@ class behat_transformations extends behat_base {
      * @return string The string with the arguments fixed.
      */
     public function arg_replace_slashes($string) {
+        if (!is_scalar($string)) {
+            return $string;
+        }
         return str_replace('\"', '"', $string);
     }
 
@@ -67,6 +70,9 @@ class behat_transformations extends behat_base {
      * @return string
      */
     public function arg_replace_nasty_strings($argument) {
+        if (!is_scalar($argument)) {
+            return $argument;
+        }
         return $this->replace_nasty_strings($argument);
     }
 

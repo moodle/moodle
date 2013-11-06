@@ -15,6 +15,7 @@ Feature: The context of a block can always be returned to it's original state.
     And I add the "Tags" block
     Then I should see "Tags" in the "Tags" "block"
     And I click on "Participants" "link" in the "//li[p/span[contains(normalize-space(string(.)), 'Current course')]]" "xpath_element"
+    And I click on "Actions" "link" in the "Tags" "block"
     And I follow "Configure Tags block"
     And I fill the moodle form with:
       | Display on page types | Any page |
@@ -24,6 +25,7 @@ Feature: The context of a block can always be returned to it's original state.
       | Assignment name | Assignment1 |
       | Description | Description |
     And I follow "Assignment1"
+    And I click on "Actions" "link" in the "Tags" "block"
     And I follow "Configure Tags block"
     And I fill the moodle form with:
       | Display on page types | Any assignment module page |
@@ -39,6 +41,7 @@ Feature: The context of a block can always be returned to it's original state.
       | Description | Description |
     And I follow "Assignment2"
     And I should see "Tags" in the "Tags" "block"
+    And I click on "Actions" "link" in the "Tags" "block"
     And I follow "Configure Tags block"
     And I fill the moodle form with:
       | Display on page types | Any page |

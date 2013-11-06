@@ -252,8 +252,6 @@ if (file_exists($modmoodleform)) {
     print_error('noformdesc');
 }
 
-include_modulelib($module->name);
-
 $mformclassname = 'mod_'.$module->name.'_mod_form';
 $mform = new $mformclassname($data, $cw->section, $cm, $course);
 $mform->set_data($data);

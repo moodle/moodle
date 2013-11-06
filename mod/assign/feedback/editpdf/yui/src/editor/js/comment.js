@@ -185,7 +185,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         position = this.editor.get_window_coordinates(new M.assignfeedback_editpdf.point(this.x, this.y));
         node.setStyles({
             width: this.width + 'px',
-            backgroundColor: COMMENTCOLOUR[this.colour]
+            backgroundColor: COMMENTCOLOUR[this.colour],
+            color: COMMENTTEXTCOLOUR
         });
 
         drawingregion.append(container);
@@ -244,6 +245,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
                 Y.later(400, this, this.delete_comment_later);
             }
             this.editor.save_current_page();
+            this.editor.editingcomment = false;
         }, this);
 
         // For delegated event handler.

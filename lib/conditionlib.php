@@ -820,6 +820,7 @@ abstract class condition_info_base {
                 $a = new stdclass;
                 // Display the fieldname into current lang.
                 if (is_numeric($field)) {
+                    // Is a custom profile field (will use multilang).
                     $translatedfieldname = $details->fieldname;
                 } else {
                     $translatedfieldname = get_user_field_name($details->fieldname);
@@ -1044,8 +1045,15 @@ abstract class condition_info_base {
                 if (!$this->is_field_condition_met($details->operator, $uservalue, $details->value)) {
                     // Set available to false
                     $available = false;
+                    // Display the fieldname into current lang.
+                    if (is_numeric($field)) {
+                        // Is a custom profile field (will use multilang).
+                        $translatedfieldname = $details->fieldname;
+                    } else {
+                        $translatedfieldname = get_user_field_name($details->fieldname);
+                    }
                     $a = new stdClass();
-                    $a->field = format_string($details->fieldname, true, array('context' => $context));
+                    $a->field = format_string($translatedfieldname, true, array('context' => $context));
                     $a->value = s($details->value);
                     $information .= html_writer::start_tag('li');
                     $information .= get_string('requires_user_field_'.$details->operator, 'condition', $a) . ' ';
@@ -1151,7 +1159,6 @@ abstract class condition_info_base {
      *
      * @global stdClass $USER
      * @global moodle_database $DB
-     * @global stdClass $SESSION
      * @param int $gradeitemid Grade item ID we're interested in
      * @param bool $grabthelot If true, grabs all scores for current user on
      *   this course, so that later ones come from cache
@@ -1161,71 +1168,73 @@ abstract class condition_info_base {
      *   or 37.21), or false if user does not have a grade yet
      */
     private function get_cached_grade_score($gradeitemid, $grabthelot=false, $userid=0) {
-        global $USER, $DB, $SESSION;
-        if ($userid==0 || $userid==$USER->id) {
-            // For current user, go via cache in session
-            if (empty($SESSION->gradescorecache) || $SESSION->gradescorecacheuserid!=$USER->id) {
-                $SESSION->gradescorecache = array();
-                $SESSION->gradescorecacheuserid = $USER->id;
-            }
-            if (!array_key_exists($gradeitemid, $SESSION->gradescorecache)) {
-                if ($grabthelot) {
-                    // Get all grades for the current course
-                    $rs = $DB->get_recordset_sql('
-                            SELECT
-                                gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax
-                            FROM
-                                {grade_items} gi
-                                LEFT JOIN {grade_grades} gg ON gi.id=gg.itemid AND gg.userid=?
-                            WHERE
-                                gi.courseid = ?', array($USER->id, $this->item->course));
-                    foreach ($rs as $record) {
-                        $SESSION->gradescorecache[$record->id] =
-                            is_null($record->finalgrade)
-                                // No grade = false
-                                ? false
-                                // Otherwise convert grade to percentage
-                                : (($record->finalgrade - $record->rawgrademin) * 100) /
-                                    ($record->rawgrademax - $record->rawgrademin);
-
-                    }
-                    $rs->close();
-                    // And if it's still not set, well it doesn't exist (eg
-                    // maybe the user set it as a condition, then deleted the
-                    // grade item) so we call it false
-                    if (!array_key_exists($gradeitemid, $SESSION->gradescorecache)) {
-                        $SESSION->gradescorecache[$gradeitemid] = false;
-                    }
-                } else {
-                    // Just get current grade
-                    $record = $DB->get_record('grade_grades', array(
-                        'userid'=>$USER->id, 'itemid'=>$gradeitemid));
-                    if ($record && !is_null($record->finalgrade)) {
-                        $score = (($record->finalgrade - $record->rawgrademin) * 100) /
-                            ($record->rawgrademax - $record->rawgrademin);
-                    } else {
-                        // Treat the case where row exists but is null, same as
-                        // case where row doesn't exist
-                        $score = false;
-                    }
-                    $SESSION->gradescorecache[$gradeitemid]=$score;
-                }
-            }
-            return $SESSION->gradescorecache[$gradeitemid];
-        } else {
-            // Not the current user, so request the score individually
-            $record = $DB->get_record('grade_grades', array(
-                'userid'=>$userid, 'itemid'=>$gradeitemid));
-            if ($record && !is_null($record->finalgrade)) {
-                $score = (($record->finalgrade - $record->rawgrademin) * 100) /
-                    ($record->rawgrademax - $record->rawgrademin);
-            } else {
-                // Treat the case where row exists but is null, same as
-                // case where row doesn't exist
-                $score = false;
-            }
-            return $score;
+        global $USER, $DB;
+        if (!$userid) {
+            $userid = $USER->id;
         }
+        $cache = cache::make('core', 'gradecondition');
+        if (($cachedgrades = $cache->get($userid)) === false) {
+            $cachedgrades = array();
+        }
+        if (!array_key_exists($gradeitemid, $cachedgrades)) {
+            if ($grabthelot) {
+                // Get all grades for the current course
+                $rs = $DB->get_recordset_sql('
+                        SELECT
+                            gi.id,gg.finalgrade,gg.rawgrademin,gg.rawgrademax
+                        FROM
+                            {grade_items} gi
+                            LEFT JOIN {grade_grades} gg ON gi.id=gg.itemid AND gg.userid=?
+                        WHERE
+                            gi.courseid = ?', array($userid, $this->item->course));
+                foreach ($rs as $record) {
+                    $cachedgrades[$record->id] =
+                        is_null($record->finalgrade)
+                            // No grade = false
+                            ? false
+                            // Otherwise convert grade to percentage
+                            : (($record->finalgrade - $record->rawgrademin) * 100) /
+                                ($record->rawgrademax - $record->rawgrademin);
+
+                }
+                $rs->close();
+                // And if it's still not set, well it doesn't exist (eg
+                // maybe the user set it as a condition, then deleted the
+                // grade item) so we call it false
+                if (!array_key_exists($gradeitemid, $cachedgrades)) {
+                    $cachedgrades[$gradeitemid] = false;
+                }
+            } else {
+                // Just get current grade
+                $record = $DB->get_record('grade_grades', array(
+                    'userid'=>$userid, 'itemid'=>$gradeitemid));
+                if ($record && !is_null($record->finalgrade)) {
+                    $score = (($record->finalgrade - $record->rawgrademin) * 100) /
+                        ($record->rawgrademax - $record->rawgrademin);
+                } else {
+                    // Treat the case where row exists but is null, same as
+                    // case where row doesn't exist
+                    $score = false;
+                }
+                $cachedgrades[$gradeitemid]=$score;
+            }
+            $cache->set($userid, $cachedgrades);
+        }
+        return $cachedgrades[$gradeitemid];
+    }
+
+    /**
+     * Called by grade code to inform the completion system when a grade has
+     * been changed. Grades can be used to determine condition for
+     * the course-module or section.
+     *
+     * Note that this function may be called twice for one changed grade object.
+     *
+     * @param grade_grade $grade
+     * @param bool $deleted
+     */
+    public static function inform_grade_changed($grade, $deleted) {
+        cache::make('core', 'gradecondition')->delete($grade->userid);
     }
 
     /**
@@ -1389,16 +1398,12 @@ abstract class condition_info_base {
     }
 
     /**
-     * For testing only. Wipes information cached in user session.
-     *
-     * @global stdClass $SESSION
+     * For testing only. Wipes information cached in cache.
+     * Replaced with {@link core_conditionlib_testcase::wipe_condition_cache()}
+     * @deprecated since 2.6
      */
     static function wipe_session_cache() {
-        global $SESSION;
-        unset($SESSION->gradescorecache);
-        unset($SESSION->gradescorecacheuserid);
-        unset($SESSION->userfieldcache);
-        unset($SESSION->userfieldcacheuserid);
+        cache::make('core', 'gradecondition')->purge();
     }
 
     /**

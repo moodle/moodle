@@ -240,12 +240,12 @@ class repository_equella extends repository {
      * Repository method to serve the referenced file
      *
      * @param stored_file $storedfile the file that contains the reference
-     * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+     * @param int $lifetime Number of seconds before the file should expire from caches (null means $CFG->filelifetime)
      * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
      * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
      * @param array $options additional options affecting the file serving
      */
-    public function send_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, array $options = null) {
+    public function send_file($stored_file, $lifetime=null , $filter=0, $forcedownload=false, array $options = null) {
         $reference  = unserialize(base64_decode($stored_file->get_reference()));
         $url = $this->appendtoken($reference->url);
         if ($url) {

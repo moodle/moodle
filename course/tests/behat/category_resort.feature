@@ -5,7 +5,7 @@ Feature: Test we can resort categories in the management interface.
   I need to test we can resort sub categories.
   I need to test we can manually sort categories.
 
-  Scenario Outline: Test resorting categories.
+  Scenario Outline: Test bulk sorting all categories.
     Given the following "categories" exists:
       | category | name | idnumber | sortorder |
       | 0 | Social studies | Ext003 | 1 |
@@ -15,10 +15,9 @@ Feature: Test we can resort categories in the management interface.
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I should see "Re-sort categories" in the ".category-listing-actions" "css_element"
-    And I should see "Re-sort the top level categories by name" in the ".category-listing-actions" "css_element"
-    And I should see "Re-sort the top level categories by idnumber" in the ".category-listing-actions" "css_element"
-    And I click on <sortby> "link" in the ".category-listing-actions" "css_element"
+    And I select "All categories" from "menuselectsortby"
+    And I select <sortby> from "menuresortcategoriesby"
+    And I press "Sort"
     # Redirect.
     And I should see the "Course categories" management page
     And I should see category listing <cat1> before <cat2>
@@ -26,38 +25,35 @@ Feature: Test we can resort categories in the management interface.
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "Re-sort categories" | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Re-sort the top level categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Re-sort the top level categories by idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Sort categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Sort categories by ID number"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
-  @javascript
-  Scenario Outline: Test resorting categories with JS enabled.
+  Scenario Outline: Test bulk sorting current category.
     Given the following "categories" exists:
       | category | name | idnumber | sortorder |
-      | 0 | Social studies | Ext003 | 1 |
-      | 0 | Applied sciences | Sci001 | 2 |
-      | 0 | Extended social studies | Ext002 | 3 |
+      | 0 | Test category | Tes001 | 1 |
+      | Tes001 | Social studies | Ext003 | 2 |
+      | Tes001 | Applied sciences | Sci001 | 3 |
+      | Tes001 | Extended social studies | Ext002 | 4 |
 
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I should see "Re-sort categories" in the ".category-listing-actions" "css_element"
-    And I should not see "By name" in the ".category-listing-actions" "css_element"
-    And I should not see "By idnumber" in the ".category-listing-actions" "css_element"
-    And I click on "Re-sort categories" "link"
-    And I should see "Re-sort the top level categories by name" in the ".category-listing-actions" "css_element"
-    And I should see "Re-sort the top level categories by idnumber" in the ".category-listing-actions" "css_element"
-    And I click on <sortby> "link" in the ".category-listing-actions" "css_element"
+    And I click on "Test category" "link"
     # Redirect.
-    And I should see the "Course categories" management page
+    And I should see the "Course categories and courses" management page
+    And I select "This category" from "menuselectsortby"
+    And I select <sortby> from "menuresortcategoriesby"
+    And I press "Sort"
+    # Redirect.
+    And I should see the "Course categories and courses" management page
     And I should see category listing <cat1> before <cat2>
     And I should see category listing <cat2> before <cat3>
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "Re-sort categories" | "Social studies"          | "Applied sciences"        | "Extended social studies" |
-    | "Re-sort the top level categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "Re-sort the top level categories by idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Sort categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Sort categories by ID number"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   Scenario Outline: Test resorting subcategories.
     Given the following "categories" exists:

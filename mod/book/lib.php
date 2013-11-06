@@ -405,7 +405,7 @@ function book_get_file_info($browser, $areas, $course, $cm, $context, $filearea,
  * @return bool false if file not found, does not return if found - just send the file
  */
 function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
-    global $DB;
+    global $CFG, $DB;
 
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
@@ -442,8 +442,14 @@ function book_pluginfile($course, $cm, $context, $filearea, $args, $forcedownloa
         return false;
     }
 
+    // Nasty hack because we do not have file revisions in book yet.
+    $lifetime = $CFG->filelifetime;
+    if ($lifetime > 60*10) {
+        $lifetime = 60*10;
+    }
+
     // finally send the file
-    send_stored_file($file, 360, 0, $forcedownload, $options);
+    send_stored_file($file, $lifetime, 0, $forcedownload, $options);
 }
 
 /**

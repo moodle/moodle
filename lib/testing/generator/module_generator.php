@@ -70,6 +70,12 @@ abstract class testing_module_generator extends component_generator_base {
 
     /**
      * Create course module and link it to course
+     *
+     * Since 2.6 it is recommended to use function add_moduleinfo() to create a module.
+     *
+     * @deprecated since 2.6
+     * @see testing_module_generator::create_instance()
+     *
      * @param integer $courseid
      * @param array $options section, visible
      * @return integer $cm instance id
@@ -110,6 +116,12 @@ abstract class testing_module_generator extends component_generator_base {
 
     /**
      * Called after *_add_instance()
+     *
+     * Since 2.6 it is recommended to use function add_moduleinfo() to create a module.
+     *
+     * @deprecated since 2.6
+     * @see testing_module_generator::create_instance()
+     *
      * @param int $id
      * @param int $cmid
      * @return stdClass module instance
@@ -130,12 +142,145 @@ abstract class testing_module_generator extends component_generator_base {
     }
 
     /**
-     * Create a test module
-     * @param array|stdClass $record
-     * @param array $options
-     * @return stdClass activity record
+     * Merges together arguments $record and $options and fills default module
+     * fields that are shared by all module types
+     *
+     * @param object|array $record fields (different from defaults) for this module
+     * @param null|array $options for backward-compatibility this may include fields from course_modules
+     *     table. They are merged into $record
+     * @throws coding_exception if $record->course is not specified
      */
-    abstract public function create_instance($record = null, array $options = null);
+    protected function prepare_moduleinfo_record($record, $options) {
+        global $DB;
+        // Make sure we don't modify the original object.
+        $moduleinfo = (object)(array)$record;
+
+        if (empty($moduleinfo->course)) {
+            throw new coding_exception('module generator requires $record->course');
+        }
+
+        $moduleinfo->modulename = $this->get_modulename();
+        $moduleinfo->module = $DB->get_field('modules', 'id', array('name' => $moduleinfo->modulename));
+
+        // Allow idnumber to be set as either $options['idnumber'] or $moduleinfo->cmidnumber or $moduleinfo->idnumber.
+        // The actual field name is 'idnumber' but add_moduleinfo() expects 'cmidnumber'.
+        if (isset($options['idnumber'])) {
+            $moduleinfo->cmidnumber = $options['idnumber'];
+        } else if (!isset($moduleinfo->cmidnumber) && isset($moduleinfo->idnumber)) {
+            $moduleinfo->cmidnumber = $moduleinfo->idnumber;
+        }
+
+        // These are the fields from table 'course_modules' in 2.6 when the second
+        // argument $options is being deprecated.
+        // List excludes fields: instance (does not exist yet), course, module and idnumber (set above)
+        $easymergefields = array('section', 'added', 'score', 'indent',
+            'visible', 'visibleold', 'groupmode', 'groupingid', 'groupmembersonly',
+            'completion', 'completiongradeitemnumber', 'completionview', 'completionexpected',
+            'availablefrom', 'availableuntil', 'showavailability', 'showdescription');
+        foreach ($easymergefields as $key) {
+            if (isset($options[$key])) {
+                $moduleinfo->$key = $options[$key];
+            }
+        }
+
+        // Set default values. Note that visibleold and completiongradeitemnumber are not used when creating a module.
+        $defaults = array(
+            'section' => 0,
+            'visible' => 1,
+            'cmidnumber' => '',
+            'groupmode' => 0,
+            'groupingid' => 0,
+            'groupmembersonly' => 0,
+            'showavailability' => 0,
+            'availablefrom' => 0,
+            'availableuntil' => 0,
+            'completion' => 0,
+            'completionview' => 0,
+            'completionexpected' => 0,
+            'conditiongradegroup' => array(),
+            'conditionfieldgroup' => array(),
+            'conditioncompletiongroup' => array()
+        );
+        foreach ($defaults as $key => $value) {
+            if (!isset($moduleinfo->$key)) {
+                $moduleinfo->$key = $value;
+            }
+        }
+
+        return $moduleinfo;
+    }
+
+    /**
+     * Creates an instance of the module for testing purposes.
+     *
+     * Module type will be taken from the class name. Each module type may overwrite
+     * this function to add other default values used by it.
+     *
+     * @param array|stdClass $record data for module being generated. Requires 'course' key
+     *     (an id or the full object). Also can have any fields from add module form.
+     * @param null|array $options general options for course module. Since 2.6 it is
+     *     possible to omit this argument by merging options into $record
+     * @return stdClass record from module-defined table with additional field
+     *     cmid (corresponding id in course_modules table)
+     */
+    public function create_instance($record = null, array $options = null) {
+        global $CFG, $DB;
+        require_once($CFG->dirroot.'/course/modlib.php');
+
+        $this->instancecount++;
+
+        // Merge options into record and add default values.
+        $record = $this->prepare_moduleinfo_record($record, $options);
+
+        // Retrieve the course record.
+        if (!empty($record->course->id)) {
+            $course = $record->course;
+            $record->course = $record->course->id;
+        } else {
+            $course = get_course($record->course);
+        }
+
+        // Fill the name and intro with default values (if missing).
+        if (empty($record->name)) {
+            $record->name = get_string('pluginname', $this->get_modulename()).' '.$this->instancecount;
+        }
+        if (empty($record->introeditor) && empty($record->intro)) {
+            $record->intro = 'Test '.$this->get_modulename().' ' . $this->instancecount;
+        }
+        if (empty($record->introeditor) && empty($record->introformat)) {
+            $record->introformat = FORMAT_MOODLE;
+        }
+
+        // Before Moodle 2.6 it was possible to create a module with completion tracking when
+        // it is not setup for course and/or site-wide. Display debugging message so it is
+        // easier to trace an error in unittests.
+        if ($record->completion && empty($CFG->enablecompletion)) {
+            debugging('Did you forget to set $CFG->enablecompletion before generating module with completion tracking?', DEBUG_DEVELOPER);
+        }
+        if ($record->completion && empty($course->enablecompletion)) {
+            debugging('Did you forget to enable completion tracking for the course before generating module with completion tracking?', DEBUG_DEVELOPER);
+        }
+
+        // Add the module to the course.
+        $moduleinfo = add_moduleinfo($record, $course, $mform = null);
+
+        // Prepare object to return with additional field cmid.
+        $instance = $DB->get_record($this->get_modulename(), array('id' => $moduleinfo->instance), '*', MUST_EXIST);
+        $instance->cmid = $moduleinfo->coursemodule;
+        return $instance;
+    }
+
+    /**
+     * Generates a piece of content for the module.
+     * User is usually taken from global $USER variable.
+     * @param stdClass $instance object returned from create_instance() call
+     * @param stdClass|array $record
+     * @return stdClass generated object
+     * @throws coding_exception if function is not implemented by module
+     */
+    public function create_content($instance, $record = array()) {
+        throw new coding_exception('Module generator for '.$this->get_modulename().' does not implement method create_content()');
+    }
 }
 
 /**

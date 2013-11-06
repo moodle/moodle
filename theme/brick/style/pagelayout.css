@@ -117,3 +117,19 @@ body {
 
 .pagelayout-report #page-content #region-main {overflow:auto;}
 .pagelayout-report #page-content #region-main .region-content {overflow:visible;}
+
+.core_media_preview #page {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
+    width: 422px;
+    padding: 0px;
+    background: none;
+}
+.core_media_preview.pagelayout-embedded .mediaplugin {
+    margin: 5px;
+}
