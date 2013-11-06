@@ -58,7 +58,8 @@ class boxnet_client extends oauth2_client {
      * @return bool Success or not.
      */
     public function download_file($fileid, $path) {
-        $result = $this->download_one($this->make_url("/files/$fileid/content"), array(), array('filepath' => $path));
+        $result = $this->download_one($this->make_url("/files/$fileid/content"), array(),
+            array('filepath' => $path, 'CURLOPT_FOLLOWLOCATION' => true));
         return ($result === true && $this->info['http_code'] === 200);
     }
 
