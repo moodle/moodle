@@ -137,14 +137,16 @@ class mbz_packer extends file_packer {
     }
 
     /**
-     * Selects appropriate packer for new archive depending on system option.
+     * Selects appropriate packer for new archive depending on system option
+     * and whether required extension is available.
      *
      * @return file_packer Suitable packer
      */
     protected function get_packer_for_archive_operation() {
         global $CFG;
+        require_once($CFG->dirroot . '/lib/filestorage/tgz_packer.php');
 
-        if ($CFG->enabletgzbackups) {
+        if ($CFG->enabletgzbackups && tgz_packer::has_required_extension()) {
             return get_file_packer('application/x-gzip');
         } else {
             return get_file_packer('application/zip');
@@ -156,13 +158,18 @@ class mbz_packer extends file_packer {
      *
      * @param string|stored_file $archivefile full pathname of zip file or stored_file instance
      * @return file_packer Suitable packer
+     * @throws moodle_exception If the file cannot be restored because of missing zlib
      */
     protected function get_packer_for_read_operation($archivefile) {
         global $CFG;
         require_once($CFG->dirroot . '/lib/filestorage/tgz_packer.php');
 
         if (tgz_packer::is_tgz_file($archivefile)) {
-            return get_file_packer('application/x-gzip');
+            if (tgz_packer::has_required_extension()) {
+                return get_file_packer('application/x-gzip');
+            } else {
+                throw new moodle_exception('errortgznozlib', 'backup');
+            }
         } else {
             return get_file_packer('application/zip');
         }

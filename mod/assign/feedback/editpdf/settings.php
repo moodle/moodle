@@ -40,7 +40,7 @@ $settings->add(new admin_setting_configexecutable('assignfeedback_editpdf/gspath
                                                   '/usr/bin/gs'));
 
 $setting = new admin_setting_php_extension_enabled('assignfeedback_editpdf/zlibenabled',
-                                                   get_string('zlibenabled', 'assignfeedback_editpdf'),
+                                                   get_string('zlibenabled', 'admin'),
                                                    get_string('zlibnotavailable', 'assignfeedback_editpdf'),
                                                    'zlib');
 

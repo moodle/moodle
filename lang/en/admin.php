@@ -491,6 +491,7 @@ $string['enablesafebrowserintegration'] = 'Enable Safe Exam Browser integration'
 $string['enablestats'] = 'Enable statistics';
 $string['enabletgzbackups'] = 'Enable new backup format';
 $string['enabletgzbackups_desc'] = 'If enabled, future backups will be created in a new compression format for .mbz files (internally stored as a .tar.gz file). This removes the 4GB backup size restriction and may improve performance. Restore supports both formats and the difference should be transparent to users.';
+$string['enabletgzbackups_nozlib'] = 'PHP extension &lsquo;zlib&rsquo; is not available. The new backup format relies on this extension and will be disabled until zlib is installed and enabled.';
 $string['enabletrusttext'] = 'Enable trusted content';
 $string['enablewebservices'] = 'Enable web services';
 $string['enablewsdocumentation'] = 'Web services documentation';
@@ -1130,6 +1131,7 @@ $string['webproxyinfo'] = 'Fill in following options if your Moodle server can n
 $string['xmlrpcrecommended'] = 'The xmlrpc extension is needed for hub communication, and useful for web services and Moodle networking';
 $string['yuicomboloading'] = 'YUI combo loading';
 $string['ziprequired'] = 'The Zip PHP extension is now required by Moodle, info-ZIP binaries or PclZip library are not used anymore.';
+$string['zlibenabled'] = 'zlib enabled';
 
 
 $string['caching'] = 'Caching';
