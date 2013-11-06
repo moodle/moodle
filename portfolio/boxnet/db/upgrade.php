@@ -32,14 +32,22 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_portfolio_boxnet_upgrade($oldversion) {
     global $CFG, $DB;
-    require_once($CFG->dirroot . '/portfolio/boxnet/db/upgradelib.php');
 
     $dbman = $DB->get_manager();
 
     if ($oldversion < 2012112901) {
-        // Message the admins.
+        require_once($CFG->libdir . '/portfoliolib.php');
+        require_once($CFG->dirroot . '/portfolio/boxnet/db/upgradelib.php');
+
         $existing = $DB->get_record('portfolio_instance', array('plugin' => 'boxnet'), '*', IGNORE_MULTIPLE);
         if ($existing) {
+
+            // Disable Box.net.
+            $instance = portfolio_instance($existing->id, $existing);
+            $instance->set('visible', 0);
+            $instance->save();
+
+            // Message the admins.
             portfolio_boxnet_admin_upgrade_notification();
         }
 
