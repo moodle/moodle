@@ -225,6 +225,7 @@ h4 img.iconhelp, h4 img.icon,
 h5 img.iconhelp, h5 img.icon,
 h6 img.iconhelp, h6 img.icon {
   vertical-align: middle;
+  padding: 4px;
 }
 .dir-rtl img.iconhelp, .dir-rtl .helplink img {
     padding-right: 3px;
@@ -2030,6 +2031,22 @@ img#persona_signin {
             display: inline; /** JS is enabled, we'll be using it so return display to normal **/
             .opacity(50);
         }
+        .toggle-display.textmenu {
+            display: block;
+            margin-left: 4px;
+            padding-left: 4px;
+
+            .iconsmall {
+                margin: 4px 4px 4px 0px;
+                padding: 8px 4px 0px 2px;
+                vertical-align: text-bottom;
+            }
+
+            .caret {
+                margin-top: 8px;
+                margin-left: 2px;
+            }
+        }
     }
     .moodle-actionmenu[data-enhanced] {
         .toggle-display {
@@ -2037,6 +2054,7 @@ img#persona_signin {
         }
         .menu-action-text  {
             display:inline;
+            vertical-align: middle;
         }
     }
 }
@@ -2059,7 +2077,7 @@ img#persona_signin {
         a {
             display: block;
             color: @dropdownLinkColor;
-            padding:2px 1em 2px 24px;
+            padding:2px 1em 2px 28px;
             &:hover,
             &:focus {
                 color: @dropdownLinkColorHover;
@@ -2079,7 +2097,7 @@ img#persona_signin {
             vertical-align: middle;
         }
         .iconsmall {
-            margin-left:-20px;
+            margin: 4px 4px 4px -24px;
         }
         > li {
             display:block;
@@ -2106,10 +2124,6 @@ img#persona_signin {
         &.align-bl-tr {bottom: 100%;left:100%;}
         &.align-br-tr {bottom: 100%;right: 0;margin-bottom: 4px;}
     }
-}
-
-.action-menu-shown .moodle-actionmenu[data-enhanced] .toggle-display {
-    background-color: #FFF;
 }
 
 .block .moodle-actionmenu {

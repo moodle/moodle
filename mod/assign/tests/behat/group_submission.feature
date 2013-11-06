@@ -44,7 +44,7 @@ Feature: Group assignment submissions
     And I fill the moodle form with:
       | Group mode | Separate groups |
     And I press "Save and return to course"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I fill the moodle form with:
       | Group mode | Separate groups |
     And I press "Save changes"

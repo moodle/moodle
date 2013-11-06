@@ -21,14 +21,18 @@ Feature: Duplicate activities
     And I add a "Database" to section "1" and I fill the form with:
       | Name | Test database name |
       | Description | Test database description |
-    And I click on "Actions" "link" in the "Test database name" activity
+    And I open "Test database name" actions menu
     When I click on "Duplicate" "link" in the "Test database name" activity
-    And I press "Continue"
-    And I press "Edit the new copy"
+    And I click on "Edit settings" "link" in the "Test database name" activity
+    And I fill the moodle form with:
+      | Name | Original database name |
+    And I press "Save and return to course"
+    And I open "Test database name" actions menu
+    And I click on "Edit settings" "link" in the "Test database name" activity
     And I fill the moodle form with:
       | Name | Duplicated database name |
       | Description | Duplicated database description |
     And I press "Save and return to course"
-    Then I should see "Test database name" in the "#section-1" "css_element"
+    Then I should see "Original database name" in the "#section-1" "css_element"
     And I should see "Duplicated database name" in the "#section-1" "css_element"
-    And "Test database name" "link" should appear before "Duplicated database name" "link"
+    And "Original database name" "link" should appear before "Duplicated database name" "link"

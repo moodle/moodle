@@ -427,6 +427,7 @@ input[type=text],textarea,select,input[type=password]{
     clear:both;
     margin:0;
     padding:5px 0 0 10px;
+    margin: 0 10px;
 }
 .block-region .block .content .commands{
     border:0 none;

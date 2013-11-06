@@ -230,7 +230,6 @@
         border-bottom: thin solid #eee;
     }
     .course-content .section .activity .commands {
-        display: block;
         text-align: right;
     }
     /** Handles display of the activity chooser on small screens **/
@@ -373,18 +372,6 @@
     // Reset the alignment for required label to display inline on mobile devices
     #page-mod-wiki-create .mform .fitem div.fitemtitle {
         float: left;
-    }
-
-// Hide broken drag'n'drop options on touch devices MDL-38371
-// Not a great workaround, landscape iPads are wider than this,
-// and a resized window on a netbook could be smaller, but best
-// we can do with CSS. There might be a JS-based solution.
-    .section .side,
-    .editing_move {
-        display: none;
-    }
-    .activityinstance > a {
-        display: block;
     }
 
   // GRID & CONTAINERS

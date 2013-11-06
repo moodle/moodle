@@ -20,7 +20,7 @@ Feature: Force group mode in a course
     And I add a "Chat" to section "1" and I fill the form with:
       | Name of this chat room | Chat room |
       | Description | Chat description |
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
 
   @javascript
   Scenario: Forced group mode using separate groups
@@ -29,10 +29,7 @@ Feature: Force group mode in a course
       | Force group mode | Yes |
     When I press "Save changes"
     Then "//a/child::img[contains(@alt, 'Separate groups (forced mode)')]" "xpath_element" should not exists
-    And "//img[contains(@alt, 'Separate groups (forced mode)')]" "xpath_element" should exists
-    And I click on "//img[contains(@alt, 'Separate groups (forced mode)')]" "xpath_element" in the "li.activity.chat" "css_element"
-    And "//a/child::img[contains(@alt, 'Separate groups (forced mode)')]" "xpath_element" should not exists
-    And "//img[contains(@alt, 'Separate groups (forced mode)')]" "xpath_element" should exists
+    And "//img[contains(@alt, 'Separate groups (forced mode)')]" "xpath_element" should not exists
 
   @javascript
   Scenario: Forced group mode using visible groups
@@ -41,10 +38,7 @@ Feature: Force group mode in a course
       | Force group mode | Yes |
     And I press "Save changes"
     Then "//a/child::img[contains(@alt, 'Visible groups (forced mode)')]" "xpath_element" should not exists
-    And "//img[contains(@alt, 'Visible groups (forced mode)')]" "xpath_element" should exists
-    And I click on "//img[contains(@alt, 'Visible groups (forced mode)')]" "xpath_element" in the "li.activity.chat" "css_element"
-    And "//a/child::img[contains(@alt, 'Visible groups (forced mode)')]" "xpath_element" should not exists
-    And "//img[contains(@alt, 'Visible groups (forced mode)')]" "xpath_element" should exists
+    And "//img[contains(@alt, 'Visible groups (forced mode)')]" "xpath_element" should not exists
 
   @javascript
   Scenario: Forced group mode without groups
@@ -53,8 +47,5 @@ Feature: Force group mode in a course
       | Force group mode | Yes |
     And I press "Save changes"
     Then "//a/child::img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should not exists
-    And "//img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should exists
-    And I click on "//img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" in the "li.activity.chat" "css_element"
-    And "//a/child::img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should not exists
-    And "//img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should exists
+    And "//img[contains(@alt, 'No groups (forced mode)')]" "xpath_element" should not exists
 

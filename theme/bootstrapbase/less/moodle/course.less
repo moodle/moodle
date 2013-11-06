@@ -38,8 +38,107 @@
 .course-content ul.section {
     margin: 1em;
 }
-.section .activity img.activityicon {
+.section {
+    .spinner {
+        height: 16px;
+        width: 16px;
+    }
+    .activity {
+        .spinner {
+            margin: 4px;
+            left: 0;
+            position: absolute;
+        }
+
+        .editing_move {
+            /* Move the move icon to the start of the line */
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        .mod-indent {
+            /**
+             * Add appropriate padding such that nothing overlaps the
+             * absolute positioned move icon.
+             */
+            padding-left: 32px;
+        }
+
+        /* The command block for each activity */
+        .actions {
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .activityinstance {
+            .dimmed {
+                img.activityicon {
+                  opacity: 0.5;
+                  filter: alpha(opacity=50);
+                }
+            }
+        }
+    }
+
+    .filler {
+        width: 16px;
+        height: 16px;
+        padding: 0.3em;
+        display: inline-block;
+    }
+
+    .activity.editor_displayed {
+        a.editing_title,
+        .moodle-actionmenu {
+            display: none;
+        }
+        div.activityinstance {
+            padding: initial;
+
+            input {
+                margin-bottom: initial;
+                padding-top: initial;
+                padding-bottom: initial;
+                vertical-align: text-bottom;
+            }
+        }
+    }
+}
+
+.dir-rtl .section {
+    .activity {
+        .spinner {
+            left: 0;
+        }
+
+        .editing_move {
+            /* Move the move icon to the start of the line */
+            left: auto;
+            right: 0;
+        }
+
+        .mod-indent {
+            /**
+             * Add appropriate padding such that nothing overlaps the
+             * absolute positioned move icon.
+             */
+            padding-left: auto;
+            padding-right: 32px;
+        }
+
+        /* The command block for each activity */
+        .actions {
+            left: 0;
+            right: auto;
+        }
+    }
+}
+
+.activity img.activityicon {
     margin-right: 6px;
+    vertical-align: text-bottom;
 }
 .dir-rtl .section .activity img.activityicon {
     margin-left: 6px;
@@ -49,12 +148,30 @@
 .section .activity .activityinstance div {
     display: inline-block;
 }
-.editing .section .activity .activityinstance {
-    min-width: 40%;
+.editing {
+    .section {
+        .activity {
+            .activityinstance {
+                min-width: 40%;
+                display: table-cell;
+                padding-right: 200px;
+                min-height: 2em;
+            }
+        }
+    }
 }
-.section .activity .activityinstance > a {
-    display: block;
+
+.dir-rtl.editing {
+    .section {
+        .activity {
+            .activityinstance {
+                padding-left: 200px;
+                padding-right: 0;
+            }
+        }
+    }
 }
+
 .editing_show + .editing_assign,
 .editing_hide + .editing_assign {
     // if roles icon missing, add space
@@ -246,23 +363,19 @@
     position: relative;
     padding: 0 0 0 16px;
 }
-.path-course-view li.activity span.autocompletion,
-.path-course-view li.activity form.togglecompletion {
-    float: right;
-    width: 0; /* Reduce the width of the control to 0 and rely on natural overflow */
+.path-course-view li.activity span.autocompletion img {
+    vertical-align: text-bottom;
 }
-.path-course-view li.activity span.autocompletion img,
 .path-course-view li.activity form.togglecompletion img {
     max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
 }
 .path-course-view li.activity form.togglecompletion .ajaxworking {
     width: 16px;
     height: 16px;
+    position: absolute;
+    right: 22px;
+    top: 3px;
     background: url([[pix:i/ajaxloader]]) no-repeat;
-}
-.dir-rtl.path-course-view li.activity form.togglecompletion,
-.dir-rtl.path-course-view li.activity span.autocompletion {
-    float: left;
 }
 .dir-rtl.path-course-view .completionprogress {
     float: none;
@@ -613,14 +726,40 @@ span.editinstructions {
     margin: 10px 0 20px;
 }
 
-.section .activity .moodle-actionmenu .iconsmall {
-    max-width: none !important; /** reset sets 100% !important which breaks on IE8 without this !important */
-    width:16px;
-    height:16px;
-    padding:0.3em;
+.section {
+    .activity {
+        .iconsmall {
+            width: 16px;
+            height: 16px;
+        }
+    }
+    .editing_title {
+        .iconsmall {
+            width: 12px;
+            height: 12px;
+            margin: 8px 8px 0px 0;
+            padding: 4px 8px 0px 0;
+            vertical-align: text-bottom;
+        }
+    }
+    .moodle-actionmenu {
+        .iconsmall {
+            max-width: none !important; /** reset sets 100% !important which breaks on IE8 without this !important */
+            width:16px;
+            height:16px;
+            padding: 4px;
+            vertical-align: text-bottom;
+        }
+    }
+    .moodle-actionmenu[data-enhanced] {
+        .menu {
+            img {
+              width: 12px;
+              height: 12px;
+            }
+        }
+    }
 }
-
-
 
 /**
  * Course management page
@@ -667,6 +806,22 @@ span.editinstructions {
     .moodle-actionmenu {
         white-space:nowrap;
     }
+
+    .moodle-actionmenu[data-enhance] {
+        .toggle-display {
+            img {
+                width: auto;
+            }
+            &.textmenu {
+                padding-right: 4px;
+
+                .caret {
+                    margin-top: 12px;
+                }
+            }
+        }
+    }
+
     .listing-actions {
         text-align:center;
         padding:0.4rem 0.3rem 0.3rem;

@@ -611,8 +611,7 @@ class core_course_management_renderer extends plugin_renderer_base {
                 new action_menu_link_secondary($shortnameurl, null, get_string('resortbyshortname')),
                 new action_menu_link_secondary($idnumberurl, null, get_string('resortbyidnumber'))
             ));
-            $menu->actiontext = get_string('resortcourses');
-            $menu->actionicon = new pix_icon('t/contextmenu', ' ', 'moodle', array('class' => 'iconsmall', 'title' => ''));
+            $menu->set_menu_trigger(get_string('resortcourses'));
             $actions[] = $this->render($menu);
         }
         $strall = get_string('all');
@@ -628,7 +627,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $perpage = $strall;
         }
         $menu->attributes['class'] .= ' courses-per-page';
-        $menu->actiontext = get_string('perpagea', 'moodle', $perpage);
+        $menu->set_menu_trigger(get_string('perpagea', 'moodle', $perpage));
         $actions[] = $this->render($menu);
         return html_writer::div(join(' | ', $actions), 'listing-actions course-listing-actions');
     }
@@ -922,7 +921,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             $menu->add(new action_menu_link_secondary($modeurl, null, $modestr, $attributes));
         }
 
-        $menu->actiontext = get_string('viewing', 'moodle', $selected);
+        $menu->set_menu_trigger(get_string('viewing', 'moodle', $selected));
 
         $html = html_writer::start_div('view-mode-selector vms');
         $html .= $this->render($menu);

@@ -486,3 +486,9 @@ body#page-course-view-topics.path-course div.moodle-dialogue-base div.yui3-widge
     color: #cc3300;
     text-decoration: underline;
 }
+
+/* Actionmenu
+-------------*/
+.jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .iconsmall {
+    margin: 4px 4px 4px 2px;
+}

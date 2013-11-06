@@ -40,7 +40,7 @@ Feature: Restore Moodle 2 course backups
     Then I should see "Course 1 restored in a new course"
     And I should see "Community finder" in the "Community finder" "block"
     And I should see "Test forum name"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     And the "id_format" field should match "Topics format" value
     And the "Number of sections" field should match "15" value
@@ -85,7 +85,7 @@ Feature: Restore Moodle 2 course backups
     When I restore "test_backup.mbz" backup into a new course using this options:
     Then I should see "Topic 1"
     And I should see "Test forum name"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     And the "id_format" field should match "Topics format" value
     And I fill the moodle form with:
@@ -96,14 +96,14 @@ Feature: Restore Moodle 2 course backups
     And I press "Save changes"
     And I should see "1 January - 7 January"
     And I should see "Test forum name"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     And the "id_format" field should match "Weekly format" value
     And I fill the moodle form with:
       | id_format | Social format |
     And I press "Save changes"
     And I should see "An open forum for chatting about anything you want to"
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     And the "id_format" field should match "Social format" value
     And I press "Cancel"
@@ -120,7 +120,7 @@ Feature: Restore Moodle 2 course backups
       | Filename | test_backup.mbz |
     And I restore "test_backup.mbz" backup into "Course 2" course using this options:
       | Overwrite course configuration | Yes |
-    And I follow "Edit settings"
+    And I click on "Edit settings" "link" in the "Administration" "block"
     And I expand all fieldsets
     Then the "id_format" field should match "Topics format" value
     And the "Number of sections" field should match "15" value
