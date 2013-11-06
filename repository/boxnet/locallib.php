@@ -67,6 +67,7 @@ function repository_boxnet_migrate_references_from_apiv1() {
         'author', 'license', 'timecreated', 'timemodified', 'sortorder', 'referencefileid');
     $referencefields = array('repositoryid' => 'repositoryid',
         'reference' => 'reference',
+        'lifetime' => 'referencelifetime',
         'lastsync' => 'referencelastsync');
     $fields = array();
     $fields[] = 'f.id AS id';
@@ -130,12 +131,12 @@ function repository_boxnet_migrate_references_from_apiv1() {
                 // set it synchronized or there is a risk that repository::sync_reference() will try to download
                 // the file again. We cannot use $file->get_contenthash() and $file->get_filesize() because they
                 // cause repository::sync_reference() to be called.
-                $file->set_synchronized($filerecord->contenthash, $filerecord->filesize);
+                $file->set_synchronized($filerecord->contenthash, $filerecord->filesize, 0, DAYSECS);
                 mtrace('Could not download reference, using last synced file. (id: ' . $file->get_referencefileid() . ')');
             } else {
                 // We don't know what the file was, but what can we do? In order to prevent a re-attempt to fetch the
                 // file in the next bit of this script (import_external_file()), we set a dummy content to the reference.
-                $file->set_synchronized($dummyhash, $dummysize);
+                $file->set_synchronized($dummyhash, $dummysize, 0, DAYSECS);
                 mtrace('Could not download reference, dummy file used. (id: ' . $file->get_referencefileid() . ')');
             }
         } else {
@@ -143,7 +144,7 @@ function repository_boxnet_migrate_references_from_apiv1() {
                 // The file has been downloaded, we add it to the file pool and synchronize
                 // all the files using this reference.
                 list($contenthash, $filesize, $unused) = $fs->add_file_to_pool($saveas);
-                $file->set_synchronized($contenthash, $filesize);
+                $file->set_synchronized($contenthash, $filesize, 0, DAYSECS);
             } catch (moodle_exception $e) {
                 // Something wrong happened...
                 mtrace('Something went wrong during sync (id: ' . $file->get_referencefileid() . ')');
