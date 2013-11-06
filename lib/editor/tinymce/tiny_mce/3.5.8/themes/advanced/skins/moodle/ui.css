@@ -12,7 +12,7 @@
 .dir-rtl .moodleSkin .mceToolbar select,
 .moodleSkin .mceToolbar a.mceButton { display:block; height: 30px; width: 30px; margin: 0; padding: 0; }
 .moodleSkin .mceToolbar a span.mceIcon { height: 30px; width: 30px; margin: 0; }
-.moodleSkin .mceToolbar a span.mceIcon img { padding: 7px 7px; }
+.moodleSkin .mceToolbar a span.mceIcon img { padding: 7px; }
 .moodleSkin .mceToolbar .mceGroupStart + td,
 .moodleSkin .mceToolbar .mceToolbarStart + td,
 .moodleSkin .mceToolbar .mceGroupStart + td a,

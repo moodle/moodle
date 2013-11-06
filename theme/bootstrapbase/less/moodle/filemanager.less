@@ -105,17 +105,17 @@
 .file-picker .fp-navbar {
     background: #F2F2F2;
     border-bottom: 1px solid #BBBBBB;
-    min-height: 48px;
+    min-height: 40px;
 }
 .file-picker .fp-navbar .fp-viewbar {
-    margin: 9px;
+    margin: 4px;
 }
 
 .file-picker .fp-content {
     background: #FFFFFF;
     clear: both;
     overflow: auto;
-    height: 432px;
+    height: 452px;
 }
 .filepicker.moodle-dialogue-fullscreen .file-picker .fp-content {
     width: 100%;
@@ -134,7 +134,7 @@
     text-align: right;
 }
 .dir-rtl .file-picker .fp-toolbar {
-    padding: 9px;
+    padding: 4px;
 }
 .dir-rtl .file-picker .fp-list {
     text-align: right;
@@ -204,12 +204,12 @@
 .fp-toolbar div {
     display: block;
     float: left;
-    margin-right: 9px;
+    margin-right: 4px;
 }
 .dir-rtl .fp-toolbar div {
     display: block;
     float: right;
-    margin-left: 9px;
+    margin-left: 4px;
     margin-right: 0px;
 }
 .fp-toolbar img {
@@ -236,7 +236,7 @@
     background: white;
 }
 .fp-repo-items fp-viewbar {
-    margin: 9px;
+    margin: 4px;
 }
 .dir-rtl .fp-toolbar img {
     vertical-align: -35%;
@@ -246,17 +246,19 @@
 }
 
 .fp-viewbar a {
-    width: 40px;
+    width: 30px;
     height: 30px;
     border-right: 1px solid #CCC;
     display: block;
     float:left;
 }
+.fp-viewbar a.checked:hover,
 .fp-viewbar a:hover {
     background-image: radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);
     background-color: #ebebeb;
 }
 
+.fp-viewbar a.checked,
 .fp-viewbar a:active {
     background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
     background-color: #dfdfdf;
@@ -270,11 +272,7 @@
     border-radius: 0 4px 4px 0;
 }
 .fp-viewbar a img {
-    margin: 7px 12px;
-}
-
-.fp-viewbar a.checked {
-    background-color: #dfdfdf;
+    margin: 7px;
 }
 
 .fp-viewbar.disabled a {
@@ -794,7 +792,7 @@ a.ygtvspacer:hover {
     border-bottom: none;
 }
 .filemanager-toolbar{
-    padding: 9px;
+    padding: 4px;
     overflow: hidden;
 }
 .fp-pathbar {
@@ -804,7 +802,7 @@ a.ygtvspacer:hover {
 }
 
 .file-picker .fp-toolbar {
-    padding: 9px;
+    padding: 4px;
 }
 
 .fp-toolbar .fp-btn-add,
@@ -819,7 +817,7 @@ a.ygtvspacer:hover {
     border-bottom: 1px solid #B3B3B3;
     border-radius: 4px;
     background: white;
-    width: 40px;
+    width: 30px;
     height: 30px;
 }
 
@@ -842,7 +840,7 @@ a.ygtvspacer:hover {
 .fp-tb-refresh a
 {
     display: block;
-    width: 40px;
+    width: 30px;
     height: 30px;
     border-radius: 4px;
 }
@@ -854,7 +852,7 @@ a.ygtvspacer:hover {
 .fp-tb-manage img,
 .fp-tb-logout img,
 .fp-tb-refresh img {
-    margin: 7px 12px;
+    margin: 7px;
 }
 
 .filemanager .fp-pathbar.empty {
