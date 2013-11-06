@@ -377,7 +377,7 @@ if ($action !== false && confirm_sesskey()) {
                     }
                     $categories = coursecat::get_many($categoryids);
                 } else if ($for === 'allcategories') {
-                    if ($sortcategoriesby) {
+                    if ($sortcategoriesby && coursecat::get(0)->can_resort_subcategories()) {
                         \core_course\management\helper::action_category_resort_subcategories(coursecat::get(0), $sortcategoriesby);
                     }
                     $categorieslist = coursecat::make_categories_list('moodle/category:manage');
@@ -388,11 +388,11 @@ if ($action !== false && confirm_sesskey()) {
                     break;
                 }
                 foreach ($categories as $cat) {
-                    if ($sortcategoriesby) {
+                    if ($sortcategoriesby && $cat->can_resort_subcategories()) {
                         // Don't clean up here, we'll do it once we're all done.
                         \core_course\management\helper::action_category_resort_subcategories($cat, $sortcategoriesby, false);
                     }
-                    if ($sortcoursesby) {
+                    if ($sortcoursesby && $cat->can_resort_courses()) {
                         \core_course\management\helper::action_category_resort_courses($cat, $sortcoursesby, false);
                     }
                 }
