@@ -17,7 +17,7 @@ Feature: Test we can resort categories in the management interface.
     And I should see the "Course categories" management page
     And I select "All categories" from "menuselectsortby"
     And I select <sortby> from "menuresortcategoriesby"
-    And I press "Go"
+    And I press "Sort"
     # Redirect.
     And I should see the "Course categories" management page
     And I should see category listing <cat1> before <cat2>
@@ -25,8 +25,8 @@ Feature: Test we can resort categories in the management interface.
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "By name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "By idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Sort categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Sort categories by ID number"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   Scenario Outline: Test bulk sorting current category.
     Given the following "categories" exists:
@@ -44,7 +44,7 @@ Feature: Test we can resort categories in the management interface.
     And I should see the "Course categories and courses" management page
     And I select "This category" from "menuselectsortby"
     And I select <sortby> from "menuresortcategoriesby"
-    And I press "Go"
+    And I press "Sort"
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see category listing <cat1> before <cat2>
@@ -52,8 +52,8 @@ Feature: Test we can resort categories in the management interface.
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "By name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "By idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Sort categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Sort categories by ID number"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   Scenario Outline: Test resorting subcategories.
     Given the following "categories" exists:

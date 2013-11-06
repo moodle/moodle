@@ -247,7 +247,7 @@ Feature: Course category management interface performs as expected
     And I should see the "Course categories" management page
     And I select "All categories" from "menuselectsortby"
     And I select <sortby> from "menuresortcategoriesby"
-    And I press "Go"
+    And I press "Sort"
     # Redirect.
     And I should see the "Course categories" management page
     And I should see category listing <cat1> before <cat2>
@@ -255,8 +255,8 @@ Feature: Course category management interface performs as expected
 
   Examples:
     | sortby | cat1 | cat2 | cat3 |
-    | "By name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
-    | "By idnumber"   | "Extended social studies" | "Social studies" | "Applied sciences" |
+    | "Sort categories by name"       | "Applied sciences"        | "Extended social studies" | "Social studies" |
+    | "Sort categories by ID number"   | "Extended social studies" | "Social studies" | "Applied sciences" |
 
   @javascript
   Scenario Outline: Sub categories are displayed correctly when resorted

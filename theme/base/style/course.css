@@ -263,10 +263,12 @@ input.titleeditor { width: 330px; vertical-align: text-bottom; }
 #course-category-listings > div > div {min-height:300px;}
 #course-category-listings h3 {margin:0;padding:0.6em 1em 0.5em;text-align:left;background-color:#f7f7f9;border-bottom:1px solid #e1e1e8;}
 #course-category-listings h4 {margin:1em 0 0;padding:0.6em 1em 0.5em;text-align:left;}
+.coursecat-management-header .moodle-actionmenu,
 #course-category-listings .moodle-actionmenu {white-space:nowrap;}
 #course-category-listings .listing-actions {text-align:center;padding:0.4em 0.3em 0.3em;}
 #course-category-listings .listing-actions > * {display:inline-block;line-height:2.2em;}
 #course-category-listings .listing-actions > .moodle-actionmenu {display:inline-block;}
+.coursecat-management-header .moodle-actionmenu[data-enhanced].show .menu a,
 #course-category-listings .listing-actions > .moodle-actionmenu .menu a {padding-left:1em;}
 #course-category-listings .listing-actions .iconsmall {margin-left:0.5em;}
 #course-category-listings ul.ml {list-style: none;margin:1em 0;}
