@@ -904,6 +904,7 @@ class core_plugin_manager {
             'qformat' => array('blackboard'),
             'enrol' => array('authorize'),
             'tool' => array('bloglevelupgrade'),
+            'theme' => array('mymobile'),
         );
 
         if (!isset($plugins[$type])) {
