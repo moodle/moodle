@@ -58,4 +58,43 @@ class behat_blocks extends behat_base {
         return $steps;
     }
 
+    /**
+     * Opens a block's actions menu if it is not already opened.
+     *
+     * @Given /^I open the "(?P<block_name_string>(?:[^"]|\\")*)" blocks action menu$/
+     * @throws DriverException The step is not available when Javascript is disabled
+     * @param string $blockname
+     * @return Given
+     */
+    public function i_open_the_blocks_action_menu($blockname) {
+
+        if (!$this->running_javascript()) {
+            throw new DriverException('Blocks action menu not available when Javascript is disabled');
+        }
+
+        // If it is already opened we do nothing.
+        $blocknode = $this->get_block_node($blockname);
+        $classes = array_flip(explode(' ', $blocknode->getAttribute('class')));
+        if (!empty($classes['action-menu-shown'])) {
+            return;
+        }
+
+        return new Given('I click on "a[role=\'menuitem\']" "css_element" in the "' . $this->escape($blockname) . '" "block"');
+    }
+
+    /**
+     * Returns the DOM node of the block from <div>.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $blockname The block name
+     * @return NodeElement
+     */
+    protected function get_block_node($blockname) {
+
+        $blockname = $this->getSession()->getSelectorsHandler()->xpathLiteral($blockname);
+        $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' block ')][contains(., $blockname)]";
+
+        return $this->find('xpath', $xpath);
+    }
+
 }
