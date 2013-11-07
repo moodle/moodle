@@ -168,15 +168,12 @@ $string['configcronremotepassword'] = 'This means that the cron.php script canno
 $string['configcurlcache'] = 'Time-to-live for cURL cache, in seconds.';
 $string['configcustommenuitems'] = 'You can configure a custom menu here to be shown by themes. Each line consists of some menu text, a link URL (optional), a tooltip title (optional) and a language code or comma-separated list of codes (optional, for displaying the line to users of the specified language only), separated by pipe characters. You can specify a structure using hyphens. For example:
 <pre>
-Moodle community|http://moodle.org
--Moodle free support|http://moodle.org/support
--Moodle development|http://moodle.org/development
---Moodle Tracker|http://tracker.moodle.org
---Moodle Docs|http://docs.moodle.org|Moodle Docs in German
+Moodle community|https://moodle.org
+-Moodle free support|https://moodle.org/support
+-Moodle development|https://moodle.org/development
+--Moodle Docs|http://docs.moodle.org|Moodle Docs
 --German Moodle Docs|http://docs.moodle.org/de|Documentation in German|de
--Moodle News|http://moodle.org/news Moodle company
--Moodle commercial hosting|http://moodle.com/hosting
--Moodle commercial support|http://moodle.com/support
+Moodle.com|http://moodle.com/
 </pre>';
 $string['configdbsessions'] = 'If enabled, this setting will use the database to store information about current sessions.  This is especially useful for large/busy sites or sites built on cluster of servers.  For most sites this should probably be left disabled so that the server disk is used instead.  Note that changing this setting now will log out all current users (including you). If you are using MySQL please make sure that \'max_allowed_packet\' in my.cnf (or my.ini) is at least 4M.';
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
@@ -538,7 +535,7 @@ $string['forcelogin'] = 'Force users to log in';
 $string['forceloginforprofileimage'] = 'Force users to log in to view user pictures';
 $string['forceloginforprofileimage_help'] = 'If enabled, users must login in order to view user profile pictures and the default user picture will be used in all notification emails.';
 $string['forceloginforprofiles'] = 'Force users to log in for profiles';
-$string['forcetimezone'] = 'Force default timezone';
+$string['forcetimezone'] = 'Force timezone';
 $string['formatuninstallwithcourses'] = 'There are {$a->count} courses using {$a->format}. Their format will be changed to {$a->defaultformat} (default format for this site). Some format-specific data may be lost. Are you sure you want to proceed?';
 $string['frontpage'] = 'Front page';
 $string['frontpagebackup'] = 'Front page backup';
@@ -732,7 +729,7 @@ $string['mobile'] = 'Mobile';
 $string['mobilecssurl'] = 'CSS';
 $string['modchooserdefault'] = 'Activity chooser default';
 $string['modeditdefaults'] = 'Default values for activity settings';
-$string['modeditingmenu'] = 'Activitiy editing menus';
+$string['modeditingmenu'] = 'Activity editing menus';
 $string['modeditingmenu_desc'] = 'If enabled many of the activity editing icons shown when viewing a course with editing on will be displayed within a drop-down menu. This reduces the content on screen when editing a course by hiding the icons until they are needed.';
 $string['modsettings'] = 'Manage activities';
 $string['modulesecurity'] = 'Module security';
