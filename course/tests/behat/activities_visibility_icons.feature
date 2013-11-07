@@ -27,8 +27,10 @@ Feature: Toggle activities visibility from the course page
     When I open "Test forum name" actions menu
     And I click on "Hide" "link" in the "Test forum name" activity
     Then "Test forum name" activity should be hidden
+    And I open "Test forum name" actions menu
     And I click on "Show" "link" in the "Test forum name" activity
     And "Test forum name" activity should be visible
+    And I open "Test forum name" actions menu
     And I click on "Hide" "link" in the "Test forum name" activity
     And "Test forum name" activity should be hidden
     And I reload the page
