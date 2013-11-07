@@ -841,9 +841,6 @@ span.editinstructions {
                 padding-left:1rem;
             }
         }
-        .iconsmall {
-            vertical-align:text-bottom;
-        }
         .moodle-actionmenu:not([data-enhanced]) {
             li {line-height:normal;}
             > .menubar a {
@@ -851,6 +848,9 @@ span.editinstructions {
                 display:inline-block;
                 > img {
                     display:none;
+                }
+                .caret {
+                    display: none;
                 }
             }
             > .menu .menu-action-text {
@@ -873,8 +873,9 @@ span.editinstructions {
             }
         }
         .tree-icon {
-            vertical-align:text-top;
             margin: 2px 6px 0 0;
+            width:12px;
+            vertical-align:inherit;
         }
         &[data-selected='1'] {
             > div {
@@ -913,8 +914,11 @@ span.editinstructions {
         display:initial;
         img {
             margin: 0 4px;
+            height:12px;
+            padding: 0;
+            vertical-align: inherit;
         }
-        .menu {
+        &.show .menu {
             a {
                 padding:4px 1em 4px 4px;
             }
@@ -922,6 +926,9 @@ span.editinstructions {
                 width: 12px;
                 max-width:none;
             }
+        }
+        .menu-action-text {
+            vertical-align: inherit;
         }
     }
 
@@ -1010,7 +1017,6 @@ span.editinstructions {
           display: none;
         }
         .bulk-action-checkbox {
-            vertical-align:middle;
             margin:-2px 6px 0 0;
         }
     }
@@ -1021,7 +1027,6 @@ span.editinstructions {
         .listitem {
             > div {
                 > .ba-checkbox {
-                    vertical-align:middle;
                     width:2.2em;
                     text-align:center;
                     margin:-1px 0.5em 0 0;
@@ -1047,14 +1052,12 @@ span.editinstructions {
             min-width:3.5em;
             display:inline-block;
             .smallicon {
-                width:0.8rem;
-                height:0.8rem;
-                vertical-align:middle;
-                margin:0 0.3rem;
+                width:12px;
+                margin-left:4px;
+                vertical-align: inherit;
             }
         }
         .bulk-action-checkbox {
-            vertical-align:middle;
             margin-right: -3px;
         }
         .category-listing > ul > .listitem:first-child {
@@ -1116,6 +1119,13 @@ span.editinstructions {
     .select-a-category .alert {
         margin: 1em;
     }
+}
+
+#course-category-listings #course-listing .listitem .drag-handle {
+  display: none;
+}
+.jsenabled #course-category-listings #course-listing .listitem .drag-handle {
+    display: block;
 }
 
 .dir-rtl #course-category-listings {

@@ -102,13 +102,13 @@ if ($modulelist !== '') {
 }
 
 $strmanagement = new lang_string('coursecatmanagement');
-$title = format_string($SITE->fullname, true, array('context' => $systemcontext));
+$pageheading = format_string($SITE->fullname, true, array('context' => $systemcontext));
 
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
-$PAGE->set_title($title);
-$PAGE->set_heading($strmanagement);
+$PAGE->set_title($strmanagement);
+$PAGE->set_heading($pageheading);
 
 // This is a system level page that operates on other contexts.
 require_login();
