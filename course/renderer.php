@@ -859,7 +859,8 @@ class core_course_renderer extends plugin_renderer_base {
             }
         } else {
             // No link, so display only content.
-            $output = html_writer::tag('div', $accesstext . $content, array('class' => $textclasses));
+            $output = html_writer::tag('div', $accesstext . $content,
+                    array('class' => 'contentwithoutlink ' . $textclasses));
         }
         return $output;
     }
@@ -982,22 +983,33 @@ class core_course_renderer extends plugin_renderer_base {
             $output .= course_get_cm_move($mod, $sectionreturn);
         }
 
-        $output .= html_writer::start_tag('div', array('class' => $indentclasses));
+        $output .= html_writer::start_tag('div', array('class' => 'mod-indent-outer'));
 
-        // Start the div for the activity title, excluding the edit icons.
-        $output .= html_writer::start_tag('div', array('class' => 'activityinstance'));
+        // This div is used to indent the content.
+        $output .= html_writer::div('', $indentclasses);
+
+        // Start a wrapper for the actual content to keep the indentation consistent
+        $output .= html_writer::start_tag('div');
 
         // Display the link to the module (or do nothing if module has no url)
-        $output .= $this->course_section_cm_name($mod, $displayoptions);
-        if ($this->page->user_is_editing()) {
-            $output .= ' ' . course_get_cm_rename_action($mod, $sectionreturn);
+        $cmname = $this->course_section_cm_name($mod, $displayoptions);
+
+        if (!empty($cmname)) {
+            // Start the div for the activity title, excluding the edit icons.
+            $output .= html_writer::start_tag('div', array('class' => 'activityinstance'));
+            $output .= $cmname;
+
+
+            if ($this->page->user_is_editing()) {
+                $output .= ' ' . course_get_cm_rename_action($mod, $sectionreturn);
+            }
+
+            // Module can put text after the link (e.g. forum unread)
+            $output .= $mod->get_after_link();
+
+            // Closing the tag which contains everything but edit icons. Content part of the module should not be part of this.
+            $output .= html_writer::end_tag('div'); // .activityinstance
         }
-
-        // Module can put text after the link (e.g. forum unread)
-        $output .= $mod->get_after_link();
-
-        // Closing the tag which contains everything but edit icons. Content part of the module should not be part of this.
-        $output .= html_writer::end_tag('div'); // .activityinstance
 
         // If there is content but NO link (eg label), then display the
         // content here (BEFORE any icons). In this case cons must be
@@ -1033,7 +1045,10 @@ class core_course_renderer extends plugin_renderer_base {
         // show availability info (if module is not available)
         $output .= $this->course_section_cm_availability($mod, $displayoptions);
 
-        $output .= html_writer::end_tag('span'); // $indentclasses
+        $output .= html_writer::end_tag('div'); // $indentclasses
+
+        // End of indentation div.
+        $output .= html_writer::end_tag('div');
 
         $output .= html_writer::end_tag('div');
         return $output;
