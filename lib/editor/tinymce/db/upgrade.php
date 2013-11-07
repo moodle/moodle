@@ -138,12 +138,20 @@ fontselect,fontsizeselect,wrap,code,search,replace,|,cleanup,removeformat,pastet
     if ($oldversion < 2013110600) {
         // Reset redesigned editor toolbar setting.
         $currentorder = get_config('editor_tinymce', 'customtoolbar');
-        // Start with a wrap.
-        // Remove the nonbreaking,charmap,table buttons (to be placed else where).
-        $neworder = str_replace(",wrap,nonbreaking,charmap,table", "", $currentorder);
-        // Place the nonbreaking,charmap,table button where they belongs.
-        $neworder = str_replace("search,replace", "search,replace,wrap,nonbreaking,charmap,table", $neworder);
-        set_config('customtoolbar', $neworder, 'editor_tinymce');
+        $olddefaultorder = "wrap,formatselect,wrap,bold,italic,wrap,bullist,numlist,wrap,link,unlink,wrap,image
+
+undo,redo,wrap,underline,strikethrough,sub,sup,wrap,justifyleft,justifycenter,justifyright,wrap,outdent,indent,wrap,forecolor,backcolor,wrap,ltr,rtl,wrap,nonbreaking,charmap,table
+
+fontselect,fontsizeselect,wrap,code,search,replace,wrap,cleanup,removeformat,pastetext,pasteword,wrap,fullscreen";
+        $neworder = "wrap,formatselect,wrap,bold,italic,wrap,bullist,numlist,wrap,link,unlink,wrap,image
+
+undo,redo,wrap,underline,strikethrough,sub,sup,wrap,justifyleft,justifycenter,justifyright,wrap,outdent,indent,wrap,forecolor,backcolor,wrap,ltr,rtl
+
+fontselect,fontsizeselect,wrap,code,search,replace,wrap,nonbreaking,charmap,table,wrap,cleanup,removeformat,pastetext,pasteword,wrap,fullscreen";
+        if ($currentorder == $olddefaultorder) {
+            set_config('customtoolbar', $neworder, 'editor_tinymce');
+        }
+
         upgrade_plugin_savepoint(true, 2013110600, 'editor', 'tinymce');
     }
 
