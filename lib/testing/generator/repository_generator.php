@@ -177,7 +177,7 @@ class testing_repository_generator extends component_generator_base {
         $record = $this->prepare_type_record($record);
         foreach ($typeoptions as $option) {
             if (!isset($record[$option])) {
-                throw new coding_exception("$option must be present in testing::create_repository_type() $record");
+                throw new coding_exception("$option must be present in testing::create_repository_type() for $type");
             }
         }
 
