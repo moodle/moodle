@@ -559,7 +559,7 @@ class core_course_management_renderer extends plugin_renderer_base {
 
         if ($category->can_resort_courses()) {
             // In order for dnd to be available the user must be able to resort the category children..
-            $html .= html_writer::div($this->output->pix_icon('i/dragdrop', get_string('dndcourse')), 'float-left drag-handle');
+            $html .= html_writer::div($this->output->pix_icon('i/move_2d', get_string('dndcourse')), 'float-left drag-handle');
         }
 
         $html .= html_writer::start_div('ba-checkbox float-left');
