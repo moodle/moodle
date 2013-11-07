@@ -1122,6 +1122,9 @@ sup {vertical-align: super;}
 .moodle-dialogue-base .moodle-dialogue.moodle-dialogue-tooltip {
     z-index: 3001;
 }
+.moodle-dialogue-base .moodle-dialogue.moodle-dialogue-tooltip .moodle-dialogue-bd {
+    overflow: auto;
+}
 
 /* Question Bank - Question Chooser "Close" button */
 #page-question-edit.dir-rtl a.container-close {right:auto;left:6px;}
