@@ -978,7 +978,8 @@ function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
                 }
             }
         } else {
-            debugging('Error baking badge image!');
+            debugging('Error baking badge image!', DEBUG_DEVELOPER);
+            return;
         }
     }
 
