@@ -698,6 +698,16 @@ class core_ddl_testcase extends database_driver_testcase {
         $this->assertSame('N', $columns['onenumber']->meta_type);
         $this->assertEquals(2.550, $DB->get_field('test_table1', 'onenumber', array(), IGNORE_MULTIPLE)); // Check default has been applied.
 
+        // Add one numeric field with scale of 0 and check it.
+        $field = new xmldb_field('onenumberwith0scale');
+        $field->set_attributes(XMLDB_TYPE_NUMBER, '6,0', null, XMLDB_NOTNULL, null, 2);
+        $dbman->add_field($table, $field);
+        $this->assertTrue($dbman->field_exists($table, 'onenumberwith0scale'));
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEquals(6, $columns['onenumberwith0scale']->max_length);
+        // We can not use assertEquals as that accepts null/false as a valid value.
+        $this->assertSame('0', strval($columns['onenumberwith0scale']->scale));
+
         // Add one float field and check it (not official type - must work as number).
         $field = new xmldb_field('onefloat');
         $field->set_attributes(XMLDB_TYPE_FLOAT, '6,3', null, XMLDB_NOTNULL, null, 3.550);
