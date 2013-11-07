@@ -204,8 +204,11 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     }
 
     public function instance_sanity_check() {
+        global $CFG;
         if (!$this->get_config('clientid') || !$this->get_config('clientsecret')) {
             return 'missingoauthkeys';
+        } else if (strpos($CFG->wwwroot, 'https') !== 0) {
+            return 'missinghttps';
         }
     }
 
