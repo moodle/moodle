@@ -182,7 +182,11 @@ function quiz_report_grade_method_sql($grademethod, $quizattemptsalias = 'quiza'
             return '';
 
         case QUIZ_ATTEMPTFIRST :
-            return "$quizattemptsalias.attempt = 1";
+            return "$quizattemptsalias.id = (
+                            SELECT MIN(qa2.id)
+                            FROM {quiz_attempts} qa2
+                            WHERE qa2.quiz = $quizattemptsalias.quiz AND
+                                qa2.userid = $quizattemptsalias.userid)";
 
         case QUIZ_ATTEMPTLAST :
             return "$quizattemptsalias.id = (
