@@ -4,7 +4,7 @@ require_once('../lib.php');
 
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
-$theme   = optional_param('theme', 'compact', PARAM_SAFEDIR);
+$theme   = optional_param('theme', 'course_theme', PARAM_SAFEDIR); //course_theme to use the current theme.
 
 $url = new moodle_url('/mod/chat/gui_ajax/index.php', array('id'=>$id));
 if ($groupid !== 0) {
@@ -37,7 +37,7 @@ require_capability('mod/chat:chat', $context);
 }
 
 // if requested theme doesn't exist, use default 'bubble' theme
-if (!file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
+if ($theme != 'course_theme' and !file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
     $theme = 'compact';
 }
 
@@ -69,7 +69,9 @@ $PAGE->requires->js_init_call('M.mod_chat_ajax.init', array($modulecfg), false, 
 $PAGE->set_title(get_string('modulename', 'chat').": $courseshortname: ".format_string($chat->name,true)."$groupname");
 $PAGE->add_body_class('yui-skin-sam');
 $PAGE->set_pagelayout('embedded');
-$PAGE->requires->css('/mod/chat/gui_ajax/theme/'.$theme.'/chat.css');
+if ( $theme != 'course_theme') {
+    $PAGE->requires->css('/mod/chat/gui_ajax/theme/'.$theme.'/chat.css');
+}
 
 echo $OUTPUT->header();
 echo $OUTPUT->box(html_writer::tag('h2',  get_string('participants'), array('class' => 'accesshide')) .

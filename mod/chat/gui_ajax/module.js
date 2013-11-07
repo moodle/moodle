@@ -116,28 +116,11 @@ M.mod_chat_ajax.init = function(Y, cfg) {
             }, this.cfg.timer, this);
 
             // Create and initalise theme changing menu
-            /*
-            this.thememenu = new Y.Overlay({
-                bodyContent : '<div class="menuitem"><a href="'+this.cfg.chaturl+'&theme=bubble">Bubble</a></div><div class="menuitem"><a href="'+this.cfg.chaturl+'&theme=compact">Compact</a></div>',
-                visible : false,
-                zIndex : 2,
-                align : {
-                    node : '#choosetheme',
-                    points : [Y.WidgetPositionExt.BL, Y.WidgetPositionExt.BR]
-                }
-            });
-            this.thememenu.render(document.body);
-            Y.one('#choosetheme').on('click', function(e){
-                this.show();
-                this.get('boundingBox').setStyle('visibility', 'visible');
-            }, this.thememenu);
-
-            return;
-            */
             this.thememenu = new Y.YUI2.widget.Menu('basicmenu', {xy:[0,0]});
             this.thememenu.addItems([
                 {text: "Bubble", url: this.cfg.chaturl+'&theme=bubble'},
-                {text: "Compact", url: this.cfg.chaturl+'&theme=compact'}
+                {text: "Compact", url: this.cfg.chaturl+'&theme=compact'},
+                {text: "Course theme", url: this.cfg.chaturl+'&theme=course_theme'}
             ]);
             this.thememenu.render(document.body);
             Y.one('#choosetheme').on('click', function(e){
@@ -156,8 +139,8 @@ M.mod_chat_ajax.init = function(Y, cfg) {
         },
 
         send : function(e, beep) {
-            this.sendbutton.set('value', M.str.chat.sending);
-
+            this.sendbutton.set('value', this.cfg.theme);
+//            alert(this.cfg.theme);
             var data = {
                 chat_message : (!beep)?this.messageinput.get('value'):'',
                 chat_sid : this.cfg.sid,
