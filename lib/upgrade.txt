@@ -56,6 +56,9 @@ information provided here is intended especially for developers.
   to 6 hours from 24 hours because etags and x-sendfile support should make file serving less expensive.
 * Date format locale charset for windows server will come from calendar type and for gregorian it will use
   lang file.
+* The library to interact with Box.net (class boxclient) is only compatible with their APIv1 which
+  reaches its end of life on the 14th of Dec. You should migrate your scripts to make usage of the
+  new class boxnet_client(). Note that the method names and return values have changed.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices

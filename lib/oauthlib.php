@@ -618,6 +618,39 @@ abstract class oauth2_client extends curl {
     }
 
     /**
+     * Get access token.
+     *
+     * This is just a getter to read the private property.
+     *
+     * @return string
+     */
+    public function get_accesstoken() {
+        return $this->accesstoken;
+    }
+
+    /**
+     * Get the client ID.
+     *
+     * This is just a getter to read the private property.
+     *
+     * @return string
+     */
+    public function get_clientid() {
+        return $this->clientid;
+    }
+
+    /**
+     * Get the client secret.
+     *
+     * This is just a getter to read the private property.
+     *
+     * @return string
+     */
+    public function get_clientsecret() {
+        return $this->clientsecret;
+    }
+
+    /**
      * Should HTTP GET be used instead of POST?
      * Some APIs do not support POST and want oauth to use
      * GET instead (with the auth_token passed as a GET param).
