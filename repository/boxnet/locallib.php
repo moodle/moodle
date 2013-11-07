@@ -116,6 +116,8 @@ function repository_boxnet_migrate_references_from_apiv1() {
             continue;
         }
 
+        mtrace('Starting migration of file reference ' . $file->get_referencefileid());
+
         // Manually import the file to the file pool to prevent timeout limitations of the repository method get_file().
         // We ignore the fact that the content of the file could exist locally because we want to synchronize the file
         // now to prevent the repository to try to download the file as well.

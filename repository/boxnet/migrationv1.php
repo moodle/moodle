@@ -31,6 +31,8 @@
  * @todo       Deprecate/remove this tool after the 14th of December 2013.
  */
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->dirroot . '/repository/boxnet/locallib.php');
@@ -40,7 +42,7 @@ require_capability('moodle/site:config', context_system::instance());
 
 $title = get_string('migrationtool', 'repository_boxnet');
 $PAGE->set_context(context_system::instance());
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('maintenance');
 $PAGE->set_title($title);
 $PAGE->set_heading($title);
 $PAGE->set_url(new moodle_url('/repository/boxnet/migrationv1.php'));
