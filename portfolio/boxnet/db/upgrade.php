@@ -35,23 +35,27 @@ function xmldb_portfolio_boxnet_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2013110600) {
+    if ($oldversion < 2013110602) {
         require_once($CFG->libdir . '/portfoliolib.php');
         require_once($CFG->dirroot . '/portfolio/boxnet/db/upgradelib.php');
 
         $existing = $DB->get_record('portfolio_instance', array('plugin' => 'boxnet'), '*', IGNORE_MULTIPLE);
         if ($existing) {
 
-            // Disable Box.net.
+            // Only disable or message the admins when the portfolio hasn't been set for APIv2.
             $instance = portfolio_instance($existing->id, $existing);
-            $instance->set('visible', 0);
-            $instance->save();
+            if ($instance->get_config('clientid') === null && $instance->get_config('clientsecret') === null) {
 
-            // Message the admins.
-            portfolio_boxnet_admin_upgrade_notification();
+                // Disable Box.net.
+                $instance->set('visible', 0);
+                $instance->save();
+
+                // Message the admins.
+                portfolio_boxnet_admin_upgrade_notification();
+            }
         }
 
-        upgrade_plugin_savepoint(true, 2013110600, 'portfolio', 'boxnet');
+        upgrade_plugin_savepoint(true, 2013110602, 'portfolio', 'boxnet');
     }
 
     return true;
