@@ -1012,10 +1012,6 @@ span.editinstructions {
             .coursename {
                 display:inline-block;
             }
-            .drag-handle {
-                display:inline-block;
-                margin: 0 6px 0 0;
-            }
             > div {
                 padding-left:1rem;
             }
@@ -1130,10 +1126,12 @@ span.editinstructions {
 }
 
 #course-category-listings #course-listing .listitem .drag-handle {
-  display: none;
+    display: none;
 }
 .jsenabled #course-category-listings #course-listing .listitem .drag-handle {
-    display: block;
+    display:inline-block;
+    margin: 0 6px 0 0;
+    cursor:pointer;
 }
 
 .dir-rtl #course-category-listings {

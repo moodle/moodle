@@ -416,7 +416,7 @@ input.titleeditor { vertical-align: text-bottom; }
     padding-right: 4px;
 }
 .jsenabled #course-category-listings .moodle-actionmenu[data-enhance] .toggle-display.textmenu .caret {
-    margin-top: 10px;
+    vertical-align:text-top;
 }
 
 #course-category-listings .item-actions {margin-right:1em;display:inline-block;display:initial;}
@@ -443,7 +443,8 @@ input.titleeditor { vertical-align: text-bottom; }
 .dir-rtl #course-category-listings li li li li li li li .tree-icon {margin-right:5em;}
 .dir-rtl #course-category-listings li li li li li li li li .tree-icon {margin-right:5.5em;}
 
-#course-listing .listitem .drag-handle {margin-right:0.5em;}
+#course-listing .listitem .drag-handle {display:none;}
+.jsenabled #course-listing .listitem .drag-handle {margin-right:0.5em;display:inline-block;cursor:pointer;}
 #course-listing .listitem .categoryname {display:inline-block;margin-left:1em;color:#a1a1a8;}
 #course-listing .listitem .coursename {display:inline-block;}
 
