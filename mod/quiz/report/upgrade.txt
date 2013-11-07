@@ -1,7 +1,13 @@
 This files describes API changes for quiz report plugins.
 
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
+=== 2.6 ===
 
+* Improving the display page and heading levels to have a proper nesting.
+We are reducing the amount of white spaces for the top report by making
+'separate group' options and attempts to be displayed inline.
+In grading report, we are changing 'no questions' from using heading to
+notification message. (MDL-41615)
 
 === 2.3 ===
 

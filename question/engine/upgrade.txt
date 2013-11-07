@@ -10,6 +10,9 @@ question_engine::is_manual_grade_in_range.
 ($qa, $options) to ($qa, $behaviouroutput, $options). If you have overridden
 that method you will need to update your code.
 
+3) Heading level for number(), add_part_heading() and respond_history()
+has been lowered by one level. These changes are part of improving the page
+accessibility and making heading to have proper nesting. (MDL-41615)
 
 === Earlier changes ===
 

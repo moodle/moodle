@@ -51,7 +51,7 @@ body.path-question-type .fitem_fgroup .accesshide {font: inherit;left: 0;positio
 .dir-rtl .que {text-align: right;}
 
 .que .info {float: left;width: 7em;padding:0.5em;margin-bottom: 1.8em;background: #eee;}
-.que h2.no {margin: 0;font-size: 0.8em;line-height: 1;}
+.que h3.no {margin: 0;font-size: 0.8em;line-height: 1;}
 .que span.qno {font-size: 1.5em;font-weight:bold;}
 .que .info > div {font-size: 0.8em;margin-top: 0.7em;}
 .que .info .questionflag.editable {cursor:pointer;}
