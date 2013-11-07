@@ -128,6 +128,7 @@ class core_user {
 
         if (empty(self::$noreplyuser)) {
             self::$noreplyuser = self::get_dummy_user_record();
+            self::$noreplyuser->maildisplay = '1'; // Show to all.
         }
         self::$noreplyuser->emailstop = 1; // Force msg stop for this user.
         return self::$noreplyuser;
