@@ -20,7 +20,7 @@ body.has_dock {margin-left:30px;}
 #dockeditempanel {min-width:200px;position:relative;z-index:12000;left:100%;}
 #dockeditempanel.dockitempanel_hidden {display:none;}
 #dockeditempanel .dockeditempanel_content {background-color:#fff;border:1px solid #000;z-index:12050;}
-#dockeditempanel .dockeditempanel_bd {overflow:auto;width:auto;}
+#dockeditempanel .dockeditempanel_bd {overflow:auto;width:100%;}
 #dockeditempanel .dockeditempanel_bd .block_docked {margin:10px;}
 #dockeditempanel .dockeditempanel_bd .block_navigation .block_tree li {overflow:visible;}
 #dockeditempanel .dockeditempanel_hd {border-bottom:1px solid #000;}
