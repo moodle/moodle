@@ -96,6 +96,28 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2012112901, 'scorm');
     }
 
+    if ($oldversion < 2012112902) {
+        // Fix invalid $scorm->launch records.
+        // Get all scorms that have a launch value that references a sco from a different scorm.
+        $sql = "SELECT s.*
+                 FROM {scorm} s
+            LEFT JOIN {scorm_scoes} c ON s.launch = c.id
+                WHERE c.id IS null OR s.id <> c.scorm";
+        $scorms = $DB->get_recordset_sql($sql);
+        foreach ($scorms as $scorm) {
+            // Find the first launchable sco for this SCORM.
+            $sqlselect = 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true). ' ORDER BY id LIMIT 1';
+            $sco = $DB->get_record_select('scorm_scoes', $sqlselect, array($scorm->id));
+            if (!empty($sco)) {
+                $scorm->launch = $sco->id;
+                $DB->update_record('scorm', $scorm);
+            }
+        }
+        $scorms->close();
+
+        upgrade_mod_savepoint(true, 2012112902, 'scorm');
+    }
+
     return true;
 }
 
