@@ -1849,5 +1849,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120306.09);
     }
 
+    if ($oldversion < 2012120307.02) {
+
+        // Delete notes of deleted courses.
+        $sql = "DELETE FROM {post}
+                 WHERE NOT EXISTS (SELECT {course}.id FROM {course}
+                                    WHERE {course}.id = {post}.courseid)
+                       AND {post}.module = ?";
+        $DB->execute($sql, array('notes'));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012120307.02);
+    }
+
+
     return true;
 }
