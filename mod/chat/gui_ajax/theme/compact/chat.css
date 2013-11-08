@@ -54,6 +54,7 @@
     border: 0;
     margin: 0;
     padding: 2px;
+    height:100%;
 }
 #chat-userlist {
     background: #E3E8F0;

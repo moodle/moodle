@@ -119,9 +119,11 @@ M.mod_chat_ajax.init = function(Y, cfg) {
             this.thememenu = new Y.YUI2.widget.Menu('basicmenu', {xy:[0,0]});
             this.thememenu.addItems([
                 {text: "Bubble", url: this.cfg.chaturl+'&theme=bubble'},
-                {text: "Compact", url: this.cfg.chaturl+'&theme=compact'},
-                {text: "Course theme", url: this.cfg.chaturl+'&theme=course_theme'}
+                {text: "Compact", url: this.cfg.chaturl+'&theme=compact'}
             ]);
+            if (this.cfg.showcoursetheme == 1) {
+                this.thememenu.addItem({text: "Course theme", url: this.cfg.chaturl+'&theme=course_theme'});
+            }
             this.thememenu.render(document.body);
             Y.one('#choosetheme').on('click', function(e){
                 this.moveTo((e.pageX-20), (e.pageY-20));
@@ -139,8 +141,7 @@ M.mod_chat_ajax.init = function(Y, cfg) {
         },
 
         send : function(e, beep) {
-            this.sendbutton.set('value', this.cfg.theme);
-//            alert(this.cfg.theme);
+            this.sendbutton.set('value', M.str.chat.sending);
             var data = {
                 chat_message : (!beep)?this.messageinput.get('value'):'',
                 chat_sid : this.cfg.sid,

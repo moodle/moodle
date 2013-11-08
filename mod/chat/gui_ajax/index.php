@@ -35,6 +35,10 @@ require_capability('mod/chat:chat', $context);
     $groupid = 0;
     $groupname = '';
 }
+$showcoursetheme = in_array('bootstrapbase', $PAGE->theme->parents);
+if (!$showcoursetheme && $theme === 'course_theme') { //set compact as default for non bootstrapbase based themes
+    $theme = 'compact';
+}
 
 // if requested theme doesn't exist, use default 'bubble' theme
 if ($theme != 'course_theme' and !file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
@@ -57,6 +61,7 @@ $modulecfg = array(
     'home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id,
     'chaturl'=>$CFG->httpswwwroot.'/mod/chat/gui_ajax/index.php?id='.$id,
     'theme'=>$theme,
+    'showcoursetheme'=>$showcoursetheme?1:0,
     'userid'=>$USER->id,
     'sid'=>$chat_sid,
     'timer'=>3000,

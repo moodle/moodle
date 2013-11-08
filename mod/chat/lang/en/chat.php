@@ -38,6 +38,7 @@ $string['configserverhost'] = 'The hostname of the computer where the server dae
 $string['configserverip'] = 'The numerical IP address that matches the above hostname';
 $string['configservermax'] = 'Max number of clients allowed';
 $string['configserverport'] = 'Port to use on the server for the daemon';
+$string['coursetheme'] = 'Course theme';
 $string['currentchats'] = 'Active chat sessions';
 $string['currentusers'] = 'Current users';
 $string['deletesession'] = 'Delete this session';
