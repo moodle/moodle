@@ -1,5 +1,3 @@
-<?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,15 +14,14 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LTI subplugin types declaration
+ * Readme file for local customisations
  *
  * @package    mod_lti
  * @copyright  2012 Mark Nielsen
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$subplugins = array(
-    'ltisource' => 'mod/lti/source',
-);
+LTI Source plugins directory
+==============================
+This directory contains LTI source plugins which are plugins that can register custom handlers
+to process lti messages.

@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,15 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LTI subplugin types declaration
+ * LTI source plugin info.
  *
- * @package    mod_lti
- * @copyright  2012 Mark Nielsen
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_lti
+ * @copyright 2013 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace mod_lti\plugininfo;
+
+use core\plugininfo\base, core_plugin_manager, moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
-$subplugins = array(
-    'ltisource' => 'mod/lti/source',
-);
+
+class ltisource extends base {
+    // 
+}
