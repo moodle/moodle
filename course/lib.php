@@ -2065,9 +2065,9 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
 
             $actions[$actionname] = new action_menu_link_primary(
                 new moodle_url($baseurl, array('id' => $mod->id, 'groupmode' => $nextgroupmode)),
-                new pix_icon($groupimage, $grouptitle, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                new pix_icon($groupimage, null, 'moodle', array('class' => 'iconsmall')),
                 $grouptitle,
-                array('class' => 'editing_'. $actionname, 'data-action' => $actionname, 'data-nextgroupmode' => $nextgroupmode)
+                array('class' => 'editing_'. $actionname, 'data-action' => $actionname, 'data-nextgroupmode' => $nextgroupmode, 'aria-live' => 'assertive')
             );
         } else {
             $actions['nogroupsupport'] = new action_menu_filler();
