@@ -4781,6 +4781,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     require_once($CFG->dirroot.'/tag/coursetagslib.php');
     require_once($CFG->dirroot.'/comment/lib.php');
     require_once($CFG->dirroot.'/rating/lib.php');
+    require_once($CFG->dirroot.'/notes/lib.php');
 
     // Handle course badges.
     badges_handle_course_deletion($courseid);
@@ -4942,6 +4943,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
     // filters be gone!
     filter_delete_all_for_context($coursecontext->id);
+
+    // Notes, you shall not pass!
+    note_delete_all($course->id);
 
     // die comments!
     comment::delete_comments($coursecontext->id);
