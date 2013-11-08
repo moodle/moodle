@@ -2831,5 +2831,21 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013110600.01);
     }
 
+    if ($oldversion < 2013110600.02) {
+
+        // If the user is logged in, we ensure that the alternate name fields are present
+        // in the session. It will not be the case when upgrading from 2.5 downwards.
+        if (!empty($USER->id)) {
+            $refreshuser = $DB->get_record('user', array('id' => $USER->id));
+            $fields = array('firstnamephonetic', 'lastnamephonetic', 'middlename', 'alternatename', 'firstname', 'lastname');
+            foreach ($fields as $field) {
+                $USER->{$field} = $refreshuser->{$field};
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013110600.02);
+    }
+
     return true;
 }
