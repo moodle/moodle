@@ -3781,8 +3781,6 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertNull($DB->get_field_sql($sql, array('paramvalue' => null)));
 
         // Check there are not problems with whitespace strings.
-        $sql = "SELECT COALESCE(null, '', null) AS test" . $DB->sql_null_from_clause();
-        $this->assertSame('', $DB->get_field_sql($sql, array()));
         $sql = "SELECT COALESCE(null, :paramvalue, null) AS test" . $DB->sql_null_from_clause();
         $this->assertSame('', $DB->get_field_sql($sql, array('paramvalue' => '')));
     }
