@@ -618,6 +618,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // Get the element we're working on
             var activityid = Y.Moodle.core_course.util.cm.getId(activity),
                 instancename  = activity.one(SELECTOR.INSTANCENAME),
+                instance = activity.one(SELECTOR.ACTIVITYINSTANCE),
                 currenttitle = instancename.get('firstChild'),
                 oldtitle = currenttitle.get('data'),
                 titletext = oldtitle,
@@ -657,18 +658,14 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 editform.appendChild(activity.one(SELECTOR.ACTIVITYICON).cloneNode());
                 editform.appendChild(editor);
                 editform.setData('anchor', anchor);
+                instance.insert(editinstructions, 'before');
                 anchor.replace(editform);
-                activity.one('div').appendChild(editinstructions);
 
                 // Force the editing instruction to match the mod-indent position.
                 var padside = 'left';
                 if (right_to_left()) {
                     padside = 'right';
                 }
-                var mi = activity.one('.mod-indent'),
-                    instructionpad = parseInt(mi.getStyle('padding-' + padside), 10) +
-                            parseInt(mi.getStyle('margin-' + padside), 10);
-                editinstructions.setStyle('margin-' + padside, instructionpad + 'px');
 
                 // We hide various components whilst editing:
                 activity.addClass(CSS.EDITINGTITLE);

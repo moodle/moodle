@@ -319,7 +319,6 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 span.editinstructions {
     position: absolute;
     top: 0px;
-    left: 0px;
     margin-top: -22px;
     margin-left: 30px;
     line-height: 16px;
