@@ -53,8 +53,7 @@ $string['memorylimithelp'] = '<p>Il limite di memoria assegnata al PHP attualmen
 
 <p>Tale limite potrà causare problemi nel funzionamento di Moodle, specialmente se usi molti moduli di attività con molti utenti.</p>
 
-<p>Ti raccomandiamo di impostare il PHP con un limite più alto se possibile, ad esempio 40M.
-Ci sono diversi modi che puoi provare:
+<p>Ti raccomandiamo di impostare il PHP con un limite più alto, ad esempio 40M, usando uno dei modi seguenti:
 <ol>
 <li>Se possibile, ricompila il PHP con l\'opzione <i>--enable-memory-limit</i>.
 Questo consentirà a Moodle di impostare in autonomia il limite di memoria.</li>
@@ -78,10 +77,10 @@ $string['pathsunsecuredataroot'] = 'La posizione della Cartella dati non è sicu
 $string['pathswrongadmindir'] = 'La cartella Admin non esiste';
 $string['phpextension'] = '{$a} estensioni PHP';
 $string['phpversion'] = 'Versione PHP';
-$string['phpversionhelp'] = '<p>Moodle necessita come minimo della versione 4.3.0 o 5.1.0 del PHP. (La versione 5.0.x soffre di problemi ben conosciuti)</p>
-<p>La versione installata nel vostro sistema è la {$a}</p>
-<p>Dovete aggiornare la versione del PHP oppure spostarsi su un host che abbia una versione più aggiornata del PHP!<br>
-(Se avete la 5.0.x, potete fare il downgrade alla versione 4.4.x)</p>';
+$string['phpversionhelp'] = '<p>Moodle necessita come minimo della versione 4.3.0 o 5.1.0 del PHP. (La versione 5.0.x soffre di problemi noti)</p>
+<p>La versione installata nel sistema è la {$a}</p>
+<p>E\' necessario aggiornare la versione del PHP oppure spostarsi su un host che abbia una versione più aggiornata del PHP!<br>
+(Dalla 5.0.x, è possibile eseguire il downgrade alla versione 4.4.x)</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Se vedi questa pagina hai installato correttamente e lanciato il pacchetto <strong>{$a->packname} {$a->packversion}</strong>. Complimenti!';
 $string['welcomep30'] = 'La release di <strong>{$a->installername}</strong> include l\'applicazione per creare l\'ambiente necessario a far girare <strong>Moodle</strong>:';
