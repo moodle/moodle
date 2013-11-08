@@ -1,4 +1,5 @@
 {
     "coverage": false,
-    "lint": "config"
+    "lint": "config",
+    "clean": true
 }
