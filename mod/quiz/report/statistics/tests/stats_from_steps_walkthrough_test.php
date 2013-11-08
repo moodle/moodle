@@ -113,7 +113,7 @@ class quiz_report_statistics_from_steps extends mod_quiz_attempt_walkthrough_fro
         );
 
         foreach ($quizstatsexpected as $statname => $statvalue) {
-            $this->assertEquals($statvalue, $quizstats->$statname, $quizstats->$statname, abs($statvalue) * 1e-5);
+            $this->assertEquals($statvalue, $quizstats->$statname, $quizstats->$statname, abs($statvalue) * 1.5e-5);
         }
 
         for ($rowno = 0; $rowno < $csvdata['qstats']->getRowCount(); $rowno++) {
