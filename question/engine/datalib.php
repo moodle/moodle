@@ -1294,7 +1294,9 @@ class question_file_saver implements question_response_files {
         if ($text !== '') {
             $text = preg_replace('/\s*<!-- File hash: \w+ -->\s*$/', '', $text);
             $text = file_rewrite_urls_to_pluginfile($text, $draftitemid);
-            $text .= '<!-- File hash: ' . $hash . ' -->';
+            if ($string) {
+                $text .= '<!-- File hash: ' . $hash . ' -->';
+            }
         }
         return $text;
     }
