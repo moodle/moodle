@@ -279,10 +279,6 @@ Console.prototype = {
         if (!listing) {
             return false;
         }
-        if (!category) {
-            Y.log('Couldn\'t find the current category object.', 'warn', 'moodle-course-management');
-            return false;
-        }
         listing.all('.listitem[data-id]').each(function(node){
             this.registerCourse(new Course({
                 node : node,
