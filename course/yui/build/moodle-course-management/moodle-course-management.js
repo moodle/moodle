@@ -278,9 +278,6 @@ Console.prototype = {
         if (!listing) {
             return false;
         }
-        if (!category) {
-            return false;
-        }
         listing.all('.listitem[data-id]').each(function(node){
             this.registerCourse(new Course({
                 node : node,
