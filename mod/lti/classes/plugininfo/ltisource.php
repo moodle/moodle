@@ -29,5 +29,5 @@ defined('MOODLE_INTERNAL') || die();
 
 
 class ltisource extends base {
-    // 
+    // Accept base class implementation 100%.
 }
