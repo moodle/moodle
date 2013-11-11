@@ -120,8 +120,13 @@
 #searchform_search {
     width: auto;
 }
-.block_rss_client .list li {
-    border-top-color: darken(@wellBackground, 7%);
+.block_rss_client {
+    .content li .link {
+        font-weight: inherit;
+    }
+    .list li {
+        border-top-color: darken(@wellBackground, 7%);
+    }
 }
 
 // Overide for RTL layout.
