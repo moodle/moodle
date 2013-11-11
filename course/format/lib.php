@@ -554,7 +554,7 @@ abstract class format_base {
             $sectionid = $section->id;
         } else if ($this->courseid && is_int($section) &&
                 ($sectionobj = $DB->get_record('course_sections',
-                        array('section' => $section, 'courseid' => $this->courseid), 'id'))) {
+                        array('section' => $section, 'course' => $this->courseid), 'id'))) {
             // course section format options will be returned
             $sectionid = $sectionobj->id;
         } else {
