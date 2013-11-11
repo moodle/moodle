@@ -2633,7 +2633,6 @@ class core_moodlelib_testcase extends advanced_testcase {
         $userinfo->imagealt = 'Michael Jordan draining another basket.';
         $userinfo->idnumber = 3982;
 
-
         // Just user name fields.
         $user = new stdClass();
         $user = username_load_fields_from_object($user, $userinfo);
@@ -2648,8 +2647,9 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         // User information for showing a picture.
         $user = new stdClass();
-        $additionalfields = array('id' => 'userid', 'imagealt', 'picture', 'email');
+        $additionalfields = explode(',', user_picture::fields());
         $user = username_load_fields_from_object($user, $userinfo, null, $additionalfields);
+        $user->id = $userinfo->userid;
         $expectedarray = new stdClass();
         $expectedarray->id = 1;
         $expectedarray->firstname = 'Bruce';
@@ -2669,11 +2669,16 @@ class core_moodlelib_testcase extends advanced_testcase {
         $userinfo->authorfirstnamephonetic = 'ブルース';
         $userinfo->authorlastnamephonetic = 'カンベッル';
         $userinfo->authormiddlename = '';
+        $userinfo->authorpicture = 23;
+        $userinfo->authorimagealt = 'Michael Jordan draining another basket.';
+        $userinfo->authoremail = 'test@testing.net';
+
 
         // Return an object with user picture information.
         $user = new stdClass();
-        $additionalfields = array('id' => 'userid', 'imagealt', 'picture', 'email');
+        $additionalfields = explode(',', user_picture::fields());
         $user = username_load_fields_from_object($user, $userinfo, 'author', $additionalfields);
+        $user->id = $userinfo->userid;
         $expectedarray = new stdClass();
         $expectedarray->id = 1;
         $expectedarray->firstname = 'Bruce';
@@ -2682,7 +2687,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $expectedarray->lastnamephonetic = 'カンベッル';
         $expectedarray->middlename = '';
         $expectedarray->alternatename = '';
-        $expectedarray->email = '';
+        $expectedarray->email = 'test@testing.net';
         $expectedarray->picture = 23;
         $expectedarray->imagealt = 'Michael Jordan draining another basket.';
         $this->assertEquals($user, $expectedarray);

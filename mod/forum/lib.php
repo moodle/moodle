@@ -3330,8 +3330,9 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     // Build an object that represents the posting user
     $postuser = new stdClass;
-    $postuserfields = array('id' => 'userid', 'imagealt', 'picture', 'email');
+    $postuserfields = explode(',', user_picture::fields());
     $postuser = username_load_fields_from_object($postuser, $post, null, $postuserfields);
+    $postuser->id = $post->userid;
     $postuser->fullname    = fullname($postuser, $cm->cache->caps['moodle/site:viewfullnames']);
     $postuser->profilelink = new moodle_url('/user/view.php', array('id'=>$post->userid, 'course'=>$course->id));
 
@@ -3767,8 +3768,9 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
     // Picture
     $postuser = new stdClass();
-    $postuserfields = array('id' => 'userid', 'imagealt', 'picture', 'email');
+    $postuserfields = explode(',', user_picture::fields());
     $postuser = username_load_fields_from_object($postuser, $post, null, $postuserfields);
+    $postuser->id = $post->userid;
     echo '<td class="picture">';
     echo $OUTPUT->user_picture($postuser, array('courseid'=>$forum->course));
     echo "</td>\n";
@@ -3830,7 +3832,8 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
     $usermodified = new stdClass();
-    $usermodified = username_load_fields_from_object($usermodified, $post, 'um', array('id' => 'usermodified'));
+    $usermodified->id = $post->usermodified;
+    $usermodified = username_load_fields_from_object($usermodified, $post, 'um');
     echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
          fullname($usermodified).'</a><br />';
     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.$parenturl.'">'.
@@ -6110,7 +6113,9 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
 
         $tmpactivity->user = new stdClass();
         $additionalfields = array('id' => 'userid', 'picture', 'imagealt', 'email');
+        $additionalfields = explode(',', user_picture::fields());
         $tmpactivity->user = username_load_fields_from_object($tmpactivity->user, $post, null, $additionalfields);
+        $tmpactivity->user->id = $post->userid;
 
         $activities[$index++] = $tmpactivity;
     }
