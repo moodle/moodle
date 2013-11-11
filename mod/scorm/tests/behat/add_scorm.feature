@@ -35,4 +35,5 @@ Feature: Add scorm activity
     And I follow "Awesome SCORM package"
     And I should see "Normal"
     And I press "Enter"
+    And I wait "5" seconds
     And I should see "Golf Explained"
