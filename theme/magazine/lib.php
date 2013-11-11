@@ -71,7 +71,7 @@ function magazine_process_css($css, $theme) {
     } else {
         $background = null;
     }
-    $css = magazine_set_background($css, $background);
+    $css = magazine_set_background($css, $background, $theme);
     
      // Set the logo image
     if (!empty($theme->settings->logo)) {
@@ -79,7 +79,7 @@ function magazine_process_css($css, $theme) {
     } else {
         $logo = null;
     }
-    $css = magazine_set_logo($css, $logo);
+    $css = magazine_set_logo($css, $logo, $theme);
     
 
     // Return the CSS
@@ -162,23 +162,21 @@ function magazine_set_forumback($css, $forumback) {
     return $css;
 }
 
-function magazine_set_background($css, $background) {
-	global $OUTPUT;
+function magazine_set_background($css, $background, $theme) {
 	$tag = '[[setting:background]]';
 	$replacement = $background;
 	if (is_null($replacement)) {
-		$replacement = $OUTPUT->pix_url('bg4', 'theme');
+		$replacement = $theme->pix_url('bg4', 'theme');
  	}
 	$css = str_replace($tag, $replacement, $css);
 	return $css;
 }
 
-function magazine_set_logo($css, $logo) {
-	global $OUTPUT;
+function magazine_set_logo($css, $logo, $theme) {
 	$tag = '[[setting:logo]]';
 	$replacement = $logo;
 	if (is_null($replacement)) {
- 		$replacement = $OUTPUT->pix_url('logo', 'theme');
+		$replacement = $theme->pix_url('logo', 'theme');
  	}
 	$css = str_replace($tag, $replacement, $css);
 	return $css;
