@@ -204,7 +204,13 @@ class core_course_management_renderer extends plugin_renderer_base {
             $textlabel = get_string('categorysubcategoryof', 'moodle', $a);
         }
         $courseicon = $this->output->pix_icon('i/course', get_string('courses'));
-        $bcatinput = array('type' => 'checkbox', 'name' => 'bcat[]', 'value' => $category->id, 'class' => 'bulk-action-checkbox', 'aria-label' => $text);
+        $bcatinput = array(
+            'type' => 'checkbox',
+            'name' => 'bcat[]',
+            'value' => $category->id,
+            'class' => 'bulk-action-checkbox',
+            'aria-label' => get_string('bulkactionselect', 'moodle', $text)
+        );
 
         if (!$category->can_resort_subcategories() && !$category->has_manage_capability()) {
             // Very very hardcoded here.
@@ -371,9 +377,13 @@ class core_course_management_renderer extends plugin_renderer_base {
     public function category_bulk_actions(coursecat $category = null) {
         // Resort courses.
         // Change parent.
+        if (!coursecat::can_resort_any() && !coursecat::can_change_parent_any()) {
+            return '';
+        }
         $strgo = new lang_string('go');
 
         $html  = html_writer::start_div('category-bulk-actions bulk-actions');
+        $html .= html_writer::div(get_string('categorybulkaction'), 'accesshide', array('tabindex' => '0'));
         if (coursecat::can_resort_any()) {
             $selectoptions = array(
                 'selectedcategories' => get_string('selectedcategories'),
@@ -605,7 +615,7 @@ class core_course_management_renderer extends plugin_renderer_base {
             'name' => 'bc[]',
             'value' => $course->id,
             'class' => 'bulk-action-checkbox',
-            'aria-label' => $text
+            'aria-label' => get_string('bulkactionselect', 'moodle', $text)
         );
         if (!$category->has_manage_capability()) {
             // Very very hardcoded here.
@@ -722,6 +732,7 @@ class core_course_management_renderer extends plugin_renderer_base {
     public function course_bulk_actions(coursecat $category) {
         $html  = html_writer::start_div('course-bulk-actions bulk-actions');
         if ($category->can_move_courses_out_of()) {
+            $html .= html_writer::div(get_string('coursebulkaction'), 'accesshide', array('tabindex' => '0'));
             $options = coursecat::make_categories_list('moodle/category:manage');
             $select = html_writer::select(
                 $options,
@@ -1205,11 +1216,11 @@ class core_course_management_renderer extends plugin_renderer_base {
             $url->set_anchor('category-listing');
             $html .= html_writer::link($url, get_string('skiptocategorylisting'), array('class' => 'skip'));
         }
-        if ($displaycategorylisting) {
+        if ($displaycourselisting) {
             $url->set_anchor('course-listing');
             $html .= html_writer::link($url, get_string('skiptocourselisting'), array('class' => 'skip'));
         }
-        if ($displaycategorylisting) {
+        if ($displaycoursedetail) {
             $url->set_anchor('course-detail');
             $html .= html_writer::link($url, get_string('skiptocoursedetails'), array('class' => 'skip'));
         }
