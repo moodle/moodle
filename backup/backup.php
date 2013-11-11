@@ -130,6 +130,13 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Carry out actual backup.
     $backup->execute();
 
+    // Backup controller gets saved/loaded so the logger object changes and we
+    // have to retrieve it.
+    $logger = $backup->get_controller()->get_logger();
+    while (!is_a($logger, 'core_backup_html_logger')) {
+        $logger = $logger->get_next();
+    }
+
     // Get HTML from logger.
     $loghtml = $logger->get_html();
 
