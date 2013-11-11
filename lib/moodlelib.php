@@ -3700,7 +3700,7 @@ function get_all_user_name_fields($returnsql = false, $tableprefix = null, $pref
  *
  * @param object $addtoobject Object to add user name fields to.
  * @param object $secondobject Object that contains user name field information.
- * @param string $prefix prefix to be added to the user name field e.g. authorfirstname.
+ * @param string $prefix prefix to be added to all fields (including $additionalfields) e.g. authorfirstname.
  * @param array $additionalfields Additional fields to be matched with data in the second object.
  * The key can be set to the user table field name.
  * @return object User name fields.
@@ -3712,8 +3712,10 @@ function username_load_fields_from_object($addtoobject, $secondobject, $prefix =
         // the key is a number and then sets the key to the array value.
         foreach ($additionalfields as $key => $value) {
             if (is_numeric($key)) {
-                $additionalfields[$value] = $value;
+                $additionalfields[$value] = $prefix . $value;
                 unset($additionalfields[$key]);
+            } else {
+                $additionalfields[$key] = $prefix . $value;
             }
         }
         $fields = array_merge($fields, $additionalfields);

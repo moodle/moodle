@@ -416,8 +416,9 @@ class scorm_interactions_report extends scorm_default_report {
                     }
                     if (in_array('picture', $columns)) {
                         $user = new stdClass();
-                        $additionalfields = array('id' => 'userid', 'picture', 'imagealt', 'email');
+                        $additionalfields = explode(',', user_picture::fields());
                         $user = username_load_fields_from_object($user, $scouser, null, $additionalfields);
+                        $user->id = $scouser->userid;
                         $row[] = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                     }
                     if (!$download) {
