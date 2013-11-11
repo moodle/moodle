@@ -40,7 +40,8 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $this->assertEquals(0, $DB->count_records('files', array()));
+        // Number of files installed in the database on a fresh Moodle site.
+        $installedfiles = $DB->count_records('files', array());
 
         $content = 'abcd';
         $syscontext = context_system::instance();
@@ -68,7 +69,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertFileExists($location);
 
         // Verify the dir placeholder files are created.
-        $this->assertEquals(3, $DB->count_records('files', array()));
+        $this->assertEquals($installedfiles + 3, $DB->count_records('files', array()));
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>sha1('/'.$filerecord['contextid'].'/'.$filerecord['component'].'/'.$filerecord['filearea'].'/'.$filerecord['itemid'].'/.'))));
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>sha1('/'.$filerecord['contextid'].'/'.$filerecord['component'].'/'.$filerecord['filearea'].'/'.$filerecord['itemid'].$filerecord['filepath'].'.'))));
 
@@ -83,7 +84,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertSame($file->get_contenthash(), $file2->get_contenthash());
         $this->assertFileExists($location);
 
-        $this->assertEquals(4, $DB->count_records('files', array()));
+        $this->assertEquals($installedfiles + 4, $DB->count_records('files', array()));
 
         // Test that borked content file is recreated.
 
@@ -98,7 +99,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertSame($content, file_get_contents($location));
         $this->assertDebuggingCalled();
 
-        $this->assertEquals(5, $DB->count_records('files', array()));
+        $this->assertEquals($installedfiles + 5, $DB->count_records('files', array()));
     }
 
     /**
@@ -109,8 +110,8 @@ class core_files_file_storage_testcase extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $filecount = $DB->count_records('files', array());
-        $this->assertEquals(0, $filecount);
+        // Number of files installed in the database on a fresh Moodle site.
+        $installedfiles = $DB->count_records('files', array());
 
         $filepath = $CFG->dirroot.'/lib/filestorage/tests/fixtures/testimage.jpg';
         $syscontext = context_system::instance();
@@ -137,7 +138,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertFileExists($location);
 
         // Verify the dir placeholder files are created.
-        $this->assertEquals(3, $DB->count_records('files', array()));
+        $this->assertEquals($installedfiles + 3, $DB->count_records('files', array()));
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>sha1('/'.$filerecord['contextid'].'/'.$filerecord['component'].'/'.$filerecord['filearea'].'/'.$filerecord['itemid'].'/.'))));
         $this->assertTrue($DB->record_exists('files', array('pathnamehash'=>sha1('/'.$filerecord['contextid'].'/'.$filerecord['component'].'/'.$filerecord['filearea'].'/'.$filerecord['itemid'].$filerecord['filepath'].'.'))));
 
@@ -152,7 +153,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertSame($file->get_contenthash(), $file2->get_contenthash());
         $this->assertFileExists($location);
 
-        $this->assertEquals(4, $DB->count_records('files', array()));
+        $this->assertEquals($installedfiles + 4, $DB->count_records('files', array()));
 
         // Test that borked content file is recreated.
 
@@ -167,7 +168,7 @@ class core_files_file_storage_testcase extends advanced_testcase {
         $this->assertSame(file_get_contents($filepath), file_get_contents($location));
         $this->assertDebuggingCalled();
 
-        $this->assertEquals(5, $DB->count_records('files', array()));
+        $this->assertEquals($installedfiles + 5, $DB->count_records('files', array()));
 
         // Test invalid file creation.
 
