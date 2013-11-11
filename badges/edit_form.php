@@ -225,6 +225,9 @@ class edit_message_form extends moodleform {
 
         $mform->addElement('advcheckbox', 'attachment', get_string('attachment', 'badges'), '', null, array(0, 1));
         $mform->addHelpButton('attachment', 'attachment', 'badges');
+        if (empty($CFG->allowattachments)) {
+            $mform->freeze('attachment');
+        }
 
         $options = array(
                 BADGE_MESSAGE_NEVER   => get_string('never'),
