@@ -2704,11 +2704,7 @@ function forum_get_discussions($cm, $forumsort="d.timemodified DESC", $fullpost=
         $umfields = "";
         $umtable  = "";
     } else {
-        $umfields = '';
-        $umnames = get_all_user_name_fields();
-        foreach ($umnames as $umname) {
-            $umfields .= ', um.' . $umname . ' AS um' . $umname;
-        }
+        $umfields = ', ' . get_all_user_name_fields(true, 'um', null, 'um');
         $umtable  = " LEFT JOIN {user} um ON (d.usermodified = um.id)";
     }
 
@@ -3334,14 +3330,8 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     // Build an object that represents the posting user
     $postuser = new stdClass;
-    $postuser->id        = $post->userid;
-    foreach (get_all_user_name_fields() as $addname) {
-        $postuser->$addname  = $post->$addname;
-    }
-    $postuser->imagealt  = $post->imagealt;
-    $postuser->picture   = $post->picture;
-    $postuser->email     = $post->email;
-    // Some handy things for later on
+    $postuserfields = array('id' => 'userid', 'imagealt', 'picture', 'email');
+    $postuser = username_load_fields_from_object($postuser, $post, null, $postuserfields);
     $postuser->fullname    = fullname($postuser, $cm->cache->caps['moodle/site:viewfullnames']);
     $postuser->profilelink = new moodle_url('/user/view.php', array('id'=>$post->userid, 'course'=>$course->id));
 
@@ -3777,14 +3767,8 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
     // Picture
     $postuser = new stdClass();
-    $postuser->id = $post->userid;
-    foreach (get_all_user_name_fields() as $addname) {
-        $postuser->$addname = $post->$addname;
-    }
-    $postuser->imagealt = $post->imagealt;
-    $postuser->picture = $post->picture;
-    $postuser->email = $post->email;
-
+    $postuserfields = array('id' => 'userid', 'imagealt', 'picture', 'email');
+    $postuser = username_load_fields_from_object($postuser, $post, null, $postuserfields);
     echo '<td class="picture">';
     echo $OUTPUT->user_picture($postuser, array('courseid'=>$forum->course));
     echo "</td>\n";
@@ -3846,11 +3830,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
     $usermodified = new stdClass();
-    $usermodified->id        = $post->usermodified;
-    foreach (get_all_user_name_fields() as $addname) {
-        $temp = 'um' . $addname;
-        $usermodified->$addname = $post->$temp;
-    }
+    $usermodified = username_load_fields_from_object($usermodified, $post, 'um', array('id' => 'usermodified'));
     echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
          fullname($usermodified).'</a><br />';
     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.$parenturl.'">'.
@@ -6129,13 +6109,8 @@ function forum_get_recent_mod_activity(&$activities, &$index, $timestart, $cours
         $tmpactivity->content->parent     = $post->parent;
 
         $tmpactivity->user = new stdClass();
-        $tmpactivity->user->id        = $post->userid;
-        $tmpactivity->user->picture   = $post->picture;
-        $tmpactivity->user->imagealt  = $post->imagealt;
-        $tmpactivity->user->email     = $post->email;
-        foreach (get_all_user_name_fields() as $addname) {
-            $tmpactivity->user->$addname = $post->$addname;
-        }
+        $additionalfields = array('id' => 'userid', 'picture', 'imagealt', 'email');
+        $tmpactivity->user = username_load_fields_from_object($tmpactivity->user, $post, null, $additionalfields);
 
         $activities[$index++] = $tmpactivity;
     }
