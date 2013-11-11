@@ -17,7 +17,7 @@ function magazine_process_css($css, $theme) {
     }
     $css = magazine_set_linkcolor($css, $linkcolor);
 
-	// Set the link hover color
+    // Set the link hover color
     if (!empty($theme->settings->linkhover)) {
         $linkhover = $theme->settings->linkhover;
     } else {
@@ -167,25 +167,25 @@ function magazine_set_background($css, $background, $theme = null) {
     if ($theme === null) {
         $theme = $OUTPUT;
     }
-	$tag = '[[setting:background]]';
-	$replacement = $background;
-	if (is_null($replacement)) {
-		$replacement = $theme->pix_url('bg4', 'theme');
- 	}
-	$css = str_replace($tag, $replacement, $css);
-	return $css;
+    $tag = '[[setting:background]]';
+    $replacement = $background;
+    if (is_null($replacement)) {
+        $replacement = $theme->pix_url('bg4', 'theme');
+    }
+    $css = str_replace($tag, $replacement, $css);
+    return $css;
 }
 
 function magazine_set_logo($css, $logo, $theme = null) {
-	global $OUTPUT;
-	if ($theme === null) {
-		$theme = $OUTPUT;
-	}
-	$tag = '[[setting:logo]]';
-	$replacement = $logo;
-	if (is_null($replacement)) {
-		$replacement = $theme->pix_url('logo', 'theme');
- 	}
-	$css = str_replace($tag, $replacement, $css);
-	return $css;
+    global $OUTPUT;
+    if ($theme === null) {
+        $theme = $OUTPUT;
+    }
+    $tag = '[[setting:logo]]';
+    $replacement = $logo;
+    if (is_null($replacement)) {
+        $replacement = $theme->pix_url('logo', 'theme');
+    }
+    $css = str_replace($tag, $replacement, $css);
+    return $css;
 }
