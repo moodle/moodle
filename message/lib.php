@@ -386,7 +386,7 @@ function message_get_contacts($user1=null, $user2=null) {
     }
     $noreplyuser = core_user::get_noreply_user();
     $noreplyuser->messagecount = message_count_unread_messages($USER, $noreplyuser);
-    if ($supportuser->messagecount > 0) {
+    if ($noreplyuser->messagecount > 0) {
         $strangers[] = $noreplyuser;
     }
     return array($onlinecontacts, $offlinecontacts, $strangers);
