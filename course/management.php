@@ -459,6 +459,10 @@ if (($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'cours
 $renderer = $PAGE->get_renderer('core_course', 'management');
 $renderer->enhance_management_interface();
 
+$displaycategorylisting = ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'categories');
+$displaycourselisting = ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'courses');
+$displaycoursedetail = (isset($courseid));
+
 echo $renderer->header();
 
 if (!$issearching) {
@@ -478,12 +482,15 @@ if (count($notificationsfail) > 0) {
 echo $renderer->management_form_start();
 
 echo $renderer->grid_start('course-category-listings', $class);
-if ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'categories') {
+
+echo $renderer->accessible_skipto_links($displaycategorylisting, $displaycourselisting, $displaycoursedetail);
+
+if ($displaycategorylisting) {
     echo $renderer->grid_column_start($categorysize, 'category-listing');
     echo $renderer->category_listing($category);
     echo $renderer->grid_column_end();
 }
-if ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'courses') {
+if ($displaycourselisting) {
     echo $renderer->grid_column_start($coursesize, 'course-listing');
     if (!$issearching) {
         echo $renderer->course_listing($category, $course, $page, $perpage);
@@ -493,7 +500,7 @@ if ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'course
         echo $renderer->search_listing($courses, $coursestotal, $course, $page, $perpage);
     }
     echo $renderer->grid_column_end();
-    if (isset($courseid)) {
+    if ($displaycoursedetail) {
         echo $renderer->grid_column_start($detailssize, 'course-detail');
         echo $renderer->course_detail($course);
         echo $renderer->grid_column_end();

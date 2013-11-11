@@ -1394,4 +1394,15 @@ class behat_course extends behat_base {
         }
         $actionnode->click();
     }
+
+    /**
+     * Clicks on a category in the management interface.
+     *
+     * @Given /^I click on "([^"]*)" category in the management category listing$/
+     * @param string $name The name of the category to click.
+     */
+    public function i_click_on_category_in_the_management_category_listing($name) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+        $node->find('css', 'a.categoryname')->click();
+    }
 }

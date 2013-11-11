@@ -501,7 +501,8 @@ input.titleeditor { vertical-align: text-bottom; }
 /** Management header styling **/
 .coursecat-management-header {vertical-align:middle;}
 .coursecat-management-header h2 {display:inline-block;text-align:left;}
-.coursecat-management-header > div {display:inline-block;float:right;margin-left:1em;}
+.coursecat-management-header > div {display:inline-block;float:right;}
+.coursecat-management-header > div > div {display:inline-block;margin-left:1em;}
 .dir-rtl .coursecat-management-header h2 {text-align:right;}
 .dir-rtl .coursecat-management-header > div {float:left;margin-right:1em;margin-left:0;}
 .coursecat-management-header .view-mode-selector img {margin-left:0.5em;vertical-align: baseline;}

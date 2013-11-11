@@ -1114,11 +1114,13 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_action_menu_link(action_menu_link $action) {
+        static $actioncount = 0;
+        $actioncount++;
 
         $comparetoalt = '';
         $text = '';
         if (!$action->icon || $action->primary === false) {
-            $text .= html_writer::start_tag('span', array('class'=>'menu-action-text'));
+            $text .= html_writer::start_tag('span', array('class'=>'menu-action-text', 'id' => 'actionmenuaction-'.$actioncount));
             if ($action->text instanceof renderable) {
                 $text .= $this->render($action->text);
             } else {
@@ -1134,12 +1136,9 @@ class core_renderer extends renderer_base {
             if ($action->primary || !$action->actionmenu->will_be_enhanced()) {
                 $action->attributes['title'] = $action->text;
             }
-            if ((string)$icon->attributes['alt'] === $comparetoalt && $action->actionmenu->will_be_enhanced()) {
-                $icon->attributes['alt'] = ' ';
-            }
             if (!$action->primary && $action->actionmenu->will_be_enhanced()) {
                 if ((string)$icon->attributes['alt'] === $comparetoalt) {
-                    $icon->attributes['alt'] = ' ';
+                    $icon->attributes['alt'] = '';
                 }
                 if (isset($icon->attributes['title']) && (string)$icon->attributes['title'] === $comparetoalt) {
                     unset($icon->attributes['title']);
@@ -1157,6 +1156,9 @@ class core_renderer extends renderer_base {
         $attributes = $action->attributes;
         unset($action->attributes['disabled']);
         $attributes['href'] = $action->url;
+        if ($text !== '') {
+            $attributes['aria-labelledby'] = 'actionmenuaction-'.$actioncount;
+        }
 
         return html_writer::tag('a', $icon.$text, $attributes);
     }

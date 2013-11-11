@@ -270,7 +270,7 @@ Feature: Course category management interface performs as expected
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Master cat" "link"
+    And I click on "Master cat" category in the management category listing
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I click on <sortby> action for "Master cat" in management category listing
@@ -727,7 +727,7 @@ Feature: Course category management interface performs as expected
     And I should see "Cat 2-1-2" in the "#course-category-listings ul.ml" "css_element"
     And I should not see "Cat 2-1-1-1" in the "#course-category-listings ul.ml" "css_element"
     And I should see "Cat 2-1-2-1" in the "#course-category-listings ul.ml" "css_element"
-    And I click on "Cat 1" "link"
+    And I click on "Cat 1" category in the management category listing
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#course-category-listings ul.ml" "css_element"

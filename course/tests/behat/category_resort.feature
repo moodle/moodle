@@ -92,7 +92,7 @@ Feature: Test we can resort categories in the management interface.
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Master cat" "link"
+    And I click on "Master cat" category in the management category listing
   # Redirect.
     And I should see the "Course categories and courses" management page
     And I click on <sortby> action for "Master cat" in management category listing
