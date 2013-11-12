@@ -481,9 +481,9 @@ if (count($notificationsfail) > 0) {
 // Start the management form.
 echo $renderer->management_form_start();
 
-echo $renderer->grid_start('course-category-listings', $class);
-
 echo $renderer->accessible_skipto_links($displaycategorylisting, $displaycourselisting, $displaycoursedetail);
+
+echo $renderer->grid_start('course-category-listings', $class);
 
 if ($displaycategorylisting) {
     echo $renderer->grid_column_start($categorysize, 'category-listing');
