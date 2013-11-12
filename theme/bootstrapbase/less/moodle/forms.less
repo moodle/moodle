@@ -382,3 +382,36 @@ div#dateselector-calendar-panel {
 fieldset.coursesearchbox label {
     display: inline;
 }
+
+/**
+ * Show the labels above text editors and file managers.
+ */
+#adminsettings #admin-summary .form-label,
+.mform .fitem_ffilemanager div.fitemtitle,
+.mform .fitem_feditor div.fitemtitle {
+    display: block;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    text-align: left;
+    width: 100%;
+}
+.dir-rtl #adminsettings #admin-summary .form-label,
+.dir-rtl .mform .fitem_ffilemanager div.fitemtitle,
+.dir-rtl .mform .fitem_feditor div.fitemtitle {
+    text-align: right;
+}
+
+#adminsettings #admin-summary .form-setting,
+#adminsettings #admin-summary .form-description,
+.mform .fitem_ffilemanager .ffilemanager,
+.mform .fitem_feditor .feditor {
+    margin-left: 0%;
+    width: 100%;
+}
+.dir-rtl #adminsettings #admin-summary .form-setting,
+.dir-rtl #adminsettings #admin-summary .form-description,
+.dir-rtl .mform .fitem_ffilemanager .ffilemanager,
+.dir-rtl .mform .fitem_feditor .feditor {
+    margin-right: 0%;
+}
+
