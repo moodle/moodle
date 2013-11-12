@@ -46,5 +46,14 @@ class block_mentees extends block_base {
 
         return $this->content;
     }
+
+    /**
+     * Returns true if the block can be docked.
+     * The mentees block can only be docked if it has a non-empty title.
+     * @return bool
+     */
+    public function instance_can_be_docked() {
+        return parent::instance_can_be_docked() && isset($this->config->title) && !empty($this->config->title);
+    }
 }
 
