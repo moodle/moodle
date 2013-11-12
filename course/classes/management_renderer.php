@@ -998,10 +998,10 @@ class core_course_management_renderer extends plugin_renderer_base {
             $menu->add(new action_menu_link_secondary($modeurl, null, $modestr, $attributes));
         }
 
-        $menu->set_menu_trigger(get_string('viewing', 'moodle', $selected));
+        $menu->set_menu_trigger($selected);
 
         $html = html_writer::start_div('view-mode-selector vms');
-        $html .= $this->render($menu);
+        $html .= get_string('viewing').' '.$this->render($menu);
         $html .= html_writer::end_div();
 
         return $html;
