@@ -123,7 +123,7 @@ abstract class quiz_attempts_report_table extends table_sql {
         $user = new stdClass();
         $additionalfields = explode(',', user_picture::fields());
         $user = username_load_fields_from_object($user, $attempt, null, $additionalfields);
-        $user->id = $attempt->userid
+        $user->id = $attempt->userid;
         return $OUTPUT->user_picture($user);
     }
 
