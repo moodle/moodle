@@ -90,6 +90,11 @@ class quiz_grading_settings_form extends moodleform {
 
         foreach ($this->hidden as $name => $value) {
             $mform->addElement('hidden', $name, $value);
+            if ($name == 'mode') {
+                $mform->setType($name, PARAM_ALPHA);
+            } else {
+                $mform->setType($name, PARAM_INT);
+            }
         }
 
         $mform->addElement('submit', 'submitbutton', get_string('changeoptions', 'quiz_grading'));
