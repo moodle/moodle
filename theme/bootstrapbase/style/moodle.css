@@ -12171,6 +12171,9 @@ body {
 #searchform_search {
   width: auto;
 }
+.block_rss_client .content li .link {
+  font-weight: inherit;
+}
 .block_rss_client .list li {
   border-top-color: #e3e3e3;
 }
@@ -12651,6 +12654,12 @@ select {
   border-color: #ddd;
   border-color: rgba(0, 0, 0, 0.15);
 }
+.forumpost .header {
+  margin-bottom: 3px;
+}
+.forumpost .maincontent .left {
+  padding: 0 10px 0 10px;
+}
 .forumpost .row .left {
   width: auto;
 }
@@ -12742,6 +12751,9 @@ div#dock {
   display: inline-block;
   padding: 10px;
 }
+.path-mod-choice .results .data {
+  white-space: normal;
+}
 .path-mod-lesson .firstpageoptions {
   margin: auto;
   min-width: 280px;
@@ -12760,7 +12772,7 @@ div#dock {
   width: 100%;
 }
 .yui-skin-sam .yui-layout {
-  background: #dddde3 url([[pix:theme|bg]]) repeat 0 0;
+  background-color: #ffffff;
 }
 .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd-nohd,
 .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd-noft,
@@ -12770,77 +12782,95 @@ div#dock {
   border: 0;
 }
 .yui-skin-sam .yui-layout-unit-right {
-  background-color: #f2f2f2;
-  background-color: #fafafa;
-  background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
-  background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
-  background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
-  background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+  min-height: 20px;
+  padding: 19px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #e3e3e3;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  border-radius: 0;
+}
+.yui-skin-sam .yui-layout-unit-right blockquote {
+  border-color: #ddd;
+  border-color: rgba(0, 0, 0, 0.15);
 }
 .yui-skin-sam .yui-layout-unit-bottom {
-  background-color: #f2f2f2;
+  min-height: 20px;
+  padding: 19px;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #e3e3e3;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  border-radius: 0;
+}
+.yui-skin-sam .yui-layout-unit-bottom blockquote {
+  border-color: #ddd;
+  border-color: rgba(0, 0, 0, 0.15);
 }
 .yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {
   background-color: transparent;
 }
 #chat-input-area table.generaltable,
 #chat-input-area table.generaltable td.cell {
-  background: transparent;
   border: 0;
-  padding: 0;
+  margin: 3px 20px;
 }
-#chat-input-area table.generaltable a,
-#chat-input-area table.generaltable td.cell a {
-  color: #4dc3ff;
+#chat-input-area table.generaltable input,
+#chat-input-area table.generaltable td.cell input {
+  margin-right: 10px;
 }
 #chat-userlist {
-  padding-top: 10px;
-  padding-bottom: 10px;
+  padding: 10px 5px;
 }
 #chat-userlist #users-list {
-  border-top: 1px solid #ebebeb;
+  border-top: 1px solid #ddd;
   border-bottom: 1px solid #ffffff;
 }
 #chat-userlist #users-list li {
   border-top: 1px solid #ffffff;
-  border-bottom: 1px solid #ebebeb;
+  border-bottom: 1px solid #ddd;
   padding: 5px 10px;
 }
-#chat-userlist #users-list a {
-  color: #00aaff;
-}
 #chat-userlist #users-list img {
-  margin-right: 5px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 #chat-messages {
-  margin: 20px;
+  margin: 20px 25px;
 }
 #chat-messages .chat-event {
   text-align: center;
   margin: 10px 0;
+  font-size: 11.9px;
+  color: #777;
 }
 #chat-messages .chat-message {
   background-color: #ffffff;
-  border: 1px solid #ccc;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  -webkit-border-radius: 6px;
-  -moz-border-radius: 6px;
-  border-radius: 6px;
-  -webkit-box-shadow: 1px 1px 10px rgba(96, 96, 96, 0.1);
-  -moz-box-shadow: 1px 1px 10px rgba(96, 96, 96, 0.1);
-  box-shadow: 1px 1px 10px rgba(96, 96, 96, 0.1);
+  border: 1px dotted #ddd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
   padding: 4px 10px;
   margin: 10px 0;
 }
 #chat-messages .chat-message .time {
   float: right;
   font-size: 11px;
+  color: #777;
 }
 #chat-messages .mdl-chat-my-entry .chat-message {
-  background-color: #ffffff;
+  background-color: #f6f6f6;
 }
 #chat-messages .mdl-chat-my-entry .chat-message .user {
   font-weight: bold;
@@ -14787,6 +14817,9 @@ input.fp-btn-choose {
   .nav-collapse.active {
     height: auto;
   }
+  .path-mod-data .box > table > tbody > tr > td {
+    display: block;
+  }
 }
 @media (max-width: 768px) {
   #filesskin .yui3-panel,
@@ -14847,6 +14880,12 @@ input.fp-btn-choose {
   }
   div[role=main] {
     margin-bottom: 2em;
+  }
+  .coursebox .info .name a {
+    background-position: 0 13px;
+  }
+  .category-browse .coursebox .info .name a {
+    background-position: 0 13px;
   }
 }
 @media (min-width: 1200px) and (max-width: 1600px) {
