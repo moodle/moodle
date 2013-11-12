@@ -375,7 +375,7 @@
             $dbparams = array($delete);
             if ($deleterecord = $DB->get_record_sql("SELECT dr.*, $allnamefields
                                                        FROM {data_records} dr
-                                                            JOIN {user} u on dr.userid = u.id
+                                                            JOIN {user} u ON dr.userid = u.id
                                                       WHERE dr.id = ?", $dbparams, MUST_EXIST)) { // Need to check this is valid.
                 if ($deleterecord->dataid == $data->id) {                       // Must be from this database
                     $deletebutton = new single_button(new moodle_url('/mod/data/view.php?d='.$data->id.'&delete='.$delete.'&confirm=1'), get_string('delete'), 'post');
