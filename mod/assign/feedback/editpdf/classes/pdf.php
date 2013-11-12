@@ -64,6 +64,10 @@ class pdf extends \FPDI {
     const GSPATH_NOTESTFILE = 'notestfile';
     /** Any other error */
     const GSPATH_ERROR = 'error';
+    /** Min. width an annotation should have */
+    const MIN_ANNOTATION_WIDTH = 5;
+    /** Min. height an annotation should have */
+    const MIN_ANNOTATION_HEIGHT = 5;
 
     /**
      * Combine the given PDF files into a single PDF. Optionally add a coversheet and coversheet fields.
@@ -300,6 +304,15 @@ class pdf extends \FPDI {
                 $ry = abs($sy - $ey) / 2;
                 $sx = min($sx, $ex) + $rx;
                 $sy = min($sy, $ey) + $ry;
+
+                // $rx and $ry should be >= min width and height
+                if ($rx < self::MIN_ANNOTATION_WIDTH) {
+                    $rx = self::MIN_ANNOTATION_WIDTH;
+                }
+                if ($ry < self::MIN_ANNOTATION_HEIGHT) {
+                    $ry = self::MIN_ANNOTATION_HEIGHT;
+                }
+
                 $this->Ellipse($sx, $sy, $rx, $ry);
                 break;
             case 'rectangle':
@@ -307,6 +320,14 @@ class pdf extends \FPDI {
                 $h = abs($sy - $ey);
                 $sx = min($sx, $ex);
                 $sy = min($sy, $ey);
+
+                // Width or height should be >= min width and height
+                if ($w < self::MIN_ANNOTATION_WIDTH) {
+                    $w = self::MIN_ANNOTATION_WIDTH;
+                }
+                if ($h < self::MIN_ANNOTATION_HEIGHT) {
+                    $h = self::MIN_ANNOTATION_HEIGHT;
+                }
                 $this->Rect($sx, $sy, $w, $h);
                 break;
             case 'highlight':
@@ -316,6 +337,12 @@ class pdf extends \FPDI {
                 $sy = min($sy, $ey) + ($h * 0.5);
                 $this->SetAlpha(0.5, 'Normal', 0.5, 'Normal');
                 $this->SetLineWidth(8.0 * $this->scale);
+
+                // width should be >= min width
+                if ($w < self::MIN_ANNOTATION_WIDTH) {
+                    $w = self::MIN_ANNOTATION_WIDTH;
+                }
+
                 $this->Rect($sx, $sy, $w, $h);
                 $this->SetAlpha(1.0, 'Normal', 1.0, 'Normal');
                 break;
@@ -326,7 +353,10 @@ class pdf extends \FPDI {
                     foreach ($points as $point) {
                         $scalepath[] = intval($point) * $this->scale;
                     }
-                    $this->PolyLine($scalepath, 'S');
+
+                    if (!empty($scalepath)) {
+                        $this->PolyLine($scalepath, 'S');
+                    }
                 }
                 break;
             case 'stamp':
@@ -335,6 +365,8 @@ class pdf extends \FPDI {
                 $h = abs($sy - $ey);
                 $sx = min($sx, $ex);
                 $sy = min($sy, $ey);
+
+                // Stamp is always more than 40px, so no need to check width/height.
                 $this->Image($imgfile, $sx, $sy, $w, $h);
                 break;
             default: // Line.

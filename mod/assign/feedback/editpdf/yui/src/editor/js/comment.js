@@ -411,6 +411,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool true if comment bound is more than min width/height, else false.
      */
     this.init_from_edit = function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
@@ -430,6 +431,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         this.width = bounds.width;
         this.colour = edit.commentcolour;
         this.rawtext = '';
+
+        return (bounds.has_min_width() && bounds.has_min_height());
     };
 
 };

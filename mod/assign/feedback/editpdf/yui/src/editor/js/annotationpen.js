@@ -122,6 +122,7 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool true if pen bound is more than min width/height, else false.
      */
     init_from_edit : function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect(),
@@ -143,6 +144,8 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
         this.endy = bounds.y + bounds.height;
         this.colour = edit.annotationcolour;
         this.path = pathlist.join(':');
+
+        return (bounds.has_min_width() || bounds.has_min_height());
     }
 
 
