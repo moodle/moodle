@@ -505,7 +505,10 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          */
         handle_resource_dim : function(button, activity, action) {
             var toggleclass = CSS.DIMCLASS,
-                dimarea = activity.one('a, .contentwithoutlink'),
+                dimarea = activity.one([
+                        SELECTOR.ACTIVITYLINK,
+                        SELECTOR.CONTENTWITHOUTLINK
+                    ].join(', ')),
                 availabilityinfo = activity.one(CSS.AVAILABILITYINFODIV),
                 nextaction = (action === 'hide') ? 'show' : 'hide',
                 buttontext = button.one('span'),
