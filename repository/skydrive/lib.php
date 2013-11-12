@@ -75,11 +75,16 @@ class repository_skydrive extends repository {
      * @return array of login options
      */
     public function print_login() {
-        $popup = new stdClass();
-        $popup->type = 'popup';
         $url = $this->skydrive->get_login_url();
-        $popup->url = $url->out(false);
-        return array('login' => array($popup));
+
+        if ($this->options['ajax']) {
+            $popup = new stdClass();
+            $popup->type = 'popup';
+            $popup->url = $url->out(false);
+            return array('login' => array($popup));
+        } else {
+            echo '<a target="_blank" href="'.$url->out(false).'">'.get_string('login', 'repository').'</a>';
+        }
     }
 
     /**
