@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 'y';
-$string['cliincorrectvalueerror'] = 'Ошибка, некорректное значение "{$a->value}" для "{$a->option}"';
+$string['cliincorrectvalueerror'] = 'Ошибка, некорректное значение «{$a->value}» для «{$a->option}»';
 $string['cliincorrectvalueretry'] = 'Некорректное значение, пожалуйста, попробуйте заново';
 $string['clitypevalue'] = 'введите значение';
 $string['clitypevaluedefault'] = 'введите значение, нажмите Enter для использования значения по умолчанию ({$a})';
