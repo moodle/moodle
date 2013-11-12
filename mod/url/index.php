@@ -37,7 +37,6 @@ add_to_log($course->id, 'url', 'view all', "index.php?id=$course->id", '');
 
 $strurl       = get_string('modulename', 'url');
 $strurls      = get_string('modulenameplural', 'url');
-$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
@@ -59,6 +58,7 @@ $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
 
 if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_'.$course->format);
     $table->head  = array ($strsectionname, $strname, $strintro);
     $table->align = array ('center', 'left', 'left');
 } else {

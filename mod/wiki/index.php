@@ -68,11 +68,11 @@ $usesections = course_format_uses_sections($course->format);
 /// Print the list of instances (your module will probably extend this)
 
 $timenow = time();
-$strsectionname = get_string('sectionname', 'format_' . $course->format);
 $strname = get_string("name");
 $table = new html_table();
 
 if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_' . $course->format);
     $table->head = array($strsectionname, $strname);
 } else {
     $table->head = array($strname);
