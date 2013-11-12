@@ -1,0 +1,83 @@
+// Chat (more!)
+// -------------------------
+.yui-skin-sam .yui-layout  {
+    background: #dddde3 url([[pix:theme|bg]]) repeat 0 0;
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd-nohd,
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd-noft,
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd,
+.yui-skin-sam .yui-layout-unit-right,
+.yui-skin-sam .yui-layout-unit-bottom {
+    border: 0;
+}
+
+.yui-skin-sam .yui-layout-unit-right {
+    background-color: darken(@navbarBackgroundHighlight, 5%);
+    #gradient > .vertical(@navbarBackgroundHighlight, darken(@navbarBackgroundHighlight, 5%));
+}
+
+.yui-skin-sam .yui-layout-unit-bottom {
+    background-color: darken(@navbarBackgroundHighlight, 5%);
+}
+
+.yui-skin-sam .yui-layout .yui-layout-unit div.yui-layout-bd {
+    background-color: transparent;
+}
+
+#chat-input-area table.generaltable,
+#chat-input-area table.generaltable td.cell {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    a {
+        color: lighten(@linkColor, 25%);
+    }
+}
+
+#chat-userlist {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    #users-list {
+        border-top: 1px solid darken(@navbarBackgroundHighlight, 8%);
+        border-bottom: 1px solid lighten(@navbarBackgroundHighlight, 5%);
+        li {
+            border-top: 1px solid lighten(@navbarBackgroundHighlight, 5%);
+            border-bottom: 1px solid darken(@navbarBackgroundHighlight, 8%);
+            padding: 5px 10px;
+        }
+        a {
+            color: lighten(@linkColor, 10%);//@navbarAccentColor;
+        }
+        img {
+            margin-right: 5px;
+        }
+    }
+}
+
+#chat-messages {
+    margin: 20px;
+    .chat-event {
+        text-align: center;
+        margin: 10px 0;
+    }
+    .chat-message {
+        background-color: @white;
+        border: 1px solid #ccc;
+        border: 1px solid rgba(0,0,0,.2);
+        .border-radius(6px);
+        .box-shadow(1px 1px 10px rgba(96,96,96,.1));
+        padding: 4px 10px;
+        margin: 10px 0;
+        .time {
+            float: right;
+            font-size: 11px;
+        }
+    }
+    .mdl-chat-my-entry .chat-message {
+        background-color: lighten(@navbarBackgroundHighlight, 75%);
+        .user {
+            font-weight: bold;
+        }
+    }
+}
