@@ -87,7 +87,11 @@ if ($showclosingheader) {
     array_push($align, 'left');
 }
 
-array_unshift($headings, get_string('sectionname', 'format_'.$course->format));
+if (course_format_uses_sections($course->format)) {
+    array_unshift($headings, get_string('sectionname', 'format_'.$course->format));
+} else {
+    array_unshift($headings, '');
+}
 array_unshift($align, 'center');
 
 $showing = '';

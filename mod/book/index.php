@@ -37,7 +37,6 @@ $PAGE->set_pagelayout('incourse');
 // Get all required strings
 $strbooks        = get_string('modulenameplural', 'mod_book');
 $strbook         = get_string('modulename', 'mod_book');
-$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname         = get_string('name');
 $strintro        = get_string('moduleintro');
 $strlastmodified = get_string('lastmodified');
@@ -62,6 +61,7 @@ $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
 
 if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_'.$course->format);
     $table->head  = array ($strsectionname, $strname, $strintro);
     $table->align = array ('center', 'left', 'left');
 } else {

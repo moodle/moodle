@@ -36,7 +36,6 @@ add_to_log($course->id, "scorm", "view all", "index.php?id=$course->id", "");
 
 $strscorm = get_string("modulename", "scorm");
 $strscorms = get_string("modulenameplural", "scorm");
-$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname = get_string("name");
 $strsummary = get_string("summary");
 $strreport = get_string("report", 'scorm');
@@ -63,6 +62,7 @@ if (! $scorms = get_all_instances_in_course("scorm", $course)) {
 $table = new html_table();
 
 if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_'.$course->format);
     $table->head  = array ($strsectionname, $strname, $strsummary, $strreport);
     $table->align = array ("center", "left", "left", "left");
 } else {
