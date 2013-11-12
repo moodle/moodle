@@ -32,4 +32,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['clianswerno'] = 'एन';
 $string['cliansweryes'] = 'वाई';
+$string['cliincorrectvalueretry'] = 'ग़लत मान, कृपया पुनः प्रयास करें';
 $string['clitypevalue'] = 'टाइप मूल्य';
+$string['cliyesnoprompt'] = 'टाइप Y (का मतलब है हाँ) या N (का मतलब है नहीं )';
