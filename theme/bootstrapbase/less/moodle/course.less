@@ -532,6 +532,11 @@ span.editinstructions {
     padding-left:21px;
     background-position: left 0.5em;
 }
+.dir-rtl .coursebox > .info > .coursename a {
+    padding-left: 0;
+    padding-right: 21px;
+    background-position: right;
+}
 .coursebox.remotehost > .info > .categoryname a {
     background-image:url([[pix:moodle|i/mnethost]]);
 }
@@ -541,6 +546,13 @@ span.editinstructions {
     float:left;
     width:40%;
     clear:left;
+}
+.dir-rtl .coursebox > .info > .coursename,
+.dir-rtl .coursebox .teachers,
+.dir-rtl .coursebox .content .courseimage,
+.dir-rtl .coursebox .content .coursefile {
+    float: right;
+    clear: right;
 }
 .coursebox > .info > h3.coursename {
     margin: 5px;
