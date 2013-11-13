@@ -387,8 +387,8 @@ fieldset.coursesearchbox label {
  * Show the labels above text editors and file managers.
  */
 #adminsettings #admin-summary .form-label,
-.mform .fitem_ffilemanager div.fitemtitle,
-.mform .fitem_feditor div.fitemtitle {
+.mform .fcontainer .fitem_ffilemanager .fitemtitle,
+.mform .fcontainer .fitem_feditor .fitemtitle {
     display: block;
     margin-top: 4px;
     margin-bottom: 4px;
@@ -396,22 +396,22 @@ fieldset.coursesearchbox label {
     width: 100%;
 }
 .dir-rtl #adminsettings #admin-summary .form-label,
-.dir-rtl .mform .fitem_ffilemanager div.fitemtitle,
-.dir-rtl .mform .fitem_feditor div.fitemtitle {
+.dir-rtl .mform .fcontainer .fitem_ffilemanager .fitemtitle,
+.dir-rtl .mform .fcontainer .fitem_feditor .fitemtitle {
     text-align: right;
 }
 
 #adminsettings #admin-summary .form-setting,
 #adminsettings #admin-summary .form-description,
-.mform .fitem_ffilemanager .ffilemanager,
-.mform .fitem_feditor .feditor {
+.mform .fcontainer .fitem_ffilemanager .ffilemanager,
+.mform .fcontainer .fitem_feditor .feditor {
     margin-left: 0%;
     width: 100%;
+    float: left;
 }
 .dir-rtl #adminsettings #admin-summary .form-setting,
 .dir-rtl #adminsettings #admin-summary .form-description,
-.dir-rtl .mform .fitem_ffilemanager .ffilemanager,
-.dir-rtl .mform .fitem_feditor .feditor {
+.dir-rtl .mform .fcontainer .fitem_ffilemanager .ffilemanager,
+.dir-rtl .mform .fcontainer .fitem_feditor .feditor {
     margin-right: 0%;
 }
-
