@@ -147,6 +147,34 @@
     }
 }
 
+.block_news_items .content {
+    .newlink {
+        padding-bottom: 10px;
+    }
+    ul li {
+        border-top: 1px rgba(0,0,0,0.05) solid;
+        padding: 2px;
+        display: table;
+        width: 100%;
+        .info {
+            display: table-header-group;
+        }
+        .date {
+            font-size: @fontSizeSmall;
+            display: inline;
+        }
+        .name {
+            font-size: @fontSizeSmall;
+            padding-left: 1ex;
+            display: inline;
+        }
+    }
+    .footer {
+        padding-top: 10px;
+        padding-left: 0px;
+    }
+}
+
 // Overide for RTL layout.
 .dir-rtl {
     .block .header,
