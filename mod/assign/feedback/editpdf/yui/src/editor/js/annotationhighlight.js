@@ -88,6 +88,11 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
         bounds.bound([new M.assignfeedback_editpdf.point(edit.start.x, edit.start.y),
                       new M.assignfeedback_editpdf.point(edit.end.x, edit.end.y)]);
 
+        // Set min. width of highlight.
+        if (!bounds.has_min_width()) {
+            bounds.set_min_width();
+        }
+
         highlightcolour = ANNOTATIONCOLOUR[edit.annotationcolour];
         // Add an alpha channel to the rgb colour.
 
@@ -118,6 +123,7 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool true if highlight bound is more than min width/height, else false.
      */
     init_from_edit : function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
@@ -131,6 +137,8 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
         this.endy = edit.start.y + 16;
         this.colour = edit.annotationcolour;
         this.page = '';
+
+        return (bounds.has_min_width());
     }
 
 });
