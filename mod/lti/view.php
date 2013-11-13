@@ -107,7 +107,7 @@ echo $OUTPUT->header();
 
 if ($lti->showtitlelaunch) {
     // Print the main part of the page
-    echo $OUTPUT->heading(format_string($lti->name));
+    echo $OUTPUT->heading(format_string($lti->name, true, array('context' => $context)));
 }
 
 if ($lti->showdescriptionlaunch && $lti->intro) {
