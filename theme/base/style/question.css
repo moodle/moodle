@@ -21,11 +21,30 @@
 #qtypechoicecontainer #chooseqtype {width: 35em;}
 #qtypechoicecontainer #chooseqtypehead h3 {margin: 0;font-weight: normal;}
 #qtypechoicecontainer #chooseqtype .qtypes {position: relative;border-bottom: 1px solid #BBBBBB;padding: 0.24em 0;}
+#qtypechoicecontainer #chooseqtype .alloptions {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 400px;
+    max-height: calc(100vh - 8em);
+    width: 60%;
+}
 #qtypechoicecontainer #chooseqtype .qtypeoption {margin-bottom: 0; padding: 0.3em 0 0.3em 1.6em;}
 #qtypechoicecontainer #chooseqtype .qtypeoption img {vertical-align: text-bottom;padding-left: 1em;padding-right: 0.5em;}
 #qtypechoicecontainer #chooseqtype .selected {background-color: #FFFFFF;box-shadow: 0px 0px 10px 0px #CCCCCC;-webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;-moz-box-shadow: 0px 0px 10px 0px #CCCCCC;}
 #qtypechoicecontainer #chooseqtype .instruction,
-#qtypechoicecontainer #chooseqtype .qtypesummary {display: none;position: absolute;top: 0px;right: 0px;bottom: 0px;left: 60%;margin: 0;padding: 1.5em 1.6em;background-color: #FFFFFF;}
+#qtypechoicecontainer #chooseqtype .qtypesummary {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 60%;
+    margin: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 1.5em 1.6em;
+    background-color: #FFFFFF;
+}
 #qtypechoicecontainer #chooseqtype .instruction,
 #qtypechoicecontainer #chooseqtype .selected .qtypesummary {display: block;}
 
