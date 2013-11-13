@@ -12228,6 +12228,18 @@ body {
 .dir-rtl .block .header .block_action {
   float: left;
 }
+.dir-rtl .block_calendar_upcoming .content .date {
+  padding-right: 22px;
+}
+.dir-rtl .block_calendar_upcoming .content .footer {
+  padding-right: 0px;
+}
+.dir-rtl .block_news_items .content ul li .name {
+  padding-right: 1ex;
+}
+.dir-rtl .block_news_items .content .footer {
+  padding-left: 0px;
+}
 /**
  * Moodle forms HTML isn't changeable via renderers (yet?) so this
  * .less file imports styles from the bootstrap @variables file and
@@ -12853,6 +12865,9 @@ div#dock {
 .path-mod-survey .reportbuttons,
 .path-mod-survey .centerpara {
   text-align: center;
+}
+.dir-rtl .path-mod-forum .forumheaderlist thead .header.lastpost {
+  text-align: left;
 }
 .yui-skin-sam .yui-layout {
   background-color: #ffffff;
