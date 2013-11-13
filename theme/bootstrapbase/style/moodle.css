@@ -12942,6 +12942,7 @@ div#dock {
   margin-right: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  max-width: none;
 }
 #chat-messages {
   margin: 20px 25px;
