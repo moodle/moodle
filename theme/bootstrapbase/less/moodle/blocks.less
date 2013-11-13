@@ -121,11 +121,17 @@
     width: auto;
 }
 .block_rss_client {
-    .content li .link {
-        font-weight: inherit;
+    .content li {
+        margin-bottom: 10px;
+        padding: 5px;
+        border: 1px solid #ddd;
+        .border-radius(@baseBorderRadius);
+        .link {
+            font-weight: inherit;
+        }
     }
-    .list li {
-        border-top-color: darken(@wellBackground, 7%);
+    .list li:first-child {
+        border-top-width: 1px; // undo the style provided by the block's styles.css
     }
 }
 
