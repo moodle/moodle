@@ -1403,8 +1403,10 @@ audio.mediaplugin_html5audio {
   white-space: nowrap;
   text-align: center;
 }
-.initialbar a {
-  padding-right: 2px;
+.initialbar a,
+.initialbar strong {
+  padding-left: 3px;
+  padding-right: 3px;
 }
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
@@ -3829,12 +3831,11 @@ span.editinstructions {
   background-image: url([[pix:moodle|i/course]]);
   background-repeat: no-repeat;
   padding-left: 21px;
-  background-position: center left;
+  background-position: left 0.5em;
 }
 .coursebox.remotehost > .info > .categoryname a {
   background-image: url([[pix:moodle|i/mnethost]]);
 }
-.coursebox > .info > .coursename,
 .coursebox .content .teachers,
 .coursebox .content .courseimage,
 .coursebox .content .coursefile {
@@ -12159,6 +12160,13 @@ body {
 .block_calendar_upcoming .footer {
   margin-top: .5em;
 }
+.block_calendar_upcoming .content .date {
+  padding-left: 22px;
+}
+.block_calendar_upcoming .content .footer {
+  padding-top: 10px;
+  padding-left: 0px;
+}
 #adminsearchquery,
 #blogsearchquery,
 #searchform_search,
@@ -12171,11 +12179,44 @@ body {
 #searchform_search {
   width: auto;
 }
+.block_rss_client .content li {
+  margin-bottom: 10px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
 .block_rss_client .content li .link {
   font-weight: inherit;
 }
-.block_rss_client .list li {
-  border-top-color: #e3e3e3;
+.block_rss_client .list li:first-child {
+  border-top-width: 1px;
+}
+.block_news_items .content .newlink {
+  padding-bottom: 10px;
+}
+.block_news_items .content ul li {
+  border-top: 1px rgba(0, 0, 0, 0.05) solid;
+  padding: 2px;
+  display: table;
+  width: 100%;
+}
+.block_news_items .content ul li .info {
+  display: table-header-group;
+}
+.block_news_items .content ul li .date {
+  font-size: 11.9px;
+  display: inline;
+}
+.block_news_items .content ul li .name {
+  font-size: 11.9px;
+  padding-left: 1ex;
+  display: inline;
+}
+.block_news_items .content .footer {
+  padding-top: 10px;
+  padding-left: 0px;
 }
 .dir-rtl .block .header,
 .dir-rtl .block h2.header {
@@ -12636,6 +12677,46 @@ select {
 .path-mod-forum .forumheaderlist td {
   border: none;
 }
+.path-mod-forum .forumheaderlist thead .header {
+  white-space: normal;
+  vertical-align: top;
+}
+.path-mod-forum .forumheaderlist thead .header.lastpost {
+  text-align: right;
+}
+.path-mod-forum .forumheaderlist .discussion .author,
+.path-mod-forum .forumheaderlist .discussion .replies,
+.path-mod-forum .forumheaderlist .discussion .lastpost {
+  white-space: normal;
+}
+.path-mod-forum .forumheaderlist .discussion .replies {
+  text-align: center;
+}
+.path-mod-forum .forumheaderlist .discussion .topic,
+.path-mod-forum .forumheaderlist .discussion .topic.starter,
+.path-mod-forum .forumheaderlist .discussion .picture,
+.path-mod-forum .forumheaderlist .discussion .author,
+.path-mod-forum .forumheaderlist .discussion .replies,
+.path-mod-forum .forumheaderlist .discussion .lastpost {
+  vertical-align: top;
+}
+.path-mod-feedback .generalbox div table tbody img {
+  height: 5px;
+}
+@media (max-width: 979px) {
+  .path-mod-forum .forumheaderlist thead .header {
+    font-weight: normal;
+    font-size: 12px;
+  }
+  .path-mod-forum .forumheaderlist .discussion .author,
+  .path-mod-forum .forumheaderlist .discussion .replies,
+  .path-mod-forum .forumheaderlist .discussion .lastpost {
+    font-size: 12px;
+  }
+  .path-mod-forum .forumheaderlist .discussion .replies .unread a {
+    padding: 0;
+  }
+}
 .forumpost {
   min-height: 20px;
   padding: 19px;
@@ -12770,6 +12851,22 @@ div#dock {
 }
 .path-mod-wiki .wiki_contentbox {
   width: 100%;
+}
+.path-mod-survey .surveytable .r0 {
+  background-color: #eee;
+}
+.path-mod-survey .surveytable .r1 {
+  background-color: #ddd;
+}
+.path-mod-survey .surveytable .rblock label {
+  text-align: center;
+}
+.path-mod-survey .resultgraph,
+.path-mod-survey .reportsummary,
+.path-mod-survey .studentreport,
+.path-mod-survey .reportbuttons,
+.path-mod-survey .centerpara {
+  text-align: center;
 }
 .yui-skin-sam .yui-layout {
   background-color: #ffffff;
