@@ -12,6 +12,7 @@ if ($groupid !== 0) {
 }
 $PAGE->set_url($url);
 $PAGE->set_popup_notification_allowed(false); // No popup notifications in the chat window
+$PAGE->requires->strings_for_js(array('coursetheme', 'bubble', 'compact'), 'mod_chat');
 
 $chat = $DB->get_record('chat', array('id'=>$id), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$chat->course), '*', MUST_EXIST);
