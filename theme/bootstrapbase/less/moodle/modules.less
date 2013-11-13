@@ -9,9 +9,49 @@ select {
     width: auto;
 }
 
+// Forum
+
 .path-mod-forum .forumheaderlist,
 .path-mod-forum .forumheaderlist td {
     border: none;
+}
+
+.path-mod-forum .forumheaderlist {
+    thead .header {
+        white-space: normal;
+        vertical-align: top;
+    }
+    thead .header.lastpost {
+        text-align: right;
+    }
+    .discussion {
+        .author, .replies, .lastpost {
+            white-space: normal;
+        }
+        .replies {
+            text-align: center;
+        }
+        .topic, .topic.starter, .picture, .author, .replies, .lastpost {
+            vertical-align: top;
+        }
+    }
+}
+
+@media (max-width: 979px) {
+    .path-mod-forum .forumheaderlist {
+        thead .header {
+            font-weight: normal;
+            font-size: round(@fontSizeSmall);
+        }
+        .discussion {
+            .author, .replies, .lastpost {
+                font-size: round(@fontSizeSmall);
+            }
+            .replies .unread a {
+                padding: 0;
+            }
+        }
+    }
 }
 
 .forumpost {
