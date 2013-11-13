@@ -3098,6 +3098,9 @@ class navbar extends navigation_node {
      * @return array
      */
     private function get_course_categories() {
+        global $CFG;
+
+        require_once($CFG->dirroot.'/course/lib.php');
         $categories = array();
         $cap = 'moodle/category:viewhiddencategories';
         foreach ($this->page->categories as $category) {
