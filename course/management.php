@@ -57,7 +57,6 @@ if ($courseid) {
     $categoryid = $category->id;
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $categoryid);
-    navigation_node::override_active_url($url);
     $url->param('courseid', $course->id);
 
 } else if ($categoryid) {
@@ -66,7 +65,6 @@ if ($courseid) {
     $category = coursecat::get($categoryid);
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $category->id);
-    navigation_node::override_active_url($url);
 
 } else {
     $course = null;
@@ -77,7 +75,6 @@ if ($courseid) {
         $viewmode = 'categories';
     }
     $context = $systemcontext;
-    navigation_node::override_active_url($url);
 }
 
 // Check if there is a selected category param, and if there is apply it.
@@ -140,6 +137,10 @@ if ($category && !has_any_capability($capabilities, $systemcontext)) {
     $PAGE->set_category_by_id($category->id);
     $PAGE->navbar->ignore_active(true);
     $PAGE->navbar->add(get_string('coursemgmt', 'admin'), $PAGE->url->out_omit_querystring());
+} else {
+    // If user has system capabilities, make sure the "Manage courses and categories" item in Administration block is active.
+    navigation_node::require_admin_tree();
+    navigation_node::override_active_url(new moodle_url('/course/management.php'));
 }
 if (!$issearching && $category !== null) {
     $parents = coursecat::get_many($category->get_parents());
