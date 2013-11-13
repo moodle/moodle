@@ -505,6 +505,7 @@ input.titleeditor { vertical-align: text-bottom; }
 .coursecat-management-header > div > div {display:inline-block;margin-left:1em;}
 .dir-rtl .coursecat-management-header h2 {text-align:right;}
 .dir-rtl .coursecat-management-header > div {float:left;margin-right:1em;margin-left:0;}
+.coursecat-management-header .view-mode-selector .moodle-actionmenu {display:inline-block;}
 .coursecat-management-header .view-mode-selector img {margin-left:0.5em;vertical-align: baseline;}
 .coursecat-management-header  select {max-width: 300px;white-space: nowrap;}
 

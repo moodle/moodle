@@ -92,7 +92,7 @@ Feature: We can change the visibility of courses in the management interface.
     And course in management listing should be dimmed "C1"
     And I toggle visibility of category "CAT1" in management listing
     And I toggle visibility of course "C1" in management listing
-    And I click on "Viewing Course categories and courses" "link"
+    And I click on "Course categories and courses" "link" in the ".view-mode-selector" "css_element"
     And I click on "Courses" "link"
     # Redirect
     And I should see "Course 1" in the "#course-listing ul.ml" "css_element"
