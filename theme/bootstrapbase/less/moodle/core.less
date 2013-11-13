@@ -1989,6 +1989,7 @@ img#persona_signin {
             display: block;
             margin-left: 4px;
             padding-left: 4px;
+            padding-right: 4px;
 
             .iconsmall {
                 margin: 4px 4px 4px 0px;
@@ -2013,6 +2014,20 @@ img#persona_signin {
         }
         .menu-action-text  {
             display:inline;
+        }
+    }
+
+    &.dir-rtl {
+        .moodle-actionmenu[data-enhance] {
+            .toggle-display.textmenu {
+                margin-left: initial;
+                margin-right: 4px;
+
+                .caret {
+                    margin-left: initial;
+                    margin-right: 2px;
+                }
+            }
         }
     }
 }

@@ -101,6 +101,7 @@
     padding-right: initial;
 }
 
+.sitetopic .section .activity .filler,
 .course-content .section .activity .filler {
     width: 16px;
     height: 16px;
@@ -116,8 +117,6 @@
     white-space: nowrap;
     display: inline-block;
 }
-.dir-rtl .sitetopic .section .activity .commands,
-.dir-rtl .course-content .section .activity .commands { padding: 0 0 0 3em;}
 
 .section .activity .moodle-actionmenu .menu > li > *,
 .section .activity .moodle-actionmenu .menubar > li > * {
