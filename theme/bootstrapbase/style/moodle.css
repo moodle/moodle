@@ -12703,20 +12703,6 @@ select {
 .path-mod-feedback .generalbox div table tbody img {
   height: 5px;
 }
-@media (max-width: 979px) {
-  .path-mod-forum .forumheaderlist thead .header {
-    font-weight: normal;
-    font-size: 12px;
-  }
-  .path-mod-forum .forumheaderlist .discussion .author,
-  .path-mod-forum .forumheaderlist .discussion .replies,
-  .path-mod-forum .forumheaderlist .discussion .lastpost {
-    font-size: 12px;
-  }
-  .path-mod-forum .forumheaderlist .discussion .replies .unread a {
-    padding: 0;
-  }
-}
 .forumpost {
   min-height: 20px;
   padding: 19px;
@@ -14917,6 +14903,18 @@ input.fp-btn-choose {
   }
   .path-mod-data .box > table > tbody > tr > td {
     display: block;
+  }
+  .path-mod-forum .forumheaderlist thead .header {
+    font-weight: normal;
+    font-size: 12px;
+  }
+  .path-mod-forum .forumheaderlist .discussion .author,
+  .path-mod-forum .forumheaderlist .discussion .replies,
+  .path-mod-forum .forumheaderlist .discussion .lastpost {
+    font-size: 12px;
+  }
+  .path-mod-forum .forumheaderlist .discussion .replies .unread a {
+    padding: 0;
   }
 }
 @media (max-width: 768px) {
