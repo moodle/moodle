@@ -886,18 +886,25 @@ class question_variant_pseudorandom_no_repeats_strategy
     /** @var int the user id the attempt belongs to. */
     protected $userid;
 
+    /** @var string extra input fed into the pseudo-random code. */
+    protected $extrarandomness = '';
+
     /**
      * Constructor.
      * @param int $attemptno The attempt number.
      * @param int $userid the user the attempt is for (defaults to $USER->id).
      */
-    public function __construct($attemptno, $userid = null) {
+    public function __construct($attemptno, $userid = null, $extrarandomness = '') {
         $this->attemptno = $attemptno;
         if (is_null($userid)) {
             global $USER;
             $this->userid = $USER->id;
         } else {
             $this->userid = $userid;
+        }
+
+        if ($extrarandomness) {
+            $this->extrarandomness = '|' . $extrarandomness;
         }
     }
 
@@ -906,7 +913,7 @@ class question_variant_pseudorandom_no_repeats_strategy
             return 1;
         }
 
-        $hash = sha1($seed . '|user' . $this->userid);
+        $hash = sha1($seed . '|user' . $this->userid . $this->extrarandomness);
         $randint = hexdec(substr($hash, 17, 7));
 
         return ($randint + $this->attemptno) % $maxvariants + 1;
