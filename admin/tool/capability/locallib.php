@@ -74,9 +74,15 @@ function tool_capability_calculate_role_data($capability, array $roles) {
     // Put the contexts into a tree structure.
     foreach ($contexts as $conid => $con) {
         $context = context::instance_by_id($conid);
-        $parentcontext = $context->get_parent_context();
-        if ($parentcontext) {
-            $contexts[$parentcontext->id]->children[] = $conid;
+        try {
+            $parentcontext = $context->get_parent_context();
+            if ($parentcontext) { // Will be false if $context is the system context.
+                $contexts[$parentcontext->id]->children[] = $conid;
+            }
+        } catch (dml_missing_record_exception $e) {
+            // Ignore corrupt context tree structure here. Don't let it break
+            // showing the rest of the report.
+            continue;
         }
     }
 
