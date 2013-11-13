@@ -1819,6 +1819,7 @@ function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = nu
     echo "</div>\n";
     echo '<div class="qtypes">' . "\n";
     echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
+    echo '<div class="alloptions">' . "\n";
     echo '<div class="realqtypes">' . "\n";
     $fakeqtypes = array();
     foreach (question_bank::get_creatable_qtypes() as $qtypename => $qtype) {
@@ -1836,6 +1837,7 @@ function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = nu
     foreach ($fakeqtypes as $qtype) {
         print_qtype_to_add_option($qtype);
     }
+    echo "</div>\n";
     echo "</div>\n";
     echo "</div>\n";
     echo '<div class="submitbuttons">' . "\n";
