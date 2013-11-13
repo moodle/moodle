@@ -87,6 +87,7 @@ class mod_lti_mod_form extends moodleform_mod {
 
         $mform->addElement('checkbox', 'showtitlelaunch', '&nbsp;', ' ' . get_string('display_name', 'lti'));
         $mform->setAdvanced('showtitlelaunch');
+        $mform->setDefault('showtitlelaunch', true);
         $mform->addHelpButton('showtitlelaunch', 'display_name', 'lti');
 
         $mform->addElement('checkbox', 'showdescriptionlaunch', '&nbsp;', ' ' . get_string('display_description', 'lti'));
