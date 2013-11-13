@@ -199,7 +199,8 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
     } else {
         $variantoffset = $attemptnumber;
     }
-    $variantstrategy = new question_variant_pseudorandom_no_repeats_strategy($variantoffset);
+    $variantstrategy = new question_variant_pseudorandom_no_repeats_strategy(
+            $variantoffset, $attempt->userid, $quizobj->get_quizid());
 
     if (!empty($forcedvariantsbyslot)) {
         $forcedvariantsbyseed = question_variant_forced_choices_selection_strategy::prepare_forced_choices_array(
