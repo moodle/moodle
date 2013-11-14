@@ -1,16 +1,13 @@
 // Chat (more!)
 // -------------------------
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax {
-    background-color: #fff;
+    background-color: @white;
     .yui-layout-unit div.yui-layout-bd-nohd,
     .yui-layout-unit div.yui-layout-bd-noft,
     .yui-layout-unit div.yui-layout-bd,
     .yui-layout-unit-right,
     .yui-layout-unit-bottom {
         border: 0;
-    }
-    .yui-layout-bd, .yui-layout-wrap, .yui-resize {
-        /*width:100% !important; //until inline styles taken out of chat css's*/
     }
     .yui-layout-unit-right,
     .yui-layout-unit-bottom {
@@ -20,18 +17,22 @@
     .yui-layout-unit div.yui-layout-bd {
         background-color: transparent;
     }
-}
-
-.path-mod-chat-gui_ajax {
     #chat-input-area table.generaltable,
     #chat-input-area table.generaltable td.cell {
         border: 0;
         padding: 3px 15px;
+        white-space: nowrap;
         input {
-            margin-right: 10px;
+            margin: 0 10px;
+            &#input-message {
+                width: 45%;
+                margin: auto;
+            }
+        }
+        a {
+            margin: 0 5px;
         }
     }
-
     #chat-userlist {
         padding: 10px 5px;
         #users-list {
@@ -50,7 +51,6 @@
             }
         }
     }
-
     #chat-messages {
         margin: 20px 25px;
         .chat-event.course-theme {
@@ -79,26 +79,15 @@
         }
     }
 }
-// RTL overides
-.path-mod-chat-gui_ajax.dir-rtl {
-    .yui-layout-unit, yui-layout-bd {
-    }
-    .yui-layout-unit-bottom {
-        margin-right: 30px;
-    }
-    #chat-input-area {
-        table.generaltable {
-            td.cell {
-                margin: 3px 0px;
-                input {
-                    margin-left: 10px;
-                }
-            }
-        }
-        .input-message {
-        }
-    }
 
+// RTL overides
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax.dir-rtl {
+    .yui-layout-unit-right {
+        padding: 0;
+    }
+    .yui-layout-unit div.yui-layout-bd {
+        text-align: right;
+    }
     #chat-userlist {
         #users-list {
             img {
@@ -110,11 +99,9 @@
         .chat-message.course-theme {
             .time {
                 float: left;
-                font-size: 11px;
-                color: #777;
             }
             .user {
-                float:right;
+                float: right;
             }
             .chat-message-meta {
                 height: 20px;
@@ -123,17 +110,5 @@
                 text-align: right;
             }
         }
-    }
-}
-.yui-skin-sam .path-mod-chat-gui_ajax.dir-rtl {
-
-    .yui-layout-unit-right {
-        padding: 0;
-    }
-    yui-layout-unit div.yui-layout-bd {
-        text-align: right;
-    }
-    .yui-layout-unit div.yui-layout-bd {
-        text-align: right;
     }
 }
