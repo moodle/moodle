@@ -4195,7 +4195,7 @@ function delete_user(stdClass $user) {
     \core\session\manager::kill_user_sessions($user->id);
 
     // Workaround for bulk deletes of users with the same email address.
-    $delname = "$user->email.".time();
+    $delname = clean_param($user->email . "." . time(), PARAM_USERNAME);
     while ($DB->record_exists('user', array('username' => $delname))) { // No need to use mnethostid here.
         $delname++;
     }
