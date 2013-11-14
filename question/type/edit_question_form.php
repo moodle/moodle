@@ -121,7 +121,7 @@ abstract class question_edit_form extends question_wizard_form {
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
     protected function definition() {
-        global $COURSE, $CFG, $DB;
+        global $COURSE, $CFG, $DB, $OUTPUT;
 
         $qtype = $this->qtype();
         $langfile = "qtype_$qtype";
@@ -236,21 +236,25 @@ abstract class question_edit_form extends question_wizard_form {
         $mform->setType('makecopy', PARAM_INT);
 
         $buttonarray = array();
-        if (!empty($this->question->id)) {
-            // Editing question.
-            if ($this->question->formoptions->canedit) {
-                $buttonarray[] = $mform->createElement('submit', 'submitbutton',
-                        get_string('savechanges'));
-            }
-            $buttonarray[] = $mform->createElement('cancel');
-        } else {
-            // Adding new question.
-            $buttonarray[] = $mform->createElement('submit', 'submitbutton',
-                    get_string('savechanges'));
-            $buttonarray[] = $mform->createElement('cancel');
+        $buttonarray[] = $mform->createElement('submit', 'updatebutton',
+                             get_string('savechangesandcontinueediting', 'question'));
+        if (!empty($this->question->id) && $this->question->formoptions->canedit) {
+            // Build the icon.
+            $url = question_preview_url($this->question->id);
+            $image = $OUTPUT->pix_icon('t/preview', '');
+
+            $action = new popup_action('click', $url, 'questionpreview',
+                    question_preview_popup_params());
+
+            $previewlink = $OUTPUT->action_link($url, get_string('openpreviewfromform', 'question', $image), $action);
+
+            $buttonarray[] = $mform->createElement('static', 'previewlink', '', $previewlink);
         }
+
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
+
+        $this->add_action_buttons(true, get_string('savechanges'));
 
         if ((!empty($this->question->id)) && (!($this->question->formoptions->canedit ||
                 $this->question->formoptions->cansaveasnew))) {
