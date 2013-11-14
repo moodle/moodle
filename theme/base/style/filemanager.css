@@ -71,6 +71,7 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 .fp-toolbar.empty {display:none;}
 .fp-toolbar .disabled {display:none;}
 .file-picker .fp-toolbar div, .fp-navbar .filemanager-toolbar .fp-toolbar div {float:left;margin:4px 0 4px 4px;background:#FFFFFF;border:1px solid #CCCCCC;border-bottom:1px solid #B3B3B3;border-radius:4px;width:30px;height:30px;}
+.file-picker .fp-toolbar .fp-tb-message  {background:inherit;border:0;border-bottom:0;border-radius:0;width:300px;height:32px;}
 .fp-toolbar div {display:block;}
 .fp-toolbar a {display:block;height:30px;width:30px;}
 .fp-toolbar a:hover {background-image:radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);background-color:#ebebeb;}
