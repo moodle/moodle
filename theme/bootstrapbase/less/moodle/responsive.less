@@ -347,7 +347,23 @@
     .nav-collapse.active {
         height: auto;
     }
-
+    .path-mod-data .box > table > tbody > tr > td {
+        display: block;
+    }
+    .path-mod-forum .forumheaderlist {
+        thead .header {
+            font-weight: normal;
+            font-size: round(@fontSizeSmall);
+        }
+        .discussion {
+            .author, .replies, .lastpost {
+                font-size: round(@fontSizeSmall);
+            }
+            .replies .unread a {
+                padding: 0;
+            }
+        }
+    }
 }
 
 @media (max-width: 768px) {
@@ -423,6 +439,26 @@
   div[role=main] {
       margin-bottom: 1em;
   }
+    .coursebox {
+        .info {
+            .name {
+                a {
+                    background-position: 0 13px;
+                }
+            }
+        }
+    }
+    .category-browse {
+        .coursebox {
+            .info {
+                .name {
+                    a {
+                        background-position: 0 13px;
+                    }
+                }
+            }
+        }
+    }
 }
 
 // All widths between 1200px and 1600px

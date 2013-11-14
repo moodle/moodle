@@ -109,9 +109,21 @@
     display: inline;
 }
 
-.block_calendar_upcoming .footer {
-    margin-top: .5em;
+.block_calendar_upcoming {
+    .footer {
+        margin-top: .5em;
+    }
+    .content {
+        .date {
+            padding-left: 22px;
+        }
+        .footer {
+            padding-top: 10px;
+            padding-left: 0px;
+        }
+    }
 }
+
 #adminsearchquery,
 #blogsearchquery,
 #searchform_search,
@@ -124,8 +136,47 @@
 #searchform_search {
     width: auto;
 }
-.block_rss_client .list li {
-    border-top-color: darken(@wellBackground, 7%);
+.block_rss_client {
+    .content li {
+        margin-bottom: 10px;
+        padding: 5px;
+        border: 1px solid #ddd;
+        .border-radius(@baseBorderRadius);
+        .link {
+            font-weight: inherit;
+        }
+    }
+    .list li:first-child {
+        border-top-width: 1px; // undo the style provided by the block's styles.css
+    }
+}
+
+.block_news_items .content {
+    .newlink {
+        padding-bottom: 10px;
+    }
+    ul li {
+        border-top: 1px rgba(0,0,0,0.05) solid;
+        padding: 2px;
+        display: table;
+        width: 100%;
+        .info {
+            display: table-header-group;
+        }
+        .date {
+            font-size: @fontSizeSmall;
+            display: inline;
+        }
+        .name {
+            font-size: @fontSizeSmall;
+            padding-left: 1ex;
+            display: inline;
+        }
+    }
+    .footer {
+        padding-top: 10px;
+        padding-left: 0px;
+    }
 }
 
 // Overide for RTL layout.
@@ -139,5 +190,25 @@
     }
     .block .header .block_action {
         float: left;
+    }
+    .block_calendar_upcoming {
+        .content {
+            .date {
+                padding-right: 22px;
+            }
+            .footer {
+                padding-right: 0px;
+            }
+        }
+    }
+    .block_news_items .content {
+        ul li {
+            .name {
+                padding-right: 1ex;
+            }
+        }
+        .footer {
+            padding-left: 0px;
+        }
     }
 }
