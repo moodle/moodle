@@ -17,3 +17,4 @@ Upgrade procedure:
    after "DOM.setStyle(ifr, 'height',DOM.getSize(ifr).h + dy); // Resize iframe"
 7/ reimplement patch in MDL-42481
 8/ reimplement patch in MDL-42684
+9/ reimplement patch in MDL-42887
