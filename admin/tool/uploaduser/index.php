@@ -232,10 +232,10 @@ if ($formdata = $mform2->is_cancelled()) {
                     $user->$key['text']   = $value;
                     $user->$key['format'] = FORMAT_MOODLE;
                 } else {
-                    $user->$key = $value;
+                    $user->$key = trim($value);
                 }
             } else {
-                $user->$key = $value;
+                $user->$key = trim($value);
             }
 
             if (in_array($key, $upt->columns)) {
@@ -966,6 +966,7 @@ if ($formdata = $mform2->is_cancelled()) {
                 if ($rid) {
                     // find duration
                     $timeend   = 0;
+
                     if (!empty($user->{'enrolperiod'.$i})) {
                         $duration = (int)$user->{'enrolperiod'.$i} * 60*60*24; // convert days to seconds
                         if ($duration > 0) { // sanity check
@@ -1097,7 +1098,7 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     $rowcols = array();
     $rowcols['line'] = $linenum;
     foreach($fields as $key => $field) {
-        $rowcols[$filecolumns[$key]] = s($field);
+        $rowcols[$filecolumns[$key]] = s(trim($field));
     }
     $rowcols['status'] = array();
 
@@ -1123,7 +1124,7 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     }
 
     if (isset($rowcols['city'])) {
-        $rowcols['city'] = trim($rowcols['city']);
+        $rowcols['city'] = $rowcols['city'];
         if (empty($rowcols['city'])) {
             $rowcols['status'][] = get_string('fieldrequired', 'error', 'city');
         }
