@@ -12870,7 +12870,7 @@ div#dock {
   text-align: left;
 }
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax {
-  background-color: #fff;
+  background-color: #ffffff;
 }
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-unit div.yui-layout-bd-nohd,
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-unit div.yui-layout-bd-noft,
@@ -12878,12 +12878,6 @@ div#dock {
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-unit-right,
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-unit-bottom {
   border: 0;
-}
-.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-bd,
-.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-wrap,
-.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-resize {
-  /*width:100% !important; //until inline styles taken out of chat css's*/
-
 }
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-unit-right,
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-unit-bottom {
@@ -12908,43 +12902,53 @@ div#dock {
 .yui-skin-sam .yui-layout.path-mod-chat-gui_ajax .yui-layout-unit div.yui-layout-bd {
   background-color: transparent;
 }
-.path-mod-chat-gui_ajax #chat-input-area table.generaltable,
-.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable,
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell {
   border: 0;
   padding: 3px 15px;
+  white-space: nowrap;
 }
-.path-mod-chat-gui_ajax #chat-input-area table.generaltable input,
-.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell input {
-  margin-right: 10px;
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable input,
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell input {
+  margin: 0 10px;
 }
-.path-mod-chat-gui_ajax #chat-userlist {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable input#input-message,
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell input#input-message {
+  width: 45%;
+  margin: auto;
+}
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable a,
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-input-area table.generaltable td.cell a {
+  margin: 0 5px;
+}
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-userlist {
   padding: 10px 5px;
 }
-.path-mod-chat-gui_ajax #chat-userlist #users-list {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-userlist #users-list {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ffffff;
 }
-.path-mod-chat-gui_ajax #chat-userlist #users-list li {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-userlist #users-list li {
   border-top: 1px solid #ffffff;
   border-bottom: 1px solid #ddd;
   padding: 5px 10px;
 }
-.path-mod-chat-gui_ajax #chat-userlist #users-list img {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-userlist #users-list img {
   margin-right: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
   max-width: none;
 }
-.path-mod-chat-gui_ajax #chat-messages {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-messages {
   margin: 20px 25px;
 }
-.path-mod-chat-gui_ajax #chat-messages .chat-event.course-theme {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-messages .chat-event.course-theme {
   text-align: center;
   margin: 10px 0;
   font-size: 11.9px;
   color: #777;
 }
-.path-mod-chat-gui_ajax #chat-messages .chat-message.course-theme {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-messages .chat-message.course-theme {
   background-color: #ffffff;
   border: 1px dotted #ddd;
   -webkit-border-radius: 4px;
@@ -12953,50 +12957,36 @@ div#dock {
   padding: 4px 10px;
   margin: 10px 0;
 }
-.path-mod-chat-gui_ajax #chat-messages .chat-message.course-theme .time {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-messages .chat-message.course-theme .time {
   float: right;
   font-size: 11px;
   color: #777;
 }
-.path-mod-chat-gui_ajax #chat-messages .mdl-chat-my-entry .chat-message.course-theme {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-messages .mdl-chat-my-entry .chat-message.course-theme {
   background-color: #f6f6f6;
 }
-.path-mod-chat-gui_ajax #chat-messages .mdl-chat-my-entry .chat-message.course-theme .user {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax #chat-messages .mdl-chat-my-entry .chat-message.course-theme .user {
   font-weight: bold;
 }
-.path-mod-chat-gui_ajax.dir-rtl .yui-layout-unit-bottom {
-  margin-right: 30px;
-}
-.path-mod-chat-gui_ajax.dir-rtl #chat-input-area table.generaltable td.cell {
-  margin: 3px 0px;
-}
-.path-mod-chat-gui_ajax.dir-rtl #chat-input-area table.generaltable td.cell input {
-  margin-left: 10px;
-}
-.path-mod-chat-gui_ajax.dir-rtl #chat-userlist #users-list img {
-  margin-left: 8px;
-}
-.path-mod-chat-gui_ajax.dir-rtl #chat-messages .chat-message.course-theme .time {
-  float: left;
-  font-size: 11px;
-  color: #777;
-}
-.path-mod-chat-gui_ajax.dir-rtl #chat-messages .chat-message.course-theme .user {
-  float: right;
-}
-.path-mod-chat-gui_ajax.dir-rtl #chat-messages .chat-message.course-theme .chat-message-meta {
-  height: 20px;
-}
-.path-mod-chat-gui_ajax.dir-rtl #chat-messages .chat-message.course-theme .text {
-  text-align: right;
-}
-.yui-skin-sam .path-mod-chat-gui_ajax.dir-rtl .yui-layout-unit-right {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax.dir-rtl .yui-layout-unit-right {
   padding: 0;
 }
-.yui-skin-sam .path-mod-chat-gui_ajax.dir-rtl yui-layout-unit div.yui-layout-bd {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax.dir-rtl .yui-layout-unit div.yui-layout-bd {
   text-align: right;
 }
-.yui-skin-sam .path-mod-chat-gui_ajax.dir-rtl .yui-layout-unit div.yui-layout-bd {
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax.dir-rtl #chat-userlist #users-list img {
+  margin-left: 8px;
+}
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax.dir-rtl #chat-messages .chat-message.course-theme .time {
+  float: left;
+}
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax.dir-rtl #chat-messages .chat-message.course-theme .user {
+  float: right;
+}
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax.dir-rtl #chat-messages .chat-message.course-theme .chat-message-meta {
+  height: 20px;
+}
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax.dir-rtl #chat-messages .chat-message.course-theme .text {
   text-align: right;
 }
 /* reports.less */
