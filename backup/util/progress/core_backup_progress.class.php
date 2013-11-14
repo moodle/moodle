@@ -115,7 +115,6 @@ abstract class core_backup_progress {
         $this->currents[] = 0;
         $this->parentcounts[] = $parentcount;
         $this->update_progress();
-        $lastprogresstime = $this->get_time();
     }
 
     /**
