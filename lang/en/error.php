@@ -186,7 +186,7 @@ $string['csvemptyfile'] = 'The CSV file is empty';
 $string['csvfewcolumns'] = 'Not enough columns, please verify the delimiter setting';
 $string['csvinvalidcols'] = '<b>Invalid CSV file:</b> First line must include "Header Fields" and the file must be type of <br />"Expanded Fields/Comma Separated"<br />or<br /> "Expanded Fields with CAVV Result Code/Comma Separated"';
 $string['csvinvalidcolsnum'] = 'Invalid CSV file - each line must include 49 or 70 fields';
-$string['csvloaderror'] = 'Error occur during loading CSV file!';
+$string['csvloaderror'] = 'An error occurred while loading the CSV file: {$a}';
 $string['csvweirdcolumns'] = 'Invalid CSV file format - number of columns is not constant!';
 $string['dbconnectionfailed'] = '<p>Error: Database connection failed</p>
 <p>It is possible that the database is overloaded or otherwise not running properly.</p>
