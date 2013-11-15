@@ -1748,13 +1748,13 @@ class backup_zip_contents extends backup_execution_step implements file_progress
         // Start tracking progress if necessary.
         if (!$this->startedprogress) {
             $reporter->start_progress('extract_file_to_dir', ($max == file_progress::INDETERMINATE)
-                    ? core_backup_progress::INDETERMINATE : $max);
+                    ? \core\progress\base::INDETERMINATE : $max);
             $this->startedprogress = true;
         }
 
         // Pass progress through to whatever handles it.
         $reporter->progress(($progress == file_progress::INDETERMINATE)
-                ? core_backup_progress::INDETERMINATE : $progress);
+                ? \core\progress\base::INDETERMINATE : $progress);
      }
 }
 

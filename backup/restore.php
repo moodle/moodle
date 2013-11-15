@@ -34,7 +34,7 @@ echo $OUTPUT->header();
 
 // Prepare a progress bar which can display optionally during long-running
 // operations while setting up the UI.
-$slowprogress = new core_backup_display_progress_if_slow(get_string('preparingui', 'backup'));
+$slowprogress = new \core\progress\display_if_slow(get_string('preparingui', 'backup'));
 
 // Overall, allow 10 units of progress.
 $slowprogress->start_progress('', 10);
@@ -90,7 +90,7 @@ $slowprogress->end_progress();
 
 if (!$restore->is_independent()) {
     // Use a temporary (disappearing) progress bar to show the precheck progress if any.
-    $precheckprogress = new core_backup_display_progress_if_slow(get_string('preparingdata', 'backup'));
+    $precheckprogress = new \core\progress\display_if_slow(get_string('preparingdata', 'backup'));
     $restore->get_controller()->set_progress($precheckprogress);
     if ($restore->get_stage() == restore_ui::STAGE_PROCESS && !$restore->requires_substage()) {
         try {
@@ -99,7 +99,7 @@ if (!$restore->is_independent()) {
             // Show the current restore state (header with bolded item).
             echo $renderer->progress_bar($restore->get_progress_bar());
             // Start displaying the actual progress bar percentage.
-            $restore->get_controller()->set_progress(new core_backup_display_progress());
+            $restore->get_controller()->set_progress(new \core\progress\display());
             // Prepare logger.
             $logger = new core_backup_html_logger($CFG->debugdeveloper ? backup::LOG_DEBUG : backup::LOG_INFO);
             $restore->get_controller()->add_logger($logger);

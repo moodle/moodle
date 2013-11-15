@@ -126,7 +126,7 @@ abstract class base_task implements checksumable, executable, loggable {
      * Gets the progress reporter, which can be used to report progress within
      * the backup or restore process.
      *
-     * @return core_backup_progress Progress reporting object
+     * @return \core\progress\base Progress reporting object
      */
     public function get_progress() {
         return $this->plan->get_progress();

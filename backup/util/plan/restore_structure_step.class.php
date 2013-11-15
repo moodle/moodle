@@ -103,7 +103,7 @@ abstract class restore_structure_step extends restore_step {
 
         // Set up progress tracking.
         $progress = $this->get_task()->get_progress();
-        $progress->start_progress($this->get_name(), core_backup_progress::INDETERMINATE);
+        $progress->start_progress($this->get_name(), \core\progress\base::INDETERMINATE);
         $xmlparser->set_progress($progress);
 
         // And process it, dispatch to target methods in step will start automatically
@@ -229,7 +229,7 @@ abstract class restore_structure_step extends restore_step {
         // the execute() method here, which does set up progress like this.)
         $progress = $this->get_task()->get_progress();
         if (!$progress->is_in_progress_section() ||
-                $progress->get_current_max() !== core_backup_progress::INDETERMINATE) {
+                $progress->get_current_max() !== \core\progress\base::INDETERMINATE) {
             $progress = null;
         }
 

@@ -46,9 +46,9 @@ abstract class backup_helper {
      * progress reports.
      *
      * @param string $backupid Backup id
-     * @param core_backup_progress $progress Optional progress reporting object
+     * @param \core\progress\base $progress Optional progress reporting object
      */
-    static public function clear_backup_dir($backupid, core_backup_progress $progress = null) {
+    static public function clear_backup_dir($backupid, \core\progress\base $progress = null) {
         global $CFG;
         if (!self::delete_dir_contents($CFG->tempdir . '/backup/' . $backupid, '', $progress)) {
             throw new backup_helper_exception('cannot_empty_backup_temp_dir');
@@ -63,9 +63,9 @@ abstract class backup_helper {
      * progress reports.
      *
      * @param string $backupid Backup id
-     * @param core_backup_progress $progress Optional progress reporting object
+     * @param \core\progress\base $progress Optional progress reporting object
      */
-     static public function delete_backup_dir($backupid, core_backup_progress $progress = null) {
+     static public function delete_backup_dir($backupid, \core\progress\base $progress = null) {
          global $CFG;
          self::clear_backup_dir($backupid, $progress);
          return rmdir($CFG->tempdir . '/backup/' . $backupid);
@@ -81,9 +81,9 @@ abstract class backup_helper {
      *
      * @param string $dir Directory to delete
      * @param string $excludedir Exclude this directory
-     * @param core_backup_progress $progress Optional progress reporting object
+     * @param \core\progress\base $progress Optional progress reporting object
      */
-    static public function delete_dir_contents($dir, $excludeddir='', core_backup_progress $progress = null) {
+    static public function delete_dir_contents($dir, $excludeddir='', \core\progress\base $progress = null) {
         global $CFG;
 
         if ($progress) {
@@ -154,9 +154,9 @@ abstract class backup_helper {
      * progress reports.
      *
      * @param int $deletefrom Time to delete from
-     * @param core_backup_progress $progress Optional progress reporting object
+     * @param \core\progress\base $progress Optional progress reporting object
      */
-    static public function delete_old_backup_dirs($deletefrom, core_backup_progress $progress = null) {
+    static public function delete_old_backup_dirs($deletefrom, \core\progress\base $progress = null) {
         global $CFG;
 
         $status = true;
@@ -213,12 +213,12 @@ abstract class backup_helper {
      *
      * @param int $backupid
      * @param string $filepath zip file containing the backup
-     * @param core_backup_progress $progress Optional progress monitor
+     * @param \core\progress\base $progress Optional progress monitor
      * @return stored_file if created, null otherwise
      *
      * @throws moodle_exception in case of any problems
      */
-    static public function store_backup_file($backupid, $filepath, core_backup_progress $progress = null) {
+    static public function store_backup_file($backupid, $filepath, \core\progress\base $progress = null) {
         global $CFG;
 
         // First of all, get some information from the backup_controller to help us decide

@@ -112,10 +112,10 @@ abstract class restore_dbops {
      *
      * @param string $restoreid Restore id
      * @param string $inforeffile File path
-     * @param core_backup_progress $progress Progress tracker
+     * @param \core\progress\base $progress Progress tracker
      */
     public static function load_inforef_to_tempids($restoreid, $inforeffile,
-            core_backup_progress $progress = null) {
+            \core\progress\base $progress = null) {
 
         if (!file_exists($inforeffile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_inforef_xml_file', $inforeffile);
@@ -123,7 +123,7 @@ abstract class restore_dbops {
 
         // Set up progress tracking (indeterminate).
         if (!$progress) {
-            $progress = new core_backup_null_progress();
+            $progress = new \core\progress\null();
         }
         $progress->start_progress('Loading inforef.xml file');
 
@@ -419,10 +419,10 @@ abstract class restore_dbops {
      *
      * @param string $restoreid Restore id
      * @param string $usersfile File path
-     * @param core_backup_progress $progress Progress tracker
+     * @param \core\progress\base $progress Progress tracker
      */
     public static function load_users_to_tempids($restoreid, $usersfile,
-            core_backup_progress $progress = null) {
+            \core\progress\base $progress = null) {
 
         if (!file_exists($usersfile)) { // Shouldn't happen ever, but...
             throw new backup_helper_exception('missing_users_xml_file', $usersfile);
@@ -430,7 +430,7 @@ abstract class restore_dbops {
 
         // Set up progress tracking (indeterminate).
         if (!$progress) {
-            $progress = new core_backup_null_progress();
+            $progress = new \core\progress\null();
         }
         $progress->start_progress('Loading users into temporary table');
 
@@ -861,13 +861,13 @@ abstract class restore_dbops {
      * @param int|null $olditemid
      * @param int|null $forcenewcontextid explicit value for the new contextid (skip mapping)
      * @param bool $skipparentitemidctxmatch
-     * @param core_backup_progress $progress Optional progress reporter
+     * @param \core\progress\base $progress Optional progress reporter
      * @return array of result object
      */
     public static function send_files_to_pool($basepath, $restoreid, $component, $filearea,
             $oldcontextid, $dfltuserid, $itemname = null, $olditemid = null,
             $forcenewcontextid = null, $skipparentitemidctxmatch = false,
-            core_backup_progress $progress = null) {
+            \core\progress\base $progress = null) {
         global $DB, $CFG;
 
         $backupinfo = backup_general_helper::get_backup_information(basename($basepath));
@@ -1084,10 +1084,10 @@ abstract class restore_dbops {
      * @param string $basepath Base path of unzipped backup
      * @param string $restoreid Restore ID
      * @param int $userid Default userid for files
-     * @param core_backup_progress $progress Object used for progress tracking
+     * @param \core\progress\base $progress Object used for progress tracking
      */
     public static function create_included_users($basepath, $restoreid, $userid,
-            core_backup_progress $progress) {
+            \core\progress\base $progress) {
         global $CFG, $DB;
         $progress->start_progress('Creating included users');
 
@@ -1481,10 +1481,10 @@ abstract class restore_dbops {
      * @param int $courseid Course id
      * @param int $userid User id
      * @param bool $samesite True if restore is to same site
-     * @param core_backup_progress $progress Progress reporter
+     * @param \core\progress\base $progress Progress reporter
      */
     public static function precheck_included_users($restoreid, $courseid, $userid, $samesite,
-            core_backup_progress $progress) {
+            \core\progress\base $progress) {
         global $CFG, $DB;
 
         // To return any problem found
@@ -1570,10 +1570,10 @@ abstract class restore_dbops {
      * @param int $courseid Course id
      * @param int $userid User id
      * @param bool $samesite True if restore is to same site
-     * @param core_backup_progress $progress Optional progress tracker
+     * @param \core\progress\base $progress Optional progress tracker
      */
     public static function process_included_users($restoreid, $courseid, $userid, $samesite,
-            core_backup_progress $progress = null) {
+            \core\progress\base $progress = null) {
         global $DB;
 
         // Just let precheck_included_users() to do all the hard work
