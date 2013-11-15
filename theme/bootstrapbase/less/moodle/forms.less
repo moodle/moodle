@@ -384,34 +384,44 @@ fieldset.coursesearchbox label {
 }
 
 /**
- * Show the labels above text editors and file managers.
+ * Show the labels above text editors and file managers except on wide screens.
  */
-#adminsettings #admin-summary .form-label,
-.mform .fcontainer .fitem_ffilemanager .fitemtitle,
-.mform .fcontainer .fitem_feditor .fitemtitle {
-    display: block;
-    margin-top: 4px;
-    margin-bottom: 4px;
-    text-align: left;
-    width: 100%;
+.mform .fcontainer .fitem .fitemtitle label {
+    font-weight: bold;
 }
-.dir-rtl #adminsettings #admin-summary .form-label,
-.dir-rtl .mform .fcontainer .fitem_ffilemanager .fitemtitle,
-.dir-rtl .mform .fcontainer .fitem_feditor .fitemtitle {
-    text-align: right;
-}
+@media (max-width: 1199px) {
+    .mform .fcontainer .fitem .fitemtitle {
+        display: block;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        text-align: left;
+        width: 100%;
+    }
+    .dir-rtl .mform .fcontainer .fitem .fitemtitle {
+        text-align: right;
+    }
 
-#adminsettings #admin-summary .form-setting,
-#adminsettings #admin-summary .form-description,
-.mform .fcontainer .fitem_ffilemanager .ffilemanager,
-.mform .fcontainer .fitem_feditor .feditor {
-    margin-left: 0%;
-    width: 100%;
-    float: left;
-}
-.dir-rtl #adminsettings #admin-summary .form-setting,
-.dir-rtl #adminsettings #admin-summary .form-description,
-.dir-rtl .mform .fcontainer .fitem_ffilemanager .ffilemanager,
-.dir-rtl .mform .fcontainer .fitem_feditor .feditor {
-    margin-right: 0%;
+    .mform .fcontainer .fitem .felement {
+        margin-left: 0;
+        width: 100%;
+        float: left;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .dir-rtl .mform .fcontainer .fitem .felement {
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .mform .fcontainer .fitem_fcheckbox .fitemtitle,
+    .mform .fcontainer .fitem_fcheckbox .felement {
+        display: inline-block;
+        width: auto;
+    }
+    .dir-rtl .mform .fcontainer .fitem_fcheckbox .felement {
+        float: right;
+    }
+    .mform .fcontainer .fitem_fcheckbox .felement {
+        padding: 6px;
+    }
 }
