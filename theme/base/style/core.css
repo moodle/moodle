@@ -331,22 +331,22 @@ input#id_externalurl {direction:ltr;}
 /**
  * Show the labels above text editors and file managers except on wide screens.
  */
-.mform .fcontainer .fitem .fitemtitle label {
+#region-main .mform .fitem .fitemtitle label {
     font-weight: bold;
 }
 @media (max-width: 1199px) {
-    .mform .fcontainer .fitem .fitemtitle {
+    #region-main .mform .fitem .fitemtitle {
         display: block;
         margin-top: 4px;
         margin-bottom: 4px;
         text-align: left;
         width: 100%;
     }
-    .dir-rtl .mform .fcontainer .fitem .fitemtitle {
+    .dir-rtl #region-main .mform .fitem .fitemtitle {
         text-align: right;
     }
 
-    .mform .fcontainer .fitem .felement {
+    #region-main .mform .fitem .felement {
         margin-left: 0;
         width: 100%;
         float: left;
@@ -354,21 +354,21 @@ input#id_externalurl {direction:ltr;}
         padding-left: 0;
         padding-right: 0;
     }
-    .dir-rtl .mform .fcontainer .fitem .felement {
+    .dir-rtl #region-main .mform .fitem .felement {
         margin-right: 0;
         float: right;
         padding-right: 0;
         padding-left: 0;
     }
-    .mform .fcontainer .fitem_fcheckbox .fitemtitle,
-    .mform .fcontainer .fitem_fcheckbox .felement {
+    #region-main .mform .fitem_fcheckbox .fitemtitle,
+    #region-main .mform .fitem_fcheckbox .felement {
         display: inline-block;
         width: auto;
     }
-    .dir-rtl .mform .fcontainer .fitem_fcheckbox .felement {
+    .dir-rtl #region-main .mform .fitem_fcheckbox .felement {
         float: right;
     }
-    .mform .fcontainer .fitem_fcheckbox .felement {
+    #region-main .mform .fitem_fcheckbox .felement {
         padding: 6px;
     }
 }
