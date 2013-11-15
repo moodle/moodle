@@ -114,7 +114,7 @@
         $where = '';
         $params['hookup'] = textlib::strtoupper($hook);
 
-        if ($hook != 'ALL' and $hook != 'SPECIAL' && ($hookstrlen = itextlib::strlen($hook))) {
+        if ($hook != 'ALL' and $hook != 'SPECIAL' and ($hookstrlen = textlib::strlen($hook))) {
             $where = "AND " . $DB->sql_substr("upper(concept)", 1, $hookstrlen) . " = :hookup";
         }
 
@@ -239,7 +239,7 @@
 
         case 'letter':
             if ($hook != 'ALL' and $hook != 'SPECIAL' and ($hookstrlen = textlib::strlen($hook))) {
-                $params['hookup'] = core_text::strtoupper($hook);
+                $params['hookup'] = textlib::strtoupper($hook);
                 $where = "AND " . $DB->sql_substr("upper(concept)", 1, $hookstrlen) . " = :hookup";
             }
             if ($hook == 'SPECIAL') {
