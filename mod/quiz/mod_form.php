@@ -424,10 +424,12 @@ class mod_quiz_mod_form extends moodleform_mod {
             }
         }
 
-        $mform->disabledIf('correctness' . $whenname, 'attempt' . $whenname);
-        $mform->disabledIf('specificfeedback' . $whenname, 'attempt' . $whenname);
-        $mform->disabledIf('generalfeedback' . $whenname, 'attempt' . $whenname);
-        $mform->disabledIf('rightanswer' . $whenname, 'attempt' . $whenname);
+        if ($whenname != 'during') {
+            $mform->disabledIf('correctness' . $whenname, 'attempt' . $whenname);
+            $mform->disabledIf('specificfeedback' . $whenname, 'attempt' . $whenname);
+            $mform->disabledIf('generalfeedback' . $whenname, 'attempt' . $whenname);
+            $mform->disabledIf('rightanswer' . $whenname, 'attempt' . $whenname);
+        }
     }
 
     protected function preprocessing_review_settings(&$toform, $whenname, $when) {
