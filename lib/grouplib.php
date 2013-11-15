@@ -203,12 +203,18 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
     // aliased. If its something else we need to avoid the cache and run the query as who knows whats going on.
     $knownfields = true;
     if ($fields !== 'g.*') {
-        $fieldbits = explode(',', $fields);
-        foreach ($fieldbits as $bit) {
-            $bit = trim($bit);
-            if (strpos($bit, 'g.') !== 0 or stripos($bit, ' AS ') !== false) {
-                $knownfields = false;
-                break;
+        // Quickly check if the first field is no longer g.id as using the
+        // cache will return an array indexed differently than when expect
+        if (strpos($fields, 'g.*') !== 0 && strpos($fields, 'g.id') !== 0) {
+            $knownfields = false;
+        } else {
+            $fieldbits = explode(',', $fields);
+            foreach ($fieldbits as $bit) {
+                $bit = trim($bit);
+                if (strpos($bit, 'g.') !== 0 or stripos($bit, ' AS ') !== false) {
+                    $knownfields = false;
+                    break;
+                }
             }
         }
     }

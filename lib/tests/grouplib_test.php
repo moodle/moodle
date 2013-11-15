@@ -26,6 +26,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+/**
+ * Unit tests for lib/grouplib.php
+ * @group core_group
+ */
 class core_grouplib_testcase extends advanced_testcase {
 
     public function test_groups_get_group_by_idnumber() {
@@ -404,6 +408,14 @@ class core_grouplib_testcase extends advanced_testcase {
         $this->assertNotContains($group2->id, $groupkeys);
         $this->assertContains($group3->id, $groupkeys);
         $this->assertContains($group4->id, $groupkeys);
+
+        // Test this function using an alternate column for the result index
+        $groups  = groups_get_all_groups($course->id, null, $grouping2->id, 'g.name, g.id');
+        $groupkeys = array_keys($groups);
+        $this->assertCount(2, $groups);
+        $this->assertNotContains($group3->id, $groupkeys);
+        $this->assertContains($group3->name, $groupkeys);
+        $this->assertEquals($group3->id, $groups[$group3->name]->id);
     }
 
     /**
