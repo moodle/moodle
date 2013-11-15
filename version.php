@@ -29,7 +29,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2012062510.01;              // YYYYMMDD      = weekly release date of this DEV branch
+$version  = 2012062510.01;              // 20120625      = branching date YYYYMMDD - do not modify!
                                         //         RR    = release increments - 00 in DEV branches
                                         //           .XX = incremental changes
 
