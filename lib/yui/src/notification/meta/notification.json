@@ -14,7 +14,8 @@
         "node",
         "panel",
         "event-key",
-        "dd-plugin"
+        "dd-plugin",
+        "moodle-core-lockscroll"
     ]
   },
   "moodle-core-notification-alert": {
