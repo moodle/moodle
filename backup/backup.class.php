@@ -126,8 +126,8 @@ abstract class backup implements checksumable {
     const OPERATION_RESTORE ='restore';// We are performing one restore
 
     // Version (to keep CFG->backup_version (and release) updated automatically)
-    const VERSION = 2013110500;
-    const RELEASE = '2.6';
+    const VERSION = 2013111800;
+    const RELEASE = '2.7';
 }
 
 /*
