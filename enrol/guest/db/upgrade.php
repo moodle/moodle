@@ -51,6 +51,9 @@ function xmldb_enrol_guest_upgrade($oldversion) {
     // Put any upgrade step following this.
 
 
+    // Moodle v2.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
 
