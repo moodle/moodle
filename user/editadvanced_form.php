@@ -50,7 +50,13 @@ class user_editadvanced_form extends moodleform {
         $enabled = get_string('pluginenabled', 'core_plugin');
         $disabled = get_string('plugindisabled', 'core_plugin');
         $auth_options = array($enabled=>array(), $disabled=>array());
+        $cannotchangepass = array();
         foreach ($auths as $auth => $unused) {
+            $authinst = get_auth_plugin($auth);
+            $passwordurl = $authinst->change_password_url();
+            if (!($authinst->can_change_password() && empty($passwordurl))) {
+                $cannotchangepass[] = $auth;
+            }
             if (is_enabled_auth($auth)) {
                 $auth_options[$enabled][$auth] = get_string('pluginname', "auth_{$auth}");
             } else {
@@ -72,6 +78,8 @@ class user_editadvanced_form extends moodleform {
         $mform->addHelpButton('newpassword', 'newpassword');
         $mform->setType('newpassword', PARAM_RAW);
         $mform->disabledIf('newpassword', 'createpassword', 'checked');
+
+        $mform->disabledIf('newpassword', 'auth', 'in', $cannotchangepass);
 
         $mform->addElement('advcheckbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
         $mform->addHelpButton('preference_auth_forcepasswordchange', 'forcepasswordchange');
