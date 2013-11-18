@@ -188,6 +188,7 @@ $string['force_ssl_help'] = 'Selecting this option forces all launches to this t
 In addition, all web service requests from the tool provider will use SSL.
 
 If using this option, confirm that this Moodle site and the tool provider support SSL.';
+$string['generaltool'] = 'General tool';
 $string['global_tool_types'] = 'Global tool types';
 $string['grading'] = 'Grade Routing';
 $string['icon_url'] = 'Icon URL';
@@ -267,7 +268,7 @@ External tool activities differ from URL resources in a few ways:
 * External tools support reading, updating, and deleting grades associated with the activity instance
 * External tool configurations create a trust relationship between your site and the tool provider, allowing secure communication between them';
 $string['modulename_link'] = 'mod/lti/view';
-$string['modulenameplural'] = 'basicltis';
+$string['modulenameplural'] = 'External Tools';
 $string['modulenamepluralformatted'] = 'LTI Instances';
 $string['never'] = 'Never';
 $string['new_window'] = 'New window';
@@ -396,6 +397,7 @@ The only case in which this option should be selected is if the tool configurati
 For example, if all launches to the tool provider just take the user to a landing page instead of to a specific resource.';
 $string['size'] = 'Size parameters';
 $string['submission'] = 'Submission';
+$string['submissions'] = 'Submissions';
 $string['submissionsfor'] = 'Submissions for {$a}';
 $string['toggle_debug_data'] = 'Toggle Debug Data';
 $string['tool_config_not_found'] = 'Tool configuration not found for this URL.';

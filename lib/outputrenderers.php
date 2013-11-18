@@ -893,6 +893,11 @@ class core_renderer extends renderer_base {
                 $performanceinfo = $perf['html'];
             }
         }
+
+        // We always want performance data when running a performance test, even if the user is redirected to another page.
+        if (MDL_PERF_TEST && strpos($footer, $this->unique_performance_info_token) === false) {
+            $footer = $this->unique_performance_info_token . $footer;
+        }
         $footer = str_replace($this->unique_performance_info_token, $performanceinfo, $footer);
 
         $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(), $footer);
@@ -1114,11 +1119,13 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     protected function render_action_menu_link(action_menu_link $action) {
+        static $actioncount = 0;
+        $actioncount++;
 
         $comparetoalt = '';
         $text = '';
         if (!$action->icon || $action->primary === false) {
-            $text .= html_writer::start_tag('span', array('class'=>'menu-action-text'));
+            $text .= html_writer::start_tag('span', array('class'=>'menu-action-text', 'id' => 'actionmenuaction-'.$actioncount));
             if ($action->text instanceof renderable) {
                 $text .= $this->render($action->text);
             } else {
@@ -1134,12 +1141,9 @@ class core_renderer extends renderer_base {
             if ($action->primary || !$action->actionmenu->will_be_enhanced()) {
                 $action->attributes['title'] = $action->text;
             }
-            if ((string)$icon->attributes['alt'] === $comparetoalt && $action->actionmenu->will_be_enhanced()) {
-                $icon->attributes['alt'] = ' ';
-            }
             if (!$action->primary && $action->actionmenu->will_be_enhanced()) {
                 if ((string)$icon->attributes['alt'] === $comparetoalt) {
-                    $icon->attributes['alt'] = ' ';
+                    $icon->attributes['alt'] = '';
                 }
                 if (isset($icon->attributes['title']) && (string)$icon->attributes['title'] === $comparetoalt) {
                     unset($icon->attributes['title']);
@@ -1157,6 +1161,9 @@ class core_renderer extends renderer_base {
         $attributes = $action->attributes;
         unset($action->attributes['disabled']);
         $attributes['href'] = $action->url;
+        if ($text !== '') {
+            $attributes['aria-labelledby'] = 'actionmenuaction-'.$actioncount;
+        }
 
         return html_writer::tag('a', $icon.$text, $attributes);
     }
@@ -3153,7 +3160,7 @@ EOD;
             // No name for tabtree root.
         } else if ($tabobject->inactive || $tabobject->activated || ($tabobject->selected && !$tabobject->linkedwhenselected)) {
             // Tab name without a link. The <a> tag is used for styling.
-            $str .= html_writer::tag('a', html_writer::span($tabobject->text), array('class' => 'nolink'));
+            $str .= html_writer::tag('a', html_writer::span($tabobject->text), array('class' => 'nolink moodle-has-zindex'));
         } else {
             // Tab name with a link.
             if (!($tabobject->link instanceof moodle_url)) {

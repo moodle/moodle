@@ -83,19 +83,26 @@ class core_collator {
                     if ($errorcode !== 0) {
                         // Get the actual locale being used, e.g. en, he, zh
                         $localeinuse = $collator->getLocale(Locale::ACTUAL_LOCALE);
-                        // Check for the common fallback warning error codes. If this occurred
-                        // there is normally little to worry about:
-                        // - U_USING_DEFAULT_WARNING (127)  - default fallback locale used (pt => UCA)
-                        // - U_USING_FALLBACK_WARNING (128) - fallback locale used (de_CH => de)
-                        // (UCA: Unicode Collation Algorithm http://unicode.org/reports/tr10/)
+                        // Check for the common fallback warning error codes. If any of the two
+                        // following errors occurred, there is normally little to worry about:
+                        // * U_USING_FALLBACK_WARNING (-128) indicates that a fall back locale was
+                        //   used. For example, 'de_CH' was requested, but nothing was found
+                        //   there, so 'de' was used.
+                        // * U_USING_DEFAULT_WARNING (-127) indicates that the default locale
+                        //   data was used; neither the requested locale nor any of its fall
+                        //   back locales could be found. For example, 'pt' was requested, but
+                        //   UCA was used (Unicode Collation Algorithm http://unicode.org/reports/tr10/).
+                        // See http://www.icu-project.org/apiref/icu4c/classicu_1_1ResourceBundle.html
                         if ($errorcode === -127 || $errorcode === -128) {
                             // Check if the locale in use is UCA default one ('root') or
                             // if it is anything like the locale we asked for
                             if ($localeinuse !== 'root' && strpos($locale, $localeinuse) !== 0) {
                                 // The locale we asked for is completely different to the locale
                                 // we have received, let the user know via debugging
-                                debugging('Invalid locale: "' . $locale . '", with warning (not fatal) "' . $errormessage .
-                                '", falling back to "' . $collator->getLocale(Locale::VALID_LOCALE) . '"');
+                                debugging('Locale warning (not fatal) '.$errormessage.': '.
+                                    'Requested locale "'.$locale.'" not found, locale "'.$localeinuse.'" used instead. '.
+                                    'The most specific locale supported by ICU relatively to the requested locale is "'.
+                                    $collator->getLocale(Locale::VALID_LOCALE).'".');
                             } else {
                                 // Nothing to do here, this is expected!
                                 // The Moodle locale setting isn't what the collator expected but
@@ -105,8 +112,10 @@ class core_collator {
                         } else {
                             // We've received some other sort of non fatal warning - let the
                             // user know about it via debugging.
-                            debugging('Problem with locale: "' . $locale . '", with message "' . $errormessage .
-                            '", falling back to "' . $collator->getLocale(Locale::VALID_LOCALE) . '"');
+                            debugging('Problem with locale: '.$errormessage.'. '.
+                                'Requested locale: "'.$locale.'", actual locale "'.$localeinuse.'". '.
+                                'The most specific locale supported by ICU relatively to the requested locale is "'.
+                                $collator->getLocale(Locale::VALID_LOCALE).'".');
                         }
                     }
                     // Store the collator object now that we can be sure it is in a workable condition

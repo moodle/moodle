@@ -3567,6 +3567,10 @@ function ismoving($courseid) {
 function fullname($user, $override=false) {
     global $CFG, $SESSION;
 
+    if (!isset($user->firstname) and !isset($user->lastname)) {
+        return '';
+    }
+
     // Get all of the name fields.
     $allnames = get_all_user_name_fields();
     if ($CFG->debugdeveloper) {
@@ -3578,10 +3582,6 @@ function fullname($user, $override=false) {
                 break;
             }
         }
-    }
-
-    if (!isset($user->firstname) and !isset($user->lastname)) {
-        return '';
     }
 
     if (!$override) {
@@ -3657,25 +3657,77 @@ function fullname($user, $override=false) {
  * A centralised location for the all name fields. Returns an array / sql string snippet.
  *
  * @param bool $returnsql True for an sql select field snippet.
- * @param string $alias table alias to use in front of each field.
+ * @param string $tableprefix table query prefix to use in front of each field.
+ * @param string $prefix prefix added to the name fields e.g. authorfirstname.
+ * @param string $fieldprefix sql field prefix e.g. id AS userid.
  * @return array|string All name fields.
  */
-function get_all_user_name_fields($returnsql = false, $alias = null) {
-    $alternatenames = array('firstnamephonetic',
-                            'lastnamephonetic',
-                            'middlename',
-                            'alternatename',
-                            'firstname',
-                            'lastname');
+function get_all_user_name_fields($returnsql = false, $tableprefix = null, $prefix = null, $fieldprefix = null) {
+    $alternatenames = array('firstnamephonetic' => 'firstnamephonetic',
+                            'lastnamephonetic' => 'lastnamephonetic',
+                            'middlename' => 'middlename',
+                            'alternatename' => 'alternatename',
+                            'firstname' => 'firstname',
+                            'lastname' => 'lastname');
+
+    // Let's add a prefix to the array of user name fields if provided.
+    if ($prefix) {
+        foreach ($alternatenames as $key => $altname) {
+            $alternatenames[$key] = $prefix . $altname;
+        }
+    }
+
+    // Create an sql field snippet if requested.
     if ($returnsql) {
-        if ($alias) {
-            foreach ($alternatenames as $key => $altname) {
-                $alternatenames[$key] = "$alias.$altname";
+        if ($tableprefix) {
+            if ($fieldprefix) {
+                foreach ($alternatenames as $key => $altname) {
+                    $alternatenames[$key] = $tableprefix . '.' . $altname . ' AS ' . $fieldprefix . $altname;
+                }
+            } else {
+                foreach ($alternatenames as $key => $altname) {
+                    $alternatenames[$key] = $tableprefix . '.' . $altname;
+                }
             }
         }
         $alternatenames = implode(',', $alternatenames);
     }
     return $alternatenames;
+}
+
+/**
+ * Reduces lines of duplicated code for getting user name fields.
+ *
+ * @param object $addtoobject Object to add user name fields to.
+ * @param object $secondobject Object that contains user name field information.
+ * @param string $prefix prefix to be added to all fields (including $additionalfields) e.g. authorfirstname.
+ * @param array $additionalfields Additional fields to be matched with data in the second object.
+ * The key can be set to the user table field name.
+ * @return object User name fields.
+ */
+function username_load_fields_from_object($addtoobject, $secondobject, $prefix = null, $additionalfields = null) {
+    $fields = get_all_user_name_fields(false, null, $prefix);
+    if ($additionalfields) {
+        // Additional fields can specify their own 'alias' such as 'id' => 'userid'. This checks to see if
+        // the key is a number and then sets the key to the array value.
+        foreach ($additionalfields as $key => $value) {
+            if (is_numeric($key)) {
+                $additionalfields[$value] = $prefix . $value;
+                unset($additionalfields[$key]);
+            } else {
+                $additionalfields[$key] = $prefix . $value;
+            }
+        }
+        $fields = array_merge($fields, $additionalfields);
+    }
+    foreach ($fields as $key => $field) {
+        // Important that we have all of the user name fields present in the object that we are sending back.
+        $addtoobject->$key = '';
+        if (isset($secondobject->$field)) {
+            $addtoobject->$key = $secondobject->$field;
+        }
+    }
+    return $addtoobject;
 }
 
 /**

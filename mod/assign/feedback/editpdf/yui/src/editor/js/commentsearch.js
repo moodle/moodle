@@ -17,7 +17,6 @@ COMMENTSEARCH = function(config) {
     config.lightbox = true;
     config.visible = false;
     config.headerContent = M.util.get_string('searchcomments', 'assignfeedback_editpdf');
-    config.zIndex = 100;
     config.footerContent = '';
     COMMENTSEARCH.superclass.constructor.apply(this, [config]);
 };

@@ -1323,12 +1323,31 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
 function reset_text_filters_cache($phpunitreset = false) {
     global $CFG, $DB;
 
-    if (!$phpunitreset) {
-        $DB->delete_records('cache_text');
+    if ($phpunitreset) {
+        // HTMLPurifier does not change, DB is already reset to defaults,
+        // nothing to do here.
+        return;
     }
+
+    $DB->delete_records('cache_text');
 
     $purifdir = $CFG->cachedir.'/htmlpurifier';
     remove_dir($purifdir, true);
+
+    // Update $CFG->filterall cache flag.
+    if (empty($CFG->stringfilters)) {
+        set_config('filterall', 0);
+        return;
+    }
+    $installedfilters = core_component::get_plugin_list('filter');
+    $filters = explode(',', $CFG->stringfilters);
+    foreach ($filters as $filter) {
+        if (isset($installedfilters[$filter])) {
+            set_config('filterall', 1);
+            return;
+        }
+    }
+    set_config('filterall', 0);
 }
 
 /**

@@ -123,6 +123,17 @@ Item.prototype = {
                     nodeup.insert(previousdown, 'after');
                 }
             }
+            nodeup = node.one(' > div a.action-moveup');
+            if (nodeup) {
+                // Try to re-focus on up.
+                nodeup.focus();
+            } else {
+                // If we can't focus up we're at the bottom, try to focus on up.
+                nodedown = node.one(' > div a.action-movedown');
+                if (nodedown) {
+                    nodedown.focus();
+                }
+            }
             this.updated(true);
             Y.log('Success: '+this.get('itemname')+' moved up by AJAX.', 'info', 'moodle-course-management');
         } else {
@@ -180,6 +191,17 @@ Item.prototype = {
                     nodedown.insert(nextup, 'before');
                 }
             }
+            nodedown = node.one(' > div a.action-movedown');
+            if (nodedown) {
+                // Try to ensure the up is focused again.
+                nodedown.focus();
+            } else {
+                // If we can't focus up we're at the top, try to focus on down.
+                nodeup = node.one(' > div a.action-moveup');
+                if (nodeup) {
+                    nodeup.focus();
+                }
+            }
             this.updated(true);
             Y.log('Success: '+this.get('itemname')+' moved down by AJAX.', 'info', 'moodle-course-management');
         } else {
@@ -200,13 +222,18 @@ Item.prototype = {
      * @returns {Boolean}
      */
     show : function(transactionid, response, args) {
-        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
+            hidebtn;
         if (outcome === false) {
             Y.log('AJAX request to show '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
 
         this.markVisible();
+        hidebtn = this.get('node').one('a[data-action=hide]');
+        if (hidebtn) {
+            hidebtn.focus();
+        }
         this.updated();
         Y.log('Success: '+this.get('itemname')+' made visible by AJAX.', 'info', 'moodle-course-management');
     },
@@ -231,12 +258,17 @@ Item.prototype = {
      * @returns {Boolean}
      */
     hide : function(transactionid, response, args) {
-        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
+            showbtn;
         if (outcome === false) {
             Y.log('AJAX request to hide '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
         this.markHidden();
+        showbtn = this.get('node').one('a[data-action=show]');
+        if (showbtn) {
+            showbtn.focus();
+        }
         this.updated();
         Y.log('Success: '+this.get('itemname')+' made hidden by AJAX.', 'info', 'moodle-course-management');
     },

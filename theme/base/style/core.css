@@ -329,6 +329,51 @@ input#id_externalurl {direction:ltr;}
 #portfolio-add-button {display:inline;}
 
 /**
+ * Show the labels above text editors and file managers except on wide screens.
+ */
+#region-main .mform .fitem .fitemtitle label {
+    font-weight: bold;
+}
+@media (max-width: 1199px) {
+    #region-main .mform .fitem .fitemtitle {
+        display: block;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        text-align: left;
+        width: 100%;
+    }
+    .dir-rtl #region-main .mform .fitem .fitemtitle {
+        text-align: right;
+    }
+
+    #region-main .mform .fitem .felement {
+        margin-left: 0;
+        width: 100%;
+        float: left;
+        margin-bottom: 6px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .dir-rtl #region-main .mform .fitem .felement {
+        margin-right: 0;
+        float: right;
+        padding-right: 0;
+        padding-left: 0;
+    }
+    #region-main .mform .fitem_fcheckbox .fitemtitle,
+    #region-main .mform .fitem_fcheckbox .felement {
+        display: inline-block;
+        width: auto;
+    }
+    .dir-rtl #region-main .mform .fitem_fcheckbox .felement {
+        float: right;
+    }
+    #region-main .mform .fitem_fcheckbox .felement {
+        padding: 6px;
+    }
+}
+
+/**
  * phpinfo styles
  */
 .phpinfo .center {text-align: center;}
@@ -368,7 +413,7 @@ input#id_externalurl {direction:ltr;}
 .groupmanagementtable #addselect_wrapper label {font-weight: normal;}
 .dir-rtl .groupmanagementtable p {text-align: right;}
 #group-usersummary {width: 14em;}
-.groupselector {margin-top: 3px;margin-bottom: 3px;}
+.groupselector {margin-top: 3px;margin-bottom: 3px;display: inline-block;}
 
 /**
  * Login
@@ -736,39 +781,23 @@ body.tag .managelink {padding: 5px;}
 .corelightbox {background-color:#CCC;position:absolute;top:0;left:0;width:100%;height:100%;text-align:center;}
 .corelightbox img {position:fixed;top:50%; left: 50%;}
 
-.mod-indent-1 {margin-left:30px;}
-.mod-indent-2 {margin-left:60px;}
-.mod-indent-3 {margin-left:90px;}
-.mod-indent-4 {margin-left:120px;}
-.mod-indent-5 {margin-left:150px;}
-.mod-indent-6 {margin-left:180px;}
-.mod-indent-7 {margin-left:210px;}
-.mod-indent-8 {margin-left:240px;}
-.mod-indent-9 {margin-left:270px;}
-.mod-indent-10 {margin-left:300px;}
-.mod-indent-11 {margin-left:330px;}
-.mod-indent-12 {margin-left:360px;}
-.mod-indent-13 {margin-left:390px;}
-.mod-indent-14 {margin-left:420px;}
+.mod-indent {display:table-cell;}
+.mod-indent-1    {width:30px;}
+.mod-indent-2    {width:60px;}
+.mod-indent-3    {width:90px;}
+.mod-indent-4    {width:120px;}
+.mod-indent-5    {width:150px;}
+.mod-indent-6    {width:180px;}
+.mod-indent-7    {width:210px;}
+.mod-indent-8    {width:240px;}
+.mod-indent-9    {width:270px;}
+.mod-indent-10   {width:300px;}
+.mod-indent-11   {width:330px;}
+.mod-indent-12   {width:360px;}
+.mod-indent-13   {width:390px;}
+.mod-indent-14   {width:420px;}
 .mod-indent-15,
-.mod-indent-huge {margin-left:420px;}
-
-.dir-rtl .mod-indent-1 {margin-right:30px;margin-left:0;}
-.dir-rtl .mod-indent-2 {margin-right:60px;margin-left:0;}
-.dir-rtl .mod-indent-3 {margin-right:90px;margin-left:0;}
-.dir-rtl .mod-indent-4 {margin-right:120px;margin-left:0;}
-.dir-rtl .mod-indent-5 {margin-right:150px;margin-left:0;}
-.dir-rtl .mod-indent-6 {margin-right:180px;margin-left:0;}
-.dir-rtl .mod-indent-7 {margin-right:210px;margin-left:0;}
-.dir-rtl .mod-indent-8 {margin-right:240px;margin-left:0;}
-.dir-rtl .mod-indent-9 {margin-right:270px;margin-left:0;}
-.dir-rtl .mod-indent-10 {margin-right:300px;margin-left:0;}
-.dir-rtl .mod-indent-11 {margin-right:330px;margin-left:0;}
-.dir-rtl .mod-indent-12 {margin-right:360px;margin-left:0;}
-.dir-rtl .mod-indent-13 {margin-right:390px;margin-left:0;}
-.dir-rtl .mod-indent-14 {margin-right:420px;margin-left:0;}
-.dir-rtl .mod-indent-15,
-.dir-rtl .mod-indent-huge {margin-right:420px;margin-left:0;}
+.mod-indent-huge {width:420px;}
 
 .dir-rtl .mform .fitem .felement {margin-right: 16%;margin-left:auto;text-align: right;}
 .dir-rtl .mform .fitem .felement input[name=email],
@@ -1138,6 +1167,9 @@ sup {vertical-align: super;}
 .moodle-dialogue-base .moodle-dialogue.moodle-dialogue-tooltip {
     z-index: 3001;
 }
+.moodle-dialogue-base .moodle-dialogue.moodle-dialogue-tooltip .moodle-dialogue-bd {
+    overflow: auto;
+}
 
 /* Question Bank - Question Chooser "Close" button */
 #page-question-edit.dir-rtl a.container-close {right:auto;left:6px;}
@@ -1483,7 +1515,14 @@ img#persona_signin { cursor: pointer; }
     display: block;
     margin-left: 4px;
     padding-left: 4px;
+    padding-right: 4px;
 }
+
+.jsenabled.dir-rtl .moodle-actionmenu[data-enhance] .toggle-display.textmenu {
+    margin-right: 4px;
+    margin-left: initial;
+}
+
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .iconsmall {
     margin: 8px 4px 0px 2px;
 }
@@ -1491,6 +1530,11 @@ img#persona_signin { cursor: pointer; }
 .jsenabled .moodle-actionmenu[data-enhance] .toggle-display.textmenu .caret {
     margin-top: 4px;
     margin-left: 2px;
+}
+
+.jsenabled.dir-rtl .moodle-actionmenu[data-enhance] .toggle-display.textmenu .caret {
+    margin-right: 2px;
+    margin-left: initial;
 }
 
 .jsenabled .moodle-actionmenu[data-enhanced] .toggle-display {opacity: 1;filter: alpha(opacity=100);}
@@ -1604,4 +1648,129 @@ a.disabled {
 a:focus .caret,
 a:hover .caret {
     border-top-color: #555;
+}
+
+/**
+ * Bootstrap 2.3.2 progress bar css.
+ * Required for none bootstrap theme.
+ */
+
+@-webkit-keyframes progress-bar-stripes {
+    from {
+        background-position: 40px 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+@-moz-keyframes progress-bar-stripes {
+    from {
+        background-position: 40px 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+@-ms-keyframes progress-bar-stripes {
+    from {
+        background-position: 40px 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+@-o-keyframes progress-bar-stripes {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 40px 0;
+    }
+}
+
+@keyframes progress-bar-stripes {
+    from {
+        background-position: 40px 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+.progress {
+    height: 20px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    background-color: #f7f7f7;
+    background-image: -moz-linear-gradient(top, #f5f5f5, #f9f9f9);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f5f5f5), to(#f9f9f9));
+    background-image: -webkit-linear-gradient(top, #f5f5f5, #f9f9f9);
+    background-image: -o-linear-gradient(top, #f5f5f5, #f9f9f9);
+    background-image: linear-gradient(to bottom, #f5f5f5, #f9f9f9);
+    background-repeat: repeat-x;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', endColorstr='#fff9f9f9', GradientType=0);
+    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.progress .bar {
+    float: left;
+    width: 0;
+    height: 100%;
+    font-size: 12px;
+    color: #ffffff;
+    text-align: center;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #0e90d2;
+    background-image: -moz-linear-gradient(top, #149bdf, #0480be);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#149bdf), to(#0480be));
+    background-image: -webkit-linear-gradient(top, #149bdf, #0480be);
+    background-image: -o-linear-gradient(top, #149bdf, #0480be);
+    background-image: linear-gradient(to bottom, #149bdf, #0480be);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff149bdf', endColorstr='#ff0480be', GradientType=0);
+    -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    -webkit-transition: width 0.6s ease;
+    -moz-transition: width 0.6s ease;
+    -o-transition: width 0.6s ease;
+    transition: width 0.6s ease;
+}
+
+.progress .bar + .bar {
+    -webkit-box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    box-shadow: inset 1px 0 0 rgba(0, 0, 0, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+.progress-striped .bar {
+    background-color: #149bdf;
+    background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
+    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+    -webkit-background-size: 40px 40px;
+    -moz-background-size: 40px 40px;
+    -o-background-size: 40px 40px;
+    background-size: 40px 40px;
+}
+
+.progress.active .bar {
+    -webkit-animation: progress-bar-stripes 2s linear infinite;
+    -moz-animation: progress-bar-stripes 2s linear infinite;
+    -ms-animation: progress-bar-stripes 2s linear infinite;
+    -o-animation: progress-bar-stripes 2s linear infinite;
+    animation: progress-bar-stripes 2s linear infinite;
 }

@@ -193,32 +193,16 @@ class quiz_statistics_calculator {
     protected function attempt_counts_and_averages($quizid, $groupstudents) {
         global $DB;
 
-        list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $groupstudents);
-
-        $selects = array();
+        $attempttotals = new stdClass();
         foreach (array_keys(quiz_get_grading_options()) as $which) {
-            $fieldprefix = static::using_attempts_string_id($which);
-            $condition = quiz_report_grade_method_sql($which);
-            if ($condition == '') {
-                $case = '1';
-            } else {
-                $case = "CASE WHEN ($condition) THEN 1 ELSE 0 END";
-            }
-            $selects[] = "
-                    SUM($case) AS {$fieldprefix}count,
-                    SUM(sumgrades * $case) AS {$fieldprefix}total";
-        }
-        $select = join(',', $selects);
 
-        $attempttotals = $DB->get_record_sql("
-                SELECT {$select}
-                FROM $fromqa
-                WHERE $whereqa", $qaparams);
+            list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql($quizid, $groupstudents, $which);
 
-        foreach (array_keys(quiz_get_grading_options()) as $which) {
+            $fromdb = $DB->get_record_sql("SELECT COUNT(*) AS rcount, AVG(sumgrades) AS average FROM $fromqa WHERE $whereqa",
+                                            $qaparams);
             $fieldprefix = static::using_attempts_string_id($which);
-            $attempttotals->{$fieldprefix.'avg'} = $attempttotals->{$fieldprefix.'total'} / $attempttotals->{$fieldprefix.'count'};
-            unset($attempttotals->{$fieldprefix.'total'});
+            $attempttotals->{$fieldprefix.'avg'} = $fromdb->average;
+            $attempttotals->{$fieldprefix.'count'} = $fromdb->rcount;
         }
         return $attempttotals;
     }

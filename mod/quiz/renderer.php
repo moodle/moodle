@@ -99,6 +99,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function review_question_not_allowed($message) {
         $output = '';
         $output .= $this->header();
+        $output .= $this->heading(format_string($attemptobj->get_quiz_name(), true,
+                                  array("context" => $attemptobj->get_quizobj()->get_context())));
         $output .= $this->notification($message);
         $output .= $this->close_window_button();
         $output .= $this->footer();
@@ -392,6 +394,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
     public function start_attempt_page(quiz $quizobj, mod_quiz_preflight_check_form $mform) {
         $output = '';
         $output .= $this->header();
+        $output .= $this->heading(format_string($quizobj->get_quiz_name(), true,
+                                  array("context" => $quizobj->get_context())));
         $output .= $this->quiz_intro($quizobj->get_quiz(), $quizobj->get_cm());
         ob_start();
         $mform->display();
@@ -879,7 +883,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
      * Generates the table heading.
      */
     public function view_table_heading() {
-        return $this->heading(get_string('summaryofattempts', 'quiz'));
+        return $this->heading(get_string('summaryofattempts', 'quiz'), 3);
     }
 
     /**
@@ -1052,14 +1056,13 @@ class mod_quiz_renderer extends plugin_renderer_base {
                 $a->method = quiz_get_grading_option_name($quiz->grademethod);
                 $a->mygrade = quiz_format_grade($quiz, $viewobj->mygrade);
                 $a->quizgrade = quiz_format_grade($quiz, $quiz->grade);
-                $resultinfo .= $this->heading(get_string('gradesofar', 'quiz', $a), 2, 'main');
+                $resultinfo .= $this->heading(get_string('gradesofar', 'quiz', $a), 3);
             } else {
                 $a = new stdClass();
                 $a->grade = quiz_format_grade($quiz, $viewobj->mygrade);
                 $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
                 $a = get_string('outofshort', 'quiz', $a);
-                $resultinfo .= $this->heading(get_string('yourfinalgradeis', 'quiz', $a), 2,
-                        'main');
+                $resultinfo .= $this->heading(get_string('yourfinalgradeis', 'quiz', $a), 3);
             }
         }
 
@@ -1069,11 +1072,11 @@ class mod_quiz_renderer extends plugin_renderer_base {
                     array('class' => 'overriddennotice'))."\n";
         }
         if ($viewobj->gradebookfeedback) {
-            $resultinfo .= $this->heading(get_string('comment', 'quiz'), 3, 'main');
+            $resultinfo .= $this->heading(get_string('comment', 'quiz'), 3);
             $resultinfo .= html_writer::div($viewobj->gradebookfeedback, 'quizteacherfeedback') . "\n";
         }
         if ($viewobj->feedbackcolumn) {
-            $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 3, 'main');
+            $resultinfo .= $this->heading(get_string('overallfeedback', 'quiz'), 3);
             $resultinfo .= html_writer::div(
                     quiz_feedback_for_grade($viewobj->mygrade, $quiz, $context),
                     'quizgradefeedback') . "\n";
@@ -1157,7 +1160,7 @@ class mod_quiz_renderer extends plugin_renderer_base {
 
         $graph = html_writer::empty_tag('img', array('src' => $url, 'alt' => $title));
 
-        return $this->heading($title) . html_writer::tag('div', $graph, array('class' => 'graph'));
+        return $this->heading($title, 3) . html_writer::tag('div', $graph, array('class' => 'graph'));
     }
 }
 

@@ -12,7 +12,7 @@ Feature: Course category management interface performs as expected
     And I log in as "admin"
     And I go to the courses management page
     And I should see "Course and category management" in the "h2" "css_element"
-    And I should see "Viewing Course categories"
+    And I should see "Course categories" in the ".view-mode-selector" "css_element"
     And I should see "Course categories" in the "h3" "css_element"
     And I should see the "Course categories" management page
 
@@ -30,11 +30,11 @@ Feature: Course category management interface performs as expected
     And I should see the "Course categories" management page
     And I should see "Course categories" in the "#category-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
-    And I should see "Viewing Course categories" in the ".view-mode-selector" "css_element"
+    And I should see "Course categories" in the ".view-mode-selector" "css_element"
     And I should not see "Course categories and courses" in the ".view-mode-selector .menu" "css_element"
     And I should not see "Course categories" in the ".view-mode-selector .menu" "css_element"
     And I should not see "Courses" in the ".view-mode-selector .menu" "css_element"
-    When I click on "Viewing Course categories" "link" in the ".view-mode-selector" "css_element"
+    When I click on "Course categories" "link" in the ".view-mode-selector" "css_element"
     Then I should see "Course categories and courses" in the ".view-mode-selector .menu" "css_element"
     And I should see "Course categories" in the ".view-mode-selector .menu" "css_element"
     And I should see "Courses" in the ".view-mode-selector .menu" "css_element"
@@ -52,7 +52,7 @@ Feature: Course category management interface performs as expected
     And I should see "Cat 1" in the "#course-listing h3" "css_element"
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "Course 1" in the "#course-listing" "css_element"
-    When I click on "Viewing Course categories" "link" in the ".view-mode-selector" "css_element"
+    When I click on "Course categories" "link" in the ".view-mode-selector" "css_element"
     Then I should see "Courses" in the ".view-mode-selector .menu" "css_element"
     And I click on "Courses" "link" in the ".view-mode-selector .menu" "css_element"
     # Redirect.
@@ -270,7 +270,7 @@ Feature: Course category management interface performs as expected
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I click on "Master cat" "link"
+    And I click on "Master cat" category in the management category listing
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I click on <sortby> action for "Master cat" in management category listing
@@ -727,7 +727,7 @@ Feature: Course category management interface performs as expected
     And I should see "Cat 2-1-2" in the "#course-category-listings ul.ml" "css_element"
     And I should not see "Cat 2-1-1-1" in the "#course-category-listings ul.ml" "css_element"
     And I should see "Cat 2-1-2-1" in the "#course-category-listings ul.ml" "css_element"
-    And I click on "Cat 1" "link"
+    And I click on "Cat 1" category in the management category listing
     # Redirect.
     And I should see the "Course categories and courses" management page
     And I should see "Cat 1" in the "#course-category-listings ul.ml" "css_element"

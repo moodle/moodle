@@ -18,7 +18,6 @@ add_to_log($course->id, "assignment", "view all", "index.php?id=$course->id", ""
 $strassignments = get_string("modulenameplural", "assignment");
 $strassignment = get_string("modulename", "assignment");
 $strassignmenttype = get_string("assignmenttype", "assignment");
-$strsectionname  = get_string('sectionname', 'format_'.$course->format);
 $strname = get_string("name");
 $strduedate = get_string("duedate", "assignment");
 $strsubmitted = get_string("submitted", "assignment");
@@ -43,6 +42,7 @@ $timenow = time();
 $table = new html_table();
 
 if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_'.$course->format);
     $table->head  = array ($strsectionname, $strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
 } else {
     $table->head  = array ($strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);

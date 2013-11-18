@@ -559,15 +559,7 @@ class question_bank_creator_name_column extends question_bank_column_base {
     protected function display_content($question, $rowclasses) {
         if (!empty($question->creatorfirstname) && !empty($question->creatorlastname)) {
             $u = new stdClass();
-            $allnames = get_all_user_name_fields();
-            foreach ($allnames as $allname) {
-                $tempname = 'creator' . $allname;
-                if (isset($question->$tempname)) {
-                    $u->$allname = $question->$tempname;
-                } else {
-                    $u->$allname = '';
-                }
-            }
+            $u = username_load_fields_from_object($u, $question, 'creator');
             echo fullname($u);
         }
     }
@@ -612,15 +604,7 @@ class question_bank_modifier_name_column extends question_bank_column_base {
     protected function display_content($question, $rowclasses) {
         if (!empty($question->modifierfirstname) && !empty($question->modifierlastname)) {
             $u = new stdClass();
-            $allnames = get_all_user_name_fields();
-            foreach ($allnames as $allname) {
-                $tempname = 'modifier' . $allname;
-                if (isset($question->$tempname)) {
-                    $u->$allname = $question->$tempname;
-                } else {
-                    $u->$allname = '';
-                }
-            }
+            $u = username_load_fields_from_object($u, $question, 'modifier');
             echo fullname($u);
         }
     }
@@ -1843,6 +1827,7 @@ function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = nu
     echo "</div>\n";
     echo '<div class="qtypes">' . "\n";
     echo '<div class="instruction">' . get_string('selectaqtypefordescription', 'question') . "</div>\n";
+    echo '<div class="alloptions">' . "\n";
     echo '<div class="realqtypes">' . "\n";
     $fakeqtypes = array();
     foreach (question_bank::get_creatable_qtypes() as $qtypename => $qtype) {
@@ -1860,6 +1845,7 @@ function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = nu
     foreach ($fakeqtypes as $qtype) {
         print_qtype_to_add_option($qtype);
     }
+    echo "</div>\n";
     echo "</div>\n";
     echo "</div>\n";
     echo '<div class="submitbuttons">' . "\n";

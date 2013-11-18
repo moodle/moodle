@@ -2406,12 +2406,12 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->resetAfterTest();
 
         // Additional names in an array.
-        $testarray = array('firstnamephonetic',
-                           'lastnamephonetic',
-                           'middlename',
-                           'alternatename',
-                           'firstname',
-                           'lastname');
+        $testarray = array('firstnamephonetic' => 'firstnamephonetic',
+                'lastnamephonetic' => 'lastnamephonetic',
+                'middlename' => 'middlename',
+                'alternatename' => 'alternatename',
+                'firstname' => 'firstname',
+                'lastname' => 'lastname');
         $this->assertEquals($testarray, get_all_user_name_fields());
 
         // Additional names as a string.
@@ -2421,6 +2421,19 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Additional names as a string with an alias.
         $teststring = 't.firstnamephonetic,t.lastnamephonetic,t.middlename,t.alternatename,t.firstname,t.lastname';
         $this->assertEquals($teststring, get_all_user_name_fields(true, 't'));
+
+        // Additional name fields with a prefix - object.
+        $testarray = array('firstnamephonetic' => 'authorfirstnamephonetic',
+                'lastnamephonetic' => 'authorlastnamephonetic',
+                'middlename' => 'authormiddlename',
+                'alternatename' => 'authoralternatename',
+                'firstname' => 'authorfirstname',
+                'lastname' => 'authorlastname');
+        $this->assertEquals($testarray, get_all_user_name_fields(false, null, 'author'));
+
+        // Additional name fields with an alias and a title - string.
+        $teststring = 'u.firstnamephonetic AS authorfirstnamephonetic,u.lastnamephonetic AS authorlastnamephonetic,u.middlename AS authormiddlename,u.alternatename AS authoralternatename,u.firstname AS authorfirstname,u.lastname AS authorlastname';
+        $this->assertEquals($teststring, get_all_user_name_fields(true, 'u', null, 'author'));
     }
 
     public function test_order_in_string() {
@@ -2599,4 +2612,84 @@ class core_moodlelib_testcase extends advanced_testcase {
         }
     }
 
+    /**
+     * Test function username_load_fields_from_object().
+     */
+    public function test_username_load_fields_from_object() {
+        $this->resetAfterTest();
+
+        // This object represents the information returned from an sql query.
+        $userinfo = new stdClass();
+        $userinfo->userid = 1;
+        $userinfo->username = 'loosebruce';
+        $userinfo->firstname = 'Bruce';
+        $userinfo->lastname = 'Campbell';
+        $userinfo->firstnamephonetic = 'ブルース';
+        $userinfo->lastnamephonetic = 'カンベッル';
+        $userinfo->middlename = '';
+        $userinfo->alternatename = '';
+        $userinfo->email = '';
+        $userinfo->picture = 23;
+        $userinfo->imagealt = 'Michael Jordan draining another basket.';
+        $userinfo->idnumber = 3982;
+
+        // Just user name fields.
+        $user = new stdClass();
+        $user = username_load_fields_from_object($user, $userinfo);
+        $expectedarray = new stdClass();
+        $expectedarray->firstname = 'Bruce';
+        $expectedarray->lastname = 'Campbell';
+        $expectedarray->firstnamephonetic = 'ブルース';
+        $expectedarray->lastnamephonetic = 'カンベッル';
+        $expectedarray->middlename = '';
+        $expectedarray->alternatename = '';
+        $this->assertEquals($user, $expectedarray);
+
+        // User information for showing a picture.
+        $user = new stdClass();
+        $additionalfields = explode(',', user_picture::fields());
+        $user = username_load_fields_from_object($user, $userinfo, null, $additionalfields);
+        $user->id = $userinfo->userid;
+        $expectedarray = new stdClass();
+        $expectedarray->id = 1;
+        $expectedarray->firstname = 'Bruce';
+        $expectedarray->lastname = 'Campbell';
+        $expectedarray->firstnamephonetic = 'ブルース';
+        $expectedarray->lastnamephonetic = 'カンベッル';
+        $expectedarray->middlename = '';
+        $expectedarray->alternatename = '';
+        $expectedarray->email = '';
+        $expectedarray->picture = 23;
+        $expectedarray->imagealt = 'Michael Jordan draining another basket.';
+        $this->assertEquals($user, $expectedarray);
+
+        // Alter the userinfo object to have a prefix.
+        $userinfo->authorfirstname = 'Bruce';
+        $userinfo->authorlastname = 'Campbell';
+        $userinfo->authorfirstnamephonetic = 'ブルース';
+        $userinfo->authorlastnamephonetic = 'カンベッル';
+        $userinfo->authormiddlename = '';
+        $userinfo->authorpicture = 23;
+        $userinfo->authorimagealt = 'Michael Jordan draining another basket.';
+        $userinfo->authoremail = 'test@testing.net';
+
+
+        // Return an object with user picture information.
+        $user = new stdClass();
+        $additionalfields = explode(',', user_picture::fields());
+        $user = username_load_fields_from_object($user, $userinfo, 'author', $additionalfields);
+        $user->id = $userinfo->userid;
+        $expectedarray = new stdClass();
+        $expectedarray->id = 1;
+        $expectedarray->firstname = 'Bruce';
+        $expectedarray->lastname = 'Campbell';
+        $expectedarray->firstnamephonetic = 'ブルース';
+        $expectedarray->lastnamephonetic = 'カンベッル';
+        $expectedarray->middlename = '';
+        $expectedarray->alternatename = '';
+        $expectedarray->email = 'test@testing.net';
+        $expectedarray->picture = 23;
+        $expectedarray->imagealt = 'Michael Jordan draining another basket.';
+        $this->assertEquals($user, $expectedarray);
+    }
 }

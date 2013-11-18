@@ -44,7 +44,7 @@ class qtype_description_walkthrough_test extends qbehaviour_walkthrough_test_bas
                 $this->quba->get_question_attempt($this->slot)->get_behaviour_name());
 
         $this->check_current_output(
-                new question_contains_tag_with_contents('h3', get_string('informationtext', 'qtype_description'))
+                new question_contains_tag_with_contents('h4', get_string('informationtext', 'qtype_description'))
         );
 
         // Further tests of the description qtype are in

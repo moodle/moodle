@@ -78,6 +78,21 @@ $messageproviders = array (
     // Course request rejection notification
     'courserequestrejected' => array (
         'capability'  => 'moodle/course:request'
-    )
+    ),
 
+    // Badge award notification to a badge recipient.
+    'badgerecipientnotice' => array (
+        'defaults' => array(
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDIN + MESSAGE_DEFAULT_LOGGEDOFF,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDOFF,
+        ),
+        'capability'  => 'moodle/badges:earnbadge'
+    ),
+
+    // Badge award notification to a badge creator (mostly cron-based).
+    'badgecreatornotice' => array (
+        'defaults' => array(
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_LOGGEDOFF,
+        )
+    )
 );

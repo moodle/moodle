@@ -3075,9 +3075,10 @@ abstract class workshop_submission_base {
      * Usually this is called by the contructor but can be called explicitely, too.
      */
     public function anonymize() {
-        foreach (array('authorid', 'authorfirstname', 'authorlastname',
-               'authorpicture', 'authorimagealt', 'authoremail') as $field) {
-            unset($this->{$field});
+        $authorfields = explode(',', user_picture::fields());
+        foreach ($authorfields as $field) {
+            $prefixedusernamefield = 'author' . $field;
+            unset($this->{$prefixedusernamefield});
         }
         $this->anonymous = true;
     }
@@ -3115,6 +3116,14 @@ class workshop_submission_summary extends workshop_submission_base implements re
     public $authorfirstname;
     /** @var string */
     public $authorlastname;
+    /** @var string */
+    public $authorfirstnamephonetic;
+    /** @var string */
+    public $authorlastnamephonetic;
+    /** @var string */
+    public $authormiddlename;
+    /** @var string */
+    public $authoralternatename;
     /** @var int */
     public $authorpicture;
     /** @var string */
@@ -3130,7 +3139,8 @@ class workshop_submission_summary extends workshop_submission_base implements re
      */
     protected $fields = array(
         'id', 'title', 'timecreated', 'timemodified',
-        'authorid', 'authorfirstname', 'authorlastname', 'authorpicture',
+        'authorid', 'authorfirstname', 'authorlastname', 'authorfirstnamephonetic', 'authorlastnamephonetic',
+        'authormiddlename', 'authoralternatename', 'authorpicture',
         'authorimagealt', 'authoremail');
 }
 
@@ -3156,8 +3166,8 @@ class workshop_submission extends workshop_submission_summary implements rendera
      */
     protected $fields = array(
         'id', 'title', 'timecreated', 'timemodified', 'content', 'contentformat', 'contenttrust',
-        'attachment', 'authorid', 'authorfirstname', 'authorlastname', 'authorpicture',
-        'authorimagealt', 'authoremail');
+        'attachment', 'authorid', 'authorfirstname', 'authorlastname', 'authorfirstnamephonetic', 'authorlastnamephonetic',
+        'authormiddlename', 'authoralternatename', 'authorpicture', 'authorimagealt', 'authoremail');
 }
 
 /**

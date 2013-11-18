@@ -1086,40 +1086,19 @@ abstract class sql_generator {
             $name .= substr(trim($field),0,3);
         }
         // Prepend the prefix
-        $name = $this->prefix . $name;
+        $name = trim($this->prefix . $name);
 
-        $name = substr(trim($name), 0, $this->names_max_length - 1 - strlen($suffix)); //Max names_max_length
-
-        // Add the suffix
-        $namewithsuffix = $name;
-        if ($suffix) {
-            $namewithsuffix = $namewithsuffix . '_' . $suffix;
-        }
+        // Make sure name does not exceed the maximum name length and add suffix.
+        $maxlengthwithoutsuffix = $this->names_max_length - strlen($suffix) - ($suffix ? 1 : 0);
+        $namewithsuffix = substr($name, 0, $maxlengthwithoutsuffix) . ($suffix ? ('_' . $suffix) : '');
 
         // If the calculated name is in the cache, or if we detect it by introspecting the DB let's modify if
-        if (in_array($namewithsuffix, $used_names) || $this->isNameInUse($namewithsuffix, $suffix, $tablename)) {
-            $counter = 2;
-            // If have free space, we add 2
-            if (strlen($namewithsuffix) < $this->names_max_length) {
-                $newname = $name . $counter;
-            // Else replace the last char by 2
-            } else {
-                $newname = substr($name, 0, strlen($name)-1) . $counter;
-            }
-            $newnamewithsuffix = $newname;
-            if ($suffix) {
-                $newnamewithsuffix = $newnamewithsuffix . '_' . $suffix;
-            }
+        $counter = 1;
+        while (in_array($namewithsuffix, $used_names) || $this->isNameInUse($namewithsuffix, $suffix, $tablename)) {
             // Now iterate until not used name is found, incrementing the counter
-            while (in_array($newnamewithsuffix, $used_names) || $this->isNameInUse($newnamewithsuffix, $suffix, $tablename)) {
-                $counter++;
-                $newname = substr($name, 0, strlen($newname)-1) . $counter;
-                $newnamewithsuffix = $newname;
-                if ($suffix) {
-                    $newnamewithsuffix = $newnamewithsuffix . '_' . $suffix;
-                }
-            }
-            $namewithsuffix = $newnamewithsuffix;
+            $counter++;
+            $namewithsuffix = substr($name, 0, $maxlengthwithoutsuffix - strlen($counter)) .
+                    $counter . ($suffix ? ('_' . $suffix) : '');
         }
 
         // Add the name to the cache

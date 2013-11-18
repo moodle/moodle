@@ -41,8 +41,11 @@ class repository_boxnet_generator extends testing_repository_generator {
      */
     protected function prepare_type_record(array $record) {
         $record = parent::prepare_type_record($record);
-        if (!isset($record['api_key'])) {
-            $record['api_key'] = 'api_key';
+        if (!isset($record['clientid'])) {
+            $record['clientid'] = 'clientid';
+        }
+        if (!isset($record['clientsecret'])) {
+            $record['clientsecret'] = 'clientsecret';
         }
         return $record;
     }

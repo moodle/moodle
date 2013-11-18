@@ -50,8 +50,24 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'manualgrade', 'comment.php?atte
 
 // Print the page header.
 $PAGE->set_pagelayout('popup');
-echo $OUTPUT->header();
-echo $OUTPUT->heading(format_string($attemptobj->get_question_name($slot)));
+$PAGE->set_heading($attemptobj->get_course()->fullname);
+$output = $PAGE->get_renderer('mod_quiz');
+echo $output->header();
+
+// Prepare summary information about this question attempt.
+$summarydata = array();
+
+// Quiz name.
+$summarydata['quizname'] = array(
+    'title'   => get_string('modulename', 'quiz'),
+    'content' => format_string($attemptobj->get_quiz_name()),
+);
+
+// Question name.
+$summarydata['questionname'] = array(
+    'title'   => get_string('question', 'quiz'),
+    'content' => $attemptobj->get_question_name($slot),
+);
 
 // Process any data that was submitted.
 if (data_submitted() && confirm_sesskey()) {
@@ -59,11 +75,14 @@ if (data_submitted() && confirm_sesskey()) {
         $transaction = $DB->start_delegated_transaction();
         $attemptobj->process_submitted_actions(time());
         $transaction->allow_commit();
-        echo $OUTPUT->notification(get_string('changessaved'), 'notifysuccess');
+        echo $output->notification(get_string('changessaved'), 'notifysuccess');
         close_window(2, true);
         die;
     }
 }
+
+// Print quiz information.
+echo $output->review_summary_table($summarydata, 0);
 
 // Print the comment form.
 echo '<form method="post" class="mform" id="manualgradingform" action="' .
@@ -91,4 +110,4 @@ echo '</form>';
 $PAGE->requires->js_init_call('M.mod_quiz.init_comment_popup', null, false, quiz_get_js_module());
 
 // End of the page.
-echo $OUTPUT->footer();
+echo $output->footer();

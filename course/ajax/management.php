@@ -140,7 +140,8 @@ switch ($action) {
         $categoryid = required_param('categoryid', PARAM_INT);
         /* @var core_course_management_renderer $renderer */
         $renderer = $PAGE->get_renderer('core_course', 'management');
-        $outcome->html = html_writer::start_tag('ul', array('class' => 'ml'));
+        $outcome->html = html_writer::start_tag('ul',
+            array('class' => 'ml', 'role' => 'group', 'id' => 'subcategoriesof'.$categoryid));
         $coursecat = coursecat::get($categoryid);
         foreach ($coursecat->get_children() as $subcat) {
             $outcome->html .= $renderer->category_listitem($subcat, array(), $subcat->get_children_count());

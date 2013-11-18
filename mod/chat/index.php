@@ -22,7 +22,6 @@ $event->trigger();
 
 /// Get all required strings
 
-$strsectionname = get_string('sectionname', 'format_'.$course->format);
 $strchats = get_string('modulenameplural', 'chat');
 $strchat  = get_string('modulename', 'chat');
 
@@ -51,6 +50,7 @@ $strname  = get_string('name');
 $table = new html_table();
 
 if ($usesections) {
+    $strsectionname = get_string('sectionname', 'format_'.$course->format);
     $table->head  = array ($strsectionname, $strname);
     $table->align = array ('center', 'left');
 } else {

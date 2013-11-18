@@ -4,7 +4,7 @@ require_once('../lib.php');
 
 $id      = required_param('id', PARAM_INT);
 $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
-$theme   = optional_param('theme', 'compact', PARAM_SAFEDIR);
+$theme   = optional_param('theme', 'course_theme', PARAM_SAFEDIR); //course_theme to use the current theme.
 
 $url = new moodle_url('/mod/chat/gui_ajax/index.php', array('id'=>$id));
 if ($groupid !== 0) {
@@ -12,6 +12,7 @@ if ($groupid !== 0) {
 }
 $PAGE->set_url($url);
 $PAGE->set_popup_notification_allowed(false); // No popup notifications in the chat window
+$PAGE->requires->strings_for_js(array('coursetheme', 'bubble', 'compact'), 'mod_chat');
 
 $chat = $DB->get_record('chat', array('id'=>$id), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$chat->course), '*', MUST_EXIST);
@@ -35,9 +36,13 @@ require_capability('mod/chat:chat', $context);
     $groupid = 0;
     $groupname = '';
 }
+$showcoursetheme = in_array('bootstrapbase', $PAGE->theme->parents);
+if (!$showcoursetheme && $theme === 'course_theme') { //set compact as default for non bootstrapbase based themes
+    $theme = 'compact';
+}
 
 // if requested theme doesn't exist, use default 'bubble' theme
-if (!file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
+if ($theme != 'course_theme' and !file_exists(dirname(__FILE__) . '/theme/'.$theme.'/chat.css')) {
     $theme = 'compact';
 }
 
@@ -57,6 +62,7 @@ $modulecfg = array(
     'home'=>$CFG->httpswwwroot.'/mod/chat/view.php?id='.$cm->id,
     'chaturl'=>$CFG->httpswwwroot.'/mod/chat/gui_ajax/index.php?id='.$id,
     'theme'=>$theme,
+    'showcoursetheme'=>$showcoursetheme?1:0,
     'userid'=>$USER->id,
     'sid'=>$chat_sid,
     'timer'=>3000,
@@ -69,7 +75,9 @@ $PAGE->requires->js_init_call('M.mod_chat_ajax.init', array($modulecfg), false, 
 $PAGE->set_title(get_string('modulename', 'chat').": $courseshortname: ".format_string($chat->name,true)."$groupname");
 $PAGE->add_body_class('yui-skin-sam');
 $PAGE->set_pagelayout('embedded');
-$PAGE->requires->css('/mod/chat/gui_ajax/theme/'.$theme.'/chat.css');
+if ( $theme != 'course_theme') {
+    $PAGE->requires->css('/mod/chat/gui_ajax/theme/'.$theme.'/chat.css');
+}
 
 echo $OUTPUT->header();
 echo $OUTPUT->box(html_writer::tag('h2',  get_string('participants'), array('class' => 'accesshide')) .
@@ -79,7 +87,7 @@ echo $OUTPUT->box(html_writer::tag('h2',  get_string('messages', 'chat'), array(
         '<ul id="messages-list"></ul>', '', 'chat-messages');
 $table = new html_table();
 $table->data = array(
-    array('<label class="accesshide" for="input-message">' . get_string('entermessage', 'chat') . ' </label><input type="text" disabled="true" id="input-message" value="Loading..." size="50" /> <input type="button" id="button-send" value="'.get_string('send', 'chat').'" /> <a id="choosetheme" href="###">'.get_string('themes').' &raquo; </a>')
+    array('<label class="accesshide" for="input-message">' . get_string('entermessage', 'chat') . ' </label><input type="text" disabled="true" id="input-message" value="Loading..." /> <input type="button" id="button-send" value="'.get_string('send', 'chat').'" /> <a id="choosetheme" href="###">'.get_string('themes').' &raquo; </a>')
 );
 echo $OUTPUT->box(html_writer::tag('h2',  get_string('composemessage', 'chat'), array('class' => 'accesshide')) .
         html_writer::table($table), '', 'chat-input-area');

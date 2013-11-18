@@ -78,6 +78,14 @@ Y.extend(ANNOTATIONRECTANGLE, M.assignfeedback_editpdf.annotation, {
         bounds.bound([new M.assignfeedback_editpdf.point(edit.start.x, edit.start.y),
                       new M.assignfeedback_editpdf.point(edit.end.x, edit.end.y)]);
 
+        // Set min. width and height of rectangle.
+        if (!bounds.has_min_width()) {
+            bounds.set_min_width();
+        }
+        if (!bounds.has_min_height()) {
+            bounds.set_min_height();
+        }
+
         shape = this.editor.graphic.addShape({
             type: Y.Rect,
             width: bounds.width,

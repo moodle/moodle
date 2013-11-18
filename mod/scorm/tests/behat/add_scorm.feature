@@ -35,6 +35,8 @@ Feature: Add scorm activity
     And I follow "Awesome SCORM package"
     And I should see "Normal"
     And I press "Enter"
+    And I wait "5" seconds
     And I switch to "scorm_object" iframe
     And I switch to "contentFrame" iframe
     And I should see "Play of the game"
+    And I switch to the main frame

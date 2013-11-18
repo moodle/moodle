@@ -39,7 +39,7 @@ $string['displayselect_help'] = 'This setting, together with the URL file type a
 * Embed - The URL is displayed within the page below the navigation bar together with the URL description and any blocks
 * Open - Only the URL is displayed in the browser window
 * In pop-up - The URL is displayed in a new browser window without menus or an address bar
-* In frame - The URL is displayed within a frame below the the navigation bar and URL description
+* In frame - The URL is displayed within a frame below the navigation bar and URL description
 * New window - The URL is displayed in a new browser window with menus and an address bar';
 $string['displayselectexplain'] = 'Choose display type, unfortunately not all types are suitable for all URLs.';
 $string['externalurl'] = 'External URL';

@@ -382,3 +382,47 @@ div#dateselector-calendar-panel {
 fieldset.coursesearchbox label {
     display: inline;
 }
+
+/**
+ * Show the labels above text editors and file managers except on wide screens.
+ */
+#region-main .mform .fitem .fitemtitle label {
+    font-weight: bold;
+}
+@media (max-width: 1199px) {
+    #region-main .mform .fitem .fitemtitle {
+        display: block;
+        margin-top: 4px;
+        margin-bottom: 4px;
+        text-align: left;
+        width: 100%;
+    }
+    .dir-rtl #region-main .mform .fitem .fitemtitle {
+        text-align: right;
+    }
+
+    #region-main .mform .fitem .felement {
+        margin-left: 0;
+        width: 100%;
+        float: left;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .dir-rtl #region-main .mform .fitem .felement {
+        margin-right: 0;
+        float: right;
+        padding-right: 0;
+        padding-left: 0;
+    }
+    #region-main .mform .fitem_fcheckbox .fitemtitle,
+    #region-main .mform .fitem_fcheckbox .felement {
+        display: inline-block;
+        width: auto;
+    }
+    .dir-rtl #region-main .mform .fitem_fcheckbox .felement {
+        float: right;
+    }
+    #region-main .mform .fitem_fcheckbox .felement {
+        padding: 6px;
+    }
+}

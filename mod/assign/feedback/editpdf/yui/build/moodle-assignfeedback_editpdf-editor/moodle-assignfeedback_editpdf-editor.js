@@ -250,6 +250,44 @@ RECT = function(x, y, width, height) {
         // Allow chaining.
         return this;
     };
+
+    /**
+     * Checks if rect has min width.
+     * @method has_min_width
+     * @return bool true if width is more than 5px.
+     * @public
+     */
+    this.has_min_width = function() {
+        return (this.width >= 5);
+    };
+
+    /**
+     * Checks if rect has min height.
+     * @method has_min_height
+     * @return bool true if height is more than 5px.
+     * @public
+     */
+    this.has_min_height = function() {
+        return (this.height >= 5);
+    };
+
+    /**
+     * Set min. width of annotation bound.
+     * @method set_min_width
+     * @public
+     */
+    this.set_min_width = function() {
+        this.width = 5;
+    };
+
+    /**
+     * Set min. height of annotation bound.
+     * @method set_min_height
+     * @public
+     */
+    this.set_min_height = function() {
+        this.height = 5;
+    };
 };
 
 M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};
@@ -745,6 +783,7 @@ Y.extend(ANNOTATION, Y.Base, {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool if width/height is more than min. required.
      */
     init_from_edit : function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
@@ -758,6 +797,7 @@ Y.extend(ANNOTATION, Y.Base, {
         this.endy = bounds.y + bounds.height;
         this.colour = edit.annotationcolour;
         this.path = '';
+        return (bounds.has_min_width() && bounds.has_min_height());
     }
 
 });
@@ -860,6 +900,7 @@ Y.extend(ANNOTATIONLINE, M.assignfeedback_editpdf.annotation, {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool true if line bound is more than min width/height, else false.
      */
     init_from_edit : function(edit) {
         this.gradeid = this.editor.get('gradeid');
@@ -870,6 +911,8 @@ Y.extend(ANNOTATIONLINE, M.assignfeedback_editpdf.annotation, {
         this.endy = edit.end.y;
         this.colour = edit.annotationcolour;
         this.path = '';
+
+        return !(((this.endx - this.x) === 0) && ((this.endy - this.y) === 0));
     }
 
 });
@@ -955,6 +998,14 @@ Y.extend(ANNOTATIONRECTANGLE, M.assignfeedback_editpdf.annotation, {
         bounds = new M.assignfeedback_editpdf.rect();
         bounds.bound([new M.assignfeedback_editpdf.point(edit.start.x, edit.start.y),
                       new M.assignfeedback_editpdf.point(edit.end.x, edit.end.y)]);
+
+        // Set min. width and height of rectangle.
+        if (!bounds.has_min_width()) {
+            bounds.set_min_width();
+        }
+        if (!bounds.has_min_height()) {
+            bounds.set_min_height();
+        }
 
         shape = this.editor.graphic.addShape({
             type: Y.Rect,
@@ -1055,6 +1106,14 @@ Y.extend(ANNOTATIONOVAL, M.assignfeedback_editpdf.annotation, {
         bounds = new M.assignfeedback_editpdf.rect();
         bounds.bound([new M.assignfeedback_editpdf.point(edit.start.x, edit.start.y),
                       new M.assignfeedback_editpdf.point(edit.end.x, edit.end.y)]);
+
+        // Set min. width and height of oval.
+        if (!bounds.has_min_width()) {
+            bounds.set_min_width();
+        }
+        if (!bounds.has_min_height()) {
+            bounds.set_min_height();
+        }
 
         shape = this.editor.graphic.addShape({
             type: Y.Ellipse,
@@ -1200,6 +1259,7 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool true if pen bound is more than min width/height, else false.
      */
     init_from_edit : function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect(),
@@ -1221,6 +1281,8 @@ Y.extend(ANNOTATIONPEN, M.assignfeedback_editpdf.annotation, {
         this.endy = bounds.y + bounds.height;
         this.colour = edit.annotationcolour;
         this.path = pathlist.join(':');
+
+        return (bounds.has_min_width() || bounds.has_min_height());
     }
 
 
@@ -1318,6 +1380,11 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
         bounds.bound([new M.assignfeedback_editpdf.point(edit.start.x, edit.start.y),
                       new M.assignfeedback_editpdf.point(edit.end.x, edit.end.y)]);
 
+        // Set min. width of highlight.
+        if (!bounds.has_min_width()) {
+            bounds.set_min_width();
+        }
+
         highlightcolour = ANNOTATIONCOLOUR[edit.annotationcolour];
         // Add an alpha channel to the rgb colour.
 
@@ -1348,6 +1415,7 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool true if highlight bound is more than min width/height, else false.
      */
     init_from_edit : function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
@@ -1361,6 +1429,8 @@ Y.extend(ANNOTATIONHIGHLIGHT, M.assignfeedback_editpdf.annotation, {
         this.endy = edit.start.y + 16;
         this.colour = edit.annotationcolour;
         this.page = '';
+
+        return (bounds.has_min_width());
     }
 
 });
@@ -1480,6 +1550,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool if width/height is more than min. required.
      */
     init_from_edit : function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
@@ -1499,6 +1570,9 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
         this.endy = bounds.y + bounds.height;
         this.colour = edit.annotationcolour;
         this.path = edit.stamp;
+
+        // Min width and height is always more than 40px.
+        return true;
     },
 
     /**
@@ -1545,7 +1619,6 @@ DROPDOWN = function(config) {
     config.width = 'auto';
     config.lightbox = false;
     config.visible = false;
-    config.zIndex = 100;
     config.footerContent = '';
     DROPDOWN.superclass.constructor.apply(this, [config]);
 };
@@ -1785,7 +1858,7 @@ Y.extend(STAMPPICKER, M.assignfeedback_editpdf.dropdown, {
             var button, listitem, title;
 
             title = M.util.get_string('stamp', 'assignfeedback_editpdf');
-            button = Y.Node.create('<button><img height="40" alt="' + title + '" src="' + stamp + '"/></button>');
+            button = Y.Node.create('<button><img height="16" width="16" alt="' + title + '" src="' + stamp + '"/></button>');
             button.setAttribute('data-stamp', stamp);
             button.setStyle('backgroundImage', 'none');
             listitem = Y.Node.create('<li/>');
@@ -1993,7 +2066,6 @@ COMMENTSEARCH = function(config) {
     config.lightbox = true;
     config.visible = false;
     config.headerContent = M.util.get_string('searchcomments', 'assignfeedback_editpdf');
-    config.zIndex = 100;
     config.footerContent = '';
     COMMENTSEARCH.superclass.constructor.apply(this, [config]);
 };
@@ -2541,6 +2613,7 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool true if comment bound is more than min width/height, else false.
      */
     this.init_from_edit = function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
@@ -2560,6 +2633,8 @@ COMMENT = function(editor, gradeid, pageno, x, y, width, colour, rawtext) {
         this.width = bounds.width;
         this.colour = edit.commentcolour;
         this.rawtext = '';
+
+        return (bounds.has_min_width() && bounds.has_min_height());
     };
 
 };
@@ -3617,10 +3692,11 @@ EDITOR.prototype = {
             }
             this.currentdrawable = false;
             comment = new M.assignfeedback_editpdf.comment(this);
-            comment.init_from_edit(this.currentedit);
-            this.pages[this.currentpage].comments.push(comment);
-            this.drawables.push(comment.draw(true));
-            this.editingcomment = true;
+            if (comment.init_from_edit(this.currentedit)) {
+                this.pages[this.currentpage].comments.push(comment);
+                this.drawables.push(comment.draw(true));
+                this.editingcomment = true;
+            }
         } else {
             annotation = this.create_annotation(this.currentedit.tool, {});
             if (annotation) {
@@ -3628,12 +3704,12 @@ EDITOR.prototype = {
                     this.currentdrawable.erase();
                 }
                 this.currentdrawable = false;
-                annotation.init_from_edit(this.currentedit);
-                this.pages[this.currentpage].annotations.push(annotation);
-                this.drawables.push(annotation.draw());
+                if (annotation.init_from_edit(this.currentedit)) {
+                    this.pages[this.currentpage].annotations.push(annotation);
+                    this.drawables.push(annotation.draw());
+                }
             }
         }
-
 
         // Save the changes.
         this.save_current_page();

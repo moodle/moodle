@@ -2780,39 +2780,6 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013102500.01);
     }
 
-    if ($oldversion < 2013110400.00) {
-
-        if (!check_dir_exists($CFG->dirroot . '/theme/mymobile', false)) {
-            // Delete from config_plugins.
-            $DB->delete_records('config_plugins', array('plugin' => 'theme_mymobile'));
-            // Delete the config logs.
-            $DB->delete_records('config_log', array('plugin' => 'theme_mymobile'));
-
-            // Replace the mymobile settings.
-            $DB->set_field('course', 'theme', 'clean', array('theme' => 'mymobile'));
-            $DB->set_field('course_categories', 'theme', 'clean', array('theme' => 'mymobile'));
-            $DB->set_field('user', 'theme', 'clean', array('theme' => 'mymobile'));
-            $DB->set_field('mnet_host', 'theme', 'clean', array('theme' => 'mymobile'));
-
-            // Replace the theme configs.
-            if (get_config('core', 'theme') == 'mymobile') {
-                set_config('theme', 'clean');
-            }
-            if (get_config('core', 'thememobile') == 'mymobile') {
-                set_config('thememobile', 'clean');
-            }
-            if (get_config('core', 'themelegacy') == 'mymobile') {
-                set_config('themelegacy', 'clean');
-            }
-            if (get_config('core', 'themetablet') == 'mymobile') {
-                set_config('themetablet', 'clean');
-            }
-        }
-
-        // Main savepoint reached.
-        upgrade_main_savepoint(true, 2013110400.00);
-    }
-
     if ($oldversion < 2013110500.01) {
         // MDL-38228. Corrected course_modules upgrade script instead of 2013021801.01.
 
@@ -2831,6 +2798,53 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2013110500.01);
+    }
+
+    if ($oldversion < 2013110600.01) {
+
+        if (!file_exists($CFG->dirroot . '/theme/mymobile')) {
+            // Replace the mymobile settings.
+            $DB->set_field('course', 'theme', 'clean', array('theme' => 'mymobile'));
+            $DB->set_field('course_categories', 'theme', 'clean', array('theme' => 'mymobile'));
+            $DB->set_field('user', 'theme', 'clean', array('theme' => 'mymobile'));
+            $DB->set_field('mnet_host', 'theme', 'clean', array('theme' => 'mymobile'));
+
+            // Replace the theme configs.
+            if (get_config('core', 'theme') === 'mymobile') {
+                set_config('theme', 'clean');
+            }
+            if (get_config('core', 'thememobile') === 'mymobile') {
+                set_config('thememobile', 'clean');
+            }
+            if (get_config('core', 'themelegacy') === 'mymobile') {
+                set_config('themelegacy', 'clean');
+            }
+            if (get_config('core', 'themetablet') === 'mymobile') {
+                set_config('themetablet', 'clean');
+            }
+
+            // Hacky emulation of plugin uninstallation.
+            unset_all_config_for_plugin('theme_mymobile');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013110600.01);
+    }
+
+    if ($oldversion < 2013110600.02) {
+
+        // If the user is logged in, we ensure that the alternate name fields are present
+        // in the session. It will not be the case when upgrading from 2.5 downwards.
+        if (!empty($USER->id)) {
+            $refreshuser = $DB->get_record('user', array('id' => $USER->id));
+            $fields = array('firstnamephonetic', 'lastnamephonetic', 'middlename', 'alternatename', 'firstname', 'lastname');
+            foreach ($fields as $field) {
+                $USER->{$field} = $refreshuser->{$field};
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013110600.02);
     }
 
     return true;

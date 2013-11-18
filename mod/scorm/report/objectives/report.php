@@ -419,14 +419,10 @@ class scorm_objectives_report extends scorm_default_report {
                         }
                     }
                     if (in_array('picture', $columns)) {
-                        $user = (object)array(
-                                    'id'=>$scouser->userid,
-                                    'picture'=>$scouser->picture,
-                                    'imagealt'=>$scouser->imagealt,
-                                    'email'=>$scouser->email);
-                        foreach (get_all_user_name_fields() as $addname) {
-                            $user->$addname = $scouser->$addname;
-                        }
+                        $user = new stdClass();
+                        $additionalfields = explode(',', user_picture::fields());
+                        $user = username_load_fields_from_object($user, $scouser, null, $additionalfields);
+                        $user->id = $scouser->userid;
                         $row[] = $OUTPUT->user_picture($user, array('courseid'=>$course->id));
                     }
                     if (!$download) {

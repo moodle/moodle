@@ -99,6 +99,44 @@ RECT = function(x, y, width, height) {
         // Allow chaining.
         return this;
     };
+
+    /**
+     * Checks if rect has min width.
+     * @method has_min_width
+     * @return bool true if width is more than 5px.
+     * @public
+     */
+    this.has_min_width = function() {
+        return (this.width >= 5);
+    };
+
+    /**
+     * Checks if rect has min height.
+     * @method has_min_height
+     * @return bool true if height is more than 5px.
+     * @public
+     */
+    this.has_min_height = function() {
+        return (this.height >= 5);
+    };
+
+    /**
+     * Set min. width of annotation bound.
+     * @method set_min_width
+     * @public
+     */
+    this.set_min_width = function() {
+        this.width = 5;
+    };
+
+    /**
+     * Set min. height of annotation bound.
+     * @method set_min_height
+     * @public
+     */
+    this.set_min_height = function() {
+        this.height = 5;
+    };
 };
 
 M.assignfeedback_editpdf = M.assignfeedback_editpdf || {};

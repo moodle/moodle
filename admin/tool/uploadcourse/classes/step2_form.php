@@ -74,6 +74,7 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->disabledIf('options[reset]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_NEW);
         $mform->disabledIf('options[reset]', 'options[mode]', 'eq', tool_uploadcourse_processor::MODE_CREATE_ALL);
         $mform->disabledIf('options[reset]', 'options[allowresets]', 'eq', 0);
+        $mform->addHelpButton('options[reset]', 'reset', 'tool_uploadcourse');
 
         // Default values.
         $mform->addElement('header', 'defaultheader', get_string('defaultvalues', 'tool_uploadcourse'));
