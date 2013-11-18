@@ -87,7 +87,7 @@ class tool_capability_renderer extends plugin_renderer_base {
         $table->attributes['class'] = 'comparisontable';
         $table->head = array('&nbsp;');
         foreach ($roles as $role) {
-            $url = new moodle_url('/admin/roles/override.php', array('contextid' => $contextid, 'roleid' => $role->id));
+            $url = new moodle_url('/admin/roles/define.php', array('action' => 'view', 'roleid' => $role->id));
             $table->head[] = html_writer::div(html_writer::link($url, $role->localname));
         }
         $table->data = array();
