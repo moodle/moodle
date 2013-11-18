@@ -175,6 +175,9 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013090100, 'scorm');
     }
 
+    // Moodle v2.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
     if ($oldversion < 2013110501) {
         // Fix invalid $scorm->launch records.
         // Get all scorms that have a launch value that references a sco from a different scorm.

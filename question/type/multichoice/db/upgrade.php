@@ -133,5 +133,8 @@ function xmldb_qtype_multichoice_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013092305, 'qtype', 'multichoice');
     }
 
+    // Moodle v2.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
