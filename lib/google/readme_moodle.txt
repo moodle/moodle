@@ -10,6 +10,12 @@ that was that we could force Google lib to use our implementation of curl.
 If you upgrade the library, please check if the method Google_CurlIO::makeRequest()
 has been updated and would require change in moodle_google_curlio.
 
+Library hack
+------------
+
+* The file Google_Client.php resets the timezone to UTC. The line
+  date_default_timezone_set('UTC'); should be commented out. See MDL-42808.
+
 Information
 -----------
 
