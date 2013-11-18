@@ -56,7 +56,7 @@ $string['anymethodcourseset'] = 'Any of the selected courses is complete';
 $string['anymethodmanual'] = 'Any of the selected roles awards the badge';
 $string['anymethodprofile'] = 'Any of the selected profile fields has been completed';
 $string['attachment'] = 'Attach badge to message';
-$string['attachment_help'] = 'If checked, an issued badge will be attached to the recepient\'s email for download';
+$string['attachment_help'] = 'If checked, an issued badge file will be attached to the recepient\'s email for download. Email attachments must be enabled in site settings to use this option.';
 $string['award'] = 'Award badge';
 $string['awardedtoyou'] = 'Issued to me';
 $string['awardoncron'] = 'Access to the badges was successfully enabled. Too many users can instantly earn this badge. To ensure site performance, this action will take some time to process.';
@@ -367,16 +367,16 @@ Once a badge has been issued to at least one user, it automatically becomes **LO
 We want to make sure that all users complete the same requirements to earn a badge. Currently, it is not possible to revoke badges. If we allowed badges requirements to be modified all the time, we would most likely end up with users having the same badge for meeting completely different requirements.';
 $string['subject'] = 'Message subject';
 $string['variablesubstitution'] = 'Variable substitution in messages.';
-$string['variablesubstitution_help'] = 'In a badge message, certain variables can be inserted into the subject and/or body of a message so that they will be replaced with real values when the message is sent. The variables should be inserted into the the text exactly as they are shown below. The following variables can be used:
+$string['variablesubstitution_help'] = 'In a badge message, certain variables can be inserted into the subject and/or body of a message so that they will be replaced with real values when the message is sent. The variables should be inserted into the text exactly as they are shown below. The following variables can be used:
 
 %badgename%
-:   This will be replaced by the badge\'s full name.
+: This will be replaced by the badge\'s full name.
 
 %username%
-:   This will be replaced by the recipient\'s full name.
+: This will be replaced by the recipient\'s full name.
 
 %badgelink%
-:   This will be replaced by the public URL with information about the issued badge.';
+: This will be replaced by the public URL with information about the issued badge.';
 $string['viewbadge'] = 'View issued badge';
 $string['visible'] = 'Visible';
 $string['warnexpired'] = ' (This badge has expired!)';

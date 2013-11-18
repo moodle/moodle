@@ -9,6 +9,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     var CSS = {
         ACTIVITYINSTANCE : 'activityinstance',
         AVAILABILITYINFODIV : 'div.availabilityinfo',
+        CONTENTWITHOUTLINK : 'contentwithoutlink',
         CONDITIONALHIDDEN : 'conditionalhidden',
         DIMCLASS : 'dimmed',
         DIMMEDTEXT : 'dimmed_text',
@@ -25,6 +26,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
     },
     // The CSS selectors we use.
     SELECTOR = {
+        ACTIONAREA: '.actions',
         ACTIONLINKTEXT : '.actionlinktext',
         ACTIVITYACTION : 'a.cm-edit-action[data-action], a.editing_title',
         ACTIVITYFORM : '.' + CSS.ACTIVITYINSTANCE + ' form',
@@ -35,11 +37,13 @@ YUI.add('moodle-course-toolboxes', function(Y) {
         ACTIVITYTITLE : 'input[name=title]',
         COMMANDSPAN : '.commands',
         CONTENTAFTERLINK : 'div.contentafterlink',
+        CONTENTWITHOUTLINK : 'div.contentwithoutlink',
         EDITTITLE: 'a.editing_title',
         HIDE : 'a.editing_hide',
         HIGHLIGHT : 'a.editing_highlight',
         INSTANCENAME : 'span.instancename',
         MODINDENTDIV : '.mod-indent',
+        MODINDENTOUTER : '.mod-indent-outer',
         PAGECONTENT : 'div#page-content',
         SECTIONLI : 'li.section',
         SHOW : 'a.'+CSS.SHOW,
@@ -218,8 +222,9 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          *
          * @method initializer
          */
-        initializer : function(config) {
+        initializer : function() {
             M.course.coursebase.register_module(this);
+            BODY.delegate('key', this.handle_data_action, 'down:enter', SELECTOR.ACTIVITYACTION, this);
             Y.delegate('click', this.handle_data_action, BODY, SELECTOR.ACTIVITYACTION, this);
         },
 
@@ -249,6 +254,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 // It wasn't a valid action node.
                 return;
             }
+            Y.log(ev.type);
 
             // Switch based upon the action and do the desired thing.
             switch (action) {
@@ -291,13 +297,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             }
         },
         add_spinner: function(activity) {
-            var instance = activity.one(SELECTOR.ACTIVITYINSTANCE);
-
-            if (instance) {
-                return M.util.add_spinner(Y, instance);
-            } else {
-                return M.util.add_spinner(Y, activity);
-            }
+            var actionarea = activity.one(SELECTOR.ACTIONAREA);
+            return M.util.add_spinner(Y, actionarea);
         },
 
         /**
@@ -346,15 +347,19 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             var spinner = this.add_spinner(activity);
             this.send_request(data, spinner);
 
+            var remainingmove;
+
             // Handle removal/addition of the moveleft button.
             if (newindent === INDENTLIMITS.MIN) {
                 button.addClass('hidden');
+                remainingmove = activity.one('.editing_moveright');
             } else if (newindent > INDENTLIMITS.MIN && oldindent === INDENTLIMITS.MIN) {
                 button.ancestor('.menu').one('[data-action=moveleft]').removeClass('hidden');
             }
 
             if (newindent === INDENTLIMITS.MAX) {
                 button.addClass('hidden');
+                remainingmove = activity.one('.editing_moveleft');
             } else if (newindent < INDENTLIMITS.MAX && oldindent === INDENTLIMITS.MAX) {
                 button.ancestor('.menu').one('[data-action=moveright]').removeClass('hidden');
             }
@@ -365,6 +370,10 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 indentdiv.addClass(CSS.MODINDENTHUGE);
             } else if (newindent <= 15 && hashugeclass) {
                 indentdiv.removeClass(CSS.MODINDENTHUGE);
+            }
+
+            if (ev.type && ev.type === "key" && remainingmove) {
+                remainingmove.focus();
             }
         },
 
@@ -506,29 +515,41 @@ YUI.add('moodle-course-toolboxes', function(Y) {
          */
         handle_resource_dim : function(button, activity, action) {
             var toggleclass = CSS.DIMCLASS,
-                dimarea = activity.one('a'),
+                dimarea = activity.one([
+                        SELECTOR.ACTIVITYLINK,
+                        SELECTOR.CONTENTWITHOUTLINK
+                    ].join(', ')),
                 availabilityinfo = activity.one(CSS.AVAILABILITYINFODIV),
                 nextaction = (action === 'hide') ? 'show' : 'hide',
                 buttontext = button.one('span'),
-                newstring = M.util.get_string(nextaction, 'moodle');
+                newstring = M.util.get_string(nextaction, 'moodle'),
+                buttonimg = button.one('img');
 
             // Update button info.
-            button.one('img').setAttrs({
-                'alt' : newstring,
+            buttonimg.setAttrs({
                 'src'   : M.util.image_url('t/' + nextaction)
             });
-            button.set('title', newstring);
+
+            if (Y.Lang.trim(button.getAttribute('title'))) {
+                button.setAttribute('title', newstring);
+            }
+
+            if (Y.Lang.trim(buttonimg.getAttribute('alt'))) {
+                buttonimg.setAttribute('alt', newstring);
+            }
+
             button.replaceClass('editing_'+action, 'editing_'+nextaction);
             button.setData('action', nextaction);
             if (buttontext) {
                 buttontext.set('text', newstring);
             }
 
-            // If activity is conditionally hidden, then don't toggle.
-            if (Y.Moodle.core_course.util.cm.getName(activity) === null) {
+            if (activity.one(SELECTOR.CONTENTWITHOUTLINK)) {
+                dimarea = activity.one(SELECTOR.CONTENTWITHOUTLINK);
                 toggleclass = CSS.DIMMEDTEXT;
-                dimarea = activity.all(SELECTOR.MODINDENTDIV + ' > div').item(1);
             }
+
+            // If activity is conditionally hidden, then don't toggle.
             if (!dimarea.hasClass(CSS.CONDITIONALHIDDEN)) {
                 // Change the UI.
                 dimarea.toggleClass(toggleclass);
@@ -564,7 +585,8 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 newtitlestr,
                 data,
                 spinner,
-                nextgroupmode = groupmode + 1;
+                nextgroupmode = groupmode + 1,
+                buttonimg = button.one('img');
 
             if (nextgroupmode > 2) {
                 nextgroupmode = 0;
@@ -584,11 +606,16 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             newtitlestr = M.util.get_string('clicktochangeinbrackets', 'moodle', newtitlestr);
 
             // Change the UI
-            button.one('img').setAttrs({
-                'alt' : newtitlestr,
+            buttonimg.setAttrs({
                 'src' : iconsrc
             });
-            button.setAttribute('title', newtitlestr).setData('action', newtitle).setData('nextgroupmode', nextgroupmode);
+            if (Y.Lang.trim(button.getAttribute('title'))) {
+                button.setAttribute('title', newtitlestr).setData('action', newtitle).setData('nextgroupmode', nextgroupmode);
+            }
+
+            if (Y.Lang.trim(buttonimg.getAttribute('alt'))) {
+                buttonimg.setAttribute('alt', newtitlestr);
+            }
 
             // And send the request
             data = {
@@ -618,6 +645,7 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // Get the element we're working on
             var activityid = Y.Moodle.core_course.util.cm.getId(activity),
                 instancename  = activity.one(SELECTOR.INSTANCENAME),
+                instance = activity.one(SELECTOR.ACTIVITYINSTANCE),
                 currenttitle = instancename.get('firstChild'),
                 oldtitle = currenttitle.get('data'),
                 titletext = oldtitle,
@@ -657,18 +685,14 @@ YUI.add('moodle-course-toolboxes', function(Y) {
                 editform.appendChild(activity.one(SELECTOR.ACTIVITYICON).cloneNode());
                 editform.appendChild(editor);
                 editform.setData('anchor', anchor);
+                instance.insert(editinstructions, 'before');
                 anchor.replace(editform);
-                activity.one('div').appendChild(editinstructions);
 
                 // Force the editing instruction to match the mod-indent position.
                 var padside = 'left';
                 if (right_to_left()) {
                     padside = 'right';
                 }
-                var mi = activity.one('.mod-indent'),
-                    instructionpad = parseInt(mi.getStyle('padding-' + padside), 10) +
-                            parseInt(mi.getStyle('margin-' + padside), 10);
-                editinstructions.setStyle('margin-' + padside, instructionpad + 'px');
 
                 // We hide various components whilst editing:
                 activity.addClass(CSS.EDITINGTITLE);
@@ -977,6 +1001,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
 
 },
 '@VERSION@', {
-    requires : ['base', 'node', 'io', 'moodle-course-coursebase', 'moodle-course-util']
+    requires : ['base', 'event-key', 'node', 'io', 'moodle-course-coursebase', 'moodle-course-util']
 }
 );

@@ -1,0 +1,114 @@
+// Chat (more!)
+// -------------------------
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax {
+    background-color: @white;
+    .yui-layout-unit div.yui-layout-bd-nohd,
+    .yui-layout-unit div.yui-layout-bd-noft,
+    .yui-layout-unit div.yui-layout-bd,
+    .yui-layout-unit-right,
+    .yui-layout-unit-bottom {
+        border: 0;
+    }
+    .yui-layout-unit-right,
+    .yui-layout-unit-bottom {
+        .well;
+        border-radius: 0;
+    }
+    .yui-layout-unit div.yui-layout-bd {
+        background-color: transparent;
+    }
+    #chat-input-area table.generaltable,
+    #chat-input-area table.generaltable td.cell {
+        border: 0;
+        padding: 3px 15px;
+        white-space: nowrap;
+        input {
+            margin: 0 10px;
+            &#input-message {
+                width: 45%;
+                margin: auto;
+            }
+        }
+        a {
+            margin: 0 5px;
+        }
+    }
+    #chat-userlist {
+        padding: 10px 5px;
+        #users-list {
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid @white;
+            li {
+                border-top: 1px solid @white;
+                border-bottom: 1px solid #ddd;
+                padding: 5px 10px;
+            }
+            img {
+                margin-right: 8px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                max-width: none;
+            }
+        }
+    }
+    #chat-messages {
+        margin: 20px 25px;
+        .chat-event.course-theme {
+            text-align: center;
+            margin: 10px 0;
+            font-size: @fontSizeSmall;
+            color: #777;
+        }
+        .chat-message.course-theme {
+            background-color: @white;
+            border: 1px dotted #ddd;
+            .border-radius(4px);
+            padding: 4px 10px;
+            margin: 10px 0;
+            .time {
+                float: right;
+                font-size: 11px;
+                color: #777;
+            }
+        }
+        .mdl-chat-my-entry .chat-message.course-theme {
+            background-color:#f6f6f6;
+            .user {
+                font-weight: bold;
+            }
+        }
+    }
+}
+
+// RTL overides
+.yui-skin-sam .yui-layout.path-mod-chat-gui_ajax.dir-rtl {
+    .yui-layout-unit-right {
+        padding: 0;
+    }
+    .yui-layout-unit div.yui-layout-bd {
+        text-align: right;
+    }
+    #chat-userlist {
+        #users-list {
+            img {
+                margin-left: 8px;
+            }
+        }
+    }
+    #chat-messages {
+        .chat-message.course-theme {
+            .time {
+                float: left;
+            }
+            .user {
+                float: right;
+            }
+            .chat-message-meta {
+                height: 20px;
+            }
+            .text {
+                text-align: right;
+            }
+        }
+    }
+}

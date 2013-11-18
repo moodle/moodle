@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>yui/src/treeview</location>
+    <name>Gallery SmugMug TreeView</name>
+    <license>BSD</license>
+    <version>2013.08.06-16-12</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

@@ -695,6 +695,16 @@ class tgz_packer extends file_packer {
         fclose($fp);
         return ($firstbytes[0] == "\x1f" && $firstbytes[1] == "\x8b");
     }
+
+    /**
+     * The zlib extension is required for this packer to work. This is a single
+     * location for the code to check whether the extension is available.
+     *
+     * @return bool True if the extension is available OK
+     */
+    public static function has_required_extension() {
+        return extension_loaded('zlib');
+    }
 }
 
 

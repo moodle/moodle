@@ -632,27 +632,36 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $message = badge_message_from_template($badge->message, $params);
     $plaintext = format_text_email($message, FORMAT_HTML);
 
-    // TODO: $filepathhash may be moodle_url instance too...
+    // Notify recipient.
+    $eventdata = new stdClass();
+    $eventdata->component         = 'moodle';
+    $eventdata->name              = 'badgerecipientnotice';
+    $eventdata->userfrom          = $userfrom;
+    $eventdata->userto            = $userto;
+    $eventdata->notification      = 1;
+    $eventdata->subject           = $badge->messagesubject;
+    $eventdata->fullmessage       = $plaintext;
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml   = $message;
+    $eventdata->smallmessage      = $plaintext;
 
-    if ($badge->attachment && is_string($filepathhash)) {
+    // Attach badge image if possible.
+    if (!empty($CFG->allowattachments) && $badge->attachment && is_string($filepathhash)) {
         $fs = get_file_storage();
         $file = $fs->get_file_by_hash($filepathhash);
-        $attachment = $file->copy_content_to_temp();
-        email_to_user($userto,
-            $userfrom,
-            $badge->messagesubject,
-            $plaintext,
-            $message,
-            str_replace($CFG->dataroot, '', $attachment),
-            str_replace(' ', '_', $badge->name) . ".png"
-        );
-        @unlink($attachment);
+        $eventdata->attachment = $file;
+        $eventdata->attachname = str_replace(' ', '_', $badge->name) . ".png";
+
+        message_send($eventdata);
     } else {
-        email_to_user($userto, $userfrom, $badge->messagesubject, $plaintext, $message);
+        message_send($eventdata);
     }
 
     // Notify badge creator about the award if they receive notifications every time.
     if ($badge->notification == 1) {
+        $userfrom = core_user::get_noreply_user();
+        $userfrom->maildisplay = true;
+
         $creator = $DB->get_record('user', array('id' => $badge->usercreated), '*', MUST_EXIST);
         $a = new stdClass();
         $a->user = fullname($userto);
@@ -662,15 +671,15 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
 
         $eventdata = new stdClass();
         $eventdata->component         = 'moodle';
-        $eventdata->name              = 'instantmessage';
+        $eventdata->name              = 'badgecreatornotice';
         $eventdata->userfrom          = $userfrom;
         $eventdata->userto            = $creator;
         $eventdata->notification      = 1;
         $eventdata->subject           = $creatorsubject;
-        $eventdata->fullmessage       = $creatormessage;
+        $eventdata->fullmessage       = format_text_email($creatormessage, FORMAT_HTML);
         $eventdata->fullmessageformat = FORMAT_PLAIN;
-        $eventdata->fullmessagehtml   = format_text($creatormessage, FORMAT_HTML);
-        $eventdata->smallmessage      = '';
+        $eventdata->fullmessagehtml   = $creatormessage;
+        $eventdata->smallmessage      = $creatorsubject;
 
         message_send($eventdata);
         $DB->set_field('badge_issued', 'issuernotified', time(), array('badgeid' => $badge->id, 'userid' => $userid));
@@ -969,8 +978,15 @@ function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
                 }
             }
         } else {
-            debugging('Error baking badge image!');
+            debugging('Error baking badge image!', DEBUG_DEVELOPER);
+            return;
         }
+    }
+
+    // If file exists and we just need its path hash, return it.
+    if ($pathhash) {
+        $file = $fs->get_file($user_context->id, 'badges', 'userbadge', $badge->id, '/', $hash . '.png');
+        return $file->get_pathnamehash();
     }
 
     $fileurl = moodle_url::make_pluginfile_url($user_context->id, 'badges', 'userbadge', $badge->id, '/', $hash, true);

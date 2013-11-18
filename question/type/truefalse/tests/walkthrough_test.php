@@ -50,7 +50,7 @@ class qtype_truefalse_walkthrough_test extends qbehaviour_walkthrough_test_base 
         $this->check_current_output(
                 $this->get_contains_question_text_expectation($tf),
                 $this->get_does_not_contain_feedback_expectation(),
-                new question_contains_tag_with_contents('h3',
+                new question_contains_tag_with_contents('h4',
                         get_string('questiontext', 'question')));
         $this->assertEquals(get_string('false', 'qtype_truefalse'),
                 $this->quba->get_right_answer_summary($this->slot));

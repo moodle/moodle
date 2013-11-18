@@ -785,10 +785,11 @@ EDITOR.prototype = {
             }
             this.currentdrawable = false;
             comment = new M.assignfeedback_editpdf.comment(this);
-            comment.init_from_edit(this.currentedit);
-            this.pages[this.currentpage].comments.push(comment);
-            this.drawables.push(comment.draw(true));
-            this.editingcomment = true;
+            if (comment.init_from_edit(this.currentedit)) {
+                this.pages[this.currentpage].comments.push(comment);
+                this.drawables.push(comment.draw(true));
+                this.editingcomment = true;
+            }
         } else {
             annotation = this.create_annotation(this.currentedit.tool, {});
             if (annotation) {
@@ -796,12 +797,12 @@ EDITOR.prototype = {
                     this.currentdrawable.erase();
                 }
                 this.currentdrawable = false;
-                annotation.init_from_edit(this.currentedit);
-                this.pages[this.currentpage].annotations.push(annotation);
-                this.drawables.push(annotation.draw());
+                if (annotation.init_from_edit(this.currentedit)) {
+                    this.pages[this.currentpage].annotations.push(annotation);
+                    this.drawables.push(annotation.draw());
+                }
             }
         }
-
 
         // Save the changes.
         this.save_current_page();

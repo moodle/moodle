@@ -32,8 +32,8 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 .dir-rtl .file-picker .fp-repo-area {border-left:1px solid #BBBBBB;border-right:none;float:right;}
 .file-picker .fp-repo-items {float:left;width:693px;}
 .dir-rtl .file-picker .fp-repo-items {float:right;}
-.file-picker .fp-navbar {background:#F2F2F2;min-height:48px;border-bottom:1px solid #BBBBBB;padding:5px 8px;}
-.file-picker .fp-content {background:#FFFFFF;clear:both;overflow:auto;height:432px;}
+.file-picker .fp-navbar {background:#F2F2F2;min-height:40px;border-bottom:1px solid #BBBBBB;}
+.file-picker .fp-content {background:#FFFFFF;clear:both;overflow:auto;height:452px;}
 .filepicker.moodle-dialogue-fullscreen .file-picker .fp-content {width:100%;}
 
 .file-picker .fp-content-loading {height:100%;width:100%;display:table;text-align:center;}
@@ -70,14 +70,15 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 .dir-rtl .fp-toolbar {float:right;}
 .fp-toolbar.empty {display:none;}
 .fp-toolbar .disabled {display:none;}
-.file-picker .fp-toolbar div, .fp-navbar .filemanager-toolbar .fp-toolbar div {float:left;margin:9px 0 9px 9px;background:#FFFFFF;border:1px solid #CCCCCC;border-bottom:1px solid #B3B3B3;border-radius:4px;width:40px;height:30px;}
+.file-picker .fp-toolbar div, .fp-navbar .filemanager-toolbar .fp-toolbar div {float:left;margin:4px 0 4px 4px;background:#FFFFFF;border:1px solid #CCCCCC;border-bottom:1px solid #B3B3B3;border-radius:4px;width:30px;height:30px;}
+.file-picker .fp-toolbar .fp-tb-message  {background:inherit;border:0;border-bottom:0;border-radius:0;width:300px;height:32px;}
 .fp-toolbar div {display:block;}
-.fp-toolbar a {display:block;height:30px;width:40px;}
+.fp-toolbar a {display:block;height:30px;width:30px;}
 .fp-toolbar a:hover {background-image:radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);background-color:#ebebeb;}
 .fp-toolbar a:active {background-image:radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);background-color:#dfdfdf;}
-.dir-rtl .fp-navbar .filemanager-toolbar .fp-toolbar div {margin:9px 9px 9px 0;}
+.dir-rtl .fp-navbar .filemanager-toolbar .fp-toolbar div {margin:4px 4px 4px 0;}
 .file-picker .fp-toolbar div.disabled {display:none;}
-.fp-toolbar img {vertical-align:-15%;margin:7px 12px;}
+.fp-toolbar img {vertical-align:-15%;margin:7px;}
 .file-picker .fp-toolbar .fp-tb-search {width:235px;height:30px;}
 .file-picker .fp-toolbar .fp-tb-search .fp-def-search {border:0;background:transparent;margin:0;padding:0;width:235px;}
 .dir-rtl .file-picker .fp-toolbar .fp-tb-search {width:242px;}
@@ -86,14 +87,13 @@ background:#E2E2E2;filter:progid:DXImageTransform.Microsoft.gradient(startColors
 .dir-rtl .fp-toolbar img {vertical-align:-35%;}
 .dir-rtl .file-picker .fp-viewbar, .dir-rtl .fp-navbar .filemanager-toolbar .fp-viewbar {float:left;}
 .dir-rtl .file-picker .fp-viewbar {margin-left:0;}
-.file-picker .fp-viewbar, .fp-navbar .filemanager-toolbar .fp-viewbar {float:right;margin:9px; background:white;border:1px solid #CCCCCC;border-radius:4px;border-bottom:1px solid #B3B3B3;height:30px;}
-.fp-viewbar .fp-vb-icons, .fp-viewbar .fp-vb-details, .fp-viewbar .fp-vb-tree {width:40px;height:30px;display:block;float:left;border-right:1px solid #CCCCCC;}
+.file-picker .fp-viewbar, .fp-navbar .filemanager-toolbar .fp-viewbar {float:right;margin:4px; background:white;border:1px solid #CCCCCC;border-radius:4px;border-bottom:1px solid #B3B3B3;height:30px;}
+.fp-viewbar .fp-vb-icons, .fp-viewbar .fp-vb-details, .fp-viewbar .fp-vb-tree {width:30px;height:30px;display:block;float:left;border-right:1px solid #CCCCCC;}
 .fp-viewbar a.fp-vb-icons {border-radius:4px 0 0 4px;}
 .fp-viewbar .fp-vb-tree {border-right:0;border-radius:0 4px 4px 0;}
-.fp-viewbar a img {margin:7px 12px;}
-.fp-viewbar a:hover {background-image:radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);background-color:#ebebeb;}
-.fp-viewbar a:active {background-image:radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);background-color:#dfdfdf;}
-.fp-viewbar a.checked {background-color:#dfdfdf;}
+.fp-viewbar a img {margin:7px;}
+.fp-viewbar a.checked:hover, .fp-viewbar a:hover {background-image:radial-gradient(ellipse at center, #ffffff 60%,#dfdfdf 100%);background-color:#ebebeb;}
+.fp-viewbar a.checked, .fp-viewbar a:active {background-image:radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);background-color:#dfdfdf;}
 .fp-viewbar.disabled a {opacity:.45;background:none;cursor:default;}
 .file-picker .fp-clear-left {clear:left;}
 
@@ -284,7 +284,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
  */
 .fp-restrictions{text-align:right;}
 .filemanager .fp-navbar {background:#F2F2F2;border-top:1px solid #BBBBBB;border-left:1px solid #BBBBBB;border-right:1px solid #BBBBBB;}
-.filemanager-toolbar {min-height:50px;}
+.filemanager-toolbar {min-height:40px;}
 .fp-pathbar {border-top:1px solid #BBBBBB;padding:5px 8px 1px;min-height:20px;}
 
 .filemanager .fp-pathbar.empty {display:none;}

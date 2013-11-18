@@ -40,6 +40,7 @@ class qbehaviour_deferredcbm_type extends qbehaviour_deferredfeedback_type {
     }
 
     public function summarise_usage(question_usage_by_activity $quba, question_display_options $options) {
+        global $OUTPUT;
         $summarydata = parent::summarise_usage($quba, $options);
 
         if ($options->marks < question_display_options::MARK_AND_MAX) {
@@ -106,6 +107,13 @@ class qbehaviour_deferredcbm_type extends qbehaviour_deferredfeedback_type {
         $averagecbm       = array_sum($totalcbmscore) / $grandtotalweight;
         $cbmbonus         = $this->calculate_bonus($averagecbm, $accuracy);
         $accuracyandbonus = $accuracy + $cbmbonus;
+
+        // Add a note to explain the max mark.
+        $summarydata['qbehaviour_cbm_grade_explanation'] = array(
+            'title' => '',
+            'content' => html_writer::tag('i', get_string('cbmgradeexplanation', 'qbehaviour_deferredcbm')) .
+                    $OUTPUT->help_icon('cbmgrades', 'qbehaviour_deferredcbm'),
+        );
 
         // Now we can start generating some of the summary: overall values.
         $summarydata['qbehaviour_cbm_entire_quiz_heading'] = array(

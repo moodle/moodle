@@ -23,8 +23,11 @@
  */
 
 $string['allowdeletes'] = 'Allow deletes';
+$string['allowdeletes_help'] = 'Whether the delete field is accepted or not.';
 $string['allowrenames'] = 'Allow renames';
+$string['allowrenames_help'] = 'Whether the rename field is accepted or not.';
 $string['allowresets'] = 'Allow resets';
+$string['allowresets_help'] = 'Whether the reset field is accepted or not.';
 $string['cachedef_helper'] = 'Helper caching';
 $string['cannotdeletecoursenotexist'] = 'Cannot delete a course that does not exist';
 $string['cannotgenerateshortnameupdatemode'] = 'Cannot generate a shortname when updates are allowed';
@@ -43,6 +46,8 @@ $string['coursedeleted'] = 'Course deleted';
 $string['coursedeletionnotallowed'] = 'Course deletion is not allowed';
 $string['coursedoesnotexistandcreatenotallowed'] = 'The course does not exist and creating course is not allowed';
 $string['courseexistsanduploadnotallowed'] = 'The course exists and update is not allowed';
+$string['coursefile'] = 'File';
+$string['coursefile_help'] = 'This file must be a CSV file.';
 $string['courseidnumberincremented'] = 'Course ID number incremented {$a->from} -> {$a->to}';
 $string['courseprocess'] = 'Course process';
 $string['courserenamed'] = 'Course renamed';
@@ -65,10 +70,12 @@ $string['createall'] = 'Create all, increment shortname if needed';
 $string['createnew'] = 'Create new courses only, skip existing ones';
 $string['createorupdate'] = 'Create new courses, or update existing ones';
 $string['csvdelimiter'] = 'CSV delimiter';
+$string['csvdelimiter_help'] = 'CSV delimiter of the CSV file.';
 $string['csvfileerror'] = 'There is something wrong with the format of the CSV file. Please check the number of headings and columns match, and that the delimiter and file encoding are correct: {$a}';
 $string['csvline'] = 'Line';
 $string['defaultvalues'] = 'Default course values';
 $string['encoding'] = 'Encoding';
+$string['encoding_help'] = 'Encoding of the CSV file.';
 $string['errorwhilerestoringcourse'] = 'Error while restoring the course';
 $string['errorwhiledeletingcourse'] = 'Error while deleting the course';
 $string['generatedshortnameinvalid'] = 'The generated shortname is invalid';
@@ -87,13 +94,17 @@ $string['invalidshortname'] = 'Invalid shortname';
 $string['missingmandatoryfields'] = 'Missing value for mandatory fields: {$a}';
 $string['missingshortnamenotemplate'] = 'Missing shortname and shortname template not set';
 $string['mode'] = 'Upload mode';
+$string['mode_help'] = 'This allows you to specify if courses can be created and/or updated.';
 $string['nochanges'] = 'No changes';
 $string['pluginname'] = 'Course upload';
 $string['preview'] = 'Preview';
 $string['reset'] = 'Reset course after upload';
+$string['reset_help'] = 'Whether to reset the course after creating/updating it.';
 $string['result'] = 'Result';
 $string['restoreafterimport'] = 'Restore after import';
 $string['rowpreviewnum'] = 'Preview rows';
+$string['rowpreviewnum_help'] = 'Number of rows from the CSV file that will be previewed in the next page. This option exists in
+order to limit the next page size.';
 $string['shortnametemplate'] = 'Template to generate a shortname';
 $string['shortnametemplate_help'] = 'The short name of the course is displayed in the navigation. You may use template syntax here (%f = fullname, %i = idnumber), or enter an initial value that is incremented.';
 $string['templatefile'] = 'Restore from this file after upload';
@@ -101,6 +112,7 @@ $string['templatefile_help'] = 'Select a file to use as a template for the creat
 $string['unknownimportmode'] = 'Unknown import mode';
 $string['updatemissing'] = 'Fill in missing items from CSV data and defaults';
 $string['updatemode'] = 'Update mode';
+$string['updatemode_help'] = 'If you allow courses to be updated, you also have to tell the tool what to update the courses with.';
 $string['updatemodedoessettonothing'] = 'Update mode does not allow anything to be updated';
 $string['updateonly'] = 'Only update existing courses';
 $string['updatewithdataordefaults'] = 'Update with CSV data and defaults';
@@ -111,6 +123,6 @@ $string['uploadcourses_help'] = 'Courses may be uploaded via text file. The form
 * Each line of the file contains one record
 * Each record is a series of data separated by commas (or other delimiters)
 * The first record contains a list of fieldnames defining the format of the rest of the file
-* Required fieldnames are shortname, fullname, summary and category';
+* Required fieldnames are shortname, fullname, and category';
 $string['uploadcoursespreview'] = 'Upload courses preview';
 $string['uploadcoursesresult'] = 'Upload courses results';

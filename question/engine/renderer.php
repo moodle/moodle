@@ -138,7 +138,7 @@ class core_question_renderer extends plugin_renderer_base {
         if (!$numbertext) {
             return '';
         }
-        return html_writer::tag('h2', $numbertext, array('class' => 'no'));
+        return html_writer::tag('h3', $numbertext, array('class' => 'no'));
     }
 
     /**
@@ -150,7 +150,7 @@ class core_question_renderer extends plugin_renderer_base {
      */
     protected function add_part_heading($heading, $content) {
         if ($content) {
-            $content = html_writer::tag('h3', $heading, array('class' => 'accesshide')) . $content;
+            $content = html_writer::tag('h4', $heading, array('class' => 'accesshide')) . $content;
         }
         return $content;
     }
@@ -456,7 +456,7 @@ class core_question_renderer extends plugin_renderer_base {
             $table->data[] = $row;
         }
 
-        return html_writer::tag('h3', get_string('responsehistory', 'question'),
+        return html_writer::tag('h4', get_string('responsehistory', 'question'),
                 array('class' => 'responsehistoryheader')) . html_writer::tag('div',
                 html_writer::table($table, true), array('class' => 'responsehistoryheader'));
     }

@@ -111,6 +111,7 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool if width/height is more than min. required.
      */
     init_from_edit : function(edit) {
         var bounds = new M.assignfeedback_editpdf.rect();
@@ -130,6 +131,9 @@ Y.extend(ANNOTATIONSTAMP, M.assignfeedback_editpdf.annotation, {
         this.endy = bounds.y + bounds.height;
         this.colour = edit.annotationcolour;
         this.path = edit.stamp;
+
+        // Min width and height is always more than 40px.
+        return true;
     },
 
     /**

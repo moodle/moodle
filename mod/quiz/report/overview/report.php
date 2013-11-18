@@ -310,7 +310,7 @@ class quiz_overview_report extends quiz_attempts_report {
      */
     protected function finish_regrade($nexturl) {
         global $OUTPUT, $PAGE;
-        echo $OUTPUT->heading(get_string('regradecomplete', 'quiz_overview'));
+        echo $OUTPUT->heading(get_string('regradecomplete', 'quiz_overview'), 3);
         echo $OUTPUT->continue_button($nexturl);
         echo $OUTPUT->footer();
         die();

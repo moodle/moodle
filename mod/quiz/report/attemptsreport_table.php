@@ -121,13 +121,9 @@ abstract class quiz_attempts_report_table extends table_sql {
     public function col_picture($attempt) {
         global $OUTPUT;
         $user = new stdClass();
+        $additionalfields = explode(',', user_picture::fields());
+        $user = username_load_fields_from_object($user, $attempt, null, $additionalfields);
         $user->id = $attempt->userid;
-        $user->imagealt = $attempt->imagealt;
-        $user->picture = $attempt->picture;
-        $user->email = $attempt->email;
-        foreach (get_all_user_name_fields() as $addname) {
-            $user->$addname = $attempt->$addname;
-        }
         return $OUTPUT->user_picture($user);
     }
 

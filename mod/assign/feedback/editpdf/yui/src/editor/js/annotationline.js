@@ -94,6 +94,7 @@ Y.extend(ANNOTATIONLINE, M.assignfeedback_editpdf.annotation, {
      * @public
      * @method init_from_edit
      * @param M.assignfeedback_editpdf.edit edit
+     * @return bool true if line bound is more than min width/height, else false.
      */
     init_from_edit : function(edit) {
         this.gradeid = this.editor.get('gradeid');
@@ -104,6 +105,8 @@ Y.extend(ANNOTATIONLINE, M.assignfeedback_editpdf.annotation, {
         this.endy = edit.end.y;
         this.colour = edit.annotationcolour;
         this.path = '';
+
+        return !(((this.endx - this.x) === 0) && ((this.endy - this.y) === 0));
     }
 
 });

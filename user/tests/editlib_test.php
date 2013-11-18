@@ -100,13 +100,14 @@ class core_user_editlib_testcase extends advanced_testcase {
         $originalcfg->fullnamedisplay = $CFG->fullnamedisplay;
 
         $CFG->fullnamedisplay = 'language';
-        $expectedresult = array('firstnamephonetic', 'lastnamephonetic', 'middlename', 'alternatename');
+        $expectedresult = array('firstnamephonetic' => 'firstnamephonetic', 'lastnamephonetic' => 'lastnamephonetic',
+                'middlename' => 'middlename', 'alternatename' => 'alternatename');
         $this->assertEquals(useredit_get_disabled_name_fields(), $expectedresult);
         $CFG->fullnamedisplay = 'firstname lastname firstnamephonetic';
-        $expectedresult = array(1 => 'lastnamephonetic', 2 => 'middlename', 3 => 'alternatename');
+        $expectedresult = array('lastnamephonetic' => 'lastnamephonetic', 'middlename' => 'middlename', 'alternatename' => 'alternatename');
         $this->assertEquals(useredit_get_disabled_name_fields(), $expectedresult);
         $CFG->fullnamedisplay = 'firstnamephonetic, lastname lastnamephonetic (alternatename)';
-        $expectedresult = array(2 => 'middlename');
+        $expectedresult = array('middlename' => 'middlename');
         $this->assertEquals(useredit_get_disabled_name_fields(), $expectedresult);
         $CFG->fullnamedisplay = 'firstnamephonetic lastnamephonetic alternatename middlename';
         $expectedresult = array();

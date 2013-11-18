@@ -281,10 +281,6 @@ Console.prototype = {
         if (!listing) {
             return false;
         }
-        if (!category) {
-            Y.log('Couldn\'t find the current category object.', 'warn', 'moodle-course-management');
-            return false;
-        }
         listing.all('.listitem[data-id]').each(function(node){
             this.registerCourse(new Course({
                 node : node,
@@ -845,6 +841,17 @@ Item.prototype = {
                     nodeup.insert(previousdown, 'after');
                 }
             }
+            nodeup = node.one(' > div a.action-moveup');
+            if (nodeup) {
+                // Try to re-focus on up.
+                nodeup.focus();
+            } else {
+                // If we can't focus up we're at the bottom, try to focus on up.
+                nodedown = node.one(' > div a.action-movedown');
+                if (nodedown) {
+                    nodedown.focus();
+                }
+            }
             this.updated(true);
             Y.log('Success: '+this.get('itemname')+' moved up by AJAX.', 'info', 'moodle-course-management');
         } else {
@@ -902,6 +909,17 @@ Item.prototype = {
                     nodedown.insert(nextup, 'before');
                 }
             }
+            nodedown = node.one(' > div a.action-movedown');
+            if (nodedown) {
+                // Try to ensure the up is focused again.
+                nodedown.focus();
+            } else {
+                // If we can't focus up we're at the top, try to focus on down.
+                nodeup = node.one(' > div a.action-moveup');
+                if (nodeup) {
+                    nodeup.focus();
+                }
+            }
             this.updated(true);
             Y.log('Success: '+this.get('itemname')+' moved down by AJAX.', 'info', 'moodle-course-management');
         } else {
@@ -922,13 +940,18 @@ Item.prototype = {
      * @returns {Boolean}
      */
     show : function(transactionid, response, args) {
-        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
+            hidebtn;
         if (outcome === false) {
             Y.log('AJAX request to show '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
 
         this.markVisible();
+        hidebtn = this.get('node').one('a[data-action=hide]');
+        if (hidebtn) {
+            hidebtn.focus();
+        }
         this.updated();
         Y.log('Success: '+this.get('itemname')+' made visible by AJAX.', 'info', 'moodle-course-management');
     },
@@ -953,12 +976,17 @@ Item.prototype = {
      * @returns {Boolean}
      */
     hide : function(transactionid, response, args) {
-        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
+            showbtn;
         if (outcome === false) {
             Y.log('AJAX request to hide '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
         this.markHidden();
+        showbtn = this.get('node').one('a[data-action=show]');
+        if (showbtn) {
+            showbtn.focus();
+        }
         this.updated();
         Y.log('Success: '+this.get('itemname')+' made hidden by AJAX.', 'info', 'moodle-course-management');
     },
@@ -1152,13 +1180,18 @@ Category.prototype = {
      */
     expand : function() {
         var node = this.get('node'),
-            action = node.one('a[data-action=expand]');
+            action = node.one('a[data-action=expand]'),
+            ul = node.one('ul[role=group]');
         node.removeClass('collapsed').setAttribute('aria-expanded', 'true');
-        action.setAttribute('data-action', 'collapse').one('img').setAttrs({
+        action.setAttribute('data-action', 'collapse').setAttrs({
+            title : M.util.get_string('collapsecategory', 'moodle', this.getName())
+        }).one('img').setAttrs({
             src : M.util.image_url('t/switch_minus', 'moodle'),
-            title : M.util.get_string('collapse', 'moodle'),
             alt : M.util.get_string('collapse', 'moodle')
         });
+        if (ul) {
+            ul.setAttribute('aria-hidden', 'false');
+        }
         this.get('console').performAjaxAction('expandcategory', {categoryid : this.get('categoryid')}, null, this);
     },
 
@@ -1168,13 +1201,18 @@ Category.prototype = {
      */
     collapse : function() {
         var node = this.get('node'),
-            action = node.one('a[data-action=collapse]');
+            action = node.one('a[data-action=collapse]'),
+            ul = node.one('ul[role=group]');
         node.addClass('collapsed').setAttribute('aria-expanded', 'false');
-        action.setAttribute('data-action', 'expand').one('img').setAttrs({
+        action.setAttribute('data-action', 'expand').setAttrs({
+            title : M.util.get_string('expandcategory', 'moodle', this.getName())
+        }).one('img').setAttrs({
             src : M.util.image_url('t/switch_plus', 'moodle'),
-            title : M.util.get_string('expand', 'moodle'),
             alt : M.util.get_string('expand', 'moodle')
         });
+        if (ul) {
+            ul.setAttribute('aria-hidden', 'true');
+        }
         this.get('console').performAjaxAction('collapsecategory', {categoryid : this.get('categoryid')}, null, this);
     },
 
@@ -1191,7 +1229,9 @@ Category.prototype = {
     loadSubcategories : function(transactionid, response, args) {
         var outcome = this.checkAjaxResponse(transactionid, response, args),
             node = this.get('node'),
-            managementconsole = this.get('console');
+            managementconsole = this.get('console'),
+            ul,
+            actionnode;
         if (outcome === false) {
             Y.log('AJAX failed to load sub categories for '+this.get('itemname'), 'warn', 'moodle-course-management');
             return false;
@@ -1201,6 +1241,11 @@ Category.prototype = {
         managementconsole.initialiseCategories(node);
         if (M.core && M.core.actionmenu && M.core.actionmenu.newDOMNode) {
             M.core.actionmenu.newDOMNode(node);
+        }
+        ul = node.one('ul[role=group]');
+        actionnode = node.one('a[data-action=collapse]');
+        if (ul && actionnode) {
+            actionnode.setAttribute('aria-controls', ul.generateID());
         }
         return true;
     },
@@ -1299,13 +1344,18 @@ Category.prototype = {
      * @returns {Boolean}
      */
     show : function(transactionid, response, args) {
-        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
+            hidebtn;
         if (outcome === false) {
             Y.log('AJAX request to show '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
 
         this.markVisible();
+        hidebtn = this.get('node').one('a[data-action=hide]');
+        if (hidebtn) {
+            hidebtn.focus();
+        }
         if (outcome.categoryvisibility) {
             this.updateChildVisibility(outcome.categoryvisibility);
         }
@@ -1326,12 +1376,17 @@ Category.prototype = {
      * @returns {Boolean}
      */
     hide : function(transactionid, response, args) {
-        var outcome = this.checkAjaxResponse(transactionid, response, args);
+        var outcome = this.checkAjaxResponse(transactionid, response, args),
+            showbtn;
         if (outcome === false) {
             Y.log('AJAX request to hide '+this.get('itemname')+' by outcome.', 'warn', 'moodle-course-management');
             return false;
         }
         this.markHidden();
+        showbtn = this.get('node').one('a[data-action=show]');
+        if (showbtn) {
+            showbtn.focus();
+        }
         if (outcome.categoryvisibility) {
             this.updateChildVisibility(outcome.categoryvisibility);
         }

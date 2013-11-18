@@ -378,6 +378,17 @@ function message_get_contacts($user1=null, $user2=null) {
     }
     $rs->close();
 
+    // Add noreply user and support user to the list.
+    $supportuser = core_user::get_support_user();
+    $supportuser->messagecount = message_count_unread_messages($USER, $supportuser);
+    if ($supportuser->messagecount > 0) {
+        $strangers[] = $supportuser;
+    }
+    $noreplyuser = core_user::get_noreply_user();
+    $noreplyuser->messagecount = message_count_unread_messages($USER, $noreplyuser);
+    if ($noreplyuser->messagecount > 0) {
+        $strangers[] = $noreplyuser;
+    }
     return array($onlinecontacts, $offlinecontacts, $strangers);
 }
 
@@ -1941,7 +1952,12 @@ function message_print_message_history($user1, $user2 ,$search = '', $messagelim
     echo html_writer::end_tag('td');
 
     echo html_writer::start_tag('td', array('align' => 'center', 'id' => 'user2'));
-    echo $OUTPUT->user_picture($user2, array('size' => 100, 'courseid' => SITEID));
+    // Show user picture with link is real user else without link.
+    if (core_user::is_real_user($user2->id)) {
+        echo $OUTPUT->user_picture($user2, array('size' => 100, 'courseid' => SITEID));
+    } else {
+        echo $OUTPUT->user_picture($user2, array('size' => 100, 'courseid' => SITEID, 'link' => false));
+    }
     echo html_writer::tag('div', fullname($user2), array('class' => 'heading'));
 
     if ($showactionlinks && isset($user2->iscontact) && isset($user2->isblocked)) {
@@ -2156,8 +2172,11 @@ function message_print_contactlist_user($contact, $incontactlist = true, $isbloc
     $strcontact = $strblock = $strhistory = null;
 
     if ($showactionlinks) {
-        $strcontact = message_get_contact_add_remove_link($incontactlist, $isblocked, $contact);
-        $strblock   = message_get_contact_block_link($incontactlist, $isblocked, $contact);
+        // Show block and delete links if user is real user.
+        if (core_user::is_real_user($contact->id)) {
+            $strcontact = message_get_contact_add_remove_link($incontactlist, $isblocked, $contact);
+            $strblock   = message_get_contact_block_link($incontactlist, $isblocked, $contact);
+        }
         $strhistory = message_history_link($USER->id, $contact->id, true, '', '', 'icon');
     }
 

@@ -38,7 +38,7 @@ $string['clitypevalue'] = 'değeri yazın';
 $string['clitypevaluedefault'] = 'değeri yazın, varsayılan değeri ({$a}) kullanmak için Enter tuşuna basın';
 $string['cliunknowoption'] = 'Tanınmayan seçenekler:
 {$a}
-. Lütfen --help seçeneğini kullanın.';
+Lütfen --help seçeneğini kullanın.';
 $string['cliyesnoprompt'] = 'e (evet) veya h (hayır) yazın';
-$string['environmentrequireinstall'] = 'yüklenmesi/etkinleştirilmesi gerekli';
+$string['environmentrequireinstall'] = 'yüklenmiş ve etkinleştirilmiş olmalıdır';
 $string['environmentrequireversion'] = 'sürüm {$a->needed} gerekli ve şu anda {$a->current} çalışıyor';

@@ -223,3 +223,40 @@ function lti_verify_sourcedid($ltiinstance, $parsed) {
         throw new Exception('SourcedId hash not valid');
     }
 }
+
+/**
+ * Extend the LTI services through the ltisource plugins
+ *
+ * @param stdClass $data LTI request data
+ * @return bool
+ * @throws coding_exception
+ */
+function lti_extend_lti_services($data) {
+    $plugins = get_plugin_list_with_function('ltisource', $data->messagetype);
+    if (!empty($plugins)) {
+        try {
+            // There can only be one
+            if (count($plugins) > 1) {
+                throw new coding_exception('More than one ltisource plugin handler found');
+            }
+            $callback = current($plugins);
+            call_user_func($callback, $data);
+        } catch (moodle_exception $e) {
+            $error = $e->getMessage();
+            if (debugging('', DEBUG_DEVELOPER)) {
+                $error .= ' '.format_backtrace(get_exception_info($e)->backtrace);
+            }
+            $responsexml = lti_get_response_xml(
+                'failure',
+                $error,
+                $data->messageid,
+                $data->messagetype
+            );
+
+            header('HTTP/1.0 400 bad request');
+            echo $responsexml->asXML();
+        }
+        return true;
+    }
+    return false;
+}

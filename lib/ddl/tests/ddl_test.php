@@ -698,6 +698,16 @@ class core_ddl_testcase extends database_driver_testcase {
         $this->assertSame('N', $columns['onenumber']->meta_type);
         $this->assertEquals(2.550, $DB->get_field('test_table1', 'onenumber', array(), IGNORE_MULTIPLE)); // Check default has been applied.
 
+        // Add one numeric field with scale of 0 and check it.
+        $field = new xmldb_field('onenumberwith0scale');
+        $field->set_attributes(XMLDB_TYPE_NUMBER, '6,0', null, XMLDB_NOTNULL, null, 2);
+        $dbman->add_field($table, $field);
+        $this->assertTrue($dbman->field_exists($table, 'onenumberwith0scale'));
+        $columns = $DB->get_columns('test_table1');
+        $this->assertEquals(6, $columns['onenumberwith0scale']->max_length);
+        // We can not use assertEquals as that accepts null/false as a valid value.
+        $this->assertSame('0', strval($columns['onenumberwith0scale']->scale));
+
         // Add one float field and check it (not official type - must work as number).
         $field = new xmldb_field('onefloat');
         $field->set_attributes(XMLDB_TYPE_FLOAT, '6,3', null, XMLDB_NOTNULL, null, 3.550);
@@ -1876,6 +1886,59 @@ class core_ddl_testcase extends database_driver_testcase {
             $this->fail('Exception expected');
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
+        }
+    }
+
+    public function test_object_name() {
+        $gen = $this->tdb->get_manager()->generator;
+
+        // This will form short object name and max length should not be exceeded.
+        $table = 'tablename';
+        $fields = 'id';
+        $suffix = 'pk';
+        for ($i=0; $i<12; $i++) {
+            $this->assertLessThanOrEqual($gen->names_max_length,
+                    strlen($gen->getNameForObject($table, $fields, $suffix)),
+                    'Generated object name is too long. $i = '.$i);
+        }
+
+        // This will form too long object name always and it must be trimmed to exactly 30 chars.
+        $table = 'aaaa_bbbb_cccc_dddd_eeee_ffff_gggg';
+        $fields = 'aaaaa,bbbbb,ccccc,ddddd';
+        $suffix = 'idx';
+        for ($i=0; $i<12; $i++) {
+            $this->assertEquals($gen->names_max_length,
+                    strlen($gen->getNameForObject($table, $fields, $suffix)),
+                    'Generated object name is too long. $i = '.$i);
+        }
+
+        // Same test without suffix.
+        $table = 'bbbb_cccc_dddd_eeee_ffff_gggg_hhhh';
+        $fields = 'aaaaa,bbbbb,ccccc,ddddd';
+        $suffix = '';
+        for ($i=0; $i<12; $i++) {
+            $this->assertEquals($gen->names_max_length,
+                    strlen($gen->getNameForObject($table, $fields, $suffix)),
+                    'Generated object name is too long. $i = '.$i);
+        }
+
+        // This must only trim name when counter is 10 or more.
+        $table = 'cccc_dddd_eeee_ffff_gggg_hhhh_iiii';
+        $fields = 'id';
+        $suffix = 'idx';
+        // Since we don't know how long prefix is, loop to generate tablename that gives exactly maxlengh-1 length.
+        // Skip this test if prefix is too long.
+        while (strlen($table) && strlen($gen->prefix.preg_replace('/_/','',$table).'_id_'.$suffix) >= $gen->names_max_length) {
+            $table = rtrim(substr($table, 0, strlen($table) - 1), '_');
+        }
+        if (strlen($table)) {
+            $this->assertEquals($gen->names_max_length - 1,
+                        strlen($gen->getNameForObject($table, $fields, $suffix)));
+            for ($i=0; $i<12; $i++) {
+                $this->assertEquals($gen->names_max_length,
+                        strlen($gen->getNameForObject($table, $fields, $suffix)),
+                        'Generated object name is too long. $i = '.$i);
+            }
         }
     }
 

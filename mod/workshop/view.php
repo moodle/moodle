@@ -387,12 +387,11 @@ case workshop::PHASE_ASSESSMENT:
                 $submission->title              = $assessment->submissiontitle;
                 $submission->timecreated        = $assessment->submissioncreated;
                 $submission->timemodified       = $assessment->submissionmodified;
-                $submission->authorid           = $assessment->authorid;
-                $submission->authorfirstname    = $assessment->authorfirstname;
-                $submission->authorlastname     = $assessment->authorlastname;
-                $submission->authorpicture      = $assessment->authorpicture;
-                $submission->authorimagealt     = $assessment->authorimagealt;
-                $submission->authoremail        = $assessment->authoremail;
+                $userpicturefields = explode(',', user_picture::fields());
+                foreach ($userpicturefields as $userpicturefield) {
+                    $prefixedusernamefield = 'author' . $userpicturefield;
+                    $submission->$prefixedusernamefield = $assessment->$prefixedusernamefield;
+                }
 
                 // transform the submission object into renderable component
                 $submission = $workshop->prepare_submission_summary($submission, $shownames);
@@ -513,12 +512,11 @@ case workshop::PHASE_EVALUATION:
             $submission->title              = $assessment->submissiontitle;
             $submission->timecreated        = $assessment->submissioncreated;
             $submission->timemodified       = $assessment->submissionmodified;
-            $submission->authorid           = $assessment->authorid;
-            $submission->authorfirstname    = $assessment->authorfirstname;
-            $submission->authorlastname     = $assessment->authorlastname;
-            $submission->authorpicture      = $assessment->authorpicture;
-            $submission->authorimagealt     = $assessment->authorimagealt;
-            $submission->authoremail        = $assessment->authoremail;
+            $userpicturefields = explode(',', user_picture::fields());
+            foreach ($userpicturefields as $userpicturefield) {
+                $prefixedusernamefield = 'author' . $userpicturefield;
+                $submission->$prefixedusernamefield = $assessment->$prefixedusernamefield;
+            }
 
             if (is_null($assessment->grade)) {
                 $class = ' notgraded';
@@ -621,12 +619,11 @@ case workshop::PHASE_CLOSED:
             $submission->title              = $assessment->submissiontitle;
             $submission->timecreated        = $assessment->submissioncreated;
             $submission->timemodified       = $assessment->submissionmodified;
-            $submission->authorid           = $assessment->authorid;
-            $submission->authorfirstname    = $assessment->authorfirstname;
-            $submission->authorlastname     = $assessment->authorlastname;
-            $submission->authorpicture      = $assessment->authorpicture;
-            $submission->authorimagealt     = $assessment->authorimagealt;
-            $submission->authoremail        = $assessment->authoremail;
+            $userpicturefields = explode(',', user_picture::fields());
+            foreach ($userpicturefields as $userpicturefield) {
+                $prefixedusernamefield = 'author' . $userpicturefield;
+                $submission->$prefixedusernamefield = $assessment->$prefixedusernamefield;
+            }
 
             if (is_null($assessment->grade)) {
                 $class = ' notgraded';

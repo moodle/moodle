@@ -21,11 +21,30 @@
 #qtypechoicecontainer #chooseqtype {width: 35em;}
 #qtypechoicecontainer #chooseqtypehead h3 {margin: 0;font-weight: normal;}
 #qtypechoicecontainer #chooseqtype .qtypes {position: relative;border-bottom: 1px solid #BBBBBB;padding: 0.24em 0;}
+#qtypechoicecontainer #chooseqtype .alloptions {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 400px;
+    max-height: calc(100vh - 8em);
+    width: 60%;
+}
 #qtypechoicecontainer #chooseqtype .qtypeoption {margin-bottom: 0; padding: 0.3em 0 0.3em 1.6em;}
 #qtypechoicecontainer #chooseqtype .qtypeoption img {vertical-align: text-bottom;padding-left: 1em;padding-right: 0.5em;}
 #qtypechoicecontainer #chooseqtype .selected {background-color: #FFFFFF;box-shadow: 0px 0px 10px 0px #CCCCCC;-webkit-box-shadow: 0px 0px 10px 0px #CCCCCC;-moz-box-shadow: 0px 0px 10px 0px #CCCCCC;}
 #qtypechoicecontainer #chooseqtype .instruction,
-#qtypechoicecontainer #chooseqtype .qtypesummary {display: none;position: absolute;top: 0px;right: 0px;bottom: 0px;left: 60%;margin: 0;padding: 1.5em 1.6em;background-color: #FFFFFF;}
+#qtypechoicecontainer #chooseqtype .qtypesummary {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 60%;
+    margin: 0;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 1.5em 1.6em;
+    background-color: #FFFFFF;
+}
 #qtypechoicecontainer #chooseqtype .instruction,
 #qtypechoicecontainer #chooseqtype .selected .qtypesummary {display: block;}
 
@@ -51,7 +70,7 @@ body.path-question-type .fitem_fgroup .accesshide {font: inherit;left: 0;positio
 .dir-rtl .que {text-align: right;}
 
 .que .info {float: left;width: 7em;padding:0.5em;margin-bottom: 1.8em;background: #eee;}
-.que h2.no {margin: 0;font-size: 0.8em;line-height: 1;}
+.que h3.no {margin: 0;font-size: 0.8em;line-height: 1;}
 .que span.qno {font-size: 1.5em;font-weight:bold;}
 .que .info > div {font-size: 0.8em;margin-top: 0.7em;}
 .que .info .questionflag.editable {cursor:pointer;}
@@ -109,6 +128,27 @@ body.path-question-type .fitem_fgroup .accesshide {font: inherit;left: 0;positio
 }
 #page-mod-quiz-edit #categoryquestions .header {
     background: none;
+}
+
+/* Add a little padding to the answer sections of edit question forms. */
+.path-question-type #id_answerhdr .fitem .fitemtitle,
+.path-question-type #id_answerhdr .fitem .felement {
+    margin-left: 6px;
+    margin-right: 6px;
+}
+.path-question-type #id_answerhdr .fitem_feditor .felement {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+@media (min-width: 1200px) {
+    .path-question-type #id_answerhdr .fitem_feditor .felement {
+        margin-left: 16%;
+        margin-right: 0px;
+    }
+    .dir-rtl .path-question-type #id_answerhdr .fitem_feditor .felement {
+        margin-right: 16%;
+        margin-left: 0px;
+    }
 }
 
 /** Overide for RTL layout **/

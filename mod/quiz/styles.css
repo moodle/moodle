@@ -333,8 +333,19 @@ table.quizattemptsummary .noreviewmessage {
 .quizattemptcounts {
     clear: left;
     text-align: center;
+    display:inline;
+    margin-left:20%;
 }
-
+.dir-rtl .quizattemptcounts {
+    margin-left:0;
+    margin-right: 20%;
+}
+#page-mod-quiz-view .quizattemptcounts,
+.dir-rtl #page-mod-quiz-view .quizattemptcounts {
+    display: block;
+    margin-left: 0;
+    margin-right: 0;
+}
 /** Mod quiz summary **/
 #page-mod-quiz-summary #content {
     text-align: center;
@@ -745,7 +756,6 @@ table#categoryquestions {
     width: 1.4em;
     padding-right: 0.3em;
     padding-left: 0;
-    z-index: 99;
     text-align: right;
     color: #333;
 }
@@ -774,7 +784,6 @@ table#categoryquestions {
     border-radius: 0.2em;
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
-    z-index: 900;
     display: block;
     margin: 0;
     background-color: #ddf;
@@ -794,7 +803,6 @@ table#categoryquestions {
     border-radius: 0.2em;
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
-    z-index: 900;
     display: block;
     margin: 0;
     background-color: #ddf;
@@ -838,7 +846,6 @@ table#categoryquestions {
     position: absolute;
     right: 0.3em;
     top: 0;
-    z-index: 900;
     display: block;
     padding: 0.2em;
     background-color: #F9F9F9;
@@ -1048,7 +1055,6 @@ bank window's title is prominent enough*/
     top: 0.2em;
     right: 0.2em;
     display: inline;
-    z-index: 900;
 }
 #page-mod-quiz-edit .quizpagedelete img {
     background-color: #d6d6d6;

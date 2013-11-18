@@ -136,7 +136,7 @@ if (substr($viewing, 0, 7) == MESSAGE_VIEW_COURSE) {
 if (!empty($user1->id) && $user1->id != $USER->id) {
     $PAGE->navigation->extend_for_user($user1);
 }
-if (!empty($user2->id) && $user2->id != $USER->id) {
+if (!empty($user2->id) && $user2realuser && ($user2->id != $USER->id)) {
     $PAGE->navigation->extend_for_user($user2);
 }
 
@@ -161,7 +161,7 @@ if ($unblockcontact and confirm_sesskey()) {
 
 //was a message sent? Do NOT allow someone looking at someone else's messages to send them.
 $messageerror = null;
-if ($currentuser && $user2realuser && has_capability('moodle/site:sendmessage', $systemcontext)) {
+if ($currentuser && !empty($user2) && has_capability('moodle/site:sendmessage', $systemcontext)) {
     // Check that the user is not blocking us!!
     if ($contact = $DB->get_record('message_contacts', array('userid' => $user2->id, 'contactid' => $user1->id))) {
         if ($contact->blocked and !has_capability('moodle/site:readallmessages', $systemcontext)) {
@@ -221,7 +221,7 @@ $countunreadtotal = 0; //count of unread messages from all users
 
 //we're dealing with unread messages early so the contact list will accurately reflect what is read/unread
 $viewingnewmessages = false;
-if ($user2realuser) {
+if (!empty($user2)) {
     //are there any unread messages from $user2
     $countunread = message_count_unread_messages($user1, $user2);
     if ($countunread>0) {
@@ -249,7 +249,7 @@ list($onlinecontacts, $offlinecontacts, $strangers) = message_get_contacts($user
 message_print_contact_selector($countunreadtotal, $viewing, $user1, $user2, $blockedusers, $onlinecontacts, $offlinecontacts, $strangers, $showactionlinks, $page);
 
 echo html_writer::start_tag('div', array('class' => 'messagearea mdl-align'));
-    if ($user2realuser) {
+    if (!empty($user2)) {
 
         echo html_writer::start_tag('div', array('class' => 'mdl-left messagehistory'));
 
@@ -306,7 +306,7 @@ echo html_writer::start_tag('div', array('class' => 'messagearea mdl-align'));
         echo html_writer::end_tag('div');
 
         //send message form
-        if ($currentuser && has_capability('moodle/site:sendmessage', $systemcontext)) {
+        if ($currentuser && has_capability('moodle/site:sendmessage', $systemcontext) && $user2realuser) {
             echo html_writer::start_tag('div', array('class' => 'mdl-align messagesend'));
                 if (!empty($messageerror)) {
                     echo html_writer::tag('span', $messageerror, array('id' => 'messagewarning'));

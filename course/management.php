@@ -57,7 +57,6 @@ if ($courseid) {
     $categoryid = $category->id;
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $categoryid);
-    navigation_node::override_active_url($url);
     $url->param('courseid', $course->id);
 
 } else if ($categoryid) {
@@ -66,7 +65,6 @@ if ($courseid) {
     $category = coursecat::get($categoryid);
     $context = context_coursecat::instance($category->id);
     $url->param('categoryid', $category->id);
-    navigation_node::override_active_url($url);
 
 } else {
     $course = null;
@@ -77,7 +75,6 @@ if ($courseid) {
         $viewmode = 'categories';
     }
     $context = $systemcontext;
-    navigation_node::override_active_url($url);
 }
 
 // Check if there is a selected category param, and if there is apply it.
@@ -102,13 +99,13 @@ if ($modulelist !== '') {
 }
 
 $strmanagement = new lang_string('coursecatmanagement');
-$title = format_string($SITE->fullname, true, array('context' => $systemcontext));
+$pageheading = format_string($SITE->fullname, true, array('context' => $systemcontext));
 
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
-$PAGE->set_title($title);
-$PAGE->set_heading($strmanagement);
+$PAGE->set_title($strmanagement);
+$PAGE->set_heading($pageheading);
 
 // This is a system level page that operates on other contexts.
 require_login();
@@ -140,6 +137,10 @@ if ($category && !has_any_capability($capabilities, $systemcontext)) {
     $PAGE->set_category_by_id($category->id);
     $PAGE->navbar->ignore_active(true);
     $PAGE->navbar->add(get_string('coursemgmt', 'admin'), $PAGE->url->out_omit_querystring());
+} else {
+    // If user has system capabilities, make sure the "Manage courses and categories" item in Administration block is active.
+    navigation_node::require_admin_tree();
+    navigation_node::override_active_url(new moodle_url('/course/management.php'));
 }
 if (!$issearching && $category !== null) {
     $parents = coursecat::get_many($category->get_parents());
@@ -459,6 +460,10 @@ if (($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'cours
 $renderer = $PAGE->get_renderer('core_course', 'management');
 $renderer->enhance_management_interface();
 
+$displaycategorylisting = ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'categories');
+$displaycourselisting = ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'courses');
+$displaycoursedetail = (isset($courseid));
+
 echo $renderer->header();
 
 if (!$issearching) {
@@ -477,13 +482,16 @@ if (count($notificationsfail) > 0) {
 // Start the management form.
 echo $renderer->management_form_start();
 
+echo $renderer->accessible_skipto_links($displaycategorylisting, $displaycourselisting, $displaycoursedetail);
+
 echo $renderer->grid_start('course-category-listings', $class);
-if ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'categories') {
+
+if ($displaycategorylisting) {
     echo $renderer->grid_column_start($categorysize, 'category-listing');
     echo $renderer->category_listing($category);
     echo $renderer->grid_column_end();
 }
-if ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'courses') {
+if ($displaycourselisting) {
     echo $renderer->grid_column_start($coursesize, 'course-listing');
     if (!$issearching) {
         echo $renderer->course_listing($category, $course, $page, $perpage);
@@ -493,7 +501,7 @@ if ($viewmode === 'default' || $viewmode === 'combined' || $viewmode === 'course
         echo $renderer->search_listing($courses, $coursestotal, $course, $page, $perpage);
     }
     echo $renderer->grid_column_end();
-    if (isset($courseid)) {
+    if ($displaycoursedetail) {
         echo $renderer->grid_column_start($detailssize, 'course-detail');
         echo $renderer->course_detail($course);
         echo $renderer->grid_column_end();

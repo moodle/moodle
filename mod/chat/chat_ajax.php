@@ -22,7 +22,7 @@ require_once(dirname(__FILE__) . '/lib.php');
 $action       = optional_param('action', '', PARAM_ALPHANUM);
 $beep_id      = optional_param('beep', '', PARAM_RAW);
 $chat_sid     = required_param('chat_sid', PARAM_ALPHANUM);
-$theme        = required_param('theme', PARAM_ALPHANUM);
+$theme        = required_param('theme', PARAM_ALPHANUMEXT);
 $chat_message = optional_param('chat_message', '', PARAM_RAW);
 $chat_lasttime = optional_param('chat_lasttime', 0, PARAM_INT);
 $chat_lastrow  = optional_param('chat_lastrow', 1, PARAM_INT);

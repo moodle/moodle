@@ -1221,12 +1221,14 @@ class global_navigation extends navigation_node {
                 // Load the course sections into the page
                 $this->load_course_sections($course, $coursenode, null, $cm);
                 $activity = $coursenode->find($cm->id, navigation_node::TYPE_ACTIVITY);
-                // Finally load the cm specific navigaton information
-                $this->load_activity($cm, $course, $activity);
-                // Check if we have an active ndoe
-                if (!$activity->contains_active_node() && !$activity->search_for_active_node()) {
-                    // And make the activity node active.
-                    $activity->make_active();
+                if (!empty($activity)) {
+                    // Finally load the cm specific navigaton information
+                    $this->load_activity($cm, $course, $activity);
+                    // Check if we have an active ndoe
+                    if (!$activity->contains_active_node() && !$activity->search_for_active_node()) {
+                        // And make the activity node active.
+                        $activity->make_active();
+                    }
                 }
                 break;
             case CONTEXT_USER :
@@ -3169,12 +3171,22 @@ class navbar extends navigation_node {
      * @return array
      */
     private function get_course_categories() {
+        global $CFG;
+
+        require_once($CFG->dirroot.'/course/lib.php');
         $categories = array();
+        $cap = 'moodle/category:viewhiddencategories';
         foreach ($this->page->categories as $category) {
+            if (!$category->visible && !has_capability($cap, get_category_or_system_context($category->parent))) {
+                continue;
+            }
             $url = new moodle_url('/course/index.php', array('categoryid' => $category->id));
             $name = format_string($category->name, true, array('context' => context_coursecat::instance($category->id)));
-            $categories[] = navigation_node::create($name, $url, self::TYPE_CATEGORY, null, $category->id);
-            $id = $category->parent;
+            $categorynode = navigation_node::create($name, $url, self::TYPE_CATEGORY, null, $category->id);
+            if (!$category->visible) {
+                $categorynode->hidden = true;
+            }
+            $categories[] = $categorynode;
         }
         if (is_enrolled(context_course::instance($this->page->course->id))) {
             $courses = $this->page->navigation->get('mycourses');

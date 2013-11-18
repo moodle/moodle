@@ -434,8 +434,11 @@ a.skip:active {
 .groupselector {
     margin-top: 3px;
     margin-bottom: 3px;
+    display: inline-block;
 }
-
+.groupselector label {
+    display: inline-block;
+}
 // Login
 .loginbox {
     margin: 15px;
@@ -1153,113 +1156,60 @@ body.tag .managelink {
     top: 50%;
     left: 50%;
 }
+
+.mod-indent-outer {
+    display: table;
+}
+.mod-indent {
+    display: table-cell;
+}
 .mod-indent-1 {
-    margin-left: 30px;
+    width: 30px;
 }
 .mod-indent-2 {
-    margin-left: 60px;
+    width: 60px;
 }
 .mod-indent-3 {
-    margin-left: 90px;
+    width: 90px;
 }
 .mod-indent-4 {
-    margin-left: 120px;
+    width: 120px;
 }
 .mod-indent-5 {
-    margin-left: 150px;
+    width: 150px;
 }
 .mod-indent-6 {
-    margin-left: 180px;
+    width: 180px;
 }
 .mod-indent-7 {
-    margin-left: 210px;
+    width: 210px;
 }
 .mod-indent-8 {
-    margin-left: 240px;
+    width: 240px;
 }
 .mod-indent-9 {
-    margin-left: 270px;
+    width: 270px;
 }
 .mod-indent-10 {
-    margin-left: 300px;
+    width: 300px;
 }
 .mod-indent-11 {
-    margin-left: 330px;
+    width: 330px;
 }
 .mod-indent-12 {
-    margin-left: 360px;
+    width: 360px;
 }
 .mod-indent-13 {
-    margin-left: 390px;
+    width: 390px;
 }
 .mod-indent-14 {
-    margin-left: 420px;
+    width: 420px;
 }
 .mod-indent-15,
 .mod-indent-huge {
-    margin-left: 420px;
+    width: 420px;
 }
-.dir-rtl .mod-indent-1 {
-    margin-right: 30px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-2 {
-    margin-right: 60px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-3 {
-    margin-right: 90px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-4 {
-    margin-right: 120px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-5 {
-    margin-right: 150px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-6 {
-    margin-right: 180px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-7 {
-    margin-right: 210px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-8 {
-    margin-right: 240px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-9 {
-    margin-right: 270px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-10 {
-    margin-right: 300px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-11 {
-    margin-right: 330px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-12 {
-    margin-right: 360px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-13 {
-    margin-right: 390px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-14 {
-    margin-right: 420px;
-    margin-left: 0;
-}
-.dir-rtl .mod-indent-15,
-.dir-rtl .mod-indent-huge {
-    margin-right: 420px;
-    margin-left: 0;
-}
+
 /* Audio player size in 'block' mode (can only change width, height is hardcoded in JS) */
 .resourcecontent .mediaplugin_mp3 object {
     height: 25px;
@@ -1404,8 +1354,11 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
     white-space: nowrap;
     text-align: center;
 }
-.initialbar a {
-    padding-right: 2px;
+.initialbar {
+    a, strong {
+        padding-left: 3px;
+        padding-right: 3px;
+    }
 }
 /* Moodle Dialogue Settings (moodle-core-dialogue)  */
 .moodle-dialogue-base .moodle-dialogue-lightbox {
@@ -1618,6 +1571,10 @@ body#page-lib-editor-tinymce-plugins-moodlemedia-preview {
 
 .moodle-dialogue-base .moodle-dialogue.moodle-dialogue-tooltip {
     z-index: 3001;
+
+    .moodle-dialogue-bd {
+        overflow: auto;
+    }
 }
 
 /* Question Bank - Question Chooser "Close" button */
@@ -2035,6 +1992,7 @@ img#persona_signin {
             display: block;
             margin-left: 4px;
             padding-left: 4px;
+            padding-right: 4px;
 
             .iconsmall {
                 margin: 4px 4px 4px 0px;
@@ -2059,6 +2017,20 @@ img#persona_signin {
         }
         .menu-action-text  {
             display:inline;
+        }
+    }
+
+    &.dir-rtl {
+        .moodle-actionmenu[data-enhance] {
+            .toggle-display.textmenu {
+                margin-left: initial;
+                margin-right: 4px;
+
+                .caret {
+                    margin-left: initial;
+                    margin-right: 2px;
+                }
+            }
         }
     }
 }

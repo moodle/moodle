@@ -2,6 +2,8 @@ This files describes API changes in the quiz code.
 
 
 === 2.6 ===
+* As part of improving the page usability and accessibility, we updated the
+  heading levels for quiz module so it has a proper nesting. (MDL-41615)
 
 * mod_quiz_renderer::view_best_score has been removed. (It did not do what the
   name suggested anyway.)

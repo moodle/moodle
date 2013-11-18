@@ -58,3 +58,36 @@ Feature: Organize students into groups
     And I should see "Student 2"
     And I should see "Student 3"
     And I should not see "Student 0"
+
+  @javascript
+  Scenario: Create groups and groupings without the 'moodle/course:changeidnumber' capability
+    Given the following "courses" exists:
+      | fullname | shortname | category | groupmode |
+      | Course 1 | C1 | 0 | 1 |
+    And the following "users" exists:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | 1 | teacher1@asd.com |
+    And the following "course enrolments" exists:
+      | user | course | role |
+      | teacher1 | C1 | editingteacher |
+    And I log in as "admin"
+    And I set the following system permissions of "Teacher" role:
+      | moodle/course:changeidnumber | Prevent |
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I expand "Users" node
+    And I follow "Groups"
+    When I press "Create group"
+    Then the "idnumber" "field" should be readonly
+    And I fill the moodle form with:
+      | Group name | The greatest group that never existed |
+    And I press "Save changes"
+    And I should see "The greatest group that never existed"
+    And I follow "Groupings"
+    And I press "Create grouping"
+    And the "idnumber" "field" should be readonly
+    And I fill the moodle form with:
+      | Grouping name | Not the greatest grouping, but it's ok! |
+    And I press "Save changes"
+    And I should see "Not the greatest grouping, but it's ok!"

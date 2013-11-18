@@ -95,10 +95,8 @@
         } else {
             $usernamefield = $DB->sql_fullname('u.lastname' , 'u.firstname');
         }
-        $where = "AND " . $DB->sql_substr("upper($usernamefield)", 1, core_text::strlen($hook)) . " = :hookup";
-
-        if ( $hook == 'ALL' ) {
-            $where = '';
+        if ($hook != 'ALL' && ($hookstrlen = core_text::strlen($hook))) {
+            $where = "AND " . $DB->sql_substr("upper($usernamefield)", 1, core_text::strlen($hook)) . " = :hookup";
         }
 
         $sqlselect  = "SELECT ge.*, $usernamefield AS glossarypivot, 1 AS userispivot ";
@@ -116,8 +114,8 @@
         $where = '';
         $params['hookup'] = core_text::strtoupper($hook);
 
-        if ($hook != 'ALL' and $hook != 'SPECIAL') {
-            $where = "AND " . $DB->sql_substr("upper(concept)", 1, core_text::strlen($hook)) . " = :hookup";
+        if ($hook != 'ALL' and $hook != 'SPECIAL' && ($hookstrlen = core_text::strlen($hook))) {
+            $where = "AND " . $DB->sql_substr("upper(concept)", 1, $hookstrlen) . " = :hookup";
         }
 
         $sqlselect  = "SELECT ge.*, ge.concept AS glossarypivot";
@@ -156,11 +154,12 @@
 
             if (empty($fullsearch)) {
                 // With fullsearch disabled, look only within concepts and aliases.
-                $concat = $DB->sql_concat('ge.concept', "' '", "COALESCE(al.alias, '')");
+                $concat = $DB->sql_concat('ge.concept', "' '", "COALESCE(al.alias, :emptychar)");
             } else {
                 // With fullsearch enabled, look also within definitions.
-                $concat = $DB->sql_concat('ge.concept', "' '", 'ge.definition', "' '", "COALESCE(al.alias, '')");
+                $concat = $DB->sql_concat('ge.concept', "' '", 'ge.definition', "' '", "COALESCE(al.alias, :emptychar)");
             }
+            $params['emptychar'] = '';
 
             $searchterms = explode(" ",$hook);
 
@@ -239,9 +238,9 @@
         break;
 
         case 'letter':
-            if ($hook != 'ALL' and $hook != 'SPECIAL') {
+            if ($hook != 'ALL' and $hook != 'SPECIAL' and ($hookstrlen = core_text::strlen($hook))) {
                 $params['hookup'] = core_text::strtoupper($hook);
-                $where = "AND " . $DB->sql_substr("upper(concept)", 1, core_text::strlen($hook)) . " = :hookup";
+                $where = "AND " . $DB->sql_substr("upper(concept)", 1, $hookstrlen) . " = :hookup";
             }
             if ($hook == 'SPECIAL') {
                 //Create appropiate IN contents

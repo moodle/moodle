@@ -24,6 +24,8 @@
  * @author     Chris Scribner
  */
 
+define('NO_DEBUG_DISPLAY', true);
+
 require_once(dirname(__FILE__) . "/../../config.php");
 require_once($CFG->dirroot.'/mod/lti/locallib.php');
 require_once($CFG->dirroot.'/mod/lti/servicelib.php');
@@ -150,9 +152,15 @@ switch ($messagetype) {
         $eventdata = array();
         $eventdata['other'] = array();
         $eventdata['other']['body'] = $rawbody;
+        $eventdata['other']['messageid'] = lti_parse_message_id($xml);
         $eventdata['other']['messagetype'] = $messagetype;
         $eventdata['other']['consumerkey'] = $consumerkey;
         $eventdata['other']['sharedsecret'] = $sharedsecret;
+
+        // Before firing the event, allow subplugins a chance to handle.
+        if (lti_extend_lti_services((object) $eventdata['other'])) {
+            break;
+        }
 
         //If an event handler handles the web service, it should set this global to true
         //So this code knows whether to send an "operation not supported" or not.
