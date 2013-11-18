@@ -919,7 +919,7 @@ abstract class condition_info_base {
         if (!empty($information)) {
             $li = strpos($information, '<li>', 4);
             if ($li === false) {
-                $information = preg_replace('~^<li>(.*)</li>$~', '$1', $information);
+                $information = preg_replace('~^\s*<li>(.*)</li>\s*$~s', '$1', $information);
             } else {
                 $information = html_writer::tag('ul', $information);
             }
@@ -1127,7 +1127,7 @@ abstract class condition_info_base {
         if (!empty($information)) {
             $li = strpos($information, '<li>', 4);
             if ($li === false) {
-                $information = preg_replace('~^<li>(.*)</li>$~', '$1', $information);
+                $information = preg_replace('~^\s*<li>(.*)</li>\s*$~s', '$1', $information);
             } else {
                 $information = html_writer::tag('ul', $information);
             }
