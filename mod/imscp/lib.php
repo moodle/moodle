@@ -104,9 +104,17 @@ function imscp_add_instance($data, $mform) {
     $context = context_module::instance($cmid);
     $imscp = $DB->get_record('imscp', array('id'=>$data->id), '*', MUST_EXIST);
 
-    if ($filename = $mform->get_new_filename('package')) {
-        if ($package = $mform->save_stored_file('package', $context->id, 'mod_imscp', 'backup', 1, '/', $filename)) {
-            // extract package content
+    if (!empty($data->package)) {
+        // Save uploaded files to 'backup' filearea.
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id, 'mod_imscp', 'backup', 1);
+        file_save_draft_area_files($data->package, $context->id, 'mod_imscp', 'backup',
+            1, array('subdirs' => 0, 'maxfiles' => 1));
+        // Get filename of zip that was uploaded.
+        $files = $fs->get_area_files($context->id, 'mod_imscp', 'backup', 1, '', false);
+        if ($files) {
+            // Extract package content to 'content' filearea.
+            $package = reset($files);
             $packer = get_file_packer('application/zip');
             $package->extract_to_storage($packer, $context->id, 'mod_imscp', 'content', 1, '/');
             $structure = imscp_parse_structure($imscp, $context);
@@ -139,7 +147,8 @@ function imscp_update_instance($data, $mform) {
     $context = context_module::instance($cmid);
     $imscp = $DB->get_record('imscp', array('id'=>$data->id), '*', MUST_EXIST);
 
-    if ($filename = $mform->get_new_filename('package')) {
+    if (!empty($data->package) && ($draftareainfo = file_get_draft_area_info($data->package)) &&
+            $draftareainfo['filecount']) {
         $fs = get_file_storage();
 
         $imscp->revision++;
@@ -152,7 +161,10 @@ function imscp_update_instance($data, $mform) {
             $packages = array();
         }
 
-        $package = $mform->save_stored_file('package', $context->id, 'mod_imscp', 'backup', $imscp->revision, '/', $filename);
+        file_save_draft_area_files($data->package, $context->id, 'mod_imscp', 'backup',
+            $imscp->revision, array('subdirs' => 0, 'maxfiles' => 1));
+        $files = $fs->get_area_files($context->id, 'mod_imscp', 'backup', $imscp->revision, '', false);
+        $package = reset($files);
 
         // purge all extracted content
         $fs->delete_area_files($context->id, 'mod_imscp', 'content');
