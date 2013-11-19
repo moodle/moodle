@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace quiz_statistics;
+
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * The statistics calculator returns an instance of this class which contains the calculated statistics.
  *
@@ -26,7 +30,7 @@
  * @author     James Pratt me@jamiep.org
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_statistics_calculated {
+class calculated {
 
     /**
      * @param  string $whichattempts which attempts to use, represented internally as one of the constants as used in
@@ -110,7 +114,7 @@ class quiz_statistics_calculated {
      * @return int|float
      */
     protected function get_field($field) {
-        $fieldname = quiz_statistics_calculator::using_attempts_string_id($this->whichattempts).$field;
+        $fieldname = calculator::using_attempts_string_id($this->whichattempts).$field;
         return $this->{$fieldname};
     }
 
@@ -182,7 +186,7 @@ class quiz_statistics_calculated {
             }
 
             $quizinfo[get_string($property, 'quiz_statistics',
-                                 quiz_statistics_calculator::using_attempts_lang_string($this->whichattempts))] = $formattedvalue;
+                                 calculator::using_attempts_lang_string($this->whichattempts))] = $formattedvalue;
         }
 
         return $quizinfo;
@@ -199,12 +203,12 @@ class quiz_statistics_calculated {
     /**
      * Cache the stats contained in this class.
      *
-     * @param $qubaids qubaid_condition
+     * @param $qubaids \qubaid_condition
      */
     public function cache($qubaids) {
         global $DB;
 
-        $toinsert = new stdClass();
+        $toinsert = new \stdClass();
 
         foreach ($this->fieldsindb as $field) {
             $toinsert->{$field} = $this->{$field};
@@ -229,7 +233,7 @@ class quiz_statistics_calculated {
     /**
      * Given a record from 'quiz_statistics' table load the data into the properties of this class.
      *
-     * @param $record from db.
+     * @param $record \stdClass from db.
      */
     public function populate_from_record($record) {
         foreach ($this->fieldsindb as $field) {

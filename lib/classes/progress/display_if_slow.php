@@ -61,10 +61,10 @@ class display_if_slow extends display {
      * Constructs the progress reporter. This will not output HTML just yet,
      * until the required delay time expires.
      *
-     * @param string $heading Text to display above bar (if it appears); '' for none
+     * @param string $heading Text to display above bar (if it appears); '' for none (default)
      * @param int $delay Delay time (default 5 seconds)
      */
-    public function __construct($heading, $delay = self::DEFAULT_DISPLAY_DELAY) {
+    public function __construct($heading = '', $delay = self::DEFAULT_DISPLAY_DELAY) {
         // Set start time based on delay.
         $this->starttime = time() + $delay;
         $this->heading = $heading;

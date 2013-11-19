@@ -54,12 +54,24 @@ class calculator {
     protected $randomselectors = array();
 
     /**
+     * @var \progress_trace
+     */
+    protected $progress;
+
+    /**
      * Constructor.
      *
      * @param object[] questions to analyze, keyed by slot, also analyses sub questions for random questions.
      *                              we expect some extra fields - slot, maxmark and number on the full question data objects.
+     * @param \core\progress\base|null $progress the element to send progress messages to, default is {@link \core\progress\null}.
      */
-    public function __construct($questions) {
+    public function __construct($questions, $progress = null) {
+
+        if ($progress === null) {
+            $progress = new \core\progress\null();
+        }
+        $this->progress = $progress;
+
         foreach ($questions as $slot => $question) {
             $this->questionstats[$slot] = new calculated();
             $this->questionstats[$slot]->questionid = $question->id;
@@ -76,15 +88,19 @@ class calculator {
      * @return array containing two arrays calculated[] and calculated_for_subquestion[].
      */
     public function calculate($qubaids) {
-        \core_php_time_limit::raise();
+
+        $this->progress->start_progress('', 6);
 
         list($lateststeps, $summarks) = $this->get_latest_steps($qubaids);
 
         if ($lateststeps) {
-
+            $this->progress->start_progress('', count($lateststeps), 1);
             // Compute the statistics of position, and for random questions, work
             // out which questions appear in which positions.
+            $countdone = 1;
             foreach ($lateststeps as $step) {
+                $this->progress->progress($countdone);
+                $countdone++;
                 $this->initial_steps_walker($step, $this->questionstats[$step->slot], $summarks);
 
                 // If this is a random question what is the real item being used?
@@ -110,6 +126,7 @@ class calculator {
                     $this->randomselectors[$randomselectorstring][$step->questionid] = $step->questionid;
                 }
             }
+            $this->progress->end_progress();
 
             foreach ($this->randomselectors as $key => $notused) {
                 ksort($this->randomselectors[$key]);
@@ -117,7 +134,11 @@ class calculator {
 
             // Compute the statistics of question id, if we need any.
             $subquestions = question_load_questions(array_keys($this->subquestionstats));
+            $this->progress->start_progress('', count($subquestions), 1);
+            $countdone = 1;
             foreach ($subquestions as $qid => $subquestion) {
+                $this->progress->progress($countdone);
+                $countdone++;
                 $this->subquestionstats[$qid]->question = $subquestion;
                 $this->subquestionstats[$qid]->question->maxmark = $this->subquestionstats[$qid]->maxmark;
                 $this->subquestionstats[$qid]->randomguessscore = $this->get_random_guess_score($subquestion);
@@ -139,6 +160,7 @@ class calculator {
                     $this->subquestionstats[$qid]->positions = '';
                 }
             }
+            $this->progress->end_progress();
 
             // Finish computing the averages, and put the subquestion data into the
             // corresponding questions.
@@ -147,7 +169,11 @@ class calculator {
             // $question and $nextquestion available, but apart from that it is
             // foreach ($this->questions as $qid => $question).
             reset($this->questionstats);
+            $this->progress->start_progress('', count($this->questionstats), 1);
+            $countdone = 1;
             while (list($slot, $questionstat) = each($this->questionstats)) {
+                $this->progress->progress($countdone);
+                $countdone++;
                 $nextquestionstats = current($this->questionstats);
 
                 $this->initial_question_walker($questionstat);
@@ -166,18 +192,28 @@ class calculator {
                     }
                 }
             }
+            $this->progress->end_progress();
 
             // Go through the records one more time.
+            $this->progress->start_progress('', count($lateststeps), 1);
+            $countdone = 1;
             foreach ($lateststeps as $step) {
+                $this->progress->progress($countdone);
+                $countdone++;
                 $this->secondary_steps_walker($step, $this->questionstats[$step->slot], $summarks);
 
                 if ($this->questionstats[$step->slot]->subquestions) {
                     $this->secondary_steps_walker($step, $this->subquestionstats[$step->questionid], $summarks);
                 }
             }
+            $this->progress->end_progress();
 
+            $this->progress->start_progress('', count($this->questionstats), 1);
             $sumofcovariancewithoverallmark = 0;
+            $countdone = 1;
             foreach ($this->questionstats as $questionstat) {
+                $this->progress->progress($countdone);
+                $countdone++;
                 $this->secondary_question_walker($questionstat);
 
                 $this->sumofmarkvariance += $questionstat->markvariance;
@@ -186,10 +222,16 @@ class calculator {
                     $sumofcovariancewithoverallmark += sqrt($questionstat->covariancewithoverallmark);
                 }
             }
+            $this->progress->end_progress();
 
+            $this->progress->start_progress('', count($this->subquestionstats), 1);
+            $countdone = 1;
             foreach ($this->subquestionstats as $subquestionstat) {
+                $this->progress->progress($countdone);
+                $countdone++;
                 $this->secondary_question_walker($subquestionstat);
             }
+            $this->progress->end_progress();
 
             foreach ($this->questionstats as $questionstat) {
                 if ($sumofcovariancewithoverallmark) {
@@ -204,6 +246,9 @@ class calculator {
                 }
             }
             $this->cache_stats($qubaids);
+
+            // All finished.
+            $this->progress->end_progress();
         }
         return array($this->questionstats, $this->subquestionstats);
     }
