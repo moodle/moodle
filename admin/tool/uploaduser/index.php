@@ -123,12 +123,11 @@ if (empty($iid)) {
         $content = $mform1->get_file_content('userfile');
 
         $readcount = $cir->load_csv_content($content, $formdata->encoding, $formdata->delimiter_name);
+        $csvloaderror = $cir->get_error();
         unset($content);
 
-        if ($readcount === false) {
-            print_error('csvloaderror', '', $returnurl);
-        } else if ($readcount == 0) {
-            print_error('csvemptyfile', 'error', $returnurl);
+        if (!is_null($csvloaderror)) {
+            print_error('csvloaderror', '', $returnurl, $csvloaderror);
         }
         // test if columns ok
         $filecolumns = uu_validate_user_upload_columns($cir, $STD_FIELDS, $PRF_FIELDS, $returnurl);
