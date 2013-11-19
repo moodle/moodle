@@ -30,5 +30,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['clianswerno'] = 'ոչ';
+$string['cliansweryes'] = 'այո';
 $string['environmentrequireinstall'] = 'անհրաժեշտ է, որպեսզի  տեղակայված և թույլատրված լինի';
 $string['environmentrequireversion'] = 'պահանջվում է {$a->needed} տարբերակը, դուք գործարկում եք՝ {$a->current}';
