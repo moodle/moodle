@@ -152,12 +152,19 @@ if (!$course) {
 $questionbank = new quiz_question_bank_view($contexts, $thispageurl, $course, $cm, $quiz);
 $questionbank->set_quiz_has_attempts($quizhasattempts);
 
-// Log this visit.
-add_to_log($cm->course, 'quiz', 'editquestions',
-            "view.php?id=$cm->id", "$quiz->id", $cm->id);
-
 // You need mod/quiz:manage in addition to question capabilities to access this page.
 require_capability('mod/quiz:manage', $contexts->lowest());
+
+// Log this visit.
+$params = array(
+    'courseid' => $course->id,
+    'context' => $contexts->lowest(),
+    'other' => array(
+        'quizid' => $quiz->id
+    )
+);
+$event = \mod_quiz\event\edit_page_viewed::create($params);
+$event->trigger();
 
 // Process commands ============================================================
 
