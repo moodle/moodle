@@ -32,7 +32,6 @@ $string['displaymode'] = 'Display mode for the options';
 $string['displayvertical'] = 'Display vertically';
 $string['event_answer_created'] = 'Choice made';
 $string['event_answer_updated'] = 'Choice updated';
-$string['event_choice_viewed'] = 'Choice viewed';
 $string['event_report_viewed'] = 'Choice report viewed';
 $string['event_instances_list_viewed'] = 'Instances list viewed';
 $string['expired'] = 'Sorry, this activity closed on {$a} and is no longer available';

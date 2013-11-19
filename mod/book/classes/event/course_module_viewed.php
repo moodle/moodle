@@ -32,44 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\content_viewed {
-
-    /**
-     * Returns description of what happened.
-     *
-     * @return string
-     */
-    public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed book activity with instance id ' . $this->objectid;
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'book', 'view', 'view.php?id=' . $this->context->instanceid, $this->objectid,
-            $this->context->instanceid);
-    }
-
-    /**
-     * Return localised event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('event_course_module_viewed', 'mod_book');
-    }
-
-    /**
-     * Get URL related to the action.
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/book/view.php', array('id' => $this->context->instanceid));
-    }
+class course_module_viewed extends \core\event\course_module_viewed {
 
     /**
      * Init method.
@@ -81,17 +44,4 @@ class course_module_viewed extends \core\event\content_viewed {
         $this->data['level'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'book';
     }
-
-    /**
-     * Custom validation.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        // Hack to please the parent class. 'view' was the key used in old add_to_log().
-        $this->data['other']['content'] = 'view';
-        parent::validate_data();
-    }
-
 }

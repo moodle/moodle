@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\content_viewed {
+class course_module_viewed extends \core\event\course_module_viewed {
 
     /**
      * Init method.
@@ -41,33 +41,6 @@ class course_module_viewed extends \core\event\content_viewed {
         $this->data['crud'] = 'r';
         $this->data['level'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'feedback';
-    }
-
-    /**
-     * Returns non-localised description of what happened.
-     *
-     * @return string
-     */
-    public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed feedback activity ' . $this->get_url();
-    }
-
-    /**
-     * Returns localised general event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('eventcoursemoduleviewed', 'mod_feedback');
-    }
-
-    /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/feedback/view.php', array('id' => $this->other['cmid']));
     }
 
     /**
@@ -99,8 +72,7 @@ class course_module_viewed extends \core\event\content_viewed {
         if ($this->other['anonymous'] == FEEDBACK_ANONYMOUS_YES) {
             return null;
         } else {
-            return array($this->courseid, 'feedback', 'view', 'view.php?id=' . $this->other['cmid'], $this->objectid,
-                    $this->other['cmid']);
+            return parent::get_legacy_logdata();
         }
     }
 

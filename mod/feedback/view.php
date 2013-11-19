@@ -103,8 +103,7 @@ $event = \mod_feedback\event\course_module_viewed::create(array(
     'other' => array(
         'cmid' => $cm->id,
         'instanceid' => $feedback->id,
-        'anonymous' => $feedback->anonymous,
-        'content' => 'feedbackmoduleview'
+        'anonymous' => $feedback->anonymous
         )
     ));
 $event->add_record_snapshot('course_modules', $cm);

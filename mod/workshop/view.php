@@ -63,14 +63,12 @@ $eventdata = array();
 $eventdata['objectid']         = $workshop->id;
 $eventdata['context']          = $workshop->context;
 $eventdata['courseid']         = $course->id;
-$eventdata['other']['content'] = $workshop->phase;
 
 $PAGE->set_url($workshop->view_url());
 $event = \mod_workshop\event\course_module_viewed::create($eventdata);
 $event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('workshop', $workshoprecord);
 $event->add_record_snapshot('course_modules', $cm);
-$event->set_page_detail();
 $event->trigger();
 
 // If the phase is to be switched, do it asap. This just has to happen after triggering
