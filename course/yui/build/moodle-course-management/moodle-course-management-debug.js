@@ -252,6 +252,21 @@ Console.prototype = {
         if (!listing) {
             return false;
         }
+
+        // Disable category bulk actions as nothing will be selected on initialise.
+        var menumovecatto = listing.one('#menumovecategoriesto');
+        if (menumovecatto) {
+            menumovecatto.setAttribute('disabled', true);
+        }
+        var menuresortcategoriesby = listing.one('#menuresortcategoriesby');
+        if (menuresortcategoriesby) {
+            menuresortcategoriesby.setAttribute('disabled', true);
+        }
+        var menuresortcoursesby = listing.one('#menuresortcoursesby');
+        if (menuresortcoursesby) {
+            menuresortcoursesby.setAttribute('disabled', true);
+        }
+
         listing.all('.listitem[data-id]').each(function(node){
             this.set('categories', new Category({
                 node : node,
@@ -261,6 +276,8 @@ Console.prototype = {
         }, this);
         if (!this.categoriesinit) {
             this.get('categorylisting').delegate('click', this.handleCategoryDelegation, 'a[data-action]', this);
+            this.get('categorylisting').delegate('click', this.handleCategoryDelegation, 'input[name="bcat[]"]', this);
+            this.get('categorylisting').delegate('click', this.handleBulkSortByaction, '#menuselectsortby', this);
             this.categoriesinit = true;
             Y.log(count+' categories being managed', 'info', 'moodle-course-management');
         } else {
@@ -281,6 +298,13 @@ Console.prototype = {
         if (!listing) {
             return false;
         }
+
+        // Disable course move to bulk action as nothing will be selected on initialise.
+        var menumovecoursesto = listing.one('#menumovecoursesto');
+        if (menumovecoursesto) {
+            menumovecoursesto.setAttribute('disabled', true);
+        }
+
         listing.all('.listitem[data-id]').each(function(node){
             this.registerCourse(new Course({
                 node : node,
@@ -290,6 +314,7 @@ Console.prototype = {
             count++;
         }, this);
         listing.delegate('click', this.handleCourseDelegation, 'a[data-action]', this);
+        listing.delegate('click', this.handleCourseDelegation, 'input[name="bc[]"]', this);
         Y.log(count+' courses being managed', 'info', 'moodle-course-management');
     },
 
@@ -339,6 +364,118 @@ Console.prototype = {
             category.handle(action, e);
         } else {
             Y.log('Could not find category to delegate to.', 'error', 'moodle-course-management');
+        }
+    },
+
+    /**
+     * Check if any course is selected.
+     *
+     * @method isCourseSelected
+     * @param {Node} checkboxnode Checkbox node on which action happened.
+     * @return bool
+     */
+    isCourseSelected : function(checkboxnode) {
+        var selected = false;
+
+        // If any course selected then show move to category select box.
+        if (checkboxnode && checkboxnode.get('checked')) {
+            selected = true;
+        } else {
+            var i,
+                course,
+                courses = this.get('courses'),
+                length = courses.length;
+            for (i = 0; i < length; i++) {
+                if (courses.hasOwnProperty(i)) {
+                    course = courses[i];
+                    if (course.get('node').one('input[name="bc[]"]').get('checked')) {
+                        selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return selected;
+    },
+
+    /**
+     * Check if any category is selected.
+     *
+     * @method isCategorySelected
+     * @param {Node} checkboxnode Checkbox node on which action happened.
+     * @return bool
+     */
+    isCategorySelected : function(checkboxnode) {
+        var selected = false;
+
+        // If any category selected then show move to category select box.
+        if (checkboxnode && checkboxnode.get('checked')) {
+            selected = true;
+        } else {
+            var i,
+                category,
+                categories = this.get('categories'),
+                length = categories.length;
+            for (i = 0; i < length; i++) {
+                if (categories.hasOwnProperty(i)) {
+                    category = categories[i];
+                    if (category.get('node').one('input[name="bcat[]"]').get('checked')) {
+                        selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return selected;
+    },
+
+    /**
+     * Handle bulk sort action.
+     *
+     * @method handleBulkSortByaction
+     * @protected
+     * @param {EventFacade} e
+     */
+    handleBulkSortByaction : function(e) {
+        var sortcategoryby = this.get('categorylisting').one('#menuresortcategoriesby'),
+            sortcourseby = this.get('categorylisting').one('#menuresortcoursesby'),
+            sortbybutton = this.get('categorylisting').one('input[name="bulksort"]');
+            sortby = e;
+
+        if (!sortby) {
+            sortby = this.get('categorylisting').one('#menuselectsortby');
+        } else {
+            if (e && e.currentTarget) {
+                sortby = e.currentTarget;
+            }
+        }
+
+        // If no sortby select found then return as we can't do anything.
+        if (!sortby) {
+            return;
+        }
+
+        if ((this.get('categories').length <= 1) || (!this.isCategorySelected() &&
+                (sortby.get("options").item(sortby.get('selectedIndex')).getAttribute('value') === 'selectedcategories'))) {
+            if (sortcategoryby) {
+                sortcategoryby.setAttribute('disabled', true);
+            }
+            if (sortcourseby) {
+                sortcourseby.setAttribute('disabled', true);
+            }
+            if (sortbybutton) {
+                sortbybutton.setAttribute('disabled', true);
+            }
+        } else {
+            if (sortcategoryby) {
+                sortcategoryby.removeAttribute('disabled');
+            }
+            if (sortcourseby) {
+                sortcourseby.removeAttribute('disabled');
+            }
+            if (sortbybutton) {
+                sortbybutton.removeAttribute('disabled');
+            }
         }
     },
 
@@ -1168,6 +1305,20 @@ Category.prototype = {
                 e.preventDefault();
                 this.collapse();
                 break;
+            case 'select':
+                var c = this.get('console'),
+                    movecategoryto = c.get('categorylisting').one('#menumovecategoriesto');
+                // If any category is selected and there are more then one categories.
+                if (movecategoryto) {
+                    if (c.isCategorySelected(e.currentTarget) &&
+                            c.get('categories').length > 1) {
+                        movecategoryto.removeAttribute('disabled');
+                    } else {
+                        movecategoryto.setAttribute('disabled', true);
+                    }
+                    c.handleBulkSortByaction();
+                }
+                break;
             default:
                 Y.log('Invalid AJAX action requested of managed category.', 'warn', 'moodle-course-management');
                 return false;
@@ -1568,6 +1719,17 @@ Course.prototype = {
             case 'hide':
                 e.halt();
                 managementconsole.performAjaxAction('hidecourse', args, this.hide, this);
+                break;
+            case 'select':
+                var c = this.get('console'),
+                    movetonode = c.get('courselisting').one('#menumovecoursesto');
+                if (movetonode) {
+                    if (c.isCourseSelected(e.currentTarget)) {
+                        movetonode.removeAttribute('disabled');
+                    } else {
+                        movetonode.setAttribute('disabled', true);
+                    }
+                }
                 break;
             default:
                 Y.log('Invalid AJAX action requested of managed course.', 'warn', 'moodle-course-management');
