@@ -108,10 +108,12 @@ function xmldb_scorm_upgrade($oldversion) {
                 WHERE c.id IS null OR s.id <> c.scorm";
         $scorms = $DB->get_recordset_sql($sql);
         foreach ($scorms as $scorm) {
-            // Find the first launchable sco for this SCORM.
-            $sqlselect = 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true). ' ORDER BY id LIMIT 1';
-            $sco = $DB->get_record_select('scorm_scoes', $sqlselect, array($scorm->id));
-            if (!empty($sco)) {
+            // This scorm has an invalid launch param - we need to calculate it and get the first launchable sco.
+            $sqlselect = 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true);
+            // We use get_records here as we need to pass a limit in the query that works cross db.
+            $scoes = $DB->get_records_select('scorm_scoes', $sqlselect, array($scorm->id), 'id', 'id', 0, 1);
+            if (!empty($scoes)) {
+                $sco = reset($scoes); // We only care about the first record - the above query only returns one.
                 $scorm->launch = $sco->id;
                 $DB->update_record('scorm', $scorm);
             }
