@@ -126,10 +126,10 @@ function scorm_add_instance($scorm, $mform=null) {
 
     // Store the package and verify.
     if ($record->scormtype === SCORM_TYPE_LOCAL) {
-        if ($mform && $data = $mform->get_data()) {
+        if (!empty($scorm->packagefile)) {
             $fs = get_file_storage();
             $fs->delete_area_files($context->id, 'mod_scorm', 'package');
-            file_save_draft_area_files($data->packagefile, $context->id, 'mod_scorm', 'package',
+            file_save_draft_area_files($scorm->packagefile, $context->id, 'mod_scorm', 'package',
                 0, array('subdirs' => 0, 'maxfiles' => 1));
             // Get filename of zip that was uploaded.
             $files = $fs->get_area_files($context->id, 'mod_scorm', 'package', 0, '', false);
@@ -202,10 +202,10 @@ function scorm_update_instance($scorm, $mform=null) {
     $context = context_module::instance($cmid);
 
     if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
-        if ($mform && $data = $mform->get_data()) {
+        if (!empty($scorm->packagefile)) {
             $fs = get_file_storage();
             $fs->delete_area_files($context->id, 'mod_scorm', 'package');
-            file_save_draft_area_files($data->packagefile, $context->id, 'mod_scorm', 'package',
+            file_save_draft_area_files($scorm->packagefile, $context->id, 'mod_scorm', 'package',
                 0, array('subdirs' => 0, 'maxfiles' => 1));
             // Get filename of zip that was uploaded.
             $files = $fs->get_area_files($context->id, 'mod_scorm', 'package', 0, '', false);
