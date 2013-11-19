@@ -228,3 +228,25 @@ class noname_event extends \core\event\base {
 class content_viewed extends \core\event\content_viewed {
 }
 
+
+/**
+ * Class course_module_viewed.
+ *
+ * Wrapper for testing \core\event\course_module_viewed.
+ */
+class course_module_viewed extends \core\event\course_module_viewed {
+    protected function init() {
+        $this->data['crud'] = 'r';
+        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['objecttable'] = 'feedback';
+    }
+}
+
+/**
+ * Class course_module_viewed_noinit.
+ *
+ * Wrapper for testing \core\event\course_module_viewed.
+ */
+class course_module_viewed_noinit extends \core\event\course_module_viewed {
+}
+
