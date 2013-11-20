@@ -404,6 +404,15 @@ class question_category_object {
         $cat->sortorder = 999;
         $cat->stamp = make_unique_id_code();
         $categoryid = $DB->insert_record("question_categories", $cat);
+
+        // Log the creation of this category.
+        $params = array(
+            'objectid' => $categoryid,
+            'contextid' => $contextid
+        );
+        $event = \core\event\question_category_created::create($params);
+        $event->trigger();
+
         if ($return) {
             return $categoryid;
         } else {
