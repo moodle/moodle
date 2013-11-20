@@ -259,4 +259,25 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the attempt deleted event.
+     */
+    public function test_attempt_deleted() {
+        list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        quiz_delete_attempt($attempt, $quizobj->get_quiz());
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\attempt_deleted', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $expected = array($quizobj->get_courseid(), 'quiz', 'delete attempt', 'report.php?id=' . $quizobj->get_cmid(),
+            $attempt->id, $quizobj->get_cmid());
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }
