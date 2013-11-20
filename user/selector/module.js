@@ -259,7 +259,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
 
             if (count > 0) {
                 optgroup.set('label', groupname+' ('+count+')');
-                if (processsingle && count===1 && this.get_option('autoselectunique') && option.get('disabled')) {
+                if (processsingle && count===1 && this.get_option('autoselectunique') && option.get('disabled') == false) {
                     option.set('selected', true);
                 }
             } else {
