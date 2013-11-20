@@ -1,0 +1,7 @@
+{
+    "moodle-filter_mathjaxloader-loader": {
+        "requires": [
+            "mathjax"
+        ]
+    }
+}
