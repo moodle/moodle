@@ -292,6 +292,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         global $CFG;
 
         $event = calendar_add_event_metadata($event);
+        $context = $event->context;
 
         $anchor  = html_writer::tag('a', '', array('name'=>'event_'.$event->id));
 
@@ -314,7 +315,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         if (!empty($event->referer)) {
             $table->data[0]->cells[1]->text .= html_writer::tag('div', $event->referer, array('class'=>'referer'));
         } else {
-            $table->data[0]->cells[1]->text .= html_writer::tag('div', $event->name, array('class'=>'name'));
+            $table->data[0]->cells[1]->text .= html_writer::tag('div', format_string($event->name, false, array('context' => $context)), array('class'=>'name'));
         }
         if (!empty($event->courselink)) {
             $table->data[0]->cells[1]->text .= html_writer::tag('div', $event->courselink, array('class'=>'course'));
@@ -338,7 +339,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $table->data[1]->cells[0] = new html_table_cell('&nbsp;');
         $table->data[1]->cells[0]->attributes['class'] .= 'side';
 
-        $table->data[1]->cells[1] = new html_table_cell($event->description);
+        $table->data[1]->cells[1] = new html_table_cell(format_text($event->description, $event->format, array('context' => $context)));
         $table->data[1]->cells[1]->attributes['class'] .= ' description';
         if (isset($event->cssclass)) {
             $table->data[1]->cells[1]->attributes['class'] .= ' '.$event->cssclass;
