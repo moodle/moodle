@@ -375,6 +375,28 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame(0, $curl->get_errno());
         $this->assertSame(1, $curl->info['redirect_count']);
         $this->assertSame('done', $contents);
+
+        $oldproxy = $CFG->proxyhost;
+        $oldproxybypass = $CFG->proxybypass;
+
+        // Test without proxy bypass and inaccessible proxy.
+        $CFG->proxyhost = 'i.do.not.exist';
+        $CFG->proxybypass = '';
+        $curl = new curl();
+        $contents = $curl->get($testhtml);
+        $this->assertNotEquals(0, $curl->get_errno());
+        $this->assertNotEquals('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+
+        // Test with proxy bypass.
+        $testhtmlhost = parse_url($testhtml, PHP_URL_HOST);
+        $CFG->proxybypass = $testhtmlhost;
+        $curl = new curl();
+        $contents = $curl->get($testhtml);
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
+
+        $CFG->proxyhost = $oldproxy;
+        $CFG->proxybypass = $oldproxybypass;
     }
 
     /**
