@@ -1566,12 +1566,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Catch the update event.
         $sink = $this->redirectEvents();
 
-        // Call remove_course_contents() which will trigger the course_content_deleted event.
-        // This function prints out data to the screen, which we do not want during a PHPUnit
-        // test, so use ob_start and ob_end_clean to prevent this.
-        ob_start();
-        remove_course_contents($course->id);
-        ob_end_clean();
+        remove_course_contents($course->id, false);
 
         // Capture the event.
         $events = $sink->get_events();

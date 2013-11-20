@@ -2613,6 +2613,24 @@ class core_moodlelib_testcase extends advanced_testcase {
     }
 
     /**
+     * Test remove_course_content deletes course contents
+     * TODO Add asserts to verify other data related to course is deleted as well.
+     */
+    public function test_remove_course_contents() {
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $user = $this->getDataGenerator()->create_user();
+        $gen = $this->getDataGenerator()->get_plugin_generator('core_notes');
+        $note = $gen->create_instance(array('courseid' => $course->id, 'userid' => $user->id));
+
+        $this->assertNotEquals(false, note_load($note->id));
+        remove_course_contents($course->id, false);
+        $this->assertFalse(note_load($note->id));
+    }
+
+    /**
      * Test function username_load_fields_from_object().
      */
     public function test_username_load_fields_from_object() {
