@@ -307,6 +307,7 @@ $string['essay'] = 'Essay';
 $string['essayquestions'] = 'Questions';
 $string['eventattemptdeleted'] = 'Quiz attempt deleted';
 $string['eventattemptreviewed'] = 'Quiz attempt reviewed';
+$string['eventattemptsummaryviewed'] = 'Quiz attempt summary viewed';
 $string['eventeditpageviewed'] = 'Quiz edit page viewed';
 $string['eventquizattemptabandoned'] = 'Quiz attempt abandoned';
 $string['eventquizattempttimelimitexceeded'] = 'Quiz attempt time limit exceeded';
