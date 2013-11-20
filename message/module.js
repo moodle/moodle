@@ -54,6 +54,12 @@ M.core_message.init_defaultoutputs = function(Y) {
                 // set initial layout
                 node.simulate("change");
             }, this);
+
+            Y.all('#defaultmessageoutputs input.messagedisable').each(function(node) {
+                // Attach event listener
+                node.on('change', defaultoutputs.changeProviderState);
+                node.simulate("change");
+            }, this);
         },
 
         changeState : function(e) {
@@ -83,6 +89,26 @@ M.core_message.init_defaultoutputs = function(Y) {
                     node.setAttribute('checked', 1)
                 }
             }, this);
+        },
+
+        changeProviderState : function(e) {
+            var isenabled = e.target.get('checked') || undefined;
+            var parentnode = e.target.ancestor('tr');
+            if (!isenabled) {
+                parentnode.all('select').each(function(node) {
+                    node.set('value', 'disallowed');
+                    node.setAttribute('disabled', 1);
+                    defaultoutputs.updateCheckboxes(node.ancestor('td'), 1, 0);
+                }, this);
+                parentnode.addClass('dimmed_text');
+            } else {
+                parentnode.all('select').each(function(node) {
+                    node.removeAttribute('disabled');
+                    node.set('value', 'permitted');
+                    defaultoutputs.updateCheckboxes(node.ancestor('td'), 0, 0);
+                }, this);
+                parentnode.removeClass('dimmed_text');
+            }
         }
     }
 
