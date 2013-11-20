@@ -60,6 +60,23 @@ if (has_capability('moodle/user:loginas', $systemcontext)) {
         print_error('usernotincourse');
     }
     $context = $coursecontext;
+
+    // Check if course has SEPARATEGROUPS and user is part of that group.
+    if (groups_get_course_groupmode($course) == SEPARATEGROUPS &&
+            !has_capability('moodle/site:accessallgroups', $context)) {
+        $samegroup = false;
+        if ($groups = groups_get_all_groups($course->id, $USER->id)) {
+            foreach ($groups as $group) {
+                if (groups_is_member($group->id, $userid)) {
+                    $samegroup = true;
+                    break;
+                }
+            }
+        }
+        if (!$samegroup) {
+            print_error('nologinas');
+        }
+    }
 }
 
 /// Login as this user and return to course home page.
