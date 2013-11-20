@@ -350,3 +350,6 @@
 #core-cache-store-summaries .store-requires-attention {background-color:#ffd3d9;}
 
 .tinymcesubplugins img.icon { padding-top: 0; padding-bottom: 0; }
+.maintenancewarning {padding:3px 1em;text-align:center;position:fixed;bottom:0;right:0;overflow:hidden;z-index:1;}
+.maintenancewarning.error {background-color:#F2DEDE;border:2px solid #EED3D7;font-weight:bold;}
+.maintenancewarning.warning {background-color:#ffd3d9;border:2px solid #EED3D7;}

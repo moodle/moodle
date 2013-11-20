@@ -769,3 +769,24 @@ img.iconsmall {
     .alert;
     .alert-danger;
 }
+
+.maintenancewarning {
+    padding: 3px 1em;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+    z-index: 1;
+    &.error {
+        color: @errorText;
+        background-color: @errorBackground;
+        border: 2px solid @errorBorder;
+        font-weight: bold;
+    }
+    &.warning {
+        color: @warningText;
+        background-color: @warningBackground;
+        border: 2px solid @warningBorder;
+    }
+}
