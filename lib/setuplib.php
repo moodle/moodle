@@ -770,7 +770,10 @@ function initialise_fullme() {
         // Do not abuse this to try to solve lan/wan access problems!!!!!
 
     } else {
-        if (($rurl['host'] !== $wwwroot['host']) or (!empty($wwwroot['port']) and $rurl['port'] != $wwwroot['port'])) {
+        if (($rurl['host'] !== $wwwroot['host']) or
+                (!empty($wwwroot['port']) and $rurl['port'] != $wwwroot['port']) or
+                (strpos($rurl['path'], $wwwroot['path']) !== 0)) {
+
             // Explain the problem and redirect them to the right URL
             if (!defined('NO_MOODLE_COOKIES')) {
                 define('NO_MOODLE_COOKIES', true);
