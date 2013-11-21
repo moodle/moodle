@@ -92,6 +92,14 @@ ini_set('log_errors', '1');
 // Getting $CFG data.
 require_once(__DIR__ . '/../../../../config.php');
 
+// When we use the utilities we don't know how the site
+// will be accessed, so if neither $CFG->behat_switchcompletely or
+// $CFG->behat_wwwroot are set we must think that the site will
+// be accessed using the built-in server which is set by default
+// to localhost:8000. We need to do this to prevent uses of the production
+// wwwroot when the site is being installed / dropped...
+$CFG->behat_wwwroot = behat_get_wwwroot();
+
 // Checking the integrity of the provided $CFG->behat_* vars
 // to prevent conflicts with production and phpunit environments.
 behat_check_config_vars();
@@ -123,14 +131,6 @@ if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
     // Now we create dataroot directory structure for behat tests.
     testing_initdataroot($CFG->behat_dataroot, 'behat');
 }
-
-// When we use the utilities we don't know how the site
-// will be accessed, so if neither $CFG->behat_switchcompletely or
-// $CFG->behat_wwwroot are set we must think that the site will
-// be accessed using the built-in server which is set by default
-// to localhost:8000. We need to do this to prevent uses of the production
-// wwwroot when the site is being installed / dropped...
-$CFG->behat_wwwroot = behat_get_wwwroot();
 
 // Overrides vars with behat-test ones.
 $vars = array('wwwroot', 'prefix', 'dataroot');
