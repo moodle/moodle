@@ -1,0 +1,108 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+/**
+ * Event for when a new blog entry is associated with a context.
+ *
+ * @package    core
+ * @copyright  2013 onwards Ankit Agarwal
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+namespace core\event;
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * blog_association_created
+ *
+ * Class for event to be triggered when a new blog entry is associated with a context.
+ *
+ * @package    core
+ * @copyright  2013 onwards Ankit Agarwal
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class blog_association_created extends \core\event\base {
+
+    /**
+     * Set basic properties for the event.
+     */
+    protected function init() {
+        $this->context = \context_system::instance();
+        $this->data['objecttable'] = 'blog_association';
+        $this->data['crud'] = 'c';
+        $this->data['level'] = self::LEVEL_PARTICIPATING;
+    }
+
+    /**
+     * Returns localised general event name.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('eventblogassociationadded', 'core_blog');
+    }
+
+    /**
+     * Returns non-localised event description with id's for admin use only.
+     *
+     * @return string
+     */
+    public function get_description() {
+        return "Blog association added between entry id $this->other['blogid'] and $this->other['associatetype'] with id
+                $this->other['associateid']";
+    }
+
+    /**
+     * Returns relevant URL.
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return new \moodle_url('/blog/index.php', array('entryid' => $this->objectid, 'userid' => $this->userid));
+    }
+
+    /**
+     * replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        if ($this->other['associatetype'] === 'course') {
+            return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
+                    $this->other['blogid'], $this->other['subject'], 0, $this->relateduserid);
+        } else {
+            return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
+                    $this->other['blogid'], $this->other['subject'], $this->other['associateid'], $this->relateduserid);
+        }
+    }
+
+    /**
+     * Custom validations.
+     *
+     * @throws \coding_exception when validation fails.
+     * @return void
+     */
+    protected function validate_data() {
+        if (empty($this->other['associatetype']) || ($this->other['associatetype'] !== 'course'
+                && $this->other['associatetype'] !== 'coursemodule')) {
+            throw new \coding_exception('Invalid associatetype in event blog_association_created.');
+        } else if (!isset($this->other['blogid'])) {
+            throw new \coding_exception('Blog id must be set in event blog_association_created.');
+        } else if (!isset($this->other['associateid'])) {
+            throw new \coding_exception('Associate id must be set in event blog_association_created.');
+        } else if (!isset($this->other['subject'])) {
+            throw new \coding_exception('Subject must be set in event blog_association_created.');
+        }
+    }
+}
