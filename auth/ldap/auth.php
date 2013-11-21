@@ -1603,7 +1603,11 @@ class auth_plugin_ldap extends auth_plugin_base {
      */
     function change_password_url() {
         if (empty($this->config->stdchangepassword)) {
-            return new moodle_url($this->config->changepasswordurl);
+            if (!empty($this->config->changepasswordurl)) {
+                return new moodle_url($this->config->changepasswordurl);
+            } else {
+                return null;
+            }
         } else {
             return null;
         }

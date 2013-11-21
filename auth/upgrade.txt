@@ -1,6 +1,10 @@
 This files describes API changes in /auth/* - plugins,
 information provided here is intended especially for developers.
 
+=== 2.7 ===
+
+* If you are returning a url in method change_password_url() from config, please make sure it is set before trying to use it.
+
 === 2.6 ===
 
 * can_be_manually_set() - This function was introduced in the base class and returns false by default. If overriden by
