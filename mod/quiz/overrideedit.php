@@ -155,8 +155,7 @@ if ($mform->is_cancelled()) {
                     $fromform->{$key} = $oldoverride->{$key};
                 }
             }
-            // Delete the old override.
-            $DB->delete_records('quiz_overrides', array('id' => $oldoverride->id));
+            quiz_delete_override($quiz, $oldoverride->id);
         }
     }
 

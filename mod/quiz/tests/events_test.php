@@ -467,4 +467,68 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the user override deleted event.
+     */
+    public function test_user_override_deleted() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+
+        // Create an override.
+        $override = new stdClass();
+        $override->quiz = $quiz->id;
+        $override->userid = 2;
+        $override->id = $DB->insert_record('quiz_overrides', $override);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        quiz_delete_override($quiz, $override->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\user_override_deleted', $event);
+        $this->assertEquals(context_module::instance($quiz->cmid), $event->get_context());
+        $expected = array($course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the group override deleted event.
+     */
+    public function test_group_override_deleted() {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+
+        // Create an override.
+        $override = new stdClass();
+        $override->quiz = $quiz->id;
+        $override->groupid = 2;
+        $override->id = $DB->insert_record('quiz_overrides', $override);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        quiz_delete_override($quiz, $override->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\group_override_deleted', $event);
+        $this->assertEquals(context_module::instance($quiz->cmid), $event->get_context());
+        $expected = array($course->id, 'quiz', 'delete override', 'overrides.php?cmid=' . $quiz->cmid, $quiz->id, $quiz->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }

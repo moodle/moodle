@@ -203,6 +203,28 @@ function quiz_delete_override($quiz, $overrideid) {
     }
 
     $DB->delete_records('quiz_overrides', array('id' => $overrideid));
+
+    // Set the common parameters for one of the events we will be triggering.
+    $params = array(
+        'objectid' => $override->id,
+        'context' => context_module::instance($quiz->cmid),
+        'other' => array(
+            'quizid' => $override->quiz
+        )
+    );
+    // Determine which override deleted event to fire.
+    if (!empty($override->userid)) {
+        $params['relateduserid'] = $override->userid;
+        $event = \mod_quiz\event\user_override_deleted::create($params);
+    } else {
+        $params['other']['groupid'] = $override->groupid;
+        $event = \mod_quiz\event\group_override_deleted::create($params);
+    }
+
+    // Trigger the override deleted event.
+    $event->add_record_snapshot('quiz_overrides', $override);
+    $event->trigger();
+
     return true;
 }
 
