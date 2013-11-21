@@ -393,4 +393,78 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the user override updated event.
+     *
+     * There is no external API for updating a user override, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_user_override_updated() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+
+        $params = array(
+            'objectid' => 1,
+            'relateduserid' => 2,
+            'context' => context_module::instance($quiz->cmid),
+            'other' => array(
+                'quizid' => $quiz->id
+            )
+        );
+        $event = \mod_quiz\event\user_override_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\user_override_updated', $event);
+        $this->assertEquals(context_module::instance($quiz->cmid), $event->get_context());
+        $expected = array($course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test the group override updated event.
+     *
+     * There is no external API for updating a group override, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_group_override_updated() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
+
+        $params = array(
+            'objectid' => 1,
+            'context' => context_module::instance($quiz->cmid),
+            'other' => array(
+                'quizid' => $quiz->id,
+                'groupid' => 2
+            )
+        );
+        $event = \mod_quiz\event\group_override_updated::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\group_override_updated', $event);
+        $this->assertEquals(context_module::instance($quiz->cmid), $event->get_context());
+        $expected = array($course->id, 'quiz', 'edit override', 'overrideedit.php?id=1', $quiz->id, $quiz->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }
