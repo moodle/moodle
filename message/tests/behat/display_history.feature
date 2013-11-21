@@ -26,7 +26,7 @@ Feature: Message history displays correctly
     And I click on "Messages" "link" in the "Navigation" "block"
     And I fill in "Search people and messages" with "User Two"
     And I press "Search people and messages"
-    And I click on "Message history" "link" in the "User Two" table row
+    And I click on "Message history" "link" in the "User Two" "table_row"
     # The message history link shows all messages.
     Then I should see "Message 1 from user1 to user2"
     And I should see "Message 10 from user1 to user2"

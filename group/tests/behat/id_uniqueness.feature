@@ -60,7 +60,7 @@ Feature: Uniqueness of Group ID number
     And I fill the moodle form with:
       | Grouping ID number | GG2 |
     And I press "Save changes"
-    And I click on "Edit" "link" in the "Grouping 1" table row
+    And I click on "Edit" "link" in the "Grouping 1" "table_row"
     And I fill the moodle form with:
       | Grouping ID number | GG2 |
     And I press "Save changes"

@@ -27,6 +27,8 @@
 
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
+use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+
 /**
  * Deprecated behat step definitions.
  *
@@ -36,6 +38,37 @@ require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_deprecated extends behat_base {
+
+    /**
+     * Click on the specified element inside a table row containing the specified text.
+     *
+     * @deprecated since Moodle 2.7 MDL-42627
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_general::i_click_on_in_the()
+     *
+     * @Given /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>(?:[^"]|\\")*)" in the "(?P<row_text_string>(?:[^"]|\\")*)" table row$/
+     * @throws ElementNotFoundException
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @param string $tablerowtext The table row text
+     */
+    public function i_click_on_in_the_table_row($element, $selectortype, $tablerowtext) {
+
+        // Throw an exception if deprecated methods are not allowed otherwise allow it's execution.
+        $alternative = 'I click on "' . $this->escape($element) . '" "' . $this->escape($selectortype) .
+            '" in the "' . $this->escape($tablerowtext) . '" "table_row"';
+        $this->deprecated_message($alternative);
+
+        // The table row container.
+        $nocontainerexception = new ElementNotFoundException($this->getSession(), '"' . $tablerowtext . '" row text ');
+        $tablerowtext = $this->getSession()->getSelectorsHandler()->xpathLiteral($tablerowtext);
+        $rownode = $this->find('xpath', "//tr[contains(., $tablerowtext)]", $nocontainerexception);
+
+        // Looking for the element DOM node inside the specified row.
+        list($selector, $locator) = $this->transform_selector($selectortype, $element);
+        $elementnode = $this->find($selector, $locator, false, $rownode);
+        $elementnode->click();
+    }
 
     /**
      * Throws an exception if $CFG->behat_usedeprecated is not allowed.
