@@ -1291,13 +1291,13 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2012103003.00) {
-        // Fix uuid field in event table to match RFC-2445 UID property
+        // Fix uuid field in event table to match RFC-2445 UID property.
         $table = new xmldb_table('event');
         $field = new xmldb_field('uuid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, 'visible');
-        if ($dbman->field_exists($table, $field)) {
-            // Changing precision of field uuid on table event to (255)
-            $dbman->change_field_precision($table, $field);
-        }
+        // The column already exists, so make sure there are no nulls (crazy mysql).
+        $DB->set_field_select('event', 'uuid', '', "uuid IS NULL");
+        // Changing precision of field uuid on table event to (255).
+        $dbman->change_field_precision($table, $field);
         // Main savepoint reached
         upgrade_main_savepoint(true, 2012103003.00);
     }
