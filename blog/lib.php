@@ -880,8 +880,12 @@ function blog_get_headers($courseid=null, $groupid=null, $userid=null, $tagid=nu
             $tagrec = $DB->get_record('tag', array('id'=>$tagid));
             $PAGE->navbar->add($tagrec->name, $blogurl);
         } elseif (!empty($tag)) {
-            $blogurl->param('tag', $tag);
-            $PAGE->navbar->add(get_string('tagparam', 'blog', $tag), $blogurl);
+            if ($tagrec = $DB->get_record('tag', array('name' => $tag))) {
+                $tagid = $tagrec->id;
+                $headers['filters']['tag'] = $tagid;
+                $blogurl->param('tag', $tag);
+                $PAGE->navbar->add(get_string('tagparam', 'blog', $tag), $blogurl);
+            }
         }
 
         // Append Search info
