@@ -96,36 +96,57 @@ if (!isset($CFG->wwwroot) or $CFG->wwwroot === 'http://example.com/moodle') {
 // * Behat is running (constant set hooking the behat init process before requiring config.php).
 // * If $CFG->behat_wwwroot has been set and the hostname/port match what the page was requested with.
 // Test environment is enabled if:
-// * User has previously enabled through admin/tool/behat/cli/util.php --enable.
+// * User has previously enabled through admin/tool/behat/cli/util.php --enable or admin/tool/behat/cli/init.php
 // Both are required to switch to test mode
 if (!defined('BEHAT_SITE_RUNNING') && !empty($CFG->behat_dataroot) &&
         !empty($CFG->behat_prefix) && file_exists($CFG->behat_dataroot)) {
 
-    $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
+    // Only included if behat_* are set, it is not likely to be a production site.
+    require_once(__DIR__ . '/../lib/behat/lib.php');
+
+    $defaultbehatwwwroot = behat_get_wwwroot();
 
     if (!empty($CFG->behat_switchcompletely) && php_sapi_name() !== 'cli') {
-        $behatswitchcompletely = true;
-        $CFG->behat_wwwroot = $CFG->wwwroot;
+        // Switch completely uses the production wwwroot as the test site URL.
+        $behatwwwroot = $defaultbehatwwwroot;
 
     } elseif (php_sapi_name() === 'cli-server') {
-        $behatbuiltinserver = true;
-        $CFG->behat_wwwroot = 'http://localhost:'.$_SERVER['SERVER_PORT'];
+        // If we are using the built-in server we use the provided $CFG->behat_wwwroot
+        // value or the default one if $CFG->behat_wwwroot is not set, only if it matches
+        // the requested URL.
+        if (behat_is_requested_url($defaultbehatwwwroot)) {
+            $behatwwwroot = $defaultbehatwwwroot;
+        }
 
     } elseif (defined('BEHAT_TEST')) {
-        $behatrunning = true;
+        // This is when moodle codebase runs through vendor/bin/behat, we "are not supposed"
+        // to need a wwwroot, but before using the production one we should set something else
+        // as an alternative.
+        $behatwwwroot = $defaultbehatwwwroot;
 
     } elseif (!empty($CFG->behat_wwwroot) && !empty($_SERVER['HTTP_HOST'])) {
-        $behaturl = parse_url($CFG->behat_wwwroot.'/');
-        $behaturl['port'] = isset($behaturl['port']) ? $behaturl['port'] : 80;
-        $behataltwww = ($behaturl['host'] == $_SERVER['HTTP_HOST']) && ($behaturl['port'] == $_SERVER['SERVER_PORT']);
+        // If $CFG->behat_wwwroot was set and matches the requested URL we
+        // use $CFG->behat_wwwroot as our wwwroot.
+        if (behat_is_requested_url($CFG->behat_wwwroot)) {
+            $behatwwwroot = $CFG->behat_wwwroot;
+        }
     }
 
-    $testenvironmentrequested = !empty($behatswitchcompletely) || !empty($behatbuiltinserver) || !empty($behatrunning) || !empty($behataltwww);
+    // If we found a proper behatwwwroot then we consider the behat test as requested.
+    $testenvironmentrequested = !empty($behatwwwroot);
 
     // Only switch to test environment if it has been enabled.
+    $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
     $testenvironmentenabled = file_exists($CFG->behat_dataroot . '/behat/test_environment_enabled.txt');
 
     if ($testenvironmentenabled && $testenvironmentrequested) {
+
+        // Now we know which one will be our behat wwwroot.
+        $CFG->behat_wwwroot = $behatwwwroot;
+
+        // Checking the integrity of the provided $CFG->behat_* vars and the
+        // selected wwwroot to prevent conflicts with production and phpunit environments.
+        behat_check_config_vars();
 
         // Constant used to inform that the behat test site is being used,
         // this includes all the processes executed by the behat CLI command like
@@ -137,9 +158,9 @@ if (!defined('BEHAT_SITE_RUNNING') && !empty($CFG->behat_dataroot) &&
         define('BEHAT_SITE_RUNNING', true);
 
         // Clean extra config.php settings.
-        require_once(__DIR__ . '/../lib/behat/lib.php');
         behat_clean_init_config();
 
+        // Now we can begin switching $CFG->X for $CFG->behat_X.
         $CFG->wwwroot = $CFG->behat_wwwroot;
         $CFG->passwordsaltmain = 'moodle';
         $CFG->prefix = $CFG->behat_prefix;
