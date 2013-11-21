@@ -59,6 +59,8 @@ information provided here is intended especially for developers.
 * The library to interact with Box.net (class boxclient) is only compatible with their APIv1 which
   reaches its end of life on the 14th of Dec. You should migrate your scripts to make usage of the
   new class boxnet_client(). Note that the method names and return values have changed.
+* Settings pages are now possible for Calendar type plugins. Calendar type plugins that require a settings page to
+  work properly will need to set their requires version to a number that is equal to or grater than the 2.6.1 release version.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices
