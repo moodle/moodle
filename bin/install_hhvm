@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+
+HHVM_APT_SOURCE="/etc/apt/sources.list.d/hhvm.list"
+
+echo "deb http://dl.hhvm.com/ubuntu precise main" > $HHVM_APT_SOURCE
+echo "deb http://archive.ubuntu.com/ubuntu precise main universe" >> $HHVM_APT_SOURCE
+
+apt-get update
+apt-get install hhvm --force-yes -y
