@@ -291,8 +291,18 @@ function quiz_attempt_save_started($quizobj, $quba, $attempt) {
     $attempt->id = $DB->insert_record('quiz_attempts', $attempt);
     // Log the new attempt.
     if ($attempt->preview) {
-        add_to_log($quizobj->get_courseid(), 'quiz', 'preview', 'view.php?id='.$quizobj->get_cmid(),
-                   $quizobj->get_quizid(), $quizobj->get_cmid());
+        $params = array(
+            'objectid' => $attempt->id,
+            'relateduserid' => $attempt->userid,
+            'courseid' => $quizobj->get_courseid(),
+            'context' => $quizobj->get_context(),
+            'other' => array(
+                'quizid' => $quizobj->get_quizid()
+            )
+        );
+        $event = \mod_quiz\event\attempt_preview_started::create($params);
+        $event->add_record_snapshot('quiz', $quizobj->get_quiz());
+        $event->trigger();
     } else {
         add_to_log($quizobj->get_courseid(), 'quiz', 'attempt', 'review.php?attempt='.$attempt->id,
                    $quizobj->get_quizid(), $quizobj->get_cmid());

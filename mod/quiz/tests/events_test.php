@@ -569,4 +569,29 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the attempt previewed event.
+     */
+    public function test_attempt_preview_started() {
+        list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
+
+        // We want to preview this attempt.
+        $attempt = quiz_create_attempt($quizobj, 1, false, time(), false, 2);
+        $attempt->preview = 1;
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\attempt_preview_started', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $expected = array($quizobj->get_courseid(), 'quiz', 'preview', 'view.php?id=' . $quizobj->get_cmid(),
+            $quizobj->get_quizid(), $quizobj->get_cmid());
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }
