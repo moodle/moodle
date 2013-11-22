@@ -2274,8 +2274,6 @@ class core_accesslib_testcase extends advanced_testcase {
             $userids = array_slice($userids, 0, 5);
         }
 
-        // Random time!
-        // srand(666);
         foreach ($userids as $userid) { // No guest or deleted.
             // Each user gets 0-10 random roles.
             $rcount = rand(0, 10);
