@@ -132,6 +132,12 @@ class qtype_shortanswer_question_test extends advanced_testcase {
                 '0', '*0*', false));
     }
 
+    public function test_compare_string_with_wildcard_many_stars() {
+        // Test the classic PHP problem case with '0'.
+        $this->assertTrue((bool)qtype_shortanswer_question::compare_string_with_wildcard(
+                '<em></em>', '***********************************<em>***********************************</em>', false));
+    }
+
     public function test_is_complete_response() {
         $question = test_question_maker::make_question('shortanswer');
 
