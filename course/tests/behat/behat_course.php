@@ -90,7 +90,7 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Adds the selected activity/resource filling the form data with the specified field/value pairs.
+     * Adds the selected activity/resource filling the form data with the specified field/value pairs. Sections 0 and 1 are also allowed on frontpage.
      *
      * @When /^I add a "(?P<activity_or_resource_name_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)" and I fill the form with:$/
      * @param string $activity The activity name
@@ -107,7 +107,7 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Opens the activity chooser and opens the activity/resource form page.
+     * Opens the activity chooser and opens the activity/resource form page. Sections 0 and 1 are also allowed on frontpage.
      *
      * @Given /^I add a "(?P<activity_or_resource_name_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -116,7 +116,19 @@ class behat_course extends behat_base {
      */
     public function i_add_to_section($activity, $section) {
 
-        $sectionxpath = "//li[@id='section-" . $section . "']";
+        if ($this->getSession()->getPage()->find('css', 'body#page-site-index') && (int)$section <= 1) {
+            // We are on the frontpage.
+            if ($section) {
+                // Section 1 represents the contents on the frontpage.
+                $sectionxpath = "//body[@id='page-site-index']/descendant::div[contains(concat(' ',normalize-space(@class),' '),' sitetopic ')]";
+            } else {
+                // Section 0 represents "Site main menu" block.
+                $sectionxpath = "//div[contains(concat(' ',normalize-space(@class),' '),' block_site_main_menu ')]";
+            }
+        } else {
+            // We are inside the course.
+            $sectionxpath = "//li[@id='section-" . $section . "']";
+        }
 
         $activityliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral(ucfirst($activity));
 
