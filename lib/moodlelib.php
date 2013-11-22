@@ -9720,7 +9720,6 @@ function unformat_float($locale_float, $strict = false) {
  */
 function swapshuffle($array) {
 
-    srand ((double) microtime() * 10000000);
     $last = count($array) - 1;
     for ($i=0;$i<=$last;$i++) {
         $from = rand(0,$last);
@@ -9760,7 +9759,6 @@ function swapshuffle_assoc($array) {
  * @return array
  */
 function draw_rand_array($array, $draws) {
-    srand ((double) microtime() * 10000000);
 
     $return = array();
 
