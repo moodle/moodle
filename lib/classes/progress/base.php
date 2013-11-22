@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Base class for handling progress information.
  *
- * Subclasses should generally override the current_progress function which
+ * Subclasses should generally override the {@link current_progress} function which
  * summarises all progress information.
  *
  * @package core_progress
@@ -40,7 +40,7 @@ abstract class base {
      * frontendservertimeout config option to a lower value, such as 180
      * seconds (default for some commercial products).
      *
-     * @var int The number of seconds that can pass without progress() calls.
+     * @var int The number of seconds that can pass without {@link progress()} calls.
      */
     const TIME_LIMIT_WITHOUT_PROGRESS = 3600;
 
@@ -80,13 +80,13 @@ abstract class base {
      * This can be called multiple times for nested progress sections. It must
      * be paired with calls to end_progress.
      *
-     * The progress maximum may be INDETERMINATE if the current operation has
+     * The progress maximum may be {@link self::INDETERMINATE} if the current operation has
      * an unknown number of steps. (This is default.)
      *
      * Calling this function will always result in a new display, so this
      * should not be called exceedingly frequently.
      *
-     * When it is complete by calling end_progress, each start_progress section
+     * When it is complete by calling {@link end_progress()}, each {@link start_progress} section
      * automatically adds progress to its parent, as defined by $parentcount.
      *
      * @param string $description Description to display
@@ -129,7 +129,7 @@ abstract class base {
     /**
      * Marks the end of an operation that will display progress.
      *
-     * This must be paired with each start_progress call.
+     * This must be paired with each {@link start_progress} call.
      *
      * If there is a parent progress section, its progress will be increased
      * automatically to reflect the end of the child section.
@@ -158,25 +158,19 @@ abstract class base {
      * Indicates that progress has occurred.
      *
      * The progress value should indicate the total progress so far, from 0
-     * to the value supplied for $max (inclusive) in start_progress.
+     * to the value supplied for $max (inclusive) in {@link start_progress}.
      *
      * You do not need to call this function for every value. It is OK to skip
      * values. It is also OK to call this function as often as desired; it
-     * doesn't do anything if called more than once per second.
+     * doesn't update the display if called more than once per second.
      *
-     * It must be INDETERMINATE if start_progress was called with $max set to
+     * It must be INDETERMINATE if {@link start_progress} was called with $max set to
      * INDETERMINATE. Otherwise it must not be indeterminate.
      *
      * @param int $progress Progress so far
      * @throws \coding_exception If progress value is invalid
      */
     public function progress($progress = self::INDETERMINATE) {
-        // Ignore too-frequent progress calls (more than once per second).
-        $now = $this->get_time();
-        if ($now === $this->lastprogresstime) {
-            return;
-        }
-
         // Check we are inside a progress section.
         $max = end($this->maxes);
         if ($max === false) {
@@ -207,6 +201,12 @@ abstract class base {
             $this->currents[key($this->currents)] = $progress;
         }
 
+        // Don't update progress bar too frequently (more than once per second).
+        $now = $this->get_time();
+        if ($now === $this->lastprogresstime) {
+            return;
+        }
+
         // Update progress.
         $this->count++;
         $this->lastprogresstime = $now;
@@ -214,6 +214,21 @@ abstract class base {
         // Update time limit before next progress display.
         \core_php_time_limit::raise(self::TIME_LIMIT_WITHOUT_PROGRESS);
         $this->update_progress();
+    }
+
+    /**
+     * An alternative to calling progress. This keeps track of the number of items done internally. Call this method
+     * with no parameters to increment the internal counter by one or you can use the $incby parameter to specify a positive
+     * change in progress. The internal progress counter should not exceed $max as passed to {@link start_progress} for this
+     * section.
+     *
+     * If you called {@link start_progress} with parameter INDETERMINATE then you cannot call this method.
+     *
+     * @var int $incby The positive change to apply to the internal progress counter. Defaults to 1.
+     */
+    public function increment_progress($incby = 1) {
+        $current = end($this->currents);
+        $this->progress($current + $incby);
     }
 
     /**
@@ -240,7 +255,7 @@ abstract class base {
     /**
      * Checks max value of current progress section.
      *
-     * @return int Current max value (may be \core\progress\base::INDETERMINATE)
+     * @return int Current max value - may be {@link \core\progress\base::INDETERMINATE}.
      * @throws \coding_exception If not in a progress section
      */
     public function get_current_max() {

@@ -64,7 +64,7 @@ class core_progress_testcase extends basic_testcase {
         // Do another progress run at same time, it should be ignored.
         $progress->progress(3);
         $this->assertFalse($progress->was_update_called());
-        $this->assert_min_max(0.2, 0.2, $progress);
+        $this->assert_min_max(0.3, 0.3, $progress);
 
         // End the section. This should cause an update.
         $progress->end_progress();
@@ -315,6 +315,65 @@ class core_progress_testcase extends basic_testcase {
         } catch (coding_exception $e) {
             $this->assertEquals(1, preg_match('~would exceed max~', $e->getMessage()));
         }
+    }
+
+    public function test_progress_change() {
+
+        $progress = new core_mock_progress();
+
+        $progress->start_progress('hello', 50);
+
+
+        for ($n = 1; $n <= 10; $n++) {
+            $progress->increment_progress();
+        }
+
+        // Check numeric position and indeterminate count.
+        $this->assert_min_max(0.2, 0.2, $progress);
+        $this->assertEquals(1, $progress->get_progress_count());
+
+        // Make some progress and check that the time limit gets added.
+        $progress->step_time();
+
+        for ($n = 1; $n <= 20; $n++) {
+            $progress->increment_progress();
+        }
+
+        $this->assertTrue($progress->was_update_called());
+
+        // Check the new value.
+        $this->assert_min_max(0.6, 0.6, $progress);
+        $this->assertEquals(2, $progress->get_progress_count());
+
+        for ($n = 1; $n <= 10; $n++) {
+            $progress->increment_progress();
+        }
+        $this->assertFalse($progress->was_update_called());
+        $this->assert_min_max(0.8, 0.8, $progress);
+        $this->assertEquals(2, $progress->get_progress_count());
+
+        // Do another progress run at same time, it should be ignored.
+        $progress->increment_progress(5);
+        $this->assertFalse($progress->was_update_called());
+        $this->assert_min_max(0.9, 0.9, $progress);
+        $this->assertEquals(2, $progress->get_progress_count());
+
+        for ($n = 1; $n <= 3; $n++) {
+            $progress->step_time();
+            $progress->increment_progress(1);
+        }
+        $this->assertTrue($progress->was_update_called());
+        $this->assert_min_max(0.96, 0.96, $progress);
+        $this->assertEquals(5, $progress->get_progress_count());
+
+
+        // End the section. This should cause an update.
+        $progress->end_progress();
+        $this->assertTrue($progress->was_update_called());
+        $this->assertEquals(5, $progress->get_progress_count());
+
+        // Because there are no sections left open, it thinks we finished.
+        $this->assert_min_max(1.0, 1.0, $progress);
     }
 
     /**
