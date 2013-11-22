@@ -8,11 +8,8 @@ env:
  - HHVM=false
 
 before_install:
-  # Define the IS_HHVM_JOB variable
   - if [[ $HHVM == true && `phpenv global` == "5.5" ]] ; then IS_HHVM_JOB=true ; else IS_HHVM_JOB=false ; fi
-  # Define the IS_PHP_JOB variable
   - if [[ $HHVM == false ]] ; then IS_PHP_JOB=true ; else IS_PHP_JOB=false ; fi
-  # Install HHVM if needed
   - if [[ $IS_HHVM_JOB == true ]] ; then sudo bin/install_hhvm; fi
 
 before_script:
