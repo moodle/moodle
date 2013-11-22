@@ -127,21 +127,15 @@ class behat_admin extends behat_base {
     }
 
     /**
-     * Goes to notification page ensuring site admin navigation is loaded.
+     * Will be deprecated in 2.7. Goes to notification page.
      *
      * @Given /^I go to notifications page$/
      * @return Given[]
      */
     public function i_go_to_notifications_page() {
-        if ($this->running_javascript()) {
-            return array(
-                new Given('I expand "' . get_string('administrationsite') . '" node'),
-                new Given('I follow "' . get_string('notifications') . '"')
-            );
-        } else {
-            return array(
-                new Given('I follow "' . get_string('administrationsite') . '"')
-            );
-        }
+        return array(
+            new Given('I expand "' . get_string('administrationsite') . '" node'),
+            new Given('I follow "' . get_string('notifications') . '"')
+        );
     }
 }
