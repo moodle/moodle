@@ -71,6 +71,30 @@ class behat_deprecated extends behat_base {
     }
 
     /**
+     * Goes to notification page ensuring site admin navigation is loaded.
+     *
+     * Step [I expand "Site administration" node] will ensure that administration menu
+     * is opened in both javascript and non-javascript modes.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     *
+     * @Given /^I go to notifications page$/
+     * @return Given[]
+     */
+    public function i_go_to_notifications_page() {
+        $alternative = array(
+            'I expand "' . get_string('administrationsite') . '" node',
+            'I click on "' . get_string('notifications') . '" "link" in the "'.get_string('administration').'" "block"'
+        );
+        $this->deprecated_message($alternative);
+        return array(
+            new Given($alternative[0]),
+            new Given($alternative[1]),
+        );
+    }
+
+    /**
      * Throws an exception if $CFG->behat_usedeprecated is not allowed.
      *
      * @throws Exception

@@ -53,6 +53,10 @@ class behat_navigation extends behat_base {
         // all of tree's nodes; adding this because of scenarios that shares the
         // same steps with and without Javascript enabled.
         if (!$this->running_javascript()) {
+            if ($nodetext === get_string('administrationsite')) {
+                // Administration menu is not loaded by default any more. Click the link to expand.
+                return new Given('I click on "'.$nodetext.'" "link" in the "'.get_string('administration').'" "block"');
+            }
             return false;
         }
 

@@ -15,7 +15,7 @@ Feature: Students can edit or delete their forum posts within a set time limit
       | user | course | role |
       | student1 | C1 | student |
     And I log in as "admin"
-    And I go to notifications page
+    And I expand "Site administration" node
     And I expand "Security" node
     And I follow "Site policies"
     And I select "1 minutes" from "Maximum time to edit posts"
