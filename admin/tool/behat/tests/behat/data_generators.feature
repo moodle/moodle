@@ -1,4 +1,4 @@
-@tool @tool_behat
+@tool @tool_behat @_only_local
 Feature: Set up contextual data for tests
   In order to write tests quickly
   As a developer
@@ -143,13 +143,29 @@ Feature: Set up contextual data for tests
       | fullname | shortname |
       | Course 1 | C1 |
     And the following "activities" exists:
-      | activity | name | intro | course | idnumber |
-      | assign   | Test assignment name | Test assignment description | C1 | assign1 |
-      | data     | Test database name | Test database description | C1 | data1 |
+      | activity   | name                   | intro                         | course | idnumber    |
+      | assign     | Test assignment name   | Test assignment description   | C1     | assign1     |
+      | assignment | Test assignment22 name | Test assignment22 description | C1     | assignment1 |
+      | data       | Test database name     | Test database description     | C1     | data1       |
+      | forum      | Test forum name        | Test forum description        | C1     | forum1      |
+      | label      | Test label name        | Test label description        | C1     | label1      |
+      | lti        | Test lti name          | Test lti description          | C1     | lti1        |
+      | page       | Test page name         | Test page description         | C1     | page1       |
+      | quiz       | Test quiz name         | Test quiz description         | C1     | quiz1       |
+      | resource   | Test resource name     | Test resource description     | C1     | resource1   |
     When I log in as "admin"
     And I follow "Course 1"
     Then I should see "Test assignment name"
+    # Assignment 2.2 is disabled by default:
+    # And I should see "Test assignment22 name"
     And I should see "Test database name"
+    And I should see "Test forum name"
+    # User can see label description instead of name on the course page:
+    And I should see "Test label description"
+    And I should see "Test lti name"
+    And I should see "Test page name"
+    And I should see "Test quiz name"
+    And I should see "Test resource name"
     And I follow "Test assignment name"
     And I should see "Test assignment description"
 
