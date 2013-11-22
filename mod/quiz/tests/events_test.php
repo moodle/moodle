@@ -222,6 +222,22 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $this->assertEquals('quiz_attempt_started', $event->get_legacy_eventname());
         $this->assertEventLegacyData($legacydata, $event);
         $this->assertEventContextNotUsed($event);
+
+        // Create another attempt.
+        $attempt = quiz_create_attempt($quizobj, 1, false, time(), false, 2);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\attempt_started', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $expected = array($quizobj->get_courseid(), 'quiz', 'attempt', 'review.php?attempt=' . $attempt->id,
+            $quizobj->get_quizid(), $quizobj->get_cmid());
+        $this->assertEventLegacyLogData($expected, $event);
     }
 
     /**
