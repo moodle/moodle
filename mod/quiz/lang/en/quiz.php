@@ -308,6 +308,7 @@ $string['essayquestions'] = 'Questions';
 $string['eventattemptdeleted'] = 'Quiz attempt deleted';
 $string['eventattemptreviewed'] = 'Quiz attempt reviewed';
 $string['eventattemptsummaryviewed'] = 'Quiz attempt summary viewed';
+$string['eventattemptviewed'] = 'Quiz attempt viewed';
 $string['eventeditpageviewed'] = 'Quiz edit page viewed';
 $string['eventoverridedeleted'] = 'Quiz override deleted';
 $string['eventoverrideupdated'] = 'Quiz override updated';
