@@ -1,0 +1,45 @@
+language: php
+php:
+  - "5.5"
+  - "5.4"
+env:
+ - DB=mysqli
+ - DB=pgsql
+ - HHVM=true
+ - HHVM=false
+
+before_install:
+    # Define the IS_HHVM_JOB variable
+    - if [[ $HHVM == true && `phpenv global` == "5.5" ]] ; then IS_HHVM_JOB=true ; else IS_HHVM_JOB=false ; fi
+    # Define the IS_PHP_JOB variable
+    - if [[ $HHVM == false ]] ; then IS_PHP_JOB=true ; else IS_PHP_JOB=false ; fi
+    # Install HHVM if needed
+    - if [[ $IS_HHVM_JOB == true ]] ; then sudo bin/install_hhvm; fi
+
+before_script:
+ - pear channel-discover pear.phpunit.de
+ - pear channel-discover pear.symfony.com
+ - pear install pear.phpunit.de/DbUnit
+ - phpenv rehash
+ - cp config-dist.php config.php
+ - sh -c "sed -i -e s/'password'/''/ -e s/example.com/localhost/ -e s%/home/example%$HOME% -e 's%\(\$CFG.*phpu\)%\n\1%' config.php"
+ - sh -c "if [ '$DB' = 'mysqli' ]; then mysql -e 'create database moodle default character set UTF8 collate UTF8_bin;'; fi"
+ - sh -c "if [ '$DB' = 'mysqli' ]; then sed -i -e s/\'pgsql\'/\'mysqli\'/ -e s/\'username\'/\'root\'/ config.php; fi"
+ - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'create database moodle;' -U postgres; fi"
+ - sh -c "if [ '$DB' = 'pgsql' ]; then sed -i s/\'username\'/\'postgres\'/ config.php; fi"
+ - mkdir -m777 $HOME/moodledata
+
+# Script for the PHP jobs
+- if [[ $IS_PHP_JOB == true ]]  ; then php admin/tool/phpunit/cli/init.php ; fi
+# Script for the HHVM job
+- if [[ $IS_HHVM_JOB == true ]] ; then hhvm admin/tool/phpunit/cli/init.php ; fi
+
+script:
+    # Script for the PHP jobs
+    - if [[ $IS_PHP_JOB == true ]]  ; then php phpunit.php  ; fi
+    # Script for the HHVM job
+    - if [[ $IS_HHVM_JOB == true ]] ; then hhvm phpunit.php ; fi
+
+notifications:
+  email:
+    - david.scotson@gla.ac.uk
