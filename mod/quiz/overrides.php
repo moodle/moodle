@@ -99,11 +99,11 @@ if ($groupmode) {
 } else {
     $colname = get_string('user');
     list($sort, $params) = users_order_by_sql('u');
-    $sql = 'SELECT o.*, u.firstname, u.lastname
-                FROM {quiz_overrides} o
-                JOIN {user} u ON o.userid = u.id
-                WHERE o.quiz = :quizid
-                ORDER BY ' . $sort;
+    $sql = 'SELECT o.*, ' . get_all_user_name_fields(true, 'u') . '
+            FROM {quiz_overrides} o
+            JOIN {user} u ON o.userid = u.id
+            WHERE o.quiz = :quizid
+            ORDER BY ' . $sort;
     $params['quizid'] = $quiz->id;
 }
 
