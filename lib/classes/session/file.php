@@ -65,7 +65,8 @@ class file extends handler {
         // Need to disable debugging since disk_free_space()
         // will fail on very large partitions (see MDL-19222).
         $freespace = @disk_free_space($this->sessiondir);
-        if (!($freespace > 2048) and $freespace !== false) {
+        // MDL-43039: disk_free_space() returns null if disabled.
+        if (!($freespace > 2048) and ($freespace !== false) and ($freespace !== null)) {
             throw new exception('sessiondiskfull', 'error');
         }
 
