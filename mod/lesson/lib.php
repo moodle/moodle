@@ -470,8 +470,10 @@ function lesson_grade_item_update($lesson, $grades=null) {
         $params['scaleid']   = -$lesson->grade;
 
         // When converting a score to a scale, use scale's grade maximum to calculate it.
-        $grade = grade_get_grades($lesson->course, 'mod', 'lesson', $lesson->id, reset($grades)->userid);
-        $params['grademax']   = reset($grade->items)->grademax;
+        if (!empty($grades)) {
+            $grade = grade_get_grades($lesson->course, 'mod', 'lesson', $lesson->id, reset($grades)->userid);
+            $params['grademax']   = reset($grade->items)->grademax;
+        }
     } else {
         $params['gradetype']  = GRADE_TYPE_NONE;
     }
