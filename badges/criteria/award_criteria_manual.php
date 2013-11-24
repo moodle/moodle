@@ -142,10 +142,18 @@ class award_criteria_manual extends award_criteria {
      * Review this criteria and decide if it has been completed
      *
      * @param int $userid User whose criteria completion needs to be reviewed.
+     * @param bool $filtered An additional parameter indicating that user list
+     *        has been reduced and some expensive checks can be skipped.
+     *
      * @return bool Whether criteria is complete
      */
-    public function review($userid) {
+    public function review($userid, $filtered = false) {
         global $DB;
+
+        // Users were already filtered by criteria completion.
+        if ($filtered) {
+            return true;
+        }
 
         $overall = false;
         foreach ($this->params as $param) {
@@ -157,7 +165,7 @@ class award_criteria_manual extends award_criteria {
                     $overall = true;
                     continue;
                 }
-            } else if ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) {
+            } else {
                 if (!$crit) {
                     $overall = false;
                     continue;
@@ -167,6 +175,41 @@ class award_criteria_manual extends award_criteria {
             }
         }
         return $overall;
+    }
+
+    /**
+     * Returns array with sql code and parameters returning all ids
+     * of users who meet this particular criterion.
+     *
+     * @return array list($join, $where, $params)
+     */
+    public function get_completed_criteria_sql() {
+        $join = '';
+        $where = '';
+        $params = array();
+
+        if ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) {
+            foreach ($this->params as $param) {
+                $roledata[] = " bma.issuerrole = :issuerrole{$param['role']} ";
+                $params["issuerrole{$param['role']}"] = $param['role'];
+            }
+            if (!empty($roledata)) {
+                $extraon = implode(' OR ', $roledata);
+                $join = " JOIN {badge_manual_award} bma ON bma.recipientid = u.id
+                          AND bma.badgeid = :badgeid{$this->badgeid} AND ({$extraon})";
+                $params["badgeid{$this->badgeid}"] = $this->badgeid;
+            }
+            return array($join, $where, $params);
+        } else {
+            foreach ($this->params as $param) {
+                $join .= " LEFT JOIN {badge_manual_award} bma{$param['role']} ON
+                          bma{$param['role']}.recipientid = u.id AND
+                          bma{$param['role']}.issuerrole = :issuerrole{$param['role']} ";
+                $where .= " AND bma{$param['role']}.issuerrole IS NOT NULL ";
+                $params["issuerrole{$param['role']}"] = $param['role'];
+            }
+            return array($join, $where, $params);
+        }
     }
 
     /**

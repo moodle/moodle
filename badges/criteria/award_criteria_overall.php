@@ -86,9 +86,12 @@ class award_criteria_overall extends award_criteria {
      * Overall criteria review should be called only from other criteria handlers.
      *
      * @param int $userid User whose criteria completion needs to be reviewed.
+     * @param bool $filtered An additional parameter indicating that user list
+     *        has been reduced and some expensive checks can be skipped.
+     *
      * @return bool Whether criteria is complete
      */
-    public function review($userid) {
+    public function review($userid, $filtered = false) {
         global $DB;
 
         $sql = "SELECT bc.*, bcm.critid, bcm.userid, bcm.datemet
@@ -114,7 +117,7 @@ class award_criteria_overall extends award_criteria {
                     $overall = true;
                     continue;
                 }
-            } else if ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) {
+            } else {
                 if ($crit->datemet === null) {
                     $overall = false;
                     continue;
@@ -125,6 +128,16 @@ class award_criteria_overall extends award_criteria {
         }
 
         return $overall;
+    }
+
+    /**
+     * Returns array with sql code and parameters returning all ids
+     * of users who meet this particular criterion.
+     *
+     * @return array list($join, $where, $params)
+     */
+    public function get_completed_criteria_sql() {
+        return array('', '', array());
     }
 
     /**
