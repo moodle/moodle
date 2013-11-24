@@ -82,6 +82,18 @@ class checker {
     }
 
     /**
+     * Is automatic deployment enabled?
+     *
+     * @return bool
+     */
+    public function enabled() {
+        global $CFG;
+
+        // The feature can be prohibited via config.php.
+        return empty($CFG->disableupdateautodeploy);
+    }
+
+    /**
      * Returns the timestamp of the last execution of {@link fetch()}
      *
      * @return int|null null if it has never been executed or we don't known
