@@ -1,78 +1,12 @@
-/** This is the CSS for the company manager control **/
-.path-blocks-iomad_company_admin .addremovetable {width: 100%;}
-.path-blocks-iomad_company_admin .addremovetable td {vertical-align: top;padding: 0.2em 0.3em}
-.path-blocks-iomad_company_admin .addremovetable p {text-align: left;margin: 0.2em 0;}
-.path-blocks-iomad_company_admin .addremovetable #existingcell,
-.path-blocks-iomad_company_admin .addremovetable #potentialcell {width: 42%;}
-.path-blocks-iomad_company_admin .addremovetable #existingcell label,
-.path-blocks-iomad_company_admin .addremovetable #potentialcell label {font-weight: bold;}
-.path-blocks-iomad_company_admin .addremovetable #buttonscell {width: 16%;}
-.path-blocks-iomad_company_admin .addremovetable #buttonscell #add,
-.path-blocks-iomad_company_admin .addremovetable #buttonscell #remove {width: 100%;margin: 0.3em 0;padding: 0.5em 0;}
-.path-blocks-iomad_company_admin .addremovetable #buttonscell p {margin: 0.3em 0;}
-.path-blocks-iomad_company_admin .addremovetable #buttonscell #assignoptions {font-size: 0.75em;}
-.path-blocks-iomad_company_admin .addremovetable #buttonscell #assignoptions .collapsibleregioncaption {font-weight: bold;}
-.path-blocks-iomad_company_admin .addremovetable #buttonscell #addcontrols {margin-top: 3em;height: 13em;}
-
-.path-blocks-iomad_company_admin .addremovetable #potentialmanagers_wrapper,
-.path-blocks-iomad_company_admin .addremovetable #currentmanagers_wrapper,
-.path-blocks-iomad_company_admin .addremovetable #potentialcourses_wrapper,
-.path-blocks-iomad_company_admin .addremovetable #currentcourses_wrapper {width: 100%;}
-.path-blocks-iomad_company_admin .addremovetable #potentialmanagers_wrapper label,
-.path-blocks-iomad_company_admin .addremovetable #currentmanagers_wrapper label,
-.path-blocks-iomad_company_admin .addremovetable #potentialcourses_wrapper label,
-.path-blocks-iomad_company_admin .addremovetable #currentcourses_wrapper label {font-weight: normal;}
-
-/** course selector **/
-.courseselector select {width: 100%;}
-.courseselector div {margin-top: 0.2em;}
-.courseselector div label {margin-right: 0.3em;}
-#courseselector_options .collapsibleregioncaption {font-weight: bold;}
-#courseselector_options p {margin:0.2em 0;text-align:left;}
-#courseselector_options { font-size: 0.75em; }
-
-/** online users block **/
-.block_iomad_online_users .content .list li.listentry {font-size:0.75em;}
-.block_iomad_online_users .content .list li.listentry img {border:#888}
-
-/** mod/courseclassroom */
-.courseclassroom th,
-.courseclassroom td { text-align:left; padding: .2em .5em .2em 0; }
-.companycourseuserstable, .companycoursetable, .companymanagertable, .companyusertable {
-  width:100%;
+@font-face {
+  font-family: alloveragain;
+  src: url([[font:theme|alloveragain.woff]]);
 }
-.courseselector select {
-  width:100%;
+.navbar .brand {
+  font-family: alloveragain;
+  color: red;
 }
-.companycourseuserstable #buttonscell , .companycoursetable #buttonscell, .companymanagertable #buttonscell, .companyusertable #buttonscell {
-  width:16%;
-}
-
-.companycourseuserstable #existingcell, .companycourseuserstable #potentialcell, .companycoursetable #existingcell, .companycoursetable #potentialcell, .companymanagertable #existingcell, .companymanagertable #potentialcell, .companyusertable #existingcell, .companyusertable #potentialcell {
-  width:42%;
-}
-
-.companycourseuserstable #buttonscell #add, .companycourseuserstable #buttonscell #remove, .companycoursetable #buttonscell #add, .companycoursetable #buttonscell #remove, .companymanagertable #buttonscell #add, .companymanagertable #buttonscell #remove, .companyusertable #buttonscell #add, .companyusertable #buttonscell #remove {
-  margin-bottom:0.3em;
-  margin-left:0;
-  margin-right:0;
-  margin-top:0.3em;
-  padding-bottom:0.5em;
-  padding-left:0;
-  padding-right:0;
-  padding-top:0.5em;
-  width:100%;
-}
-
-.companycourseuserstable #buttonscell #addcontrols, .companycoursetable #buttonscell #addcontrols, .companymanagertable #buttonscell #addcontrols, .companyusertable #buttonscell #addcontrols {
-  height:13em;
-  margin-top:3em;
-}
-
-.companycourseuserstable td, .companycoursetable td, .companymanagertable td, .companyusertable td {
-  padding-bottom:0.2em;
-  padding-left:0.3em;
-  padding-right:0.3em;
-  padding-top:0.2em;
-  vertical-align:top;
+.iomadlink {
+  font-family: alloveragain;
+  font-size: 8px;
 }

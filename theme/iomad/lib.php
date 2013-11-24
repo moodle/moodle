@@ -30,6 +30,7 @@
  * @return string The parsed CSS The parsed CSS.
  */
 function theme_iomad_process_css($css, $theme) {
+    global $CFG;
 
     // Set the background image for the logo.
     $logo = $theme->setting_file_url('logo', 'logo');
