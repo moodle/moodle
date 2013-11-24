@@ -107,7 +107,7 @@ class block_iomad_company_admin extends block_base {
 
             // Put together link.
             $html .= '<div class="iomadlink">';
-            $html .= "<a href=\"$url\">" . $icon . $menu['name'] . "</a>";
+            $html .= "<a href=\"$url\">" . $icon . "</a>";
             $html .= '</div>';
         }
         $html .= '</div>';
@@ -131,11 +131,11 @@ class block_iomad_company_admin extends block_base {
         $html = '';
 
         // Build list.
-        $html .= '<ul class="iomadtab">';
+        $html .= '<ul class="nav nav-tabs">';
         foreach ($tabs as $key => $tab) {
             $url->param('tabid', $key);
             if ($key == $selected) {
-                $class = 'class="iomadselected"';
+                $class = 'class="active"';
                 $link = $tab;
             } else {
                 $class = '';

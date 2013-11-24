@@ -52,7 +52,7 @@ class iomad_admin_menu {
                 'name' => get_string('editdepartment', 'block_iomad_company_admin'),
                 'url' => 'company_department_create_form.php',
                 'cap' => 'block/iomad_company_admin:edit_departments',
-                'icon' => 'newcourse',
+                'icon' => 'managedepartment',
             ),
             'assignmanagers' => array(
                 'category' => 'CompanyAdmin',
@@ -60,7 +60,7 @@ class iomad_admin_menu {
                 'name' => get_string('assignmanagers', 'block_iomad_company_admin'),
                 'url' => 'company_managers_form.php',
                 'cap' => 'block/iomad_company_admin:company_manager',
-                'icon' => 'manager',
+                'icon' => 'assigndepartmentusers',
             ),
             'userprofiles' => array(
                 'category' => 'CompanyAdmin',
@@ -68,7 +68,7 @@ class iomad_admin_menu {
                 'name' => get_string('userprofiles', 'block_iomad_company_admin'),
                 'url' => 'company_user_profiles.php',
                 'cap' => 'block/iomad_company_admin:company_user_profiles',
-                'icon' => 'userprofiles',
+                'icon' => 'optionalprofiles',
             ),
             'assignusers' => array(
                 'category' => 'CompanyAdmin',
@@ -76,7 +76,7 @@ class iomad_admin_menu {
                 'name' => get_string('assignusers', 'block_iomad_company_admin'),
                 'url' => 'company_users_form.php',
                 'cap' => 'block/iomad_company_admin:company_user',
-                'icon' => 'users',
+                'icon' => 'assignusers',
             ),
             'assigncourses' => array(
                 'category' => 'CompanyAdmin',
@@ -84,7 +84,7 @@ class iomad_admin_menu {
                 'name' => get_string('assigncourses', 'block_iomad_company_admin'),
                 'url' => 'company_courses_form.php',
                 'cap' => 'block/iomad_company_admin:company_course',
-                'icon' => 'courses',
+                'icon' => 'assigncourses',
             ),
             'createuser' => array(
                 'category' => 'UserAdmin',
@@ -148,7 +148,7 @@ class iomad_admin_menu {
                 'name' => get_string('createcourse', 'block_iomad_company_admin'),
                 'url' => 'company_course_create_form.php',
                 'cap' => 'block/iomad_company_admin:createcourse',
-                'icon' => 'newcourse',
+                'icon' => 'createcourse',
             ),
             'assigntocompany' => array(
                 'category' => 'CourseAdmin',
@@ -156,7 +156,7 @@ class iomad_admin_menu {
                 'name' => get_string('assigntocompany', 'block_iomad_company_admin'),
                 'url' => 'company_courses_form.php',
                 'cap' => 'block/iomad_company_admin:company_course',
-                'icon' => 'courses',
+                'icon' => 'assigntocompany',
             ),
             'managecourses' => array(
                 'category' => 'CourseAdmin',
@@ -164,7 +164,7 @@ class iomad_admin_menu {
                 'name' => get_string('iomad_courses_title', 'block_iomad_company_admin'),
                 'url' => 'iomad_courses_form.php',
                 'cap' => 'block/iomad_company_admin:managecourses',
-                'icon' => 'courses',
+                'icon' => 'managecoursesettings',
             ),
             'enroluser' => array(
                 'category' => 'CourseAdmin',
@@ -172,7 +172,7 @@ class iomad_admin_menu {
                 'name' => get_string('enroluser', 'block_iomad_company_admin'),
                 'url' => 'company_course_users_form.php',
                 'cap' => 'block/iomad_company_admin:company_course_users',
-                'icon' => 'users',
+                'icon' => 'userenrolements',
             ),
             'classrooms' => array(
                 'category' => 'CourseAdmin',
@@ -180,7 +180,7 @@ class iomad_admin_menu {
                 'name' => get_string('classrooms', 'block_iomad_company_admin'),
                 'url' => 'classroom_list.php',
                 'cap' => 'block/iomad_company_admin:classrooms',
-                'icon' => 'locations',
+                'icon' => 'teachinglocations',
             ));
         $returnarray['manageiomadlicenses'] = array(
                 'category' => 'LicenseAdmin',

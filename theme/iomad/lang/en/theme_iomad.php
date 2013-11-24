@@ -14,7 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-$string['pluginname'] = 'Iomad';
+/**
+ * Strings for component 'theme_iomad', language 'en'
+ *
+ * @package   theme_clean
+ * @copyright 2013 Howard Miller
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+$string['choosereadme'] = 'IOMAD Bootstrap theme';
+$string['configtitle'] = 'IOMAD';
+
+$string['customcss'] = 'Custom CSS';
+$string['customcssdesc'] = 'Whatever CSS rules you add to this textarea will be reflected in every page, making for easier customization of this theme.';
+
+$string['footnote'] = 'Footnote';
+$string['footnotedesc'] = 'Whatever you add to this textarea will be displayed in the footer throughout your Moodle site.';
+
+$string['invert'] = 'Invert navbar';
+$string['invertdesc'] = 'Swaps text and background for the navbar at the top of the page between black and white.';
+
+$string['logo'] = 'Logo';
+$string['logodesc'] = 'Please upload your custom logo here if you want to add it to the header.<br>
+If the height of your logo is more than 75px add the following CSS rule to the Custom CSS box below.<br>
+a.logo {height: 100px;} or whatever height in pixels the logo is.';
+
+$string['pluginname'] = 'IOMAD';
+
 $string['region-side-post'] = 'Right';
 $string['region-side-pre'] = 'Left';
-$string['choosereadme'] = 'This theme is based on the standard theme with a bit of Iomad specific CSS.';
+

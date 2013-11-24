@@ -51,6 +51,7 @@ $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_dashboard', 'local', 'name');
 $blockpage->setup();
 // Set tye pagetype correctly.
 $PAGE->set_pagetype('local-iomad-dashboard-index');
+$PAGE->set_pagelayout('mydashboard');
 
 // Now we can display the page.
 
