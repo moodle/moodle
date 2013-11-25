@@ -191,8 +191,8 @@ class core_course_management_helper_test extends advanced_testcase {
 
         $parentassignment->assign(CAP_PREVENT);
         // Now we have capability on the category and subcategory but not the parent.
-        // Try to mark the subcategory as visible. This shouldn't be possible because its parent is hidden.
-        $this->assertFalse(\core_course\management\helper::action_category_show($subcategory));
+        // Try to mark the subcategory as visible. This should be possible although its parent is set to hidden.
+        $this->assertTrue(\core_course\management\helper::action_category_show($subcategory));
         $cat = coursecat::get($category->id);
         $subcat = coursecat::get($subcategory->id);
         $course = $DB->get_record('course', array('id' => $course->id), 'id, visible, visibleold', MUST_EXIST);
@@ -348,8 +348,8 @@ class core_course_management_helper_test extends advanced_testcase {
 
         $parentassignment->assign(CAP_PREVENT);
         // Now we have capability on the category and subcategory but not the parent.
-        // Try to mark the subcategory as visible. This shouldn't be possible because its parent is hidden.
-        $this->assertFalse(\core_course\management\helper::action_category_show($subcategory));
+        // Try to mark the subcategory as visible. This should be possible although its parent is set to hidden.
+        $this->assertTrue(\core_course\management\helper::action_category_show($subcategory));
         $cat = coursecat::get($category->id);
         $subcat = coursecat::get($subcategory->id);
         $course = $DB->get_record('course', array('id' => $course->id), 'id, visible, visibleold', MUST_EXIST);
