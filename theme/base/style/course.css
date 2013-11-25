@@ -461,14 +461,11 @@ input.titleeditor { vertical-align: text-bottom; }
 .dir-rtl #course-category-listings .listitem > div > .float-right {float:left;text-align:left;}
 
 #course-category-listings .listitem[data-visible="0"],
-#course-category-listings .listitem[data-visible="0"] a.categoryname,
 #course-category-listings .listitem[data-visible="0"] > div > a {color:#AAA;}
 #course-category-listings .listitem > div .item-actions .action-hide,
 #course-category-listings .listitem[data-visible="0"] > div .item-actions .action-show {display:inline;}
 #course-category-listings .listitem > div .item-actions .action-show,
 #course-category-listings .listitem[data-visible="0"] > div .item-actions .action-hide,
-#course-category-listings .listitem[data-visible="0"] > ul .item-actions.category-item-actions .action-hide,
-#course-category-listings .listitem[data-visible="0"] > ul .item-actions.category-item-actions .action-show,
 
 #category-listing .listitem:first-child > div .item-actions .action-moveup,
 #category-listing .listitem:last-child > div .item-actions .action-movedown,
