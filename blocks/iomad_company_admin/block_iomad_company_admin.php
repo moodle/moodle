@@ -123,27 +123,19 @@ class block_iomad_company_admin extends block_base {
      * Build tabs for selecting admin page
      */
     public function gettabs($tabs, $selected) {
+        global $OUTPUT;
 
-        // Get base url.
-        $url = $this->page->url;
-
-        // Build output.
-        $html = '';
+        $row = array();
 
         // Build list.
-        $html .= '<ul class="nav nav-tabs">';
         foreach ($tabs as $key => $tab) {
-            $url->param('tabid', $key);
-            if ($key == $selected) {
-                $class = 'class="active"';
-                $link = $tab;
-            } else {
-                $class = '';
-                $link = "<a href=\"$url\">$tab</a>";
-            }
-            $html .= "<li $class>$link</li>";
+            $row[] = new tabobject(
+                $key,
+                new moodle_url('/local/iomad_dashboard/index.php', array('tabid'=>$key)),
+                $tab
+            );
         }
-        $html .= '</ul>';
+        $html = $OUTPUT->tabtree($row, $selected);
 
         return $html;
     }
