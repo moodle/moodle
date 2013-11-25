@@ -1626,7 +1626,7 @@ function core_tables_exist() {
 function upgrade_plugin_mnet_functions($component) {
     global $DB, $CFG;
 
-    list($type, $plugin) = explode('_', $component);
+    list($type, $plugin) = normalize_component($component);
     $path = get_plugin_directory($type, $plugin);
 
     $publishes = array();
