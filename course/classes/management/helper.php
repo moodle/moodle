@@ -622,10 +622,6 @@ class helper {
         if (!$category->can_change_visibility()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_change_visbility');
         }
-        if ((int)$category->get_parent_coursecat()->visible === 0) {
-            // You cannot mark a category visible if its parent is hidden.
-            return false;
-        }
         $category->show();
         return true;
     }

@@ -978,9 +978,6 @@ span.editinstructions {
         // The category or course is hidden.
         &[data-visible="0"] {
             .muted;
-            a.categoryname {
-                .muted;
-            }
             > div {
                 > a {
                     .muted;
@@ -992,13 +989,6 @@ span.editinstructions {
                     .action-hide {
                         display:none;
                     }
-                }
-            }
-            > ul .item-actions.category-item-actions {
-                // If the category is hidden hide both show and hide icons for sub categories.
-                .action-hide,
-                .action-show {
-                    display: none;
                 }
             }
         }
