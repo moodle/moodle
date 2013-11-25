@@ -141,13 +141,13 @@ class quiz_override_form extends moodleform {
                     $groups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
                     if (!empty($groups)) {
                         $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
-                                'u.id, u.firstname, u.lastname, u.email',
+                                'u.id, u.email, ' . get_all_user_name_fields(true, 'u'),
                                 $sort, '', '', array_keys($groups),
                                 '', false, true);
                     }
                 } else {
                     $users = get_users_by_capability($this->context, 'mod/quiz:attempt',
-                            'u.id, u.firstname, u.lastname, u.email' ,
+                            'u.id, u.email, ' . get_all_user_name_fields(true, 'u'),
                             $sort, '', '', '', '', false, true);
                 }
                 if (empty($users)) {
