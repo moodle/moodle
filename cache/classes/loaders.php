@@ -463,6 +463,20 @@ class cache implements cache_loader {
             }
         }
 
+        if ($this->perfdebug) {
+            $hits = 0;
+            $misses = 0;
+            foreach ($fullresult as $value) {
+                if ($value === false) {
+                    $misses++;
+                } else {
+                    $hits++;
+                }
+            }
+            cache_helper::record_cache_hit($this->storetype, $this->definition->get_id(), $hits);
+            cache_helper::record_cache_miss($this->storetype, $this->definition->get_id(), $misses);
+        }
+
         // Return the result. Phew!
         return $fullresult;
     }
@@ -1937,7 +1951,19 @@ class cache_session extends cache {
         if ($hasmissingkeys && $strictness === MUST_EXIST) {
             throw new coding_exception('Requested key did not exist in any cache stores and could not be loaded.');
         }
-
+        if ($this->perfdebug) {
+            $hits = 0;
+            $misses = 0;
+            foreach ($return as $value) {
+                if ($value === false) {
+                    $misses++;
+                } else {
+                    $hits++;
+                }
+            }
+            cache_helper::record_cache_hit($this->storetype, $this->get_definition()->get_id(), $hits);
+            cache_helper::record_cache_miss($this->storetype, $this->get_definition()->get_id(), $misses);
+        }
         return $return;
 
     }
