@@ -39,6 +39,7 @@ require_login();
 
 $header = "$SITE->shortname: ".get_string('publicprofile')." (".get_string('myprofile', 'admin').")";
 
+$PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
 admin_externalpage_setup('mypage', '', null, '', array('pagelayout' => 'mydashboard'));
 
 // Override pagetype to show blocks properly.
