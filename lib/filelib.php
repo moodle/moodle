@@ -3314,9 +3314,11 @@ class curl {
      * @return bool
      */
     protected function request($url, $options = array()) {
-        // create curl instance
-        $curl = curl_init($url);
-        $options['url'] = $url;
+        // Set the URL as a curl option.
+        $this->setopt(array('CURLOPT_URL' => $url));
+
+        // Create curl instance.
+        $curl = curl_init();
 
         // Reset here so that the data is valid when result returned from cache.
         $this->info             = array();
