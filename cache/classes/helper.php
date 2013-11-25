@@ -382,34 +382,40 @@ class cache_helper {
     /**
      * Record a cache hit in the stats for the given store and definition.
      *
+     * @internal
      * @param string $store
      * @param string $definition
+     * @param int $hits The number of hits to record (by default 1)
      */
-    public static function record_cache_hit($store, $definition) {
+    public static function record_cache_hit($store, $definition, $hits = 1) {
         self::ensure_ready_for_stats($store, $definition);
-        self::$stats[$definition][$store]['hits']++;
+        self::$stats[$definition][$store]['hits'] += $hits;
     }
 
     /**
      * Record a cache miss in the stats for the given store and definition.
      *
+     * @internal
      * @param string $store
      * @param string $definition
+     * @param int $misses The number of misses to record (by default 1)
      */
-    public static function record_cache_miss($store, $definition) {
+    public static function record_cache_miss($store, $definition, $misses = 1) {
         self::ensure_ready_for_stats($store, $definition);
-        self::$stats[$definition][$store]['misses']++;
+        self::$stats[$definition][$store]['misses'] += $misses;
     }
 
     /**
      * Record a cache set in the stats for the given store and definition.
      *
+     * @internal
      * @param string $store
      * @param string $definition
+     * @param int $sets The number of sets to record (by default 1)
      */
-    public static function record_cache_set($store, $definition) {
+    public static function record_cache_set($store, $definition, $sets = 1) {
         self::ensure_ready_for_stats($store, $definition);
-        self::$stats[$definition][$store]['sets']++;
+        self::$stats[$definition][$store]['sets'] += $sets;
     }
 
     /**
