@@ -2,7 +2,12 @@
 
 // This file defines settingpages and externalpages under the "appearance" category
 
-if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
+$capabilities = array(
+    'moodle/my:configsyspages',
+    'moodle/tag:manage'
+);
+
+if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
     $ADMIN->add('appearance', new admin_category('themes', new lang_string('themes')));
     // "themesettings" settingpage
