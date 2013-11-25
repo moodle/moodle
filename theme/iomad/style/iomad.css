@@ -1,12 +1,25 @@
 @font-face {
-  font-family: alloveragain;
+  font-family: iomad;
   src: url([[font:theme|alloveragain.woff]]);
 }
 .navbar .brand {
-  font-family: alloveragain;
+  font-family: iomad;
   color: red;
 }
 .iomadlink {
-  font-family: alloveragain;
-  font-size: 8px;
+  font-family: iomad;
+  font-size: 10px;
+  text-transform: uppercase;
+  text-align: center;
+  line-height: 150%;
+}
+.iomadlink a {
+  color: #f75701;
+  padding: 0 10px;
+}
+.block .header .title h2 {
+  color: #f75701;
+  text-transform: uppercase;
+  font-family: iomad;
+  font-weight: normal;
 }

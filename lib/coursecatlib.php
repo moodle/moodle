@@ -25,6 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// IOMAD
+require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
+
 /**
  * Class to store, cache, render and manage course category
  *
@@ -2128,6 +2131,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
      */
     public static function make_categories_list($requiredcapability = '', $excludeid = 0, $separator = ' / ') {
         global $DB;
+        global $CFG;
         $coursecatcache = cache::make('core', 'coursecat');
 
         // Check if we cached the complete list of user-accessible category names ($baselist) or list of ids
@@ -2211,7 +2215,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
         }
 
         // IOMAD :  Filter the list of categories.
-        if (!is_siteadmin()) {
+        if (!is_siteadmin() and !during_initial_install()) {
             $names = iomad::iomad_filter_categories($names);
         }
 

@@ -1,14 +1,42 @@
+
+// IOMAD Colours
+@IOMAD_Red: #d20001;
+@IOMAD_Yellow: #ffdf00;
+@IOMAD_Green: #93d801;
+@IOMAD_Blue: #76ebff;
+@IOMAD_Purple: #b639b7;
+@IOMAD_Orange: #f75701;
+
+
 @font-face {
-    font-family: alloveragain;
+    font-family: iomad;
     src: url([[font:theme|alloveragain.woff]]);
 }
 
 .navbar .brand {
-    font-family: alloveragain;
+    font-family: iomad;
     color: red;
     }
 
+// Links to reports.
 .iomadlink {
-    font-family: alloveragain;
-    font-size: 9px;
+    font-family: iomad;
+    font-size: 10px;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 150%;
 }
+
+.iomadlink a {
+    color: @IOMAD_Orange;
+    padding: 0 10px;
+    }
+
+// Blocks.
+.block .header .title h2 {
+    color: @IOMAD_Orange;
+    text-transform: uppercase;
+    font-family: iomad;
+    font-weight: normal;
+}
+
