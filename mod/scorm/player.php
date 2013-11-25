@@ -101,7 +101,9 @@ $strexit = get_string('exitactivity', 'scorm');
 
 $coursecontext = context_course::instance($course->id);
 
-if ($displaymode == 'popup') {
+if ($displaymode == 'embedded') {
+    $PAGE->set_pagelayout('embedded');
+} else if ($displaymode == 'popup') {
     $PAGE->set_pagelayout('popup');
 } else {
     $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
