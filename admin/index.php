@@ -47,7 +47,9 @@ if (!function_exists('iconv')) {
 
 define('NO_OUTPUT_BUFFERING', true);
 
-if (empty($_GET['cache']) and empty($_POST['cache']) and empty($_GET['sesskey']) and empty($_POST['sesskey'])) {
+if ((isset($_GET['cache']) and $_GET['cache'] === '0')
+        or (isset($_POST['cache']) and $_POST['cache'] === '0')
+        or (!isset($_POST['cache']) and !isset($_GET['cache']) and empty($_GET['sesskey']) and empty($_POST['sesskey']))) {
     // Prevent caching at all cost when visiting this page directly,
     // we redirect to self once we known no upgrades are necessary.
     // Note: $_GET and $_POST are used here intentionally because our param cleaning is not loaded yet.
@@ -72,9 +74,7 @@ $cache          = optional_param('cache', 0, PARAM_BOOL);
 
 // Set up PAGE.
 $url = new moodle_url('/admin/index.php');
-if ($cache) {
-    $url->param('cache', $cache);
-}
+$url->param('cache', $cache);
 $PAGE->set_url($url);
 unset($url);
 
@@ -249,11 +249,13 @@ if ($version > $CFG->version) {  // upgrade
     $PAGE->set_pagelayout('maintenance');
     $PAGE->set_popup_notification_allowed(false);
 
+    /** @var core_admin_renderer $output */
+    $output = $PAGE->get_renderer('core', 'admin');
+
     if (upgrade_stale_php_files_present()) {
         $PAGE->set_title($stradministration);
         $PAGE->set_cacheable(false);
 
-        $output = $PAGE->get_renderer('core', 'admin');
         echo $output->upgrade_stale_php_files_page();
         die();
     }
@@ -268,7 +270,6 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_heading($strdatabasechecking);
         $PAGE->set_cacheable(false);
 
-        $output = $PAGE->get_renderer('core', 'admin');
         echo $output->upgrade_confirm_page($a->newversion, $maturity, $testsite);
         die();
 
@@ -282,7 +283,6 @@ if ($version > $CFG->version) {  // upgrade
         $PAGE->set_heading($strcurrentrelease);
         $PAGE->set_cacheable(false);
 
-        $output = $PAGE->get_renderer('core', 'admin');
         echo $output->upgrade_environment_page($release, $envstatus, $environment_results);
         die();
 
@@ -296,24 +296,14 @@ if ($version > $CFG->version) {  // upgrade
 
         $reloadurl = new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1));
 
-        // check plugin dependencies first
-        $failed = array();
-        if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
-            $output = $PAGE->get_renderer('core', 'admin');
-            echo $output->unsatisfied_dependencies_page($version, $failed, $reloadurl);
-            die();
-        }
-        unset($failed);
-
         if ($fetchupdates) {
-            // no sesskey support guaranteed here
-            if (empty($CFG->disableupdatenotifications)) {
-                available_update_checker::instance()->fetch();
+            $updateschecker = available_update_checker::instance();
+            if ($updateschecker->enabled()) {
+                // No sesskey support guaranteed here, because sessions might not work yet.
+                $updateschecker->fetch();
             }
             redirect($reloadurl);
         }
-
-        $output = $PAGE->get_renderer('core', 'admin');
 
         $deployer = available_update_deployer::instance();
         if ($deployer->enabled()) {
@@ -321,6 +311,7 @@ if ($version > $CFG->version) {  // upgrade
 
             $deploydata = $deployer->submitted_data();
             if (!empty($deploydata)) {
+                // No sesskey support guaranteed here, because sessions might not work yet.
                 echo $output->upgrade_plugin_confirm_deploy_page($deployer, $deploydata);
                 die();
             }
@@ -332,7 +323,18 @@ if ($version > $CFG->version) {  // upgrade
         die();
 
     } else {
-        // Launch main upgrade
+        // Always verify plugin dependencies!
+        $failed = array();
+        if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+            $PAGE->set_pagelayout('maintenance');
+            $PAGE->set_popup_notification_allowed(false);
+            $reloadurl = new moodle_url('/admin/index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1, 'cache' => 0));
+            echo $output->unsatisfied_dependencies_page($version, $failed, $reloadurl);
+            die();
+        }
+        unset($failed);
+
+        // Launch main upgrade.
         upgrade_core($version, true);
     }
 } else if ($version < $CFG->version) {
@@ -352,6 +354,10 @@ if ($branch <> $CFG->branch) {  // Update the branch
 if (moodle_needs_upgrading()) {
     if (!$PAGE->headerprinted) {
         // means core upgrade or installation was not already done
+
+        /** @var core_admin_renderer $output */
+        $output = $PAGE->get_renderer('core', 'admin');
+
         if (!$confirmplugins) {
             $strplugincheck = get_string('plugincheck');
 
@@ -363,12 +369,13 @@ if (moodle_needs_upgrading()) {
             $PAGE->set_cacheable(false);
 
             if ($fetchupdates) {
-                // no sesskey support guaranteed here
-                available_update_checker::instance()->fetch();
-                redirect($PAGE->url);
+                $updateschecker = available_update_checker::instance();
+                if ($updateschecker->enabled()) {
+                    require_sesskey();
+                    $updateschecker->fetch();
+                }
+                redirect($reloadurl);
             }
-
-            $output = $PAGE->get_renderer('core', 'admin');
 
             $deployer = available_update_deployer::instance();
             if ($deployer->enabled()) {
@@ -376,26 +383,30 @@ if (moodle_needs_upgrading()) {
 
                 $deploydata = $deployer->submitted_data();
                 if (!empty($deploydata)) {
+                    require_sesskey();
                     echo $output->upgrade_plugin_confirm_deploy_page($deployer, $deploydata);
                     die();
                 }
             }
 
-            // check plugin dependencies first
-            $failed = array();
-            if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
-                echo $output->unsatisfied_dependencies_page($version, $failed, $PAGE->url);
-                die();
-            }
-            unset($failed);
-
-            // dependencies check passed, let's rock!
+            // Show plugins info.
             echo $output->upgrade_plugin_check_page(plugin_manager::instance(), available_update_checker::instance(),
                     $version, $showallplugins,
                     new moodle_url($PAGE->url),
                     new moodle_url('/admin/index.php', array('confirmplugincheck'=>1)));
             die();
         }
+
+        // Always verify plugin dependencies!
+        $failed = array();
+        if (!plugin_manager::instance()->all_plugins_ok($version, $failed)) {
+            $PAGE->set_pagelayout('maintenance');
+            $PAGE->set_popup_notification_allowed(false);
+            $reloadurl = new moodle_url('/admin/index.php', array('cache' => 0));
+            echo $output->unsatisfied_dependencies_page($version, $failed, $reloadurl);
+            die();
+        }
+        unset($failed);
     }
     // install/upgrade all plugins and other parts
     upgrade_noncore(true);
@@ -454,6 +465,17 @@ if (during_initial_install()) {
 } else {
     // just make sure upgrade logging is properly terminated
     upgrade_finished('upgradesettings.php');
+}
+
+if (has_capability('moodle/site:config', context_system::instance())) {
+    if ($fetchupdates) {
+        $updateschecker = available_update_checker::instance();
+        if ($updateschecker->enabled()) {
+            require_sesskey();
+            $updateschecker->fetch();
+        }
+        redirect(new moodle_url('/admin/index.php', array('cache' => 0)));
+    }
 }
 
 // Now we can be sure everything was upgraded and caches work fine,
@@ -533,12 +555,6 @@ $buggyiconvnomb = (!function_exists('mb_convert_encoding') and @iconv('UTF-8', '
 $registered = $DB->count_records('registration_hubs', array('huburl' => HUB_MOODLEORGHUBURL, 'confirmed' => 1));
 
 admin_externalpage_setup('adminnotifications');
-
-if ($fetchupdates) {
-    require_sesskey();
-    $updateschecker->fetch();
-    redirect(new moodle_url('/admin/index.php'));
-}
 
 $output = $PAGE->get_renderer('core', 'admin');
 echo $output->admin_notifications_page($maturity, $insecuredataroot, $errorsdisplayed,
