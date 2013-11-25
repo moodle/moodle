@@ -469,9 +469,19 @@ function lesson_grade_item_update($lesson, $grades=null) {
         $params['gradetype']  = GRADE_TYPE_SCALE;
         $params['scaleid']   = -$lesson->grade;
 
-        // When converting a score to a scale, use scale's grade maximum to calculate it.
+        // Make sure current grade fetched correctly from $grades
+        $currentgrade = null;
         if (!empty($grades)) {
-            $grade = grade_get_grades($lesson->course, 'mod', 'lesson', $lesson->id, reset($grades)->userid);
+            if (is_array($grades)) {
+                $currentgrade = reset($grades);
+            } else {
+                $currentgrade = $grades;
+            }
+        }
+
+        // When converting a score to a scale, use scale's grade maximum to calculate it.
+        if (!empty($currentgrade) && $currentgrade->rawgrade !== null) {
+            $grade = grade_get_grades($lesson->course, 'mod', 'lesson', $lesson->id, $currentgrade->userid);
             $params['grademax']   = reset($grade->items)->grademax;
         }
     } else {
