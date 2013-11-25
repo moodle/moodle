@@ -234,10 +234,10 @@ if ($formdata = $mform2->is_cancelled()) {
                     $user->$key['text']   = $value;
                     $user->$key['format'] = FORMAT_MOODLE;
                 } else {
-                    $user->$key = $value;
+                    $user->$key = trim($value);
                 }
             } else {
-                $user->$key = $value;
+                $user->$key = trim($value);
             }
 
             if (in_array($key, $upt->columns)) {
@@ -965,7 +965,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     $status = null;
 
                     if (isset($user->{'enrolstatus'.$i})) {
-                        $enrolstatus = trim($user->{'enrolstatus'.$i});
+                        $enrolstatus = $user->{'enrolstatus'.$i};
                         if ($enrolstatus == '') {
                             $status = null;
                         } else if ($enrolstatus === (string)ENROL_USER_ACTIVE) {
@@ -1108,7 +1108,7 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     $rowcols = array();
     $rowcols['line'] = $linenum;
     foreach($fields as $key => $field) {
-        $rowcols[$filecolumns[$key]] = s($field);
+        $rowcols[$filecolumns[$key]] = s(trim($field));
     }
     $rowcols['status'] = array();
 
@@ -1134,7 +1134,7 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     }
 
     if (isset($rowcols['city'])) {
-        $rowcols['city'] = trim($rowcols['city']);
+        $rowcols['city'] = $rowcols['city'];
     }
     // Check if rowcols have custom profile field with correct data and update error state.
     $noerror = uu_check_custom_profile_data($rowcols) && $noerror;
