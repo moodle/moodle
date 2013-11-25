@@ -81,6 +81,7 @@ class block_tags extends block_base {
         }
 
         $this->content = new stdClass;
+        $this->content->text = '';
         $this->content->footer = '';
 
         // Get a list of tags.
