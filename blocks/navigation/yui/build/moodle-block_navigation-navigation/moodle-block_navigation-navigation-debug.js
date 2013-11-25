@@ -404,6 +404,15 @@ Y.extend(TREE, Y.Base, TREE.prototype, {
                 }
                 return val;
             }
+        },
+        /**
+         * The navigation tree block instance.
+         */
+        instance : {
+            value : false,
+            setter : function(val) {
+                return parseInt(val);
+            }
         }
     }
 });
