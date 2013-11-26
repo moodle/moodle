@@ -77,4 +77,4 @@ Feature: Block appearances
       | Visible | Yes |
       | Region  | Right |
     And I press "Save changes"
-    And I should see "Comments" in the "#region-post" "css_element"
+    And I should see "Comments" in the "//*[@id='region-post' or @id='block-region-side-post']" "xpath_element"
