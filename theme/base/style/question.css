@@ -130,12 +130,6 @@ body.path-question-type .fitem_fgroup .accesshide {font: inherit;left: 0;positio
     background: none;
 }
 
-/* Add a little padding to the answer sections of edit question forms. */
-.path-question-type #id_answerhdr .fitem .fitemtitle,
-.path-question-type #id_answerhdr .fitem .felement {
-    margin-left: 6px;
-    margin-right: 6px;
-}
 .path-question-type #id_answerhdr .fitem_feditor .felement {
     margin-left: 0px;
     margin-right: 0px;
@@ -145,9 +139,18 @@ body.path-question-type .fitem_fgroup .accesshide {font: inherit;left: 0;positio
         margin-left: 16%;
         margin-right: 0px;
     }
-    .dir-rtl .path-question-type #id_answerhdr .fitem_feditor .felement {
+    body#page-question-type-multichoice div[id^=fitem_id_] .fitemtitle {
+        padding-left: 0;
+        padding-right: 0;
+    }
+    .dir-rtl.path-question-type #id_answerhdr .fitem_feditor .felement {
         margin-right: 16%;
         margin-left: 0px;
+    }
+
+    body.dir-rtl#page-question-type-multichoice div[id^=fitem_id_] .fitemtitle {
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 
