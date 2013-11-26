@@ -235,28 +235,10 @@ class cache_factory {
      */
     public function create_cache(cache_definition $definition) {
         $class = $definition->get_cache_class();
-        if ($this->is_initialising() || $this->stores_disabled()) {
-            // Do nothing we just want the dummy store.
-            $stores = array($this->create_dummy_store($definition));
-        } else {
-            $stores = cache_helper::get_cache_stores($definition);
-            if (count($stores) === 0) {
-                // No suitable stores we found for the definition. We need to come up with a sensible default.
-                // If this has happened we can be sure that the user has mapped custom stores to either the
-                // mode of the definition. The first alternative to try is the system default for the mode.
-                // e.g. the default file store instance for application definitions.
-                $config = $this->create_config_instance();
-                foreach ($config->get_stores($definition->get_mode()) as $name => $details) {
-                    if (!empty($details['default'])) {
-                        $stores[] = $this->create_store_from_config($name, $details, $definition);
-                        break;
-                    }
-                }
-                if (count($stores) === 0) {
-                    // Hmm still no stores, better provide a dummy store to mimic functionality. The dev will be none the wiser.
-                    $stores[] = $this->create_dummy_store($definition);
-                }
-            }
+        $stores = cache_helper::get_stores_suitable_for_definition($definition);
+        if (count($stores) === 0) {
+            // Hmm still no stores, better provide a dummy store to mimic functionality. The dev will be none the wiser.
+            $stores[] = $this->create_dummy_store($definition);
         }
         $loader = null;
         if ($definition->has_data_source()) {
