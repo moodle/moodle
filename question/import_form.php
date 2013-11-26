@@ -53,7 +53,7 @@ class question_import_form extends moodleform {
         foreach ($fileformatnames as $shortname => $fileformatname) {
             $currentgrp1 = array();
             $currentgrp1[] = $mform->createElement('radio', 'format', '', $fileformatname, $shortname);
-            $mform->addGroup($currentgrp1, "formathelp[$i]", '&#160;', array('<br />'), false);
+            $mform->addGroup($currentgrp1, "formathelp[$i]", '', array('<br />'), false);
 
             if (get_string_manager()->string_exists('pluginname_help', 'qformat_' . $shortname)) {
                 $mform->addHelpButton("formathelp[$i]", 'pluginname', 'qformat_' . $shortname);
