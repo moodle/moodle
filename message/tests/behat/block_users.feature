@@ -15,7 +15,7 @@ Feature: Block users from contacting me
     And I follow "Messages"
     And I fill in "Search people and messages" with "User Two"
     And I press "Search people and messages"
-    When I click on "Block contact" "link" in the "User Two" table row
+    When I click on "Block contact" "link" in the "User Two" "table_row"
     Then the "Message navigation:" select box should contain "Blocked users (1)"
     And I select "Blocked users (1)" from "Message navigation:"
     And I should see "User Two"

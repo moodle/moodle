@@ -24,7 +24,7 @@ Feature: A teacher can preview questions in the question bank
       | fraction[0] | 100% |
       | answer[1] | * |
       | fraction[1] | None |
-    When I click on "Preview" "link" in the "Test question name" table row
+    When I click on "Preview" "link" in the "Test question name" "table_row"
     And I switch to "questionpreview" window
     And I fill the moodle form with:
       | Whether correct | Shown |
