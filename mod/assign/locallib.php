@@ -944,11 +944,7 @@ class assign {
     protected function add_plugin_grade_elements($grade, MoodleQuickForm $mform, stdClass $data, $userid) {
         foreach ($this->feedbackplugins as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible()) {
-                $mform->addElement('header', 'header_' . $plugin->get_type(), $plugin->get_name());
-                $mform->setExpanded('header_' . $plugin->get_type());
-                if (!$plugin->get_form_elements_for_user($grade, $mform, $data, $userid)) {
-                    $mform->removeElement('header_' . $plugin->get_type());
-                }
+                $plugin->get_form_elements_for_user($grade, $mform, $data, $userid);
             }
         }
     }
@@ -5720,10 +5716,7 @@ class assign {
                                                     $userid) {
         foreach ($this->submissionplugins as $plugin) {
             if ($plugin->is_enabled() && $plugin->is_visible() && $plugin->allow_submissions()) {
-                $mform->addElement('header', 'header_' . $plugin->get_type(), $plugin->get_name());
-                if (!$plugin->get_form_elements_for_user($submission, $mform, $data, $userid)) {
-                    $mform->removeElement('header_' . $plugin->get_type());
-                }
+                $plugin->get_form_elements_for_user($submission, $mform, $data, $userid);
             }
         }
     }

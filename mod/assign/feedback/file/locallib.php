@@ -143,8 +143,7 @@ class assign_feedback_file extends assign_feedback_plugin {
                                                   'assignfeedback_file',
                                                   ASSIGNFEEDBACK_FILE_FILEAREA,
                                                   $gradeid);
-        $mform->addElement('filemanager', $elementname . '_filemanager', html_writer::tag('span', $this->get_name(),
-            array('class' => 'accesshide')), null, $fileoptions);
+        $mform->addElement('filemanager', $elementname . '_filemanager', $this->get_name(), null, $fileoptions);
 
         return true;
     }
