@@ -867,4 +867,31 @@ class cache_definition {
     protected function get_cache_identifier() {
         return cache_helper::get_site_identifier();
     }
+
+    /**
+     * Returns the possible sharing options that can be used with this defintion.
+     *
+     * @return int
+     */
+    public function get_sharing_options() {
+        return $this->sharingoptions;
+    }
+
+    /**
+     * Returns the user entered sharing key for this definition.
+     *
+     * @return string
+     */
+    public function get_user_input_sharing_key() {
+        return $this->userinputsharingkey;
+    }
+
+    /**
+     * Returns the user selected sharing option for this definition.
+     *
+     * @return int
+     */
+    public function get_selected_sharing_option() {
+        return $this->selectedsharingoption;
+    }
 }
