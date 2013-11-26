@@ -1,14 +1,18 @@
 @font-face {
   font-family: iomad;
-  src: url([[font:theme|alloveragain.woff]]);
+  src: url([[font:theme|astonish.woff]]);
 }
 .navbar .brand {
   font-family: iomad;
   color: red;
 }
+.dashboard-section .headingblock {
+  display: none;
+}
 .iomadlink {
   font-family: iomad;
-  font-size: 10px;
+  font-size: 16px;
+  font-weight: normal;
   text-transform: uppercase;
   text-align: center;
   line-height: 150%;
@@ -17,9 +21,19 @@
   color: #f75701;
   padding: 0 10px;
 }
+#page-header h1 {
+  font-family: iomad;
+  font-weight: normal;
+  color: #f75701;
+}
 .block .header .title h2 {
   color: #f75701;
+  font-size: 18px;
   text-transform: uppercase;
   font-family: iomad;
   font-weight: normal;
+}
+.block {
+  border: 2px solid #a8a8a8;
+  background-color: #fff9cc;
 }

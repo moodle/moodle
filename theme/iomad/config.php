@@ -88,7 +88,7 @@ $THEME->layouts = array(
         'defaultregion' => 'side-pre',
     ),
     'mydashboard' => array(
-        'file' => 'iomad.php',
+        'file' => 'dashboard.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
         'options' => array('langmenu'=>true),

@@ -6,11 +6,12 @@
 @IOMAD_Blue: #76ebff;
 @IOMAD_Purple: #b639b7;
 @IOMAD_Orange: #f75701;
+@IOMAD_Border_black: #a8a8a8;
 
 
 @font-face {
     font-family: iomad;
-    src: url([[font:theme|alloveragain.woff]]);
+    src: url([[font:theme|astonish.woff]]);
 }
 
 .navbar .brand {
@@ -18,10 +19,16 @@
     color: red;
     }
 
+// Dashboard layout
+.dashboard-section .headingblock {
+    display: none;
+    }
+
 // Links to reports.
 .iomadlink {
     font-family: iomad;
-    font-size: 10px;
+    font-size: 16px;
+    font-weight: normal;
     text-transform: uppercase;
     text-align: center;
     line-height: 150%;
@@ -32,11 +39,24 @@
     padding: 0 10px;
     }
 
+// Page header.
+#page-header h1 {
+    font-family: iomad;
+    font-weight: normal;
+    color: @IOMAD_Orange;
+    }
+
 // Blocks.
 .block .header .title h2 {
     color: @IOMAD_Orange;
+    font-size: 18px;
     text-transform: uppercase;
     font-family: iomad;
     font-weight: normal;
 }
+
+.block {
+    border: 2px solid @IOMAD_Border_black;
+    background-color: lighten(@IOMAD_Yellow, 40%);
+    }
 

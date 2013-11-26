@@ -188,7 +188,7 @@ class iomad_admin_menu {
                 'name' => get_string('managelicenses', 'block_iomad_company_admin'),
                 'url' => 'company_license_list.php',
                 'cap' => 'block/iomad_company_admin:edit_licenses',
-                'icon' => 'courses',
+                'icon' => 'licensemanagement',
             );
         $returnarray['licenseusers'] = array(
                 'category' => 'LicenseAdmin',
@@ -196,7 +196,7 @@ class iomad_admin_menu {
                 'name' => get_string('licenseusers', 'block_iomad_company_admin'),
                 'url' => 'company_license_users_form.php',
                 'cap' => 'block/iomad_company_admin:allocate_licenses',
-                'icon' => 'users',
+                'icon' => 'userlicenseallocations',
             );
 
         $returnarray['EmailTemplates'] = array(
@@ -205,7 +205,7 @@ class iomad_admin_menu {
             'name' => get_string('blocktitle', 'local_email'),
             'url' => '/local/email/template_list.php',
             'cap' => 'local/email:list',
-            'icon' => 'emails'
+            'icon' => 'emailtemplates'
         );
 
         $returnarray['ShopSettings_list'] = array(
@@ -222,7 +222,7 @@ class iomad_admin_menu {
             'name' => get_string('orders', 'block_iomad_commerce'),
             'url' => '/blocks/iomad_commerce/orderlist.php',
             'cap' => 'block/iomad_commerce:admin_view',
-            'icon' => 'money'
+            'icon' => 'orders'
         );
         return $returnarray;
     }
