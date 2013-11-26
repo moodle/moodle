@@ -342,6 +342,15 @@ input#id_externalurl {direction:ltr;}
         text-align: left;
         width: 100%;
     }
+    #region-main .mform .femptylabel .fitemtitle {
+        display: inline-block;
+        width: auto;
+        margin-right: 8px;
+    }
+    .dir-rtl #region-main .mform .femptylabel .fitemtitle {
+        margin-right: 0px;
+        margin-left: 8px;
+    }
     .dir-rtl #region-main .mform .fitem .fitemtitle {
         text-align: right;
     }
@@ -353,6 +362,14 @@ input#id_externalurl {direction:ltr;}
         margin-bottom: 6px;
         padding-left: 0;
         padding-right: 0;
+    }
+    #region-main .mform .fitem .fstatic:empty {
+        display: none;
+    }
+    #region-main .mform .femptylabel .felement {
+        display: inline-block;
+        margin-top: 4px;
+        width: auto;
     }
     .dir-rtl #region-main .mform .fitem .felement {
         margin-right: 0;
