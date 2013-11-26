@@ -84,12 +84,6 @@ function behat_error($errorcode, $text = '') {
  * @return bool
  */
 function behat_error_handler($errno, $errstr, $errfile, $errline, $errcontext) {
-    global $OUTPUT;
-
-    // Only after something has been writen.
-    if (!$OUTPUT->has_started()) {
-        return false;
-    }
 
     // If is preceded by an @ we don't show it.
     if (!error_reporting()) {
