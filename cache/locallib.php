@@ -1123,7 +1123,10 @@ abstract class cache_administration_helper extends cache_helper {
      * @return array An array containing sub-arrays, one for each mode.
      */
     public static function get_default_mode_stores() {
+        global $OUTPUT;
         $instance = cache_config::instance();
+        $adequatestores = cache_helper::get_stores_suitable_for_mode_default();
+        $icon = new pix_icon('i/warning', new lang_string('inadequatestoreformapping', 'cache'));
         $storenames = array();
         foreach ($instance->get_all_stores() as $key => $store) {
             if (!empty($store['default'])) {
@@ -1145,6 +1148,9 @@ abstract class cache_administration_helper extends cache_helper {
                 $modemappings[$mode][$mapping['store']] = $storenames[$mapping['store']];
             } else {
                 $modemappings[$mode][$mapping['store']] = $mapping['store'];
+            }
+            if (!array_key_exists($mapping['store'], $adequatestores)) {
+                $modemappings[$mode][$mapping['store']] = $modemappings[$mode][$mapping['store']].' '.$OUTPUT->render($icon);
             }
         }
         return $modemappings;
