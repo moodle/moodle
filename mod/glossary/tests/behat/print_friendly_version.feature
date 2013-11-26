@@ -38,6 +38,7 @@ Feature: A teacher can choose whether to provide a printer-friendly glossary ent
     And I follow "Printer-friendly version"
     And I should see "Just a test concept"
 
+  @javascript
   Scenario: Printer-friendly glossary view disabled
     Given I add a "Glossary" to section "1" and I fill the form with:
       | Name | Test glossary name |
