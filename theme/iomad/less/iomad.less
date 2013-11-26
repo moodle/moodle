@@ -16,6 +16,7 @@
 
 .navbar .brand {
     font-family: iomad;
+    font-size: 36px;
     color: red;
     }
 
@@ -27,11 +28,11 @@
 // Links to reports.
 .iomadlink {
     font-family: iomad;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: normal;
     text-transform: uppercase;
     text-align: center;
-    line-height: 150%;
+    line-height: 120%;
 }
 
 .iomadlink a {
@@ -47,16 +48,24 @@
     }
 
 // Blocks.
-.block .header .title h2 {
+.iomad_block_title {
     color: @IOMAD_Orange;
-    font-size: 18px;
+    font-size: 20px;
     text-transform: uppercase;
     font-family: iomad;
     font-weight: normal;
-}
+    }
+
+.block .header .title h2 {
+    .iomad_block_title;
+    }    
+
+.block .content h3 {
+    .iomad_block_title;
+    }  
 
 .block {
     border: 2px solid @IOMAD_Border_black;
-    background-color: lighten(@IOMAD_Yellow, 40%);
+    background-color: lighten(@IOMAD_Blue, 22%);
     }
 
