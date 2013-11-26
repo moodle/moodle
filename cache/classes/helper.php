@@ -644,4 +644,28 @@ class cache_helper {
             }
         }
     }
+
+    /**
+     * Returns an array of stores that would meet the requirements for every definition.
+     *
+     * These stores would be 100% suitable to map as defaults for cache modes.
+     *
+     * @return array[] An array of stores, keys are the store names.
+     */
+    public static function get_stores_suitable_for_mode_default() {
+        $factory = cache_factory::instance();
+        $config = $factory->create_config_instance();
+        $requirements = 0;
+        foreach ($config->get_definitions() as $definition) {
+            $definition = cache_definition::load($definition['component'].'/'.$definition['area'], $definition);
+            $requirements = $requirements | $definition->get_requirements_bin();
+        }
+        $stores = array();
+        foreach ($config->get_all_stores() as $name => $store) {
+            if (!empty($store['features']) && ($store['features'] & $requirements)) {
+                $stores[$name] = $store;
+            }
+        }
+        return $stores;
+    }
 }
