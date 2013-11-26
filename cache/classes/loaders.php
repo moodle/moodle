@@ -647,10 +647,11 @@ class cache implements cache_loader {
                 $this->static_acceleration_set($data[$key]['key'], $value);
             }
         }
-        if ($this->perfdebug) {
-            cache_helper::record_cache_set($this->storetype, $this->definition->get_id());
+        $successfullyset = $this->store->set_many($data);
+        if ($this->perfdebug && $successfullyset) {
+            cache_helper::record_cache_set($this->storetype, $this->definition->get_id(), $successfullyset);
         }
-        return $this->store->set_many($data);
+        return $successfullyset;
     }
 
     /**
@@ -2037,10 +2038,11 @@ class cache_session extends cache {
                 'value' => $value
             );
         }
-        if ($this->perfdebug) {
-            cache_helper::record_cache_set($this->storetype, $definitionid);
+        $successfullyset = $this->get_store()->set_many($data);
+        if ($this->perfdebug && $successfullyset) {
+            cache_helper::record_cache_set($this->storetype, $definitionid, $successfullyset);
         }
-        return $this->get_store()->set_many($data);
+        return $successfullyset;
     }
 
     /**
