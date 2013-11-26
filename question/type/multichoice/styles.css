@@ -42,6 +42,20 @@ body#page-question-type-multichoice div[id^=fitem_id_][id*=answer_] .fitemtitle 
     font-weight: bold;
 }
 
+body#page-question-type-multichoice div[id^=fitem_id_] .fitemtitle{
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 6px;
+    padding-right: 0px;
+}
+
+body.dir-rtl#page-question-type-multichoice div[id^=fitem_id_] .fitemtitle {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding-left: 0px;
+    padding-right: 6px;
+}
+
 body#page-question-type-multichoice div[id^=fitem_id_][id*=fraction_] {
     background: #EEE;
     margin-bottom: 0;
