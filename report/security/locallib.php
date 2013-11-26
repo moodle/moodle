@@ -563,7 +563,7 @@ function report_security_check_defaultuserrole($detailed=false) {
 
     if ($riskycount or !$legacyok) {
         $result->status  = REPORT_SECURITY_CRITICAL;
-        $result->info    = get_string('check_defaultuserrole_error', 'report_security', format_string($default_role->name));
+        $result->info    = get_string('check_defaultuserrole_error', 'report_security', role_get_name($default_role));
 
     } else {
         $result->status  = REPORT_SECURITY_OK;
