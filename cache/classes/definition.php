@@ -963,4 +963,31 @@ class cache_definition {
     public function has_required_identifiers() {
         return (count($this->requireidentifiers) > 0);
     }
+
+    /**
+     * Returns the possible sharing options that can be used with this defintion.
+     *
+     * @return int
+     */
+    public function get_sharing_options() {
+        return $this->sharingoptions;
+    }
+
+    /**
+     * Returns the user entered sharing key for this definition.
+     *
+     * @return string
+     */
+    public function get_user_input_sharing_key() {
+        return $this->userinputsharingkey;
+    }
+
+    /**
+     * Returns the user selected sharing option for this definition.
+     *
+     * @return int
+     */
+    public function get_selected_sharing_option() {
+        return $this->selectedsharingoption;
+    }
 }

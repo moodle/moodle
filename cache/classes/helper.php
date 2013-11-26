@@ -143,7 +143,7 @@ class cache_helper {
      *
      * @param array $stores
      * @param cache_definition $definition
-     * @return array
+     * @return cache_store[]
      */
     protected static function initialise_cachestore_instances(array $stores, cache_definition $definition) {
         $return = array();
@@ -698,6 +698,37 @@ class cache_helper {
         foreach ($config->get_all_stores() as $name => $store) {
             if (!empty($store['features']) && ($store['features'] & $requirements)) {
                 $stores[$name] = $store;
+            }
+        }
+        return $stores;
+    }
+
+    /**
+     * Returns stores suitable for use with a given definition.
+     *
+     * @param cache_definition $definition
+     * @return cache_store[]
+     */
+    public static function get_stores_suitable_for_definition(cache_definition $definition) {
+        $factory = cache_factory::instance();
+        $stores = array();
+        if ($factory->is_initialising() || $factory->stores_disabled()) {
+            // No suitable stores here.
+            return $stores;
+        } else {
+            $stores = self::get_cache_stores($definition);
+            if (count($stores) === 0) {
+                // No suitable stores we found for the definition. We need to come up with a sensible default.
+                // If this has happened we can be sure that the user has mapped custom stores to either the
+                // mode of the definition. The first alternative to try is the system default for the mode.
+                // e.g. the default file store instance for application definitions.
+                $config = $factory->create_config_instance();
+                foreach ($config->get_stores($definition->get_mode()) as $name => $details) {
+                    if (!empty($details['default'])) {
+                        $stores[] = $factory->create_store_from_config($name, $details, $definition);
+                        break;
+                    }
+                }
             }
         }
         return $stores;
