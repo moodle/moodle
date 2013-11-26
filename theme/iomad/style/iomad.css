@@ -4,6 +4,7 @@
 }
 .navbar .brand {
   font-family: iomad;
+  font-size: 36px;
   color: red;
 }
 .dashboard-section .headingblock {
@@ -11,11 +12,11 @@
 }
 .iomadlink {
   font-family: iomad;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: normal;
   text-transform: uppercase;
   text-align: center;
-  line-height: 150%;
+  line-height: 120%;
 }
 .iomadlink a {
   color: #f75701;
@@ -26,14 +27,28 @@
   font-weight: normal;
   color: #f75701;
 }
+.iomad_block_title {
+  color: #f75701;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-family: iomad;
+  font-weight: normal;
+}
 .block .header .title h2 {
   color: #f75701;
-  font-size: 18px;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-family: iomad;
+  font-weight: normal;
+}
+.block .content h3 {
+  color: #f75701;
+  font-size: 20px;
   text-transform: uppercase;
   font-family: iomad;
   font-weight: normal;
 }
 .block {
   border: 2px solid #a8a8a8;
-  background-color: #fff9cc;
+  background-color: #e6fbff;
 }
