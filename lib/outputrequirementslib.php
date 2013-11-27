@@ -1261,13 +1261,8 @@ class page_requirements_manager {
         }
 
         $baserollups = array(
-            'rollup/' . $CFG->yui3version . '/yui-moodlesimple' . $yuiformat . '.js',
-        );
-        // The reason for separate rollups is that the Y = YUI().use('*') call is run async and
-        // it gets it's knickers in a twist. Putting it in a separate <script>
-        // to the moodle rollup means that it's completed before the moodle one starts.
-        $moodlerollups = array(
-            'rollup/' . $jsrev . '/mcore' . $format . '.js',
+            'rollup/' . $CFG->yui3version . "/yui-moodlesimple{$yuiformat}.js",
+            'rollup/' . $jsrev . "/mcore{$format}.js",
         );
 
         if ($this->yui3loader->combine) {
@@ -1278,11 +1273,9 @@ class page_requirements_manager {
                 }
                 $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->comboBase.implode('&amp;', $modules).'" />';
             }
-            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->local_comboBase.'rollup/'.$CFG->yui3version.'/yui-moodlesimple-min.css" />';
+            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->local_comboBase.'rollup/'.$CFG->yui3version.'/yui-moodlesimple' . $yuiformat . '.css" />';
             $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
                     . implode('&amp;', $baserollups) . '"></script>';
-            $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase
-                    . implode('&amp;', $moodlerollups) . '"></script>';
 
         } else {
             if (!empty($page->theme->yuicssmodules)) {
@@ -1290,11 +1283,8 @@ class page_requirements_manager {
                     $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->base.$module.'/'.$module.'-min.css" />';
                 }
             }
-            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->local_comboBase.'rollup/'.$CFG->yui3version.'/yui-moodlesimple-min.css" />';
+            $code .= '<link rel="stylesheet" type="text/css" href="'.$this->yui3loader->local_comboBase.'rollup/'.$CFG->yui3version.'/yui-moodlesimple' . $yuiformat . '.css" />';
             foreach ($baserollups as $rollup) {
-                $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase.$rollup.'"></script>';
-            }
-            foreach ($moodlerollups as $rollup) {
                 $code .= '<script type="text/javascript" src="'.$this->yui3loader->local_comboBase.$rollup.'"></script>';
             }
         }
