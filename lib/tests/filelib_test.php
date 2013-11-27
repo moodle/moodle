@@ -399,6 +399,79 @@ class core_filelib_testcase extends advanced_testcase {
         $CFG->proxybypass = $oldproxybypass;
     }
 
+    public function test_curl_response_headers() {
+
+        // Test 404 request.
+        $curl = new curl();
+        $contents = $curl->get($this->getExternalTestFileUrl('/i.do.not.exist'));
+        $response = $curl->getResponse();
+        $this->assertSame('404 Not Found', reset($response));
+        $this->assertSame(0, $curl->get_errno());
+
+        $testhtml = $this->getExternalTestFileUrl('/test.html');
+
+        // Test standard request.
+        $curl = new curl();
+        $contents = $curl->get($testhtml);
+        $response = $curl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $curl->get_errno());
+
+        $testurl = $this->getExternalTestFileUrl('/test_relative_redir.php');
+
+        // Test a redirect without follow location.
+        $curl = new curl();
+        $contents = $curl->get("$testurl?redir=3", array(), array('CURLOPT_FOLLOWLOCATION'=>0));
+        $response = $curl->getResponse();
+        $this->assertSame('302 Found', reset($response));
+        $this->assertSame(0, $curl->get_errno());
+
+        // Test a redirect without follow location and emulated redirect.
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?redir=3", array(), array('CURLOPT_FOLLOWLOCATION'=>0));
+        $response = $curl->getResponse();
+        $this->assertSame('302 Found', reset($response));
+        $this->assertSame(0, $curl->get_errno());
+
+        // Test a redirect.
+        $curl = new curl();
+        $contents = $curl->get("$testurl?type=302");
+        $response = $curl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame(1, $curl->info['redirect_count']);
+        $this->assertSame('done', $contents);
+
+        // Test a redirect with emulated redirect.
+        $curl = new curl();
+        $curl->emulateredirects = true;
+        $contents = $curl->get("$testurl?type=302");
+        $response = $curl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame('done', $contents);
+
+        $testpost = $this->getExternalTestFileUrl('/test_post.php');
+
+        // Test post request.
+        $curl = new curl();
+        $contents = $curl->post($testpost, 'data=moodletest');
+        $response = $curl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame('OK', $contents);
+
+        // Test 100 requests.
+        $curl = new curl();
+        $curl->setHeader('Expect: 100-continue');
+        $contents = $curl->post($testpost, 'data=moodletest');
+        $response = $curl->getResponse();
+        $this->assertSame('200 OK', reset($response));
+        $this->assertSame(0, $curl->get_errno());
+        $this->assertSame('OK', $contents);
+    }
+
     /**
      * Testing prepare draft area
      *
