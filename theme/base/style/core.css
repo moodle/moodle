@@ -1198,7 +1198,7 @@ sup {vertical-align: super;}
 
 /* Center the submit buttons within the area */
 .choosercontainer #chooseform .submitbuttons {
-    margin: 0.7em 0;
+    padding: 0.7em 0;
     text-align: center;
 }
 
