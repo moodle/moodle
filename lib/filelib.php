@@ -3082,6 +3082,10 @@ class curl {
      * private callback function
      * Formatting HTTP Response Header
      *
+     * We only keep the last headers returned. For example during a redirect the
+     * redirect headers will not appear in {@link self::getResponse()}, if you need
+     * to use those headers, refer to {@link self::get_raw_response()}.
+     *
      * @param resource $ch Apparently not used
      * @param string $header
      * @return int The strlen of the header
@@ -3090,15 +3094,17 @@ class curl {
         $this->rawresponse[] = $header;
 
         if (trim($header, "\r\n") === '') {
-            if ($this->responsefinished) {
-                // Multiple headers means redirect, keep just the latest one.
-                $this->response = array();
-                return strlen($header);
-            }
+            // This must be the last header.
             $this->responsefinished = true;
         }
 
         if (strlen($header) > 2) {
+            if ($this->responsefinished) {
+                // We still have headers after the supposedly last header, we must be
+                // in a redirect so let's empty the response to keep the last headers.
+                $this->responsefinished = false;
+                $this->response = array();
+            }
             list($key, $value) = explode(" ", rtrim($header, "\r\n"), 2);
             $key = rtrim($key, ':');
             if (!empty($this->response[$key])) {
@@ -3401,9 +3407,6 @@ class curl {
                         }
                     }
                 }
-
-                $this->responsefinished = false;
-                $this->response = array();
 
                 curl_setopt($curl, CURLOPT_URL, $redirecturl);
                 $ret = curl_exec($curl);
