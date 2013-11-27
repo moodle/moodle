@@ -190,12 +190,15 @@ class behat_config_manager {
                         'selenium2' => null
                     ),
                     'Moodle\BehatExtension\Extension' => array(
+                        'formatters' => array(
+                            'moodle_progress' => 'Moodle\BehatExtension\Formatter\MoodleProgressFormatter'
+                        ),
                         'features' => $features,
                         'steps_definitions' => $stepsdefinitions
                     )
                 ),
                 'formatter' => array(
-                    'name' => 'progress'
+                    'name' => 'moodle_progress'
                 )
             )
         );

@@ -268,63 +268,7 @@ class phpunit_util extends testing_util {
      * @return void
      */
     public static function bootstrap_moodle_info() {
-        global $CFG;
-
-        // All developers have to understand English, do not localise!
-
-        $release = null;
-        require("$CFG->dirroot/version.php");
-
-        echo "Moodle $release, $CFG->dbtype";
-        if ($hash = self::get_git_hash()) {
-            echo ", $hash";
-        }
-        echo "\n";
-    }
-
-    /**
-     * Try to get current git hash of the Moodle in $CFG->dirroot.
-     * @return string null if unknown, sha1 hash if known
-     */
-    public static function get_git_hash() {
-        global $CFG;
-
-        // This is a bit naive, but it should mostly work for all platforms.
-
-        if (!file_exists("$CFG->dirroot/.git/HEAD")) {
-            return null;
-        }
-
-        $ref = file_get_contents("$CFG->dirroot/.git/HEAD");
-        if ($ref === false) {
-            return null;
-        }
-
-        $ref = trim($ref);
-
-        if (strpos($ref, 'ref: ') !== 0) {
-            return null;
-        }
-
-        $ref = substr($ref, 5);
-
-        if (!file_exists("$CFG->dirroot/.git/$ref")) {
-            return null;
-        }
-
-        $hash = file_get_contents("$CFG->dirroot/.git/$ref");
-
-        if ($hash === false) {
-            return null;
-        }
-
-        $hash = trim($hash);
-
-        if (strlen($hash) != 40) {
-            return null;
-        }
-
-        return $hash;
+        echo self::get_site_info();
     }
 
     /**
