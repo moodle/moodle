@@ -1028,13 +1028,16 @@ abstract class moodleform {
      *
      * @param array $elementobjs Array of elements or groups of elements that are to be repeated
      * @param int $repeats no of times to repeat elements initially
-     * @param array $options Array of options to apply to elements. Array keys are element names.
-     *     This is an array of arrays. The second sets of keys are the option types for the elements :
-     *         'default' - default value is value
-     *         'type' - PARAM_* constant is value
-     *         'helpbutton' - helpbutton params array is value
-     *         'disabledif' - last three moodleform::disabledIf()
-     *         params are value as an array
+     * @param array $options a nested array. The first array key is the element name.
+     *    the second array key is the type of option to set, and depend on that option,
+     *    the value takes different forms.
+     *         'default'    - default value to set. Can include '{no}' which is replaced by the repeat number.
+     *         'type'       - PARAM_* type.
+     *         'helpbutton' - array containing the helpbutton params.
+     *         'disabledif' - array containing the disabledIf() arguments after the element name.
+     *         'rule'       - array containing the addRule arguments after the element name.
+     *         'expanded'   - whether this section of the form should be expanded by default. (Name be a header element.)
+     *         'advanced'   - whether this element is hidden by 'Show more ...'.
      * @param string $repeathiddenname name for hidden element storing no of repeats in this form
      * @param string $addfieldsname name for button to add more fields
      * @param int $addfieldsno how many fields to add at a time
