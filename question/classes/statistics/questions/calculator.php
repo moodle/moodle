@@ -251,7 +251,7 @@ class calculator {
 
         $timemodified = time() - self::TIME_TO_CACHE;
         return $DB->get_field_select('question_statistics', 'timemodified', 'hashcode = ? AND timemodified > ?',
-                                     array($qubaids->get_hash_code(), $timemodified));
+                                     array($qubaids->get_hash_code(), $timemodified), IGNORE_MULTIPLE);
     }
 
     /** @var integer Time after which statistics are automatically recomputed. */

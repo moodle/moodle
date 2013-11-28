@@ -31,22 +31,7 @@ require_once($CFG->dirroot . '/mod/quiz/tests/attempt_walkthrough_from_csv_test.
 require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
-/**
- * Test helper subclass of quiz_statistics_report
- *
- * @copyright  2013 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class testable_quiz_statistics_report extends quiz_statistics_report {
 
-    public function get_stats($quiz, $whichattempts = QUIZ_GRADEAVERAGE, $groupstudents = array()) {
-        $qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts);
-        $this->clear_cached_data($qubaids);
-        $questions = $this->load_and_initialise_questions_for_calculations($quiz);
-        return $this->get_quiz_and_questions_stats($quiz, $whichattempts, $groupstudents, $questions);
-    }
-}
 
 /**
  * Quiz attempt walk through using data from csv file.
@@ -92,8 +77,31 @@ class quiz_report_statistics_from_steps extends mod_quiz_attempt_walkthrough_fro
 
         $this->check_attempts_results($csvdata['results'], $attemptids);
 
-        $this->report = new testable_quiz_statistics_report();
-        list($quizstats, $questionstats, $subquestionstats) = $this->report->get_stats($this->quiz);
+        $this->report = new quiz_statistics_report();
+        $whichattempts = QUIZ_GRADEAVERAGE;
+        $groupstudents = array();
+        $questions = $this->report->load_and_initialise_questions_for_calculations($this->quiz);
+        list($quizstats, $questionstats, $subquestionstats) =
+                        $this->report->get_quiz_and_questions_stats($this->quiz, $whichattempts, $groupstudents, $questions);
+
+        $qubaids = quiz_statistics_qubaids_condition($this->quiz->id, $groupstudents, $whichattempts);
+
+        // We will create some quiz and question stat calculator instances and some response analyser instances, just in order
+        // to check the time of the
+        $quizcalc = new quiz_statistics_calculator();
+        // Should not be a delay of more than one second between the calculation of stats above and here.
+        $this->assertEquals(time(), $quizcalc->get_last_calculated_time($qubaids), '', 1);
+
+        $qcalc = new \core_question\statistics\questions\calculator($questions);
+        $this->assertEquals(time(), $qcalc->get_last_calculated_time($qubaids), '', 1);
+
+        foreach ($questions as $question) {
+            if (!question_bank::get_qtype($question->qtype, false)->can_analyse_responses()) {
+                continue;
+            }
+            $responesstats = new \core_question\statistics\responses\analyser($question);
+            $this->assertEquals(time(), $responesstats->get_last_analysed_time($qubaids), '', 1);
+        }
 
         // These quiz stats and the question stats found in qstats00.csv were calculated independently in spreadsheet which is
         // available in open document or excel format here :
