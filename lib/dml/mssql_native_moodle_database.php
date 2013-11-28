@@ -1252,6 +1252,16 @@ s only returning name of SQL substring function, it now requires all parameters.
         }
     }
 
+    /**
+     * Does this driver support tool_replace?
+     *
+     * @since 2.6.1
+     * @return bool
+     */
+    public function replace_all_text_supported() {
+        return true;
+    }
+
     public function session_lock_supported() {
         return true;
     }
