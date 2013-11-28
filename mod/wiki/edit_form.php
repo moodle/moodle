@@ -101,10 +101,8 @@ class mod_wiki_edit_form extends moodleform {
         $mform->setType('contentformat', PARAM_ALPHANUMEXT);
 
         if (!empty($CFG->usetags)) {
-            $tags = !isset($this->_customdata['tags'])?"":$this->_customdata['tags'];
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
             $mform->addElement('tags', 'tags', get_string('tags'));
-            $mform->setDefault('tags', $tags);
             $mform->setType('tags', PARAM_TEXT);
         }
 
