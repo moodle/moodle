@@ -90,17 +90,17 @@ class quiz_report_statistics_from_steps extends mod_quiz_attempt_walkthrough_fro
         // to check the time of the
         $quizcalc = new quiz_statistics_calculator();
         // Should not be a delay of more than one second between the calculation of stats above and here.
-        $this->assertEquals(time(), $quizcalc->get_last_calculated_time($qubaids), '', 1);
+        $this->assertTimeCurrent($quizcalc->get_last_calculated_time($qubaids));
 
         $qcalc = new \core_question\statistics\questions\calculator($questions);
-        $this->assertEquals(time(), $qcalc->get_last_calculated_time($qubaids), '', 1);
+        $this->assertTimeCurrent($qcalc->get_last_calculated_time($qubaids));
 
         foreach ($questions as $question) {
             if (!question_bank::get_qtype($question->qtype, false)->can_analyse_responses()) {
                 continue;
             }
             $responesstats = new \core_question\statistics\responses\analyser($question);
-            $this->assertEquals(time(), $responesstats->get_last_analysed_time($qubaids), '', 1);
+            $this->assertTimeCurrent($responesstats->get_last_analysed_time($qubaids));
         }
 
         // These quiz stats and the question stats found in qstats00.csv were calculated independently in spreadsheet which is
