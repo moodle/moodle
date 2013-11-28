@@ -39,14 +39,24 @@ if ($branchtype !== navigation_node::TYPE_SITE_ADMIN) {
     die('Wrong node type passed.');
 }
 
+// Start capturing output in case of broken plugins.
+ob_start();
+
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/lib/ajax/getsiteadminbranch.php', array('type'=>$branchtype));
 
 $sitenavigation = new settings_navigation_ajax($PAGE);
 
-// Set XML headers.
-header('Content-type: text/plain; charset=utf-8');
-// Convert and output the branch as XML.
+// Convert and output the branch as JSON.
 $converter = new navigation_json();
 $branch = $sitenavigation->get('root');
-echo $converter->convert($branch);
+
+$output = ob_get_contents();
+ob_end_clean();
+if ($CFG->debugdeveloper && !empty($output)) {
+    throw new coding_exception('Unexpected output whilst building the administration tree. ' .
+            'This could be caused by trailing whitespace. Output received: ' .
+            var_export($output, true));
+} else {
+    echo $converter->convert($branch);
+}
