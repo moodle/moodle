@@ -500,7 +500,7 @@ class quiz_statistics_report extends quiz_default_report {
      *     - $questionstats array of \core_question\statistics\questions\calculated objects keyed by slot.
      *     - $subquestionstats array of \core_question\statistics\questions\calculated_for_subquestion objects keyed by question id.
      */
-    protected function get_quiz_and_questions_stats($quiz, $whichattempts, $groupstudents, $questions) {
+    public function get_quiz_and_questions_stats($quiz, $whichattempts, $groupstudents, $questions) {
 
         $qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts);
 

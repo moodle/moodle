@@ -161,7 +161,8 @@ class analyser {
         global $DB;
 
         $timemodified = time() - self::TIME_TO_CACHE;
-        return $DB->get_field_select('question_response_analysis', 'hashcode = ? AND questionid = ? AND timemodified > ?',
+        return $DB->get_field_select('question_response_analysis', 'timemodified',
+                                     'hashcode = ? AND questionid = ? AND timemodified > ?',
                                      array($qubaids->get_hash_code(), $this->questiondata->id, $timemodified), IGNORE_MULTIPLE);
     }
 }
