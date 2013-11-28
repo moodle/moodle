@@ -1032,11 +1032,14 @@ sup {vertical-align: super;}
     text-shadow: 1px 1px 1px #FFFFFF;
     border-radius: 10px 10px 0px 0px;
     border-bottom: 1px solid #BBBBBB;
-    background: #CCCCCC;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));
-    background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
-    filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+    background-color: #CCCCCC;
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
+    -ms-filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+    background-image: -webkit-linear-gradient(top, #FFFFFF, #CCCCCC); /* For Chrome and Safari */
+    background-image:    -moz-linear-gradient(top, #FFFFFF, #CCCCCC); /* For old Fx (3.6 to 15) */
+    background-image:     -ms-linear-gradient(top, #FFFFFF, #CCCCCC); /* For pre-releases of IE 10*/
+    background-image:      -o-linear-gradient(top, #FFFFFF, #CCCCCC); /* For old Opera (11.1 to 12.0) */
+    background-image:         linear-gradient(to bottom, #FFFFFF, #CCCCCC); /* Standard syntax; must be last */
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
