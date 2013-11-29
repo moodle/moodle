@@ -62,6 +62,7 @@ $string['editing'] = 'Editing wiki page';
 $string['editingcomment'] = 'Editing comment';
 $string['editingpage'] = 'Editing this page \'{$a}\'';
 $string['editsection'] = 'edit';
+$string['eventhistoryviewed'] = 'Wiki history viewed';
 $string['eventpageviewed'] = 'Wiki page viewed';
 $string['files'] = 'Files';
 $string['filenotuploadederror'] = 'File \'{$a}\' could not be uploaded correctly.';
