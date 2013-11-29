@@ -247,12 +247,24 @@ function wiki_save_page($wikipage, $newcontent, $userid) {
         $version->userid = $userid;
         $version->version++;
         $version->timecreated = time();
-        $versionid = $DB->insert_record('wiki_versions', $version);
+        $version->id = $DB->insert_record('wiki_versions', $version);
 
         $wikipage->timemodified = $version->timecreated;
         $wikipage->userid = $userid;
         $return = wiki_refresh_cachedcontent($wikipage, $newcontent);
-
+        $event = \mod_wiki\event\page_updated::create(
+                array(
+                    'context' => $context,
+                    'objectid' => $wikipage->id,
+                    'relateduserid' => $userid,
+                    'other' => array(
+                        'newcontent' => $newcontent
+                        )
+                    ));
+        $event->add_record_snapshot('wiki', $wiki);
+        $event->add_record_snapshot('wiki_pages', $wikipage);
+        $event->add_record_snapshot('wiki_versions', $version);
+        $event->trigger();
         return $return;
     } else {
         return false;
