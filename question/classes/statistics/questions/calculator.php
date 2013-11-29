@@ -97,10 +97,8 @@ class calculator {
             $this->progress->start_progress('', count($lateststeps), 1);
             // Compute the statistics of position, and for random questions, work
             // out which questions appear in which positions.
-            $countdone = 1;
             foreach ($lateststeps as $step) {
-                $this->progress->progress($countdone);
-                $countdone++;
+                $this->progress->increment_progress();
                 $this->initial_steps_walker($step, $this->questionstats[$step->slot], $summarks);
 
                 // If this is a random question what is the real item being used?
@@ -118,6 +116,8 @@ class calculator {
                     $number = $this->questionstats[$step->slot]->question->number;
                     $this->subquestionstats[$step->questionid]->usedin[$number] = $number;
 
+                    // Keep track of which random questions are actually selected from each pool of questions that random
+                    // questions are pulled from.
                     $randomselectorstring = $this->questionstats[$step->slot]->question->category. '/'
                                                                     .$this->questionstats[$step->slot]->question->questiontext;
                     if (!isset($this->randomselectors[$randomselectorstring])) {
@@ -132,13 +132,11 @@ class calculator {
                 ksort($this->randomselectors[$key]);
             }
 
-            // Compute the statistics of question id, if we need any.
             $subquestions = question_load_questions(array_keys($this->subquestionstats));
+            // Compute the statistics for sub questions, if there are any.
             $this->progress->start_progress('', count($subquestions), 1);
-            $countdone = 1;
             foreach ($subquestions as $qid => $subquestion) {
-                $this->progress->progress($countdone);
-                $countdone++;
+                $this->progress->increment_progress();
                 $this->subquestionstats[$qid]->question = $subquestion;
                 $this->subquestionstats[$qid]->question->maxmark = $this->subquestionstats[$qid]->maxmark;
                 $this->subquestionstats[$qid]->randomguessscore = $this->get_random_guess_score($subquestion);
@@ -170,10 +168,8 @@ class calculator {
             // foreach ($this->questions as $qid => $question).
             reset($this->questionstats);
             $this->progress->start_progress('', count($this->questionstats), 1);
-            $countdone = 1;
             while (list($slot, $questionstat) = each($this->questionstats)) {
-                $this->progress->progress($countdone);
-                $countdone++;
+                $this->progress->increment_progress();
                 $nextquestionstats = current($this->questionstats);
 
                 $this->initial_question_walker($questionstat);
@@ -196,10 +192,8 @@ class calculator {
 
             // Go through the records one more time.
             $this->progress->start_progress('', count($lateststeps), 1);
-            $countdone = 1;
             foreach ($lateststeps as $step) {
-                $this->progress->progress($countdone);
-                $countdone++;
+                $this->progress->increment_progress();
                 $this->secondary_steps_walker($step, $this->questionstats[$step->slot], $summarks);
 
                 if ($this->questionstats[$step->slot]->subquestions) {
@@ -210,10 +204,8 @@ class calculator {
 
             $this->progress->start_progress('', count($this->questionstats), 1);
             $sumofcovariancewithoverallmark = 0;
-            $countdone = 1;
             foreach ($this->questionstats as $questionstat) {
-                $this->progress->progress($countdone);
-                $countdone++;
+                $this->progress->increment_progress();
                 $this->secondary_question_walker($questionstat);
 
                 $this->sumofmarkvariance += $questionstat->markvariance;
@@ -225,10 +217,8 @@ class calculator {
             $this->progress->end_progress();
 
             $this->progress->start_progress('', count($this->subquestionstats), 1);
-            $countdone = 1;
             foreach ($this->subquestionstats as $subquestionstat) {
-                $this->progress->progress($countdone);
-                $countdone++;
+                $this->progress->increment_progress();
                 $this->secondary_question_walker($subquestionstat);
             }
             $this->progress->end_progress();
