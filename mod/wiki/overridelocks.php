@@ -77,7 +77,6 @@ $wikipage->set_page($page);
 if (!empty($section)) {
     $wikipage->set_section($sectioncontent, $section);
 }
-add_to_log($course->id, "wiki", "overridelocks", "view.php?pageid=".$pageid, $pageid, $cm->id);
 
 $wikipage->print_header();
 

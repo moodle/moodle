@@ -999,9 +999,19 @@ function wiki_set_lock($pageid, $userid, $section = null, $insert = false) {
 
 /**
  * Deletes wiki_locks that are not in use. (F.Ex. after submitting the changes). If no userid is present, it deletes ALL the wiki_locks of a specific page.
+ *
+ * @param int $pageid page id.
+ * @param int $userid id of user for which lock is deleted.
+ * @param string $section section to be deleted.
+ * @param bool $delete_from_db deleted from db.
+ * @param bool $delete_section_and_page delete section and page version.
  */
 function wiki_delete_locks($pageid, $userid = null, $section = null, $delete_from_db = true, $delete_section_and_page = false) {
     global $DB;
+
+    $wiki = wiki_get_wiki_from_pageid($pageid);
+    $cm = get_coursemodule_from_instance('wiki', $wiki->id);
+    $context = context_module::instance($cm->id);
 
     $params = array('pageid' => $pageid);
 
@@ -1019,6 +1029,17 @@ function wiki_delete_locks($pageid, $userid = null, $section = null, $delete_fro
             $params['sectionname'] = null;
             $DB->delete_records('wiki_locks', $params);
         }
+        $event = \mod_wiki\event\page_locks_deleted::create(
+        array(
+            'context' => $context,
+            'objectid' => $pageid,
+            'relateduserid' => $userid,
+            'other' => array(
+                'section' => $section
+                )
+            ));
+        // No need to add snapshot, as important data is section, userid and pageid, which is part of event.
+        $event->trigger();
     } else {
         $DB->set_field('wiki_locks', 'lockedat', time(), $params);
     }
