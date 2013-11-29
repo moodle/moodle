@@ -1112,7 +1112,7 @@ function wiki_delete_synonym($subwikiid, $pageid = null) {
  * @param int $subwikiid id of the subwiki for which all pages should be deleted
  */
 function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
-    global $DB;
+    global $DB, $CFG;
 
     if (!empty($pageids) && is_int($pageids)) {
        $pageids = array($pageids);
@@ -1124,6 +1124,8 @@ function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
     if (empty($pageids)) {
         return;
     }
+
+    require_once($CFG->dirroot . '/tag/lib.php');
 
     /// Delete page and all it's relevent data
     foreach ($pageids as $pageid) {
@@ -1147,7 +1149,7 @@ function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
         wiki_delete_synonym($subwikiid, $pageid);
 
         //Delete all page versions
-        wiki_delete_page_versions(array($pageid=>array(0)));
+        wiki_delete_page_versions(array($pageid=>array(0)), $context);
 
         //Delete all page locks
         wiki_delete_locks($pageid);
@@ -1155,9 +1157,23 @@ function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
         //Delete all page links
         wiki_delete_links(null, $pageid);
 
-        //Delete page
         $params = array('id' => $pageid);
+
+        // Get page before deleting.
+        $page = $DB->get_record('wiki_pages', $params);
+
+        //Delete page
         $DB->delete_records('wiki_pages', $params);
+
+        // Trigger page_deleted event.
+        $event = \mod_wiki\event\page_deleted::create(
+                array(
+                    'context' => $context,
+                    'objectid' => $pageid,
+                    'other' => array('subwikiid' => $subwikiid)
+                    ));
+        $event->add_record_snapshot('wiki_pages', $page);
+        $event->trigger();
     }
 }
 
@@ -1166,20 +1182,42 @@ function wiki_delete_pages($context, $pageids = null, $subwikiid = null) {
  * if version is 0 then it will remove all versions of the page
  *
  * @param array $deleteversions delete versions for a page
+ * @param context_module $context module context
  */
-function wiki_delete_page_versions($deleteversions) {
+function wiki_delete_page_versions($deleteversions, $context = null) {
     global $DB;
 
     /// delete page-versions
     foreach ($deleteversions as $id => $versions) {
-        foreach ($versions as $version) {
-            $params = array('pageid' => $id);
-            //If version = 0, then remove all versions of this page, else remove
-            //specified version
-            if ($version != 0) {
-                $params['version'] = $version;
-            }
+        $params = array('pageid' => $id);
+        if (is_null($context)) {
+            $wiki = wiki_get_wiki_from_pageid($id);
+            $cm = get_coursemodule_from_instance('wiki', $wiki->id);
+            $context = context_module::instance($cm->id);
+        }
+        // Delete all versions, if version specified is 0.
+        if (in_array(0, $versions)) {
+            $oldversions = $DB->get_records('wiki_versions', $params);
             $DB->delete_records('wiki_versions', $params, IGNORE_MISSING);
+        } else {
+            list($insql, $param) = $DB->get_in_or_equal($versions);
+            $insql .= ' AND pageid = ?';
+            array_push($param, $params['pageid']);
+            $oldversions = $DB->get_recordset_select('wiki_versions', 'version ' . $insql, $param);
+            $DB->delete_records_select('wiki_versions', 'version ' . $insql, $param);
+        }
+        foreach ($oldversions as $version) {
+            // Trigger page version deleted event.
+            $event = \mod_wiki\event\page_version_deleted::create(
+                    array(
+                        'context' => $context,
+                        'objectid' => $version->id,
+                        'other' => array(
+                            'pageid' => $id
+                        )
+                    ));
+            $event->add_record_snapshot('wiki_versions', $version);
+            $event->trigger();
         }
     }
 }

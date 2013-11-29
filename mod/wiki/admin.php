@@ -59,8 +59,6 @@ require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/wiki:managewiki', $context);
 
-add_to_log($course->id, "wiki", "admin", "admin.php?pageid=".$page->id, $page->id, $cm->id);
-
 //Delete page if a page ID to delete was supplied
 if (!empty($delete) && confirm_sesskey()) {
     wiki_delete_pages($context, $delete, $page->subwikiid);
@@ -92,7 +90,7 @@ if (!empty($toversion) && !empty($fromversion) && confirm_sesskey()) {
             }
         }
         $purgeversions[$pageid] = $versions;
-        wiki_delete_page_versions($purgeversions);
+        wiki_delete_page_versions($purgeversions, $context);
     }
 }
 
