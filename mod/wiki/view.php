@@ -298,7 +298,14 @@ if($pageid) {
     $event->add_record_snapshot('wiki_pages', $page);
     $event->trigger();
 } else if($id) {
-    add_to_log($course->id, 'wiki', 'view', "view.php?id=".$id, $id, $cm->id);
+    $event = \mod_wiki\event\course_module_viewed::create(
+            array(
+                'context' => $context,
+                'objectid' => $wiki->id
+                )
+            );
+    $event->add_record_snapshot('wiki', $wiki);
+    $event->trigger();
 } else if($wid && $title) {
     $event = \mod_wiki\event\page_viewed::create(
             array(
