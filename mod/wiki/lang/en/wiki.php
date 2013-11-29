@@ -64,6 +64,7 @@ $string['editingpage'] = 'Editing this page \'{$a}\'';
 $string['editsection'] = 'edit';
 $string['eventdiffviewed'] = 'Wiki diff viewed';
 $string['eventhistoryviewed'] = 'Wiki history viewed';
+$string['eventmapviewed'] = 'Wiki page map viewed';
 $string['eventpagedeleted'] = 'Wiki page deleted';
 $string['eventpagelocksdeleted'] = 'Wiki page locks deleted';
 $string['eventpageviewed'] = 'Wiki page viewed';
