@@ -286,9 +286,18 @@ class behat_filepicker extends behat_files {
 
         $this->find_button(get_string('getfile', 'repository'))->click();
 
+        // We wait for all the JS to finish as it is performing an action.
+        $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
+
         if ($overwriteaction !== false) {
-            $this->find_button($overwriteaction)->click();
+            $overwritebutton = $this->find_button($overwriteaction);
+            $this->ensure_node_is_visible($overwritebutton);
+            $overwritebutton->click();
+
+            // We wait for all the JS to finish.
+            $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
         }
+
     }
 
 }

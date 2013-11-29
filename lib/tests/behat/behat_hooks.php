@@ -255,8 +255,9 @@ class behat_hooks extends behat_base {
      */
     protected function wait_for_pending_js() {
 
-        // Wait for all pending JS to complete (max 10 seconds).
-        for ($i = 0; $i < 100; $i++) {
+        // We don't use behat_base::spin() here as we don't want to end up with an exception
+        // if the page & JSs don't finish loading properly.
+        for ($i = 0; $i < self::EXTENDED_TIMEOUT * 10; $i++) {
             $pending = '';
             try {
                 $jscode = 'return ' . self::PAGE_READY_JS . ' ? "" : M.util.pending_js.join(":");';
@@ -281,8 +282,7 @@ class behat_hooks extends behat_base {
         }
 
         // Timeout waiting for JS to complete.
-        // We could throw an exception here - as this is a likely indicator of slow JS or JS errors.
-        echo ' Slow JS, pending requests:' . $pending . ' ';
+        // TODO MDL-43173 We should fail the scenarios if JS loading times out.
         return false;
     }
 
