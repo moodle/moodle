@@ -373,6 +373,14 @@ function wiki_create_page($swid, $title, $format, $userid) {
     $version->pageid = $pageid;
     $DB->update_record('wiki_versions', $version);
 
+    $event = \mod_wiki\event\page_created::create(
+            array(
+                'context' => $context,
+                'objectid' => $pageid
+                )
+            );
+    $event->trigger();
+
     wiki_make_cache_expire($page->title);
     return $pageid;
 }
