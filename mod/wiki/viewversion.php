@@ -65,7 +65,18 @@ $wikipage = new page_wiki_viewversion($wiki, $subwiki, $cm);
 $wikipage->set_page($page);
 $wikipage->set_versionid($versionid);
 
-add_to_log($course->id, "wiki", "history", "viewversion.php?pageid=".$pageid."&versionid=".$versionid, $pageid, $cm->id);
+$event = \mod_wiki\event\page_version_viewed::create(
+        array(
+            'context' => context_module::instance($cm->id),
+            'objectid' => $pageid,
+            'other' => array(
+                'versionid' => $versionid
+                )
+            ));
+$event->add_record_snapshot('wiki_pages', $page);
+$event->add_record_snapshot('wiki', $wiki);
+$event->add_record_snapshot('wiki_subwikis', $subwiki);
+$event->trigger();
 
 // Print the page header
 $wikipage->print_header();

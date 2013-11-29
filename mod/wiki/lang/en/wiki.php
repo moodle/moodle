@@ -72,6 +72,7 @@ $string['eventpageviewed'] = 'Wiki page viewed';
 $string['eventpageupdated'] = 'Wiki page updated';
 $string['eventpageversiondeleted'] = 'Wiki page version deleted';
 $string['eventversionrestored'] = 'Wiki version restored';
+$string['eventversionviewed'] = 'Wiki page version viewed';
 $string['files'] = 'Files';
 $string['filenotuploadederror'] = 'File \'{$a}\' could not be uploaded correctly.';
 $string['filtername'] = 'Wiki auto-linking';
