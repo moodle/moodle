@@ -52,7 +52,7 @@ class behat_form_editor extends behat_form_field {
 
         // We want the editor to be ready, otherwise the value can not
         // be set and an exception is thrown.
-        for ($i = 0; $i < behat_base::WAIT_FOR_EDITOR_RETRIES; $i++) {
+        for ($i = 0; $i < behat_base::EXTENDED_TIMEOUT; $i++) {
             try {
                 // Get tinyMCE editor id if it exists.
                 if ($editorid = $this->get_editor_id()) {
@@ -95,7 +95,7 @@ class behat_form_editor extends behat_form_field {
         // We want the editor to be ready to return the correct value, sometimes the
         // page loads too fast and the returned value may be '' if the editor didn't
         // have enough time to load completely despite having a different value.
-        for ($i = 0; $i < behat_base::WAIT_FOR_EDITOR_RETRIES; $i++) {
+        for ($i = 0; $i < behat_base::EXTENDED_TIMEOUT; $i++) {
             try {
 
                 // Get tinyMCE editor id if it exists.
@@ -137,7 +137,7 @@ class behat_form_editor extends behat_form_field {
      * can not execute Javascript, also some Moodle settings disables the HTML
      * editor.
      *
-     * @return mixed The id of the editor of false if is not available
+     * @return mixed The id of the editor of false if it is not available
      */
     protected function get_editor_id() {
 
@@ -145,7 +145,7 @@ class behat_form_editor extends behat_form_field {
         try {
             $available = $this->session->evaluateScript('return (typeof tinyMCE != "undefined")');
 
-            // Also checking that it exist a tinyMCE editor for the requested field.
+            // Also checking that it exists a tinyMCE editor for the requested field.
             $editorid = $this->field->getAttribute('id');
             $available = $this->session->evaluateScript('return (typeof tinyMCE.get("'.$editorid.'") != "undefined")');
 

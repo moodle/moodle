@@ -38,10 +38,10 @@ Feature: In an assignment, students can upload files for assessment
     And I should see "Not graded"
     And I press "Edit submission"
     And I upload "lib/tests/fixtures/upload_users.csv" file to "File submissions" filemanager
-    And ".ffilemanager .fm-maxfiles .fp-btn-add" "css_element" should exists
+    And ".ffilemanager .fm-maxfiles .fp-btn-add" "css_element" should not be visible
     And I press "Save changes"
     And I should see "Submitted for grading"
     And I should see "empty.txt"
     And I should see "upload_users.csv"
     And I press "Edit submission"
-    And ".ffilemanager .fm-maxfiles .fp-btn-add" "css_element" should exists
+    And ".ffilemanager .fm-maxfiles .fp-btn-add" "css_element" should not be visible
