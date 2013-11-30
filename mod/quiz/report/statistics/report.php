@@ -412,6 +412,12 @@ class quiz_statistics_report extends quiz_default_report {
         foreach ($questionstats as $questionstat) {
             // Output the data for these question statistics.
             $this->table->add_data_keyed($this->table->format_row($questionstat));
+            if (count($questionstat->variantstats) > 1) {
+                ksort($questionstat->variantstats);
+                foreach ($questionstat->variantstats as $variantstat) {
+                    $this->table->add_data_keyed($this->table->format_row($variantstat));
+                }
+            }
 
             if (empty($questionstat->subquestions)) {
                 continue;
@@ -419,9 +425,21 @@ class quiz_statistics_report extends quiz_default_report {
 
             // And its subquestions, if it has any.
             $subitemstodisplay = explode(',', $questionstat->subquestions);
+            $displayorder = 1;
             foreach ($subitemstodisplay as $subitemid) {
                 $subquestionstats[$subitemid]->maxmark = $questionstat->maxmark;
+                $subquestionstats[$subitemid]->subqdisplayorder = $displayorder;
+                $subquestionstats[$subitemid]->question->number = $questionstat->question->number;
                 $this->table->add_data_keyed($this->table->format_row($subquestionstats[$subitemid]));
+                if (count($subquestionstats[$subitemid]->variantstats) > 1) {
+                    ksort($subquestionstats[$subitemid]->variantstats);
+                    foreach ($subquestionstats[$subitemid]->variantstats as $variantstat) {
+                        $variantstat->subqdisplayorder = $displayorder;
+                        $variantstat->question->number = $questionstat->question->number;
+                        $this->table->add_data_keyed($this->table->format_row($variantstat));
+                    }
+                }
+                $displayorder++;
             }
         }
 

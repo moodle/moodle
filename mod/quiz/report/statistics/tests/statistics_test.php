@@ -130,10 +130,10 @@ class quiz_statistics_question_stats_testcase extends basic_testcase {
         foreach ($this->qstats as $qstat) {
             $value = array_shift($values);
             if ($value !== null) {
-                $this->assertEquals($qstat->{$fieldname} * $multiplier,
-                    $value, '', 1E-6);
+                $this->assertEquals($value, $qstat->{$fieldname} * $multiplier,
+                    '', 1E-6);
             } else {
-                $this->assertEquals($qstat->{$fieldname} * $multiplier, $value);
+                $this->assertEquals($value, $qstat->{$fieldname} * $multiplier);
             }
         }
     }

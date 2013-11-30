@@ -2927,5 +2927,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014011701.00);
     }
 
+    if ($oldversion < 2014012300.01) {
+
+        // Define field variant to be added to question_statistics.
+        $table = new xmldb_table('question_statistics');
+        $field = new xmldb_field('variant', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'subquestion');
+
+        // Conditionally launch add field variant.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014012300.01);
+    }
+
     return true;
 }

@@ -45,6 +45,12 @@ class calculated {
     public $slot = null;
 
     /**
+     * @var null|integer if this property is not null then this is the stats for a variant of a question or when inherited by
+     *                   calculated_for_subquestion and not null then this is the stats for a variant of a sub question.
+     */
+    public $variant = null;
+
+    /**
      * @var bool is this a sub question.
      */
     public $subquestion = false;
@@ -103,7 +109,7 @@ class calculated {
     // End of fields in db.
 
     protected $fieldsindb = array('questionid', 'slot', 'subquestion', 's', 'effectiveweight', 'negcovar', 'discriminationindex',
-        'discriminativeefficiency', 'sd', 'facility', 'subquestions', 'maxmark', 'positions', 'randomguessscore');
+        'discriminativeefficiency', 'sd', 'facility', 'subquestions', 'maxmark', 'positions', 'randomguessscore', 'variant');
 
     // Fields used for intermediate calculations.
 
@@ -153,6 +159,14 @@ class calculated {
     public $question;
 
     /**
+     * An array of calculated stats for each variant of the question. Even when there is just one variant we still calculate this
+     * data as there is no way to know if there are variants before we have finished going through the attempt data one time.
+     *
+     * @var calculated[] $variants
+     */
+    public $variantstats = array();
+
+    /**
      * Set if this record has been retrieved from cache. This is the time that the statistics were calculated.
      *
      * @var integer
@@ -173,6 +187,12 @@ class calculated {
             $toinsert->{$field} = $this->{$field};
         }
         $DB->insert_record('question_statistics', $toinsert, false);
+
+        if (count($this->variantstats) > 1) {
+            foreach ($this->variantstats as $variantstat) {
+                $variantstat->cache($qubaids);
+            }
+        }
     }
 
     /**
