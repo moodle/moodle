@@ -56,6 +56,12 @@ class calculated {
     public $subquestion = false;
 
     /**
+     * @var string if this stat has been picked as a min, median or maximum facility value then this string says which stat this
+     *                  is.
+     */
+    public $minmedianmaxnotice = '';
+
+    /**
      * @var int total attempts at this question.
      */
     public $s = 0;
