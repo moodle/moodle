@@ -79,10 +79,10 @@ class block_iomad_company_selector extends block_base {
         $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
         $this->content->text = $OUTPUT->container_start('companyselect');
         if (!empty($SESSION->currenteditingcompany)) {
-            $this->content->text .= $OUTPUT->heading( get_string('currentcompany', 'block_iomad_company_selector').
-                                    ' - '.$companyname );
+            $this->content->text .= '<h3>'. get_string('currentcompany', 'block_iomad_company_selector').
+                                    ' - '.$companyname .'</h3>';
         } else {
-            $this->content->text .= $OUTPUT->heading( get_string('nocurrentcompany', 'block_iomad_company_selector'));
+            $this->content->text .= '<h3>'. get_string('nocurrentcompany', 'block_iomad_company_selector').'</h3>';
         }
         $this->content->text .= $fwselectoutput;
         $this->content->text .= $OUTPUT->container_end();
