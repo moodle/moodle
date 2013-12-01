@@ -51,6 +51,7 @@ $string['discussion'] = 'Discussion';
 $string['emailmessages'] = 'Email messages when I am offline';
 $string['emailtagline'] = 'This is a copy of a message sent to you at "{$a->sitename}". Go to {$a->url} to reply.';
 $string['emptysearchstring'] = 'You must search for something';
+$string['enabled'] = 'Enabled';
 $string['errorcallingprocessor'] = 'Error calling defined output';
 $string['errortranslatingdefault'] = 'Error translating default setting provided by plugin, using system defaults instead.';
 $string['forced'] = 'Forced';
