@@ -1176,13 +1176,14 @@ class core_admin_renderer extends plugin_renderer_base {
             get_string('displayname', 'core_plugin'),
             get_string('source', 'core_plugin'),
             get_string('version', 'core_plugin'),
+            get_string('release', 'core_plugin'),
             get_string('availability', 'core_plugin'),
             get_string('actions', 'core_plugin'),
             get_string('notes','core_plugin'),
         );
-        $table->headspan = array(1, 1, 1, 1, 2, 1);
+        $table->headspan = array(1, 1, 1, 1, 1, 2, 1);
         $table->colclasses = array(
-            'pluginname', 'source', 'version', 'availability', 'settings', 'uninstall', 'notes'
+            'pluginname', 'source', 'version', 'release', 'availability', 'settings', 'uninstall', 'notes'
         );
 
         foreach ($plugininfo as $type => $plugins) {
@@ -1238,6 +1239,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 }
 
                 $version = new html_table_cell($plugin->versiondb);
+                $release = new html_table_cell($plugin->release);
 
                 $isenabled = $plugin->is_enabled();
                 if (is_null($isenabled)) {
@@ -1283,7 +1285,7 @@ class core_admin_renderer extends plugin_renderer_base {
                 $notes = new html_table_cell($requiredby.$updateinfo);
 
                 $row->cells = array(
-                    $pluginname, $source, $version, $availability, $settings, $uninstall, $notes
+                    $pluginname, $source, $version, $release, $availability, $settings, $uninstall, $notes
                 );
                 $table->data[] = $row;
             }
