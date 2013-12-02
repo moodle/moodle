@@ -110,11 +110,11 @@ function hm()
 
         $files = array($testfile1, $testfile2);
 
-        $this->assertSame("function hm(){}\nfunction oh(){}", core_minify::js_files($files));
+        $this->assertSame("function hm(){};\nfunction oh(){}", core_minify::js_files($files));
 
         $files = array($testfile1, $testfile2, $testfile3);
 
-        $this->assertStringStartsWith("function hm(){}\nfunction oh(){}\n\n\n// Cannot read JS file ", @core_minify::js_files($files));
+        $this->assertStringStartsWith("function hm(){};\nfunction oh(){};\n\n\n// Cannot read JS file ", @core_minify::js_files($files));
 
         unlink($testfile1);
         unlink($testfile2);
