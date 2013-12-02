@@ -142,4 +142,82 @@ class core_setuplib_testcase extends basic_testcase {
         $this->assertContains($expected, $exceptioninfo->message, 'Exception message does not contain system paths');
         $this->assertContains($expected, $exceptioninfo->debuginfo, 'Exception debug info does not contain system paths');
     }
+
+    public function test_merge_query_params() {
+        $original = array(
+            'id' => '1',
+            'course' => '2',
+            'action' => 'delete',
+            'grade' => array(
+                0 => 'a',
+                1 => 'b',
+                2 => 'c',
+            ),
+            'items' => array(
+                'a' => 'aa',
+                'b' => 'bb',
+            ),
+            'mix' => array(
+                0 => '2',
+            ),
+            'numerical' => array(
+                '2' => array('a' => 'b'),
+                '1' => '2',
+            ),
+        );
+
+        $chunk = array(
+            'numerical' => array(
+                '0' => 'z',
+                '2' => array('d' => 'e'),
+            ),
+            'action' => 'create',
+            'next' => '2',
+            'grade' => array(
+                0 => 'e',
+                1 => 'f',
+                2 => 'g',
+            ),
+            'mix' => 'mix',
+        );
+
+        $expected = array(
+            'id' => '1',
+            'course' => '2',
+            'action' => 'create',
+            'grade' => array(
+                0 => 'a',
+                1 => 'b',
+                2 => 'c',
+                3 => 'e',
+                4 => 'f',
+                5 => 'g',
+            ),
+            'items' => array(
+                'a' => 'aa',
+                'b' => 'bb',
+            ),
+            'mix' => 'mix',
+            'numerical' => array(
+                '2' => array('a' => 'b', 'd' => 'e'),
+                '1' => '2',
+                '0' => 'z',
+            ),
+            'next' => '2',
+        );
+
+        $array = $original;
+        merge_query_params($array, $chunk);
+
+        $this->assertSame($expected, $array);
+        $this->assertNotSame($original, $array);
+
+        $query = "id=1&course=2&action=create&grade%5B%5D=a&grade%5B%5D=b&grade%5B%5D=c&grade%5B%5D=e&grade%5B%5D=f&grade%5B%5D=g&items%5Ba%5D=aa&items%5Bb%5D=bb&mix=mix&numerical%5B2%5D%5Ba%5D=b&numerical%5B2%5D%5Bd%5D=e&numerical%5B1%5D=2&numerical%5B0%5D=z&next=2";
+        $decoded = array();
+        parse_str($query, $decoded);
+        $this->assertSame($expected, $decoded);
+
+        // Prove that we cannot use array_merge_recursive() instead.
+        $this->assertNotSame($expected, array_merge_recursive($original, $chunk));
+    }
 }
