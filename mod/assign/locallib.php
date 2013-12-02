@@ -6451,31 +6451,12 @@ class assign {
         $shouldreopen = false;
         if ($instance->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS) {
             // Check the gradetopass from the gradebook.
-            $gradinginfo = grade_get_grades($this->get_course()->id,
-                                            'mod',
-                                            'assign',
-                                            $instance->id,
-                                            $userid);
+            $gradeitem = $this->get_grade_item();
+            if ($gradeitem) {
+                $gradegrade = grade_grade::fetch(array('userid'=>$userid, 'itemid'=>$gradeitem->id));
 
-            // What do we do if the grade has not been added to the gradebook (e.g. blind marking)?
-            $gradingitem = null;
-            $gradebookgrade = null;
-            if (isset($gradinginfo->items[0])) {
-                $gradingitem = $gradinginfo->items[0];
-                $gradebookgrade = $gradingitem->grades[$userid];
-            }
-
-            if ($gradebookgrade) {
-                // TODO: This code should call grade_grade->is_passed().
-                $shouldreopen = true;
-                if (is_null($gradebookgrade->grade)) {
-                    $shouldreopen = false;
-                }
-                if (empty($gradingitem->gradepass) || $gradingitem->gradepass == $gradingitem->grademin) {
-                    $shouldreopen = false;
-                }
-                if ($gradebookgrade->grade >= $gradingitem->gradepass) {
-                    $shouldreopen = false;
+                if ($gradegrade && !$gradegrade->is_passed()) {
+                    $shouldreopen = true;
                 }
             }
         }
