@@ -647,6 +647,12 @@ BRANCH.prototype = {
         this.node.setAttribute('data-loaded', '1');
         try {
             var object = Y.JSON.parse(outcome.responseText);
+            if (object.error) {
+                Y.use('moodle-core-notification-ajaxException', function () {
+                    return new M.core.ajaxException(object).show();
+                });
+                return false;
+            }
             if (object.children && object.children.length > 0) {
                 var coursecount = 0;
                 for (var i in object.children) {
@@ -668,8 +674,13 @@ BRANCH.prototype = {
                 }
                 return true;
             }
-        } catch (ex) {
+        } catch (error) {
             // If we got here then there was an error parsing the result.
+            Y.use('moodle-core-notification-exception', function () {
+                return new M.core.exception(error).show();
+            });
+
+            return false;
         }
         // The branch is empty so class it accordingly
         this.node.replaceClass('branch', 'emptybranch');
