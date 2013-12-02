@@ -731,4 +731,13 @@ class behat_forms extends behat_base {
         $node = $this->get_node_in_container('xpath_element', $xpathtarget, 'form_row', $field);
         $this->ensure_node_is_visible($node);
     }
+
+    /**
+     * Visit the fixture page for testing repeat defaults.
+     * @Given /^I am on the repeat defaults form page$/
+     */
+    public function i_am_on_the_repeat_defaults_form_page() {
+        $url = new moodle_url('/lib/form/tests/behat/fixtures/repeat_defaults_form.php');
+        $this->getSession()->visit($this->locate_path($url->out_as_local_url(false)));
+    }
 }

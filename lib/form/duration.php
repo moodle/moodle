@@ -218,7 +218,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
                 if (null === $value) {
                     // if no boxes were checked, then there is no value in the array
                     // yet we don't want to display default value in this case
-                    if ($caller->isSubmitted()) {
+                    if ($caller->isSubmitted() && !$caller->is_new_repeat($this->getName())) {
                         $value = $this->_findValue($caller->_submitValues);
                     } else {
                         $value = $this->_findValue($caller->_defaultValues);
