@@ -31,6 +31,8 @@ defined('MOODLE_INTERNAL') || die();
 define('NAVIGATION_CACHE_NAME', 'navigation');
 define('NAVIGATION_SITE_ADMIN_CACHE_NAME', 'navigationsiteadmin');
 
+require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
+
 /**
  * This class is used to represent a node in a navigation tree
  *
