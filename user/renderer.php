@@ -95,7 +95,7 @@ class core_user_renderer extends plugin_renderer_base {
      * @param string $firstinitial the first initial of the firstname
      * @param string $lastinitial the first initial of the lastname
      * @param int $usercount the amount of users meeting the search criteria
-     * @param int $totalcount the amount of users of the set/subset being searched 
+     * @param int $totalcount the amount of users of the set/subset being searched
      * @param string $heading heading of the subset being searched, default is All Participants
      * @return string html output
      */

@@ -561,7 +561,7 @@ class grade_report_grader extends grade_report {
      * This consists of student names and icons, links to user reports and id numbers, as well
      * as header cells for these columns. It also includes the fillers required for the
      * categories displayed on the right side of the report.
-     * @param boolean $displayaverages whether to display average rows in the table 
+     * @param boolean $displayaverages whether to display average rows in the table
      * @return array Array of html_table_row objects
      */
     public function get_left_rows($displayaverages) {
@@ -692,7 +692,7 @@ class grade_report_grader extends grade_report {
 
     /**
      * Builds and returns the rows that will make up the right part of the grader report
-     * @param boolean $displayaverages whether to display average rows in the table 
+     * @param boolean $displayaverages whether to display average rows in the table
      * @return array Array of html_table_row objects
      */
     public function get_right_rows($displayaverages) {
@@ -1067,7 +1067,7 @@ class grade_report_grader extends grade_report {
      * Depending on the style of report (fixedstudents vs traditional one-table),
      * arranges the rows of data in one or two tables, and returns the output of
      * these tables in HTML
-     * @param boolean $displayaverages whether to display average rows in the table 
+     * @param boolean $displayaverages whether to display average rows in the table
      * @return string HTML
      */
     public function get_grade_table($displayaverages = false) {
