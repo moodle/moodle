@@ -31,10 +31,16 @@
  */
 class core_user_testcase extends advanced_testcase {
 
+    /**
+     * Setup test data.
+     */
+    protected function setUp() {
+        $this->resetAfterTest(true);
+    }
+
     public function test_get_user() {
         global $CFG;
 
-        $this->resetAfterTest(true);
 
         // Create user and try fetach it with api.
         $user = $this->getDataGenerator()->create_user();
@@ -77,5 +83,37 @@ class core_user_testcase extends advanced_testcase {
         $supportuser = core_user::get_support_user();
         $this->assertEquals($user, $supportuser);
         $this->assertTrue(core_user::is_real_user($supportuser->id));
+    }
+
+    /**
+     * Test get_user_by_username method.
+     */
+    public function test_get_user_by_username() {
+        $record = array();
+        $record['username'] = 'johndoe';
+        $record['email'] = 'johndoe@example.com';
+        $record['timecreated'] = time();
+
+        // Create a default user for the test.
+        $userexpected = $this->getDataGenerator()->create_user($record);
+
+        // Assert that the returned user is the espected one.
+        $this->assertEquals($userexpected, core_user::get_user_by_username('johndoe'));
+
+        // Assert that a subset of fields is correctly returned.
+        $this->assertEquals((object) $record, core_user::get_user_by_username('johndoe', 'username,email,timecreated'));
+
+        // Assert that a user with a different mnethostid will no be returned.
+        $this->assertFalse(core_user::get_user_by_username('johndoe', 'username,email,timecreated', 2));
+
+        // Create a new user from a different host.
+        $record['mnethostid'] = 2;
+        $userexpected2 = $this->getDataGenerator()->create_user($record);
+
+        // Assert that the new user is returned when specified the correct mnethostid.
+        $this->assertEquals($userexpected2, core_user::get_user_by_username('johndoe', '*', 2));
+
+        // Assert that a user not in the db return false.
+        $this->assertFalse(core_user::get_user_by_username('janedoe'));
     }
 }

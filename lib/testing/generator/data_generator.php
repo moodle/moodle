@@ -226,7 +226,10 @@ EOD;
             $record['deleted'] = 0;
         }
 
-        $record['timecreated'] = time();
+        if (!isset($record['timecreated'])) {
+            $record['timecreated'] = time();
+        }
+
         $record['timemodified'] = $record['timecreated'];
         $record['lastip'] = '0.0.0.0';
 
