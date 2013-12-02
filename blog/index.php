@@ -223,5 +223,13 @@ $bloglisting = new blog_listing($blogheaders['filters']);
 $bloglisting->print_entries();
 
 echo $OUTPUT->footer();
-
-add_to_log($courseid, 'blog', 'view', 'index.php?entryid='.$entryid.'&amp;tagid='.@$tagid.'&amp;tag='.$tag, 'view blog entry');
+$eventparams = array(
+    'other' => array('entryid' => $entryid, 'tagid' => $tagid, 'userid' => $userid, 'modid' => $modid, 'groupid' => $groupid,
+                     'search' => $search, 'fromstart' => $start)
+);
+if (!empty($userid)) {
+    $eventparams['relateduserid'] = $userid;
+}
+$eventparams['other']['courseid'] = ($courseid === SITEID) ? 0 : $courseid;
+$event = \core\event\blog_entries_viewed::create($eventparams);
+$event->trigger();

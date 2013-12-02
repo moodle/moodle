@@ -250,5 +250,137 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventLegacyData($blog, $event);
     }
+
+
+    /**
+     * Tests for event blog_association_created.
+     */
+    public function test_blog_association_created_event() {
+        global $USER;
+
+        $this->setAdminUser();
+        $this->resetAfterTest();
+        $sitecontext = context_system::instance();
+        $coursecontext = context_course::instance($this->courseid);
+        $contextmodule = context_module::instance($this->cmid);
+
+        // Add blog associations with a course.
+        $blog = new blog_entry($this->postid);
+        $sink = $this->redirectEvents();
+        $blog->add_association($coursecontext->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $sink->close();
+
+        // Validate event data.
+        $this->assertInstanceOf('\core\event\blog_association_created', $event);
+        $this->assertEquals($sitecontext->id, $event->contextid);
+        $this->assertEquals($blog->id, $event->other['blogid']);
+        $this->assertEquals($this->courseid, $event->other['associateid']);
+        $this->assertEquals('course', $event->other['associatetype']);
+        $this->assertEquals($blog->subject, $event->other['subject']);
+        $this->assertEquals($USER->id, $event->userid);
+        $this->assertEquals($this->userid, $event->relateduserid);
+        $this->assertEquals('blog_association', $event->objecttable);
+        $arr = array(SITEID, 'blog', 'add association', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id,
+                     $blog->subject, 0, $this->userid);
+        $this->assertEventLegacyLogData($arr, $event);
+
+        // Add blog associations with a module.
+        $blog = new blog_entry($this->postid);
+        $sink = $this->redirectEvents();
+        $blog->add_association($contextmodule->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+        $sink->close();
+
+        // Validate event data.
+        $this->assertEquals($blog->id, $event->other['blogid']);
+        $this->assertEquals($this->cmid, $event->other['associateid']);
+        $this->assertEquals('coursemodule', $event->other['associatetype']);
+        $arr = array(SITEID, 'blog', 'add association', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id,
+                     $blog->subject, $this->cmid, $this->userid);
+        $this->assertEventLegacyLogData($arr, $event);
+    }
+
+    /**
+     * Tests for event blog_association_created validations.
+     */
+    public function test_blog_association_created_event_validations() {
+
+        $this->resetAfterTest();
+
+         // Make sure associatetype validations work.
+        try {
+            \core\event\blog_association_created::create(array(
+                'contextid' => 1,
+                'objectid' => 3,
+                'other' => array('associateid' => 2 , 'blogid' => 3, 'subject' => 'blog subject')));
+        } catch (coding_exception $e) {
+            $this->assertContains('Invalid associatetype', $e->getMessage());
+        }
+        try {
+            \core\event\blog_association_created::create(array(
+                'contextid' => 1,
+                'objectid' => 3,
+                'other' => array('associateid' => 2 , 'blogid' => 3, 'associatetype' => 'random', 'subject' => 'blog subject')));
+        } catch (coding_exception $e) {
+            $this->assertContains('Invalid associatetype', $e->getMessage());
+        }
+        // Make sure associateid validations work.
+        try {
+            \core\event\blog_association_created::create(array(
+                'contextid' => 1,
+                'objectid' => 3,
+                'other' => array('blogid' => 3, 'associatetype' => 'course', 'subject' => 'blog subject')));
+        } catch (coding_exception $e) {
+            $this->assertContains('Associate id must be set', $e->getMessage());
+        }
+        // Make sure blogid validations work.
+        try {
+            \core\event\blog_association_created::create(array(
+                'contextid' => 1,
+                'objectid' => 3,
+                'other' => array('associateid' => 3, 'associatetype' => 'course', 'subject' => 'blog subject')));
+        } catch (coding_exception $e) {
+            $this->assertContains('Blog id must be set', $e->getMessage());
+        }
+        // Make sure blogid validations work.
+        try {
+            \core\event\blog_association_created::create(array(
+                'contextid' => 1,
+                'objectid' => 3,
+                'other' => array('blogid' => 3, 'associateid' => 3, 'associatetype' => 'course')));
+        } catch (coding_exception $e) {
+            $this->assertContains('Subject must be set', $e->getMessage());
+        }
+    }
+
+    /**
+     * Tests for event blog_entries_viewed.
+     */
+    public function test_blog_entries_viewed_event() {
+
+        $this->setAdminUser();
+        $this->resetAfterTest();
+        $other = array('entryid' => $this->postid, 'tagid' => $this->tagid, 'userid' => $this->userid, 'modid' => $this->cmid,
+                       'groupid' => $this->groupid, 'courseid' => $this->courseid, 'search' => 'search', 'fromstart' => 2);
+
+        // Trigger event.
+        $sink = $this->redirectEvents();
+        $eventparams = array('other' => $other);
+        $eventinst = \core\event\blog_entries_viewed::create($eventparams);
+        $eventinst->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+        $sink->close();
+
+        // Validate event data.
+        $url = new moodle_url('/blog/index.php', $other);
+        $url2 = new moodle_url('index.php', $other);
+        $this->assertEquals($url, $event->get_url());
+        $arr = array(SITEID, 'blog', 'view', $url2->out(), 'view blog entry');
+        $this->assertEventLegacyLogData($arr, $event);
+    }
 }
 
