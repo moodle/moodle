@@ -1238,8 +1238,8 @@ function wiki_get_comment($commentid){
 /**
  * Returns all comments by context and pageid
  *
- * @param $context. Current context
- * @param $pageid. Current pageid
+ * @param int $contextid Current context id
+ * @param int $pageid Current pageid
  **/
 function wiki_get_comments($contextid, $pageid) {
     global $DB;
