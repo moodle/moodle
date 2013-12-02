@@ -99,7 +99,6 @@ if ($action == 'delete') {
         $comm->set_action($action, 0, $content);
     }
 }
-add_to_log($course->id, 'wiki', 'comment', "comments.php?pageid=".$pageid, $pageid, $cm->id);
 
 $comm->print_header();
 $comm->print_content();

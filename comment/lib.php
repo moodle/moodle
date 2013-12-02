@@ -651,6 +651,20 @@ class comment {
             }
             $newcmt->time = userdate($newcmt->timecreated, $newcmt->strftimeformat);
 
+            // Trigger comment created event.
+            $eventclassname = '\\' . $this->component . '\\event\comment_created';
+            if (class_exists($eventclassname)) {
+                $event = $eventclassname::create(
+                        array(
+                            'context' => $this->context,
+                            'objectid' => $newcmt->id,
+                            'other' => array(
+                                'itemid' => $this->itemid
+                                )
+                            ));
+                $event->trigger();
+            }
+
             return $newcmt;
         } else {
             throw new comment_exception('dbupdatefailed');
@@ -709,6 +723,20 @@ class comment {
             throw new comment_exception('nopermissiontocomment');
         }
         $DB->delete_records('comments', array('id'=>$commentid));
+        // Trigger comment delete event.
+        $eventclassname = '\\' . $this->component . '\\event\comment_deleted';
+        if (class_exists($eventclassname)) {
+            $event = $eventclassname::create(
+                    array(
+                        'context' => $this->context,
+                        'objectid' => $commentid,
+                        'other' => array(
+                            'itemid' => $this->itemid
+                            )
+                        ));
+            $event->add_record_snapshot('comments', $comment);
+            $event->trigger();
+        }
         return true;
     }
 
