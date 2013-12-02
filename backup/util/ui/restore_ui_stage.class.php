@@ -697,6 +697,7 @@ class restore_ui_stage_process extends restore_ui_stage {
         $html .= html_writer::start_tag('form', array(
             'action'    => $url->out_omit_querystring(),
             'class'     => 'backup-restore',
+            'enctype'   => 'application/x-www-form-urlencoded', // Enforce compatibility with our max_input_vars hack.
             'method'    => 'post'));
         foreach ($url->params() as $name => $value) {
             $html .= html_writer::empty_tag('input', array(

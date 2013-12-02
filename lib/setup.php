@@ -712,6 +712,10 @@ if (!empty($CFG->profilingenabled)) {
     }
 }
 
+// Hack to get around max_input_vars restrictions,
+// we need to do this after session init to have some basic DDoS protection.
+workaround_max_input_vars();
+
 // Process theme change in the URL.
 if (!empty($CFG->allowthemechangeonurl) and !empty($_GET['theme'])) {
     // we have to use _GET directly because we do not want this to interfere with _POST

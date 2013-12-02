@@ -1734,51 +1734,10 @@ class grade_report_grader extends grade_report {
     /**
      * Returns the maximum number of students to be displayed on each page
      *
-     * Takes into account the 'studentsperpage' user preference and the 'max_input_vars'
-     * PHP setting. Too many fields is only a problem when submitting grades but
-     * we respect 'max_input_vars' even when viewing grades to prevent students disappearing
-     * when toggling editing on and off.
-     *
      * @return int The maximum number of students to display per page
      */
     public function get_students_per_page() {
-        global $USER;
-        static $studentsperpage = null;
-
-        if ($studentsperpage === null) {
-            $originalstudentsperpage = $studentsperpage = $this->get_pref('studentsperpage');
-
-            // Will this number of students result in more fields that we are allowed?
-            $maxinputvars = ini_get('max_input_vars');
-            if ($maxinputvars !== false) {
-                // We can't do anything about there being more grade items than max_input_vars,
-                // but we can decrease number of students per page if there are >= max_input_vars
-                $fieldsperstudent = 0; // The number of fields output per student
-
-                if ($this->get_pref('quickgrading') || $this->get_pref('showquickfeedback')) {
-                    // Each array (grade, feedback) will gain one element
-                    $fieldsperstudent ++;
-                }
-
-                $fieldsrequired = $studentsperpage * $fieldsperstudent;
-                if ($fieldsrequired >= $maxinputvars) {
-                    $studentsperpage = $maxinputvars - 1; // Subtract one to be on the safe side
-                    if ($studentsperpage<1) {
-                        // Make sure students per page doesn't fall below 1, though if your
-                        // max_input_vars is only 1 you've got bigger problems!
-                        $studentsperpage = 1;
-                    }
-
-                    $a = new stdClass();
-                    $a->originalstudentsperpage = $originalstudentsperpage;
-                    $a->studentsperpage = $studentsperpage;
-                    $a->maxinputvars = $maxinputvars;
-                    debugging(get_string('studentsperpagereduced', 'grades', $a));
-                }
-            }
-        }
-
-        return $studentsperpage;
+        return $this->get_pref('studentsperpage');
     }
 }
 
