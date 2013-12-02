@@ -61,7 +61,7 @@ class assign_upgrade_manager {
               return false;
         }
 
-        @set_time_limit(ASSIGN_MAX_UPGRADE_TIME_SECS);
+        core_php_time_limit::raise(ASSIGN_MAX_UPGRADE_TIME_SECS);
 
         // Get the module details.
         $oldmodule = $DB->get_record('modules', array('name'=>'assignment'), '*', MUST_EXIST);

@@ -108,7 +108,7 @@ switch ($action) {
         echo $OUTPUT->header();
 
         // This may take a long time.
-        set_time_limit(0);
+        core_php_time_limit::raise();
 
         // Disable plugin to prevent concurrent cron execution.
         unset($enabled[$enrol]);

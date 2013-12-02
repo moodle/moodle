@@ -2036,7 +2036,7 @@ abstract class enrol_plugin {
         // Unfortunately this may take a long time, it should not be interrupted,
         // otherwise users get duplicate notification.
 
-        @set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_HUGE);
 
 

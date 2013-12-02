@@ -615,7 +615,7 @@ class manager {
         global $CFG, $DB;
 
         // This may take a long time...
-        set_time_limit(0);
+        \core_php_time_limit::raise();
 
         $maxlifetime = $CFG->sessiontimeout;
 

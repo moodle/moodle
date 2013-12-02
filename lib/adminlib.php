@@ -126,7 +126,7 @@ function uninstall_plugin($type, $name) {
     global $CFG, $DB, $OUTPUT;
 
     // This may take a long time.
-    @set_time_limit(0);
+    core_php_time_limit::raise();
 
     // Recursively uninstall all subplugins first.
     $subplugintypes = core_component::get_plugin_types_with_subplugins();
@@ -6728,7 +6728,7 @@ function db_replace($search, $replace) {
                         'block_instances', '');
 
     // Turn off time limits, sometimes upgrades can be slow.
-    @set_time_limit(0);
+    core_php_time_limit::raise();
 
     if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
         return false;

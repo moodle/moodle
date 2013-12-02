@@ -167,7 +167,7 @@ function enrol_cohort_sync(progress_trace $trace, $courseid = NULL) {
     }
 
     // Unfortunately this may take a long time, this script can be interrupted without problems.
-    @set_time_limit(0);
+    core_php_time_limit::raise();
     raise_memory_limit(MEMORY_HUGE);
 
     $trace->output('Starting user enrolment synchronisation...');

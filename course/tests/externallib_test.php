@@ -662,9 +662,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         // Check that the course has been duplicated.
         $this->assertEquals($newcourse['shortname'], $duplicate['shortname']);
-
-        // Reset the timeouts.
-        set_time_limit(0);
     }
 
     /**
@@ -1026,9 +1023,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->fail('Unknown CM found.');
             }
         }
-
-        // Reset the timeout (see MDL-38989).
-        set_time_limit(0);
     }
 
     /**
@@ -1080,9 +1074,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->fail('Unknown CM found.');
             }
         }
-
-        // Reset the timeout (see MDL-38989).
-        set_time_limit(0);
     }
 
     /**
@@ -1124,10 +1115,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Check that course modules haven't changed, but that blocks have.
         $this->assertEquals($initialcmcount, $newcmcount);
         $this->assertEquals(($initialblockcount + 1), $newblockcount);
-
-
-        // Reset the timeout (see MDL-38989).
-        set_time_limit(0);
     }
 
     /**
@@ -1176,9 +1163,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->fail('Unknown CM found: '.$cm->name);
             }
         }
-
-        // Reset the timeout (see MDL-38989).
-        set_time_limit(0);
     }
 
     /**

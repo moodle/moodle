@@ -307,7 +307,7 @@ class enrol_database_plugin extends enrol_plugin {
         }
 
         // We may need a lot of memory here.
-        @set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_HUGE);
 
         $table            = $this->get_config('remoteenroltable');
@@ -625,7 +625,7 @@ class enrol_database_plugin extends enrol_plugin {
         $trace->output('Starting course synchronisation...');
 
         // We may need a lot of memory here.
-        @set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_HUGE);
 
         if (!$extdb = $this->db_init()) {

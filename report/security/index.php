@@ -42,7 +42,7 @@ if (array_search($issue, $issues, true) === false) {
 
 // we may need a bit more memory and this may take a long time to process
 raise_memory_limit(MEMORY_EXTRA);
-@set_time_limit(0);
+core_php_time_limit::raise();
 
 // Print the header.
 admin_externalpage_setup('reportsecurity', '', null, '', array('pagelayout'=>'report'));

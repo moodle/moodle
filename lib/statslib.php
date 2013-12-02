@@ -208,7 +208,7 @@ function stats_cron_daily($maxdays=1) {
         }
 
         $days++;
-        @set_time_limit($timeout - 200);
+        core_php_time_limit::raise($timeout - 200);
 
         if ($days > 1) {
             // move the lock
@@ -677,7 +677,7 @@ function stats_cron_weekly() {
 
     $weeks = 0;
     while ($now > $nextstartweek) {
-        @set_time_limit($timeout - 200);
+        core_php_time_limit::raise($timeout - 200);
         $weeks++;
 
         if ($weeks > 1) {
@@ -820,7 +820,7 @@ function stats_cron_monthly() {
 
     $months = 0;
     while ($now > $nextstartmonth) {
-        @set_time_limit($timeout - 200);
+        core_php_time_limit::raise($timeout - 200);
         $months++;
 
         if ($months > 1) {

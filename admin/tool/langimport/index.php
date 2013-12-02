@@ -69,7 +69,7 @@ $notice_ok    = array();
 $notice_error = array();
 
 if (($mode == INSTALLATION_OF_SELECTED_LANG) and confirm_sesskey() and !empty($pack)) {
-    set_time_limit(0);
+    core_php_time_limit::raise();
     make_temp_directory('');
     make_upload_directory('lang');
 
@@ -125,7 +125,7 @@ if ($mode == DELETION_OF_SELECTED_LANG and !empty($uninstalllang)) {
 }
 
 if ($mode == UPDATE_ALL_LANG) {
-    set_time_limit(0);
+    core_php_time_limit::raise();
 
     $installer = new lang_installer();
 

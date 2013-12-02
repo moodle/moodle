@@ -255,7 +255,7 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
     }
 
     // unfortunately this may take a long time, execution can be interrupted safely
-    @set_time_limit(0);
+    core_php_time_limit::raise();
     raise_memory_limit(MEMORY_HUGE);
 
     if ($verbose) {

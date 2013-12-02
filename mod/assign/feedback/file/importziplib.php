@@ -167,7 +167,7 @@ class assignfeedback_file_zip_importer {
         raise_memory_limit(MEMORY_EXTRA);
 
         $packer = get_file_packer('application/zip');
-        @set_time_limit(ASSIGNFEEDBACK_FILE_MAXFILEUNZIPTIME);
+        core_php_time_limit::raise(ASSIGNFEEDBACK_FILE_MAXFILEUNZIPTIME);
 
         return $packer->extract_to_storage($zipfile,
                                     $contextid,
@@ -218,7 +218,7 @@ class assignfeedback_file_zip_importer {
     public function import_zip_files($assignment, $fileplugin) {
         global $CFG, $PAGE, $DB;
 
-        @set_time_limit(ASSIGNFEEDBACK_FILE_MAXFILEUNZIPTIME);
+        core_php_time_limit::raise(ASSIGNFEEDBACK_FILE_MAXFILEUNZIPTIME);
         $packer = get_file_packer('application/zip');
 
         $feedbackfilesupdated = 0;

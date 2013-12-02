@@ -57,7 +57,7 @@ if (data_submitted() and $confirm and confirm_sesskey()) {
 
     echo $OUTPUT->notification('Please be patient and wait for this to complete...', 'notifysuccess');
 
-    set_time_limit(0);
+    core_php_time_limit::raise();
 
     foreach ($rs as $table) {
         $DB->set_debug(true);

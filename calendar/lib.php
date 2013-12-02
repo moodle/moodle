@@ -3025,7 +3025,7 @@ function calendar_import_icalendar_events($ical, $courseid, $subscriptionid = nu
     $updatecount = 0;
 
     // Large calendars take a while...
-    set_time_limit(300);
+    core_php_time_limit::raise(300);
 
     // Mark all events in a subscription with a zero timestamp.
     if (!empty($subscriptionid)) {

@@ -85,7 +85,7 @@ if (!$iid) {
         // Large files are likely to take their time and memory. Let PHP know
         // that we'll take longer, and that the process should be recycled soon
         // to free up memory.
-        @set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_EXTRA);
 
         // Use current (non-conflicting) time stamp.
@@ -183,7 +183,7 @@ if ($formdata = $mform2->get_data()) {
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.
-    @set_time_limit(0);
+    core_php_time_limit::raise();
     raise_memory_limit(MEMORY_EXTRA);
 
     $csvimport->init();

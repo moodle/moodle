@@ -31,9 +31,14 @@ abstract class core_backup_progress {
     const INDETERMINATE = -1;
 
     /**
+     * This value is set rather high to ensure there are no regressions from
+     * previous behaviour. For testing, it may be useful to set the
+     * frontendservertimeout config option to a lower value, such as 180
+     * seconds (default for some commercial products).
+     *
      * @var int The number of seconds that can pass without progress() calls.
      */
-    const TIME_LIMIT_WITHOUT_PROGRESS = 120;
+    const TIME_LIMIT_WITHOUT_PROGRESS = 3600;
 
     /**
      * @var int Time of last progress call.
@@ -201,7 +206,9 @@ abstract class core_backup_progress {
         // Update progress.
         $this->count++;
         $this->lastprogresstime = $now;
-        set_time_limit(self::TIME_LIMIT_WITHOUT_PROGRESS);
+
+        // Update time limit before next progress display.
+        core_php_time_limit::raise(self::TIME_LIMIT_WITHOUT_PROGRESS);
         $this->update_progress();
     }
 

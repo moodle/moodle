@@ -141,7 +141,7 @@ function enrol_category_sync_full(progress_trace $trace) {
     }
 
     // We may need a lot of time here.
-    @set_time_limit(0);
+    core_php_time_limit::raise();
 
     $plugin = enrol_get_plugin('category');
 

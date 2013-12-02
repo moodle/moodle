@@ -1715,9 +1715,6 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Destroy the resource controller since we are done using it.
         $rc->destroy();
         unset($rc);
-
-        // Clear the time limit, otherwise PHPUnit complains.
-        set_time_limit(0);
     }
 
     /**

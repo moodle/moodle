@@ -50,7 +50,7 @@ require_once($CFG->libdir.'/dtllib.php');
  * @return does not return, calls die()
  */
 function tool_dbtransfer_export_xml_database($description, $mdb) {
-    @set_time_limit(0);
+    core_php_time_limit::raise();
 
     \core\session\manager::write_close(); // Release session.
 
@@ -77,7 +77,7 @@ function tool_dbtransfer_export_xml_database($description, $mdb) {
  * @return void
  */
 function tool_dbtransfer_transfer_database(moodle_database $sourcedb, moodle_database $targetdb, progress_trace $feedback = null) {
-    @set_time_limit(0);
+    core_php_time_limit::raise();
 
     \core\session\manager::write_close(); // Release session.
 

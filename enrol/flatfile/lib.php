@@ -229,7 +229,7 @@ class enrol_flatfile_plugin extends enrol_plugin {
         global $CFG, $DB;
 
         // We may need more memory here.
-        @set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_HUGE);
 
         $filelocation = $this->get_config('location');
