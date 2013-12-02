@@ -87,7 +87,7 @@ EOD;
             $compressed[] = self::js($content);
         }
 
-        return implode("\n", $compressed);
+        return implode(";\n", $compressed);
     }
 
     /**
