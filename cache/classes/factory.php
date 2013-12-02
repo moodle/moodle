@@ -235,14 +235,9 @@ class cache_factory {
      */
     public function create_cache(cache_definition $definition) {
         $class = $definition->get_cache_class();
-        if ($this->is_initialising()) {
-            // Do nothing we just want the dummy store.
-            $stores = array();
-        } else {
-            $stores = cache_helper::get_cache_stores($definition);
-        }
+        $stores = cache_helper::get_stores_suitable_for_definition($definition);
         if (count($stores) === 0) {
-            // Hmm no stores, better provide a dummy store to mimick functionality. The dev will be none the wiser.
+            // Hmm still no stores, better provide a dummy store to mimic functionality. The dev will be none the wiser.
             $stores[] = $this->create_dummy_store($definition);
         }
         $loader = null;
