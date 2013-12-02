@@ -1595,14 +1595,6 @@ function set_coursemodule_visible($id, $visible) {
         }
     }
 
-    // Hide the associated grade items so the teacher doesn't also have to go to the gradebook and hide them there.
-    $grade_items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename, 'iteminstance'=>$cm->instance, 'courseid'=>$cm->course));
-    if ($grade_items) {
-        foreach ($grade_items as $grade_item) {
-            $grade_item->set_hidden(!$visible);
-        }
-    }
-
     // Updating visible and visibleold to keep them in sync. Only changing a section visibility will
     // affect visibleold to allow for an original visibility restore. See set_section_visible().
     $cminfo = new stdClass();
@@ -1610,6 +1602,22 @@ function set_coursemodule_visible($id, $visible) {
     $cminfo->visible = $visible;
     $cminfo->visibleold = $visible;
     $DB->update_record('course_modules', $cminfo);
+
+    // Hide the associated grade items so the teacher doesn't also have to go to the gradebook and hide them there.
+    // Note that this must be done after updating the row in course_modules, in case
+    // the modules grade_item_update function needs to access $cm->visible.
+    if (plugin_supports('mod', $modulename, FEATURE_CONTROLS_GRADE_VISIBILITY) &&
+            component_callback_exists('mod_' . $modulename, 'grade_item_update')) {
+        $instance = $DB->get_record($modulename, array('id' => $cm->instance), '*', MUST_EXIST);
+        component_callback('mod_' . $modulename, 'grade_item_update', array($instance));
+    } else {
+        $grade_items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename, 'iteminstance'=>$cm->instance, 'courseid'=>$cm->course));
+        if ($grade_items) {
+            foreach ($grade_items as $grade_item) {
+                $grade_item->set_hidden(!$visible);
+            }
+        }
+    }
 
     rebuild_course_cache($cm->course, true);
     return true;
