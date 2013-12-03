@@ -108,7 +108,7 @@ class behat_command {
 
         // We don't check the PHP version if $CFG->behat_switchcompletely has been enabled.
         // Here we are in CLI.
-        if (empty($CFG->behat_switchcompletely) && $checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
+        if (empty($CFG->behat_switchcompletely) && empty($CFG->behat_wwwroot) && $checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
             behat_error(BEHAT_EXITCODE_REQUIREMENT, 'PHP 5.4 is required. See config-dist.php for possible alternatives');
         }
 
@@ -148,6 +148,7 @@ class behat_command {
         }
 
         // Checking behat dataroot existence otherwise echo about admin/tool/behat/cli/init.php.
+        $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
         if (empty($CFG->behat_dataroot) || !is_dir($CFG->behat_dataroot) || !is_writable($CFG->behat_dataroot)) {
             self::output_msg(get_string('runclitool', 'tool_behat', 'php admin/tool/behat/cli/init.php'));
             return BEHAT_EXITCODE_CONFIG;
