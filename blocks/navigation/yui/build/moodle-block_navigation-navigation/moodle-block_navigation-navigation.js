@@ -675,10 +675,12 @@ BRANCH.prototype = {
                 return true;
             }
         } catch (error) {
-            // If we got here then there was an error parsing the result.
-            Y.use('moodle-core-notification-exception', function () {
-                return new M.core.exception(error).show();
-            });
+            if (outcome && outcome.status && outcome.status > 0) {
+                // If we got here then there was an error parsing the result.
+                Y.use('moodle-core-notification-exception', function () {
+                    return new M.core.exception(error).show();
+                });
+            }
 
             return false;
         }
