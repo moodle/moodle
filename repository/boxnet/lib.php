@@ -184,12 +184,14 @@ class repository_boxnet extends repository {
      * @return array
      */
     public function get_file($ref, $filename = '') {
+        global $CFG;
+
         $ref = unserialize(self::convert_to_valid_reference($ref));
         $path = $this->prepare_file($filename);
         if (!empty($ref->downloadurl)) {
             $c = new curl();
             $result = $c->download_one($ref->downloadurl, null, array('filepath' => $filename,
-                'timeout' => self::GETFILE_TIMEOUT, 'followlocation' => true));
+                'timeout' => $CFG->repositorygetfiletimeout, 'followlocation' => true));
             $info = $c->get_info();
             if ($result !== true || !isset($info['http_code']) || $info['http_code'] != 200) {
                 throw new moodle_exception('errorwhiledownload', 'repository', '', $result);
