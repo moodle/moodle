@@ -24,6 +24,8 @@
 
 $string['allowguests'] = 'This course allows guest users to enter';
 $string['guest:config'] = 'Configure guest access instances';
+$string['guestaccess_withpassword'] = 'Guest access requires password';
+$string['guestaccess_withoutpassword'] = 'Guest access';
 $string['password'] = 'Password';
 $string['password_help'] = 'A password allows guest access to the course to be restricted to only those who know the password. Guests will be required to supply the password each time they access the course.';
 $string['passwordinvalid'] = 'Incorrect access password, please try again';
