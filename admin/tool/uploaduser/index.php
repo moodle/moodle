@@ -547,8 +547,6 @@ if ($formdata = $mform2->is_cancelled()) {
                         continue;
                     }
                     if (!property_exists($user, $column) or !property_exists($existinguser, $column)) {
-                        // this should never happen
-                        debugging("Could not find $column on the user objects", DEBUG_DEVELOPER);
                         continue;
                     }
                     if ($updatetype == UU_UPDATE_MISSING) {
