@@ -43,58 +43,23 @@ $edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and of
 
 require_login();
 
-$context = context_system::instance();
-require_capability('moodle/my:configsyspages', $context);
-$PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
 $header = "$SITE->shortname: ".get_string('myhome')." (".get_string('mypage', 'admin').")";
 
-// Start setting up the page
-$params = array();
-$PAGE->set_url('/my/indexsys.php', $params);
-$PAGE->set_pagelayout('mydashboard');
+$PAGE->set_blocks_editing_capability('moodle/my:configsyspages');
+admin_externalpage_setup('mypage', '', null, '', array('pagelayout' => 'mydashboard'));
+
+// Override pagetype to show blocks properly.
 $PAGE->set_pagetype('my-index');
-$PAGE->set_context($context);
+
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
 $PAGE->blocks->add_region('content');
-
-// TODO: Make the page be selected properly in the Settings block
 
 // Get the My Moodle page info.  Should always return something unless the database is broken.
 if (!$currentpage = my_get_page(null, MY_PAGE_PRIVATE)) {
     print_error('mymoodlesetup');
 }
 $PAGE->set_subpage($currentpage->id);
-
-
-// Toggle the editing state and switches
-if ($PAGE->user_allowed_editing()) {
-    if ($edit !== null) {             // Editing state was specified
-        $USER->editing = $edit;       // Change editing state
-    } else {                          // Editing state is in session
-        if (!empty($USER->editing)) {
-            $edit = 1;
-        } else {
-            $edit = 0;
-        }
-    }
-
-    // Add button for editing page
-    $params['edit'] = !$edit;
-
-    if (empty($edit)) {
-        $editstring = get_string('updatemymoodleon');
-    } else {
-        $editstring = get_string('updatemymoodleoff');
-    }
-
-    $url = new moodle_url("$CFG->wwwroot/my/indexsys.php", $params);
-    $button = $OUTPUT->single_button($url, $editstring);
-    $PAGE->set_button($button);
-
-} else {
-    $USER->editing = $edit = 0;
-}
 
 echo $OUTPUT->header();
 
