@@ -71,7 +71,7 @@ class core_php_time_limit {
         // server systems; if the front-end server has a timeout without receiving
         // data, it's helpful to set this timeout lower to ensure that a suitable
         // error gets logged.
-        if ($CFG->maxtimelimit) {
+        if (!empty($CFG->maxtimelimit)) {
             $realtimeout = max(1, $CFG->maxtimelimit);
             if ($newlimit === 0) {
                 $newlimit = $realtimeout;
