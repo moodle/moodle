@@ -664,7 +664,7 @@ class auth_plugin_db extends auth_plugin_base {
      * @return moodle_url
      */
     function change_password_url() {
-        if ($this->is_internal()) {
+        if ($this->is_internal() || empty($this->config->changepasswordurl)) {
             // Standard form.
             return null;
         } else {
