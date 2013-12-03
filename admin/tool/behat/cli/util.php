@@ -92,21 +92,17 @@ ini_set('log_errors', '1');
 // Getting $CFG data.
 require_once(__DIR__ . '/../../../../config.php');
 
-// CFG->behat_prefix must be set and with value different than CFG->prefix and phpunit_prefix.
-if (empty($CFG->behat_prefix) ||
-       ($CFG->behat_prefix == $CFG->prefix) ||
-       (!empty($CFG->phpunit_prefix) && $CFG->behat_prefix == $CFG->phpunit_prefix)) {
-    behat_error(BEHAT_EXITCODE_CONFIG,
-        'Define $CFG->behat_prefix in config.php with a value different than $CFG->prefix and $CFG->phpunit_prefix');
-}
+// When we use the utilities we don't know how the site
+// will be accessed, so if neither $CFG->behat_switchcompletely or
+// $CFG->behat_wwwroot are set we must think that the site will
+// be accessed using the built-in server which is set by default
+// to localhost:8000. We need to do this to prevent uses of the production
+// wwwroot when the site is being installed / dropped...
+$CFG->behat_wwwroot = behat_get_wwwroot();
 
-// CFG->behat_dataroot must be set and with value different than CFG->dataroot and phpunit_dataroot.
-if (empty($CFG->behat_dataroot) ||
-       ($CFG->behat_dataroot == $CFG->dataroot) ||
-       (!empty($CFG->phpunit_dataroot) && $CFG->behat_dataroot == $CFG->phpunit_dataroot)) {
-    behat_error(BEHAT_EXITCODE_CONFIG,
-        'Define $CFG->behat_dataroot in config.php with a value different than $CFG->dataroot and $CFG->phpunit_dataroot');
-}
+// Checking the integrity of the provided $CFG->behat_* vars
+// to prevent conflicts with production and phpunit environments.
+behat_check_config_vars();
 
 // Create behat_dataroot if it doesn't exists.
 if (!file_exists($CFG->behat_dataroot)) {
