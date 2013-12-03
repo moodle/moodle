@@ -1229,16 +1229,10 @@ function fix_utf8($value) {
         // No null bytes expected in our data, so let's remove it.
         $value = str_replace("\0", '', $value);
 
-        // Lower error reporting because glibc throws bogus notices.
-        $olderror = error_reporting();
-        if ($olderror & E_NOTICE) {
-            error_reporting($olderror ^ E_NOTICE);
-        }
-
         // Note: this duplicates min_fix_utf8() intentionally.
         static $buggyiconv = null;
         if ($buggyiconv === null) {
-            $buggyiconv = (!function_exists('iconv') or iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
+            $buggyiconv = (!function_exists('iconv') or @iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
         }
 
         if ($buggyiconv) {
@@ -1254,11 +1248,7 @@ function fix_utf8($value) {
             }
 
         } else {
-            $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
-        }
-
-        if ($olderror & E_NOTICE) {
-            error_reporting($olderror);
+            $result = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
         }
 
         return $result;

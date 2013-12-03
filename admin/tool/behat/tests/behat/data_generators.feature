@@ -1,4 +1,4 @@
-@tool @tool_behat
+@tool @tool_behat @_only_local
 Feature: Set up contextual data for tests
   In order to write tests quickly
   As a developer
@@ -143,13 +143,56 @@ Feature: Set up contextual data for tests
       | fullname | shortname |
       | Course 1 | C1 |
     And the following "activities" exists:
-      | activity | name | intro | course | idnumber |
-      | assign   | Test assignment name | Test assignment description | C1 | assign1 |
-      | data     | Test database name | Test database description | C1 | data1 |
+      | activity   | name                   | intro                         | course | idnumber    |
+      | assign     | Test assignment name   | Test assignment description   | C1     | assign1     |
+      | assignment | Test assignment22 name | Test assignment22 description | C1     | assignment1 |
+      | book       | Test book name         | Test book description         | C1     | book1       |
+      | chat       | Test chat name         | Test chat description         | C1     | chat1       |
+      | choice     | Test choice name       | Test choice description       | C1     | choice1     |
+      | data       | Test database name     | Test database description     | C1     | data1       |
+      | feedback   | Test feedback name     | Test feedback description     | C1     | feedback1   |
+      | folder     | Test folder name       | Test folder description       | C1     | folder1     |
+      | forum      | Test forum name        | Test forum description        | C1     | forum1      |
+      | glossary   | Test glossary name     | Test glossary description     | C1     | glossary1   |
+      | imscp      | Test imscp name        | Test imscp description        | C1     | imscp1      |
+      | label      | Test label name        | Test label description        | C1     | label1      |
+      | lesson     | Test lesson name       | Test lesson description       | C1     | lesson1     |
+      | lti        | Test lti name          | Test lti description          | C1     | lti1        |
+      | page       | Test page name         | Test page description         | C1     | page1       |
+      | quiz       | Test quiz name         | Test quiz description         | C1     | quiz1       |
+      | resource   | Test resource name     | Test resource description     | C1     | resource1   |
+      | scorm      | Test scorm name        | Test scorm description        | C1     | scorm1      |
+      | survey     | Test survey name       | Test survey description       | C1     | survey1     |
+      | url        | Test url name          | Test url description          | C1     | url1        |
+      | wiki       | Test wiki name         | Test wiki description         | C1     | wiki1       |
+      | workshop   | Test workshop name     | Test workshop description     | C1     | workshop1   |
     When I log in as "admin"
     And I follow "Course 1"
     Then I should see "Test assignment name"
+    # Assignment 2.2 module type is disabled by default
+    # And I should see "Test assignment22 name"
+    And I should see "Test book name"
+    And I should see "Test chat name"
+    And I should see "Test choice name"
     And I should see "Test database name"
+    # Feedback module type is disabled by default
+    # And I should see "Test feedback name"
+    And I should see "Test folder name"
+    And I should see "Test forum name"
+    And I should see "Test glossary name"
+    And I should see "Test imscp name"
+    # We don't see label name, we see only description:
+    And I should see "Test label description"
+    And I should see "Test lesson name"
+    And I should see "Test lti name"
+    And I should see "Test page name"
+    And I should see "Test quiz name"
+    And I should see "Test resource name"
+    And I should see "Test scorm name"
+    And I should see "Test survey name"
+    And I should see "Test url name"
+    And I should see "Test wiki name"
+    And I should see "Test workshop name"
     And I follow "Test assignment name"
     And I should see "Test assignment description"
 
