@@ -73,11 +73,14 @@ abstract class base_moodleform extends moodleform {
      */
     function __construct(base_ui_stage $uistage, $action=null, $customdata=null, $method='post', $target='', $attributes=null, $editable=true) {
         $this->uistage = $uistage;
-        $attributes = (array)$attributes;
+        // Add a class to the attributes to prevent the default collapsible behaviour.
+        if (!$attributes) {
+            $attributes = array();
+        }
+        $attributes['class'] = 'unresponsive';
         if (!isset($attributes['enctype'])) {
             $attributes['enctype'] = 'application/x-www-form-urlencoded'; // Enforce compatibility with our max_input_vars hack.
         }
-
         parent::__construct($action, $customdata, $method, $target, $attributes, $editable);
     }
     /**

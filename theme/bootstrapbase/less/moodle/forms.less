@@ -386,11 +386,11 @@ fieldset.coursesearchbox label {
 /**
  * Show the labels above text editors and file managers except on wide screens.
  */
-#region-main .mform .fitem .fitemtitle label {
+#region-main .mform:not(.unresponsive) .fitem .fitemtitle label {
     font-weight: bold;
 }
 @media (max-width: 1199px) {
-    #region-main .mform {
+    #region-main .mform:not(.unresponsive) {
         .fitem {
             .fitemtitle {
                 display: block;
@@ -434,7 +434,7 @@ fieldset.coursesearchbox label {
             }
         }
     }
-    .dir-rtl #region-main .mform {
+    .dir-rtl #region-main .mform:not(.unresponsive) {
         .femptylabel .fitemtitle {
             margin-right: 0px;
             margin-left: 8px;
