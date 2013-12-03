@@ -203,8 +203,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
             }
         }
 
-        $mform->addElement('editor', 'assignfeedbackcomments_editor', html_writer::tag('span', $this->get_name(),
-            array('class' => 'accesshide')), null, null);
+        $mform->addElement('editor', 'assignfeedbackcomments_editor', $this->get_name(), null, null);
 
         return true;
     }
