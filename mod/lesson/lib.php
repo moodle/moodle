@@ -468,6 +468,22 @@ function lesson_grade_item_update($lesson, $grades=null) {
     } else if ($lesson->grade < 0) {
         $params['gradetype']  = GRADE_TYPE_SCALE;
         $params['scaleid']   = -$lesson->grade;
+
+        // Make sure current grade fetched correctly from $grades
+        $currentgrade = null;
+        if (!empty($grades)) {
+            if (is_array($grades)) {
+                $currentgrade = reset($grades);
+            } else {
+                $currentgrade = $grades;
+            }
+        }
+
+        // When converting a score to a scale, use scale's grade maximum to calculate it.
+        if (!empty($currentgrade) && $currentgrade->rawgrade !== null) {
+            $grade = grade_get_grades($lesson->course, 'mod', 'lesson', $lesson->id, $currentgrade->userid);
+            $params['grademax']   = reset($grade->items)->grademax;
+        }
     } else {
         $params['gradetype']  = GRADE_TYPE_NONE;
     }
@@ -488,7 +504,7 @@ function lesson_grade_item_update($lesson, $grades=null) {
             }
             //check raw grade isnt null otherwise we erroneously insert a grade of 0
             if ($grade['rawgrade'] !== null) {
-                $grades[$key]['rawgrade'] = ($grade['rawgrade'] * $lesson->grade / 100);
+                $grades[$key]['rawgrade'] = ($grade['rawgrade'] * $params['grademax'] / 100);
             } else {
                 //setting rawgrade to null just in case user is deleting a grade
                 $grades[$key]['rawgrade'] = null;
