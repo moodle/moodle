@@ -16,7 +16,7 @@ Feature: Users can search their message history
     And I fill in "Search people and messages" with "your biscuits"
     And I press "Search people and messages"
     Then I should see "User Two"
-    And I click on "context" "link" in the "User Two" table row
+    And I click on "context" "link" in the "User Two" "table_row"
     And I should see "Give me your biscuits"
 
   @javascript
