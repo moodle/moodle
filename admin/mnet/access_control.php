@@ -16,8 +16,6 @@ require_login();
 
 admin_externalpage_setup('ssoaccesscontrol');
 
-echo $OUTPUT->header();
-
 if (!extension_loaded('openssl')) {
     print_error('requiresopenssl', 'mnet');
 }
@@ -117,6 +115,8 @@ if ($form = data_submitted() and confirm_sesskey()) {
     }
     exit;
 }
+
+echo $OUTPUT->header();
 
 // Explain
 echo $OUTPUT->box(get_string('ssoacldescr','mnet'));
