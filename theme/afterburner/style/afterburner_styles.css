@@ -466,14 +466,6 @@ tab styles for ie6 & ie7
 .file-picker textarea {
     background-color: #EEE;
 }
-/* Important z-index fixes
--------------------------*/
-.yui-skin-sam .yui-panel-container {
-    z-index: 999999!important;
-}
-body#page-course-view-topics.path-course div.moodle-dialogue-base div.yui3-widget{
-    z-index: 600!important;
-}
 
 /* Moodle forms
 ----------------*/
