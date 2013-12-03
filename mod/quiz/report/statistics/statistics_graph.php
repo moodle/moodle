@@ -153,6 +153,12 @@ foreach ($fieldstoplot as $fieldtoplot => $notused) {
 $gridresolution = 10;
 $max = ceil($max / $gridresolution) * $gridresolution;
 $min = floor($min / $gridresolution) * $gridresolution;
+
+if ($max == $min) {
+    // Make sure there is some difference between min and max y values.
+    $max = $min + $gridresolution;
+}
+
 $gridlines = ceil(($max - $min) / $gridresolution) + 1;
 
 $graph->parameter['y_axis_gridlines'] = $gridlines;
