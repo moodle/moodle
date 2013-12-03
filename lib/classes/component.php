@@ -566,6 +566,9 @@ $cache = '.var_export($cache, true).';
         self::load_classes('core', "$CFG->dirroot/lib/classes");
 
         foreach (self::$subsystems as $subsystem => $fulldir) {
+            if (!$fulldir) {
+                continue;
+            }
             self::load_classes('core_'.$subsystem, "$fulldir/classes");
         }
 
