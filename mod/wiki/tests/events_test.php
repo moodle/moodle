@@ -147,7 +147,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
     /**
      * Test instances_list_viewed event.
      */
-    public function test_instances_list_viewed() {
+    public function test_course_module_instance_list_viewed() {
         // There is no proper API to call or trigger this event, so simulating event
         // to check if event returns the right information.
 
@@ -155,7 +155,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $context = context_course::instance($this->course->id);
 
         $params = array('context' => $context);
-        $event = \mod_wiki\event\instances_list_viewed::create($params);
+        $event = \mod_wiki\event\course_module_instance_list_viewed::create($params);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -165,7 +165,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\mod_wiki\event\instances_list_viewed', $event);
+        $this->assertInstanceOf('\mod_wiki\event\course_module_instance_list_viewed', $event);
         $this->assertEquals($context, $event->get_context());
         $expected = array($this->course->id, 'wiki', 'view all', 'index.php?id=' . $this->course->id, '');
         $this->assertEventLegacyLogData($expected, $event);
@@ -534,29 +534,18 @@ class mod_wiki_events_testcase extends advanced_testcase {
      * Test page_version_restored event.
      */
     public function test_page_version_restored() {
-        // There is no proper API to call or trigger this event, so simulating event
-        // to check if event returns the right information.
-
         $this->setUp();
 
         $page = $this->wikigenerator->create_first_page($this->wiki);
         $context = context_module::instance($this->wiki->cmid);
         $version = wiki_get_version(1);
-        $params = array(
-                'context' => $context,
-                'objectid' => $version->id,
-                'other' => array(
-                    'pageid' => $page->id
-                    )
-                );
-        $event = \mod_wiki\event\page_version_restored::create($params);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
-        $event->trigger();
+        wiki_restore_page($page, $version, $context);
         $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
+        $this->assertCount(2, $events);
+        $event = array_pop($events);
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_wiki\event\page_version_restored', $event);

@@ -292,11 +292,27 @@ function wiki_refresh_cachedcontent($page, $newcontent = null) {
 
     return array('page' => $page, 'sections' => $parseroutput['repeated_sections'], 'version' => $version->version);
 }
+
 /**
- * Restore a page
+ * Restore a page with specified version.
+ *
+ * @param stdClass $wikipage wiki page record
+ * @param stdClass $version wiki page version to restore
+ * @param context_module $context context of wiki module
+ * @return stdClass restored page
  */
-function wiki_restore_page($wikipage, $newcontent, $userid) {
-    $return = wiki_save_page($wikipage, $newcontent, $userid);
+function wiki_restore_page($wikipage, $version, $context) {
+    $return = wiki_save_page($wikipage, $version->content, $version->userid);
+    $event = \mod_wiki\event\page_version_restored::create(
+            array(
+                'context' => $context,
+                'objectid' => $version->id,
+                'other' => array(
+                    'pageid' => $wikipage->id
+                    )
+                ));
+    $event->add_record_snapshot('wiki_versions', $version);
+    $event->trigger();
     return $return['page'];
 }
 
