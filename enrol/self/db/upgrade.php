@@ -56,6 +56,12 @@ function xmldb_enrol_self_upgrade($oldversion) {
     // Moodle v2.6.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2013112100) {
+        // Set customint1 (group enrolment key) to 0 if it was not set (null).
+        $DB->execute("UPDATE {enrol} SET customint1 = 0 WHERE enrol = 'self' AND customint1 IS NULL");
+        upgrade_plugin_savepoint(true, 2013112100, 'enrol', 'self');
+    }
+
     return true;
 }
 
