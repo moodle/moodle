@@ -88,12 +88,13 @@ while (count($parts)) {
 
         if (strpos($rollupname, 'yui-moodlesimple') !== false) {
             if (substr($rollupname, -3) === '.js') {
-                // Determine whether we should minify this rollup.
-                preg_match('/(-min)?\.js/', $rollupname, $matches);
+                // Determine which version of this rollup should be used.
                 $filesuffix = '.js';
+                preg_match('/(-(debug|min))?\.js/', $rollupname, $matches);
                 if (isset($matches[1])) {
-                    $filesuffix = '-min.js';
+                    $filesuffix = $matches[0];
                 }
+
                 $type = 'js';
             } else if (substr($rollupname, -4) === '.css') {
                 $type = 'css';
@@ -216,9 +217,11 @@ while (count($parts)) {
                 'core/notification/notification-dialogue',
             );
 
+            // Determine which version of this rollup should be used.
             $filesuffix = '.js';
+            preg_match('/(-(debug|min))?\.js/', $rollupname, $matches);
             if (isset($matches[1])) {
-                $filesuffix = '-min.js';
+                $filesuffix = $matches[0];
             }
 
             // We need to add these new parts to the beginning of the $parts list, not the end.
