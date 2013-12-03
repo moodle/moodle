@@ -102,7 +102,6 @@ You can view it <a href="{$a->url}">here</a>.';
 $string['entries_saved'] = 'Your answers have been saved. Thank you.';
 $string['export_questions'] = 'Export questions';
 $string['export_to_excel'] = 'Export to Excel';
-$string['eventcoursemoduleviewed'] = 'Course module viewed';
 $string['eventresponsedeleted'] = 'Response deleted';
 $string['eventresponsesubmitted'] = 'Response submitted';
 $string['eventinstanceslistviewed'] = 'Instances list viewed';

@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 Adrian Greeve
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\content_viewed {
+class course_module_viewed extends \core\event\course_module_viewed {
 
     /**
      * Init method.
@@ -41,42 +41,5 @@ class course_module_viewed extends \core\event\content_viewed {
         $this->data['crud'] = 'r';
         $this->data['level'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'choice';
-    }
-
-    /**
-     * Returns localised general event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('event_choice_viewed', 'choice');
-    }
-
-    /**
-     * Returns non-localised description of what happened.
-     *
-     * @return string
-     */
-    public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed choice activity with instance id ' . $this->objectid;
-    }
-
-    /**
-     * Returns relevant URL.
-     * @return \moodle_url
-     */
-    public function get_url() {
-        $url = '/mod/choice/view.php';
-        return new \moodle_url($url, array('id' => $this->context->instanceid));
-    }
-
-    /**
-     * replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        $url = new \moodle_url('view.php', array('id' => $this->context->instanceid));
-        return array($this->courseid, 'choice', 'view', $url->out(), $this->objectid, $this->context->instanceid);
     }
 }

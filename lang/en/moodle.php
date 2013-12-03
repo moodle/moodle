@@ -717,6 +717,7 @@ $string['eventcoursedeleted'] = 'Course deleted';
 $string['eventcoursemodulecreated'] = 'Course module created';
 $string['eventcoursemoduledeleted'] = 'Course module deleted';
 $string['eventcoursemoduleupdated'] = 'Course module updated';
+$string['eventcoursemoduleviewed'] = 'Course module viewed';
 $string['eventcourseresetended'] = 'Course reset ended';
 $string['eventcourseresetstarted'] = 'Course reset started';
 $string['eventcourserestored'] = 'Course restored';

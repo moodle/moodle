@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\content_viewed {
+class course_module_viewed extends \core\event\course_module_viewed {
 
     /**
      * Init method.
@@ -53,33 +53,6 @@ class course_module_viewed extends \core\event\content_viewed {
     }
 
     /**
-     * Returns non-localised description of what happened.
-     *
-     * @return string
-     */
-    public function get_description() {
-        return 'User with id ' . $this->userid . ' viewed workshop activity with instance id ' . $this->objectid;
-    }
-
-    /**
-     * Returns localised general event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('workshopviewed', 'workshop');
-    }
-
-    /**
-     * Returns relevant URL.
-     * @return \moodle_url
-     */
-    public function get_url() {
-        $url = '/mod/workshop/view.php';
-        return new \moodle_url($url, array('id'=>$this->context->instanceid));
-    }
-
-    /**
      * Legacy event data if get_legacy_eventname() is not empty.
      *
      * @return mixed
@@ -92,15 +65,5 @@ class course_module_viewed extends \core\event\content_viewed {
         $cm       = $this->get_record_snapshot('course_modules', $this->context->instanceid);
         $workshop = new \workshop($workshop, $cm, $course);
         return (object)array('workshop' => $workshop, 'user' => $USER);
-    }
-
-    /**
-     * replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        $url = new \moodle_url('view.php', array('id' => $this->context->instanceid));
-        return array($this->courseid, 'workshop', 'view', $url->out(), $this->objectid, $this->context->instanceid);
     }
 }
