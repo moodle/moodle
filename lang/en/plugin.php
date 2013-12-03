@@ -64,6 +64,7 @@ $string['plugindisable'] = 'Disable';
 $string['plugindisabled'] = 'Disabled';
 $string['pluginenable'] = 'Enable';
 $string['pluginenabled'] = 'Enabled';
+$string['release'] = 'Release';
 $string['requiredby'] = 'Required by: {$a}';
 $string['requires'] = 'Requires';
 $string['rootdir'] = 'Directory';

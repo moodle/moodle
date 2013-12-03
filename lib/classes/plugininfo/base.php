@@ -53,6 +53,8 @@ abstract class base {
     public $versiondb;
     /** @var int|float|string required version of Moodle core  */
     public $versionrequires;
+    /** @var mixed human-readable release information */
+    public $release;
     /** @var array other plugins that this one depends on, lazy-loaded by {@link get_other_required_plugins()} */
     public $dependencies;
     /** @var int number of instances of the plugin - not supported yet */
@@ -222,6 +224,9 @@ abstract class base {
         }
         if (isset($plugin->requires)) {
             $this->versionrequires = $plugin->requires;
+        }
+        if (isset($plugin->release)) {
+            $this->release = $plugin->release;
         }
         if (isset($plugin->dependencies)) {
             $this->dependencies = $plugin->dependencies;
