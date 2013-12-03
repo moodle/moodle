@@ -661,6 +661,11 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_extraallowedsettings = array('logsql', 'dblogerror');
 //
+// You should explicitly allow the usage of the deprecated behat steps, otherwise an exception will
+// be thrown when using them. The setting is disabled by default.
+// Example:
+//   $CFG->behat_usedeprecated = true;
+//
 //=========================================================================
 // 12. DEVELOPER DATA GENERATOR
 //=========================================================================

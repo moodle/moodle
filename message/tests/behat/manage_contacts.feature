@@ -16,7 +16,7 @@ Feature: Manage contacts
     And I click on "Messages" "link" in the "Navigation" "block"
     And I fill in "Search people and messages" with "User Two"
     And I press "Search people and messages"
-    When I click on "Add contact" "link" in the "User Two" table row
+    When I click on "Add contact" "link" in the "User Two" "table_row"
     Then I should see "Message 1 from user1 to user2"
     And I should see "Message 2 from user1 to user2"
     And I should see "User Two" in the "#message_contacts" "css_element"
