@@ -590,7 +590,7 @@ BRANCH.prototype = {
         } else {
             e.stopPropagation();
         }
-        if (e.type === 'actionkey' && e.action === 'enter' && e.target.test('A')) {
+        if ((e.type === 'actionkey' && e.action === 'enter') || e.target.test('a')) {
             // No ajaxLoad for enter.
             this.node.setAttribute('data-expandable', '0');
             this.node.setAttribute('data-loaded', '1');
