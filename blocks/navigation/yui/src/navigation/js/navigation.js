@@ -677,11 +677,13 @@ BRANCH.prototype = {
             }
             Y.log('AJAX loading complete but there were no children.', 'note', 'moodle-block_navigation');
         } catch (error) {
-            // If we got here then there was an error parsing the result.
-            Y.log('Error parsing AJAX response or adding branches to the navigation tree', 'error', 'moodle-block_navigation');
-            Y.use('moodle-core-notification-exception', function () {
-                return new M.core.exception(error).show();
-            });
+            if (outcome && outcome.status && outcome.status > 0) {
+                // If we got here then there was an error parsing the result.
+                Y.log('Error parsing AJAX response or adding branches to the navigation tree', 'error', 'moodle-block_navigation');
+                Y.use('moodle-core-notification-exception', function () {
+                    return new M.core.exception(error).show();
+                });
+            }
 
             return false;
         }
