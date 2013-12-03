@@ -33,7 +33,7 @@
  * @return int id of the newly created user
  */
 function user_create_user($user, $updatepassword = true) {
-    global $DB;
+    global $DB, $CFG;
 
     // Set the timecreate field to the current time.
     if (!is_object($user)) {
