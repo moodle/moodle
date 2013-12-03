@@ -1249,14 +1249,25 @@ class page_requirements_manager {
         $code = '';
 
         $jsrev = $this->get_jsrev();
+
+        $yuiformat = '-min';
+        if ($this->yui3loader->filter === 'RAW') {
+            $yuiformat = '';
+        }
+
+        $format = '-min';
+        if ($this->YUI_config->groups['moodle']['filter'] === 'DEBUG') {
+            $format = '-debug';
+        }
+
         $baserollups = array(
-            'rollup/' . $CFG->yui3version . '/yui-moodlesimple-min.js',
+            'rollup/' . $CFG->yui3version . '/yui-moodlesimple' . $yuiformat . '.js',
         );
         // The reason for separate rollups is that the Y = YUI().use('*') call is run async and
         // it gets it's knickers in a twist. Putting it in a separate <script>
         // to the moodle rollup means that it's completed before the moodle one starts.
         $moodlerollups = array(
-            'rollup/' . $jsrev . '/mcore-min.js',
+            'rollup/' . $jsrev . '/mcore' . $format . '.js',
         );
 
         if ($this->yui3loader->combine) {
@@ -1290,10 +1301,8 @@ class page_requirements_manager {
 
         if ($this->yui3loader->filter === 'RAW') {
             $code = str_replace('-min.css', '.css', $code);
-            $code = str_replace('-min.js', '.js', $code);
         } else if ($this->yui3loader->filter === 'DEBUG') {
             $code = str_replace('-min.css', '.css', $code);
-            $code = str_replace('-min.js', '-debug.js', $code);
         }
         return $code;
     }
