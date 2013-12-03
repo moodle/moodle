@@ -181,7 +181,8 @@ class filter_tex extends moodle_text_filter {
                 $texcache->timemodified = time();
                 $DB->insert_record("cache_filters", $texcache, false);
             }
-            $filename = $md5 . ".{$CFG->filter_tex_convertformat}";
+            $convertformat = get_config('filter_tex', 'convertformat');
+            $filename = $md5.".{$convertformat}";
             $text = str_replace( $matches[0][$i], filter_text_image($filename, $texexp, 0, 0, $align, $alt), $text);
         }
         return $text;
