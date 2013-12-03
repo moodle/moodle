@@ -33,6 +33,7 @@ define('BEHAT_EXITCODE_PERMISSIONS', 252);
 define('BEHAT_EXITCODE_REINSTALL', 253);
 define('BEHAT_EXITCODE_INSTALL', 254);
 define('BEHAT_EXITCODE_COMPOSER', 255);
+define('BEHAT_EXITCODE_INSTALLED', 256);
 
 /**
  * Exits with an error code
@@ -61,6 +62,9 @@ function behat_error($errorcode, $text = '') {
         case BEHAT_EXITCODE_INSTALL:
             $path = testing_cli_argument_path('/admin/tool/behat/cli/init.php');
             $text = "Install Behat before enabling it, use:\n php ".$path;
+            break;
+        case BEHAT_EXITCODE_INSTALLED:
+            $text = "The Behat site is already installed";
             break;
         default:
             $text = 'Unknown error ' . $errorcode . ' ' . $text;
