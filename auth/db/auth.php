@@ -399,6 +399,9 @@ class auth_plugin_db extends auth_plugin_base {
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
+                if (empty($user->calendartype)) {
+                    $user->calendartype = $CFG->calendartype;
+                }
                 $user->timecreated = time();
                 $user->timemodified = $user->timecreated;
                 if ($collision = $DB->get_record_select('user', "username = :username AND mnethostid = :mnethostid AND auth <> :auth", array('username'=>$user->username, 'mnethostid'=>$CFG->mnet_localhost_id, 'auth'=>$this->authtype), 'id,username,auth')) {
