@@ -723,6 +723,7 @@ $string['eventcourseresetstarted'] = 'Course reset started';
 $string['eventcourserestored'] = 'Course restored';
 $string['eventcourseupdated'] = 'Course updated';
 $string['eventcoursesectionupdated'] = ' Course section updated';
+$string['eventcoursemoduleinstancelistviewed'] = 'Course module instance list viewed';
 $string['eventusercreated'] = 'User created';
 $string['eventuserdeleted'] = 'User deleted';
 $string['eventuserlistviewed'] = 'User list viewed';

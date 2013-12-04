@@ -79,3 +79,4 @@ abstract class course_module_instances_list_viewed extends \core\event\content_v
     }
 
 }
+
