@@ -1,0 +1,13 @@
+{
+    "moodle-course-toolboxes": {
+        "requires": [
+            "node",
+            "base",
+            "event-key",
+            "node",
+            "io",
+            "moodle-course-coursebase",
+            "moodle-course-util"
+        ]
+    }
+}
