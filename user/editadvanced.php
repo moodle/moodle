@@ -169,7 +169,6 @@ if ($usernew = $userform->get_data()) {
     $createpassword = false;
 
     if ($usernew->id == -1) {
-        //TODO check out if it makes sense to create account with this auth plugin and what to do with the password
         unset($usernew->id);
         $createpassword = !empty($usernew->createpassword);
         unset($usernew->createpassword);
@@ -177,12 +176,24 @@ if ($usernew = $userform->get_data()) {
         $usernew->mnethostid = $CFG->mnet_localhost_id; // always local user
         $usernew->confirmed  = 1;
         $usernew->timecreated = time();
-        if ($createpassword) {
-            $usernew->password = '';
+        if ($authplugin->is_internal()) {
+            if ($createpassword or empty($usernew->newpassword)) {
+                $usernew->password = '';
+            } else {
+                $usernew->password = hash_internal_user_password($usernew->newpassword);
+            }
         } else {
-            $usernew->password = hash_internal_user_password($usernew->newpassword);
+            $usernew->password = AUTH_PASSWORD_NOT_CACHED;
         }
         $usernew->id = user_create_user($usernew, false);
+
+        if (!$authplugin->is_internal() and $authplugin->can_change_password() and !empty($usernew->newpassword)) {
+            if (!$authplugin->user_update_password($usernew, $usernew->newpassword)) {
+                // Do not stop here, we need to finish user creation.
+                debugging(get_string('cannotupdatepasswordonextauth', '', '', $usernew->auth), DEBUG_NONE);
+            }
+        }
+
     } else {
         $usernew = file_postupdate_standard_editor($usernew, 'description', $editoroptions, $usercontext, 'user', 'profile', 0);
         // Pass a true old $user here.
