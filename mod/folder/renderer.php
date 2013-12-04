@@ -40,11 +40,10 @@ class mod_folder_renderer extends plugin_renderer_base {
         $folderinstances = get_fast_modinfo($folder->course)->get_instances_of('folder');
         if (!isset($folderinstances[$folder->id]) ||
                 !($cm = $folderinstances[$folder->id]) ||
-                !$cm->uservisible ||
-                !($context = context_module::instance($cm->id)) ||
-                !has_capability('mod/folder:view', $context)) {
-            // some error in parameters or module is not visible to the user
-            // don't throw any errors in renderer, just return empty string
+                !($context = context_module::instance($cm->id))) {
+            // Some error in parameters.
+            // Don't throw any errors in renderer, just return empty string.
+            // Capability to view module must be checked before calling renderer.
             return $output;
         }
 
