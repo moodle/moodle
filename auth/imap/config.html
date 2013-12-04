@@ -44,7 +44,7 @@ if (!isset($config->changepasswordurl)) {
     <td>
         <?php
 
-        $imaptypes = array('imap', 'imapssl', 'imapcert', 'imaptls');
+        $imaptypes = array('imap', 'imapssl', 'imapcert', 'imapnosslcert', 'imaptls');
         foreach ($imaptypes as $imaptype) {
             $imapoptions[$imaptype] = $imaptype;
         }
