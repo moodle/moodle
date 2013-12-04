@@ -343,7 +343,7 @@ BRANCH.prototype = {
         // Prepare the icon, should be an object representing a pix_icon
         var branchicon = false;
         var icon = this.get('icon');
-        if (icon && (!isbranch || this.get('type') == NODETYPE.ACTIVITY)) {
+        if (icon && (!isbranch || this.get('type') === NODETYPE.ACTIVITY)) {
             branchicon = Y.Node.create('<img alt="" />');
             branchicon.setAttribute('src', M.util.image_url(icon.pix, icon.component));
             branchli.addClass('item_with_icon');
@@ -476,14 +476,14 @@ BRANCH.prototype = {
             if (object.children && object.children.length > 0) {
                 var coursecount = 0;
                 for (var i in object.children) {
-                    if (typeof(object.children[i])==='object') {
-                        if (object.children[i].type == NODETYPE.COURSE) {
+                    if (typeof(object.children[i]) ==='object') {
+                        if (object.children[i].type === NODETYPE.COURSE) {
                             coursecount++;
                         }
                         this.addChild(object.children[i]);
                     }
                 }
-                if ((this.get('type') == NODETYPE.CATEGORY || this.get('type') == NODETYPE.ROOTNODE || this.get('type') == NODETYPE.MYCATEGORY)
+                if ((this.get('type') === NODETYPE.CATEGORY || this.get('type') === NODETYPE.ROOTNODE || this.get('type') === NODETYPE.MYCATEGORY)
                     && coursecount >= M.block_navigation.courselimit) {
                     this.addViewAllCoursesChild(this);
                 }
@@ -509,14 +509,14 @@ BRANCH.prototype = {
             var count = 0, i, children = branch.get('children');
             for (i in children) {
                 // Add each branch to the tree
-                if (children[i].type == NODETYPE.COURSE) {
+                if (children[i].type === NODETYPE.COURSE) {
                     count++;
                 }
                 if (typeof(children[i]) === 'object') {
                     branch.addChild(children[i]);
                 }
             }
-            if ((branch.get('type') == NODETYPE.CATEGORY || branch.get('type') == NODETYPE.MYCATEGORY)
+            if ((branch.get('type') === NODETYPE.CATEGORY || branch.get('type') === NODETYPE.MYCATEGORY)
                 && count >= M.block_navigation.courselimit) {
                 this.addViewAllCoursesChild(branch);
             }
@@ -529,7 +529,7 @@ BRANCH.prototype = {
      */
     addViewAllCoursesChild: function(branch) {
         var url = null;
-        if (branch.get('type') == NODETYPE.ROOTNODE) {
+        if (branch.get('type') === NODETYPE.ROOTNODE) {
             if (branch.get('key') === 'mycourses') {
                 url = M.cfg.wwwroot + '/my';
             } else {
