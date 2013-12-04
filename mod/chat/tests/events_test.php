@@ -134,7 +134,7 @@ class mod_chat_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
     }
 
-    public function test_instances_list_viewed() {
+    public function test_course_module_instance_list_viewed() {
         global $USER;
         $this->resetAfterTest();
 
@@ -146,12 +146,12 @@ class mod_chat_events_testcase extends advanced_testcase {
         $params = array(
             'context' => context_course::instance($course->id)
         );
-        $event = \mod_chat\event\instances_list_viewed::create($params);
+        $event = \mod_chat\event\course_module_instance_list_viewed::create($params);
         $sink = $this->redirectEvents();
         $event->trigger();
         $events = $sink->get_events();
         $event = reset($events);
-        $this->assertInstanceOf('\mod_chat\event\instances_list_viewed', $event);
+        $this->assertInstanceOf('\mod_chat\event\course_module_instance_list_viewed', $event);
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $expected = array($course->id, 'chat', 'view all', "index.php?id=$course->id", '');

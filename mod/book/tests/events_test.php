@@ -137,7 +137,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData(array('1', 2, false), $event);
     }
 
-    public function test_instances_list_viewed() {
+    public function test_course_module_instance_list_viewed() {
         // There is no proper API to call to trigger this event, so what we are
         // doing here is simply making sure that the events returns the right information.
 
@@ -145,7 +145,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $params = array(
             'context' => context_course::instance($course->id)
         );
-        $event = \mod_book\event\instances_list_viewed::create($params);
+        $event = \mod_book\event\course_module_instance_list_viewed::create($params);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -155,7 +155,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\mod_book\event\instances_list_viewed', $event);
+        $this->assertInstanceOf('\mod_book\event\course_module_instance_list_viewed', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $expected = array($course->id, 'book', 'view all', 'index.php?id='.$course->id, '');
         $this->assertEventLegacyLogData($expected, $event);
