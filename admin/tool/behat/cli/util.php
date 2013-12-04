@@ -78,42 +78,28 @@ if (!empty($options['help'])) {
     exit(0);
 }
 
-
-// Checking $CFG->behat_* vars and values.
+// Describe this script.
 define('BEHAT_UTIL', true);
 define('CLI_SCRIPT', true);
-define('ABORT_AFTER_CONFIG', true);
 define('NO_OUTPUT_BUFFERING', true);
 define('IGNORE_COMPONENT_CACHE', true);
 
-error_reporting(E_ALL | E_STRICT);
+// Only load CFG from config.php, stop ASAP in lib/setup.php.
+define('ABORT_AFTER_CONFIG', true);
+require_once(__DIR__ . '/../../../../config.php');
+
+// Remove error handling overrides done in config.php.
+$CFG->debug = (E_ALL | E_STRICT);
+$CFG->debugdisplay = 1;
+error_reporting($CFG->debug);
 ini_set('display_errors', '1');
 ini_set('log_errors', '1');
 
-// Getting $CFG data.
-require_once(__DIR__ . '/../../../../config.php');
+// Finish moodle init.
+define('ABORT_AFTER_CONFIG_CANCEL', true);
+require("$CFG->dirroot/lib/setup.php");
 
-// When we use the utilities we don't know how the site
-// will be accessed, so if neither $CFG->behat_switchcompletely or
-// $CFG->behat_wwwroot are set we must think that the site will
-// be accessed using the built-in server which is set by default
-// to localhost:8000. We need to do this to prevent uses of the production
-// wwwroot when the site is being installed / dropped...
-$CFG->behat_wwwroot = behat_get_wwwroot();
-
-// Checking the integrity of the provided $CFG->behat_* vars
-// to prevent conflicts with production and phpunit environments.
-behat_check_config_vars();
-
-// Create behat_dataroot if it doesn't exists.
-if (!file_exists($CFG->behat_dataroot)) {
-    if (!mkdir($CFG->behat_dataroot, $CFG->directorypermissions)) {
-        behat_error(BEHAT_EXITCODE_PERMISSIONS, '$CFG->behat_dataroot directory can not be created');
-    }
-}
-if (!is_dir($CFG->behat_dataroot) || !is_writable($CFG->behat_dataroot)) {
-    behat_error(BEHAT_EXITCODE_PERMISSIONS, '$CFG->behat_dataroot directory has no permissions or is not a directory');
-}
+raise_memory_limit(MEMORY_HUGE);
 
 // Check that the directory does not contains other things.
 if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
@@ -132,30 +118,6 @@ if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
     // Now we create dataroot directory structure for behat tests.
     testing_initdataroot($CFG->behat_dataroot, 'behat');
 }
-
-// Overrides vars with behat-test ones.
-$vars = array('wwwroot', 'prefix', 'dataroot');
-foreach ($vars as $var) {
-    $CFG->{$var} = $CFG->{'behat_' . $var};
-}
-
-// Clean $CFG extra values before performing any action.
-behat_clean_init_config();
-
-$CFG->noemailever = true;
-$CFG->passwordsaltmain = 'moodle';
-
-$CFG->themerev = 1;
-$CFG->jsrev = 1;
-
-// Unset cache and temp directories to reset them again with the new $CFG->dataroot.
-unset($CFG->cachedir);
-unset($CFG->localcachedir);
-unset($CFG->tempdir);
-
-// Continues setup.
-define('ABORT_AFTER_CONFIG_CANCEL', true);
-require("$CFG->dirroot/lib/setup.php");
 
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/upgradelib.php');
@@ -185,7 +147,7 @@ if ($options['install']) {
     behat_util::start_test_mode();
     $runtestscommand = behat_command::get_behat_command() . ' --config '
         . $CFG->behat_dataroot . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'behat.yml';
-    mtrace("Acceptance tests environment enabled, to run the tests use:\n " . $runtestscommand);
+    mtrace("Acceptance tests environment enabled on $CFG->behat_wwwroot, to run the tests use:\n " . $runtestscommand);
 } else if ($options['disable']) {
     behat_util::stop_test_mode();
     mtrace("Acceptance tests environment disabled");

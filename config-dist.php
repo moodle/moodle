@@ -584,21 +584,11 @@ $CFG->admin = 'admin';
 //=========================================================================
 // 11. BEHAT SUPPORT
 //=========================================================================
-// Behat needs a separate data directory and unique database prefix:
+// Behat test site needs a unique www root, data directory and database prefix:
 //
+// $CFG->behat_wwwroot = 'http://127.0.0.1/moodle';
 // $CFG->behat_prefix = 'bht_';
 // $CFG->behat_dataroot = '/home/example/bht_moodledata';
-//
-// To set a seperate wwwroot for Behat to use, use $CFG->behat_wwwroot; this is set automatically
-// to http://localhost:8000 as it is the proposed PHP built-in server URL. Instead of that you can,
-// for example, use an alias, add a host to /etc/hosts or add a new virtual host having a URL
-// poiting to your production site and another one poiting to your test site. Note that you need
-// to ensure that this URL is not accessible from the www as the behat test site uses "sugar"
-// credentials (admin/admin) and can be easily hackable.
-//
-// Example:
-//   $CFG->behat_wwwroot = 'http://192.168.1.250:8000';
-//   $CFG->behat_wwwroot = 'http://localhost/moodlesitetesting';
 //
 // You can override default Moodle configuration for Behat and add your own
 // params; here you can add more profiles, use different Mink drivers than Selenium...
@@ -643,16 +633,6 @@ $CFG->admin = 'admin';
 //           )
 //       )
 //   );
-//
-// You can completely switch to test environment when "php admin/tool/behat/cli/util --enable",
-// this means that all the site accesses will be routed to the test environment instead of
-// the regular one, so NEVER USE THIS SETTING IN PRODUCTION SITES. This setting is useful
-// when working with cloud CI (continous integration) servers which requires public sites to run the
-// tests, or in testing/development installations when you are developing in a pre-PHP 5.4 server.
-// Note that with this setting enabled $CFG->behat_wwwroot is ignored and $CFG->behat_wwwroot
-// value will be the regular $CFG->wwwroot value.
-// Example:
-//   $CFG->behat_switchcompletely = true;
 //
 // You can force the browser session (not user's sessions) to restart after N seconds. This could
 // be useful if you are using a cloud-based service with time restrictions in the browser side.

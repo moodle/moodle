@@ -107,7 +107,7 @@ class behat_hooks extends behat_base {
 
         if (!behat_util::is_server_running()) {
             throw new Exception($CFG->behat_wwwroot .
-                ' is not available, ensure you started your PHP built-in server or your web server is correctly started and set up.' .
+                ' is not available, ensure you specified correct url and that the server is set up and started.' .
                 ' More info in ' . behat_command::DOCS_URL . '#Running_tests');
         }
 

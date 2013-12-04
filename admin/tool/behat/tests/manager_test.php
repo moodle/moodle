@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for admin/tool/behat.
+ * Unit tests for behat manager.
  *
  * @package   tool_behat
  * @copyright  2012 David Monllaó
@@ -30,45 +30,13 @@ require_once($CFG->libdir . '/behat/classes/util.php');
 require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
 
 /**
- * Allows access to internal methods without exposing them.
+ * Behat manager tests.
  *
  * @package    tool_behat
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class testable_behat_config_manager extends behat_config_manager {
-
-    /**
-     * Allow access to protected method
-     * @see parent::merge_config()
-     * @param mixed $config
-     * @param mixed $localconfig
-     * @return mixed
-     */
-    public static function merge_config($config, $localconfig) {
-        return parent::merge_config($config, $localconfig);
-    }
-
-    /**
-     * Allow access to protected method
-     * @see parent::get_config_file_contents()
-     * @param array $features
-     * @param array $stepsdefinitions
-     * @return string
-     */
-    public static function get_config_file_contents($features, $stepsdefinitions) {
-        return parent::get_config_file_contents($features, $stepsdefinitions);
-    }
-}
-
-/**
- * Tool behat tests.
- *
- * @package    tool_behat
- * @copyright  2012 David Monllaó
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class tool_behat_testcase extends advanced_testcase {
+class tool_behat_manager_testcase extends advanced_testcase {
 
     /**
      * behat_config_manager tests.
@@ -103,7 +71,7 @@ class tool_behat_testcase extends advanced_testcase {
 
         $array = testable_behat_config_manager::merge_config($array1, $array2);
 
-        // Overriddes are applied.
+        // Overrides are applied.
         $this->assertEquals('OVERRIDDEN1', $array['simple']);
         $this->assertEquals('OVERRIDDEN2', $array['array']['one']);
 
@@ -150,10 +118,8 @@ class tool_behat_testcase extends advanced_testcase {
             $this->markTestSkipped('Behat not installed.');
         }
 
-        // It is possible that it has no value.
-        if (empty($CFG->behat_wwwroot)) {
-            $CFG->behat_wwwroot = behat_get_wwwroot();
-        }
+        // Add some fake test url.
+        $CFG->behat_wwwroot = 'http://example.com/behat';
 
         // To avoid user value at config.php level.
         unset($CFG->behat_config);
@@ -194,3 +160,34 @@ class tool_behat_testcase extends advanced_testcase {
 
 }
 
+/**
+ * Allows access to internal methods without exposing them.
+ *
+ * @package    tool_behat
+ * @copyright  2012 David Monllaó
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class testable_behat_config_manager extends behat_config_manager {
+
+    /**
+     * Allow access to protected method
+     * @see parent::merge_config()
+     * @param mixed $config
+     * @param mixed $localconfig
+     * @return mixed
+     */
+    public static function merge_config($config, $localconfig) {
+        return parent::merge_config($config, $localconfig);
+    }
+
+    /**
+     * Allow access to protected method
+     * @see parent::get_config_file_contents()
+     * @param array $features
+     * @param array $stepsdefinitions
+     * @return string
+     */
+    public static function get_config_file_contents($features, $stepsdefinitions) {
+        return parent::get_config_file_contents($features, $stepsdefinitions);
+    }
+}
