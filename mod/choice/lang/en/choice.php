@@ -33,7 +33,6 @@ $string['displayvertical'] = 'Display vertically';
 $string['event_answer_created'] = 'Choice made';
 $string['event_answer_updated'] = 'Choice updated';
 $string['event_report_viewed'] = 'Choice report viewed';
-$string['event_instances_list_viewed'] = 'Instances list viewed';
 $string['expired'] = 'Sorry, this activity closed on {$a} and is no longer available';
 $string['atleastoneoption'] = 'You need to provide at least one possible answer.';
 $string['full'] = '(Full)';
