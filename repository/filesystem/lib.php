@@ -572,10 +572,10 @@ class repository_filesystem extends repository {
             $filename = $mainfile->get_filename();
             $basepath = strstr($mainfilepath, $filename, true);
 
-            $fullrelativefilepath = realpath($this->root_path.$basepath.$relativepath);
+            $fullrelativefilepath = realpath($this->get_rootpath().$basepath.$relativepath);
 
             // Sanity check to make sure this path is inside this repository and the file exists.
-            if (strpos($fullrelativefilepath, $this->root_path) === 0 && file_exists($fullrelativefilepath)) {
+            if (strpos($fullrelativefilepath, $this->get_rootpath()) === 0 && file_exists($fullrelativefilepath)) {
                 send_file($fullrelativefilepath, basename($relativepath), null, 0);
             }
         }
