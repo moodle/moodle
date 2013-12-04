@@ -2925,13 +2925,16 @@ function set_coursemodule_visible($id, $visible) {
     $cminfo->visibleold = $visible;
     $DB->update_record('course_modules', $cminfo);
 
+    require_once($CFG->dirroot . '/mod/' . $modulename . '/lib.php');
+    $functionname = $modulename . '_grade_item_update';
+
     // Hide the associated grade items so the teacher doesn't also have to go to the gradebook and hide them there.
     // Note that this must be done after updating the row in course_modules, in case
     // the modules grade_item_update function needs to access $cm->visible.
     if (plugin_supports('mod', $modulename, FEATURE_CONTROLS_GRADE_VISIBILITY) &&
-            component_callback_exists('mod_' . $modulename, 'grade_item_update')) {
+            function_exists($functionname)) {
         $instance = $DB->get_record($modulename, array('id' => $cm->instance), '*', MUST_EXIST);
-        component_callback('mod_' . $modulename, 'grade_item_update', array($instance));
+        $functionname($instance);
     } else {
         $grade_items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename, 'iteminstance'=>$cm->instance, 'courseid'=>$cm->course));
         if ($grade_items) {
