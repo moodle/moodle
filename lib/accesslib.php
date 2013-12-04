@@ -1113,12 +1113,12 @@ function get_empty_accessdata() {
 function get_user_accessdata($userid, $preloadonly=false) {
     global $CFG, $ACCESSLIB_PRIVATE, $USER;
 
-    if (!empty($USER->acces['rdef']) and empty($ACCESSLIB_PRIVATE->rolepermissions)) {
+    if (!empty($USER->access['rdef']) and empty($ACCESSLIB_PRIVATE->rolepermissions)) {
         // share rdef from USER session with rolepermissions cache in order to conserve memory
-        foreach($USER->acces['rdef'] as $k=>$v) {
-            $ACCESSLIB_PRIVATE->rolepermissions[$k] =& $USER->acces['rdef'][$k];
+        foreach ($USER->access['rdef'] as $k=>$v) {
+            $ACCESSLIB_PRIVATE->rolepermissions[$k] =& $USER->access['rdef'][$k];
         }
-        $ACCESSLIB_PRIVATE->accessdatabyuser[$USER->id] = $USER->acces;
+        $ACCESSLIB_PRIVATE->accessdatabyuser[$USER->id] = $USER->access;
     }
 
     if (!isset($ACCESSLIB_PRIVATE->accessdatabyuser[$userid])) {
