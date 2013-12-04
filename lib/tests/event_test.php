@@ -666,6 +666,12 @@ class core_event_testcase extends advanced_testcase {
         $event6->trigger();
         $this->assertDebuggingCalled();
 
+        // Check that whole float numbers do not trigger debugging messages.
+        $event7 = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(),
+            'other' => array('wholenumber' => 90.0000, 'numberwithdecimals' => 54.7656, 'sample' => 1)));
+        $event7->trigger();
+        $this->assertDebuggingNotCalled();
+
         $event = \core_tests\event\problematic_event2::create(array());
         $this->assertDebuggingNotCalled();
         $event = \core_tests\event\problematic_event2::create(array('context'=>\context_system::instance()));
