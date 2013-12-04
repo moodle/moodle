@@ -198,12 +198,13 @@ function behat_check_config_vars() {
 
     // CFG->behat_dataroot must be set and with value different than CFG->dataroot and phpunit_dataroot.
     $CFG->dataroot = realpath($CFG->dataroot);
-    if (!empty($CFG->behat_dataroot)) {
+    if (!empty($CFG->behat_dataroot) && is_dir($CFG->behat_dataroot)) {
         $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
     }
     if (empty($CFG->behat_dataroot) ||
            ($CFG->behat_dataroot == $CFG->dataroot) ||
-           (!empty($CFG->phpunit_dataroot) && $CFG->behat_dataroot == $CFG->phpunit_dataroot)) {
+           (!empty($CFG->phpunit_dataroot) && is_dir($CFG->phpunit_dataroot)
+                && $CFG->behat_dataroot == realpath($CFG->phpunit_dataroot))) {
         behat_error(BEHAT_EXITCODE_CONFIG,
             'Define $CFG->behat_dataroot in config.php with a value different than $CFG->dataroot and $CFG->phpunit_dataroot');
     }
