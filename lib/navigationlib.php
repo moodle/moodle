@@ -2460,10 +2460,12 @@ class global_navigation extends navigation_node {
                 $filterselect = $currentgroup;
             }
             $filterselect = clean_param($filterselect, PARAM_INT);
-            if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
-               and has_capability('moodle/blog:view', context_system::instance())) {
-                $blogsurls = new moodle_url('/blog/index.php', array($filtervar => $filterselect));
-                $participants->add(get_string('blogscourse','blog'), $blogsurls->out());
+            if (!empty($CFG->enableblogs)) {
+                if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
+                   and has_capability('moodle/blog:view', context_system::instance())) {
+                    $blogsurls = new moodle_url('/blog/index.php', array($filtervar => $filterselect));
+                    $participants->add(get_string('blogscourse','blog'), $blogsurls->out());
+                }
             }
             if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->page->context) || has_capability('moodle/notes:view', $this->page->context))) {
                 $participants->add(get_string('notes','notes'), new moodle_url('/notes/index.php', array('filtertype'=>'course', 'filterselect'=>$course->id)));
