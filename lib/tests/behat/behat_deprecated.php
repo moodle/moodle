@@ -138,6 +138,101 @@ class behat_deprecated extends behat_base {
     }
 
     /**
+     * Creates a folder with specified name in the current folder and in the specified filepicker field.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_filepicker::i_create_folder_in_filemanager()
+     *
+     * @Given /^I create "(?P<foldername_string>(?:[^"]|\\")*)" folder in "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $foldername
+     * @param string $filepickerelement
+     */
+    public function i_create_folder_in_filepicker($foldername, $filepickerelement) {
+        $alternative = 'I create "' . $this->escape($foldername) .
+                '" folder in "' . $this->escape($filepickerelement) . '" filemanager';
+        $this->deprecated_message($alternative);
+        return array(new Given($alternative));
+    }
+
+    /**
+     * Opens the contents of a filepicker folder. It looks for the folder in the current folder and in the path bar.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_filepicker::i_open_folder_from_filemanager()
+     *
+     * @Given /^I open "(?P<foldername_string>(?:[^"]|\\")*)" folder from "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $foldername
+     * @param string $filepickerelement
+     */
+    public function i_open_folder_from_filepicker($foldername, $filepickerelement) {
+        $alternative = 'I open "' . $this->escape($foldername) . '" folder from "' .
+                $this->escape($filepickerelement) . '" filemanager';
+        $this->deprecated_message($alternative);
+        return array(new Given($alternative));
+    }
+
+    /**
+     * Unzips the specified file from the specified filepicker field. The zip file has to be visible in the current folder.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_filepicker::i_unzip_file_from_filemanager()
+     *
+     * @Given /^I unzip "(?P<filename_string>(?:[^"]|\\")*)" file from "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $filename
+     * @param string $filepickerelement
+     */
+    public function i_unzip_file_from_filepicker($filename, $filepickerelement) {
+        $alternative = 'I unzip "' . $this->escape($filename) . '" file from "' .
+                $this->escape($filepickerelement) . '" filemanager';
+        $this->deprecated_message($alternative);
+        return array(new Given($alternative));
+    }
+
+    /**
+     * Zips the specified folder from the specified filepicker field. The folder has to be in the current folder.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_filepicker::i_zip_folder_from_filemanager()
+     *
+     * @Given /^I zip "(?P<filename_string>(?:[^"]|\\")*)" folder from "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $foldername
+     * @param string $filepickerelement
+     */
+    public function i_zip_folder_from_filepicker($foldername, $filepickerelement) {
+        $alternative = 'I zip "' . $this->escape($foldername) . '" folder from "' .
+                $this->escape($filepickerelement) . '" filemanager';
+        $this->deprecated_message($alternative);
+        return array(new Given($alternative));
+    }
+
+    /**
+     * Deletes the specified file or folder from the specified filepicker field.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_filepicker::i_delete_file_from_filemanager()
+     *
+     * @Given /^I delete "(?P<file_or_folder_name_string>(?:[^"]|\\")*)" from "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $name
+     * @param string $filepickerelement
+     */
+    public function i_delete_file_from_filepicker($name, $filepickerelement) {
+        $alternative = 'I delete "' . $this->escape($name) . '" from "' .
+                $this->escape($filepickerelement) . '" filemanager';
+        $this->deprecated_message($alternative);
+        return array(new Given($alternative));
+    }
+
+    /**
      * Throws an exception if $CFG->behat_usedeprecated is not allowed.
      *
      * @throws Exception

@@ -16,11 +16,11 @@ Feature: Create folders in the file manager
     And I fill the moodle form with:
       | Name | Folder resource |
       | Description | The description |
-    And I create "Folder 1" folder in "Files" filepicker
-    And I open "Folder 1" folder from "Files" filepicker
-    And I create "SubFolder 1" folder in "Files" filepicker
-    When I open "Files" folder from "Files" filepicker
+    And I create "Folder 1" folder in "Files" filemanager
+    And I open "Folder 1" folder from "Files" filemanager
+    And I create "SubFolder 1" folder in "Files" filemanager
+    When I open "Files" folder from "Files" filemanager
     Then I should see "Folder 1"
-    And I open "Folder 1" folder from "Files" filepicker
+    And I open "Folder 1" folder from "Files" filemanager
     And I should see "SubFolder 1"
     And I press "Save and return to course"
