@@ -97,7 +97,7 @@ class quiz {
      * @param int $userid the the userid.
      * @return quiz the new quiz object
      */
-    public static function create($quizid, $userid) {
+    public static function create($quizid, $userid = null) {
         global $DB;
 
         $quiz = quiz_access_manager::load_quiz_and_settings($quizid);
@@ -105,7 +105,9 @@ class quiz {
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information.
-        $quiz = quiz_update_effective_access($quiz, $userid);
+        if ($userid) {
+            $quiz = quiz_update_effective_access($quiz, $userid);
+        }
 
         return new quiz($quiz, $cm, $course);
     }
@@ -151,6 +153,14 @@ class quiz {
             }
         }
         get_question_options($questionstoprocess);
+    }
+
+    /**
+     * Get an instance of the {@link \mod_quiz\structure} class for this quiz.
+     * @return \mod_quiz\structure describes the questions in the quiz.
+     */
+    public function get_structure() {
+        return \mod_quiz\structure::create_for_quiz($this);
     }
 
     // Simple getters ==========================================================

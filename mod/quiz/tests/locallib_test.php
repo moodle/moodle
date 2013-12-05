@@ -18,7 +18,7 @@
  * Unit tests for (some of) mod/quiz/locallib.php.
  *
  * @package    mod_quiz
- * @category   phpunit
+ * @category   test
  * @copyright  2008 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -141,5 +141,17 @@ class mod_quiz_locallib_testcase extends basic_testcase {
         $quiz->timeclose = time() - 3600;
 
         $this->assertEquals(mod_quiz_display_options::AFTER_CLOSE, quiz_attempt_state($quiz, $attempt));
+    }
+
+    public function test_quiz_question_tostring() {
+        $question = new stdClass();
+        $question->qtype = 'multichoice';
+        $question->name = 'The question name';
+        $question->questiontext = '<p>What sort of <b>inequality</b> is x &lt; y<img alt="?" src="..."></p>';
+        $question->questiontextformat = FORMAT_HTML;
+
+        $summary = quiz_question_tostring($question);
+        $this->assertEquals('<span class="questionname">The question name</span> ' .
+                '<span class="questiontext">What sort of INEQUALITY is x &lt; y[?]</span>', $summary);
     }
 }

@@ -1120,6 +1120,20 @@ function quiz_get_user_image_options() {
 }
 
 /**
+ * Get the choices to offer for the 'Questions per page' option.
+ * @return array int => string.
+ */
+function quiz_questions_per_page_options() {
+    $pageoptions = array();
+    $pageoptions[0] = get_string('neverallononepage', 'quiz');
+    $pageoptions[1] = get_string('everyquestion', 'quiz');
+    for ($i = 2; $i <= QUIZ_MAX_QPP_OPTION; ++$i) {
+        $pageoptions[$i] = get_string('everynquestions', 'quiz', $i);
+    }
+    return $pageoptions;
+}
+
+/**
  * Get the human-readable name for a quiz attempt state.
  * @param string $state one of the state constants like {@link quiz_attempt::IN_PROGRESS}.
  * @return string The lang string to describe that state.
@@ -1231,27 +1245,12 @@ function quiz_question_preview_url($quiz, $question) {
  * @return the HTML for a preview question icon.
  */
 function quiz_question_preview_button($quiz, $question, $label = false) {
-    global $CFG, $OUTPUT;
+    global $PAGE;
     if (!question_has_capability_on($question, 'use', $question->category)) {
         return '';
     }
 
-    $url = quiz_question_preview_url($quiz, $question);
-
-    // Do we want a label?
-    $strpreviewlabel = '';
-    if ($label) {
-        $strpreviewlabel = get_string('preview', 'quiz');
-    }
-
-    // Build the icon.
-    $strpreviewquestion = get_string('previewquestion', 'quiz');
-    $image = $OUTPUT->pix_icon('t/preview', $strpreviewquestion);
-
-    $action = new popup_action('click', $url, 'questionpreview',
-            question_preview_popup_params());
-
-    return $OUTPUT->action_link($url, $image, $action, array('title' => $strpreviewquestion));
+    return $PAGE->get_renderer('mod_quiz', 'edit')->question_preview_icon($quiz, $question, $label);
 }
 
 /**
@@ -1875,4 +1874,34 @@ class qubaids_for_quiz extends qubaid_join {
 
         parent::__construct('{quiz_attempts} quiza', 'quiza.uniqueid', $where, $params);
     }
+}
+
+/**
+ * Creates a textual representation of a question for display.
+ *
+ * @param object $question A question object from the database questions table
+ * @param bool $showicon If true, show the question's icon with the question. False by default.
+ * @param bool $showquestiontext If true (default), show question text after question name.
+ *       If false, show only question name.
+ * @return string
+ */
+function quiz_question_tostring($question, $showicon = false, $showquestiontext = true) {
+    $result = '';
+
+    $name = shorten_text(format_string($question->name), 200);
+    if ($showicon) {
+        $name .= print_question_icon($question) . ' ' . $name;
+    }
+    $result .= html_writer::span($name, 'questionname');
+
+    if ($showquestiontext) {
+        $questiontext = question_utils::to_plain_text($question->questiontext,
+                $question->questiontextformat, array('noclean' => true, 'para' => false));
+        $questiontext = shorten_text($questiontext, 200);
+        if ($questiontext) {
+            $result .= ' ' . html_writer::span(s($questiontext), 'questiontext');
+        }
+    }
+
+    return $result;
 }

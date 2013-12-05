@@ -666,20 +666,13 @@ class view {
 
         $category = $this->get_current_category($categoryandcontext);
 
-        $cmoptions = new \stdClass();
-        $cmoptions->hasattempts = !empty($this->quizhasattempts);
-
         $strselectall = get_string('selectall');
         $strselectnone = get_string('deselectall');
-        $strdelete = get_string('delete');
 
         list($categoryid, $contextid) = explode(',', $categoryandcontext);
         $catcontext = \context::instance_by_id($contextid);
 
         $canadd = has_capability('moodle/question:add', $catcontext);
-        $caneditall = has_capability('moodle/question:editall', $catcontext);
-        $canuseall = has_capability('moodle/question:useall', $catcontext);
-        $canmoveall = has_capability('moodle/question:moveall', $catcontext);
 
         $this->create_new_question_form($category, $canadd);
 
@@ -728,35 +721,40 @@ class view {
         }
         echo '</div>';
 
+        $this->display_bottom_controls($totalnumber, $recurse, $category, $catcontext, $addcontexts);
+
+        echo '</fieldset>';
+        echo "</form>\n";
+    }
+
+    /**
+     * Display the controls at the bottom of the list of questions.
+     * @param int      $totalnumber Total number of questions that might be shown (if it was not for paging).
+     * @param bool     $recurse     Whether to include subcategories.
+     * @param stdClass $category    The question_category row from the database.
+     * @param context  $catcontext  The context of the category being displayed.
+     * @param array    $addcontexts contexts where the user is allowed to add new questions.
+     */
+    protected function display_bottom_controls($totalnumber, $recurse, $category, \context $catcontext, array $addcontexts) {
+        $caneditall = has_capability('moodle/question:editall', $catcontext);
+        $canuseall = has_capability('moodle/question:useall', $catcontext);
+        $canmoveall = has_capability('moodle/question:moveall', $catcontext);
+
         echo '<div class="modulespecificbuttonscontainer">';
         if ($caneditall || $canmoveall || $canuseall) {
             echo '<strong>&nbsp;'.get_string('withselected', 'question').':</strong><br />';
 
-            if (function_exists('module_specific_buttons')) {
-                echo module_specific_buttons($this->cm->id, $cmoptions);
-            }
-
             // Print delete and move selected question.
             if ($caneditall) {
-                echo '<input type="submit" name="deleteselected" value="' . $strdelete . "\" />\n";
+                echo '<input type="submit" name="deleteselected" value="' . get_string('delete') . "\" />\n";
             }
 
             if ($canmoveall && count($addcontexts)) {
-                echo '<input type="submit" name="move" value="'.get_string('moveto', 'question')."\" />\n";
+                echo '<input type="submit" name="move" value="' . get_string('moveto', 'question') . "\" />\n";
                 question_category_select_menu($addcontexts, false, 0, "{$category->id},{$category->contextid}");
-            }
-
-            if (function_exists('module_specific_controls') && $canuseall) {
-                $modulespecific = module_specific_controls($totalnumber, $recurse, $category, $this->cm->id, $cmoptions);
-                if (!empty($modulespecific)) {
-                    echo "<hr />{$modulespecific}";
-                }
             }
         }
         echo "</div>\n";
-
-        echo '</fieldset>';
-        echo "</form>\n";
     }
 
     protected function start_table() {
