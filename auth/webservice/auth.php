@@ -90,10 +90,12 @@ class auth_plugin_webservice extends auth_plugin_base {
     /**
      * Returns true if this authentication plugin is 'internal'.
      *
+     * Webserice auth doesn't use password fields, it uses only tokens.
+     *
      * @return bool
      */
     function is_internal() {
-        return true;
+        return false;
     }
 
     /**
