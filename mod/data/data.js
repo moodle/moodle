@@ -39,43 +39,6 @@ function showHideAdvSearch(checked) {
     }
 }
 
-M.data_filepicker = {};
-
-
-M.data_filepicker.callback = function(params) {
-    var html = '<a href="'+params['url']+'">'+params['file']+'</a>';
-    document.getElementById('file_info_'+params['client_id']).innerHTML = html;
-};
-
-/**
- * Deprecated since 2.5, will be removed in 2.7.
- * Please don't use this function.
- * Use the filemanager instead. (/lib/form/filemanager.js)
- * This fucntion is called for each file picker on page.
- */
-M.data_filepicker.init = function(Y, options) {
-    if (M.cfg.developerdebug) {
-        Y.log("You are using a deprecated function call (M.data_filepicker). Please look at rewriting your call to use M.form_filemanager");
-    }
-    options.formcallback = M.data_filepicker.callback;
-    if (!M.core_filepicker.instances[options.client_id]) {
-        M.core_filepicker.init(Y, options);
-    }
-    Y.on('click', function(e, client_id) {
-        e.preventDefault();
-        M.core_filepicker.instances[client_id].show();
-    }, '#filepicker-button-'+options.client_id, null, options.client_id);
-
-    var item = document.getElementById('nonjs-filepicker-'+options.client_id);
-    if (item) {
-        item.parentNode.removeChild(item);
-    }
-    item = document.getElementById('filepicker-wrapper-'+options.client_id);
-    if (item) {
-        item.style.display = '';
-    }
-};
-
 M.data_urlpicker = {};
 
 M.data_urlpicker.init = function(Y, options) {
@@ -92,40 +55,4 @@ M.data_urlpicker.init = function(Y, options) {
 
 M.data_urlpicker.callback = function (params) {
     document.getElementById('field_url_'+params.client_id).value = params.url;
-};
-
-M.data_imagepicker = {};
-
-M.data_imagepicker.callback = function(params) {
-    var html = '<a href="'+params['url']+'"><img src="'+params['url']+'" /> '+params['file']+'</a>';
-    document.getElementById('file_info_'+params['client_id']).innerHTML = html;
-};
-
-/**
- * Deprecated since 2.5, will be removed in 2.7.
- * Please don't use this function.
- * Use the filemanager instead. (/lib/form/filemanager.js)
- * This fucntion is called for each file picker on page.
- */
-M.data_imagepicker.init = function(Y, options) {
-    if (M.cfg.developerdebug) {
-        Y.log("You are using a deprecated function call (M.data_imagepicker). Please look at rewriting your call to use M.form_filemanager");
-    }
-    options.formcallback = M.data_imagepicker.callback;
-    if (!M.core_filepicker.instances[options.client_id]) {
-        M.core_filepicker.init(Y, options);
-    }
-    Y.on('click', function(e, client_id) {
-        e.preventDefault();
-        M.core_filepicker.instances[client_id].show();
-    }, '#filepicker-button-'+options.client_id, null, options.client_id);
-
-    var item = document.getElementById('nonjs-filepicker-'+options.client_id);
-    if (item) {
-        item.parentNode.removeChild(item);
-    }
-    item = document.getElementById('filepicker-wrapper-'+options.client_id);
-    if (item) {
-        item.style.display = '';
-    }
 };
