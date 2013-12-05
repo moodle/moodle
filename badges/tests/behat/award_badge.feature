@@ -18,7 +18,7 @@ Feature: Award badges
       | Description | Test badge description |
       | issuername | Test Badge Site |
       | issuercontact | testuser@test-badge-site.com |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filepicker
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I select "Profile completion" from "type"
     And I check "First name"
@@ -53,7 +53,7 @@ Feature: Award badges
       | Name | Site Badge |
       | Description | Site badge description |
       | issuername | Tester of site badge |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filepicker
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I select "Manual issue by role" from "type"
     And I check "Teacher"
@@ -98,7 +98,7 @@ Feature: Award badges
       | Name | Course Badge |
       | Description | Course badge description |
       | issuername | Tester of course badge |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filepicker
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I select "Manual issue by role" from "type"
     And I check "Teacher"
@@ -156,7 +156,7 @@ Feature: Award badges
       | Name | Course Badge |
       | Description | Course badge description |
       | issuername | Tester of course badge |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filepicker
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I select "Activity completion" from "type"
     And I check "Test assignment name"
@@ -219,7 +219,7 @@ Feature: Award badges
       | Name | Course Badge |
       | Description | Course badge description |
       | issuername | Tester of course badge |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filepicker
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     And I press "Create badge"
     And I select "Course completion" from "type"
     And I fill the moodle form with:

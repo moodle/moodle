@@ -117,6 +117,27 @@ class behat_deprecated extends behat_base {
     }
 
     /**
+     * Uploads a file to the specified filemanager leaving other fields in upload form default. The paths should be relative to moodle codebase.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_repository_upload::i_upload_file_to_filemanager()
+     *
+     * @When /^I upload "(?P<filepath_string>(?:[^"]|\\")*)" file to "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $filepath
+     * @param string $filepickerelement
+     */
+    public function i_upload_file_to_filepicker($filepath, $filepickerelement) {
+        $alternative = 'I upload "' . $this->escape($filepath) . '" file to "' .
+                $this->escape($filepickerelement) . '" filemanager';
+        $this->deprecated_message($alternative);
+        return array(
+            new Given($alternative)
+        );
+    }
+
+    /**
      * Throws an exception if $CFG->behat_usedeprecated is not allowed.
      *
      * @throws Exception

@@ -9,7 +9,7 @@ Feature: Delete files and folders from the file manager
     Given I log in as "admin"
     And I expand "My profile" node
     And I follow "My private files"
-    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filepicker
+    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I create "Delete me" folder in "Files" filepicker
     And I press "Save changes"
     When I delete "empty.txt" from "Files" filepicker

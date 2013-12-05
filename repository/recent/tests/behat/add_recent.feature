@@ -12,8 +12,8 @@ Feature: Recent files repository lists the recently used files
     And I log in as "admin"
     And I expand "My profile" node
     And I follow "My private files"
-    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filepicker
-    And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filepicker
+    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
+    And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filemanager
     And I press "Save changes"
     And I am on homepage
     And I follow "Course 1"
