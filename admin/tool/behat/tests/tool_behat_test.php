@@ -150,11 +150,6 @@ class tool_behat_testcase extends advanced_testcase {
             $this->markTestSkipped('Behat not installed.');
         }
 
-        // It is possible that it has no value.
-        if (empty($CFG->behat_wwwroot)) {
-            $CFG->behat_wwwroot = behat_get_wwwroot();
-        }
-
         // To avoid user value at config.php level.
         unset($CFG->behat_config);
 
@@ -177,6 +172,9 @@ class tool_behat_testcase extends advanced_testcase {
         // values like paths should not be asserted including the key name as they would depend on the
         // directories values.
         $this->assertContains($CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'features', $contents);
+
+        // If it was empty should be filled by behat_config_manager::get_config_file_contents().
+        $this->assertNotNull($CFG->behat_wwwroot);
 
         // Not quoted strings.
         $this->assertContains('micarro: /me/lo/robaron', $contents);

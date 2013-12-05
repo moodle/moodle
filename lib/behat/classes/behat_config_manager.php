@@ -173,6 +173,11 @@ class behat_config_manager {
         // We require here when we are sure behat dependencies are available.
         require_once($CFG->dirroot . '/vendor/autoload.php');
 
+        // It is possible that it has no value.
+        if (empty($CFG->behat_wwwroot)) {
+            $CFG->behat_wwwroot = behat_get_wwwroot();
+        }
+
         $basedir = $CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat';
         $config = array(
             'default' => array(
