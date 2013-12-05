@@ -282,26 +282,3 @@ abstract class testing_module_generator extends component_generator_base {
         throw new coding_exception('Module generator for '.$this->get_modulename().' does not implement method create_content()');
     }
 }
-
-/**
- * Deprecated in favour of testing_module_generator
- *
- * @deprecated since Moodle 2.5 MDL-37457 - please do not use this function any more.
- * @todo       MDL-37517 This will be deleted in Moodle 2.7
- * @see        testing_module_generator
- * @package    core
- * @category   test
- * @copyright  2012 David Monllaó
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-abstract class phpunit_module_generator extends testing_module_generator {
-
-    /**
-     * Dumb constructor to throw the deprecated notification
-     * @param testing_data_generator $datagenerator
-     */
-    public function __construct(testing_data_generator $datagenerator) {
-        debugging('Class phpunit_module_generator is deprecated, please use class testing_module_generator instead', DEBUG_DEVELOPER);
-        parent::__construct($datagenerator);
-    }
-}
