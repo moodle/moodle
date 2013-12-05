@@ -235,12 +235,7 @@ if ($result->prerequisites) {
                                                        $scorm->width, $scorm->height)));
         ?>
             <noscript>
-            <!--[if IE]>
                 <iframe id="main" class="scoframe" name="main" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr; ?>"></iframe>
-            <![endif]-->
-            <!--[if !IE]>
-                <object id="main" class="scoframe" type="text/html" data="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr; ?>"></object>
-            <![endif]-->
             </noscript>
         <?php
     }
