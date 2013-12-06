@@ -4492,6 +4492,10 @@ class settings_navigation_ajax extends settings_navigation {
             return false;
         }
         $this->load_administration_settings();
+
+        // Check if local plugins is adding node to site admin.
+        $this->load_local_plugin_settings();
+
         $this->initialised = true;
     }
 }
