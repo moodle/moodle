@@ -113,6 +113,24 @@ abstract class base implements \IteratorAggregate {
      */
     private final function __construct() {
         $this->data = array_fill_keys(self::$fields, null);
+
+        // Define some basic details.
+        $classname = get_called_class();
+        $parts = explode('\\', $classname);
+        if (count($parts) !== 3 or $parts[1] !== 'event') {
+            throw new \coding_exception("Invalid event class name '$classname', it must be defined in component\\event\\
+                    namespace");
+        }
+        $this->data['eventname'] = '\\'.$classname;
+        $this->data['component'] = $parts[0];
+
+        $pos = strrpos($parts[2], '_');
+        if ($pos === false) {
+            throw new \coding_exception("Invalid event class name '$classname', there must be at least one underscore separating
+                    object and action words");
+        }
+        $this->data['target'] = substr($parts[2], 0, $pos);
+        $this->data['action'] = substr($parts[2], $pos + 1);
     }
 
     /**
@@ -145,21 +163,6 @@ abstract class base implements \IteratorAggregate {
 
         // Set automatic data.
         $event->data['timecreated'] = time();
-
-        $classname = get_class($event);
-        $parts = explode('\\', $classname);
-        if (count($parts) !== 3 or $parts[1] !== 'event') {
-            throw new \coding_exception("Invalid event class name '$classname', it must be defined in component\\event\\ namespace");
-        }
-        $event->data['eventname'] = '\\'.$classname;
-        $event->data['component'] = $parts[0];
-
-        $pos = strrpos($parts[2], '_');
-        if ($pos === false) {
-            throw new \coding_exception("Invalid event class name '$classname', there must be at least one underscore separating object and action words");
-        }
-        $event->data['target'] = substr($parts[2], 0, $pos);
-        $event->data['action'] = substr($parts[2], $pos+1);
 
         // Set optional data or use defaults.
         $event->data['objectid'] = isset($data['objectid']) ? $data['objectid'] : null;
