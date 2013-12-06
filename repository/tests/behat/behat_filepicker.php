@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Files and filepicker manipulation steps definitions.
+ * Filemanager and filepicker manipulation steps definitions.
  *
  * @package    core
  * @category   test
@@ -28,10 +28,11 @@
 require_once(__DIR__ . '/../../../lib/behat/behat_files.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Gherkin\Node\TableNode as TableNode;
+    Behat\Gherkin\Node\TableNode as TableNode,
+    Behat\Behat\Context\Step\Given as Given;
 
 /**
- * Steps definitions to deal with the filepicker.
+ * Steps definitions to deal with the filemanager and filepicker.
  *
  * Extends behat_files rather than behat_base as is file-related.
  *
@@ -45,17 +46,34 @@ class behat_filepicker extends behat_files {
     /**
      * Creates a folder with specified name in the current folder and in the specified filepicker field.
      *
+     * Will be deprecated in 2.7
+     * @see behat_filepicker::i_create_folder_in_filemanager()
+     *
      * @Given /^I create "(?P<foldername_string>(?:[^"]|\\")*)" folder in "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $foldername
      * @param string $filepickerelement
      */
     public function i_create_folder_in_filepicker($foldername, $filepickerelement) {
+        $alternative = 'I create "' . $this->escape($foldername) .
+                '" folder in "' . $this->escape($filepickerelement) . '" filemanager';
+        return array(new Given($alternative));
+    }
 
-        $fieldnode = $this->get_filepicker_node($filepickerelement);
+    /**
+     * Creates a folder with specified name in the current folder and in the specified filemanager field.
+     *
+     * @Given /^I create "(?P<foldername_string>(?:[^"]|\\")*)" folder in "(?P<filemanager_field_string>(?:[^"]|\\")*)" filemanager$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $foldername
+     * @param string $filemanagerelement
+     */
+    public function i_create_folder_in_filemanager($foldername, $filemanagerelement) {
 
-        // Looking for the create folder button inside the specified filepicker.
-        $exception = new ExpectationException('No folders can be created in "'.$filepickerelement.'" filepicker', $this->getSession());
+        $fieldnode = $this->get_filepicker_node($filemanagerelement);
+
+        // Looking for the create folder button inside the specified filemanager.
+        $exception = new ExpectationException('No folders can be created in "'.$filemanagerelement.'" filemanager', $this->getSession());
         $newfolder = $this->find('css', 'div.fp-btn-mkdir a', $exception, $fieldnode);
         $newfolder->click();
 
@@ -79,17 +97,34 @@ class behat_filepicker extends behat_files {
     /**
      * Opens the contents of a filepicker folder. It looks for the folder in the current folder and in the path bar.
      *
+     * Will be deprecated in 2.7
+     * @see behat_filepicker::i_open_folder_from_filemanager()
+     *
      * @Given /^I open "(?P<foldername_string>(?:[^"]|\\")*)" folder from "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $foldername
      * @param string $filepickerelement
      */
     public function i_open_folder_from_filepicker($foldername, $filepickerelement) {
+        $alternative = 'I open "' . $this->escape($foldername) . '" folder from "' .
+                $this->escape($filepickerelement) . '" filemanager';
+        return array(new Given($alternative));
+    }
 
-        $fieldnode = $this->get_filepicker_node($filepickerelement);
+    /**
+     * Opens the contents of a filemanager folder. It looks for the folder in the current folder and in the path bar.
+     *
+     * @Given /^I open "(?P<foldername_string>(?:[^"]|\\")*)" folder from "(?P<filemanager_field_string>(?:[^"]|\\")*)" filemanager$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $foldername
+     * @param string $filemanagerelement
+     */
+    public function i_open_folder_from_filemanager($foldername, $filemanagerelement) {
+
+        $fieldnode = $this->get_filepicker_node($filemanagerelement);
 
         $exception = new ExpectationException(
-            'The "'.$foldername.'" folder can not be found in the "'.$filepickerelement.'" filepicker',
+            'The "'.$foldername.'" folder can not be found in the "'.$filemanagerelement.'" filemanager',
             $this->getSession()
         );
 
@@ -132,15 +167,32 @@ class behat_filepicker extends behat_files {
     /**
      * Unzips the specified file from the specified filepicker field. The zip file has to be visible in the current folder.
      *
+     * Will be deprecated in 2.7
+     * @see behat_filepicker::i_unzip_file_from_filemanager()
+     *
      * @Given /^I unzip "(?P<filename_string>(?:[^"]|\\")*)" file from "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $filename
      * @param string $filepickerelement
      */
     public function i_unzip_file_from_filepicker($filename, $filepickerelement) {
+        $alternative = 'I unzip "' . $this->escape($filename) . '" file from "' .
+                $this->escape($filepickerelement) . '" filemanager';
+        return array(new Given($alternative));
+    }
 
-        // Open the contextual menu of the filepicker element.
-        $this->open_element_contextual_menu($filename, $filepickerelement);
+    /**
+     * Unzips the specified file from the specified filemanager field. The zip file has to be visible in the current folder.
+     *
+     * @Given /^I unzip "(?P<filename_string>(?:[^"]|\\")*)" file from "(?P<filemanager_field_string>(?:[^"]|\\")*)" filemanager$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $filename
+     * @param string $filemanagerelement
+     */
+    public function i_unzip_file_from_filemanager($filename, $filemanagerelement) {
+
+        // Open the contextual menu of the filemanager element.
+        $this->open_element_contextual_menu($filename, $filemanagerelement);
 
         // Execute the action.
         $exception = new ExpectationException($filename.' element can not be unzipped', $this->getSession());
@@ -150,12 +202,14 @@ class behat_filepicker extends behat_files {
         $this->wait_until_return_to_form();
 
         // Wait until the current folder contents are updated
-        $containernode = $this->get_filepicker_node($filepickerelement);
+        $containernode = $this->get_filepicker_node($filemanagerelement);
         $this->wait_until_contents_are_updated($containernode);
     }
 
     /**
      * Zips the specified folder from the specified filepicker field. The folder has to be in the current folder.
+     *
+     * Will be deprecated in 2.7
      *
      * @Given /^I zip "(?P<filename_string>(?:[^"]|\\")*)" folder from "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
      * @throws ExpectationException Thrown by behat_base::find
@@ -163,9 +217,23 @@ class behat_filepicker extends behat_files {
      * @param string $filepickerelement
      */
     public function i_zip_folder_from_filepicker($foldername, $filepickerelement) {
+        $alternative = 'I zip "' . $this->escape($foldername) . '" folder from "' .
+                $this->escape($filepickerelement) . '" filemanager';
+        return array(new Given($alternative));
+    }
 
-        // Open the contextual menu of the filepicker element.
-        $this->open_element_contextual_menu($foldername, $filepickerelement);
+    /**
+     * Zips the specified folder from the specified filemanager field. The folder has to be in the current folder.
+     *
+     * @Given /^I zip "(?P<filename_string>(?:[^"]|\\")*)" folder from "(?P<filemanager_field_string>(?:[^"]|\\")*)" filemanager$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $foldername
+     * @param string $filemanagerelement
+     */
+    public function i_zip_folder_from_filemanager($foldername, $filemanagerelement) {
+
+        // Open the contextual menu of the filemanager element.
+        $this->open_element_contextual_menu($foldername, $filemanagerelement);
 
         // Execute the action.
         $exception = new ExpectationException($foldername.' element can not be zipped', $this->getSession());
@@ -175,22 +243,39 @@ class behat_filepicker extends behat_files {
         $this->wait_until_return_to_form();
 
         // Wait until the current folder contents are updated
-        $containernode = $this->get_filepicker_node($filepickerelement);
+        $containernode = $this->get_filepicker_node($filemanagerelement);
         $this->wait_until_contents_are_updated($containernode);
     }
 
     /**
      * Deletes the specified file or folder from the specified filepicker field.
      *
+     * Will be deprecated in 2.7
+     * @see behat_filepicker::i_delete_file_from_filemanager()
+     *
      * @Given /^I delete "(?P<file_or_folder_name_string>(?:[^"]|\\")*)" from "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
      * @throws ExpectationException Thrown by behat_base::find
-     * @param string $foldername
+     * @param string $name
      * @param string $filepickerelement
      */
     public function i_delete_file_from_filepicker($name, $filepickerelement) {
+        $alternative = 'I delete "' . $this->escape($name) . '" from "' .
+                $this->escape($filepickerelement) . '" filemanager';
+        return array(new Given($alternative));
+    }
 
-        // Open the contextual menu of the filepicker element.
-        $this->open_element_contextual_menu($name, $filepickerelement);
+    /**
+     * Deletes the specified file or folder from the specified filemanager field.
+     *
+     * @Given /^I delete "(?P<file_or_folder_name_string>(?:[^"]|\\")*)" from "(?P<filemanager_field_string>(?:[^"]|\\")*)" filemanager$/
+     * @throws ExpectationException Thrown by behat_base::find
+     * @param string $name
+     * @param string $filemanagerelement
+     */
+    public function i_delete_file_from_filemanager($name, $filemanagerelement) {
+
+        // Open the contextual menu of the filemanager element.
+        $this->open_element_contextual_menu($name, $filemanagerelement);
 
         // Execute the action.
         $exception = new ExpectationException($name.' element can not be deleted', $this->getSession());
@@ -205,7 +290,7 @@ class behat_filepicker extends behat_files {
         $this->wait_until_return_to_form();
 
         // Wait until file manager contents are updated.
-        $containernode = $this->get_filepicker_node($filepickerelement);
+        $containernode = $this->get_filepicker_node($filemanagerelement);
         $this->wait_until_contents_are_updated($containernode);
     }
 
