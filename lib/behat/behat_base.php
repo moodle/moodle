@@ -29,7 +29,8 @@
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
+    Behat\Mink\Element\NodeElement as NodeElement;
 
 /**
  * Steps definitions base class.
@@ -38,6 +39,11 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
  *
  * It can not contain steps definitions to avoid duplicates, only utility
  * methods shared between steps.
+ *
+ * @method NodeElement find_field(string $locator) Finds a form element
+ * @method NodeElement find_button(string $locator) Finds a form input submit element or a button
+ * @method NodeElement find_link(string $locator) Finds a link on a page
+ * @method NodeElement find_file(string $locator) Finds a forum input file element
  *
  * @package   core
  * @category  test

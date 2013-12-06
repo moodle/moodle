@@ -42,27 +42,18 @@ class behat_repository_recent extends behat_files {
     /**
      * Adds the specified file from the 'Recent files' repository to the specified filepicker of the current page.
      *
+     * This will be deprecated in 2.7
+     * @see behat_filepicker::i_add_file_from_repository_to_filemanager()
+     *
      * @When /^I add "(?P<filename_string>(?:[^"]|\\")*)" file from recent files to "(?P<filepicker_field_string>(?:[^"]|\\")*)" filepicker$/
      * @param string $filename
      * @param string $filepickerelement
      */
     public function i_add_file_from_recent_files_to_filepicker($filename, $filepickerelement) {
-
-        $filepickernode = $this->get_filepicker_node($filepickerelement);
-
-        // Opening the select repository window and selecting the recent repository.
-        $this->open_add_file_window($filepickernode, get_string('pluginname', 'repository_recent'));
-
-        // Opening the specified file contextual menu from the modal window.
-        $this->open_element_contextual_menu($filename);
-
-        $this->find_button(get_string('getfile', 'repository'))->click();
-
-        // Ensure the file has been selected and we returned to the form page.
-        $this->wait_until_return_to_form();
-
-        // Wait until file manager contents are updated.
-        $this->wait_until_contents_are_updated($filepickernode);
+        $reponame = get_string('pluginname', 'repository_recent');
+        $alternative = 'I add "' . $this->escape($filename) . '" file from "' .
+                $reponame . '" to "' . $this->escape($filepickerelement) . '" filemanager';
+        return array(new Behat\Behat\Context\Step\Given($alternative));
     }
 
 }

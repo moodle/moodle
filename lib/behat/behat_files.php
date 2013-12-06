@@ -32,7 +32,7 @@
 require_once(__DIR__ . '/behat_base.php');
 
 use Behat\Mink\Exception\ExpectationException as ExpectationException,
-    Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+    Behat\Mink\Element\NodeElement as NodeElement;
 
 /**
  * Files-related actions.
@@ -104,7 +104,7 @@ class behat_files extends behat_base {
      *
      * @throws ExpectationException Thrown by behat_base::find
      * @param string $name The name of the folder/file
-     * @param string $filepickerelement The filepicker locator, the whole DOM if false
+     * @param string $filepickerelement The filepicker form element locator, the repository items are in filepicker modal window if false
      * @return void
      */
     protected function open_element_contextual_menu($name, $filepickerelement = false) {
@@ -115,6 +115,9 @@ class behat_files extends behat_base {
         if ($filepickerelement) {
             $containernode = $this->get_filepicker_node($filepickerelement);
             $exceptionmsg = 'The "'.$filepickerelement.'" filepicker ' . $exceptionmsg;
+            $locatorprefix = "//div[@class='fp-content']";
+        } else {
+            $locatorprefix = "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-repo-items ')]//descendant::div[@class='fp-content']";
         }
 
         $exception = new ExpectationException($exceptionmsg, $this->getSession());
@@ -128,7 +131,7 @@ class behat_files extends behat_base {
             // First we look at the folder as we need to click on the contextual menu otherwise it would be opened.
             $node = $this->find(
                 'xpath',
-                "//div[@class='fp-content']" .
+                $locatorprefix .
                     "//descendant::*[self::div | self::a][contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]" .
                     "[contains(concat(' ', normalize-space(@class), ' '), ' fp-folder ')]" .
                     "[normalize-space(.)=$name]" .
@@ -142,7 +145,7 @@ class behat_files extends behat_base {
             // Here the contextual menu is hidden, we click on the thumbnail.
             $node = $this->find(
                 'xpath',
-                "//div[@class='fp-content']" .
+                $locatorprefix .
                 "//descendant::*[self::div | self::a][contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]" .
                 "[normalize-space(.)=$name]" .
                 "//descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' fp-thumbnail ')]",
