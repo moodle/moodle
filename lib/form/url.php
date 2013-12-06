@@ -109,7 +109,7 @@ class MoodleQuickForm_url extends HTML_QuickForm_text{
         if (count($options->repositories) > 0) {
             $straddlink = get_string('choosealink', 'repository');
             $str .= <<<EOD
-<button id="filepicker-button-{$client_id}" style="display:none">
+<button id="filepicker-button-{$client_id}" class="visibleifjs">
 $straddlink
 </button>
 EOD;
@@ -120,7 +120,6 @@ EOD;
 
         $module = array('name'=>'form_url', 'fullpath'=>'/lib/form/url.js', 'requires'=>array('core_filepicker'));
         $PAGE->requires->js_init_call('M.form_url.init', array($options), true, $module);
-        $PAGE->requires->js_function_call('show_item', array('filepicker-button-'.$client_id));
 
         return $str;
     }
