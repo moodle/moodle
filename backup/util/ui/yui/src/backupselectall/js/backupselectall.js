@@ -1,12 +1,18 @@
-YUI.add('moodle-backup-backupselectall', function(Y) {
+/**
+ * Adds select all/none links to the top of the backup/restore/import schema page.
+ *
+ * @module moodle-backup-backupselectall
+ */
 
 // Namespace for the backup
 M.core_backup = M.core_backup || {};
 
 /**
  * Adds select all/none links to the top of the backup/restore/import schema page.
+ *
+ * @class M.core_backup.backupselectall
  */
-M.core_backup.select_all_init = function(modnames) {
+M.core_backup.backupselectall = function(modnames) {
     var formid = null;
 
     var helper = function(e, check, type, mod) {
@@ -23,7 +29,7 @@ M.core_backup.select_all_init = function(modnames) {
             if (prefix && name.substring(0, prefix.length) !== prefix) {
                 return;
             }
-            if (name.substring(name.length - len) == type) {
+            if (name.substring(name.length - len) === type) {
                 checkbox.set('checked', check);
             }
         });
@@ -67,9 +73,9 @@ M.core_backup.select_all_init = function(modnames) {
     var withuserdata = false;
     Y.all('input[type="checkbox"]').each(function(checkbox) {
         var name = checkbox.get('name');
-        if (name.substring(name.length - 9) == '_userdata') {
+        if (name.substring(name.length - 9) === '_userdata') {
             withuserdata = '_userdata';
-        } else if (name.substring(name.length - 9) == '_userinfo') {
+        } else if (name.substring(name.length - 9) === '_userinfo') {
             withuserdata = '_userinfo';
         }
     });
@@ -103,7 +109,7 @@ M.core_backup.select_all_init = function(modnames) {
         if (!modnames.hasOwnProperty(mod)) {
             continue;
         }
-        var html = html_generator('include_setting section_level', 'mod_' + mod, modnames[mod]);
+        html = html_generator('include_setting section_level', 'mod_' + mod, modnames[mod]);
         if (withuserdata) {
             html += html_generator('normal_setting', 'userdata-mod_' + mod, modnames[mod]);
         }
@@ -127,26 +133,27 @@ M.core_backup.select_all_init = function(modnames) {
         modlist.currentlyshown = !modlist.currentlyshown;
 
         // Either hide or show the links.
-        var animcfg = { node: modlist, duration: 0.2 };
+        var animcfg = { node: modlist, duration: 0.2 },
+            anim;
         if (modlist.currentlyshown) {
             // Animate reveal of the module links.
             modlist.show();
             animcfg.to = { maxHeight: modlist.get('clientHeight') + 'px' };
             modlist.setStyle('maxHeight', '0px');
-            var anim = new Y.Anim(animcfg);
+            anim = new Y.Anim(animcfg);
             anim.on('end', function() { modlist.setStyle('maxHeight', 'none'); });
             anim.run();
         } else {
             // Animate hide of the module links.
             animcfg.to = { maxHeight: '0px' };
             modlist.setStyle('maxHeight', modlist.get('clientHeight') + 'px');
-            var anim = new Y.Anim(animcfg);
+            anim = new Y.Anim(animcfg);
             anim.on('end', function() { modlist.hide(); modlist.setStyle('maxHeight', 'none'); });
             anim.run();
         }
 
     };
-    Y.one('#backup-bytype').on('click', function(e) { toggletypes(); });
+    Y.one('#backup-bytype').on('click', function() { toggletypes(); });
 
     Y.one('#backup-all-included').on('click',  function(e) { helper(e, true,  '_included'); });
     Y.one('#backup-none-included').on('click', function(e) { helper(e, false, '_included'); });
@@ -154,6 +161,4 @@ M.core_backup.select_all_init = function(modnames) {
         Y.one('#backup-all-userdata').on('click',  function(e) { helper(e, true,  withuserdata); });
         Y.one('#backup-none-userdata').on('click', function(e) { helper(e, false, withuserdata); });
     }
-}
-
-}, '@VERSION@', {'requires':['base', 'node', 'event', 'node-event-simulate', 'anim']});
+};

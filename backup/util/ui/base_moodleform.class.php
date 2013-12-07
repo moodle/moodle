@@ -353,7 +353,7 @@ abstract class base_moodleform extends moodleform {
         // Get list of module types on course.
         $modinfo = get_fast_modinfo($COURSE);
         $modnames = $modinfo->get_used_module_names(true);
-        $PAGE->requires->yui_module('moodle-backup-backupselectall', 'M.core_backup.select_all_init',
+        $PAGE->requires->yui_module('moodle-backup-backupselectall', 'M.core_backup.backupselectall',
                 array($modnames));
         $PAGE->requires->strings_for_js(array('select', 'all', 'none'), 'moodle');
         $PAGE->requires->strings_for_js(array('showtypes', 'hidetypes'), 'backup');
