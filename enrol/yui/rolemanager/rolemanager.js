@@ -113,7 +113,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             var event = this.on('assignablerolesloaded', function(){
                 event.detach();
                 var s = M.str.role, confirmation = {
-                    lightbox :  true,
+                    modal:  true,
                     visible  :  true,
                     centered :  true,
                     title    :  s.confirmunassigntitle,

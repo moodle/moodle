@@ -38,7 +38,7 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 headerContent:Y.one('#imagetitleoverlay').get('innerHTML'),
                 bodyContent:Y.one('#imageoverlay').get('innerHTML'),
                 visible: false, //by default it is not displayed
-                lightbox : false,
+                modal: false,
                 zIndex:100
             });
 
@@ -101,7 +101,7 @@ YUI.add('moodle-block_community-imagegallery', function(Y) {
                 + screennumber + ' / ' + this.imageidnumbers[imageid] + ' </h1></div>' + nextimagelink,
                 bodyContent:Y.one('#imageoverlay').get('innerHTML'),
                 visible: false, //by default it is not displayed
-                lightbox : false,
+                modal: false,
                 zIndex:100,
                 closeButtonTitle: this.get('closeButtonTitle')
             });
