@@ -1660,9 +1660,19 @@ abstract class admin_setting {
             rebuild_course_cache(0, true);
         }
 
-        add_to_config_log($name, $oldvalue, $value, $this->plugin);
+        $this->add_to_config_log($name, $oldvalue, $value);
 
         return true; // BC only
+    }
+
+    /**
+     * Log config changes if necessary.
+     * @param string $name
+     * @param string $oldvalue
+     * @param string $value
+     */
+    protected function add_to_config_log($name, $oldvalue, $value) {
+        add_to_config_log($name, $oldvalue, $value, $this->plugin);
     }
 
     /**
@@ -2159,6 +2169,22 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
      */
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         parent::__construct($name, $visiblename, $description, $defaultsetting, PARAM_RAW, 30);
+    }
+
+    /**
+     * Log config changes if necessary.
+     * @param string $name
+     * @param string $oldvalue
+     * @param string $value
+     */
+    protected function add_to_config_log($name, $oldvalue, $value) {
+        if ($value !== '') {
+            $value = '********';
+        }
+        if ($oldvalue !== '' and $oldvalue !== null) {
+            $oldvalue = '********';
+        }
+        parent::add_to_config_log($name, $oldvalue, $value);
     }
 
     /**
