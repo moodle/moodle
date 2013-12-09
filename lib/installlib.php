@@ -192,7 +192,20 @@ function install_db_validate($database, $dbhost, $dbuser, $dbpass, $dbname, $pre
         }
         return '';
     } catch (dml_exception $ex) {
-        return get_string($ex->errorcode, $ex->module, $ex->a).'<br />'.$ex->debuginfo;
+        $stringmanager = get_string_manager();
+        $errorstring = $ex->errorcode.'oninstall';
+        $legacystring = $ex->errorcode;
+        if ($stringmanager->string_exists($errorstring, $ex->module)) {
+            // By using a different string id from the error code we are separating exception handling and output.
+            return $stringmanager->get_string($errorstring, $ex->module, $ex->a).'<br />'.$ex->debuginfo;
+        } else if ($stringmanager->string_exists($legacystring, $ex->module)) {
+            // There are some DML exceptions that may be thrown here as well as during normal operation.
+            // If we have a translated message already we still want to serve it here.
+            // However it is not the preferred way.
+            return $stringmanager->get_string($legacystring, $ex->module, $ex->a).'<br />'.$ex->debuginfo;
+        }
+        // No specific translation. Deliver a generic error message.
+        return $stringmanager->get_string('dmlexceptiononinstall', 'error', $ex);
     }
 }
 

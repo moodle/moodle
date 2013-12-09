@@ -46,6 +46,9 @@ $string['cannotcallscript'] = 'You cannot call this script in that way';
 $string['cannotcallusgetselecteduser'] = 'You cannot call user_selector::get_selected_user if multi select is true.';
 $string['cannotcreatebackupdir'] = 'Could not create backupdata folder.  The site administrator needs to fix the file permissions';
 $string['cannotcreatecategory'] = 'The category was not inserted';
+$string['cannotcreatedboninstall'] = '<p>Cannot create the database.</p>
+<p>The specified database does not exist and the given user does not have permission to create the database.</p>
+<p>The site administrator should verify database configuration.</p>';
 $string['cannotcreategroup'] = 'Error creating group';
 $string['cannotcreatelangbase'] = 'Error: Could not create base lang directory';
 $string['cannotcreatelangdir'] = 'Cannot create lang directory';
@@ -199,6 +202,7 @@ $string['ddlunknownerror'] = 'Unknown DDL library error';
 $string['ddlxmlfileerror'] = 'XML database file errors found';
 $string['destinationcmnotexit'] = 'The destination course module does not exist';
 $string['detectedbrokenplugin'] = 'Plugin "{$a}" is defective or outdated, can not continue, sorry.';
+$string['dmlexceptiononinstall'] = '<p>A database error has occurred [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['dmlreadexception'] = 'Error reading from database';
 $string['dmltransactionexception'] = 'Database transaction error';
 $string['dmlwriteexception'] = 'Error writing to database';
