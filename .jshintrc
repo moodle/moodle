@@ -42,7 +42,7 @@
     "sub":          false,
     "supernew":     false,
     "maxerr":       500,
-    "maxlen":       150,
+    "maxlen":       180,
     "passfail":     false,
     "latedef":      true
 }
