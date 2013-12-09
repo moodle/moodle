@@ -1,0 +1,9 @@
+This files describes API changes in /badges/*,
+information provided here is intended especially for developers.
+
+=== 2.7 ===
+
+* New optional parameter $archive in delete() in badge class in badgeslib.php
+  allows to indicate that a badge should be archived instead of fully deleted.
+  If this parameter is set to FALSE, a badge will all its information, criteria,
+  and awards will be removed from the database.
