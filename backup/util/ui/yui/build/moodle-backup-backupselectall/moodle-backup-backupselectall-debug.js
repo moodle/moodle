@@ -166,4 +166,4 @@ M.core_backup.backupselectall = function(modnames) {
 };
 
 
-}, '@VERSION@');
+}, '@VERSION@', {"requires": ["node", "event", "node-event-simulate", "anim"]});
