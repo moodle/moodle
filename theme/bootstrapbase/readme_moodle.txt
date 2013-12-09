@@ -32,19 +32,17 @@ To update to the latest release of html5shiv:
 
 bootstrapcollapse.js, bootstrapdropdown.js, bootstrapengine.js
 --------------------------------------------------------------
-This theme uses YUI ports of the Twitter bootstrap jQuery based libs. These ported files are available on:
+This theme uses YUI ports of the Twitter bootstrap jQuery based libs.
 
-https://github.com/jshirley/yui3-gallery/blob/master/src/gallery-bootstrap-collapse/js/bootstrap-collapse.js
-https://github.com/jshirley/yui3-gallery/blob/master/src/gallery-bootstrap-dropdown/js/bootstrap-dropdown.js
-https://github.com/jshirley/yui3-gallery/blob/master/src/gallery-bootstrap-engine/js/bootstrap-engine.js
-
-The content of these files are slightly modified to make sure all required YUI libraries are loaded. To achieve
-that the first and last line of each of these files has been modified.
+Upgrade procedure:
+* git clone https://github.com/jshirley/yui-gallery.git
+* from that repository copy:
+** build/gallery-bootstrap-collapse/gallery-bootstrap-collapse-debug.js to js/gallery-bootstrapcollapse.js
+** build/gallery-bootstrap-dropdown/gallery-bootstrap-dropdown-debug.js to js/gallery-bootstrapdropdown.js
+** build/gallery-bootstrap-engine/gallery-bootstrap-engine-debug.js to js/gallery-bootstrapengine.js
+* apply patches from MDL-43152 to address linting issues
+* run shifter on this directory as required
+* update ../../../thirdpartylibs.xml
 
 The YUI port of the Twitter bootstrap libs are now longer maintained. If you need all of the Bootstrap JavaScript
 functionality consider switching to the original jQuery version of these file
-
-If you do want to update use these file locations:
-theme/bootstrapbase/yui/src/bootstrap/js/bootstrap-collapse.js
-theme/bootstrapbase/yui/src/bootstrap/js/bootstrap-dropdown.js
-theme/bootstrapbase/yui/src/bootstrap/js/bootstrap-engine.js

@@ -411,7 +411,7 @@ Y.extend(TREE, Y.Base, TREE.prototype, {
         instance : {
             value : false,
             setter : function(val) {
-                return parseInt(val);
+                return parseInt(val, 10);
             }
         }
     }
