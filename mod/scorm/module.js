@@ -100,41 +100,20 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
             }
 
             var content = new Y.YUI2.util.Element('scorm_content');
-            try {
-                // first try IE way - it can not set name attribute later
-                // and also it has some restrictions on DOM access from object tag
-                if (window_name || node.title == null) {
-                    var obj = document.createElement('<iframe id="scorm_object" src="">');
-                    if (window_name) {
-                        var mine = window.open('','','width=1,height=1,left=0,top=0,scrollbars=no');
-                        if(! mine) {
-                             alert(M.str.scorm.popupsblocked);
-                        }
-                        mine.close()
-                    }
-                }
-                else {
-                    var obj = document.createElement('<iframe id="scorm_object" src="'+url_prefix + node.title+'">');
-                }
-                // fudge IE7 to redraw the screen
-                if (Y.YUI2.env.ua.ie > 5 && Y.YUI2.env.ua.ie < 8) {
-                    obj.attachEvent("onload", scorm_resize_parent);
-                }
-            } catch (e) {
-                var obj = document.createElement('object');
-                obj.setAttribute('id', 'scorm_object');
-                obj.setAttribute('type', 'text/html');
-                if (!window_name && node.title != null) {
-                    obj.setAttribute('data', url_prefix + node.title);
-                }
-                if (window_name) {
-                    var mine = window.open('','','width=1,height=1,left=0,top=0,scrollbars=no');
-                    if(! mine) {
-                         alert(M.str.scorm.popupsblocked);
-                    }
-                    mine.close()
-                }
+            var obj = document.createElement('iframe');
+            obj.setAttribute('id', 'scorm_object');
+            obj.setAttribute('type', 'text/html');
+            if (!window_name && node.title != null) {
+                obj.setAttribute('src', url_prefix + node.title);
             }
+            if (window_name) {
+                var mine = window.open('','','width=1,height=1,left=0,top=0,scrollbars=no');
+                if(! mine) {
+                    alert(M.str.scorm.popupsblocked);
+                }
+                mine.close()
+            }
+
             var old = Y.YUI2.util.Dom.get('scorm_object');
             if (old) {
                 if(window_name) {
@@ -176,16 +155,6 @@ M.mod_scorm.init = function(Y, hide_nav, hide_toc, toc_title, window_name, launc
                         (scoes_nav[launch_sco].flow != 1)) || (scoes_nav[launch_sco].hidecontinue == 1)));
             scorm_buttons[4].set('disabled', (scorm_skipnext(scorm_current_node) == null || scorm_skipnext(scorm_current_node).title == null ||
                         scoes_nav[launch_sco].hidecontinue == 1));
-        };
-
-        var scorm_resize_parent = function() {
-            // fudge  IE7 to redraw the screen
-            parent.resizeBy(-10, -10);
-            parent.resizeBy(10, 10);
-            var ifr = Y.YUI2.util.Dom.get('scorm_object');
-            if (ifr) {
-                ifr.detachEvent("onload", scorm_resize_parent);
-            }
         };
 
         var scorm_resize_layout = function(alsowidth) {
