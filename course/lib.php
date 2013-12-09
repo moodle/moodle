@@ -2183,7 +2183,7 @@ function course_get_cm_move(cm_info $mod, $sr = null) {
     if ($hasmanageactivities) {
         $pixicon = 'i/dragdrop';
 
-        if ($mod->course == SITEID) {
+        if (!course_ajax_enabled($mod->get_course())) {
             // Override for course frontpage until we get drag/drop working there.
             $pixicon = 't/move';
         }
