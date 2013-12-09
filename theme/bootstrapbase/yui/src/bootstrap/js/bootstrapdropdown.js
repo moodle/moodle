@@ -27,7 +27,7 @@ It can also be plugged into any node or node list.
 
 var NS = Y.namespace('Bootstrap');
 
-function DropdownPlugin(config) {
+function DropdownPlugin() {
   DropdownPlugin.superclass.constructor.apply(this, arguments);
 }
 
@@ -56,7 +56,7 @@ Y.extend( DropdownPlugin, Y.Plugin.Base, {
             className = this.config.className;
 
         target.toggleClass( className );
-        target.once('clickoutside', function(e) {
+        target.once('clickoutside', function() {
             target.toggleClass( className );
         });
     },
@@ -112,4 +112,3 @@ NS.dropdown_delegation = function() {
 
 
 }, '@VERSION@' ,{requires:['plugin','event','event-outside']});
-;
