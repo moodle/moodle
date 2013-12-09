@@ -32,9 +32,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class deployer {
 
-    const HTTP_PARAM_PREFIX     = 'updteautodpldata_';  // Hey, even Google has not heard of such a prefix! So it MUST be safe :-p.
-    const HTTP_PARAM_CHECKER    = 'datapackagesize';    // Name of the parameter that holds the number of items in the received data items.
-
     /** @var \core\update\deployer holds the singleton instance */
     protected static $singletoninstance;
     /** @var moodle_url URL of a page that includes the deployer UI */
@@ -207,9 +204,19 @@ class deployer {
             throw new coding_exception('Illegal method call - deployer not initialized.');
         }
 
-        $params = $this->data_to_params(array(
-            'updateinfo' => (array)$info,   // See http://www.php.net/manual/en/language.types.array.php#language.types.array.casting .
-        ));
+        $params = array(
+            'updateaddon' => $info->component,
+            'version' =>$info->version,
+            'sesskey' => sesskey(),
+        );
+
+        // Append some our own data.
+        if (!empty($this->callerurl)) {
+            $params['callerurl'] = $this->callerurl->out(false);
+        }
+        if (!empty($this->returnurl)) {
+            $params['returnurl'] = $this->returnurl->out(false);
+        }
 
         $widget = new \single_button(
             new moodle_url($this->callerurl, $params),
@@ -301,25 +308,46 @@ class deployer {
      * @return array
      */
     public function submitted_data() {
-
-        $data = $this->params_to_data($_POST);
-
-        if (empty($data) or empty($data[self::HTTP_PARAM_CHECKER])) {
+        $component = optional_param('updateaddon', '', PARAM_COMPONENT);
+        $version = optional_param('version', '', PARAM_RAW);
+        if (!$component or !$version) {
             return false;
         }
 
-        if (!empty($data['updateinfo']) and is_object($data['updateinfo'])) {
-            $updateinfo = $data['updateinfo'];
-            if (!empty($updateinfo->component) and !empty($updateinfo->version)) {
-                $data['updateinfo'] = new info($updateinfo->component, (array)$updateinfo);
+        $plugininfo = \core_plugin_manager::instance()->get_plugin_info($component);
+        if (!$plugininfo) {
+            return false;
+        }
+
+        if ($plugininfo->is_standard()) {
+            return false;
+        }
+
+        if (!$updates = $plugininfo->available_updates()) {
+            return false;
+        }
+
+        $info = null;
+        foreach ($updates as $update) {
+            if ($update->version == $version) {
+                $info = $update;
+                break;
             }
         }
-
-        if (!empty($data['callerurl'])) {
-            $data['callerurl'] = new moodle_url($data['callerurl']);
+        if (!$info) {
+            return false;
         }
 
-        if (!empty($data['returnurl'])) {
+        $data = array(
+            'updateaddon' => $component,
+            'updateinfo'  => $info,
+            'callerurl'   => optional_param('callerurl', null, PARAM_URL),
+            'returnurl'   => optional_param('returnurl', null, PARAM_URL),
+        );
+        if ($data['callerurl']) {
+            $data['callerurl'] = new moodle_url($data['callerurl']);
+        }
+        if ($data['callerurl']) {
             $data['returnurl'] = new moodle_url($data['returnurl']);
         }
 
@@ -422,60 +450,6 @@ class deployer {
     /* === End of external API === */
 
     /**
-     * Prepares an array of HTTP parameters that can be passed to another page.
-     *
-     * @param array|object $data associative array or an object holding the data, data JSON-able
-     * @return array suitable as a param for moodle_url
-     */
-    protected function data_to_params($data) {
-
-        // Append some our own data.
-        if (!empty($this->callerurl)) {
-            $data['callerurl'] = $this->callerurl->out(false);
-        }
-        if (!empty($this->returnurl)) {
-            $data['returnurl'] = $this->returnurl->out(false);
-        }
-
-        // Finally append the count of items in the package.
-        $data[self::HTTP_PARAM_CHECKER] = count($data);
-
-        // Generate params.
-        $params = array();
-        foreach ($data as $name => $value) {
-            $transname = self::HTTP_PARAM_PREFIX.$name;
-            $transvalue = json_encode($value);
-            $params[$transname] = $transvalue;
-        }
-
-        return $params;
-    }
-
-    /**
-     * Converts HTTP parameters passed to the script into native PHP data
-     *
-     * @param array $params such as $_REQUEST or $_POST
-     * @return array data passed for this class
-     */
-    protected function params_to_data(array $params) {
-
-        if (empty($params)) {
-            return array();
-        }
-
-        $data = array();
-        foreach ($params as $name => $value) {
-            if (strpos($name, self::HTTP_PARAM_PREFIX) === 0) {
-                $realname = substr($name, strlen(self::HTTP_PARAM_PREFIX));
-                $realvalue = json_decode($value);
-                $data[$realname] = $realvalue;
-            }
-        }
-
-        return $data;
-    }
-
-    /**
      * Returns a random string to be used as a filename of the password storage.
      *
      * @return string
@@ -511,7 +485,13 @@ class deployer {
         $directory = core_component::get_plugin_directory($plugintype, $pluginname);
 
         if (is_null($directory)) {
-            throw new coding_exception('Unknown component location', $component);
+            // Plugin unknown, most probably deleted or missing during upgrade,
+            // look at the parent directory instead because they might want to install it.
+            $plugintypes = core_component::get_plugin_types();
+            if (!isset($plugintypes[$plugintype])) {
+                throw new coding_exception('Unknown component location', $component);
+            }
+            $directory = $plugintypes[$plugintype];
         }
 
         return $this->directory_writable($directory);
