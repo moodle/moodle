@@ -274,6 +274,7 @@ body {
 
 .userprofile dl {
     margin-top: 10px;
+    display: inline-block;
 }
 
 .userprofile dl dt, .userprofile dl dd {
