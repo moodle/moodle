@@ -93,15 +93,7 @@ if ($format) {
         }
     }
 
-    $params = null;
-    $companytest = "";
-    if ($companyid) {
-        $company = new company($companyid);
-        $companyshortname = $company->get_shortname();
-
-        $params = array('companyshortname' => $companyshortname);
-        $companytest = ' AND muid.data = :companyshortname';
-    }
+    $params = array('companyid'=>$companyid);
 
     // Get department users.
     $departmentusers = company::get_recursive_department_users($userhierarchylevel);
@@ -114,20 +106,19 @@ if ($format) {
                 $departmentids .= $departmentuser->userid;
             }
         }
-        $sqlsearch = " AND muid.userid in ($departmentids) ";
+        $sqlsearch = " AND userid in ($departmentids) ";
     } else {
         $sqlsearch = "AND 1 = 0";
     }
 
 
 
-    $userids = $DB->get_records_sql_menu("SELECT muid.userid, muid.userid as id
+    $userids = $DB->get_records_sql_menu("SELECT userid, userid as id
         FROM
-            {user_info_field} muif
-            INNER JOIN {user_info_data} muid ON muif.id = muid.fieldid
+            {company_users}
         WHERE
-            muif.shortname = 'company'
-            " . $sqlsearch . $companytest, $params);
+            companyid = :companyid
+            " . $sqlsearch, $params);
 
     switch ($format) {
         case 'csv' : user_download_csv($userids, $fields, ! $companyid);
