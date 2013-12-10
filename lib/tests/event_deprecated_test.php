@@ -15,28 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course module instances list_viewed event.
+ * Tests for deprecated events. Please add tests for deprecated events in this file.
  *
- * This class has been deprecated, please use \core\event\course_module_instance_list_viewed.
- * 
  * @package    core
- * @copyright  2013 Frédéric Massart
+ * @category   phpunit
+ * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * This class has been deprecated, please use \core\event\course_module_instance_list_viewed.
+ * Class core_event_instances_list_viewed_testcase
  *
- * @deprecated Since Moodle 2.7
- * @package    core
- * @copyright  2013 Frédéric Massart
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Tests for deprecated events.
  */
-abstract class course_module_instances_list_viewed extends course_module_instance_list_viewed {
-}
+class core_event_deprecated_testcase extends advanced_testcase {
 
-debugging('core\\event\\course_module_instances_list_viewed has been deperecated. Please use
-        core\\event\\course_module_instance_list_viewed instead', DEBUG_DEVELOPER);
+    /**
+     * Test event properties and methods.
+     */
+    public function test_deprecated_course_module_instances_list_viewed_events() {
+
+        // Make sure the abstract class course_module_instances_list_viewed generates a debugging notice.
+        require_once(__DIR__.'/fixtures/event_mod_badfixtures.php');
+        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
+
+    }
+}

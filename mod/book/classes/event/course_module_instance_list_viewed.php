@@ -15,28 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Course module instances list_viewed event.
+ * mod_book course module instance list viewed event.
  *
- * This class has been deprecated, please use \core\event\course_module_instance_list_viewed.
- * 
- * @package    core
- * @copyright  2013 Frédéric Massart
+ * @package    mod_book
+ * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\event;
+namespace mod_book\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * This class has been deprecated, please use \core\event\course_module_instance_list_viewed.
+ * mod_book course module instance list viewed event class.
  *
- * @deprecated Since Moodle 2.7
- * @package    core
- * @copyright  2013 Frédéric Massart
+ * @package    mod_book
+ * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class course_module_instances_list_viewed extends course_module_instance_list_viewed {
+class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
 }
 
-debugging('core\\event\\course_module_instances_list_viewed has been deperecated. Please use
-        core\\event\\course_module_instance_list_viewed instead', DEBUG_DEVELOPER);
