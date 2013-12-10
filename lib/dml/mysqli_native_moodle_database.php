@@ -1392,6 +1392,16 @@ class mysqli_native_moodle_database extends moodle_database {
         return ' CAST(' . $fieldname . ' AS SIGNED) ';
     }
 
+    /**
+     * Does this driver support tool_replace?
+     *
+     * @since 2.6.1
+     * @return bool
+     */
+    public function replace_all_text_supported() {
+        return true;
+    }
+
     public function session_lock_supported() {
         return true;
     }
