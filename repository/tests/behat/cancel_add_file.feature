@@ -12,7 +12,7 @@ Feature: A selected file can be cancelled
     And I log in as "admin"
     And I expand "My profile" node
     And I follow "My private files"
-    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filepicker
+    And I upload "lib/tests/fixtures/empty.txt" file to "Files" filemanager
     And I press "Save changes"
     And I am on homepage
     And I follow "Course 1"
@@ -21,7 +21,7 @@ Feature: A selected file can be cancelled
     And I fill the moodle form with:
       | Name | Folder name |
       | Description | Folder description |
-    And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filepicker
+    And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filemanager
     And I click on "#fitem_id_files .fp-btn-add a" "css_element"
     And I click on "Recent files" "link" in the ".fp-repo-area" "css_element"
     And I click on "//a[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')][normalize-space(.)='empty.txt']" "xpath_element"
