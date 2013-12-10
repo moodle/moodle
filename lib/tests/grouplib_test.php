@@ -413,4 +413,36 @@ class grouplib_testcase extends advanced_testcase {
         $this->assertContains($group3->name, $groupkeys);
         $this->assertEquals($group3->id, $groups[$group3->name]->id);
     }
+
+    /**
+     * This unit test checks that groups_get_all_groups returns groups in
+     * alphabetical order even if they are in a grouping.
+     */
+    public function test_groups_ordering() {
+        $generator = $this->getDataGenerator();
+        $this->resetAfterTest();
+
+        // Create a course category and course.
+        $cat = $generator->create_category(array('parent' => 0));
+        $course = $generator->create_course(array('category' => $cat->id));
+        $grouping = $generator->create_grouping(array('courseid' => $course->id, 'name' => 'Grouping'));
+
+        // Create groups in reverse order.
+        $group2 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 2'));
+        $group1 = $generator->create_group(array('courseid' => $course->id, 'name' => 'Group 1'));
+
+        // Assign the groups to the grouping in reverse order.
+        $this->assertTrue(groups_assign_grouping($grouping->id, $group2->id));
+        $this->assertTrue(groups_assign_grouping($grouping->id, $group1->id));
+
+        // Get all groups and check they are alphabetical.
+        $groups = array_values(groups_get_all_groups($course->id, 0));
+        $this->assertEquals('Group 1', $groups[0]->name);
+        $this->assertEquals('Group 2', $groups[1]->name);
+
+        // Now check the same is true when accessed by grouping.
+        $groups = array_values(groups_get_all_groups($course->id, 0, $grouping->id));
+        $this->assertEquals('Group 1', $groups[0]->name);
+        $this->assertEquals('Group 2', $groups[1]->name);
+    }
 }
