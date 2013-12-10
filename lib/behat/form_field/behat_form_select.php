@@ -40,40 +40,82 @@ class behat_form_select extends behat_form_field {
     /**
      * Sets the value of a single select.
      *
+     * Seems an easy select, but there are lots of combinations
+     * of browsers and operative systems and each one manages the
+     * autosubmits and the multiple option selects in a diferent way.
+     *
      * @param string $value
      * @return void
      */
     public function set_value($value) {
+
+        // In some browsers we select an option and it triggers all the
+        // autosubmits and works as expected but not in all of them, so we
+        // try to catch all the possibilities to make this function work as
+        // expected.
+
+        // Get the internal id of the element we are going to click.
+        // This kind of internal IDs are only available in the selenium wire
+        // protocol, so only available using selenium drivers, phantomjs and family.
+        if ($this->running_javascript()) {
+            $currentelementid = $this->get_internal_field_id();
+        }
+
+        // Here we select an option.
         $this->field->selectOption($value);
 
-        // Adding a click as Selenium requires it to fire some JS events.
-        if ($this->running_javascript()) {
+        // With JS disabled this is enough and we finish here.
+        if (!$this->running_javascript()) {
+            return;
+        }
 
-            // In some browsers the selectOption actions can perform a page reload
-            // so we need to ensure the element is still available to continue interacting
-            // with it. We don't wait here.
-            if (!$this->session->getDriver()->find($this->field->getXpath())) {
+        // With JS enabled we add more clicks as some selenium
+        // drivers requires it to fire JS events.
+
+        // In some browsers the selectOption actions can perform a form submit or reload page
+        // so we need to ensure the element is still available to continue interacting
+        // with it. We don't wait here.
+        $selectxpath = $this->field->getXpath();
+        if (!$this->session->getDriver()->find($selectxpath)) {
+            return;
+        }
+
+        // We also check the selenium internal element id, if it have changed
+        // we are dealing with an autosubmit that was already executed, and we don't to
+        // execute anything else as the action we wanted was already performed.
+        if ($currentelementid != $this->get_internal_field_id()) {
+            return;
+        }
+
+        // We also check that the option is still there. We neither wait.
+        $valueliteral = $this->session->getSelectorsHandler()->xpathLiteral($value);
+        $optionxpath = $selectxpath . "/descendant::option[(./@value=$valueliteral or normalize-space(.)=$valueliteral)]";
+        if (!$this->session->getDriver()->find($optionxpath)) {
+            return;
+        }
+
+        // Single select sometimes needs an extra click in the option.
+        if (!$this->field->hasAttribute('multiple')) {
+
+            // Using the driver direcly because Element methods are messy when dealing
+            // with elements inside containers.
+            $optionnodes = $this->session->getDriver()->find($optionxpath);
+            if ($optionnodes) {
+                current($optionnodes)->click();
+            }
+
+        } else {
+            // Multiple ones needs the click in the select.
+            $this->field->click();
+
+            // We ensure that the option is still there.
+            if (!$this->session->getDriver()->find($optionxpath)) {
                 return;
             }
 
-            // Single select needs an extra click in the option.
-            if (!$this->field->hasAttribute('multiple')) {
-
-                $value = $this->session->getSelectorsHandler()->xpathLiteral($value);
-
-                // Using the driver direcly because Element methods are messy when dealing
-                // with elements inside containers.
-                $optionxpath = $this->field->getXpath() .
-                    "/descendant::option[(./@value=$value or normalize-space(.)=$value)]";
-                $optionnodes = $this->session->getDriver()->find($optionxpath);
-                if ($optionnodes) {
-                    current($optionnodes)->click();
-                }
-
-            } else {
-                // Multiple ones needs the click in the select.
-                $this->field->click();
-            }
+            // Repeating the select as some drivers (chrome that I know) are moving
+            // to another option after the general select field click above.
+            $this->field->selectOption($value);
         }
     }
 

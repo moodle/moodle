@@ -1,4 +1,4 @@
-@mod @mod_scorm
+@mod @mod_scorm @_only_local @_switch_frame
 Feature: Add scorm activity
   In order to let students access a scorm package
   As a teacher
@@ -21,10 +21,10 @@ Feature: Add scorm activity
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "SCORM package" to section "1"
-    And I upload "mod/scorm/tests/packages/singlescobasic.zip" file to "Package file" filemanager
     And I fill the moodle form with:
       | Name | Awesome SCORM package |
       | Description | Description |
+    And I upload "mod/scorm/tests/packages/singlescobasic.zip" file to "Package file" filemanager
     And I click on "Save and display" "button"
     Then I should see "Awesome SCORM package"
     And I should see "Normal"
@@ -35,7 +35,6 @@ Feature: Add scorm activity
     And I follow "Awesome SCORM package"
     And I should see "Normal"
     And I press "Enter"
-    And I wait "5" seconds
     And I switch to "scorm_object" iframe
     And I switch to "contentFrame" iframe
     And I should see "Play of the game"

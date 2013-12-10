@@ -222,42 +222,68 @@ class behat_hooks extends behat_base {
     }
 
     /**
-     * Checks that all DOM is ready.
+     * Wait for JS to complete before beginning interacting with the DOM.
+     *
+     * Executed only when running against a real browser.
+     *
+     * @BeforeStep @javascript
+     */
+    public function before_step_javascript($event) {
+        $this->wait_for_pending_js();
+    }
+
+    /**
+     * Wait for JS to complete after finishing the step.
+     *
+     * With this we ensure that there are not AJAX calls
+     * still in progress.
      *
      * Executed only when running against a real browser.
      *
      * @AfterStep @javascript
      */
     public function after_step_javascript($event) {
+        $this->wait_for_pending_js();
+    }
 
-        // If it doesn't have definition or it fails there is no need to check it.
-        if ($event->getResult() != StepEvent::PASSED ||
-            !$event->hasDefinition()) {
-            return;
-        }
+    /**
+     * Waits for all the JS to be loaded.
+     *
+     * @throws NoSuchWindow
+     * @throws UnknownError
+     * @return bool True or false depending whether all the JS is loaded or not.
+     */
+    protected function wait_for_pending_js() {
 
-       // Wait until the page is ready.
-       // We are already checking that we use a JS browser, this could
-       // change in case we use another JS driver.
-       try {
-
-            // Safari and Internet Explorer requires time between steps,
-            // otherwise Selenium tries to click in the previous page's DOM.
-            if ($this->getSession()->getDriver()->getBrowserName() == 'safari' ||
-                    $this->getSession()->getDriver()->getBrowserName() == 'internet explorer') {
-                $this->getSession()->wait(self::TIMEOUT * 1000, false);
-
-            } else {
-                // With other browsers we just wait for the DOM ready.
-                $this->getSession()->wait(self::TIMEOUT * 1000, '(document.readyState === "complete")');
+        // We don't use behat_base::spin() here as we don't want to end up with an exception
+        // if the page & JSs don't finish loading properly.
+        for ($i = 0; $i < self::EXTENDED_TIMEOUT * 10; $i++) {
+            $pending = '';
+            try {
+                $jscode = 'return ' . self::PAGE_READY_JS . ' ? "" : M.util.pending_js.join(":");';
+                $pending = $this->getSession()->evaluateScript($jscode);
+            } catch (NoSuchWindow $nsw) {
+                // We catch an exception here, in case we just closed the window we were interacting with.
+                // No javascript is running if there is no window right?
+                $pending = '';
+            } catch (UnknownError $e) {
+                // Same exception as before, but some combinations of browser + OS reports it as an unknown error
+                // exception.
+                $pending = '';
             }
 
-        } catch (NoSuchWindow $e) {
-            // If we were interacting with a popup window it will not exists after closing it.
-        } catch (UnknownError $e) {
-            // Custom exception to provide more feedback about possible solutions.
-            $this->throw_unknown_exception($e);
+            // If there are no pending JS we stop waiting.
+            if ($pending === '') {
+                return true;
+            }
+
+            // 0.1 seconds.
+            usleep(100000);
         }
+
+        // Timeout waiting for JS to complete.
+        // TODO MDL-43173 We should fail the scenarios if JS loading times out.
+        return false;
     }
 
     /**

@@ -48,19 +48,38 @@ class behat_form_editor extends behat_form_field {
      */
     public function set_value($value) {
 
-        // Get tinyMCE editor id if it exists.
-        if ($editorid = $this->get_editor_id()) {
+        $lastexception = null;
 
-            // Set the value to the iframe and save it to the textarea.
-            $this->session->executeScript('
-                tinyMCE.get("'.$editorid.'").setContent("' . $value . '");
-                tinyMCE.get("'.$editorid.'").save();
-            ');
+        // We want the editor to be ready, otherwise the value can not
+        // be set and an exception is thrown.
+        for ($i = 0; $i < behat_base::EXTENDED_TIMEOUT; $i++) {
+            try {
+                // Get tinyMCE editor id if it exists.
+                if ($editorid = $this->get_editor_id()) {
 
-        } else {
-            // Set the value to a textarea otherwise.
-            parent::set_value($value);
+                    // Set the value to the iframe and save it to the textarea.
+                    $this->session->executeScript('
+                        tinyMCE.get("'.$editorid.'").setContent("' . $value . '");
+                        tinyMCE.get("'.$editorid.'").save();
+                    ');
+
+                } else {
+                    // Set the value to a textarea otherwise.
+                    parent::set_value($value);
+                }
+                return;
+
+            } catch (Exception $e) {
+                // Catching any kind of exception and ignoring it until times out.
+                $lastexception = $e;
+
+                // Waiting 0.1 seconds.
+                usleep(100000);
+            }
         }
+
+        // If it is not available we throw the last exception.
+        throw $lastexception;
     }
 
     /**
@@ -70,14 +89,45 @@ class behat_form_editor extends behat_form_field {
      */
     public function get_value() {
 
-        // Get tinyMCE editor id if it exists.
-        if ($editorid = $this->get_editor_id()) {
+        // Can be be a string value or an exception depending whether the editor loads or not.
+        $lastoutcome = '';
 
-            // Save the current iframe value in case default value has been edited.
-            $this->session->executeScript('tinyMCE.get("'.$editorid.'").save();');
+        // We want the editor to be ready to return the correct value, sometimes the
+        // page loads too fast and the returned value may be '' if the editor didn't
+        // have enough time to load completely despite having a different value.
+        for ($i = 0; $i < behat_base::EXTENDED_TIMEOUT; $i++) {
+            try {
+
+                // Get tinyMCE editor id if it exists.
+                if ($editorid = $this->get_editor_id()) {
+
+                    // Save the current iframe value in case default value has been edited.
+                    $this->session->executeScript('tinyMCE.get("'.$editorid.'").save();');
+                }
+
+                $lastoutcome = $this->field->getValue();
+
+                // We only want to wait until it times out if the value is empty.
+                if ($lastoutcome != '') {
+                    return $lastoutcome;
+                }
+
+            } catch (Exception $e) {
+                // Catching any kind of exception and ignoring it until times out.
+                $lastoutcome = $e;
+
+                // Waiting 0.1 seconds.
+                usleep(100000);
+            }
         }
 
-        return $this->field->getValue();
+        // If it is not available we throw the last exception.
+        if (is_a($lastoutcome, 'Exception')) {
+            throw $lastoutcome;
+        }
+
+        // Return the value if there are no exceptions it will be '' at this point
+        return $lastoutcome;
     }
 
     /**
@@ -87,7 +137,7 @@ class behat_form_editor extends behat_form_field {
      * can not execute Javascript, also some Moodle settings disables the HTML
      * editor.
      *
-     * @return mixed The id of the editor of false if is not available
+     * @return mixed The id of the editor of false if it is not available
      */
     protected function get_editor_id() {
 
@@ -95,7 +145,7 @@ class behat_form_editor extends behat_form_field {
         try {
             $available = $this->session->evaluateScript('return (typeof tinyMCE != "undefined")');
 
-            // Also checking that it exist a tinyMCE editor for the requested field.
+            // Also checking that it exists a tinyMCE editor for the requested field.
             $editorid = $this->field->getAttribute('id');
             $available = $this->session->evaluateScript('return (typeof tinyMCE.get("'.$editorid.'") != "undefined")');
 

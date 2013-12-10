@@ -76,6 +76,7 @@ class behat_navigation extends behat_base {
 
         $exception = new ExpectationException('The "' . $nodetext . '" node can not be expanded', $this->getSession());
         $node = $this->find('xpath', $xpath, $exception);
+        $this->ensure_node_is_visible($node);
         $node->click();
     }
 
