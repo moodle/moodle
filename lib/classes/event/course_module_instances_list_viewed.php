@@ -18,7 +18,7 @@
  * Course module instances list_viewed event.
  *
  * This class has been deprecated, please use \core\event\course_module_instance_list_viewed.
- * 
+ *
  * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
