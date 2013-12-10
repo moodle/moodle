@@ -15,7 +15,7 @@ Feature: An admin can update courses using a CSV file
 
   @javascript
   Scenario: Updating a course fullname
-    Given I upload "admin/tool/uploadcourse/tests/fixtures/courses.csv" file to "File" filepicker
+    Given I upload "admin/tool/uploadcourse/tests/fixtures/courses.csv" file to "File" filemanager
     And I select "Only update existing courses" from "Upload mode"
     And I select "Update with CSV data only" from "Update mode"
     And I click on "Preview" "button"

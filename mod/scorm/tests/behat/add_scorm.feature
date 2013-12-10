@@ -21,7 +21,7 @@ Feature: Add scorm activity
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "SCORM package" to section "1"
-    And I upload "mod/scorm/tests/packages/singlescobasic.zip" file to "Package file" filepicker
+    And I upload "mod/scorm/tests/packages/singlescobasic.zip" file to "Package file" filemanager
     And I fill the moodle form with:
       | Name | Awesome SCORM package |
       | Description | Description |

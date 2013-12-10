@@ -22,7 +22,7 @@ Feature: Importing of groups and groupings
     And I expand "Users" node
     And I follow "Groups"
     And I press "Import groups"
-    When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filepicker
+    When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filemanager
     And I press "Import groups"
     And I press "Continue"
     Then I should see "group-id-1"
@@ -47,7 +47,7 @@ Feature: Importing of groups and groupings
     And I expand "Users" node
     And I follow "Groups"
     And I press "Import groups"
-    When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filepicker
+    When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filemanager
     And I press "Import groups"
     Then I should see "Group group-id-1 added successfully"
     And I should see "Group group-id-2 added successfully"
@@ -91,7 +91,7 @@ Feature: Importing of groups and groupings
     And I expand "Users" node
     And I follow "Groups"
     And I press "Import groups"
-    When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filepicker
+    When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filemanager
     And I press "Import groups"
     And I press "Continue"
     Then I select "group-id-1" from "groups"

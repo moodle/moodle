@@ -36,7 +36,7 @@ Feature: Add badges to the system
       | Description | Test badge description |
       | issuername | Test Badge Site |
       | issuercontact | testuser@test-badge-site.com |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filepicker
+    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
     When I press "Create badge"
     Then I should see "Edit details"
     And I should see "Test Badge"

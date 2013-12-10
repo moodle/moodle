@@ -27,7 +27,7 @@ Feature: Upload users to a cohort
     And I expand "Users" node
     And I expand "Accounts" node
     When I follow "Upload users"
-    And I upload "lib/tests/fixtures/upload_users_cohorts.csv" file to "File" filepicker
+    And I upload "lib/tests/fixtures/upload_users_cohorts.csv" file to "File" filemanager
     And I press "Upload users"
     And I press "Upload users"
     And I press "Continue"
