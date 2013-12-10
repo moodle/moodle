@@ -76,7 +76,7 @@ class company_user {
         */
 
         $sendemail = $user->sendnewpasswordemails;
-        $passwordentered = isset($user->newpassword) && !empty($user->newpassword);
+        $passwordentered = !empty($user->newpassword);
         $createpassword = !$passwordentered;
         $forcepasswordchange = $user->preference_auth_forcepasswordchange;
         // Store temp password unless password was entered and it's not going to be send by
@@ -85,8 +85,6 @@ class company_user {
 
         if ($passwordentered) {
             $user->password = $user->newpassword;   // Don't hash it, user_create_user will do that.
-        } else {
-            $user->password = '';
         }
 
         $user->confirmed = 1;
