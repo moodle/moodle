@@ -863,6 +863,9 @@ class core_useragent {
             } else if (self::is_ie() and !self::check_ie_version('9')) {
                 // IE < 9 doesn't support SVG. Say no.
                 $instance->supportssvg = false;
+            } else if (self::is_ie() and !self::check_ie_version('10') and self::check_ie_compatibility_view()) {
+                // IE 9 Compatibility View doesn't support SVG. Say no.
+                $instance->supportssvg = false;
             } else if (preg_match('#Android +[0-2]\.#', $instance->useragent)) {
                 // Android < 3 doesn't support SVG. Say no.
                 $instance->supportssvg = false;
