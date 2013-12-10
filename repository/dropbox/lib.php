@@ -551,6 +551,8 @@ class repository_dropbox extends repository {
     }
 
     public function sync_reference(stored_file $file) {
+        global $CFG;
+
         if ($file->get_referencelastsync() + DAYSECS > time()) {
             // Synchronise not more often than once a day.
             return false;
