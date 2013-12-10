@@ -1,0 +1,10 @@
+{
+  "name": "moodle-course-modchooser",
+  "builds": {
+    "moodle-course-modchooser": {
+      "jsfiles": [
+        "modchooser.js"
+      ]
+    }
+  }
+}
