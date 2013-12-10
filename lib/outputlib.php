@@ -1254,6 +1254,11 @@ class theme_config {
                 } else if (check_browser_version('MSIE', 0) and !check_browser_version('MSIE', 9)) {
                     // IE < 9 doesn't support SVG. Say no.
                     $this->usesvg = false;
+                } else if (check_browser_version('MSIE', 0) and !check_browser_version('MSIE', 10) and
+                        // IE running in Compatibility View?
+                        (preg_match("/MSIE 7.0/", $_SERVER['HTTP_USER_AGENT']) && preg_match("/Trident\/([0-9\.]+)/", $_SERVER['HTTP_USER_AGENT']))) {
+                    // IE 9 Compatibility View doesn't support SVG. Say no.
+                    $this->usesvg = false;
                 } else if (preg_match('#Android +[0-2]\.#', $_SERVER['HTTP_USER_AGENT'])) {
                     // Android < 3 doesn't support SVG. Say no.
                     $this->usesvg = false;
