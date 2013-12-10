@@ -251,6 +251,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     // We do not want to show this option unless there is more than one calendar type to display.
     if (count($calendartypes) > 1) {
         $mform->addElement('select', 'calendartype', get_string('preferredcalendar', 'calendar'), $calendartypes);
+        $mform->setDefault('calendartype', $CFG->calendartype);
     }
 
     if (!empty($CFG->allowuserthemes)) {

@@ -41,8 +41,11 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     }
 
 
-    // calendar
+    // Calendar settings.
     $temp = new admin_settingpage('calendar', new lang_string('calendarsettings','admin'));
+
+    $temp->add(new admin_setting_configselect('calendartype', new lang_string('calendartype', 'admin'),
+        new lang_string('calendartype_desc', 'admin'), 'gregorian', \core_calendar\type_factory::get_list_of_calendar_types()));
     $temp->add(new admin_setting_special_adminseesall());
     //this is hacky because we do not want to include the stuff from calendar/lib.php
     $temp->add(new admin_setting_configselect('calendar_site_timeformat', new lang_string('pref_timeformat', 'calendar'),
