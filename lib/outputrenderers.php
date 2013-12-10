@@ -1099,24 +1099,20 @@ class core_renderer extends renderer_base {
         foreach ($menu->get_primary_actions($this) as $action) {
             if ($action instanceof renderable) {
                 $content = $this->render($action);
-                $role = 'presentation';
             } else {
                 $content = $action;
-                $role = 'menuitem';
             }
-            $output .= html_writer::tag('li', $content, array('role' => $role));
+            $output .= html_writer::tag('li', $content, array('role' => 'presentation'));
         }
         $output .= html_writer::end_tag('ul');
         $output .= html_writer::start_tag('ul', $menu->attributessecondary);
         foreach ($menu->get_secondary_actions() as $action) {
             if ($action instanceof renderable) {
                 $content = $this->render($action);
-                $role = 'presentation';
             } else {
                 $content = $action;
-                $role = 'menuitem';
             }
-            $output .= html_writer::tag('li', $content, array('role' => $role));
+            $output .= html_writer::tag('li', $content, array('role' => 'presentation'));
         }
         $output .= html_writer::end_tag('ul');
         $output .= html_writer::end_tag('div');
