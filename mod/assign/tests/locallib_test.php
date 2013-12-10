@@ -1494,6 +1494,77 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     }
 
     /**
+     * Testing for comment inline settings
+     */
+    public function test_feedback_comment_commentinline() {
+        global $CFG;
+
+        $sourcetext = "Hello!
+
+I'm writing to you from the Moodle Majlis in Muscat, Oman, where we just had several days of Moodle community goodness.
+
+URL outside a tag: https://moodle.org/logo/logo-240x60.gif
+Plugin url outside a tag: @@PLUGINFILE@@/logo-240x60.gif
+
+External link 1:<img src='https://moodle.org/logo/logo-240x60.gif' alt='Moodle'/>
+External link 2:<img alt=\"Moodle\" src=\"https://moodle.org/logo/logo-240x60.gif\"/>
+Internal link 1:<img src='@@PLUGINFILE@@/logo-240x60.gif' alt='Moodle'/>
+Internal link 2:<img alt=\"Moodle\" src=\"@@PLUGINFILE@@logo-240x60.gif\"/>
+Anchor link 1:<a href=\"@@PLUGINFILE@@logo-240x60.gif\" alt=\"bananas\">Link text</a>
+Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
+";
+
+        // Note the internal images have been stripped and the html is purified (quotes fixed in this case).
+        $filteredtext = "Hello!
+
+I'm writing to you from the Moodle Majlis in Muscat, Oman, where we just had several days of Moodle community goodness.
+
+URL outside a tag: https://moodle.org/logo/logo-240x60.gif
+Plugin url outside a tag: @@PLUGINFILE@@/logo-240x60.gif
+
+External link 1:<img src=\"https://moodle.org/logo/logo-240x60.gif\" alt=\"Moodle\" />
+External link 2:<img alt=\"Moodle\" src=\"https://moodle.org/logo/logo-240x60.gif\" />
+Internal link 1:
+Internal link 2:
+Anchor link 1:Link text
+Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
+";
+
+        $this->setUser($this->editingteachers[0]);
+        $params = array('assignsubmission_onlinetext_enabled' => 1,
+                        'assignfeedback_comments_enabled' => 1,
+                        'assignfeedback_comments_commentinline' => 1);
+        $assign = $this->create_instance($params);
+
+        $this->setUser($this->students[0]);
+        // Add a submission but don't submit now.
+        $submission = $assign->get_user_submission($this->students[0]->id, true);
+        $data = new stdClass();
+
+        // Test the internal link is stripped, but the external one is not.
+        $data->onlinetext_editor = array('itemid'=>file_get_unused_draft_itemid(),
+                                         'text'=>$sourcetext,
+                                         'format'=>FORMAT_MOODLE);
+
+        $plugin = $assign->get_submission_plugin_by_type('onlinetext');
+        $plugin->save($submission, $data);
+
+        $this->setUser($this->editingteachers[0]);
+
+        $data = new stdClass();
+        require_once($CFG->dirroot . '/mod/assign/gradeform.php');
+        $pagination = array('userid'=>$this->students[0]->id,
+                            'rownum'=>0,
+                            'last'=>true,
+                            'useridlistid'=>time(),
+                            'attemptnumber'=>0);
+        $formparams = array($assign, $data, $pagination);
+        $mform = new mod_assign_grade_form(null, $formparams);
+
+        $this->assertEquals($filteredtext, $data->assignfeedbackcomments_editor['text']);
+    }
+
+    /**
      * Testing for feedback comment plugin settings
      */
     public function test_feedback_plugin_settings() {

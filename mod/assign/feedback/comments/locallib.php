@@ -187,6 +187,87 @@ class assign_feedback_comments extends assign_feedback_plugin {
     }
 
     /**
+     * Save the settings for feedback comments plugin
+     *
+     * @param stdClass $data
+     * @return bool
+     */
+    public function save_settings(stdClass $data) {
+        $this->set_config('commentinline', !empty($data->assignfeedback_comments_commentinline));
+        return true;
+    }
+
+    /**
+     * Get the default setting for feedback comments plugin
+     *
+     * @param MoodleQuickForm $mform The form to add elements to
+     * @return void
+     */
+    public function get_settings(MoodleQuickForm $mform) {
+        $default = get_config('assignfeedback_comments', 'inline');
+        $mform->addElement('selectyesno',
+                           'assignfeedback_comments_commentinline',
+                           get_string('commentinline', 'assignfeedback_comments'));
+        $mform->addHelpButton('assignfeedback_comments_commentinline', 'commentinline', 'assignfeedback_comments');
+        $mform->setDefault('assignfeedback_comments_commentinline', $default);
+        // Disable comment online if comment feedback plugin is disabled.
+        $mform->disabledIf('assignfeedback_comments_commentinline', 'assignfeedback_comments_enabled', 'notchecked');
+   }
+
+    /**
+     * A student submission may contain image tags that refer to images stored
+     * in the file area for the submission. We cannot allow these links to be copied to
+     * the feedback text fields, so we must strip them from the content.
+     *
+     * @param string $source The submission text
+     * @return string The stripped text
+     */
+    protected function strip_moodle_content($source) {
+        $baseurl = '@@PLUGINFILE@@';
+        // Looking for something like < .* "@@pluginfile@@.*" .* >
+        $pattern = '$<[^<>]+["\']' . $baseurl . '[^"\']*["\'][^<>]*>$';
+        $stripped = preg_replace($pattern, '', $source);
+        // Use purify html to rebalence potentially mismatched tags and generally cleanup.
+        return purify_html($stripped);
+    }
+
+    /**
+     * Convert the text from any submission plugin that has an editor field to
+     * a format suitable for inserting in the feedback text field.
+     *
+     * @param stdClass $submission
+     * @param stdClass $data - Form data to be filled with the converted submission text and format.
+     * @return boolean - True if feedback text was set.
+     */
+    protected function convert_submission_text_to_feedback($submission, $data) {
+        $format = false;
+        $text = '';
+
+        foreach ($this->assignment->get_submission_plugins() as $plugin) {
+            $fields = $plugin->get_editor_fields();
+            if ($plugin->is_enabled() && $plugin->is_visible() && !empty($fields)) {
+                foreach ($fields as $key => $description) {
+                    $rawtext = $this->strip_moodle_content($plugin->get_editor_text($key, $submission->id));
+
+                    $newformat = $plugin->get_editor_format($key, $submission->id);
+
+                    if ($format !== false && $newformat != $format) {
+                        // There are 2 or more editor fields using different formats, set to plain as a fallback.
+                        $format = FORMAT_PLAIN;
+                    } else {
+                        $format = $newformat;
+                    }
+                    $text .= $rawtext;
+                }
+            }
+        }
+
+        $data->assignfeedbackcomments_editor['text'] = $text;
+        $data->assignfeedbackcomments_editor['format'] = $format;
+        return true;
+    }
+
+    /**
      * Get form elements for the grading page
      *
      * @param stdClass|null $grade
@@ -194,12 +275,22 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @param stdClass $data
      * @return bool true if elements were added to the form
      */
-    public function get_form_elements($grade, MoodleQuickForm $mform, stdClass $data) {
+    public function get_form_elements_for_user($grade, MoodleQuickForm $mform, stdClass $data, $userid) {
+        $commentinlinenabled = $this->get_config('commentinline');
+        $submission = $this->assignment->get_user_submission($userid, false);
+        $feedbackcomments = false;
+
         if ($grade) {
             $feedbackcomments = $this->get_feedback_comments($grade->id);
-            if ($feedbackcomments) {
-                $data->assignfeedbackcomments_editor['text'] = $feedbackcomments->commenttext;
-                $data->assignfeedbackcomments_editor['format'] = $feedbackcomments->commentformat;
+        }
+
+        if ($feedbackcomments && !empty($feedbackcomments->commenttext)) {
+            $data->assignfeedbackcomments_editor['text'] = $feedbackcomments->commenttext;
+            $data->assignfeedbackcomments_editor['format'] = $feedbackcomments->commentformat;
+        } else {
+            // No feedback given yet - maybe we need to copy the text from the submission?
+            if (!empty($commentinlinenabled) && $submission) {
+                $this->convert_submission_text_to_feedback($submission, $data);
             }
         }
 
@@ -296,6 +387,10 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @return bool was it a success? (false will trigger a rollback)
      */
     public function upgrade_settings(context $oldcontext, stdClass $oldassignment, & $log) {
+        if ($oldassignment->assignmenttype == 'online') {
+            $this->set_config('commentinline', $oldassignment->var1);
+            return true;
+        }
         return true;
     }
 
