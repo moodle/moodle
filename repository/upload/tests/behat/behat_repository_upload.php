@@ -109,14 +109,10 @@ class behat_repository_upload extends behat_files {
 
         $filemanagernode = $this->get_filepicker_node($filemanagerelement);
 
-        // Wait until file manager is completely loaded.
-        $this->wait_until_contents_are_updated($filemanagernode);
-
         // Opening the select repository window and selecting the upload repository.
         $this->open_add_file_window($filemanagernode, get_string('pluginname', 'repository_upload'));
 
         // Ensure all the form is ready.
-        $this->getSession()->wait(2 * 1000, false);
         $noformexception = new ExpectationException('The upload file form is not ready', $this->getSession());
         $this->find(
             'xpath',
@@ -161,16 +157,18 @@ class behat_repository_upload extends behat_files {
         $submit = $this->find_button(get_string('upload', 'repository'));
         $submit->press();
 
+        // We wait for all the JS to finish as it is performing an action.
+        $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
+
         if ($overwriteaction !== false) {
-            $this->getSession()->wait(1 * 1000, false);
-            $this->find_button($overwriteaction)->click();
+            $overwritebutton = $this->find_button($overwriteaction);
+            $this->ensure_node_is_visible($overwritebutton);
+            $overwritebutton->click();
+
+            // We wait for all the JS to finish.
+            $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
         }
 
-        // Ensure the file has been uploaded and all ajax processes finished.
-        $this->wait_until_return_to_form();
-
-        // Wait until file manager contents are updated.
-        $this->wait_until_contents_are_updated($filemanagernode);
     }
 
 }

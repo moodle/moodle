@@ -95,7 +95,16 @@ class behat_permissions extends behat_base {
         try {
             $advancedtoggle = $this->find_button(get_string('showadvanced', 'form'));
             if ($advancedtoggle) {
-                $this->getSession()->getPage()->pressButton(get_string('showadvanced', 'form'));
+
+                // As we are interacting with a moodle form we wait for the editor to be ready
+                // otherwise we may have problems when setting values on it or clicking on elements
+                // as the position of the elements will change once the editor is loaded.
+                $this->ensure_editors_are_loaded();
+
+                $advancedtoggle->click();
+
+                // Wait for the page to load.
+                $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
             }
         } catch (Exception $e) {
             // We already are in advanced mode.

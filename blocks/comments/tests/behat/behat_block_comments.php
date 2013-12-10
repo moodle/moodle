@@ -65,9 +65,6 @@ class behat_block_comments extends behat_base {
 
             $this->find_link(get_string('savecomment'))->click();
 
-            // Wait for the AJAX request.
-            $this->getSession()->wait(4 * 1000, false);
-
         } else {
 
             $commentstextarea = $this->find('css', '.block_comments form textarea', $exception);
@@ -103,7 +100,7 @@ class behat_block_comments extends behat_base {
         $deleteicon = $this->find('css', '.comment-delete a img', $deleteexception, $commentnode);
         $deleteicon->click();
 
-        // Wait for the AJAX request.
+        // Wait for the animation to finish, in theory is just 1 sec, adding 4 just in case.
         $this->getSession()->wait(4 * 1000, false);
     }
 

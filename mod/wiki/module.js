@@ -38,21 +38,23 @@ M.mod_wiki.init = function(Y, args) {
     });
     new WikiHelper(args);
 };
-M.mod_wiki.renew_lock = function(Y, args) {
-    function renewLock() {
-        var args = {};
-        args['sesskey'] = M.cfg.sesskey;
-        args['pageid'] = wiki.pageid;
-        if (wiki.section) {
-            args['section'] = wiki.section;
-        }
-        var callback = {};
-        Y.use('yui2-connection', function(Y) {
-            Y.YUI2.util.Connect.asyncRequest('GET', 'lock.php?' + build_querystring(args), callback);
-        });
+M.mod_wiki.renew_lock = function() {
+    var args = {
+        sesskey: M.cfg.sesskey,
+        pageid: wiki.pageid
+    };
+    if (wiki.section) {
+        args.section = wiki.section;
     }
-    setInterval(renewLock, wiki.renew_lock_timeout * 1000);
-}
+    YUI().use('io', function(Y) {
+        function renewLock() {
+            Y.io('lock.php?' + build_querystring(args), {
+                method: 'POST'
+            });
+        }
+        setInterval(renewLock, wiki.renew_lock_timeout * 1000);
+    });
+};
 M.mod_wiki.history = function(Y, args) {
     var compare = false;
     var comparewith = false;

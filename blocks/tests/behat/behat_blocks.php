@@ -59,6 +59,20 @@ class behat_blocks extends behat_base {
     }
 
     /**
+     * Docks a block. Editing mode should be previously enabled.
+     *
+     * @Given /^I dock "(?P<block_name_string>(?:[^"]|\\")*)" block$/
+     * @param string $blockname
+     * @return Given
+     */
+    public function i_dock_block($blockname) {
+
+        // Looking for both title and alt.
+        $xpath = "//input[@type='image'][@title='" . get_string('dockblock', 'block', $blockname) . "' or @alt='" . get_string('addtodock', 'block') . "']";
+        return new Given('I click on " ' . $xpath . '" "xpath_element" in the "' . $this->escape($blockname) . '" "block"');
+    }
+
+    /**
      * Opens a block's actions menu if it is not already opened.
      *
      * @Given /^I open the "(?P<block_name_string>(?:[^"]|\\")*)" blocks action menu$/

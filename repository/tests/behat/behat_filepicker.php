@@ -68,12 +68,6 @@ class behat_filepicker extends behat_files {
         $dialognode = $this->find('css', '.moodle-dialogue-focused');
         $buttonnode = $this->find('css', '.fp-dlg-butcreate', $exception, $dialognode);
         $buttonnode->click();
-
-        // Wait until the process finished and modal windows are hidden.
-        $this->wait_until_return_to_form();
-
-        // Wait until the current folder contents are updated
-        $this->wait_until_contents_are_updated($fieldnode);
     }
 
     /**
@@ -92,9 +86,6 @@ class behat_filepicker extends behat_files {
             'The "'.$foldername.'" folder can not be found in the "'.$filemanagerelement.'" filemanager',
             $this->getSession()
         );
-
-        // Just in case there is any contents refresh in progress.
-        $this->wait_until_contents_are_updated($fieldnode);
 
         $folderliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($foldername);
 
@@ -124,9 +115,6 @@ class behat_filepicker extends behat_files {
 
         // It should be a NodeElement, otherwise an exception would have been thrown.
         $folder->click();
-
-        // Wait until the current folder contents are updated
-        $this->wait_until_contents_are_updated($fieldnode);
     }
 
     /**
@@ -145,13 +133,6 @@ class behat_filepicker extends behat_files {
         // Execute the action.
         $exception = new ExpectationException($filename.' element can not be unzipped', $this->getSession());
         $this->perform_on_element('unzip', $exception);
-
-        // Wait until the process finished and modal windows are hidden.
-        $this->wait_until_return_to_form();
-
-        // Wait until the current folder contents are updated
-        $containernode = $this->get_filepicker_node($filemanagerelement);
-        $this->wait_until_contents_are_updated($containernode);
     }
 
     /**
@@ -170,13 +151,6 @@ class behat_filepicker extends behat_files {
         // Execute the action.
         $exception = new ExpectationException($foldername.' element can not be zipped', $this->getSession());
         $this->perform_on_element('zip', $exception);
-
-        // Wait until the process finished and modal windows are hidden.
-        $this->wait_until_return_to_form();
-
-        // Wait until the current folder contents are updated
-        $containernode = $this->get_filepicker_node($filemanagerelement);
-        $this->wait_until_contents_are_updated($containernode);
     }
 
     /**
@@ -200,13 +174,6 @@ class behat_filepicker extends behat_files {
         // Using xpath + click instead of pressButton as 'Ok' it is a common string.
         $okbutton = $this->find('css', 'div.fp-dlg button.fp-dlg-butconfirm');
         $okbutton->click();
-
-        // Wait until the process finished and modal windows are hidden.
-        $this->wait_until_return_to_form();
-
-        // Wait until file manager contents are updated.
-        $containernode = $this->get_filepicker_node($filemanagerelement);
-        $this->wait_until_contents_are_updated($containernode);
     }
 
 
@@ -220,7 +187,6 @@ class behat_filepicker extends behat_files {
      */
     public function i_should_see_elements_in_filemanager($elementscount, $filemanagerelement) {
         $filemanagernode = $this->get_filepicker_node($filemanagerelement);
-        $this->wait_until_contents_are_updated($filemanagernode);
         $elements = $this->find_all('css', '.fp-content .fp-file', false, $filemanagernode);
         if (count($elements) != $elementscount) {
             throw new ExpectationException('Found '.count($elements).' elements in filemanager instead of expected '.$elementscount);
@@ -298,9 +264,6 @@ class behat_filepicker extends behat_files {
             $overwriteaction = false) {
         $filemanagernode = $this->get_filepicker_node($filemanagerelement);
 
-        // Wait until file manager is completely loaded.
-        $this->wait_until_contents_are_updated($filemanagernode);
-
         // Opening the select repository window and selecting the upload repository.
         $this->open_add_file_window($filemanagernode, $repository);
 
@@ -323,16 +286,18 @@ class behat_filepicker extends behat_files {
 
         $this->find_button(get_string('getfile', 'repository'))->click();
 
+        // We wait for all the JS to finish as it is performing an action.
+        $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
+
         if ($overwriteaction !== false) {
-            $this->getSession()->wait(1 * 1000, false);
-            $this->find_button($overwriteaction)->click();
+            $overwritebutton = $this->find_button($overwriteaction);
+            $this->ensure_node_is_visible($overwritebutton);
+            $overwritebutton->click();
+
+            // We wait for all the JS to finish.
+            $this->getSession()->wait(self::TIMEOUT, self::PAGE_READY_JS);
         }
 
-        // Ensure the file has been uploaded and all ajax processes finished.
-        $this->wait_until_return_to_form();
-
-        // Wait until file manager contents are updated.
-        $this->wait_until_contents_are_updated($filemanagernode);
     }
 
 }

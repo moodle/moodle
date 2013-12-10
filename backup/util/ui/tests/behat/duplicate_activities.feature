@@ -21,8 +21,8 @@ Feature: Duplicate activities
     And I add a "Database" to section "1" and I fill the form with:
       | Name | Test database name |
       | Description | Test database description |
-    And I open "Test database name" actions menu
-    When I click on "Duplicate" "link" in the "Test database name" activity
+    And I duplicate "Test database name" activity
+    And I wait until section "1" is available
     And I open "Test database name" actions menu
     And I click on "Edit settings" "link" in the "Test database name" activity
     And I fill the moodle form with:

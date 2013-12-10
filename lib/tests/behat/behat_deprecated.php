@@ -68,6 +68,7 @@ class behat_deprecated extends behat_base {
         // Looking for the element DOM node inside the specified row.
         list($selector, $locator) = $this->transform_selector($selectortype, $element);
         $elementnode = $this->find($selector, $locator, false, $rownode);
+        $this->ensure_element_is_visible($elementnode);
         $elementnode->click();
     }
 

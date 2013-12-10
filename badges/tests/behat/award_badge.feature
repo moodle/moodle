@@ -4,13 +4,10 @@ Feature: Award badges
   As an admin
   I need to add criteria to badges in the system
 
-  Background:
-    Given I am on homepage
-    And I log in as "admin"
-
   @javascript
   Scenario: Award profile badge
-    Given I expand "Site administration" node
+    Given I log in as "admin"
+    And I expand "Site administration" node
     And I expand "Badges" node
     And I follow "Add a new badge"
     And I fill the moodle form with:
@@ -46,6 +43,7 @@ Feature: Award badges
       | username | firstname | lastname | email |
       | teacher | teacher | 1 | teacher1@asd.com |
       | student | student | 1 | student1@asd.com |
+    And I log in as "admin"
     And I expand "Site administration" node
     And I expand "Badges" node
     And I follow "Add a new badge"
@@ -89,7 +87,6 @@ Feature: Award badges
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And I log out
     And I log in as "teacher1"
     And I follow "Course 1"
     And I click on "//span[text()='Badges']" "xpath_element" in the "Administration" "block"
@@ -133,7 +130,6 @@ Feature: Award badges
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log out
     And I log in as "admin"
     And I set the following administration settings values:
       | Enable completion tracking | 1 |
@@ -172,7 +168,6 @@ Feature: Award badges
     And I follow "Home"
     And I follow "Course 1"
     And I press "Mark as complete: Test assignment name"
-    And I wait "2" seconds
     And I expand "My profile" node
     And I follow "My badges"
     Then I should see "Course Badge"
@@ -190,7 +185,6 @@ Feature: Award badges
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log out
     And I log in as "admin"
     And I set the following administration settings values:
       | Enable completion tracking | 1 |
