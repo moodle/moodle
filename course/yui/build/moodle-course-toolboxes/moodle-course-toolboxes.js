@@ -7,7 +7,7 @@ YUI.add('moodle-course-toolboxes', function (Y, NAME) {
  * when viewing a course in editing mode.
  *
  * @module moodle-course-toolboxes
- * @namesapce M.course.toolboxes
+ * @namespace M.course.toolboxes
  */
 
 // The CSS classes we use.
@@ -62,6 +62,7 @@ var CSS = {
 
 // Setup the basic namespace.
 M.course = M.course || {};
+
 /**
  * The toolbox class is a generic class which should never be directly
  * instantiated. Please extend it instead.
@@ -204,6 +205,16 @@ Y.extend(TOOLBOX, Y.Base, {
 /**
  * Resource and activity toolbox class.
  *
+ * This class is responsible for managing AJAX interactions with activities and resources
+ * when viewing a course in editing mode.
+ *
+ * @module moodle-course-toolboxes
+ * @namespace M.course.toolboxes
+ */
+
+/**
+ * Resource and activity toolbox class.
+ *
  * This is a class extending TOOLBOX containing code specific to resources
  *
  * This class is responsible for managing AJAX interactions with activities and resources
@@ -211,7 +222,7 @@ Y.extend(TOOLBOX, Y.Base, {
  *
  * @class resources
  * @constructor
- * @extends toolbox
+ * @extends M.course.toolboxes.toolbox
  */
 var RESOURCETOOLBOX = function() {
     RESOURCETOOLBOX.superclass.constructor.apply(this, arguments);
@@ -887,16 +898,24 @@ M.course.init_resource_toolbox = function(config) {
     return M.course.resource_toolbox;
 };
 /**
- * Section toolbox clas
+ * Resource and activity toolbox class.
  *
- * This is a class extending TOOLBOX containing code specific to sections
+ * This class is responsible for managing AJAX interactions with activities and resources
+ * when viewing a course in editing mode.
+ *
+ * @module moodle-course-toolboxes
+ * @namespace M.course.toolboxes
+ */
+
+/**
+ * Section toolbox class.
  *
  * This class is responsible for managing AJAX interactions with sections
  * when viewing a course in editing mode.
  *
- * @class resources
+ * @class section
  * @constructor
- * @extends toolbox
+ * @extends M.course.toolboxes.toolbox
  */
 var SECTIONTOOLBOX = function() {
     SECTIONTOOLBOX.superclass.constructor.apply(this, arguments);
