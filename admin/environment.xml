@@ -1007,4 +1007,120 @@
       </PHP_SETTING>
     </PHP_SETTINGS>
   </MOODLE>
+  <MOODLE version="2.7" requires="2.2">
+    <UNICODE level="required">
+      <FEEDBACK>
+        <ON_ERROR message="unicoderequired" />
+      </FEEDBACK>
+    </UNICODE>
+    <DATABASE level="required">
+      <VENDOR name="mariadb" version="5.5.31" />
+      <VENDOR name="mysql" version="5.5.31" />
+      <VENDOR name="postgres" version="9.1" />
+      <VENDOR name="mssql" version="10.0" />
+      <VENDOR name="oracle" version="10.2" />
+    </DATABASE>
+    <PHP version="5.4.4" level="required">
+    </PHP>
+    <PCREUNICODE level="optional">
+      <FEEDBACK>
+        <ON_CHECK message="pcreunicodewarning" />
+      </FEEDBACK>
+    </PCREUNICODE>
+    <PHP_EXTENSIONS>
+      <PHP_EXTENSION name="iconv" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="iconvrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="mbstring" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="mbstringrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="curl" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="curlrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="openssl" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="opensslrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="tokenizer" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="tokenizerrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="xmlrpc" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="xmlrpcrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="soap" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="soaprecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="ctype" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="ctyperequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="zip" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="ziprequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="zlib" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="gd" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="gdrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="simplexml" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="simplexmlrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="spl" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="splrequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="pcre" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="dom" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="xml" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="intl" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="intlrecommended" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="json" level="required">
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="hash" level="required"/>
+    </PHP_EXTENSIONS>
+    <PHP_SETTINGS>
+      <PHP_SETTING name="memory_limit" value="96M" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="settingmemorylimit" />
+        </FEEDBACK>
+      </PHP_SETTING>
+      <PHP_SETTING name="file_uploads" value="1" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="settingfileuploads" />
+        </FEEDBACK>
+      </PHP_SETTING>
+      <PHP_SETTING name="opcache.enable" value="1" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="opcacherecommended" />
+        </FEEDBACK>
+      </PHP_SETTING>
+    </PHP_SETTINGS>
+  </MOODLE>
 </COMPATIBILITY_MATRIX>
