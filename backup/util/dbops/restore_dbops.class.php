@@ -995,11 +995,7 @@ abstract class restore_dbops {
                 if ($includesfiles) {
                     // The file is not found in the backup.
                     if (!file_exists($backuppath)) {
-                        $result = new stdClass();
-                        $result->code = 'file_missing_in_backup';
-                        $result->message = sprintf('missing file %s%s in backup', $file->filepath, $file->filename);
-                        $result->level = backup::LOG_WARNING;
-                        $results[] = $result;
+                        $results[] = self::get_missing_file_result($file);
                         continue;
                     }
 
@@ -1028,11 +1024,7 @@ abstract class restore_dbops {
                             $fs->create_file_from_storedfile($file_record, $foundfile->id);
                         } else {
                             // A matching existing file record was not found in the database.
-                            $result = new stdClass();
-                            $result->code = 'file_missing_in_backup';
-                            $result->message = sprintf('missing file %s%s in backup', $file->filepath, $file->filename);
-                            $result->level = backup::LOG_WARNING;
-                            $results[] = $result;
+                            $results[] = self::get_missing_file_result($file);
                             continue;
                         }
                     }
@@ -1061,6 +1053,22 @@ abstract class restore_dbops {
         }
         $rs->close();
         return $results;
+    }
+
+    /**
+     * Returns suitable entry to include in log when there is a missing file.
+     *
+     * @param stdClass $file File definition
+     * @return stdClass Log entry
+     */
+    protected static function get_missing_file_result($file) {
+        $result = new stdClass();
+        $result->code = 'file_missing_in_backup';
+        $result->message = 'Missing file in backup: ' . $file->filepath  . $file->filename .
+                ' (old context ' . $file->contextid . ', component ' . $file->component .
+                ', filearea ' . $file->filearea . ', old itemid ' . $file->itemid . ')';
+        $result->level = backup::LOG_WARNING;
+        return $result;
     }
 
     /**
