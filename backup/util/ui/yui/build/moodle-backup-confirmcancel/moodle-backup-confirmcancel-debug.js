@@ -69,7 +69,7 @@ M.core_backup.confirmcancel = {
             new Y.EventHandle(M.core_backup.confirmcancel.listeners).detach();
 
             // Simulate the original cancel button click.
-            c.currentTarget.simulate('click');
+            e.currentTarget.simulate('click');
         }, this);
 
 
