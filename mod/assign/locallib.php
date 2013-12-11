@@ -5123,7 +5123,7 @@ class assign {
     protected function process_copy_previous_attempt(&$notices) {
         require_sesskey();
 
-        return copy_previous_attempt($notices);
+        return $this->copy_previous_attempt($notices);
     }
 
     /**
