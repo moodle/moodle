@@ -685,7 +685,9 @@ class mod_assign_renderer extends plugin_renderer_base {
                     $o .= $this->output->box_end();
                 } else if ($submission->status == ASSIGN_SUBMISSION_STATUS_REOPENED) {
                     $o .= $this->output->box_start('generalbox submissionaction');
-                    $urlparams = array('id' => $status->coursemoduleid, 'action' => 'editprevioussubmission');
+                    $urlparams = array('id' => $status->coursemoduleid,
+                                       'action' => 'editprevioussubmission',
+                                       'sesskey'=>sesskey());
                     $o .= $this->output->single_button(new moodle_url('/mod/assign/view.php', $urlparams),
                                                        get_string('addnewattemptfromprevious', 'assign'), 'get');
                     $o .= $this->output->box_start('boxaligncenter submithelp');
