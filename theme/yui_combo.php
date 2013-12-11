@@ -184,6 +184,9 @@ while (count($parts)) {
                 'dd-ddm-base',
                 'dd-drag',
                 'dd-plugin',
+
+                // Cache is used by moodle-core-tooltip which we include everywhere.
+                'cache',
             );
 
             // We need to add these new parts to the beginning of the $parts list, not the end.
@@ -213,6 +216,7 @@ while (count($parts)) {
         if (strpos($rollupname, 'mcore') !== false) {
             $yuimodules = array(
                 'core/tooltip/tooltip',
+                'core/popuphelp/popuphelp',
                 'core/dock/dock-loader',
                 'core/notification/notification-dialogue',
             );
