@@ -107,9 +107,8 @@ class assign_feedback_offline extends assign_feedback_plugin {
         // Does this assignment use a scale?
         $scaleoptions = null;
         if ($this->assignment->get_instance()->grade < 0) {
-            $scale = $DB->get_record('scale', array('id'=>-($this->assignment->get_instance()->grade)));
-            if ($scale) {
-                $scaleoptions = explode(',', $scale->scale);
+            if ($scale = $DB->get_record('scale', array('id'=>-($this->assignment->get_instance()->grade)))) {
+                $scaleoptions = make_menu_from_list($scale->scale);
             }
         }
         // We may need to upgrade the gradebook comments after this update.
@@ -127,7 +126,7 @@ class assign_feedback_offline extends assign_feedback_plugin {
                 // This is a scale - we need to convert any grades to indexes in the scale.
                 $scaleindex = array_search($record->grade, $scaleoptions);
                 if ($scaleindex !== false) {
-                    $record->grade = $scaleindex + 1;
+                    $record->grade = $scaleindex;
                 } else {
                     $record->grade = '';
                 }
