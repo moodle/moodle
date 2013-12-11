@@ -239,7 +239,15 @@
         $PAGE->set_button($buttons);
     }
 
-    $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
+    // If viewing a section, make the title more specific
+    if ($section and $section > 0 and course_format_uses_sections($course->format)) {
+        $sectionname = get_string('sectionname', "format_$course->format");
+        $sectiontitle = get_section_name($course, $section);
+        $PAGE->set_title(get_string('coursesectiontitle', 'moodle', array('course' => $course->fullname, 'sectiontitle' => $sectiontitle, 'sectionname' => $sectionname)));
+    } else {
+        $PAGE->set_title(get_string('coursetitle', 'moodle', array('course' => $course->fullname)));
+    }
+
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
