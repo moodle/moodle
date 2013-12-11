@@ -4,7 +4,7 @@
         "base",
         "node",
         "io-base",
-        "moodle-core-notification",
+        "moodle-core-notification-dialogue",
         "json-parse",
         "widget-position",
         "widget-position-align",
