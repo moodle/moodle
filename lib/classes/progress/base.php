@@ -212,7 +212,7 @@ abstract class base {
         $this->lastprogresstime = $now;
 
         // Update time limit before next progress display.
-        core_php_time_limit::raise(self::TIME_LIMIT_WITHOUT_PROGRESS);
+        \core_php_time_limit::raise(self::TIME_LIMIT_WITHOUT_PROGRESS);
         $this->update_progress();
     }
 
