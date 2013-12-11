@@ -131,7 +131,7 @@ class cachestore_memcache extends cache_store implements cache_is_configurable {
 
         $this->connection = new Memcache;
         foreach ($this->servers as $server) {
-            $this->connection->addServer($server[0], $server[1], true, $server[2]);
+            $this->connection->addServer($server[0], (int) $server[1], true, (int) $server[2]);
         }
         // Test the connection to the pool of servers.
         $this->isready = @$this->connection->set($this->parse_key('ping'), 'ping', MEMCACHE_COMPRESSED, 1);
