@@ -236,6 +236,11 @@ class cache_factory {
     public function create_cache(cache_definition $definition) {
         $class = $definition->get_cache_class();
         $stores = cache_helper::get_stores_suitable_for_definition($definition);
+        foreach ($stores as $key => $store) {
+            if (!$store::are_requirements_met()) {
+                unset($stores[$key]);
+            }
+        }
         if (count($stores) === 0) {
             // Hmm still no stores, better provide a dummy store to mimic functionality. The dev will be none the wiser.
             $stores[] = $this->create_dummy_store($definition);
@@ -253,7 +258,7 @@ class cache_factory {
     /**
      * Creates a store instance given its name and configuration.
      *
-     * If the store has already been instantiated then the original objetc will be returned. (reused)
+     * If the store has already been instantiated then the original object will be returned. (reused)
      *
      * @param string $name The name of the store (must be unique remember)
      * @param array $details
@@ -267,8 +272,9 @@ class cache_factory {
             $store = new $class($details['name'], $details['configuration']);
             $this->stores[$name] = $store;
         }
+        /* @var cache_store $store */
         $store = $this->stores[$name];
-        if (!$store->is_ready() || !$store->is_supported_mode($definition->get_mode())) {
+        if (!$store::are_requirements_met() || !$store->is_ready() || !$store->is_supported_mode($definition->get_mode())) {
             return false;
         }
         // We always create a clone of the original store.
