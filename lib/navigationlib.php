@@ -2453,22 +2453,19 @@ class global_navigation extends navigation_node {
         //Participants
         if (has_capability('moodle/course:viewparticipants', $this->page->context)) {
             $participants = $coursenode->add(get_string('participants'), new moodle_url('/user/index.php?id='.$course->id), self::TYPE_CONTAINER, get_string('participants'), 'participants');
-            $currentgroup = groups_get_course_group($course, true);
-            if ($course->id == $SITE->id) {
-                $filtervar = 'courseid';
-                $filterselect = '';
-            } else if ($course->id && !$currentgroup) {
-                $filtervar = 'courseid';
-                $filterselect = $course->id;
-            } else {
-                $filtervar = 'groupid';
-                $filterselect = $currentgroup;
-            }
-            $filterselect = clean_param($filterselect, PARAM_INT);
-            if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
-               and has_capability('moodle/blog:view', context_system::instance())) {
-                $blogsurls = new moodle_url('/blog/index.php', array($filtervar => $filterselect));
-                $participants->add(get_string('blogscourse','blog'), $blogsurls->out());
+            if (!empty($CFG->enableblogs)) {
+                if (($CFG->bloglevel == BLOG_GLOBAL_LEVEL or ($CFG->bloglevel == BLOG_SITE_LEVEL and (isloggedin() and !isguestuser())))
+                   and has_capability('moodle/blog:view', context_system::instance())) {
+                    $blogsurls = new moodle_url('/blog/index.php');
+                    if ($course->id == $SITE->id) {
+                        $blogsurls->param('courseid', 0);
+                    } else if ($currentgroup = groups_get_course_group($course, true)) {
+                        $blogsurls->param('groupid', $currentgroup);
+                    } else {
+                        $blogsurls->param('courseid', $course->id);
+                    }
+                    $participants->add(get_string('blogscourse','blog'), $blogsurls->out());
+                }
             }
             if (!empty($CFG->enablenotes) && (has_capability('moodle/notes:manage', $this->page->context) || has_capability('moodle/notes:view', $this->page->context))) {
                 $participants->add(get_string('notes','notes'), new moodle_url('/notes/index.php', array('filtertype'=>'course', 'filterselect'=>$course->id)));
