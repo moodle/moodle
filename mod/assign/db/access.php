@@ -82,6 +82,12 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/course:manageactivities'
     ),
 
+    'mod/assign:editothersubmission' => array(
+        'riskbitmask' => RISK_MANAGETRUST|RISK_DATALOSS|RISK_PERSONAL,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_MODULE
+    ),
+
     'mod/assign:grantextension' => array(
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,

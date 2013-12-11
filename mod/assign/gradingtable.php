@@ -962,6 +962,8 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string
      */
     public function col_userid(stdClass $row) {
+        global $USER;
+
         $edit = '';
 
         $actions = array();
@@ -977,6 +979,9 @@ class assign_grading_table extends table_sql implements renderable {
             $description = get_string('updategrade', 'assign');
         }
         $actions[$url->out(false)] = $description;
+
+        $submissionsopen = $this->assignment->submissions_open($row->id);
+        $caneditsubmission = $this->assignment->can_edit_submission($row->id, $USER->id);
 
         // Hide for offline assignments.
         if ($this->assignment->is_any_submission_plugin_enabled()) {
@@ -1018,6 +1023,18 @@ class assign_grading_table extends table_sql implements renderable {
                 $description = get_string('grantextension', 'assign');
                 $actions[$url->out(false)] = $description;
             }
+            if ($submissionsopen &&
+                    $USER->id != $row->id &&
+                    $caneditsubmission) {
+                $urlparams = array('id' => $this->assignment->get_course_module()->id,
+                                   'userid'=>$row->id,
+                                   'action'=>'editsubmission',
+                                   'sesskey'=>sesskey(),
+                                   'page'=>$this->currpage);
+                $url = new moodle_url('/mod/assign/view.php', $urlparams);
+                $description = get_string('editsubmission', 'assign');
+                $actions[$url->out(false)] = $description;
+            }
         }
         if ($row->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED &&
                 $this->assignment->get_instance()->submissiondrafts) {
@@ -1028,6 +1045,20 @@ class assign_grading_table extends table_sql implements renderable {
                                'page'=>$this->currpage);
             $url = new moodle_url('/mod/assign/view.php', $urlparams);
             $description = get_string('reverttodraftshort', 'assign');
+            $actions[$url->out(false)] = $description;
+        }
+        if ($row->status == ASSIGN_SUBMISSION_STATUS_DRAFT &&
+                $this->assignment->get_instance()->submissiondrafts &&
+                $caneditsubmission &&
+                $submissionsopen &&
+                $row->id != $USER->id) {
+            $urlparams = array('id' => $this->assignment->get_course_module()->id,
+                               'userid'=>$row->id,
+                               'action'=>'submitotherforgrading',
+                               'sesskey'=>sesskey(),
+                               'page'=>$this->currpage);
+            $url = new moodle_url('/mod/assign/view.php', $urlparams);
+            $description = get_string('submitforgrading', 'assign');
             $actions[$url->out(false)] = $description;
         }
 

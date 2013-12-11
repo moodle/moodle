@@ -1422,9 +1422,10 @@ class mod_assign_external extends external_api {
         $warnings = array();
         $data = new stdClass();
         $data->submissionstatement = $acceptsubmissionstatement;
+        $notices = array();
 
-        if (!$assignment->submit_for_grading($data)) {
-            $detail = 'User id: ' . $USER->id . ', Assignment id: ' . $assignmentid;
+        if (!$assignment->submit_for_grading($data, $notices)) {
+            $detail = 'User id: ' . $USER->id . ', Assignment id: ' . $assignmentid . ' Notices:' . implode(', ', $notices);
             $warnings[] = self::generate_warning($assignmentid,
                                                  'couldnotsubmitforgrading',
                                                  $detail);
