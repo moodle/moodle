@@ -37,26 +37,28 @@ defined('MOODLE_INTERNAL') || die();
 class calculator {
 
     /**
-     * @var calculated[]
+     * @var all_calculated_for_qubaid_condition all the stats calculated for slots and sub-questions and variants of those
+     *                                                  questions.
      */
-    public $questionstats = array();
-
-    /**
-     * @var calculated_for_subquestion[]
-     */
-    public $subquestionstats = array();
+    protected $stats;
 
     /**
      * @var float
      */
     protected $sumofmarkvariance = 0;
 
+    /**
+     * @var array[] keyed by a string representing the pool of questions that this random question draws from.
+     *              string as returned from {@link \core_question\statistics\questions\calculated::random_selector_string}
+     */
     protected $randomselectors = array();
 
     /**
      * @var \progress_trace
      */
     protected $progress;
+
+    protected $statscollectionclassname = '\core_question\statistics\questions\all_calculated_for_qubaid_condition';
 
     /**
      * Constructor.
@@ -71,46 +73,16 @@ class calculator {
             $progress = new \core\progress\null();
         }
         $this->progress = $progress;
-
+        $this->stats = new $this->statscollectionclassname();
         foreach ($questions as $slot => $question) {
-            $this->questionstats[$slot] = $this->new_slot_stats($question, $slot);
+            $this->stats->initialise_for_slot($slot, $question);
+            $this->stats->for_slot($slot)->randomguessscore = $this->get_random_guess_score($question);
         }
     }
 
     /**
-     * Set up a calculated instance ready to store a questions stats.
-     *
-     * @param $question
-     * @param $slot
-     * @return calculated
-     */
-    protected function new_slot_stats($question, $slot) {
-        $toreturn = new calculated();
-        $toreturn->questionid = $question->id;
-        $toreturn->maxmark = $question->maxmark;
-        $toreturn->question = $question;
-        $toreturn->slot = $slot;
-        $toreturn->positions = $question->number;
-        $toreturn->randomguessscore = $this->get_random_guess_score($question);
-        return $toreturn;
-    }
-
-    /**
-     * Set up a calculated instance ready to store a randomly selected question's stats.
-     *
-     * @param $step
-     * @return calculated_for_subquestion
-     */
-    protected function new_subq_stats($step) {
-        $toreturn = new calculated_for_subquestion();
-        $toreturn->questionid = $step->questionid;
-        $toreturn->maxmark = $step->maxmark;
-        return $toreturn;
-    }
-
-    /**
      * @param $qubaids \qubaid_condition
-     * @return array containing two arrays calculated[] and calculated_for_subquestion[].
+     * @return all_calculated_for_qubaid_condition
      */
     public function calculate($qubaids) {
 
@@ -126,43 +98,40 @@ class calculator {
 
                 $this->progress->increment_progress();
 
-                $israndomquestion = ($step->questionid != $this->questionstats[$step->slot]->questionid);
+                $israndomquestion = ($step->questionid != $this->stats->for_slot($step->slot)->questionid);
                 // If this is a variant we have not seen before create a place to store stats calculations for this variant.
-                if (!$israndomquestion && !isset($this->questionstats[$step->slot]->variantstats[$step->variant])) {
-                    $this->questionstats[$step->slot]->variantstats[$step->variant] =
-                        $this->new_slot_stats($this->questionstats[$step->slot]->question, $step->slot);
-                    $this->questionstats[$step->slot]->variantstats[$step->variant]->variant = $step->variant;
+                if (!$israndomquestion && is_null($this->stats->for_slot($step->slot , $step->variant))) {
+                    $this->stats->initialise_for_slot($step->slot, $this->stats->for_slot($step->slot)->question, $step->variant);
+                    $this->stats->for_slot($step->slot, $step->variant)->randomguessscore =
+                                                    $this->get_random_guess_score($this->stats->for_slot($step->slot)->question);
                 }
 
-
                 // Step data walker for main question.
-                $this->initial_steps_walker($step, $this->questionstats[$step->slot], $summarks, true, !$israndomquestion);
+                $this->initial_steps_walker($step, $this->stats->for_slot($step->slot), $summarks, true, !$israndomquestion);
 
                 // If this is a random question do the calculations for sub question stats.
                 if ($israndomquestion) {
-                    if (!isset($this->subquestionstats[$step->questionid])) {
-                        $this->subquestionstats[$step->questionid] = $this->new_subq_stats($step);
-                    } else if ($this->subquestionstats[$step->questionid]->maxmark != $step->maxmark) {
-                        $this->subquestionstats[$step->questionid]->differentweights = true;
+                    if (is_null($this->stats->for_subq($step->questionid))) {
+                        $this->stats->initialise_for_subq($step);
+                    } else if ($this->stats->for_subq($step->questionid)->maxmark != $step->maxmark) {
+                        $this->stats->for_subq($step->questionid)->differentweights = true;
                     }
 
                     // If this is a variant of this subq we have not seen before create a place to store stats calculations for it.
-                    if (!isset($this->subquestionstats[$step->questionid]->variantstats[$step->variant])) {
-                        $this->subquestionstats[$step->questionid]->variantstats[$step->variant] = $this->new_subq_stats($step);
-                        $this->subquestionstats[$step->questionid]->variantstats[$step->variant]->variant = $step->variant;
+                    if (is_null($this->stats->for_subq($step->questionid, $step->variant))) {
+                        $this->stats->initialise_for_subq($step, $step->variant);
                     }
 
-                    $this->initial_steps_walker($step, $this->subquestionstats[$step->questionid], $summarks, false);
+                    $this->initial_steps_walker($step, $this->stats->for_subq($step->questionid), $summarks, false);
 
                     // Extra stuff we need to do in this loop for subqs to keep track of where they need to be displayed later.
 
-                    $number = $this->questionstats[$step->slot]->question->number;
-                    $this->subquestionstats[$step->questionid]->usedin[$number] = $number;
+                    $number = $this->stats->for_slot($step->slot)->question->number;
+                    $this->stats->for_subq($step->questionid)->usedin[$number] = $number;
 
                     // Keep track of which random questions are actually selected from each pool of questions that random
                     // questions are pulled from.
-                    $randomselectorstring = $this->questionstats[$step->slot]->question->category. '/'
-                                                                    .$this->questionstats[$step->slot]->question->questiontext;
+                    $randomselectorstring = $this->stats->for_slot($step->slot)->random_selector_string();
                     if (!isset($this->randomselectors[$randomselectorstring])) {
                         $this->randomselectors[$randomselectorstring] = array();
                     }
@@ -173,67 +142,60 @@ class calculator {
 
             foreach ($this->randomselectors as $key => $notused) {
                 ksort($this->randomselectors[$key]);
+                $this->randomselectors[$key] = implode(',', $this->randomselectors[$key]);
             }
 
-            $subquestions = question_load_questions(array_keys($this->subquestionstats));
+            $this->stats->subquestions = question_load_questions($this->stats->get_all_subq_ids());
             // Compute the statistics for sub questions, if there are any.
-            $this->progress->start_progress('', count($subquestions), 1);
-            foreach ($subquestions as $qid => $subquestion) {
+            $this->progress->start_progress('', count($this->stats->subquestions), 1);
+            foreach ($this->stats->subquestions as $qid => $subquestion) {
                 $this->progress->increment_progress();
-                $subquestion->maxmark = $this->subquestionstats[$qid]->maxmark;
-                $this->subquestionstats[$qid]->question = $subquestion;
-                $this->subquestionstats[$qid]->randomguessscore = $this->get_random_guess_score($subquestion);
+                $subquestion->maxmark = $this->stats->for_subq($qid)->maxmark;
+                $this->stats->for_subq($qid)->question = $subquestion;
+                $this->stats->for_subq($qid)->randomguessscore = $this->get_random_guess_score($subquestion);
 
-                foreach ($this->subquestionstats[$qid]->variantstats as $variantstat) {
-                    $variantstat->question = $subquestion;
-                    $variantstat->randomguessscore = $this->get_random_guess_score($subquestion);
+                $this->stats->for_subq($qid)->sort_variants();
+                if ($variants = $this->stats->get_variants_for_subq($qid)) {
+                    foreach ($variants as $variant) {
+                        $this->stats->for_subq($qid, $variant)->question = $subquestion;
+                        $this->stats->for_subq($qid, $variant)->randomguessscore = $this->get_random_guess_score($subquestion);
+                    }
                 }
 
-                $this->initial_question_walker($this->subquestionstats[$qid]);
+                $this->initial_question_walker($this->stats->for_subq($qid));
 
-                if ($this->subquestionstats[$qid]->differentweights) {
-                    // TODO output here really sucks, but throwing is too severe.
-                    global $OUTPUT;
-                    $name = $this->subquestionstats[$qid]->question->name;
-                    echo $OUTPUT->notification( get_string('erroritemappearsmorethanoncewithdifferentweight',
-                                                            'quiz_statistics', $name));
-                }
-
-                if ($this->subquestionstats[$qid]->usedin) {
-                    sort($this->subquestionstats[$qid]->usedin, SORT_NUMERIC);
-                    $this->subquestionstats[$qid]->positions = implode(',', $this->subquestionstats[$qid]->usedin);
+                if ($this->stats->for_subq($qid)->usedin) {
+                    sort($this->stats->for_subq($qid)->usedin, SORT_NUMERIC);
+                    $this->stats->for_subq($qid)->positions = implode(',', $this->stats->for_subq($qid)->usedin);
                 } else {
-                    $this->subquestionstats[$qid]->positions = '';
+                    $this->stats->for_subq($qid)->positions = '';
                 }
             }
             $this->progress->end_progress();
 
-            // Finish computing the averages, and put the subquestion data into the
+            // Finish computing the averages, and put the sub-question data into the
             // corresponding questions.
 
             // This cannot be a foreach loop because we need to have both
             // $question and $nextquestion available, but apart from that it is
             // foreach ($this->questions as $qid => $question).
-            reset($this->questionstats);
-            $this->progress->start_progress('', count($this->questionstats), 1);
-            while (list(, $questionstat) = each($this->questionstats)) {
+            $slots = $this->stats->get_all_slots();
+            $this->progress->start_progress('', count($slots), 1);
+            while (list(, $slot) = each($slots)) {
+                $this->stats->for_slot($slot)->sort_variants();
                 $this->progress->increment_progress();
-                $nextquestionstats = current($this->questionstats);
+                $nextslot = current($slots);
 
-                $this->initial_question_walker($questionstat);
+                $this->initial_question_walker($this->stats->for_slot($slot));
 
-                // The rest of this loop is again to work out where randomly selected question stats should be displayed.
-                if ($questionstat->question->qtype == 'random') {
-                    $randomselectorstring = $questionstat->question->category .'/'. $questionstat->question->questiontext;
-                    if ($nextquestionstats && $nextquestionstats->question->qtype == 'random') {
-                        $nextrandomselectorstring  =
-                            $nextquestionstats->question->category .'/'. $nextquestionstats->question->questiontext;
-                        if ($randomselectorstring == $nextrandomselectorstring) {
-                            continue; // Next loop iteration.
-                        }
+                // The rest of this loop is to finish working out where randomly selected question stats should be displayed.
+                if ($this->stats->for_slot($slot)->question->qtype == 'random') {
+                    $randomselectorstring = $this->stats->for_slot($slot)->random_selector_string();
+                    if ($nextslot &&  ($randomselectorstring == $this->stats->for_slot($nextslot)->random_selector_string())) {
+                        continue; // Next loop iteration.
                     }
                     if (isset($this->randomselectors[$randomselectorstring])) {
-                        $questionstat->subquestions = implode(',', $this->randomselectors[$randomselectorstring]);
+                        $this->stats->for_slot($slot)->subquestions = $this->randomselectors[$randomselectorstring];
                     }
                 }
             }
@@ -243,121 +205,58 @@ class calculator {
             $this->progress->start_progress('', count($lateststeps), 1);
             foreach ($lateststeps as $step) {
                 $this->progress->increment_progress();
-                $israndomquestion = ($this->questionstats[$step->slot]->question->qtype == 'random');
-                $this->secondary_steps_walker($step, $this->questionstats[$step->slot], $summarks, !$israndomquestion);
+                $israndomquestion = ($this->stats->for_slot($step->slot)->question->qtype == 'random');
+                $this->secondary_steps_walker($step, $this->stats->for_slot($step->slot), $summarks, !$israndomquestion);
 
-                if ($this->questionstats[$step->slot]->subquestions) {
-                    $this->secondary_steps_walker($step, $this->subquestionstats[$step->questionid], $summarks);
+                if ($this->stats->for_slot($step->slot)->subquestions) {
+                    $this->secondary_steps_walker($step, $this->stats->for_subq($step->questionid), $summarks);
                 }
             }
             $this->progress->end_progress();
 
-            $this->progress->start_progress('', count($this->questionstats), 1);
+            $slots = $this->stats->get_all_slots();
+            $this->progress->start_progress('', count($slots), 1);
             $sumofcovariancewithoverallmark = 0;
-            foreach ($this->questionstats as $questionstat) {
+            foreach ($this->stats->get_all_slots() as $slot) {
                 $this->progress->increment_progress();
-                $this->secondary_question_walker($questionstat);
+                $this->secondary_question_walker($this->stats->for_slot($slot));
 
-                $this->sumofmarkvariance += $questionstat->markvariance;
+                $this->sumofmarkvariance += $this->stats->for_slot($slot)->markvariance;
 
-                if ($questionstat->covariancewithoverallmark >= 0) {
-                    $sumofcovariancewithoverallmark += sqrt($questionstat->covariancewithoverallmark);
+                if ($this->stats->for_slot($slot)->covariancewithoverallmark >= 0) {
+                    $sumofcovariancewithoverallmark += sqrt($this->stats->for_slot($slot)->covariancewithoverallmark);
                 }
             }
             $this->progress->end_progress();
 
-            $this->progress->start_progress('', count($this->subquestionstats), 1);
-            foreach ($this->subquestionstats as $subquestionstat) {
+            $subqids = $this->stats->get_all_subq_ids();
+            $this->progress->start_progress('', count($subqids), 1);
+            foreach ($subqids as $subqid) {
                 $this->progress->increment_progress();
-                $this->secondary_question_walker($subquestionstat);
+                $this->secondary_question_walker($this->stats->for_subq($subqid));
             }
             $this->progress->end_progress();
 
-            foreach ($this->questionstats as $questionstat) {
+            foreach ($this->stats->get_all_slots() as $slot) {
                 if ($sumofcovariancewithoverallmark) {
-                    if ($questionstat->negcovar) {
-                        $questionstat->effectiveweight = null;
+                    if ($this->stats->for_slot($slot)->negcovar) {
+                        $this->stats->for_slot($slot)->effectiveweight = null;
                     } else {
-                        $questionstat->effectiveweight = 100 * sqrt($questionstat->covariancewithoverallmark) /
-                            $sumofcovariancewithoverallmark;
+                        $this->stats->for_slot($slot)->effectiveweight =
+                                                        100 * sqrt($this->stats->for_slot($slot)->covariancewithoverallmark) /
+                                                        $sumofcovariancewithoverallmark;
                     }
                 } else {
-                    $questionstat->effectiveweight = null;
+                    $this->stats->for_slot($slot)->effectiveweight = null;
                 }
             }
-            $this->cache_stats($qubaids);
+            $this->stats->cache($qubaids);
 
             // All finished.
             $this->progress->end_progress();
         }
-        return array($this->questionstats, $this->subquestionstats);
+        return $this->stats;
     }
-
-    /**
-     * Load cached statistics from the database.
-     *
-     * @param $qubaids \qubaid_condition
-     * @return array containing two arrays calculated[] and calculated_for_subquestion[].
-     */
-    public function get_cached($qubaids) {
-        global $DB;
-        $timemodified = time() - self::TIME_TO_CACHE;
-        $questionstatrecs = $DB->get_records_select('question_statistics', 'hashcode = ? AND timemodified > ?',
-                                         array($qubaids->get_hash_code(), $timemodified));
-
-        $questionids = array();
-        foreach ($questionstatrecs as $fromdb) {
-            if (is_null($fromdb->variant) && !$fromdb->slot) {
-                $questionids[] = $fromdb->questionid;
-            }
-        }
-        $subquestions = question_load_questions($questionids);
-        foreach ($questionstatrecs as $fromdb) {
-            if (is_null($fromdb->variant)) {
-                if ($fromdb->slot) {
-                    $this->questionstats[$fromdb->slot]->populate_from_record($fromdb);
-                    // Array created in constructor and populated from question.
-                } else {
-                    $this->subquestionstats[$fromdb->questionid] = new calculated_for_subquestion();
-                    $this->subquestionstats[$fromdb->questionid]->populate_from_record($fromdb);
-                    $this->subquestionstats[$fromdb->questionid]->question = $subquestions[$fromdb->questionid];
-                }
-            }
-        }
-        // Add cached variant stats to data structure.
-        foreach ($questionstatrecs as $fromdb) {
-            if (!is_null($fromdb->variant)) {
-                if ($fromdb->slot) {
-                    $newcalcinstance = new calculated();
-                    $this->questionstats[$fromdb->slot]->variantstats[$fromdb->variant] = $newcalcinstance;
-                    $newcalcinstance->question = $this->questionstats[$fromdb->slot]->question;
-                } else {
-                    $newcalcinstance = new calculated_for_subquestion();
-                    $this->subquestionstats[$fromdb->questionid]->variantstats[$fromdb->variant] = $newcalcinstance;
-                    $newcalcinstance->question = $subquestions[$fromdb->questionid];
-                }
-                $newcalcinstance->populate_from_record($fromdb);
-            }
-        }
-        return array($this->questionstats, $this->subquestionstats);
-    }
-
-    /**
-     * Find time of non-expired statistics in the database.
-     *
-     * @param $qubaids \qubaid_condition
-     * @return integer|boolean Time of cached record that matches this qubaid_condition or false is non found.
-     */
-    public function get_last_calculated_time($qubaids) {
-        global $DB;
-
-        $timemodified = time() - self::TIME_TO_CACHE;
-        return $DB->get_field_select('question_statistics', 'timemodified', 'hashcode = ? AND timemodified > ?',
-                                     array($qubaids->get_hash_code(), $timemodified), IGNORE_MULTIPLE);
-    }
-
-    /** @var integer Time after which statistics are automatically recomputed. */
-    const TIME_TO_CACHE = 900; // 15 minutes.
 
     /**
      * Used when computing Coefficient of Internal Consistency by quiz statistics.
@@ -385,7 +284,7 @@ class calculator {
     qa.maxmark,
     qas.fraction * qa.maxmark as mark";
 
-        $lateststeps = $dm->load_questions_usages_latest_steps($qubaids, array_keys($this->questionstats), $fields);
+        $lateststeps = $dm->load_questions_usages_latest_steps($qubaids, $this->stats->get_all_slots(), $fields);
         $summarks = array();
         if ($lateststeps) {
             foreach ($lateststeps as $step) {
@@ -536,7 +435,6 @@ class calculator {
             $stats->discriminativeefficiency = null;
         }
 
-
         if ($dovariantsalso) {
             foreach ($stats->variantstats as $variantstat) {
                 $this->secondary_question_walker($variantstat, false);
@@ -554,16 +452,23 @@ class calculator {
     }
 
     /**
+     * Find time of non-expired statistics in the database.
+     *
      * @param $qubaids \qubaid_condition
+     * @return integer|boolean Time of cached record that matches this qubaid_condition or false is non found.
      */
-    protected function cache_stats($qubaids) {
-         foreach ($this->questionstats as $questionstat) {
-            $questionstat->cache($qubaids);
-         }
-
-        foreach ($this->subquestionstats as $subquestionstat) {
-            $subquestionstat->cache($qubaids);
-        }
+    public function get_last_calculated_time($qubaids) {
+        return $this->stats->get_last_calculated_time($qubaids);
     }
 
+    /**
+     * Load cached statistics from the database.
+     *
+     * @param $qubaids \qubaid_condition
+     * @return all_calculated_for_qubaid_condition
+     */
+    public function get_cached($qubaids) {
+        $this->stats->get_cached($qubaids);
+        return $this->stats;
+    }
 }

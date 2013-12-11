@@ -38,8 +38,6 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/statisticslib.php');
  */
 class quiz_statistics_report extends quiz_default_report {
 
-    const SUBQ_AND_VARIANT_ROW_LIMIT = 10;
-
     /**
      * @var context_module
      */
@@ -145,13 +143,12 @@ class quiz_statistics_report extends quiz_default_report {
         if (!$nostudentsingroup) {
             // Get the data to be displayed.
             $progress = $this->get_progress_trace_instance();
-            list($quizstats, $questionstats, $subquestionstats) =
+            list($quizstats, $questionstats) =
                 $this->get_all_stats_and_analysis($quiz, $whichattempts, $groupstudents, $questions, $progress);
         } else {
             // Or create empty stats containers.
             $quizstats = new \quiz_statistics\calculated($whichattempts);
-            $questionstats = array();
-            $subquestionstats = array();
+            $questionstats = new \core_question\statistics\questions\all_calculated_for_qubaid_condition();
         }
 
         // Set up the table, if there is data.
@@ -173,6 +170,10 @@ class quiz_statistics_report extends quiz_default_report {
                 echo $OUTPUT->notification(get_string('noattempts', 'quiz'));
             }
 
+            foreach($questionstats->any_error_messages() as $errormessage) {
+                echo $OUTPUT->notification($errormessage);
+            }
+
             // Print display options form.
             $mform->display();
         }
@@ -183,7 +184,7 @@ class quiz_statistics_report extends quiz_default_report {
             $this->download_quiz_info_table($quizinfo);
 
             if ($quizstats->s()) {
-                $this->output_quiz_structure_analysis_table($quizstats->s(), $questionstats, $subquestionstats);
+                $this->output_quiz_structure_analysis_table($questionstats);
 
                 if ($this->table->is_downloading() == 'xhtml' && $quizstats->s() != 0) {
                     $this->output_statistics_graph($quiz->id, $currentgroup, $whichattempts);
@@ -193,13 +194,14 @@ class quiz_statistics_report extends quiz_default_report {
                     if (question_bank::get_qtype(
                             $question->qtype, false)->can_analyse_responses()) {
                         $this->output_individual_question_response_analysis(
-                                $question, $questionstats[$slot]->s, $reporturl, $qubaids);
+                                $question, $questionstats->for_slot($slot)->s, $reporturl, $qubaids);
 
-                    } else if (!empty($questionstats[$slot]->subquestions)) {
-                        $subitemstodisplay = explode(',', $questionstats[$slot]->subquestions);
-                        foreach ($subitemstodisplay as $subitemid) {
-                            $this->output_individual_question_response_analysis(
-                                $subquestionstats[$subitemid]->question, $subquestionstats[$subitemid]->s, $reporturl, $qubaids);
+                    } else if ($subqids = $questionstats->for_slot($slot)->get_sub_question_ids()) {
+                        foreach ($subqids as $subqid) {
+                            $this->output_individual_question_response_analysis($questionstats->for_subq($subqid)->question,
+                                                                                $questionstats->for_subq($subqid)->s,
+                                                                                $reporturl,
+                                                                                $qubaids);
                         }
                     }
                 }
@@ -213,8 +215,11 @@ class quiz_statistics_report extends quiz_default_report {
                 print_error('questiondoesnotexist', 'question');
             }
 
-            $this->output_individual_question_data($quiz, $questionstats[$slot]);
-            $this->output_individual_question_response_analysis($questions[$slot], $questionstats[$slot]->s, $reporturl, $qubaids);
+            $this->output_individual_question_data($quiz, $questionstats->for_slot($slot));
+            $this->output_individual_question_response_analysis($questions[$slot],
+                                                                $questionstats->for_slot($slot)->s,
+                                                                $reporturl,
+                                                                $qubaids);
 
             // Back to overview link.
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
@@ -223,13 +228,15 @@ class quiz_statistics_report extends quiz_default_report {
 
         } else if ($qid) {
             // Report on an individual sub-question indexed questionid.
-            if (!isset($subquestionstats[$qid])) {
+            if (is_null($questionstats->for_subq($qid))) {
                 print_error('questiondoesnotexist', 'question');
             }
 
-            $this->output_individual_question_data($quiz, $subquestionstats[$qid]);
-            $this->output_individual_question_response_analysis($subquestionstats[$qid]->question,
-                                                                $subquestionstats[$qid]->s, $reporturl, $qubaids);
+            $this->output_individual_question_data($quiz, $questionstats->for_subq($qid));
+            $this->output_individual_question_response_analysis($questionstats->for_subq($qid)->question,
+                                                                $questionstats->for_subq($qid)->s,
+                                                                $reporturl,
+                                                                $qubaids);
 
             // Back to overview link.
             echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
@@ -240,7 +247,9 @@ class quiz_statistics_report extends quiz_default_report {
             // Downloading overview report.
             $quizinfo = $quizstats->get_formatted_quiz_info_data($course, $cm, $quiz);
             $this->download_quiz_info_table($quizinfo);
-            $this->output_quiz_structure_analysis_table($quizstats->s(), $questionstats, $subquestionstats);
+            if ($quizstats->s()) {
+                $this->output_quiz_structure_analysis_table($questionstats);
+            }
             $this->table->finish_output();
 
         } else {
@@ -252,7 +261,7 @@ class quiz_statistics_report extends quiz_default_report {
             echo $this->output_quiz_info_table($quizinfo);
             if ($quizstats->s()) {
                 echo $OUTPUT->heading(get_string('quizstructureanalysis', 'quiz_statistics'), 3);
-                $this->output_quiz_structure_analysis_table($quizstats->s(), $questionstats, $subquestionstats);
+                $this->output_quiz_structure_analysis_table($questionstats);
                 $this->output_statistics_graph($quiz->id, $currentgroup, $whichattempts);
             }
         }
@@ -402,100 +411,25 @@ class quiz_statistics_report extends quiz_default_report {
 
     /**
      * Output the table that lists all the questions in the quiz with their statistics.
-     * @param int $s number of attempts.
-     * @param \core_question\statistics\questions\calculated[] $questionstats the stats for the main questions in the quiz.
-     * @param \core_question\statistics\questions\calculated_for_subquestion[] $subquestionstats the stats of any random questions.
+     * @param \core_question\statistics\questions\all_calculated_for_qubaid_condition $questionstats the stats for all questions in
+     *                                                                                               the quiz including subqs and
+     *                                                                                               variants.
      */
-    protected function output_quiz_structure_analysis_table($s, $questionstats, $subquestionstats) {
-        if (!$s) {
-            return;
-        }
-
-        foreach ($questionstats as $questionstat) {
+    protected function output_quiz_structure_analysis_table($questionstats) {
+        foreach ($questionstats->get_all_slots() as $slot) {
             // Output the data for these question statistics.
-            $this->table->add_data_keyed($this->table->format_row($questionstat));
-            if (count($questionstat->variantstats) > 1) {
-                if (count($questionstat->variantstats) > static::SUBQ_AND_VARIANT_ROW_LIMIT) {
-                    $statstoadd = $this->find_min_median_and_max_facility_stats_objects($questionstat->variantstats);
-                } else {
-                    ksort($questionstat->variantstats);
-                    $statstoadd = $questionstat->variantstats;
-                }
-                $this->add_array_of_rows_to_table($statstoadd);
-            }
+            $this->table->add_data_keyed($this->table->format_row($questionstats->for_slot($slot)));
 
-            if (empty($questionstat->subquestions)) {
-                continue;
-            }
-
-            // And its sub-questions, if it has any.
-            $subitemstodisplay = explode(',', $questionstat->subquestions);
-
-            // We need to get all variants out of sub-questions to count them and possibly find min, median and max.
-            $displayorder = 1;
-            $subqvariants = array();
-            foreach ($subitemstodisplay as $subitemid) {
-                if (count($subquestionstats[$subitemid]->variantstats) > 1) {
-                    ksort($subquestionstats[$subitemid]->variantstats);
-                    foreach ($subquestionstats[$subitemid]->variantstats as $variantstat) {
-                        $variantstat->subqdisplayorder = $displayorder;
-                        $variantstat->question->number = $questionstat->question->number;
-                        $subqvariants[] = $variantstat;
-                    }
-                }
-                $displayorder++;
-            }
-            if (count($subqvariants) > static::SUBQ_AND_VARIANT_ROW_LIMIT) {
-                // Too many variants from randomly selected questions.
-                $toadd = $this->find_min_median_and_max_facility_stats_objects($subqvariants);
-                $this->add_array_of_rows_to_table($toadd);
-            } else if (count($subitemstodisplay) > static::SUBQ_AND_VARIANT_ROW_LIMIT) {
-                // Too many randomly selected questions.
-                $toadd = $this->find_min_median_and_max_facility_stats_objects($subitemstodisplay);
-                $this->add_array_of_rows_to_table($toadd);
-            } else {
-                foreach ($subitemstodisplay as $subitemid) {
-                    $subquestionstats[$subitemid]->maxmark = $questionstat->maxmark;
-                    $subquestionstats[$subitemid]->subqdisplayorder = $displayorder;
-                    $subquestionstats[$subitemid]->question->number = $questionstat->question->number;
-                    $this->table->add_data_keyed($this->table->format_row($subquestionstats[$subitemid]));
-                    if (count($subquestionstats[$subitemid]->variantstats) > 1) {
-                        ksort($subquestionstats[$subitemid]->variantstats);
-                        foreach ($subquestionstats[$subitemid]->variantstats as $variantstat) {
-                            $this->table->add_data_keyed($this->table->format_row($variantstat));
-                        }
-                    }
-                }
-            }
+            $limitvariants = !$this->table->is_downloading();
+            $this->add_array_of_rows_to_table($questionstats->all_subq_and_variant_stats_for_slot($slot, $limitvariants));
 
         }
 
         $this->table->finish_output(!$this->table->is_downloading());
     }
 
-    protected function find_min_median_and_max_facility_stats_objects($questionstats) {
-        $facilities = array();
-        foreach ($questionstats as $key => $questionstat) {
-            $facilities[$key] = (float)$questionstat->facility;
-        }
-        asort($facilities);
-        $facilitykeys = array_keys($facilities);
-        $keyformin = $facilitykeys[0];
-        $keyformedian = $facilitykeys[(int)(round(count($facilitykeys) / 2)-1)];
-        $keyformax = $facilitykeys[count($facilitykeys) - 1];
-        $toreturn = array();
-        foreach (array($keyformin => 'minimumfacility',
-                       $keyformedian => 'medianfacility',
-                       $keyformax => 'maximumfacility') as $key => $stringid) {
-            $questionstats[$key]->minmedianmaxnotice = get_string($stringid, 'quiz_statistics');
-            $toreturn[] = $questionstats[$key];
-        }
-        return $toreturn;
-    }
-
-
     /**
-     * @param \core_question\statistics\questions\calculator $statstoadd
+     * @param \core_question\statistics\questions\calculated[] $statstoadd
      */
     protected function add_array_of_rows_to_table($statstoadd) {
         foreach ($statstoadd as $stattoadd) {
@@ -580,10 +514,9 @@ class quiz_statistics_report extends quiz_default_report {
      *                                   we calculate stats based on which attempts would affect the grade for each student.
      * @param array  $groupstudents      students in this group.
      * @param array  $questions          full question data.
-     * @return array with 4 elements:
-     *     - $quizstats The statistics for overall attempt scores.
-     *     - $questionstats array of \core_question\statistics\questions\calculated objects keyed by slot.
-     *     - $subquestionstats array of \core_question\statistics\questions\calculated_for_subquestion objects keyed by question id.
+     * @param \core\progress\base|null   $progress
+     * @return array with 2 elements:    - $quizstats The statistics for overall attempt scores.
+     *                                   - $questionstats \core_question\statistics\questions\all_calculated_for_qubaid_condition
      */
     public function get_all_stats_and_analysis($quiz, $whichattempts, $groupstudents, $questions, $progress = null) {
 
@@ -602,23 +535,24 @@ class quiz_statistics_report extends quiz_default_report {
             $progress->start_progress('', 3);
 
             // Recalculate now.
-            list($questionstats, $subquestionstats) = $qcalc->calculate($qubaids);
+            $questionstats = $qcalc->calculate($qubaids);
             $progress->progress(1);
 
             $quizstats = $quizcalc->calculate($quiz->id, $whichattempts, $groupstudents, count($questions),
                                               $qcalc->get_sum_of_mark_variance());
             $progress->progress(2);
             if ($quizstats->s()) {
-                $this->analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestionstats, $progress);
+                $subquestions = $questionstats->get_sub_questions();
+                $this->analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestions, $progress);
             }
             $progress->progress(3);
             $progress->end_progress();
         } else {
             $quizstats = $quizcalc->get_cached($qubaids);
-            list($questionstats, $subquestionstats) = $qcalc->get_cached($qubaids);
+            $questionstats = $qcalc->get_cached($qubaids);
         }
 
-        return array($quizstats, $questionstats, $subquestionstats);
+        return array($quizstats, $questionstats);
     }
 
     /**
@@ -638,7 +572,7 @@ class quiz_statistics_report extends quiz_default_report {
         return $this->progress;
     }
 
-    protected function analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestionstats,
+    protected function analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestions,
                                                                             $progress = null) {
 
         if ($progress === null) {
@@ -646,7 +580,7 @@ class quiz_statistics_report extends quiz_default_report {
         }
 
         // Starting response analysis tasks.
-        $progress->start_progress('', count($questions) + count($subquestionstats));
+        $progress->start_progress('', count($questions) + count($subquestions));
 
         // Starting response analysis of main questions.
         $progress->start_progress('', count($questions), count($questions));
@@ -667,19 +601,19 @@ class quiz_statistics_report extends quiz_default_report {
         $progress->end_progress();
 
         // Starting response analysis of sub-questions.
-        $countsubquestions = count($subquestionstats);
+        $countsubquestions = count($subquestions);
         $progress->start_progress('', $countsubquestions, $countsubquestions);
         $donecount = 1;
-        foreach ($subquestionstats as $subquestionstat) {
+        foreach ($subquestions as $subquestion) {
             $progress->progress($donecount);
             $donecount++;
-            if (!question_bank::get_qtype($subquestionstat->question->qtype, false)->can_analyse_responses() ||
-                    isset($done[$subquestionstat->question->id])) {
+            if (!question_bank::get_qtype($subquestion->qtype, false)->can_analyse_responses() ||
+                    isset($done[$subquestion->id])) {
                 continue;
             }
-            $done[$subquestionstat->question->id] = 1;
+            $done[$subquestion->id] = 1;
 
-            $responesstats = new \core_question\statistics\responses\analyser($subquestionstat->question);
+            $responesstats = new \core_question\statistics\responses\analyser($subquestion);
             $responesstats->calculate($qubaids);
         }
         // Finished sub-question tasks.
