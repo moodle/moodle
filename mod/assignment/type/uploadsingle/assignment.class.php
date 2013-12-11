@@ -136,7 +136,7 @@ class assignment_uploadsingle extends assignment_base {
         $context = context_module::instance($this->cm->id);
 
         // Get ids of users enrolled in the given course.
-        list($enroledsql, $params) = get_enrolled_sql($context, 'mod/assignment:view', $groupid);
+        list($enroledsql, $params) = get_enrolled_sql($context, 'mod/assignment:submit', $groupid);
         $params['assignmentid'] = $this->cm->instance;
 
         // Get ids of users enrolled in the given course.
