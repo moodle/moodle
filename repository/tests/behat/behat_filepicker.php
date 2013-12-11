@@ -187,9 +187,16 @@ class behat_filepicker extends behat_files {
      */
     public function i_should_see_elements_in_filemanager($elementscount, $filemanagerelement) {
         $filemanagernode = $this->get_filepicker_node($filemanagerelement);
-        $elements = $this->find_all('css', '.fp-content .fp-file', false, $filemanagernode);
+
+        // We count .fp-file elements inside a filemanager not being updated.
+        $xpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' filemanager ')]" .
+            "[not(contains(concat(' ', normalize-space(@class), ' '), ' fm-updating '))]" .
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-content ')]" .
+            "//div[contains(concat(' ', normalize-space(@class), ' '), ' fp-file ')]";
+
+        $elements = $this->find_all('xpath', $xpath, false, $filemanagernode);
         if (count($elements) != $elementscount) {
-            throw new ExpectationException('Found '.count($elements).' elements in filemanager instead of expected '.$elementscount);
+            throw new ExpectationException('Found '.count($elements).' elements in filemanager instead of expected '.$elementscount, $this->getSession());
         }
     }
 
