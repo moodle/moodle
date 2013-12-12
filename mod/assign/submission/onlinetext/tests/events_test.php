@@ -60,6 +60,7 @@ class assignsubmission_onlinetext_events_testcase extends advanced_testcase {
         $this->assertEquals($context->id, $event->contextid);
         $this->assertEquals($submission->id, $event->objectid);
         $this->assertEquals(array(), $event->other['pathnamehashes']);
+        $this->assertEquals(FORMAT_PLAIN, $event->other['format']);
         $this->assertEquals('Submission text', $event->other['content']);
         $expected = new stdClass();
         $expected->modulename = 'assign';
