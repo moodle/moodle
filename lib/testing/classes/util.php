@@ -644,18 +644,23 @@ abstract class testing_util {
             return null;
         }
 
-        $ref = file_get_contents("$CFG->dirroot/.git/HEAD");
-        if ($ref === false) {
+        $headcontent = file_get_contents("$CFG->dirroot/.git/HEAD");
+        if ($headcontent === false) {
             return null;
         }
 
-        $ref = trim($ref);
+        $headcontent = trim($headcontent);
 
-        if (strpos($ref, 'ref: ') !== 0) {
+        // If it is pointing to a hash we return it directly.
+        if (strlen($headcontent) === 40) {
+            return $headcontent;
+        }
+
+        if (strpos($headcontent, 'ref: ') !== 0) {
             return null;
         }
 
-        $ref = substr($ref, 5);
+        $ref = substr($headcontent, 5);
 
         if (!file_exists("$CFG->dirroot/.git/$ref")) {
             return null;
