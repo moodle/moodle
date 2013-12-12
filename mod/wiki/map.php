@@ -70,6 +70,7 @@ $event = \mod_wiki\event\page_map_viewed::create(
 $event->add_record_snapshot('wiki_pages', $page);
 $event->add_record_snapshot('wiki', $wiki);
 $event->add_record_snapshot('wiki_subwikis', $subwiki);
+$event->trigger();
 
 // Print page header
 $wikipage->set_view($option);
