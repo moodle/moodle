@@ -101,7 +101,7 @@ class behat_course extends behat_base {
 
             // Adding a forced wait until editors are loaded as otherwise selenium sometimes tries clicks on the
             // format field when the editor is being rendered and the click misses the field coordinates.
-            $steps[] = new Given('I wait until the editors are loaded');
+            $steps[] = new Given('I expand all fieldsets');
             $steps[] = new Given('I select "' . $formatvalue . '" from "' . $formatfield . '"');
             $steps[] = new Given('I fill the moodle form with:', $table);
         } else {
