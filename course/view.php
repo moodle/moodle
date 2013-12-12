@@ -239,6 +239,14 @@
     }
 
     $PAGE->set_title(get_string('course') . ': ' . $course->fullname);
+    // If viewing a section, make the title more specific
+    if ($section and $section > 0 and course_format_uses_sections($course->format)) {
+        // Get section details and check it exists.
+        $newtitle = $PAGE->title.', '.get_string('sectionname', "format_$course->format").': '.
+            get_section_name($course, $section);
+        $PAGE->set_title($newtitle);
+    }
+
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
