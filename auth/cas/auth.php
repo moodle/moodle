@@ -413,6 +413,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
 
         // Test for group creator
         if (!empty($this->config->groupecreators)) {
+            $ldapconnection = $this->ldap_connect();
             if ($this->config->memberattribute_isdn) {
                 if(!($userid = $this->ldap_find_userdn($ldapconnection, $extusername))) {
                     return false;
