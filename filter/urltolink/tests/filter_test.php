@@ -144,6 +144,11 @@ class filter_urltolink_testcase extends basic_testcase {
             '<td background="www.moodle.org">&nbsp;</td>' => '<td background="www.moodle.org">&nbsp;</td>',
             '<form name="input" action="http://moodle.org/submit.asp" method="get">'=>'<form name="input" action="http://moodle.org/submit.asp" method="get">',
             '<td background="https://www.moodle.org">&nbsp;</td>' => '<td background="https://www.moodle.org">&nbsp;</td>',
+            // CSS URLs.
+            '<table style="background-image: url(\'http://moodle.org/pic.jpg\');">' => '<table style="background-image: url(\'http://moodle.org/pic.jpg\');">',
+            '<table style="background-image: url(http://moodle.org/pic.jpg);">' => '<table style="background-image: url(http://moodle.org/pic.jpg);">',
+            '<table style="background-image: url("http://moodle.org/pic.jpg");">' => '<table style="background-image: url("http://moodle.org/pic.jpg");">',
+            '<table style="background-image: url( http://moodle.org/pic.jpg );">' => '<table style="background-image: url( http://moodle.org/pic.jpg );">',
             //partially escaped img tag
             'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />' => 'partially escaped img tag &lt;img src="http://moodle.org/logo/logo-240x60.gif" />',
             //fully escaped img tag. Commented out as part of MDL-21183
