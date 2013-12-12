@@ -57,7 +57,7 @@ class behat_navigation extends behat_base {
                 // Administration menu is not loaded by default any more. Click the link to expand.
                 return new Given('I click on "'.$nodetext.'" "link" in the "'.get_string('administration').'" "block"');
             }
-            return false;
+            return true;
         }
 
         // Avoid problems with quotes.
@@ -91,7 +91,7 @@ class behat_navigation extends behat_base {
 
         // No collapsible nodes with non-JS browsers.
         if (!$this->running_javascript()) {
-            return false;
+            return true;
         }
 
         // Avoid problems with quotes.
