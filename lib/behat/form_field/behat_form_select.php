@@ -101,21 +101,42 @@ class behat_form_select extends behat_form_field {
             // with elements inside containers.
             $optionnodes = $this->session->getDriver()->find($optionxpath);
             if ($optionnodes) {
-                current($optionnodes)->click();
+                // Wrapped in a try & catch as we can fall into race conditions
+                // and the element may not be there.
+                try {
+                    current($optionnodes)->click();
+                } catch (Exception $e) {
+                    // We continue and return as this means that the element is not there or it is not the same.
+                    return;
+                }
             }
 
         } else {
-            // Multiple ones needs the click in the select.
-            $this->field->click();
+            // Wrapped in a try & catch as we can fall into race conditions
+            // and the element may not be there.
+            try {
+                // Multiple ones needs the click in the select.
+                $this->field->click();
+            } catch (Exception $e) {
+                // We continue and return as this means that the element is not there or it is not the same.
+                return;
+            }
 
             // We ensure that the option is still there.
             if (!$this->session->getDriver()->find($optionxpath)) {
                 return;
             }
 
-            // Repeating the select as some drivers (chrome that I know) are moving
-            // to another option after the general select field click above.
-            $this->field->selectOption($value);
+            // Wrapped in a try & catch as we can fall into race conditions
+            // and the element may not be there.
+            try {
+                // Repeating the select as some drivers (chrome that I know) are moving
+                // to another option after the general select field click above.
+                $this->field->selectOption($value);
+            } catch (Exception $e) {
+                // We continue and return as this means that the element is not there or it is not the same.
+                return;
+            }
         }
     }
 
