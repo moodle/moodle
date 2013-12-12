@@ -243,6 +243,7 @@ if (strlen($result) > 0) {
 
 
         if (!empty($mailstudents)) {
+            $a = new stdClass();
             $a->coursename = format_string($course->fullname, true, array('context' => $coursecontext));
             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
 
@@ -250,7 +251,7 @@ if (strlen($result) > 0) {
             $eventdata->modulename        = 'moodle';
             $eventdata->component         = 'enrol_paypal';
             $eventdata->name              = 'paypal_enrolment';
-            $eventdata->userfrom          = $teacher;
+            $eventdata->userfrom          = empty($teacher) ? get_admin() : $teacher;
             $eventdata->userto            = $user;
             $eventdata->subject           = get_string("enrolmentnew", 'enrol', $shortname);
             $eventdata->fullmessage       = get_string('welcometocoursetext', '', $a);
@@ -261,7 +262,7 @@ if (strlen($result) > 0) {
 
         }
 
-        if (!empty($mailteachers)) {
+        if (!empty($mailteachers) && !empty($teacher)) {
             $a->course = format_string($course->fullname, true, array('context' => $coursecontext));
             $a->user = fullname($user);
 
