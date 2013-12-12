@@ -77,16 +77,16 @@ class behat_general extends behat_base {
         // moodle_page::$periodicrefreshdelay possible values.
         if (!$metarefresh = $this->getSession()->getPage()->find('xpath', "//head/descendant::meta[@http-equiv='refresh']")) {
             // We don't fail the scenario if no redirection with message is found to avoid race condition false failures.
-            return false;
+            return true;
         }
 
         // Wrapped in try & catch in case the redirection has already been executed.
         try {
             $content = $metarefresh->getAttribute('content');
         } catch (NoSuchElement $e) {
-            return false;
+            return true;
         } catch (StaleElementReference $e) {
-            return false;
+            return true;
         }
 
         // Getting the refresh time and the url if present.
@@ -217,21 +217,6 @@ class behat_general extends behat_base {
         }
 
         $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
-    }
-
-    /**
-     * Waits until the editors are all completely loaded.
-     *
-     * @Given /^I wait until the editors are loaded$/
-     * @throws DriverException
-     */
-    public function wait_until_editors_are_loaded() {
-
-        if (!$this->running_javascript()) {
-            throw new DriverException('Editors are not loaded when running without Javascript support');
-        }
-
-        $this->ensure_editors_are_loaded();
     }
 
     /**

@@ -69,9 +69,6 @@ class behat_forms extends behat_base {
      */
     public function i_fill_the_moodle_form_with(TableNode $data) {
 
-        // We ensure that all the editors are loaded and we can interact with them.
-        $this->ensure_editors_are_loaded();
-
         // Expand all fields in case we have.
         $this->expand_all_fields();
 
@@ -109,6 +106,9 @@ class behat_forms extends behat_base {
      * @return void
      */
     protected function expand_all_fields() {
+
+        // We ensure that all the editors are loaded and we can interact with them.
+        $this->ensure_editors_are_loaded();
 
         // behat_base::find() throws an exception if there are no elements, we should not fail a test because of this.
         try {

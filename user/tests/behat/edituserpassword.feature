@@ -17,3 +17,5 @@ Feature: Enable/disable password field based on authentication selected.
     And the "newpassword" "field" should be disabled
     And I select "Email-based self-registration" from "auth"
     And the "newpassword" "field" should be enabled
+    # We need to cancel/submit a form that has been modified.
+    And I press "Create user"
