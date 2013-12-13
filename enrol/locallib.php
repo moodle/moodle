@@ -1011,7 +1011,7 @@ class course_enrolment_manager {
                     continue;
                 } else if ($ue->timestart and $ue->timeend) {
                     $period = get_string('periodstartend', 'enrol', array('start'=>userdate($ue->timestart), 'end'=>userdate($ue->timeend)));
-                    $periodoutside = ($ue->timestart && $ue->timeend && $now < $ue->timestart && $now > $ue->timeend);
+                    $periodoutside = ($ue->timestart && $ue->timeend && ($now < $ue->timestart || $now > $ue->timeend));
                 } else if ($ue->timestart) {
                     $period = get_string('periodstart', 'enrol', userdate($ue->timestart));
                     $periodoutside = ($ue->timestart && $now < $ue->timestart);
