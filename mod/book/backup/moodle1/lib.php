@@ -121,12 +121,12 @@ class moodle1_mod_book_handler extends moodle1_mod_handler {
      * @param array $data
      */
     public function process_book_chapters($data) {
-        $this->write_xml('chapter', $data, array('/chapter/id'));
-
-        // convert chapter files
+        // Convert chapter files.
         $this->fileman->filearea = 'chapter';
         $this->fileman->itemid   = $data['id'];
         $data['content'] = moodle1_converter::migrate_referenced_files($data['content'], $this->fileman);
+
+        $this->write_xml('chapter', $data, array('/chapter/id'));
     }
 
     /**
