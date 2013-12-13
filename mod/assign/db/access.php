@@ -143,5 +143,16 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/grade:manage'
     ),
 
+    'mod/assign:viewgrades' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW
+        )
+    ),
+
+
 );
 
