@@ -78,7 +78,7 @@ class calculator {
     public function calculate($qubaids) {
         set_time_limit(0);
 
-        list($lateststeps, $summarks, $summarksavg) = $this->get_latest_steps($qubaids);
+        list($lateststeps, $summarks) = $this->get_latest_steps($qubaids);
 
         if ($lateststeps) {
 
@@ -169,10 +169,10 @@ class calculator {
 
             // Go through the records one more time.
             foreach ($lateststeps as $step) {
-                $this->secondary_steps_walker($step, $this->questionstats[$step->slot], $summarks, $summarksavg);
+                $this->secondary_steps_walker($step, $this->questionstats[$step->slot], $summarks);
 
                 if ($this->questionstats[$step->slot]->subquestions) {
-                    $this->secondary_steps_walker($step, $this->subquestionstats[$step->questionid], $summarks, $summarksavg);
+                    $this->secondary_steps_walker($step, $this->subquestionstats[$step->questionid], $summarks);
                 }
             }
 
@@ -268,10 +268,9 @@ class calculator {
 
     /**
      * @param $qubaids \qubaid_condition
-     * @return array with three items
+     * @return array with two items
      *              - $lateststeps array of latest step data for the question usages
      *              - $summarks    array of total marks for each usage, indexed by usage id
-     *              - $summarksavg the average of the total marks over all the usages
      */
     protected function get_latest_steps($qubaids) {
         $dm = new \question_engine_data_mapper();
@@ -292,12 +291,9 @@ class calculator {
                 }
                 $summarks[$step->questionusageid] += $step->mark;
             }
-            $summarksavg = array_sum($summarks) / count($summarks);
-        } else {
-            $summarksavg = null;
         }
 
-        return array($lateststeps, $summarks, $summarksavg);
+        return array($lateststeps, $summarks);
     }
 
     /**
@@ -341,6 +337,8 @@ class calculator {
 
         $stats->othermarkaverage = $stats->totalothermarks / $stats->s;
 
+        $stats->summarksaverage = $stats->totalsummarks / $stats->s;
+
         sort($stats->markarray, SORT_NUMERIC);
         sort($stats->othermarksarray, SORT_NUMERIC);
     }
@@ -352,16 +350,15 @@ class calculator {
      * @param object $step        the state to add to the statistics.
      * @param calculated $stats       the question statistics we are accumulating.
      * @param array  $summarks    of the sum of marks for each question usage, indexed by question usage id
-     * @param float  $summarksavg the average sum of marks for all question usages
      */
-    protected function secondary_steps_walker($step, $stats, $summarks, $summarksavg) {
+    protected function secondary_steps_walker($step, $stats, $summarks) {
         $markdifference = $step->mark - $stats->markaverage;
         if ($stats->subquestion) {
             $othermarkdifference = $summarks[$step->questionusageid] - $stats->othermarkaverage;
         } else {
             $othermarkdifference = $summarks[$step->questionusageid] - $step->mark - $stats->othermarkaverage;
         }
-        $overallmarkdifference = $summarks[$step->questionusageid] - $summarksavg;
+        $overallmarkdifference = $summarks[$step->questionusageid] - $stats->summarksaverage;
 
         $sortedmarkdifference = array_shift($stats->markarray) - $stats->markaverage;
         $sortedothermarkdifference = array_shift($stats->othermarksarray) - $stats->othermarkaverage;

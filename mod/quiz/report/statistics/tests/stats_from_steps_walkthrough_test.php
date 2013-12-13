@@ -32,7 +32,6 @@ require_once($CFG->dirroot . '/mod/quiz/report/default.php');
 require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
 require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
 
-
 /**
  * Quiz attempt walk through using data from csv file.
  *
@@ -42,7 +41,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/reportlib.php');
  * @author     Jamie Pratt <me@jamiep.org>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_report_statistics_from_steps extends mod_quiz_attempt_walkthrough_from_csv_testcase {
+class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkthrough_from_csv_testcase {
 
     /**
      * @var quiz_statistics_report object to do stats calculations.
@@ -103,9 +102,11 @@ class quiz_report_statistics_from_steps extends mod_quiz_attempt_walkthrough_fro
             $this->assertTimeCurrent($responesstats->get_last_analysed_time($qubaids));
         }
 
-        // These quiz stats and the question stats found in qstats00.csv were calculated independently in spreadsheet which is
+        // These quiz stats and the question stats found in qstats00.csv were calculated independently in spreadsheets which are
         // available in open document or excel format here :
         // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/statsspreadsheet
+
+        // These quiz stats and the position stats here are calculated in stats.xls and stats.ods available, see above github URL.
         $quizstatsexpected = array(
             'median' => 4.5,
             'firstattemptsavg' => 4.617333332,
@@ -128,22 +129,62 @@ class quiz_report_statistics_from_steps extends mod_quiz_attempt_walkthrough_fro
             $slotqstats = $csvdata['qstats']->getRow($rowno);
             foreach ($slotqstats as $statname => $slotqstat) {
                 if ($statname !== 'slot') {
-                    switch ($statname) {
-                        case 'covariance' :
-                        case 'discriminationindex' :
-                        case 'discriminativeefficiency' :
-                        case 'effectiveweight' :
-                            $precision = 1e-5;
-                            break;
-                        default :
-                            $precision = 1e-6;
-                    }
-                    $slot = $slotqstats['slot'];
-                    $delta = abs($slotqstat) * $precision;
-                    $actual = $questionstats[$slot]->{$statname};
-                    $this->assertEquals(floatval($slotqstat), $actual, "$statname for slot $slot", $delta);
+                    $this->assert_stat_equals($questionstats, $subquestionstats, $slotqstats['slot'],
+                                              null, null, $statname, (float)$slotqstat);
                 }
             }
+        }
+
+        $itemstats = array('s' => 12,
+                          'effectiveweight' => null,
+                          'discriminationindex' => 35.803933,
+                          'discriminativeefficiency' => 39.39393939,
+                          'sd' => 0.514928651,
+                          'facility' => 0.583333333,
+                          'maxmark' => 1,
+                          'positions' => '1',
+                          'slot' => null,
+                          'subquestion' => true);
+        foreach ($itemstats as $statname => $expected) {
+            $this->assert_stat_equals($questionstats, $subquestionstats, 1, null, 'numerical', $statname, $expected);
+        }
+    }
+
+    /**
+     * Check that the stat is as expected within a reasonable tolerance.
+     *
+     * @param \core_question\statistics\questions\calculated[] $questionstats
+     * @param \core_question\statistics\questions\calculated_for_subquestion[] $subquestionstats
+     * @param int                                              $slot
+     * @param int|null                                         $variant if null then not a variant stat.
+     * @param string|null                                      $subqname if null then not an item stat.
+     * @param string                                           $statname
+     * @param float                                            $expected
+     */
+    protected function assert_stat_equals($questionstats, $subquestionstats, $slot, $variant, $subqname, $statname, $expected) {
+
+        if ($variant === null && $subqname === null) {
+            $actual = $questionstats[$slot]->{$statname};
+        } else if ($subqname !== null) {
+            $actual = $subquestionstats[$this->randqids[$slot][$subqname]]->{$statname};
+        } else {
+            $actual = $questionstats[$slot]->variantstats[$variant]->{$statname};
+        }
+        if (is_bool($expected) || is_string($expected)) {
+            $this->assertEquals($expected, $actual, "$statname for slot $slot");
+        } else {
+            switch ($statname) {
+                case 'covariance' :
+                case 'discriminationindex' :
+                case 'discriminativeefficiency' :
+                case 'effectiveweight' :
+                    $precision = 1e-5;
+                    break;
+                default :
+                    $precision = 1e-6;
+            }
+            $delta = abs($expected) * $precision;
+            $this->assertEquals(floatval($expected), $actual, "$statname for slot $slot", $delta);
         }
     }
 }
