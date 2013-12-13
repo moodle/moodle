@@ -80,3 +80,40 @@ function ajaxenabled(array $browsers = null) {
         return false;
     }
 }
+
+/**
+ * Starts capturing output whilst processing an AJAX request.
+ *
+ * This should be used in combination with ajax_check_captured_output to
+ * report any captured output to the user.
+ *
+ * @retrun Boolean Returns true on success or false on failure.
+ */
+function ajax_capture_output() {
+    // Start capturing output in case of broken plugins.
+    return ob_start();
+}
+
+/**
+ * Check captured output for content. If the site has a debug level of
+ * debugdeveloper set, and the content is non-empty, then throw a coding
+ * exception which can be captured by the Y.IO request and displayed to the
+ * user.
+ *
+ * @return Any output that was captured.
+ */
+function ajax_check_captured_output() {
+    global $CFG;
+
+    // Retrieve the output - there should be none.
+    $output = ob_get_contents();
+    ob_end_clean();
+
+    if ($CFG->debug == DEBUG_DEVELOPER && !empty($output)) {
+        // Only throw an error if the site is in debugdeveloper.
+        throw new coding_exception('Unexpected output whilst processing AJAX request. ' .
+                'This could be caused by trailing whitespace. Output received: ' .
+                var_export($output, true));
+    }
+    return $output;
+}
