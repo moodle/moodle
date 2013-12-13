@@ -45,6 +45,11 @@
     padding-left: 24px;
 }
 
+.section .label .mod-indent-outer {
+    padding-left: 24px;
+    display: block;
+}
+
 .dir-rtl .section .activity .mod-indent-outer {
     padding-left: auto;
     padding-right: 24px;
@@ -91,6 +96,16 @@
     padding-right: 32px;
     height: 2em;
     display: table-cell;
+
+}
+
+.sitetopic .section .label .activityinstance,
+.course-content .section .label .activityinstance,
+.sitetopic .section .label .contentwithoutlink,
+.course-content .section .label .contentwithoutlink {
+    padding-right: 32px;
+    display: block;
+    height: inherit;
 }
 
 .dir-rtl .sitetopic .section .activity .activityinstance,
