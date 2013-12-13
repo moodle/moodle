@@ -53,10 +53,10 @@ class testable_question_statistics extends \core_question\statistics\questions\c
 
     /**
      * @param $qubaids qubaid_condition is ignored in this test
-     * @return array with three items
+     * @return array with two items
      *              - $lateststeps array of latest step data for the question usages
      *              - $summarks    array of total marks for each usage, indexed by usage id
-     *              - $summarksavg the average of the total marks over all the usages     */
+     */
     protected function get_latest_steps($qubaids) {
         $summarks = array();
         $fakeusageid = 0;
@@ -72,8 +72,7 @@ class testable_question_statistics extends \core_question\statistics\questions\c
             $step->questionusageid = $fakeusageid;
         }
 
-        $summarksavg = array_sum($summarks) / count($summarks);
-        return array($this->lateststeps, $summarks, $summarksavg);
+        return array($this->lateststeps, $summarks);
     }
 
     protected function cache_stats($qubaids) {
