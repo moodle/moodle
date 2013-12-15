@@ -128,8 +128,7 @@ class block_course_list extends block_list {
             $this->content->items[] = get_string('remotecourses','mnet');
             $this->content->icons[] = '';
             foreach ($courses as $course) {
-                $coursecontext = context_course::instance($course->id);
-                $this->content->items[]="<a title=\"" . format_string($course->shortname, true, array('context' => $coursecontext)) . "\" ".
+                $this->content->items[]="<a title=\"" . format_string($course->shortname, true) . "\" ".
                     "href=\"{$CFG->wwwroot}/auth/mnet/jump.php?hostid={$course->hostid}&amp;wantsurl=/course/view.php?id={$course->remoteid}\">"
                     .$icon. format_string(get_course_display_name_for_list($course)) . "</a>";
             }
