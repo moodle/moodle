@@ -391,4 +391,16 @@ class enrol_guest_plugin extends enrol_plugin {
         // No need to set mapping, we do not restore users or roles here.
         $step->set_mapping('enrol', $oldid, 0);
     }
+
+    /**
+     * Is it possible to delete enrol instance via standard UI?
+     *
+     * @param object $instance
+     * @return bool
+     */
+    public function can_delete_instance($instance) {
+        $context = context_course::instance($instance->courseid);
+        return has_capability('enrol/guest:config', $context);
+    }
+
 }
