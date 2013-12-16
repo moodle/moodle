@@ -344,7 +344,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
                     $baseurl->params($params);
                     $name = 'uid';
                     $selected = $subwiki->userid;
-                    echo $this->output->single_select($baseurl, $name, $options, $selected);
+                    echo $this->output->single_select($baseurl, $name, $options, $selected, null);
                     echo $this->output->container_end();
                 }
                 return;
@@ -404,7 +404,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 $baseurl->params($params);
                 $name = 'groupanduser';
                 $selected = $subwiki->groupid . '-' . $subwiki->userid;
-                echo $this->output->single_select($baseurl, $name, $options, $selected);
+                echo $this->output->single_select($baseurl, $name, $options, $selected, null);
                 echo $this->output->container_end();
 
                 return;
@@ -451,7 +451,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
                 $baseurl->params($params);
                 $name = 'groupanduser';
                 $selected = $subwiki->groupid . '-' . $subwiki->userid;
-                echo $this->output->single_select($baseurl, $name, $options, $selected);
+                echo $this->output->single_select($baseurl, $name, $options, $selected, null);
                 echo $this->output->container_end();
 
                 return;
@@ -469,6 +469,10 @@ class mod_wiki_renderer extends plugin_renderer_base {
     }
 
     function menu_map($pageid, $currentselect) {
+        if (empty($currentselect)) {
+            // The wiki uses digit number to match the options and 5 is the default one.
+            $currentselect = 5;
+        }
         $options = array('contributions', 'links', 'orphaned', 'pageindex', 'pagelist', 'updatedpages');
         $items = array();
         foreach ($options as $opt) {
@@ -509,7 +513,7 @@ class mod_wiki_renderer extends plugin_renderer_base {
         foreach ($items as $key => $item) {
             $selectoptions[$key + 1] = $item;
         }
-        $select = new single_select(new moodle_url('/mod/wiki/admin.php', array('pageid' => $pageid)), 'option', $selectoptions, $currentselect);
+        $select = new single_select(new moodle_url('/mod/wiki/admin.php', array('pageid' => $pageid)), 'option', $selectoptions, $currentselect, null);
         $select->label = get_string('adminmenu', 'wiki') . ': ';
         return $this->output->container($this->output->render($select), 'midpad');
     }
