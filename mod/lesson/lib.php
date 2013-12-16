@@ -906,14 +906,12 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
  *
  * @package  mod_lesson
  * @category files
- * @todo MDL-31048 localize
  * @return array a list of available file areas
  */
 function lesson_get_file_areas() {
     $areas = array();
-    $areas['page_contents'] = 'Page contents'; //TODO: localize!!!!
-    $areas['mediafile'] = 'Media file'; //TODO: localize!!!!
-
+    $areas['page_contents'] = get_string('pagecontents', 'mod_lesson');
+    $areas['mediafile'] = get_string('mediafile', 'mod_lesson');
     return $areas;
 }
 
