@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_assign submission updated event.
+ * mod_assign submission_created abstract event.
  *
  * @package    mod_assign
- * @copyright  2013 Frédéric Massart
+ * @copyright  2014 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -27,7 +27,7 @@ namespace mod_assign\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_assign submission updated event class.
+ * mod_assign submission_created abstract event class.
  *
  * @property-read array $other Extra information about the event.
  *     -int submissionid: ID number of this submission.
@@ -37,16 +37,16 @@ defined('MOODLE_INTERNAL') || die();
  * }
  *
  * @package    mod_assign
- * @copyright  2013 Frédéric Massart
+ * @copyright  2014 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class submission_updated extends \core\event\base {
+abstract class submission_created extends \core\event\base {
 
     /**
      * Init method.
      */
     protected function init() {
-        $this->data['crud'] = 'u';
+        $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
@@ -56,7 +56,7 @@ abstract class submission_updated extends \core\event\base {
      * @return string
      */
     public static function get_name() {
-        return get_string('eventsubmissionupdated', 'mod_assign');
+        return get_string('eventsubmissioncreated', 'mod_assign');
     }
 
     /**

@@ -1,13 +1,14 @@
 This files describes API changes in the assign code.
 === 2.7 ===
+
 * Added setting sendstudentnotifications to assign DB table with admin defaults. This sets the default value for the
   "Notify students" option on the grading forms. This setting can be retrieved via webservices.
-
-=== 2.7 ===
 
 * Web service function mod_assign_save_grade has an additional optional parameter $advancedgradingdata which allows
   advanced grading data to be used.
 * A new web service function mod_assign_save_grades has been added which allows multiple grades to be processed.
+* The event submission_updated() [mod/assign/classes/event/submission_updated.php] has been altered to now be an abstract class
+  for submission events in the submission plug-ins.
 
 === 2.6.1 ===
 

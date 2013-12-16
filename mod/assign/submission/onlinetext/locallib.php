@@ -150,6 +150,7 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
         $params = array(
             'context' => context_module::instance($this->assignment->get_course_module()->id),
+            'courseid' => $this->assignment->get_course()->id,
             'objectid' => $submission->id,
             'other' => array(
                 'pathnamehashes' => array_keys($files),
@@ -160,12 +161,39 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         $event = \assignsubmission_onlinetext\event\assessable_uploaded::create($params);
         $event->trigger();
 
+        $groupname = null;
+        $groupid = 0;
+        // Get the group name as other fields are not transcribed in the logs and this information is important.
+        if (empty($submission->userid) && !empty($submission->groupid)) {
+            $groupname = $DB->get_field('groups', 'name', array('id' => $submission->groupid), '*', MUST_EXIST);
+            $groupid = $submission->groupid;
+        } else {
+            $params['relateduserid'] = $submission->userid;
+        }
+
+        $count = count_words($data->onlinetext);
+
+        // Unset the objectid and other field from params for use in submission events.
+        unset($params['objectid']);
+        unset($params['other']);
+        $params['other'] = array(
+            'submissionid' => $submission->id,
+            'submissionattempt' => $submission->attemptnumber,
+            'submissionstatus' => $submission->status,
+            'onlinetextwordcount' => $count,
+            'groupid' => $groupid,
+            'groupname' => $groupname
+        );
+
         if ($onlinetextsubmission) {
 
             $onlinetextsubmission->onlinetext = $data->onlinetext;
             $onlinetextsubmission->onlineformat = $data->onlinetext_editor['format'];
-
-            return $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
+            $params['objectid'] = $onlinetextsubmission->id;
+            $updatestatus = $DB->update_record('assignsubmission_onlinetext', $onlinetextsubmission);
+            $event = \assignsubmission_onlinetext\event\submission_updated::create($params);
+            $event->trigger();
+            return $updatestatus;
         } else {
 
             $onlinetextsubmission = new stdClass();
@@ -174,7 +202,11 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
             $onlinetextsubmission->submission = $submission->id;
             $onlinetextsubmission->assignment = $this->assignment->get_instance()->id;
-            return $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission) > 0;
+            $onlinetextsubmission->id = $DB->insert_record('assignsubmission_onlinetext', $onlinetextsubmission);
+            $params['objectid'] = $onlinetextsubmission->id;
+            $event = \assignsubmission_onlinetext\event\submission_created::create($params);
+            $event->trigger();
+            return $onlinetextsubmission->id > 0;
         }
     }
 
