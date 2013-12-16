@@ -186,7 +186,7 @@ while (count($parts)) {
                 'dd-plugin',
 
                 // Cache is used by moodle-core-tooltip which we include everywhere.
-                'cache',
+                'cache-base',
             );
 
             // We need to add these new parts to the beginning of the $parts list, not the end.
