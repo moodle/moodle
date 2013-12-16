@@ -15,40 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki comment deleted event.
+ * block_comments comment created event.
  *
- * @package    mod_wiki
+ * @package    block_comments
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_wiki\event;
+namespace block_comments\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki comment deleted event.
+ * block_comments comment created event.
  *
- * @package    mod_wiki
+ * @package    block_comments
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class comment_deleted extends \core\event\comment_deleted {
-
-    /**
-     * Get URL related to the action.
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/wiki/comments.php', array('pageid' => $this->other['itemid']));
-    }
-
-    /**
-     * Returns description of what happened.
-     *
-     * @return string
-     */
-    public function get_description() {
-        return 'User with id ' . $this->userid . ' deleted comment for wiki with page id ' . $this->other['itemid'];
-    }
+class comment_created extends \core\event\comment_created {
+    // No need to override any method.
 }

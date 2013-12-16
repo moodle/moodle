@@ -15,45 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Abstract comments viewed event.
+ * mod_glossary comment deleted event.
  *
- * @package    core
+ * @package    mod_glossary
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace core\event;
-
+namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Abstract comments viewed event class.
+ * mod_glossary comment deleted event.
  *
- * This class has to be extended by any event which is triggred while viewing comment.
- *
- * @package    core
+ * @package    mod_glossary
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class comments_viewed extends \core\event\base {
-
+class comment_deleted extends \core\event\comment_deleted {
     /**
-     * Init method.
+     * Get URL related to the action.
      *
-     * @return void
+     * @return \moodle_url
      */
-    protected function init() {
-        $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
-    }
-
-    /**
-     * Return localised event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('eventcommentsviewed', 'moodle');
+    public function get_url() {
+        return new \moodle_url('/mod/glossary/view.php', array('id' => $this->other['itemid']));
     }
 
     /**
@@ -62,16 +48,6 @@ abstract class comments_viewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'User with id '. $this->userid . ' viewed comments for ' . $this->component . ' with instance id ' .
-                $this->objectid;
-    }
-
-    /**
-     * Get URL related to the action.
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return $this->context->get_url();
+        return 'User with id ' . $this->userid . ' deleted comment for glossary activity with id ' . $this->other['itemid'];
     }
 }

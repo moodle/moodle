@@ -652,7 +652,11 @@ class comment {
             $newcmt->time = userdate($newcmt->timecreated, $newcmt->strftimeformat);
 
             // Trigger comment created event.
-            $eventclassname = '\\' . $this->component . '\\event\comment_created';
+            if (core_component::is_core_subsystem($this->component)) {
+                $eventclassname = '\\core\\event\\' . $this->component . '_comment_created';
+            } else {
+                $eventclassname = '\\' . $this->component . '\\event\comment_created';
+            }
             if (class_exists($eventclassname)) {
                 $event = $eventclassname::create(
                         array(
@@ -724,7 +728,11 @@ class comment {
         }
         $DB->delete_records('comments', array('id'=>$commentid));
         // Trigger comment delete event.
-        $eventclassname = '\\' . $this->component . '\\event\comment_deleted';
+        if (core_component::is_core_subsystem($this->component)) {
+            $eventclassname = '\\core\\event\\' . $this->component . '_comment_deleted';
+        } else {
+            $eventclassname = '\\' . $this->component . '\\event\comment_deleted';
+        }
         if (class_exists($eventclassname)) {
             $event = $eventclassname::create(
                     array(

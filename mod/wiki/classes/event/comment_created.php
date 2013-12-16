@@ -49,7 +49,6 @@ class comment_created extends \core\event\comment_created {
      * @return string
      */
     public function get_description() {
-        return 'User with id '. $this->userid . ' added comment for ' . $this->component . ' with page id ' .
-                $this->other['itemid'];
+        return 'User with id ' . $this->userid . ' added comment for wiki with page id ' . $this->other['itemid'];
     }
 }
