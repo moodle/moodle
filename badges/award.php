@@ -106,7 +106,7 @@ if (count($acceptedroles) > 1) {
             $pageurl = new moodle_url('/badges/award.php', array('id' => $badgeid));
             $issuerrole = new stdClass();
             $issuerrole->roleid = $role;
-            $roleselect = get_string('selectaward', 'badges') . $OUTPUT->single_select(new moodle_url($pageurl), 'role', $select, $role);
+            $roleselect = get_string('selectaward', 'badges') . $OUTPUT->single_select(new moodle_url($pageurl), 'role', $select, $role, null);
         }
     } else {
         echo $OUTPUT->header();
