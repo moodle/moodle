@@ -4997,6 +4997,74 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertEquals(2, reset($records)->count);
         $this->assertEquals(2, end($records)->count);
     }
+
+    /**
+     * Test debugging messages about invalid limit number values.
+     */
+    public function test_invalid_limits_debugging() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        // Setup test data.
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $DB->insert_record($tablename, array('course' => '1'));
+
+        // Verify that get_records_sql throws debug notices with invalid limit params.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 'invalid');
+        $this->assertDebuggingCalled("Non-numeric limitfrom parameter detected: 'invalid', did you pass the correct arguments?");
+
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, 'invalid');
+        $this->assertDebuggingCalled("Non-numeric limitnum parameter detected: 'invalid', did you pass the correct arguments?");
+
+        // Verify that get_recordset_sql throws debug notices with invalid limit params.
+        $rs = $DB->get_recordset_sql("SELECT * FROM {{$tablename}}", null, 'invalid');
+        $this->assertDebuggingCalled("Non-numeric limitfrom parameter detected: 'invalid', did you pass the correct arguments?");
+        $rs->close();
+
+        $rs = $DB->get_recordset_sql("SELECT * FROM {{$tablename}}", null, 1, 'invalid');
+        $this->assertDebuggingCalled("Non-numeric limitnum parameter detected: 'invalid', did you pass the correct arguments?");
+        $rs->close();
+
+        // Verify that some edge cases do no create debugging messages.
+        // String form of integer values.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, '1');
+        $this->assertDebuggingNotCalled();
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, '2');
+        $this->assertDebuggingNotCalled();
+        // Empty strings.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, '');
+        $this->assertDebuggingNotCalled();
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, '');
+        $this->assertDebuggingNotCalled();
+        // Null values.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, null);
+        $this->assertDebuggingNotCalled();
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, null);
+        $this->assertDebuggingNotCalled();
+
+        // Verify that empty arrays DO create debugging mesages.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, array());
+        $this->assertDebuggingCalled("Non-numeric limitfrom parameter detected: array (\n), did you pass the correct arguments?");
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, array());
+        $this->assertDebuggingCalled("Non-numeric limitnum parameter detected: array (\n), did you pass the correct arguments?");
+
+        // Verify Negative number handling:
+        // -1 is explicitly treated as 0 for historical reasons.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, -1);
+        $this->assertDebuggingNotCalled();
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, -1);
+        $this->assertDebuggingNotCalled();
+        // Any other negative values should throw debugging messages.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, -2);
+        $this->assertDebuggingCalled("Negative limitfrom parameter detected: -2, did you pass the correct arguments?");
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, -2);
+        $this->assertDebuggingCalled("Negative limitnum parameter detected: -2, did you pass the correct arguments?");
+    }
 }
 
 /**
