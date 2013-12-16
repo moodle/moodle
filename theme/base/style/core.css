@@ -799,6 +799,7 @@ body.tag .managelink {padding: 5px;}
 .corelightbox img {position:fixed;top:50%; left: 50%;}
 
 .mod-indent {display:table-cell;}
+.label .mod-indent {float:left; padding-top:20px}
 .mod-indent-1    {width:30px;}
 .mod-indent-2    {width:60px;}
 .mod-indent-3    {width:90px;}
