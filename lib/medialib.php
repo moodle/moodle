@@ -817,7 +817,7 @@ class core_media_player_qt extends core_media_player {
         <param name="pluginspage" value="http://www.apple.com/quicktime/download/" />
         <param name="src" value="$url" />
         <param name="controller" value="true" />
-        <param name="loop" value="true" />
+        <param name="loop" value="false" />
         <param name="autoplay" value="false" />
         <param name="autostart" value="false" />
         <param name="scale" value="aspect" />
@@ -826,7 +826,7 @@ class core_media_player_qt extends core_media_player {
             <param name="src" value="$url" />
             <param name="pluginurl" value="http://www.apple.com/quicktime/download/" />
             <param name="controller" value="true" />
-            <param name="loop" value="true" />
+            <param name="loop" value="false" />
             <param name="autoplay" value="false" />
             <param name="autostart" value="false" />
             <param name="scale" value="aspect" />
@@ -930,7 +930,7 @@ class core_media_player_swf extends core_media_player {
   <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="$width" height="$height">
     <param name="movie" value="$url" />
     <param name="autoplay" value="true" />
-    <param name="loop" value="true" />
+    <param name="loop" value="false" />
     <param name="controller" value="true" />
     <param name="scale" value="aspect" />
     <param name="base" value="." />
@@ -939,7 +939,7 @@ class core_media_player_swf extends core_media_player {
     <object type="application/x-shockwave-flash" data="$url" width="$width" height="$height">
       <param name="controller" value="true" />
       <param name="autoplay" value="true" />
-      <param name="loop" value="true" />
+      <param name="loop" value="false" />
       <param name="scale" value="aspect" />
       <param name="base" value="." />
       <param name="allowscriptaccess" value="never" />
