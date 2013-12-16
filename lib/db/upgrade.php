@@ -1862,6 +1862,45 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2012120307.02);
     }
 
+    if ($oldversion < 2012120307.09) {
+        // Purge stored passwords from config_log table, ideally this should be in each plugin
+        // but that would complicate backporting...
+        $items = array(
+            'core/cronremotepassword', 'core/proxypassword', 'core/smtppass', 'core/jabberpassword',
+            'enrol_database/dbpass', 'enrol_ldap/bind_pw', 'url/secretphrase');
+        foreach ($items as $item) {
+            list($plugin, $name) = explode('/', $item);
+            if ($plugin === 'core') {
+                $sql = "UPDATE {config_log}
+                           SET value = :value
+                         WHERE name = :name AND plugin IS NULL AND value <> ''";
+                $params = array('value'=>'********', 'name'=>$name);
+                $DB->execute($sql, $params);
+
+                $sql = "UPDATE {config_log}
+                           SET oldvalue = :value
+                         WHERE name = :name AND plugin IS NULL AND oldvalue <> ''";
+                $params = array('value'=>'********', 'name'=>$name);
+                $DB->execute($sql, $params);
+
+            } else {
+                $sql = "UPDATE {config_log}
+                           SET value = :value
+                         WHERE name = :name AND plugin = :plugin AND value <> ''";
+                $params = array('value'=>'********', 'name'=>$name, 'plugin'=>$plugin);
+                $DB->execute($sql, $params);
+
+                $sql = "UPDATE {config_log}
+                           SET oldvalue = :value
+                         WHERE name = :name AND plugin = :plugin AND oldvalue <> ''";
+                $params = array('value'=>'********', 'name'=>$name, 'plugin'=>$plugin);
+                $DB->execute($sql, $params);
+            }
+        }
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2012120307.09);
+    }
+
 
     return true;
 }
