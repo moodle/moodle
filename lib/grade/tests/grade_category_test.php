@@ -41,6 +41,7 @@ class grade_category_testcase extends grade_base_testcase {
         $this->sub_test_grade_category_aggregate_grades();
         $this->sub_test_grade_category_apply_limit_rules();
         $this->sub_test_grade_category_is_aggregationcoef_used();
+        $this->sub_test_grade_category_aggregation_uses_aggregationcoef();
         $this->sub_test_grade_category_fetch_course_tree();
         $this->sub_test_grade_category_get_children();
         $this->sub_test_grade_category_load_grade_item();
@@ -67,6 +68,8 @@ class grade_category_testcase extends grade_base_testcase {
 
         //do this last as adding a second course category messes up the data
         $this->sub_test_grade_category_insert_course_category();
+        $this->sub_test_grade_category_is_extracredit_used();
+        $this->sub_test_grade_category_aggregation_uses_extracredit();
     }
 
     //adds 3 new grade categories at various depths
@@ -534,11 +537,43 @@ class grade_category_testcase extends grade_base_testcase {
 
     }
 
-    /**
-     * TODO implement
-     */
     protected function sub_test_grade_category_is_aggregationcoef_used() {
+        $category = new grade_category();
+        // Following use aggregationcoef.
+        $category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $this->assertTrue($category->is_aggregationcoef_used());
+        $category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2;
+        $this->assertTrue($category->is_aggregationcoef_used());
+        $category->aggregation = GRADE_AGGREGATE_EXTRACREDIT_MEAN;
+        $this->assertTrue($category->is_aggregationcoef_used());
+        $category->aggregation = GRADE_AGGREGATE_SUM;
+        $this->assertTrue($category->is_aggregationcoef_used());
 
+        // Following don't use aggregationcoef.
+        $category->aggregation = GRADE_AGGREGATE_MAX;
+        $this->assertFalse($category->is_aggregationcoef_used());
+        $category->aggregation = GRADE_AGGREGATE_MEAN;
+        $this->assertFalse($category->is_aggregationcoef_used());
+        $category->aggregation = GRADE_AGGREGATE_MEDIAN;
+        $this->assertFalse($category->is_aggregationcoef_used());
+        $category->aggregation = GRADE_AGGREGATE_MIN;
+        $this->assertFalse($category->is_aggregationcoef_used());
+        $category->aggregation = GRADE_AGGREGATE_MODE;
+        $this->assertFalse($category->is_aggregationcoef_used());
+    }
+
+    protected function sub_test_grade_category_aggregation_uses_aggregationcoef() {
+
+        $this->assertTrue(grade_category::aggregation_uses_aggregationcoef(GRADE_AGGREGATE_WEIGHTED_MEAN));
+        $this->assertTrue(grade_category::aggregation_uses_aggregationcoef(GRADE_AGGREGATE_WEIGHTED_MEAN2));
+        $this->assertTrue(grade_category::aggregation_uses_aggregationcoef(GRADE_AGGREGATE_EXTRACREDIT_MEAN));
+        $this->assertTrue(grade_category::aggregation_uses_aggregationcoef(GRADE_AGGREGATE_SUM));
+
+        $this->assertFalse(grade_category::aggregation_uses_aggregationcoef(GRADE_AGGREGATE_MAX));
+        $this->assertFalse(grade_category::aggregation_uses_aggregationcoef(GRADE_AGGREGATE_MEAN));
+        $this->assertFalse(grade_category::aggregation_uses_aggregationcoef(GRADE_AGGREGATE_MEDIAN));
+        $this->assertFalse(grade_category::aggregation_uses_aggregationcoef(GRADE_AGGREGATE_MIN));
+        $this->assertFalse(grade_category::aggregation_uses_aggregationcoef(GRADE_AGGREGATE_MODE));
     }
 
     protected function sub_test_grade_category_fetch_course_tree() {
@@ -723,5 +758,44 @@ class grade_category_testcase extends grade_base_testcase {
         $grade->rawgrade = rand(0, 1000) / 1000;
         $grade->insert();
         return $grade->rawgrade;
+    }
+
+    protected function sub_test_grade_category_is_extracredit_used() {
+        $category = new grade_category();
+        // Following use aggregationcoef.
+        $category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN2;
+        $this->assertTrue($category->is_extracredit_used());
+        $category->aggregation = GRADE_AGGREGATE_EXTRACREDIT_MEAN;
+        $this->assertTrue($category->is_extracredit_used());
+        $category->aggregation = GRADE_AGGREGATE_SUM;
+        $this->assertTrue($category->is_extracredit_used());
+
+        // Following don't use aggregationcoef.
+        $category->aggregation = GRADE_AGGREGATE_WEIGHTED_MEAN;
+        $this->assertFalse($category->is_extracredit_used());
+        $category->aggregation = GRADE_AGGREGATE_MAX;
+        $this->assertFalse($category->is_extracredit_used());
+        $category->aggregation = GRADE_AGGREGATE_MEAN;
+        $this->assertFalse($category->is_extracredit_used());
+        $category->aggregation = GRADE_AGGREGATE_MEDIAN;
+        $this->assertFalse($category->is_extracredit_used());
+        $category->aggregation = GRADE_AGGREGATE_MIN;
+        $this->assertFalse($category->is_extracredit_used());
+        $category->aggregation = GRADE_AGGREGATE_MODE;
+        $this->assertFalse($category->is_extracredit_used());
+    }
+
+    protected function sub_test_grade_category_aggregation_uses_extracredit() {
+
+        $this->assertTrue(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_WEIGHTED_MEAN2));
+        $this->assertTrue(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_EXTRACREDIT_MEAN));
+        $this->assertTrue(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_SUM));
+
+        $this->assertFalse(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_WEIGHTED_MEAN));
+        $this->assertFalse(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_MAX));
+        $this->assertFalse(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_MEAN));
+        $this->assertFalse(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_MEDIAN));
+        $this->assertFalse(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_MIN));
+        $this->assertFalse(grade_category::aggregation_uses_extracredit(GRADE_AGGREGATE_MODE));
     }
 }
