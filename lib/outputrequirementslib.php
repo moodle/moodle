@@ -240,6 +240,7 @@ class page_requirements_manager {
             $this->YUI_config->debug = true;
         } else {
             $this->yui3loader->filter = null;
+            $this->YUI_config->groups['moodle']['filter'] = null;
             $this->YUI_config->debug = false;
         }
 
