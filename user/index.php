@@ -197,7 +197,7 @@
             unset($courselist[SITEID]);
             $courselist = array(SITEID => format_string($SITE->shortname, true, array('context' => $systemcontext))) + $courselist;
         }
-        $select = new single_select($popupurl, 'id', $courselist, $course->id, array(''=>'choosedots'), 'courseform');
+        $select = new single_select($popupurl, 'id', $courselist, $course->id, null, 'courseform');
         $select->set_label(get_string('mycourses'));
         $controlstable->data[0]->cells[] = $OUTPUT->render($select);
     }
