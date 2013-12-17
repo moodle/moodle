@@ -11,6 +11,12 @@ information provided here is intended especially for developers.
 * mod_page\event\instances_list_viewed has been deprecated. Please use mod_page\event\course_module_instance_list_viewed instead.
 * The constants FRONTPAGECOURSELIST, FRONTPAGETOPICONLY & FRONTPAGECOURSELIMIT have been removed.
 
+YUI:
+  * The lightbox attribute for moodle-core-notification-dialogue has been
+    deprecated and replaced by the modal attribute. This was actually
+    changed in Moodle 2.2, but has only been marked as deprecated now. It
+    will be removed in Moodle 2.9.
+
 === 2.6 ===
 
 * Use new methods from core_component class instead of get_core_subsystems(), get_plugin_types(),

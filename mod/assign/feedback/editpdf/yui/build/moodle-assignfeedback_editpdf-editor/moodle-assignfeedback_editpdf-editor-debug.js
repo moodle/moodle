@@ -1617,7 +1617,6 @@ DROPDOWN = function(config) {
     config.draggable = false;
     config.centered = false;
     config.width = 'auto';
-    config.lightbox = false;
     config.visible = false;
     config.footerContent = '';
     DROPDOWN.superclass.constructor.apply(this, [config]);
@@ -1696,6 +1695,23 @@ Y.extend(DROPDOWN, M.core.dialogue, {
          */
         buttonNode : {
             value : null
+        }
+    }
+});
+
+Y.Base.modifyAttrs(DROPDOWN, {
+    /**
+     * Whether the widget should be modal or not.
+     *
+     * Moodle override: We override this for commentsearch to force it always false.
+     *
+     * @attribute Modal
+     * @type Boolean
+     * @default false
+     */
+    modal: {
+        getter: function() {
+            return false;
         }
     }
 });
@@ -2063,7 +2079,6 @@ COMMENTSEARCH = function(config) {
     config.draggable = false;
     config.centered = true;
     config.width = '400px';
-    config.lightbox = true;
     config.visible = false;
     config.headerContent = M.util.get_string('searchcomments', 'assignfeedback_editpdf');
     config.footerContent = '';
@@ -2195,6 +2210,23 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
             value : null
         }
 
+    }
+});
+
+Y.Base.modifyAttrs(COMMENTSEARCH, {
+    /**
+     * Whether the widget should be modal or not.
+     *
+     * Moodle override: We override this for commentsearch to force it always true.
+     *
+     * @attribute Modal
+     * @type Boolean
+     * @default true
+     */
+    modal: {
+        getter: function() {
+            return true;
+        }
     }
 });
 
