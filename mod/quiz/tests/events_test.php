@@ -610,4 +610,40 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
+
+    /**
+     * Test the question manually graded event.
+     *
+     * There is no external API for manually grading a question, so the unit test will simply
+     * create and trigger the event and ensure the event data is returned as expected.
+     */
+    public function test_question_manually_graded() {
+        list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
+
+        $params = array(
+            'objectid' => 1,
+            'courseid' => $quizobj->get_courseid(),
+            'context' => context_module::instance($quizobj->get_cmid()),
+            'other' => array(
+                'quizid' => $quizobj->get_quizid(),
+                'attemptid' => 2,
+                'slot' => 3
+            )
+        );
+        $event = \mod_quiz\event\question_manually_graded::create($params);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_quiz\event\question_manually_graded', $event);
+        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $expected = array($quizobj->get_courseid(), 'quiz', 'manualgrade', 'comment.php?attempt=2&slot=3',
+            $quizobj->get_quizid(), $quizobj->get_cmid());
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
 }
