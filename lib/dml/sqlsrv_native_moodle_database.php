@@ -979,6 +979,10 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $dataobject = (array)$dataobject;
 
         $columns = $this->get_columns($table);
+        if (empty($columns)) {
+            throw new dml_exception('ddltablenotexist', $table);
+        }
+
         $cleaned = array ();
 
         foreach ($dataobject as $field => $value) {

@@ -2253,6 +2253,14 @@ class core_dml_testcase extends database_driver_testcase {
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
+
+        // Try to insert a record into a non-existent table. dml_exception expected.
+        try {
+            $DB->insert_record('nonexistenttable', $record, true);
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
     }
 
     public function test_import_record() {
