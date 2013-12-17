@@ -180,56 +180,80 @@ function behat_clean_init_config() {
 function behat_check_config_vars() {
     global $CFG;
 
-    // CFG->behat_prefix must be set and with value different than CFG->prefix and phpunit_prefix.
-    if (empty($CFG->behat_prefix) ||
-           ($CFG->behat_prefix == $CFG->prefix) ||
-           (!empty($CFG->phpunit_prefix) && $CFG->behat_prefix == $CFG->phpunit_prefix)) {
+    // Verify prefix value.
+    if (empty($CFG->behat_prefix)) {
         behat_error(BEHAT_EXITCODE_CONFIG,
-            'Define $CFG->behat_prefix in config.php with a value different than $CFG->prefix and $CFG->phpunit_prefix');
+            'Define $CFG->behat_prefix in config.php');
+    }
+    if (!empty($CFG->prefix) and $CFG->behat_prefix == $CFG->prefix) {
+        behat_error(BEHAT_EXITCODE_CONFIG,
+            '$CFG->behat_prefix in config.php must be different from $CFG->prefix');
+    }
+    if (!empty($CFG->phpunit_prefix) and $CFG->behat_prefix == $CFG->phpunit_prefix) {
+        behat_error(BEHAT_EXITCODE_CONFIG,
+            '$CFG->behat_prefix in config.php must be different from $CFG->phpunit_prefix');
     }
 
-    // $CFG->behat_wwwroot must be different than CFG->wwwroot if it is set, it may not be set as
-    // it can take the default value and we should also consider that will have the same value than
-    // $CFG->wwwroot if $CFG->behat_switchcompletely is set.
-    if (!empty($CFG->behat_wwwroot) && $CFG->behat_wwwroot == $CFG->wwwroot && empty($CFG->behat_switchcompletely)) {
+    // Verify behat wwwroot value.
+    if (empty($CFG->behat_wwwroot)) {
         behat_error(BEHAT_EXITCODE_CONFIG,
-            'Define $CFG->behat_wwwroot in config.php with a value different than $CFG->wwwroot');
+            'Define $CFG->behat_wwwroot in config.php');
+    }
+    if (!empty($CFG->wwwroot) and $CFG->behat_wwwroot == $CFG->wwwroot) {
+        behat_error(BEHAT_EXITCODE_CONFIG,
+            '$CFG->behat_wwwroot in config.php must be different from $CFG->wwwroot');
     }
 
-    // CFG->behat_dataroot must be set and with value different than CFG->dataroot and phpunit_dataroot.
-    $CFG->dataroot = realpath($CFG->dataroot);
-    if (!empty($CFG->behat_dataroot) && is_dir($CFG->behat_dataroot)) {
-        $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
-    }
-    if (empty($CFG->behat_dataroot) ||
-           ($CFG->behat_dataroot == $CFG->dataroot) ||
-           (!empty($CFG->phpunit_dataroot) && is_dir($CFG->phpunit_dataroot)
-                && $CFG->behat_dataroot == realpath($CFG->phpunit_dataroot))) {
+    // Verify behat dataroot value.
+    if (empty($CFG->behat_dataroot)) {
         behat_error(BEHAT_EXITCODE_CONFIG,
-            'Define $CFG->behat_dataroot in config.php with a value different than $CFG->dataroot and $CFG->phpunit_dataroot');
+            'Define $CFG->behat_dataroot in config.php');
     }
-
+    if (!file_exists($CFG->behat_dataroot)) {
+        $permissions = isset($CFG->directorypermissions) ? $CFG->directorypermissions : 02777;
+        if (!mkdir($CFG->behat_dataroot, $permissions, true)) {
+            behat_error(BEHAT_EXITCODE_PERMISSIONS, '$CFG->behat_dataroot directory can not be created');
+        }
+    }
+    $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
+    if (empty($CFG->behat_dataroot) or !is_dir($CFG->behat_dataroot) or !is_writable($CFG->behat_dataroot)) {
+        behat_error(BEHAT_EXITCODE_CONFIG,
+            '$CFG->behat_dataroot in config.php must point to an existing writable directory');
+    }
+    if (!empty($CFG->dataroot) and $CFG->behat_dataroot == realpath($CFG->dataroot)) {
+        behat_error(BEHAT_EXITCODE_CONFIG,
+            '$CFG->behat_dataroot in config.php must be different from $CFG->dataroot');
+    }
+    if (!empty($CFG->phpunit_dataroot) and $CFG->behat_dataroot == realpath($CFG->phpunit_dataroot)) {
+        behat_error(BEHAT_EXITCODE_CONFIG,
+            '$CFG->behat_dataroot in config.php must be different from $CFG->phpunit_dataroot');
+    }
 }
 
 /**
- * Returns a URL based on the priorities between $CFG->behat_* vars.
- *
- * 1.- Switch completely wins and overwrites behat_wwwroot
- * 2.- behat_wwwroot alternatively
- * 3.- http://localhost:8000 if there is nothing else
- *
- * @return string
+ * Should we switch to the test site data?
+ * @return bool
  */
-function behat_get_wwwroot() {
+function behat_is_test_site() {
     global $CFG;
 
-    if (!empty($CFG->behat_switchcompletely)) {
-        return $CFG->wwwroot;
-    } else if (!empty($CFG->behat_wwwroot)) {
-        return $CFG->behat_wwwroot;
+    if (defined('BEHAT_UTIL')) {
+        // This is the admin tool that installs/drops the test site install.
+        return true;
+    }
+    if (defined('BEHAT_TEST')) {
+        // This is the main vendor/bin/behat script.
+        return true;
+    }
+    if (empty($CFG->behat_wwwroot)) {
+        return false;
+    }
+    if (isset($_SERVER['REMOTE_ADDR']) and behat_is_requested_url($CFG->behat_wwwroot)) {
+        // Something is accessing the web server like a real browser.
+        return true;
     }
 
-    return 'http://localhost:8000';
+    return false;
 }
 
 /**
