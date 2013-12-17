@@ -27,6 +27,8 @@ JavaSript:
     * The findChildNodes global function has been deprecated. Y.all should
       be used instead.
 
+* New locking api and admin settings to configure the system locking type.
+
 === 2.6 ===
 
 * Use new methods from core_component class instead of get_core_subsystems(), get_plugin_types(),
