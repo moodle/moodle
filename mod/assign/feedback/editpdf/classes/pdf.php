@@ -77,6 +77,8 @@ class pdf extends \FPDI {
      */
     public function combine_pdfs($pdflist, $outfilename) {
 
+        raise_memory_limit(MEMORY_EXTRA);
+
         $this->setPageUnit('pt');
         $this->setPrintHeader(false);
         $this->setPrintFooter(false);
@@ -122,6 +124,8 @@ class pdf extends \FPDI {
      * @return int the number of pages in the PDF
      */
     public function load_pdf($filename) {
+        raise_memory_limit(MEMORY_EXTRA);
+
         $this->setPageUnit('pt');
         $this->scale = 72.0 / 100.0;
         $this->SetFont('helvetica', '', 16.0 * $this->scale);
@@ -133,6 +137,7 @@ class pdf extends \FPDI {
         $this->setPrintFooter(false);
         $this->pagecount = $this->setSourceFile($filename);
         $this->filename = $filename;
+
         return $this->pagecount;
     }
 
