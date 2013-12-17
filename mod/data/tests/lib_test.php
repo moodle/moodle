@@ -104,4 +104,129 @@ class data_lib_testcase extends advanced_testcase {
         // Make sure the function returns true on a successful deletion.
         $this->assertTrue($result);
     }
+
+    /**
+     * Test comment_created event.
+     */
+    public function test_data_comment_created_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/comment/lib.php');
+
+        $this->resetAfterTest();
+
+        // Create a record for deleting.
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->name = "Mod data delete test";
+        $record->intro = "Some intro of some sort";
+        $record->comments = 1;
+
+        $module = $this->getDataGenerator()->create_module('data', $record);
+        $field = data_get_field_new('text', $module);
+
+        $fielddetail = new stdClass();
+        $fielddetail->name = 'Name';
+        $fielddetail->description = 'Some name';
+
+        $field->define_field($fielddetail);
+        $field->insert_field();
+        $recordid = data_add_record($module);
+
+        $datacontent = array();
+        $datacontent['fieldid'] = $field->field->id;
+        $datacontent['recordid'] = $recordid;
+        $datacontent['content'] = 'Asterix';
+
+        $contentid = $DB->insert_record('data_content', $datacontent);
+        $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
+
+        $context = context_module::instance($module->id);
+        $cmt = new stdClass();
+        $cmt->context = $context;
+        $cmt->course = $course;
+        $cmt->cm = $cm;
+        $cmt->area = 'database_entry';
+        $cmt->itemid = $contentid;
+        $cmt->showcount = true;
+        $cmt->component = 'mod_data';
+        $comment = new comment($cmt);
+
+        // Triggering and capturing the event.
+        $sink = $this->redirectEvents();
+        $comment->add('New comment');
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_data\event\comment_created', $event);
+        $this->assertEquals($context, $event->get_context());
+        $url = new moodle_url('/mod/data/view.php', array('id' => $module->id));
+        $this->assertEquals($url, $event->get_url());
+    }
+
+    /**
+     * Test comment_deleted event.
+     */
+    public function test_data_comment_deleted_event() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/comment/lib.php');
+
+        $this->resetAfterTest();
+
+        // Create a record for deleting.
+        $this->setAdminUser();
+        $course = $this->getDataGenerator()->create_course();
+        $record = new stdClass();
+        $record->course = $course->id;
+        $record->name = "Mod data delete test";
+        $record->intro = "Some intro of some sort";
+        $record->comments = 1;
+
+        $module = $this->getDataGenerator()->create_module('data', $record);
+        $field = data_get_field_new('text', $module);
+
+        $fielddetail = new stdClass();
+        $fielddetail->name = 'Name';
+        $fielddetail->description = 'Some name';
+
+        $field->define_field($fielddetail);
+        $field->insert_field();
+        $recordid = data_add_record($module);
+
+        $datacontent = array();
+        $datacontent['fieldid'] = $field->field->id;
+        $datacontent['recordid'] = $recordid;
+        $datacontent['content'] = 'Asterix';
+
+        $contentid = $DB->insert_record('data_content', $datacontent);
+        $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
+
+        $context = context_module::instance($module->id);
+        $cmt = new stdClass();
+        $cmt->context = $context;
+        $cmt->course = $course;
+        $cmt->cm = $cm;
+        $cmt->area = 'database_entry';
+        $cmt->itemid = $contentid;
+        $cmt->showcount = true;
+        $cmt->component = 'mod_data';
+        $comment = new comment($cmt);
+        $newcomment = $comment->add('New comment 1');
+
+        // Triggering and capturing the event.
+        $sink = $this->redirectEvents();
+        $comment->delete($newcomment->id);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Checking that the event contains the expected values.
+        $this->assertInstanceOf('\mod_data\event\comment_deleted', $event);
+        $this->assertEquals($context, $event->get_context());
+        $url = new moodle_url('/mod/data/view.php', array('id' => $module->id));
+        $this->assertEquals($url, $event->get_url());
+    }
 }
