@@ -9,6 +9,7 @@ information provided here is intended especially for developers.
 * mod_choice\event\instances_list_viewed has been deprecated. Please use mod_choice\event\course_module_instance_list_viewed instead.
 * mod_feedback\event\instances_list_viewed has been deprecated. Please use mod_feedback\event\course_module_instance_list_viewed instead.
 * mod_page\event\instances_list_viewed has been deprecated. Please use mod_page\event\course_module_instance_list_viewed instead.
+* The constants FRONTPAGECOURSELIST, FRONTPAGETOPICONLY & FRONTPAGECOURSELIMIT have been removed.
 
 === 2.6 ===
 
