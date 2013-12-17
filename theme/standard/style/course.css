@@ -85,9 +85,6 @@
 .coursebox .content .coursefile,
 .coursebox.remotecoursebox .remotecourseinfo {font-size:0.9em;}
 
-.course_category_tree .controls {margin-bottom:5px;text-align:right;float:right;}
-.course_category_tree .controls div {padding-right:2em;font-size:75%;}
-
 .course_category_tree .category >.info {background-image:url([[pix:theme|hgradient]]);background-repeat: repeat-x;background-color:#e1e1df;border:1px solid #ddd;margin:3px 0;}
 .course_category_tree.frontpage-category-names .category >.info {background:none;border:none;margin:0;}
 

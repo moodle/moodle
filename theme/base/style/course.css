@@ -153,13 +153,9 @@ li.section.hidden span.commands a.editing_show {cursor:default;}
 
 .course_category_tree .category .numberofcourse {font-size: 0.85em;}
 
-.course_category_tree .controls {visibility: hidden;}
-.course_category_tree .controls div {display:inline;cursor:pointer;}
-.jsenabled .course_category_tree .controls {visibility: visible;}
-
 .course_category_tree .category>.info .name {background-image:url([[pix:moodle|t/collapsed_empty]]);background-repeat: no-repeat;background-position:center left;}
 .dir-rtl .course_category_tree .category>.info .name {background-image:url([[pix:moodle|t/collapsed_empty_rtl]]);background-position:center right;}
-.course_category_tree .category.with_children>.info .name {background-image:url([[pix:moodle|t/expanded]]);}
+.course_category_tree .category.with_children>.info .name {background-image:url([[pix:moodle|t/expanded]]);cursor: pointer;}
 .course_category_tree .category.with_children.collapsed>.info .name {background-image:url([[pix:moodle|t/collapsed]]);}
 .dir-rtl .course_category_tree .category.with_children.collapsed>.info .name {background-image:url([[pix:moodle|t/collapsed_rtl]]);}
 .course_category_tree .category.collapsed>.content {display:none;}
