@@ -644,6 +644,29 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Checks that the specified activity's action menu is open.
+     *
+     * @Then /^"(?P<activity_name_string>(?:[^"]|\\")*)" actions menu should be open$/
+     * @throws DriverException The step is not available when Javascript is disabled
+     * @param string $activityname
+     */
+    public function actions_menu_should_be_open($activityname) {
+
+        if (!$this->running_javascript()) {
+            throw new DriverException('Activities actions menu not available when Javascript is disabled');
+        }
+
+        // If it is already closed we do nothing.
+        $activitynode = $this->get_activity_node($activityname);
+        $classes = array_flip(explode(' ', $activitynode->getAttribute('class')));
+        if (empty($classes['action-menu-shown'])) {
+            throw new ExpectationException(sprintf("The action menu for '%s' is not open", $activityname), $this->getSession());
+        }
+
+        return;
+    }
+
+    /**
      * Indents to the right the activity or resource specified by it's name. Editing mode should be on.
      *
      * @Given /^I indent right "(?P<activity_name_string>(?:[^"]|\\")*)" activity$/
