@@ -139,10 +139,6 @@ class assign_submission_onlinetext extends assign_submission_plugin {
 
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
 
-        $text = format_text($data->onlinetext,
-                            $data->onlinetext_editor['format'],
-                            array('context'=>$this->assignment->get_context()));
-
         $fs = get_file_storage();
 
         $files = $fs->get_area_files($this->assignment->get_context()->id,
@@ -157,7 +153,8 @@ class assign_submission_onlinetext extends assign_submission_plugin {
             'objectid' => $submission->id,
             'other' => array(
                 'pathnamehashes' => array_keys($files),
-                'content' => trim($text)
+                'content' => trim($data->onlinetext),
+                'format' => $data->onlinetext_editor['format']
             )
         );
         $event = \assignsubmission_onlinetext\event\assessable_uploaded::create($params);
@@ -423,12 +420,9 @@ class assign_submission_onlinetext extends assign_submission_plugin {
         // Format the info for each submission plugin (will be logged).
         $onlinetextsubmission = $this->get_onlinetext_submission($submission->id);
         $onlinetextloginfo = '';
-        $text = format_text($onlinetextsubmission->onlinetext,
-                            $onlinetextsubmission->onlineformat,
-                            array('context'=>$this->assignment->get_context()));
         $onlinetextloginfo .= get_string('numwordsforlog',
                                          'assignsubmission_onlinetext',
-                                         count_words($text));
+                                         count_words($onlinetextsubmission->onlinetext));
 
         return $onlinetextloginfo;
     }
