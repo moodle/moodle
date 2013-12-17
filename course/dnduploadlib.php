@@ -729,15 +729,15 @@ class dndupload_ajax_processor {
         $resp->icon = $mod->get_icon_url()->out();
         $resp->name = $mod->name;
         if ($mod->has_view()) {
-            $resp->link = $mod->get_url()->out();
+            $resp->link = $mod->url->out();
         } else {
             $resp->link = null;
         }
-        $resp->content = $mod->get_content();
+        $resp->content = $mod->content;
         $resp->elementid = 'module-'.$mod->id;
         $actions = course_get_cm_edit_actions($mod, 0, $mod->sectionnum);
         $resp->commands = ' '. $courserenderer->course_section_cm_edit_actions($actions, $mod);
-        $resp->onclick = $mod->get_on_click();
+        $resp->onclick = $mod->onclick;
         $resp->visible = $mod->visible;
 
         // If using groupings, then display grouping name.
