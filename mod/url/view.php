@@ -47,7 +47,14 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/url:view', $context);
 
-add_to_log($course->id, 'url', 'view', 'view.php?id='.$cm->id, $url->id, $cm->id);
+$params = array(
+    'context' => $context,
+    'objectid' => $url->id,
+    'courseid' => $course->id
+);
+$event = \mod_url\event\course_module_viewed::create($params);
+$event->add_record_snapshot('url', $url);
+$event->trigger();
 
 // Update 'viewed' state if required by completion system
 $completion = new completion_info($course);
