@@ -3,6 +3,7 @@ information provided here is intended especially for developers.
 
 === 2.7 ===
 
+DEPRECATIONS:
 * Abstract class \core\event\course_module_instances_list_viewed is deprecated now, use \core\event\instances_list_viewed instead.
 * mod_book\event\instances_list_viewed has been deprecated. Please use mod_book\event\course_module_instance_list_viewed instead.
 * mod_chat\event\instances_list_viewed has been deprecated. Please use mod_chat\event\course_module_instance_list_viewed instead.
@@ -16,6 +17,10 @@ YUI:
     deprecated and replaced by the modal attribute. This was actually
     changed in Moodle 2.2, but has only been marked as deprecated now. It
     will be removed in Moodle 2.9.
+
+JavaSript:
+    * The findChildNodes global function has been deprecated. Y.all should
+      be used instead.
 
 === 2.6 ===
 
