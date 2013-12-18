@@ -35,6 +35,13 @@ require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
 function theme_iomad_process_css($css, $theme) {
     global $CFG;
 
+    // Set the background image for the logo
+    $logo = $theme->setting_file_url('logo', 'logo');
+    if (empty($logo)) {
+        $logo = $CFG->wwwroot.'/theme/iomad/pix/iomad_logo.png';
+    }
+    $css = theme_iomad_set_logo($css, $logo);
+
     // Set custom CSS.
     if (!empty($theme->settings->customcss)) {
         $customcss = $theme->settings->customcss;
@@ -43,9 +50,30 @@ function theme_iomad_process_css($css, $theme) {
     }
     $css = theme_iomad_set_customcss($css, $customcss);
 
+    $css = theme_iomad_process_company_css($css, $theme);
+
     // deal with webfonts
     $tag = '[[font:theme|astonish.woff]]';
     $replacement = $CFG->wwwroot.'/theme/iomad/fonts/astonish.woff';
+    $css = str_replace($tag, $replacement, $css);
+
+    return $css;
+}
+
+/**
+ * Adds the logo to CSS.
+ *
+ * @param string $css The CSS.
+ * @param string $logo The URL of the logo.
+ * @return string The parsed CSS
+ */
+function theme_iomad_set_logo($css, $logo) {
+    $tag = '[[setting:logo]]';
+    $replacement = $logo;
+    if (is_null($replacement)) {
+        $replacement = '';
+    }
+
     $css = str_replace($tag, $replacement, $css);
 
     return $css;
@@ -119,31 +147,14 @@ function theme_iomad_get_html_for_settings(renderer_base $output, moodle_page $p
         $return->navbarclass .= ' navbar-inverse';
     }
 
-    // get logos
-    $theme = $page->theme;
-    $logo = $theme->setting_file_url('logo', 'logo');
-    if (empty($logo)) {
-        $logo = $CFG->wwwroot.'/theme/iomad/pix/iomad_logo.png';
-    }
-    $clientlogo = '';
-    if ($companyid = iomad::is_company_user()) {
-        $context = get_context_instance(CONTEXT_SYSTEM);
-        if ($files = $DB->get_records('files', array('contextid' => $context->id, 'component' => 'theme_iomad', 'filearea' => 'logo', 'itemid' => $companyid))) {
-            foreach ($files as $file) {
-                if ($file->filename != '.') {
-                    $clientlogo = $CFG->wwwroot . "/pluginfile.php/{$context->id}/theme_iomad/logo/$companyid/{$file->filename}";
-                }
-            }
-        }
-    }
-
-    $return->heading = '<div id="sitelogo">' . 
-        '<a href="' . $CFG->wwwroot . '" ><img src="' . $logo . '" /></a></div>';
-    $return->heading .= '<div id="siteheading">' . $output->page_heading() . '</div>';
-    if ($clientlogo) {
-        $return->heading .= '<div id="clientlogo">' . 
-            '<a href="' . $CFG->wwwroot . '" ><img src="' . $clientlogo . '" /></a></div>';
-    }
+    //if (!empty($page->theme->settings->logo)) {
+        $return->heading = "<div id='sitelogo'>".html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'logo'))."</div>";
+        $return->heading .= "<div id='siteheading'>".$output->page_heading()."</div>";
+        $return->heading .= "<div id='clientlogo'>".html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'clientlogo'))."</div>";
+    /*} else {
+        $return->heading = $output->page_heading();
+        $return->heading .= html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'clientlogo'));
+    }*/
 
     $return->footnote = '';
     if (!empty($page->theme->settings->footnote)) {
@@ -190,6 +201,16 @@ function theme_iomad_process_company_css($css, $theme) {
     company_user::load_company();
 
     if (isset($USER->company)) {
+        // prepare logo fullpath
+        $tag = '[[setting:clientlogo]]';
+        $context = get_context_instance(CONTEXT_SYSTEM);
+        $logo = file_rewrite_pluginfile_urls('@@PLUGINFILE@@/[[company:logo_filename]]',
+                                             'pluginfile.php',
+                                             $context->id,
+                                             'theme_iomad',
+                                             'logo',
+                                             $USER->company->id);
+        $css = str_replace($tag, $logo, $css);
 
         // replace company properties
         foreach($USER->company as $key => $value) {

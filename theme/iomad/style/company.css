@@ -3,10 +3,8 @@
 .header, .navbar { background: [[company:bgcolor_header]]; }
 .block .content { background: [[company:bgcolor_content]]; }
 
-<<<<<<< HEAD
 h1.headermain { background: url([[logo]]) no-repeat 0 50%; padding-left: 100px; }
-h1.headermain:before { content: '[[company:name]] - '; }
-=======
+
 a.clientlogo {
     background: url([[setting:clientlogo]]) no-repeat 0 0;
     display: block;
@@ -16,4 +14,3 @@ a.clientlogo {
     padding: 0;
     width: 100%;
 }
->>>>>>> 947ab77... IOMAD: theme customisations for company were not working.
