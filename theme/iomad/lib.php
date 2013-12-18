@@ -20,6 +20,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once($CFG->dirroot.'/local/iomad/lib/user.php');
+require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
+
 /**
  * Parses CSS before it is cached.
  *
@@ -32,8 +35,11 @@
 function theme_iomad_process_css($css, $theme) {
     global $CFG;
 
-    // Set the background image for the logo.
+    // Set the background image for the logo
     $logo = $theme->setting_file_url('logo', 'logo');
+    if (empty($logo)) {
+        $logo = $CFG->wwwroot.'/theme/iomad/pix/iomad_logo.png';
+    }
     $css = theme_iomad_set_logo($css, $logo);
 
     // Set custom CSS.
@@ -43,6 +49,13 @@ function theme_iomad_process_css($css, $theme) {
         $customcss = null;
     }
     $css = theme_iomad_set_customcss($css, $customcss);
+
+    $css = theme_iomad_process_company_css($css, $theme);
+
+    // deal with webfonts
+    $tag = '[[font:theme|astonish.woff]]';
+    $replacement = $CFG->wwwroot.'/theme/iomad/fonts/astonish.woff';
+    $css = str_replace($tag, $replacement, $css);
 
     return $css;
 }
@@ -125,11 +138,14 @@ function theme_iomad_get_html_for_settings(renderer_base $output, moodle_page $p
         $return->navbarclass .= ' navbar-inverse';
     }
 
-    if (!empty($page->theme->settings->logo)) {
-        $return->heading = html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'logo'));
-    } else {
+    //if (!empty($page->theme->settings->logo)) {
+        $return->heading = "<div id='sitelogo'>".html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'logo'))."</div>";
+        $return->heading .= "<div id='siteheading'>".$output->page_heading()."</div>";
+        $return->heading .= "<div id='clientlogo'>".html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'clientlogo'))."</div>";
+    /*} else {
         $return->heading = $output->page_heading();
-    }
+        $return->heading .= html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'clientlogo'));
+    }*/
 
     $return->footnote = '';
     if (!empty($page->theme->settings->footnote)) {
@@ -161,4 +177,40 @@ function iomad_set_logo() {
  */
 function iomad_set_customcss() {
     throw new coding_exception('Please call theme_'.__FUNCTION__.' instead of '.__FUNCTION__);
+}
+
+/* perficio_process_css  - Processes perficio specific tags in CSS files
+ *
+ * [[logo]] gets replaced with the full url to the company logo
+ * [[company:$property]] gets replaced with the property of the $USER->company object
+ *     available properties are: id, shortname, name, logo_filename + the fields in company->cssfields, currently  bgcolor_header and bgcolor_content
+ *
+ */
+function theme_iomad_process_company_css($css, $theme) {
+    global $USER;
+
+    company_user::load_company();
+
+    if (isset($USER->company)) {
+        // prepare logo fullpath
+        $tag = '[[setting:clientlogo]]';
+        $context = get_context_instance(CONTEXT_SYSTEM);
+        $logo = file_rewrite_pluginfile_urls('@@PLUGINFILE@@/[[company:logo_filename]]',
+                                             'pluginfile.php',
+                                             $context->id,
+                                             'theme_iomad',
+                                             'logo',
+                                             $USER->company->id);
+        $css = str_replace($tag, $logo, $css);
+
+        // replace company properties
+        foreach($USER->company as $key => $value) {
+            if (isset($value)) {
+                $css = preg_replace("/\[\[company:$key\]\]/", $value, $css);
+            }
+        }
+
+    }
+    return $css;
+
 }

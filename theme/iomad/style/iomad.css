@@ -77,3 +77,19 @@ body {
   color: #f75701;
   border-top-width: 0px;
 }
+
+#sitelogo {
+    float: left;
+    width:100px;
+    padding-bottom: 10px;
+}
+
+#siteheading {
+    float: left;
+    left: 100px;
+}
+
+#clientlogo {
+    float: right;
+    width: 100px;
+}

@@ -30,7 +30,7 @@ $THEME->name = 'iomad';
 //
 $THEME->doctype = 'html5';
 $THEME->parents = array('bootstrapbase');
-$THEME->sheets = array('iomad');
+$THEME->sheets = array('iomad', 'custom', 'company');
 $THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
 
