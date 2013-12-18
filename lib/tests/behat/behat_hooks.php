@@ -279,6 +279,21 @@ class behat_hooks extends behat_base {
     }
 
     /**
+     * Take screenshot when step fails.
+     * Screenshot is saved at /tmp/
+     *
+     * @AfterStep
+     */
+    public function take_screenshot_after_failed_step(Behat\Behat\Event\StepEvent $event) {
+        global $CFG;
+
+        if (!empty($CFG->behat_screenshot_after_failure) &&
+                $event->getResult() === Behat\Behat\Event\StepEvent::FAILED) {
+            $this->saveScreenshot();
+        }
+    }
+
+    /**
      * Waits for all the JS to be loaded.
      *
      * @throws \Exception
