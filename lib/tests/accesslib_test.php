@@ -2016,12 +2016,10 @@ class accesslib_testcase extends advanced_testcase {
             $userids = array_slice($userids, 0, 5);
         }
 
-        // Random time!
-        //srand(666);
-        foreach($userids as $userid) { // no guest or deleted
-            // each user gets 0-10 random roles
+        foreach ($userids as $userid) { // No guest or deleted.
+            // Each user gets 0-10 random roles.
             $rcount = rand(0, 10);
-            for($j=0; $j<$rcount; $j++) {
+            for ($j=0; $j<$rcount; $j++) {
                 $roleid = $roles[rand(0, count($roles)-1)];
                 $contextid = $contexts[rand(0, count($contexts)-1)]->id;
                 role_assign($roleid, $userid, $contextid);

@@ -67,7 +67,6 @@ function cron_run() {
     // Run cleanup core cron jobs, but not every time since they aren't too important.
     // These don't have a timer to reduce load, so we'll use a random number
     // to randomly choose the percentage of times we should run these jobs.
-    srand ((double) microtime() * 10000000);
     $random100 = rand(0,100);
     if ($random100 < 20) {     // Approximately 20% of the time.
         mtrace("Running clean-up tasks...");
