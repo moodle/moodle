@@ -194,7 +194,7 @@ class company_edit_form extends company_moodleform {
             if ($this->companyrecord->theme == 'iomad') {
                 $mform->addElement('HTML', get_string('theoptionsbelow',
                                                       'block_iomad_company_admin'));
-                $mform->addElement('filepicker', 'companylogo',
+                $mform->addElement('filemanager', 'companylogo',
                                     get_string('companylogo', 'block_iomad_company_admin'), null,
                                     array('subdirs' => 0,
                                          'maxbytes' => 150 * 1024,

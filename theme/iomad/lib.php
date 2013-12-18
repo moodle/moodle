@@ -91,14 +91,20 @@ function theme_iomad_set_logo($css, $logo) {
  * @param array $options
  * @return bool
  */
-function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'logo') {
-        $theme = theme_config::load('iomad');
-        return $theme->setting_file_serve('logo', $args, $forcedownload, $options);
-    } else {
+function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+    global $USER, $CFG;
+
+    $fs = get_file_storage();
+    $relativepath = implode('/', $args);
+    $fullpath = "/$context->id/theme_iomad/$filearea/$relativepath";
+
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         send_file_not_found();
     }
+
+    send_stored_file($file, 0, 0, $forcedownload);
 }
+
 
 /**
  * Adds any custom CSS to the CSS before it is cached.
