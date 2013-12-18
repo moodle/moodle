@@ -1079,6 +1079,7 @@ class core_course_renderer extends plugin_renderer_base {
         $classes = trim('coursebox clearfix '. $additionalclasses);
         if ($chelper->get_show_courses() >= self::COURSECAT_SHOW_COURSES_EXPANDED) {
             $nametag = 'h3';
+            $classes .= ' expanded';
         } else {
             $classes .= ' collapsed';
             $nametag = 'div';
@@ -1470,6 +1471,7 @@ class core_course_renderer extends plugin_renderer_base {
             $classes[] = 'loaded';
             if (!empty($categorycontent)) {
                 $classes[] = 'with_children';
+                $classes[] = 'expanded';
             }
         }
         $content = html_writer::start_tag('div', array(
