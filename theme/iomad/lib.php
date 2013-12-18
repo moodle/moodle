@@ -91,17 +91,14 @@ function theme_iomad_set_logo($css, $logo) {
  * @param array $options
  * @return bool
  */
-function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload) {
+    global $USER, $CFG;
 
     $fs = get_file_storage();
     $relativepath = implode('/', $args);
-    $filename = $args[1];
-    $itemid = $args[0];
-    if ($itemid == -1) {
-        $itemid = 0;
-    }
+    $fullpath = "/$context->id/theme_iomad/$filearea/$relativepath";
 
-    if (!$file = $fs->get_file($context->id, 'theme_iomad', 'logo', $itemid, '/', $filename) or $file->is_directory()) {
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
         send_file_not_found();
     }
 
