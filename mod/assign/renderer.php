@@ -813,10 +813,10 @@ class mod_assign_renderer extends plugin_renderer_base {
                     // Edit previous feedback.
                     $returnparams = http_build_query($history->returnparams);
                     $urlparams = array('id' => $history->coursemoduleid,
-                                   'userid'=>$grade->userid,
+                                   'rownum'=>$history->rownum,
+                                   'useridlistid'=>$history->useridlistid,
                                    'attemptnumber'=>$grade->attemptnumber,
                                    'action'=>'grade',
-                                   'rownum'=>0,
                                    'returnaction'=>$history->returnaction,
                                    'returnparams'=>$returnparams);
                     $url = new moodle_url('/mod/assign/view.php', $urlparams);

@@ -476,22 +476,26 @@ class assign_submission_status implements renderable {
  */
 class assign_attempt_history implements renderable {
 
-    /** @var array submissions */
+    /** @var array submissions - The list of previous attempts */
     public $submissions = array();
-    /** @var array grades */
+    /** @var array grades - The grades for the previous attempts */
     public $grades = array();
-    /** @var array submissionplugins */
+    /** @var array submissionplugins - The list of submission plugins to render the previous attempts */
     public $submissionplugins = array();
-    /** @var array feedbackplugins */
+    /** @var array feedbackplugins - The list of feedback plugins to render the previous attempts */
     public $feedbackplugins = array();
-    /** @var int coursemoduleid */
+    /** @var int coursemoduleid - The cmid for the assignment */
     public $coursemoduleid = 0;
-    /** @var string returnaction */
+    /** @var string returnaction - The action for the next page. */
     public $returnaction = '';
-    /** @var string returnparams */
+    /** @var string returnparams - The params for the next page. */
     public $returnparams = array();
-    /** @var bool cangrade */
+    /** @var bool cangrade - Does this user have grade capability? */
     public $cangrade = false;
+    /** @var string useridlistid - Id of the useridlist stored in cache, this plus rownum determines the userid */
+    public $useridlistid = 0;
+    /** @var int rownum - The rownum of the user in the useridlistid - this plus useridlistid determines the userid */
+    public $rownum = 0;
 
     /**
      * Constructor
@@ -504,6 +508,8 @@ class assign_attempt_history implements renderable {
      * @param string $returnaction
      * @param array $returnparams
      * @param bool $cangrade
+     * @param int $useridlistid
+     * @param int $rownum
      */
     public function __construct($submissions,
                                 $grades,
@@ -512,7 +518,9 @@ class assign_attempt_history implements renderable {
                                 $coursemoduleid,
                                 $returnaction,
                                 $returnparams,
-                                $cangrade) {
+                                $cangrade,
+                                $useridlistid,
+                                $rownum) {
         $this->submissions = $submissions;
         $this->grades = $grades;
         $this->submissionplugins = $submissionplugins;
@@ -521,6 +529,8 @@ class assign_attempt_history implements renderable {
         $this->returnaction = $returnaction;
         $this->returnparams = $returnparams;
         $this->cangrade = $cangrade;
+        $this->useridlistid = $useridlistid;
+        $this->rownum = $rownum;
     }
 }
 
