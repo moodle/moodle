@@ -148,7 +148,9 @@ class behat_command {
         }
 
         // Checking behat dataroot existence otherwise echo about admin/tool/behat/cli/init.php.
-        $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
+        if (!empty($CFG->behat_dataroot)) {
+            $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
+        }
         if (empty($CFG->behat_dataroot) || !is_dir($CFG->behat_dataroot) || !is_writable($CFG->behat_dataroot)) {
             self::output_msg(get_string('runclitool', 'tool_behat', 'php admin/tool/behat/cli/init.php'));
             return BEHAT_EXITCODE_CONFIG;
