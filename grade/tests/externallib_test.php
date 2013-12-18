@@ -209,7 +209,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $coursecontext = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $coursecontext->id, 3);
-        $modulecontext = context_module::instance($assign->id);
+        $modulecontext = context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:grade', $modulecontext->id, $roleid);
 
         // Create the teacher's enrolment record.

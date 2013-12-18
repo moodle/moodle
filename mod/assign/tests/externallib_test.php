@@ -66,7 +66,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-        $context = context_module::instance($assign->id);
+        $context = context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
@@ -332,7 +332,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-        $context = context_module::instance($assign->id);
+        $context = context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
@@ -403,7 +403,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-        $context = context_module::instance($assign->id);
+        $context = context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:revealidentities', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
@@ -1072,7 +1072,7 @@ class mod_assign_external_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $context = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
-        $context = context_module::instance($assign->id);
+        $context = context_module::instance($assign->cmid);
         $this->assignUserCapability('mod/assign:grade', $context->id, $roleid);
 
         // Create the teacher's enrolment record.
