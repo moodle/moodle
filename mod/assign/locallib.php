@@ -827,30 +827,37 @@ class assign {
             $event = new stdClass();
 
             $params = array('modulename'=>'assign', 'instance'=>$instance->id);
-            $event->id = $DB->get_field('event',
-                                        'id',
-                                        $params);
+            $event->id = $DB->get_field('event', 'id', $params);
+            $event->name = $instance->name;
+            $event->timestart = $instance->duedate;
+
+            // Convert the links to pluginfile. It is a bit hacky but at this stage the files
+            // might not have been saved in the module area yet.
+            $intro = $instance->intro;
+            if ($draftid = file_get_submitted_draft_itemid('introeditor')) {
+                $intro = file_rewrite_urls_to_pluginfile($intro, $draftid);
+            }
+
+            // We need to remove the links to files as the calendar is not ready
+            // to support module events with file areas.
+            $intro = strip_pluginfile_content($intro);
+            $event->description = array(
+                'text' => $intro,
+                'format' => $instance->introformat
+            );
 
             if ($event->id) {
-                $event->name        = $instance->name;
-                $event->description = format_module_intro('assign', $instance, $coursemoduleid);
-                $event->timestart   = $instance->duedate;
-
                 $calendarevent = calendar_event::load($event->id);
                 $calendarevent->update($event);
             } else {
-                $event = new stdClass();
-                $event->name        = $instance->name;
-                $event->description = format_module_intro('assign', $instance, $coursemoduleid);
+                unset($event->id);
                 $event->courseid    = $instance->course;
                 $event->groupid     = 0;
                 $event->userid      = 0;
                 $event->modulename  = 'assign';
                 $event->instance    = $instance->id;
                 $event->eventtype   = 'due';
-                $event->timestart   = $instance->duedate;
                 $event->timeduration = 0;
-
                 calendar_event::create($event);
             }
         } else {
