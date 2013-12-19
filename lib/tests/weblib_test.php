@@ -400,4 +400,43 @@ class web_testcase extends advanced_testcase {
         $this->assertSame("do\n  re\n    mi\n", $trace2->get_buffer());
         $this->expectOutputString('');
     }
+
+    public function test_strip_pluginfile_content() {
+        $source = <<<SOURCE
+Hello!
+
+I'm writing to you from the Moodle Majlis in Muscat, Oman, where we just had several days of Moodle community goodness.
+
+URL outside a tag: https://moodle.org/logo/logo-240x60.gif
+Plugin url outside a tag: @@PLUGINFILE@@/logo-240x60.gif
+
+External link 1:<img src='https://moodle.org/logo/logo-240x60.gif' alt='Moodle'/>
+External link 2:<img alt="Moodle" src="https://moodle.org/logo/logo-240x60.gif"/>
+Internal link 1:<img src='@@PLUGINFILE@@/logo-240x60.gif' alt='Moodle'/>
+Internal link 2:<img alt="Moodle" src="@@PLUGINFILE@@logo-240x60.gif"/>
+Anchor link 1:<a href="@@PLUGINFILE@@logo-240x60.gif" alt="bananas">Link text</a>
+Anchor link 2:<a title="bananas" href="../logo-240x60.gif">Link text</a>
+Anchor + ext. img:<a title="bananas" href="../logo-240x60.gif"><img alt="Moodle" src="@@PLUGINFILE@@logo-240x60.gif"/></a>
+Ext. anchor + img:<a href="@@PLUGINFILE@@logo-240x60.gif"><img alt="Moodle" src="https://moodle.org/logo/logo-240x60.gif"/></a>
+SOURCE;
+        $expected = <<<EXPECTED
+Hello!
+
+I'm writing to you from the Moodle Majlis in Muscat, Oman, where we just had several days of Moodle community goodness.
+
+URL outside a tag: https://moodle.org/logo/logo-240x60.gif
+Plugin url outside a tag: @@PLUGINFILE@@/logo-240x60.gif
+
+External link 1:<img src="https://moodle.org/logo/logo-240x60.gif" alt="Moodle" />
+External link 2:<img alt="Moodle" src="https://moodle.org/logo/logo-240x60.gif" />
+Internal link 1:
+Internal link 2:
+Anchor link 1:Link text
+Anchor link 2:<a title="bananas" href="../logo-240x60.gif">Link text</a>
+Anchor + ext. img:<a title="bananas" href="../logo-240x60.gif"></a>
+Ext. anchor + img:<img alt="Moodle" src="https://moodle.org/logo/logo-240x60.gif" />
+EXPECTED;
+        $this->assertSame($expected, strip_pluginfile_content($source));
+    }
+
 }
