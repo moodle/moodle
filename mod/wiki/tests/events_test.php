@@ -300,12 +300,14 @@ class mod_wiki_events_testcase extends advanced_testcase {
      * Test page_deleted and page_version_deleted and page_locks_deleted event.
      */
     public function test_page_deleted() {
-        global $USER;
+        global $DB;
 
         $this->setUp();
 
         $page = $this->wikigenerator->create_first_page($this->wiki);
         $context = context_module::instance($this->wiki->cmid);
+        $oldversions = $DB->get_records('wiki_versions', array('pageid' => $page->id));
+        $oldversion = array_shift($oldversions);
 
         // Triggering and capturing the event.
         $sink = $this->redirectEvents();
@@ -317,7 +319,8 @@ class mod_wiki_events_testcase extends advanced_testcase {
         // Checking that the event contains the page_version_deleted event.
         $this->assertInstanceOf('\mod_wiki\event\page_version_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $this->assertEquals($page->id, $event->objectid);
+        $this->assertEquals($page->id, $event->other['pageid']);
+        $this->assertEquals($oldversion->id, $event->objectid);
         $expected = array($this->course->id, 'wiki', 'admin', 'admin.php?pageid=' .  $page->id,  $page->id, $this->wiki->cmid);
         $this->assertEventLegacyLogData($expected, $event);
 
