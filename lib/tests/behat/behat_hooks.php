@@ -68,6 +68,16 @@ class behat_hooks extends behat_base {
     protected static $initprocessesfinished = false;
 
     /**
+     * Some exceptions can only be caught in a before or after step hook,
+     * they can not be thrown there as they will provoke a framework level
+     * failure, but we can store them here to fail the step in i_look_for_exceptions()
+     * which result will be parsed by the framework as the last step result.
+     *
+     * @var Null or the exception last step throw in the before or after hook.
+     */
+    protected static $currentstepexception = null;
+
+    /**
      * Gives access to moodle codebase, ensures all is ready and sets up the test lock.
      *
      * Includes config.php to use moodle codebase with $CFG->behat_*
@@ -215,12 +225,22 @@ class behat_hooks extends behat_base {
     /**
      * Wait for JS to complete before beginning interacting with the DOM.
      *
-     * Executed only when running against a real browser.
+     * Executed only when running against a real browser. We wrap it
+     * all in a try & catch to forward the exception to i_look_for_exceptions
+     * so the exception will be at scenario level, which causes a failure, by
+     * default would be at framework level, which will stop the execution of
+     * the run.
      *
      * @BeforeStep @javascript
      */
     public function before_step_javascript($event) {
-        $this->wait_for_pending_js();
+
+        try {
+            $this->wait_for_pending_js();
+            self::$currentstepexception = null;
+        } catch (Exception $e) {
+            self::$currentstepexception = $e;
+        }
     }
 
     /**
@@ -229,12 +249,33 @@ class behat_hooks extends behat_base {
      * With this we ensure that there are not AJAX calls
      * still in progress.
      *
-     * Executed only when running against a real browser.
+     * Executed only when running against a real browser. We wrap it
+     * all in a try & catch to forward the exception to i_look_for_exceptions
+     * so the exception will be at scenario level, which causes a failure, by
+     * default would be at framework level, which will stop the execution of
+     * the run.
      *
      * @AfterStep @javascript
      */
     public function after_step_javascript($event) {
-        $this->wait_for_pending_js();
+
+        try {
+            $this->wait_for_pending_js();
+            self::$currentstepexception = null;
+        } catch (UnexpectedAlertOpen $e) {
+            self::$currentstepexception = $e;
+
+            // Accepting the alert so the framework can continue properly running
+            // the following scenarios. Some browsers already closes the alert, so
+            // wrapping in a try & catch.
+            try {
+                $this->getSession()->getDriver()->getWebDriverSession()->accept_alert();
+            } catch (Exception $e) {
+                // Catching the generic one as we never know how drivers reacts here.
+            }
+        } catch (Exception $e) {
+            self::$currentstepexception = $e;
+        }
     }
 
     /**
@@ -258,9 +299,10 @@ class behat_hooks extends behat_base {
                 // No javascript is running if there is no window right?
                 $pending = '';
             } catch (UnknownError $e) {
-                // Same exception as before, but some combinations of browser + OS reports it as an unknown error
-                // exception.
-                $pending = '';
+                // M is not defined when the window or the frame don't exist anymore.
+                if (strstr($e->getMessage(), 'M is not defined') != false) {
+                    $pending = '';
+                }
             }
 
             // If there are no pending JS we stop waiting.
@@ -284,9 +326,15 @@ class behat_hooks extends behat_base {
      * after each step so no features will splicitly use it.
      *
      * @Given /^I look for exceptions$/
+     * @throw Exception Unknown type, depending on what we caught in the hook or basic \Exception.
      * @see Moodle\BehatExtension\Tester\MoodleStepTester
      */
     public function i_look_for_exceptions() {
+
+        // If the step already failed in a hook throw the exception.
+        if (!is_null(self::$currentstepexception)) {
+            throw self::$currentstepexception;
+        }
 
         // Wrap in try in case we were interacting with a closed window.
         try {
