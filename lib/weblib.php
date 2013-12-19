@@ -1524,6 +1524,25 @@ function format_module_intro($module, $activity, $cmid, $filter=true) {
 }
 
 /**
+ * Removes the usage of Moodle files from a text.
+ *
+ * In some rare cases we need to re-use a text that already has embedded links
+ * to some files hosted within Moodle. But the new area in which we will push
+ * this content does not support files... therefore we need to remove those files.
+ *
+ * @param string $source The text
+ * @return string The stripped text
+ */
+function strip_pluginfile_content($source) {
+    $baseurl = '@@PLUGINFILE@@';
+    // Looking for something like < .* "@@pluginfile@@.*" .* >
+    $pattern = '$<[^<>]+["\']' . $baseurl . '[^"\']*["\'][^<>]*>$';
+    $stripped = preg_replace($pattern, '', $source);
+    // Use purify html to rebalence potentially mismatched tags and generally cleanup.
+    return purify_html($stripped);
+}
+
+/**
  * Legacy function, used for cleaning of old forum and glossary text only.
  *
  * @param string $text text that may contain legacy TRUSTTEXT marker
