@@ -215,23 +215,6 @@ class assign_feedback_comments extends assign_feedback_plugin {
    }
 
     /**
-     * A student submission may contain image tags that refer to images stored
-     * in the file area for the submission. We cannot allow these links to be copied to
-     * the feedback text fields, so we must strip them from the content.
-     *
-     * @param string $source The submission text
-     * @return string The stripped text
-     */
-    protected function strip_moodle_content($source) {
-        $baseurl = '@@PLUGINFILE@@';
-        // Looking for something like < .* "@@pluginfile@@.*" .* >
-        $pattern = '$<[^<>]+["\']' . $baseurl . '[^"\']*["\'][^<>]*>$';
-        $stripped = preg_replace($pattern, '', $source);
-        // Use purify html to rebalence potentially mismatched tags and generally cleanup.
-        return purify_html($stripped);
-    }
-
-    /**
      * Convert the text from any submission plugin that has an editor field to
      * a format suitable for inserting in the feedback text field.
      *
@@ -247,7 +230,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
             $fields = $plugin->get_editor_fields();
             if ($plugin->is_enabled() && $plugin->is_visible() && !empty($fields)) {
                 foreach ($fields as $key => $description) {
-                    $rawtext = $this->strip_moodle_content($plugin->get_editor_text($key, $submission->id));
+                    $rawtext = strip_pluginfile_content($plugin->get_editor_text($key, $submission->id));
 
                     $newformat = $plugin->get_editor_format($key, $submission->id);
 
