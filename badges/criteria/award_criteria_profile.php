@@ -179,7 +179,7 @@ class award_criteria_profile extends award_criteria {
                 $infodata[] = " uid.fieldid = :fieldid{$param['field']} ";
                 $sqlparams["fieldid{$param['field']}"] = $param['field'];
             } else {
-                $userdata[] = " u.{$param['field']} != '' ";
+                $userdata[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
             }
         }
 
@@ -209,6 +209,8 @@ class award_criteria_profile extends award_criteria {
      * @return array list($join, $where, $params)
      */
     public function get_completed_criteria_sql() {
+        global $DB;
+
         $join = '';
         $where = '';
         $params = array();
@@ -219,7 +221,7 @@ class award_criteria_profile extends award_criteria {
                 $infodata[] = " uid.fieldid = :fieldid{$param['field']} ";
                 $params["fieldid{$param['field']}"] = $param['field'];
             } else {
-                $userdata[] = " u.{$param['field']} != '' ";
+                $userdata[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
             }
         }
 
