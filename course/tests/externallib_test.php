@@ -900,13 +900,13 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->course = $course->id;
         $module1 = self::getDataGenerator()->create_module('forum', $record);
-        $module2 = self::getDataGenerator()->create_module('assignment', $record);
+        $module2 = self::getDataGenerator()->create_module('assign', $record);
 
         // Check the forum was correctly created.
         $this->assertEquals(1, $DB->count_records('forum', array('id' => $module1->id)));
 
         // Check the assignment was correctly created.
-        $this->assertEquals(1, $DB->count_records('assignment', array('id' => $module2->id)));
+        $this->assertEquals(1, $DB->count_records('assign', array('id' => $module2->id)));
 
         // Check data exists in the course modules table.
         $this->assertEquals(2, $DB->count_records_select('course_modules', 'id = :module1 OR id = :module2',
@@ -939,7 +939,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $DB->count_records('forum', array('id' => $module1->id)));
 
         // Check the assignment was deleted.
-        $this->assertEquals(0, $DB->count_records('assignment', array('id' => $module2->id)));
+        $this->assertEquals(0, $DB->count_records('assign', array('id' => $module2->id)));
 
         // Check we retrieve no data in the course modules table.
         $this->assertEquals(0, $DB->count_records_select('course_modules', 'id = :module1 OR id = :module2',
@@ -955,7 +955,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         // Create two modules.
         $module1 = self::getDataGenerator()->create_module('forum', $record);
-        $module2 = self::getDataGenerator()->create_module('assignment', $record);
+        $module2 = self::getDataGenerator()->create_module('assign', $record);
 
         // Since these modules were recreated the user will not have capabilities
         // to delete them, ensure exception is thrown if they try.

@@ -23,8 +23,9 @@
 function xmldb_assignment_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
-    $dbman = $DB->get_manager();
+    require_once(__DIR__.'/upgradelib.php');
 
+    $dbman = $DB->get_manager();
 
     // Moodle v2.2.0 release upgrade line
     // Put any upgrade step following this
@@ -80,6 +81,55 @@ function xmldb_assignment_upgrade($oldversion) {
 
     // Moodle v2.6.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2013121900) {
+        // Define table assignment_upgrade to be created.
+        $table = new xmldb_table('assignment_upgrade');
+
+        // Adding fields to table assignment_upgrade.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('oldcmid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('oldinstance', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('newcmid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('newinstance', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table assignment_upgrade.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        // Adding indexes to table assignment_upgrade.
+        $table->add_index('oldcmid', XMLDB_INDEX_NOTUNIQUE, array('oldcmid'));
+        $table->add_index('oldinstance', XMLDB_INDEX_NOTUNIQUE, array('oldinstance'));
+
+        // Conditionally launch create table for assignment_upgrade.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        if ($module = $DB->get_record("modules", array("name" => "assignment"))) {
+            $DB->set_field("modules", "visible", "0", array("id" => $module->id)); // Hide module.
+            // Hide all course modules.
+            $sql = "UPDATE {course_modules}
+                       SET visibleold = visible, visible = 0
+                     WHERE module = ?";
+            $DB->execute($sql, array($module->id));
+            // Increment course.cacherev for courses where we just made something invisible.
+            // This will force cache rebuilding on the next request.
+            increment_revision_number('course', 'cacherev',
+                    "id IN (SELECT DISTINCT course
+                                    FROM {course_modules}
+                                   WHERE visibleold = 1 AND module = ?)",
+                    array($module->id));
+        }
+
+        $count = $DB->count_records('assignment');
+        if ($count) {
+            mod_assignment_pending_upgrades_notification($count);
+        }
+
+        // Assignment savepoint reached.
+        upgrade_mod_savepoint(true, 2013121900, 'assignment');
+    }
 
     return true;
 }

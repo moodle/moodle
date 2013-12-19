@@ -299,6 +299,15 @@ class assign_upgrade_manager {
             $sql = 'UPDATE {grade_items} SET itemmodule = ?, iteminstance = ? WHERE itemmodule = ? AND iteminstance = ?';
             $DB->execute($sql, $params);
 
+            // Create a mapping record to map urls from the old to the new assignment.
+            $mapping = new stdClass();
+            $mapping->oldcmid = $oldcoursemodule->id;
+            $mapping->oldinstance = $oldassignment->id;
+            $mapping->newcmid = $newcoursemodule->id;
+            $mapping->newinstance = $newassignment->get_instance()->id;
+            $mapping->timecreated = time();
+            $DB->insert_record('assignment_upgrade', $mapping);
+
             $gradesdone = true;
 
         } catch (Exception $exception) {

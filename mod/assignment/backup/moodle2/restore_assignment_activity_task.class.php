@@ -109,4 +109,13 @@ class restore_assignment_activity_task extends restore_activity_task {
 
         return $rules;
     }
+
+    /**
+     * Expose the restore mode so we can skip automatic upgrade for MODE_IMPORT (e.g. duplicate).
+     *
+     * @return int
+     */
+    public function get_mode() {
+        return $this->plan->get_mode();
+    }
 }

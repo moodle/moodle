@@ -575,32 +575,6 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                         continue;
                     }
                 }
-                if ($event->modulename == 'assignment'){
-                    // create calendar_event to test edit_event capability
-                    // this new event will also prevent double creation of calendar_event object
-                    $checkevent = new calendar_event($event);
-                    // TODO: rewrite this hack somehow
-                    if (!calendar_edit_event_allowed($checkevent)){ // cannot manage entries, eg. student
-                        if (!$assignment = $DB->get_record('assignment', array('id'=>$event->instance))) {
-                            // print_error("invalidid", 'assignment');
-                            continue;
-                        }
-                        // assign assignment to assignment object to use hidden_is_hidden method
-                        require_once($CFG->dirroot.'/mod/assignment/lib.php');
-
-                        if (!file_exists($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php')) {
-                            continue;
-                        }
-                        require_once ($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
-
-                        $assignmentclass = 'assignment_'.$assignment->assignmenttype;
-                        $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm);
-
-                        if ($assignmentinstance->description_is_hidden()){//force not to show description before availability
-                            $event->description = get_string('notavailableyet', 'assignment');
-                        }
-                    }
-                }
             }
 
             if ($processed >= $display->maxevents) {
