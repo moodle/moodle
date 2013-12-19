@@ -59,6 +59,20 @@ if (!isset($CFG)) {
 // it can not be anything else, there is no point in having this in config.php
 $CFG->dirroot = dirname(dirname(__FILE__));
 
+// File permissions on created directories in the $CFG->dataroot
+if (!isset($CFG->directorypermissions)) {
+    $CFG->directorypermissions = 02777;      // Must be octal (that's why it's here)
+}
+if (!isset($CFG->filepermissions)) {
+    $CFG->filepermissions = ($CFG->directorypermissions & 0666); // strip execute flags
+}
+// Better also set default umask because developers often forget to include directory
+// permissions in mkdir() and chmod() after creating new files.
+if (!isset($CFG->umaskpermissions)) {
+    $CFG->umaskpermissions = (($CFG->directorypermissions & 0777) ^ 0777);
+}
+umask($CFG->umaskpermissions);
+
 if (defined('BEHAT_SITE_RUNNING')) {
     // We already switched to behat test site previously.
 
@@ -330,20 +344,6 @@ if (CLI_SCRIPT) {
 if (!defined('AJAX_SCRIPT')) {
     define('AJAX_SCRIPT', false);
 }
-
-// File permissions on created directories in the $CFG->dataroot
-if (!isset($CFG->directorypermissions)) {
-    $CFG->directorypermissions = 02777;      // Must be octal (that's why it's here)
-}
-if (!isset($CFG->filepermissions)) {
-    $CFG->filepermissions = ($CFG->directorypermissions & 0666); // strip execute flags
-}
-// Better also set default umask because developers often forget to include directory
-// permissions in mkdir() and chmod() after creating new files.
-if (!isset($CFG->umaskpermissions)) {
-    $CFG->umaskpermissions = (($CFG->directorypermissions & 0777) ^ 0777);
-}
-umask($CFG->umaskpermissions);
 
 // Exact version of currently used yui2 and 3 library.
 $CFG->yui2version = '2.9.0';
