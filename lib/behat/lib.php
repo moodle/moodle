@@ -211,6 +211,7 @@ function behat_check_config_vars() {
     }
     if (!file_exists($CFG->behat_dataroot)) {
         $permissions = isset($CFG->directorypermissions) ? $CFG->directorypermissions : 02777;
+        umask(0);
         if (!mkdir($CFG->behat_dataroot, $permissions, true)) {
             behat_error(BEHAT_EXITCODE_PERMISSIONS, '$CFG->behat_dataroot directory can not be created');
         }

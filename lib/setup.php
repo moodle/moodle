@@ -71,6 +71,28 @@ if (defined('BEHAT_SITE_RUNNING')) {
         // selected wwwroot to prevent conflicts with production and phpunit environments.
         behat_check_config_vars();
 
+        // Check that the directory does not contains other things.
+        if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
+            if ($dh = opendir($CFG->behat_dataroot)) {
+                while (($file = readdir($dh)) !== false) {
+                    if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store') {
+                        continue;
+                    }
+                    behat_error(BEHAT_EXITCODE_CONFIG, '$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot');
+                }
+                closedir($dh);
+                unset($dh);
+                unset($file);
+            }
+
+            if (defined('BEHAT_UTIL')) {
+                // Now we create dataroot directory structure for behat tests.
+                testing_initdataroot($CFG->behat_dataroot, 'behat');
+            } else {
+                behat_error(BEHAT_EXITCODE_INSTALL);
+            }
+        }
+
         if (!defined('BEHAT_UTIL') and !defined('BEHAT_TEST')) {
             // Somebody tries to access test site directly, tell them if not enabled.
             if (!file_exists($CFG->behat_dataroot . '/behat/test_environment_enabled.txt')) {

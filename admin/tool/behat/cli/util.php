@@ -101,24 +101,6 @@ require("$CFG->dirroot/lib/setup.php");
 
 raise_memory_limit(MEMORY_HUGE);
 
-// Check that the directory does not contains other things.
-if (!file_exists("$CFG->behat_dataroot/behattestdir.txt")) {
-    if ($dh = opendir($CFG->behat_dataroot)) {
-        while (($file = readdir($dh)) !== false) {
-            if ($file === 'behat' or $file === '.' or $file === '..' or $file === '.DS_Store') {
-                continue;
-            }
-            behat_error(BEHAT_EXITCODE_CONFIG, '$CFG->behat_dataroot directory is not empty, ensure this is the directory where you want to install behat test dataroot');
-        }
-        closedir($dh);
-        unset($dh);
-        unset($file);
-    }
-
-    // Now we create dataroot directory structure for behat tests.
-    testing_initdataroot($CFG->behat_dataroot, 'behat');
-}
-
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/upgradelib.php');
 require_once($CFG->libdir.'/clilib.php');

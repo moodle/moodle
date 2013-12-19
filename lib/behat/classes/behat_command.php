@@ -100,10 +100,9 @@ class behat_command {
      * It checks behat dependencies have been installed and runs
      * the behat help command to ensure it works as expected
      *
-     * @param  bool $checkphp Extra check for the PHP version
      * @return int Error code or 0 if all ok
      */
-    public static function behat_setup_problem($checkphp = false) {
+    public static function behat_setup_problem() {
         global $CFG;
 
         $clibehaterrorstr = "Behat dependencies not installed. Ensure you ran the composer installer. " . self::DOCS_URL . "#Installation\n";

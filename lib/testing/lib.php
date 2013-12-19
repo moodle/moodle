@@ -38,7 +38,13 @@ function testing_cli_argument_path($moodlepath) {
         $moodlepath = preg_replace('|^/admin/|', "/$CFG->admin/", $moodlepath);
     }
 
-    $cwd = getcwd();
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        // Web access, this should not happen often.
+        $cwd = dirname(dirname(__DIR__));
+    } else {
+        // This is the real CLI script, work with relative paths.
+        $cwd = getcwd();
+    }
     if (substr($cwd, -1) !== DIRECTORY_SEPARATOR) {
         $cwd .= DIRECTORY_SEPARATOR;
     }

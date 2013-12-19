@@ -196,7 +196,7 @@ class behat_util extends testing_util {
         }
 
         // Checks the behat set up and the PHP version.
-        if ($errorcode = behat_command::behat_setup_problem(true)) {
+        if ($errorcode = behat_command::behat_setup_problem()) {
             exit($errorcode);
         }
 
@@ -230,7 +230,7 @@ class behat_util extends testing_util {
         }
 
         // Checks the behat set up and the PHP version, returning an error code if something went wrong.
-        if ($errorcode = behat_command::behat_setup_problem(true)) {
+        if ($errorcode = behat_command::behat_setup_problem()) {
             return $errorcode;
         }
 
