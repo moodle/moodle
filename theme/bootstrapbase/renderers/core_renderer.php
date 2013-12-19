@@ -24,6 +24,9 @@
 
 class theme_bootstrapbase_core_renderer extends core_renderer {
 
+    /** @var custom_menu_item language The language menu if created */
+    protected $language = null;
+
     /*
      * This renders a notification message.
      * Uses bootstrap compatible html.
@@ -102,9 +105,9 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         }
 
         if ($addlangmenu) {
-            $language = $menu->add(get_string('language'), new moodle_url('#'), get_string('language'), 10000);
+            $this->language = $menu->add(get_string('language'), new moodle_url('#'), get_string('language'), 10000);
             foreach ($langs as $langtype => $langname) {
-                $language->add($langname, new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
+                $this->language->add($langname, new moodle_url($this->page->url, array('lang' => $langtype)), $langname);
             }
         }
 
@@ -126,12 +129,15 @@ class theme_bootstrapbase_core_renderer extends core_renderer {
         if ($menunode->has_children()) {
 
             if ($level == 1) {
-                $dropdowntype = 'dropdown';
+                $class = 'dropdown';
             } else {
-                $dropdowntype = 'dropdown-submenu';
+                $class = 'dropdown-submenu';
             }
 
-            $content = html_writer::start_tag('li', array('class'=>$dropdowntype));
+            if ($menunode === $this->language) {
+                $class .= ' langmenu';
+            }
+            $content = html_writer::start_tag('li', array('class' => $class));
             // If the child has menus render it as a sub menu.
             $submenucount++;
             if ($menunode->get_url() !== null) {
