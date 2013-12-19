@@ -204,7 +204,7 @@ class assign_feedback_comments extends assign_feedback_plugin {
      * @return void
      */
     public function get_settings(MoodleQuickForm $mform) {
-        $default = get_config('assignfeedback_comments', 'inline');
+        $default = $this->get_config('commentinline');
         $mform->addElement('selectyesno',
                            'assignfeedback_comments_commentinline',
                            get_string('commentinline', 'assignfeedback_comments'));
