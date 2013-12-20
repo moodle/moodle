@@ -122,14 +122,6 @@ $functions = array(
                 'type' => 'write'
         ),
 
-        'mod_assign_save_grades' => array(
-                'classname' => 'mod_assign_external',
-                'methodname' => 'save_grades',
-                'classpath' => 'mod/assign/externallib.php',
-                'description' => 'Save multiple grade updates for an assignment.',
-                'type' => 'write'
-        ),
-
         'mod_assign_save_user_extensions' => array(
                 'classname' => 'mod_assign_external',
                 'methodname' => 'save_user_extensions',
