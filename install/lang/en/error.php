@@ -30,6 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>Cannot create the database.</p>
+<p>The specified database does not exist and the given user does not have permission to create the database.</p>
+<p>The site administrator should verify database configuration.</p>';
 $string['cannotcreatelangdir'] = 'Cannot create lang directory';
 $string['cannotcreatetempdir'] = 'Cannot create temp directory';
 $string['cannotdownloadcomponents'] = 'Cannot download components';
@@ -39,6 +42,7 @@ $string['cannotsavemd5file'] = 'Cannot save md5 file';
 $string['cannotsavezipfile'] = 'Cannot save ZIP file';
 $string['cannotunzipfile'] = 'Cannot unzip file';
 $string['componentisuptodate'] = 'Component is up-to-date';
+$string['dmlexceptiononinstall'] = '<p>A database error has occurred [{$a->errorcode}].<br />{$a->debuginfo}</p>';
 $string['downloadedfilecheckfailed'] = 'Downloaded file check failed';
 $string['invalidmd5'] = 'The check variable was wrong - try again';
 $string['missingrequiredfield'] = 'Some required field is missing';
