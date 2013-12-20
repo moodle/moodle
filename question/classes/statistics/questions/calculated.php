@@ -258,4 +258,18 @@ class calculated {
             return array();
         }
     }
+
+    /**
+     * Array of variants that have appeared in the attempt data for this question.
+     *
+     * @return int[]
+     */
+    public function get_variants() {
+        $variants = array_keys($this->variantstats);
+        if (count($variants) > 1) {
+            return $variants;
+        } else {
+            return array();
+        }
+    }
 }

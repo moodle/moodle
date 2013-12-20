@@ -202,17 +202,26 @@ class quiz_statistics_table extends flexible_table {
             return $name;
         }
 
-        $url = null;
-        if ($questionstat->subquestion) {
-            $url = new moodle_url($this->baseurl, array('qid' => $questionstat->questionid));
-        } else if ($questionstat->slot && $questionstat->question->qtype != 'random') {
-            $url = new moodle_url($this->baseurl, array('slot' => $questionstat->slot));
+        $baseurl = new moodle_url($this->baseurl);
+        if (is_null($questionstat->variant)) {
+            if ($questionstat->subquestion && !$questionstat->get_variants()) {
+                $url = new moodle_url($baseurl, array('qid' => $questionstat->questionid));
+                $name = html_writer::link($url, $name, array('title' => get_string('detailedanalysis', 'quiz_statistics')));
+            } else if ($baseurl->param('slot') === null && $questionstat->slot) {
+                $number = $questionstat->question->number;
+                $url = new moodle_url($baseurl, array('slot' => $questionstat->slot));
+                if ($questionstat->get_variants() || $questionstat->get_sub_question_ids()) {
+                    $name = html_writer::link($url,
+                                              $name,
+                                              array('title' => get_string('slotstructureanalysis', 'quiz_statistics', $number)));
+                } else {
+                    $name = html_writer::link($url,
+                                              $name,
+                                              array('title' => get_string('detailedanalysis', 'quiz_statistics')));
+                }
+            }
         }
 
-        if ($url) {
-            $name = html_writer::link($url, $name,
-                    array('title' => get_string('detailedanalysis', 'quiz_statistics')));
-        }
 
         if ($this->is_dubious_question($questionstat)) {
             $name = html_writer::tag('div', $name, array('class' => 'dubious'));
@@ -298,7 +307,7 @@ class quiz_statistics_table extends flexible_table {
     protected function col_effective_weight($questionstat) {
         global $OUTPUT;
 
-        if ($questionstat->subquestion) {
+        if (is_null($questionstat->effectiveweight)) {
             return '';
         }
 

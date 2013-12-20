@@ -215,16 +215,29 @@ class quiz_statistics_report extends quiz_default_report {
                 print_error('questiondoesnotexist', 'question');
             }
 
-            $this->output_individual_question_data($quiz, $questionstats->for_slot($slot));
-            $this->output_individual_question_response_analysis($questions[$slot],
-                                                                $questionstats->for_slot($slot)->s,
-                                                                $reporturl,
-                                                                $qubaids);
+            if ($questionstats->for_slot($slot)->get_sub_question_ids() || $questionstats->for_slot($slot)->get_variants()) {
+                if (!$this->table->is_downloading()) {
+                    $number = $questionstats->for_slot($slot)->question->number;
+                    echo $OUTPUT->heading(get_string('slotstructureanalysis', 'quiz_statistics', $number), 3);
+                }
+                $this->table->define_baseurl(new moodle_url($reporturl, array('slot' => $slot)));
+                $this->table->format_and_add_array_of_rows($questionstats->structure_analysis_for_one_slot($slot));
+            } else {
+                $this->output_individual_question_data($quiz, $questionstats->for_slot($slot));
+                $this->output_individual_question_response_analysis($questions[$slot],
+                                                                    $questionstats->for_slot($slot)->s,
+                                                                    $reporturl,
+                                                                    $qubaids);
 
-            // Back to overview link.
-            echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
-                    get_string('backtoquizreport', 'quiz_statistics') . '</a>',
-                    'backtomainstats boxaligncenter generalbox boxwidthnormal mdl-align');
+            }
+            if (!$this->table->is_downloading()) {
+                // Back to overview link.
+                echo $OUTPUT->box('<a href="' . $reporturl->out() . '">' .
+                        get_string('backtoquizreport', 'quiz_statistics') . '</a>',
+                        'backtomainstats boxaligncenter generalbox boxwidthnormal mdl-align');
+            } else {
+                $this->table->finish_output();
+            }
 
         } else if ($qid) {
             // Report on an individual sub-question indexed questionid.
@@ -417,12 +430,10 @@ class quiz_statistics_report extends quiz_default_report {
      */
     protected function output_quiz_structure_analysis_table($questionstats) {
         $tooutput = array();
+        $limitvariants = !$this->table->is_downloading();
         foreach ($questionstats->get_all_slots() as $slot) {
             // Output the data for these question statistics.
-            $tooutput[] = $questionstats->for_slot($slot);
-
-            $limitvariants = !$this->table->is_downloading();
-            $tooutput = array_merge($tooutput, $questionstats->all_subq_and_variant_stats_for_slot($slot, $limitvariants));
+            $tooutput = array_merge($tooutput, $questionstats->structure_analysis_for_one_slot($slot, $limitvariants));
         }
         $this->table->format_and_add_array_of_rows($tooutput);
     }
