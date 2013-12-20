@@ -538,6 +538,7 @@ class assign {
      */
     public function add_instance(stdClass $formdata, $callplugins) {
         global $DB;
+        $adminconfig = $this->get_admin_config();
 
         $err = '';
 
@@ -555,6 +556,10 @@ class assign {
         $update->requiresubmissionstatement = $formdata->requiresubmissionstatement;
         $update->sendnotifications = $formdata->sendnotifications;
         $update->sendlatenotifications = $formdata->sendlatenotifications;
+        $update->sendstudentnotifications = $adminconfig->sendstudentnotifications;
+        if (isset($formdata->sendstudentnotifications)) {
+            $update->sendstudentnotifications = $formdata->sendstudentnotifications;
+        }
         $update->duedate = $formdata->duedate;
         $update->cutoffdate = $formdata->cutoffdate;
         $update->allowsubmissionsfromdate = $formdata->allowsubmissionsfromdate;
@@ -878,6 +883,7 @@ class assign {
      */
     public function update_instance($formdata) {
         global $DB;
+        $adminconfig = $this->get_admin_config();
 
         $update = new stdClass();
         $update->id = $formdata->instance;
@@ -891,6 +897,10 @@ class assign {
         $update->requiresubmissionstatement = $formdata->requiresubmissionstatement;
         $update->sendnotifications = $formdata->sendnotifications;
         $update->sendlatenotifications = $formdata->sendlatenotifications;
+        $update->sendstudentnotifications = $adminconfig->sendstudentnotifications;
+        if (isset($formdata->sendstudentnotifications)) {
+            $update->sendstudentnotifications = $formdata->sendstudentnotifications;
+        }
         $update->duedate = $formdata->duedate;
         $update->cutoffdate = $formdata->cutoffdate;
         $update->allowsubmissionsfromdate = $formdata->allowsubmissionsfromdate;
@@ -3107,7 +3117,9 @@ class assign {
         if ($showquickgrading && $quickgrading) {
             $gradingtable = new assign_grading_table($this, $perpage, $filter, 0, true);
             $table = $this->get_renderer()->render($gradingtable);
-            $quickformparams = array('cm'=>$this->get_course_module()->id, 'gradingtable'=>$table);
+            $quickformparams = array('cm'=>$this->get_course_module()->id,
+                                     'gradingtable'=>$table,
+                                     'sendstudentnotifications'=>$this->get_instance()->sendstudentnotifications);
             $quickgradingform = new mod_assign_quick_grading_form(null, $quickformparams);
 
             $o .= $this->get_renderer()->render(new assign_form('quickgradingform', $quickgradingform));
@@ -5724,7 +5736,7 @@ class assign {
             }
         }
         $mform->addElement('selectyesno', 'sendstudentnotifications', get_string('sendstudentnotifications', 'assign'));
-        $mform->setDefault('sendstudentnotifications', 1);
+        $mform->setDefault('sendstudentnotifications', $this->get_instance()->sendstudentnotifications);
 
         $mform->addElement('hidden', 'action', 'submitgrade');
         $mform->setType('action', PARAM_ALPHA);

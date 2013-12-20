@@ -527,7 +527,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         // Now create an assignment and add some feedback.
         $this->setUser($this->editingteachers[0]);
-        $assign = $this->create_instance();
+        $assign = $this->create_instance(array('sendstudentnotifications'=>1));
 
         // Simulate adding a grade.
         $this->setUser($this->teachers[0]);

@@ -1,4 +1,7 @@
 This files describes API changes in the assign code.
+=== 2.7 ===
+* Added setting sendstudentnotifications to assign DB table with admin defaults. This sets the default value for the
+  "Notify students" option on the grading forms. This setting can be retrieved via webservices.
 
 === 2.6.1 ===
 
