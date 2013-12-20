@@ -104,6 +104,11 @@ class behat_form_select extends behat_form_field {
                 // Wrapped in a try & catch as we can fall into race conditions
                 // and the element may not be there.
                 try {
+
+                    // Wait for all the possible AJAX requests that have been
+                    // already triggered by selectOption() to be finished.
+                    $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
+
                     current($optionnodes)->click();
                 } catch (Exception $e) {
                     // We continue and return as this means that the element is not there or it is not the same.
@@ -112,6 +117,11 @@ class behat_form_select extends behat_form_field {
             }
 
         } else {
+
+            // Wait for all the possible AJAX requests that have been
+            // already triggered by selectOption() to be finished.
+            $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
+
             // Wrapped in a try & catch as we can fall into race conditions
             // and the element may not be there.
             try {
@@ -126,6 +136,10 @@ class behat_form_select extends behat_form_field {
             if (!$this->session->getDriver()->find($optionxpath)) {
                 return;
             }
+
+            // Wait for all the possible AJAX requests that have been
+            // already triggered by selectOption() to be finished.
+            $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
 
             // Wrapped in a try & catch as we can fall into race conditions
             // and the element may not be there.
