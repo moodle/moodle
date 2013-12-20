@@ -39,3 +39,4 @@ Feature: Add scorm activity
     And I switch to "contentFrame" iframe
     And I should see "Play of the game"
     And I switch to the main frame
+    And I follow "Course 1"
