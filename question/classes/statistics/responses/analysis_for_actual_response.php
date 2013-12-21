@@ -58,18 +58,19 @@ class analysis_for_actual_response {
         $this->count++;
     }
 
-
     /**
      * @param \qubaid_condition $qubaids
      * @param int               $questionid the question id
+     * @param int               $variantno
      * @param string            $subpartid
      * @param string            $responseclassid
      */
-    public function cache($qubaids, $questionid, $subpartid, $responseclassid) {
+    public function cache($qubaids, $questionid, $variantno, $subpartid, $responseclassid) {
         global $DB;
         $row = new \stdClass();
         $row->hashcode = $qubaids->get_hash_code();
         $row->questionid = $questionid;
+        $row->variant = $variantno;
         $row->subqid = $subpartid;
         if ($responseclassid === '') {
             $row->aid = null;
