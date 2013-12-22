@@ -583,27 +583,19 @@ M.core_filepicker.init = function(Y, options) {
                 method: 'POST',
                 on: {
                     complete: function(id,o,p) {
-                        if (!o) {
-                            // TODO
-                            alert('IO FATAL');
-                            return;
-                        }
                         var data = null;
                         try {
                             data = Y.JSON.parse(o.responseText);
                         } catch(e) {
-                            scope.print_msg(M.str.repository.invalidjson, 'error');
-                            scope.display_error(M.str.repository.invalidjson+'<pre>'+stripHTML(o.responseText)+'</pre>', 'invalidjson')
-                            return;
+                            if (o && o.status && o.status > 0) {
+                                new M.core.exception(e);
+                                return;
+                            }
                         }
                         // error checking
                         if (data && data.error) {
-                            scope.print_msg(data.error, 'error');
-                            if (args.onerror) {
-                                args.onerror(id,data,p);
-                            } else {
-                                this.fpnode.one('.fp-content').setContent('');
-                            }
+                            new M.core.ajaxException(data);
+                            this.fpnode.one('.fp-content').setContent('');
                             return;
                         } else {
                             if (data.msg) {
