@@ -650,7 +650,7 @@ BRANCH.prototype = {
         try {
             var object = Y.JSON.parse(outcome.responseText);
             if (object.error) {
-                Y.use('moodle-core-notification-ajaxException', function () {
+                Y.use('moodle-core-notification-ajaxexception', function () {
                     return new M.core.ajaxException(object).show();
                 });
                 return false;

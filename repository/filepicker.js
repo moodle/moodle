@@ -595,7 +595,7 @@ M.core_filepicker.init = function(Y, options) {
                         }
                         // error checking
                         if (data && data.error) {
-                            Y.use('moodle-core-notification-ajaxException', function () {
+                            Y.use('moodle-core-notification-ajaxexception', function () {
                                 return new M.core.ajaxException(data);
                             });
                             this.fpnode.one('.fp-content').setContent('');
