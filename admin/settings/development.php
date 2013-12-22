@@ -27,9 +27,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configcheckbox('enabletgzbackups',
             new lang_string('enabletgzbackups', 'admin'),
             new lang_string('enabletgzbackups_desc', 'admin'), 0));
-    $temp->add(new admin_setting_php_extension_enabled('zlibenabled',
-            get_string('zlibenabled', 'admin'),
-            get_string('enabletgzbackups_nozlib', 'admin'), 'zlib'));
 
     $ADMIN->add('experimental', $temp);
 

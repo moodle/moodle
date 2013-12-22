@@ -700,7 +700,9 @@ class tgz_packer extends file_packer {
      * The zlib extension is required for this packer to work. This is a single
      * location for the code to check whether the extension is available.
      *
-     * @return bool True if the extension is available OK
+     * @deprecated since 2.7 Always true because zlib extension is now required.
+     *
+     * @return bool True if the zlib extension is available OK
      */
     public static function has_required_extension() {
         return extension_loaded('zlib');

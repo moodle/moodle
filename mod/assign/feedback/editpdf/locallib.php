@@ -266,9 +266,6 @@ class assign_feedback_editpdf extends assign_feedback_plugin {
      */
     public function is_enabled() {
         $testpath = assignfeedback_editpdf\pdf::test_gs_path();
-        if (!extension_loaded('zlib')) {
-            return false;
-        }
         if ($testpath->status == assignfeedback_editpdf\pdf::GSPATH_OK) {
             return true;
         }
