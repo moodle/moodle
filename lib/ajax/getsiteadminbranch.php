@@ -40,7 +40,7 @@ if ($branchtype !== navigation_node::TYPE_SITE_ADMIN) {
 }
 
 // Start capturing output in case of broken plugins.
-ob_start();
+ajax_capture_output();
 
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/lib/ajax/getsiteadminbranch.php', array('type'=>$branchtype));
@@ -51,12 +51,5 @@ $sitenavigation = new settings_navigation_ajax($PAGE);
 $converter = new navigation_json();
 $branch = $sitenavigation->get('root');
 
-$output = ob_get_contents();
-ob_end_clean();
-if ($CFG->debugdeveloper && !empty($output)) {
-    throw new coding_exception('Unexpected output whilst building the administration tree. ' .
-            'This could be caused by trailing whitespace. Output received: ' .
-            var_export($output, true));
-} else {
-    echo $converter->convert($branch);
-}
+ajax_check_captured_output();
+echo $converter->convert($branch);
