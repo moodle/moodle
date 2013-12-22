@@ -130,7 +130,10 @@ class ChatDaemon {
                     foreach ($chatroom['users'] as $sessionid => $userid) {
                         // We will be polling each user as required.
                         $this->trace('...shall we poll '.$sessionid.'?');
-                        if ($this->sets_info[$sessionid]['chatuser']->lastmessageping < $this->_last_idle_poll) {
+                        if (!empty($this->sets_info[$sessionid]) && isset($this->sets_info[$sessionid]['chatuser']) &&
+                                // Having tried to exclude race conditions as already done in user_lazy_update()
+                                // please do the real job by checking the last poll.
+                                ($this->sets_info[$sessionid]['chatuser']->lastmessageping < $this->_last_idle_poll)) {
                             $this->trace('YES!');
                             // This user hasn't been polled since his last message.
                             $result = $this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], '<!-- poll -->');
@@ -209,6 +212,11 @@ class ChatDaemon {
             return false;
         }
 
+        // Does promote_final() already finish its job?
+        if (!isset($this->sets_info[$sessionid]['lastinfocommit'])) {
+            return false;
+        }
+
         $now = time();
 
         // We 'll be cheating a little, and NOT updating the record data as
@@ -231,6 +239,7 @@ class ChatDaemon {
         $timenow = time();
 
         if (empty($str)) {
+            $str = new stdClass();
             $str->idle  = get_string("idle", "chat");
             $str->beep  = get_string("beep", "chat");
             $str->day   = get_string("day");
@@ -700,7 +709,12 @@ EOD;
         $monitor = array();
         if (!empty($this->conn_ufo)) {
             foreach ($this->conn_ufo as $ufoid => $ufo) {
-                $monitor[$ufoid] = $ufo->handle;
+                // Avoid socket_select() warnings by preventing the check over invalid resources.
+                if (is_resource($ufo->handle)) {
+                    $monitor[$ufoid] = $ufo->handle;
+                } else {
+                    $this->dismiss_ufo($ufo->handle, false);
+                }
             }
         }
 
@@ -735,21 +749,24 @@ EOD;
 
                 // Simply give them the message.
                 $output = chat_format_message_manually($message, $info['courseid'], $sender, $info['user']);
-                $this->trace('Delivering message "'.$output->text.'" to '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
+                if ($output !== false) {
+                    $this->trace('Delivering message "'.$output->text.'" to ' .
+                        $this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
 
-                if ($output->beep) {
-                    $this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL],
-                                      '<embed src="'.$this->_beepsoundsrc.'" autostart="true" hidden="true" />');
-                }
+                    if ($output->beep) {
+                        $this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL],
+                                          '<embed src="'.$this->_beepsoundsrc.'" autostart="true" hidden="true" />');
+                    }
 
-                if ($info['quirks'] & QUIRK_CHUNK_UPDATE) {
-                    $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
-                    $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
-                    $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
-                }
+                    if ($info['quirks'] & QUIRK_CHUNK_UPDATE) {
+                        $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
+                        $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
+                        $output->html .= $GLOBALS['CHAT_DUMMY_DATA'];
+                    }
 
-                if (!$this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $output->html)) {
-                    $this->disconnect_session($sessionid);
+                    if (!$this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $output->html)) {
+                        $this->disconnect_session($sessionid);
+                    }
                 }
             }
         }
@@ -947,6 +964,12 @@ while (true) {
                 if (strlen($data) == 2048) { // If socket_read has more data, ignore all data.
                     $daemon->trace('UFO with '.$handle.': Data too long; connection closed', E_USER_WARNING);
                     $daemon->dismiss_ufo($handle, true, 'Data too long; connection closed');
+                    continue;
+                }
+
+                // Ignore desktop browser fake "favorite icon" requests.
+                if (strpos($data, 'GET /favicon.ico HTTP') === 0) {
+                    // Known malformed data, drop it without any further notice.
                     continue;
                 }
 
