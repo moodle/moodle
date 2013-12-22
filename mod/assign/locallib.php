@@ -2767,7 +2767,9 @@ class assign {
                                                   $this->get_course_module()->id,
                                                   $this->get_return_action(),
                                                   $this->get_return_params(),
-                                                  true);
+                                                  true,
+                                                  $useridlistid,
+                                                  $rownum);
 
             $o .= $this->get_renderer()->render($history);
         }
@@ -3453,7 +3455,9 @@ class assign {
                                                       $this->get_course_module()->id,
                                                       $this->get_return_action(),
                                                       $this->get_return_params(),
-                                                      false);
+                                                      false,
+                                                      0,
+                                                      0);
 
                 $o .= $this->get_renderer()->render($history);
             }
