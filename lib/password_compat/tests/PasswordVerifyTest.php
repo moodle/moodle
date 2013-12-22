@@ -5,13 +5,6 @@ require_once($CFG->dirroot . '/lib/password_compat/lib/password.php');
 
 class PasswordVerifyTest extends PHPUnit_Framework_TestCase {
 
-    protected function setUp() {
-        if (password_compat_not_supported()) {
-            // Skip test if password_compat is not supported.
-            $this->markTestSkipped('password_compat not supported');
-        }
-    }
-
     public function testFuncExists() {
         $this->assertTrue(function_exists('password_verify'));
     }

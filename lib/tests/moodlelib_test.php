@@ -2181,24 +2181,13 @@ class core_moodlelib_testcase extends advanced_testcase {
      * Test function validate_internal_user_password().
      */
     public function test_validate_internal_user_password() {
-        if (password_compat_not_supported()) {
-            // If bcrypt is not properly supported test legacy md5 hashes instead.
-            // Can't hardcode these as we don't know the site's password salt.
-            $validhashes = array(
-                'pw' => hash_internal_user_password('pw'),
-                'abc' => hash_internal_user_password('abc'),
-                'C0mP1eX_&}<?@*&%` |\"' => hash_internal_user_password('C0mP1eX_&}<?@*&%` |\"'),
-                'ĩńťėŕňăţĩōŋāĹ' => hash_internal_user_password('ĩńťėŕňăţĩōŋāĹ')
-            );
-        } else {
-            // Otherwise test bcrypt hashes.
-            $validhashes = array(
-                'pw' => '$2y$10$LOSDi5eaQJhutSRun.OVJ.ZSxQZabCMay7TO1KmzMkDMPvU40zGXK',
-                'abc' => '$2y$10$VWTOhVdsBbWwtdWNDRHSpewjd3aXBQlBQf5rBY/hVhw8hciarFhXa',
-                'C0mP1eX_&}<?@*&%` |\"' => '$2y$10$3PJf.q.9ywNJlsInPbqc8.IFeSsvXrGvQLKRFBIhVu1h1I3vpIry6',
-                'ĩńťėŕňăţĩōŋāĹ' => '$2y$10$3A2Y8WpfRAnP3czJiSv6N.6Xp0T8hW3QZz2hUCYhzyWr1kGP1yUve'
-            );
-        }
+        // Otherwise test bcrypt hashes.
+        $validhashes = array(
+            'pw' => '$2y$10$LOSDi5eaQJhutSRun.OVJ.ZSxQZabCMay7TO1KmzMkDMPvU40zGXK',
+            'abc' => '$2y$10$VWTOhVdsBbWwtdWNDRHSpewjd3aXBQlBQf5rBY/hVhw8hciarFhXa',
+            'C0mP1eX_&}<?@*&%` |\"' => '$2y$10$3PJf.q.9ywNJlsInPbqc8.IFeSsvXrGvQLKRFBIhVu1h1I3vpIry6',
+            'ĩńťėŕňăţĩōŋāĹ' => '$2y$10$3A2Y8WpfRAnP3czJiSv6N.6Xp0T8hW3QZz2hUCYhzyWr1kGP1yUve'
+        );
 
         foreach ($validhashes as $password => $hash) {
             $user = new stdClass();
@@ -2227,17 +2216,12 @@ class core_moodlelib_testcase extends advanced_testcase {
             $user->password = $hash;
             $this->assertTrue(validate_internal_user_password($user, $password));
 
-            if (password_compat_not_supported()) {
-                // If bcrypt is not properly supported make sure the passwords are in md5 format.
-                $this->assertTrue(password_is_legacy_hash($hash));
-            } else {
-                // Otherwise they should not be in md5 format.
-                $this->assertFalse(password_is_legacy_hash($hash));
+            // Otherwise they should not be in md5 format.
+            $this->assertFalse(password_is_legacy_hash($hash));
 
-                // Check that cost factor in hash is correctly set.
-                $this->assertRegExp('/\$10\$/', $hash);
-                $this->assertRegExp('/\$04\$/', $fasthash);
-            }
+            // Check that cost factor in hash is correctly set.
+            $this->assertRegExp('/\$10\$/', $hash);
+            $this->assertRegExp('/\$04\$/', $fasthash);
         }
     }
 
@@ -2265,15 +2249,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Update the password.
         update_internal_user_password($user, 'password');
 
-        if (password_compat_not_supported()) {
-            // If bcrypt not properly supported the password should remain as an md5 hash.
-            $expected_hash = hash_internal_user_password('password', true);
-            $this->assertSame($user->password, $expected_hash);
-            $this->assertTrue(password_is_legacy_hash($user->password));
-        } else {
-            // Otherwise password should have been updated to a bcrypt hash.
-            $this->assertFalse(password_is_legacy_hash($user->password));
-        }
+        // Otherwise password should have been updated to a bcrypt hash.
+        $this->assertFalse(password_is_legacy_hash($user->password));
     }
 
     public function test_fullname() {

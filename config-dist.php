@@ -562,11 +562,8 @@ $CFG->admin = 'admin';
 //=========================================================================
 // 10. SECRET PASSWORD SALT
 //=========================================================================
-// A single site-wide password salt is no longer required *unless* you are
-// upgrading an older version of Moodle (prior to 2.5), or if you are using
-// a PHP version below 5.3.7. If upgrading, keep any values from your old
-// config.php file. If you are using PHP < 5.3.7 set to a long random string
-// below:
+// A site-wide password salt is no longer used in new installations.
+// If upgrading from 2.6 or older, keep all existing salts in config.php file.
 //
 // $CFG->passwordsaltmain = 'a_very_long_random_string_of_characters#@6&*1';
 //
