@@ -27,7 +27,7 @@ class portfolio_plugin_googledocs extends portfolio_plugin_push_base {
     private $googleoauth = null;
 
     public function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE);
+        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_RICHHTML);
     }
 
     public static function get_name() {
