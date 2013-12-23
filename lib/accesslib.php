@@ -5462,6 +5462,10 @@ abstract class context extends stdClass implements IteratorAggregate {
     public function delete() {
         global $DB;
 
+        if ($this->_contextlevel <= CONTEXT_SYSTEM) {
+            throw new coding_exception('Cannot delete system context');
+        }
+
         // double check the context still exists
         if (!$DB->record_exists('context', array('id'=>$this->_id))) {
             context::cache_remove($this);
@@ -5556,6 +5560,11 @@ abstract class context extends stdClass implements IteratorAggregate {
      */
     public function get_child_contexts() {
         global $DB;
+
+        if (empty($this->_path) or empty($this->_depth)) {
+            debugging('Can not find child contexts of context '.$this->_id.' try rebuilding of context paths');
+            return array();
+        }
 
         $sql = "SELECT ctx.*
                   FROM {context} ctx
@@ -6556,6 +6565,11 @@ class context_coursecat extends context {
      */
     public function get_child_contexts() {
         global $DB;
+
+        if (empty($this->_path) or empty($this->_depth)) {
+            debugging('Can not find child contexts of context '.$this->_id.' try rebuilding of context paths');
+            return array();
+        }
 
         $sql = "SELECT ctx.*
                   FROM {context} ctx
