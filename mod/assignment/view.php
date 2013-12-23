@@ -44,7 +44,7 @@ $classfile = "$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assi
 if (!file_exists($classfile)) {
     throw new moodle_exception('unsupportedsubplugin', 'assignment', new moodle_url('/course/view.php', array('id' => $course->id)), $assignment->assignmenttype);
 }
-require ($classfile);
+require_once($classfile);
 $assignmentclass = "assignment_$assignment->assignmenttype";
 $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
 
