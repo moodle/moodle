@@ -3406,8 +3406,8 @@ class assign {
         $potentialgraders = get_enrolled_users($this->context, "mod/assign:grade");
 
         $graders = array();
-        if (groups_get_activity_groupmode($this->get_course_module()) == SEPARATEGROUPS) {   // Separate groups are being used
-            if ($groups = groups_get_all_groups($this->get_course()->id, $userid)) {  // Try to find all groups
+        if (groups_get_activity_groupmode($this->get_course_module()) == SEPARATEGROUPS) {
+            if ($groups = groups_get_all_groups($this->get_course()->id, $userid, $this->get_course_module()->groupingid)) {
                 foreach ($groups as $group) {
                     foreach ($potentialgraders as $grader) {
                         if ($grader->id == $userid) {
