@@ -756,27 +756,28 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     public function test_get_graders() {
         $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
-        $assign = $this->create_instance();
 
+        // Create an assignment with no groups.
+        $assign = $this->create_instance();
         $this->assertCount(self::DEFAULT_TEACHER_COUNT +
                            self::DEFAULT_EDITING_TEACHER_COUNT +
                            self::EXTRA_TEACHER_COUNT +
                            self::EXTRA_EDITING_TEACHER_COUNT,
                            $assign->testable_get_graders($this->students[0]->id));
 
-        $assign = $this->create_instance();
         // Force create an assignment with SEPARATEGROUPS.
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
-        $params = array('course'=>$this->course->id);
-        $instance = $generator->create_instance($params);
-        $cm = get_coursemodule_from_instance('assign', $instance->id);
-        set_coursemodule_groupmode($cm->id, SEPARATEGROUPS);
-        $cm->groupmode = SEPARATEGROUPS;
-        $context = context_module::instance($cm->id);
-        $assign = new testable_assign($context, $cm, $this->course);
+        $data = new stdClass();
+        $data->courseid = $this->course->id;
+        $data->name = 'Grouping';
+        $groupingid = groups_create_grouping($data);
+        groups_assign_grouping($groupingid, $this->groups[0]->id);
+        $assign = $this->create_instance(array('groupingid' => $groupingid, 'groupmode' => SEPARATEGROUPS));
 
         $this->setUser($this->students[1]);
         $this->assertCount(4, $assign->testable_get_graders($this->students[0]->id));
+        // Note the second student is in a group that is not in the grouping.
+        // This means that we get all graders that are not in a group in the grouping.
+        $this->assertCount(10, $assign->testable_get_graders($this->students[1]->id));
     }
 
     public function test_group_members_only() {
