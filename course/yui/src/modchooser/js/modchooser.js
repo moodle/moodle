@@ -5,7 +5,7 @@
  */
 
 var CSS = {
-    PAGECONTENT : 'div#page-content',
+    PAGECONTENT : 'body',
     SECTION : 'li.section',
     SECTIONMODCHOOSER : 'span.section-modchooser-link',
     SITEMENU : 'div.block_site_main_menu',

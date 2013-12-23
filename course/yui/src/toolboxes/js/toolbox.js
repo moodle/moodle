@@ -47,7 +47,7 @@ var CSS = {
         INSTANCENAME : 'span.instancename',
         MODINDENTDIV : '.mod-indent',
         MODINDENTOUTER : '.mod-indent-outer',
-        PAGECONTENT : 'div#page-content',
+        PAGECONTENT : 'body',
         SECTIONLI : 'li.section',
         SHOW : 'a.'+CSS.SHOW,
         SHOWHIDE : 'a.editing_showhide'

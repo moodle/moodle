@@ -13,7 +13,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
         LIGHTBOX : 'lightbox',
         MOVEDOWN : 'movedown',
         MOVEUP : 'moveup',
-        PAGECONTENT : 'page-content',
+        PAGECONTENT : 'div[role="main"]',
         RIGHT : 'right',
         SECTION : 'section',
         SECTIONADDMENUS : 'section_add_menus',
@@ -59,7 +59,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                 });
                 del.dd.plug(Y.Plugin.DDConstrained, {
                     // Keep it inside the .course-content
-                    constrain: '#'+CSS.PAGECONTENT,
+                    constrain: CSS.PAGECONTENT,
                     stickY: true
                 });
                 del.dd.plug(Y.Plugin.DDWinScroll);
@@ -302,7 +302,7 @@ YUI.add('moodle-course-dragdrop', function(Y) {
                 });
                 del.dd.plug(Y.Plugin.DDConstrained, {
                     // Keep it inside the .course-content
-                    constrain: '#'+CSS.PAGECONTENT
+                    constrain: CSS.PAGECONTENT
                 });
                 del.dd.plug(Y.Plugin.DDWinScroll);
 
