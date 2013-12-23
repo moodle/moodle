@@ -4569,7 +4569,7 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
     );
 
     // Include course dragdrop
-    if ($course->id != $SITE->id) {
+    if (course_format_uses_sections($course->format)) {
         $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_section_dragdrop',
             array(array(
                 'courseid' => $course->id,
@@ -4614,8 +4614,8 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'movesection',
         ), 'moodle');
 
-    // Include format-specific strings
-    if ($course->id != $SITE->id) {
+    // Include section-specific strings for formats which support sections.
+    if (course_format_uses_sections($course->format)) {
         $PAGE->requires->strings_for_js(array(
                 'showfromothers',
                 'hidefromothers',
