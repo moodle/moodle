@@ -955,23 +955,6 @@ class page_requirements_manager {
     }
 
     /**
-     * Adds a call to make use of a YUI gallery module. DEPRECATED DO NOT USE!!!
-     *
-     * @deprecated DO NOT USE
-     *
-     * @param string|array $modules One or more gallery modules to require
-     * @param string $version
-     * @param string $function
-     * @param array $arguments
-     * @param bool $ondomready
-     */
-    public function js_gallery_module($modules, $version, $function, array $arguments = null, $ondomready = false) {
-        global $CFG;
-        debugging('This function will be removed before 2.0 is released please change it from js_gallery_module to yui_module', DEBUG_DEVELOPER);
-        $this->yui_module($modules, $function, $arguments, $version, $ondomready);
-    }
-
-    /**
      * Creates a JavaScript function call that requires one or more modules to be loaded.
      *
      * This function can be used to include all of the standard YUI module types within JavaScript:
