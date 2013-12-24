@@ -677,7 +677,7 @@ function login_attempt_failed($user) {
  * @param stdClass $user
  */
 function login_lock_account($user) {
-    global $CFG, $SESSION;
+    global $CFG;
 
     if ($user->mnethostid != $CFG->mnet_localhost_id) {
         return;
@@ -699,12 +699,7 @@ function login_lock_account($user) {
         $secret = random_string(15);
         set_user_preference('login_lockout_secret', $secret, $user);
 
-        // Some nasty hackery to get strings and dates localised for target user.
-        $sessionlang = isset($SESSION->lang) ? $SESSION->lang : null;
-        if (get_string_manager()->translation_exists($user->lang, false)) {
-            $SESSION->lang = $user->lang;
-            moodle_setlocale();
-        }
+        $oldforcelang = force_current_language($user->lang);
 
         $site = get_site();
         $supportuser = core_user::get_support_user();
@@ -725,10 +720,7 @@ function login_lock_account($user) {
             email_to_user($user, $supportuser, $subject, $message);
         }
 
-        if ($SESSION->lang !== $sessionlang) {
-            $SESSION->lang = $sessionlang;
-            moodle_setlocale();
-        }
+        force_current_language($oldforcelang);
     }
 }
 
