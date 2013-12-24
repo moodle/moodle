@@ -30,6 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>無法建立資料庫</p>
+<p>指定之資料庫並不存在。使用者並未有權限建立資料庫</p>
+<p>網站管理員需查明資料庫之組態.</p>';
 $string['cannotcreatelangdir'] = '無法建立語言資料夾。';
 $string['cannotcreatetempdir'] = '無法建立暫存資料夾。';
 $string['cannotdownloadcomponents'] = '無法下載元件。';
@@ -40,7 +43,7 @@ $string['cannotsavezipfile'] = '無法儲存 ZIP 檔案。';
 $string['cannotunzipfile'] = '無法解壓縮檔案。';
 $string['componentisuptodate'] = '元件已經是最新的了。';
 $string['downloadedfilecheckfailed'] = '下載檔案檢查錯誤。';
-$string['invalidmd5'] = '無效的 md5';
+$string['invalidmd5'] = '打勾的變數不對，請再重試。';
 $string['missingrequiredfield'] = '缺少部份必填欄位';
 $string['remotedownloaderror'] = '下載元件至伺服器失敗，檢查代理伺服器的設定、高度建議安裝PHP cURL，您必須手動下載<a href="{$a->url}">{$a->url}</a>，並且複製到伺服器"{$a->dest}" 解壓縮';
 $string['wrongdestpath'] = '錯誤的目的路徑。';
