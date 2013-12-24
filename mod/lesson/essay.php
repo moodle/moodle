@@ -243,8 +243,6 @@ switch ($mode) {
                 $essayinfo->sent = 1;
                 $attempt->useranswer = serialize($essayinfo);
                 $DB->update_record('lesson_attempts', $attempt);
-                // Log it
-                add_to_log($course->id, 'lesson', 'update email essay grade', "essay.php?id=$cm->id", format_string($pages[$attempt->pageid]->title,true).': '.fullname($users[$attempt->userid]), $cm->id);
             }
         }
         $lesson->add_message(get_string('emailsuccess', 'lesson'), 'notifysuccess');
