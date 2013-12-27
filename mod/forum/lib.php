@@ -8498,8 +8498,6 @@ function forum_set_user_maildigest($forum, $maildigest, $user = null) {
             $subscription->id = $DB->insert_record('forum_digests', $subscription);
         }
     }
-
-    return true;
 }
 
 /**
