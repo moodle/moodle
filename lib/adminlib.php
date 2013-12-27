@@ -1627,7 +1627,20 @@ abstract class admin_setting {
             rebuild_course_cache(0, true);
         }
 
-        // log change
+        $this->add_to_config_log($name, $oldvalue, $value);
+
+        return true; // BC only
+    }
+
+    /**
+     * Log config changes if necessary.
+     * @param string $name
+     * @param string $oldvalue
+     * @param string $value
+     */
+    protected function add_to_config_log($name, $oldvalue, $value) {
+        global $DB, $USER;
+
         $log = new stdClass();
         $log->userid       = during_initial_install() ? 0 :$USER->id; // 0 as user id during install
         $log->timemodified = time();
@@ -1636,8 +1649,6 @@ abstract class admin_setting {
         $log->value        = $value;
         $log->oldvalue     = $oldvalue;
         $DB->insert_record('config_log', $log);
-
-        return true; // BC only
     }
 
     /**
@@ -2010,6 +2021,22 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
      */
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         parent::__construct($name, $visiblename, $description, $defaultsetting, PARAM_RAW, 30);
+    }
+
+    /**
+     * Log config changes if necessary.
+     * @param string $name
+     * @param string $oldvalue
+     * @param string $value
+     */
+    protected function add_to_config_log($name, $oldvalue, $value) {
+        if ($value !== '') {
+            $value = '********';
+        }
+        if ($oldvalue !== '' and $oldvalue !== null) {
+            $oldvalue = '********';
+        }
+        parent::add_to_config_log($name, $oldvalue, $value);
     }
 
     /**
