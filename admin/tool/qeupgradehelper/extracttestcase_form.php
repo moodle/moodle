@@ -46,7 +46,7 @@ class tool_qeupgradehelper_extract_options_form extends moodleform {
 
         $qtypes = get_plugin_list('qtype');
         foreach ($qtypes as $qtype => $notused) {
-            $qtypes[$qtype] = get_string($qtype, 'qtype_' . $qtype);
+            $qtypes[$qtype] = get_string('pluginname', 'qtype_' . $qtype);
         }
 
         $mform->addElement('header', 'h1', 'Either extract a specific question_session');
