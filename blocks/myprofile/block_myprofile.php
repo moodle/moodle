@@ -213,24 +213,6 @@ class block_myprofile extends block_base {
     }
 
     /**
-     * displays instance configuration form
-     *
-     * @return boolean
-     */
-    function instance_config_print() {
-        return false;
-
-        /*
-        global $CFG;
-
-        $form = new block_myprofile.phpConfigForm(null, array($this->config));
-        $form->display();
-
-        return true;
-        */
-    }
-
-    /**
      * locations where block can be displayed
      *
      * @return array

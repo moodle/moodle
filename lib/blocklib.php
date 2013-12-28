@@ -29,28 +29,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**#@+
- * @deprecated since Moodle 2.0. No longer used.
- */
-define('BLOCK_MOVE_LEFT',   0x01);
-define('BLOCK_MOVE_RIGHT',  0x02);
-define('BLOCK_MOVE_UP',     0x04);
-define('BLOCK_MOVE_DOWN',   0x08);
-define('BLOCK_CONFIGURE',   0x10);
-/**#@-*/
-
-/**#@+
  * Default names for the block regions in the standard theme.
  */
 define('BLOCK_POS_LEFT',  'side-pre');
 define('BLOCK_POS_RIGHT', 'side-post');
-/**#@-*/
-
-/**#@+
- * @deprecated since Moodle 2.0. No longer used.
- */
-define('BLOCKS_PINNED_TRUE',0);
-define('BLOCKS_PINNED_FALSE',1);
-define('BLOCKS_PINNED_BOTH',2);
 /**#@-*/
 
 define('BUI_CONTEXTS_FRONTPAGE_ONLY', 0);
@@ -483,19 +465,6 @@ class block_manager {
         }
         $bc->attributes['class'] .= ' block_fake';
         $this->extracontent[$region][] = $bc;
-    }
-
-    /**
-     * When the block_manager class was created, the {@link add_fake_block()}
-     * was called add_pretend_block, which is inconsisted with
-     * {@link show_only_fake_blocks()}. To fix this inconsistency, this method
-     * was renamed to add_fake_block. Please update your code.
-     * @param block_contents $bc the content of the block-like thing.
-     * @param string $region a block region that exists on this page.
-     */
-    public function add_pretend_block($bc, $region) {
-        debugging(DEBUG_DEVELOPER, 'add_pretend_block has been renamed to add_fake_block. Please rename the method call in your code.');
-        $this->add_fake_block($bc, $region);
     }
 
     /**
@@ -1949,28 +1918,6 @@ function block_add_block_ui($page, $output) {
     return $bc;
 }
 
-// Functions that have been deprecated by block_manager =======================
-
-/**
- * @deprecated since Moodle 2.0 - use $page->blocks->get_addable_blocks();
- *
- * This function returns an array with the IDs of any blocks that you can add to your page.
- * Parameters are passed by reference for speed; they are not modified at all.
- *
- * @param $page the page object.
- * @param $blockmanager Not used.
- * @return array of block type ids.
- */
-function blocks_get_missing(&$page, &$blockmanager) {
-    debugging('blocks_get_missing is deprecated. Please use $page->blocks->get_addable_blocks() instead.', DEBUG_DEVELOPER);
-    $blocks = $page->blocks->get_addable_blocks();
-    $ids = array();
-    foreach ($blocks as $block) {
-        $ids[] = $block->id;
-    }
-    return $ids;
-}
-
 /**
  * Actually delete from the database any blocks that are currently on this page,
  * but which should not be there according to blocks_name_allowed_in_format.
@@ -2100,23 +2047,6 @@ function blocks_set_visibility($instance, $page, $newvisibility) {
     $bp->region = $instance->defaultregion;
     $bp->weight = $instance->defaultweight;
     $DB->insert_record('block_positions', $bp);
-}
-
-/**
- * @deprecated since 2.0
- * Delete all the blocks from a particular page.
- *
- * @param string $pagetype the page type.
- * @param integer $pageid the page id.
- * @return bool success or failure.
- */
-function blocks_delete_all_on_page($pagetype, $pageid) {
-    global $DB;
-
-    debugging('Call to deprecated function blocks_delete_all_on_page. ' .
-            'This function cannot work any more. Doing nothing. ' .
-            'Please update your code to use a block_manager method $PAGE->blocks->....', DEBUG_DEVELOPER);
-    return false;
 }
 
 /**
