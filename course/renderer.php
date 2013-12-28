@@ -194,8 +194,6 @@ class core_course_renderer extends plugin_renderer_base {
         $formcontent .= html_writer::start_tag('div', array('id' => 'typeformdiv'));
         $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'id' => 'course',
                 'name' => 'course', 'value' => $course->id));
-        $formcontent .= html_writer::tag('input', '',
-                array('type' => 'hidden', 'class' => 'jump', 'name' => 'jump', 'value' => ''));
         $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'name' => 'sesskey',
                 'value' => sesskey()));
         $formcontent .= html_writer::end_tag('div');

@@ -29,9 +29,6 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
     // The current section ID
     sectionid : null,
 
-    // The hidden element holding the jump param
-    jumplink : null,
-
     initializer : function() {
         var dialogue = Y.one('.chooserdialoguebody');
         var header = Y.one('.choosertitle');
@@ -155,8 +152,11 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
         e.preventDefault();
     },
     option_selected : function(thisoption) {
-        // Add the sectionid to the URL
-        this.jumplink.set('value', thisoption.get('value') + '&section=' + this.sectionid);
+        // Add the sectionid to the URL.
+        this.hiddenRadioValue.setAttrs({
+            name: 'jump',
+            value: thisoption.get('value') + '&section=' + this.sectionid
+        });
     }
 },
 {
