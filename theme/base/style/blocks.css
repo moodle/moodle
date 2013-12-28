@@ -7,7 +7,7 @@
 .block .header .commands > a { margin:0 3px; }
 .block .header .commands .icon img {width:12px;height:12px;}
 .block .content {padding:4px;}
-.block.hidden .content {display: none;}
+.jsenabled .block.hidden .content {display: none;}
 .block .content .userpicture {width:16px;height:16px;margin-right:6px;}
 .block .content .list li.listentry {clear:both;}
 .block .content .list .c0 {display:inline;}
