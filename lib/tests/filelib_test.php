@@ -292,7 +292,7 @@ Connection: close
 HTTP/1.0 200 OK
 Server: Apache
 X-Lb-Nocache: true
-Cache-Control: private, max-age=15
+Cache-Control: private, max-age=15, no-transform
 ETag: "4d69af5d8ba873ea9192c489e151bd7b"
 Content-Type: text/html
 Date: Thu, 08 Dec 2011 14:44:53 GMT
@@ -308,7 +308,7 @@ EOF;
 HTTP/1.0 200 OK
 Server: Apache
 X-Lb-Nocache: true
-Cache-Control: private, max-age=15
+Cache-Control: private, max-age=15, no-transform
 ETag: "4d69af5d8ba873ea9192c489e151bd7b"
 Content-Type: text/html
 Date: Thu, 08 Dec 2011 14:44:53 GMT
