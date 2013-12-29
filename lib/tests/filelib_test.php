@@ -129,7 +129,7 @@ class core_filelib_testcase extends advanced_testcase {
         $this->assertSame('404', $response->status);
         $this->assertTrue(is_array($response->headers));
         $this->assertRegExp('|^HTTP/1\.[01] 404 Not Found$|', rtrim($response->response_code));
-        $this->assertStringStartsWith('<!DOCTYPE', $response->results);
+        // Do not test the response starts with DOCTYPE here because some servers may return different headers.
         $this->assertSame('', $response->error);
 
         // Invalid url.
