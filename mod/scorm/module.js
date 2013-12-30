@@ -48,7 +48,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
     var scorm_bloody_labelclick = false;
     var scorm_nav_panel;
 
-    Y.use('button', 'dd-plugin', 'panel', 'resize', 'moodle-mod_scorm-treeview', function(Y) {
+    Y.use('button', 'dd-plugin', 'panel', 'resize', 'gallery-sm-treeview', function(Y) {
 
         Y.TreeView.prototype.getNodeByAttribute = function(attribute, value) {
             var node = null,
