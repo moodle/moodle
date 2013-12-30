@@ -2550,6 +2550,7 @@ function redirect($url, $message='', $delay=-1) {
     if ($PAGE) {
         $PAGE->set_context(null);
         $PAGE->set_pagelayout('redirect');  // No header and footer needed.
+        $PAGE->set_title(get_string('pageshouldredirect', 'moodle'));
     }
 
     if ($url instanceof moodle_url) {
