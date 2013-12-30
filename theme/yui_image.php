@@ -60,9 +60,9 @@ if ($version == 'moodle' && count($parts) >= 3) {
     if (!file_exists($imagepath) or !is_file($imagepath)) {
         $imagepath = $dir . '/yui/' . $module . '/assets/skins/sam/' . $image;
     }
-} else if ($version == 'gallery' && count($parts)==3) {
-    list($module, $version, $image) = $parts;
-    $imagepath = "$CFG->dirroot/lib/yui/gallery/$module/$version/assets/skins/sam/$image";
+} else if ($version == 'gallery' && count($parts) >= 3) {
+    list($revision, $module, , , , $image) = $parts;
+    $imagepath = "$CFG->dirroot/lib/yuilib/gallery/$module/assets/skins/sam/$image";
 } else if (count($parts) == 1 && ($version == $CFG->yui3version || $version == $CFG->yui2version)) {
     list($image) = $parts;
     if ($version == $CFG->yui3version) {

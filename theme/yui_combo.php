@@ -288,7 +288,17 @@ while (count($parts)) {
         $contentfile = "$CFG->libdir/yuilib/$part";
 
     } else if ($version == 'gallery') {
-        $contentfile = "$CFG->libdir/yui/$part";
+        if (count($bits) <= 2) {
+            // This is an invalid module load attempt.
+            $content .= "\n// Incorrect moodle module inclusion. Not enough component information in {$part}.\n";
+            continue;
+        }
+        $revision = (int)array_shift($bits);
+        if ($revision === -1) {
+            // Revision -1 says please don't cache the JS
+            $cache = false;
+        }
+        $contentfile = "$CFG->libdir/yuilib/gallery/" . join('/', $bits);
 
     } else if ($version == 'yuiuseall') {
         // Create global Y that is available in global scope,
@@ -341,8 +351,12 @@ while (count($parts)) {
             $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$CFG->yui2version.'/$1.$2', $filecontent);
 
         } else if ($version == 'gallery') {
-            // search for all images in gallery module CSS and serve them through the yui_image.php script
-            $filecontent = preg_replace('/([a-z0-9_-]+)\.(png|gif)/', $relroot.'/theme/yui_image.php'.$sep.$version.'/'.$bits[0].'/'.$bits[1].'/$1.$2', $filecontent);
+            // Replace any references to the CDN with a relative link.
+            $filecontent = preg_replace('#(' . preg_quote('http://yui.yahooapis.com/') . '(gallery-[^/]*/))#', '../../../../', $filecontent);
+
+            // Replace all relative image links with the a link to yui_image.php.
+            $filecontent = preg_replace('#(' . preg_quote('../../../../') . ')(gallery-[^/]*/assets/skins/sam/[a-z0-9_-]+)\.(png|gif)#',
+                    $relroot . '/theme/yui_image.php' . $sep . '/gallery/' . $revision . '/$2.$3', $filecontent);
 
         } else {
             // First we need to remove relative paths to images. These are used by YUI modules to make use of global assets.
