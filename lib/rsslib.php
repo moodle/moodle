@@ -216,7 +216,7 @@ function rss_get_file_name($instance, $sql, $params = array()) {
         // serialize it and then concatenate it with the sql.
         // The reason for this is to generate a unique filename
         // for queries using the same sql but different parameters.
-        asort($parms);
+        asort($params);
         $serializearray = serialize($params);
         return $instance->id.'_'.md5($sql . $serializearray);
     } else {
