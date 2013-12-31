@@ -52,4 +52,28 @@ class core_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'category', 'add', 'editcategory.php?id=' . $category->id, $category->id);
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the course category updated event.
+     */
+    public function test_course_category_updated() {
+        // Create a category.
+        $category = $this->getDataGenerator()->create_category();
+
+        // Create some data we are going to use to update this category.
+        $data = new stdClass();
+        $data->name = 'Category name change';
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $category->update($data);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\course_category_updated', $event);
+        $this->assertEquals(context_coursecat::instance($category->id), $event->get_context());
+        $expected = array(SITEID, 'category', 'update', 'editcategory.php?id=' . $category->id, $category->id);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
 }

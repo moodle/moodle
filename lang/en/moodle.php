@@ -717,6 +717,7 @@ $string['eventcommentdeleted'] = 'Comment deleted';
 $string['eventcommentsviewed'] = 'Comments viewed';
 $string['eventcoursecategorycreated'] = 'Category created';
 $string['eventcoursecategorydeleted'] = 'Category deleted';
+$string['eventcoursecategoryupdated'] = 'Category updated';
 $string['eventcoursecontentdeleted'] = 'Course content deleted';
 $string['eventcoursecreated'] = 'Course created';
 $string['eventcoursedeleted'] = 'Course deleted';

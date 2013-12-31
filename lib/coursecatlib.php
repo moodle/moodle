@@ -521,13 +521,19 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
         $newcategory->timemodified = time();
 
+        $categorycontext = $this->get_context();
         if ($editoroptions) {
-            $categorycontext = $this->get_context();
             $newcategory = file_postupdate_standard_editor($newcategory, 'description', $editoroptions, $categorycontext,
                                                            'coursecat', 'description', 0);
         }
         $DB->update_record('course_categories', $newcategory);
-        add_to_log(SITEID, "category", 'update', "editcategory.php?id=$this->id", $this->id);
+
+        $event = \core\event\course_category_updated::create(array(
+            'objectid' => $newcategory->id,
+            'context' => $categorycontext
+        ));
+        $event->trigger();
+
         fix_course_sortorder();
         // Purge cache even if fix_course_sortorder() did not do it.
         cache_helper::purge_by_event('changesincoursecat');
