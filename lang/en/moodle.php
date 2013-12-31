@@ -715,6 +715,7 @@ $string['errorwhenconfirming'] = 'You are not confirmed yet because an error occ
 $string['eventcommentcreated'] = 'Comment created';
 $string['eventcommentdeleted'] = 'Comment deleted';
 $string['eventcommentsviewed'] = 'Comments viewed';
+$string['eventcoursecategorycreated'] = 'Category created';
 $string['eventcoursecategorydeleted'] = 'Category deleted';
 $string['eventcoursecontentdeleted'] = 'Course content deleted';
 $string['eventcoursecreated'] = 'Course created';

@@ -427,7 +427,12 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $DB->update_record('course_categories', $updatedata);
         }
 
-        add_to_log(SITEID, "category", 'add', "editcategory.php?id=$newcategory->id", $newcategory->id);
+        $event = \core\event\course_category_created::create(array(
+            'objectid' => $newcategory->id,
+            'context' => $categorycontext
+        ));
+        $event->trigger();
+
         cache_helper::purge_by_event('changesincoursecat');
 
         return self::get($newcategory->id, MUST_EXIST, true);
