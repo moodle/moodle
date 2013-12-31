@@ -64,7 +64,7 @@ class core_events_testcase extends advanced_testcase {
         $data = new stdClass();
         $data->name = 'Category name change';
 
-        // Trigger and capture the event.
+        // Trigger and capture the event for updating a category.
         $sink = $this->redirectEvents();
         $category->update($data);
         $events = $sink->get_events();
@@ -74,6 +74,46 @@ class core_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\course_category_updated', $event);
         $this->assertEquals(context_coursecat::instance($category->id), $event->get_context());
         $expected = array(SITEID, 'category', 'update', 'editcategory.php?id=' . $category->id, $category->id);
+        $this->assertEventLegacyLogData($expected, $event);
+
+        // Create another category and a child category.
+        $category2 = $this->getDataGenerator()->create_category();
+        $childcat = $this->getDataGenerator()->create_category(array('parent' => $category2->id));
+
+        // Trigger and capture the event for changing the parent of a category.
+        $sink = $this->redirectEvents();
+        $childcat->change_parent($category);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\course_category_updated', $event);
+        $this->assertEquals(context_coursecat::instance($childcat->id), $event->get_context());
+        $expected = array(SITEID, 'category', 'move', 'editcategory.php?id=' . $childcat->id, $childcat->id);
+        $this->assertEventLegacyLogData($expected, $event);
+
+        // Trigger and capture the event for changing the sortorder of a category.
+        $sink = $this->redirectEvents();
+        $category2->change_sortorder_by_one(true);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\course_category_updated', $event);
+        $this->assertEquals(context_coursecat::instance($category2->id), $event->get_context());
+        $expected = array(SITEID, 'category', 'move', 'management.php?categoryid=' . $category2->id, $category2->id);
+        $this->assertEventLegacyLogData($expected, $event);
+
+        // Trigger and capture the event for deleting a category and moving it's children to another.
+        $sink = $this->redirectEvents();
+        $category->delete_move($category->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\course_category_updated', $event);
+        $this->assertEquals(context_coursecat::instance($childcat->id), $event->get_context());
+        $expected = array(SITEID, 'category', 'move', 'editcategory.php?id=' . $childcat->id, $childcat->id);
         $this->assertEventLegacyLogData($expected, $event);
     }
 }

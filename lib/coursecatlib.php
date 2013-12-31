@@ -1752,7 +1752,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             foreach ($children as $childcat) {
                 $childcat->change_parent_raw($newparentcat);
                 // Log action.
-                add_to_log(SITEID, "category", "move", "editcategory.php?id=$childcat->id", $childcat->id);
+                $event = \core\event\course_category_updated::create(array(
+                    'objectid' => $childcat->id,
+                    'context' => $childcat->get_context()
+                ));
+                $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'editcategory.php?id=' . $childcat->id,
+                    $childcat->id));
+                $event->trigger();
             }
             fix_course_sortorder();
         }
@@ -1920,7 +1926,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             fix_course_sortorder();
             cache_helper::purge_by_event('changesincoursecat');
             $this->restore();
-            add_to_log(SITEID, "category", "move", "editcategory.php?id=$this->id", $this->id);
+
+            $event = \core\event\course_category_updated::create(array(
+                'objectid' => $this->id,
+                'context' => $this->get_context()
+            ));
+            $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'editcategory.php?id=' . $this->id, $this->id));
+            $event->trigger();
         }
     }
 
@@ -2541,7 +2553,15 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $DB->set_field('course_categories', 'sortorder', $swapcategory->sortorder, array('id' => $this->id));
             $DB->set_field('course_categories', 'sortorder', $this->sortorder, array('id' => $swapcategory->id));
             $this->sortorder = $swapcategory->sortorder;
-            add_to_log(SITEID, "category", "move", "management.php?categoryid={$this->id}", $this->id);
+
+            $event = \core\event\course_category_updated::create(array(
+                'objectid' => $this->id,
+                'context' => $this->get_context()
+            ));
+            $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'management.php?categoryid=' . $this->id,
+                $this->id));
+            $event->trigger();
+
             // Finally reorder courses.
             fix_course_sortorder();
             cache_helper::purge_by_event('changesincoursecat');

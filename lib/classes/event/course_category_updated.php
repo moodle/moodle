@@ -27,6 +27,9 @@ defined('MOODLE_INTERNAL') || die();
  */
 class course_category_updated extends base {
 
+    /** @var array The legacy log data. */
+    private $legacylogdata;
+
     /**
      * Initialise the event data.
      */
@@ -56,11 +59,24 @@ class course_category_updated extends base {
     }
 
     /**
+     * Set the legacy data used for add_to_log().
+     *
+     * @param array $logdata
+     */
+    public function set_legacy_logdata($logdata) {
+        $this->legacylogdata = $logdata;
+    }
+
+    /**
      * Return legacy data for add_to_log().
      *
      * @return array
      */
     protected function get_legacy_logdata() {
+        if (!empty($this->legacylogdata)) {
+            return $this->legacylogdata;
+        }
+
         return array(SITEID, 'category', 'update', 'editcategory.php?id=' . $this->objectid, $this->objectid);
     }
 }
