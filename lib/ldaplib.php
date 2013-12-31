@@ -382,19 +382,14 @@ function ldap_stripslashes($text) {
 
 
 /**
- * Check if PHP supports LDAP paged results and we can use them (we have to use LDAP
- * version 3, otherwise the server doesn't use them).
+ * Check if we use LDAP version 3, otherwise the server cannot use them.
  *
  * @param ldapversion integer The LDAP protocol version we use.
  *
  * @return boolean true is paged results can be used, false otherwise.
  */
 function ldap_paged_results_supported($ldapversion) {
-
-    if (((int)$ldapversion === 3) &&
-        function_exists('ldap_control_paged_result') &&
-        function_exists('ldap_control_paged_result_response')) {
-
+    if ((int)$ldapversion === 3) {
         return true;
     }
 
