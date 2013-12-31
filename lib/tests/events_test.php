@@ -115,5 +115,29 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEquals(context_coursecat::instance($childcat->id), $event->get_context());
         $expected = array(SITEID, 'category', 'move', 'editcategory.php?id=' . $childcat->id, $childcat->id);
         $this->assertEventLegacyLogData($expected, $event);
+
+        // Trigger and capture the event for hiding a category.
+        $sink = $this->redirectEvents();
+        $category2->hide();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\course_category_updated', $event);
+        $this->assertEquals(context_coursecat::instance($category2->id), $event->get_context());
+        $expected = array(SITEID, 'category', 'hide', 'editcategory.php?id=' . $category2->id, $category2->id);
+        $this->assertEventLegacyLogData($expected, $event);
+
+        // Trigger and capture the event for unhiding a category.
+        $sink = $this->redirectEvents();
+        $category2->show();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\course_category_updated', $event);
+        $this->assertEquals(context_coursecat::instance($category2->id), $event->get_context());
+        $expected = array(SITEID, 'category', 'show', 'editcategory.php?id=' . $category2->id, $category2->id);
+        $this->assertEventLegacyLogData($expected, $event);
     }
 }

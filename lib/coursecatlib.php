@@ -1998,7 +1998,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     public function hide() {
         if ($this->hide_raw(0)) {
             cache_helper::purge_by_event('changesincoursecat');
-            add_to_log(SITEID, "category", "hide", "editcategory.php?id=$this->id", $this->id);
+
+            $event = \core\event\course_category_updated::create(array(
+                'objectid' => $this->id,
+                'context' => $this->get_context()
+            ));
+            $event->set_legacy_logdata(array(SITEID, 'category', 'hide', 'editcategory.php?id=' . $this->id, $this->id));
+            $event->trigger();
         }
     }
 
@@ -2051,7 +2057,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     public function show() {
         if ($this->show_raw()) {
             cache_helper::purge_by_event('changesincoursecat');
-            add_to_log(SITEID, "category", "show", "editcategory.php?id=$this->id", $this->id);
+
+            $event = \core\event\course_category_updated::create(array(
+                'objectid' => $this->id,
+                'context' => $this->get_context()
+            ));
+            $event->set_legacy_logdata(array(SITEID, 'category', 'show', 'editcategory.php?id=' . $this->id, $this->id));
+            $event->trigger();
         }
     }
 
