@@ -1,6 +1,12 @@
 This file describes API changes in core filter API and plugins,
 information provided here is intended especially for developers.
 
+=== 2.7 ===
+
+* Finally filter may use $PAGE and $OUTPUT, yay!
+* Old global text caching was removed, each filter is now responsible
+  for own caching.
+
 === 2.6 ===
 
 * filtersettings.php is now deprecated, migrate to standard settings.php
