@@ -223,14 +223,6 @@ class cachestore_session extends session_data_store implements cache_is_key_awar
     }
 
     /**
-     * Returns true if this store instance is ready to be used.
-     * @return bool
-     */
-    public function is_ready() {
-        return true;
-    }
-
-    /**
      * Retrieves an item from the cache store given its key.
      *
      * @param string $key The key to retrieve
