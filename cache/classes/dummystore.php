@@ -130,14 +130,6 @@ class cachestore_dummy extends cache_store {
     }
 
     /**
-     * Returns true if this is ready.
-     * @return bool
-     */
-    public function is_ready() {
-        return true;
-    }
-
-    /**
      * Returns true the given mode is supported.
      * @param int $mode
      * @return bool

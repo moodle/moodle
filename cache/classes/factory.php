@@ -274,7 +274,7 @@ class cache_factory {
         }
         /* @var cache_store $store */
         $store = $this->stores[$name];
-        if (!$store::are_requirements_met() || !$store->is_ready() || !$store->is_supported_mode($definition->get_mode())) {
+        if (!$store->is_ready() || !$store->is_supported_mode($definition->get_mode())) {
             return false;
         }
         // We always create a clone of the original store.
