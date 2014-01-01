@@ -486,6 +486,11 @@ if (!$cache and !optional_param('sesskey', '', PARAM_RAW)) {
 
 // Check for valid admin user - no guest autologin
 require_login(0, false);
+if (isguestuser()) {
+    // Login as real user!
+    $SESSION->wantsurl = (string)new moodle_url('/admin/index.php');
+    redirect(get_login_url());
+}
 $context = context_system::instance();
 require_capability('moodle/site:config', $context);
 
