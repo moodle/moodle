@@ -278,6 +278,14 @@ class helper {
             );
         }
 
+        if ($category->can_restore_courses_into()) {
+            $actions['restore'] = array(
+                'url' => new \moodle_url('/backup/restorefile.php', array('contextid' => $category->get_context()->id)),
+                'icon' => new \pix_icon('i/restore', new \lang_string('restorecourse', 'admin')),
+                'string' => new \lang_string('restorecourse', 'admin')
+            );
+        }
+
         return $actions;
     }
 

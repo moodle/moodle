@@ -17,9 +17,17 @@ $PAGE->set_pagelayout('standard');
 require_login($course, null, $cm);
 require_capability('moodle/restore:restorecourse', $context);
 
+if (is_null($course)) {
+    $coursefullname = $SITE->fullname;
+    $courseshortname = $SITE->shortname;
+} else {
+    $coursefullname = $course->fullname;
+    $courseshortname = $course->shortname;
+}
+
 // Show page header.
-$PAGE->set_title($course->shortname . ': ' . get_string('restore'));
-$PAGE->set_heading($course->fullname);
+$PAGE->set_title($courseshortname . ': ' . get_string('restore'));
+$PAGE->set_heading($coursefullname);
 
 $renderer = $PAGE->get_renderer('core','backup');
 echo $OUTPUT->header();

@@ -2396,6 +2396,14 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
+     * Returns true if the user is able to restore a course into this category as a new course.
+     * @return bool
+     */
+    public function can_restore_courses_into() {
+        return has_capability('moodle/course:create', $this->get_context());
+    }
+
+    /**
      * Resorts the sub categories of this category by the given field.
      *
      * @param string $field
