@@ -240,10 +240,23 @@ function tag_set_delete($record_type, $record_id, $tag, $component = null, $cont
 function tag_type_set($tagid, $type) {
     global $DB;
 
-    if ($tag = $DB->get_record('tag', array('id'=>$tagid), 'id')) {
+    if ($tag = $DB->get_record('tag', array('id' => $tagid), 'id, userid, name, rawname')) {
         $tag->tagtype = $type;
         $tag->timemodified = time();
-        return $DB->update_record('tag', $tag);
+        $DB->update_record('tag', $tag);
+
+        $event = \core\event\tag_updated::create(array(
+            'objectid' => $tag->id,
+            'relateduserid' => $tag->userid,
+            'context' => context_system::instance(),
+            'other' => array(
+                'name' => $tag->name,
+                'rawname' => $tag->rawname
+            )
+        ));
+        $event->trigger();
+
+        return true;
     }
     return false;
 }
@@ -263,12 +276,26 @@ function tag_type_set($tagid, $type) {
 function tag_description_set($tagid, $description, $descriptionformat) {
     global $DB;
 
-    if ($tag = $DB->get_record('tag', array('id'=>$tagid),'id')) {
+    if ($tag = $DB->get_record('tag', array('id' => $tagid), 'id, userid, name, rawname')) {
         $tag->description = $description;
         $tag->descriptionformat = $descriptionformat;
         $tag->timemodified = time();
-        return $DB->update_record('tag', $tag);
+        $DB->update_record('tag', $tag);
+
+        $event = \core\event\tag_updated::create(array(
+            'objectid' => $tag->id,
+            'relateduserid' => $tag->userid,
+            'context' => context_system::instance(),
+            'other' => array(
+                'name' => $tag->name,
+                'rawname' => $tag->rawname
+            )
+        ));
+        $event->trigger();
+
+        return true;
     }
+
     return false;
 }
 
@@ -565,7 +592,7 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
  * @return   bool     true on success, false otherwise
  */
 function tag_rename($tagid, $newrawname) {
-    global $DB;
+    global $COURSE, $DB;
 
     $norm = tag_normalize($newrawname, TAG_CASE_ORIGINAL);
     if (! $newrawname_clean = array_shift($norm) ) {
@@ -583,11 +610,28 @@ function tag_rename($tagid, $newrawname) {
         }
     }
 
-    if ($tag = tag_get('id', $tagid, 'id, name, rawname')) {
-        $tag->rawname      = $newrawname_clean;
-        $tag->name         = $newname_clean;
+    if ($tag = tag_get('id', $tagid, 'id, userid, name, rawname')) {
+        // Store the name before we change it.
+        $oldname = $tag->name;
+
+        $tag->rawname = $newrawname_clean;
+        $tag->name = $newname_clean;
         $tag->timemodified = time();
-        return $DB->update_record('tag', $tag);
+        $DB->update_record('tag', $tag);
+
+        $event = \core\event\tag_updated::create(array(
+            'objectid' => $tag->id,
+            'relateduserid' => $tag->userid,
+            'context' => context_system::instance(),
+            'other' => array(
+                'name' => $newname_clean,
+                'rawname' => $newrawname_clean
+            )
+        ));
+        $event->set_legacy_logdata(array($COURSE->id, 'tag', 'update', 'index.php?id='. $tag->id, $oldname . '->'. $tag->name));
+        $event->trigger();
+
+        return true;
     }
     return false;
 }
