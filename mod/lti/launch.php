@@ -59,8 +59,6 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 
 require_login($course);
 
-add_to_log($course->id, "lti", "launch", "launch.php?id=$cm->id", "$lti->id");
-
 $lti->cmid = $cm->id;
 lti_view($lti);
 
