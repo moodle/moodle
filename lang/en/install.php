@@ -145,15 +145,6 @@ $string['inputwebdirectory'] = 'Moodle directory:';
 $string['installation'] = 'Installation';
 $string['langdownloaderror'] = 'Unfortunately the language "{$a}" could not be downloaded. The installation process will continue in English.';
 $string['langdownloadok'] = 'The language "{$a}" was installed successfully. The installation process will continue in this language.';
-$string['magicquotesruntime'] = 'Magic quotes run time';
-$string['magicquotesruntimeerror'] = 'This should be off';
-$string['magicquotesruntimehelp'] = '<p>Magic quotes runtime should be turned off for Moodle to function properly.</p>
-
-<p>Normally it is off by default ... see the setting <b>magic_quotes_runtime</b> in your php.ini file.</p>
-
-<p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
-   called .htaccess within your Moodle directory:</p>
-   <blockquote><div>php_value magic_quotes_runtime Off</div></blockquote>';
 $string['memorylimit'] = 'Memory limit';
 $string['memorylimiterror'] = 'The PHP memory limit is set quite low ... you may run into problems later.';
 $string['memorylimithelp'] = '<p>The PHP memory limit for your server is currently set to {$a}.</p>

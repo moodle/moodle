@@ -108,10 +108,6 @@ $config = new stdClass();
 $config->lang = $lang;
 
 if (!empty($_POST)) {
-    if (install_ini_get_bool('magic_quotes_gpc')) {
-        $_POST = array_map('stripslashes', $_POST);
-    }
-
     $config->stage = (int)$_POST['stage'];
 
     if (isset($_POST['previous'])) {
