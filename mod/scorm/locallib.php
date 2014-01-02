@@ -1871,11 +1871,8 @@ function scorm_get_adlnav_json ($scoes, &$adlnav = array(), $parentscoid = null)
  */
 function scorm_check_url($url) {
     $curl = new curl;
-
-    if (!ini_get('open_basedir') and !ini_get('safe_mode')) {
-        // Same options as in {@link download_file_content()}, used in {@link scorm_parse_scorm()}.
-        $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => true, 'CURLOPT_MAXREDIRS' => 5));
-    }
+    // Same options as in {@link download_file_content()}, used in {@link scorm_parse_scorm()}.
+    $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => true, 'CURLOPT_MAXREDIRS' => 5));
     $cmsg = $curl->head($url);
     $info = $curl->get_info();
     if (empty($info['http_code']) || $info['http_code'] != 200) {

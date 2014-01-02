@@ -2924,7 +2924,7 @@ class curl {
         }
 
         if (!isset($this->emulateredirects)) {
-            $this->emulateredirects = (ini_get('open_basedir') or ini_get('safe_mode'));
+            $this->emulateredirects = ini_get('open_basedir');
         }
     }
 
