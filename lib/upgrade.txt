@@ -26,6 +26,9 @@ YUI:
 JavaSript:
     * The findChildNodes global function has been deprecated. Y.all should
       be used instead.
+    * The callback argument to confirm_action and M.util.show_confirm_dialog has been deprecated. If you need to write a
+      confirmation which includes a callback, please use moodle-core-notification-confirmation and attach callbacks to the
+      events provided.
 
 === 2.6 ===
 
