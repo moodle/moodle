@@ -10,6 +10,11 @@ $return = optional_param('return', '', PARAM_ALPHA);
 
 /// no guest autologin
 require_login(0, false);
+if (isguestuser()) {
+    // Login as real user!
+    $SESSION->wantsurl = (string)new moodle_url('/admin/upgradesettings.php', array('return'=>$return));
+    redirect(get_login_url());
+}
 
 admin_externalpage_setup('upgradesettings'); // now hidden page
 $PAGE->set_pagelayout('maintenance'); // do not print any blocks or other rubbish, we want to force saving
