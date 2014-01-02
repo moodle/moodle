@@ -704,9 +704,6 @@ function ini_get_bool($ini_get_arg) {
 function setup_validate_php_configuration() {
    // this must be very fast - no slow checks here!!!
 
-   if (ini_get_bool('register_globals')) {
-       print_error('globalswarning', 'admin');
-   }
    if (ini_get_bool('session.auto_start')) {
        print_error('sessionautostartwarning', 'admin');
    }
