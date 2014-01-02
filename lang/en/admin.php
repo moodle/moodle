@@ -394,14 +394,6 @@ $string['custommenuitems'] = 'Custom menu items';
 $string['datarootsecurityerror'] = '<p><strong>SECURITY WARNING!</strong></p><p>Your dataroot directory is in the wrong location and is exposed to the web. This means that all your private files are available to anyone in the world, and some of them could be used by a cracker to obtain unauthorised administrative access to your site!</p>
 <p>You <em>must</em> move dataroot directory ({$a}) to a new location that is not within your public web directory, and update the <code>$CFG->dataroot</code> setting in your config.php accordingly.</p>';
 $string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ({$a}) is not directly accessible via web.';
-$string['dbmigrate'] = 'Moodle database migration';
-$string['dbmigrateconnecerror'] = 'Could not connect to the database specified.';
-$string['dbmigrateencodingerror'] = 'The database specified has encoding {$a} rather than required UNICODE/UTF8.<br />Please specify another.';
-$string['dbmigratepostgres'] = 'It seems that you are using PostgreSQL as the database server. To continue the migration process you need to manually create a new database with encoding "UNICODE"(PostgreSQL 7) or "UTF8" (PostgreSQL 8) to store the migrated data. Please enter your new database connection settings below to continue:';
-$string['dbmigratewarning'] = 'Please make sure that you have backed up your Moodle database before commencing this procedure. If you are unsure of how to do that, please contact your system admin. Your Moodle site will be put under maintenance mode after you start the migration process';
-$string['dbmigratewarning2'] = '<b>Warning: You are about to start the database migration process. Please be very sure that your entire Moodle database is backed up.</b>';
-$string['dbmigrationdeprecateddb'] = '<font color="#ff0000">This database is migrated to a new UTF8 database and deprecated. Please edit your config.php and use the new database for this moodle.</font>';
-$string['dbmigrationdupfailed'] = 'Database duplication failed with possible error:<font color="#ff0000"><pre>{$a}</pre></font>';
 $string['dbsessions'] = 'Use database for session information';
 $string['debug'] = 'Debug messages';
 $string['debugall'] = 'ALL: Show all reasonable PHP debug messages';
@@ -1085,9 +1077,6 @@ $string['upgradesure'] = '<p>Your Moodle files have been changed, and you are ab
 <p>Once you do this you can not go back again. Please note that this process can take a long time.</p>
 <p>Are you sure you want to upgrade this server to this version?</p>';
 $string['upgradetimedout'] = 'Upgrade timed out, please restart the upgrade.';
-$string['upgrade197notice'] = '<p>Moodle 1.9.7 contains a number of security fixes to user passwords and backups to protect the user data on your site. As a result some of your settings and permissions relating to backups may have changed.<br />
-See the <a href="http://docs.moodle.org/dev/Moodle_1.9.7_release_notes" target="_blank">Moodle 1.9.7 release notes</a> for full details.</p>';
-$string['upgrade197noticesubject'] = 'Moodle 1.9.7 upgrade security notices';
 $string['upgradingdata'] = 'Upgrading data';
 $string['upgradinglogs'] = 'Upgrading logs';
 $string['upgradingversion'] = 'Upgrading to new version';
