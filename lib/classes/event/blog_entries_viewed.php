@@ -29,6 +29,12 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Class for event to be triggered when blog entries are viewed.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int courseid id of associated course.
+ * }
+ *
  * @package    core
  * @copyright  2013 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

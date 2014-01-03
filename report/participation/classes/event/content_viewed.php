@@ -26,6 +26,13 @@ namespace report_participation\event;
 /**
  * Event triggered, when some content in participation report is viewed.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type string content viewed content identifier.
+ *      @type string url (optional) url of report page.
+ * }
+ *
  * @package    report_participation
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

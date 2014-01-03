@@ -21,6 +21,16 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Course restored event.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type string type restore type, activity, course or section.
+ *      @type int target where restored (new/existing/current/adding/deleting)
+ *      @type int mode execution mode
+ *      @type string opertaion restore
+ *      @type boolean samesite true is restored to same site.
+ * }
+ *
  * @package    core
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

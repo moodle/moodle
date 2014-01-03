@@ -29,6 +29,14 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * assignment_online assessable uploaded event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type array pathnamehashes uploaded files path name hashes.
+ *      @type string content submission text.
+ *      @type string triggeredfrom name of the function from which it is triggred.
+ * }
+ *
  * @package    assignment_online
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

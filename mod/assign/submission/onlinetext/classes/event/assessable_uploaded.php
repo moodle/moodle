@@ -29,6 +29,14 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * assignsubmission_onlinetext assessable uploaded event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type array pathnamehashes uploaded files path name hashes.
+ *      @type string content string.
+ *      @type string format content format.
+ * }
+ *
  * @package    assignsubmission_onlinetext
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -100,4 +108,16 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
         $this->data['objecttable'] = 'assign_submission';
     }
 
+    /**
+     * Validation that should be shared among child classes.
+     *
+     * @throws \coding_exception when validation fails.
+     * @return void
+     */
+    protected function validate_data() {
+        parent::validate_data();
+        if (!isset($this->other['format']) || !is_string($this->other['format'])) {
+            throw new \coding_exception('format must be set in $other and must be a string.');
+        }
+    }
 }

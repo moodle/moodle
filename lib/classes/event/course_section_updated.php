@@ -29,6 +29,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Course section updated.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int sectionnum section number.
+ * }
+ *
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

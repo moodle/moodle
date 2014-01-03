@@ -28,6 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Event for when a feedback activity is viewed.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int anonymous if feedback is anonymous.
+ *      @type int cmid course module id.
+ * }
+ *
  * @package    mod_feedback
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

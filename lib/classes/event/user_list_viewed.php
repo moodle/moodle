@@ -17,6 +17,14 @@
 /**
  * Defines the user list viewed event.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int courseid id of course.
+ *      @type string courseshortname short name of course.
+ *      @type string coursefullname full name of course.
+ * }
+ *
  * @package    core
  * @copyright  2013 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

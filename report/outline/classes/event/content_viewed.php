@@ -26,6 +26,13 @@ namespace report_outline\event;
 /**
  * Event for when some content in outline report is viewed.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type string content viewed content identifier.
+ *      @type string url (optional) url of report page.
+ * }
+ *
  * @package    report_outline
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

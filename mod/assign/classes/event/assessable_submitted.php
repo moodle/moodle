@@ -29,6 +29,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * mod_assign assessable submitted event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type bool submission_editable is submission editable.
+ * }
+ *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

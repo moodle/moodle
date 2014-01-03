@@ -28,6 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * mod_wiki version viewed event.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int versionid id page version.
+ * }
+ *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

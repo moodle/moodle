@@ -31,6 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  *
  * This class has to be extended by any event which is triggred while deleting comment.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int itemid id of item for which comment is deleted.
+ * }
+ *
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -29,6 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * assignment_submitted assessable uploaded event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int assignmentid assignment id.
+ *      @type bool submission_editable is submission editable.
+ * }
+ *
  * @package    assignment_submitted
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -116,6 +123,9 @@ class assessable_submitted extends \core\event\assessable_submitted {
         parent::validate_data();
         if (!isset($this->other['submission_editable'])) {
             throw new \coding_exception('Other must contain the key submission_editable.');
+        }
+        if (!isset($this->other['assignmentid'])) {
+            throw new \coding_exception('Other must contain the key assignmentid.');
         }
     }
 }

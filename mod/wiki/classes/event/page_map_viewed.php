@@ -28,6 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * mod_wiki map viewed event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int option map option viewed.
+ * }
+ *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

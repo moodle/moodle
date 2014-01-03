@@ -28,6 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * mod_wiki diff viewed event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int comparewith version number to compare with.
+ *      @type int compare version number to compare.
+ * }
+ *
  * @package    mod_wiki
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
