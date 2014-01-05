@@ -22,6 +22,7 @@ $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
 $a = optional_param('a', '', PARAM_INT);         // scorm ID
 $organization = optional_param('organization', '', PARAM_INT); // organization ID
 $action = optional_param('action', '', PARAM_ALPHA);
+$preventskip = optional_param('preventskip', '', PARAM_INT); // Prevent Skip view, set by javascript redirects.
 
 if (!empty($id)) {
     if (! $cm = get_coursemodule_from_id('scorm', $id, 0, true)) {
@@ -66,7 +67,7 @@ $launch = false; // Does this automatically trigger a launch based on skipview.
 if (!empty($scorm->popup)) {
     $orgidentifier = '';
     $scoid = 0;
-    if ($scorm->skipview >= SCORM_SKIPVIEW_FIRST &&
+    if (empty($preventskip) && $scorm->skipview >= SCORM_SKIPVIEW_FIRST &&
         has_capability('mod/scorm:skipview', $contextmodule) &&
         !has_capability('mod/scorm:viewreport', $contextmodule)) { // Don't skip users with the capability to view reports.
 
@@ -91,15 +92,22 @@ if (!empty($scorm->popup)) {
     if (isset($courseformat->coursedisplay) && $courseformat->coursedisplay == COURSE_DISPLAY_MULTIPAGE) {
         $sectionid = $cm->sectionnum;
     }
+    if ($courseformat->format == 'singleactivity') {
+        $courseurl = $url->out(false, array('preventskip' => '1'));
+    } else {
+        $courseurl = course_get_url($course, $sectionid)->out(false);
+    }
 
     $PAGE->requires->data_for_js('scormplayerdata', Array('launch' => $launch,
                                                            'currentorg' => $orgidentifier,
                                                            'sco' => $scoid,
                                                            'scorm' => $scorm->id,
-                                                           'courseurl' => course_get_url($course, $sectionid)->out(false),
+                                                           'courseurl' => $courseurl,
                                                            'cwidth' => $scorm->width,
                                                            'cheight' => $scorm->height,
                                                            'popupoptions' => $scorm->options), true);
+    $PAGE->requires->string_for_js('popupsblocked', 'scorm');
+    $PAGE->requires->string_for_js('popuplaunched', 'scorm');
     $PAGE->requires->js('/mod/scorm/view.js', true);
 }
 
@@ -123,7 +131,7 @@ $event->add_record_snapshot('scorm', $scorm);
 $event->add_record_snapshot('course_modules', $cm);
 $event->trigger();
 
-if (empty($launch) && (has_capability('mod/scorm:skipview', $contextmodule))) {
+if (empty($preventskip) && empty($launch) && (has_capability('mod/scorm:skipview', $contextmodule))) {
     scorm_simple_play($scorm, $USER, $contextmodule, $cm->id);
 }
 
