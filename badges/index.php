@@ -30,12 +30,12 @@ require_once($CFG->libdir . '/badgeslib.php');
 $type       = required_param('type', PARAM_INT);
 $courseid   = optional_param('id', 0, PARAM_INT);
 $page       = optional_param('page', 0, PARAM_INT);
-$activate   = optional_param('activate', 0, PARAM_INT);
 $deactivate = optional_param('lock', 0, PARAM_INT);
 $sortby     = optional_param('sort', 'name', PARAM_ALPHA);
 $sorthow    = optional_param('dir', 'ASC', PARAM_ALPHA);
 $confirm    = optional_param('confirm', false, PARAM_BOOL);
 $delete     = optional_param('delete', 0, PARAM_INT);
+$archive    = optional_param('archive', 0, PARAM_INT);
 $msg        = optional_param('msg', '', PARAM_TEXT);
 
 if (!in_array($sortby, array('name', 'status'))) {
@@ -107,20 +107,34 @@ $PAGE->requires->js('/badges/backpack.js');
 $PAGE->requires->js_init_call('check_site_access', null, false);
 $output = $PAGE->get_renderer('core', 'badges');
 
-if ($delete && has_capability('moodle/badges:deletebadge', $PAGE->context)) {
-    $badge = new badge($delete);
+if (($delete || $archive) && has_capability('moodle/badges:deletebadge', $PAGE->context)) {
+    $badgeid = ($archive != 0) ? $archive : $delete;
+    $badge = new badge($badgeid);
     if (!$confirm) {
         echo $output->header();
-        echo $output->confirm(
-                    get_string('delconfirm', 'badges', $badge->name),
-                    new moodle_url($PAGE->url, array('delete' => $badge->id, 'confirm' => 1)),
-                    $returnurl
-                );
+        // Archive this badge?
+        echo $output->heading(get_string('archivebadge', 'badges', $badge->name));
+        $archivebutton = $output->single_button(
+                            new moodle_url($PAGE->url, array('archive' => $badge->id, 'confirm' => 1)),
+                            get_string('archiveconfirm', 'badges'));
+        echo $output->box(get_string('archivehelp', 'badges') . $archivebutton, 'generalbox');
+
+        // Delete this badge?
+        echo $output->heading(get_string('delbadge', 'badges', $badge->name));
+        $deletebutton = $output->single_button(
+                            new moodle_url($PAGE->url, array('delete' => $badge->id, 'confirm' => 1)),
+                            get_string('delconfirm', 'badges'));
+        echo $output->box(get_string('deletehelp', 'badges') . $deletebutton, 'generalbox');
+
+        // Go back.
+        echo $output->action_link($returnurl, get_string('cancel'));
+
         echo $output->footer();
         die();
     } else {
         require_sesskey();
-        $badge->delete();
+        $archiveonly = ($archive != 0) ? true : false;
+        $badge->delete($archiveonly);
         redirect($returnurl);
     }
 }

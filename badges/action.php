@@ -29,7 +29,6 @@ require_once($CFG->libdir . '/badgeslib.php');
 
 $badgeid = required_param('id', PARAM_INT);
 $copy = optional_param('copy', 0, PARAM_BOOL);
-$delete    = optional_param('delete', 0, PARAM_BOOL);
 $activate = optional_param('activate', 0, PARAM_BOOL);
 $deactivate = optional_param('lock', 0, PARAM_BOOL);
 $confirm   = optional_param('confirm', 0, PARAM_BOOL);
@@ -60,38 +59,6 @@ if ($return !== 0) {
     $returnurl = new moodle_url('/badges/overview.php', array('id' => $badge->id));
 }
 $returnurl->remove_params('awards');
-
-if ($delete) {
-    require_capability('moodle/badges:deletebadge', $context);
-
-    $PAGE->url->param('delete', 1);
-    if ($confirm) {
-        require_sesskey();
-        $badge->delete();
-        redirect(new moodle_url('/badges/index.php', array('type' => $badge->type, 'id' => $badge->courseid)));
-    }
-
-    $strheading = get_string('delbadge', 'badges');
-    $PAGE->navbar->add($strheading);
-    $PAGE->set_title($strheading);
-    $PAGE->set_heading($badge->name);
-    echo $OUTPUT->header();
-    echo $OUTPUT->heading($strheading);
-
-    $urlparams = array(
-        'id' => $badge->id,
-        'delete' => 1,
-        'confirm' => 1,
-        'sesskey' => sesskey()
-    );
-    $continue = new moodle_url('/badges/action.php', $urlparams);
-    $cancel = new moodle_url('/badges/index.php', array('type' => $badge->type, 'id' => $badge->courseid));
-
-    $message = get_string('delconfirm', 'badges', $badge->name);
-    echo $OUTPUT->confirm($message, $continue, $cancel);
-    echo $OUTPUT->footer();
-    die;
-}
 
 if ($copy) {
     require_sesskey();

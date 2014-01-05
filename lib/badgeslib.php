@@ -603,13 +603,42 @@ class badge {
     }
 
     /**
-     * Marks the badge as archived.
-     * For reporting and historical purposed we cannot completely delete badges.
-     * We will just change their status to BADGE_STATUS_ARCHIVED.
+     * Fully deletes the badge or marks it as archived.
+     *
+     * @param $archive bool Achive a badge without actual deleting of any data.
      */
-    public function delete() {
-        $this->status = BADGE_STATUS_ARCHIVED;
-        $this->save();
+    public function delete($archive = true) {
+        global $DB;
+
+        if ($archive) {
+            $this->status = BADGE_STATUS_ARCHIVED;
+            $this->save();
+            return;
+        }
+
+        $fs = get_file_storage();
+
+        // Remove all issued badge image files and badge awards.
+        // Cannot bulk remove area files here because they are issued in user context.
+        $awards = $this->get_awards();
+        foreach ($awards as $award) {
+            $usercontext = context_user::instance($award->userid);
+            $fs->delete_area_files($usercontext->id, 'badges', 'userbadge', $this->id);
+        }
+        $DB->delete_records('badge_issued', array('badgeid' => $this->id));
+
+        // Remove all badge criteria.
+        $criteria = $this->get_criteria();
+        foreach ($criteria as $criterion) {
+            $criterion->delete();
+        }
+
+        // Delete badge images.
+        $badgecontext = $this->get_context();
+        $fs->delete_area_files($badgecontext->id, 'badges', 'badgeimage', $this->id);
+
+        // Finally, remove badge itself.
+        $DB->delete_records('badge', array('id' => $this->id));
     }
 }
 
