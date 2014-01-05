@@ -8227,14 +8227,9 @@ function get_plugin_types($fullpaths=true) {
     $cache = cache::make('core', 'plugintypes');
 
     if ($fullpaths) {
-        // First confirm that dirroot and the stored dirroot match.
-        if ($CFG->dirroot === $cache->get('dirroot')) {
-            // They match we can use it.
-            $cached = $cache->get(1);
-        } else {
-            // Oops they didn't match. The moodle directory has been moved on us.
-            $cached = false;
-        }
+        // Cache each dirroot separately in case cluster nodes happen to be deployed to
+        // different locations.
+        $cached = $cache->get(sha1($CFG->dirroot));
     } else {
         $cached = $cache->get(0);
     }
@@ -8293,10 +8288,7 @@ function get_plugin_types($fullpaths=true) {
         }
 
         $cache->set(0, $info);
-        $cache->set(1, $fullinfo);
-        // We cache the dirroot as well so that we can compare it when we
-        // retrieve full info from the cache.
-        $cache->set('dirroot', $CFG->dirroot);
+        $cache->set(sha1($CFG->dirroot), $fullinfo);
 
         return ($fullpaths ? $fullinfo : $info);
     }
