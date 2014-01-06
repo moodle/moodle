@@ -4317,6 +4317,12 @@ class settings_navigation extends navigation_node {
             $categorynode->add(get_string('filters', 'admin'), $url, self::TYPE_SETTING, null, 'filters', new pix_icon('i/filter', ''));
         }
 
+        // Restore.
+        if (has_capability('moodle/course:create', $this->context)) {
+            $url = new moodle_url('/backup/restorefile.php', array('contextid' => $this->context->id));
+            $categorynode->add(get_string('restorecourse', 'admin'), $url, self::TYPE_SETTING, null, 'restorecourse', new pix_icon('i/restore', ''));
+        }
+
         return $categorynode;
     }
 
