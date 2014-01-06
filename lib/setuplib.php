@@ -710,9 +710,6 @@ function setup_validate_php_configuration() {
    if (ini_get_bool('session.auto_start')) {
        print_error('sessionautostartwarning', 'admin');
    }
-   if (ini_get_bool('magic_quotes_runtime')) {
-       print_error('fatalmagicquotesruntime', 'admin');
-   }
 }
 
 /**
@@ -993,11 +990,6 @@ function workaround_max_input_vars() {
     foreach ($chunks as $chunk) {
         $values = array();
         parse_str($chunk, $values);
-
-        if (ini_get_bool('magic_quotes_gpc')) {
-            // Use the same logic as lib/setup.php to work around deprecated magic quotes.
-            $values = array_map('stripslashes_deep', $values);
-        }
 
         merge_query_params($_POST, $values);
         merge_query_params($_REQUEST, $values);

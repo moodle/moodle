@@ -521,7 +521,6 @@ $string['experimental'] = 'Experimental';
 $string['experimentalsettings'] = 'Experimental settings';
 $string['extendedusernamechars'] = 'Allow extended characters in usernames';
 $string['extramemorylimit'] = 'Extra PHP memory limit';
-$string['fatalmagicquotesruntime'] = '<p>Serious configuration error detected, please notify server administrator.</p><p> To operate properly, Moodle requires that administrator changes PHP settings.</p><p><code>magic_quotes_runtime</code> must be set to <code>off</code>.</p><p>This setting is controlled by editing <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file on the server.</p>';
 $string['fatalsessionautostart'] = '<p>Serious configuration error detected, please notify server administrator.</p><p> To operate properly, Moodle requires that administrator changes PHP settings.</p><p><code>session.auto_start</code> must be set to <code>off</code>.</p><p>This setting is controlled by editing <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file on the server.</p>';
 $string['filecreated'] = 'New file created';
 $string['filestoredin'] = 'Save file into folder :';

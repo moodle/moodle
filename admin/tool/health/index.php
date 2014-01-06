@@ -240,25 +240,6 @@ class problem_000005 extends problem_base {
     }
 }
 
-class problem_000006 extends problem_base {
-    function title() {
-        return 'PHP: magic_quotes_runtime is enabled';
-    }
-    function exists() {
-        return (ini_get_bool('magic_quotes_runtime'));
-    }
-    function severity() {
-        return SEVERITY_SIGNIFICANT;
-    }
-    function description() {
-        return 'Your PHP configuration includes an enabled setting, magic_quotes_runtime, that <strong>must be disabled</strong> in order for Moodle to work correctly. Notable symptoms arising from this misconfiguration include strange display errors whenever a text field that includes single or double quotes is processed.';
-    }
-    function solution() {
-        global $CFG;
-        return '<p>There are two ways you can solve this problem:</p><ol><li>If you have access to your main <strong>php.ini</strong> file, then find the line that looks like this: <pre>magic_quotes_runtime = On</pre> and change it to <pre>magic_quotes_runtime = Off</pre> and then restart your web server. Be warned that this, as any other PHP setting change, might affect other web applications running on the server.</li><li>Finally, you may be able to change this setting just for your site by creating or editing the file <strong>'.$CFG->dirroot.'/.htaccess</strong> to contain this line: <pre>php_value magic_quotes_runtime "Off"</pre></li></ol>';
-    }
-}
-
 class problem_000007 extends problem_base {
     function title() {
         return 'PHP: file_uploads is disabled';
