@@ -57,11 +57,6 @@ $_SERVER['HTTP_USER_AGENT'] = 'dummy';
 $_SERVER['SERVER_NAME'] = $CFG->chat_serverhost;
 $_SERVER['PHP_SELF']    = "http://$CFG->chat_serverhost:$CFG->chat_serverport/mod/chat/chatd.php";
 
-$safemode = ini_get('safe_mode');
-if(!empty($safemode)) {
-    die("Error: Cannot run with PHP safe_mode = On. Turn off safe_mode in php.ini.\n");
-}
-
 core_php_time_limit::raise(0);
 error_reporting(E_ALL);
 
