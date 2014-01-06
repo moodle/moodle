@@ -455,8 +455,9 @@ class cache_helper {
         $class = $store['class'];
 
         // Found the store: is it ready?
+        /* @var cache_store $instance */
         $instance = new $class($store['name'], $store['configuration']);
-        if (!$instance->is_ready()) {
+        if (!$instance::are_requirements_met() || !$instance->is_ready()) {
             unset($instance);
             return false;
         }
