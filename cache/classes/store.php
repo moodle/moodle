@@ -179,9 +179,7 @@ abstract class cache_store implements cache_store_interface {
      * Returns true if this cache store instance is ready to use.
      * @return bool
      */
-    public function is_ready() {
-        return self::are_requirements_met();
-    }
+    abstract public function is_ready();
 
     /**
      * Retrieves an item from the cache store given its key.
