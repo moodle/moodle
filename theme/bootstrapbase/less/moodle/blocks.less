@@ -39,11 +39,14 @@
     width:auto;
 }
 
-.block .content {
-    padding: 4px 14px;
-}
-.block .content hr {
-    margin: 5px 0;
+.block {
+    .content {
+        padding: 4px 14px;
+        word-wrap: break-word;
+        hr {
+            margin: 5px 0;
+        }
+    }
 }
 
 .block.hidden .content {
