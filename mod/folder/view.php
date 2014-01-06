@@ -50,7 +50,13 @@ if ($folder->display == FOLDER_DISPLAY_INLINE) {
     redirect(course_get_url($folder->course, $cm->sectionnum));
 }
 
-add_to_log($course->id, 'folder', 'view', 'view.php?id='.$cm->id, $folder->id, $cm->id);
+$params = array(
+    'context' => $context,
+    'objectid' => $folder->id
+);
+$event = \mod_folder\event\course_module_viewed::create($params);
+$event->add_record_snapshot('folder', $folder);
+$event->trigger();
 
 // Update 'viewed' state if required by completion system
 $completion = new completion_info($course);
