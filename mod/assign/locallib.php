@@ -788,6 +788,10 @@ class assign {
         require_once($CFG->dirroot.'/mod/assign/lib.php');
         $assign = clone $this->get_instance();
         $assign->cmidnumber = $coursemoduleid;
+
+        // Set assign gradebook feedback plugin status (enabled and visible).
+        $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
+
         $param = null;
         if ($reset) {
             $param = 'reset';
@@ -3999,7 +4003,8 @@ class assign {
         }
         $assign = clone $this->get_instance();
         $assign->cmidnumber = $this->get_course_module()->idnumber;
-
+        // Set assign gradebook feedback plugin status (enabled and visible).
+        $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
         return assign_grade_item_update($assign, $gradebookgrade);
     }
 
@@ -5958,6 +5963,8 @@ class assign {
                     // Update Gradebook.
                     $assign = clone $this->get_instance();
                     $assign->cmidnumber = $this->get_course_module()->idnumber;
+                    // Set assign gradebook feedback plugin status.
+                    $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
                     assign_update_grades($assign, $userid);
                 }
 
@@ -6778,6 +6785,28 @@ class assign {
             $this->susers = get_suspended_userids($this->context);
         }
         return !in_array($userid, $this->susers);
+    }
+
+    /**
+     * Returns true if gradebook feedback plugin is enabled
+     *
+     * @return bool true if gradebook feedback plugin is enabled and visible else false.
+     */
+    public function is_gradebook_feedback_enabled() {
+        // Get default grade book feedback plugin.
+        $adminconfig = $this->get_admin_config();
+        $gradebookplugin = $adminconfig->feedback_plugin_for_gradebook;
+        $gradebookplugin = str_replace('assignfeedback_', '', $gradebookplugin);
+
+        // Check if default gradebook feedback is visible and enabled.
+        $gradebookfeedbackplugin = $this->get_feedback_plugin_by_type($gradebookplugin);
+
+        if ($gradebookfeedbackplugin->is_visible() && $gradebookfeedbackplugin->is_enabled()) {
+            return true;
+        }
+
+        // Gradebook feedback plugin is either not visible/enabled.
+        return false;
     }
 }
 
