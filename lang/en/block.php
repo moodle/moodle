@@ -50,6 +50,7 @@ $string['hidepanel'] = 'Hide panel';
 $string['moveblock'] = 'Move {$a} block';
 $string['moveblockafter'] = 'Move block to after {$a} block';
 $string['moveblockbefore'] = 'Move block to before {$a} block';
+$string['moveblockinregion'] = 'Move block to {$a} region';
 $string['movingthisblockcancel'] = 'Moving this block ({$a})';
 $string['onthispage'] = 'On this page';
 $string['pagetypes'] = 'Page types';
