@@ -44,7 +44,7 @@ class block_site_main_menu extends block_list {
                     $content = $cm->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
                     $instancename = $cm->get_formatted_name();
 
-                    if (!($url = $cm->get_url())) {
+                    if (!($url = $cm->url)) {
                         $this->content->items[] = $content;
                         $this->content->icons[] = '';
                     } else {
@@ -123,7 +123,7 @@ class block_site_main_menu extends block_list {
                     $instancename = $mod->get_formatted_name();
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
 
-                    if (!($url = $mod->get_url())) {
+                    if (!($url = $mod->url)) {
                         $this->content->items[] = $content . $editbuttons;
                         $this->content->icons[] = '';
                     } else {

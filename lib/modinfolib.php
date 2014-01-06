@@ -1167,7 +1167,17 @@ class cm_info implements IteratorAggregate {
      * @return mixed
      */
     public function __call($name, $arguments) {
+        global $CFG;
+
         if (in_array($name, self::$standardmethods)) {
+            if ($CFG->debugdeveloper) {
+                if ($alternative = array_search($name, self::$standardproperties)) {
+                    // All standard methods do not have arguments anyway.
+                    debugging("cm_info::$name() is deprecated, please use the property cm_info->$alternative instead.", DEBUG_DEVELOPER);
+                } else {
+                    debugging("cm_info::$name() is deprecated and should not be used.", DEBUG_DEVELOPER);
+                }
+            }
             // All standard methods do not have arguments anyway.
             return $this->$name();
         }

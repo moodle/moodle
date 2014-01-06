@@ -288,7 +288,7 @@ function resource_get_coursemodule_info($coursemodule) {
  * @param cm_info $cm Course module information
  */
 function resource_cm_info_view(cm_info $cm) {
-    $details = $cm->get_custom_data();
+    $details = $cm->customdata;
     if ($details) {
         $cm->set_after_link(' ' . html_writer::tag('span', $details,
                 array('class' => 'resourcelinkdetails')));

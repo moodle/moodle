@@ -460,7 +460,7 @@ function folder_get_coursemodule_info($cm) {
  * @param cm_info $cm
  */
 function folder_cm_info_dynamic(cm_info $cm) {
-    if ($cm->get_custom_data()) {
+    if ($cm->customdata) {
         // the field 'customdata' is not empty IF AND ONLY IF we display contens inline
         $cm->set_no_view_link();
     }
@@ -474,12 +474,12 @@ function folder_cm_info_dynamic(cm_info $cm) {
  */
 function folder_cm_info_view(cm_info $cm) {
     global $PAGE;
-    if ($cm->uservisible && $cm->get_custom_data() &&
+    if ($cm->uservisible && $cm->customdata &&
             has_capability('mod/folder:view', $cm->context)) {
         // Restore folder object from customdata.
         // Note the field 'customdata' is not empty IF AND ONLY IF we display contens inline.
         // Otherwise the content is default.
-        $folder = $cm->get_custom_data();
+        $folder = $cm->customdata;
         $folder->id = (int)$cm->instance;
         $folder->course = (int)$cm->course;
         $folder->display = FOLDER_DISPLAY_INLINE;

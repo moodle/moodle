@@ -100,7 +100,7 @@ class format_singleactivity extends format_base {
         if (!$cm->uservisible) {
             return null;
         }
-        $action = $cm->get_url();
+        $action = $cm->url;
         if (!$action) {
             // Do not add to navigation activity without url (i.e. labels).
             return null;
@@ -412,13 +412,13 @@ class format_singleactivity extends format_base {
                     // Student views an empty course page.
                     return;
                 }
-            } else if (!$cm->uservisible || !$cm->get_url()) {
+            } else if (!$cm->uservisible || !$cm->url) {
                 // Activity is set but not visible to current user or does not have url.
                 // Display course page (either empty or with availability restriction info).
                 return;
             } else {
                 // Everything is set up and accessible, redirect to the activity page!
-                redirect($cm->get_url());
+                redirect($cm->url);
             }
         }
     }

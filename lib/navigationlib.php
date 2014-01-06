@@ -1860,13 +1860,13 @@ class global_navigation extends navigation_node {
                 $activity->hidden = (!$cm->visible);
                 $activity->modname = $cm->modname;
                 $activity->nodetype = navigation_node::NODETYPE_LEAF;
-                $activity->onclick = $cm->get_on_click();
-                $url = $cm->get_url();
+                $activity->onclick = $cm->onclick;
+                $url = $cm->url;
                 if (!$url) {
                     $activity->url = null;
                     $activity->display = false;
                 } else {
-                    $activity->url = $cm->get_url()->out();
+                    $activity->url = $url->out();
                     $activity->display = $cm->uservisible ? true : false;
                     if (self::module_extends_navigation($cm->modname)) {
                         $activity->nodetype = navigation_node::NODETYPE_BRANCH;
@@ -2011,7 +2011,7 @@ class global_navigation extends navigation_node {
         } else {
             $icon = new pix_icon('icon', get_string('modulename', $cm->modname), $cm->modname);
         }
-        $url = $cm->get_url();
+        $url = $cm->url;
         $activitynode = $coursenode->add(format_string($cm->name), $url, navigation_node::TYPE_ACTIVITY, null, $cm->id, $icon);
         $activitynode->title(get_string('modulename', $cm->modname));
         $activitynode->hidden = (!$cm->visible);

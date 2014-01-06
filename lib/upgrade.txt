@@ -11,6 +11,8 @@ DEPRECATIONS:
 * mod_feedback\event\instances_list_viewed has been deprecated. Please use mod_feedback\event\course_module_instance_list_viewed instead.
 * mod_page\event\instances_list_viewed has been deprecated. Please use mod_page\event\course_module_instance_list_viewed instead.
 * The constants FRONTPAGECOURSELIST, FRONTPAGETOPICONLY & FRONTPAGECOURSELIMIT have been removed.
+* Various cm_info methods have been deprecated in favour of their read-only properties (get_url(), get_content(), get_extra_classes(),
+  get_on_click(), get_custom_data(), get_after_link, get_after_edit_icons)
 
 YUI:
   * The lightbox attribute for moodle-core-notification-dialogue has been

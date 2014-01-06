@@ -600,13 +600,13 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         foreach($firstsection['modules'] as $module) {
             if ($module['id'] == $forumcm->id and $module['modname'] == 'forum') {
                 $cm = $modinfo->cms[$forumcm->id];
-                $formattedtext = format_text($cm->get_content(), FORMAT_HTML,
+                $formattedtext = format_text($cm->content, FORMAT_HTML,
                     array('noclean' => true, 'para' => false, 'filter' => false));
                 $this->assertEquals($formattedtext, $module['description']);
                 $testexecuted = $testexecuted + 1;
             } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
                 $cm = $modinfo->cms[$labelcm->id];
-                $formattedtext = format_text($cm->get_content(), FORMAT_HTML,
+                $formattedtext = format_text($cm->content, FORMAT_HTML,
                     array('noclean' => true, 'para' => false, 'filter' => false));
                 $this->assertEquals($formattedtext, $module['description']);
                 $testexecuted = $testexecuted + 1;

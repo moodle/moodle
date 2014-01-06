@@ -114,11 +114,11 @@ class block_recent_activity_renderer extends plugin_renderer_base {
                 break;
             case 'add mod':
                 $text = get_string('added', 'moodle', $cm->modfullname). '<br />'.
-                    html_writer::link($cm->get_url(), format_string($cm->name, true));
+                    html_writer::link($cm->url, format_string($cm->name, true));
                 break;
             case 'update mod':
                 $text = get_string('updated', 'moodle', $cm->modfullname). '<br />'.
-                    html_writer::link($cm->get_url(), format_string($cm->name, true));
+                    html_writer::link($cm->url, format_string($cm->name, true));
                 break;
             default:
                 return '';
