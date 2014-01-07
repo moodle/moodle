@@ -2181,7 +2181,7 @@ class core_moodlelib_testcase extends advanced_testcase {
      * Test function validate_internal_user_password().
      */
     public function test_validate_internal_user_password() {
-        // Otherwise test bcrypt hashes.
+        // Test bcrypt hashes.
         $validhashes = array(
             'pw' => '$2y$10$LOSDi5eaQJhutSRun.OVJ.ZSxQZabCMay7TO1KmzMkDMPvU40zGXK',
             'abc' => '$2y$10$VWTOhVdsBbWwtdWNDRHSpewjd3aXBQlBQf5rBY/hVhw8hciarFhXa',
@@ -2216,7 +2216,7 @@ class core_moodlelib_testcase extends advanced_testcase {
             $user->password = $hash;
             $this->assertTrue(validate_internal_user_password($user, $password));
 
-            // Otherwise they should not be in md5 format.
+            // They should not be in md5 format.
             $this->assertFalse(password_is_legacy_hash($hash));
 
             // Check that cost factor in hash is correctly set.
@@ -2249,7 +2249,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         // Update the password.
         update_internal_user_password($user, 'password');
 
-        // Otherwise password should have been updated to a bcrypt hash.
+        // Password should have been updated to a bcrypt hash.
         $this->assertFalse(password_is_legacy_hash($user->password));
     }
 
