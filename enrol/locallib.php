@@ -1265,7 +1265,7 @@ class enrol_user_button extends single_button {
      */
     public function require_yui_module($modules, $function, array $arguments = null, $galleryversion = null, $ondomready = false) {
         if ($galleryversion != null) {
-            debugging('The galleryversion parameter to yui_module has been deprecated since Moodle 2.3.');
+            debugging('The galleryversion parameter to yui_module has been deprecated since Moodle 2.3.', DEBUG_DEVELOPER);
         }
 
         $js = new stdClass;
