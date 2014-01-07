@@ -296,15 +296,45 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
     public function test_update_calendar() {
         global $DB;
 
-        $now = time();
         $this->setUser($this->editingteachers[0]);
-        $assign = $this->create_instance(array('duedate'=>$now));
+        $userctx = context_user::instance($this->editingteachers[0]->id)->id;
+
+        // Hack to pretend that there was an editor involved. We need both $_POST and $_REQUEST, and a sesskey.
+        $draftid = file_get_unused_draft_itemid();
+        $_REQUEST['introeditor'] = $draftid;
+        $_POST['introeditor'] = $draftid;
+        $_POST['sesskey'] = sesskey();
+
+        // Write links to a draft area.
+        $fakearealink1 = file_rewrite_pluginfile_urls('<a href="@@PLUGINFILE@@/pic.gif">link</a>', 'draftfile.php', $userctx,
+            'user', 'draft', $draftid);
+        $fakearealink2 = file_rewrite_pluginfile_urls('<a href="@@PLUGINFILE@@/pic.gif">new</a>', 'draftfile.php', $userctx,
+            'user', 'draft', $draftid);
+
+        // Create a new assignment with links to a draft area.
+        $now = time();
+        $assign = $this->create_instance(array(
+            'duedate' => $now,
+            'intro' => $fakearealink1,
+            'introformat' => FORMAT_HTML
+        ));
 
         // See if there is an event in the calendar.
         $params = array('modulename'=>'assign', 'instance'=>$assign->get_instance()->id);
-        $id = $DB->get_field('event', 'id', $params);
+        $event = $DB->get_record('event', $params);
+        $this->assertNotEmpty($event);
+        $this->assertSame('link', $event->description);     // The pluginfile links are removed.
 
-        $this->assertEquals(false, empty($id));
+        // Make sure the same works when updating the assignment.
+        $instance = $assign->get_instance();
+        $instance->instance = $instance->id;
+        $instance->intro = $fakearealink2;
+        $instance->introformat = FORMAT_HTML;
+        $assign->update_instance($instance);
+        $params = array('modulename' => 'assign', 'instance' => $assign->get_instance()->id);
+        $event = $DB->get_record('event', $params);
+        $this->assertNotEmpty($event);
+        $this->assertSame('new', $event->description);     // The pluginfile links are removed.
     }
 
     public function test_update_instance() {
