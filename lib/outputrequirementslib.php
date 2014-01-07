@@ -631,20 +631,6 @@ class page_requirements_manager {
     }
 
     /**
-     * This method was used to load YUI2 libraries into global scope,
-     * use YUI 2in3 instead. Every YUI2 module is represented as a yui2-*
-     * sandboxed module in YUI3 code via Y.YUI2. property.
-     *
-     * {@see http://tracker.moodle.org/browse/MDL-34741}
-     *
-     * @param string|array $libname
-     * @deprecated since 2.4
-     */
-    public function yui2_lib($libname) {
-        throw new coding_exception('PAGE->yui2_lib() is not available any more, use YUI 2in3 instead, see MDL-34741 for more information.');
-    }
-
-    /**
      * Returns the actual url through which a script is served.
      *
      * @param moodle_url|string $url full moodle url, or shortened path to script
