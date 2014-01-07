@@ -616,7 +616,6 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if ($user->firstaccess == 0) {
                     $user->firstaccess = time();
                 }
-                require_once($CFG->dirroot.'/user/lib.php');
                 user_update_user($user, false);
                 return AUTH_CONFIRM_OK;
             }
