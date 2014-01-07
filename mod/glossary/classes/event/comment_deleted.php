@@ -15,38 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mod_wiki comment created event.
+ * mod_glossary comment deleted event.
  *
- * @package    mod_wiki
+ * @package    mod_glossary
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace mod_wiki\event;
+namespace mod_glossary\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * mod_wiki comment created event.
+ * mod_glossary comment deleted event.
  *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type int itemid id of item for which comment is created.
- * }
- *
- * @package    mod_wiki
+ * @package    mod_glossary
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class comment_created extends \core\event\comment_created {
-
+class comment_deleted extends \core\event\comment_deleted {
     /**
      * Get URL related to the action.
      *
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/wiki/comments.php', array('pageid' => $this->other['itemid']));
+        return new \moodle_url('/mod/glossary/view.php', array('id' => $this->other['itemid']));
     }
 
     /**
@@ -55,6 +48,6 @@ class comment_created extends \core\event\comment_created {
      * @return string
      */
     public function get_description() {
-        return 'User with id ' . $this->userid . ' added comment for wiki with page id ' . $this->other['itemid'];
+        return 'User with id ' . $this->userid . ' deleted comment for glossary activity with id ' . $this->other['itemid'];
     }
 }

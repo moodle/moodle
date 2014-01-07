@@ -50,7 +50,7 @@ class comments_viewed extends \core\event\comments_viewed {
      * @return string
      */
     public function get_description() {
-        return 'User with id '. $this->userid . ' viewed comments for wiki page id ' .
+        return 'User with id ' . $this->userid . ' viewed comments for wiki page id ' .
                 $this->objectid;
     }
 

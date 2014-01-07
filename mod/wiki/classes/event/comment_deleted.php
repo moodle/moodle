@@ -55,7 +55,6 @@ class comment_deleted extends \core\event\comment_deleted {
      * @return string
      */
     public function get_description() {
-        return 'User with id '. $this->userid . ' deleted comment for ' . $this->component . ' with page id ' .
-                $this->other['itemid'];
+        return 'User with id ' . $this->userid . ' deleted comment for wiki with page id ' . $this->other['itemid'];
     }
 }

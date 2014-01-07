@@ -65,4 +65,13 @@ abstract class comments_viewed extends \core\event\base {
         return 'User with id '. $this->userid . ' viewed comments for ' . $this->component . ' with instance id ' .
                 $this->objectid;
     }
+
+    /**
+     * Get URL related to the action.
+     *
+     * @return \moodle_url
+     */
+    public function get_url() {
+        return $this->context->get_url();
+    }
 }
