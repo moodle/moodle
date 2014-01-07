@@ -107,7 +107,7 @@ class block_admin_bookmarks extends block_base {
 
         $this->content->footer = '';
         $this->page->settingsnav->initialise();
-        $node = $this->page->settingsnav->get('root', navigation_node::TYPE_SETTING);
+        $node = $this->page->settingsnav->get('root', navigation_node::TYPE_SITE_ADMIN);
         if (!$node || !$node->contains_active_node()) {
             return $this->content;
         }
