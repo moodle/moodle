@@ -36,10 +36,6 @@ class core_files_mbz_packer_testcase extends advanced_testcase {
         // Get backup packer.
         $packer = get_file_packer('application/vnd.moodle.backup');
         require_once($CFG->dirroot . '/lib/filestorage/tgz_packer.php');
-        if (!tgz_packer::has_required_extension()) {
-            $this->markTestSkipped('zlib not available');
-            return;
-        }
 
         // Set up basic archive contents.
         $files = array('1.txt' => array('frog'));

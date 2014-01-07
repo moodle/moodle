@@ -175,11 +175,7 @@ abstract class backup_controller_dbops extends backup_dbops {
     public static function decode_backup_temp_info($info) {
         // We encode all data except null.
         if ($info != null) {
-            if (extension_loaded('zlib')) {
-                return unserialize(gzuncompress(base64_decode($info)));
-            } else {
-                return unserialize(base64_decode($info));
-            }
+            return unserialize(gzuncompress(base64_decode($info)));
         }
         return $info;
     }
@@ -195,11 +191,7 @@ abstract class backup_controller_dbops extends backup_dbops {
         if ($info != null) {
             // We compress if possible. It reduces db, network and memory storage. The saving is greater than CPU compression cost.
             // Compression level 1 is chosen has it produces good compression with the smallest possible overhead, see MDL-40618.
-            if (extension_loaded('zlib')) {
-                return base64_encode(gzcompress(serialize($info), 1));
-            } else {
-                return base64_encode(serialize($info));
-            }
+            return base64_encode(gzcompress(serialize($info), 1));
         }
         return $info;
     }

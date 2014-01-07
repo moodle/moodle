@@ -952,9 +952,9 @@ if (PHPUNIT_TEST) {
 
 // // try to detect IE6 and prevent gzip because it is extremely buggy browser
 if (!empty($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false) {
-    @ini_set('zlib.output_compression', 'Off');
+    ini_set('zlib.output_compression', 'Off');
     if (function_exists('apache_setenv')) {
-        @apache_setenv('no-gzip', 1);
+        apache_setenv('no-gzip', 1);
     }
 }
 

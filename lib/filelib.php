@@ -2672,7 +2672,7 @@ function fulldelete($location) {
  */
 function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
     // better turn off any kind of compression and buffering
-    @ini_set('zlib.output_compression', 'Off');
+    ini_set('zlib.output_compression', 'Off');
 
     $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
     if ($handle === false) {

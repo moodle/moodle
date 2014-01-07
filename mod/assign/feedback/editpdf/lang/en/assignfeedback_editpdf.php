@@ -89,4 +89,3 @@ $string['unsavedchanges'] = 'Unsaved changes';
 $string['viewfeedbackonline'] = 'View annotated PDF...';
 $string['white'] = 'White';
 $string['yellow'] = 'Yellow';
-$string['zlibnotavailable'] = 'Php extension "zlib" is not available. The annotate PDF feature relies on this php extension and will be disabled until zlib is installed and enabled.';

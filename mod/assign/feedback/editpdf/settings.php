@@ -39,13 +39,6 @@ $settings->add(new admin_setting_configexecutable('assignfeedback_editpdf/gspath
                                                   get_string('gspath_help', 'assignfeedback_editpdf'),
                                                   '/usr/bin/gs'));
 
-$setting = new admin_setting_php_extension_enabled('assignfeedback_editpdf/zlibenabled',
-                                                   get_string('zlibenabled', 'admin'),
-                                                   get_string('zlibnotavailable', 'assignfeedback_editpdf'),
-                                                   'zlib');
-
-$settings->add($setting);
-
 $url = new moodle_url('/mod/assign/feedback/editpdf/testgs.php');
 $link = html_writer::link($url, get_string('testgs', 'assignfeedback_editpdf'));
 $settings->add(new admin_setting_heading('testgs', '', $link));

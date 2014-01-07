@@ -142,14 +142,14 @@ function min_enable_zlib_compression() {
 
     // zlib.output_compression is preferred over ob_gzhandler()
     if (!empty($_SERVER['HTTP_USER_AGENT']) and strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE 6') !== false) {
-        @ini_set('zlib.output_compression', 'Off');
+        ini_set('zlib.output_compression', 'Off');
         if (function_exists('apache_setenv')) {
-            @apache_setenv('no-gzip', 1);
+            apache_setenv('no-gzip', 1);
         }
         return false;
     }
 
-    @ini_set('output_handler', '');
+    ini_set('output_handler', '');
 
     /*
      * docs clearly say 'on' means enable and number means size of buffer,
@@ -157,7 +157,7 @@ function min_enable_zlib_compression() {
      * 1 probably sets chunk size to 4096. our CSS and JS scripts are much bigger,
      * so let's try some bigger sizes.
      */
-    @ini_set('zlib.output_compression', 65536);
+    ini_set('zlib.output_compression', 65536);
 
     return true;
 }

@@ -114,9 +114,6 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
     public function test_to_normal_files() {
         global $CFG;
         $packer = get_file_packer('application/x-gzip');
-        if (self::skip_because_missing_zlib()) {
-            return;
-        }
 
         // Archive files.
         $files = $this->prepare_file_list();
@@ -157,9 +154,6 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
      */
     public function test_to_stored_files() {
         global $CFG;
-        if (self::skip_because_missing_zlib()) {
-            return;
-        }
         $packer = get_file_packer('application/x-gzip');
 
         // Archive files.
@@ -226,9 +220,6 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
      */
     public function test_only_specified_files() {
         global $CFG;
-        if (self::skip_because_missing_zlib()) {
-            return;
-        }
         $packer = get_file_packer('application/x-gzip');
 
         // Archive files.
@@ -261,9 +252,6 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
      */
     public function test_file_progress() {
         global $CFG;
-        if (self::skip_because_missing_zlib()) {
-            return;
-        }
 
         // Set up.
         $filelist = $this->prepare_file_list();
@@ -321,9 +309,6 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
      */
     public function test_list_files() {
         global $CFG;
-        if (self::skip_because_missing_zlib()) {
-            return;
-        }
 
         // Set up.
         $filelist = $this->prepare_file_list();
@@ -391,9 +376,6 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
 
     public function test_is_tgz_file() {
         global $CFG;
-        if (self::skip_because_missing_zlib()) {
-            return;
-        }
 
         // Set up.
         $filelist = $this->prepare_file_list();
@@ -445,20 +427,5 @@ class core_files_tgz_packer_testcase extends advanced_testcase implements file_p
      */
     public function progress($progress = file_progress::INDETERMINATE, $max = file_progress::INDETERMINATE) {
         $this->progress[] = array($progress, $max);
-    }
-
-    /**
-     * Checks if zlib is available. If not, marks current test as skipped.
-     *
-     * @return bool True if text should be skipped
-     */
-    protected function skip_because_missing_zlib() {
-        global $CFG;
-        require_once($CFG->dirroot . '/lib/filestorage/tgz_packer.php');
-        if (!tgz_packer::has_required_extension()) {
-            $this->markTestSkipped('zlib not available');
-            return true;
-        }
-        return false;
     }
 }
