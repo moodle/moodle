@@ -1268,9 +1268,9 @@ function scorm_debugging($scorm) {
  * Delete Scorm tracks for selected users
  *
  * @param array $attemptids list of attempts that need to be deleted
- * @param int $scorm instance
+ * @param stdClass $scorm instance
  *
- * return bool true deleted all responses, false failed deleting an attempt - stopped here
+ * @return bool true deleted all responses, false failed deleting an attempt - stopped here
  */
 function scorm_delete_responses($attemptids, $scorm) {
     if (!is_array($attemptids) || empty($attemptids)) {
@@ -1302,15 +1302,27 @@ function scorm_delete_responses($attemptids, $scorm) {
  * Delete Scorm tracks for selected users
  *
  * @param int $userid ID of User
- * @param int $scormid ID of Scorm
+ * @param stdClass $scorm Scorm object
  * @param int $attemptid user attempt that need to be deleted
  *
- * return bool true suceeded
+ * @return bool true suceeded
  */
 function scorm_delete_attempt($userid, $scorm, $attemptid) {
     global $DB;
 
     $DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id, 'attempt' => $attemptid));
+    $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+
+    // Trigger instances list viewed event.
+    $event = \mod_scorm\event\attempt_deleted::create(array(
+         'other' => array('attemptid' => $attemptid),
+         'context' => context_module::instance($cm->instance),
+         'relateduserid' => $userid
+    ));
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('scorm', $scorm);
+    $event->trigger();
+
     include_once('lib.php');
     scorm_update_grades($scorm, $userid, true);
     return true;
