@@ -47,6 +47,11 @@ class behat_form_checkbox extends behat_form_field {
      */
     public function set_value($value) {
 
+        if (!$this->running_javascript()) {
+            $this->field->check();
+            return;
+        }
+
         if (!empty($value) && !$this->field->isChecked()) {
             // Check it if it should be checked and it is not.
             $this->field->click();
