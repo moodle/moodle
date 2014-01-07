@@ -206,7 +206,9 @@ class ChatDaemon {
         // if this is needed, as we have a nonblocking socket anyway.
         // If trouble starts to creep up, we 'll restore this.
 //        $check_socket = array($connection);
-//        $socket_changed = socket_select($read = NULL, $check_socket, $except = NULL, 0, 0);
+//        $read = null;
+//        $except = null;
+//        $socket_changed = socket_select($read, $check_socket, $except, 0, 0);
 //        if($socket_changed > 0) {
 //
 //            // ABOVE CODE GOES HERE
@@ -691,7 +693,9 @@ EOD;
 
     function conn_accept() {
         $read_socket = array($this->listen_socket);
-        $changed = socket_select($read_socket, $write = NULL, $except = NULL, 0, 0);
+        $write = null;
+        $except = null;
+        $changed = socket_select($read_socket, $write, $except, 0, 0);
 
         if(!$changed) {
             return false;
@@ -721,7 +725,9 @@ EOD;
             return 0;
         }
 
-        $retval = socket_select($monitor, $a = NULL, $b = NULL, NULL);
+        $a = null;
+        $b = null;
+        $retval = socket_select($monitor, $a, $b, null);
         $handles = $monitor;
 
         return $retval;
@@ -1004,7 +1010,9 @@ while(true) {
     if($DAEMON->conn_activity_ufo($active)) {
         foreach($active as $handle) {
             $read_socket = array($handle);
-            $changed = socket_select($read_socket, $write = NULL, $except = NULL, 0, 0);
+            $write = null;
+            $except = null;
+            $changed = socket_select($read_socket, $write, $except, 0, 0);
 
             if($changed > 0) {
                 // Let's see what it has to say
