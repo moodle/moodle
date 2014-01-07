@@ -1894,14 +1894,14 @@ function send_headers($contenttype, $cacheable = true) {
     }
 
     if ($cacheable) {
-        // Allow caching on "back" (but not on normal clicks)
-        @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
+        // Allow caching on "back" (but not on normal clicks).
+        @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0, no-transform');
         @header('Pragma: no-cache');
         @header('Expires: ');
     } else {
-        // Do everything we can to always prevent clients and proxies caching
+        // Do everything we can to always prevent clients and proxies caching.
         @header('Cache-Control: no-store, no-cache, must-revalidate');
-        @header('Cache-Control: post-check=0, pre-check=0', false);
+        @header('Cache-Control: post-check=0, pre-check=0, no-transform', false);
         @header('Pragma: no-cache');
         @header('Expires: Mon, 20 Aug 1969 09:23:00 GMT');
         @header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
