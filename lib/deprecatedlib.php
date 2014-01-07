@@ -31,6 +31,22 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Checks whether the password compatibility library will work with the current
+ * version of PHP. This cannot be done using PHP version numbers since the fix
+ * has been backported to earlier versions in some distributions.
+ *
+ * See https://github.com/ircmaxell/password_compat/issues/10 for more details.
+ *
+ * @deprecated since 2.7 PHP 5.4.x should be always compatible.
+ *
+ * @return bool always returns false
+ */
+function password_compat_not_supported() {
+    debugging('Do not use password_compat_not_supported() - bcrypt is now always available', DEBUG_DEVELOPER);
+    return false;
+}
+
+/**
  * Factory method that was returning moodle_session object.
  *
  * @deprecated since 2.6

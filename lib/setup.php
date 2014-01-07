@@ -128,7 +128,6 @@ if (defined('BEHAT_SITE_RUNNING')) {
 
         // Now we can begin switching $CFG->X for $CFG->behat_X.
         $CFG->wwwroot = $CFG->behat_wwwroot;
-        $CFG->passwordsaltmain = 'moodle';
         $CFG->prefix = $CFG->behat_prefix;
         $CFG->dataroot = $CFG->behat_dataroot;
     }
