@@ -52,6 +52,8 @@ class assign_grading_table extends table_sql implements renderable {
     private $quickgrading = false;
     /** @var boolean $hasgrantextension - Only do the capability check once for the entire table */
     private $hasgrantextension = false;
+    /** @var boolean $hasgrade - Only do the capability check once for the entire table */
+    private $hasgrade = false;
     /** @var array $groupsubmissions - A static cache of group submissions */
     private $groupsubmissions = array();
     /** @var array $submissiongroups - A static cache of submission groups */
@@ -83,6 +85,11 @@ class assign_grading_table extends table_sql implements renderable {
         parent::__construct('mod_assign_grading');
         $this->assignment = $assignment;
 
+        // Check permissions up front.
+        $this->hasgrantextension = has_capability('mod/assign:grantextension',
+                                                  $this->assignment->get_context());
+        $this->hasgrade = $this->assignment->can_grade();
+
         foreach ($assignment->get_feedback_plugins() as $plugin) {
             if ($plugin->is_visible() && $plugin->is_enabled()) {
                 foreach ($plugin->get_grading_batch_operations() as $action => $description) {
@@ -94,7 +101,7 @@ class assign_grading_table extends table_sql implements renderable {
             }
         }
         $this->perpage = $perpage;
-        $this->quickgrading = $quickgrading;
+        $this->quickgrading = $quickgrading && $this->hasgrade;
         $this->output = $PAGE->get_renderer('mod_assign');
 
         $urlparams = array('action'=>'grading', 'id'=>$assignment->get_course_module()->id);
@@ -225,7 +232,7 @@ class assign_grading_table extends table_sql implements renderable {
         $headers = array();
 
         // Select.
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && $this->hasgrade) {
             $columns[] = 'select';
             $headers[] = get_string('select') .
                     '<div class="selectall"><label class="accesshide" for="selectall">' . get_string('selectall') . '</label>
@@ -302,7 +309,7 @@ class assign_grading_table extends table_sql implements renderable {
             $columns[] = 'gradecanbechanged';
             $headers[] = get_string('gradecanbechanged', 'assign');
         }
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && $this->hasgrade) {
             // We have to call this column userid so we can use userid as a default sortable column.
             $columns[] = 'userid';
             $headers[] = get_string('edit');
@@ -370,8 +377,6 @@ class assign_grading_table extends table_sql implements renderable {
                                               'assign',
                                               $this->assignment->get_instance()->id,
                                               $users);
-        $this->hasgrantextension = has_capability('mod/assign:grantextension',
-                                                  $this->assignment->get_context());
 
         if (!empty($CFG->enableoutcomes) && !empty($this->gradinginfo->outcomes)) {
             $columns[] = 'outcomes';
@@ -809,7 +814,7 @@ class assign_grading_table extends table_sql implements renderable {
         $grade = '';
         $gradingdisabled = $this->assignment->grading_disabled($row->id);
 
-        if (!$this->is_downloading()) {
+        if (!$this->is_downloading() && $this->hasgrade) {
             $name = fullname($row);
             if ($this->assignment->is_blind_marking()) {
                 $name = get_string('hiddenuser', 'assign') .
@@ -1288,7 +1293,7 @@ class assign_grading_table extends table_sql implements renderable {
      * @return string HTML fragment.
      */
     protected function show_hide_link($column, $index) {
-        if ($index > 0) {
+        if ($index > 0 || !$this->hasgrade) {
             return parent::show_hide_link($column, $index);
         }
         return '';

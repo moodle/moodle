@@ -533,7 +533,29 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(false, $assign->testable_is_graded($this->students[1]->id));
     }
 
+    public function test_can_grade() {
+        global $DB;
+
+        $this->setUser($this->editingteachers[0]);
+        $assign = $this->create_instance();
+
+        $this->setUser($this->students[0]);
+        $this->assertEquals(false, $assign->can_grade());
+        $this->setUser($this->editingteachers[0]);
+        $this->assertEquals(true, $assign->can_grade());
+        $this->setUser($this->teachers[0]);
+        $this->assertEquals(true, $assign->can_grade());
+
+        // Test the viewgrades capability - without mod/assign:grade.
+        $this->setUser($this->students[0]);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        assign_capability('mod/assign:viewgrades', CAP_ALLOW, $studentrole->id, $assign->get_context()->id);
+        $this->assertEquals(false, $assign->can_grade());
+    }
+
     public function test_can_view_submission() {
+        global $DB;
+
         $this->create_extra_users();
         $this->setUser($this->editingteachers[0]);
         $assign = $this->create_instance();
@@ -552,6 +574,15 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $this->assertEquals(true, $assign->can_view_submission($this->students[1]->id));
         $this->assertEquals(true, $assign->can_view_submission($this->teachers[0]->id));
         $this->assertEquals(true, $assign->can_view_submission($this->extrasuspendedstudents[0]->id));
+
+        // Test the viewgrades capability - without mod/assign:grade.
+        $this->setUser($this->students[0]);
+        $studentrole = $DB->get_record('role', array('shortname' => 'student'));
+        assign_capability('mod/assign:viewgrades', CAP_ALLOW, $studentrole->id, $assign->get_context()->id);
+        $this->assertEquals(true, $assign->can_view_submission($this->students[0]->id));
+        $this->assertEquals(true, $assign->can_view_submission($this->students[1]->id));
+        $this->assertEquals(true, $assign->can_view_submission($this->teachers[0]->id));
+        $this->assertEquals(false, $assign->can_view_submission($this->extrasuspendedstudents[0]->id));
     }
 
 
