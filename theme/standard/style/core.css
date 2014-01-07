@@ -427,7 +427,7 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 /**
  * Enrol
  */
-.userenrolment {font-size:90%;border:1px solid #999;}
+.userenrolment {border:1px solid #999;}
 .userenrolment tr.r0 {background-color:#F9F9F9;}
 .userenrolment tr.r1 {background-color:#F3F3F3;}
 .userenrolment td {border:1px solid #E9E9E9;border-top-color:#F6F6F6;border-right-color:#EEE;border-left-color:#F3F3F3;}
@@ -437,17 +437,16 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
 .userenrolment .r0 .col_bulkops {background-color:#FFFFFF;}
 .userenrolment .r1 .col_bulkops {background-color:#F9F9F9;}
 .userenrolment tr.lastrow td {border-bottom-width:0;}
-.userenrolment .col_userdetails {padding:3px;min-width:35%;}
-.userenrolment .col_role .roles {position:relative;}
-.userenrolment .col_role .role {line-height:10px;font-size:10px;}
+.userenrolment .col_userdetails {min-width:35%;}
 .userenrolment .col_role .role a img {height:8px;}
-.userenrolment .col_role .addrole {background-color:#DDD;border:1px outset #EEE;-moz-border-radius:5px;}
+.userenrolment .col_role .addrole > * {padding-bottom:3px;}
+.userenrolment .col_role .addrole > *:hover {border-bottom:1px solid #666;}
 .userenrolment .col_group {max-width:300px;}
-.userenrolment .col_group .group {line-height:10px;font-size:10px;}
 .userenrolment .col_group .group a img {height:8px;}
-.userenrolment .col_group .addgroup {background-color:#DDD;border:1px outset #EEE;-moz-border-radius:5px;}
+.userenrolment .col_group .addgroup > * {padding-bottom:3px;}
+.userenrolment .col_group .addgroup > *:hover {border-bottom:1px solid #666;}
 .userenrolment .col_enrol {max-width:300px;}
-.userenrolment .col_enrol .enrolment {border:1px outset #E6E6E6;background-color:#EEE;line-height:10px;font-size:10px;-moz-border-radius:5px;}
+.userenrolment .col_enrol .enrolment {border:1px outset #E6E6E6;background-color:#EEE;-moz-border-radius:5px;}
 .userenrolment.otheruserenrolment .col_role .role {float:none;}
 .path-enrol .enrolusersbutton,
 .path-enrol .enrolcohortbutton {float:left;}
