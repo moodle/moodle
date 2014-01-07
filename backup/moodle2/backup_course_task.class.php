@@ -129,18 +129,36 @@ class backup_course_task extends backup_task {
     /**
      * Code the transformations to perform in the course in
      * order to get transportable (encoded) links
+     * @param string $content content in which to encode links.
+     * @return string content with links encoded.
      */
     static public function encode_content_links($content) {
-        global $CFG;
-
-        $base = preg_quote($CFG->wwwroot, '/');
 
         // Link to the course main page (it also covers "&topic=xx" and "&week=xx"
-        // because they don't become transformed (section number) in backup/restore
-        $search = '/(' . $base . '\/course\/view.php\?id\=)([0-9]+)/';
-        $content= preg_replace($search, '$@COURSEVIEWBYID*$2@$', $content);
+        // because they don't become transformed (section number) in backup/restore.
+        $content = self::encode_links_helper($content, 'COURSEVIEWBYID',       '/course/view.php?id=');
+
+        // A few other key course links.
+        $content = self::encode_links_helper($content, 'GRADEINDEXBYID',       '/grade/index.php?id=');
+        $content = self::encode_links_helper($content, 'GRADEREPORTINDEXBYID', '/grade/report/index.php?id=');
+        $content = self::encode_links_helper($content, 'BADGESVIEWBYID',       '/badges/view.php?type=2&id=');
+        $content = self::encode_links_helper($content, 'USERINDEXVIEWBYID',    '/user/index.php?id=');
 
         return $content;
+    }
+
+    /**
+     * Helper method, used by encode_content_links.
+     * @param string $content content in which to encode links.
+     * @param unknown_type $name the name of this type of encoded link.
+     * @param unknown_type $path the path that identifies this type of link, up
+     *      to the ?paramname= bit.
+     * @return string content with one type of link encoded.
+     */
+    static private function encode_links_helper($content, $name, $path) {
+        global $CFG;
+        $base = preg_quote($CFG->wwwroot . $path, '/');
+        return preg_replace('/(' . $base . ')([0-9]+)/', '$@' . $name . '*$2@$', $content);
     }
 
 // Protected API starts here
