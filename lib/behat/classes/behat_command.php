@@ -82,8 +82,12 @@ class behat_command {
 
         // Cygwin uses linux-style directory separators.
         if ($custombyterm && testing_is_cygwin()) {
-            $exec = 'behat.bat';
             $separator = '/';
+
+            // MinGW can not execute .bat scripts.
+            if (!testing_is_mingw()) {
+                $exec = 'behat.bat';
+            }
         }
         return 'vendor' . $separator . 'bin' . $separator . $exec;
     }

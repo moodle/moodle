@@ -159,7 +159,7 @@ class behat_config_manager {
     public static function get_steps_list_config_filepath() {
         global $USER;
 
-        // We don't cygwin-it as it is called using exec().
+        // We don't cygwin-it as it is called using exec() which uses cmd.exe.
         $userdir = behat_command::get_behat_dir() . '/users/' . $USER->id;
         make_writable_directory($userdir);
 
