@@ -400,8 +400,8 @@ SELECT
     {$fields}
 
 FROM {$qubaids->from_question_attempts('qa')}
-JOIN {question_attempt_steps} qas ON
-        qas.id = {$this->latest_step_for_qa_subquery()}
+JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+        AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
 
 WHERE
     {$qubaids->where()} AND
@@ -438,8 +438,8 @@ SELECT
     COUNT(1) AS numattempts
 
 FROM {$qubaids->from_question_attempts('qa')}
-JOIN {question_attempt_steps} qas ON
-        qas.id = {$this->latest_step_for_qa_subquery()}
+JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+        AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
 JOIN {question} q ON q.id = qa.questionid
 
 WHERE
@@ -547,8 +547,8 @@ SELECT
     1
 
 FROM {$qubaids->from_question_attempts('qa')}
-JOIN {question_attempt_steps} qas ON
-        qas.id = {$this->latest_step_for_qa_subquery()}
+JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+        AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
 JOIN {question} q ON q.id = qa.questionid
 
 WHERE
@@ -609,8 +609,8 @@ SELECT
     COUNT(1) AS numaveraged
 
 FROM {$qubaids->from_question_attempts('qa')}
-JOIN {question_attempt_steps} qas ON
-        qas.id = {$this->latest_step_for_qa_subquery()}
+JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+        AND qas.sequencenumber = {$this->latest_step_for_qa_subquery()}
 
 WHERE
     {$qubaids->where()}
@@ -926,10 +926,11 @@ ORDER BY
         // NULL total into a 0.
         return "SELECT COALESCE(SUM(qa.maxmark * qas.fraction), 0)
             FROM {question_attempts} qa
-            JOIN {question_attempt_steps} qas ON qas.id = (
-                SELECT MAX(summarks_qas.id)
-                  FROM {question_attempt_steps} summarks_qas
-                 WHERE summarks_qas.questionattemptid = qa.id
+            JOIN {question_attempt_steps} qas ON qas.questionattemptid = qa.id
+                    AND qas.sequencenumber = (
+                            SELECT MAX(summarks_qas.sequencenumber)
+                              FROM {question_attempt_steps} summarks_qas
+                             WHERE summarks_qas.questionattemptid = qa.id
             )
             WHERE qa.questionusageid = $qubaid
             HAVING COUNT(CASE
@@ -971,15 +972,15 @@ ORDER BY
                        {$alias}qas.userid
 
                   FROM {$qubaids->from_question_attempts($alias . 'qa')}
-                  JOIN {question_attempt_steps} {$alias}qas ON
-                           {$alias}qas.id = {$this->latest_step_for_qa_subquery($alias . 'qa.id')}
+                  JOIN {question_attempt_steps} {$alias}qas ON {$alias}qas.questionattemptid = {$alias}qa.id
+                            AND {$alias}qas.sequencenumber = {$this->latest_step_for_qa_subquery($alias . 'qa.id')}
                  WHERE {$qubaids->where()}
             ) $alias", $qubaids->from_where_params());
     }
 
     protected function latest_step_for_qa_subquery($questionattemptid = 'qa.id') {
         return "(
-                SELECT MAX(id)
+                SELECT MAX(sequencenumber)
                 FROM {question_attempt_steps}
                 WHERE questionattemptid = $questionattemptid
             )";
