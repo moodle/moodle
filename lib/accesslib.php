@@ -2471,7 +2471,8 @@ function reset_role_capabilities($roleid) {
 
     $systemcontext = context_system::instance();
 
-    $DB->delete_records('role_capabilities', array('roleid'=>$roleid));
+    $DB->delete_records('role_capabilities',
+            array('roleid'=>$roleid, 'contextid' => $systemcontext->id));
 
     foreach($defaultcaps as $cap=>$permission) {
         assign_capability($cap, $permission, $roleid, $systemcontext->id);
