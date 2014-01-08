@@ -168,7 +168,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
         $draggableimageitem[] = $mform->createElement('text', 'draglabel',
                                                 get_string('label', 'qtype_ddimageortext'),
                                                 array('size'=>30, 'class'=>'tweakcss'));
-        $mform->setType('draglabel', PARAM_NOTAGS);
+        $mform->setType('draglabel', PARAM_RAW); // These are validated manually.
         return $draggableimageitem;
     }
 
