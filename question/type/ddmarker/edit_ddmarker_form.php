@@ -113,7 +113,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
         $grouparray[] = $mform->createElement('text', 'coords',
                                                 get_string('coords', 'qtype_ddmarker'),
                                                 array('size'=>50, 'class'=>'tweakcss'));
-        $mform->setType('coords', PARAM_NOTAGS);
+        $mform->setType('coords', PARAM_RAW); // These are validated manually.
         $markernos = array();
         $markernos[0] = '';
         for ($i = 1; $i <= $imagerepeats; $i += 1) {
