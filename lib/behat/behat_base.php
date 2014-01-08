@@ -55,7 +55,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * The timeout for each Behat step (load page, wait for an element to load...).
      */
-    const TIMEOUT = 3;
+    const TIMEOUT = 6;
 
     /**
      * And extended timeout for specific cases.
