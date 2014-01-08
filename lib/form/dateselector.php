@@ -123,8 +123,10 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
         }
         // The YUI2 calendar only supports the gregorian calendar type so only display the calendar image if this is being used.
         if ($calendartype->get_name() === 'gregorian') {
-            $this->_elements[] = @MoodleQuickForm::createElement('image', 'calendar', $OUTPUT->pix_url('i/calendar', 'moodle'),
-                array('title' => get_string('calendar', 'calendar'), 'class' => 'visibleifjs'));
+            $image = $OUTPUT->pix_icon('i/calendar', get_string('calendar', 'calendar'), 'moodle');
+            $this->_elements[] = @MoodleQuickForm::createElement('link', 'calendar',
+                    null, '#', $image,
+                    array('class' => 'visibleifjs'));
         }
         // If optional we add a checkbox which the user can use to turn if on
         if ($this->_options['optional']) {
