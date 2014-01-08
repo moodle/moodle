@@ -408,6 +408,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                 var dragitemhome = this.doc.drag_item_home(choiceno);
                 for (var i=0; i < coords.length; i++) {
                     var dragitem;
+                    coords[i][0] = Math.round(coords[i][0]);
+                    coords[i][1] = Math.round(coords[i][1]);
                     dragitem = this.doc.drag_item_for_choice(choiceno, i);
                     if (!dragitem || dragitem.hasClass('beingdragged')) {
                         dragitem = this.clone_new_drag_item(dragitemhome, i);
@@ -481,6 +483,8 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
         drop_zone_key_press : function (e) {
             var dragitem = e.target;
             var xy = dragitem.getXY();
+            xy[0] = Math.round(xy[0]); 
+            xy[1] = Math.round(xy[1]);
             switch (e.direction) {
                 case 'left' :
                     xy[0] -= 1;
@@ -542,7 +546,33 @@ YUI.add('moodle-qtype_ddmarker-dd', function(Y) {
                                     this, notifier);
         }
     });
+    M.qtype_ddmarker.isGetBoundingClientRectOverridden = false;
+    M.qtype_ddmarker.overrideGetBoundingClientRect = function() {
+        if(M.qtype_ddmarker.isGetBoundingClientRectOverridden){
+            return;
+        }
+
+        if(Y.UA.ie != 10 || !Element.prototype.getBoundingClientRect){
+            return;
+        }
+
+        M.qtype_ddmarker.isGetBoundingClientRectOverridden = true;
+        Element.prototype.getBoundingClientRectOld = Element.prototype.getBoundingClientRect;
+        Element.prototype.getBoundingClientRect = function(){
+            var rect = this.getBoundingClientRectOld();
+
+            var newRect = new Object();
+            newRect.top = Math.round(rect.top);
+            newRect.bottom = Math.round(rect.bottom);
+            newRect.left = Math.round(rect.left);
+            newRect.right = Math.round(rect.right);
+            newRect.height = Math.round(rect.height);
+            newRect.width = Math.round(rect.width);
+            return newRect;
+        }
+    }
     M.qtype_ddmarker.init_question = function(config) {
+        M.qtype_ddmarker.overrideGetBoundingClientRect();
         return new DDMARKER_QUESTION(config);
     };
 }, '@VERSION@', {
