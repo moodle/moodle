@@ -281,6 +281,7 @@ class behat_hooks extends behat_base {
     /**
      * Waits for all the JS to be loaded.
      *
+     * @throws \Exception
      * @throws NoSuchWindow
      * @throws UnknownError
      * @return bool True or false depending whether all the JS is loaded or not.
@@ -314,9 +315,12 @@ class behat_hooks extends behat_base {
             usleep(100000);
         }
 
-        // Timeout waiting for JS to complete.
-        // TODO MDL-43173 We should fail the scenarios if JS loading times out.
-        return false;
+        // Timeout waiting for JS to complete. It will be catched and forwarded to behat_hooks::i_look_for_exceptions().
+        // It is unlikely that Javascript code of a page or an AJAX request needs more than self::EXTENDED_TIMEOUT seconds
+        // to be loaded, although when pages contains Javascript errors M.util.js_complete() can not be executed, so the
+        // number of JS pending code and JS completed code will not match and we will reach this point.
+        throw new \Exception('Javascript code and/or AJAX requests are not ready after ' . self::EXTENDED_TIMEOUT .
+            ' seconds. There is a Javascript error or the code is extremely slow.');
     }
 
     /**
