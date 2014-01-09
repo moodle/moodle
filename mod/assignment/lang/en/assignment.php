@@ -44,9 +44,9 @@ assignment submission for \'{$a->assignment}\'
 You can see it appended to your assignment submission:
 
     {$a->url}';
-$string['assignmentmailhtml'] = '{$a->teacher} has posted some feedback on your
-assignment submission for \'<i>{$a->assignment}</i>\'<br /><br />
-You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
+$string['assignmentmailhtml'] = '<p>{$a->teacher} has posted some feedback on your
+assignment submission for \'<i>{$a->assignment}</i>\'.</p>
+<p>You can see it appended to your <a href="{$a->url}">assignment submission</a>.</p>';
 $string['assignmentmailsmall'] = '{$a->teacher} has posted some feedback on your
 assignment submission for \'{$a->assignment}\' You can see it appended to your submission';
 $string['assignmentname'] = 'Assignment name';
@@ -88,9 +88,8 @@ for \'{$a->assignment}\' at {$a->timeupdated}
 It is available here:
 
     {$a->url}';
-$string['emailteachermailhtml'] = '{$a->username} has updated their assignment submission
-for <i>\'{$a->assignment}\'  at {$a->timeupdated}</i><br /><br />
-It is <a href="{$a->url}">available on the web site</a>.';
+$string['emailteachermailhtml'] = '<p>{$a->username} has updated their assignment submission for <i>\'{$a->assignment}\' at {$a->timeupdated}</i>.</p>
+<p>It is <a href="{$a->url}">available on the site</a>.</p>';
 $string['emailteachers'] = 'Email alerts to teachers';
 $string['emailteachers_help'] = 'If enabled, teachers receive email notification whenever students add or update an assignment submission.
 

@@ -92,7 +92,8 @@ $string['defaultinfofor'] = 'The default category for questions shared in contex
 $string['defaultmarkmustbepositive'] = 'The default mark must be positive.';
 $string['deletecoursecategorywithquestions'] = 'There are questions in the question bank associated with this course category. If you proceed, they will be deleted. You may wish to move them first, using the question bank interface.';
 $string['deletequestioncheck'] = 'Are you absolutely sure you want to delete \'{$a}\'?';
-$string['deletequestionscheck'] = 'Are you absolutely sure you want to delete the following questions?<br /><br />{$a}';
+$string['deletequestionscheck'] = '<p>Are you absolutely sure you want to delete the following questions?</p>
+<p>{$a}</p>';
 $string['deletingbehaviour'] = 'Deleting question behaviour \'{$a}\'';
 $string['deletingqtype'] = 'Deleting question type \'{$a}\'';
 $string['didnotmatchanyanswer'] = '[Did not match any answer]';

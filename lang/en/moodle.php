@@ -1567,7 +1567,12 @@ $string['searchagain'] = 'Search again';
 $string['searchbyemail'] = 'Search by email address';
 $string['searchbyusername'] = 'Search by username';
 $string['searchcourses'] = 'Search courses';
-$string['searchhelp'] = 'You can search for multiple words at once.<br /><br />word : find any match of this word within the text.<br />+word : only exact matching words will be found.<br />-word : don\'t include results containing this word.';
+$string['searchhelp'] = '<p>You can search for multiple words at once and can refine your search as follows:</p>
+<ul>
+<li>word - find any match of this word within the text.</li>
+<li>+word - only exact matching words will be found.</li>
+<li>-word - don\'t include results containing this word.</li>
+</ul>';
 $string['searchoptions'] = 'Search options';
 $string['searchresults'] = 'Search results';
 $string['sec'] = 'sec';
@@ -1608,7 +1613,7 @@ $string['selectmoduletoviewhelp'] = 'Select an activity or resource to view its 
 Double-click on an activity or resource name to quickly add it.';
 $string['selectnos'] = 'Select all \'No\'';
 $string['selectperiod'] = 'Select period';
-$string['selectcategorysort'] = 'Which categories would you like to sort';
+$string['selectcategorysort'] = 'Which categories would you like to sort?';
 $string['selectcategorysortby'] = 'Select how you would like to sort categories';
 $string['selectcoursesortby'] = 'Select how you would like to sort courses';
 $string['senddetails'] = 'Send my details via email';
