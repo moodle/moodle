@@ -1,4 +1,4 @@
-@block @block_activity_modules @_only_local
+@block @block_activity_modules
 Feature: Block activity modules
   In order to overview activity modules in a course
   As a manager
@@ -13,7 +13,7 @@ Feature: Block activity modules
     And I click on "//a[@title=\"Show\"]" "xpath_element" in the "Feedback" "table_row"
 
   Scenario: Add activities block on the frontpage
-    And the following "activities" exists:
+    Given the following "activities" exists:
       | activity   | name                        | intro                              | course               | idnumber    |
       | assign     | Frontpage assignment name   | Frontpage assignment description   | Acceptance test site | assign0     |
       | book       | Frontpage book name         | Frontpage book description         | Acceptance test site | book0       |
