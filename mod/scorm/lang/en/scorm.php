@@ -234,14 +234,14 @@ SCORM activities may be used
 $string['modulename_link'] = 'mod/scorm/view';
 $string['modulenameplural'] = 'SCORM packages';
 $string['nav'] = 'Show Navigation';
-$string['nav_help'] = 'This setting specifies wether to show or hide the navigation buttons and their position.
+$string['nav_help'] = 'This setting specifies whether to show or hide the navigation buttons and their position.
 
 There are 3 options:
 
-* No - Do not show the navigation buttons
-* Under content - Show the navigation buttons under SCORM package content
-* Float - Allows to manually specify the navigation buttons position from left and from top with respect to the window.';
-$string['navdesc'] = 'This setting specifies wether to show/hide navigation buttons and their position.';
+* No - Navigation buttons are not shown
+* Under content - Navigation buttons are shown below the SCORM package content
+* Floating - Navigation buttons are shown floating, with the postition from the top and from the left determined by the package.';
+$string['navdesc'] = 'This setting specifies whether to show or hide navigation buttons and their position.';
 $string['navpositionleft'] = 'Position of navigation buttons from left in pixels.';
 $string['navpositiontop'] = 'Position of navigation buttons from top in pixels.';
 $string['newattempt'] = 'Start a new attempt';
