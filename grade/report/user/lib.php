@@ -415,7 +415,7 @@ class grade_report_user extends grade_report {
                     $data['weight']['headers'] = "$header_cat $header_row weight";
                     // has a weight assigned, might be extra credit
                     if ($grade_object->aggregationcoef > 0 && $type <> 'courseitem') {
-                        $data['weight']['content'] = number_format($grade_object->aggregationcoef,2).'%';
+                        $data['weight']['content'] = number_format($grade_object->aggregationcoef,2);
                     }
                 }
 
