@@ -898,6 +898,7 @@ class question_bank_view {
     protected $countsql;
     protected $loadsql;
     protected $sqlparams;
+    /** @var array of \core_question\bank\search\condition objects. */
     protected $searchconditions = array();
 
     /**
@@ -1158,6 +1159,9 @@ class question_bank_view {
 
     /**
      * Create the SQL query to retrieve the indicated questions
+     * @param stdClass $category no longer used.
+     * @param bool $recurse no longer used.
+     * @param bool $showhidden no longer used.
      * @deprecated since Moodle 2.7 MDL-40313.
      * @see build_query()
      * @see question_bank_search_condition
@@ -1315,6 +1319,7 @@ class question_bank_view {
 
     /**
      * prints category information
+     * @param stdClass $category the category row from the database.
      * @deprecated since Moodle 2.7 MDL-40313.
      * @see core_question_bank_search_condition_category
      * @todo MDL-41978 This will be deleted in Moodle 2.8
@@ -1329,7 +1334,7 @@ class question_bank_view {
     }
 
     /**
-     * prints a form to choose categories
+     * Prints a form to choose categories
      * @deprecated since Moodle 2.7 MDL-40313.
      * @see core_question_bank_search_condition_category
      * @todo MDL-41978 This will be deleted in Moodle 2.8
@@ -1349,6 +1354,10 @@ class question_bank_view {
     }
 
     /**
+     * Display the options form.
+     * @param bool $recurse no longer used.
+     * @param bool $showhidden no longer used.
+     * @param bool $showquestiontext whether to show the question text.
      * @deprecated since Moodle 2.7 MDL-40313.
      * @see display_options_form
      * @todo MDL-41978 This will be deleted in Moodle 2.8
@@ -1367,7 +1376,8 @@ class question_bank_view {
      * @todo MDL-41978 This will be deleted in Moodle 2.8
      */
     protected function display_category_form_checkbox($name, $value, $label) {
-        debugging('display_category_form_checkbox() is deprecated, please use core_question_bank_search_condition_category instead.', DEBUG_DEVELOPER);
+        debugging('display_category_form_checkbox() is deprecated, ' .
+                'please use core_question_bank_search_condition_category instead.', DEBUG_DEVELOPER);
         echo '<div><input type="hidden" id="' . $name . '_off" name="' . $name . '" value="0" />';
         echo '<input type="checkbox" id="' . $name . '_on" name="' . $name . '" value="1"';
         if ($value) {
@@ -1437,17 +1447,19 @@ class question_bank_view {
     }
 
     /**
-    * Prints the table of questions in a category with interactions
-    *
-    * @param object $course   The course object
-    * @param int $categoryid  The id of the question category to be displayed
-    * @param int $cm      The course module record if we are in the context of a particular module, 0 otherwise
-    * @param int $recurse     This is 1 if subcategories should be included, 0 otherwise
-    * @param int $page        The number of the page to be displayed
-    * @param int $perpage     Number of questions to show per page
-    * @param bool $showhidden   True if also hidden questions should be displayed
-    * @param bool $showquestiontext whether the text of each question should be shown in the list. Deprecated.
-    */
+     * Prints the table of questions in a category with interactions
+     *
+     * @param array      $contexts    Not used!
+     * @param moodle_url $pageurl     The URL to reload this page.
+     * @param string     $categoryandcontext 'categoryID,contextID'.
+     * @param stdClass   $cm          Not used!
+     * @param bool       $recurse     Whether to include subcategories.
+     * @param int        $page        The number of the page to be displayed
+     * @param int        $perpage     Number of questions to show per page
+     * @param bool       $showhidden  whether deleted questions should be displayed.
+     * @param bool       $showquestiontext whether the text of each question should be shown in the list. Deprecated.
+     * @param array      $addcontexts contexts where the user is allowed to add new questions.
+     */
     protected function display_question_list($contexts, $pageurl, $categoryandcontext,
             $cm = null, $recurse=1, $page=0, $perpage=100, $showhidden=false,
             $showquestiontext = false, $addcontexts = array()) {
@@ -1707,6 +1719,10 @@ class question_bank_view {
         }
     }
 
+    /**
+     * Add another search control to this view.
+     * @param core_question_bank_search_condition $searchcondition the condition to add.
+     */
     public function add_searchcondition($searchcondition) {
         $this->searchconditions[] = $searchcondition;
     }

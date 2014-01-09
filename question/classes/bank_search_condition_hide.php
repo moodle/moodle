@@ -1,13 +1,46 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+
 /**
- *  This class controls whether hidden / deleted questions are hidden in the list.
+ * A search class to control whether hidden / deleted questions are hidden in the list.
+ *
+ * @package   core_question
+ * @copyright 2013 Ray Morris
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * This class controls whether hidden / deleted questions are hidden in the list.
+ *
+ * @copyright 2013 Ray Morris
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_question_bank_search_condition_hide extends core_question_bank_search_condition {
-    protected $where  = '';
+    /** @var bool Whether to include old "deleted" questions. */
     protected $hide;
 
+    /** @var string SQL fragment to add to the where clause. */
+    protected $where;
+
     /**
-     * @param bool $hide include old "deleted" questions.
+     * Constructor.
+     * @param bool $hide whether to include old "deleted" questions.
      */
     public function __construct($hide = true) {
         $this->hide = $hide;
@@ -16,9 +49,6 @@ class core_question_bank_search_condition_hide extends core_question_bank_search
         }
     }
 
-    /**
-     * @return string An SQL fragment to be ANDed into the WHERE clause to show or hide deleted/hidden questions
-     */
     public function where() {
         return  $this->where;
     }

@@ -1111,6 +1111,7 @@ class quiz_question_bank_view extends question_bank_view {
     protected $quizhasattempts = false;
     /** @var object the quiz settings. */
     protected $quiz = false;
+    /** @var int The maximum displayed length of the category info. */
     const MAX_TEXT_LENGTH = 200;
 
     /**
@@ -1206,13 +1207,15 @@ class quiz_question_bank_view extends question_bank_view {
 
     /**
      * prints a form to choose categories
+     * @param string $categoryandcontext 'categoryID,contextID'.
      * @deprecated since Moodle 2.6 MDL-40313.
      * @see question_bank_search_condition_category
      * @todo MDL-41978 This will be deleted in Moodle 2.8
      */
     protected function print_choose_category_message($categoryandcontext) {
         global $OUTPUT;
-        debugging('print_choose_category_message() is deprecated, please use question_bank_search_condition_category instead.', DEBUG_DEVELOPER);
+        debugging('print_choose_category_message() is deprecated, ' .
+                'please use question_bank_search_condition_category instead.', DEBUG_DEVELOPER);
         echo $OUTPUT->box_start('generalbox questionbank');
         $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'),
                 $this->baseurl, $categoryandcontext);
@@ -1236,7 +1239,7 @@ class quiz_question_bank_view extends question_bank_view {
             echo $searchcondition->display_options($this);
         }
         $this->display_advanced_search_form();
-        $go = html_writer::empty_tag('input', array('type'=>'submit', 'value'=>get_string('go')));
+        $go = html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('go')));
         echo html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
         echo html_writer::end_div();
         echo html_writer::end_tag('form');
