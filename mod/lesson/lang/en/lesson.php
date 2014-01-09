@@ -171,6 +171,7 @@ $string['essayemailmessage2'] = '<p>Essay prompt:<blockquote>{$a->question}</blo
 $string['essayemailsubject'] = 'Your grade for {$a} question';
 $string['essays'] = 'Essays';
 $string['essayscore'] = 'Essay score';
+$string['eventessayassessed'] = 'Essay assessed';
 $string['eventessayattemptviewed'] = 'Essay attempt viewed';
 $string['eventhighscoreadded'] = 'Highscore added';
 $string['eventhighscoresviewed'] = 'Highscores viewed';
