@@ -40,18 +40,16 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
 class behat_groups extends behat_base {
 
     /**
-     * Add the specified user to the group. You should be in the groups page when running this step.
+     * Add the specified user to the group. You should be in the groups page when running this step. The user should be specified like "Firstname Lastname (user@email.com)".
      *
-     * @Given /^I add "(?P<username_string>(?:[^"]|\\")*)" user to "(?P<group_name_string>(?:[^"]|\\")*)" group$/
+     * @Given /^I add "(?P<user_fullname_string>(?:[^"]|\\")*)" user to "(?P<group_name_string>(?:[^"]|\\")*)" group members$/
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $username
      * @param string $groupname
      */
-    public function i_add_user_to_group($username, $groupname) {
-        global $DB;
+    public function i_add_user_to_group_members($userfullname, $groupname) {
 
-        $user = $DB->get_record('user', array('username' => $username));
-        $userfullname = $this->getSession()->getSelectorsHandler()->xpathLiteral(fullname($user));
+        $userfullname = $this->getSession()->getSelectorsHandler()->xpathLiteral($userfullname);
 
         // Using a xpath liternal to avoid problems with quotes and double quotes.
         $groupname = $this->getSession()->getSelectorsHandler()->xpathLiteral($groupname);
