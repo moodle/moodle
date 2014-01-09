@@ -91,7 +91,7 @@ $namefields = get_all_user_name_fields(true, 'u');
 $sql = "SELECT b.userid, b.dateissued, b.uniquehash, $namefields
     FROM {badge_issued} b INNER JOIN {user} u
         ON b.userid = u.id
-    WHERE b.badgeid = :badgeid
+    WHERE b.badgeid = :badgeid AND u.deleted = 0
     ORDER BY $sortby $sorthow";
 
 $totalcount = $DB->count_records('badge_issued', array('badgeid' => $badge->id));
