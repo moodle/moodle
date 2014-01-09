@@ -367,7 +367,7 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
                                                   JOIN {chat_users} chu ON chu.chatid = ch.id
                                                   JOIN {user} u         ON u.id = chu.userid
                                                  WHERE cm.id = :cmid $timeout $groupselect
-                                              GROUP BY u.id, u.firstname, u.lastname, u.email, u.picture", $params)) {
+                                              GROUP BY $userfields", $params)) {
             }
 
             $link = $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id;
