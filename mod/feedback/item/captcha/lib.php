@@ -231,9 +231,17 @@ class feedback_item_captcha extends feedback_item_base {
         <a href="javascript:Recaptcha.switch_type(\'image\')">' . $strgetanimagecaptcha . '</a>
         </div>
         </div>';
+
+        // Check if we are using SSL.
+        if (strpos($CFG->wwwroot, 'https://') === 0) {
+            $ssl = true;
+        } else {
+            $ssl = false;
+        }
+
         //we have to rename the challengefield
         if (!empty($CFG->recaptchaprivatekey) AND !empty($CFG->recaptchapublickey)) {
-            $captchahtml = recaptcha_get_html($CFG->recaptchapublickey, null);
+            $captchahtml = recaptcha_get_html($CFG->recaptchapublickey, null, $ssl);
             echo $html.$captchahtml;
         }
     }
