@@ -8,9 +8,9 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
     Given the following "users" exists:
       | username | firstname | lastname | email | auth | confirmed |
       | user1 | User | One | one@asd.com | manual | 0 |
-      | user2 | User | Two | one@asd.com | ldap | 1 |
-      | user3 | User | Three | one@asd.com | manual | 1 |
-      | user4 | User | Four | one@asd.com | ldap | 0 |
+      | user2 | User | Two | two@asd.com | ldap | 1 |
+      | user3 | User | Three | three@asd.com | manual | 1 |
+      | user4 | User | Four | four@asd.com | ldap | 0 |
     And the following "cohorts" exists:
       | name | idnumber |
       | Cohort 1 | CH1 |
@@ -23,8 +23,8 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
       | user2 | C1 | student |
       | user3 | C1 | student |
     And I log in as "admin"
-    And I add "user2" user to "CH1" cohort
-    And I add "user3" user to "CH1" cohort
+    And I add "User Two (two@asd.com)" user to "CH1" cohort members
+    And I add "User Three (three@asd.com)" user to "CH1" cohort members
     And I follow "Browse list of users"
 
   @javascript
