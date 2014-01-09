@@ -1979,7 +1979,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
 
     // Indent.
-    if ($hasmanageactivities) {
+    if ($hasmanageactivities && $indent >= 0) {
         $indentlimits = new stdClass();
         $indentlimits->min = 0;
         $indentlimits->max = 16;
