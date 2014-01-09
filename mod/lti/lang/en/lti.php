@@ -228,13 +228,9 @@ $string['lti_launch_error'] = 'An error occurred when launching the external too
 $string['lti_launch_error_tool_request'] = '<p>
 To submit a request for an administrator to complete the tool configuration, click <a href="{$a->admin_request_url}" target="_top">here</a>.
 </p>';
-$string['lti_launch_error_unsigned_help'] = '   <p>
-        This error may be a result of a missing consumer key and shared secret for the tool provider.
-    </p>
-    <p>
-        If you have a consumer key and shared secret, you may enter it when editing the external tool instance (make sure advanced options are visible).<br />
-        Alternatively, you may create a course level tool provider configuration <a href="{$a->course_tool_editor}">here</a>.
-    </p>';
+$string['lti_launch_error_unsigned_help'] = '<p>This error may be a result of a missing consumer key and shared secret for the tool provider.</p>
+<p>If you have a consumer key and shared secret, you may enter it when editing the external tool instance (make sure advanced options are visible).</p>
+<p>Alternatively, you may <a href="{$a->course_tool_editor}">create a course level tool provider configuration</a>.</p>';
 $string['lti_tool_request_added'] = 'Tool configuration request successfully submitted. You may need to contact an administrator to complete the tool configuration.';
 $string['lti_tool_request_existing'] = 'A tool configuration for the tool domain has already been submitted.';
 $string['main_admin'] = 'General help';

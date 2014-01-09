@@ -1468,7 +1468,12 @@ $string['searchagain'] = 'Search again';
 $string['searchbyemail'] = 'Search by email address';
 $string['searchbyusername'] = 'Search by username';
 $string['searchcourses'] = 'Search courses';
-$string['searchhelp'] = 'You can search for multiple words at once.<br /><br />word : find any match of this word within the text.<br />+word : only exact matching words will be found.<br />-word : don\'t include results containing this word.';
+$string['searchhelp'] = '<p>You can search for multiple words at once and can refine your search as follows:</p>
+<ul>
+<li>word - find any match of this word within the text.</li>
+<li>+word - only exact matching words will be found.</li>
+<li>-word - don\'t include results containing this word.</li>
+</ul>';
 $string['searchoptions'] = 'Search options';
 $string['searchresults'] = 'Search results';
 $string['sec'] = 'sec';

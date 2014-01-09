@@ -192,8 +192,8 @@ $string['dbconnectionfailed'] = '<p>Error: Database connection failed</p>
 $string['dbdriverproblem'] = '<p>Error: database driver problem detected</p>
 <p>The site administrator should verify server configuration</p><p>{$a}</p>';
 $string['dbsessionbroken'] = 'Serious database session problem detected.<br /><br />Please notify server administrator.';
-$string['dbsessionhandlerproblem'] = 'Setting up of database session failed.<br /><br />Please notify server administrator.';
-$string['dbsessionmysqlpacketsize'] = 'Serious session error detected.<br /><br />Please notify administrator, this problem is most probably caused by small value in max_allowed_packet MySQL setting.';
+$string['dbsessionhandlerproblem'] = 'Setting up of database session failed. Please notify the server administrator.';
+$string['dbsessionmysqlpacketsize'] = 'A serious session error was detected. Please notify the site administrator. The problem is most probably caused by small value in max_allowed_packet MySQL setting.';
 $string['dbupdatefailed'] = 'Database update failed';
 $string['ddldependencyerror'] = '{$a->targettype} "{$a->targetname}" cannot be modified. Dependency found with {$a->offendingtype} "{$a->offendingname}"';
 $string['ddlexecuteerror'] = 'DDL sql execution error';
@@ -445,7 +445,8 @@ $string['querystringcannotbeempty'] = 'The query string cannot be empty.';
 $string['redirecterrordetected'] = 'Unsupported redirect detected, script execution terminated';
 $string['refoundto'] = 'Can be refunded to {$a}';
 $string['refoundtoorigi'] = 'Refunded to original amount: {$a}';
-$string['remotedownloaderror'] = 'Download of component to your server failed, please verify proxy settings, PHP cURL extension is highly recommended.<br /><br />You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.';
+$string['remotedownloaderror'] = '<p>The download of the component to your server failed. Please verify proxy settings; the PHP cURL extension is highly recommended.</p>
+<p>You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.</p>';
 $string['remotedownloadnotallowed'] = 'Download of components to your server isn\'t allowed (allow_url_fopen is disabled).<br /><br />You must download the <a href="{$a->url}">{$a->url}</a> file manually, copy it to "{$a->dest}" in your server and unzip it there.';
 $string['reportnotavailable'] = 'This type of report is only available for the site course';
 $string['requirecorrectaccess'] = 'Invalid url or port.';
@@ -464,11 +465,12 @@ $string['serverconnection'] = 'Error connecting to the server';
 $string['servicedonotexist'] = 'The service does not exist';
 $string['sessionwaiterr'] = 'Timed out while waiting for session lock.<br />Wait for your current requests to finish and try again later.';
 $string['sessioncookiesdisable'] = 'Incorrect use of require_key_login() - session cookies must be disabled!';
-$string['sessiondiskfull'] = 'The session partition is full. It is not possible to login at this time.<br /><br />Please notify server administrator.';
+$string['sessiondiskfull'] = 'The session partition is full. It is not possible to login at this time. Please notify the server administrator.';
 $string['sessionerroruser'] = 'Your session has timed out.  Please login again.';
 $string['sessionerroruser2'] = 'A server error that affects your login session was detected. Please login again or restart your browser.';
 $string['sessionipnomatch'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site.  Normal users should not be seeing this message - please ask the site administrator for help.';
-$string['sessionipnomatch2'] = 'Sorry, but your IP number seems to have changed from when you first logged in.  This security feature prevents crackers stealing your identity while logged in to this site. You may see this error if you use wireless networks or if you are roaming between different networks. Please ask the site administrator for more help.<br /><br />If you want to continue please press F5 key to refresh this page.';
+$string['sessionipnomatch2'] = '<p>Sorry, but your IP number seems to have changed from when you first logged in. This security feature prevents crackers stealing your identity while logged in to this site. You may see this error if you use wireless networks or if you are roaming between different networks. Please ask the site administrator for more help.</p>
+<p>If you want to continue please press F5 key to refresh this page.</p>';
 $string['shortnametaken'] = 'Short name is already used for another course';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
 $string['socksnotsupported'] = 'SOCKS5 proxy is not supported in PHP4';

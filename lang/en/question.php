@@ -98,7 +98,8 @@ $string['deletecoursecategorywithquestions'] = 'There are questions in the quest
 $string['deleteqtypeareyousure'] = 'Delete question type {$a}: are you sure?';
 $string['deleteqtypeareyousuremessage'] = 'You are about to completely delete the question type {$a}. This will completely delete everything in the database associated with this question type. Are you SURE you want to continue?';
 $string['deletequestioncheck'] = 'Are you absolutely sure you want to delete \'{$a}\'?';
-$string['deletequestionscheck'] = 'Are you absolutely sure you want to delete the following questions?<br /><br />{$a}';
+$string['deletequestionscheck'] = '<p>Are you absolutely sure you want to delete the following questions?</p>
+<p>{$a}</p>';
 $string['deletingbehaviour'] = 'Deleting question behaviour \'{$a}\'';
 $string['deletingqtype'] = 'Deleting question type \'{$a}\'';
 $string['didnotmatchanyanswer'] = '[Did not match any answer]';

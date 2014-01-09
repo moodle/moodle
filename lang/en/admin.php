@@ -86,7 +86,7 @@ $string['bloglevel'] = 'Blog visibility';
 $string['bookmarkadded'] = 'Bookmark added.';
 $string['bookmarkalreadyexists'] = 'You have already bookmarked this page.';
 $string['bookmarkdeleted'] = 'Bookmark deleted.';
-$string['bookmarkthispage'] = 'bookmark this page';
+$string['bookmarkthispage'] = 'Bookmark this page';
 $string['cachejs'] = 'Cache Javascript';
 $string['cachejs_help'] = 'Javascript caching and compression greatly improves page loading performance. it is strongly recommended for production sites. Developers will probably want to disable this feature.';
 $string['cachetext'] = 'Text cache lifetime';
@@ -225,7 +225,7 @@ $string['configfrontpagecourselimit'] = 'Maximum number of courses';
 $string['configfrontpagecourselimithelp'] = 'Maximum number of courses to be displayed on the site\'s front page in course listings.';
 $string['configfrontpageloggedin'] = 'The items selected above will be displayed on the site\'s front page when a user is logged in.';
 $string['configfullnamedisplay'] = 'This defines how names are shown when they are displayed in full. For most mono-lingual sites the most efficient setting is "First name + Surname", but you may choose to hide surnames altogether, or to leave it up to the current language pack to decide (some languages have different conventions).';
-$string['configgeoipfile'] = 'Location of GeoIP City binary data file. This file is not part of Moodle distribution and must be obtained separately from <a href="http://www.maxmind.com/">MaxMind</a>. You can either buy a commercial version or use the free version.<br />Simply download <a href="http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" >http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz</a> and extract it into "{$a}" directory on your server.';
+$string['configgeoipfile'] = 'Location of GeoIP City binary data file. This file is not part of Moodle distribution and must be obtained separately from <a href="http://www.maxmind.com/">MaxMind</a>. You can either buy a commercial version or use the free version. Simply download <a href="http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz" >http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz</a> and extract it into "{$a}" directory on your server.';
 $string['configgetremoteaddrconf'] = 'If your server is behind a reverse proxy, you can use this setting to specify which HTTP headers can be trusted to contain the remote IP address. The headers are read in order, using the first one that is available.';
 $string['configgradebookroles'] = 'This setting allows you to control who appears on the gradebook.  Users need to have at least one of these roles in a course to be shown in the gradebook for that course.';
 $string['configgradeexport'] = 'Choose which gradebook export formats are your primary methods for exporting grades.  Chosen plugins will then set and use a "last exported" field for every grade.  For example, this might result in exported records being identified as being "new" or "updated".  If you are not sure about this then leave everything unchecked.';
@@ -623,7 +623,7 @@ $string['latexpreamble'] = 'LaTeX preamble';
 $string['latexsettings'] = 'LaTeX renderer Settings';
 $string['latinexcelexport'] = 'Excel encoding';
 $string['legacyfilesinnewcourses'] = 'Legacy course files in new courses';
-$string['legacyfilesinnewcourses_help'] = 'By default legacy course files areas are available only in upgraded courses. Please note some features like single activity backup/restore are not compatible with this settings.';
+$string['legacyfilesinnewcourses_help'] = 'By default, legacy course files areas are available in upgraded courses only. Please note that some features such as activity backup and restore are not compatible with this setting.';
 $string['licensesettings'] = 'Licence settings';
 $string['linkadmincategories'] = 'Link admin categories';
 $string['linkadmincategories_help'] = 'If enabled admin setting categories will be displayed as links in the navigation and will lead to the admin category pages.';
@@ -752,7 +752,7 @@ $string['navshowcategories'] = 'Show course categories';
 $string['navshowmycoursecategories'] = 'Show my course categories';
 $string['navshowmycoursecategories_help'] = 'If enabled courses in the users my courses branch will be shown in categories.';
 $string['navsortmycoursessort'] = 'Sort my courses';
-$string['navsortmycoursessort_help'] = 'This determines whether courses are listed under My courses according to the sort order (i.e. the order set in Settings > Site Administration > Courses > Add/edit courses) or alphabetically by course setting.';
+$string['navsortmycoursessort_help'] = 'This determines whether courses are listed under My courses according to the sort order (i.e. the order set in Site administration > Courses > Manage courses and categories) or alphabetically by course setting.';
 $string['neverdeleteruns'] = 'Never delete runs';
 $string['nobookmarksforuser'] = 'You do not have any bookmarks.';
 $string['nodatabase'] = 'No database';
@@ -1086,11 +1086,10 @@ This warning is often caused by unzipping a standard Moodle package over a previ
 This warning can also be caused by an incomplete checkout or update operation from the Git repository, in which case you may just have to wait for the operation to complete, or perhaps run the appropriate clean-up command and retry the operation.
 
 You can find more information in upgrade documentation at <a href="{$a}">{$a}</a>.';
-$string['upgradesure'] = 'Your Moodle files have been changed, and you are about to automatically upgrade your server to this version: <br /><br />
-<strong>{$a}</strong> <br /><br />
-Once you do this you can not go back again. <br /><br />
-Please note that this process can take a long time. <br /><br />
-Are you sure you want to upgrade this server to this version?';
+$string['upgradesure'] = '<p>Your Moodle files have been changed, and you are about to automatically upgrade your server to this version:</p>
+<p><strong>{$a}</strong></p>
+<p>Once you do this you can not go back again. Please note that this process can take a long time.</p>
+<p>Are you sure you want to upgrade this server to this version?</p>';
 $string['upgradetimedout'] = 'Upgrade timed out, please restart the upgrade.';
 $string['upgrade197notice'] = '<p>Moodle 1.9.7 contains a number of security fixes to user passwords and backups to protect the user data on your site. As a result some of your settings and permissions relating to backups may have changed.<br />
 See the <a href="http://docs.moodle.org/dev/Moodle_1.9.7_release_notes" target="_blank">Moodle 1.9.7 release notes</a> for full details.</p>';

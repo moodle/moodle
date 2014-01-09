@@ -33,7 +33,8 @@ $string['addarandomquestion'] = 'Add a random question ...';
 $string['addarandomquestion_help'] = 'When a random question is added, it results in a randomly-chosen question from the category being inserted into the quiz. This means that different students are likely to get a different selection of questions, and when a quiz allows multiple attempts then each attempt is likely to contain a new selection of questions.';
 $string['adddescriptionlabel'] = 'Add description/label';
 $string['addingquestion'] = 'Adding a question';
-$string['addingquestions'] = 'This side of the page is where you manage your database of questions.  Questions are stored in categories to help you keep them organised, and can be used by any quiz in your course or even other courses if you choose to \'publish\' them. <br /><br />After you select or create a question category you will be able to create or edit questions.  You can select any of these questions to add to your quiz over on the other side of this page.';
+$string['addingquestions'] = '<p>This side of the page is where you manage your database of questions. Questions are stored in categories to help you keep them organised, and can be used by any quiz in your course or even other courses if you choose to \'publish\' them.</p>
+<p>After you select or create a question category you will be able to create or edit questions. You can select any of these questions to add to your quiz over on the other side of this page.</p>';
 $string['addmoreoverallfeedbacks'] = 'Add {no} more feedback fields';
 $string['addnewgroupoverride'] = 'Add group override';
 $string['addnewpagesafterselected'] = 'Add new pages after selected questions';

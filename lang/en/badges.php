@@ -276,9 +276,9 @@ $string['makeprivate'] = 'Make private';
 $string['makepublic'] = 'Make public';
 $string['managebadges'] = 'Manage badges';
 $string['message'] = 'Message body';
-$string['messagebody'] = '<p>You have been awarded a badge "%badgename%"!</p>
+$string['messagebody'] = '<p>You have been awarded the badge "%badgename%"!</p>
 <p>More information about this badge can be found at %badgelink%.</p>
-<p>If there is no badge attached to this email, you can manage and download it from {$a} page.</p>';
+<p>You can manage and download the badge from {$a}.</p>';
 $string['messagesubject'] = 'Congratulations! You just earned a badge!';
 $string['method'] = 'This criterion is complete when...';
 $string['mingrade'] = 'Minimum grade required';
