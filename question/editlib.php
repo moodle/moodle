@@ -24,6 +24,8 @@
  */
 
 
+use core_question\bank\search\category_condition;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/questionlib.php');
@@ -942,7 +944,8 @@ class question_bank_view {
 
     /**
      * Initialize search conditions from plugins
-     * local_*_get_question_bank_search_conditions() must return an array of core_question_bank_search_condition objects
+     * local_*_get_question_bank_search_conditions() must return an array of
+     * \core_question\bank\search\condition objects.
      */
     protected function init_search_conditions() {
         $searchplugins = get_plugin_list_with_function('local', 'get_question_bank_search_conditions');
@@ -1164,17 +1167,18 @@ class question_bank_view {
      * @param bool $showhidden no longer used.
      * @deprecated since Moodle 2.7 MDL-40313.
      * @see build_query()
-     * @see question_bank_search_condition
+     * @see \core_question\bank\search\condition
      * @todo MDL-41978 This will be deleted in Moodle 2.8
      */
     protected function build_query_sql($category, $recurse, $showhidden) {
-        debugging('build_query_sql() is deprecated, please use question_bank_view::build_query() and core_question_bank_search_condition" .
-                          classes instead.', DEBUG_DEVELOPER);
+        debugging('build_query_sql() is deprecated, please use question_bank_view::build_query() and ' .
+                '\core_question\bank\search\condition classes instead.', DEBUG_DEVELOPER);
         self::build_query();
     }
 
     /**
-     * Create the SQL query to retrieve the indicated questions, based on core_question_bank_search_condition filters
+     * Create the SQL query to retrieve the indicated questions, based on
+     * \core_question\bank\search\condition filters.
      */
     protected function build_query() {
         global $DB;
@@ -1280,9 +1284,9 @@ class question_bank_view {
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
         // Category selection form
         echo $OUTPUT->heading(get_string('questionbank', 'question'), 2);
-        array_unshift($this->searchconditions, new core_question_bank_search_condition_hide(!$showhidden));
-        array_unshift($this->searchconditions, new core_question_bank_search_condition_category($cat, $recurse, $editcontexts,
-                                                                                           $this->baseurl, $this->course));
+        array_unshift($this->searchconditions, new \core_question\bank\search\hidden_condition(!$showhidden));
+        array_unshift($this->searchconditions, new \core_question\bank\search\category_condition(
+                $cat, $recurse, $editcontexts, $this->baseurl, $this->course));
         $this->display_options_form($showquestiontext);
 
         // continues with list of questions
@@ -1321,7 +1325,7 @@ class question_bank_view {
      * prints category information
      * @param stdClass $category the category row from the database.
      * @deprecated since Moodle 2.7 MDL-40313.
-     * @see core_question_bank_search_condition_category
+     * @see \core_question\bank\search\condition
      * @todo MDL-41978 This will be deleted in Moodle 2.8
      */
     protected function print_category_info($category) {
@@ -1336,13 +1340,14 @@ class question_bank_view {
     /**
      * Prints a form to choose categories
      * @deprecated since Moodle 2.7 MDL-40313.
-     * @see core_question_bank_search_condition_category
+     * @see \core_question\bank\search\condition
      * @todo MDL-41978 This will be deleted in Moodle 2.8
      */
     protected function display_category_form($contexts, $pageurl, $current) {
         global $OUTPUT;
 
-        debugging('display_category_form() is deprecated, please use core_question_bank_search_condition_category instead.', DEBUG_DEVELOPER);
+        debugging('display_category_form() is deprecated, please use ' .
+                '\core_question\bank\search\condition instead.', DEBUG_DEVELOPER);
     /// Get all the existing categories now
         echo '<div class="choosecategory">';
         $catmenu = question_category_options($contexts, false, 0, true);
@@ -1361,7 +1366,7 @@ class question_bank_view {
      * @deprecated since Moodle 2.7 MDL-40313.
      * @see display_options_form
      * @todo MDL-41978 This will be deleted in Moodle 2.8
-     * @see core_question_bank_search_condition_category
+     * @see \core_question\bank\search\condition
      */
     protected function display_options($recurse, $showhidden, $showquestiontext) {
         debugging('display_options() is deprecated, please use display_options_form instead.', DEBUG_DEVELOPER);
@@ -1371,13 +1376,13 @@ class question_bank_view {
     /**
      * Print a single option checkbox.
      * @deprecated since Moodle 2.7 MDL-40313.
-     * @see core_question_bank_search_condition_category
+     * @see \core_question\bank\search\condition
      * @see html_writer::checkbox
      * @todo MDL-41978 This will be deleted in Moodle 2.8
      */
     protected function display_category_form_checkbox($name, $value, $label) {
         debugging('display_category_form_checkbox() is deprecated, ' .
-                'please use core_question_bank_search_condition_category instead.', DEBUG_DEVELOPER);
+                'please use \core_question\bank\search\condition instead.', DEBUG_DEVELOPER);
         echo '<div><input type="hidden" id="' . $name . '_off" name="' . $name . '" value="0" />';
         echo '<input type="checkbox" id="' . $name . '_on" name="' . $name . '" value="1"';
         if ($value) {
@@ -1721,7 +1726,7 @@ class question_bank_view {
 
     /**
      * Add another search control to this view.
-     * @param core_question_bank_search_condition $searchcondition the condition to add.
+     * @param \core_question\bank\search\condition $searchcondition the condition to add.
      */
     public function add_searchcondition($searchcondition) {
         $this->searchconditions[] = $searchcondition;

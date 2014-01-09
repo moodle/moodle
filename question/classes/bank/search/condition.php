@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_question\bank\search;
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -32,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 Ray Morris
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class core_question_bank_search_condition {
+abstract class condition {
     /**
      * Return an SQL fragment to be ANDed into the WHERE clause to filter which questions are shown.
      * @return string SQL fragment. Must use named parameters.

@@ -1188,9 +1188,9 @@ class quiz_question_bank_view extends question_bank_view {
 
         $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
         array_unshift($this->searchconditions,
-                new question_bank_search_condition_hide(!$showhidden));
+                new \core_question\bank\search\hidden_condition(!$showhidden));
         array_unshift($this->searchconditions,
-                new question_bank_search_condition_category($cat, $recurse,
+                new \core_question\bank\search\category_condition($cat, $recurse,
                         $editcontexts, $this->baseurl, $this->course, self::MAX_TEXT_LENGTH));
 
         echo $OUTPUT->box_start('generalbox questionbank');
@@ -1209,13 +1209,13 @@ class quiz_question_bank_view extends question_bank_view {
      * prints a form to choose categories
      * @param string $categoryandcontext 'categoryID,contextID'.
      * @deprecated since Moodle 2.6 MDL-40313.
-     * @see question_bank_search_condition_category
+     * @see \core_question\bank\search\category_condition
      * @todo MDL-41978 This will be deleted in Moodle 2.8
      */
     protected function print_choose_category_message($categoryandcontext) {
         global $OUTPUT;
         debugging('print_choose_category_message() is deprecated, ' .
-                'please use question_bank_search_condition_category instead.', DEBUG_DEVELOPER);
+                'please use \core_question\bank\search\category_condition instead.', DEBUG_DEVELOPER);
         echo $OUTPUT->box_start('generalbox questionbank');
         $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'),
                 $this->baseurl, $categoryandcontext);

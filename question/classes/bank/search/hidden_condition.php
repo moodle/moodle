@@ -23,6 +23,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core_question\bank\search;
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -31,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright 2013 Ray Morris
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_question_bank_search_condition_hide extends core_question_bank_search_condition {
+class hidden_condition extends condition {
     /** @var bool Whether to include old "deleted" questions. */
     protected $hide;
 
@@ -57,11 +58,11 @@ class core_question_bank_search_condition_hide extends core_question_bank_search
      * Print HTML to display the "Also show old questions" checkbox
      */
     public function display_options_adv() {
-        echo "<div>";
-        echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'showhidden',
+        echo \html_writer::start_div();
+        echo \html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'showhidden',
                                                    'value' => '0', 'id' => 'showhidden_off'));
-        echo html_writer::checkbox('showhidden', '1', (! $this->hide), get_string('showhidden', 'question'),
+        echo \html_writer::checkbox('showhidden', '1', (! $this->hide), get_string('showhidden', 'question'),
                                    array('id' => 'showhidden_on', 'class' => 'searchoptions'));
-        echo "</div>\n";
+        echo \html_writer::end_div() . "\n";
     }
 }
