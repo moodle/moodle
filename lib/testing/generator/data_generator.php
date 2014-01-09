@@ -42,6 +42,7 @@ class testing_data_generator {
     protected $groupcount = 0;
     protected $groupingcount = 0;
     protected $rolecount = 0;
+    protected $tagcount = 0;
 
     /** @var array list of plugin generators */
     protected $generators = array();
@@ -742,6 +743,57 @@ EOD;
         }
 
         return $newroleid;
+    }
+
+    /**
+     * Create a tag.
+     *
+     * @param array|stdClass $record
+     * @return stdClass the tag record
+     */
+    public function create_tag($record = null) {
+        global $DB, $USER;
+
+        $this->tagcount++;
+        $i = $this->tagcount;
+
+        $record = (array) $record;
+
+        if (!isset($record['userid'])) {
+            $record['userid'] = $USER->id;
+        }
+
+        if (!isset($record['name'])) {
+            $record['name'] = 'Tag name ' . $i;
+        }
+
+        if (!isset($record['rawname'])) {
+            $record['rawname'] = 'Raw tag name ' . $i;
+        }
+
+        if (!isset($record['tagtype'])) {
+            $record['tagtype'] = 'default';
+        }
+
+        if (!isset($record['description'])) {
+            $record['description'] = 'Tag description';
+        }
+
+        if (!isset($record['descriptionformat'])) {
+            $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        if (!isset($record['flag'])) {
+            $record['flag'] = 0;
+        }
+
+        if (!isset($record['timemodified'])) {
+            $record['timemodified'] = time();
+        }
+
+        $id = $DB->insert_record('tag', $record);
+
+        return $DB->get_record('tag', array('id' => $id), '*', MUST_EXIST);
     }
 
     /**
