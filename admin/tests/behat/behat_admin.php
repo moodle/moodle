@@ -17,7 +17,7 @@
 /**
  * Steps definitions related with administration.
  *
- * @package   core
+ * @package   core_admin
  * @category  test
  * @copyright 2013 David Monllaó
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +34,7 @@ use Behat\Gherkin\Node\TableNode as TableNode,
 /**
  * Site administration level steps definitions.
  *
- * @package    core
+ * @package    core_admin
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

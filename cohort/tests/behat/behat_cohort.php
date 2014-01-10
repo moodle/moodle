@@ -17,7 +17,7 @@
 /**
  * Cohorts steps definitions.
  *
- * @package    core
+ * @package    core_cohort
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -32,7 +32,7 @@ use Behat\Behat\Context\Step\Given as Given;
 /**
  * Steps definitions for cohort actions.
  *
- * @package    core
+ * @package    core_cohort
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

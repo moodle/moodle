@@ -17,7 +17,7 @@
 /**
  * Commenting system steps definitions.
  *
- * @package    core_comment
+ * @package    block_comments
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,7 +33,7 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
 /**
  * Steps definitions to deal with the commenting system
  *
- * @package    core_comment
+ * @package    block_comments
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

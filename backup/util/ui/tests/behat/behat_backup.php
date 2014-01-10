@@ -17,7 +17,7 @@
 /**
  * Backup and restore actions to help behat feature files writting.
  *
- * @package    core
+ * @package    core_backup
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,7 +35,7 @@ use Behat\Gherkin\Node\TableNode as TableNode,
 /**
  * Backup-related steps definitions.
  *
- * @package    core
+ * @package    core_backup
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
