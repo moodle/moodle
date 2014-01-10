@@ -23,7 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['managemyfiles'] = 'Manage my files';
 $string['pluginname'] = 'My private files';
 $string['privatefiles'] = 'Private files';
 $string['private_files:addinstance'] = 'Add a new private files block';
