@@ -4,7 +4,7 @@ Feature: A teacher can choose whether glossary entries require approval
   As a user
   I need to enable entries requiring approval
 
-  Scenario: Approve and disapprove glossary entries
+  Scenario: Approve and undo approve glossary entries
     Given the following "users" exists:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
@@ -56,11 +56,11 @@ Feature: A teacher can choose whether glossary entries require approval
     And I follow "Test glossary name"
     Then I should see "Concept definition"
     And I log out
-    # Disapprove the previous entry.
+    # Undo the approval of the previous entry.
     And I log in as "teacher1"
     And I follow "Course 1"
     And I follow "Test glossary name"
-    And I follow "Disapprove"
+    And I follow "Undo approval"
     And I log out
     # Check that the entry is no longer visible by students.
     And I log in as "student2"
