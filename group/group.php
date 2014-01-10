@@ -74,6 +74,12 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('moodle/course:managegroups', $context);
 
+$strgroups = get_string('groups');
+$PAGE->set_title($strgroups);
+$PAGE->set_heading($course->fullname . ': '.$strgroups);
+$PAGE->set_pagelayout('standard');
+navigation_node::override_active_url(new moodle_url('/group/index.php', array('id' => $course->id)));
+
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&group='.$id;
 
 // Prepare the description editor: We do support files for group descriptions
@@ -123,8 +129,6 @@ $PAGE->navbar->add($strgroups, new moodle_url('/group/index.php', array('id'=>$c
 $PAGE->navbar->add($strheading);
 
 /// Print header
-$PAGE->set_title($strgroups);
-$PAGE->set_heading($course->fullname . ': '.$strgroups);
 echo $OUTPUT->header();
 echo '<div id="grouppicture">';
 if ($id) {
