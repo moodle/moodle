@@ -4366,6 +4366,7 @@ class assign {
 
         $info = new stdClass();
         if ($blindmarking) {
+            $userfrom = clone($userfrom);
             $info->username = get_string('participant', 'assign') . ' ' . $uniqueidforuser;
             $userfrom->firstname = get_string('participant', 'assign');
             $userfrom->lastname = $uniqueidforuser;
