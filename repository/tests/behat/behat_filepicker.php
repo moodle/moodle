@@ -17,7 +17,7 @@
 /**
  * Filemanager and filepicker manipulation steps definitions.
  *
- * @package    core
+ * @package    core_filepicker
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -36,7 +36,7 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
  *
  * Extends behat_files rather than behat_base as is file-related.
  *
- * @package    core
+ * @package    core_filepicker
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
