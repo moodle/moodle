@@ -42,6 +42,7 @@ $string['cannotsavemd5file'] = '無法儲存 md5 檔案。';
 $string['cannotsavezipfile'] = '無法儲存 ZIP 檔案。';
 $string['cannotunzipfile'] = '無法解壓縮檔案。';
 $string['componentisuptodate'] = '元件已經是最新的了。';
+$string['dmlexceptiononinstall'] = '<p>資料庫有誤 [{$a->錯誤碼}].<br />{$a->排除故障資訊}</p>';
 $string['downloadedfilecheckfailed'] = '下載的檔案檢查失敗';
 $string['invalidmd5'] = '這檢查變項是錯的，再試一次。';
 $string['missingrequiredfield'] = '缺少部份必填欄位';
