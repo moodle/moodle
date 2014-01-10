@@ -74,6 +74,8 @@ class block_social_activities extends block_list {
             $strmovefull = strip_tags(get_string('movefull', '', "'$USER->activitycopyname'"));
             $strcancel= get_string('cancel');
             $stractivityclipboard = $USER->activitycopyname;
+        } else {
+            $strmove = get_string('move');
         }
         $editbuttons = '';
 
@@ -91,6 +93,14 @@ class block_social_activities extends block_list {
                 }
                 if (!$ismoving) {
                     $actions = course_get_cm_edit_actions($mod, -1);
+
+                    // Prepend list of actions with the 'move' action.
+                    $actions = array('move' => new action_menu_link_primary(
+                        new moodle_url('/course/mod.php', array('sesskey' => sesskey(), 'copy' => $mod->id)),
+                        new pix_icon('t/move', $strmove, 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                        $strmove
+                    )) + $actions;
+
                     $editbuttons = html_writer::tag('div',
                         $courserenderer->course_section_cm_edit_actions($actions, $mod, array('donotenhance' => true)),
                         array('class' => 'buttons')
