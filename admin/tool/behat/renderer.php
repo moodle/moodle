@@ -45,37 +45,7 @@ class tool_behat_renderer extends plugin_renderer_base {
      */
     public function render_stepsdefinitions($stepsdefinitions, $form) {
 
-        $title = get_string('pluginname', 'tool_behat');
-
-        // Header.
-        $html = $this->output->header();
-        $html .= $this->output->heading($title);
-
-        // Info.
-        $installurl = behat_command::DOCS_URL . '#Installation';
-        $installlink = html_writer::tag('a', $installurl, array('href' => $installurl, 'target' => '_blank'));
-        $writetestsurl = behat_command::DOCS_URL . '#Writting_features';
-        $writetestslink = html_writer::tag('a', $writetestsurl, array('href' => $writetestsurl, 'target' => '_blank'));
-        $writestepsurl = behat_command::DOCS_URL . '#Adding_steps_definitions';
-        $writestepslink = html_writer::tag('a', $writestepsurl, array('href' => $writestepsurl, 'target' => '_blank'));
-        $infos = array(
-            get_string('installinfo', 'tool_behat', $installlink),
-            get_string('newtestsinfo', 'tool_behat', $writetestslink),
-            get_string('newstepsinfo', 'tool_behat', $writestepslink)
-        );
-
-        // List of steps.
-        $html .= $this->output->box_start();
-        $html .= html_writer::tag('h1', get_string('infoheading', 'tool_behat'));
-        $html .= html_writer::tag('div', get_string('aim', 'tool_behat'));
-        $html .= html_writer::empty_tag('div');
-        $html .= html_writer::empty_tag('ul');
-        $html .= html_writer::empty_tag('li');
-        $html .= implode(html_writer::end_tag('li') . html_writer::empty_tag('li'), $infos);
-        $html .= html_writer::end_tag('li');
-        $html .= html_writer::end_tag('ul');
-        $html .= html_writer::end_tag('div');
-        $html .= $this->output->box_end();
+        $html = $this->generic_info();
 
         // Form.
         ob_start();
@@ -123,4 +93,75 @@ class tool_behat_renderer extends plugin_renderer_base {
 
         return $html;
     }
+
+    /**
+     * Renders an error message adding the generic info about the tool purpose and setup.
+     *
+     * @param string $msg The error message
+     * @return string HTML
+     */
+    public function render_error($msg) {
+
+        $html = $this->generic_info();
+
+        $a = new stdClass();
+        $a->errormsg = $msg;
+        $a->behatcommand = behat_command::get_behat_command();
+        $a->behatinit = 'php admin' . DIRECTORY_SEPARATOR . 'tool' . DIRECTORY_SEPARATOR .
+            'behat' . DIRECTORY_SEPARATOR . 'cli' . DIRECTORY_SEPARATOR . 'init.php';
+
+        $msg = get_string('wrongbehatsetup', 'tool_behat', $a);
+
+        // Error box including generic error string + specific error msg.
+        $html .= $this->output->box_start('box errorbox');
+        $html .= html_writer::tag('div', $msg);
+        $html .= $this->output->box_end();
+
+        $html .= $this->output->footer();
+
+        return $html;
+    }
+
+    /**
+     * Generic info about the tool.
+     *
+     * @return string
+     */
+    protected function generic_info() {
+
+        $title = get_string('pluginname', 'tool_behat');
+
+        // Header.
+        $html = $this->output->header();
+        $html .= $this->output->heading($title);
+
+        // Info.
+        $installurl = behat_command::DOCS_URL . '#Installation';
+        $installlink = html_writer::tag('a', $installurl, array('href' => $installurl, 'target' => '_blank'));
+        $writetestsurl = behat_command::DOCS_URL . '#Writting_features';
+        $writetestslink = html_writer::tag('a', $writetestsurl, array('href' => $writetestsurl, 'target' => '_blank'));
+        $writestepsurl = behat_command::DOCS_URL . '#Adding_steps_definitions';
+        $writestepslink = html_writer::tag('a', $writestepsurl, array('href' => $writestepsurl, 'target' => '_blank'));
+        $infos = array(
+            get_string('installinfo', 'tool_behat', $installlink),
+            get_string('newtestsinfo', 'tool_behat', $writetestslink),
+            get_string('newstepsinfo', 'tool_behat', $writestepslink)
+        );
+
+        // List of steps.
+        $html .= $this->output->box_start();
+        $html .= html_writer::tag('h1', get_string('infoheading', 'tool_behat'));
+        $html .= html_writer::tag('div', get_string('aim', 'tool_behat'));
+        $html .= html_writer::empty_tag('div');
+        $html .= html_writer::empty_tag('ul');
+        $html .= html_writer::empty_tag('li');
+        $html .= implode(html_writer::end_tag('li') . html_writer::empty_tag('li'), $infos);
+        $html .= html_writer::end_tag('li');
+        $html .= html_writer::end_tag('ul');
+        $html .= html_writer::end_tag('div');
+        $html .= $this->output->box_end();
+
+        return $html;
+    }
+
 }
