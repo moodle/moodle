@@ -51,5 +51,5 @@ Also note that participants view actions can not be logged in this case.';
 $string['displaypage'] = 'On a separate page';
 $string['displayinline'] = 'Inline on a course page';
 $string['noautocompletioninline'] = 'Automatic completion on viewing of activity can not be selected together with "Display inline" option';
-$string['showexpanded'] = 'Show sub-folders expanded';
-$string['showexpanded_help'] = 'If enabled, will display sub-folders expanded by default. Else, sub-folders will display collapsed.';
+$string['showexpanded'] = 'Show subfolders expanded';
+$string['showexpanded_help'] = 'If set to \'yes\', subfolders are shown expanded by default; otherwise they are shown collapsed.';
