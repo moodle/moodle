@@ -30,5 +30,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['parentlanguage'] = 'Arved språk';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Norsk - bokmål';
