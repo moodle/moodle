@@ -2870,30 +2870,32 @@ function xmldb_main_upgrade($oldversion) {
             'enrol_database/dbpass', 'enrol_ldap/bind_pw', 'url/secretphrase');
         foreach ($items as $item) {
             list($plugin, $name) = explode('/', $item);
+            $sqlcomparevalue =  $DB->sql_compare_text('value');
+            $sqlcompareoldvalue = $DB->sql_compare_text('oldvalue');
             if ($plugin === 'core') {
                 $sql = "UPDATE {config_log}
                            SET value = :value
-                         WHERE name = :name AND plugin IS NULL AND value <> ''";
-                $params = array('value'=>'********', 'name'=>$name);
+                         WHERE name = :name AND plugin IS NULL AND $sqlcomparevalue <> :empty";
+                $params = array('value' => '********', 'name' => $name, 'empty' => '');
                 $DB->execute($sql, $params);
 
                 $sql = "UPDATE {config_log}
                            SET oldvalue = :value
-                         WHERE name = :name AND plugin IS NULL AND oldvalue <> ''";
-                $params = array('value'=>'********', 'name'=>$name);
+                         WHERE name = :name AND plugin IS NULL AND $sqlcompareoldvalue <> :empty";
+                $params = array('value' => '********', 'name' => $name, 'empty' => '');
                 $DB->execute($sql, $params);
 
             } else {
                 $sql = "UPDATE {config_log}
                            SET value = :value
-                         WHERE name = :name AND plugin = :plugin AND value <> ''";
-                $params = array('value'=>'********', 'name'=>$name, 'plugin'=>$plugin);
+                         WHERE name = :name AND plugin = :plugin AND $sqlcomparevalue <> :empty";
+                $params = array('value' => '********', 'name' => $name, 'plugin' => $plugin, 'empty' => '');
                 $DB->execute($sql, $params);
 
                 $sql = "UPDATE {config_log}
                            SET oldvalue = :value
-                         WHERE name = :name AND plugin = :plugin AND oldvalue <> ''";
-                $params = array('value'=>'********', 'name'=>$name, 'plugin'=>$plugin);
+                         WHERE name = :name AND plugin = :plugin AND  $sqlcompareoldvalue <> :empty";
+                $params = array('value' => '********', 'name' => $name, 'plugin' => $plugin, 'empty' => '');
                 $DB->execute($sql, $params);
             }
         }
