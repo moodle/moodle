@@ -32,15 +32,15 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['cannotcreatelangdir'] = 'Nije moguće kreirati direktorij jezika';
 $string['cannotcreatetempdir'] = 'Nije moguće kreirati privremeni direktorij';
-$string['cannotdownloadcomponents'] = 'Nije moguće preuzeti komponente.';
-$string['cannotdownloadzipfile'] = 'Nije moguće preuzeti arhivu';
+$string['cannotdownloadcomponents'] = 'Nije moguće preuzeti komponente';
+$string['cannotdownloadzipfile'] = 'Nije moguće preuzeti ZIP arhivu';
 $string['cannotfindcomponent'] = 'Nije moguće pronaći komponentu.';
 $string['cannotsavemd5file'] = 'Nije moguće sačuvati md5 datoteku.';
 $string['cannotsavezipfile'] = 'Nije moguće sačuvati ZIP arhivu.';
 $string['cannotunzipfile'] = 'Nije moguće raspakovati ZIP datoteku.';
 $string['componentisuptodate'] = 'Komponenta je dostupna u svojoj najnovijoj verziji';
 $string['downloadedfilecheckfailed'] = 'Nije uspjela provjera preuzete datoteke';
-$string['invalidmd5'] = 'Neispravna md5 datoteka';
+$string['invalidmd5'] = 'Provjerena varijabla (md5 datoteka) je pogrešna - pokušajte ponovo';
 $string['missingrequiredfield'] = 'Nedostaje neko obavezno polje';
 $string['remotedownloaderror'] = 'Preuzimanje komponente na Vaš server nije uspjelo. Provjerite podešavanja proksi servera. PHP cURL ekstenzija se preporučuje.<br /><br />Morate da preuzmete <a href="{$a->url}">{$a->url}</a> datoteku ručno, kopirate je u direktorij "{$a->dest}" na svom sereveru i tamo je raspakovati.';
 $string['wrongdestpath'] = 'Pogrešna odredišna putanja';
