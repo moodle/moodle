@@ -37,6 +37,7 @@ $string['entertags'] = 'Enter tags separated by commas';
 $string['errordeleting'] = 'Error deleting tag with id {$a}, please report to your system administrator.';
 $string['errortagfrontpage'] = 'Tagging the site main page is not allowed';
 $string['errorupdatingrecord'] = 'Error updating tag record';
+$string['eventitemtagged'] = 'Item tagged';
 $string['eventtagupdated'] = 'Tag updated';
 $string['flag'] = 'Flag';
 $string['flagasinappropriate'] = 'Flag as inappropriate';
