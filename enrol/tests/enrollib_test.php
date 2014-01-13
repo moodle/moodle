@@ -316,4 +316,45 @@ class core_enrollib_testcase extends advanced_testcase {
         $expectedlegacyeventdata->courseid = $course1->id;
         $this->assertEventLegacyData($expectedlegacyeventdata, $event);
     }
+
+    /**
+     * Test user_enrolment_deleted event.
+     */
+    public function test_user_enrolment_deleted_event() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $manualplugin = enrol_get_plugin('manual');
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $student = $DB->get_record('role', array('shortname' => 'student'));
+
+        $enrol = $DB->get_record('enrol', array('courseid' => $course->id, 'enrol' => 'manual'), '*', MUST_EXIST);
+
+        // Enrol user.
+        $manualplugin->enrol_user($enrol, $user->id, $student->id);
+
+        // Get the user enrolment information, used to validate legacy event data.
+        $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $user->id));
+
+        // Unenrol user and capture event.
+        $sink = $this->redirectEvents();
+        $manualplugin->unenrol_user($enrol, $user->id);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        // Validate the event.
+        $this->assertInstanceOf('\core\event\user_enrolment_deleted', $event);
+        $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals('user_unenrolled', $event->get_legacy_eventname());
+        $expectedlegacyeventdata = $dbuserenrolled;
+        $expectedlegacyeventdata->enrol = $manualplugin->get_name();
+        $expectedlegacyeventdata->courseid = $course->id;
+        $expectedlegacyeventdata->lastenrol = true;
+        $this->assertEventLegacyData($expectedlegacyeventdata, $event);
+        $expected = array($course->id, 'course', 'unenrol', '../enrol/users.php?id=' . $course->id, $course->id);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
 }

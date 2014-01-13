@@ -139,7 +139,6 @@ if ($canunenrol && optional_param('remove', false, PARAM_BOOL) && confirm_sesske
     if (!empty($userstounassign)) {
         foreach($userstounassign as $removeuser) {
             $enrol_manual->unenrol_user($instance, $removeuser->id);
-            add_to_log($course->id, 'course', 'unenrol', '../enrol/users.php?id='.$course->id, $course->id); //there should be userid somewhere!
         }
 
         $potentialuserselector->invalidate_selected_users();
