@@ -566,6 +566,8 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_trigger_problems() {
+        $this->resetAfterTest(true);
+
         $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>5, 'xx'=>10)));
         $event->trigger();
         try {
@@ -597,6 +599,8 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_bad_events() {
+        $this->resetAfterTest(true);
+
         try {
             $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'other'=>array('sample'=>5, 'xx'=>10)));
             $this->fail('Exception expected when context and contextid missing');
@@ -654,7 +658,8 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_problematic_events() {
-        global $CFG;
+        $this->resetAfterTest(true);
+
         $event1 = \core_tests\event\problematic_event1::create(array('context'=>\context_system::instance()));
         $this->assertDebuggingNotCalled();
         $this->assertNull($event1->xxx);
@@ -702,6 +707,8 @@ class core_event_testcase extends advanced_testcase {
 
     public function test_record_snapshots() {
         global $DB;
+
+        $this->resetAfterTest(true);
 
         $event = \core_tests\event\unittest_executed::create(array('courseid'=>1, 'context'=>\context_system::instance(), 'other'=>array('sample'=>1, 'xx'=>10)));
         $course1 = $DB->get_record('course', array('id'=>1));

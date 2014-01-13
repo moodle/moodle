@@ -1007,7 +1007,6 @@ $string['taskcontextcleanup'] = 'Cleanup contexts';
 $string['taskcreatecontexts'] = 'Create missing contexts';
 $string['taskdeletecachetext'] = 'Delete old text cache records';
 $string['taskdeleteincompleteusers'] = 'Delete incomplete users';
-$string['taskdeletelogs'] = 'Delete logs';
 $string['taskdeleteunconfirmedusers'] = 'Delete unconfirmed users';
 $string['taskeventscron'] = 'Background processing for events';
 $string['taskfiletrashcleanup'] = 'Cleanup files in trash';

@@ -15,44 +15,38 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A scheduled task.
+ * Log storage manager interface.
  *
  * @package    core
- * @copyright  2013 onwards Martin Dougiamas  http://dougiamas.com
+ * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace core\task;
+
+namespace core\log;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
- * Simple task to delete old log records.
+ * Interface describing log readers.
+ *
+ * This is intended for reports, use get_log_manager() to get
+ * the configured instance.
+ *
+ * @package core\log
  */
-class delete_logs_task extends scheduled_task {
-
+interface manager {
     /**
-     * Get a descriptive name for this task (shown to admins).
+     * Return list of available log readers in given
+     * context for current user.
      *
-     * @return string
+     * @param \context $context
+     * @return \core\log\reader[]
      */
-    public function get_name() {
-        return get_string('taskdeletelogs', 'admin');
-    }
+    public function get_readers(\context $context);
 
     /**
-     * Do the job.
-     * Throw exceptions on errors (the job will be retried).
+     * Dispose all initialised stores.
+     * @return void
      */
-    public function execute() {
-        global $CFG, $DB;
-
-        $timenow = time();
-
-        // Delete old logs to save space.
-        // Value in days.
-        if (!empty($CFG->loglifetime)) {
-            $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
-            $DB->delete_records_select("log", "time < ?", array($loglifetime));
-        }
-
-    }
-
+    public function dispose();
 }

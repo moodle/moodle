@@ -60,15 +60,6 @@ $tasks = array(
         'month' => '*'
     ),
     array(
-        'classname' => 'core\task\delete_logs_task',
-        'blocking' => 0,
-        'minute' => '0',
-        'hour' => '2',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*'
-    ),
-    array(
         'classname' => 'core\task\backup_cleanup_task',
         'blocking' => 0,
         'minute' => '10',

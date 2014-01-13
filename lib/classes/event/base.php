@@ -348,6 +348,83 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
+     * Create fake event from legacy log data.
+     *
+     * @param stdClass $legacy
+     * @return base
+     */
+    public static final function restore_legacy($legacy) {
+        $classname = get_called_class();
+        $event = new $classname();
+        $event->restored = true;
+        $event->triggered = true;
+        $event->dispatched = true;
+
+        $context = false;
+        $component = 'legacy';
+        if ($legacy->cmid) {
+            $context = \context_module::instance($legacy->cmid, IGNORE_MISSING);
+            $component = 'mod_'.$legacy->module;
+        } else if ($legacy->course) {
+            $context = \context_course::instance($legacy->course, IGNORE_MISSING);
+        }
+        if (!$context) {
+            $context = \context_system::instance();
+        }
+
+        $event->data = array();
+
+        $event->data['eventname'] = $legacy->module.'_'.$legacy->action;
+        $event->data['component'] = $component;
+        $event->data['action'] = $legacy->action;
+        $event->data['target'] = null;
+        $event->data['objecttable'] = null;
+        $event->data['objectid'] = null;
+        if (strpos($legacy->action, 'view') !== false) {
+            $event->data['crud'] = 'r';
+        } else if (strpos($legacy->action, 'print') !== false) {
+            $event->data['crud'] = 'r';
+        } else if (strpos($legacy->action, 'update') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'hide') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'move') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'write') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'tag') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'remove') !== false) {
+            $event->data['crud'] = 'u';
+        } else if (strpos($legacy->action, 'delete') !== false) {
+            $event->data['crud'] = 'p';
+        } else if (strpos($legacy->action, 'create') !== false) {
+            $event->data['crud'] = 'c';
+        } else if (strpos($legacy->action, 'post') !== false) {
+            $event->data['crud'] = 'c';
+        } else if (strpos($legacy->action, 'add') !== false) {
+            $event->data['crud'] = 'c';
+        } else {
+            // End of guessing...
+            $event->data['crud'] = 'r';
+        }
+        $event->data['edulevel'] = $event::LEVEL_OTHER;
+        $event->data['contextid'] = $context->id;
+        $event->data['contextlevel'] = $context->contextlevel;
+        $event->data['contextinstanceid'] = $context->instanceid;
+        $event->data['userid'] = ($legacy->userid ? $legacy->userid : null);
+        $event->data['courseid'] = ($legacy->course ? $legacy->course : null);
+        $event->data['relateduserid'] = ($legacy->userid ? $legacy->userid : null);
+        $event->data['timecreated'] = $legacy->time;
+
+        $event->logextra = array('origin'=>$legacy->ip, 'realuserid'=>null);
+
+        $event->data['other'] = (array)$legacy;
+
+        return $event;
+    }
+
+    /**
      * Returns event context.
      * @return \context
      */
@@ -504,7 +581,10 @@ abstract class base implements \IteratorAggregate {
 
         if (isset($CFG->loglifetime) and $CFG->loglifetime != -1) {
             if ($data = $this->get_legacy_logdata()) {
-                call_user_func_array('add_to_log', $data);
+                $manager = get_log_manager();
+                if (method_exists($manager, 'legacy_add_to_log')) {
+                    call_user_func_array(array($manager, 'legacy_add_to_log'), $data);
+                }
             }
         }
 

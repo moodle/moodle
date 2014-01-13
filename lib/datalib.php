@@ -1584,6 +1584,41 @@ function coursemodule_visible_for_user($cm, $userid=0) {
 /// LOG FUNCTIONS /////////////////////////////////////////////////////
 
 /**
+ * Get instance of log manager.
+ *
+ * @param bool $forcereload
+ * @return \core\log\manager
+ */
+function get_log_manager($forcereload = false) {
+    /** @var \core\log\manager $singleton */
+    static $singleton = null;
+
+    if ($forcereload and isset($singleton)) {
+        $singleton->dispose();
+        $singleton = null;
+    }
+
+    if (isset($singleton)) {
+        return $singleton;
+    }
+
+    $classname = '\tool_log\log\manager';
+    if (defined('LOG_MANAGER_CLASS')) {
+        $classname = LOG_MANAGER_CLASS;
+    }
+
+    if (!class_exists($classname)) {
+        if (!empty($classname)) {
+            debugging("Cannot find log manager class '$classname'.", DEBUG_DEVELOPER);
+        }
+        $classname = '\core\log\dummy_manager';
+    }
+
+    $singleton = new $classname();
+    return $singleton;
+}
+
+/**
  * Add an entry to the config log table.
  *
  * These are "action" focussed rather than web server hits,
@@ -1611,109 +1646,6 @@ function add_to_config_log($name, $oldvalue, $value, $plugin) {
     $log->value     = $value;
     $log->plugin    = $plugin;
     $DB->insert_record('config_log', $log);
-}
-
-/**
- * Add an entry to the log table.
- *
- * Add an entry to the log table.  These are "action" focussed rather
- * than web server hits, and provide a way to easily reconstruct what
- * any particular student has been doing.
- *
- * @package core
- * @category log
- * @global moodle_database $DB
- * @global stdClass $CFG
- * @global stdClass $USER
- * @uses SITEID
- * @uses DEBUG_DEVELOPER
- * @uses DEBUG_ALL
- * @param    int     $courseid  The course id
- * @param    string  $module  The module name  e.g. forum, journal, resource, course, user etc
- * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
- * @param    string  $url     The file and parameters used to see the results of the action
- * @param    string  $info    Additional description information
- * @param    string  $cm      The course_module->id if there is one
- * @param    string  $user    If log regards $user other than $USER
- * @return void
- */
-function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
-    // Note that this function intentionally does not follow the normal Moodle DB access idioms.
-    // This is for a good reason: it is the most frequently used DB update function,
-    // so it has been optimised for speed.
-    global $DB, $CFG, $USER;
-
-    if ($cm === '' || is_null($cm)) { // postgres won't translate empty string to its default
-        $cm = 0;
-    }
-
-    if ($user) {
-        $userid = $user;
-    } else {
-        if (\core\session\manager::is_loggedinas()) {  // Don't log
-            return;
-        }
-        $userid = empty($USER->id) ? '0' : $USER->id;
-    }
-
-    if (isset($CFG->logguests) and !$CFG->logguests) {
-        if (!$userid or isguestuser($userid)) {
-            return;
-        }
-    }
-
-    $REMOTE_ADDR = getremoteaddr();
-
-    $timenow = time();
-    $info = $info;
-    if (!empty($url)) { // could break doing html_entity_decode on an empty var.
-        $url = html_entity_decode($url, ENT_QUOTES, 'UTF-8');
-    } else {
-        $url = '';
-    }
-
-    // Restrict length of log lines to the space actually available in the
-    // database so that it doesn't cause a DB error. Log a warning so that
-    // developers can avoid doing things which are likely to cause this on a
-    // routine basis.
-    if(!empty($info) && core_text::strlen($info)>255) {
-        $info = core_text::substr($info,0,252).'...';
-        debugging('Warning: logged very long info',DEBUG_DEVELOPER);
-    }
-
-    // If the 100 field size is changed, also need to alter print_log in course/lib.php
-    if(!empty($url) && core_text::strlen($url)>100) {
-        $url = core_text::substr($url,0,97).'...';
-        debugging('Warning: logged very long URL',DEBUG_DEVELOPER);
-    }
-
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->logwrites++;};
-
-    $log = array('time'=>$timenow, 'userid'=>$userid, 'course'=>$courseid, 'ip'=>$REMOTE_ADDR, 'module'=>$module,
-                 'cmid'=>$cm, 'action'=>$action, 'url'=>$url, 'info'=>$info);
-
-    try {
-        $DB->insert_record_raw('log', $log, false);
-    } catch (dml_exception $e) {
-        debugging('Error: Could not insert a new entry to the Moodle log. '. $e->error, DEBUG_ALL);
-
-        // MDL-11893, alert $CFG->supportemail if insert into log failed
-        if ($CFG->supportemail and empty($CFG->noemailever)) {
-            // email_to_user is not usable because email_to_user tries to write to the logs table,
-            // and this will get caught in an infinite loop, if disk is full
-            $site = get_site();
-            $subject = 'Insert into log failed at your moodle site '.$site->fullname;
-            $message = "Insert into log table failed at ". date('l dS \of F Y h:i:s A') .".\n It is possible that your disk is full.\n\n";
-            $message .= "The failed query parameters are:\n\n" . var_export($log, true);
-
-            $lasttime = get_config('admin', 'lastloginserterrormail');
-            if(empty($lasttime) || time() - $lasttime > 60*60*24) { // limit to 1 email per day
-                //using email directly rather than messaging as they may not be able to log in to access a message
-                mail($CFG->supportemail, $subject, $message);
-                set_config('lastloginserterrormail', time(), 'admin');
-            }
-        }
-    }
 }
 
 /**
