@@ -410,15 +410,6 @@ margin: 0;
     background-position:0 0;
 }
 
-#page-mod-assignment-submissions #wrapper {
-    padding: 0 1%;
-}
-
-#page-mod-assignment-submissions #attempts td,
-#page-mod-assignment-submissions #attempts th.header {
-    font-size: 80%;
-}
-
 .course-content ul.topics,
 .course-content ul.weeks {
     clear: both;

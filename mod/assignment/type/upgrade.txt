@@ -1,7 +1,6 @@
 This file describes changes in the assignment type API and DB structures.
 Information provided here is intended especially for developers.
 
-=== 2.3 ===
+=== 2.7 ===
 
-API changes:
-* send_file() methods now accept $forcedownload and $options parameters
+mod_assignment has been deleted. Do not use it.

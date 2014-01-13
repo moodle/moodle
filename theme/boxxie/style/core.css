@@ -750,20 +750,6 @@ td.eventskey {
     margin-bottom: 0;
 }
 
-/* Assignment */
-
-#page-mod-assignment-view .reportlink a {
-    background-color: #fcffd8;
-}
-
-#page-mod-assignment-view .generalbox {
-    border-color: #e5e5e5;
-}
-
-#page-mod-assignment-submissions .mform fieldset legend {
-    margin-top: 0.5em;
-}
-
 /* Choice */
 
 #page-mod-choice-view #notice {

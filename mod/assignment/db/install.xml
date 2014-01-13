@@ -60,5 +60,22 @@
         <INDEX NAME="timemarked" UNIQUE="false" FIELDS="timemarked"/>
       </INDEXES>
     </TABLE>
+    <TABLE NAME="assignment_upgrade" COMMENT="Info about upgraded assignments">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="oldcmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="oldinstance" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="newcmid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="newinstance" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="oldcmid" UNIQUE="false" FIELDS="oldcmid"/>
+        <INDEX NAME="oldinstance" UNIQUE="false" FIELDS="oldinstance"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

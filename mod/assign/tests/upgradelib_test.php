@@ -53,15 +53,13 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
         $params = array('course'=>$this->course->id,
                         'assignmenttype'=>'upload');
-        $record = $generator->create_instance($params);
-
-        $assignment = new assignment_base($record->cmid);
+        $assignment = $generator->create_instance($params);
 
         $this->setAdminUser();
         $log = '';
         $upgrader = new assign_upgrade_manager();
 
-        $this->assertTrue($upgrader->upgrade_assignment($assignment->assignment->id, $log));
+        $this->assertTrue($upgrader->upgrade_assignment($assignment->id, $log));
         $record = $DB->get_record('assign', array('course'=>$this->course->id));
 
         $cm = get_coursemodule_from_instance('assign', $record->id);
@@ -99,15 +97,13 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
         $params = array('course'=>$this->course->id,
                         'assignmenttype'=>'uploadsingle');
-        $record = $generator->create_instance($params);
-
-        $assignment = new assignment_base($record->cmid);
+        $assignment = $generator->create_instance($params);
 
         $this->setAdminUser();
         $log = '';
         $upgrader = new assign_upgrade_manager();
 
-        $this->assertTrue($upgrader->upgrade_assignment($assignment->assignment->id, $log));
+        $this->assertTrue($upgrader->upgrade_assignment($assignment->id, $log));
         $record = $DB->get_record('assign', array('course'=>$this->course->id));
 
         $cm = get_coursemodule_from_instance('assign', $record->id);
@@ -145,15 +141,13 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
         $params = array('course'=>$this->course->id,
                         'assignmenttype'=>'online');
-        $record = $generator->create_instance($params);
-
-        $assignment = new assignment_base($record->cmid);
+        $assignment = $generator->create_instance($params);
 
         $this->setAdminUser();
         $log = '';
         $upgrader = new assign_upgrade_manager();
 
-        $this->assertTrue($upgrader->upgrade_assignment($assignment->assignment->id, $log));
+        $this->assertTrue($upgrader->upgrade_assignment($assignment->id, $log));
         $record = $DB->get_record('assign', array('course'=>$this->course->id));
 
         $cm = get_coursemodule_from_instance('assign', $record->id);
@@ -191,15 +185,13 @@ class mod_assign_upgradelib_testcase extends mod_assign_base_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assignment');
         $params = array('course'=>$this->course->id,
                         'assignmenttype'=>'offline');
-        $record = $generator->create_instance($params);
-
-        $assignment = new assignment_base($record->cmid);
+        $assignment = $generator->create_instance($params);
 
         $this->setAdminUser();
         $log = '';
         $upgrader = new assign_upgrade_manager();
 
-        $this->assertTrue($upgrader->upgrade_assignment($assignment->assignment->id, $log));
+        $this->assertTrue($upgrader->upgrade_assignment($assignment->id, $log));
         $record = $DB->get_record('assign', array('course'=>$this->course->id));
 
         $cm = get_coursemodule_from_instance('assign', $record->id);
