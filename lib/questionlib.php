@@ -331,6 +331,9 @@ function question_delete_question($questionid) {
     question_bank::get_qtype($question->qtype, false)->delete_question(
             $questionid, $question->contextid);
 
+    // Delete all tag instances.
+    $DB->delete_records('tag_instance', array('component' => 'core_question', 'itemid' => $question->id));
+
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
             array('parent' => $questionid), '', 'id, qtype')) {
@@ -435,7 +438,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
 
                     // Check to see if there were any questions that were kept because
                     // they are still in use somehow, even though quizzes in courses
-                    // in this category will already have been deteted. This could
+                    // in this category will already have been deleted. This could
                     // happen, for example, if questions are added to a course,
                     // and then that course is moved to another category (MDL-14802).
                     $questionids = $DB->get_records_menu('question',
@@ -474,12 +477,17 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         }
 
     } else {
-        // Move question categories ot the new context.
+        // Move question categories to the new context.
         if (!$newcontext = context_coursecat::instance($newcategory->id)) {
             return false;
         }
-        $DB->set_field('question_categories', 'contextid', $newcontext->id,
-                array('contextid'=>$context->id));
+
+        // Update the contextid for any tag instances for questions in the old context.
+        $DB->set_field('tag_instance', 'contextid', $newcontext->id, array('component' => 'core_question',
+            'contextid' => $context->id));
+
+        $DB->set_field('question_categories', 'contextid', $newcontext->id, array('contextid' => $context->id));
+
         if ($feedback) {
             $a = new stdClass();
             $a->oldplace = $context->get_context_name();
@@ -611,6 +619,10 @@ function question_move_questions_to_category($questionids, $newcategoryid) {
     $DB->set_field_select('question', 'category', $newcategoryid,
             "parent $questionidcondition", $params);
 
+    // Update the contextid for any tag instances that may exist for these questions.
+    $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
+        "component = 'core_question' AND itemid $questionidcondition", $params);
+
     // TODO Deal with datasets.
 
     // Purge these questions from the cache.
@@ -639,6 +651,13 @@ function question_move_category_to_context($categoryid, $oldcontextid, $newconte
                 $questionid, $oldcontextid, $newcontextid);
         // Purge this question from the cache.
         question_bank::notify_question_edited($questionid);
+    }
+
+    if ($questionids) {
+        // Update the contextid for any tag instances that may exist for these questions.
+        list($questionids, $params) = $DB->get_in_or_equal(array_keys($questionids));
+        $DB->set_field_select('tag_instance', 'contextid', $newcontextid,
+            "component = 'core_question' AND itemid $questionids", $params);
     }
 
     $subcatids = $DB->get_records_menu('question_categories',

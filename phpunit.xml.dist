@@ -108,6 +108,9 @@
         <testsuite name="core_notes">
             <directory suffix="_test.php">notes/tests</directory>
         </testsuite>
+        <testsuite name="core_tag">
+            <directory suffix="_test.php">tag/tests</directory>
+        </testsuite>
         <testsuite name="core_rating">
             <directory suffix="_test.php">rating/tests</directory>
         </testsuite>

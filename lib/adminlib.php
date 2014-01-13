@@ -231,6 +231,9 @@ function uninstall_plugin($type, $name) {
     $fs = get_file_storage();
     $fs->delete_component_files($component);
 
+    // Delete all tag instances for this component.
+    $DB->delete_records('tag_instance', array('component' => $component));
+
     // Finally purge all caches.
     purge_all_caches();
 

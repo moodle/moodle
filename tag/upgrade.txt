@@ -1,6 +1,11 @@
 This files describes API changes in tagging, information provided
 here is intended especially for developers.
 
+=== 2.7 ===
+
+* The functions tag_set, tag_set_add, tag_set_delete and tag_assign now expect the component
+and contextid of the item being tagged.
+
 === 2.6 ===
 
 More cleanup was done to tag cloud sorting which involved some API changes, see MDL_39800

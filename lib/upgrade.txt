@@ -44,6 +44,8 @@ JavaSript:
 * New "Time spent waiting for the database" performance metric displayed along with the
   other MDL_PERF vars; the change affects both the error logs and the vars displayed in
   the page footer.
+* Changes in the tag API. The component and contextid are now saved when assigning tags to an item. Please see
+  tag/upgrade.txt for more information.
 
 === 2.6 ===
 

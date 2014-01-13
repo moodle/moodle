@@ -1215,7 +1215,7 @@ abstract class restore_dbops {
                         $usertag = (object)$usertag;
                         $tags[] = $usertag->rawname;
                     }
-                    tag_set('user', $newuserid, $tags);
+                    tag_set('user', $newuserid, $tags, 'core', $newuserctxid);
                 }
 
                 // Process preferences

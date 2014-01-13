@@ -165,7 +165,10 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
 
         $tag = $data->rawname;
         $itemid = $this->get_new_parentid('wiki_page');
-        tag_set_add('wiki_pages', $itemid, $tag);
+        $wikiid = $this->get_new_parentid('wiki');
+
+        $cm = get_coursemodule_from_instance('wiki', $wikiid);
+        tag_set_add('wiki_pages', $itemid, $tag, 'mod_wiki', context_module::instance($cm->id)->id);
     }
 
     protected function after_execute() {

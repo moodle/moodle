@@ -29,6 +29,7 @@ global $CFG;
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/tests/fixtures/course_capability_assignment.php');
 require_once($CFG->dirroot . '/enrol/imsenterprise/tests/imsenterprise_test.php');
+require_once($CFG->dirroot . '/tag/lib.php');
 
 class core_course_courselib_testcase extends advanced_testcase {
 
@@ -1366,28 +1367,40 @@ class core_course_courselib_testcase extends advanced_testcase {
         // Generate an assignment with due date (will generate a course event).
         $assign = $this->getDataGenerator()->create_module('assign', array('duedate' => time(), 'course' => $course->id));
 
-        $cm = get_coursemodule_from_instance('assign', $assign->id);
+        // Get the module context.
+        $modcontext = context_module::instance($assign->cmid);
 
         // Verify context exists.
-        $this->assertInstanceOf('context_module', context_module::instance($cm->id, IGNORE_MISSING));
+        $this->assertInstanceOf('context_module', $modcontext);
+
+        // Add some tags to this assignment.
+        tag_set('assign', $assign->id, array('Tag 1', 'Tag 2', 'Tag 3'), 'mod_assign', $modcontext->id);
+
+        // Confirm the tag instances were added.
+        $this->assertEquals(3, $DB->count_records('tag_instance', array('component' => 'mod_assign', 'contextid' =>
+            $modcontext->id)));
 
         // Verify event assignment event has been generated.
         $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
         $this->assertEquals(1, $eventcount);
 
         // Run delete..
-        course_delete_module($cm->id);
+        course_delete_module($assign->cmid);
 
         // Verify the context has been removed.
-        $this->assertFalse(context_module::instance($cm->id, IGNORE_MISSING));
+        $this->assertFalse(context_module::instance($assign->cmid, IGNORE_MISSING));
 
         // Verify the course_module record has been deleted.
-        $cmcount = $DB->count_records('course_modules', array('id' => $cm->id));
+        $cmcount = $DB->count_records('course_modules', array('id' => $assign->cmid));
         $this->assertEmpty($cmcount);
 
         // Verify event assignment events have been removed.
         $eventcount = $DB->count_records('event', array('instance' => $assign->id, 'modulename' => 'assign'));
         $this->assertEmpty($eventcount);
+
+        // Verify the tag instances were deleted.
+        $this->assertEquals(0, $DB->count_records('tag_instance', array('component' => 'mod_assign', 'contextid' =>
+            $modcontext->id)));
     }
 
     /**

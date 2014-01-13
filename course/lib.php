@@ -1703,6 +1703,9 @@ function course_delete_module($cmid) {
     $DB->delete_records('course_completion_criteria', array('moduleinstance' => $cm->id,
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
 
+    // Delete the tag instances.
+    $DB->delete_records('tag_instance', array('component' => 'mod_' . $modulename, 'contextid' => $modcontext->id));
+
     // Delete the context.
     context_helper::delete_instance(CONTEXT_MODULE, $cm->id);
 

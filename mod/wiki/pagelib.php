@@ -2035,7 +2035,7 @@ class page_wiki_save extends page_wiki_edit {
 
         if ($save && $data) {
             if (!empty($CFG->usetags)) {
-                tag_set('wiki_pages', $this->page->id, $data->tags);
+                tag_set('wiki_pages', $this->page->id, $data->tags, 'mod_wiki', $this->modcontext->id);
             }
 
             $message = '<p>' . get_string('saving', 'wiki') . '</p>';

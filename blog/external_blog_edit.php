@@ -84,7 +84,8 @@ if ($externalblogform->is_cancelled()){
 
             $newexternal->id = $DB->insert_record('blog_external', $newexternal);
             blog_sync_external_entries($newexternal);
-            tag_set('blog_external', $newexternal->id, explode(',', $data->autotags));
+            tag_set('blog_external', $newexternal->id, explode(',', $data->autotags), 'core',
+                context_user::instance($newexternal->userid)->id);
 
             break;
 
@@ -102,7 +103,8 @@ if ($externalblogform->is_cancelled()){
                 $external->timemodified = time();
 
                 $DB->update_record('blog_external', $external);
-                tag_set('blog_external', $external->id, explode(',', $data->autotags));
+                tag_set('blog_external', $external->id, explode(',', $data->autotags), 'core',
+                    context_user::instance($newexternal->userid)->id);
 
             } else {
                 print_error('wrongexternalid', 'blog');

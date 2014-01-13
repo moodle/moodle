@@ -1468,7 +1468,8 @@ class restore_course_structure_step extends restore_structure_step {
             // Add the one being restored
             $tags[] = $data->rawname;
             // Send all the tags back to the course
-            tag_set('course', $this->get_courseid(), $tags);
+            tag_set('course', $this->get_courseid(), $tags, 'core',
+                context_course::instance($this->get_courseid())->id);
         }
     }
 
@@ -3279,6 +3280,9 @@ abstract class restore_activity_structure_step extends restore_structure_step {
  */
 class restore_create_categories_and_questions extends restore_structure_step {
 
+    /** @var array $cachecategory store the categories */
+    protected $cachedcategory = array();
+
     protected function define_structure() {
 
         $category = new restore_path_element('question_category', '/question_categories/question_category');
@@ -3384,7 +3388,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
         // step will be in charge of restoring all the question files
     }
 
-        protected function process_question_hint($data) {
+    protected function process_question_hint($data) {
         global $DB;
 
         $data = (object)$data;
@@ -3448,7 +3452,7 @@ class restore_create_categories_and_questions extends restore_structure_step {
         $newquestion = $this->get_new_parentid('question');
 
         if (!empty($CFG->usetags)) { // if enabled in server
-            // TODO: This is highly inneficient. Each time we add one tag
+            // TODO: This is highly inefficient. Each time we add one tag
             // we fetch all the existing because tag_set() deletes them
             // so everything must be reinserted on each call
             $tags = array();
@@ -3459,8 +3463,13 @@ class restore_create_categories_and_questions extends restore_structure_step {
             }
             // Add the one being restored
             $tags[] = $data->rawname;
+            // Get the category, so we can then later get the context.
+            $categoryid = $this->get_new_parentid('question_category');
+            if (empty($this->cachedcategory) || $this->cachedcategory->id != $categoryid) {
+                $this->cachedcategory = $DB->get_record('question_categories', array('id' => $categoryid));
+            }
             // Send all the tags back to the question
-            tag_set('question', $newquestion, $tags);
+            tag_set('question', $newquestion, $tags, 'core_question', $this->cachedcategory->contextid);
         }
     }
 

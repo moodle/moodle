@@ -174,7 +174,7 @@ function useredit_update_trackforums($user, $usernew) {
  * @param array $interests
  */
 function useredit_update_interests($user, $interests) {
-    tag_set('user', $user->id, $interests);
+    tag_set('user', $user->id, $interests, 'core', context_user::instance($user->id)->id);
 }
 
 /**
