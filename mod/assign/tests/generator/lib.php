@@ -34,6 +34,7 @@ class mod_assign_generator extends testing_module_generator {
             'submissiondrafts'                  => 1,
             'requiresubmissionstatement'        => 0,
             'sendnotifications'                 => 0,
+            'sendstudentnotifications'          => 1,
             'sendlatenotifications'             => 0,
             'duedate'                           => 0,
             'allowsubmissionsfromdate'          => 0,

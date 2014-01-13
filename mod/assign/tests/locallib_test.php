@@ -527,7 +527,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
 
         // Now create an assignment and add some feedback.
         $this->setUser($this->editingteachers[0]);
-        $assign = $this->create_instance();
+        $assign = $this->create_instance(array('sendstudentnotifications'=>1));
 
         // Simulate adding a grade.
         $this->setUser($this->teachers[0]);
@@ -535,6 +535,9 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         $data->grade = '50.0';
         $assign->testable_apply_grade_to_user($data, $this->students[0]->id, 0);
         $assign->testable_apply_grade_to_user($data, $this->students[1]->id, 0);
+
+        $data->sendstudentnotifications = false;
+        $assign->testable_apply_grade_to_user($data, $this->students[2]->id, 0);
 
         // Now run cron and see that one message was sent.
         $this->preventResetByRollback();
@@ -544,6 +547,7 @@ class mod_assign_locallib_testcase extends mod_assign_base_testcase {
         assign::cron();
 
         $messages = $sink->get_messages();
+        // The sent count should be 2, because the 3rd one was marked as do not send notifications.
         $this->assertEquals(2, count($messages));
         $this->assertEquals(1, $messages[0]->notification);
         $this->assertEquals($assign->get_instance()->name, $messages[0]->contexturlname);
