@@ -282,7 +282,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
  /*
  * File Manager layout
  */
-.fp-restrictions{text-align:right;}
+.filemanager .fp-restrictions {text-align:right;}
 .filemanager .fp-navbar {background:#F2F2F2;border-top:1px solid #BBBBBB;border-left:1px solid #BBBBBB;border-right:1px solid #BBBBBB;}
 .filemanager-toolbar {min-height:40px;}
 .fp-pathbar {border-top:1px solid #BBBBBB;padding:5px 8px 1px;min-height:20px;}
@@ -421,6 +421,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 .dir-rtl .filepicker .yui-layout-unit-center {left:0;}
 .dir-rtl #filemenu .yuimenuitemlabel {text-align:right;}
 .dir-rtl .filemanager-container .yui3-skin-sam .yui3-datatable-header {text-align:right;}
+.dir-rtl .filemanager .fp-restrictions { text-align: left; }
 
 
 /**
