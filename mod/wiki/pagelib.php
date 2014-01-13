@@ -564,10 +564,6 @@ class page_wiki_edit extends page_wiki {
             $params['filearea']   = 'attachments';
         }
 
-        if (!empty($CFG->usetags)) {
-            $params['tags'] = tag_get_tags_csv('wiki_pages', $this->page->id, TAG_RETURN_TEXT);
-        }
-
         $form = new mod_wiki_edit_form($url, $params);
 
         if ($formdata = $form->get_data()) {
@@ -576,7 +572,7 @@ class page_wiki_edit extends page_wiki {
             }
         } else {
             if (!empty($CFG->usetags)) {
-                $data->tags = tag_get_tags_array('wiki', $this->page->id);
+                $data->tags = tag_get_tags_array('wiki_pages', $this->page->id);
             }
         }
 
