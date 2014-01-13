@@ -136,4 +136,60 @@ class core_tag_events_testcase extends advanced_testcase {
         $expected = null;
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the tag flagged event.
+     */
+    public function test_tag_flagged() {
+        global $DB;
+
+        $this->setAdminUser();
+
+        // Create tags we are going to flag.
+        $tag = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+
+        // Trigger and capture the event for setting the flag of a tag.
+        $sink = $this->redirectEvents();
+        tag_set_flag($tag->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the flag was updated.
+        $tag = $DB->get_record('tag', array('id' => $tag->id));
+        $this->assertEquals(1, $tag->flag);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\tag_flagged', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag->id, $tag->id, '', '2');
+        $this->assertEventLegacyLogData($expected, $event);
+
+        // Unset the flag for both (though by default tag2 should have been created with 0 already).
+        tag_unset_flag(array($tag->id, $tag2->id));
+
+        // Trigger and capture the event for setting the flag for multiple tags.
+        $sink = $this->redirectEvents();
+        tag_set_flag(array($tag->id, $tag2->id));
+        $events = $sink->get_events();
+
+        // Check that the flags were updated.
+        $tag = $DB->get_record('tag', array('id' => $tag->id));
+        $this->assertEquals(1, $tag->flag);
+        $tag2 = $DB->get_record('tag', array('id' => $tag2->id));
+        $this->assertEquals(1, $tag2->flag);
+
+        // Confirm the events.
+        $event = $events[0];
+        $this->assertInstanceOf('\core\event\tag_flagged', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag->id, $tag->id, '', '2');
+        $this->assertEventLegacyLogData($expected, $event);
+
+        $event = $events[1];
+        $this->assertInstanceOf('\core\event\tag_flagged', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $expected = array(SITEID, 'tag', 'flag', 'index.php?id=' . $tag2->id, $tag2->id, '', '2');
+        $this->assertEventLegacyLogData($expected, $event);
+    }
 }

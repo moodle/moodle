@@ -1260,21 +1260,43 @@ function tag_record_tagged_with($record_type, $record_id, $tag) {
 }
 
 /**
- * Flag a tag as inapropriate
+ * Flag a tag as inappropriate.
  *
- * @package core_tag
- * @access  private
- * @param   int|array $tagids a single tagid, or an array of tagids
+ * @param int|array $tagids a single tagid, or an array of tagids
  */
 function tag_set_flag($tagids) {
     global $DB;
 
-    $tagids = (array)$tagids;
-    foreach ($tagids as $tagid) {
-        $tag = $DB->get_record('tag', array('id'=>$tagid), 'id, flag');
-        $tag->flag++;
-        $tag->timemodified = time();
-        $DB->update_record('tag', $tag);
+    $tagids = (array) $tagids;
+
+    // Use the tagids to create a select statement to be used later.
+    list($tagsql, $tagparams) = $DB->get_in_or_equal($tagids, SQL_PARAMS_NAMED);
+
+    // Update all the tags to flagged.
+    $sql = "UPDATE {tag}
+               SET flag = flag + 1, timemodified = :time
+             WHERE id $tagsql";
+
+    // Update all the tags.
+    $DB->execute($sql, array_merge(array('time' => time()), $tagparams));
+
+    // Get all the tags.
+    if ($tags = $DB->get_records_select('tag', 'id '. $tagsql, $tagparams, 'id ASC')) {
+        // Loop through and fire an event for each tag that it was flagged.
+        foreach ($tags as $tag) {
+            $event = \core\event\tag_flagged::create(array(
+                'objectid' => $tag->id,
+                'relateduserid' => $tag->userid,
+                'context' => context_system::instance(),
+                'other' => array(
+                    'name' => $tag->name,
+                    'rawname' => $tag->rawname
+                )
+
+            ));
+            $event->add_record_snapshot('tag', $tag);
+            $event->trigger();
+        }
     }
 }
 
