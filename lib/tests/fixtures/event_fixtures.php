@@ -41,7 +41,7 @@ class unittest_executed extends \core\event\base {
 
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     public function get_url() {
@@ -116,14 +116,14 @@ class unittest_observer {
 class bad_event1 extends \core\event\base {
     protected function init() {
         //$this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 }
 
 class bad_event2 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
-        //$this->data['level'] = 10;
+        //$this->data['edulevel'] = 10;
     }
 }
 
@@ -131,14 +131,14 @@ class bad_event2b extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
         // Invalid level value.
-        $this->data['level'] = -1;
+        $this->data['edulevel'] = -1;
     }
 }
 
 class bad_event3 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         unset($this->data['courseid']);
     }
 }
@@ -146,7 +146,7 @@ class bad_event3 extends \core\event\base {
 class bad_event4 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['xxx'] = 1;
     }
 }
@@ -154,14 +154,14 @@ class bad_event4 extends \core\event\base {
 class bad_event5 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'x';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 }
 
 class bad_event6 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'xxx_xxx_xx';
     }
 }
@@ -169,7 +169,7 @@ class bad_event6 extends \core\event\base {
 class bad_event7 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = null;
     }
 }
@@ -177,7 +177,7 @@ class bad_event7 extends \core\event\base {
 class bad_event8 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'user';
     }
 }
@@ -185,14 +185,14 @@ class bad_event8 extends \core\event\base {
 class problematic_event1 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 }
 
 class problematic_event2 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = \context_system::instance();
     }
 }
@@ -200,7 +200,7 @@ class problematic_event2 extends \core\event\base {
 class problematic_event3 extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = \context_system::instance();
     }
 
@@ -211,11 +211,19 @@ class problematic_event3 extends \core\event\base {
     }
 }
 
+class deprecated_event1 extends \core\event\base {
+    protected function init() {
+        $this->data['crud'] = 'c';
+        $this->data['level'] = self::LEVEL_TEACHING; // Tests edulevel hint.
+        $this->context = \context_system::instance();
+    }
+}
+
 class noname_event extends \core\event\base {
 
     protected function init() {
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = \context_system::instance();
     }
 }
@@ -237,7 +245,7 @@ class content_viewed extends \core\event\content_viewed {
 class course_module_viewed extends \core\event\course_module_viewed {
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->data['objecttable'] = 'feedback';
     }
 }
