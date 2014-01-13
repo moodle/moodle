@@ -1,0 +1,18 @@
+// The class gradetreebox matches the pages displaying the gradebook
+// "Categories and items" > "Simple view" and "Full view".
+.gradetreebox {
+    h4 {
+        // Force back the base font-size to minimise width.
+        font-size: @baseFontSize;
+    }
+    th.cell,
+    input[type=text] {
+        // Fallback on the minimum width.
+        width: auto;
+    }
+    input[type=text],
+    select {
+        // Remove the bottom margin to gain height.
+        margin-bottom: 0;
+    }
+}
