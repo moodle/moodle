@@ -51,7 +51,7 @@ class blog_association_created extends \core\event\base {
         $this->context = \context_system::instance();
         $this->data['objecttable'] = 'blog_association';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**

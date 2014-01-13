@@ -41,7 +41,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
         $this->data['objecttable'] = 'book';
     }
 }

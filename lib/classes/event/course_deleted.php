@@ -41,7 +41,7 @@ class course_deleted extends base {
     protected function init() {
         $this->data['objecttable'] = 'course';
         $this->data['crud'] = 'd';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**

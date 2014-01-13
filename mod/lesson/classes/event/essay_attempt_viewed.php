@@ -34,7 +34,7 @@ class essay_attempt_viewed extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'lesson_attempts';
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**

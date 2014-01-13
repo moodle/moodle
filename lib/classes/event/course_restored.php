@@ -43,7 +43,7 @@ class course_restored extends base {
     protected function init() {
         $this->data['objecttable'] = 'course';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**

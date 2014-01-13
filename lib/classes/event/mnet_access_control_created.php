@@ -33,7 +33,7 @@ class mnet_access_control_created extends base {
     protected function init() {
         $this->data['objecttable'] = 'mnet_sso_access_control';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**

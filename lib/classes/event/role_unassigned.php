@@ -38,7 +38,7 @@ class role_unassigned extends base {
     protected function init() {
         $this->data['objecttable'] = 'role';
         $this->data['crud'] = 'd';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**

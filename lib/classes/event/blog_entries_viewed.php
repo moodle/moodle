@@ -50,7 +50,7 @@ class blog_entries_viewed extends base {
     protected function init() {
         $this->context = \context_system::instance();
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
