@@ -234,11 +234,17 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         global $DB;
 
         $data = (object)$data;
-        $oldid = $data->id;
 
-        $data->quiz = $this->get_new_parentid('quiz');
+        // Backwards compatibility for MDL-43670.
+        if (!isset($data->questionid) && isset($data->question)) {
+            $data->questionid = $data->question;
+        }
+        if (!isset($data->maxmark) && isset($data->grade)) {
+            $data->maxmark = $data->grade;
+        }
 
-        $data->question = $this->get_mappingid('question', $data->question);
+        $data->quizid = $this->get_new_parentid('quiz');
+        $data->questionid = $this->get_mappingid('question', $data->questionid);
 
         $DB->insert_record('quiz_question_instances', $data);
     }

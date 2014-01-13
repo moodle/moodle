@@ -97,15 +97,15 @@ function quiz_report_get_significant_questions($quiz) {
 SELECT
     q.id,
     q.length,
-    qqi.grade AS maxmark
+    qqi.maxmark
 
 FROM {question} q
-JOIN {quiz_question_instances} qqi ON qqi.question = q.id
+JOIN {quiz_question_instances} qqi ON qqi.questionid = q.id
 
 WHERE
     q.id $usql AND
-    qqi.quiz = ? AND
-    length > 0", $params);
+    qqi.quizid = ? AND
+    q.length > 0", $params);
 
     $qsbyslot = array();
     $number = 1;

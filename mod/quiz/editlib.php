@@ -75,7 +75,7 @@ function quiz_remove_question($quiz, $questionid) {
     $quiz->questions = implode(',', $questionids);
     $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
     $DB->delete_records('quiz_question_instances',
-            array('quiz' => $quiz->instance, 'question' => $questionid));
+            array('quizid' => $quiz->instance, 'questionid' => $questionid));
 }
 
 /**
@@ -168,9 +168,9 @@ function quiz_add_quiz_question($id, $quiz, $page = 0) {
 
     // Add the new question instance.
     $instance = new stdClass();
-    $instance->quiz = $quiz->id;
-    $instance->question = $id;
-    $instance->grade = $DB->get_field('question', 'defaultmark', array('id' => $id));
+    $instance->quizid = $quiz->id;
+    $instance->questionid = $id;
+    $instance->maxmark = $DB->get_field('question', 'defaultmark', array('id' => $id));
     $DB->insert_record('quiz_question_instances', $instance);
 }
 
@@ -196,7 +196,7 @@ function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
                 AND NOT EXISTS (
                         SELECT *
                           FROM {quiz_question_instances}
-                         WHERE question = q.id)
+                         WHERE questionid = q.id)
             ORDER BY id", array($category->id, $includesubcategories))) {
         // Take as many of these as needed.
         while (($existingquestion = array_shift($existingquestions)) && $number > 0) {
@@ -280,29 +280,29 @@ function quiz_save_new_layout($quiz) {
  * Saves changes to the question grades in the quiz_question_instances table.
  * It does not update 'sumgrades' in the quiz table.
  *
- * @param int grade    The maximal grade for the question
- * @param int $questionid  The id of the question
- * @param int $quizid  The id of the quiz to update / add the instances for.
+ * @param float    $maxmark    the maximal grade for the question.
+ * @param int      $questionid the question id.
+ * @param stdClass $quiz       the quiz settings.
  */
-function quiz_update_question_instance($grade, $questionid, $quiz) {
+function quiz_update_question_instance($maxmark, $questionid, $quiz) {
     global $DB;
-    $instance = $DB->get_record('quiz_question_instances', array('quiz' => $quiz->id,
-            'question' => $questionid));
+    $instance = $DB->get_record('quiz_question_instances', array('quizid' => $quiz->id,
+            'questionid' => $questionid));
     $slot = quiz_get_slot_for_question($quiz, $questionid);
 
     if (!$instance || !$slot) {
-        throw new coding_exception('Attempt to change the grade of a quesion not in the quiz.');
+        throw new coding_exception('Attempt to change the max mark of a quesion not in the quiz.');
     }
 
-    if (abs($grade - $instance->grade) < 1e-7) {
+    if (abs($maxmark - $instance->maxmark) < 1e-7) {
         // Grade has not changed. Nothing to do.
         return;
     }
 
-    $instance->grade = $grade;
+    $instance->maxmark = $maxmark;
     $DB->update_record('quiz_question_instances', $instance);
     question_engine::set_max_mark_in_attempts(new qubaids_for_quiz($quiz->id),
-            $slot, $grade);
+            $slot, $maxmark);
 }
 
 // Private function used by the following two.
@@ -392,11 +392,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete, $reordertool,
     if ($quiz->questions) {
         list($usql, $params) = $DB->get_in_or_equal(explode(',', $quiz->questions));
         $params[] = $quiz->id;
-        $questions = $DB->get_records_sql("SELECT q.*, qc.contextid, qqi.grade as maxmark
+        $questions = $DB->get_records_sql("SELECT q.*, qc.contextid, qqi.maxmark
                               FROM {question} q
                               JOIN {question_categories} qc ON qc.id = q.category
-                              JOIN {quiz_question_instances} qqi ON qqi.question = q.id
-                             WHERE q.id $usql AND qqi.quiz = ?", $params);
+                              JOIN {quiz_question_instances} qqi ON qqi.questionid = q.id
+                             WHERE q.id $usql AND qqi.quizid = ?", $params);
     } else {
         $questions = array();
     }

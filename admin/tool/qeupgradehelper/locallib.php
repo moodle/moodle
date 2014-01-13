@@ -638,10 +638,10 @@ function tool_qeupgradehelper_load_question($questionid, $quizid) {
     global $CFG, $DB;
 
     $question = $DB->get_record_sql('
-            SELECT q.*, qqi.grade AS maxmark
+            SELECT q.*, qqi.maxmark
             FROM {question} q
-            JOIN {quiz_question_instances} qqi ON qqi.question = q.id
-            WHERE q.id = :questionid AND qqi.quiz = :quizid',
+            JOIN {quiz_question_instances} qqi ON qqi.questionid = q.id
+            WHERE q.id = :questionid AND qqi.quizid = :quizid',
             array('questionid' => $questionid, 'quizid' => $quizid));
 
     if (tool_qeupgradehelper_is_upgraded()) {
