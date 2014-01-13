@@ -1,4 +1,4 @@
-@mod @mod_scorm @_only_local
+@mod @mod_scorm @_only_local @_file_upload
 Feature: Add scorm activity
   In order to let students access a scorm package
   As a teacher

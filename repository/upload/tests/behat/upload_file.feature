@@ -1,4 +1,4 @@
-@repository @repository_upload @_only_local
+@repository @repository_upload @_only_local @_file_upload
 Feature: Upload files
   In order to add contents
   As a user
