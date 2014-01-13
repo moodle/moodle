@@ -1087,30 +1087,88 @@ body.tag .managelink {
     float: right;
     margin-left: 3px;
 }
-#page-enrol-users .enrol_user_buttons {
-    float: right;
+#page-enrol-users {
+    .enrol_user_buttons {
+        float: right;
+        .enrolusersbutton {
+            display: inline;
+            div,
+            form {
+                display: inline;
+                margin-right: 0;
+            }
+        }
+    }
+    #filterform {
+        .well;
+        .well-small;
+        display: inline-block;
+        .fitem {
+            display: inline-block;
+            line-height: @baseLineHeight * 2;
+            margin-right: .3em;
+            white-space: nowrap;
+            label {
+                display: inline;
+                line-height: @baseLineHeight;
+                padding-right: .3em;
+            }
+            :before,
+            :after {
+                display: inline;
+            }
+        }
+        div,
+        fieldset {
+            display: inline;
+            float: none;
+            clear: none;
+            width: auto;
+            margin: 0;
+        }
+        select,
+        .ftext input {
+            width: 7em;
+        }
+        input,
+        select {
+            margin-bottom: 0;
+        }
+    }
+    .user-enroller-panel .uep-search-results .user .details {
+       width: 237px;
+    }
 }
-#page-enrol-users.dir-rtl .enrol_user_buttons {
-    float: left;
+.dir-rtl {
+    &#page-enrol-users {
+        .col_userdetails {
+            .subfield_picture {
+                float: right;
+            }
+        }
+        .enrol_user_buttons {
+            float: left;
+            .enrolusersbutton {
+                margin-left: 0;
+                margin-right: 1em;
+                div {
+                    margin-left: 0;
+                }
+            }
+        }
+        #filterform {
+            .fitem {
+                margin-right: 0;
+                margin-left: .3em;
+                label {
+                    padding-right: 0;
+                    padding-left: .3em;
+                }
+            }
+        }
+    }
 }
-#page-enrol-users .enrol_user_buttons .enrolusersbutton {
-    margin-left: 1em;
-    display: inline;
-}
-#page-enrol-users .enrol_user_buttons .enrolusersbutton div,
-#page-enrol-users .enrol_user_buttons .enrolusersbutton form {
-    display: inline;
-}
-#page-enrol-users .enrol_user_buttons .enrolusersbutton input {
-    padding-left: 6px;
-    padding-right: 6px;
-}
-#page-enrol-users.dir-rtl .col_userdetails .subfield_picture {
-    float: right;
-}
-#page-enrol-users .user-enroller-panel .uep-search-results .user .details {
-    width: 237px;
-}
+
 /**
 * Overide for RTL layout
 **/
