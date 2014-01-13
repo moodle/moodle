@@ -1,4 +1,4 @@
-@core @core_filepicker @_only_local
+@core @core_filepicker @_file_upload
 Feature: Overwrite file feature
   In order to update an existing file
   As a user
