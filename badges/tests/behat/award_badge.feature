@@ -1,4 +1,4 @@
-@core @core_badges @_only_local
+@core @core_badges @_only_local @_file_upload
 Feature: Award badges
   In order to award badges to users for their achievements
   As an admin

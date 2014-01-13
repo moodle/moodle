@@ -1,4 +1,4 @@
-@core @core_admin @_only_local
+@core @core_admin @_only_local @_file_upload
 Feature: Upload users
   In order to add users to the system
   As an admin

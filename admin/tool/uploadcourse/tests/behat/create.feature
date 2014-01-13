@@ -1,4 +1,4 @@
-@tool @tool_uploadcourse @_only_local
+@tool @tool_uploadcourse @_only_local @_file_upload
 Feature: An admin can create courses using a CSV file
   In order to create courses using a CSV file
   As an admin
