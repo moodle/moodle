@@ -159,8 +159,8 @@ class manager implements \core\log\manager {
      */
     public function legacy_add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
         $this->init();
-        if (isset($this->stores['legacy'])) {
-            $this->stores['legacy']->legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user);
+        if (isset($this->stores['logstore_legacy'])) {
+            $this->stores['logstore_legacy']->legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user);
         }
     }
 }

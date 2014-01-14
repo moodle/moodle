@@ -104,8 +104,7 @@ class store implements \tool_log\log\store, \core\log\reader {
         // This is for a good reason: it is the most frequently used DB update function,
         // so it has been optimised for speed.
         global $DB, $CFG, $USER;
-
-        if ($this->legacy_logging_enabled()) {
+        if (!$this->legacy_logging_enabled()) {
             return;
         }
 
