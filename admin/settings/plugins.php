@@ -25,6 +25,9 @@
 */
 
 if ($hassiteconfig) {
+    /* @var admin_root $ADMIN */
+    $ADMIN->locate('modules')->set_sorting(true);
+
     $ADMIN->add('modules', new admin_page_pluginsoverview());
 
     // activity modules
