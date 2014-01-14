@@ -2919,5 +2919,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014011000.01);
     }
 
+    if ($oldversion < 2014011701.00) {
+        // Fix gradebook sortorder duplicates.
+        upgrade_grade_item_fix_sortorder();
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014011701.00);
+    }
+
     return true;
 }
