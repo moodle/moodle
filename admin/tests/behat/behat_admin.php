@@ -17,7 +17,7 @@
 /**
  * Steps definitions related with administration.
  *
- * @package   core
+ * @package   core_admin
  * @category  test
  * @copyright 2013 David Monllaó
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -35,7 +35,7 @@ use Behat\Behat\Context\Step\Given as Given,
 /**
  * Site administration level steps definitions.
  *
- * @package    core
+ * @package    core_admin
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
