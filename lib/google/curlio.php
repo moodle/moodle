@@ -172,7 +172,7 @@ class moodle_google_curlio extends Google_CurlIO {
             if (!is_string($name)) {
                 $name = $this->get_option_name_from_constant($name);
             }
-            $safeParams[$name] = $vale;
+            $safeParams[$name] = $value;
         }
         parent::setOptions($safeParams);
     }
