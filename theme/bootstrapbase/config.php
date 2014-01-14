@@ -38,12 +38,6 @@ $THEME->supportscssoptimisation = false;
 
 $THEME->editor_sheets = array('editor');
 
-$THEME->plugins_exclude_sheets = array(
-    'block' => array(
-        'html'
-    ),
-);
-
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 
 $THEME->layouts = array(
