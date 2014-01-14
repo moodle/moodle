@@ -52,7 +52,8 @@ $digestoptions = forum_get_user_digest_options();
 $info = new stdClass();
 $info->name  = fullname($USER);
 $info->forum = format_string($forum->name);
-$info->maildigest = forum_set_user_maildigest($forum, $maildigest);
+forum_set_user_maildigest($forum, $maildigest);
+$info->maildigest = $maildigest;
 
 if ($maildigest === -1) {
     // Get the default maildigest options.
