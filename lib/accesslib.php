@@ -5788,6 +5788,13 @@ class context_helper extends context {
     }
 
     /**
+     * Reset internal context levels array.
+     */
+    public static function reset_levels() {
+        self::$alllevels = null;
+    }
+
+    /**
      * Initialise context levels, call before using self::$alllevels.
      */
     private static function init_levels() {
@@ -5809,8 +5816,17 @@ class context_helper extends context {
             return;
         }
 
+        $levels = $CFG->custom_context_classes;
+        if (!is_array($levels)) {
+            $levels = @unserialize($levels);
+        }
+        if (!is_array($levels)) {
+            debugging('Invalid $CFG->custom_context_classes detected, value ignored.', DEBUG_DEVELOPER);
+            return;
+        }
+
         // Unsupported custom levels, use with care!!!
-        foreach ($CFG->custom_context_classes as $level => $classname) {
+        foreach ($levels as $level => $classname) {
             self::$alllevels[$level] = $classname;
         }
         ksort(self::$alllevels);
