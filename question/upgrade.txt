@@ -1,5 +1,23 @@
 This files describes API changes for code that uses the question API.
 
+=== 2.7 ===
+
+1)  Changes to class question_bank_view:
+
+    Filters, including $recurse and $showhidden, are now implemented as
+    pluggable \core_question\bank\search\condition classes.
+
+    Therefore $recurse and $showhidden are no longer passed to the following functions:
+        protected function display_options [deprecated, use display_options_form()]
+        protected function build_query_sql [deprecated, use build_query()]
+
+    protected function display_category_form() is deprecated. Use \core_question\bank\search\category_condition
+
+    protected function display_category_form_checkbox deprecated use html_writer::checkbox and separate JavaScript
+
+To add filters, local plugins can now implement the function local_[pluginname]_get_question_bank_search_conditions,
+
+
 === 2.6 ===
 
 1) Modules using the question bank MUST now declare their use of it with the xxx_supports()

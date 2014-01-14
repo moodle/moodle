@@ -1111,6 +1111,8 @@ class quiz_question_bank_view extends question_bank_view {
     protected $quizhasattempts = false;
     /** @var object the quiz settings. */
     protected $quiz = false;
+    /** @var int The maximum displayed length of the category info. */
+    const MAX_TEXT_LENGTH = 200;
 
     /**
      * Constructor
@@ -1184,16 +1186,15 @@ class quiz_question_bank_view extends question_bank_view {
             return;
         }
 
-        // Display the current category.
-        if (!$category = $this->get_current_category($cat)) {
-            return;
-        }
-        $this->print_category_info($category);
+        $editcontexts = $this->contexts->having_one_edit_tab_cap($tabname);
+        array_unshift($this->searchconditions,
+                new \core_question\bank\search\hidden_condition(!$showhidden));
+        array_unshift($this->searchconditions,
+                new \core_question\bank\search\category_condition($cat, $recurse,
+                        $editcontexts, $this->baseurl, $this->course, self::MAX_TEXT_LENGTH));
 
         echo $OUTPUT->box_start('generalbox questionbank');
-
-        $this->display_category_form($this->contexts->having_one_edit_tab_cap($tabname),
-                $this->baseurl, $cat);
+        $this->display_options_form($showquestiontext);
 
         // Continues with list of questions.
         $this->display_question_list($this->contexts->having_one_edit_tab_cap($tabname),
@@ -1201,12 +1202,20 @@ class quiz_question_bank_view extends question_bank_view {
                 $perpage, $showhidden, $showquestiontext,
                 $this->contexts->having_cap('moodle/question:add'));
 
-        $this->display_options($recurse, $showhidden, $showquestiontext);
         echo $OUTPUT->box_end();
     }
 
+    /**
+     * prints a form to choose categories
+     * @param string $categoryandcontext 'categoryID,contextID'.
+     * @deprecated since Moodle 2.6 MDL-40313.
+     * @see \core_question\bank\search\category_condition
+     * @todo MDL-41978 This will be deleted in Moodle 2.8
+     */
     protected function print_choose_category_message($categoryandcontext) {
         global $OUTPUT;
+        debugging('print_choose_category_message() is deprecated, ' .
+                'please use \core_question\bank\search\category_condition instead.', DEBUG_DEVELOPER);
         echo $OUTPUT->box_start('generalbox questionbank');
         $this->display_category_form($this->contexts->having_one_edit_tab_cap('edit'),
                 $this->baseurl, $categoryandcontext);
@@ -1214,6 +1223,27 @@ class quiz_question_bank_view extends question_bank_view {
         print_string('selectcategoryabove', 'question');
         echo "</b></p>";
         echo $OUTPUT->box_end();
+    }
+
+    /**
+     * Display the form with options for which questions are displayed and how they are displayed.
+     * This differs from parent display_options_form only in that it does not have the checkbox to show the question text.
+     * @param bool $showquestiontext Display the text of the question within the list. (Currently ignored)
+     */
+    protected function display_options_form($showquestiontext) {
+        global $PAGE;
+        echo html_writer::start_tag('form', array('method' => 'get',
+                'action' => new moodle_url('/mod/quiz/edit.php'), 'id' => 'displayoptions'));
+        echo html_writer::start_div();
+        foreach ($this->searchconditions as $searchcondition) {
+            echo $searchcondition->display_options($this);
+        }
+        $this->display_advanced_search_form();
+        $go = html_writer::empty_tag('input', array('type' => 'submit', 'value' => get_string('go')));
+        echo html_writer::tag('noscript', html_writer::tag('div', $go), array('class' => 'inline'));
+        echo html_writer::end_div();
+        echo html_writer::end_tag('form');
+        $PAGE->requires->yui_module('moodle-question-searchform', 'M.question.searchform.init');
     }
 
     protected function print_category_info($category) {
@@ -1232,6 +1262,7 @@ class quiz_question_bank_view extends question_bank_view {
     }
 
     protected function display_options($recurse, $showhidden, $showquestiontext) {
+        debugging('display_options() is deprecated, see display_options_form() instead.', DEBUG_DEVELOPER);
         echo '<form method="get" action="edit.php" id="displayoptions">';
         echo "<fieldset class='invisiblefieldset'>";
         echo html_writer::input_hidden_params($this->baseurl,
