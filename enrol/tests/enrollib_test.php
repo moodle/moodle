@@ -310,11 +310,14 @@ class core_enrollib_testcase extends advanced_testcase {
         $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $admin->id));
         $this->assertInstanceOf('\core\event\user_enrolment_created', $event);
         $this->assertEquals($dbuserenrolled->id, $event->objectid);
+        $this->assertEquals(context_course::instance($course1->id), $event->get_context());
         $this->assertEquals('user_enrolled', $event->get_legacy_eventname());
         $expectedlegacyeventdata = $dbuserenrolled;
         $expectedlegacyeventdata->enrol = $manual->get_name();
         $expectedlegacyeventdata->courseid = $course1->id;
         $this->assertEventLegacyData($expectedlegacyeventdata, $event);
+        $expected = array($course1->id, 'course', 'enrol', '../enrol/users.php?id=' . $course1->id, $course1->id);
+        $this->assertEventLegacyLogData($expected, $event);
     }
 
     /**
