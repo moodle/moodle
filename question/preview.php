@@ -275,12 +275,6 @@ print_collapsible_region_end();
 // Display the settings form.
 $optionsform->display();
 
-$PAGE->requires->js_init_call('M.core_question_preview.init', null, false, array(
-        'name' => 'core_question_preview',
-        'fullpath' => '/question/preview.js',
-        'requires' => array('base', 'dom', 'event-delegate', 'event-key', 'core_question_engine'),
-        'strings' => array(
-            array('closepreview', 'question'),
-        )));
+$PAGE->requires->yui_module('moodle-question-preview', 'M.question.preview.init');
 echo $OUTPUT->footer();
 
