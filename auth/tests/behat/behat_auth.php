@@ -18,7 +18,7 @@
 /**
  * Basic authentication steps definitions.
  *
- * @package    core
+ * @package    core_auth
  * @category   test
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -34,7 +34,7 @@ use Behat\Behat\Context\Step\When as When;
 /**
  * Log in log out steps definitions.
  *
- * @package    core
+ * @package    core_auth
  * @category   test
  * @copyright  2012 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
