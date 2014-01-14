@@ -145,31 +145,7 @@ if ($hassiteconfig) {
     // "filtersettings" settingpage
     $temp = new admin_settingpage('commonfiltersettings', new lang_string('commonfiltersettings', 'admin'));
     if ($ADMIN->fulltree) {
-        $cachetimes = array(
-            604800 => new lang_string('numdays','',7),
-            86400 => new lang_string('numdays','',1),
-            43200 => new lang_string('numhours','',12),
-            10800 => new lang_string('numhours','',3),
-            7200 => new lang_string('numhours','',2),
-            3600 => new lang_string('numhours','',1),
-            2700 => new lang_string('numminutes','',45),
-            1800 => new lang_string('numminutes','',30),
-            900 => new lang_string('numminutes','',15),
-            600 => new lang_string('numminutes','',10),
-            540 => new lang_string('numminutes','',9),
-            480 => new lang_string('numminutes','',8),
-            420 => new lang_string('numminutes','',7),
-            360 => new lang_string('numminutes','',6),
-            300 => new lang_string('numminutes','',5),
-            240 => new lang_string('numminutes','',4),
-            180 => new lang_string('numminutes','',3),
-            120 => new lang_string('numminutes','',2),
-            60 => new lang_string('numminutes','',1),
-            30 => new lang_string('numseconds','',30),
-            0 => new lang_string('no')
-        );
         $items = array();
-        $items[] = new admin_setting_configselect('cachetext', new lang_string('cachetext', 'admin'), new lang_string('configcachetext', 'admin'), 60, $cachetimes);
         $items[] = new admin_setting_configselect('filteruploadedfiles', new lang_string('filteruploadedfiles', 'admin'), new lang_string('configfilteruploadedfiles', 'admin'), 0,
                 array('0' => new lang_string('none'), '1' => new lang_string('allfiles'), '2' => new lang_string('htmlfilesonly')));
         $items[] = new admin_setting_configcheckbox('filtermatchoneperpage', new lang_string('filtermatchoneperpage', 'admin'), new lang_string('configfiltermatchoneperpage', 'admin'), 0);
