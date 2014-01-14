@@ -192,10 +192,16 @@ margin-right:10px;
 }
 
 table#user-grades .quickfeedback {
-border:1px dashed #000;
-margin-left: 10px;
+    border: 1px dashed #000;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    margin-left: 10px;
 }
-.dir-rtl table#user-grades .quickfeedback { margin-left: 0; margin-right: 10px;}
+.dir-rtl table#user-grades .quickfeedback {
+    margin-left: 0;
+    margin-right: 10px;
+}
 
 .path-grade-report-grader #siteconfiglink {
 text-align:right;
@@ -265,8 +271,9 @@ border-style:solid;
 border-width:0 1px 1px;
 }
 
-.path-grade-report-grader table td.topleft {
-border-bottom:0;
+.path-grade-report-grader .left_scroller table td.topleft {
+    background-color: #fff;
+    border-bottom-color: #cecece;
 }
 
 table#user-grades td.topleft {
@@ -319,7 +326,10 @@ padding:0;
 }
 
 .path-grade-report-grader td input.text {
-border:1px solid #666;
+    border: 1px solid #666;
+    width: auto;
+    margin: 0;
+    padding: 0;
 }
 
 .path-grade-report-grader td input.submit {
@@ -578,9 +588,12 @@ background-color:#f3ead8;
     vertical-align: text-bottom;
     margin-left: .45em;
 }
-
-.path-grade-report-grader .grade_icons { margin-bottom: .3em;}
-
+.path-grade-report-grader .grade_icons {
+    margin-bottom: .3em;
+}
+.path-grade-report-grader tr.controls .grade_icons {
+    margin-bottom: 0;
+}
 .path-grade-report-grader .yui3-overlay {
     background-color: #FFEE69;
     border-color: #D4C237 #A6982B #A6982B;

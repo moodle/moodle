@@ -273,6 +273,12 @@ table#user-grades td.course {
     font-weight:700;
 }
 
+.path-grade-report-grader td input.text {
+    border: 1px solid #666;
+    width: auto;
+    margin: 0;
+    padding: 0;
+}
 .path-grade-report-grader #overDiv table {
 margin:0;
 }
@@ -343,6 +349,9 @@ table#user-grades .userpic {
 table#user-grades .quickfeedback {
     border:1px dashed #000;
     margin-left: 10px;
+    width: auto;
+    margin: 0;
+    padding: 0;
 }
 .dir-rtl table#user-grades .quickfeedback {
     margin-left: 0;
@@ -432,18 +441,9 @@ margin:10px auto 0;
     width:auto;
     vertical-align:middle;
 }
-
 .path-grade-report-grader .left_scroller {
     float:left;
     clear:none;
-    #fixed_column .heading th.header,
-    #fixed_column td,
-    #fixed_column th {
-        height: 4em;
-    }
-    #fixed_column td.controls {
-        height: 2em;
-    }
 }
 .path-grade-report-grader.dir-rtl .left_scroller {
     float: right;
@@ -452,19 +452,20 @@ margin:10px auto 0;
     width: auto;
     clear: none;
     overflow-x: scroll;
+}
 
-    tr.heading_name_row th,
-    table#user-grades td.grade {
-        height: 4em;
-    }
-    .path-grade-report-grader .left_scroller .topleft,
-    tr.avg td,
-    tr.groupavg,
-    tr.controls_row,
-    div.right_scroller tr {
-        height: 2em;
+.path-grade-report-grader {
+    div.left_scroller,
+    div.right_scroller {
+        tr, td, th {
+            height: 4.5em;
+        }
+       td.controls {
+            height: 2em;
+        }
     }
 }
+
 table#fixed_column,
 table#user-grades,
 table#fixed_column th,
@@ -510,7 +511,9 @@ table#user-grades input {
 .path-grade-report-grader .right_scroller td select {
     font-size: @fontSizeSmall;
 }
-
+.path-grade-report-grader tr.controls .grade_icons {
+    margin-bottom: 0;
+}
 .path-grade-report-grader .grade_icons img.ajax {
     float:right;
 }
