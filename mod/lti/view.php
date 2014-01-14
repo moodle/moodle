@@ -96,7 +96,13 @@ require_login($course);
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
-add_to_log($course->id, "lti", "view", "view.php?id=$cm->id", "$lti->id");
+$params = array(
+    'context' => $context,
+    'objectid' => $lti->id
+);
+$event = \mod_lti\event\course_module_viewed::create($params);
+$event->add_record_snapshot('lti', $lti);
+$event->trigger();
 
 $pagetitle = strip_tags($course->shortname.': '.format_string($lti->name));
 $PAGE->set_title($pagetitle);

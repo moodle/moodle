@@ -56,7 +56,11 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 require_login($course);
 $PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, "lti", "view all", "index.php?id=$course->id", "");
+$params = array(
+    'context' => context_course::instance($course->id)
+);
+$event = \mod_lti\event\course_module_instance_list_viewed::create($params);
+$event->trigger();
 
 $PAGE->set_url('/mod/lti/index.php', array('id' => $course->id));
 $pagetitle = strip_tags($course->shortname.': '.get_string("modulenamepluralformatted", "lti"));
