@@ -1,0 +1,10 @@
+{
+    "name": "moodle-form-passwordunmask",
+    "builds": {
+        "moodle-form-passwordunmask": {
+            "jsfiles": [
+                "passwordunmask.js"
+            ]
+        }
+    }
+}
