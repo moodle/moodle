@@ -2062,7 +2062,7 @@ function message_format_message($message, $format='', $keywords='', $class='othe
 
     return <<<TEMPLATE
 <div class='message $class'>
-    <a name="m'.{$message->id}.'"></a>
+    <a name="m{$message->id}"></a>
     <span class="message-meta"><span class="time">$time</span></span>: <span class="text">$messagetext</span>
 </div>
 TEMPLATE;
