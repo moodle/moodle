@@ -148,9 +148,6 @@ if ($scorm->lastattemptlock == 1 && $result->attemptleft == 0) {
     exit;
 }
 
-add_to_log($course->id, 'scorm', 'view', "player.php?cm=$cm->id&scoid=$sco->id", "$scorm->id", $cm->id);
-
-
 $scoidstr = '&amp;scoid='.$sco->id;
 $modestr = '&amp;mode='.$mode;
 

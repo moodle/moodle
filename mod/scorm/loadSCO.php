@@ -159,7 +159,16 @@ if (scorm_external_link($sco->launch)) {
     $result = "$CFG->wwwroot/pluginfile.php/$context->id/mod_scorm/content/$scorm->revision/$launcher";
 }
 
-add_to_log($course->id, 'scorm', 'launch', 'view.php?id='.$cm->id, $result, $cm->id);
+// Trigger a Sco launched event.
+$event = \mod_scorm\event\sco_launched::create(array(
+    'objectid' => $sco->id,
+    'context' => $context,
+    'other' => array('instanceid' => $scorm->id, 'loadedcontent' => $result)
+));
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('scorm', $scorm);
+$event->add_record_snapshot('scorm_scoes', $sco);
+$event->trigger();
 
 header('Content-Type: text/html; charset=UTF-8');
 
