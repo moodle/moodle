@@ -667,6 +667,10 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_extraallowedsettings = array('logsql', 'dblogerror');
 //
+// You can make behat save a screenshot when a scenario fails.
+// Example:
+//   $CFG->behat_screenshots_path = '/my/path/to/save/screenshots';
+//
 //=========================================================================
 // 12. DEVELOPER DATA GENERATOR
 //=========================================================================
