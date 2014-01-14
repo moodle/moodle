@@ -34,32 +34,3 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-/**
- * This function will look for the risky PHP setting register_globals
- * in order to inform about. MDL-12914
- *
- * @param object $result the environment_results object to be modified
- * @return mixed null if the test is irrelevant or environment_results object with
- *               status set to true (test passed) or false (test failed)
- */
-function php_check_register_globals($result) {
-
-/// Check for register_globals. If enabled, security warning
-    if (ini_get_bool('register_globals')) {
-        $result->status = false;
-    } else {
-        $result = null;
-    }
-
-    return $result;
-}
-
-function php_check_php533($result) {
-    if (version_compare(phpversion(), '5.3.3') < 0) {
-        $result->status = false;
-    } else {
-        $result = null;
-    }
-    return $result;
-}
