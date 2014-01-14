@@ -951,6 +951,9 @@ class lesson extends lesson_base {
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->dirroot.'/calendar/lib.php');
 
+        $cm = get_coursemodule_from_instance('lesson', $this->properties->id, $this->properties->course);
+        $context = context_module::instance($cm->id);
+
         $DB->delete_records("lesson", array("id"=>$this->properties->id));
         $DB->delete_records("lesson_pages", array("lessonid"=>$this->properties->id));
         $DB->delete_records("lesson_answers", array("lessonid"=>$this->properties->id));
@@ -965,6 +968,10 @@ class lesson extends lesson_base {
                 $event->delete();
             }
         }
+
+        // Delete files associated with this module.
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id);
 
         grade_update('mod/lesson', $this->properties->course, 'mod', 'lesson', $this->properties->id, 0, null, array('deleted'=>1));
         return true;
@@ -1819,6 +1826,12 @@ abstract class lesson_page extends lesson_base {
         $DB->delete_records("lesson_answers", array("pageid" => $this->properties->id));
         // ..and the page itself
         $DB->delete_records("lesson_pages", array("id" => $this->properties->id));
+
+        // Delete files associated with this page.
+        $cm = get_coursemodule_from_instance('lesson', $this->lesson->id, $this->lesson->course);
+        $context = context_module::instance($cm->id);
+        $fs = get_file_storage();
+        $fs->delete_area_files($context->id, 'mod_lesson', 'page_contents', $this->properties->id);
 
         // repair the hole in the linkage
         if (!$this->properties->prevpageid && !$this->properties->nextpageid) {
