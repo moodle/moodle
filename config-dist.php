@@ -654,6 +654,10 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_additionalfeatures = array('/home/developer/code/wipfeatures');
 //
+// You can make behat save a screenshot when a scenario fails.
+// Example:
+//   $CFG->behat_screenshots_path = '/my/path/to/save/screenshots';
+//
 //=========================================================================
 // 12. DEVELOPER DATA GENERATOR
 //=========================================================================

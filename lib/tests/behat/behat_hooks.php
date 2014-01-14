@@ -78,6 +78,13 @@ class behat_hooks extends behat_base {
     protected static $currentstepexception = null;
 
     /**
+     * If we are saving screenshots on failures we should use the same parent dir during a run.
+     *
+     * @var The parent dir name
+     */
+    protected static $screenshotsdirname = false;
+
+    /**
      * Gives access to moodle codebase, ensures all is ready and sets up the test lock.
      *
      * Includes config.php to use moodle codebase with $CFG->behat_*
@@ -133,6 +140,10 @@ class behat_hooks extends behat_base {
         if (!empty($CFG->behat_restart_browser_after)) {
             // Store the initial browser session opening.
             self::$lastbrowsersessionstart = time();
+        }
+
+        if (!empty($CFG->behat_screenshots_path) && !is_writable($CFG->behat_screenshots_path)) {
+            throw new Exception('You set $CFG->behat_screenshots_path to a non-writable directory');
         }
     }
 
@@ -258,6 +269,13 @@ class behat_hooks extends behat_base {
      * @AfterStep @javascript
      */
     public function after_step_javascript($event) {
+        global $CFG;
+
+        // Save a screenshot if the step failed.
+        if (!empty($CFG->behat_screenshots_path) &&
+                $event->getResult() === StepEvent::FAILED) {
+            $this->take_screenshot($event);
+        }
 
         try {
             $this->wait_for_pending_js();
@@ -276,6 +294,52 @@ class behat_hooks extends behat_base {
         } catch (Exception $e) {
             self::$currentstepexception = $e;
         }
+    }
+
+    /**
+     * Getter for self::$screenshotsdirname
+     *
+     * @return string
+     */
+    protected function get_run_screenshots_dir() {
+        return self::$screenshotsdirname;
+    }
+
+    /**
+     * Take screenshot when a step fails.
+     *
+     * @throws Exception
+     * @param StepEvent $event
+     */
+    protected function take_screenshot(StepEvent $event) {
+        global $CFG;
+
+        // Goutte can't save screenshots.
+        if (!$this->running_javascript()) {
+            return false;
+        }
+
+        // All the run screenshots in the same parent dir.
+        if (!$screenshotsdirname = self::get_run_screenshots_dir()) {
+            $screenshotsdirname = self::$screenshotsdirname = date('Y-m-d_Hi');
+
+            $dir = $CFG->behat_screenshots_path . DIRECTORY_SEPARATOR . $screenshotsdirname;
+
+            if (!mkdir($dir, $CFG->directorypermissions, true)) {
+                // It shouldn't, we already checked that the directory is writable.
+                throw new Exception('No directories can be created inside $CFG->behat_screenshots_path, check the directory permissions.');
+            }
+        } else {
+            // We will always need to know the full path.
+            $dir = $CFG->behat_screenshots_path . DIRECTORY_SEPARATOR . $screenshotsdirname;
+        }
+
+        // The scenario title + the failed step text.
+        // We want a i-am-the-scenario-title_i-am-the-failed-step.png format.
+        $filename = $event->getStep()->getParent()->getTitle() . '_' . $event->getStep()->getText();
+        $filename = preg_replace('/([^a-zA-Z0-9\_]+)/', '-', $filename) . '.png';
+
+        $this->saveScreenshot($filename, $dir);
     }
 
     /**
