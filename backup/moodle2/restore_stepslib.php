@@ -2223,6 +2223,7 @@ class restore_calendarevents_structure_step extends restore_structure_step {
         $result = $DB->record_exists_sql($sql, $arg);
         if (empty($result)) {
             $newitemid = $DB->insert_record('event', $params);
+            $this->set_mapping('event', $oldid, $newitemid);
             $this->set_mapping('event_description', $oldid, $newitemid, $restorefiles);
         }
 
