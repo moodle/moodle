@@ -10,8 +10,8 @@ Feature: Manage contacts
       | user1 | User | One | one@asd.com |
       | user2 | User | Two | two@asd.com |
     And I log in as "user1"
-    And I send "Message 1 from user1 to user2" message to "user2"
-    And I send "Message 2 from user1 to user2" message to "user2"
+    And I send "Message 1 from user1 to user2" message to "User Two" user
+    And I send "Message 2 from user1 to user2" message to "User Two" user
     And I expand "My profile" node
     And I click on "Messages" "link" in the "Navigation" "block"
     And I fill in "Search people and messages" with "User Two"

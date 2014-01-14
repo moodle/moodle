@@ -60,16 +60,7 @@ class behat_deprecated extends behat_base {
             '" in the "' . $this->escape($tablerowtext) . '" "table_row"';
         $this->deprecated_message($alternative);
 
-        // The table row container.
-        $nocontainerexception = new ElementNotFoundException($this->getSession(), '"' . $tablerowtext . '" row text ');
-        $tablerowtext = $this->getSession()->getSelectorsHandler()->xpathLiteral($tablerowtext);
-        $rownode = $this->find('xpath', "//tr[contains(., $tablerowtext)]", $nocontainerexception);
-
-        // Looking for the element DOM node inside the specified row.
-        list($selector, $locator) = $this->transform_selector($selectortype, $element);
-        $elementnode = $this->find($selector, $locator, false, $rownode);
-        $this->ensure_element_is_visible($elementnode);
-        $elementnode->click();
+        return new Given($alternative);
     }
 
     /**
@@ -231,6 +222,84 @@ class behat_deprecated extends behat_base {
                 $this->escape($filepickerelement) . '" filemanager';
         $this->deprecated_message($alternative);
         return array(new Given($alternative));
+    }
+
+    /**
+     * Sends a message to the specified user from the logged user.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_message::i_send_message_to_user()
+     *
+     * @Given /^I send "(?P<message_contents_string>(?:[^"]|\\")*)" message to "(?P<username_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException
+     * @param string $messagecontent
+     * @param string $tousername
+     */
+    public function i_send_message_to_user($messagecontent, $tousername) {
+
+        global $DB;
+
+        // Runs by CLI, same PHP process that created the user.
+        $touser = $DB->get_record('user', array('username' => $tousername));
+        if (!$touser) {
+            throw new ElementNotFoundException($this->getSession(), '"' . $tousername . '" ');
+        }
+        $tofullname = fullname($touser);
+
+        $alternative = 'I send "' . $this->escape($messagecontent) . '" message to "' . $tofullname . '" user';
+        $this->deprecated_message($alternative);
+        return new Given($alternative);
+    }
+
+    /**
+     * Adds the user to the specified cohort.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_cohort::i_add_user_to_cohort_members()
+     *
+     * @Given /^I add "(?P<user_username_string>(?:[^"]|\\")*)" user to "(?P<cohort_idnumber_string>(?:[^"]|\\")*)" cohort$/
+     * @param string $username
+     * @param string $cohortidnumber
+     */
+    public function i_add_user_to_cohort($username, $cohortidnumber) {
+        global $DB;
+
+        // The user was created by the data generator, executed by the same PHP process that is
+        // running this step, not by any Selenium action.
+        $user = $DB->get_record('user', array('username' => $username));
+        $userlocator = $user->firstname . ' ' . $user->lastname . ' (' . $user->email . ')';
+
+        $alternative = 'I add "' . $this->escape($userlocator) .
+            '" user to "' . $this->escape($cohortidnumber) . '" cohort members';
+        $this->deprecated_message($alternative);
+
+        return new Given($alternative);
+    }
+
+    /**
+     * Add the specified user to the group. You should be in the groups page when running this step.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_groups::i_add_user_to_group_members()
+     *
+     * @Given /^I add "(?P<username_string>(?:[^"]|\\")*)" user to "(?P<group_name_string>(?:[^"]|\\")*)" group$/
+     * @param string $username
+     * @param string $groupname
+     */
+    public function i_add_user_to_group($username, $groupname) {
+        global $DB;
+
+        $user = $DB->get_record('user', array('username' => $username));
+        $userfullname = fullname($user);
+
+        $alternative = 'I add "' . $this->escape($userfullname) .
+            '" user to "' . $this->escape($groupname) . '" group members';
+        $this->deprecated_message($alternative);
+
+        return new Given($alternative);
     }
 
     /**

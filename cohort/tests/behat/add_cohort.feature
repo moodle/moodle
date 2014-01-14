@@ -35,8 +35,8 @@ Feature: Add cohorts of users
 
   @javascript
   Scenario: Add users to a cohort selecting them from the system users list
-    When I add "user1" user to "333" cohort
-    And I add "user2" user to "333" cohort
+    When I add "First User (first@user.com)" user to "333" cohort members
+    And I add "Second User (second@user.com)" user to "333" cohort members
     Then I should see "2" in the "#cohorts" "css_element"
     And I follow "Assign"
     And the "Current users" select box should contain "First User (first@user.com)"
