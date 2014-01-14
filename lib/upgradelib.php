@@ -2077,8 +2077,12 @@ function upgrade_grade_item_fix_sortorder() {
     foreach($rs as $duplicate) {
         $DB->execute("UPDATE {grade_items}
                          SET sortorder = sortorder + 1
-                       WHERE courseid = :courseid AND sortorder >= :sortorder AND id > :id",
-            array('courseid' => $duplicate->courseid, 'sortorder' =>$duplicate->sortorder, 'id' => $duplicate->id));
+                       WHERE courseid = :courseid AND
+                       (sortorder > :sortorder OR (sortorder = :sortorder2 AND id > :id))",
+            array('courseid' => $duplicate->courseid,
+                'sortorder' => $duplicate->sortorder,
+                'sortorder2' => $duplicate->sortorder,
+                'id' => $duplicate->id));
     }
     $rs->close();
 

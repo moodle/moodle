@@ -52,48 +52,39 @@ class upgradelib_test extends advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        // Create fake items in course1, with sortorder duplicates.
-        $course1 = $this->getDataGenerator()->create_course();
-        $course1item = array();
-        $course1item[0] = $this->insert_fake_grade_item_sortorder($course1->id, 1);
+        // The purpose of this test is to make sure that after upgrade script
+        // there is no duplicates in the field grade_items.sortorder (for each course)
+        // and the result of query "SELECT id FROM grade_items WHERE courseid=? ORDER BY sortorder, id" does not change.
+        $sequencesql = 'SELECT id FROM {grade_items} WHERE courseid=? ORDER BY sortorder, id';
 
-        $course1item[1] = $this->insert_fake_grade_item_sortorder($course1->id, 2);
-        $course1item[2] = $this->insert_fake_grade_item_sortorder($course1->id, 2);
+        // Each set is used for filling the db with fake data and will be representing the result of query:
+        // "SELECT sortorder from {grade_items} WHERE courseid=? ORDER BY id".
+        $testsets = array(
+            // Items that need no action.
+            array(1,2,3),
+            array(5,6,7),
+            array(7,6,1,3,2,5),
+            // Items with sortorder duplicates
+            array(1,2,2,3,3,4,5),
+            // Only one sortorder duplicate.
+            array(1,1),
+            array(3,3),
+            // Non-sequential sortorders with one or multiple duplicates.
+            array(3,3,7,5,6,6,9,10,8,3),
+            array(7,7,3),
+            array(3,4,5,3,5,4,7,1)
+        );
+        $origsequences = array();
 
-        $course1item[3] = $this->insert_fake_grade_item_sortorder($course1->id, 3);
-        $course1item[4] = $this->insert_fake_grade_item_sortorder($course1->id, 3);
-
-        $course1item[5] = $this->insert_fake_grade_item_sortorder($course1->id, 4);
-        $course1item[6] = $this->insert_fake_grade_item_sortorder($course1->id, 5);
-
-        // Create fake items in course2 which need no action.
-        $course2 = $this->getDataGenerator()->create_course();
-        $course2item = array();
-        $course2item[0] = $this->insert_fake_grade_item_sortorder($course2->id, 1);
-        $course2item[1] = $this->insert_fake_grade_item_sortorder($course2->id, 2);
-        $course2item[2] = $this->insert_fake_grade_item_sortorder($course2->id, 3);
-
-        // Create a new course which only has sortorder duplicates.
-        $course3 = $this->getDataGenerator()->create_course();
-        $course3item = array();
-        $course3item[0] = $this->insert_fake_grade_item_sortorder($course3->id, 1);
-        $course3item[1] = $this->insert_fake_grade_item_sortorder($course3->id, 1);
-
-        // A course with non-sequential sortorders and duplicates.
-        $course4 = $this->getDataGenerator()->create_course();
-        $course4item = array();
-        $course4item[0] = $this->insert_fake_grade_item_sortorder($course4->id, 3);
-        $course4item[1] = $this->insert_fake_grade_item_sortorder($course4->id, 3);
-
-        $course4item[2] = $this->insert_fake_grade_item_sortorder($course4->id, 5);
-        $course4item[3] = $this->insert_fake_grade_item_sortorder($course4->id, 6);
-        $course4item[4] = $this->insert_fake_grade_item_sortorder($course4->id, 6);
-
-        $course4item[5] = $this->insert_fake_grade_item_sortorder($course4->id, 9);
-        $course4item[6] = $this->insert_fake_grade_item_sortorder($course4->id, 10);
-        // Create some items with non-sequential id and sortorder relationship.
-        $course4item[7] = $this->insert_fake_grade_item_sortorder($course4->id, 7);
-        $course4item[8] = $this->insert_fake_grade_item_sortorder($course4->id, 8);
+        // Generate the data and remember the initial sequence or items.
+        foreach ($testsets as $testset) {
+            $course = $this->getDataGenerator()->create_course();
+            foreach ($testset as $sortorder) {
+                $this->insert_fake_grade_item_sortorder($course->id, $sortorder);
+            }
+            $DB->get_records('grade_items');
+            $origsequences[$course->id] = $DB->get_fieldset_sql($sequencesql, array($course->id));
+        }
 
         $duplicatedetectionsql = "SELECT courseid, sortorder
                                     FROM {grade_items}
@@ -111,86 +102,18 @@ class upgradelib_test extends advanced_testcase {
         $dupes = $DB->record_exists_sql($duplicatedetectionsql);
         $this->assertFalse($dupes);
 
-        // Load all grade items for ease.
-        $afterfixgradeitems = $DB->get_records('grade_items');
-
-        // Verify that the duplicate sortorders have been removed from course1.
-        $this->assertNotEquals($afterfixgradeitems[$course1item[1]->id]->sortorder,
-            $afterfixgradeitems[$course1item[2]->id]->sortorder);
-        $this->assertNotEquals($afterfixgradeitems[$course1item[3]->id]->sortorder,
-            $afterfixgradeitems[$course1item[4]->id]->sortorder);
-        // Verify that the order has been respected in course1.
-        $this->assertGreaterThan($afterfixgradeitems[$course1item[0]->id]->sortorder,
-            $afterfixgradeitems[$course1item[1]->id]->sortorder);
-        $this->assertGreaterThan($afterfixgradeitems[$course1item[2]->id]->sortorder,
-            $afterfixgradeitems[$course1item[3]->id]->sortorder);
-        $this->assertGreaterThan($afterfixgradeitems[$course1item[3]->id]->sortorder,
-            $afterfixgradeitems[$course1item[5]->id]->sortorder);
-        $this->assertGreaterThan($afterfixgradeitems[$course1item[5]->id]->sortorder,
-            $afterfixgradeitems[$course1item[6]->id]->sortorder);
-
-        // Verify that no other fields have been modified in course1.
-        foreach ($course1item as $originalitem) {
-            $newitem = $afterfixgradeitems[$originalitem->id];
-
-            // Ignore changes to sortorder.
-            unset($originalitem->sortorder);
-            unset($newitem->sortorder);
-
-            $this->assertEquals($originalitem, $newitem);
-        }
-
-        // Verify that course2 items are completely unmodified.
-        foreach ($course2item as $originalitem) {
-            $newitem = $afterfixgradeitems[$originalitem->id];
-            $this->assertEquals($originalitem, $newitem);
-        }
-
-        // Verify that the duplicates in course3 have been removed.
-        $this->assertNotEquals($afterfixgradeitems[$course3item[0]->id]->sortorder,
-            $afterfixgradeitems[$course3item[1]->id]->sortorder);
-
-        // Verify that no other fields in course3 have been modified.
-        foreach ($course3item as $originalitem) {
-            $newitem = $afterfixgradeitems[$originalitem->id];
-
-            // Ignore changes to sortorder.
-            unset($originalitem->sortorder);
-            unset($newitem->sortorder);
-
-            $this->assertEquals($originalitem, $newitem);
-        }
-
-        // Verify that the duplicates in course4 have been removed.
-        $this->assertNotEquals($afterfixgradeitems[$course4item[0]->id]->sortorder,
-            $afterfixgradeitems[$course4item[1]->id]->sortorder);
-        $this->assertNotEquals($afterfixgradeitems[$course4item[3]->id]->sortorder,
-            $afterfixgradeitems[$course4item[4]->id]->sortorder);
-
-        // Verify that the order has been respected in course4.
-        $this->assertGreaterThan($afterfixgradeitems[$course4item[1]->id]->sortorder,
-            $afterfixgradeitems[$course4item[2]->id]->sortorder, "2 grater than 1");
-        $this->assertGreaterThan($afterfixgradeitems[$course4item[4]->id]->sortorder,
-            $afterfixgradeitems[$course4item[5]->id]->sortorder);
-        $this->assertGreaterThan($afterfixgradeitems[$course4item[5]->id]->sortorder,
-            $afterfixgradeitems[$course4item[6]->id]->sortorder);
-
-        // Check the items created with non-sequential id and sortorder relationship
-        // are converted correclty.
-        $this->assertGreaterThan($afterfixgradeitems[$course4item[7]->id]->sortorder,
-            $afterfixgradeitems[$course4item[5]->id]->sortorder);
-        $this->assertGreaterThan($afterfixgradeitems[$course4item[7]->id]->sortorder,
-            $afterfixgradeitems[$course4item[8]->id]->sortorder);
-
-        // Verify that no other fields in course4 have been modified.
-        foreach ($course4item as $originalitem) {
-            $newitem = $afterfixgradeitems[$originalitem->id];
-
-            // Ignore changes to sortorder.
-            unset($originalitem->sortorder);
-            unset($newitem->sortorder);
-
-            $this->assertEquals($originalitem, $newitem);
+        // Verify that sequences are exactly the same as they were before upgrade script.
+        $idx = 0;
+        foreach ($origsequences as $courseid => $origsequence) {
+            if (count(($testsets[$idx])) == count(array_unique($testsets[$idx]))) {
+                // If there were no duplicates for this course verify that sortorders are not modified.
+                $newsortorders = $DB->get_fieldset_sql("SELECT sortorder from {grade_items} WHERE courseid=? ORDER BY id", array($courseid));
+                $this->assertEquals($testsets[$idx], $newsortorders);
+            }
+            $newsequence = $DB->get_fieldset_sql($sequencesql, array($courseid));
+            $this->assertEquals($origsequence, $newsequence,
+                    "Sequences do not match for test set $idx : ".join(',', $testsets[$idx]));
+            $idx++;
         }
     }
 
