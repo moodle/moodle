@@ -2460,8 +2460,11 @@ function get_default_capabilities($archetype) {
  * Reset role capabilities to default according to selected role archetype.
  * If no archetype selected, removes all capabilities.
  *
- * @param int $roleid
- * @return void
+ * This applies to capabilities that are assigned to the role (that you could
+ * edit in the 'define roles' interface), and not to any capability overrides
+ * in different locations.
+ *
+ * @param int $roleid ID of role to reset capabilities for
  */
 function reset_role_capabilities($roleid) {
     global $DB;
@@ -2471,11 +2474,15 @@ function reset_role_capabilities($roleid) {
 
     $systemcontext = context_system::instance();
 
-    $DB->delete_records('role_capabilities', array('roleid'=>$roleid));
+    $DB->delete_records('role_capabilities',
+            array('roleid' => $roleid, 'contextid' => $systemcontext->id));
 
     foreach($defaultcaps as $cap=>$permission) {
         assign_capability($cap, $permission, $roleid, $systemcontext->id);
     }
+
+    // Mark the system context dirty.
+    context_system::instance()->mark_dirty();
 }
 
 /**
