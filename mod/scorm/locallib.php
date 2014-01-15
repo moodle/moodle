@@ -1245,7 +1245,7 @@ function scorm_get_attempt_count($userid, $scorm, $returnobjects = false, $ignor
         $params = array($userid, $scorm->id);
         $sql = "SELECT COUNT(DISTINCT attempt)
                   FROM {scorm_scoes_track}
-                 WHERE 'userid' = ? AND 'scormid' = ?";
+                 WHERE userid = ? AND scormid = ?";
         if ($ignoremissingcompletion) { // Exclude attempts that don't have the completion element requested.
             $sql .= ' AND element = ?';
             $params[] = $element;
