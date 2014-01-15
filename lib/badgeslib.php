@@ -331,10 +331,11 @@ class badge {
      */
     public function has_awards() {
         global $DB;
-        if ($DB->record_exists('badge_issued', array('badgeid' => $this->id))) {
-            return true;
-        }
-        return false;
+        $awarded = $DB->record_exists_sql('SELECT b.uniquehash
+                    FROM {badge_issued} b INNER JOIN {user} u ON b.userid = u.id
+                    WHERE b.badgeid = :badgeid AND u.deleted = 0', array('badgeid' => $this->id));
+
+        return $awarded;
     }
 
     /**
@@ -349,7 +350,7 @@ class badge {
                 'SELECT b.userid, b.dateissued, b.uniquehash, u.firstname, u.lastname
                     FROM {badge_issued} b INNER JOIN {user} u
                         ON b.userid = u.id
-                    WHERE b.badgeid = :badgeid', array('badgeid' => $this->id));
+                    WHERE b.badgeid = :badgeid AND u.deleted = 0', array('badgeid' => $this->id));
 
         return $awards;
     }
@@ -774,7 +775,9 @@ function badges_get_badges($type, $courseid = 0, $sort = '', $dir = '', $page = 
             $badges[$r->id]->dateissued = $r->dateissued;
             $badges[$r->id]->uniquehash = $r->uniquehash;
         } else {
-            $badges[$r->id]->awards = $DB->count_records('badge_issued', array('badgeid' => $badge->id));
+            $badges[$r->id]->awards = $DB->count_records_sql('SELECT COUNT(b.userid)
+                                         FROM {badge_issued} b INNER JOIN {user} u ON b.userid = u.id
+                                         WHERE b.badgeid = :badgeid AND u.deleted = 0', array('badgeid' => $badge->id));
             $badges[$r->id]->statstring = $badge->get_status_name();
         }
     }
