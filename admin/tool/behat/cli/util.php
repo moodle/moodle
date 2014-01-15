@@ -183,8 +183,8 @@ if ($options['install']) {
     mtrace("Acceptance tests site dropped");
 } else if ($options['enable']) {
     behat_util::start_test_mode();
-    $runtestscommand = behat_command::get_behat_command() . ' --config '
-        . $CFG->behat_dataroot . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'behat.yml';
+    $runtestscommand = behat_command::get_behat_command(true) .
+        ' --config ' . behat_config_manager::get_behat_cli_config_filepath();
     mtrace("Acceptance tests environment enabled, to run the tests use:\n " . $runtestscommand);
 } else if ($options['disable']) {
     behat_util::stop_test_mode();
