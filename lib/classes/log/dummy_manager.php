@@ -28,7 +28,7 @@ namespace core\log;
 defined('MOODLE_INTERNAL') || die();
 
 class dummy_manager implements manager {
-    public function get_readers(\context $context) {
+    public function get_readers() {
         return array();
     }
     public function dispose() {

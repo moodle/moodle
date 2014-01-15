@@ -36,13 +36,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 interface manager {
     /**
-     * Return list of available log readers in given
-     * context for current user.
+     * Return list of available log readers.
      *
-     * @param \context $context
      * @return \core\log\reader[]
      */
-    public function get_readers(\context $context);
+    public function get_readers();
 
     /**
      * Dispose all initialised stores.

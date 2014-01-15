@@ -94,16 +94,13 @@ class manager implements \core\log\manager {
      *
      * This way the reports find out available sources of data.
      *
-     * @param \context $context
      * @return \core\log\reader[] list of available log data readers
      */
-    public function get_readers(\context $context) {
+    public function get_readers() {
         $this->init();
         $return = array();
         foreach ($this->readers as $plugin => $reader) {
-            if ($reader->can_access($context)) {
-                $return[$plugin] = $reader;
-            }
+            $return[$plugin] = $reader;
         }
         return $return;
     }
