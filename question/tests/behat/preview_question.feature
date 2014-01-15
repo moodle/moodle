@@ -18,13 +18,13 @@ Feature: A teacher can preview questions in the question bank
     And I log in as "teacher1"
     And I follow "Course 1"
     And I add a "Numerical" question filling the form with:
-      | Question name | Test question name |
+      | Question name | Test question to be previewed |
       | Question text | How much is 1 + 1 |
       | answer[0] | 2 |
       | fraction[0] | 100% |
       | answer[1] | * |
       | fraction[1] | None |
-    When I click on "Preview" "link" in the "Test question name" "table_row"
+    When I click on "Preview" "link" in the "Test question to be previewed" "table_row"
     And I switch to "questionpreview" window
     And I fill the moodle form with:
       | Whether correct | Shown |
