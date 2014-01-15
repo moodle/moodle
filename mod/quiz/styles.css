@@ -694,7 +694,6 @@ table#categoryquestions {
 }
 
 #page-mod-quiz-edit .reorder .questioncontentcontainer {
-    position: relative;
     overflow: hidden;
     white-space: nowrap;
 }
@@ -821,7 +820,7 @@ table#categoryquestions {
     line-height: 1em;
     max-width: 30%;
     position: absolute;
-    right: 50px;
+    right: 60px;
     border-radius: 0.2em;
     border-bottom-left-radius: 0;
     border-top-left-radius: 0;
@@ -1291,7 +1290,7 @@ bank window's title is prominent enough*/
     float: right;
 }
 #page-mod-quiz-edit.dir-rtl div.question div.content div.qorder {
-    left: 50px;
+    left: 60px;
     right: auto;
 }
 #page-mod-quiz-edit.dir-rtl .reorder div.question div.content {
