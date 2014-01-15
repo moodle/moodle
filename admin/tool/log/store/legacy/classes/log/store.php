@@ -27,6 +27,14 @@ namespace logstore_legacy\log;
 defined('MOODLE_INTERNAL') || die();
 
 class store implements \tool_log\log\store, \core\log\reader {
+    /** @var array list of db fields which needs to be replaced for legacy log query */
+    protected $standardtolegacyfields = array(
+                                'timecreated' => 'time',
+                                'courseid' => 'course',
+                                'contextinstanceid' => 'cmid',
+                                'origin' => 'ip'
+                                );
+
     public function __construct(\tool_log\log\manager $manager) {
     }
 
@@ -45,18 +53,14 @@ class store implements \tool_log\log\store, \core\log\reader {
     public function get_events($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;
 
-        $selectwhere = str_replace('timecreated', 'time', $selectwhere);
-        $sort = str_replace('timecreated', 'time', $sort);
-        if (isset($params['timecreated'])) {
-            $params['time'] = $params['timecreated'];
-            unset($params['timecreated']);
-        }
-
-        $selectwhere = str_replace('courseid', 'course', $selectwhere);
-        $sort = str_replace('courseid', 'course', $sort);
-        if (isset($params['courseid'])) {
-            $params['course'] = $params['courseid'];
-            unset($params['courseid']);
+        // Replace db field names to make it compatible with legacy log.
+        foreach ($this->standardtolegacyfields as $from => $to) {
+            $selectwhere = str_replace($from, $to, $selectwhere);
+            $sort = str_replace($from, $to, $sort);
+            if (isset($params[$from])) {
+                $params[$to] = $params[$from];
+                unset($params[$from]);
+            }
         }
 
         $events = array();
@@ -77,16 +81,14 @@ class store implements \tool_log\log\store, \core\log\reader {
 
     public function get_events_count($selectwhere, array $params) {
         global $DB;
-        $selectwhere = str_replace('timecreated', 'time', $selectwhere);
-        if (isset($params['timecreated'])) {
-            $params['time'] = $params['timecreated'];
-            unset($params['timecreated']);
-        }
 
-        $selectwhere = str_replace('courseid', 'course', $selectwhere);
-        if (isset($params['courseid'])) {
-            $params['course'] = $params['courseid'];
-            unset($params['courseid']);
+        // Replace db field names to make it compatible with legacy log.
+        foreach ($this->standardtolegacyfields as $from => $to) {
+            $selectwhere = str_replace($from, $to, $selectwhere);
+            if (isset($params[$from])) {
+                $params[$to] = $params[$from];
+                unset($params[$from]);
+            }
         }
 
         try {
