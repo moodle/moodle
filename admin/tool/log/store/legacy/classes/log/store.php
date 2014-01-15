@@ -47,13 +47,25 @@ class store implements \tool_log\log\store, \core\log\reader {
 
         $selectwhere = str_replace('timecreated', 'time', $selectwhere);
         $sort = str_replace('timecreated', 'time', $sort);
+        if (isset($params['timecreated'])) {
+            $params['time'] = $params['timecreated'];
+            unset($params['timecreated']);
+        }
+
+        $selectwhere = str_replace('courseid', 'course', $selectwhere);
+        $sort = str_replace('courseid', 'course', $sort);
+        if (isset($params['courseid'])) {
+            $params['course'] = $params['courseid'];
+            unset($params['courseid']);
+        }
 
         $events = array();
+        $records = array();
 
         try {
             $records = $DB->get_records_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
         } catch (\moodle_exception $ex) {
-            debugging("error converting legacy event data", $ex->getMessage().$ex->debuginfo);
+            debugging("error converting legacy event data ". $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
         }
 
         foreach ($records as $data) {
@@ -66,10 +78,21 @@ class store implements \tool_log\log\store, \core\log\reader {
     public function get_events_count($selectwhere, array $params) {
         global $DB;
         $selectwhere = str_replace('timecreated', 'time', $selectwhere);
+        if (isset($params['timecreated'])) {
+            $params['time'] = $params['timecreated'];
+            unset($params['timecreated']);
+        }
+
+        $selectwhere = str_replace('courseid', 'course', $selectwhere);
+        if (isset($params['courseid'])) {
+            $params['course'] = $params['courseid'];
+            unset($params['courseid']);
+        }
+
         try {
             return $DB->count_records_select('log', $selectwhere, $params);
         } catch (\moodle_exception $ex) {
-            debugging("error converting legacy event data", $ex->getMessage().$ex->debuginfo);
+            debugging("error converting legacy event data ". $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
             return 0;
         }
     }
