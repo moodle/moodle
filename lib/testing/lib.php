@@ -92,6 +92,30 @@ function testing_is_cygwin() {
 }
 
 /**
+ * Returns whether a mingw CLI is running.
+ *
+ * MinGW sets $_SERVER['TERM'] to cygwin, but it
+ * can not run .bat files; this function may be useful
+ * when we need to output proposed commands to users
+ * using Windows CLI interfaces.
+ *
+ * @link http://sourceforge.net/p/mingw/bugs/1902
+ * @return bool
+ */
+function testing_is_mingw() {
+
+    if (!testing_is_cygwin()) {
+        return false;
+    }
+
+    if (!empty($_SERVER['MSYSTEM'])) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Mark empty dataroot to be used for testing.
  * @param string $dataroot  The dataroot directory
  * @param string $framework The test framework

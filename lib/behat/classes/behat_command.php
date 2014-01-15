@@ -66,10 +66,30 @@ class behat_command {
 
     /**
      * Returns the executable path
+     *
+     * Allows returning a customized command for cygwin when the
+     * command is just displayed, when using exec(), system() and
+     * friends we stay with DIRECTORY_SEPARATOR as they use the
+     * normal cmd.exe (in Windows).
+     *
+     * @param  bool $custombyterm  If the provided command should depend on the terminal where it runs
      * @return string
      */
-    public final static function get_behat_command() {
-        return 'vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'behat';
+    public final static function get_behat_command($custombyterm = false) {
+
+        $separator = DIRECTORY_SEPARATOR;
+        $exec = 'behat';
+
+        // Cygwin uses linux-style directory separators.
+        if ($custombyterm && testing_is_cygwin()) {
+            $separator = '/';
+
+            // MinGW can not execute .bat scripts.
+            if (!testing_is_mingw()) {
+                $exec = 'behat.bat';
+            }
+        }
+        return 'vendor' . $separator . 'bin' . $separator . $exec;
     }
 
     /**

@@ -144,19 +144,34 @@ class behat_config_manager {
     /**
      * Returns the behat config file path used by the steps definition list
      *
-     * Note this can only be called from web-based scripts so it will return the
-     * production dataroot not behat_dataroot. With this the steps definitions
-     * list is accessible without having to install the behat test site.
-     *
      * @return string
      */
     public static function get_steps_list_config_filepath() {
         global $USER;
 
+        // We don't cygwin-it as it is called using exec() which uses cmd.exe.
         $userdir = behat_command::get_behat_dir() . '/users/' . $USER->id;
         make_writable_directory($userdir);
 
         return $userdir . '/behat.yml';
+    }
+
+    /**
+     * Returns the behat config file path used by the behat cli command.
+     *
+     * @return string
+     */
+    public static function get_behat_cli_config_filepath() {
+        global $CFG;
+
+        $command = $CFG->behat_dataroot . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'behat.yml';
+
+        // Cygwin uses linux-style directory separators.
+        if (testing_is_cygwin()) {
+            $command = str_replace('\\', '/', $command);
+        }
+
+        return $command;
     }
 
     /**
