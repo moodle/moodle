@@ -331,10 +331,11 @@ class badge {
      */
     public function has_awards() {
         global $DB;
-        if ($DB->record_exists('badge_issued', array('badgeid' => $this->id))) {
-            return true;
-        }
-        return false;
+        $awarded = $DB->record_exists_sql('SELECT b.uniquehash
+                    FROM {badge_issued} b INNER JOIN {user} u ON b.userid = u.id
+                    WHERE b.badgeid = :badgeid AND u.deleted = 0', array('badgeid' => $this->id));
+
+        return $awarded;
     }
 
     /**
