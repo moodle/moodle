@@ -37,13 +37,13 @@ Feature: Restrict activity availability through date conditions
       | assignsubmission_file_enabled | 0 |
       | id_availablefrom_day | 31 |
       | id_availablefrom_month | 12 |
-      | id_availablefrom_year | 2050 |
+      | id_availablefrom_year | 2037 |
       | id_showavailability | 1 |
     And I press "Save and return to course"
     And I log out
     When I log in as "student1"
     And I follow "Course 1"
-    Then I should see "Available from 31 December 2050."
+    Then I should see "Available from 31 December 2037."
     And "Test assignment 1" activity should be hidden
     And I log out
 
