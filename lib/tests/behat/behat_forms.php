@@ -236,6 +236,9 @@ class behat_forms extends behat_base {
     /**
      * Checks that the form element field have the specified value.
      *
+     * NOTE: This method/step does not support all fields. Namely, multi-select ones aren't supported.
+     * @todo: MDL-43738 would try to put some better support here for that multi-select and others.
+     *
      * @Then /^the "(?P<field_string>(?:[^"]|\\")*)" field should match "(?P<value_string>(?:[^"]|\\")*)" value$/
      * @throws ExpectationException
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -288,20 +291,41 @@ class behat_forms extends behat_base {
      * @throws ExpectationException
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $select The select element name
-     * @param string $option The option text/value
+     * @param string $option The option text/value. Plain value or comma separated
+     *                       values if multiple. Commas in multiple values escaped with backslash.
      */
     public function the_select_box_should_contain($select, $option) {
 
         $selectnode = $this->find_field($select);
+        $multiple = $selectnode->hasAttribute('multiple');
+        $optionsarr = array(); // Array of passed value/text options to test.
 
-        $regex = '/' . preg_quote($option, '/') . '/ui';
-        if (!preg_match($regex, $selectnode->getText())) {
-            throw new ExpectationException(
-                'The select box "' . $select . '" does not contains the option "' . $option . '"',
-                $this->getSession()
-            );
+        if ($multiple) {
+            // Can pass multiple comma separated, with valuable commas escaped with backslash.
+            foreach (preg_replace('/\\\,/', ',',  preg_split('/(?<!\\\),/', $option)) as $opt) {
+                $optionsarr[] = trim($opt);
+            }
+        } else {
+            // Only one option has been passed.
+            $optionsarr[] = trim($option);
         }
 
+        // Now get all the values and texts in the select.
+        $options = $selectnode->findAll('xpath', '//option');
+        $values = array();
+        foreach ($options as $opt) {
+            $values[trim($opt->getValue())] = trim($opt->getText());
+        }
+
+        foreach ($optionsarr as $opt) {
+            // Verify every option is a valid text or value.
+            if (!in_array($opt, $values) && !array_key_exists($opt, $values)) {
+                throw new ExpectationException(
+                    'The select box "' . $select . '" does not contain the option "' . $opt . '"',
+                    $this->getSession()
+                );
+            }
+        }
     }
 
     /**
@@ -311,18 +335,148 @@ class behat_forms extends behat_base {
      * @throws ExpectationException
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $select The select element name
-     * @param string $option The option text/value
+     * @param string $option The option text/value. Plain value or comma separated
+     *                       values if multiple. Commas in multiple values escaped with backslash.
      */
     public function the_select_box_should_not_contain($select, $option) {
 
         $selectnode = $this->find_field($select);
+        $multiple = $selectnode->hasAttribute('multiple');
+        $optionsarr = array(); // Array of passed value/text options to test.
 
-        $regex = '/' . preg_quote($option, '/') . '/ui';
-        if (preg_match($regex, $selectnode->getText())) {
-            throw new ExpectationException(
-                'The select box "' . $select . '" contains the option "' . $option . '"',
-                $this->getSession()
-            );
+        if ($multiple) {
+            // Can pass multiple comma separated, with valuable commas escaped with backslash.
+            foreach (preg_replace('/\\\,/', ',',  preg_split('/(?<!\\\),/', $option)) as $opt) {
+                $optionsarr[] = trim($opt);
+            }
+        } else {
+            // Only one option has been passed.
+            $optionsarr[] = trim($option);
+        }
+
+        // Now get all the values and texts in the select.
+        $options = $selectnode->findAll('xpath', '//option');
+        $values = array();
+        foreach ($options as $opt) {
+            $values[trim($opt->getValue())] = trim($opt->getText());
+        }
+
+        foreach ($optionsarr as $opt) {
+            // Verify every option is not a valid text or value.
+            if (in_array($opt, $values) || array_key_exists($opt, $values)) {
+                throw new ExpectationException(
+                    'The select box "' . $select . '" contains the option "' . $opt . '"',
+                    $this->getSession()
+                );
+            }
+        }
+    }
+
+    /**
+     * Checks, that given select box contains the specified option selected.
+     *
+     * @Then /^the "(?P<select_string>(?:[^"]|\\")*)" select box should contain "(?P<option_string>(?:[^"]|\\")*)" selected$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $select The select element name
+     * @param string $option The option text. Plain value or comma separated
+     *                       values if multiple. Commas in multiple values escaped with backslash.
+     */
+    public function the_select_box_should_contain_selected($select, $option) {
+
+        $selectnode = $this->find_field($select);
+        $multiple = $selectnode->hasAttribute('multiple');
+        $optionsarr = array(); // Array of passed text options to test.
+        $selectedarr = array(); // Array of selected text options.
+
+        if ($multiple) {
+            // Can pass multiple comma separated, with valuable commas escaped with backslash.
+            foreach (preg_replace('/\\\,/', ',',  preg_split('/(?<!\\\),/', $option)) as $opt) {
+                $optionsarr[] = trim($opt);
+            }
+        } else {
+            // Only one option has been passed.
+            $optionsarr[] = trim($option);
+        }
+
+        // Get currently selected texts.
+        $field = behat_field_manager::get_form_field($selectnode, $this->getSession());
+        $value = $field->get_value();
+
+        if ($multiple) {
+            // Can be multiple comma separated, with valuable commas escaped with backslash.
+            foreach (preg_replace('/\\\,/', ',',  preg_split('/(?<!\\\),/', $value)) as $val) {
+                $selectedarr[] = trim($val);
+            }
+        } else {
+            // Only one text can be selected.
+            $selectedarr[] = trim($value);
+        }
+
+        // Everything normalized, Verify every option is a selected one.
+        foreach ($optionsarr as $opt) {
+            if (!in_array($opt, $selectedarr)) {
+                throw new ExpectationException(
+                    'The select box "' . $select . '" does not contain the option "' . $opt . '"' . ' selected',
+                    $this->getSession()
+                );
+            }
+        }
+    }
+
+    /**
+     * Checks, that given select box contains the specified option not selected.
+     *
+     * @Then /^the "(?P<select_string>(?:[^"]|\\")*)" select box should contain "(?P<option_string>(?:[^"]|\\")*)" not selected$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $select The select element name
+     * @param string $option The option text. Plain value or comma separated
+     *                       values if multiple. Commas in multiple values escaped with backslash.
+     */
+    public function the_select_box_should_contain_not_selected($select, $option) {
+
+        $selectnode = $this->find_field($select);
+        $multiple = $selectnode->hasAttribute('multiple');
+        $optionsarr = array(); // Array of passed text options to test.
+        $selectedarr = array(); // Array of selected text options.
+
+        // First of all, the option(s) must exist, delegate it. Plain and raw.
+        $this->the_select_box_should_contain($select, $option);
+
+        if ($multiple) {
+            // Can pass multiple comma separated, with valuable commas escaped with backslash.
+            foreach (preg_replace('/\\\,/', ',',  preg_split('/(?<!\\\),/', $option)) as $opt) {
+                $optionsarr[] = trim($opt);
+            }
+        } else {
+            // Only one option has been passed.
+            $optionsarr[] = trim($option);
+        }
+
+        // Get currently selected texts.
+        $field = behat_field_manager::get_form_field($selectnode, $this->getSession());
+        $value = $field->get_value();
+
+        if ($multiple) {
+            // Can be multiple comma separated, with valuable commas escaped with backslash.
+            foreach (preg_replace('/\\\,/', ',',  preg_split('/(?<!\\\),/', $value)) as $val) {
+                $selectedarr[] = trim($val);
+            }
+        } else {
+            // Only one text can be selected.
+            $selectedarr[] = trim($value);
+        }
+
+        // Everything normalized, Verify every option is not a selected one.
+        foreach ($optionsarr as $opt) {
+            // Now, verify it's not selected.
+            if (in_array($opt, $selectedarr)) {
+                throw new ExpectationException(
+                    'The select box "' . $select . '" contains the option "' . $opt . '"' . ' selected',
+                    $this->getSession()
+                );
+            }
         }
     }
 

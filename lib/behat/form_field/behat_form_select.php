@@ -38,13 +38,13 @@ require_once(__DIR__  . '/behat_form_field.php');
 class behat_form_select extends behat_form_field {
 
     /**
-     * Sets the value of a single select.
+     * Sets the value(s) of a select element.
      *
      * Seems an easy select, but there are lots of combinations
      * of browsers and operative systems and each one manages the
-     * autosubmits and the multiple option selects in a diferent way.
+     * autosubmits and the multiple option selects in a different way.
      *
-     * @param string $value
+     * @param string $value plain value or comma separated values if multiple. Commas in values escaped with backslash.
      * @return void
      */
     public function set_value($value) {
@@ -61,8 +61,26 @@ class behat_form_select extends behat_form_field {
             $currentelementid = $this->get_internal_field_id();
         }
 
-        // Here we select an option.
-        $this->field->selectOption($value);
+        // Is the select multiple?
+        $multiple = $this->field->hasAttribute('multiple');
+
+        // By default, assume the passed value is a non-multiple option.
+        $options = array(trim($value));
+
+        // Here we select the option(s).
+        if ($multiple) {
+            // Split and decode values. Comma separated list of values allowed. With valuable commas escaped with backslash.
+            $options = preg_replace('/\\\,/', ',',  preg_split('/(?<!\\\),/', $value));
+            // This is a multiple select, let's pass the multiple flag after first option.
+            $afterfirstoption = false;
+            foreach ($options as $option) {
+                $this->field->selectOption(trim($option), $afterfirstoption);
+                $afterfirstoption = true;
+            }
+        } else {
+            // This is a single select, let's pass the last one specified.
+            $this->field->selectOption(end($options));
+        }
 
         // With JS disabled this is enough and we finish here.
         if (!$this->running_javascript()) {
@@ -87,11 +105,13 @@ class behat_form_select extends behat_form_field {
             return;
         }
 
-        // We also check that the option is still there. We neither wait.
-        $valueliteral = $this->session->getSelectorsHandler()->xpathLiteral($value);
-        $optionxpath = $selectxpath . "/descendant::option[(./@value=$valueliteral or normalize-space(.)=$valueliteral)]";
-        if (!$this->session->getDriver()->find($optionxpath)) {
-            return;
+        // We also check that the option(s) are still there. We neither wait.
+        foreach ($options as $option) {
+            $valueliteral = $this->session->getSelectorsHandler()->xpathLiteral(trim($option));
+            $optionxpath = $selectxpath . "/descendant::option[(./@value=$valueliteral or normalize-space(.)=$valueliteral)]";
+            if (!$this->session->getDriver()->find($optionxpath)) {
+                return;
+            }
         }
 
         // Wrapped in try & catch as the element may disappear if an AJAX request was submitted.
@@ -150,9 +170,11 @@ class behat_form_select extends behat_form_field {
             // Wrapped in a try & catch as we can fall into race conditions
             // and the element may not be there.
             try {
-                // Repeating the select as some drivers (chrome that I know) are moving
+                // Repeating the select(s) as some drivers (chrome that I know) are moving
                 // to another option after the general select field click above.
-                $this->field->selectOption($value);
+                foreach ($options as $option) {
+                    $this->field->selectOption(trim($option), true);
+                }
             } catch (Exception $e) {
                 // We continue and return as this means that the element is not there or it is not the same.
                 return;
@@ -161,12 +183,53 @@ class behat_form_select extends behat_form_field {
     }
 
     /**
-     * Returns the text of the current value.
+     * Returns the text of the currently selected options.
      *
-     * @return string
+     * @return string Comma separated if multiple options are selected. Commas in option texts escaped with backslash.
      */
     public function get_value() {
-        $selectedoption = $this->field->find('xpath', '//option[@selected="selected"]');
-        return $selectedoption->getText();
+
+        // Is the select multiple?
+        $multiple = $this->field->hasAttribute('multiple');
+
+        $selectedoptions = array(); // To accumulate found selected options.
+
+        // Selenium getValue() implementation breaks - separates - values having
+        // commas within them, so we'll be looking for options with the 'selected' attribute instead.
+        if ($this->running_javascript()) {
+            // Get all the options in the select and extract their value/text pairs.
+            $alloptions = $this->field->findAll('xpath', '//option');
+            foreach ($alloptions as $option) {
+                // Is it selected?
+                if ($option->hasAttribute('selected')) {
+                    if ($multiple) {
+                        // If the select is multiple, text commas must be encoded.
+                        $selectedoptions[] = trim(str_replace(',', '\,', $option->getText()));
+                    } else {
+                        $selectedoptions[] =  trim($option->getText());
+                    }
+                }
+            }
+
+        // Goutte does not keep the 'selected' attribute updated, but its getValue() returns
+        // the selected elements correctly, also those having commas within them.
+        } else {
+            $values = $this->field->getValue();
+            // Get all the options in the select and extract their value/text pairs.
+            $alloptions = $this->field->findAll('xpath', '//option');
+            foreach ($alloptions as $option) {
+                // Is it selected?
+                if (in_array($option->getValue(), $values)) {
+                    if ($multiple) {
+                        // If the select is multiple, text commas must be encoded.
+                        $selectedoptions[] = trim(str_replace(',', '\,', $option->getText()));
+                    } else {
+                        $selectedoptions[] =  trim($option->getText());
+                    }
+                }
+            }
+        }
+
+        return implode(', ', $selectedoptions);
     }
 }
