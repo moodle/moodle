@@ -115,10 +115,6 @@ unset($user2id);
 
 $systemcontext = context_system::instance();
 
-if (!empty($user2) && $user1->id == $user2->id) {
-    print_error('invaliduserid');
-}
-
 // Is the user involved in the conversation?
 // Do they have the ability to read other user's conversations?
 if (!message_current_user_is_involved($user1, $user2) && !has_capability('moodle/site:readallmessages', $systemcontext)) {
