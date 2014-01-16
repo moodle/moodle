@@ -353,7 +353,7 @@ input.titleeditor { vertical-align: text-bottom; }
 }
 
 /* Course drag and drop upload styles */
-#dndupload-status {width:40%;margin:0 30%;padding:6px;border:1px solid #ddd;text-align:center;background:#ffc;position:absolute;z-index:9999;box-shadow:2px 2px 5px 1px #ccc;border-radius:0px 0px 8px 8px;z-index: 0;}
+#dndupload-status {width:40%;margin:0 30%;padding:6px;border:1px solid #ddd;top:-5px;text-align:center;background:#ffc;position:absolute;left:0;box-shadow:2px 2px 5px 1px #ccc;border-radius:0px 0px 8px 8px;z-index: 0;}
 .dndupload-preview {color:#909090;border:1px dashed #909090;list-style:none; margin-top: .2em; padding: .3em; line-height: 16px;}
 .dndupload-preview img.icon { vertical-align: text-bottom; padding: 0;}
 .dndupload-progress-outer {width:70px;border:1px solid black;border-radius:4px;height:10px;display:inline-block;margin:0;padding:0;overflow:hidden;position:relative;}
