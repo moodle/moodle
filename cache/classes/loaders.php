@@ -1742,7 +1742,7 @@ class cache_session extends cache {
      * Purges the session cache of all data belonging to the current user.
      */
     public function purge_current_user() {
-        $keys = $this->get_store()->find_all($this->get_key_prefix());
+        $keys = $this->get_store()->find_by_prefix($this->get_key_prefix());
         $this->get_store()->delete_many($keys);
     }
 
