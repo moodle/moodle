@@ -1332,7 +1332,7 @@ function scorm_delete_attempt($userid, $scorm, $attemptid) {
     // Trigger instances list viewed event.
     $event = \mod_scorm\event\attempt_deleted::create(array(
          'other' => array('attemptid' => $attemptid),
-         'context' => context_module::instance($cm->instance),
+         'context' => context_module::instance($cm->id),
          'relateduserid' => $userid
     ));
     $event->add_record_snapshot('course_modules', $cm);

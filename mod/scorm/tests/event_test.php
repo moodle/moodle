@@ -74,7 +74,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->assertCount(1, $events);
         $this->assertInstanceOf('\mod_scorm\event\attempt_deleted', $event);
         $this->assertEquals($USER->id, $event->userid);
-        $this->assertEquals(context_module::instance($this->eventscorm->id), $event->get_context());
+        $this->assertEquals(context_module::instance($this->eventcm->id), $event->get_context());
         $this->assertEquals(4, $event->other['attemptid']);
         $this->assertEquals(2, $event->relateduserid);
         $expected = array($this->eventcourse->id, 'scorm', 'delete attempts', 'report.php?id=' . $this->eventcm->id,
