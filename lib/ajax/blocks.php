@@ -88,9 +88,14 @@ switch ($action) {
 
         $bui_newweight = null;
         if ($bui_beforeid == 0) {
-            // Moving to very bottom
-            $last = end($instances);
-            $bui_newweight = $last->instance->weight + 1;
+            if (count($instances) === 0) {
+                // Moving the block into an empty region. Give it the default weight.
+                $bui_newweight = 0;
+            } else {
+                // Moving to very bottom.
+                $last = end($instances);
+                $bui_newweight = $last->instance->weight + 1;
+            }
         } else {
             // Moving somewhere
             $lastweight = 0;
