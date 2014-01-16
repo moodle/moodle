@@ -108,18 +108,6 @@ function xmldb_assignment_upgrade($oldversion) {
 
         if ($module = $DB->get_record("modules", array("name" => "assignment"))) {
             $DB->set_field("modules", "visible", "0", array("id" => $module->id)); // Hide module.
-            // Hide all course modules.
-            $sql = "UPDATE {course_modules}
-                       SET visibleold = visible, visible = 0
-                     WHERE module = ?";
-            $DB->execute($sql, array($module->id));
-            // Increment course.cacherev for courses where we just made something invisible.
-            // This will force cache rebuilding on the next request.
-            increment_revision_number('course', 'cacherev',
-                    "id IN (SELECT DISTINCT course
-                                    FROM {course_modules}
-                                   WHERE visibleold = 1 AND module = ?)",
-                    array($module->id));
         }
 
         $count = $DB->count_records('assignment');
