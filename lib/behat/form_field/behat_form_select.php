@@ -38,52 +38,192 @@ require_once(__DIR__  . '/behat_form_field.php');
 class behat_form_select extends behat_form_field {
 
     /**
-     * Sets the value of a single select.
+     * Sets the value(s) of a select element.
      *
-     * @param string $value
+r    * Seems an easy select, but there are lots of combinations
+     * of browsers and operative systems and each one manages the
+     * autosubmits and the multiple option selects in a different way.
+     *
+     * @param string $value plain value or comma separated values if multiple. Commas in values escaped with backslash.
      * @return void
      */
     public function set_value($value) {
-        $this->field->selectOption($value);
 
-        // Adding a click as Selenium requires it to fire some JS events.
+        // In some browsers we select an option and it triggers all the
+        // autosubmits and works as expected but not in all of them, so we
+        // try to catch all the possibilities to make this function work as
+        // expected.
+
+        // Get the internal id of the element we are going to click.
+        // This kind of internal IDs are only available in the selenium wire
+        // protocol, so only available using selenium drivers, phantomjs and family.
         if ($this->running_javascript()) {
+            $currentelementid = $this->get_internal_field_id();
+        }
 
-            // In some browsers the selectOption actions can perform a page reload
-            // so we need to ensure the element is still available to continue interacting
-            // with it. We don't wait here.
-            if (!$this->session->getDriver()->find($this->field->getXpath())) {
+        // Is the select multiple?
+        $multiple = $this->field->hasAttribute('multiple');
+
+        // By default, assume the passed value is a non-multiple option.
+        $options = array(trim($value));
+
+        // Here we select the option(s).
+        if ($multiple) {
+            // Split and decode values. Comma separated list of values allowed. With valuable commas escaped with backslash.
+            $options = preg_replace('/\\\,/', ',',  preg_split('/(?<!\\\),/', $value));
+            // This is a multiple select, let's pass the multiple flag after first option.
+            $afterfirstoption = false;
+            foreach ($options as $option) {
+                $this->field->selectOption(trim($option), $afterfirstoption);
+                $afterfirstoption = true;
+            }
+        } else {
+            // This is a single select, let's pass the last one specified.
+            $this->field->selectOption(end($options));
+        }
+
+        // With JS disabled this is enough and we finish here.
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        // With JS enabled we add more clicks as some selenium
+        // drivers requires it to fire JS events.
+
+        // In some browsers the selectOption actions can perform a form submit or reload page
+        // so we need to ensure the element is still available to continue interacting
+        // with it. We don't wait here.
+        $selectxpath = $this->field->getXpath();
+        if (!$this->session->getDriver()->find($selectxpath)) {
+            return;
+        }
+
+        // We also check the selenium internal element id, if it have changed
+        // we are dealing with an autosubmit that was already executed, and we don't to
+        // execute anything else as the action we wanted was already performed.
+        if ($currentelementid != $this->get_internal_field_id()) {
+            return;
+        }
+
+        // We also check that the option(s) are still there. We neither wait.
+        foreach ($options as $option) {
+            $valueliteral = $this->session->getSelectorsHandler()->xpathLiteral(trim($option));
+            $optionxpath = $selectxpath . "/descendant::option[(./@value=$valueliteral or normalize-space(.)=$valueliteral)]";
+            if (!$this->session->getDriver()->find($optionxpath)) {
+                return;
+            }
+        }
+
+        // Single select sometimes needs an extra click in the option.
+        if (!$multiple) {
+
+            // Using the driver direcly because Element methods are messy when dealing
+            // with elements inside containers.
+            $optionnodes = $this->session->getDriver()->find($optionxpath);
+            if ($optionnodes) {
+                // Wrapped in a try & catch as we can fall into race conditions
+                // and the element may not be there.
+                try {
+
+                    // Wait for all the possible AJAX requests that have been
+                    // already triggered by selectOption() to be finished.
+                    $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
+
+                    current($optionnodes)->click();
+                } catch (Exception $e) {
+                    // We continue and return as this means that the element is not there or it is not the same.
+                    return;
+                }
+            }
+
+        } else {
+
+            // Wait for all the possible AJAX requests that have been
+            // already triggered by selectOption() to be finished.
+            $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
+
+            // Wrapped in a try & catch as we can fall into race conditions
+            // and the element may not be there.
+            try {
+                // Multiple ones needs the click in the select.
+                $this->field->click();
+            } catch (Exception $e) {
+                // We continue and return as this means that the element is not there or it is not the same.
                 return;
             }
 
-            // Single select needs an extra click in the option.
-            if (!$this->field->hasAttribute('multiple')) {
+            // We ensure that the option is still there.
+            if (!$this->session->getDriver()->find($optionxpath)) {
+                return;
+            }
 
-                $value = $this->session->getSelectorsHandler()->xpathLiteral($value);
+            // Wait for all the possible AJAX requests that have been
+            // already triggered by selectOption() to be finished.
+            $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
 
-                // Using the driver direcly because Element methods are messy when dealing
-                // with elements inside containers.
-                $optionxpath = $this->field->getXpath() .
-                    "/descendant::option[(./@value=$value or normalize-space(.)=$value)]";
-                $optionnodes = $this->session->getDriver()->find($optionxpath);
-                if ($optionnodes) {
-                    current($optionnodes)->click();
+            // Wrapped in a try & catch as we can fall into race conditions
+            // and the element may not be there.
+            try {
+                // Repeating the select(s) as some drivers (chrome that I know) are moving
+                // to another option after the general select field click above.
+                foreach ($options as $option) {
+                    $this->field->selectOption(trim($option), true);
                 }
-
-            } else {
-                // Multiple ones needs the click in the select.
-                $this->field->click();
+            } catch (Exception $e) {
+                // We continue and return as this means that the element is not there or it is not the same.
+                return;
             }
         }
     }
 
     /**
-     * Returns the text of the current value.
+     * Returns the text of the currently selected options.
      *
-     * @return string
+     * @return string Comma separated if multiple options are selected. Commas in option texts escaped with backslash.
      */
     public function get_value() {
-        $selectedoption = $this->field->find('xpath', '//option[@selected="selected"]');
-        return $selectedoption->getText();
+
+        // Is the select multiple?
+        $multiple = $this->field->hasAttribute('multiple');
+
+        $selectedoptions = array(); // To accumulate found selected options.
+
+        // Selenium getValue() implementation breaks - separates - values having
+        // commas within them, so we'll be looking for options with the 'selected' attribute instead.
+        if ($this->running_javascript()) {
+            // Get all the options in the select and extract their value/text pairs.
+            $alloptions = $this->field->findAll('xpath', '//option');
+            foreach ($alloptions as $option) {
+                // Is it selected?
+                if ($option->hasAttribute('selected')) {
+                    if ($multiple) {
+                        // If the select is multiple, text commas must be encoded.
+                        $selectedoptions[] = trim(str_replace(',', '\,', $option->getText()));
+                    } else {
+                        $selectedoptions[] =  trim($option->getText());
+                    }
+                }
+            }
+
+        // Goutte does not keep the 'selected' attribute updated, but its getValue() returns
+        // the selected elements correctly, also those having commas within them.
+        } else {
+            $values = $this->field->getValue();
+            // Get all the options in the select and extract their value/text pairs.
+            $alloptions = $this->field->findAll('xpath', '//option');
+            foreach ($alloptions as $option) {
+                // Is it selected?
+                if (in_array($option->getValue(), $values)) {
+                    if ($multiple) {
+                        // If the select is multiple, text commas must be encoded.
+                        $selectedoptions[] = trim(str_replace(',', '\,', $option->getText()));
+                    } else {
+                        $selectedoptions[] =  trim($option->getText());
+                    }
+                }
+            }
+        }
+
+        return implode(', ', $selectedoptions);
     }
 }
