@@ -99,9 +99,11 @@
         }
     }
 
+    .fp-formset div {
+        height: auto;
+    }
 }
 
-// login page
 @media (min-width: 1200px) {
     .loginbox.twocolumns .loginpanel {
         margin-left: 0;
@@ -536,4 +538,27 @@
    #page-mod-forum-discuss.dir-rtl .discussioncontrols {
        text-align: left;
    }
+}
+
+
+// File Picker.
+@media (max-width: 768px) {
+    .fp-forminset .control-group .controls {
+        margin-left: 0;
+    }
+    .dir-rtl .fp-formset .control-group {
+        label.control-label {
+            text-align: right;
+            float: none;
+        }
+    }
+    .dir-rtl .fp-forminset .control-group {
+        label.control-label {
+            text-align: right;
+            float: none;
+        }
+        .controls {
+            margin-right: 0;
+        }
+    }
 }
