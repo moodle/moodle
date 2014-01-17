@@ -73,7 +73,7 @@ class report_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/scorm/report.php', array('id' => $this->context->instanceid, 'mode' => $this->other['mode']));
+        return new \moodle_url('/mod/scorm/report.php', array('id' => $this->contextinstanceid, 'mode' => $this->other['mode']));
     }
 
     /**
@@ -82,8 +82,8 @@ class report_viewed extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'scorm', 'report', 'report.php?id=' . $this->context->instanceid .
-                '&mode=' . $this->other['mode'], $this->objectid, $this->context->instanceid);
+        return array($this->courseid, 'scorm', 'report', 'report.php?id=' . $this->contextinstanceid .
+                '&mode=' . $this->other['mode'], $this->objectid, $this->contextinstanceid);
     }
 
     /**

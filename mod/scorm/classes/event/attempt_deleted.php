@@ -71,7 +71,7 @@ class attempt_deleted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/scorm/report.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/scorm/report.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -80,8 +80,8 @@ class attempt_deleted extends \core\event\base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'scorm', 'delete attempts', 'report.php?id=' . $this->context->instanceid,
-                $this->other['attemptid'], $this->context->instanceid);
+        return array($this->courseid, 'scorm', 'delete attempts', 'report.php?id=' . $this->contextinstanceid,
+                $this->other['attemptid'], $this->contextinstanceid);
     }
 
     /**

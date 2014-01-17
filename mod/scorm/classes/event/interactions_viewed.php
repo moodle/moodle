@@ -73,7 +73,7 @@ class interactions_viewed extends \core\event\base {
      */
     public function get_url() {
         $params = array(
-            'id' => $this->context->instanceid,
+            'id' => $this->contextinstanceid,
             'user' => $this->relateduserid,
             'attempt' => $this->other['attemptid']
         );
@@ -87,8 +87,8 @@ class interactions_viewed extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return array($this->courseid, 'scorm', 'userreportinteractions', 'report/userreportinteractions.php?id=' .
-                $this->context->instanceid . '&user=' . $this->relateduserid . '&attempt=' . $this->other['attemptid'],
-                $this->other['instanceid'], $this->context->instanceid);
+                $this->contextinstanceid . '&user=' . $this->relateduserid . '&attempt=' . $this->other['attemptid'],
+                $this->other['instanceid'], $this->contextinstanceid);
     }
 
     /**

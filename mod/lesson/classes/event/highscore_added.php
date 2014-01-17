@@ -52,7 +52,7 @@ class highscore_added extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/lesson/highscores.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/lesson/highscores.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -75,7 +75,7 @@ class highscore_added extends \core\event\base {
     protected function get_legacy_logdata() {
         $highscore = $this->get_record_snapshot('lesson_high_scores', $this->objectid);
 
-        return array($this->courseid, 'lesson', 'update highscores', 'highscores.php?id=' . $this->context->instanceid,
-            $highscore->nickname, $this->context->instanceid);
+        return array($this->courseid, 'lesson', 'update highscores', 'highscores.php?id=' . $this->contextinstanceid,
+            $highscore->nickname, $this->contextinstanceid);
     }
 }

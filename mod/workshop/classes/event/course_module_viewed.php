@@ -62,7 +62,7 @@ class course_module_viewed extends \core\event\course_module_viewed {
 
         $workshop = $this->get_record_snapshot('workshop', $this->objectid);
         $course   = $this->get_record_snapshot('course', $this->courseid);
-        $cm       = $this->get_record_snapshot('course_modules', $this->context->instanceid);
+        $cm       = $this->get_record_snapshot('course_modules', $this->contextinstanceid);
         $workshop = new \workshop($workshop, $cm, $course);
         return (object)array('workshop' => $workshop, 'user' => $USER);
     }

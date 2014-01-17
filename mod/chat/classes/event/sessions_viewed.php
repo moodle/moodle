@@ -56,8 +56,8 @@ class sessions_viewed extends \core\event\content_viewed {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'chat', 'report', 'report.php?id=' . $this->context->instanceid,
-            $this->objectid, $this->context->instanceid);
+        return array($this->courseid, 'chat', 'report', 'report.php?id=' . $this->contextinstanceid,
+            $this->objectid, $this->contextinstanceid);
     }
 
     /**
@@ -75,7 +75,7 @@ class sessions_viewed extends \core\event\content_viewed {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/chat/report.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/chat/report.php', array('id' => $this->contextinstanceid));
     }
 
     /**

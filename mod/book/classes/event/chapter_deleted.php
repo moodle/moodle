@@ -47,7 +47,7 @@ class chapter_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The chapter $this->objectid of the book $this->context->instanceid has been deleted.";
+        return "The chapter $this->objectid of the book " . $this->contextinstanceid . " has been deleted.";
     }
 
     /**
@@ -74,7 +74,7 @@ class chapter_deleted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/book/view.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/book/view.php', array('id' => $this->contextinstanceid));
     }
 
     /**

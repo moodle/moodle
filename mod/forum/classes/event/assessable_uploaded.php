@@ -62,7 +62,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
         $eventdata = new \stdClass();
         $eventdata->modulename   = 'forum';
         $eventdata->name         = $this->other['triggeredfrom'];
-        $eventdata->cmid         = $this->context->instanceid;
+        $eventdata->cmid         = $this->contextinstanceid;
         $eventdata->itemid       = $this->objectid;
         $eventdata->courseid     = $this->courseid;
         $eventdata->userid       = $this->userid;

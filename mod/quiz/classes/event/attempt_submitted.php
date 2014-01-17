@@ -99,7 +99,7 @@ class attempt_submitted extends \core\event\base {
         $legacyeventdata->timestamp = $attempt->timefinish;
         $legacyeventdata->userid = $this->relateduserid;
         $legacyeventdata->quizid = $attempt->quiz;
-        $legacyeventdata->cmid = $this->context->instanceid;
+        $legacyeventdata->cmid = $this->contextinstanceid;
         $legacyeventdata->courseid = $this->courseid;
         $legacyeventdata->submitterid = $this->other['submitterid'];
         $legacyeventdata->timefinish = $attempt->timefinish;

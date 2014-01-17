@@ -355,7 +355,7 @@ abstract class base implements \IteratorAggregate {
         if (isset($this->context)) {
             return $this->context;
         }
-        $this->context = \context::instance_by_id($this->data['contextid'], false);
+        $this->context = \context::instance_by_id($this->data['contextid'], IGNORE_MISSING);
         return $this->context;
     }
 

@@ -79,7 +79,12 @@ abstract class comment_deleted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return $this->context->get_url();
+        $context = $this->get_context();
+        if ($context) {
+            return $context->get_url();
+        } else {
+            return null;
+        }
     }
 
     /**

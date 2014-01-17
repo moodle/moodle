@@ -74,7 +74,7 @@ class tracks_viewed extends \core\event\base {
      */
     public function get_url() {
         $params = array(
-            'id' => $this->context->instanceid,
+            'id' => $this->contextinstanceid,
             'user' => $this->relateduserid,
             'attempt' => $this->other['attemptid'],
             'scoid' => $this->other['scoid']
@@ -88,9 +88,9 @@ class tracks_viewed extends \core\event\base {
      * @return array
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'scorm', 'userreporttracks', 'report/userreporttracks.php?id=' . $this->context->instanceid
+        return array($this->courseid, 'scorm', 'userreporttracks', 'report/userreporttracks.php?id=' . $this->contextinstanceid
             . '&user=' . $this->relateduserid . '&attempt=' . $this->other['attemptid'] . '&scoid=' . $this->other['scoid'],
-            $this->other['instanceid'], $this->context->instanceid);
+            $this->other['instanceid'], $this->contextinstanceid);
     }
 
     /**

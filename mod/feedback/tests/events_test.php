@@ -130,6 +130,7 @@ class mod_feedback_events_testcase extends advanced_testcase {
         $arr = array($this->eventcourse->id, 'feedback', 'delete', 'view.php?id=' . $this->eventcm->id, $this->eventfeedback->id,
                 $this->eventfeedback->id);
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
 
         // Test can_view() .
         $this->setUser($this->eventuser);

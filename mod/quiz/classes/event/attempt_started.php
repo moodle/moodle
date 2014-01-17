@@ -94,7 +94,7 @@ class attempt_started extends \core\event\base {
         $legacyeventdata->timestamp = $attempt->timestart;
         $legacyeventdata->userid = $this->relateduserid;
         $legacyeventdata->quizid = $attempt->quiz;
-        $legacyeventdata->cmid = $this->context->instanceid;
+        $legacyeventdata->cmid = $this->contextinstanceid;
         $legacyeventdata->courseid = $this->courseid;
 
         return $legacyeventdata;

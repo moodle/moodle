@@ -68,7 +68,7 @@ class response_deleted extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return 'The feedback from user ' . $this->other['relateduserid']. ' was deleted by' . $this->userid;
+        return 'The feedback from user ' . $this->relateduserid . ' was deleted by' . $this->userid;
     }
 
     /**

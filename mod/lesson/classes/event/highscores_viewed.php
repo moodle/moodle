@@ -52,7 +52,7 @@ class highscores_viewed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/lesson/highscores.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/lesson/highscores.php', array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -72,7 +72,7 @@ class highscores_viewed extends \core\event\base {
     protected function get_legacy_logdata() {
         $lesson = $this->get_record_snapshot('lesson', $this->objectid);
 
-        return array($this->courseid, 'lesson', 'view highscores', 'highscores.php?id=' . $this->context->instanceid,
-            $lesson->name, $this->context->instanceid);
+        return array($this->courseid, 'lesson', 'view highscores', 'highscores.php?id=' . $this->contextinstanceid,
+            $lesson->name, $this->contextinstanceid);
     }
 }

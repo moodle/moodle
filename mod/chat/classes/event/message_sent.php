@@ -50,8 +50,8 @@ class message_sent extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         $message = $this->get_record_snapshot('chat_messages', $this->objectid);
-        return array($this->courseid, 'chat', 'talk', 'view.php?id=' . $this->context->instanceid,
-            $message->chatid, $this->context->instanceid, $this->relateduserid);
+        return array($this->courseid, 'chat', 'talk', 'view.php?id=' . $this->contextinstanceid,
+            $message->chatid, $this->contextinstanceid, $this->relateduserid);
     }
 
     /**
@@ -69,7 +69,7 @@ class message_sent extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/chat/view.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/chat/view.php', array('id' => $this->contextinstanceid));
     }
 
     /**

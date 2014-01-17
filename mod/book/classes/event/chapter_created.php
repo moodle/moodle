@@ -40,7 +40,7 @@ class chapter_created extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The chapter $this->objectid of the book $this->context->instanceid has been created.";
+        return "The chapter $this->objectid of the book " . $this->contextinstanceid . " has been created.";
     }
 
     /**
@@ -49,8 +49,8 @@ class chapter_created extends \core\event\base {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'book', 'add chapter', 'view.php?id=' . $this->context->instanceid . '&chapterid=' .
-            $this->objectid, $this->objectid, $this->context->instanceid);
+        return array($this->courseid, 'book', 'add chapter', 'view.php?id=' . $this->contextinstanceid . '&chapterid=' .
+            $this->objectid, $this->objectid, $this->contextinstanceid);
     }
 
     /**
@@ -69,7 +69,7 @@ class chapter_created extends \core\event\base {
      */
     public function get_url() {
         return new \moodle_url('/mod/book/view.php', array(
-            'id' => $this->context->instanceid,
+            'id' => $this->contextinstanceid,
             'chapterid' => $this->objectid
         ));
     }

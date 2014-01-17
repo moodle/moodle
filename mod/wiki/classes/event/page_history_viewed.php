@@ -69,7 +69,7 @@ class page_history_viewed extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return(array($this->courseid, 'wiki', 'history',
-            'history.php?pageid=' . $this->objectid, $this->objectid, $this->context->instanceid));
+            'history.php?pageid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**

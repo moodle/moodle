@@ -40,7 +40,7 @@ class chapter_viewed extends \core\event\content_viewed {
      * @return string
      */
     public function get_description() {
-        return "The user $this->userid has viewed the chapter $this->objectid of book module $this->context->instanceid";
+        return "The user $this->userid has viewed the chapter $this->objectid of book module $this->contextinstanceid";
     }
 
     /**
@@ -49,8 +49,8 @@ class chapter_viewed extends \core\event\content_viewed {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, 'book', 'view chapter', 'view.php?id=' . $this->context->instanceid .
-            '&amp;chapterid=' . $this->objectid, $this->objectid, $this->context->instanceid);
+        return array($this->courseid, 'book', 'view chapter', 'view.php?id=' . $this->contextinstanceid .
+            '&amp;chapterid=' . $this->objectid, $this->objectid, $this->contextinstanceid);
     }
 
     /**
@@ -68,7 +68,7 @@ class chapter_viewed extends \core\event\content_viewed {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/book/view.php', array('id' => $this->context->instanceid, 'chapterid' => $this->objectid));
+        return new \moodle_url('/mod/book/view.php', array('id' => $this->contextinstanceid, 'chapterid' => $this->objectid));
     }
 
     /**

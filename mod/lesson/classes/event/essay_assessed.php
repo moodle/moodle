@@ -71,7 +71,7 @@ class essay_assessed extends \core\event\base {
     protected function get_legacy_logdata() {
         $lesson = $this->get_record_snapshot('lesson', $this->other['lessonid']);
         return array($this->courseid, 'lesson', 'update grade', 'essay.php?id=' .
-                $this->context->instanceid, $lesson->name, $this->context->instanceid);
+                $this->contextinstanceid, $lesson->name, $this->contextinstanceid);
     }
 
     /**
@@ -89,7 +89,7 @@ class essay_assessed extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/lesson/essay.php', array('id' => $this->context->instanceid));
+        return new \moodle_url('/mod/lesson/essay.php', array('id' => $this->contextinstanceid));
     }
 
     /**

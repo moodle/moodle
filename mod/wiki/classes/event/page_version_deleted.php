@@ -76,7 +76,7 @@ class page_version_deleted extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return(array($this->courseid, 'wiki', 'admin', 'admin.php?pageid=' . $this->other['pageid'], $this->other['pageid'],
-            $this->context->instanceid));
+            $this->contextinstanceid));
     }
 
     /**

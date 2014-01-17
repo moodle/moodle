@@ -69,7 +69,7 @@ class page_created extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return(array($this->courseid, 'wiki', 'add page',
-            'view.php?pageid=' . $this->objectid, $this->objectid, $this->context->instanceid));
+            'view.php?pageid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
     }
 
     /**

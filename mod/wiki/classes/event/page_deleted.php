@@ -75,7 +75,7 @@ class page_deleted extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return(array($this->courseid, 'wiki', 'admin', 'admin.php?pageid=' . $this->objectid, $this->objectid,
-            $this->context->instanceid));
+            $this->contextinstanceid));
     }
 
     /**

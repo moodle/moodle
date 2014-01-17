@@ -64,7 +64,7 @@ class report_viewed extends \core\event\content_viewed {
      */
     public function get_url() {
         $url = '/mod/choice/report.php';
-        return new \moodle_url($url, array('id' => $this->context->instanceid));
+        return new \moodle_url($url, array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -73,7 +73,7 @@ class report_viewed extends \core\event\content_viewed {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        $url = new \moodle_url('report.php', array('id' => $this->context->instanceid));
-        return array($this->courseid, 'choice', 'report', $url->out(), $this->objectid, $this->context->instanceid);
+        $url = new \moodle_url('report.php', array('id' => $this->contextinstanceid));
+        return array($this->courseid, 'choice', 'report', $url->out(), $this->objectid, $this->contextinstanceid);
     }
 }

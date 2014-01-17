@@ -72,7 +72,7 @@ abstract class course_module_viewed extends base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url("/mod/$this->objecttable/view.php", array('id' => $this->context->instanceid));
+        return new \moodle_url("/mod/$this->objecttable/view.php", array('id' => $this->contextinstanceid));
     }
 
     /**
@@ -81,8 +81,8 @@ abstract class course_module_viewed extends base {
      * @return array|null
      */
     protected function get_legacy_logdata() {
-        return array($this->courseid, $this->objecttable, 'view', 'view.php?id=' . $this->context->instanceid, $this->objectid,
-                     $this->context->instanceid);
+        return array($this->courseid, $this->objecttable, 'view', 'view.php?id=' . $this->contextinstanceid, $this->objectid,
+                     $this->contextinstanceid);
     }
 
     /**

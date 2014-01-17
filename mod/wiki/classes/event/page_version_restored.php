@@ -75,7 +75,7 @@ class page_version_restored extends \core\event\base {
      */
     protected function get_legacy_logdata() {
         return(array($this->courseid, 'wiki', 'restore',
-            'view.php?pageid=' . $this->other['pageid'], $this->other['pageid'], $this->context->instanceid));
+            'view.php?pageid=' . $this->other['pageid'], $this->other['pageid'], $this->contextinstanceid));
     }
 
     /**
