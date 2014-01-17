@@ -628,4 +628,61 @@ class question_usage_autosave_test extends qbehaviour_walkthrough_test_base {
 
         $this->delete_quba();
     }
+
+    public function test_finish_with_unhandled_autosave_data() {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $question = $generator->create_question('shortanswer', null,
+                array('category' => $cat->id));
+
+        // Start attempt at a shortanswer question.
+        $q = question_bank::load_question($question->id);
+        $this->start_attempt_at_question($q, 'deferredfeedback', 1);
+
+        $this->check_current_state(question_state::$todo);
+        $this->check_current_mark(null);
+        $this->check_step_count(1);
+
+        // Process a response and check the expected result.
+        $this->process_submission(array('answer' => 'cat'));
+
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_step_count(2);
+        $this->save_quba();
+
+        // Now check how that is re-displayed.
+        $this->render();
+        $this->check_output_contains_text_input('answer', 'cat');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
+
+        // Process an autosave.
+        $this->load_quba();
+        $this->process_autosave(array('answer' => 'frog'));
+        $this->check_current_state(question_state::$complete);
+        $this->check_current_mark(null);
+        $this->check_step_count(3);
+        $this->save_quba();
+
+        // Now check how that is re-displayed.
+        $this->load_quba();
+        $this->render();
+        $this->check_output_contains_text_input('answer', 'frog');
+        $this->check_output_contains_hidden_input(':sequencecheck', 2);
+
+        // Now finishe the attempt, without having done anything since the autosave.
+        $this->finish();
+        $this->save_quba();
+
+        // Now check how that has been graded and is re-displayed.
+        $this->load_quba();
+        $this->check_current_state(question_state::$gradedright);
+        $this->check_current_mark(1);
+        $this->render();
+        $this->check_output_contains_text_input('answer', 'frog', false);
+        $this->check_output_contains_hidden_input(':sequencecheck', 4);
+
+        $this->delete_quba();
+    }
 }
