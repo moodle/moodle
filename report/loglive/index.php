@@ -49,6 +49,11 @@ $context = context_course::instance($course->id);
 require_capability('report/loglive:view', $context);
 
 $strlivelogs = get_string('livelogs', 'report_loglive');
+if (!empty($page)) {
+    $strlogs = get_string('logs'). ": ". get_string('page', 'report_loglive', $page + 1);
+} else {
+    $strlogs = get_string('logs');
+}
 
 if ($inpopup) {
     \core\session\manager::write_close();
