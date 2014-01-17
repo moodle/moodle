@@ -67,6 +67,31 @@ class qtype_essay_test_helper extends question_test_helper {
     }
 
     /**
+     * Make the data what would be received from the editing form for an essay
+     * question using the HTML editor allowing embedded files as input, and up
+     * to three attachments.
+     *
+     * @return stdClass the data that would be returned by $form->get_gata();
+     */
+    public function get_essay_question_form_data_editor() {
+        $fromform = new stdClass();
+
+        $fromform->name = 'Essay question (HTML editor)';
+        $fromform->questiontext = array('text' => 'Please write a story about a frog.', 'format' => FORMAT_HTML);
+        $fromform->defaultmark = 1.0;
+        $fromform->generalfeedback = array('text' => 'I hope your story had a beginning, a middle and an end.', 'format' => FORMAT_HTML);
+        $fromform->responseformat = 'editor';
+        $fromform->responserequired = 1;
+        $fromform->responsefieldlines = 10;
+        $fromform->attachments = 0;
+        $fromform->attachmentsrequired = 0;
+        $fromform->graderinfo = array('text' => '', 'format' => FORMAT_HTML);
+        $fromform->responsetemplate = array('text' => '', 'format' => FORMAT_HTML);
+
+        return $fromform;
+    }
+
+    /**
      * Makes an essay question using the HTML editor allowing embedded files as
      * input, and up to three attachments.
      * @return qtype_essay_question
