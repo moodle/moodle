@@ -2263,6 +2263,114 @@ class core_dml_testcase extends database_driver_testcase {
         }
     }
 
+    public function test_insert_records() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('oneint', XMLDB_TYPE_INTEGER, '10', null, null, null, 100);
+        $table->add_field('onenum', XMLDB_TYPE_NUMBER, '10,2', null, null, null, 200);
+        $table->add_field('onechar', XMLDB_TYPE_CHAR, '100', null, null, null, 'onestring');
+        $table->add_field('onetext', XMLDB_TYPE_TEXT, 'big', null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $this->assertCount(0, $DB->get_records($tablename));
+
+        $record = new stdClass();
+        $record->id = '1';
+        $record->course = '1';
+        $record->oneint = null;
+        $record->onenum = '1.00';
+        $record->onechar = 'a';
+        $record->onetext = 'aaa';
+
+        $expected = array();
+        $records = array();
+        for ($i = 1; $i <= 2000; $i++) { // This may take a while, it should be higher than defaults in DML drivers.
+            $rec = clone($record);
+            $rec->id = (string)$i;
+            $rec->oneint = (string)$i;
+            $expected[$i] = $rec;
+            $rec = clone($rec);
+            unset($rec->id);
+            $records[$i] = $rec;
+        }
+
+        $DB->insert_records($tablename, $records);
+        $stored = $DB->get_records($tablename, array(), 'id ASC');
+        $this->assertEquals($expected, $stored);
+
+        // Test there can be some extra properties including id.
+        $count = $DB->count_records($tablename);
+        $rec1 = (array)$record;
+        $rec1['xxx'] = 1;
+        $rec2 = (array)$record;
+        $rec2['xxx'] = 2;
+
+        $records = array($rec1, $rec2);
+        $DB->insert_records($tablename, $records);
+        $this->assertEquals($count + 2, $DB->count_records($tablename));
+
+        // Test not all properties are necessary.
+        $rec1 = (array)$record;
+        unset($rec1['course']);
+        $rec2 = (array)$record;
+        unset($rec2['course']);
+
+        $records = array($rec1, $rec2);
+        $DB->insert_records($tablename, $records);
+
+        // Make sure no changes in data object structure are tolerated.
+        $rec1 = (array)$record;
+        unset($rec1['id']);
+        $rec2 = (array)$record;
+        unset($rec2['id']);
+
+        $records = array($rec1, $rec2);
+        $DB->insert_records($tablename, $records);
+
+        $rec2['xx'] = '1';
+        $records = array($rec1, $rec2);
+        try {
+            $DB->insert_records($tablename, $records);
+            $this->fail('coding_exception expected when insert_records receives different object data structures');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        unset($rec2['xx']);
+        unset($rec2['course']);
+        $rec2['course'] = '1';
+        $records = array($rec1, $rec2);
+        try {
+            $DB->insert_records($tablename, $records);
+            $this->fail('coding_exception expected when insert_records receives different object data structures');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        $records = 1;
+        try {
+            $DB->insert_records($tablename, $records);
+            $this->fail('coding_exception expected when insert_records receives non-traversable data');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+
+        $records = array(1);
+        try {
+            $DB->insert_records($tablename, $records);
+            $this->fail('coding_exception expected when insert_records receives non-objet record');
+        } catch (moodle_exception $e) {
+            $this->assertInstanceOf('coding_exception', $e);
+        }
+    }
+
     public function test_import_record() {
         // All the information in this test is fetched from DB by get_recordset() so we
         // have such method properly tested against nulls, empties and friends...
