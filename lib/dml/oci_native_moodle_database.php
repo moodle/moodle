@@ -888,19 +888,28 @@ class oci_native_moodle_database extends moodle_database {
 
     /**
      * Do NOT use in code, to be used by database_manager only!
-     * @param string $sql query
+     * @param string|array $sql query
      * @return bool true
-     * @throws dml_exception A DML specific exception is thrown for any errors.
+     * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
     public function change_database_structure($sql) {
+        $this->get_manager(); // Includes DDL exceptions classes ;-)
+        $sqls = (array)$sql;
+
+        try {
+            foreach ($sqls as $sql) {
+                $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+                $stmt = $this->parse_query($sql);
+                $result = oci_execute($stmt, $this->commit_status);
+                $this->query_end($result, $stmt);
+                oci_free_statement($stmt);
+            }
+        } catch (ddl_change_structure_exception $e) {
+            $this->reset_caches();
+            throw $e;
+        }
+
         $this->reset_caches();
-
-        $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
-        $stmt = $this->parse_query($sql);
-        $result = oci_execute($stmt, $this->commit_status);
-        $this->query_end($result, $stmt);
-        oci_free_statement($stmt);
-
         return true;
     }
 
