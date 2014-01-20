@@ -2833,6 +2833,12 @@ class restore_activity_grades_structure_step extends restore_structure_step {
         }
         // no need to save any grade_letter mapping
     }
+
+    public function after_restore() {
+        // Fix grade item's sortorder after restore, as it might have duplicates.
+        $courseid = $this->get_task()->get_courseid();
+        grade_item::fix_duplicate_sortorder($courseid);
+    }
 }
 
 
