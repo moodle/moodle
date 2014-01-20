@@ -8893,6 +8893,10 @@ function get_performance_info() {
     $info['html'] .= '<span class="dbqueries">DB reads/writes: '.$info['dbqueries'].'</span> ';
     $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
 
+    $info['dbtime'] = round($DB->perf_get_queries_time(), 5);
+    $info['html'] .= '<span class="dbtime">DB queries time: '.$info['dbtime'].' secs</span> ';
+    $info['txt'] .= 'db queries time: ' . $info['dbtime'] . 's ';
+
     if (function_exists('posix_times')) {
         $ptimes = posix_times();
         if (is_array($ptimes)) {
