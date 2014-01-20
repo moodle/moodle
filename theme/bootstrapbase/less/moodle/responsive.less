@@ -298,7 +298,17 @@
     .path-backup .mform .fitem .felement,
     .mform .fdescription.required,
     .form-item .form-description {
-      margin-left: 0;
+        margin-left: 0;
+    }
+    .dir-rtl {
+        .form-item .form-label,
+        .mform .fitem div.fitemtitle {
+            float: none;
+            text-align: right;
+        }
+        .mform .fitem .felement {
+            margin-right: 0;
+        }
     }
     table#form td.submit,
     .form-buttons,
