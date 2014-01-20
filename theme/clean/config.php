@@ -44,12 +44,6 @@ $THEME->yuicssmodules = array();
 
 $THEME->editor_sheets = array();
 
-$THEME->plugins_exclude_sheets = array(
-    'block' => array(
-        'html',
-    ),
-);
-
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
 $THEME->csspostprocess = 'theme_clean_process_css';
 
