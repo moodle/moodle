@@ -298,11 +298,11 @@ class qtype_ddmarker extends qtype_ddtoimage_base {
                     $fs->get_area_files($contextid, 'qtype_ddmarker', 'dragimage', $drag->id);
             $output .= "    <drag>\n";
             $output .= "      <no>{$drag->no}</no>\n";
-            $output .= $format->writetext($drag->label, 3)."\n";
+            $output .= $format->writetext($drag->label, 3);
             if ($drag->infinite) {
                 $output .= "      <infinite/>\n";
             }
-            $output .= "      <noofdrags>{$drag->no}</noofdrags>\n";
+            $output .= "      <noofdrags>{$drag->noofdrags}</noofdrags>\n";
             $output .= "    </drag>\n";
         }
         foreach ($question->options->drops as $drop) {
