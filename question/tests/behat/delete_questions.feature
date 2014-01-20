@@ -17,16 +17,16 @@ Feature: A teacher can delete questions in the question bank
     And I log in as "teacher1"
     And I follow "Course 1"
     And I add a "Essay" question filling the form with:
-      | Question name | Test question name |
+      | Question name | Test question to be deleted |
       | Question text | Write about whatever you want |
     And I follow "Course 1"
 
   @javascript
   Scenario: Delete a question not used in a quiz
     Given I follow "Question bank"
-    And I click on "Delete" "link" in the "Test question name" "table_row"
+    And I click on "Delete" "link" in the "Test question to be deleted" "table_row"
     When I press "Continue"
-    Then I should not see "Test question name"
+    Then I should not see "Test question to be deleted"
 
   @javascript
   Scenario: Delete a question used in a quiz
@@ -36,14 +36,14 @@ Feature: A teacher can delete questions in the question bank
     And I follow "Test quiz"
     And I follow "Edit quiz"
     And I follow "Show"
-    And I click on "Add to quiz" "link" in the "Test question name" "table_row"
+    And I click on "Add to quiz" "link" in the "Test question to be deleted" "table_row"
     And I follow "Course 1"
     And I follow "Question bank"
-    And I click on "Delete" "link" in the "Test question name" "table_row"
+    And I click on "Delete" "link" in the "Test question to be deleted" "table_row"
     When I press "Continue"
-    Then I should not see "Test question name"
+    Then I should not see "Test question to be deleted"
     And I click on "Also show old questions" "checkbox"
-    And I should see "Test question name"
+    And I should see "Test question to be deleted"
     And I follow "Course 1"
     And I follow "Test quiz"
     And I click on "Preview quiz now" "button"

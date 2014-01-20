@@ -31,6 +31,7 @@ require_once($CFG->libdir . '/formslib.php');
 
 // Read URL parameters telling us which question to edit.
 $id = optional_param('id', 0, PARAM_INT); // question id
+$makecopy = optional_param('makecopy', 0, PARAM_INT);
 $qtype = optional_param('qtype', '', PARAM_FILE);
 $categoryid = optional_param('category', 0, PARAM_INT);
 $cmid = optional_param('cmid', 0, PARAM_INT);
@@ -46,6 +47,9 @@ $scrollpos = optional_param('scrollpos', 0, PARAM_INT);
 $url = new moodle_url('/question/question.php');
 if ($id !== 0) {
     $url->param('id', $id);
+}
+if ($makecopy !== 0) {
+    $url->param('makecopy', $makecopy);
 }
 if ($qtype !== '') {
     $url->param('qtype', $qtype);
@@ -177,6 +181,10 @@ if ($id) {
         if (!$formeditable) {
             question_require_capability_on($question, 'view');
         }
+        if ($makecopy) {
+            // If we are duplicating a question, add some indication to the question name.
+            $question->name = get_string('questionnamecopy', 'question', $question->name);
+        }
     }
 
 } else  { // creating a new question
@@ -209,6 +217,7 @@ if ($formeditable && $id){
 $toform->appendqnumstring = $appendqnumstring;
 $toform->returnurl = $originalreturnurl;
 $toform->movecontext = $movecontext;
+$toform->makecopy = $makecopy;
 if ($cm !== null){
     $toform->cmid = $cm->id;
     $toform->courseid = $cm->course;
@@ -228,10 +237,10 @@ if ($mform->is_cancelled()) {
     }
 
 } else if ($fromform = $mform->get_data()) {
-    /// If we are saving as a copy, break the connection to the old question.
-    if (!empty($fromform->makecopy)) {
+    // If we are saving as a copy, break the connection to the old question.
+    if ($makecopy) {
         $question->id = 0;
-        $question->hidden = 0; // Copies should not be hidden
+        $question->hidden = 0; // Copies should not be hidden.
     }
 
     /// Process the combination of usecurrentcat, categorymoveto and category form
