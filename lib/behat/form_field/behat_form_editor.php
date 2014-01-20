@@ -58,6 +58,7 @@ class behat_form_editor extends behat_form_field {
                 if ($editorid = $this->get_editor_id()) {
 
                     // Set the value to the iframe and save it to the textarea.
+                    $value = str_replace('"', '\"', $value);
                     $this->session->executeScript('
                         tinyMCE.get("'.$editorid.'").setContent("' . $value . '");
                         tinyMCE.get("'.$editorid.'").save();
