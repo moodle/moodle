@@ -16,7 +16,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manage files in folder in private area - to be replaced by something better hopefully....
+ * Manage files in folder in private area.
+ *
+ * This page is not used and now redirects to the page to manage the private files.
  *
  * @package   block_private_files
  * @copyright 2010 Petr Skoda (http://skodak.org)
@@ -24,42 +26,5 @@
  */
 
 require('../../config.php');
-require_once("$CFG->dirroot/blocks/private_files/edit_form.php");
-require_once("$CFG->dirroot/repository/lib.php");
 
-require_login();
-if (isguestuser()) {
-    die();
-}
-//TODO: add capability check here!
-
-$context = context_user::instance($USER->id);
-$title = get_string('privatefiles', 'block_private_files');
-$struser = get_string('user');
-
-$PAGE->set_url('/blocks/private_files/edit.php');
-$PAGE->set_context($context);
-$PAGE->set_title($title);
-$PAGE->set_heading($title);
-$PAGE->set_pagelayout('mydashboard');
-$PAGE->set_pagetype('user-private-files');
-
-$data = new stdClass();
-$options = array('subdirs'=>1, 'maxbytes'=>$CFG->userquota, 'maxfiles'=>-1, 'accepted_types'=>'*');
-file_prepare_standard_filemanager($data, 'files', $options, $context, 'user', 'private', 0);
-
-$mform = new block_private_files_form(null, array('data'=>$data, 'options'=>$options));
-
-if ($mform->is_cancelled()) {
-    redirect(new moodle_url('/my/'));
-
-} else if ($formdata = $mform->get_data()) {
-    $formdata = file_postupdate_standard_filemanager($formdata, 'files', $options, $context, 'user', 'private', 0);
-    redirect(new moodle_url('/my/'));
-}
-
-echo $OUTPUT->header();
-echo $OUTPUT->box_start('generalbox');
-$mform->display();
-echo $OUTPUT->box_end();
-echo $OUTPUT->footer();
+redirect(new moodle_url('/user/files.php'));
