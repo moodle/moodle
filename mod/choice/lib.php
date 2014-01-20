@@ -697,9 +697,10 @@ function choice_reset_userdata($data) {
  * @param object $choice
  * @param object $cm
  * @param int $groupmode
+ * @param bool $onlyactive Whether to get response data for active users only.
  * @return array
  */
-function choice_get_response_data($choice, $cm, $groupmode) {
+function choice_get_response_data($choice, $cm, $groupmode, $onlyactive) {
     global $CFG, $USER, $DB;
 
     $context = context_module::instance($cm->id);
@@ -716,7 +717,8 @@ function choice_get_response_data($choice, $cm, $groupmode) {
 
 /// First get all the users who have access here
 /// To start with we assume they are all "unanswered" then move them later
-    $allresponses[0] = get_enrolled_users($context, 'mod/choice:choose', $currentgroup, user_picture::fields('u', array('idnumber')));
+    $allresponses[0] = get_enrolled_users($context, 'mod/choice:choose', $currentgroup,
+            user_picture::fields('u', array('idnumber')), null, 0, 0, $onlyactive);
 
 /// Get all the recorded responses for this choice
     $rawresponses = $DB->get_records('choice_answers', array('choiceid' => $choice->id));
@@ -790,10 +792,14 @@ function choice_extend_settings_navigation(settings_navigation $settings, naviga
         if ($groupmode) {
             groups_get_activity_group($PAGE->cm, true);
         }
-        // We only actually need the choice id here
-        $choice = new stdClass;
-        $choice->id = $PAGE->cm->instance;
-        $allresponses = choice_get_response_data($choice, $PAGE->cm, $groupmode);   // Big function, approx 6 SQL calls per user
+
+        $choice = choice_get_choice($PAGE->cm->instance);
+
+        // Check if we want to include responses from inactive users.
+        $onlyactive = $choice->includeinactive ? false : true;
+
+        // Big function, approx 6 SQL calls per user.
+        $allresponses = choice_get_response_data($choice, $PAGE->cm, $groupmode, $onlyactive);
 
         $responsecount =0;
         foreach($allresponses as $optionid => $userlist) {

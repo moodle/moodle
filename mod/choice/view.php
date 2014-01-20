@@ -111,7 +111,11 @@ if ($groupmode) {
     groups_get_activity_group($cm, true);
     groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/choice/view.php?id='.$id);
 }
-$allresponses = choice_get_response_data($choice, $cm, $groupmode);   // Big function, approx 6 SQL calls per user
+
+// Check if we want to include responses from inactive users.
+$onlyactive = $choice->includeinactive ? false : true;
+
+$allresponses = choice_get_response_data($choice, $cm, $groupmode, $onlyactive);   // Big function, approx 6 SQL calls per user.
 
 
 if (has_capability('mod/choice:readresponses', $context)) {
