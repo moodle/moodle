@@ -77,7 +77,6 @@ body {
 
 #page-content #region-main-box #region-post-box #region-pre .region-content,
 #page-content #region-main-box #region-post-box #region-post .region-content {
-    overflow: hidden;
     padding: 10px 0 20px 10px;
 }
 

@@ -36,6 +36,11 @@
 .block_completionstatus .generaltable { border: 0px; }
 .block_completionstatus .generaltable .cell { border: 0px; }
 
+.block-region {
+    min-height: 400px;
+    overflow: hidden;
+}
+
 /** Overide for RTL layout **/
 .dir-rtl .block .header,
 .dir-rtl .block h2.header {text-align:right;}

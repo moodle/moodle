@@ -43,17 +43,14 @@ body {margin:auto 0px;
     position: relative;
     width: 200px;
     left: 200px;
-    min-height: 100%;
 }
 #page-content #region-post {
     float: right;
     position: relative;
     left: 600px;
     width: 200px;
-    min-height: 100%;
 }
 #page-content #region-main .region-content {
-    overflow: hidden;
     padding: 20px 20px 20px 0;
     min-height: 100%;
 }
@@ -67,7 +64,6 @@ body {margin:auto 0px;
 }
 #page-content #region-pre .region-content,
 #page-content #region-post .region-content {
-    overflow: hidden;
     padding: 20px 10px;
     min-height: 100%;
 }
