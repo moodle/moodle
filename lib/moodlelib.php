@@ -5830,7 +5830,18 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         }
         return true;
     } else {
-        add_to_log(SITEID, 'library', 'mailer', qualified_me(), 'ERROR: '. $mail->ErrorInfo);
+        // Trigger event for failing to send email.
+        $event = \core\event\email_failed::create(array(
+            'context' => context_system::instance(),
+            'userid' => $from->id,
+            'relateduserid' => $user->id,
+            'other' => array(
+                'subject' => $subject,
+                'message' => $messagetext,
+                'errorinfo' => $mail->ErrorInfo
+            )
+        ));
+        $event->trigger();
         if (CLI_SCRIPT) {
             mtrace('Error: lib/moodlelib.php email_to_user(): '.$mail->ErrorInfo);
         }
