@@ -847,6 +847,24 @@ class question_attempt {
     }
 
     /**
+     * If there is an autosaved step, convert it into a real save, so that it
+     * is preserved.
+     */
+    protected function convert_autosaved_step_to_real_step() {
+        if ($this->autosavedstep === null) {
+            return;
+        }
+
+        $laststep = end($this->steps);
+        if ($laststep !== $this->autosavedstep) {
+            throw new coding_exception('Cannot convert autosaved step to real step, since other steps have been added.');
+        }
+
+        $this->observer->notify_step_modified($this->autosavedstep, $this, key($this->steps));
+        $this->autosavedstep = null;
+    }
+
+    /**
      * Use a strategy to pick a variant.
      * @param question_variant_selection_strategy $variantstrategy a strategy.
      * @return int the selected variant.
@@ -1150,6 +1168,7 @@ class question_attempt {
      * @param int $userid the user to attribute the aciton to. (If not given, use the current user.)
      */
     public function finish($timestamp = null, $userid = null) {
+        $this->convert_autosaved_step_to_real_step();
         $this->process_action(array('-finish' => 1), $timestamp, $userid);
     }
 
