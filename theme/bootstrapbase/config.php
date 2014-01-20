@@ -39,9 +39,6 @@ $THEME->supportscssoptimisation = false;
 $THEME->editor_sheets = array('editor');
 
 $THEME->plugins_exclude_sheets = array(
-    'block' => array(
-        'html'
-    ),
     'gradereport' => array(
         'grader',
     ),
