@@ -498,4 +498,26 @@
             margin: 0 0 1em 0;
         }
     }
+
+    #page-mod-forum-discuss .discussioncontrols {
+        text-align: right;
+        .discussioncontrol {
+            float: none;
+            width: auto;
+            display: inline-block;
+            margin: 0 3px 0.5em;
+            select,
+            input {
+                margin-bottom: 0;
+            }
+            &.movediscussion {
+                margin-right: 0;
+                padding-right: 0;
+            }
+        }
+    }
+
+   #page-mod-forum-discuss.dir-rtl .discussioncontrols {
+       text-align: left;
+   }
 }
