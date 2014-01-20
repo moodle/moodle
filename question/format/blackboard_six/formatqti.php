@@ -778,8 +778,10 @@ class qformat_blackboard_six_qti extends qformat_blackboard_six_base {
         $question->fraction[] = 1;
         $question->defaultmark = 1;
         $question->responseformat = 'editor';
+        $question->responserequired = 1;
         $question->responsefieldlines = 15;
         $question->attachments = 0;
+        $question->attachmentsrequired = 0;
         $question->responsetemplate =  $this->text_field('');
 
         $questions[]=$question;

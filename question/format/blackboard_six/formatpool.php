@@ -153,8 +153,10 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
             $question->responsetemplate =  $this->text_field('');
             $question->feedback = '';
             $question->responseformat = 'editor';
+            $question->responserequired = 1;
             $question->responsefieldlines = 15;
             $question->attachments = 0;
+            $question->attachmentsrequired = 0;
             $question->fraction = 0;
 
             $questions[] = $question;

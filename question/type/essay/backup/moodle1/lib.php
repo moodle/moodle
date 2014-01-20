@@ -43,8 +43,10 @@ class moodle1_qtype_essay_handler extends moodle1_qtype_handler {
         $this->write_xml('essay', array(
             'id'                     => $this->converter->get_nextid(),
             'responseformat'         => 'editor',
+            'responserequired'       => 1,
             'responsefieldlines'     => 15,
             'attachments'            => 0,
+            'attachmentsrequired'    => 0,
             'graderinfo'             => '',
             'graderinfoformat'       => FORMAT_HTML,
             'responsetemplate'       => '',

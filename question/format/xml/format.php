@@ -726,8 +726,12 @@ class qformat_xml extends qformat_default {
                 array('#', 'responseformat', 0, '#'), 'editor');
         $qo->responsefieldlines = $this->getpath($question,
                 array('#', 'responsefieldlines', 0, '#'), 15);
+        $qo->responserequired = $this->getpath($question,
+                array('#', 'responserequired', 0, '#'), 1);
         $qo->attachments = $this->getpath($question,
                 array('#', 'attachments', 0, '#'), 0);
+        $qo->attachmentsrequired = $this->getpath($question,
+                array('#', 'attachmentsrequired', 0, '#'), 0);
         $qo->graderinfo = $this->import_text_with_files($question,
                 array('#', 'graderinfo', 0), '', $this->get_format($qo->questiontextformat));
         $qo->responsetemplate['text'] = $this->getpath($question,
@@ -1273,10 +1277,14 @@ class qformat_xml extends qformat_default {
             case 'essay':
                 $expout .= "    <responseformat>" . $question->options->responseformat .
                         "</responseformat>\n";
+                $expout .= "    <responserequired>" . $question->options->responserequired .
+                        "</responserequired>\n";
                 $expout .= "    <responsefieldlines>" . $question->options->responsefieldlines .
                         "</responsefieldlines>\n";
                 $expout .= "    <attachments>" . $question->options->attachments .
                         "</attachments>\n";
+                $expout .= "    <attachmentsrequired>" . $question->options->attachmentsrequired .
+                        "</attachmentsrequired>\n";
                 $expout .= "    <graderinfo " .
                         $this->format($question->options->graderinfoformat) . ">\n";
                 $expout .= $this->writetext($question->options->graderinfo, 3);

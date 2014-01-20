@@ -355,8 +355,10 @@ END;
         $expectedq->length = 1;
         $expectedq->penalty = 0;
         $expectedq->responseformat = 'editor';
+        $expectedq->responserequired = 1;
         $expectedq->responsefieldlines = 15;
         $expectedq->attachments = 0;
+        $expectedq->attachmentsrequired = 0;
         $expectedq->graderinfo['text'] = '';
         $expectedq->graderinfo['format'] = FORMAT_MOODLE;
         $expectedq->responsetemplate['text'] = '';
@@ -380,8 +382,10 @@ END;
     <penalty>0</penalty>
     <hidden>0</hidden>
     <responseformat>monospaced</responseformat>
+    <responserequired>0</responserequired>
     <responsefieldlines>42</responsefieldlines>
     <attachments>-1</attachments>
+    <attachmentsrequired>1</attachmentsrequired>
     <graderinfo format="html">
         <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
     </graderinfo>
@@ -404,8 +408,10 @@ END;
         $expectedq->length = 1;
         $expectedq->penalty = 0;
         $expectedq->responseformat = 'monospaced';
+        $expectedq->responserequired = 0;
         $expectedq->responsefieldlines = 42;
         $expectedq->attachments = -1;
+        $expectedq->attachmentsrequired = 1;
         $expectedq->graderinfo['text'] = '<p>Grade <b>generously</b>!</p>';
         $expectedq->graderinfo['format'] = FORMAT_HTML;
         $expectedq->responsetemplate['text'] = '<p>Here is something <b>really</b> interesting.</p>';
@@ -432,8 +438,10 @@ END;
         $qdata->options->id = 456;
         $qdata->options->questionid = 123;
         $qdata->options->responseformat = 'monospaced';
+        $qdata->options->responserequired = 0;
         $qdata->options->responsefieldlines = 42;
         $qdata->options->attachments = -1;
+        $qdata->options->attachmentsrequired = 1;
         $qdata->options->graderinfo = '<p>Grade <b>generously</b>!</p>';
         $qdata->options->graderinfoformat = FORMAT_HTML;
         $qdata->options->responsetemplate = '<p>Here is something <b>really</b> interesting.</p>';
@@ -456,8 +464,10 @@ END;
     <penalty>0</penalty>
     <hidden>0</hidden>
     <responseformat>monospaced</responseformat>
+    <responserequired>0</responserequired>
     <responsefieldlines>42</responsefieldlines>
     <attachments>-1</attachments>
+    <attachmentsrequired>1</attachmentsrequired>
     <graderinfo format="html">
       <text><![CDATA[<p>Grade <b>generously</b>!</p>]]></text>
     </graderinfo>
