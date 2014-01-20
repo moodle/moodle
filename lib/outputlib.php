@@ -782,22 +782,33 @@ class theme_config {
                 $plugins = get_plugin_list($type);
                 foreach ($plugins as $plugin=>$fulldir) {
                     if (!empty($excludes[$type]) and is_array($excludes[$type])
-                        and in_array($plugin, $excludes[$type])) {
+                            and in_array($plugin, $excludes[$type])) {
                         continue;
                     }
 
-                    $plugincontent = '';
+                    // Add main stylesheet.
                     $sheetfile = "$fulldir/styles.css";
                     if (is_readable($sheetfile)) {
                         $cssfiles['plugins'][$type.'_'.$plugin] = $sheetfile;
                     }
-                    $sheetthemefile = "$fulldir/styles_{$this->name}.css";
-                    if (is_readable($sheetthemefile)) {
-                        $cssfiles['plugins'][$type.'_'.$plugin.'_'.$this->name] = $sheetthemefile;
+
+                    // Create a list of candidate sheets from parents (direct parent last) and current theme.
+                    $candidates = array();
+                    foreach (array_reverse($this->parent_configs) as $parent_config) {
+                        $candidates[] = $parent_config->name;
                     }
+                    $candidates[] = $this->name;
+
+                    // Add the sheets found.
+                    foreach ($candidates as $candidate) {
+                        $sheetthemefile = "$fulldir/styles_{$candidate}.css";
+                        if (is_readable($sheetthemefile)) {
+                            $cssfiles['plugins'][$type.'_'.$plugin.'_'.$candidate] = $sheetthemefile;
+                        }
                     }
                 }
             }
+        }
 
         // find out wanted parent sheets
         $excludes = $this->resolve_excludes('parents_exclude_sheets');
