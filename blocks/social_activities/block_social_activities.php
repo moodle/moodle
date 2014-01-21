@@ -91,8 +91,10 @@ class block_social_activities extends block_list {
                 }
                 if (!$ismoving) {
                     $actions = course_get_cm_edit_actions($mod, -1);
-                    $editbuttons = '<br />'.
-                            $courserenderer->course_section_cm_edit_actions($actions, $mod);
+                    $editbuttons = html_writer::tag('div',
+                        $courserenderer->course_section_cm_edit_actions($actions, $mod, array('donotenhance' => true)),
+                        array('class' => 'buttons')
+                    );
                 } else {
                     $editbuttons = '';
                 }
