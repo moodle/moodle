@@ -179,6 +179,9 @@ table#user-grades .userpic {
 }
 table#user-grades .quickfeedback {
     border: 1px dashed #000;
+    width: auto;
+    margin: 0;
+    padding: 0;
     margin-left: 10px;
 }
 .dir-rtl table#user-grades .quickfeedback {
@@ -240,8 +243,9 @@ table#user-grades th.courseitem,
     border-style: solid;
     border-width: 0 1px 1px;
 }
-.path-grade-report-grader table td.topleft {
-    border-bottom: 0;
+.path-grade-report-grader .left_scroller table td.topleft {
+    background-color: #fff;
+    border-bottom-color: #cecece;
 }
 table#user-grades td.topleft {
     background-color: #fff;
@@ -287,6 +291,9 @@ table#user-grades td.topleft {
 }
 .path-grade-report-grader td input.text {
     border: 1px solid #666;
+    width: auto;
+    margin: 0;
+    padding: 0;
 }
 .path-grade-report-grader td input.submit {
     margin: 10px 10px 0px 10px;
@@ -507,6 +514,9 @@ table#user-grades td.controls,
 }
 .path-grade-report-grader .grade_icons {
     margin-bottom: .3em;
+}
+.path-grade-report-grader tr.controls .grade_icons {
+    margin-bottom: 0;
 }
 .path-grade-report-grader .yui3-overlay {
     background-color: #FFEE69;
