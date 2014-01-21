@@ -25,10 +25,53 @@ M.mod_scormform.init = function(Y) {
         poptions = poptions+',width='+cwidth+',height='+cheight;
     }
 
+    var scormredirect = function (winobj) {
+        winobj.onload = function () {
+
+            // Hide the form and toc if it exists - we don't want to allow multiple submissions when a window is open.
+            if (scormform) {
+                scormform.hide();
+            }
+
+            var scormtoc = Y.one('#toc');
+            if (scormtoc) {
+                scormtoc.hide();
+            }
+            // Hide the intro and display a message to the user if the window is closed but for some reason the events
+            // below aren't triggered.
+            var scormintro = Y.one('#intro');
+            scormintro.setHTML('<a href="'+ course_url + '">' + M.str.scorm.popuplaunched + '</a>');
+        }
+        // When pop-up is closed return to course homepage.
+        winobj.onunload = function () {
+            // Onunload is called multiple times in the SCORM window - we only want to handle when it is actually closed.
+            setTimeout(function() {
+                if (!winobj.opener) {
+                    // Redirect the parent window to the course homepage.
+                    parent.window.location = course_url;
+                }
+            }, 200)
+        }
+        // Check to make sure pop-up has been launched - if not display a warning,
+        // this shouldn't happen as the pop-up here is launched on user action but good to make sure.
+        setTimeout(function() {
+            if (!winobj) {
+                scormintro.setHTML(M.str.scorm.popupsblocked);
+            }}, 800);
+    }
+
     if (launch == true) {
         launch_url = launch_url+"&display=popup";
-        window.open(launch_url,'Popup', poptions);
-        parent.window.location = course_url;
+        var winobj = window.open(launch_url,'Popup', poptions);
+        this.target='Popup';
+        scormredirect(winobj);
     }
-    scormform.onsubmit = function() {window.open('', 'Popup', poptions); this.target='Popup'; parent.window.location = course_url;};
+    // Listen for view form submit and generate popup on user interaction.
+    if (scormform) {
+        scormform.onsubmit = function() {
+            var winobj = window.open('', 'Popup', poptions);
+            this.target='Popup';
+            scormredirect(winobj);
+        }
+    }
 }
