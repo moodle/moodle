@@ -24,7 +24,7 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
 
-$context = get_context_instance(CONTEXT_SYSTEM);
+$context = context_system::instance();
 require_login();
 
 // Set the companyid

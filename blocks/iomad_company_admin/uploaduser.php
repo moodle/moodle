@@ -734,7 +734,7 @@ if ($formdata = $mform->is_cancelled()) {
             profile_save_data($user);
 
             // Make sure user context exists.
-            context_user::instance($user->id);
+            get_context_instance(CONTEXT_USER, $user->id);
 
             // Add the user to the company default hierarchy level.
             company::assign_user_to_department($formdata->userdepartment, $user->id);
@@ -768,7 +768,7 @@ if ($formdata = $mform->is_cancelled()) {
                 $ccache[$shortname]->groups = null;
             }
             $courseid      = $ccache[$shortname]->id;
-            $coursecontext = context_course::instance($courseid);
+            $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
             if (!isset($manualcache[$courseid])) {
                 if ($instances = enrol_get_instances($courseid, false)) {
                     $manualcache[$courseid] = reset($instances);
@@ -1404,12 +1404,12 @@ function uu_allowed_auths() {
  */
 function uu_allowed_roles() {
     // Let's cheat a bit, frontpage is guaranteed to exist and has the same list of roles ;-).
-    $roles = get_assignable_roles(context_course::instance(SITEID), ROLENAME_ORIGINALANDSHORT);
+    $roles = get_assignable_roles(get_context_instance(CONTEXT_COURSE, SITEID), ROLENAME_ORIGINALANDSHORT);
     return array_reverse($roles, true);
 }
 
 function uu_allowed_roles_cache() {
-    $allowedroles = get_assignable_roles(context_course::instance(SITEID), ROLENAME_SHORT);
+    $allowedroles = get_assignable_roles(get_context_instance(CONTEXT_COURSE, SITEID), ROLENAME_SHORT);
     foreach ($allowedroles as $rid => $rname) {
         $rolecache[$rid] = new stdClass();
         $rolecache[$rid]->id   = $rid;

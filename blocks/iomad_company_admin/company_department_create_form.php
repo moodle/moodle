@@ -32,7 +32,7 @@ class department_display_form extends company_moodleform {
         global $CFG, $USER;
 
         $this->selectedcompany = $companyid;
-        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
+        $this->context = get_context_instance(CONTEXT_COURSECAT, $CFG->defaultrequestcategory);
         $syscontext = context_system::instance();
 
         $company = new company($this->selectedcompany);
@@ -122,7 +122,7 @@ class department_edit_form extends company_moodleform {
         global $CFG;
 
         $this->selectedcompany = $companyid;
-        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
+        $this->context = get_context_instance(CONTEXT_COURSECAT, $CFG->defaultrequestcategory);
         $this->departmentid = $departmentid;
         $this->chosenid = $chosenid;
         $this->action = $action;
@@ -195,12 +195,9 @@ $createnew = optional_param('createnew', 0, PARAM_INT);
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:edit_departments', $context);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 $PAGE->set_context($context);
+
+require_capability('block/iomad_company_admin:edit_departments', $context);
 
 $urlparams = array();
 if ($returnurl) {
@@ -218,6 +215,11 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block',
                           'createdepartment_title');
 $blockpage->setup($urlparams);
+
+require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
 
 $mform = new department_display_form($PAGE->url, $companyid, $departmentid);
 $editform = new department_edit_form($PAGE->url, $companyid, $departmentid);

@@ -298,11 +298,6 @@ $selectedcourse = optional_param('currentcourses', 0, PARAM_INTEGER);
 
 $context = context_system::instance();
 require_login();
-require_capability('block/iomad_company_admin:company_course_users', $context);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 $PAGE->set_context($context);
 
 $urlparams = array('companyid' => $companyid);
@@ -324,6 +319,12 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block',
                            'company_course_users_title');
 $blockpage->setup();
+
+require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+require_capability('block/iomad_company_admin:company_course_users', $context);
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
 
 $coursesform = new company_ccu_courses_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourse);
 $usersform = new company_course_users_form($PAGE->url, $context, $companyid, $departmentid);
