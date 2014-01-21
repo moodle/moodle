@@ -34,7 +34,8 @@ $mode = optional_param('mode', 'display', PARAM_ALPHA);
 
 $cm = get_coursemodule_from_id('lesson', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$lesson = new lesson($DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST));
+$dblesson = $DB->get_record('lesson', array('id' => $cm->instance), '*', MUST_EXIST);
+$lesson = new lesson($dblesson);
 
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
@@ -129,8 +130,20 @@ switch ($mode) {
             $updategrade->id = $grade->id;
             $updategrade->grade = $gradeinfo->grade;
             $DB->update_record('lesson_grades', $updategrade);
-            // Log it
-            add_to_log($course->id, 'lesson', 'update grade', "essay.php?id=$cm->id", $lesson->name, $cm->id);
+
+            $params = array(
+                'context' => $context,
+                'objectid' => $grade->id,
+                'courseid' => $course->id,
+                'relateduserid' => $attempt->userid,
+                'other' => array(
+                    'lessonid' => $lesson->id,
+                    'attemptid' => $attemptid
+                )
+            );
+            $event = \mod_lesson\event\essay_assessed::create($params);
+            $event->add_record_snapshot('lesson', $dblesson);
+            $event->trigger();
 
             $lesson->add_message(get_string('changessaved'), 'notifysuccess');
 
