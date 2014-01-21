@@ -34,10 +34,11 @@ define("COURSECLASSROOM_MAX_NAME_LENGTH", 50);
  * @return string
  */
 function get_trainingevent_name($trainingevent) {
+    $textlib = textlib_get_instance();
 
     $name = strip_tags(format_string($trainingevent->intro, true));
-    if (textlib::strlen($name) > COURSECLASSROOM_MAX_NAME_LENGTH) {
-        $name = textlib::substr($name, 0, COURSECLASSROOM_MAX_NAME_LENGTH)."...";
+    if ($textlib->strlen($name) > COURSECLASSROOM_MAX_NAME_LENGTH) {
+        $name = $textlib->substr($name, 0, COURSECLASSROOM_MAX_NAME_LENGTH)."...";
     }
 
     if (empty($name)) {
@@ -47,6 +48,7 @@ function get_trainingevent_name($trainingevent) {
 
     return $name;
 }
+
 /**
  * Given an object containing all the necessary data,
  * (defined by the form in mod_form.php) this function
@@ -94,13 +96,13 @@ function trainingevent_update_instance($trainingevent) {
     $trainingevent->id = $trainingevent->instance;
 
     grade_update('mod/trainingevent',
-                  $trainingevent->course,
-                  'mod',
-                  'trainingevent',
-                  $trainingevent->id,
-                  0,
-                  null,
-                  array('itemname' => $trainingevent->name));
+                 $trainingevent->course,
+                 'mod',
+                 'trainingevent',
+                 $trainingevent->id,
+                 0,
+                 null,
+                 array('itemname' => $trainingevent->name));
 
     return $DB->update_record("trainingevent", $trainingevent);
 }
@@ -130,13 +132,13 @@ function trainingevent_delete_instance($id) {
         $result = false;
     } else {
         grade_update('mod/trainingevent',
-                      $trainingevent->course,
-                      'mod',
-                      'trainingevent',
-                      $trainingevent->id,
-                      0,
-                      null,
-                      array('deleted' => 1));
+                     $trainingevent->course,
+                     'mod',
+                     'trainingevent',
+                     $trainingevent->id,
+                     0,
+                     null,
+                     array('deleted' => 1));
     }
 
     return $result;
@@ -176,17 +178,17 @@ function trainingevent_get_coursemodule_info($coursemodule) {
 
         // No filtering here because this info is cached and filtered later.
 
-        $extra = "<p>";
         if ($trainingevent->classroomid) {
+            $extra = "";
             if ($classroom = $DB->get_record('classroom', array('id' => $trainingevent->classroomid), '*')) {
-                $extra .= get_string('location', 'trainingevent') . ": " . $classroom->name . " </br> ";
+                $extra .= get_string('location', 'trainingevent') . ": " . $classroom->name . " - ";
             }
         }
         $dateformat = "d F Y, g:ia";
 
         $extra .= get_string('startdatetime', 'trainingevent') . ": " . date($dateformat, $trainingevent->startdatetime);
-        $extra .= "<a href='$CFG->wwwroot/mod/trainingevent/manageclass.php?id=$trainingevent->id'></br>".
-                   get_string('details', 'trainingevent')."</a></br></p>";
+        $extra .= "</br><a href='$CFG->wwwroot/mod/trainingevent/manageclass.php?id=$trainingevent->id'>".
+                   get_string('details', 'trainingevent')."</a></br>";
 
         // Sneakily prepend the extra info to the intro value (only for the remainder of this function).
         $trainingevent->intro = "<div>" . $extra . "</div>";
@@ -272,6 +274,9 @@ function trainingevent_supports($feature) {
         case FEATURE_GRADE_OUTCOMES: {
             return false;
         }
+        case FEATURE_MOD_ARCHETYPE: {
+            return MOD_ARCHETYPE_RESOURCE;
+        }
         case FEATURE_BACKUP_MOODLE2: {
             return true;
         }
@@ -285,3 +290,29 @@ function trainingevent_supports($feature) {
     }
 }
 
+/***
+ * Checks if the user is already booked on another training even at
+ * the same time as the one passed.
+ *
+ * @uses event = object
+ * @usese $userid = int
+ * @returns boolean
+ */
+function trainingevent_event_clashes($event, $userid) {
+    global $DB;
+
+    // Check if either the current event start or end date falls between an event
+    // the user is already booked on.
+    if ($DB->get_records_sql("SELECT cc.id FROM {trainingevent} cc
+                              RIGHT JOIN {trainingevent_users} ccu
+                              ON (ccu.trainingeventid = cc.id AND ccu.userid = :userid)
+                              WHERE ( cc.startdatetime <= ".$event->startdatetime."
+                              AND cc.enddatetime >= ".$event->startdatetime.")
+                              OR ( cc.startdatetime <= ".$event->enddatetime."
+                              AND cc.enddatetime >= ".$event->enddatetime.")",
+                              array('userid' => $userid))) {
+        return true;
+    } else {
+        return false;
+    }
+}

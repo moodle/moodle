@@ -78,7 +78,7 @@ function xmldb_trainingevent_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        // Trainingevent savepoint reached.
+        // Label savepoint reached.
         upgrade_mod_savepoint(true, 2011111701, 'trainingevent');
     }
 

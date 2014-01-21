@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    Block Approve Enroll
+ * @package    Block Iomad Approve Access
  * @copyright  2011 onwards E-Learn Design Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,52 +26,85 @@ require_once($CFG->libdir . '/tablelib.php');
 require_once('lib.php');
 
 class approve_form extends moodleform {
-function definition() {
+    public function definition() {
         global $CFG, $DB, $USER;
+
         $mform = $this->_form; // Don't forget the underscore!
-        // get my manager type.
+
+        // Get my manager type.
         $department = false;
-    if ($managertype = $DB->get_record('companymanager', array('userid' => $USER->id))) {
-        if (!empty($managertype->departmentmanager)) {
+        if ($manageruser = $DB->get_record('company_users', array('userid' => $USER->id))) {
+            if (($manageruser->managertype == 2)) {
                 $department = true;
+            }
         }
-    }
 
         $selectarr = array();
-    if ($results = approve_enroll_get_my_users()) {
+        if ($results = approve_enroll_get_my_users()) {
+
             $mform->addElement('html', '<h2>'.get_string('approveuserstitle', 'block_iomad_approve_access').'</h2>');
-    }
-    if (!$department) {
+
+            if (!$department) {
                 $mform->addElement('html', '* '.get_string('managernotyetapproved', 'block_iomad_approve_access'));
-    }
-    foreach ($results as $result) {
+            }
+            $dateformat = "d F Y, g:ia";
+            foreach ($results as $result) {
 
                 // Get the user info.
                 $user = $DB->get_record("user", array("id" => $result->userid) , "firstname,lastname");
+
                 // Get the course info.
                 $course = $DB->get_record("course", array('id' => $result->courseid), "fullname");
+
                 // Get the activity info.
-                $activity = $DB->get_record('courseclassroom', array('id' => $result->activityid), 'approvaltype');
+                $activity = $DB->get_record('trainingevent', array('id' => $result->activityid));
+
+                // Get the room info.
+                $roominfo = $DB->get_record('classroom', array('id' => $activity->classroomid));
+
+                // Get the number of current attendees.
+                $numattendees = $DB->count_records('trainingevent_users', array('trainingeventid' => $activity->id));
 
                 // Check the approval status.
-        if ($activity->approvaltype == 3 && $result->manager_ok != 1 && !$department) {
+                if ($activity->approvaltype == 3 && $result->manager_ok != 1 && !$department) {
                     $managerapproved = '*';
-        } else {
+                } else {
                     $managerapproved = '';
-        }
+                }
                 $radioarray = array();
-                $radioarray[] =& $mform->createElement('radio', 'approve_'.$result->userid.'_'.$result->courseid, '',
-                                                       get_string('approve').$managerapproved, 1);
-                $radioarray[] =& $mform->createElement('radio', 'approve_'.$result->userid.'_'.$result->courseid, '',
-                                                       get_string('deny', 'block_iomad_approve_access'), 2);
-                $mform->addGroup($radioarray, 'approve_'.$result->userid.'_'.$result->courseid,
-                                 $user->firstname. ' '. $user->lastname.' : '.$course->fullname.'
-                                 <a href="'.
-                                 new moodle_url('/mod/courseclassroom/manageclass.php',
-                                                array('id' => $result->activityid)).'">'.
-                                 $activity->name.' '.date($dateformat, $activity->startdatetime).'</a>',
-                                 array(' '), false);
-            {
+                // Is the event fully booked?
+                if ($numattendees < $roominfo->capacity ) {
+                    $radioarray[] =& $mform->createElement('radio',
+                                                           'approve_'.$result->userid.'_'.$result->activityid,
+                                                           '',
+                                                           get_string('approve').$managerapproved,
+                                                           1);
+                    $radioarray[] =& $mform->createElement('radio',
+                                                           'approve_'.$result->userid.'_'.$result->activityid,
+                                                           '',
+                                                           get_string('deny', 'block_iomad_approve_access'),
+                                                           2);
+                    $mform->addGroup($radioarray, 'approve_'.$result->userid.'_'.$result->courseid,
+                                     $user->firstname. ' '. $user->lastname.' : '.$course->fullname.'
+                                     <a href="'.
+                                     new moodle_url('/mod/trainingevent/manageclass.php', array('id' => $result->activityid)).'">'.
+                                     $activity->name.' '.date($dateformat, $activity->startdatetime).'</a>',
+                                     array(' '), false);
+                } else {
+                    $radioarray[] =& $mform->createElement('radio',
+                                                           'approve_'.$result->userid.'_'.$result->activityid,
+                                                           '',
+                                                           get_string('deny', 'block_iomad_approve_access'),
+                                                           2);
+                    $mform->addGroup($radioarray, '_'.$result->userid.'_'.$result->courseid,
+                                     $user->firstname. ' '. $user->lastname.' : '.$course->fullname.'
+                                     <a href="'.
+                                     new moodle_url('/mod/trainingevent/manageclass.php', array('id' => $result->activityid)).'">'.
+                                     $activity->name.' '.date($dateformat, $activity->startdatetime).'</a></br><b>'.
+                                     get_string('fullybooked', 'block_iomad_approve_access')."</b>",
+                                     array(' '), false);
+                }
+            }
             $this->add_action_buttons(true, 'submit');
         } else {
             $mform->addElement('html', get_string('noonetoapprove', 'block_iomad_approve_access'));

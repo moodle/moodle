@@ -73,12 +73,12 @@ class mod_trainingevent_mod_form extends moodleform_mod {
 
         $this->standard_coursemodule_elements();
 
-        // Buttons.
+        // Add the buttons.
         $this->add_action_buttons(true, false, null);
 
     }
 
-    public function validation($data, $files) {
+    public function validation($data) {
         global $DB;
 
         $errors = array();
@@ -86,19 +86,27 @@ class mod_trainingevent_mod_form extends moodleform_mod {
             $errors['classroomid'] = get_string('invalidclassroom', 'trainingevent');
             return $errors;
         }
+
+        // Are we editing or adding?
+        if (!empty($data['instance'])) {
+            $mysql = " AND id != " . $data['instance'];
+        } else {
+            $mysql = "";
+        }
+
         // Check the date against that room usage.
         if ($roomclash = $DB->get_records_sql("SELECT * FROM {trainingevent}
-                                               WHERE classroomid = ".$data['classroomid']."
+                                               WHERE classroomid = ".$data['classroomid']."$mysql
                                                AND startdatetime < ".$data['startdatetime']."
                                                AND enddatetime > ".$data['startdatetime'])) {
             $errors['classroomid'] = get_string('chosenclassroomunavailable', 'trainingevent');
         } else if ($roomclash = $DB->get_records_sql("SELECT * FROM {trainingevent}
-                                                      WHERE classroomid = ".$data['classroomid']."
+                                                      WHERE classroomid = ".$data['classroomid']."$mysql
                                                       AND startdatetime > ".$data['startdatetime']."
                                                       AND startdatetime < ".$data['enddatetime'])) {
             $errors['classroomid'] = get_string('chosenclassroomunavailable', 'trainingevent');
         } else if ($roomclash = $DB->get_records_sql("SELECT * FROM {trainingevent}
-                                                      WHERE classroomid = ".$data['classroomid']."
+                                                      WHERE classroomid = ".$data['classroomid']."$mysql
                                                       AND startdatetime > ".$data['startdatetime']."
                                                       AND enddatetime < ".$data['enddatetime'])) {
             $errors['classroomid'] = get_string('chosenclassroomunavailable', 'trainingevent');

@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    Block Approve Enroll
+ * @package    Block Iomad Approve Access
  * @copyright  2011 onwards E-Learn Design Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -25,29 +25,36 @@ defined('MOODLE_INTERNAL') || die();
 $capabilities = array(
     'block/iomad_approve_access:addinstance' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => array(
             'manager' => CAP_ALLOW
         ),
+
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
 
     'block/iomad_approve_access:myaddinstance' => array(
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => array(
             'manager' => CAP_ALLOW
         ),
+
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
+
     'block/iomad_approve_access:approve' => array(
         'riskbitmask' => RISK_SPAM | RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_BLOCK,
         'archetypes' => array(
             'manager' => CAP_ALLOW
         ),
+
         'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
-);  
+);

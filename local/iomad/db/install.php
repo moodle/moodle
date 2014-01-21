@@ -19,7 +19,7 @@
 function xmldb_local_iomad_install() {
     global $CFG, $DB;
 
-    $systemcontext = context_system::instance();
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
     // Create new Company Manager role.
     if (!$companymanager = $DB->get_record( 'role', array( 'shortname' => 'companymanager') )) {
@@ -157,6 +157,7 @@ function xmldb_local_iomad_install() {
     }
 
     $companymanagercaps = array(
+        'local/iomad_dashboard:view',
         'block/iomad_online_users:viewlist',
         'block/iomad_link:view',
         'block/iomad_company_admin:view_licenses',
@@ -202,6 +203,9 @@ function xmldb_local_iomad_install() {
         'mod/quiz:view',
         'mod/resource:view',
         'mod/survey:participate',
+        'mod/trainingevent:add`',
+        'mod/trainingevent:grade',
+        'mod/trainingevent:viewattendees',
         'moodle/block:view',
         'moodle/grade:viewall',
         'moodle/site:viewfullnames',
@@ -231,9 +235,10 @@ function xmldb_local_iomad_install() {
         'mod/choice:deleteresponses',
         'mod/choice:downloadresponses',
         'mod/choice:readresponses',
-        'mod/courseclassroom:grade',
-        'mod/courseclassroom:invite',
-        'mod/courseclassroom:viewattendees',
+        'mod/trainingevent:add`',
+        'mod/trainingevent:grade',
+        'mod/trainingevent:invite',
+        'mod/trainingevent:viewattendees',
         'mod/forum:addnews',
         'mod/forum:addquestion',
         'mod/forum:createattachment',

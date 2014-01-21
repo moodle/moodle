@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    Block Approve Enroll
+ * @package    Block Approve access
  * @copyright  2011 onwards E-Learn Design Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->version = 2013071000;  // YYYYMMDDHH (year, month, day, 24-hr time)
+$plugin->version = 2013071000;  // YYYYMMDDHH (year, month, day, 24-hr time).
 $plugin->requires = 2010021900; // YYYYMMDDHH (This is the release version for Moodle 2.0).

@@ -29,6 +29,7 @@ class EmailTemplate {
     protected $sender = null;
     protected $headers = null;
     protected $approveuser = null;
+    protected $event = null;
 
     /**
      * Send an email to (a) specified user(s)
@@ -120,6 +121,7 @@ class EmailTemplate {
         $this->invoice = array_key_exists('invoice', $options) ? $options['invoice'] : null;
         $sender = array_key_exists('sender', $options) ? $options['sender'] : null;
         $approveuser = array_key_exists('approveuser', $options) ? $options['approveuser'] : null;
+        $event = array_key_exists('event',$options) ? $options['event'] : null;
         $this->classroom = array_key_exists('classroom', $options) ? $options['classroom'] : null;
         $this->license = array_key_exists('license', $options) ? $options['license'] : null;
         $this->headers = array_key_exists('headers', $options) ? $options['headers'] : null;
@@ -175,6 +177,7 @@ class EmailTemplate {
         }
 
         $this->course = $this->get_course($course);
+        $this->event = $event;
 
         $this->templatename = $templatename;
         $this->template = $this->get_template($templatename);
@@ -385,7 +388,8 @@ class EmailTemplate {
                               $this->classroom,
                               $this->license,
                               $this->sender,
-                              $this->approveuser);
+                              $this->approveuser,
+                              $this->event);
 
         foreach ($amethods as $funcname) {
             $replacement = "{" . $funcname . "}";

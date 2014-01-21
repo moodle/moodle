@@ -25,7 +25,7 @@
 
 $capabilities = array(
 
-    'mod/trainingevent:addinstance' => array(
+    'mod/trainingevent:invite' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(
@@ -35,7 +35,7 @@ $capabilities = array(
         )
     ),
 
-    'mod/trainingevent:invite' => array(
+    'mod/trainingevent:add' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'archetypes' => array(

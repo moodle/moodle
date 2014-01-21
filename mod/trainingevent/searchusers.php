@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Library of functions and constants for module trainingevent
+ *
+ * @package    mod
+ * @subpackage trainingevent
+ * @copyright  2013 onwards E-Learn Design Ltd.  {@link http://www.e-learndesign.co.uk}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
 require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
@@ -21,14 +31,14 @@ require_once($CFG->dirroot.'/user/filters/lib.php');
 $sort         = optional_param('sort', 'firstname', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
-$perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page.
+$perpage      = optional_param('perpage', 30, PARAM_INT);        // How many per page?
 $acl          = optional_param('acl', '0', PARAM_INT);           // Id of user to tweak mnet ACL (requires $access).
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);   // Md5 confirmation hash.
 $email  = optional_param('email', 0, PARAM_CLEAN);
-$eventid = required_param('eventid', PARAM_INTEGER);
+$eventid = required_param('eventid', 0, PARAM_INTEGER);
 
 $params = array();
 
@@ -61,9 +71,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $eventid))) {
     print_error('invalid event ID');
 }
 
-// Page stuff:.
+// Page stuff.
 $url = new moodle_url('/course/view.php', array('id' => $event->course));
-$context = context_course::instance($event->course);
+$context = get_context_instance(CONTEXT_COURSE, $event->course);
 require_login($event->course); // Adds to $PAGE, creates $OUTPUT.
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
@@ -75,12 +85,15 @@ echo $OUTPUT->header();
 // Get the location information.
 $location = $DB->get_record('classroom', array('id' => $event->classroomid));
 
+// How many are already attending?
+$attending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id));
+
 // Get the associated department id.
 $company = new company($location->companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+if (has_capability('block/eldms_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = company::get_userlevel($USER);
@@ -93,7 +106,7 @@ if ($departmentid == 0 ) {
 // Get the appropriate list of departments.
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 $select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
-$select->label = get_string('department', 'block_iomad_company_admin');
+$select->label = get_string('department', 'block_eldms_company_admin');
 $select->formid = 'choosedepartment';
 echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
@@ -136,7 +149,8 @@ if (!empty($fieldnames)) {
     }
 }
 
-$returnurl = "manageclass.php?eventid= $eventid";
+
+$returnurl = "manageclass.php?eventid=$eventid";
 
 // Carry on with the user listing.
 
@@ -185,14 +199,17 @@ if ($assignedusers = $DB->get_records('trainingevent_users', array('trainingeven
     $sqlsearch .= " AND id not in (".implode(',', array_keys($assignedusers)).") ";
 }
 
+// Strip out no course users.
+$sqlsearch .= " AND id IN ( SELECT userid from {course_completions} WHERE course = " . $event->course . ") ";
+
 // Get the user records.
 $userrecords = $DB->get_fieldset_select('user', 'id', $sqlsearch);
 $userlist = "";
 foreach ($userrecords as $userrecord) {
     if ( !empty($userlist)) {
-        $userlist .= " OR id= $userrecord ";
+        $userlist .= " OR id=$userrecord ";
     } else {
-        $userlist .= " id= $userrecord ";
+        $userlist .= " id=$userrecord ";
     }
 }
 if (!empty($userlist)) {
@@ -204,7 +221,7 @@ $usercount = count($userrecords);
 
 echo $OUTPUT->heading("$usercount ".get_string('users'));
 
-$alphabet = explode(',', get_string('alphabet', 'block_iomad_company_admin'));
+$alphabet = explode(',', get_string('alphabet', 'block_eldms_company_admin'));
 $strall = get_string('all');
 
 $baseurl = new moodle_url('editusers.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
@@ -212,11 +229,12 @@ echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
 
 flush();
 
+
 if (!$users) {
     $match = array();
     echo $OUTPUT->heading(get_string('nousersfound'));
 
-    $table = new stdclass();
+    $table = null;
 
 } else {
 
@@ -264,24 +282,25 @@ if (!$users) {
             continue; // Do not dispaly dummy new user and guest here.
         }
 
-        if (has_capability('mod/trainingevent:invite', $context)) {
+        if (has_capability('mod/trainingevent:add', $context) && $attending < $location->capacity) {
             $enrolmentbutton = $OUTPUT->single_button(new moodle_url("/mod/trainingevent/manageclass.php",
-                                                      array('id' => $event->id,
-                                                            'chosenevent' => $event->id,
-                                                            'userid' => $user->id,
-                                                            'view' => 1,
-                                                            'action' => 'add')),
-                                                      get_string('bookuser', 'trainingevent'));
+                                                                      array('id' => $event->id,
+                                                                            'chosenevent' => $event->id,
+                                                                            'userid' => $user->id,
+                                                                            'view' => 1,
+                                                                            'action' => 'add')),
+                                                                      get_string('bookuser',
+                                                                      'trainingevent'));
         } else {
             $enrolmentbutton = "";
         }
         $fullname = fullname($user, true);
 
         $table->data[] = array ("$fullname",
-                                "$user->email",
-                                "$user->city",
-                                "$user->country",
-                                $enrolmentbutton);
+                            "$user->email",
+                            "$user->city",
+                            "$user->country",
+                            $enrolmentbutton);
     }
 }
 

@@ -684,6 +684,58 @@ class company {
     }
 
     /**
+     * Gets all of the users that manager is responsible for
+     *
+     * Parameters -
+     *             $companyid = int;
+     *             $departmentid = int;
+     *
+     * Returns array()
+     *
+     **/
+    public static function get_my_users($companyid=0, $departmentid=0) {
+        global $USER;
+
+        if (empty($companyid)) {
+            return array();
+        }
+        if (empty($departmentid)) {
+            if (is_siteadmin($USER->id)) {
+                $department = self::get_company_parentnode($companyid);
+                $departmentid = $department->id;
+            } else {
+                $department = self::get_userlevel($USER);
+                $departmentid = $department->id;
+            }
+        }
+        return self::get_recursive_department_users($departmentid);
+    }
+
+    /**
+     * Gets a list of the users that manager is responsible for
+     *
+     * Parameters -
+     *             $companyid = int;
+     *             $departmentid = int;
+     *
+     * Returns string
+     *
+     **/
+    public static function get_my_users_list($companyid=0, $departmentid=0) {
+        global $USER;
+
+        if (empty($companyid)) {
+            return array();
+        }
+        $userlist = self::get_my_users($companyid, $departmentid);
+        $users = array();
+        foreach ($userlist as $user) {
+            $users[] = $user->userid;
+        }
+        return implode(',', $users);
+    }
+
+    /**
      * Gets a list of the users at this department id
      *
      * Parameters -

@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * block approve enroll 
+ * block approve access 
  *
- * @package    Block Approve Enroll
+ * @package    Block Iomad Approve Access
  * @copyright  2011 onwards E-Learn Design Limited
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -32,8 +32,9 @@ class block_iomad_approve_access extends block_base {
     }
 
     public function has_config() {
-        return false;
+        return true;
     }
+
     public function get_content() {
         global $DB;
 
@@ -45,8 +46,8 @@ class block_iomad_approve_access extends block_base {
         $this->content = new stdClass;
 
         if (approve_enrol_has_users()) {
-            $this->content->text   = '<a href="'.new moodle_url('/blocks/iomad_approve_access/approve.php').
-                                      '">'.get_string('userstoapprove', 'block_iomad_approve_access').'</a>';
+            $this->content->text   = '<a href="'.new moodle_url('/blocks/iomad_approve_access/approve.php').'">'.
+                                      get_string('userstoapprove', 'block_iomad_approve_access').'</a>';
         } else {
             $this->content->text = get_string('noonetoapprove', 'block_iomad_approve_access');
         }

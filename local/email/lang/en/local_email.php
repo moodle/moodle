@@ -51,28 +51,36 @@ please log onto {Site_FullName} ({LinkURL}) to approve or deny this request.';
 $string['approved_subject'] = 'You have been approved access to {Course_FullName}';
 $string['approved_body'] = 'You have been granted access to course {Course_FullName}.  To access this, please click on {CourseURL}.';
 
-$string['course_classroom_denied_subject'] = 'Face to face training event approval denied';
-$string['course_classroom_denied_body'] = 'Your approval request has been rejected for {Course_FullName} at the following event -
-
-Time : {Classroom_Time}
-Location : {Classroom_Name}
-Address : {Classroom_Address}
-          {Classroom_City} {Classroom_Postcode}';
-$string['expire_subject'] = 'Course expires';
-$string['expire_body'] = 'This is to let you know that your training in {Course_FullName} expires soon.';
-
 $string['course_classroom_approval_subject'] = 'New face to face training event approval';
-$string['course_classroom_approval_body'] = 'You have been asked to approve access to the face to face training course {Course_FullName} for {Approveuser_FirstName} {Approveuser_LastName} at the following event -
+$string['course_classroom_approval_body'] = 'You have been asked to approve access to the face to face training course {Event_Name} for {Approveuser_FirstName} {Approveuser_LastName} at the following event -
 
 Time : {Classroom_Time}
 Location : {Classroom_Name}
 Address : {Classroom_Address}
           {Classroom_City} {Classroom_Postcode}
 
-please log onto {Site_FullName} ({SiteURL}) to approve or deny this request.';
+please log onto {Site_FullName} ('.$CFG->wwwroot.') to approve or deny this request.';
 
 $string['course_classroom_approved_subject'] = 'Face to face training event approved';
-$string['course_classroom_approved_body'] = 'You have been approved access to the face to face training course {Course_FullName} at the following event -
+$string['course_classroom_approved_body'] = 'You have been approved access to the face to face training course {Event_Name} at the following event -
+
+Time : {Classroom_Time}
+Location : {Classroom_Name}
+Address : {Classroom_Address}
+          {Classroom_City} {Classroom_Postcode}
+';
+
+$string['course_classroom_denied_subject'] = 'Face to face training event approval denied';
+$string['course_classroom_denied_body'] = 'Your approval request has been rejected for {Event_Name} at the following event -
+
+Time : {Classroom_Time}
+Location : {Classroom_Name}
+Address : {Classroom_Address}
+          {Classroom_City} {Classroom_Postcode}
+';
+
+$string['course_classroom_manager_denied_subject'] = 'Face to face training event approval denied by company manager';
+$string['course_classroom_manager_denied_body'] = 'The approval request for {Approveuser_FirstName} {Approveuser_LastName} has been rejected by {User_FirstName} {User_LastName} ({User_Email}) for {Event_Name} at the following event -
 
 Time : {Classroom_Time}
 Location : {Classroom_Name}
@@ -81,7 +89,7 @@ Address : {Classroom_Address}
 ';
 
 $string['course_classroom_approval_request_subject'] = 'New face to face training event approval request sent';
-$string['course_classroom_approval_request_body'] = 'You have asked for access to the face to face training course {Course_FullName} at the following event -
+$string['course_classroom_approval_request_body'] = 'You have asked for access to the face to face training course {Event_Name} at the following event -
 
 Time : {Classroom_Time}
 Location : {Classroom_Name}
@@ -90,8 +98,8 @@ Address : {Classroom_Address}
 
 You will be notified once your manager has approved or denied access.';
 
-$string['courseclassroom_approved_subject'] = 'You have been approved access to {Course_FullName}';
-$string['courseclassroom_approved_body'] = 'You have been granted access to course {Course_FullName}.  To access this, please click on {CourseURL}.';
+$string['courseclassroom_approved_subject'] = 'You have been approved access to {Event_Name}';
+$string['courseclassroom_approved_body'] = 'You have been granted access to course {Event_Name}.  To access this, please click on {CourseURL}.';
 
 $string['user_added_to_course_subject'] = 'Added to {Course_FullName}';
 $string['user_added_to_course_body'] = 'Dear {User_FirstName}
@@ -174,6 +182,8 @@ $string['expiry_warn_manager_body'] = 'Dear {User_FullName},
 the following users accreditation in {Course_FullName} is due to expire soon :
 
 {Course_ReportText}';
+$string['expire_subject'] = 'Course expires';
+$string['expire_body'] = 'This is to let you know that your training in {Course_FullName} expires soon.';
 $string['expire_manager_subject'] = 'Accreditation expired report for {Course_FullName}';
 $string['expire_manager_body'] = 'Dear {User_FullName},
 the following users accreditation in {Course_FullName} has expired :
