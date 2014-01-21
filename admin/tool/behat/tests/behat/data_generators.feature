@@ -1,4 +1,4 @@
-@tool @tool_behat @_only_local
+@tool @tool_behat
 Feature: Set up contextual data for tests
   In order to write tests quickly
   As a developer

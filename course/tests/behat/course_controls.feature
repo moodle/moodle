@@ -1,4 +1,4 @@
-@core @core_course @_alerts
+@core @core_course @_alert
 Feature: Course activity controls works as expected
   In order to manage my course's activities
   As a teacher
