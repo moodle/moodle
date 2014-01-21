@@ -33,7 +33,11 @@ $course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
 require_course_login($course, true);
 $PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, 'resource', 'view all', "index.php?id=$course->id", '');
+$params = array(
+    'context' => context_course::instance($course->id)
+);
+$event = \mod_resource\event\course_module_instance_list_viewed::create($params);
+$event->trigger();
 
 $strresource     = get_string('modulename', 'resource');
 $strresources    = get_string('modulenameplural', 'resource');
