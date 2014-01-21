@@ -93,6 +93,11 @@ define('BADGE_MESSAGE_DAILY', 2);
 define('BADGE_MESSAGE_WEEKLY', 3);
 define('BADGE_MESSAGE_MONTHLY', 4);
 
+/*
+ * URL of backpack. Currently only the Open Badges backpack is supported.
+ */
+define('BADGE_BACKPACKURL', 'backpack.openbadges.org');
+
 /**
  * Class that represents badge.
  *
@@ -1177,7 +1182,7 @@ function badges_check_backpack_accessibility() {
     // Using fake assertion url to check whether backpack can access the web site.
     $fakeassertion = new moodle_url('/badges/assertion.php', array('b' => 'abcd1234567890'));
 
-    // Curl request to http://backpack.openbadges.org/baker.
+    // Curl request to backpack baker.
     $curl = new curl();
     $options = array(
         'FRESH_CONNECT' => true,
@@ -1185,7 +1190,7 @@ function badges_check_backpack_accessibility() {
         'HEADER' => 0,
         'CONNECTTIMEOUT' => 2,
     );
-    $location = 'http://backpack.openbadges.org/baker';
+    $location = 'http://' . BADGE_BACKPACKURL . '/baker';
     $out = $curl->get($location, array('assertion' => $fakeassertion->out(false)), $options);
 
     $data = json_decode($out);
@@ -1254,7 +1259,7 @@ function badges_setup_backpack_js() {
     if (!empty($CFG->badges_allowexternalbackpack)) {
         $PAGE->requires->string_for_js('error:backpackproblem', 'badges');
         $protocol = (strpos($CFG->wwwroot, 'https://') === 0) ? 'https://' : 'http://';
-        $PAGE->requires->js(new moodle_url($protocol . 'backpack.openbadges.org/issuer.js'), true);
+        $PAGE->requires->js(new moodle_url($protocol . BADGE_BACKPACKURL . '/issuer.js'), true);
         $PAGE->requires->js('/badges/backpack.js', true);
     }
 }
