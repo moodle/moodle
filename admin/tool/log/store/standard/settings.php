@@ -29,4 +29,5 @@ if ($hassiteconfig) {
     // TODO: Localise these settings.
 
     $settings->add(new admin_setting_configcheckbox('logstore_standard/logguests', 'Log guest actions', '', '1'));
+    $settings->add(new admin_setting_configtext('logstore_standard/buffersize', 'Buffer size', '', '50', PARAM_INT));
 }

@@ -27,6 +27,12 @@ namespace logstore_legacy\log;
 defined('MOODLE_INTERNAL') || die();
 
 class store implements \tool_log\log\store, \core\log\reader {
+    use \tool_log\helper\store,
+        \tool_log\helper\reader;
+
+    public function __construct(\tool_log\log\manager $manager) {
+        $this->helper_setup($manager);
+    }
     /** @var array list of db fields which needs to be replaced for legacy log query */
     protected $standardtolegacyfields = array(
                                 'timecreated' => 'time',
@@ -34,21 +40,6 @@ class store implements \tool_log\log\store, \core\log\reader {
                                 'contextinstanceid' => 'cmid',
                                 'origin' => 'ip'
                                 );
-
-    public function __construct(\tool_log\log\manager $manager) {
-    }
-
-    public function get_name() {
-        return get_string('pluginname', 'logstore_legacy');
-    }
-
-    public function get_description() {
-        return get_string('pluginname_desc', 'logstore_legacy');
-    }
-
-    public function can_access(\context $context) {
-        return has_capability('logstore/legacy:read', $context);
-    }
 
     public function get_events($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;

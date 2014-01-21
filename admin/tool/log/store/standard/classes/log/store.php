@@ -27,50 +27,45 @@ namespace logstore_standard\log;
 defined('MOODLE_INTERNAL') || die();
 
 class store implements \tool_log\log\writer, \core\log\sql_reader {
+    use \tool_log\helper\store,
+        \tool_log\helper\writer,
+        \tool_log\helper\reader;
+
     /** @var string $logguests true if logging guest access */
     protected $logguests;
 
     public function __construct(\tool_log\log\manager $manager) {
-        $this->logguests = get_config('logstore_standard', 'logguests');
-        if ($this->logguests === false) {
-            // Log everything before setting is saved for the first time.
-            $this->logguests = '1';
-        }
+        $this->helper_setup($manager);
+        // Log everything before setting is saved for the first time.
+        $this->logguests = $this->get_config('logguests', 1);
     }
 
-    public function write(\core\event\base $event) {
+    protected function insert_events($events) {
         global $DB;
 
+        $dataobj = array();
+
         // Filter events.
-        if (!CLI_SCRIPT and !$this->logguests) {
-            // Always log inside CLI scripts because we do not login there.
-            if (!isloggedin() or isguestuser()) {
-                return;
+        foreach ($events as $event) {
+            if (!CLI_SCRIPT and !$this->logguests) {
+                // Always log inside CLI scripts because we do not login there.
+                if (!isloggedin() or isguestuser()) {
+                    continue;
+                }
             }
+
+            $data = $event->get_data();
+            $data['other'] = serialize($data['other']);
+            if (CLI_SCRIPT) {
+                $data['origin'] = 'cli';
+            } else {
+                $data['origin'] = getremoteaddr();
+            }
+            $data['realuserid'] = \core\session\manager::is_loggedinas() ? $_SESSION['USER']->realuser : null;
+            $dataobj[] = $data;
         }
 
-        $data = $event->get_data();
-        $data['other'] = serialize($data['other']);
-        if (CLI_SCRIPT) {
-            $data['origin'] = 'cli';
-        } else {
-            $data['origin'] = getremoteaddr();
-        }
-        $data['realuserid'] = \core\session\manager::is_loggedinas() ? $_SESSION['USER']->realuser : null;
-
-        $DB->insert_record('logstore_standard_log', $data);
-    }
-
-    public function get_name() {
-        return get_string('pluginname', 'logstore_standard');
-    }
-
-    public function get_description() {
-        return get_string('pluginname_desc', 'logstore_standard');
-    }
-
-    public function can_access(\context $context) {
-        return has_capability('logstore/standard:read', $context);
+        $DB->insert_records('logstore_standard_log', $dataobj);
     }
 
     public function get_events($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
@@ -80,7 +75,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
         $records = $DB->get_records_select('logstore_standard_log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
 
         foreach ($records as $data) {
-            $extra = array('origin'=>$data->origin, 'realuserid'=>$data->realuserid);
+            $extra = array('origin' => $data->origin, 'realuserid' => $data->realuserid);
             $data = (array)$data;
             $id = $data['id'];
             $data['other'] = unserialize($data['other']);
@@ -107,8 +102,5 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
     }
 
     public function cron() {
-    }
-
-    public function dispose() {
     }
 }
