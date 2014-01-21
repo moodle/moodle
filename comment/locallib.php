@@ -61,7 +61,8 @@ class comment_manager {
         }
         $comments = array();
 
-        $sql = "SELECT c.id, c.contextid, c.itemid, c.commentarea, c.userid, c.content, u.firstname, u.lastname, c.timecreated
+        $usernamefields = get_all_user_name_fields(true, 'u');
+        $sql = "SELECT c.id, c.contextid, c.itemid, c.commentarea, c.userid, c.content, $usernamefields, c.timecreated
                   FROM {comments} c
                   JOIN {user} u
                        ON u.id=c.userid
@@ -74,8 +75,9 @@ class comment_manager {
             $item->time = userdate($item->timecreated);
             $item->content = format_text($item->content, FORMAT_MOODLE, $formatoptions);
             // Unset fields not related to the comment
-            unset($item->firstname);
-            unset($item->lastname);
+            foreach (get_all_user_name_fields() as $namefield) {
+                unset($item->$namefield);
+            }
             unset($item->timecreated);
             // Record the comment
             $comments[] = $item;
