@@ -885,7 +885,11 @@ function lesson_pluginfile($course, $cm, $context, $filearea, $args, $forcedownl
         $fullpath = "/$context->id/mod_lesson/$filearea/$pageid/".implode('/', $args);
 
     } else if ($filearea === 'mediafile') {
-        array_shift($args); // ignore itemid - caching only
+        if (count($args) > 1) {
+            // Remove the itemid when it appears to be part of the arguments. If there is only one argument
+            // then it is surely the file name. The itemid is sometimes used to prevent browser caching.
+            array_shift($args);
+        }
         $fullpath = "/$context->id/mod_lesson/$filearea/0/".implode('/', $args);
 
     } else {
