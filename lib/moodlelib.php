@@ -3628,7 +3628,7 @@ function fullname($user, $override=false) {
     // The special characters are Japanese brackets that are common enough to make allowances for them (not covered by :punct:).
     $patterns[] = '/[[:punct:]「」]*EMPTY[[:punct:]「」]*/u';
     // This regular expression is to remove any double spaces in the display name.
-    $patterns[] = '/\s{2,}/';
+    $patterns[] = '/\s{2,}/u';
     foreach ($patterns as $pattern) {
         $displayname = preg_replace($pattern, ' ', $displayname);
     }
