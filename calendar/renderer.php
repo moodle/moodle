@@ -309,6 +309,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         global $CFG;
 
         $event = calendar_add_event_metadata($event);
+        $context = $event->context;
 
         $anchor  = html_writer::tag('a', '', array('name'=>'event_'.$event->id));
 
@@ -331,7 +332,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         if (!empty($event->referer)) {
             $table->data[0]->cells[1]->text .= html_writer::tag('div', $event->referer, array('class'=>'referer'));
         } else {
-            $table->data[0]->cells[1]->text .= html_writer::tag('div', $event->name, array('class'=>'name'));
+            $table->data[0]->cells[1]->text .= html_writer::tag('div', format_string($event->name, false, array('context' => $context)), array('class'=>'name'));
         }
         if (!empty($event->courselink)) {
             $table->data[0]->cells[1]->text .= html_writer::tag('div', $event->courselink, array('class'=>'course'));
@@ -355,7 +356,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         $table->data[1]->cells[0] = new html_table_cell('&nbsp;');
         $table->data[1]->cells[0]->attributes['class'] .= 'side';
 
-        $table->data[1]->cells[1] = new html_table_cell($event->description);
+        $table->data[1]->cells[1] = new html_table_cell(format_text($event->description, $event->format, array('context' => $context)));
         $table->data[1]->cells[1]->attributes['class'] .= ' description';
         if (isset($event->cssclass)) {
             $table->data[1]->cells[1]->attributes['class'] .= ' '.$event->cssclass;
@@ -594,79 +595,6 @@ class core_calendar_renderer extends plugin_renderer_base {
         $table->data[] = $row;
         $output .= html_writer::table($table);
 
-        return $output;
-    }
-
-    /**
-     * Displays a filter selection table
-     *
-     * @param calendar_information $calendar
-     * @return string
-     * @deprecated since Moodle 2.4 MDL-32309
-     * @see calendar_filter_controls()
-     */
-    protected function filter_selection_table(calendar_information $calendar, moodle_url $returnurl = null) {
-        global $SESSION;
-        debugging('Method core_calendar_renderer::filter_selection_table() is deprecated, please use '.
-                'calendar_filter_controls() instead', DEBUG_DEVELOPER);
-
-        if ($returnurl === null) {
-            $returnurl = $this->page->url;
-        }
-
-        $output  = html_writer::start_tag('div', array('class'=>'filters'));
-        $output .= html_writer::start_tag('table');
-        $output .= html_writer::start_tag('tr');
-
-        // Global events
-        $link = new moodle_url(CALENDAR_URL.'set.php', array('var' => 'showglobal', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
-        $strglobalevents = get_string('globalevents', 'calendar');
-        if (calendar_show_event_type(CALENDAR_EVENT_GLOBAL)) {
-            $output .= html_writer::tag('td', '', array('class'=>'calendar_event_global', 'style'=>'width:8px;'));
-            $output .= html_writer::tag('td', html_writer::tag('strong', $strglobalevents).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar').'<span class="accesshide">'.$strglobalevents.'</span>').')');
-        } else {
-            $output .= html_writer::tag('td', '', array('style'=>'width:8px;'));
-            $output .= html_writer::tag('td', html_writer::tag('strong', $strglobalevents).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar').'<span class="accesshide">'.$strglobalevents.'</span>').')');
-        }
-
-        // Course events
-        $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showcourses', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
-        $strcourseevents = get_string('courseevents', 'calendar');
-        if (calendar_show_event_type(CALENDAR_EVENT_COURSE)) {
-            $output .= html_writer::tag('td', '', array('class'=>'calendar_event_course', 'style'=>'width:8px;'));
-            $output .= html_writer::tag('td', html_writer::tag('strong', $strcourseevents).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar').'<span class="accesshide">'.$strcourseevents.'</span>').')');
-        } else {
-            $output .= html_writer::tag('td', '', array('style'=>'width:8px;'));
-            $output .= html_writer::tag('td', html_writer::tag('strong', $strcourseevents).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar').'<span class="accesshide">'.$strcourseevents.'</span>').')');
-        }
-        $output .= html_writer::end_tag('tr');
-
-        if(isloggedin() && !isguestuser()) {
-            $output .= html_writer::start_tag('tr');
-            // Group events
-            $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showgroups', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
-            $strgroupevents = get_string('groupevents', 'calendar');
-            if (calendar_show_event_type(CALENDAR_EVENT_GROUP)) {
-                $output .= html_writer::tag('td', '', array('class'=>'calendar_event_group', 'style'=>'width:8px;'));
-                $output .= html_writer::tag('td', html_writer::tag('strong', $strgroupevents).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar').'<span class="accesshide">'.$strgroupevents.'</span>').')');
-            } else {
-                $output .= html_writer::tag('td', '', array('style'=>'width:8px;'));
-                $output .= html_writer::tag('td', html_writer::tag('strong', $strgroupevents).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar').'<span class="accesshide">'.$strgroupevents.'</span>').')');
-            }
-            // User events
-            $link = new moodle_url(CALENDAR_URL.'set.php', array('var'=>'showuser', 'return' => base64_encode($returnurl->out(false)), 'sesskey'=>sesskey()));
-            $struserevents = get_string('userevents', 'calendar');
-            if (calendar_show_event_type(CALENDAR_EVENT_USER)) {
-                $output .= html_writer::tag('td', '', array('class'=>'calendar_event_user', 'style'=>'width:8px;'));
-                $output .= html_writer::tag('td', html_writer::tag('strong', $struserevents).' '.get_string('shown', 'calendar').' ('.html_writer::link($link, get_string('clickhide', 'calendar').'<span class="accesshide">'.$struserevents.'</span>').')');
-            } else {
-                $output .= html_writer::tag('td', '', array('style'=>'width:8px;'));
-                $output .= html_writer::tag('td', html_writer::tag('strong', $struserevents).' '.get_string('hidden', 'calendar').' ('.html_writer::link($link, get_string('clickshow', 'calendar').'<span class="accesshide">'.$struserevents.'</span>').')');
-            }
-            $output .= html_writer::end_tag('tr');
-        }
-        $output .= html_writer::end_tag('table');
-        $output .= html_writer::end_tag('div');
         return $output;
     }
 

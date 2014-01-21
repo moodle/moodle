@@ -236,9 +236,20 @@ abstract class award_criteria {
      * Review this criteria and decide if the user has completed
      *
      * @param int $userid User whose criteria completion needs to be reviewed.
+     * @param bool $filtered An additional parameter indicating that user list
+     *        has been reduced and some expensive checks can be skipped.
+     *
      * @return bool Whether criteria is complete
      */
-    abstract public function review($userid);
+    abstract public function review($userid, $filtered = false);
+
+    /**
+     * Returns array with sql code and parameters returning all ids
+     * of users who meet this particular criterion.
+     *
+     * @return array list($join, $where, $params)
+     */
+    abstract public function get_completed_criteria_sql();
 
     /**
      * Mark this criteria as complete for a user

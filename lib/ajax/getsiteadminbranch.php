@@ -39,14 +39,17 @@ if ($branchtype !== navigation_node::TYPE_SITE_ADMIN) {
     die('Wrong node type passed.');
 }
 
+// Start capturing output in case of broken plugins.
+ajax_capture_output();
+
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url('/lib/ajax/getsiteadminbranch.php', array('type'=>$branchtype));
 
 $sitenavigation = new settings_navigation_ajax($PAGE);
 
-// Set XML headers.
-header('Content-type: text/plain; charset=utf-8');
-// Convert and output the branch as XML.
+// Convert and output the branch as JSON.
 $converter = new navigation_json();
 $branch = $sitenavigation->get('root');
+
+ajax_check_captured_output();
 echo $converter->convert($branch);

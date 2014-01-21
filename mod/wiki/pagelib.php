@@ -562,10 +562,6 @@ class page_wiki_edit extends page_wiki {
             $params['filearea']   = 'attachments';
         }
 
-        if (!empty($CFG->usetags)) {
-            $params['tags'] = tag_get_tags_csv('wiki_pages', $this->page->id, TAG_RETURN_TEXT);
-        }
-
         $form = new mod_wiki_edit_form($url, $params);
 
         if ($formdata = $form->get_data()) {
@@ -574,7 +570,7 @@ class page_wiki_edit extends page_wiki {
             }
         } else {
             if (!empty($CFG->usetags)) {
-                $data->tags = tag_get_tags_array('wiki', $this->page->id);
+                $data->tags = tag_get_tags_array('wiki_pages', $this->page->id);
             }
         }
 
@@ -2159,7 +2155,7 @@ class page_wiki_confirmrestore extends page_wiki_save {
         require_capability('mod/wiki:managewiki', $this->modcontext, NULL, true, 'nomanagewikipermission', 'wiki');
 
         $version = wiki_get_version($this->version->id);
-        if (wiki_restore_page($this->page, $version->content, $version->userid)) {
+        if (wiki_restore_page($this->page, $version, $this->modcontext)) {
             redirect($CFG->wwwroot . '/mod/wiki/view.php?pageid=' . $this->page->id, get_string('restoring', 'wiki', $version->version), 3);
         } else {
             print_error('restoreerror', 'wiki', $version->version);

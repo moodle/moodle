@@ -213,6 +213,16 @@ if ($ADMIN->fulltree) {
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
+    $name = new lang_string('sendstudentnotificationsdefault', 'mod_assign');
+    $description = new lang_string('sendstudentnotificationsdefault_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/sendstudentnotifications',
+                                                    $name,
+                                                    $description,
+                                                    1);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
+
     $name = new lang_string('blindmarking', 'mod_assign');
     $description = new lang_string('blindmarking_help', 'mod_assign');
     $setting = new admin_setting_configcheckbox('assign/blindmarking',

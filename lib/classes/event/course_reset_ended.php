@@ -28,6 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * core course reset ended event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type array reset_options all reset options settings including courseid.
+ * }
+ *
  * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -30,6 +30,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['cannotcreatedboninstall'] = '<p>無法建立資料庫</p>
+<p>指定之資料庫並不存在。使用者並未有權限建立資料庫</p>
+<p>網站管理員需查明資料庫之組態.</p>';
 $string['cannotcreatelangdir'] = '無法建立語言資料夾。';
 $string['cannotcreatetempdir'] = '無法建立暫存資料夾。';
 $string['cannotdownloadcomponents'] = '無法下載元件。';
@@ -39,6 +42,7 @@ $string['cannotsavemd5file'] = '無法儲存 md5 檔案。';
 $string['cannotsavezipfile'] = '無法儲存 ZIP 檔案。';
 $string['cannotunzipfile'] = '無法解壓縮檔案。';
 $string['componentisuptodate'] = '元件已經是最新的了。';
+$string['dmlexceptiononinstall'] = '<p>資料庫有誤 [{$a->錯誤碼}].<br />{$a->排除故障資訊}</p>';
 $string['downloadedfilecheckfailed'] = '下載檔案檢查錯誤。';
 $string['invalidmd5'] = '無效的 md5';
 $string['missingrequiredfield'] = '缺少部份必填欄位';

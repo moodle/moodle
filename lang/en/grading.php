@@ -61,10 +61,10 @@ $string['nosharedformfound'] = 'No template found';
 $string['searchtemplate'] = 'Grading forms search';
 $string['searchtemplate_help'] = 'You can search for a grading form and use it as a template for the new grading form here. Simply type words that should appear somewhere in the form name, its description or the form body itself. To search for a phrase, wrap the whole query in double quotes.
 
-By default, only the grading forms that have been saved as shared templates are included in the search results. You can also include all your own grading forms in the search results. This way, you can simply re-use your grading forms without sharing them. Only forms marked as \'Ready for usage\' can be re-used this way.';
+By default, only the grading forms that have been saved as shared templates are included in the search results. You can also include all your own grading forms in the search results. This way, you can simply re-use your grading forms without sharing them. Only forms marked as \'Ready for use\' can be re-used this way.';
 $string['searchownforms'] = 'include my own forms';
 $string['statusdraft'] = 'Draft';
-$string['statusready'] = 'Ready for usage';
+$string['statusready'] = 'Ready for use';
 $string['templatedelete'] = 'Delete';
 $string['templatedeleteconfirm'] = 'You are going to delete the shared template \'{$a}\'. Deleting a template does not affect existing forms that were created from it.';
 $string['templateedit'] = 'Edit';

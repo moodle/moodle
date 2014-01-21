@@ -111,11 +111,6 @@ class core_statslib_testcase extends advanced_testcase {
         $this->resetAfterTest();
     }
 
-    protected function tearDown() {
-        // Reset the timeouts.
-        set_time_limit(0);
-    }
-
     /**
      * Function to setup database.
      *

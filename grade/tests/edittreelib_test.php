@@ -99,9 +99,14 @@ class core_grade_edittreelib_testcase extends advanced_testcase {
         $this->assertEquals($scale->id, $gradeitem->scaleid);
         $this->assertEquals($scalestring, $cell->text, "Grade text matches scale");
 
-        // Now change it to no grade.
+        // Now change it to no grade with gradebook feedback enabled.
+        $adminconfig = $assign->get_admin_config();
+        $gradebookplugin = $adminconfig->feedback_plugin_for_gradebook;
+        $gradebookplugin .= '_enabled';
+
         $instance = $assign->get_instance();
         $instance->grade = 0;
+        $instance->$gradebookplugin = 1;
         $instance->instance = $instance->id;
         $assign->update_instance($instance);
 
@@ -111,6 +116,19 @@ class core_grade_edittreelib_testcase extends advanced_testcase {
         $this->assertEquals(GRADE_TYPE_TEXT, $gradeitem->gradetype);
         $this->assertEquals(null, $gradeitem->scaleid);
         $this->assertEquals(' - ', $cell->text, 'Grade text matches empty value of " - "');
+
+        // Now change it to no grade with gradebook feedback disabled.
+        $instance = $assign->get_instance();
+        $instance->grade = 0;
+        $instance->$gradebookplugin = 0;
+        $instance->instance = $instance->id;
+        $assign->update_instance($instance);
+
+        $gradeitem = grade_item::fetch($gradeitemparams);
+        $cell = $column->get_item_cell($gradeitem, array());
+
+        $this->assertEquals(GRADE_TYPE_NONE, $gradeitem->gradetype);
+        $this->assertEquals(null, $gradeitem->scaleid);
     }
 }
 

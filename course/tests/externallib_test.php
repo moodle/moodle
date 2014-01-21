@@ -600,13 +600,13 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         foreach($firstsection['modules'] as $module) {
             if ($module['id'] == $forumcm->id and $module['modname'] == 'forum') {
                 $cm = $modinfo->cms[$forumcm->id];
-                $formattedtext = format_text($cm->get_content(), FORMAT_HTML,
+                $formattedtext = format_text($cm->content, FORMAT_HTML,
                     array('noclean' => true, 'para' => false, 'filter' => false));
                 $this->assertEquals($formattedtext, $module['description']);
                 $testexecuted = $testexecuted + 1;
             } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
                 $cm = $modinfo->cms[$labelcm->id];
-                $formattedtext = format_text($cm->get_content(), FORMAT_HTML,
+                $formattedtext = format_text($cm->content, FORMAT_HTML,
                     array('noclean' => true, 'para' => false, 'filter' => false));
                 $this->assertEquals($formattedtext, $module['description']);
                 $testexecuted = $testexecuted + 1;
@@ -662,9 +662,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         // Check that the course has been duplicated.
         $this->assertEquals($newcourse['shortname'], $duplicate['shortname']);
-
-        // Reset the timeouts.
-        set_time_limit(0);
     }
 
     /**
@@ -903,13 +900,13 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $record = new stdClass();
         $record->course = $course->id;
         $module1 = self::getDataGenerator()->create_module('forum', $record);
-        $module2 = self::getDataGenerator()->create_module('assignment', $record);
+        $module2 = self::getDataGenerator()->create_module('assign', $record);
 
         // Check the forum was correctly created.
         $this->assertEquals(1, $DB->count_records('forum', array('id' => $module1->id)));
 
         // Check the assignment was correctly created.
-        $this->assertEquals(1, $DB->count_records('assignment', array('id' => $module2->id)));
+        $this->assertEquals(1, $DB->count_records('assign', array('id' => $module2->id)));
 
         // Check data exists in the course modules table.
         $this->assertEquals(2, $DB->count_records_select('course_modules', 'id = :module1 OR id = :module2',
@@ -942,7 +939,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         $this->assertEquals(0, $DB->count_records('forum', array('id' => $module1->id)));
 
         // Check the assignment was deleted.
-        $this->assertEquals(0, $DB->count_records('assignment', array('id' => $module2->id)));
+        $this->assertEquals(0, $DB->count_records('assign', array('id' => $module2->id)));
 
         // Check we retrieve no data in the course modules table.
         $this->assertEquals(0, $DB->count_records_select('course_modules', 'id = :module1 OR id = :module2',
@@ -958,7 +955,7 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
 
         // Create two modules.
         $module1 = self::getDataGenerator()->create_module('forum', $record);
-        $module2 = self::getDataGenerator()->create_module('assignment', $record);
+        $module2 = self::getDataGenerator()->create_module('assign', $record);
 
         // Since these modules were recreated the user will not have capabilities
         // to delete them, ensure exception is thrown if they try.
@@ -1026,9 +1023,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->fail('Unknown CM found.');
             }
         }
-
-        // Reset the timeout (see MDL-38989).
-        set_time_limit(0);
     }
 
     /**
@@ -1080,9 +1074,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->fail('Unknown CM found.');
             }
         }
-
-        // Reset the timeout (see MDL-38989).
-        set_time_limit(0);
     }
 
     /**
@@ -1124,10 +1115,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
         // Check that course modules haven't changed, but that blocks have.
         $this->assertEquals($initialcmcount, $newcmcount);
         $this->assertEquals(($initialblockcount + 1), $newblockcount);
-
-
-        // Reset the timeout (see MDL-38989).
-        set_time_limit(0);
     }
 
     /**
@@ -1176,9 +1163,6 @@ class core_course_externallib_testcase extends externallib_advanced_testcase {
                 $this->fail('Unknown CM found: '.$cm->name);
             }
         }
-
-        // Reset the timeout (see MDL-38989).
-        set_time_limit(0);
     }
 
     /**

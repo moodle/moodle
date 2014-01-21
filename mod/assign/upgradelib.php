@@ -61,7 +61,7 @@ class assign_upgrade_manager {
               return false;
         }
 
-        @set_time_limit(ASSIGN_MAX_UPGRADE_TIME_SECS);
+        core_php_time_limit::raise(ASSIGN_MAX_UPGRADE_TIME_SECS);
 
         // Get the module details.
         $oldmodule = $DB->get_record('modules', array('name'=>'assignment'), '*', MUST_EXIST);
@@ -298,6 +298,15 @@ class assign_upgrade_manager {
             $params = array('assign', $newassignment->get_instance()->id, 'assignment', $oldassignment->id);
             $sql = 'UPDATE {grade_items} SET itemmodule = ?, iteminstance = ? WHERE itemmodule = ? AND iteminstance = ?';
             $DB->execute($sql, $params);
+
+            // Create a mapping record to map urls from the old to the new assignment.
+            $mapping = new stdClass();
+            $mapping->oldcmid = $oldcoursemodule->id;
+            $mapping->oldinstance = $oldassignment->id;
+            $mapping->newcmid = $newcoursemodule->id;
+            $mapping->newinstance = $newassignment->get_instance()->id;
+            $mapping->timecreated = time();
+            $DB->insert_record('assignment_upgrade', $mapping);
 
             $gradesdone = true;
 

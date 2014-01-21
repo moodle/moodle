@@ -31,6 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Class for event to be triggered when a note is viewed.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type string content hard-coded to notes.
+ * }
+ *
  * @package    core
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

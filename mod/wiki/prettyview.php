@@ -59,7 +59,18 @@ require_capability('mod/wiki:viewpage', $context);
 $wikipage = new page_wiki_prettyview($wiki, $subwiki, $cm);
 
 $wikipage->set_page($page);
-add_to_log($course->id, "wiki", "view", "prettyview.php?pageid=".$pageid, $pageid, $cm->id);
+
+$event = \mod_wiki\event\page_viewed::create(
+        array(
+            'context' => $context,
+            'objectid' => $pageid,
+            'other' => array('prettyview' => true)
+            )
+        );
+$event->add_record_snapshot('wiki_pages', $page);
+$event->add_record_snapshot('wiki', $wiki);
+$event->add_record_snapshot('wiki_subwikis', $subwiki);
+$event->trigger();
 
 $wikipage->print_header();
 $wikipage->print_content();

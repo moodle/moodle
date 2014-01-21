@@ -40,6 +40,15 @@ class tinymce_managefiles extends editor_tinymce_plugin {
             array $options = null) {
         global $USER;
 
+        if (!isloggedin() or isguestuser()) {
+            // Must be a real user to manage any files.
+            return;
+        }
+        if (!isset($options['maxfiles']) or $options['maxfiles'] == 0) {
+            // No files allowed - easy, do not load anything.
+            return;
+        }
+
         // Add parameters for filemanager
         $params['managefiles'] = array('usercontext' => context_user::instance($USER->id)->id);
         foreach (array('itemid', 'context', 'areamaxbytes', 'maxbytes', 'subdirs', 'return_types') as $key) {

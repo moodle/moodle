@@ -132,9 +132,6 @@ class backup_step_testcase extends advanced_testcase {
 
         // Remove the test dir and any content
         @remove_dir(dirname($file));
-
-        // Clear the time limit, otherwise PHPUnit complains.
-        set_time_limit(0);
     }
 
     /**

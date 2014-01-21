@@ -278,6 +278,14 @@ class helper {
             );
         }
 
+        if ($category->can_restore_courses_into()) {
+            $actions['restore'] = array(
+                'url' => new \moodle_url('/backup/restorefile.php', array('contextid' => $category->get_context()->id)),
+                'icon' => new \pix_icon('i/restore', new \lang_string('restorecourse', 'admin')),
+                'string' => new \lang_string('restorecourse', 'admin')
+            );
+        }
+
         return $actions;
     }
 
@@ -621,10 +629,6 @@ class helper {
     public static function action_category_show(\coursecat $category) {
         if (!$category->can_change_visibility()) {
             throw new \moodle_exception('permissiondenied', 'error', '', null, 'coursecat::can_change_visbility');
-        }
-        if ((int)$category->get_parent_coursecat()->visible === 0) {
-            // You cannot mark a category visible if its parent is hidden.
-            return false;
         }
         $category->show();
         return true;

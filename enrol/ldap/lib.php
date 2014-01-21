@@ -147,7 +147,7 @@ class enrol_ldap_plugin extends enrol_plugin {
         }
 
         // We may need a lot of memory here
-        @set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_HUGE);
 
         // Get enrolments for each type of role.
@@ -311,7 +311,7 @@ class enrol_ldap_plugin extends enrol_plugin {
         $ldap_pagedresults = ldap_paged_results_supported($this->get_config('ldap_version'));
 
         // we may need a lot of memory here
-        @set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_HUGE);
 
         $oneidnumber = null;

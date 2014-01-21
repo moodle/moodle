@@ -25,7 +25,7 @@ require('../lib.php');
 
 // we are going to run for a long time
 // avoid being terminated by php
-@set_time_limit(0);
+core_php_time_limit::raise();
 
 $chat_sid      = required_param('chat_sid',          PARAM_ALPHANUM);
 $chat_lasttime = optional_param('chat_lasttime',  0, PARAM_INT);

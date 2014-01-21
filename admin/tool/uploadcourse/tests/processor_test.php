@@ -96,9 +96,6 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
             }
         }
         $this->assertTrue($found);
-
-        // Restore the time limit to prevent warning.
-        set_time_limit(0);
     }
 
     public function test_restore_restore_file() {
@@ -136,9 +133,6 @@ class tool_uploadcourse_processor_testcase extends advanced_testcase {
             }
         }
         $this->assertTrue($found);
-
-        // Restore the time limit to prevent warning.
-        set_time_limit(0);
     }
 
     public function test_shortname_template() {

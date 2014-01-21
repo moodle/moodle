@@ -28,6 +28,13 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * core_group member added event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type string component name of component
+ *      @type int itemid id of item.
+ * }
+ *
  * @package    core_group
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

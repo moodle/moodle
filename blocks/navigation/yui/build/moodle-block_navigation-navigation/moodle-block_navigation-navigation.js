@@ -403,6 +403,15 @@ Y.extend(TREE, Y.Base, TREE.prototype, {
                 }
                 return val;
             }
+        },
+        /**
+         * The navigation tree block instance.
+         */
+        instance : {
+            value : false,
+            setter : function(val) {
+                return parseInt(val, 10);
+            }
         }
     }
 });
@@ -582,7 +591,7 @@ BRANCH.prototype = {
         } else {
             e.stopPropagation();
         }
-        if (e.type === 'actionkey' && e.action === 'enter' && e.target.test('A')) {
+        if ((e.type === 'actionkey' && e.action === 'enter') || e.target.test('a')) {
             // No ajaxLoad for enter.
             this.node.setAttribute('data-expandable', '0');
             this.node.setAttribute('data-loaded', '1');
@@ -638,6 +647,12 @@ BRANCH.prototype = {
         this.node.setAttribute('data-loaded', '1');
         try {
             var object = Y.JSON.parse(outcome.responseText);
+            if (object.error) {
+                Y.use('moodle-core-notification-ajaxexception', function () {
+                    return new M.core.ajaxException(object).show();
+                });
+                return false;
+            }
             if (object.children && object.children.length > 0) {
                 var coursecount = 0;
                 for (var i in object.children) {
@@ -659,8 +674,15 @@ BRANCH.prototype = {
                 }
                 return true;
             }
-        } catch (ex) {
-            // If we got here then there was an error parsing the result.
+        } catch (error) {
+            if (outcome && outcome.status && outcome.status > 0) {
+                // If we got here then there was an error parsing the result.
+                Y.use('moodle-core-notification-exception', function () {
+                    return new M.core.exception(error).show();
+                });
+            }
+
+            return false;
         }
         // The branch is empty so class it accordingly
         this.node.replaceClass('branch', 'emptybranch');

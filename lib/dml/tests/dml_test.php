@@ -2253,6 +2253,14 @@ class core_dml_testcase extends database_driver_testcase {
         } catch (moodle_exception $e) {
             $this->assertInstanceOf('dml_exception', $e);
         }
+
+        // Try to insert a record into a non-existent table. dml_exception expected.
+        try {
+            $DB->insert_record('nonexistenttable', $record, true);
+            $this->fail("Expecting an exception, none occurred");
+        } catch (exception $e) {
+            $this->assertTrue($e instanceof dml_exception);
+        }
     }
 
     public function test_import_record() {
@@ -4234,6 +4242,64 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertCount($currentcount, $results);
     }
 
+    public function test_replace_all_text() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        if (!$DB->replace_all_text_supported()) {
+            $this->markTestSkipped($DB->get_name().' does not support replacing of texts');
+        }
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '20', null, null);
+        $table->add_field('intro', XMLDB_TYPE_TEXT, 'big', null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $id1 = (string)$DB->insert_record($tablename, array('name' => null, 'intro' => null));
+        $id2 = (string)$DB->insert_record($tablename, array('name' => '', 'intro' => ''));
+        $id3 = (string)$DB->insert_record($tablename, array('name' => 'xxyy', 'intro' => 'vvzz'));
+        $id4 = (string)$DB->insert_record($tablename, array('name' => 'aa bb aa bb', 'intro' => 'cc dd cc aa'));
+        $id5 = (string)$DB->insert_record($tablename, array('name' => 'kkllll', 'intro' => 'kkllll'));
+
+        $expected = $DB->get_records($tablename, array(), 'id ASC');
+
+        $columns = $DB->get_columns($tablename);
+
+        $DB->replace_all_text($tablename, $columns['name'], 'aa', 'o');
+        $result = $DB->get_records($tablename, array(), 'id ASC');
+        $expected[$id4]->name = 'o bb o bb';
+        $this->assertEquals($expected, $result);
+
+        $DB->replace_all_text($tablename, $columns['intro'], 'aa', 'o');
+        $result = $DB->get_records($tablename, array(), 'id ASC');
+        $expected[$id4]->intro = 'cc dd cc o';
+        $this->assertEquals($expected, $result);
+
+        $DB->replace_all_text($tablename, $columns['name'], '_', '*');
+        $DB->replace_all_text($tablename, $columns['name'], '?', '*');
+        $DB->replace_all_text($tablename, $columns['name'], '%', '*');
+        $DB->replace_all_text($tablename, $columns['intro'], '_', '*');
+        $DB->replace_all_text($tablename, $columns['intro'], '?', '*');
+        $DB->replace_all_text($tablename, $columns['intro'], '%', '*');
+        $result = $DB->get_records($tablename, array(), 'id ASC');
+        $this->assertEquals($expected, $result);
+
+        $long = '1234567890123456789';
+        $DB->replace_all_text($tablename, $columns['name'], 'kk', $long);
+        $result = $DB->get_records($tablename, array(), 'id ASC');
+        $expected[$id5]->name = core_text::substr($long.'llll', 0, 20);
+        $this->assertEquals($expected, $result);
+
+        $DB->replace_all_text($tablename, $columns['intro'], 'kk', $long);
+        $result = $DB->get_records($tablename, array(), 'id ASC');
+        $expected[$id5]->intro = $long.'llll';
+        $this->assertEquals($expected, $result);
+    }
+
     public function test_onelevel_commit() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
@@ -4930,6 +4996,74 @@ class core_dml_testcase extends database_driver_testcase {
         $this->assertCount(2, $records);
         $this->assertEquals(2, reset($records)->count);
         $this->assertEquals(2, end($records)->count);
+    }
+
+    /**
+     * Test debugging messages about invalid limit number values.
+     */
+    public function test_invalid_limits_debugging() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        // Setup test data.
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $DB->insert_record($tablename, array('course' => '1'));
+
+        // Verify that get_records_sql throws debug notices with invalid limit params.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 'invalid');
+        $this->assertDebuggingCalled("Non-numeric limitfrom parameter detected: 'invalid', did you pass the correct arguments?");
+
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, 'invalid');
+        $this->assertDebuggingCalled("Non-numeric limitnum parameter detected: 'invalid', did you pass the correct arguments?");
+
+        // Verify that get_recordset_sql throws debug notices with invalid limit params.
+        $rs = $DB->get_recordset_sql("SELECT * FROM {{$tablename}}", null, 'invalid');
+        $this->assertDebuggingCalled("Non-numeric limitfrom parameter detected: 'invalid', did you pass the correct arguments?");
+        $rs->close();
+
+        $rs = $DB->get_recordset_sql("SELECT * FROM {{$tablename}}", null, 1, 'invalid');
+        $this->assertDebuggingCalled("Non-numeric limitnum parameter detected: 'invalid', did you pass the correct arguments?");
+        $rs->close();
+
+        // Verify that some edge cases do no create debugging messages.
+        // String form of integer values.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, '1');
+        $this->assertDebuggingNotCalled();
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, '2');
+        $this->assertDebuggingNotCalled();
+        // Empty strings.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, '');
+        $this->assertDebuggingNotCalled();
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, '');
+        $this->assertDebuggingNotCalled();
+        // Null values.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, null);
+        $this->assertDebuggingNotCalled();
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, null);
+        $this->assertDebuggingNotCalled();
+
+        // Verify that empty arrays DO create debugging mesages.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, array());
+        $this->assertDebuggingCalled("Non-numeric limitfrom parameter detected: array (\n), did you pass the correct arguments?");
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, array());
+        $this->assertDebuggingCalled("Non-numeric limitnum parameter detected: array (\n), did you pass the correct arguments?");
+
+        // Verify Negative number handling:
+        // -1 is explicitly treated as 0 for historical reasons.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, -1);
+        $this->assertDebuggingNotCalled();
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, -1);
+        $this->assertDebuggingNotCalled();
+        // Any other negative values should throw debugging messages.
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, -2);
+        $this->assertDebuggingCalled("Negative limitfrom parameter detected: -2, did you pass the correct arguments?");
+        $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, -2);
+        $this->assertDebuggingCalled("Negative limitnum parameter detected: -2, did you pass the correct arguments?");
     }
 }
 

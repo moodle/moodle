@@ -4,7 +4,6 @@
  **********************************************************/
 
 /** General **/
-#page-mod-assignment-index .cell,
 #page-mod-chat-index .cell,
 #page-mod-choice-index .cell,
 #page-mod-forum-index .generalbox .cell,
@@ -15,35 +14,6 @@
 #page-mod-wiki-index .cell {font-size:0.8em;}
 .mod_introbox {width:90%;margin:1em auto;}
 table.mod_index {width:90%;margin:1em auto;}
-
-/** Assignment **/
-.path-mod-assignment .feedback .files {background-color: #EFEFEF;padding:5px;}
-.path-mod-assignment .feedback .time,
-#page-mod-assignment-view .feedback .date {font-size: 0.8em;}
-.path-mod-assignment #wordcount {font-size: 0.8em;text-align: right;}
-#page-mod-assignment-submissions .feedback .content,
-#page-mod-assignment-submissions .feedback .topic,
-#page-mod-assignment-submissions .feedback .picture {padding: 10px;border:1px solid #DDD;}
-#page-mod-assignment-submissions .generaltable .r1 {background-color: #FFFFFF;}
-#page-mod-assignment-submissions .s0 {background: #FFD991;}
-#page-mod-assignment-submissions table.submissions td.cell,
-#page-mod-assignment-submissions table.submissions th{border:1px solid #DDD;vertical-align: middle;padding-left: 5px;padding-right: 5px;}
-#page-mod-assignment-submissions .timemodified,
-#page-mod-assignment-submissions .timemarked {font-size: 0.9em;}
-#page-mod-assignment-submissions .fgcontrols {margin-top: 1em;text-align:center;}
-#page-mod-assignment-submissions .fgcontrols .fastgbutton{margin-top: 0.5em;}
-#page-mod-assignment-view #dates {font-size: 0.8em;margin:30px auto;}
-#page-mod-assignment-view #dates .c0 {text-align:right;font-weight:bold;}
-#page-mod-assignment-view .feedback {border:1px solid #DDD;}
-#page-mod-assignment-view .feedback .topic {padding: 4px;border:0px solid #DDD;border-bottom-width: 1px;}
-#page-mod-assignment-view .feedback .content {padding: 4px;}
-#page-mod-assignment-view .feedback .left {width: 35px;padding: 4px;text-align: center;vertical-align: top;}
-#page-mod-assignment-view #dates {font-size: 0.8em;margin:30px auto;}
-#page-mod-assignment-submissions .status,
-#page-mod-assignment-view #online .singlebutton {text-align: center;}
-#page-mod-assignment-submissions .submissions .grade,
-#page-mod-assignment-view .feedback .fullname,
-#page-mod-assignment-view .feedback .grade {font-weight:bold;}
 
 /** Chat **/
 .path-mod-chat .time {font-weight: bold;}

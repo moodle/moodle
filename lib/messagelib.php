@@ -57,6 +57,14 @@ function message_send($eventdata) {
     //new message ID to return
     $messageid = false;
 
+    // Fetch default (site) preferences
+    $defaultpreferences = get_message_output_default_preferences();
+    $preferencebase = $eventdata->component.'_'.$eventdata->name;
+    // If message provider is disabled then don't do any processing.
+    if (!empty($defaultpreferences->{$preferencebase.'_disable'})) {
+        return $messageid;
+    }
+
     //TODO: we need to solve problems with database transactions here somehow, for now we just prevent transactions - sorry
     $DB->transactions_forbidden();
 
@@ -150,12 +158,9 @@ function message_send($eventdata) {
 
     // Fetch enabled processors
     $processors = get_message_processors(true);
-    // Fetch default (site) preferences
-    $defaultpreferences = get_message_output_default_preferences();
 
     // Preset variables
     $processorlist = array();
-    $preferencebase = $eventdata->component.'_'.$eventdata->name;
     // Fill in the array of processors to be used based on default and user preferences
     foreach ($processors as $processor) {
         // Skip adding processors for internal user, if processor doesn't support sending message to internal user.

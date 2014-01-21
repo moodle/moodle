@@ -183,6 +183,13 @@
     <licenseversion></licenseversion>
   </library>
   <library>
+    <location>yuilib/gallery</location>
+    <name>YUI Gallery</name>
+    <license>BSD</license>
+    <version>gallery-2013.10.02-20-26</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
     <location>jquery</location>
     <name>jQuery</name>
     <license>MIT</license>

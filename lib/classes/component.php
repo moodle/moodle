@@ -566,6 +566,9 @@ $cache = '.var_export($cache, true).';
         self::load_classes('core', "$CFG->dirroot/lib/classes");
 
         foreach (self::$subsystems as $subsystem => $fulldir) {
+            if (!$fulldir) {
+                continue;
+            }
             self::load_classes('core_'.$subsystem, "$fulldir/classes");
         }
 
@@ -1009,5 +1012,15 @@ $cache = '.var_export($cache, true).';
             }
             opcache_invalidate($file, true);
         }
+    }
+
+    /**
+     * Return true if subsystemname is core subsystem.
+     *
+     * @param string $subsystemname name of the subsystem.
+     * @return bool true if core subsystem.
+     */
+    public static function is_core_subsystem($subsystemname) {
+        return isset(self::$subsystems[$subsystemname]);
     }
 }

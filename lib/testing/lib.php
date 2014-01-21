@@ -38,7 +38,13 @@ function testing_cli_argument_path($moodlepath) {
         $moodlepath = preg_replace('|^/admin/|', "/$CFG->admin/", $moodlepath);
     }
 
-    $cwd = getcwd();
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        // Web access, this should not happen often.
+        $cwd = dirname(dirname(__DIR__));
+    } else {
+        // This is the real CLI script, work with relative paths.
+        $cwd = getcwd();
+    }
     if (substr($cwd, -1) !== DIRECTORY_SEPARATOR) {
         $cwd .= DIRECTORY_SEPARATOR;
     }
@@ -89,6 +95,30 @@ function testing_is_cygwin() {
     } else {
         return false;
     }
+}
+
+/**
+ * Returns whether a mingw CLI is running.
+ *
+ * MinGW sets $_SERVER['TERM'] to cygwin, but it
+ * can not run .bat files; this function may be useful
+ * when we need to output proposed commands to users
+ * using Windows CLI interfaces.
+ *
+ * @link http://sourceforge.net/p/mingw/bugs/1902
+ * @return bool
+ */
+function testing_is_mingw() {
+
+    if (!testing_is_cygwin()) {
+        return false;
+    }
+
+    if (!empty($_SERVER['MSYSTEM'])) {
+        return true;
+    }
+
+    return false;
 }
 
 /**

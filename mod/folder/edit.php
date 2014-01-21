@@ -63,7 +63,16 @@ if ($mform->is_cancelled()) {
     $formdata = file_postupdate_standard_filemanager($formdata, 'files', $options, $context, 'mod_folder', 'content', 0);
     $DB->set_field('folder', 'revision', $folder->revision+1, array('id'=>$folder->id));
 
-    add_to_log($course->id, 'folder', 'edit', 'edit.php?id='.$cm->id, $folder->id, $cm->id);
+    // Update the variable of the folder revision so we can pass it as an accurate snapshot later.
+    $folder->revision = $folder->revision + 1;
+
+    $params = array(
+        'context' => $context,
+        'objectid' => $folder->id
+    );
+    $event = \mod_folder\event\folder_updated::create($params);
+    $event->add_record_snapshot('folder', $folder);
+    $event->trigger();
 
     redirect($redirecturl);
 }

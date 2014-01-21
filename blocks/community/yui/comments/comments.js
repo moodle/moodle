@@ -23,7 +23,7 @@ YUI.add('moodle-block_community-comments', function(Y) {
                         .append(Y.one('#commentoverlay-'+commentid+' .commenttitle').get('innerHTML')),
                     bodyContent:Y.one('#commentoverlay-'+commentid).get('innerHTML'),
                     visible: false, //by default it is not displayed
-                    lightbox : false,
+                    modal: false,
                     zIndex:100,
                     closeButtonTitle: this.get('closeButtonTitle')
                 });

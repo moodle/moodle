@@ -1,6 +1,9 @@
 This files describes API changes in /cache/stores/* - cache store plugins.
 Information provided here is intended especially for developers.
 
+=== 2.7 ===
+* cache_store::is_ready is no longer abstract, calling cache_store::are_requirements_met by default.
+
 === 2.6 ===
 * All cache instances are recorded and subsequent requests are given a reference to the original instance.
 * The persistent option for the cache definition has been deprecated. Please use the staticacceleration option instead.

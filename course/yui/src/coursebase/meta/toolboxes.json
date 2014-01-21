@@ -1,0 +1,8 @@
+{
+    "moodle-course-coursebase": {
+        "requires": [
+            "base",
+            "node"
+        ]
+    }
+}

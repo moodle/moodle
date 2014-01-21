@@ -27,16 +27,16 @@ Feature: Upload users to a cohort
     And I expand "Users" node
     And I expand "Accounts" node
     When I follow "Upload users"
-    And I upload "lib/tests/fixtures/upload_users_cohorts.csv" file to "File" filepicker
+    And I upload "lib/tests/fixtures/upload_users_cohorts.csv" file to "File" filemanager
     And I press "Upload users"
     And I press "Upload users"
     And I press "Continue"
     And I follow "Cohorts"
-    And I click on "Assign" "link" in the "Cohort 1" table row
+    And I click on "Assign" "link" in the "Cohort 1" "table_row"
     Then the "Current users" select box should contain "Tom Jones (tomjones@example.com)"
     And the "Current users" select box should contain "Bob Jones (bobjones@example.com)"
     And I press "Back to cohorts"
-    And I click on "Assign" "link" in the "Cohort 2" table row
+    And I click on "Assign" "link" in the "Cohort 2" "table_row"
     And the "Current users" select box should contain "Mary Smith (marysmith@example.com)"
     And the "Current users" select box should contain "Alice Smith (alicesmith@example.com)"
     And I am on homepage

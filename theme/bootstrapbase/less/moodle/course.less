@@ -34,7 +34,9 @@
     vertical-align: text-bottom;
 }
 
-.site-topic ul.section,
+.sitetopic ul.section {
+    margin: 0;
+}
 .course-content ul.section {
     margin: 1em;
 }
@@ -87,6 +89,19 @@
                 }
             }
         }
+    }
+    .label {
+      .contentwithoutlink,
+      .activityinstance {
+        padding-right: 32px;
+        display: block;
+        height: inherit;
+      }
+
+      .mod-indent-outer {
+        padding-left: 24px;
+        display: block;
+      }
     }
 
     .filler {
@@ -530,6 +545,11 @@ span.editinstructions {
     padding-left:21px;
     background-position: left 0.5em;
 }
+.dir-rtl .coursebox > .info > .coursename a {
+    padding-left: 0;
+    padding-right: 21px;
+    background-position: right;
+}
 .coursebox.remotehost > .info > .categoryname a {
     background-image:url([[pix:moodle|i/mnethost]]);
 }
@@ -539,6 +559,13 @@ span.editinstructions {
     float:left;
     width:40%;
     clear:left;
+}
+.dir-rtl .coursebox > .info > .coursename,
+.dir-rtl .coursebox .teachers,
+.dir-rtl .coursebox .content .courseimage,
+.dir-rtl .coursebox .content .coursefile {
+    float: right;
+    clear: right;
 }
 .coursebox > .info > h3.coursename {
     margin: 5px;
@@ -777,6 +804,15 @@ span.editinstructions {
     }
 }
 
+.dir-rtl .section {
+    .editing_title {
+        .iconsmall {
+            margin: 8px 0 0 8px;
+            padding: 4px 0 0 8px;
+        }
+    }
+}
+
 /**
  * Course management page
  * Palette
@@ -967,9 +1003,6 @@ span.editinstructions {
         // The category or course is hidden.
         &[data-visible="0"] {
             .muted;
-            a.categoryname {
-                .muted;
-            }
             > div {
                 > a {
                     .muted;
@@ -981,13 +1014,6 @@ span.editinstructions {
                     .action-hide {
                         display:none;
                     }
-                }
-            }
-            > ul .item-actions.category-item-actions {
-                // If the category is hidden hide both show and hide icons for sub categories.
-                .action-hide,
-                .action-show {
-                    display: none;
                 }
             }
         }

@@ -925,6 +925,54 @@ abstract class moodle_database {
     }
 
     /**
+     * Ensures that limit params are numeric and positive integers, to be passed to the database.
+     * We explicitly treat null, '' and -1 as 0 in order to provide compatibility with how limit
+     * values have been passed historically.
+     *
+     * @param int $limitfrom Where to start results from
+     * @param int $limitnum How many results to return
+     * @return array Normalised limit params in array($limitfrom, $limitnum)
+     */
+    protected function normalise_limit_from_num($limitfrom, $limitnum) {
+        global $CFG;
+
+        // We explicilty treat these cases as 0.
+        if ($limitfrom === null || $limitfrom === '' || $limitfrom === -1) {
+            $limitfrom = 0;
+        }
+        if ($limitnum === null || $limitnum === '' || $limitnum === -1) {
+            $limitnum = 0;
+        }
+
+        if ($CFG->debugdeveloper) {
+            if (!is_numeric($limitfrom)) {
+                $strvalue = var_export($limitfrom, true);
+                debugging("Non-numeric limitfrom parameter detected: $strvalue, did you pass the correct arguments?",
+                    DEBUG_DEVELOPER);
+            } else if ($limitfrom < 0) {
+                debugging("Negative limitfrom parameter detected: $limitfrom, did you pass the correct arguments?",
+                    DEBUG_DEVELOPER);
+            }
+
+            if (!is_numeric($limitnum)) {
+                $strvalue = var_export($limitnum, true);
+                debugging("Non-numeric limitnum parameter detected: $strvalue, did you pass the correct arguments?",
+                    DEBUG_DEVELOPER);
+            } else if ($limitnum < 0) {
+                debugging("Negative limitnum parameter detected: $limitnum, did you pass the correct arguments?",
+                    DEBUG_DEVELOPER);
+            }
+        }
+
+        $limitfrom = (int)$limitfrom;
+        $limitnum  = (int)$limitnum;
+        $limitfrom = max(0, $limitfrom);
+        $limitnum  = max(0, $limitnum);
+
+        return array($limitfrom, $limitnum);
+    }
+
+    /**
      * Return tables in database WITHOUT current prefix.
      * @param bool $usecache if true, returns list of cached tables.
      * @return array of table names in lowercase and without prefix
@@ -2124,6 +2172,61 @@ abstract class moodle_database {
      */
     public function sql_regex($positivematch=true) {
         return '';
+    }
+
+    /**
+     * Does this driver support tool_replace?
+     *
+     * @since 2.6.1
+     * @return bool
+     */
+    public function replace_all_text_supported() {
+        return false;
+    }
+
+    /**
+     * Replace given text in all rows of column.
+     *
+     * @since 2.6.1
+     * @param string $table name of the table
+     * @param database_column_info $column
+     * @param string $search
+     * @param string $replace
+     */
+    public function replace_all_text($table, database_column_info $column, $search, $replace) {
+        if (!$this->replace_all_text_supported()) {
+            return;
+        }
+
+        // NOTE: override this methods if following standard compliant SQL
+        //       does not work for your driver.
+
+        $columnname = $column->name;
+        $sql = "UPDATE {".$table."}
+                       SET $columnname = REPLACE($columnname, ?, ?)
+                     WHERE $columnname IS NOT NULL";
+
+        if ($column->meta_type === 'X') {
+            $this->execute($sql, array($search, $replace));
+
+        } else if ($column->meta_type === 'C') {
+            if (core_text::strlen($search) < core_text::strlen($replace)) {
+                $colsize = $column->max_length;
+                $sql = "UPDATE {".$table."}
+                       SET $columnname = SUBSTRING(REPLACE($columnname, ?, ?), 1, $colsize)
+                     WHERE $columnname IS NOT NULL";
+            }
+            $this->execute($sql, array($search, $replace));
+        }
+    }
+
+    /**
+     * Analyze the data in temporary tables to force statistics collection after bulk data loads.
+     *
+     * @return void
+     */
+    public function update_temp_table_stats() {
+        $this->temptables->update_stats();
     }
 
     /**

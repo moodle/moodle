@@ -53,8 +53,15 @@ require_login($course, false, $cm);
 $contextmodule = context_module::instance($cm->id);
 require_capability('mod/scorm:viewreport', $contextmodule);
 
-add_to_log($course->id, 'scorm', 'userreportinteractions', 'userreportinteractions.php?id='.$cm->id, $scorm->id, $cm->id);
-
+// Trigger a user interactions viewed event.
+$event = \mod_scorm\event\interactions_viewed::create(array(
+    'context' => $contextmodule,
+    'relateduserid' => $userid,
+    'other' => array('attemptid' => $attempt, 'instanceid' => $scorm->id)
+));
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('scorm', $scorm);
+$event->trigger();
 
 $trackdata = $DB->get_records('scorm_scoes_track', array('userid' => $user->id, 'scormid' => $scorm->id,
     'attempt' => $attempt));

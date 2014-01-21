@@ -64,7 +64,6 @@ $string['chatreport'] = 'Chat sessions';
 $string['chat:talk'] = 'Talk in a chat';
 $string['chattime'] = 'Next chat time';
 $string['entermessage'] = "Enter your message";
-$string['event_instances_list_viewed'] = 'Instances list viewed';
 $string['event_message_sent'] = 'Message sent';
 $string['event_sessions_viewed'] = 'Sessions viewed';
 $string['idle'] = 'Idle';

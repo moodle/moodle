@@ -76,7 +76,7 @@ class calculator {
      * @return array containing two arrays calculated[] and calculated_for_subquestion[].
      */
     public function calculate($qubaids) {
-        set_time_limit(0);
+        \core_php_time_limit::raise();
 
         list($lateststeps, $summarks, $summarksavg) = $this->get_latest_steps($qubaids);
 
@@ -250,9 +250,8 @@ class calculator {
         global $DB;
 
         $timemodified = time() - self::TIME_TO_CACHE;
-        return $DB->get_field_select('question_statistics', 'timemodified', 'hashcode = ? AND timemodified > ? '.
-                                                          'ORDER BY timemodified DESC LIMIT 1',
-                                     array($qubaids->get_hash_code(), $timemodified));
+        return $DB->get_field_select('question_statistics', 'timemodified', 'hashcode = ? AND timemodified > ?',
+                                     array($qubaids->get_hash_code(), $timemodified), IGNORE_MULTIPLE);
     }
 
     /** @var integer Time after which statistics are automatically recomputed. */

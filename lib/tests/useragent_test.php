@@ -138,6 +138,9 @@ class core_useragent_testcase extends basic_testcase {
             '530' => array(
                 'Nexus' => 'Mozilla/5.0 (Linux; U; Android 2.1; en-us; Nexus One Build/ERD62) AppleWebKit/530.17 (KHTML, like Gecko) Version/4.0 Mobile Safari/530.17 –Nexus'
             ),
+            '537' => array(
+                'Samsung GT-9505' => 'Mozilla/5.0 (Linux; Android 4.3; it-it; SAMSUNG GT-I9505/I9505XXUEMJ7 Build/JSS15J) AppleWebKit/537.36 (KHTML, like Gecko) Version/1.5 Chrome/28.0.1500.94 Mobile Safari/537.36'
+            )
         ),
         'Chrome' => array(
             '8' => array(
@@ -411,6 +414,66 @@ class core_useragent_testcase extends basic_testcase {
         $this->assertFalse(core_useragent::check_firefox_version(5));
         $this->assertFalse(core_useragent::check_gecko_version('18.0'));
 
+    }
+
+    /**
+     * Modifies $_SERVER['HTTP_USER_AGENT'] manually to check if supports_svg
+     * works as expected.
+     */
+    public function test_supports_svg() {
+        $this->assertTrue(core_useragent::supports_svg());
+
+        // MSIE 5.0 is not considered a browser at all: known false positive.
+        core_useragent::instance(true, $this->user_agents['MSIE']['5.0']['Windows 98']);
+        $this->assertTrue(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['5.5']['Windows 2000']);
+        $this->assertFalse(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['6.0']['Windows XP SP2']);
+        $this->assertFalse(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['7.0']['Windows XP SP2']);
+        $this->assertFalse(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['8.0']['Windows Vista']);
+        $this->assertFalse(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['9.0']['Windows 7']);
+        $this->assertTrue(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['9.0i']['Windows 7']);
+        $this->assertFalse(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['10.0']['Windows 8']);
+        $this->assertTrue(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['10.0i']['Windows 8']);
+        $this->assertTrue(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['11.0']['Windows 8.1']);
+        $this->assertTrue(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['MSIE']['11.0i']['Windows 8.1']);
+        $this->assertTrue(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['WebKit Android']['525']['G1 Phone']);
+        $this->assertFalse(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['WebKit Android']['530']['Nexus']);
+        $this->assertFalse(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['WebKit Android']['537']['Samsung GT-9505']);
+        $this->assertTrue(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['Opera']['9.0']['Windows XP']);
+        $this->assertFalse(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['Chrome']['8']['Mac OS X']);
+        $this->assertTrue(core_useragent::supports_svg());
+
+        core_useragent::instance(true, $this->user_agents['Firefox']['18.0']['Mac OS X']);
+        $this->assertTrue(core_useragent::supports_svg());
     }
 
     /**

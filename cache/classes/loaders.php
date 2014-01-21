@@ -463,6 +463,20 @@ class cache implements cache_loader {
             }
         }
 
+        if ($this->perfdebug) {
+            $hits = 0;
+            $misses = 0;
+            foreach ($fullresult as $value) {
+                if ($value === false) {
+                    $misses++;
+                } else {
+                    $hits++;
+                }
+            }
+            cache_helper::record_cache_hit($this->storetype, $this->definition->get_id(), $hits);
+            cache_helper::record_cache_miss($this->storetype, $this->definition->get_id(), $misses);
+        }
+
         // Return the result. Phew!
         return $fullresult;
     }
@@ -633,10 +647,11 @@ class cache implements cache_loader {
                 $this->static_acceleration_set($data[$key]['key'], $value);
             }
         }
-        if ($this->perfdebug) {
-            cache_helper::record_cache_set($this->storetype, $this->definition->get_id());
+        $successfullyset = $this->store->set_many($data);
+        if ($this->perfdebug && $successfullyset) {
+            cache_helper::record_cache_set($this->storetype, $this->definition->get_id(), $successfullyset);
         }
-        return $this->store->set_many($data);
+        return $successfullyset;
     }
 
     /**
@@ -1937,7 +1952,19 @@ class cache_session extends cache {
         if ($hasmissingkeys && $strictness === MUST_EXIST) {
             throw new coding_exception('Requested key did not exist in any cache stores and could not be loaded.');
         }
-
+        if ($this->perfdebug) {
+            $hits = 0;
+            $misses = 0;
+            foreach ($return as $value) {
+                if ($value === false) {
+                    $misses++;
+                } else {
+                    $hits++;
+                }
+            }
+            cache_helper::record_cache_hit($this->storetype, $this->get_definition()->get_id(), $hits);
+            cache_helper::record_cache_miss($this->storetype, $this->get_definition()->get_id(), $misses);
+        }
         return $return;
 
     }
@@ -2011,10 +2038,11 @@ class cache_session extends cache {
                 'value' => $value
             );
         }
-        if ($this->perfdebug) {
-            cache_helper::record_cache_set($this->storetype, $definitionid);
+        $successfullyset = $this->get_store()->set_many($data);
+        if ($this->perfdebug && $successfullyset) {
+            cache_helper::record_cache_set($this->storetype, $definitionid, $successfullyset);
         }
-        return $this->get_store()->set_many($data);
+        return $successfullyset;
     }
 
     /**

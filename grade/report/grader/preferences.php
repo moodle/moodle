@@ -22,10 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-set_time_limit(0);
 require_once '../../../config.php';
 require_once $CFG->libdir . '/gradelib.php';
 require_once '../../lib.php';
+core_php_time_limit::raise();
 
 $courseid      = required_param('id', PARAM_INT);
 

@@ -159,6 +159,8 @@ class auth_plugin_base {
      *
      * This method is used if can_change_password() returns true.
      * This method is called only when user is logged in, it may use global $USER.
+     * If you are using a plugin config variable in this method, please make sure it is set before using it,
+     * as this method can be called even if the plugin is disabled, in which case the config values won't be set.
      *
      * @return moodle_url url of the profile page or null if standard used
      */

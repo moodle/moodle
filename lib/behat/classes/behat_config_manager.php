@@ -82,6 +82,11 @@ class behat_config_manager {
             $features = array_values($featurespaths);
         }
 
+        // Optionally include features from additional directories.
+        if (!empty($CFG->behat_additionalfeatures)) {
+            $features = array_merge($features, array_map("realpath", $CFG->behat_additionalfeatures));
+        }
+
         // Gets all the components with steps definitions.
         $stepsdefinitions = array();
         $steps = self::get_components_steps_definitions();
@@ -91,6 +96,11 @@ class behat_config_manager {
                     $stepsdefinitions[$key] = $filepath;
                 }
             }
+        }
+
+        // We don't want the deprecated steps definitions here.
+        if (!$testsrunner) {
+            unset($stepsdefinitions['behat_deprecated']);
         }
 
         // Behat config file specifing the main context class,
@@ -144,19 +154,34 @@ class behat_config_manager {
     /**
      * Returns the behat config file path used by the steps definition list
      *
-     * Note this can only be called from web-based scripts so it will return the
-     * production dataroot not behat_dataroot. With this the steps definitions
-     * list is accessible without having to install the behat test site.
-     *
      * @return string
      */
     public static function get_steps_list_config_filepath() {
         global $USER;
 
+        // We don't cygwin-it as it is called using exec() which uses cmd.exe.
         $userdir = behat_command::get_behat_dir() . '/users/' . $USER->id;
         make_writable_directory($userdir);
 
         return $userdir . '/behat.yml';
+    }
+
+    /**
+     * Returns the behat config file path used by the behat cli command.
+     *
+     * @return string
+     */
+    public static function get_behat_cli_config_filepath() {
+        global $CFG;
+
+        $command = $CFG->behat_dataroot . DIRECTORY_SEPARATOR . 'behat' . DIRECTORY_SEPARATOR . 'behat.yml';
+
+        // Cygwin uses linux-style directory separators.
+        if (testing_is_cygwin()) {
+            $command = str_replace('\\', '/', $command);
+        }
+
+        return $command;
     }
 
     /**
@@ -172,6 +197,11 @@ class behat_config_manager {
 
         // We require here when we are sure behat dependencies are available.
         require_once($CFG->dirroot . '/vendor/autoload.php');
+
+        // It is possible that it has no value as we don't require a full behat setup to list the step definitions.
+        if (empty($CFG->behat_wwwroot)) {
+            $CFG->behat_wwwroot = 'http://itwillnotbeused.com';
+        }
 
         $basedir = $CFG->dirroot . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'behat';
         $config = array(
@@ -190,12 +220,15 @@ class behat_config_manager {
                         'selenium2' => null
                     ),
                     'Moodle\BehatExtension\Extension' => array(
+                        'formatters' => array(
+                            'moodle_progress' => 'Moodle\BehatExtension\Formatter\MoodleProgressFormatter'
+                        ),
                         'features' => $features,
                         'steps_definitions' => $stepsdefinitions
                     )
                 ),
                 'formatter' => array(
-                    'name' => 'progress'
+                    'name' => 'moodle_progress'
                 )
             )
         );

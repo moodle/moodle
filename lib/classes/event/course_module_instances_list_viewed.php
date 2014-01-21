@@ -17,6 +17,8 @@
 /**
  * Course module instances list_viewed event.
  *
+ * This class has been deprecated, please use \core\event\course_module_instance_list_viewed.
+ *
  * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -26,56 +28,15 @@ namespace core\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Course module instances list viewed event class.
+ * This class has been deprecated, please use \core\event\course_module_instance_list_viewed.
  *
- * This is an abstract to guide the developers in using this event name for their events.
- * It is intended to be used when the user viewes the list of all the instances of a module
- * in a course. This replaces the historical 'view all' log entry generated in mod/somemod/index.php.
- *
- * Example:
- *
- *     \mod_chat\event\instances_list_viewed extends \core\event\course_module_instances_list_viewed
- *
+ * @deprecated Since Moodle 2.7
  * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class course_module_instances_list_viewed extends \core\event\content_viewed {
-
-    /**
-     * Init method.
-     *
-     * @return void
-     */
-    protected function init() {
-        $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_OTHER;
-    }
-
-    /**
-     * Set page detail.
-     *
-     * Override to prevent its use.
-     */
-    public function set_page_detail() {
-    }
-
-    /**
-     * Custom validation.
-     *
-     * The parent validation is ignored on purpose.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        if ($this->context->contextlevel !== CONTEXT_COURSE) {
-           throw new \coding_exception('The context must be a course level context.');
-        }
-        // Hack to by pass the requirement of the parent class. 'view_all' was the old fashioned-way
-        // to describe the page listing all the instances of a module in a course.
-        $this->data['other']['content'] = 'view_all';
-        parent::validate_data();
-    }
-
+abstract class course_module_instances_list_viewed extends course_module_instance_list_viewed {
 }
+
+debugging('core\\event\\course_module_instances_list_viewed has been deperecated. Please use
+        core\\event\\course_module_instance_list_viewed instead', DEBUG_DEVELOPER);

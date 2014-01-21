@@ -44,10 +44,6 @@ function xmldb_editor_tinymce_upgrade($oldversion) {
     // Moodle v2.5.0 release upgrade line.
     // Put any upgrade step following this.
 
-
-    // Moodle v2.6.0 release upgrade line.
-    // Put any upgrade step following this.
-
     if ($oldversion < 2013061400) {
         // Reset redesigned editor toolbar setting.
         $oldorder = "fontselect,fontsizeselect,formatselect,|,undo,redo,|,search,replace,|,fullscreen
@@ -154,6 +150,10 @@ fontselect,fontsizeselect,wrap,code,search,replace,wrap,nonbreaking,charmap,tabl
 
         upgrade_plugin_savepoint(true, 2013110600, 'editor', 'tinymce');
     }
+
+    // Moodle v2.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
 
     return true;
 }

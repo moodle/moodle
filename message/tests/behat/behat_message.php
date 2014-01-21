@@ -41,23 +41,13 @@ use Behat\Behat\Context\Step\Given as Given,
 class behat_message extends behat_base {
 
     /**
-     * Sends a message to the specified user from the logged user.
+     * Sends a message to the specified user from the logged user. The user full name should contain the first and last names.
      *
-     * @Given /^I send "(?P<message_contents_string>(?:[^"]|\\")*)" message to "(?P<username_string>(?:[^"]|\\")*)"$/
-     * @throws ElementNotFoundException
+     * @Given /^I send "(?P<message_contents_string>(?:[^"]|\\")*)" message to "(?P<user_full_name_string>(?:[^"]|\\")*)" user$/
      * @param string $messagecontent
-     * @param string $tousername
+     * @param string $userfullname
      */
-    public function i_send_message_to_user($messagecontent, $tousername) {
-
-        global $DB;
-
-        // Runs by CLI, same PHP process that created the user.
-        $touser = $DB->get_record('user', array('username' => $tousername));
-        if (!$touser) {
-            throw new ElementNotFoundException($this->getSession(), '"' . $tousername . '" ');
-        }
-        $tofullname = fullname($touser);
+    public function i_send_message_to_user($messagecontent, $userfullname) {
 
         $steps = array();
         $steps[] = new Given('I am on homepage');
@@ -67,9 +57,9 @@ class behat_message extends behat_base {
         }
 
         $steps[] = new Given('I follow "' . get_string('messages', 'message') . '"');
-        $steps[] = new Given('I fill in "' . get_string('searchcombined', 'message') . '" with "' . $this->escape($tofullname) . '"');
+        $steps[] = new Given('I fill in "' . get_string('searchcombined', 'message') . '" with "' . $this->escape($userfullname) . '"');
         $steps[] = new Given('I press "' . get_string('searchcombined', 'message') . '"');
-        $steps[] = new Given('I follow "' . $this->escape(get_string('sendmessageto', 'message', $tofullname)) . '"');
+        $steps[] = new Given('I follow "' . $this->escape(get_string('sendmessageto', 'message', $userfullname)) . '"');
         $steps[] = new Given('I fill in "id_message" with "' . $this->escape($messagecontent) . '"');
         $steps[] = new Given('I press "' . get_string('sendmessage', 'message') . '"');
 

@@ -25,6 +25,7 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/tablelib.php');
 require_once('lib.php');
+require_once($CFG->libdir.'/adminlib.php');
 
 define('SHOW_ALL_PAGE_SIZE', 50000);
 define('DEFAULT_PAGE_SIZE', 30);
@@ -41,21 +42,16 @@ if (empty($CFG->usetags)) {
     print_error('tagsaredisabled', 'tag');
 }
 
-$systemcontext = context_system::instance();
-require_capability('moodle/tag:manage', $systemcontext);
-
 $params = array();
 if ($perpage != DEFAULT_PAGE_SIZE) {
     $params['perpage'] = $perpage;
 }
-$PAGE->set_url('/tag/manage.php', $params);
-$PAGE->set_context($systemcontext);
+admin_externalpage_setup('managetags', '', $params, '', array('pagelayout' => 'standard'));
+
 $PAGE->set_blocks_editing_capability('moodle/tag:editblocks');
 $PAGE->navbar->add(get_string('tags', 'tag'), new moodle_url('/tag/search.php'));
 $PAGE->navbar->add(get_string('managetags', 'tag'));
-$PAGE->set_title(get_string('managetags', 'tag'));
-$PAGE->set_heading($COURSE->fullname);
-$PAGE->set_pagelayout('standard');
+
 echo $OUTPUT->header();
 
 $err_notice = '';

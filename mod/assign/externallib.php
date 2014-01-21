@@ -312,11 +312,29 @@ class mod_assign_external extends external_api {
                 unset($courses[$id]);
             }
         }
-        $extrafields='m.id as assignmentid, m.course, m.nosubmissions, m.submissiondrafts, m.sendnotifications, '.
-                     'm.sendlatenotifications, m.duedate, m.allowsubmissionsfromdate, m.grade, m.timemodified, '.
-                     'm.completionsubmit, m.cutoffdate, m.teamsubmission, m.requireallteammemberssubmit, '.
-                     'm.teamsubmissiongroupingid, m.blindmarking, m.revealidentities, m.attemptreopenmethod, '.
-                     'm.maxattempts, m.markingworkflow, m.markingallocation, m.requiresubmissionstatement';
+        $extrafields='m.id as assignmentid, ' .
+                     'm.course, ' .
+                     'm.nosubmissions, ' .
+                     'm.submissiondrafts, ' .
+                     'm.sendnotifications, '.
+                     'm.sendlatenotifications, ' .
+                     'm.sendstudentnotifications, ' .
+                     'm.duedate, ' .
+                     'm.allowsubmissionsfromdate, '.
+                     'm.grade, ' .
+                     'm.timemodified, '.
+                     'm.completionsubmit, ' .
+                     'm.cutoffdate, ' .
+                     'm.teamsubmission, ' .
+                     'm.requireallteammemberssubmit, '.
+                     'm.teamsubmissiongroupingid, ' .
+                     'm.blindmarking, ' .
+                     'm.revealidentities, ' .
+                     'm.attemptreopenmethod, '.
+                     'm.maxattempts, ' .
+                     'm.markingworkflow, ' .
+                     'm.markingallocation, ' .
+                     'm.requiresubmissionstatement';
         $coursearray = array();
         foreach ($courses as $id => $course) {
             $assignmentarray = array();
@@ -359,6 +377,7 @@ class mod_assign_external extends external_api {
                         'submissiondrafts' => $module->submissiondrafts,
                         'sendnotifications' => $module->sendnotifications,
                         'sendlatenotifications' => $module->sendlatenotifications,
+                        'sendstudentnotifications' => $module->sendstudentnotifications,
                         'duedate' => $module->duedate,
                         'allowsubmissionsfromdate' => $module->allowsubmissionsfromdate,
                         'grade' => $module->grade,
@@ -412,6 +431,7 @@ class mod_assign_external extends external_api {
                 'submissiondrafts' => new external_value(PARAM_INT, 'submissions drafts'),
                 'sendnotifications' => new external_value(PARAM_INT, 'send notifications'),
                 'sendlatenotifications' => new external_value(PARAM_INT, 'send notifications'),
+                'sendstudentnotifications' => new external_value(PARAM_INT, 'send student notifications (default)'),
                 'duedate' => new external_value(PARAM_INT, 'assignment due date'),
                 'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'allow submissions from date'),
                 'grade' => new external_value(PARAM_INT, 'grade type'),
@@ -1402,9 +1422,10 @@ class mod_assign_external extends external_api {
         $warnings = array();
         $data = new stdClass();
         $data->submissionstatement = $acceptsubmissionstatement;
+        $notices = array();
 
-        if (!$assignment->submit_for_grading($data)) {
-            $detail = 'User id: ' . $USER->id . ', Assignment id: ' . $assignmentid;
+        if (!$assignment->submit_for_grading($data, $notices)) {
+            $detail = 'User id: ' . $USER->id . ', Assignment id: ' . $assignmentid . ' Notices:' . implode(', ', $notices);
             $warnings[] = self::generate_warning($assignmentid,
                                                  'couldnotsubmitforgrading',
                                                  $detail);

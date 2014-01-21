@@ -1229,16 +1229,10 @@ function fix_utf8($value) {
         // No null bytes expected in our data, so let's remove it.
         $value = str_replace("\0", '', $value);
 
-        // Lower error reporting because glibc throws bogus notices.
-        $olderror = error_reporting();
-        if ($olderror & E_NOTICE) {
-            error_reporting($olderror ^ E_NOTICE);
-        }
-
         // Note: this duplicates min_fix_utf8() intentionally.
         static $buggyiconv = null;
         if ($buggyiconv === null) {
-            $buggyiconv = (!function_exists('iconv') or iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
+            $buggyiconv = (!function_exists('iconv') or @iconv('UTF-8', 'UTF-8//IGNORE', '100'.chr(130).'€') !== '100€');
         }
 
         if ($buggyiconv) {
@@ -1254,11 +1248,7 @@ function fix_utf8($value) {
             }
 
         } else {
-            $result = iconv('UTF-8', 'UTF-8//IGNORE', $value);
-        }
-
-        if ($olderror & E_NOTICE) {
-            error_reporting($olderror);
+            $result = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
         }
 
         return $result;
@@ -4247,7 +4237,7 @@ function delete_user(stdClass $user) {
     \core\session\manager::kill_user_sessions($user->id);
 
     // Workaround for bulk deletes of users with the same email address.
-    $delname = "$user->email.".time();
+    $delname = clean_param($user->email . "." . time(), PARAM_USERNAME);
     while ($DB->record_exists('user', array('username' => $delname))) { // No need to use mnethostid here.
         $delname++;
     }
@@ -4543,38 +4533,6 @@ function password_is_legacy_hash($password) {
 }
 
 /**
- * Checks whether the password compatibility library will work with the current
- * version of PHP. This cannot be done using PHP version numbers since the fix
- * has been backported to earlier versions in some distributions.
- *
- * See https://github.com/ircmaxell/password_compat/issues/10 for more details.
- *
- * @return bool True if the library is NOT supported.
- */
-function password_compat_not_supported() {
-
-    $hash = '$2y$04$usesomesillystringfore7hnbRJHxXVLeakoG8K30oukPsA.ztMG';
-
-    // Create a one off application cache to store bcrypt support status as
-    // the support status doesn't change and crypt() is slow.
-    $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'password_compat');
-
-    if (!$bcryptsupport = $cache->get('bcryptsupport')) {
-        $test = crypt('password', $hash);
-        // Cache string instead of boolean to avoid MDL-37472.
-        if ($test == $hash) {
-            $bcryptsupport = 'supported';
-        } else {
-            $bcryptsupport = 'not supported';
-        }
-        $cache->set('bcryptsupport', $bcryptsupport);
-    }
-
-    // Return true if bcrypt *not* supported.
-    return ($bcryptsupport !== 'supported');
-}
-
-/**
  * Compare password against hash stored in user object to determine if it is valid.
  *
  * If necessary it also updates the stored hash to the current format.
@@ -4648,15 +4606,6 @@ function hash_internal_user_password($password, $fasthash = false) {
     global $CFG;
     require_once($CFG->libdir.'/password_compat/lib/password.php');
 
-    // Use the legacy hashing algorithm (md5) if PHP is not new enough to support bcrypt properly.
-    if (password_compat_not_supported()) {
-        if (isset($CFG->passwordsaltmain)) {
-            return md5($password.$CFG->passwordsaltmain);
-        } else {
-            return md5($password);
-        }
-    }
-
     // Set the cost factor to 4 for fast hashing, otherwise use default cost.
     $options = ($fasthash) ? array('cost' => 4) : array();
 
@@ -4689,9 +4638,6 @@ function update_internal_user_password($user, $password) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/password_compat/lib/password.php');
 
-    // Use the legacy hashing algorithm (md5) if PHP doesn't support bcrypt properly.
-    $legacyhash = password_compat_not_supported();
-
     // Figure out what the hashed password should be.
     $authplugin = get_auth_plugin($user->auth);
     if ($authplugin->prevent_local_passwords()) {
@@ -4700,14 +4646,9 @@ function update_internal_user_password($user, $password) {
         $hashedpassword = hash_internal_user_password($password);
     }
 
-    if ($legacyhash) {
-        $passwordchanged = ($user->password !== $hashedpassword);
-        $algorithmchanged = false;
-    } else {
-        // If verification fails then it means the password has changed.
-        $passwordchanged = !password_verify($password, $user->password);
-        $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
-    }
+    // If verification fails then it means the password has changed.
+    $passwordchanged = !password_verify($password, $user->password);
+    $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
 
     if ($passwordchanged || $algorithmchanged) {
         $DB->set_field('user', 'password',  $hashedpassword, array('id' => $user->id));
@@ -4960,6 +4901,7 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     require_once($CFG->dirroot.'/tag/coursetagslib.php');
     require_once($CFG->dirroot.'/comment/lib.php');
     require_once($CFG->dirroot.'/rating/lib.php');
+    require_once($CFG->dirroot.'/notes/lib.php');
 
     // Handle course badges.
     badges_handle_course_deletion($courseid);
@@ -5121,6 +5063,9 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
 
     // Filters be gone!
     filter_delete_all_for_context($coursecontext->id);
+
+    // Notes, you shall not pass!
+    note_delete_all($course->id);
 
     // Die comments!
     comment::delete_comments($coursecontext->id);
@@ -5700,6 +5645,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     if (!empty($user->deleted)) {
         debugging('Can not send email to deleted user: '.$user->id, DEBUG_DEVELOPER);
         return false;
+    }
+
+    if (defined('BEHAT_SITE_RUNNING')) {
+        // Fake email sending in behat.
+        return true;
     }
 
     if (!empty($CFG->noemailever)) {
@@ -7656,7 +7606,6 @@ function random_string ($length=15) {
     $pool .= 'abcdefghijklmnopqrstuvwxyz';
     $pool .= '0123456789';
     $poollen = strlen($pool);
-    mt_srand ((double) microtime() * 1000000);
     $string = '';
     for ($i = 0; $i < $length; $i++) {
         $string .= substr($pool, (mt_rand()%($poollen)), 1);
@@ -7677,7 +7626,6 @@ function complex_random_string($length=null) {
     $pool  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     $pool .= '`~!@#%^&*()_+-=[];,./<>?:{} ';
     $poollen = strlen($pool);
-    mt_srand ((double) microtime() * 1000000);
     if ($length===null) {
         $length = floor(rand(24, 32));
     }
@@ -7977,7 +7925,6 @@ function unformat_float($localefloat, $strict = false) {
  */
 function swapshuffle($array) {
 
-    srand ((double) microtime() * 10000000);
     $last = count($array) - 1;
     for ($i = 0; $i <= $last; $i++) {
         $from = rand(0, $last);
@@ -8017,7 +7964,6 @@ function swapshuffle_assoc($array) {
  * @return array
  */
 function draw_rand_array($array, $draws) {
-    srand ((double) microtime() * 10000000);
 
     $return = array();
 

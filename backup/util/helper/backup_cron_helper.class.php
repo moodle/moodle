@@ -111,7 +111,7 @@ abstract class backup_cron_automated_helper {
             cron_trace_time_and_memory();
 
             // This could take a while!
-            @set_time_limit(0);
+            core_php_time_limit::raise();
             raise_memory_limit(MEMORY_EXTRA);
 
             $nextstarttime = backup_cron_automated_helper::calculate_next_automated_backup($admin->timezone, $now);

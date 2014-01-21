@@ -15,7 +15,7 @@ Feature: An admin can create courses using a CSV file
 
   @javascript
   Scenario: Creation of unexisting courses
-    Given I upload "admin/tool/uploadcourse/tests/fixtures/courses.csv" file to "File" filepicker
+    Given I upload "admin/tool/uploadcourse/tests/fixtures/courses.csv" file to "File" filemanager
     And I click on "Preview" "button"
     When I click on "Upload courses" "button"
     Then I should see "The course exists and update is not allowed"
@@ -29,7 +29,7 @@ Feature: An admin can create courses using a CSV file
 
   @javascript
   Scenario: Creation of existing courses
-    Given I upload "admin/tool/uploadcourse/tests/fixtures/courses.csv" file to "File" filepicker
+    Given I upload "admin/tool/uploadcourse/tests/fixtures/courses.csv" file to "File" filemanager
     And I select "Create all, increment shortname if needed" from "Upload mode"
     And I click on "Preview" "button"
     When I click on "Upload courses" "button"

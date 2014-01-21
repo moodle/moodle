@@ -73,7 +73,7 @@ class question_engine_attempt_upgrader {
     }
 
     protected function prevent_timeout() {
-        set_time_limit(300);
+        core_php_time_limit::raise(300);
         if ($this->doingbackup) {
             return;
         }

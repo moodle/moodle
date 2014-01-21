@@ -20,13 +20,16 @@ Feature: Restrict activity availability through date conditions
     And I set the following administration settings values:
       | Enable conditional access | 1 |
     And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I turn editing mode on
+    # Adding the page like this because id_available*_enabled needs to be clicked to trigger the action.
+    And I add a "Assignment" to section "1"
+    And I expand all fieldsets
 
   @javascript
   Scenario: Show activity greyed-out to students when available from date is in future
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "1"
+    Given I click on "id_availablefrom_enabled" "checkbox"
     And I fill the moodle form with:
       | Assignment name | Test assignment 1 |
       | Description | This assignment is restricted by date |
@@ -36,7 +39,6 @@ Feature: Restrict activity availability through date conditions
       | id_availablefrom_month | 12 |
       | id_availablefrom_year | 2050 |
       | id_showavailability | 1 |
-    And I click on "id_availablefrom_enabled" "checkbox"
     And I press "Save and return to course"
     And I log out
     When I log in as "student1"
@@ -47,10 +49,7 @@ Feature: Restrict activity availability through date conditions
 
   @javascript
   Scenario: Show activity hidden to students when available until date is in past
-    Given I log in as "teacher1"
-    And I follow "Course 1"
-    And I turn editing mode on
-    And I add a "Assignment" to section "2"
+    Given I click on "id_availableuntil_enabled" "checkbox"
     And I fill the moodle form with:
       | Assignment name | Test assignment 2 |
       | Description | This assignment is restricted by date |
@@ -60,7 +59,6 @@ Feature: Restrict activity availability through date conditions
       | id_availableuntil_month | 2 |
       | id_availableuntil_year | 2013 |
       | id_showavailability | 0 |
-    And I click on "id_availableuntil_enabled" "checkbox"
     And I press "Save and return to course"
     And I log out
     When I log in as "student1"

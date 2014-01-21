@@ -82,6 +82,18 @@ class checker {
     }
 
     /**
+     * Is automatic deployment enabled?
+     *
+     * @return bool
+     */
+    public function enabled() {
+        global $CFG;
+
+        // The feature can be prohibited via config.php.
+        return empty($CFG->disableupdateautodeploy);
+    }
+
+    /**
      * Returns the timestamp of the last execution of {@link fetch()}
      *
      * @return int|null null if it has never been executed or we don't known
@@ -275,6 +287,12 @@ class checker {
 
         set_config('recentfetch', time(), 'core_plugin');
         set_config('recentresponse', $response, 'core_plugin');
+
+        if (defined('CACHE_DISABLE_ALL') and CACHE_DISABLE_ALL) {
+            // Very nasty hack to work around cache coherency issues on admin/index.php?cache=0 page,
+            // we definitely need to keep caches in sync when writing into DB at all times!
+            \cache_helper::purge_all(true);
+        }
 
         $this->restore_response(true);
     }

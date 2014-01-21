@@ -67,15 +67,50 @@ class behat_course extends behat_base {
      * @return Given[]
      */
     public function i_create_a_course_with(TableNode $table) {
-        return array(
+
+        $steps = array(
             new Given('I go to the courses management page'),
             new Given('I should see the "'.get_string('categories').'" management page'),
             new Given('I click on category "'.get_string('miscellaneous').'" in the management interface'),
             new Given('I should see the "'.get_string('categoriesandcoures').'" management page'),
-            new Given('I click on "'.get_string('createnewcourse').'" "link" in the "#course-listing" "css_element"'),
-            new Given('I fill the moodle form with:', $table),
-            new Given('I press "' . get_string('savechanges') . '"')
+            new Given('I click on "'.get_string('createnewcourse').'" "link" in the "#course-listing" "css_element"')
         );
+
+        // If the course format is one of the fields we change how we
+        // fill the form as we need to wait for the form to be set.
+        $rowshash = $table->getRowsHash();
+        $formatfieldrefs = array(get_string('format'), 'format', 'id_format');
+        foreach ($formatfieldrefs as $fieldref) {
+            if (!empty($rowshash[$fieldref])) {
+                $formatfield = $fieldref;
+            }
+        }
+
+        // Setting the format separately.
+        if (!empty($formatfield)) {
+
+            // Removing the format field from the TableNode.
+            $rows = $table->getRows();
+            $formatvalue = $rowshash[$formatfield];
+            foreach ($rows as $key => $row) {
+                if ($row[0] == $formatfield) {
+                    unset($rows[$key]);
+                }
+            }
+            $table->setRows($rows);
+
+            // Adding a forced wait until editors are loaded as otherwise selenium sometimes tries clicks on the
+            // format field when the editor is being rendered and the click misses the field coordinates.
+            $steps[] = new Given('I expand all fieldsets');
+            $steps[] = new Given('I select "' . $formatvalue . '" from "' . $formatfield . '"');
+            $steps[] = new Given('I fill the moodle form with:', $table);
+        } else {
+            $steps[] = new Given('I fill the moodle form with:', $table);
+        }
+
+        $steps[] = new Given('I press "' . get_string('savechanges') . '"');
+
+        return $steps;
     }
 
     /**
@@ -85,18 +120,16 @@ class behat_course extends behat_base {
      * @return Given[]
      */
     public function i_go_to_the_courses_management_page() {
-        if ($this->running_javascript()) {
-            $scenario = array(new Given('I expand "' . get_string('administrationsite') . '" node'));
-        } else {
-            $scenario = array(new Given('I follow "' . get_string('administrationsite') . '"'));
-        }
-        $scenario[] = new Given('I expand "' . get_string('courses', 'admin') . '" node');
-        $scenario[] = new Given('I follow "' . get_string('coursemgmt', 'admin') . '"');
-        return $scenario;
+        return array(
+            new Given('I am on homepage'),
+            new Given('I expand "' . get_string('administrationsite') . '" node'),
+            new Given('I expand "' . get_string('courses', 'admin') . '" node'),
+            new Given('I follow "' . get_string('coursemgmt', 'admin') . '"')
+        );
     }
 
     /**
-     * Adds the selected activity/resource filling the form data with the specified field/value pairs.
+     * Adds the selected activity/resource filling the form data with the specified field/value pairs. Sections 0 and 1 are also allowed on frontpage.
      *
      * @When /^I add a "(?P<activity_or_resource_name_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)" and I fill the form with:$/
      * @param string $activity The activity name
@@ -114,7 +147,7 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Opens the activity chooser and opens the activity/resource form page.
+     * Opens the activity chooser and opens the activity/resource form page. Sections 0 and 1 are also allowed on frontpage.
      *
      * @Given /^I add a "(?P<activity_or_resource_name_string>(?:[^"]|\\")*)" to section "(?P<section_number>\d+)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
@@ -123,7 +156,19 @@ class behat_course extends behat_base {
      */
     public function i_add_to_section($activity, $section) {
 
-        $sectionxpath = "//li[@id='section-" . $section . "']";
+        if ($this->getSession()->getPage()->find('css', 'body#page-site-index') && (int)$section <= 1) {
+            // We are on the frontpage.
+            if ($section) {
+                // Section 1 represents the contents on the frontpage.
+                $sectionxpath = "//body[@id='page-site-index']/descendant::div[contains(concat(' ',normalize-space(@class),' '),' sitetopic ')]";
+            } else {
+                // Section 0 represents "Site main menu" block.
+                $sectionxpath = "//div[contains(concat(' ',normalize-space(@class),' '),' block_site_main_menu ')]";
+            }
+        } else {
+            // We are inside the course.
+            $sectionxpath = "//li[@id='section-" . $section . "']";
+        }
 
         $activityliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral(ucfirst($activity));
 
@@ -171,10 +216,7 @@ class behat_course extends behat_base {
         // Ensures the section exists.
         $xpath = $this->section_exists($sectionnumber);
 
-        return array(
-            new Given('I click on "' . get_string('markthistopic') . '" "link" in the "' . $this->escape($xpath) . '" "xpath_element"'),
-            new Given('I wait "2" seconds')
-        );
+        return new Given('I click on "' . get_string('markthistopic') . '" "link" in the "' . $this->escape($xpath) . '" "xpath_element"');
     }
 
     /**
@@ -189,10 +231,7 @@ class behat_course extends behat_base {
         // Ensures the section exists.
         $xpath = $this->section_exists($sectionnumber);
 
-        return array(
-            new Given('I click on "' . get_string('markedthistopic') . '" "link" in the "' . $this->escape($xpath) . '" "xpath_element"'),
-            new Given('I wait "2" seconds')
-        );
+        return new Given('I click on "' . get_string('markedthistopic') . '" "link" in the "' . $this->escape($xpath) . '" "xpath_element"');
     }
 
     /**
@@ -205,9 +244,9 @@ class behat_course extends behat_base {
         $showlink = $this->show_section_icon_exists($sectionnumber);
         $showlink->click();
 
-        // It requires time.
         if ($this->running_javascript()) {
-            $this->getSession()->wait(5000, false);
+            $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+            $this->i_wait_until_section_is_available($sectionnumber);
         }
     }
 
@@ -221,9 +260,9 @@ class behat_course extends behat_base {
         $hidelink = $this->hide_section_icon_exists($sectionnumber);
         $hidelink->click();
 
-        // It requires time.
         if ($this->running_javascript()) {
-            $this->getSession()->wait(5000, false);
+            $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+            $this->i_wait_until_section_is_available($sectionnumber);
         }
     }
 
@@ -304,6 +343,11 @@ class behat_course extends behat_base {
 
         $sectionxpath = $this->section_exists($sectionnumber);
 
+        // Preventive in case there is any action in progress.
+        // Adding it here because we are interacting (click) with
+        // the elements, not necessary when we just find().
+        $this->i_wait_until_section_is_available($sectionnumber);
+
         // Section should be hidden.
         $exception = new ExpectationException('The section is not hidden', $this->getSession());
         $this->find('xpath', $sectionxpath . "[contains(concat(' ', normalize-space(@class), ' '), ' hidden ')]", $exception);
@@ -328,9 +372,12 @@ class behat_course extends behat_base {
                     // Non-JS browsers can not click on img elements.
                     if ($this->running_javascript()) {
 
-                        // Expanding the actions menu.
-                        $actionsmenu = $this->find('css', "a[role='menuitem']", false, $activity);
-                        $actionsmenu->click();
+                        // Expanding the actions menu if it is not shown.
+                        $classes = array_flip(explode(' ', $activity->getAttribute('class')));
+                        if (empty($classes['action-menu-shown'])) {
+                            $actionsmenu = $this->find('css', "a[role='menuitem']", false, $activity);
+                            $actionsmenu->click();
+                        }
 
                         // To check that the visibility is not clickable we check the funcionality rather than the applied style.
                         $visibilityiconnode = $this->find('css', 'a.editing_show img', false, $activity);
@@ -339,6 +386,17 @@ class behat_course extends behat_base {
 
                     // We ensure that we still see the show icon.
                     $visibilityiconnode = $this->find('css', 'a.editing_show img', $visibilityexception, $activity);
+
+                    // It is there only when running JS scenarios.
+                    if ($this->running_javascript()) {
+
+                        // Collapse the actions menu if it is displayed.
+                        $classes = array_flip(explode(' ', $activity->getAttribute('class')));
+                        if (!empty($classes['action-menu-shown'])) {
+                            $actionsmenu = $this->find('css', "a[role='menuitem']", false, $activity);
+                            $actionsmenu->click();
+                        }
+                    }
                 }
             }
 
@@ -533,8 +591,7 @@ class behat_course extends behat_base {
         $activity = $this->escape($activityname);
         return array(
             new Given('I click on "' . get_string('edittitle') . '" "link" in the "' . $activity .'" activity'),
-            new Given('I fill in "title" with "' . $this->escape($newactivityname) . chr(10) . '"'),
-            new Given('I wait "2" seconds')
+            new Given('I fill in "title" with "' . $this->escape($newactivityname) . chr(10) . '"')
         );
     }
 
@@ -563,6 +620,53 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Closes an activity actions menu if it is not already closed.
+     *
+     * @Given /^I close "(?P<activity_name_string>(?:[^"]|\\")*)" actions menu$/
+     * @throws DriverException The step is not available when Javascript is disabled
+     * @param string $activityname
+     * @return Given
+     */
+    public function i_close_actions_menu($activityname) {
+
+        if (!$this->running_javascript()) {
+            throw new DriverException('Activities actions menu not available when Javascript is disabled');
+        }
+
+        // If it is already closed we do nothing.
+        $activitynode = $this->get_activity_node($activityname);
+        $classes = array_flip(explode(' ', $activitynode->getAttribute('class')));
+        if (empty($classes['action-menu-shown'])) {
+            return;
+        }
+
+        return new Given('I click on "a[role=\'menuitem\']" "css_element" in the "' . $this->escape($activityname) . '" activity');
+    }
+
+    /**
+     * Checks that the specified activity's action menu is open.
+     *
+     * @Then /^"(?P<activity_name_string>(?:[^"]|\\")*)" actions menu should be open$/
+     * @throws DriverException The step is not available when Javascript is disabled
+     * @param string $activityname
+     */
+    public function actions_menu_should_be_open($activityname) {
+
+        if (!$this->running_javascript()) {
+            throw new DriverException('Activities actions menu not available when Javascript is disabled');
+        }
+
+        // If it is already closed we do nothing.
+        $activitynode = $this->get_activity_node($activityname);
+        $classes = array_flip(explode(' ', $activitynode->getAttribute('class')));
+        if (empty($classes['action-menu-shown'])) {
+            throw new ExpectationException(sprintf("The action menu for '%s' is not open", $activityname), $this->getSession());
+        }
+
+        return;
+    }
+
+    /**
      * Indents to the right the activity or resource specified by it's name. Editing mode should be on.
      *
      * @Given /^I indent right "(?P<activity_name_string>(?:[^"]|\\")*)" activity$/
@@ -577,10 +681,6 @@ class behat_course extends behat_base {
             $steps[] = new Given('I open "' . $activity . '" actions menu');
         }
         $steps[] = new Given('I click on "' . get_string('moveright') . '" "link" in the "' . $activity . '" activity');
-
-        if ($this->running_javascript()) {
-            $steps[] = new Given('I wait "2" seconds');
-        }
 
         return $steps;
     }
@@ -600,10 +700,6 @@ class behat_course extends behat_base {
             $steps[] = new Given('I open "' . $activity . '" actions menu');
         }
         $steps[] = new Given('I click on "' . get_string('moveleft') . '" "link" in the "' . $activity . '" activity');
-
-        if ($this->running_javascript()) {
-            $steps[] = new Given('I wait "2" seconds');
-        }
 
         return $steps;
 
@@ -629,8 +725,6 @@ class behat_course extends behat_base {
             $element->click();
 
             $this->getSession()->getDriver()->getWebDriverSession()->accept_alert();
-
-            $this->getSession()->wait(2 * 1000, false);
 
         } else {
 
@@ -658,10 +752,7 @@ class behat_course extends behat_base {
             $steps[] = new Given('I open "' . $activity . '" actions menu');
         }
         $steps[] = new Given('I click on "' . get_string('duplicate') . '" "link" in the "' . $activity . '" activity');
-        if ($this->running_javascript()) {
-            // Temporary wait until MDL-41030 lands.
-            $steps[] = new Given('I wait "4" seconds');
-        } else {
+        if (!$this->running_javascript()) {
             $steps[] = new Given('I press "' . get_string('continue') .'"');
             $steps[] = new Given('I press "' . get_string('duplicatecontcourse') .'"');
         }
@@ -681,12 +772,22 @@ class behat_course extends behat_base {
         $steps = array();
 
         $activity = $this->escape($activityname);
+        $activityliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($activityname);
 
         if ($this->running_javascript()) {
             $steps[] = new Given('I duplicate "' . $activity . '" activity');
 
+            // We wait until the AJAX request finishes and the section is visible again.
+            $hiddenlightboxxpath = "//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][contains(., $activityliteral)]" .
+                "/ancestor::li[contains(concat(' ', normalize-space(@class), ' '), ' section ')]" .
+                "/descendant::div[contains(concat(' ', @class, ' '), ' lightbox ')][contains(@style, 'display: none')]";
+            $steps[] = new Given('I wait until the page is ready');
+            $steps[] = new Given('I wait until "' . $this->escape($hiddenlightboxxpath) .'" "xpath_element" exists');
+
+            // Close the original activity actions menu.
+            $steps[] = new Given('I close "' . $activity . '" actions menu');
+
             // Determine the future new activity xpath from the former one.
-            $activityliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($activityname);
             $duplicatedxpath = "//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][contains(., $activityliteral)]" .
                 "/following-sibling::li";
             $duplicatedactionsmenuxpath = $duplicatedxpath . "/descendant::a[@role='menuitem']";
@@ -705,6 +806,32 @@ class behat_course extends behat_base {
         $steps[] = new Given('I fill the moodle form with:', $data);
         $steps[] = new Given('I press "' . get_string('savechangesandreturntocourse') . '"');
         return $steps;
+    }
+
+    /**
+     * Waits until the section is available to interact with it. Useful when the section is performing an action and the section is overlayed with a loading layout.
+     *
+     * Using the protected method as this method will be usually
+     * called by other methods which are not returning a set of
+     * steps and performs the actions directly, so it would not
+     * be executed if it returns another step.
+     *
+     * Hopefully we would not require test writers to use this step
+     * and we will manage it from other step definitions.
+     *
+     * @Given /^I wait until section "(?P<section_number>\d+)" is available$/
+     * @param int $sectionnumber
+     * @return void
+     */
+    public function i_wait_until_section_is_available($sectionnumber) {
+
+        // Looks for a hidden lightbox or a non-existent lightbox in that section.
+        $sectionxpath = $this->section_exists($sectionnumber);
+        $hiddenlightboxxpath = $sectionxpath . "/descendant::div[contains(concat(' ', @class, ' '), ' lightbox ')][contains(@style, 'display: none')]" .
+            " | " .
+            $sectionxpath . "[count(child::div[contains(@class, 'lightbox')]) = 0]";
+
+        $this->ensure_element_exists($hiddenlightboxxpath, 'xpath_element');
     }
 
     /**
@@ -873,6 +1000,18 @@ class behat_course extends behat_base {
     }
 
     /**
+     * Gets the activity instance name from the activity node.
+     *
+     * @throws ElementNotFoundException
+     * @param NodeElement $activitynode
+     * @return string
+     */
+    protected function get_activity_name($activitynode) {
+        $instancenamenode = $this->find('xpath', "//span[contains(concat(' ', normalize-space(@class), ' '), ' instancename ')]", false, $activitynode);
+        return $instancenamenode->getText();
+    }
+
+    /**
      * Returns whether the user can edit the course contents or not.
      *
      * @return bool
@@ -946,7 +1085,7 @@ class behat_course extends behat_base {
     protected function get_management_category_listing_node_by_name($name, $link = false) {
         $selector = "//div[@id='category-listing']//li[contains(concat(' ', normalize-space(@class), ' '), ' listitem-category ')]//a[text()='{$name}']";
         if ($link === false) {
-            $selector .= "/ancestor::li[@data-id]";
+            $selector .= "/ancestor::li[@data-id][1]";
         }
         return $this->find('xpath', $selector);
     }
@@ -1001,39 +1140,70 @@ class behat_course extends behat_base {
     }
 
     /**
-     * Clicks on a category checkbox in the management interface.
+     * Clicks on a category checkbox in the management interface, if not checked.
      *
      * @Given /^I select category "(?P<name>[^"]*)" in the management interface$/
      * @param string $name
      */
     public function i_select_category_in_the_management_interface($name) {
         $node = $this->get_management_category_listing_node_by_name($name);
-        $node->checkField('bcat[]');
+        $node = $node->findField('bcat[]');
+        if (!$node->isChecked()) {
+            $node->click();
+        }
     }
 
     /**
-     * Clicks course checkbox in the management interface.
+     * Clicks on a category checkbox in the management interface, if checked.
+     *
+     * @Given /^I unselect category "(?P<name>[^"]*)" in the management interface$/
+     * @param string $name
+     */
+    public function i_unselect_category_in_the_management_interface($name) {
+        $node = $this->get_management_category_listing_node_by_name($name);
+        $node = $node->findField('bcat[]');
+        if ($node->isChecked()) {
+            $node->click();
+        }
+    }
+
+    /**
+     * Clicks course checkbox in the management interface, if not checked.
      *
      * @Given /^I select course "(?P<name>[^"]*)" in the management interface$/
      * @param string $name
      */
     public function i_select_course_in_the_management_interface($name) {
         $node = $this->get_management_course_listing_node_by_name($name);
-        $node->checkField('bc[]');
+        $node = $node->findField('bc[]');
+        if (!$node->isChecked()) {
+            $node->click();
+        }
+    }
+
+    /**
+     * Clicks course checkbox in the management interface, if checked.
+     *
+     * @Given /^I unselect course "(?P<name>[^"]*)" in the management interface$/
+     * @param string $name
+     */
+    public function i_unselect_course_in_the_management_interface($name) {
+        $node = $this->get_management_course_listing_node_by_name($name);
+        $node = $node->findField('bc[]');
+        if ($node->isChecked()) {
+            $node->click();
+        }
     }
 
     /**
      * Move selected categories to top level in the management interface.
      *
-     * @Given /^I move category "(?P<idnumber>[^"]*)" to top level in the management interface$/
-     * @param string $idnumber
+     * @Given /^I move category "(?P<name>[^"]*)" to top level in the management interface$/
+     * @param string $name
      * @return Given[]
      */
-    public function i_move_category_to_top_level_in_the_management_interface($idnumber) {
-        $id = $this->get_category_id($idnumber);
-        $selector = sprintf('.listitem-category[data-id="%d"] > div', $id);
-        $node = $this->find('css', $selector);
-        $node->checkField('bcat[]');
+    public function i_move_category_to_top_level_in_the_management_interface($name) {
+        $this->i_select_category_in_the_management_interface($name);
         return array(
             new Given('I select "' .  coursecat::get(0)->get_formatted_name() . '" from "menumovecategoriesto"'),
             new Given('I press "bulkmovecategories"'),

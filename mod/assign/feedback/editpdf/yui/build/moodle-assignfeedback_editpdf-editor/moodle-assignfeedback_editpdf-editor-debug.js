@@ -1617,7 +1617,6 @@ DROPDOWN = function(config) {
     config.draggable = false;
     config.centered = false;
     config.width = 'auto';
-    config.lightbox = false;
     config.visible = false;
     config.footerContent = '';
     DROPDOWN.superclass.constructor.apply(this, [config]);
@@ -1650,7 +1649,8 @@ Y.extend(DROPDOWN, M.core.dialogue, {
 
         body.on('clickoutside', function(e) {
             if (this.get('visible')) {
-                if (e.target !== button && e.target.ancestor() !== button) {
+                // Note: we need to compare ids because for some reason - sometimes button is an Object, not a Y.Node.
+                if (e.target.get('id') !== button.get('id') && e.target.ancestor().get('id') !== button.get('id')) {
                     e.preventDefault();
                     this.hide();
                 }
@@ -1696,6 +1696,23 @@ Y.extend(DROPDOWN, M.core.dialogue, {
          */
         buttonNode : {
             value : null
+        }
+    }
+});
+
+Y.Base.modifyAttrs(DROPDOWN, {
+    /**
+     * Whether the widget should be modal or not.
+     *
+     * Moodle override: We override this for commentsearch to force it always false.
+     *
+     * @attribute Modal
+     * @type Boolean
+     * @default false
+     */
+    modal: {
+        getter: function() {
+            return false;
         }
     }
 });
@@ -2063,7 +2080,6 @@ COMMENTSEARCH = function(config) {
     config.draggable = false;
     config.centered = true;
     config.width = '400px';
-    config.lightbox = true;
     config.visible = false;
     config.headerContent = M.util.get_string('searchcomments', 'assignfeedback_editpdf');
     config.footerContent = '';
@@ -2195,6 +2211,23 @@ Y.extend(COMMENTSEARCH, M.core.dialogue, {
             value : null
         }
 
+    }
+});
+
+Y.Base.modifyAttrs(COMMENTSEARCH, {
+    /**
+     * Whether the widget should be modal or not.
+     *
+     * Moodle override: We override this for commentsearch to force it always true.
+     *
+     * @attribute Modal
+     * @type Boolean
+     * @default true
+     */
+    modal: {
+        getter: function() {
+            return true;
+        }
     }
 });
 

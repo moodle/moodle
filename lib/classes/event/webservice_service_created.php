@@ -28,6 +28,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * core webservice service created event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type string sessionid session id.
+ * }
+ *
  * @package    core
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -184,10 +184,11 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @return string
      */
     public function user_roles_and_actions($userid, $roles, $assignableroles, $canassign, $pageurl) {
-        $iconenroladd    = $this->output->pix_url('t/enroladd');
         $iconenrolremove = $this->output->pix_url('t/delete');
 
-        // get list of roles
+
+
+        // Get list of roles.
         $rolesoutput = '';
         foreach ($roles as $roleid=>$role) {
             if ($canassign and (is_siteadmin() or isset($assignableroles[$roleid])) and !$role['unchangeable']) {
@@ -210,9 +211,10 @@ class core_enrol_renderer extends plugin_renderer_base {
                 }
             }
             if (!$hasallroles) {
-                $url = new moodle_url($pageurl, array('action'=>'assign', 'user'=>$userid));
-                $icon = html_writer::empty_tag('img', array('alt'=>get_string('assignroles', 'role'), 'src'=>$iconenroladd));
-                $output = html_writer::tag('div', html_writer::link($url, $icon, array('class'=>'assignrolelink', 'title'=>get_string('assignroles', 'role'))), array('class'=>'addrole'));
+                $url = new moodle_url($pageurl, array('action' => 'assign', 'user' => $userid));
+                $roleicon = $this->output->pix_icon('i/assignroles', get_string('assignroles', 'role'));
+                $link = html_writer::link($url, $roleicon, array('class' => 'assignrolelink'));
+                $output = html_writer::tag('div', $link, array('class'=>'addrole'));
             }
         }
         $output .= html_writer::tag('div', $rolesoutput, array('class'=>'roles'));
@@ -230,9 +232,9 @@ class core_enrol_renderer extends plugin_renderer_base {
      * @return string
      */
     public function user_groups_and_actions($userid, $groups, $allgroups, $canmanagegroups, $pageurl) {
-        $iconenroladd    = $this->output->pix_url('t/enroladd');
         $iconenrolremove = $this->output->pix_url('t/delete');
-        $straddgroup = get_string('addgroup', 'group');
+
+        $groupicon = $this->output->pix_icon('i/group', get_string('addgroup', 'group'));
 
         $groupoutput = '';
         foreach($groups as $groupid=>$name) {
@@ -244,13 +246,13 @@ class core_enrol_renderer extends plugin_renderer_base {
                 $groupoutput .= html_writer::tag('div', $name, array('class'=>'group', 'rel'=>$groupid));
             }
         }
-        $groupoutput = html_writer::tag('div', $groupoutput, array('class'=>'groups'));
+        $output = '';
         if ($canmanagegroups && (count($groups) < count($allgroups))) {
-            $icon = html_writer::empty_tag('img', array('alt'=>$straddgroup, 'src'=>$iconenroladd));
             $url = new moodle_url($pageurl, array('action'=>'addmember', 'user'=>$userid));
-            $groupoutput .= html_writer::tag('div', html_writer::link($url, $icon), array('class'=>'addgroup'));
+            $output .= html_writer::tag('div', html_writer::link($url, $groupicon), array('class'=>'addgroup'));
         }
-        return $groupoutput;
+        $output = $output.html_writer::tag('div', $groupoutput, array('class'=>'groups'));
+        return $output;
     }
 
     /**

@@ -271,8 +271,9 @@ class manager {
                     // This should not happen, just log it, we MUST not produce any output here!
                     error_log("Cannot find session record $sid for user ".$_SESSION['USER']->id.", creating new session.");
                 }
+                // Prevent session fixation attacks.
+                session_regenerate_id(true);
             }
-            session_regenerate_id(true);
             $_SESSION = array();
         }
         unset($sid);
@@ -614,7 +615,7 @@ class manager {
         global $CFG, $DB;
 
         // This may take a long time...
-        set_time_limit(0);
+        \core_php_time_limit::raise();
 
         $maxlifetime = $CFG->sessiontimeout;
 

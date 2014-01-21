@@ -386,43 +386,72 @@ fieldset.coursesearchbox label {
 /**
  * Show the labels above text editors and file managers except on wide screens.
  */
-#region-main .mform .fitem .fitemtitle label {
+#region-main .mform:not(.unresponsive) .fitem .fitemtitle label {
     font-weight: bold;
 }
 @media (max-width: 1199px) {
-    #region-main .mform .fitem .fitemtitle {
-        display: block;
-        margin-top: 4px;
-        margin-bottom: 4px;
-        text-align: left;
-        width: 100%;
+    #region-main .mform:not(.unresponsive) {
+        .fitem {
+            .fitemtitle {
+                display: block;
+                margin-top: 4px;
+                margin-bottom: 4px;
+                text-align: left;
+                width: 100%;
+            }
+            .felement {
+                margin-left: 0;
+                width: 100%;
+                float: left;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .fstatic:empty {
+                display: none;
+            }
+        }
+        .femptylabel {
+            .fitemtitle {
+                display: inline-block;
+                width: auto;
+                margin-right: 8px;
+            }
+            .felement {
+                display: inline-block;
+                margin-top: 4px;
+                padding-top: 5px;
+                width: auto;
+            }
+        }
+        .fitem_fcheckbox{
+            .fitemtitle,
+            .felement {
+                display: inline-block;
+                width: auto;
+            }
+            .felement {
+                padding: 6px;
+            }
+        }
     }
-    .dir-rtl #region-main .mform .fitem .fitemtitle {
-        text-align: right;
-    }
-
-    #region-main .mform .fitem .felement {
-        margin-left: 0;
-        width: 100%;
-        float: left;
-        padding-left: 0;
-        padding-right: 0;
-    }
-    .dir-rtl #region-main .mform .fitem .felement {
-        margin-right: 0;
-        float: right;
-        padding-right: 0;
-        padding-left: 0;
-    }
-    #region-main .mform .fitem_fcheckbox .fitemtitle,
-    #region-main .mform .fitem_fcheckbox .felement {
-        display: inline-block;
-        width: auto;
-    }
-    .dir-rtl #region-main .mform .fitem_fcheckbox .felement {
-        float: right;
-    }
-    #region-main .mform .fitem_fcheckbox .felement {
-        padding: 6px;
+    .dir-rtl #region-main .mform:not(.unresponsive) {
+        .femptylabel .fitemtitle {
+            margin-right: 0px;
+            margin-left: 8px;
+        }
+        .fitem {
+            .fitemtitle {
+                text-align: right;
+            }
+            .felement {
+                margin-right: 0;
+                float: right;
+                padding-right: 0;
+                padding-left: 0;
+            }
+        }
+        .fitem_fcheckbox .felement {
+            float: right;
+        }
     }
 }

@@ -281,7 +281,7 @@ class cache_definition {
      * An array of identifiers provided to this cache when it was initialised.
      * @var array
      */
-    protected $identifiers = array();
+    protected $identifiers = null;
 
     /**
      * Key prefix for use with single key cache stores
@@ -654,6 +654,9 @@ class cache_definition {
      * @return array
      */
     public function get_identifiers() {
+        if (!isset($this->identifiers)) {
+            return array();
+        }
         return $this->identifiers;
     }
 
@@ -766,10 +769,21 @@ class cache_definition {
      * @throws coding_exception
      */
     public function set_identifiers(array $identifiers = array()) {
+        // If we are setting the exact same identifiers then just return as nothing really changed.
+        // We don't care about order as cache::make will use the same definition order all the time.
+        if ($identifiers === $this->identifiers) {
+            return;
+        }
+
         foreach ($this->requireidentifiers as $identifier) {
             if (!isset($identifiers[$identifier])) {
                 throw new coding_exception('Identifier required for cache has not been provided: '.$identifier);
             }
+        }
+
+        if ($this->identifiers === null) {
+            // Initialize identifiers if they have not been.
+            $this->identifiers = array();
         }
         foreach ($identifiers as $name => $value) {
             $this->identifiers[$name] = (string)$value;
@@ -893,7 +907,7 @@ class cache_definition {
                 'area' => $this->area,
                 'siteidentifier' => $this->get_cache_identifier()
             );
-            if (!empty($this->identifiers)) {
+            if (isset($this->identifiers) && !empty($this->identifiers)) {
                 $identifiers = array();
                 foreach ($this->identifiers as $key => $value) {
                     $identifiers[] = htmlentities($key, ENT_QUOTES, 'UTF-8').'='.htmlentities($value, ENT_QUOTES, 'UTF-8');
@@ -962,5 +976,32 @@ class cache_definition {
      */
     public function has_required_identifiers() {
         return (count($this->requireidentifiers) > 0);
+    }
+
+    /**
+     * Returns the possible sharing options that can be used with this defintion.
+     *
+     * @return int
+     */
+    public function get_sharing_options() {
+        return $this->sharingoptions;
+    }
+
+    /**
+     * Returns the user entered sharing key for this definition.
+     *
+     * @return string
+     */
+    public function get_user_input_sharing_key() {
+        return $this->userinputsharingkey;
+    }
+
+    /**
+     * Returns the user selected sharing option for this definition.
+     *
+     * @return int
+     */
+    public function get_selected_sharing_option() {
+        return $this->selectedsharingoption;
     }
 }

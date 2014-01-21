@@ -1,0 +1,4 @@
+=== 2.7 ===
+
+* blog_entry->add_association() does not accept any params.
+* blog_entry->add_associations() accepts only one param.

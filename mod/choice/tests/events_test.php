@@ -236,7 +236,7 @@ class mod_choice_events_testcase extends advanced_testcase {
     /**
      * Test to ensure that event data is being stored correctly.
      */
-    public function test_instances_list_viewed() {
+    public function test_course_module_instance_list_viewed_viewed() {
         global $USER;
 
         // Not much can be tested here as the event is only triggered on a page load,
@@ -244,12 +244,12 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->setAdminUser();
 
         $params = array('context' => context_course::instance($this->course->id));
-        $event = \mod_choice\event\instances_list_viewed::create($params);
+        $event = \mod_choice\event\course_module_instance_list_viewed::create($params);
         $sink = $this->redirectEvents();
         $event->trigger();
         $events = $sink->get_events();
         $event = reset($events);
-        $this->assertInstanceOf('\mod_choice\event\instances_list_viewed', $event);
+        $this->assertInstanceOf('\mod_choice\event\course_module_instance_list_viewed', $event);
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals(context_course::instance($this->course->id), $event->get_context());
         $expected = array($this->course->id, 'choice', 'view all', 'index.php?id=' . $this->course->id, '');

@@ -55,6 +55,10 @@ $string['anymethodactivity'] = 'Any of the selected activities is complete';
 $string['anymethodcourseset'] = 'Any of the selected courses is complete';
 $string['anymethodmanual'] = 'Any of the selected roles awards the badge';
 $string['anymethodprofile'] = 'Any of the selected profile fields has been completed';
+$string['archivebadge'] = 'Would you like to delete badge \'{$a}\', but keep existing issued badges?';
+$string['archiveconfirm'] = 'Delete and keep existing issued badges';
+$string['archivehelp'] = '<p>This option means that the badge will be marked as "retired" and will no longer appear in the list of badges. Users will no longer be able to earn this badge, however existing badge recipients will still be able to display this badge on their profile page and push it to their external backpacks.</p>
+<p>If you would like your users to retain access to the earned badges it is important to select this option instead of fully deleting badges.</p>';
 $string['attachment'] = 'Attach badge to message';
 $string['attachment_help'] = 'If checked, an issued badge file will be attached to the recepient\'s email for download. Email attachments must be enabled in site settings to use this option.';
 $string['award'] = 'Award badge';
@@ -196,8 +200,10 @@ $string['defaultissuercontact'] = 'Default badge issuer contact details';
 $string['defaultissuercontact_desc'] = 'An email address associated with the badge issuer.';
 $string['defaultissuername'] = 'Default badge issuer name';
 $string['defaultissuername_desc'] = 'Name of the issuing agent or authority.';
-$string['delbadge'] = 'Delete badge';
-$string['delconfirm'] = 'Are you sure that you want to delete badge \'{$a}\'?';
+$string['delbadge'] = 'Would you like to delete badge \'{$a}\' and remove all existing issued badges?';
+$string['delconfirm'] = 'Delete and remove existing issued badges';
+$string['deletehelp'] = '<p>Fully deleting a badge means that all its information and criteria records will be permanently removed. Users who have earned this badge will no longer be able to access it and display it on their profile pages.</p>
+<p>Note: Users who have earned this badge and have already pushed it to their external backpack, will still have this badge in their external backpack. However, they will not be able to access criteria and evidence pages linking back to this web site.</p>';
 $string['delcritconfirm'] = 'Are you sure that you want to delete this criterion?';
 $string['delparamconfirm'] = 'Are you sure that you want to delete this parameter?';
 $string['description'] = 'Description';
@@ -276,9 +282,9 @@ $string['makeprivate'] = 'Make private';
 $string['makepublic'] = 'Make public';
 $string['managebadges'] = 'Manage badges';
 $string['message'] = 'Message body';
-$string['messagebody'] = '<p>You have been awarded a badge "%badgename%"!</p>
+$string['messagebody'] = '<p>You have been awarded the badge "%badgename%"!</p>
 <p>More information about this badge can be found at %badgelink%.</p>
-<p>If there is no badge attached to this email, you can manage and download it from {$a} page.</p>';
+<p>You can manage and download the badge from {$a}.</p>';
 $string['messagesubject'] = 'Congratulations! You just earned a badge!';
 $string['method'] = 'This criterion is complete when...';
 $string['mingrade'] = 'Minimum grade required';

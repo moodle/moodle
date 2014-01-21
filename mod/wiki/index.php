@@ -45,7 +45,8 @@ require_login($course, true);
 $PAGE->set_pagelayout('incourse');
 $context = context_course::instance($course->id);
 
-add_to_log($course->id, 'wiki', 'view', "index.php?id=".$id, "");
+$event = \mod_wiki\event\course_module_instance_list_viewed::create(array('context' => $context));
+$event->trigger();
 
 /// Get all required stringswiki
 $strwikis = get_string("modulenameplural", "wiki");

@@ -27,9 +27,6 @@ DirectoryIndex index.php index.html index.htm
 
 ### Thirdly, set up some PHP variables that Moodle needs
 
-php_flag magic_quotes_gpc        0
-php_flag magic_quotes_runtime    0
-php_flag register_globals        0
 php_flag file_uploads            1
 php_flag short_open_tag          1
 php_flag session.auto_start      0

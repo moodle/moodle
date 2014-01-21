@@ -126,7 +126,7 @@ function uninstall_plugin($type, $name) {
     global $CFG, $DB, $OUTPUT;
 
     // This may take a long time.
-    @set_time_limit(0);
+    core_php_time_limit::raise();
 
     // Recursively uninstall all subplugins first.
     $subplugintypes = core_component::get_plugin_types_with_subplugins();
@@ -750,8 +750,8 @@ interface parentable_part_of_admin_tree extends part_of_admin_tree {
  */
 class admin_category implements parentable_part_of_admin_tree {
 
-    /** @var mixed An array of part_of_admin_tree objects that are this object's children */
-    public $children;
+    /** @var part_of_admin_tree[] An array of part_of_admin_tree objects that are this object's children */
+    protected $children;
     /** @var string An internal name for this category. Must be unique amongst ALL part_of_admin_tree objects */
     public $name;
     /** @var string The displayed name for this category. Usually obtained through get_string() */
@@ -765,6 +765,15 @@ class admin_category implements parentable_part_of_admin_tree {
 
     /** @var array fast lookup category cache, all categories of one tree point to one cache */
     protected $category_cache;
+
+    /** @var bool If set to true children will be sorted when calling {@link admin_category::get_children()} */
+    protected $sort = false;
+    /** @var bool If set to true children will be sorted in ascending order. */
+    protected $sortasc = true;
+    /** @var bool If set to true sub categories and pages will be split and then sorted.. */
+    protected $sortsplit = true;
+    /** @var bool $sorted True if the children have been sorted and don't need resorting */
+    protected $sorted = false;
 
     /**
      * Constructor for an empty admin category
@@ -830,7 +839,7 @@ class admin_category implements parentable_part_of_admin_tree {
      */
     public function search($query) {
         $result = array();
-        foreach ($this->children as $child) {
+        foreach ($this->get_children() as $child) {
             $subsearch = $child->search($query);
             if (!is_array($subsearch)) {
                 debugging('Incorrect search result from '.$child->name);
@@ -990,6 +999,104 @@ class admin_category implements parentable_part_of_admin_tree {
             }
         }
         return false;
+    }
+
+    /**
+     * Sets sorting on this category.
+     *
+     * Please note this function doesn't actually do the sorting.
+     * It can be called anytime.
+     * Sorting occurs when the user calls get_children.
+     * Code using the children array directly won't see the sorted results.
+     *
+     * @param bool $sort If set to true children will be sorted, if false they won't be.
+     * @param bool $asc If true sorting will be ascending, otherwise descending.
+     * @param bool $split If true we sort pages and sub categories separately.
+     */
+    public function set_sorting($sort, $asc = true, $split = true) {
+        $this->sort = (bool)$sort;
+        $this->sortasc = (bool)$asc;
+        $this->sortsplit = (bool)$split;
+    }
+
+    /**
+     * Returns the children associated with this category.
+     *
+     * @return part_of_admin_tree[]
+     */
+    public function get_children() {
+        // If we should sort and it hasn't already been sorted.
+        if ($this->sort && !$this->sorted) {
+            if ($this->sortsplit) {
+                $categories = array();
+                $pages = array();
+                foreach ($this->children as $child) {
+                    if ($child instanceof admin_category) {
+                        $categories[] = $child;
+                    } else {
+                        $pages[] = $child;
+                    }
+                }
+                core_collator::asort_objects_by_property($categories, 'visiblename');
+                core_collator::asort_objects_by_property($pages, 'visiblename');
+                if (!$this->sortasc) {
+                    $categories = array_reverse($categories);
+                    $pages = array_reverse($pages);
+                }
+                $this->children = array_merge($pages, $categories);
+            } else {
+                core_collator::asort_objects_by_property($this->children, 'visiblename');
+                if (!$this->sortasc) {
+                    $this->children = array_reverse($this->children);
+                }
+            }
+            $this->sorted = true;
+        }
+        return $this->children;
+    }
+
+    /**
+     * Magically gets a property from this object.
+     *
+     * @param $property
+     * @return part_of_admin_tree[]
+     * @throws coding_exception
+     */
+    public function __get($property) {
+        if ($property === 'children') {
+            return $this->get_children();
+        }
+        throw new coding_exception('Invalid property requested.');
+    }
+
+    /**
+     * Magically sets a property against this object.
+     *
+     * @param string $property
+     * @param mixed $value
+     * @throws coding_exception
+     */
+    public function __set($property, $value) {
+        if ($property === 'children') {
+            $this->sorted = false;
+            $this->children = $value;
+        } else {
+            throw new coding_exception('Invalid property requested.');
+        }
+    }
+
+    /**
+     * Checks if an inaccessible property is set.
+     *
+     * @param string $property
+     * @return bool
+     * @throws coding_exception
+     */
+    public function __isset($property) {
+        if ($property === 'children') {
+            return isset($this->children);
+        }
+        throw new coding_exception('Invalid property requested.');
     }
 }
 
@@ -1660,9 +1767,19 @@ abstract class admin_setting {
             rebuild_course_cache(0, true);
         }
 
-        add_to_config_log($name, $oldvalue, $value, $this->plugin);
+        $this->add_to_config_log($name, $oldvalue, $value);
 
         return true; // BC only
+    }
+
+    /**
+     * Log config changes if necessary.
+     * @param string $name
+     * @param string $oldvalue
+     * @param string $value
+     */
+    protected function add_to_config_log($name, $oldvalue, $value) {
+        add_to_config_log($name, $oldvalue, $value, $this->plugin);
     }
 
     /**
@@ -2159,6 +2276,22 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
      */
     public function __construct($name, $visiblename, $description, $defaultsetting) {
         parent::__construct($name, $visiblename, $description, $defaultsetting, PARAM_RAW, 30);
+    }
+
+    /**
+     * Log config changes if necessary.
+     * @param string $name
+     * @param string $oldvalue
+     * @param string $value
+     */
+    protected function add_to_config_log($name, $oldvalue, $value) {
+        if ($value !== '') {
+            $value = '********';
+        }
+        if ($oldvalue !== '' and $oldvalue !== null) {
+            $oldvalue = '********';
+        }
+        parent::add_to_config_log($name, $oldvalue, $value);
     }
 
     /**
@@ -6728,7 +6861,7 @@ function db_replace($search, $replace) {
                         'block_instances', '');
 
     // Turn off time limits, sometimes upgrades can be slow.
-    @set_time_limit(0);
+    core_php_time_limit::raise();
 
     if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
         return false;
@@ -6741,11 +6874,8 @@ function db_replace($search, $replace) {
 
         if ($columns = $DB->get_columns($table)) {
             $DB->set_debug(true);
-            foreach ($columns as $column => $data) {
-                if (in_array($data->meta_type, array('C', 'X'))) {  // Text stuff only
-                    //TODO: this should be definitively moved to DML driver to do the actual replace, this is not going to work for MSSQL and Oracle...
-                    $DB->execute("UPDATE {".$table."} SET $column = REPLACE($column, ?, ?)", array($search, $replace));
-                }
+            foreach ($columns as $column) {
+                $DB->replace_all_text($table, $column, $search, $replace);
             }
             $DB->set_debug(false);
         }
@@ -6775,6 +6905,8 @@ function db_replace($search, $replace) {
         $function($search, $replace);
         echo $OUTPUT->notification("...finished", 'notifysuccess');
     }
+
+    purge_all_caches();
 
     return true;
 }

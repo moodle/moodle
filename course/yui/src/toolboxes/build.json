@@ -1,0 +1,12 @@
+{
+    "name": "moodle-course-toolboxes",
+    "builds": {
+        "moodle-course-toolboxes": {
+            "jsfiles": [
+                "toolbox.js",
+                "resource.js",
+                "section.js"
+            ]
+        }
+    }
+}

@@ -29,13 +29,18 @@ Feature: Restrict activity availability through grade conditions
       | Description | Grade this assignment to revoke restriction on restricted assignment |
       | assignsubmission_onlinetext_enabled | 1 |
       | assignsubmission_file_enabled | 0 |
-    And I add a "Page" to section "2" and I fill the form with:
+    # Adding the page like this because id_availableform_enabled needs to be clicked to trigger the action.
+    And I add a "Page" to section "2"
+    And I expand all fieldsets
+    And I click on "id_availablefrom_enabled" "checkbox"
+    And I fill the moodle form with:
       | Name | Test page name |
       | Description | Restricted page, till grades in Grade assignment is at least 20% |
       | Page content | Test page contents |
       | id_conditiongradegroup_0_conditiongradeitemid | 2 |
       | id_conditiongradegroup_0_conditiongrademin | 20 |
       | id_showavailability | 1 |
+    And I press "Save and return to course"
     And I log out
     When I log in as "student1"
     And I follow "Course 1"

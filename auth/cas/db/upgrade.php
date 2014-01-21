@@ -49,5 +49,8 @@ function xmldb_auth_cas_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013091700, 'auth', 'cas');
     }
 
+    // Moodle v2.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

@@ -1,0 +1,10 @@
+{
+  "name": "moodle-backup-backupselectall",
+  "builds": {
+    "moodle-backup-backupselectall": {
+      "jsfiles": [
+        "backupselectall.js"
+      ]
+    }
+  }
+}

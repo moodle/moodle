@@ -37,13 +37,20 @@ class award_criteria_activity extends award_criteria {
     public $criteriatype = BADGE_CRITERIA_TYPE_ACTIVITY;
 
     private $courseid;
+    private $coursestartdate;
 
     public $required_param = 'module';
     public $optional_params = array('bydate');
 
     public function __construct($record) {
+        global $DB;
         parent::__construct($record);
-        $this->courseid = self::get_course();
+
+        $course = $DB->get_record_sql('SELECT b.courseid, c.startdate
+                        FROM {badge} b INNER JOIN {course} c ON b.courseid = c.id
+                        WHERE b.id = :badgeid ', array('badgeid' => $this->badgeid));
+        $this->courseid = $course->courseid;
+        $this->coursestartdate = $course->startdate;
     }
 
     /**
@@ -93,17 +100,6 @@ class award_criteria_activity extends award_criteria {
         } else {
             return html_writer::alist($output, array(), 'ul');
         }
-    }
-
-    /**
-     * Return course ID for activities
-     *
-     * @return int
-     */
-    private function get_course() {
-        global $DB;
-        $courseid = $DB->get_field('badge', 'courseid', array('id' => $this->badgeid));
-        return $courseid;
     }
 
     /**
@@ -184,14 +180,17 @@ class award_criteria_activity extends award_criteria {
      * Review this criteria and decide if it has been completed
      *
      * @param int $userid User whose criteria completion needs to be reviewed.
+     * @param bool $filtered An additional parameter indicating that user list
+     *        has been reduced and some expensive checks can be skipped.
+     *
      * @return bool Whether criteria is complete
      */
-    public function review($userid) {
-        global $DB;
+    public function review($userid, $filtered = false) {
         $completionstates = array(COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS);
-        $course = $DB->get_record('course', array('id' => $this->courseid));
+        $course = new stdClass();
+        $course->id = $this->courseid;
 
-        if ($course->startdate > time()) {
+        if ($this->coursestartdate > time()) {
             return false;
         }
 
@@ -217,7 +216,7 @@ class award_criteria_activity extends award_criteria {
                 } else {
                     return false;
                 }
-            } else if ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) {
+            } else {
                 if (in_array($data->completionstate, $completionstates) && $check_date) {
                     return true;
                 } else {
@@ -228,5 +227,45 @@ class award_criteria_activity extends award_criteria {
         }
 
         return $overall;
+    }
+
+    /**
+     * Returns array with sql code and parameters returning all ids
+     * of users who meet this particular criterion.
+     *
+     * @return array list($join, $where, $params)
+     */
+    public function get_completed_criteria_sql() {
+        $join = '';
+        $where = '';
+        $params = array();
+
+        if ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) {
+            foreach ($this->params as $param) {
+                $moduledata[] = " cmc.coursemoduleid = :completedmodule{$param['module']} ";
+                $params["completedmodule{$param['module']}"] = $param['module'];
+            }
+            if (!empty($moduledata)) {
+                $extraon = implode(' OR ', $moduledata);
+                $join = " JOIN {course_modules_completion} cmc ON cmc.userid = u.id AND
+                          ( cmc.completionstate = :completionpass OR cmc.completionstate = :completioncomplete ) AND ({$extraon})";
+                $params["completionpass"] = COMPLETION_COMPLETE_PASS;
+                $params["completioncomplete"] = COMPLETION_COMPLETE;
+            }
+            return array($join, $where, $params);
+        } else {
+            foreach ($this->params as $param) {
+                $join .= " LEFT JOIN {course_modules_completion} cmc{$param['module']} ON
+                          cmc{$param['module']}.userid = u.id AND
+                          cmc{$param['module']}.coursemoduleid = :completedmodule{$param['module']} AND
+                          ( cmc{$param['module']}.completionstate = :completionpass{$param['module']} OR
+                            cmc{$param['module']}.completionstate = :completioncomplete{$param['module']} )";
+                $where .= " AND cmc{$param['module']}.coursemoduleid IS NOT NULL ";
+                $params["completedmodule{$param['module']}"] = $param['module'];
+                $params["completionpass{$param['module']}"] = COMPLETION_COMPLETE_PASS;
+                $params["completioncomplete{$param['module']}"] = COMPLETION_COMPLETE;
+            }
+            return array($join, $where, $params);
+        }
     }
 }

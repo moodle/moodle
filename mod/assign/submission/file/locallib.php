@@ -158,8 +158,7 @@ class assign_submission_file extends assign_submission_plugin {
                                                   'assignsubmission_file',
                                                   ASSIGNSUBMISSION_FILE_FILEAREA,
                                                   $submissionid);
-        $mform->addElement('filemanager', 'files_filemanager', html_writer::tag('span', $this->get_name(),
-            array('class' => 'accesshide')), null, $fileoptions);
+        $mform->addElement('filemanager', 'files_filemanager', $this->get_name(), null, $fileoptions);
 
         return true;
     }

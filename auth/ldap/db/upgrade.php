@@ -39,5 +39,8 @@ function xmldb_auth_ldap_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013052100, 'auth', 'ldap');
     }
 
+    // Moodle v2.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

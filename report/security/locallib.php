@@ -39,7 +39,6 @@ function report_security_hide_timearning() {
 
 function report_security_get_issue_list() {
     return array(
-        'report_security_check_globals',
         'report_security_check_unsecuredataroot',
         'report_security_check_displayerrors',
         'report_security_check_noauth',
@@ -75,35 +74,6 @@ function report_security_doc_link($issue, $name) {
 ///               Issue checks
 ///=============================================
 
-
-/**
- * Verifies register globals PHP setting.
- * @param bool $detailed
- * @return object result
- */
-function report_security_check_globals($detailed=false) {
-    $result = new stdClass();
-    $result->issue   = 'report_security_check_globals';
-    $result->name    = get_string('check_globals_name', 'report_security');
-    $result->info    = null;
-    $result->details = null;
-    $result->status  = null;
-    $result->link    = null;
-
-    if (ini_get_bool('register_globals')) {
-        $result->status = REPORT_SECURITY_CRITICAL;
-        $result->info   = get_string('check_globals_error', 'report_security');
-    } else {
-        $result->status = REPORT_SECURITY_OK;
-        $result->info   = get_string('check_globals_ok', 'report_security');
-    }
-
-    if ($detailed) {
-        $result->details = get_string('check_globals_details', 'report_security');
-    }
-
-    return $result;
-}
 
 /**
  * Verifies unsupported noauth setting
@@ -508,7 +478,8 @@ function report_security_check_riskxss($detailed=false) {
     $result->info = get_string('check_riskxss_warning', 'report_security', $count);
 
     if ($detailed) {
-        $users = $DB->get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt $sqlfrom", $params);
+        $userfields = user_picture::fields('u');
+        $users = $DB->get_records_sql("SELECT DISTINCT $userfields $sqlfrom", $params);
         foreach ($users as $uid=>$user) {
             $users[$uid] = fullname($user);
         }
@@ -563,7 +534,7 @@ function report_security_check_defaultuserrole($detailed=false) {
 
     if ($riskycount or !$legacyok) {
         $result->status  = REPORT_SECURITY_CRITICAL;
-        $result->info    = get_string('check_defaultuserrole_error', 'report_security', format_string($default_role->name));
+        $result->info    = get_string('check_defaultuserrole_error', 'report_security', role_get_name($default_role));
 
     } else {
         $result->status  = REPORT_SECURITY_OK;
@@ -710,7 +681,8 @@ function report_security_check_riskadmin($detailed=false) {
     $result->status  = null;
     $result->link    = null;
 
-    $sql = "SELECT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email
+    $userfields = user_picture::fields('u');
+    $sql = "SELECT $userfields
               FROM {user} u
              WHERE u.id IN ($CFG->siteadmins)";
 
@@ -834,7 +806,8 @@ function report_security_check_riskbackup($detailed=false) {
         $users = array();
 
         list($sort, $sortparams) = users_order_by_sql('u');
-        $rs = $DB->get_recordset_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, u.imagealt, u.email, ra.contextid, ra.roleid
+        $userfields = user_picture::fields('u');
+        $rs = $DB->get_recordset_sql("SELECT DISTINCT $userfields, ra.contextid, ra.roleid
             $sqluserinfo ORDER BY $sort", array_merge($params, $sortparams));
 
         foreach ($rs as $user) {

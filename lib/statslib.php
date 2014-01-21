@@ -208,7 +208,7 @@ function stats_cron_daily($maxdays=1) {
         }
 
         $days++;
-        @set_time_limit($timeout - 200);
+        core_php_time_limit::raise($timeout - 200);
 
         if ($days > 1) {
             // move the lock
@@ -259,6 +259,7 @@ function stats_cron_daily($maxdays=1) {
             $failed = true;
             break;
         }
+        $DB->update_temp_table_stats();
 
         stats_progress('1');
 
@@ -385,6 +386,10 @@ function stats_cron_daily($maxdays=1) {
             $failed = true;
             break;
         }
+        // The steps up until this point, all add to {temp_stats_daily} and don't use new tables.
+        // There is no point updating statistics as they won't be used until the DELETE below.
+        $DB->update_temp_table_stats();
+
         stats_progress('7');
 
         // Default frontpage role enrolments are all site users (not deleted)
@@ -581,6 +586,7 @@ function stats_cron_daily($maxdays=1) {
             $failed = true;
             break;
         }
+        $DB->update_temp_table_stats();
         stats_progress('15');
 
         // How many view actions for guests or not-logged-in on frontpage
@@ -677,7 +683,7 @@ function stats_cron_weekly() {
 
     $weeks = 0;
     while ($now > $nextstartweek) {
-        @set_time_limit($timeout - 200);
+        core_php_time_limit::raise($timeout - 200);
         $weeks++;
 
         if ($weeks > 1) {
@@ -820,7 +826,7 @@ function stats_cron_monthly() {
 
     $months = 0;
     while ($now > $nextstartmonth) {
-        @set_time_limit($timeout - 200);
+        core_php_time_limit::raise($timeout - 200);
         $months++;
 
         if ($months > 1) {
@@ -1735,6 +1741,9 @@ function stats_temp_table_fill($timestart, $timeend) {
             SELECT userid, course, action FROM {temp_log1}';
 
     $DB->execute($sql);
+
+    // We have just loaded all the temp tables, collect statistics for that.
+    $DB->update_temp_table_stats();
 
     return true;
 }

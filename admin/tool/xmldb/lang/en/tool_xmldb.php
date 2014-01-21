@@ -106,6 +106,8 @@ $string['fieldsusedinindex'] = 'This field is used as index';
 $string['fieldsusedinkey'] = 'This field is used as key.';
 $string['filemodifiedoutfromeditor'] = 'Warning: File locally modified while using the XMLDB Editor. Saving will overwrite local changes.';
 $string['filenotwriteable'] = 'File not writeable';
+$string['fkunknownfield'] = 'Foreign key {$a->keyname} on table {$a->tablename} points to a non-existent field {$a->reffield} in referenced table {$a->reftable}.';
+$string['fkunknowntable'] = 'Foreign key {$a->keyname} on table {$a->tablename} points to a non-existent table {$a->reftable}.';
 $string['fkviolationdetails'] = 'Foreign key {$a->keyname} on table {$a->tablename} is violated by {$a->numviolations} out of {$a->numrows} rows.';
 $string['floatincorrectdecimals'] = 'Incorrect number of decimals for float field';
 $string['floatincorrectlength'] = 'Incorrect length for float field';
@@ -183,6 +185,8 @@ $string['selecttable'] = 'Select table:';
 $string['table'] = 'Table';
 $string['tablenameempty'] = 'The table name cannot be empty';
 $string['tables'] = 'Tables';
+$string['unknownfield'] = 'Refers to an unknown field';
+$string['unknowntable'] = 'Refers to an unknown table';
 $string['unload'] = 'Unload';
 $string['up'] = 'Up';
 $string['view'] = 'View';
@@ -206,7 +210,11 @@ $string['wronglengthforenum'] = 'Incorrect length for enum field';
 $string['wrongnumberofreffields'] = 'Wrong number of reference fields';
 $string['wrongreservedwords'] = 'Currently used reserved words<br />(note that table names aren\'t important if using $CFG->prefix)';
 $string['wrongoraclesemantics'] = 'Wrong Oracle BYTE semantics found';
-$string['yesmissingindexesfound'] = 'Some missing indexes have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more missing indexes are found.';
-$string['yeswrongdefaultsfound'] = 'Some inconsistent defaults have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to fix them all (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more inconsistent defaults are found.';
-$string['yeswrongintsfound'] = 'Some wrong integers have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more wrong integers are found.';
-$string['yeswrongoraclesemanticsfound'] = 'Some Oracle columns using BYTE semantics have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them (don\'t forget to backup your data before doing that).<br /><br />After doing that, it\'s highly recommended to execute this utility again to check that no more wrong semantics are found.';
+$string['yesmissingindexesfound'] = '<p>Some missing indexes have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all of them. Remember to backup your data first!</p>
+<p>After doing that, it\'s highly recommended to execute this utility again to check that no more missing indexes are found.</p>';
+$string['yeswrongdefaultsfound'] = '<p>Some inconsistent defaults have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to fix them all. Remember to backup your data first!</p>
+<p>After doing that, it\'s highly recommended to execute this utility again to check that no more inconsistent defaults are found.</p>';
+$string['yeswrongintsfound'] = '<p>Some wrong integers have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them. Remember to backup your data first!</p>
+<p>After doing that, it\'s highly recommended to execute this utility again to check that no more wrong integers are found.</p>';
+$string['yeswrongoraclesemanticsfound'] = '<p>Some Oracle columns using BYTE semantics have been found in your DB. Here are their details and the needed SQL statements to be executed with your favourite SQL interface to create all them. Remember to backup your data first!</p>
+<p>After doing that, it\'s highly recommended to execute this utility again to check that no more wrong semantics are found.</p>';

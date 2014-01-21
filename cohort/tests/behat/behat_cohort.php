@@ -17,7 +17,7 @@
 /**
  * Cohorts steps definitions.
  *
- * @package    core
+ * @package    core_cohort
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -32,7 +32,7 @@ use Behat\Behat\Context\Step\Given as Given;
 /**
  * Steps definitions for cohort actions.
  *
- * @package    core
+ * @package    core_cohort
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -40,39 +40,49 @@ use Behat\Behat\Context\Step\Given as Given;
 class behat_cohort extends behat_base {
 
     /**
-     * Adds the user to the specified cohort.
+     * Adds the user to the specified cohort. The user should be specified like "Firstname Lastname (user@email.com)".
      *
-     * @Given /^I add "(?P<user_username_string>(?:[^"]|\\")*)" user to "(?P<cohort_idnumber_string>(?:[^"]|\\")*)" cohort$/
-     * @param string $username
+     * @Given /^I add "(?P<user_fullname_string>(?:[^"]|\\")*)" user to "(?P<cohort_idnumber_string>(?:[^"]|\\")*)" cohort members$/
+     * @param string $user
      * @param string $cohortidnumber
      */
-    public function i_add_user_to_cohort($username, $cohortidnumber) {
-        global $DB;
-
-        // The user was created by the data generator, executed by the same PHP process that is
-        // running this step, not by any Selenium action.
-        $userid = $DB->get_field('user', 'id', array('username' => $username));
+    public function i_add_user_to_cohort_members($user, $cohortidnumber) {
 
         $steps = array(
-            new Given('I click on "' . get_string('assign', 'cohort') . '" "link" in the "' . $this->escape($cohortidnumber) . '" table row'),
-            new Given('I select "' . $userid . '" from "' . get_string('potusers', 'cohort') . '"'),
+            new Given('I click on "' . get_string('assign', 'cohort') . '" "link" in the "' . $this->escape($cohortidnumber) . '" "table_row"'),
+            new Given('I select "' . $this->escape($user) . '" from "' . get_string('potusers', 'cohort') . '"'),
             new Given('I press "' . get_string('add') . '"'),
             new Given('I press "' . get_string('backtocohorts', 'cohort') . '"')
         );
 
         // If we are not in the cohorts management we should move there before anything else.
         if (!$this->getSession()->getPage()->find('css', 'input#cohort_search_q')) {
-            $steps = array_merge(
-                array(
-                    new Given('I am on homepage'),
-                    new Given('I collapse "' . get_string('frontpagesettings', 'admin') . '" node'),
-                    new Given('I expand "' . get_string('administrationsite') . '" node'),
-                    new Given('I expand "' . get_string('users', 'admin') . '" node'),
-                    new Given('I expand "' . get_string('accounts', 'admin') . '" node'),
-                    new Given('I follow "' . get_string('cohorts', 'cohort') . '"')
-                ),
-                $steps
-            );
+
+            // With JS enabled we should expand a few tree nodes.
+            if ($this->running_javascript()) {
+                $steps = array_merge(
+                    array(
+                        new Given('I am on homepage'),
+                        new Given('I collapse "' . get_string('frontpagesettings', 'admin') . '" node'),
+                        new Given('I expand "' . get_string('administrationsite') . '" node'),
+                        new Given('I expand "' . get_string('users', 'admin') . '" node'),
+                        new Given('I expand "' . get_string('accounts', 'admin') . '" node'),
+                        new Given('I follow "' . get_string('cohorts', 'cohort') . '"')
+                    ),
+                    $steps
+                );
+
+            } else {
+                // JS disabled.
+                $steps = array_merge(
+                    array(
+                        new Given('I am on homepage'),
+                        new Given('I follow "' . get_string('administrationsite') . '" node'),
+                        new Given('I follow "' . get_string('cohorts', 'cohort') . '"')
+                    ),
+                    $steps
+                );
+            }
         }
 
         return $steps;

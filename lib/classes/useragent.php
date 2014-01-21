@@ -500,17 +500,17 @@ class core_useragent {
         } else {
             return false;
         }
-        $compat_view = false;
+        $compatview = false;
         // IE8 and later versions may pretend to be IE7 for intranet sites, use Trident version instead,
         // the Trident should always describe the capabilities of IE in any emulation mode.
         if ($browser === '7.0' and preg_match("/Trident\/([0-9\.]+)/", $useragent, $match)) {
-            $compat_view = true;
+            $compatview = true;
             $browser = $match[1] + 4; // NOTE: Hopefully this will work also for future IE versions.
         }
         $browser = round($browser, 1);
         return array(
             'version'    => $browser,
-            'compatview' => $compat_view
+            'compatview' => $compatview
         );
     }
 
@@ -862,6 +862,9 @@ class core_useragent {
                 $instance->supportssvg = false;
             } else if (self::is_ie() and !self::check_ie_version('9')) {
                 // IE < 9 doesn't support SVG. Say no.
+                $instance->supportssvg = false;
+            } else if (self::is_ie() and !self::check_ie_version('10') and self::check_ie_compatibility_view()) {
+                // IE 9 Compatibility View doesn't support SVG. Say no.
                 $instance->supportssvg = false;
             } else if (preg_match('#Android +[0-2]\.#', $instance->useragent)) {
                 // Android < 3 doesn't support SVG. Say no.

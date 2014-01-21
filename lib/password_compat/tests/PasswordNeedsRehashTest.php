@@ -5,13 +5,6 @@ require_once($CFG->dirroot . '/lib/password_compat/lib/password.php');
 
 class PasswordNeedsRehashTest extends PHPUnit_Framework_TestCase {
 
-    protected function setUp() {
-        if (password_compat_not_supported()) {
-            // Skip test if password_compat is not supported.
-            $this->markTestSkipped('password_compat not supported');
-        }
-    }
-
     public static function provideCases() {
         return array(
             array('foo', 0, array(), false),

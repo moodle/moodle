@@ -45,5 +45,25 @@ function xmldb_filter_tex_upgrade($oldversion) {
     // Put any upgrade step following this.
 
 
+    // Moodle v2.6.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2013120300) {
+        $settings = array(
+                'density', 'latexbackground', 'convertformat', 'pathlatex',
+                'convertformat', 'pathconvert', 'pathdvips', 'latexpreamble');
+
+        // Move tex settings to config_pluins and delete entries from the config table.
+        foreach ($settings as $setting) {
+            $existingkey = 'filter_tex_'.$setting;
+            if (array_key_exists($existingkey, $CFG)) {
+                set_config($setting, $CFG->{$existingkey}, 'filter_tex');
+                unset_config($existingkey);
+            }
+        }
+
+        upgrade_plugin_savepoint(true, 2013120300, 'filter', 'tex');
+    }
+
     return true;
 }

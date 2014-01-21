@@ -29,6 +29,12 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * mod_assign marker updated event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type int markerid userid id of marker.
+ * }
+ *
  * @package    mod_assign
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

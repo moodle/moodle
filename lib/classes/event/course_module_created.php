@@ -17,6 +17,14 @@
 /**
  * Event to be triggered when a new course module is created.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type string modulename name of module created.
+ *      @type string name title of module.
+ *      @type string instanceid id of module instance.
+ * }
+ *
  * @package    core
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.

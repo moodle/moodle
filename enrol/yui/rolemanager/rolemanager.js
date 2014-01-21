@@ -113,7 +113,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             var event = this.on('assignablerolesloaded', function(){
                 event.detach();
                 var s = M.str.role, confirmation = {
-                    lightbox :  true,
+                    modal:  true,
                     visible  :  true,
                     centered :  true,
                     title    :  s.confirmunassigntitle,
@@ -284,15 +284,6 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
             if (allroles) {
                 this.get(CONTAINER).addClass('hasAllRoles');
             } else {
-                if (!link) {
-                    var m = this.get(MANIPULATOR);
-                    link = Y.Node.create('<div class="addrole"></div>').append(
-                        Y.Node.create('<img alt="" />').setAttribute('src', M.util.image_url('t/enroladd', 'moodle'))
-                    );
-                    link.on('click', m.addRole, m, this);
-                    this.get(CONTAINER).one('.col_role').insert(link, 0);
-                    this.set(ASSIGNROLELINK, link);
-                }
                 this.get(CONTAINER).removeClass('hasAllRoles');
             }
         },

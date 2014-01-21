@@ -85,7 +85,6 @@ if ($option == get_string('save', 'wiki')) {
     $wikipage->set_page($page);
     $wikipage->set_newcontent($newcontent);
     $wikipage->set_upload(true);
-    add_to_log($course->id, 'wiki', 'edit', "view.php?pageid=".$pageid, $pageid, $cm->id);
 } else {
     if ($option == get_string('preview')) {
         if (!confirm_sesskey()) {

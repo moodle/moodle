@@ -51,7 +51,15 @@ require_login($course, false, $cm);
 $contextmodule = context_module::instance($cm->id);
 require_capability('mod/scorm:viewreport', $contextmodule);
 
-add_to_log($course->id, 'scorm', 'userreporttracks', 'userreporttracks.php?id='.$id, $scorm->id, $id);
+// Trigger a tracks viewed event.
+$event = \mod_scorm\event\tracks_viewed::create(array(
+    'context' => $contextmodule,
+    'relateduserid' => $userid,
+    'other' => array('attemptid' => $attempt, 'instanceid' => $scorm->id, 'scoid' => $scoid)
+));
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('scorm', $scorm);
+$event->trigger();
 
 // Print the page header.
 $strreport = get_string('report', 'scorm');

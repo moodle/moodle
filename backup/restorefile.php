@@ -61,6 +61,14 @@ switch ($context->contextlevel) {
 require_login($course, false, $cm);
 require_capability('moodle/restore:restorecourse', $context);
 
+if (is_null($course)) {
+    $courseid = 0;
+    $coursefullname = $SITE->fullname;
+} else {
+    $courseid = $course->id;
+    $coursefullname = $course->fullname;
+}
+
 $browser = get_file_browser();
 
 // check if tmp dir exists
@@ -83,7 +91,7 @@ if ($action == 'choosebackupfile') {
                     'pathnamehash' => $file->get_pathnamehash(), 'contenthash' => $file->get_contenthash()));
         } else {
             // If it's some weird other kind of file then use old code.
-            $filename = restore_controller::get_tempdir_name($course->id, $USER->id);
+            $filename = restore_controller::get_tempdir_name($courseid, $USER->id);
             $pathname = $tmpdir . '/' . $filename;
             $fileinfo->copy_to_pathname($pathname);
             $restore_url = new moodle_url('/backup/restore.php', array(
@@ -98,14 +106,14 @@ if ($action == 'choosebackupfile') {
 
 $PAGE->set_url($url);
 $PAGE->set_context($context);
-$PAGE->set_title(get_string('course') . ': ' . $course->fullname);
+$PAGE->set_title(get_string('course') . ': ' . $coursefullname);
 $PAGE->set_heading($heading);
 $PAGE->set_pagelayout('admin');
 
 $form = new course_restore_form(null, array('contextid'=>$contextid));
 $data = $form->get_data();
 if ($data && has_capability('moodle/restore:uploadfile', $context)) {
-    $filename = restore_controller::get_tempdir_name($course->id, $USER->id);
+    $filename = restore_controller::get_tempdir_name($courseid, $USER->id);
     $pathname = $tmpdir . '/' . $filename;
     $form->save_file('backupfile', $pathname);
     $restore_url = new moodle_url('/backup/restore.php', array('contextid'=>$contextid, 'filename'=>$filename));

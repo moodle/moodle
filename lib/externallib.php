@@ -149,7 +149,7 @@ class external_api {
      */
     public static function set_timeout($seconds=360) {
         $seconds = ($seconds < 300) ? 300 : $seconds;
-        set_time_limit($seconds);
+        core_php_time_limit::raise($seconds);
     }
 
     /**

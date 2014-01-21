@@ -194,8 +194,6 @@ class core_course_renderer extends plugin_renderer_base {
         $formcontent .= html_writer::start_tag('div', array('id' => 'typeformdiv'));
         $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'id' => 'course',
                 'name' => 'course', 'value' => $course->id));
-        $formcontent .= html_writer::tag('input', '',
-                array('type' => 'hidden', 'class' => 'jump', 'name' => 'jump', 'value' => ''));
         $formcontent .= html_writer::tag('input', '', array('type' => 'hidden', 'name' => 'sesskey',
                 'value' => sesskey()));
         $formcontent .= html_writer::end_tag('div');
@@ -743,7 +741,7 @@ class core_course_renderer extends plugin_renderer_base {
             // nothing to be displayed to the user
             return $output;
         }
-        $url = $mod->get_url();
+        $url = $mod->url;
         if (!$url) {
             return $output;
         }
@@ -793,7 +791,7 @@ class core_course_renderer extends plugin_renderer_base {
 
         // Get on-click attribute value if specified and decode the onclick - it
         // has already been encoded for display (puke).
-        $onclick = htmlspecialchars_decode($mod->get_on_click(), ENT_QUOTES);
+        $onclick = htmlspecialchars_decode($mod->onclick, ENT_QUOTES);
 
         $groupinglabel = '';
         if (!empty($mod->groupingid) && has_capability('moodle/course:managegroups', context_course::instance($mod->course))) {
@@ -851,7 +849,7 @@ class core_course_renderer extends plugin_renderer_base {
         } else {
             $textclasses .= ' dimmed_text';
         }
-        if ($mod->get_url()) {
+        if ($mod->url) {
             if ($content) {
                 // If specified, display extra content after link.
                 $output = html_writer::tag('div', $content, array('class' =>
@@ -923,7 +921,7 @@ class core_course_renderer extends plugin_renderer_base {
     public function course_section_cm_list_item($course, &$completioninfo, cm_info $mod, $sectionreturn, $displayoptions = array()) {
         $output = '';
         if ($modulehtml = $this->course_section_cm($course, $completioninfo, $mod, $sectionreturn, $displayoptions)) {
-            $modclasses = 'activity ' . $mod->modname . ' modtype_' . $mod->modname . ' ' . $mod->get_extra_classes();
+            $modclasses = 'activity ' . $mod->modname . ' modtype_' . $mod->modname . ' ' . $mod->extraclasses;
             $output .= html_writer::tag('li', $modulehtml, array('class' => $modclasses, 'id' => 'module-' . $mod->id));
         }
         return $output;
@@ -937,7 +935,6 @@ class core_course_renderer extends plugin_renderer_base {
      *
      * This function calls:
      * {@link core_course_renderer::course_section_cm_name()}
-     * {@link cm_info::get_after_link()}
      * {@link core_course_renderer::course_section_cm_text()}
      * {@link core_course_renderer::course_section_cm_availability()}
      * {@link core_course_renderer::course_section_cm_completion()}
@@ -1005,7 +1002,7 @@ class core_course_renderer extends plugin_renderer_base {
             }
 
             // Module can put text after the link (e.g. forum unread)
-            $output .= $mod->get_after_link();
+            $output .= $mod->afterlink;
 
             // Closing the tag which contains everything but edit icons. Content part of the module should not be part of this.
             $output .= html_writer::end_tag('div'); // .activityinstance
@@ -1018,7 +1015,7 @@ class core_course_renderer extends plugin_renderer_base {
         // it should work similarly (at least in terms of ordering) to an
         // activity.
         $contentpart = $this->course_section_cm_text($mod, $displayoptions);
-        $url = $mod->get_url();
+        $url = $mod->url;
         if (empty($url)) {
             $output .= $contentpart;
         }
@@ -1027,7 +1024,7 @@ class core_course_renderer extends plugin_renderer_base {
         if ($this->page->user_is_editing()) {
             $editactions = course_get_cm_edit_actions($mod, $mod->indent, $sectionreturn);
             $modicons .= ' '. $this->course_section_cm_edit_actions($editactions, $mod, $displayoptions);
-            $modicons .= $mod->get_after_edit_icons();
+            $modicons .= $mod->afterediticons;
         }
 
         $modicons .= $this->course_section_cm_completion($course, $completioninfo, $mod, $displayoptions);

@@ -616,7 +616,6 @@ class auth_plugin_ldap extends auth_plugin_base {
                 if ($user->firstaccess == 0) {
                     $user->firstaccess = time();
                 }
-                require_once($CFG->dirroot.'/user/lib.php');
                 user_update_user($user, false);
                 return AUTH_CONFIRM_OK;
             }
@@ -944,6 +943,9 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $user->username = trim(core_text::strtolower($user->username));
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
+                }
+                if (empty($user->calendartype)) {
+                    $user->calendartype = $CFG->calendartype;
                 }
 
                 $id = user_create_user($user, false);
@@ -1603,7 +1605,11 @@ class auth_plugin_ldap extends auth_plugin_base {
      */
     function change_password_url() {
         if (empty($this->config->stdchangepassword)) {
-            return new moodle_url($this->config->changepasswordurl);
+            if (!empty($this->config->changepasswordurl)) {
+                return new moodle_url($this->config->changepasswordurl);
+            } else {
+                return null;
+            }
         } else {
             return null;
         }

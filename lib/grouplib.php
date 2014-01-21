@@ -203,12 +203,18 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
     // aliased. If its something else we need to avoid the cache and run the query as who knows whats going on.
     $knownfields = true;
     if ($fields !== 'g.*') {
-        $fieldbits = explode(',', $fields);
-        foreach ($fieldbits as $bit) {
-            $bit = trim($bit);
-            if (strpos($bit, 'g.') !== 0 or stripos($bit, ' AS ') !== false) {
-                $knownfields = false;
-                break;
+        // Quickly check if the first field is no longer g.id as using the
+        // cache will return an array indexed differently than when expect
+        if (strpos($fields, 'g.*') !== 0 && strpos($fields, 'g.id') !== 0) {
+            $knownfields = false;
+        } else {
+            $fieldbits = explode(',', $fields);
+            foreach ($fieldbits as $bit) {
+                $bit = trim($bit);
+                if (strpos($bit, 'g.') !== 0 or stripos($bit, ' AS ') !== false) {
+                    $knownfields = false;
+                    break;
+                }
             }
         }
     }
@@ -987,7 +993,13 @@ function groups_cache_groupdata($courseid, cache $cache = null) {
 
     if (!empty($groupings)) {
         // Finally get the mappings between the two.
-        $mappings = $DB->get_records_list('groupings_groups', 'groupingid', array_keys($groupings), '', 'id,groupingid,groupid');
+        list($insql, $params) = $DB->get_in_or_equal(array_keys($groupings));
+        $mappings = $DB->get_records_sql("
+                SELECT gg.id, gg.groupingid, gg.groupid
+                  FROM {groupings_groups} gg
+                  JOIN {groups} g ON g.id = gg.groupid
+                 WHERE gg.groupingid $insql
+              ORDER BY g.name ASC", $params);
     } else {
         $mappings = array();
     }

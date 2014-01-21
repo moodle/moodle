@@ -161,7 +161,7 @@ class webdav_client {
         // let's try to open a socket
         $this->_error_log('open a socket connection');
         $this->sock = fsockopen($this->_socket . $this->_server, $this->_port, $this->_errno, $this->_errstr, $this->_socket_timeout);
-        set_time_limit(30);
+        core_php_time_limit::raise(30);
         if (is_resource($this->sock)) {
             socket_set_blocking($this->sock, true);
             $this->_connection_closed = false;

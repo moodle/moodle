@@ -1,4 +1,14 @@
 This files describes API changes in the assign code.
+=== 2.7 ===
+* Added setting sendstudentnotifications to assign DB table with admin defaults. This sets the default value for the
+  "Notify students" option on the grading forms. This setting can be retrieved via webservices.
+
+=== 2.6.1 ===
+
+* format_text() is no longer used for formating assignment content to be used in events (assign_submission_onlinetext::save()) or
+  the word count (assign_submission_onlinetext::format_for_log()) in mod/assign/submission/onlinetext/locallib.php. format_text()
+  should only be used when displaying information to the screen. It was being used incorrectly before in these areas. Plugins using
+  the event assessable_uploaded() should use file_rewrite_pluginfile_urls() to translate the text back to the desired output.
 
 === 2.6 ===
 * To see submission/grades of inactive users, user should have moodle/course:viewsuspendedusers capability.

@@ -17,7 +17,7 @@
 /**
  * Commenting system steps definitions.
  *
- * @package    core_comment
+ * @package    block_comments
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -33,7 +33,7 @@ use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
 /**
  * Steps definitions to deal with the commenting system
  *
- * @package    core_comment
+ * @package    block_comments
  * @category   test
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -64,9 +64,6 @@ class behat_block_comments extends behat_base {
             $commentstextarea->setValue($comment);
 
             $this->find_link(get_string('savecomment'))->click();
-
-            // Wait for the AJAX request.
-            $this->getSession()->wait(4 * 1000, false);
 
         } else {
 
@@ -103,7 +100,7 @@ class behat_block_comments extends behat_base {
         $deleteicon = $this->find('css', '.comment-delete a img', $deleteexception, $commentnode);
         $deleteicon->click();
 
-        // Wait for the AJAX request.
+        // Wait for the animation to finish, in theory is just 1 sec, adding 4 just in case.
         $this->getSession()->wait(4 * 1000, false);
     }
 

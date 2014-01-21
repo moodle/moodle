@@ -49,7 +49,7 @@ function cron_run() {
         set_debugging(DEBUG_DEVELOPER, true);
     }
 
-    set_time_limit(0);
+    core_php_time_limit::raise();
     $starttime = microtime();
 
     // Increase memory limit
@@ -66,7 +66,6 @@ function cron_run() {
     // Run cleanup core cron jobs, but not every time since they aren't too important.
     // These don't have a timer to reduce load, so we'll use a random number
     // to randomly choose the percentage of times we should run these jobs.
-    srand ((double) microtime() * 10000000);
     $random100 = rand(0,100);
     if ($random100 < 20) {     // Approximately 20% of the time.
         mtrace("Running clean-up tasks...");
@@ -131,14 +130,6 @@ function cron_run() {
             $DB->execute("DELETE FROM {backup_controllers}
                           WHERE timecreated < ?", array($loglifetime));
             mtrace(" Deleted old backup records");
-        }
-
-
-        // Delete old cached texts
-        if (!empty($CFG->cachetext)) {   // Defined in config.php
-            $cachelifetime = time() - $CFG->cachetext - 60;  // Add an extra minute to allow for really heavy sites
-            $DB->delete_records_select('cache_text', "timemodified < ?", array($cachelifetime));
-            mtrace(" Deleted old cache_text records");
         }
 
 
@@ -224,8 +215,9 @@ function cron_run() {
     // Generate new password emails for users - ppl expect these generated asap
     if ($DB->count_records('user_preferences', array('name'=>'create_password', 'value'=>'1'))) {
         mtrace('Creating passwords for new users...');
-        $newusers = $DB->get_recordset_sql("SELECT u.id as id, u.email, u.firstname,
-                                                 u.lastname, u.username, u.lang,
+        $usernamefields = get_all_user_name_fields(true, 'u');
+        $newusers = $DB->get_recordset_sql("SELECT u.id as id, u.email,
+                                                 $usernamefields, u.username, u.lang,
                                                  p.id as prefid
                                             FROM {user} u
                                             JOIN {user_preferences} p ON u.id=p.userid
@@ -287,7 +279,7 @@ function cron_run() {
                         mtrace("... used " . (microtime(1) - $pre_time) . " seconds");
                     }
                     // Reset possible changes by modules to time_limit. MDL-11597
-                    @set_time_limit(0);
+                    core_php_time_limit::raise();
                     mtrace("done.");
                 }
             }
@@ -314,7 +306,7 @@ function cron_run() {
                         $DB->set_field('block', 'lastcron', $timenow, array('id'=>$block->id));
                     }
                     // Reset possible changes by blocks to time_limit. MDL-11597
-                    @set_time_limit(0);
+                    core_php_time_limit::raise();
                     mtrace('done.');
                 }
             }
@@ -493,7 +485,7 @@ function cron_run() {
                     }
                 }
             }
-            @set_time_limit(0);
+            core_php_time_limit::raise();
         } else {
             mtrace('Next stats run after:'. userdate($timetocheck));
         }
@@ -575,7 +567,7 @@ function cron_execute_plugin_type($plugintype, $description = null) {
                 round(microtime(true) - $pre_time, 2) . " seconds)");
 
         set_config('lastcron', time(), $component);
-        @set_time_limit(0);
+        core_php_time_limit::raise();
     }
 
     if ($description) {

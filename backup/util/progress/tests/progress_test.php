@@ -56,9 +56,11 @@ class backup_progress_testcase extends basic_testcase {
 
         // Make some progress and check that the time limit gets added.
         $progress->step_time();
+        core_php_time_limit::get_and_clear_unit_test_data();
         $progress->progress(2);
         $this->assertTrue($progress->was_update_called());
-        $this->assertEquals(120, ini_get('max_execution_time'));
+        $this->assertEquals(array(core_backup_progress::TIME_LIMIT_WITHOUT_PROGRESS),
+                core_php_time_limit::get_and_clear_unit_test_data());
 
         // Check the new value.
         $this->assert_min_max(0.2, 0.2, $progress);
@@ -77,9 +79,6 @@ class backup_progress_testcase extends basic_testcase {
 
         // There was 1 progress call.
         $this->assertEquals(1, $progress->get_progress_count());
-
-        // Clear the time limit, otherwise phpunit complains.
-        set_time_limit(0);
     }
 
     /**
@@ -158,8 +157,6 @@ class backup_progress_testcase extends basic_testcase {
         $this->assert_min_max(0.8, 0.8, $progress);
         $progress->end_progress();
         $this->assertFalse($progress->is_in_progress_section());
-
-        set_time_limit(0);
     }
 
     /**
@@ -192,8 +189,6 @@ class backup_progress_testcase extends basic_testcase {
         $this->assert_min_max(0.4, 1.0, $progress);
         $progress->end_progress();
         $this->assert_min_max(1.0, 1.0, $progress);
-
-        set_time_limit(0);
     }
 
     /**
@@ -208,9 +203,6 @@ class backup_progress_testcase extends basic_testcase {
         $this->assert_min_max(0.01, 0.01, $progress);
         $progress->end_progress();
         $this->assert_min_max(0.01, 0.01, $progress);
-
-        // Clear the time limit, otherwise phpunit complains.
-        set_time_limit(0);
     }
 
     /**
@@ -231,8 +223,6 @@ class backup_progress_testcase extends basic_testcase {
         $this->assert_min_max(0.02, 0.02, $progress);
         $progress->end_progress();
         $this->assert_min_max(0.02, 0.02, $progress);
-
-        set_time_limit(0);
     }
 
     /**
@@ -329,9 +319,6 @@ class backup_progress_testcase extends basic_testcase {
         } catch (coding_exception $e) {
             $this->assertEquals(1, preg_match('~would exceed max~', $e->getMessage()));
         }
-
-        // Clear the time limit, otherwise phpunit complains.
-        set_time_limit(0);
     }
 
     /**

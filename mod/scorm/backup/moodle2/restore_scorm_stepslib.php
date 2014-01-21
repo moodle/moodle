@@ -184,9 +184,29 @@ class restore_scorm_activity_structure_step extends restore_activity_structure_s
     }
 
     protected function after_execute() {
+        global $DB;
+
         // Add scorm related files, no need to match by itemname (just internally handled context)
         $this->add_related_files('mod_scorm', 'intro', null);
         $this->add_related_files('mod_scorm', 'content', null);
         $this->add_related_files('mod_scorm', 'package', null);
+
+        // Fix launch param in scorm table to use new sco id.
+        $scormid = $this->get_new_parentid('scorm');
+        $scorm = $DB->get_record('scorm', array('id' => $scormid));
+        $scorm->launch = $this->get_mappingid('scorm_sco', $scorm->launch, '');
+        if (empty($scorm->launch)) {
+            // This scorm has an invalid launch param - we need to calculate it and get the first launchable sco.
+            $sqlselect = 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true);
+            // We use get_records here as we need to pass a limit in the query that works cross db.
+            $scoes = $DB->get_records_select('scorm_scoes', $sqlselect, array($scormid), 'sortorder', 'id', 0, 1);
+            if (!empty($scoes)) {
+                $sco = reset($scoes); // We only care about the first record - the above query only returns one.
+                $scorm->launch = $sco->id;
+            }
+        }
+        if (!empty($scorm->launch)) {
+            $DB->update_record('scorm', $scorm);
+        }
     }
 }

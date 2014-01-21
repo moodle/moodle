@@ -156,35 +156,86 @@ class award_criteria_profile extends award_criteria {
      * Review this criteria and decide if it has been completed
      *
      * @param int $userid User whose criteria completion needs to be reviewed.
+     * @param bool $filtered An additional parameter indicating that user list
+     *        has been reduced and some expensive checks can be skipped.
+     *
      * @return bool Whether criteria is complete
      */
-    public function review($userid) {
+    public function review($userid, $filtered = false) {
         global $DB;
 
-        $overall = false;
+        // Users were already filtered by criteria completion, no checks required.
+        if ($filtered) {
+            return true;
+        }
+
+        $join = '';
+        $where = '';
+        $sqlparams = array();
+        $rule = ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) ? ' OR ' : ' AND ';
+
         foreach ($this->params as $param) {
             if (is_numeric($param['field'])) {
-                $crit = $DB->get_field('user_info_data', 'data', array('userid' => $userid, 'fieldid' => $param['field']));
+                $infodata[] = " uid.fieldid = :fieldid{$param['field']} ";
+                $sqlparams["fieldid{$param['field']}"] = $param['field'];
             } else {
-                $crit = $DB->get_field('user', $param['field'], array('id' => $userid));
-            }
-
-            if ($this->method == BADGE_CRITERIA_AGGREGATION_ALL) {
-                if (!$crit) {
-                    return false;
-                } else {
-                    $overall = true;
-                    continue;
-                }
-            } else if ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) {
-                if (!$crit) {
-                    $overall = false;
-                    continue;
-                } else {
-                    return true;
-                }
+                $userdata[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
             }
         }
+
+        // Add user custom field parameters if there are any.
+        if (!empty($infodata)) {
+            $extraon = implode($rule, $infodata);
+            $join = " LEFT JOIN {user_info_data} uid ON uid.userid = u.id AND ({$extraon})";
+        }
+
+        // Add user table field parameters if there are any.
+        if (!empty($userdata)) {
+            $extraon = implode($rule, $userdata);
+            $where = " AND ({$extraon})";
+        }
+
+        $sqlparams['userid'] = $userid;
+        $sql = "SELECT u.* FROM {user} u " . $join . " WHERE u.id = :userid " . $where;
+        $overall = $DB->record_exists_sql($sql, $sqlparams);
+
         return $overall;
+    }
+
+    /**
+     * Returns array with sql code and parameters returning all ids
+     * of users who meet this particular criterion.
+     *
+     * @return array list($join, $where, $params)
+     */
+    public function get_completed_criteria_sql() {
+        global $DB;
+
+        $join = '';
+        $where = '';
+        $params = array();
+        $rule = ($this->method == BADGE_CRITERIA_AGGREGATION_ANY) ? ' OR ' : ' AND ';
+
+        foreach ($this->params as $param) {
+            if (is_numeric($param['field'])) {
+                $infodata[] = " uid.fieldid = :fieldid{$param['field']} ";
+                $params["fieldid{$param['field']}"] = $param['field'];
+            } else {
+                $userdata[] = $DB->sql_isnotempty('u', "u.{$param['field']}", false, true);
+            }
+        }
+
+        // Add user custom fields if there are any.
+        if (!empty($infodata)) {
+            $extraon = implode($rule, $infodata);
+            $join = " LEFT JOIN {user_info_data} uid ON uid.userid = u.id AND ({$extraon})";
+        }
+
+        // Add user table fields if there are any.
+        if (!empty($userdata)) {
+            $extraon = implode($rule, $userdata);
+            $where = " AND ({$extraon})";
+        }
+        return array($join, $where, $params);
     }
 }

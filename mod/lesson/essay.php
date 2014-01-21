@@ -243,8 +243,6 @@ switch ($mode) {
                 $essayinfo->sent = 1;
                 $attempt->useranswer = serialize($essayinfo);
                 $DB->update_record('lesson_attempts', $attempt);
-                // Log it
-                add_to_log($course->id, 'lesson', 'update email essay grade', "essay.php?id=$cm->id", format_string($pages[$attempt->pageid]->title,true).': '.fullname($users[$attempt->userid]), $cm->id);
             }
         }
         $lesson->add_message(get_string('emailsuccess', 'lesson'), 'notifysuccess');
@@ -299,8 +297,6 @@ switch ($mode) {
         }
         break;
 }
-// Log it
-add_to_log($course->id, 'lesson', 'view grade', "essay.php?id=$cm->id", get_string('manualgrading', 'lesson'), $cm->id);
 
 $lessonoutput = $PAGE->get_renderer('mod_lesson');
 echo $lessonoutput->header($lesson, $cm, 'essay', false, null, get_string('manualgrading', 'lesson'));
@@ -384,6 +380,16 @@ switch ($mode) {
         echo html_writer::table($table);
         break;
     case 'grade':
+        // Trigger the essay grade viewed event.
+        $event = \mod_lesson\event\essay_attempt_viewed::create(array(
+            'objectid' => $attempt->id,
+            'relateduserid' => $attempt->userid,
+            'context' => $context,
+            'courseid' => $course->id,
+        ));
+        $event->add_record_snapshot('lesson_attempts', $attempt);
+        $event->trigger();
+
         // Grading form
         // Expects the following to be set: $attemptid, $answer, $user, $page, $attempt
         $essayinfo = unserialize($attempt->useranswer);

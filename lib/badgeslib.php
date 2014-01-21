@@ -331,10 +331,11 @@ class badge {
      */
     public function has_awards() {
         global $DB;
-        if ($DB->record_exists('badge_issued', array('badgeid' => $this->id))) {
-            return true;
-        }
-        return false;
+        $awarded = $DB->record_exists_sql('SELECT b.uniquehash
+                    FROM {badge_issued} b INNER JOIN {user} u ON b.userid = u.id
+                    WHERE b.badgeid = :badgeid AND u.deleted = 0', array('badgeid' => $this->id));
+
+        return $awarded;
     }
 
     /**
@@ -349,7 +350,7 @@ class badge {
                 'SELECT b.userid, b.dateissued, b.uniquehash, u.firstname, u.lastname
                     FROM {badge_issued} b INNER JOIN {user} u
                         ON b.userid = u.id
-                    WHERE b.badgeid = :badgeid', array('badgeid' => $this->id));
+                    WHERE b.badgeid = :badgeid AND u.deleted = 0', array('badgeid' => $this->id));
 
         return $awards;
     }
@@ -426,54 +427,66 @@ class badge {
         $awards = 0;
 
         // Raise timelimit as this could take a while for big web sites.
-        set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_HUGE);
 
-        // For site level badges, get all active site users who can earn this badge and haven't got it yet.
-        if ($this->type == BADGE_TYPE_SITE) {
-            $sql = 'SELECT DISTINCT u.id, bi.badgeid
+        foreach ($this->criteria as $crit) {
+            // Overall criterion is decided when other criteria are reviewed.
+            if ($crit->criteriatype == BADGE_CRITERIA_TYPE_OVERALL) {
+                continue;
+            }
+
+            list($extrajoin, $extrawhere, $extraparams) = $crit->get_completed_criteria_sql();
+            // For site level badges, get all active site users who can earn this badge and haven't got it yet.
+            if ($this->type == BADGE_TYPE_SITE) {
+                $sql = "SELECT DISTINCT u.id, bi.badgeid
                         FROM {user} u
+                        {$extrajoin}
                         LEFT JOIN {badge_issued} bi
                             ON u.id = bi.userid AND bi.badgeid = :badgeid
-                        WHERE bi.badgeid IS NULL AND u.id != :guestid AND u.deleted = 0';
-            $toearn = $DB->get_fieldset_sql($sql, array('badgeid' => $this->id, 'guestid' => $CFG->siteguest));
-        } else {
-            // For course level badges, get users who can earn this badge in the course.
-            // These are all enrolled users with capability moodle/badges:earnbadge.
-            $earned = $DB->get_fieldset_select('badge_issued', 'userid AS id', 'badgeid = :badgeid', array('badgeid' => $this->id));
-            $users = get_enrolled_users($this->get_context(), 'moodle/badges:earnbadge', 0, 'u.id');
-            $toearn = array_diff(array_keys($users), $earned);
-        }
-
-        foreach ($toearn as $uid) {
-            $toreview = false;
-            foreach ($this->criteria as $crit) {
-                if ($crit->criteriatype != BADGE_CRITERIA_TYPE_OVERALL) {
-                    if ($crit->review($uid)) {
-                        $crit->mark_complete($uid);
-                        if ($this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->method == BADGE_CRITERIA_AGGREGATION_ANY) {
-                            $this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($uid);
-                            $this->issue($uid);
-                            $awards++;
-                            break;
-                        } else {
-                            $toreview = true;
-                            continue;
-                        }
-                    } else {
-                        if ($this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->method == BADGE_CRITERIA_AGGREGATION_ANY) {
-                            continue;
-                        } else {
-                            break;
-                        }
-                    }
+                        WHERE bi.badgeid IS NULL AND u.id != :guestid AND u.deleted = 0 " . $extrawhere;
+                $params = array_merge(array('badgeid' => $this->id, 'guestid' => $CFG->siteguest), $extraparams);
+                $toearn = $DB->get_fieldset_sql($sql, $params);
+            } else {
+                // For course level badges, get all users who already earned the badge in this course.
+                // Then find the ones who are enrolled in the course and don't have a badge yet.
+                $earned = $DB->get_fieldset_select('badge_issued', 'userid AS id', 'badgeid = :badgeid', array('badgeid' => $this->id));
+                $wheresql = '';
+                $earnedparams = array();
+                if (!empty($earned)) {
+                    list($earnedsql, $earnedparams) = $DB->get_in_or_equal($earned, SQL_PARAMS_NAMED, 'u', false);
+                    $wheresql = ' WHERE u.id ' . $earnedsql;
                 }
+                list($enrolledsql, $enrolledparams) = get_enrolled_sql($this->get_context(), 'moodle/badges:earnbadge', 0, true);
+                $sql = "SELECT u.id
+                        FROM {user} u
+                        {$extrajoin}
+                        JOIN ({$enrolledsql}) je ON je.id = u.id " . $wheresql . $extrawhere;
+                $params = array_merge($enrolledparams, $earnedparams, $extraparams);
+                $toearn = $DB->get_fieldset_sql($sql, $params);
             }
-            // Review overall if it is required.
-            if ($toreview && $this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->review($uid)) {
-                $this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($uid);
-                $this->issue($uid);
-                $awards++;
+
+            foreach ($toearn as $uid) {
+                $reviewoverall = false;
+                if ($crit->review($uid, true)) {
+                    $crit->mark_complete($uid);
+                    if ($this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->method == BADGE_CRITERIA_AGGREGATION_ANY) {
+                        $this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($uid);
+                        $this->issue($uid);
+                        $awards++;
+                    } else {
+                        $reviewoverall = true;
+                    }
+                } else {
+                    // Will be reviewed some other time.
+                    $reviewoverall = false;
+                }
+                // Review overall if it is required.
+                if ($reviewoverall && $this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->review($uid)) {
+                    $this->criteria[BADGE_CRITERIA_TYPE_OVERALL]->mark_complete($uid);
+                    $this->issue($uid);
+                    $awards++;
+                }
             }
         }
 
@@ -591,13 +604,42 @@ class badge {
     }
 
     /**
-     * Marks the badge as archived.
-     * For reporting and historical purposed we cannot completely delete badges.
-     * We will just change their status to BADGE_STATUS_ARCHIVED.
+     * Fully deletes the badge or marks it as archived.
+     *
+     * @param $archive bool Achive a badge without actual deleting of any data.
      */
-    public function delete() {
-        $this->status = BADGE_STATUS_ARCHIVED;
-        $this->save();
+    public function delete($archive = true) {
+        global $DB;
+
+        if ($archive) {
+            $this->status = BADGE_STATUS_ARCHIVED;
+            $this->save();
+            return;
+        }
+
+        $fs = get_file_storage();
+
+        // Remove all issued badge image files and badge awards.
+        // Cannot bulk remove area files here because they are issued in user context.
+        $awards = $this->get_awards();
+        foreach ($awards as $award) {
+            $usercontext = context_user::instance($award->userid);
+            $fs->delete_area_files($usercontext->id, 'badges', 'userbadge', $this->id);
+        }
+        $DB->delete_records('badge_issued', array('badgeid' => $this->id));
+
+        // Remove all badge criteria.
+        $criteria = $this->get_criteria();
+        foreach ($criteria as $criterion) {
+            $criterion->delete();
+        }
+
+        // Delete badge images.
+        $badgecontext = $this->get_context();
+        $fs->delete_area_files($badgecontext->id, 'badges', 'badgeimage', $this->id);
+
+        // Finally, remove badge itself.
+        $DB->delete_records('badge', array('id' => $this->id));
     }
 }
 
@@ -774,7 +816,9 @@ function badges_get_badges($type, $courseid = 0, $sort = '', $dir = '', $page = 
             $badges[$r->id]->dateissued = $r->dateissued;
             $badges[$r->id]->uniquehash = $r->uniquehash;
         } else {
-            $badges[$r->id]->awards = $DB->count_records('badge_issued', array('badgeid' => $badge->id));
+            $badges[$r->id]->awards = $DB->count_records_sql('SELECT COUNT(b.userid)
+                                        FROM {badge_issued} b INNER JOIN {user} u ON b.userid = u.id
+                                        WHERE b.badgeid = :badgeid AND u.deleted = 0', array('badgeid' => $badge->id));
             $badges[$r->id]->statstring = $badge->get_status_name();
         }
     }

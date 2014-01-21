@@ -19,7 +19,7 @@ Feature: Upload users
     And I expand "Users" node
     And I expand "Accounts" node
     And I follow "Upload users"
-    When I upload "lib/tests/fixtures/upload_users.csv" file to "File" filepicker
+    When I upload "lib/tests/fixtures/upload_users.csv" file to "File" filemanager
     And I press "Upload users"
     Then I should see "Upload users preview"
     And I should see "Tom"
@@ -42,5 +42,4 @@ Feature: Upload users
     And I expand "Users" node
     And I follow "Groups"
     And I select "Section 1 (1)" from "groups"
-    And I wait "4" seconds
     And the "members" select box should contain "Tom Jones"

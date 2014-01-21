@@ -117,7 +117,6 @@ $string['errorminbackup20version'] = 'This backup file has been created with one
 $string['errorrestorefrontpage'] = 'Restoring over front page is not allowed.';
 $string['errorinvalidformat'] = 'Unknown backup format';
 $string['errorinvalidformatinfo'] = 'The selected file is not a valid Moodle backup file and can\'t be restored.';
-$string['errortgznozlib'] = 'The selected file is in the new backup format and cannot be restored because the zlib PHP extension is not available on this system.';
 $string['executionsuccess'] = 'The backup file was successfully created.';
 $string['filename'] = 'Filename';
 $string['filealiasesrestorefailures'] = 'Aliases restore failures';

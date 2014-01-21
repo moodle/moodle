@@ -73,7 +73,19 @@ $wikipage = new page_wiki_diff($wiki, $subwiki, $cm);
 $wikipage->set_page($page);
 $wikipage->set_comparison($compare, $comparewith);
 
-add_to_log($course->id, "wiki", "diff", "diff.php?pageid=".$pageid."&comparewith=".$comparewith."&compare=".$compare, $pageid, $cm->id);
+$event = \mod_wiki\event\page_diff_viewed::create(
+        array(
+            'context' => context_module::instance($cm->id),
+            'objectid' => $pageid,
+            'other' => array(
+                'comparewith' => $comparewith,
+                'compare' => $compare
+                )
+            ));
+$event->add_record_snapshot('wiki_pages', $page);
+$event->add_record_snapshot('wiki', $wiki);
+$event->add_record_snapshot('wiki_subwikis', $subwiki);
+$event->trigger();
 
 $wikipage->print_header();
 

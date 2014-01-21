@@ -108,7 +108,7 @@ $string['deletingnoneemptycategory'] = 'Deleting this category will not delete t
 $string['descending'] = 'descending';
 $string['destination'] = 'Destination of imported entries';
 $string['destination_help'] = 'Entries can either be imported and added to the current glossary or to a new glossary, in which case a new glossary will be created based on information in the XML file.';
-$string['disapprove'] = 'Disapprove';
+$string['disapprove'] = 'Undo approval';
 $string['displayformat'] = 'Display format';
 $string['displayformat_help'] = 'There are 7 display formats:
 
@@ -174,7 +174,7 @@ $string['filtername'] = 'Glossary auto-linking';
 $string['fullmatch'] = 'Match whole words only';
 $string['fullmatch_help'] = 'This setting specifies whether only whole words will be linked, for example, a glossary entry named "construct" will not create a link inside the word "constructivism".';
 $string['glossary:addinstance'] = 'Add a new glossary';
-$string['glossary:approve'] = 'Approve unapproved entries, or disapprove approved ones';
+$string['glossary:approve'] = 'Approve and undo approved entries';
 $string['glossary:comment'] = 'Create comments';
 $string['glossary:export'] = 'Export entries';
 $string['glossary:exportentry'] = 'Export single entry';

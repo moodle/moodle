@@ -31,6 +31,22 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Checks whether the password compatibility library will work with the current
+ * version of PHP. This cannot be done using PHP version numbers since the fix
+ * has been backported to earlier versions in some distributions.
+ *
+ * See https://github.com/ircmaxell/password_compat/issues/10 for more details.
+ *
+ * @deprecated since 2.7 PHP 5.4.x should be always compatible.
+ *
+ * @return bool always returns false
+ */
+function password_compat_not_supported() {
+    debugging('Do not use password_compat_not_supported() - bcrypt is now always available', DEBUG_DEVELOPER);
+    return false;
+}
+
+/**
  * Factory method that was returning moodle_session object.
  *
  * @deprecated since 2.6
@@ -559,46 +575,6 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
- * @deprecated use get_string("pluginname", "auth_[PLUINNAME]") instead.
- * @todo remove completely in MDL-40517
- */
-function auth_get_plugin_title($authtype) {
-    throw new coding_exception('Function auth_get_plugin_title() is deprecated, please use standard get_string("pluginname", "auth_'.$authtype.'")!');
-}
-
-/**
- * @deprecated use indivividual enrol plugin settings instead
- * @todo remove completely in MDL-40517
- */
-function get_default_course_role($course) {
-    throw new coding_exception('get_default_course_role() can not be used any more, please use enrol plugin settings instead!');
-}
-
-/**
- * @deprecated use get_string_manager()->get_list_of_translations() instead.
- * @todo remove completely in MDL-40517
- */
-function get_list_of_languages($refreshcache=false, $returnall=false) {
-    throw new coding_exception('get_list_of_languages() can not be used any more, please use get_string_manager()->get_list_of_translations() instead.');
-}
-
-/**
- * @deprecated use get_string_manager()->get_list_of_currencies() instead.
- * @todo remove completely in MDL-40517
- */
-function get_list_of_currencies() {
-    throw new coding_exception('get_list_of_currencies() can not be used any more, please use get_string_manager()->get_list_of_currencies() instead.');
-}
-
-/**
- * @deprecated use get_string_manager()->get_list_of_countries() instead.
- * @todo remove completely in MDL-40517
- */
-function get_list_of_countries() {
-    throw new coding_exception('get_list_of_countries() can not be used any more, please use get_string_manager()->get_list_of_countries() instead.');
-}
-
-/**
  * Return all course participant for a given course
  *
  * @deprecated use get_enrolled_users($context) instead.
@@ -653,56 +629,6 @@ function get_recent_enrolments($courseid, $timestart) {
           ORDER BY MAX(l.time) ASC";
     $params = array($timestart, $courseid);
     return $DB->get_records_sql($sql, $params);
-}
-
-########### FROM weblib.php ##########################################################################
-
-/**
- * @deprecated use $OUTPUT->box() instead.
- * @todo remove completely in MDL-40517
- */
-function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
-    throw new coding_exception('print_simple_box can not be used any more. Please use $OUTPUT->box() instead');
-}
-
-/**
- * @deprecated use $OUTPUT->box_start instead.
- * @todo remove completely in MDL-40517
- */
-function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
-    throw new coding_exception('print_simple_box_start can not be used any more. Please use $OUTPUT->box_start instead');
-}
-
-/**
- * @deprecated use $OUTPUT->box_end instead.
- * @todo remove completely in MDL-40517
- */
-function print_simple_box_end($return=false) {
-    throw new coding_exception('print_simple_box_end can not be used any more. Please use $OUTPUT->box_end instead');
-}
-
-/**
- * @deprecated the urltolink filter now does this job.
- * @todo remove completely in MDL-40517
- */
-function convert_urls_into_links($text) {
-    throw new coding_exception('convert_urls_into_links() can not be used any more and replaced by the urltolink filter');
-}
-
-/**
- * @deprecated use the emoticon_manager class instead.
- * @todo remove completely in MDL-40517
- */
-function get_emoticons_list_for_help_file() {
-    throw new coding_exception('get_emoticons_list_for_help_file() can not be used any more, use the new emoticon_manager API instead');
-}
-
-/**
- * @deprecated use emoticon filter now does this job.
- * @todo remove completely in MDL-40517
- */
-function replace_smilies(&$text) {
-    throw new coding_exception('replace_smilies() can not be used any more and replaced with the emoticon filter.');
 }
 
 /**
@@ -985,13 +911,6 @@ function error($message, $link='') {
 
 
 /**
- * @deprecated use $PAGE->requires->js_module() instead.
- */
-function require_js($lib) {
-    throw new coding_exception('require_js() was removed, use new JS api');
-}
-
-/**
  * @deprecated use $PAGE->theme->name instead.
  * @todo final deprecation of this function in MDL-40607
  * @return string the name of the current theme.
@@ -1030,54 +949,6 @@ function skip_main_destination() {
 
     debugging('skip_main_destination() is deprecated, please use $OUTPUT->skip_link_target() instead.', DEBUG_DEVELOPER);
     return $OUTPUT->skip_link_target();
-}
-
-/**
- * @deprecated use $OUTPUT->heading() instead.
- * @todo remove completely in MDL-40517
- */
-function print_headline($text, $size=2, $return=false) {
-    throw new coding_exception('print_headline() can not be used any more. Please use $OUTPUT->heading() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->heading() instead.
- * @todo remove completely in MDL-40517
- */
-function print_heading($text, $deprecated = '', $size = 2, $class = 'main', $return = false, $id = '') {
-    throw new coding_exception('print_heading() can not be used any more. Please use $OUTPUT->heading() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->heading() instead.
- * @todo remove completely in MDL-40517
- */
-function print_heading_block($heading, $class='', $return=false) {
-    throw new coding_exception('print_heading_with_block() can not be used any more. Please use $OUTPUT->heading() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->box() instead.
- * @todo remove completely in MDL-40517
- */
-function print_box($message, $classes='generalbox', $ids='', $return=false) {
-    throw new coding_exception('print_box() can not be used any more. Please use $OUTPUT->box() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->box_start() instead.
- * @todo remove completely in MDL-40517
- */
-function print_box_start($classes='generalbox', $ids='', $return=false) {
-    throw new coding_exception('print_box_start() can not be used any more. Please use $OUTPUT->box_start() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->box_end() instead.
- * @todo remove completely in MDL-40517
- */
-function print_box_end($return=false) {
-    throw new coding_exception('print_box_end() can not be used any more. Please use $OUTPUT->box_end() instead.');
 }
 
 /**
@@ -1132,14 +1003,6 @@ function print_container_start($clearfix=false, $classes='', $idbase='', $return
     } else {
         echo $output;
     }
-}
-
-/**
- * @deprecated do not use any more, is not automatic
- * @todo remove completely in MDL-40517
- */
-function check_theme_arrows() {
-    throw new coding_exception('check_theme_arrows() has been deprecated, do not use it anymore, it is now automatic.');
 }
 
 /**
@@ -1328,22 +1191,6 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
 }
 
 /**
- * @deprecated use $OUTPUT->footer() instead.
- * @todo remove completely in MDL-40517
- */
-function print_footer($course = NULL, $usercourse = NULL, $return = false) {
-    throw new coding_exception('print_footer() cant be used anymore. Please use $OUTPUT->footer() instead.');
-}
-
-/**
- * @deprecated use theme layouts instead.
- * @todo remove completely in MDL-40517
- */
-function user_login_string($course='ignored', $user='ignored') {
-    throw new coding_exception('user_login_info() cant be used anymore. User login info is now handled via themes layouts.');
-}
-
-/**
  * Prints a nice side block with an optional header.  The content can either
  * be a block of HTML or a list of text with optional icons.
  *
@@ -1389,90 +1236,6 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
     $bc->attributes = $attributes;
 
     echo $OUTPUT->block($bc, BLOCK_POS_LEFT); // POS LEFT may be wrong, but no way to get a better guess here.
-}
-
-/**
- * @deprecated blocks are now printed by theme.
- * @todo remove completely in MDL-40517
- */
-function blocks_have_content(&$blockmanager, $region) {
-    throw new coding_exception('blocks_have_content() can no longer be used. Blocks are now printed by the theme.');
-}
-
-/**
- * @deprecated blocks are now printed by the theme.
- * @todo remove completely in MDL-40517
- */
-function blocks_print_group($page, $blockmanager, $region) {
-    throw new coding_exception('function blocks_print_group() can no longer be used. Blocks are now printed by the theme.');
-}
-
-/**
- * @deprecated blocks are now printed by the theme.
- * @todo remove completely in MDL-40517
- */
-function blocks_setup(&$page, $pinned = BLOCKS_PINNED_FALSE) {
-    throw new coding_exception('blocks_print_group() can no longer be used. Blocks are now printed by the theme.');
-}
-
-/**
- * @deprecated Layout is now controlled by the theme.
- * @todo remove completely in MDL-40517
- */
-function blocks_preferred_width($instances) {
-    throw new coding_exception('blocks_print_group() can no longer be used. Blocks are now printed by the theme.');
-}
-
-/**
- * @deprecated use html_writer::table() instead.
- * @todo remove completely in MDL-40517
- */
-function print_table($table, $return=false) {
-    throw new coding_exception('print_table() can no longer be used. Use html_writer::table() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->action_link() instead (note: popups are discouraged for accesibility reasons)
- * @todo remove completely in MDL-40517
- */
-function link_to_popup_window ($url, $name=null, $linkname=null, $height=400, $width=500, $title=null, $options=null, $return=false) {
-    throw new coding_exception('link_to_popup_window() can no longer be used. Please to use $OUTPUT->action_link() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->single_button() instead.
- * @todo remove completely in MDL-40517
- */
-function button_to_popup_window ($url, $name=null, $linkname=null,
-                                 $height=400, $width=500, $title=null, $options=null, $return=false,
-                                 $id=null, $class=null) {
-    throw new coding_exception('button_to_popup_window() can no longer be used. Please use $OUTPUT->single_button() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->single_button() instead.
- * @todo remove completely in MDL-40517
- */
-function print_single_button($link, $options, $label='OK', $method='get', $notusedanymore='',
-        $return=false, $tooltip='', $disabled = false, $jsconfirmmessage='', $formid = '') {
-
-    throw new coding_exception('print_single_button() can no longer be used. Please use $OUTPUT->single_button() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->spacer() instead.
- * @todo remove completely in MDL-40517
- */
-function print_spacer($height=1, $width=1, $br=true, $return=false) {
-    throw new coding_exception('print_spacer() can no longer be used. Please use $OUTPUT->spacer() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->user_picture() instead.
- * @todo remove completely in MDL-40517
- */
-function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=false, $link=true, $target='', $alttext=true) {
-    throw new coding_exception('print_user_picture() can no longer be used. Please use $OUTPUT->user_picture($user, array(\'courseid\'=>$courseid) instead.');
 }
 
 /**
@@ -1531,24 +1294,6 @@ function print_textarea($unused, $rows, $cols, $width, $height, $name, $value=''
         return $str;
     }
     echo $str;
-}
-
-
-/**
- * Print a help button.
- *
- * @deprecated since Moodle 2.0
- */
-function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false, $imagetext='') {
-    throw new coding_exception('helpbutton() can not be used any more, please see $OUTPUT->help_icon().');
-}
-
-/**
- * @deprecated this is now handled by text editors
- * @todo remove completely in MDL-40517
- */
-function emoticonhelpbutton($form, $field, $return = false) {
-    throw new coding_exception('emoticonhelpbutton() was removed, new text editors will implement this feature');
 }
 
 /**
@@ -1643,32 +1388,6 @@ function print_arrow($direction='up', $strsort=null, $return=false) {
 }
 
 /**
- * Returns a string containing a link to the user documentation.
- * Also contains an icon by default. Shown to teachers and admin only.
- *
- * @deprecated since Moodle 2.0
- */
-function doc_link($path='', $text='', $iconpath='ignored') {
-    throw new coding_exception('doc_link() can not be used any more, please see $OUTPUT->doc_link().');
-}
-
-/**
- * @deprecated use $OUTPUT->render($pagingbar) instead.
- * @todo remove completely in MDL-40517
- */
-function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false, $return=false) {
-    throw new coding_exception('print_paging_bar() can not be used any more. Please use $OUTPUT->render($pagingbar) instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel) instead.
- * @todo remove completely in MDL-40517
- */
-function notice_yesno($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno=NULL, $methodyes='post', $methodno='post') {
-    throw new coding_exception('notice_yesno() can not be used any more. Please use $OUTPUT->confirm($message, $buttoncontinue, $buttoncancel) instead.');
-}
-
-/**
  * Given an array of values, output the HTML for a select element with those options.
  *
  * @deprecated since Moodle 2.0
@@ -1725,24 +1444,6 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
 }
 
 /**
- * @deprecated use html_writer::select_yes_no() instead.
- * @todo remove completely in MDL-40517
- */
-function choose_from_menu_yesno($name, $selected, $script = '', $return = false, $disabled = false, $tabindex = 0) {
-    throw new coding_exception('choose_from_menu_yesno() can not be used anymore. Please use html_writerselect_yes_no() instead.');
-}
-
-/**
- * @deprecated use html_writer::select() instead.
- * @todo remove completely in MDL-40517
- */
-function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
-                                 $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
-
-    throw new coding_exception('choose_from_menu_nested() can not be used any more. Please use html_writer::select() instead.');
-}
-
-/**
  * Prints a help button about a scale
  *
  * @deprecated use $OUTPUT->help_icon_scale($courseid, $scale) instead.
@@ -1766,48 +1467,6 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
     } else {
         echo $output;
     }
-}
-
-/**
- * @deprecated use html_writer::select_time() instead
- * @todo remove completely in MDL-40517
- */
-function print_time_selector($hour, $minute, $currenttime=0, $step=5, $return=false) {
-    throw new moodle_exception('print_time_selector() can not be used any more . Please use html_writer::select_time() instead.');
-}
-
-/**
- * @deprecated please use html_writer::select_time instead
- * @todo remove completely in MDL-40517
- */
-function print_date_selector($day, $month, $year, $currenttime=0, $return=false) {
-    throw new coding_exception('print_date_selector() can not be used any more. Please use html_writer::select_time() instead.');
-}
-
-/**
- * Implements a complete little form with a dropdown menu.
- *
- * @deprecated since Moodle 2.0
- */
-function popup_form($baseurl, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
-    $targetwindow='self', $selectlabel='', $optionsextra=NULL, $submitvalue='', $disabled=false, $showbutton=false) {
-        throw new coding_exception('popup_form() can not be used any more, please see $OUTPUT->single_select or $OUTPUT->url_select().');
-}
-
-/**
- * @deprecated use $OUTPUT->close_window_button() instead.
- * @todo remove completely in MDL-40517
- */
-function close_window_button($name='closewindow', $return=false, $reloadopener = false) {
-    throw new coding_exception('close_window_button() can not be used any more. Use $OUTPUT->close_window_button() instead.');
-}
-
-/**
- * @deprecated use html_writer instead.
- * @todo remove completely in MDL-40517
- */
-function choose_from_radio ($options, $name, $checked='', $return=false) {
-    throw new coding_exception('choose_from_radio() can not be used any more. Please use html_writer instead.');
 }
 
 /**
@@ -1848,32 +1507,6 @@ function print_checkbox($name, $value, $checked = true, $label = '', $alt = '', 
 }
 
 /**
- * @deprecated use mforms or html_writer instead.
- * @todo remove completely in MDL-40517
- */
-function print_textfield($name, $value, $alt = '', $size=50, $maxlength=0, $return=false) {
-    throw new coding_exception('print_textfield() can not be used anymore. Please use mforms or html_writer instead.');
-}
-
-
-/**
- * @deprecated use $OUTPUT->heading_with_help() instead
- * @todo remove completely in MDL-40517
- */
-function print_heading_with_help($text, $helppage, $module='moodle', $icon=false, $return=false) {
-    throw new coding_exception('print_heading_with_help() can not be used anymore. Please use $OUTPUT->heading_with_help() instead.');
-}
-
-/**
- * @deprecated use $OUTPUT->edit_button() instead.
- * @todo remove completely in MDL-40517
- */
-function update_tag_button($tagid) {
-    throw new coding_exception('update_tag_button() can not be used any more. Please $OUTPUT->edit_button(moodle_url) instead.');
-}
-
-
-/**
  * Prints the 'update this xxx' button that appears on module pages.
  *
  * @deprecated since Moodle 2.0
@@ -1898,14 +1531,6 @@ function update_module_button($cmid, $ignored, $string) {
     } else {
         return '';
     }
-}
-
-/**
- * @deprecated use $OUTPUT->edit_button() instead.
- * @todo remove completely in MDL-40517
- */
-function update_course_icon($courseid) {
-    throw new coding_exception('update_course_button() can not be used anymore. Please use $OUTPUT->edit_button(moodle_url) instead.');
 }
 
 /**
@@ -2004,7 +1629,7 @@ function build_navigation($extranavlinks, $cm = null) {
 
 /**
  * @deprecated not relevant with global navigation in Moodle 2.x+
- * @todo remove completely in MDL-40517
+ * @todo remove completely in MDL-40607
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
     // This function has been deprecated with the creation of the global nav in
@@ -2012,30 +1637,6 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     debugging('navmenu() is deprecated, it is no longer relevant with global navigation.', DEBUG_DEVELOPER);
 
     return '';
-}
-
-/**
- * @deprecated use the settings block instead.
- * @todo remove completely in MDL-40517
- */
-function switchroles_form($courseid) {
-    throw new coding_exception('switchroles_form() can not be used any more. The global settings block does this job.');
-}
-
-/**
- * @deprecated Please use normal $OUTPUT->header() instead
- * @todo remove completely in MDL-40517
- */
-function admin_externalpage_print_header($focus='') {
-    throw new coding_exception('admin_externalpage_print_header can not be used any more. Please $OUTPUT->header() instead.');
-}
-
-/**
- * @deprecated Please use normal $OUTPUT->footer() instead
- * @todo remove completely in MDL-40517
- */
-function admin_externalpage_print_footer() {
-    throw new coding_exception('admin_externalpage_print_footer can not be used anymore Please $OUTPUT->footer() instead.');
 }
 
 /// CALENDAR MANAGEMENT  ////////////////////////////////////////////////////////////////
@@ -2149,13 +1750,6 @@ function show_event($event) {
 
     $event = new calendar_event($event);
     return $event->toggle_visibility(true);
-}
-
-/**
- * @deprecated Use core_text::strtolower($text) instead.
- */
-function moodle_strtolower($string, $encoding='') {
-    throw new coding_exception('moodle_strtolower() cannot be used any more. Please use core_text::strtolower() instead.');
 }
 
 /**
@@ -3986,12 +3580,6 @@ function convert_tabrows_to_tree($tabrows, $selected, $inactive, $activated) {
 }
 
 /**
- * @deprecated since Moodle 2.3
- */
-function move_section($course, $section, $move) {
-    throw new coding_exception('move_section() can not be used any more, please see move_section_to().');
-}
-/**
  * Can handle rotated text. Whether it is safe to use the trickery in textrotate.js.
  *
  * @deprecated since 2.5 - do not use, the textrotate.js will work it out automatically
@@ -4050,22 +3638,6 @@ function get_context_instance($contextlevel, $instance = 0, $strictness = IGNORE
 function get_context_instance_by_id($id, $strictness = IGNORE_MISSING) {
     debugging('get_context_instance_by_id() is deprecated, please use context::instance_by_id($id) instead.', DEBUG_DEVELOPER);
     return context::instance_by_id($id, $strictness);
-}
-
-/**
- * @deprecated since Moodle 2.2
- * @see load_temp_course_role()
- */
-function load_temp_role($context, $roleid, array $accessdata) {
-    throw new coding_exception('load_temp_role() can not be used any more, please use load_temp_course_role()');
-}
-
-/**
- * @deprecated since Moodle 2.2
- * @see remove_temp_course_roles()
- */
-function remove_temp_roles($context, array $accessdata) {
-    throw new coding_exception('remove_temp_roles() can not be used any more, please use remove_temp_course_roles()');
 }
 
 /**
@@ -4524,14 +4096,6 @@ function get_related_contexts_string(context $context) {
     } else {
         return (' ='.$context->id);
     }
-}
-
-/**
- * @deprecated since Moodle 2.0 - use $PAGE->user_is_editing() instead.
- * @see moodle_page->user_is_editing()
- */
-function isediting() {
-    throw new coding_exception('isediting() can not be used any more, please use $PAGE->user_is_editing() instead.');
 }
 
 /**

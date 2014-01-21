@@ -179,7 +179,9 @@ abstract class cache_store implements cache_store_interface {
      * Returns true if this cache store instance is ready to use.
      * @return bool
      */
-    abstract public function is_ready();
+    public function is_ready() {
+        return forward_static_call(array($this, 'are_requirements_met'));
+    }
 
     /**
      * Retrieves an item from the cache store given its key.

@@ -340,7 +340,7 @@ class quiz_overview_report extends quiz_attempts_report {
     protected function regrade_attempt($attempt, $dryrun = false, $slots = null) {
         global $DB;
         // Need more time for a quiz with many questions.
-        set_time_limit(300);
+        core_php_time_limit::raise(300);
 
         $transaction = $DB->start_delegated_transaction();
 

@@ -331,22 +331,31 @@ input#id_externalurl {direction:ltr;}
 /**
  * Show the labels above text editors and file managers except on wide screens.
  */
-#region-main .mform .fitem .fitemtitle label {
+#region-main .mform:not(.unresponsive) .fitem .fitemtitle label {
     font-weight: bold;
 }
 @media (max-width: 1199px) {
-    #region-main .mform .fitem .fitemtitle {
+    #region-main .mform:not(.unresponsive) .fitem .fitemtitle {
         display: block;
         margin-top: 4px;
         margin-bottom: 4px;
         text-align: left;
         width: 100%;
     }
-    .dir-rtl #region-main .mform .fitem .fitemtitle {
+    #region-main .mform:not(.unresponsive) .femptylabel .fitemtitle {
+        display: inline-block;
+        width: auto;
+        margin-right: 8px;
+    }
+    .dir-rtl #region-main .mform:not(.unresponsive) .femptylabel .fitemtitle {
+        margin-right: 0px;
+        margin-left: 8px;
+    }
+    .dir-rtl #region-main .mform:not(.unresponsive) .fitem .fitemtitle {
         text-align: right;
     }
 
-    #region-main .mform .fitem .felement {
+    #region-main .mform:not(.unresponsive) .fitem .felement {
         margin-left: 0;
         width: 100%;
         float: left;
@@ -354,21 +363,29 @@ input#id_externalurl {direction:ltr;}
         padding-left: 0;
         padding-right: 0;
     }
-    .dir-rtl #region-main .mform .fitem .felement {
+    #region-main .mform:not(.unresponsive) .fitem .fstatic:empty {
+        display: none;
+    }
+    #region-main .mform:not(.unresponsive) .femptylabel .felement {
+        display: inline-block;
+        margin-top: 4px;
+        width: auto;
+    }
+    .dir-rtl #region-main .mform:not(.unresponsive) .fitem .felement {
         margin-right: 0;
         float: right;
         padding-right: 0;
         padding-left: 0;
     }
-    #region-main .mform .fitem_fcheckbox .fitemtitle,
-    #region-main .mform .fitem_fcheckbox .felement {
+    #region-main .mform:not(.unresponsive) .fitem_fcheckbox .fitemtitle,
+    #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
         display: inline-block;
         width: auto;
     }
-    .dir-rtl #region-main .mform .fitem_fcheckbox .felement {
+    .dir-rtl #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
         float: right;
     }
-    #region-main .mform .fitem_fcheckbox .felement {
+    #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
         padding: 6px;
     }
 }
@@ -694,24 +711,27 @@ body.tag .managelink {padding: 5px;}
  * Enrol
  */
 .userenrolment {width:100%;border-collapse: collapse;}
-.userenrolment td {padding:0;height:41px;}
+.userenrolment tr {vertical-align:top;}
+.userenrolment td {height:41px;padding:3px;}
+.userenrolment td > * {margin:3px;}
 .userenrolment .subfield {margin-right:5px;}
 .userenrolment .col_userdetails .subfield_picture {float:left;}
 .userenrolment .col_lastseen {width:150px;}
 .userenrolment .col_role {width:262px;}
-.userenrolment .col_role .roles {margin-right:30px;}
-.userenrolment .col_role .role {float:left;padding:3px;margin:3px;}
-.dir-rtl .userenrolment .col_role .role {float:right;}
-.userenrolment .col_role .role a {margin-left:3px;cursor:pointer;}
-.userenrolment .col_role .addrole {float:right;width:18px;margin:3px;height:18px;text-align:center;}
-.userenrolment .col_role .addrole a img {vertical-align:bottom;}
-.userenrolment .hasAllRoles .col_role .addrole {display:none;}
+.userenrolment .col_role .roles,
 .userenrolment .col_group .groups {margin-right:30px;}
-.userenrolment .col_group .group {float:left;padding:3px;margin:3px;white-space:nowrap;}
+.userenrolment .col_role .role,
+.userenrolment .col_group .group {float:left;white-space:nowrap;margin-right:6px;}
+.userenrolment .col_role .role a,
 .userenrolment .col_group .group a {margin-left:3px;cursor:pointer;}
-.userenrolment .col_group .addgroup {float:right;width:18px;margin:3px;height:18px;text-align:center;}
+.userenrolment .col_role .addrole,
+.userenrolment .col_group .addgroup {float:right;}
+.userenrolment .col_role .addrole a img,
 .userenrolment .col_group .addgroup a img {vertical-align:bottom;}
-.userenrolment .col_enrol .enrolment {float:left;padding:3px;margin:3px;}
+.userenrolment .hasAllRoles .col_role .addrole {display:none;}
+.dir-rtl .userenrolment .col_role .role {float:right;}
+
+.userenrolment .col_enrol .enrolment {float:left;}
 .userenrolment .col_enrol .enrolment a {float:right;margin-left:3px;}
 #page-enrol-users .enrol_user_buttons {float:right;}
 #page-enrol-users .enrol_user_buttons .singlebutton {margin-top: 2px; line-height: 2;}
@@ -782,6 +802,7 @@ body.tag .managelink {padding: 5px;}
 .corelightbox img {position:fixed;top:50%; left: 50%;}
 
 .mod-indent {display:table-cell;}
+.label .mod-indent {float:left; padding-top:20px}
 .mod-indent-1    {width:30px;}
 .mod-indent-2    {width:60px;}
 .mod-indent-3    {width:90px;}
@@ -1015,11 +1036,14 @@ sup {vertical-align: super;}
     text-shadow: 1px 1px 1px #FFFFFF;
     border-radius: 10px 10px 0px 0px;
     border-bottom: 1px solid #BBBBBB;
-    background: #CCCCCC;
-    background: -webkit-gradient(linear, left top, left bottom, from(#FFFFFF), to(#CCCCCC));
-    background: -moz-linear-gradient(top,  #FFFFFF,  #CCCCCC);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
-    filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+    background-color: #CCCCCC;
+    -ms-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#CCCCCC')!important;
+    -ms-filter: dropshadow(color=#FFFFFF, offx=1, offy=1);
+    background-image: -webkit-linear-gradient(top, #FFFFFF, #CCCCCC); /* For Chrome and Safari */
+    background-image:    -moz-linear-gradient(top, #FFFFFF, #CCCCCC); /* For old Fx (3.6 to 15) */
+    background-image:     -ms-linear-gradient(top, #FFFFFF, #CCCCCC); /* For pre-releases of IE 10*/
+    background-image:      -o-linear-gradient(top, #FFFFFF, #CCCCCC); /* For old Opera (11.1 to 12.0) */
+    background-image:         linear-gradient(to bottom, #FFFFFF, #CCCCCC); /* Standard syntax; must be last */
 }
 
 .moodle-dialogue-base .moodle-dialogue-wrap .moodle-dialogue-hd h1 {
@@ -1198,7 +1222,7 @@ sup {vertical-align: super;}
 
 /* Center the submit buttons within the area */
 .choosercontainer #chooseform .submitbuttons {
-    margin: 0.7em 0;
+    padding: 0.7em 0;
     text-align: center;
 }
 
@@ -1555,8 +1579,7 @@ img#persona_signin { cursor: pointer; }
     width: 12px;
     height: 12px;
 }
-.moodle-actionmenu[data-enhanced].show .menu a:hover,
-.moodle-actionmenu[data-enhanced].show .menu a:focus {color: #ffffff;background-color: #0088cc;}
+.moodle-actionmenu[data-enhanced].show .menu a:hover {color: #ffffff;background-color: #0088cc;}
 .moodle-actionmenu[data-enhanced].show .menu a:first-child {-webkit-border-top-right-radius: 4px;border-top-right-radius: 4px;-webkit-border-top-left-radius: 4px;border-top-left-radius: 4px;-moz-border-radius-topright: 4px;-moz-border-radius-topleft: 4px;}
 .moodle-actionmenu[data-enhanced].show .menu a:last-child {-webkit-border-bottom-right-radius: 4px;border-bottom-right-radius: 4px;-webkit-border-bottom-left-radius: 4px;border-bottom-left-radius: 4px;-moz-border-radius-bottomright: 4px;-moz-border-radius-bottomleft: 4px;}
 .moodle-actionmenu[data-enhanced].show .menu a.hidden {display: none;}

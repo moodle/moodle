@@ -30,6 +30,7 @@ $string['annually'] = 'Annually';
 $string['calendar'] = 'Calendar';
 $string['calendarheading'] = '{$a} Calendar';
 $string['calendarpreferences'] = 'Calendar preferences';
+$string['calendartypes'] = 'Calendar types';
 $string['calendarurl'] = 'Calendar URL: {$a}';
 $string['clickhide'] = 'click to hide';
 $string['clickshow'] = 'click to show';

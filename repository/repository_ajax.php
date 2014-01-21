@@ -74,6 +74,8 @@ $repooptions = array(
     'ajax' => true,
     'mimetypes' => $accepted_types
 );
+
+ajax_capture_output();
 $repo = repository::get_repository_by_id($repo_id, $contextid, $repooptions);
 
 // Check permissions
@@ -87,7 +89,7 @@ if (!empty($course)) {
 $maxbytes = get_user_max_upload_file_size($context, $CFG->maxbytes, $coursemaxbytes, $maxbytes);
 
 // Wait as long as it takes for this script to finish
-set_time_limit(0);
+core_php_time_limit::raise();
 
 // These actions all occur on the currently active repository instance
 switch ($action) {
@@ -97,6 +99,7 @@ switch ($action) {
         if ($repo->check_login()) {
             $listing = repository::prepare_listing($repo->get_listing($req_path, $page));
             $listing['repo_id'] = $repo_id;
+            ajax_check_captured_output();
             echo json_encode($listing);
             break;
         } else {
@@ -105,23 +108,27 @@ switch ($action) {
     case 'login':
         $listing = $repo->print_login();
         $listing['repo_id'] = $repo_id;
+        ajax_check_captured_output();
         echo json_encode($listing);
         break;
     case 'logout':
         $logout = $repo->logout();
         $logout['repo_id'] = $repo_id;
+        ajax_check_captured_output();
         echo json_encode($logout);
         break;
     case 'searchform':
         $search_form['repo_id'] = $repo_id;
         $search_form['form'] = $repo->print_search();
         $search_form['allowcaching'] = true;
+        ajax_check_captured_output();
         echo json_encode($search_form);
         break;
     case 'search':
         $search_result = repository::prepare_listing($repo->search($search_text, (int)$page));
         $search_result['repo_id'] = $repo_id;
         $search_result['issearchresult'] = true;
+        ajax_check_captured_output();
         echo json_encode($search_result);
         break;
     case 'download':
@@ -160,6 +167,7 @@ switch ($action) {
             $info['file'] = $saveas_filename;
             $info['type'] = 'link';
             $info['url'] = $link;
+            ajax_check_captured_output();
             echo json_encode($info);
             die;
         } else {
@@ -251,6 +259,7 @@ switch ($action) {
                 // You can cache reository file in this callback
                 // or complete other tasks.
                 $repo->cache_file_by_reference($reference, $storedfile);
+                ajax_check_captured_output();
                 echo json_encode($event);
                 die;
             } else if ($repo->has_moodle_files()) {
@@ -261,6 +270,7 @@ switch ($action) {
                 // {@link repository::copy_to_area()}.
                 $fileinfo = $repo->copy_to_area($reference, $record, $maxbytes, $areamaxbytes);
 
+                ajax_check_captured_output();
                 echo json_encode($fileinfo);
                 die;
             } else {
@@ -286,12 +296,14 @@ switch ($action) {
                     $info['e'] = get_string('error', 'moodle');
                 }
             }
+            ajax_check_captured_output();
             echo json_encode($info);
             die;
         }
         break;
     case 'upload':
         $result = $repo->upload($saveas_filename, $maxbytes);
+        ajax_check_captured_output();
         echo json_encode($result);
         break;
 
@@ -304,6 +316,7 @@ switch ($action) {
         $newfilename = required_param('newfilename', PARAM_FILE);
 
         $info = repository::overwrite_existing_draftfile($itemid, $filepath, $filename, $newfilepath, $newfilename);
+        ajax_check_captured_output();
         echo json_encode($info);
         break;
 
@@ -311,6 +324,7 @@ switch ($action) {
         // delete tmp file
         $newfilepath = required_param('newfilepath', PARAM_PATH);
         $newfilename = required_param('newfilename', PARAM_FILE);
+        ajax_check_captured_output();
         echo json_encode(repository::delete_tempfile_from_draft($itemid, $newfilepath, $newfilename));
 
         break;

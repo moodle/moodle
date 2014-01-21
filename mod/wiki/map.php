@@ -58,7 +58,19 @@ $context = context_module::instance($cm->id);
 require_capability('mod/wiki:viewpage', $context);
 
 $wikipage = new page_wiki_map($wiki, $subwiki, $cm);
-add_to_log($course->id, "wiki", "map", "map.php?pageid=".$pageid, $pageid, $cm->id);
+
+$event = \mod_wiki\event\page_map_viewed::create(
+        array(
+            'context' => $context,
+            'objectid' => $pageid,
+            'other' => array(
+                'option' => $option
+                )
+            ));
+$event->add_record_snapshot('wiki_pages', $page);
+$event->add_record_snapshot('wiki', $wiki);
+$event->add_record_snapshot('wiki_subwikis', $subwiki);
+$event->trigger();
 
 // Print page header
 $wikipage->set_view($option);

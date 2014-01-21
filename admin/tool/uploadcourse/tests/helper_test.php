@@ -204,9 +204,6 @@ class tool_uploadcourse_helper_testcase extends advanced_testcase {
         $this->assertEquals($dir, $dir2);
 
         $CFG->keeptempdirectoriesonbackup = $oldcfg;
-
-        // Restore the time limit to prevent warning.
-        set_time_limit(0);
     }
 
     public function test_get_role_ids() {

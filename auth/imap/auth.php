@@ -73,6 +73,10 @@ class auth_plugin_imap extends auth_plugin_base {
                     $host = '{'.$host.":{$this->config->port}/imap/tls}";
                 break;
 
+                case 'imapnosslcert':
+                    $host = '{'.$host.":{$this->config->port}/imap/novalidate-cert}";
+                break;
+
                 default:
                     $host = '{'.$host.":{$this->config->port}/imap}";
             }
@@ -120,7 +124,11 @@ class auth_plugin_imap extends auth_plugin_base {
      * @return moodle_url
      */
     function change_password_url() {
-        return new moodle_url($this->config->changepasswordurl);
+        if (!empty($this->config->changepasswordurl)) {
+            return new moodle_url($this->config->changepasswordurl);
+        } else {
+            return null;
+        }
     }
 
     /**

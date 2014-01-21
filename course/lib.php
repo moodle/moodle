@@ -43,15 +43,12 @@ define('COURSE_MAX_COURSES_PER_DROPDOWN', 1000);
 // Max users in log dropdown before switching to optional.
 define('COURSE_MAX_USERS_PER_DROPDOWN', 1000);
 define('FRONTPAGENEWS', '0');
-define('FRONTPAGECOURSELIST', '1'); // Not used. TODO MDL-38832 remove.
 define('FRONTPAGECATEGORYNAMES', '2');
-define('FRONTPAGETOPICONLY', '3'); // Not used. TODO MDL-38832 remove.
 define('FRONTPAGECATEGORYCOMBO', '4');
 define('FRONTPAGEENROLLEDCOURSELIST', '5');
 define('FRONTPAGEALLCOURSELIST', '6');
 define('FRONTPAGECOURSESEARCH', '7');
 // Important! Replaced with $CFG->frontpagecourselimit - maximum number of courses displayed on the frontpage.
-define('FRONTPAGECOURSELIMIT',    200); // TODO MDL-38832 remove.
 define('EXCELROWS', 65535);
 define('FIRSTUSEDEXCELROW', 3);
 
@@ -1595,14 +1592,6 @@ function set_coursemodule_visible($id, $visible) {
         }
     }
 
-    // Hide the associated grade items so the teacher doesn't also have to go to the gradebook and hide them there.
-    $grade_items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename, 'iteminstance'=>$cm->instance, 'courseid'=>$cm->course));
-    if ($grade_items) {
-        foreach ($grade_items as $grade_item) {
-            $grade_item->set_hidden(!$visible);
-        }
-    }
-
     // Updating visible and visibleold to keep them in sync. Only changing a section visibility will
     // affect visibleold to allow for an original visibility restore. See set_section_visible().
     $cminfo = new stdClass();
@@ -1610,6 +1599,22 @@ function set_coursemodule_visible($id, $visible) {
     $cminfo->visible = $visible;
     $cminfo->visibleold = $visible;
     $DB->update_record('course_modules', $cminfo);
+
+    // Hide the associated grade items so the teacher doesn't also have to go to the gradebook and hide them there.
+    // Note that this must be done after updating the row in course_modules, in case
+    // the modules grade_item_update function needs to access $cm->visible.
+    if (plugin_supports('mod', $modulename, FEATURE_CONTROLS_GRADE_VISIBILITY) &&
+            component_callback_exists('mod_' . $modulename, 'grade_item_update')) {
+        $instance = $DB->get_record($modulename, array('id' => $cm->instance), '*', MUST_EXIST);
+        component_callback('mod_' . $modulename, 'grade_item_update', array($instance));
+    } else {
+        $grade_items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$modulename, 'iteminstance'=>$cm->instance, 'courseid'=>$cm->course));
+        if ($grade_items) {
+            foreach ($grade_items as $grade_item) {
+                $grade_item->set_hidden(!$visible);
+            }
+        }
+    }
 
     rebuild_course_cache($cm->course, true);
     return true;
@@ -2175,7 +2180,7 @@ function course_get_cm_move(cm_info $mod, $sr = null) {
     if ($hasmanageactivities) {
         $pixicon = 'i/dragdrop';
 
-        if ($mod->course == SITEID) {
+        if (!course_ajax_enabled($mod->get_course())) {
             // Override for course frontpage until we get drag/drop working there.
             $pixicon = 't/move';
         }
@@ -3202,7 +3207,7 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
     );
 
     // Include course dragdrop
-    if ($course->id != $SITE->id) {
+    if (course_format_uses_sections($course->format)) {
         $PAGE->requires->yui_module('moodle-course-dragdrop', 'M.course.init_section_dragdrop',
             array(array(
                 'courseid' => $course->id,
@@ -3240,8 +3245,8 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'emptydragdropregion'
         ), 'moodle');
 
-    // Include format-specific strings
-    if ($course->id != $SITE->id) {
+    // Include section-specific strings for formats which support sections.
+    if (course_format_uses_sections($course->format)) {
         $PAGE->requires->strings_for_js(array(
                 'showfromothers',
                 'hidefromothers',

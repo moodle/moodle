@@ -77,16 +77,16 @@ class behat_general extends behat_base {
         // moodle_page::$periodicrefreshdelay possible values.
         if (!$metarefresh = $this->getSession()->getPage()->find('xpath', "//head/descendant::meta[@http-equiv='refresh']")) {
             // We don't fail the scenario if no redirection with message is found to avoid race condition false failures.
-            return false;
+            return true;
         }
 
         // Wrapped in try & catch in case the redirection has already been executed.
         try {
             $content = $metarefresh->getAttribute('content');
         } catch (NoSuchElement $e) {
-            return false;
+            return true;
         } catch (StaleElementReference $e) {
-            return false;
+            return true;
         }
 
         // Getting the refresh time and the url if present.
@@ -124,7 +124,20 @@ class behat_general extends behat_base {
      * @param string $iframename
      */
     public function switch_to_iframe($iframename) {
-        $this->getSession()->switchToIFrame($iframename);
+
+        // We spin to give time to the iframe to be loaded.
+        // Using extended timeout as we don't know about which
+        // kind of iframe will be loaded.
+        $this->spin(
+            function($context, $iframename) {
+                $context->getSession()->switchToIFrame($iframename);
+
+                // If no exception we are done.
+                return true;
+            },
+            $iframename,
+            self::EXTENDED_TIMEOUT
+        );
     }
 
     /**
@@ -173,6 +186,7 @@ class behat_general extends behat_base {
     public function click_link($link) {
 
         $linknode = $this->find_link($link);
+        $this->ensure_node_is_visible($linknode);
         $linknode->click();
     }
 
@@ -202,7 +216,41 @@ class behat_general extends behat_base {
             throw new DriverException('Waits are disabled in scenarios without Javascript support');
         }
 
-        $this->getSession()->wait(self::TIMEOUT, '(document.readyState === "complete")');
+        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+    }
+
+    /**
+     * Waits until the provided element selector exists in the DOM
+     *
+     * Using the protected method as this method will be usually
+     * called by other methods which are not returning a set of
+     * steps and performs the actions directly, so it would not
+     * be executed if it returns another step.
+
+     * @Given /^I wait until "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" exists$/
+     * @param string $element
+     * @param string $selector
+     * @return void
+     */
+    public function wait_until_exists($element, $selectortype) {
+        $this->ensure_element_exists($element, $selectortype);
+    }
+
+    /**
+     * Waits until the provided element does not exist in the DOM
+     *
+     * Using the protected method as this method will be usually
+     * called by other methods which are not returning a set of
+     * steps and performs the actions directly, so it would not
+     * be executed if it returns another step.
+
+     * @Given /^I wait until "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" does not exist$/
+     * @param string $element
+     * @param string $selector
+     * @return void
+     */
+    public function wait_until_does_not_exists($element, $selectortype) {
+        $this->ensure_element_does_not_exist($element, $selectortype);
     }
 
     /**
@@ -230,6 +278,7 @@ class behat_general extends behat_base {
 
         // Gets the node based on the requested selector type and locator.
         $node = $this->get_selected_node($selectortype, $element);
+        $this->ensure_node_is_visible($node);
         $node->click();
     }
 
@@ -245,29 +294,8 @@ class behat_general extends behat_base {
     public function i_click_on_in_the($element, $selectortype, $nodeelement, $nodeselectortype) {
 
         $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
+        $this->ensure_node_is_visible($node);
         $node->click();
-    }
-
-    /**
-     * Click on the specified element inside a table row containing the specified text.
-     *
-     * @Given /^I click on "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>(?:[^"]|\\")*)" in the "(?P<row_text_string>(?:[^"]|\\")*)" table row$/
-     * @throws ElementNotFoundException
-     * @param string $element Element we look for
-     * @param string $selectortype The type of what we look for
-     * @param string $tablerowtext The table row text
-     */
-    public function i_click_on_in_the_table_row($element, $selectortype, $tablerowtext) {
-
-        // The table row container.
-        $nocontainerexception = new ElementNotFoundException($this->getSession(), '"' . $tablerowtext . '" row text ');
-        $tablerowtext = $this->getSession()->getSelectorsHandler()->xpathLiteral($tablerowtext);
-        $rownode = $this->find('xpath', "//tr[contains(., $tablerowtext)]", $nocontainerexception);
-
-        // Looking for the element DOM node inside the specified row.
-        list($selector, $locator) = $this->transform_selector($selectortype, $element);
-        $elementnode = $this->find($selector, $locator, false, $rownode);
-        $elementnode->click();
     }
 
     /**
@@ -319,6 +347,9 @@ class behat_general extends behat_base {
 
     /**
      * Checks, that the specified element is not visible. Only available in tests using Javascript.
+     *
+     * As a "not" method, it's performance is not specially good as we should ensure that the element
+     * have time to appear.
      *
      * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>(?:[^"]|\\")*)" should not be visible$/
      * @throws ElementNotFoundException
@@ -403,24 +434,35 @@ class behat_general extends behat_base {
         $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
-        // Wait until it finds the text, otherwise custom exception.
         try {
             $nodes = $this->find_all('xpath', $xpath);
-
-            // We also check for the element visibility when running JS tests.
-            if ($this->running_javascript()) {
-                foreach ($nodes as $node) {
-                    if ($node->isVisible()) {
-                        return;
-                    }
-                }
-
-                throw new ExpectationException("'{$text}' text was found but was not visible", $this->getSession());
-            }
-
         } catch (ElementNotFoundException $e) {
             throw new ExpectationException('"' . $text . '" text was not found in the page', $this->getSession());
         }
+
+        // If we are not running javascript we have enough with the
+        // element existing as we can't check if it is visible.
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        // We spin as we don't have enough checking that the element is there, we
+        // should also ensure that the element is visible.
+        $this->spin(
+            function($context, $args) {
+
+                foreach ($args['nodes'] as $node) {
+                    if ($node->isVisible()) {
+                        return true;
+                    }
+                }
+
+                // If non of the nodes is visible we loop again.
+                throw new ExpectationException('"' . $args['text'] . '" text was found but was not visible', $context->getSession());
+            },
+            array('nodes' => $nodes, 'text' => $text)
+        );
+
     }
 
     /**
@@ -432,16 +474,43 @@ class behat_general extends behat_base {
      */
     public function assert_page_not_contains_text($text) {
 
-        // Delegating the process to assert_page_contains_text.
+        // Looking for all the matching nodes without any other descendant matching the
+        // same xpath (we are using contains(., ....).
+        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
+            "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
+
+        // We should wait a while to ensure that the page is not still loading elements.
+        // Giving preference to the reliability of the results rather than to the performance.
         try {
-            $this->assert_page_contains_text($text);
-        } catch (ExpectationException $e) {
-            // It should not appear, so this is good.
+            $nodes = $this->find_all('xpath', $xpath);
+        } catch (ElementNotFoundException $e) {
+            // All ok.
             return;
         }
 
-        // If the page contains the text this is failing.
-        throw new ExpectationException('"' . $text . '" text was found in the page', $this->getSession());
+        // If we are not running javascript we have enough with the
+        // element existing as we can't check if it is hidden.
+        if (!$this->running_javascript()) {
+            throw new ExpectationException('"' . $text . '" text was found in the page', $this->getSession());
+        }
+
+        // If the element is there we should be sure that it is not visible.
+        $this->spin(
+            function($context, $args) {
+
+                foreach ($args['nodes'] as $node) {
+                    if ($node->isVisible()) {
+                        throw new ExpectationException('"' . $args['text'] . '" text was found in the page', $context->getSession());
+                    }
+                }
+
+                // If non of the found nodes is visible we consider that the text is not visible.
+                return true;
+            },
+            array('nodes' => $nodes, 'text' => $text)
+        );
+
     }
 
     /**
@@ -468,22 +537,30 @@ class behat_general extends behat_base {
         // Wait until it finds the text inside the container, otherwise custom exception.
         try {
             $nodes = $this->find_all('xpath', $xpath, false, $container);
+        } catch (ElementNotFoundException $e) {
+            throw new ExpectationException('"' . $text . '" text was not found in the "' . $element . '" element', $this->getSession());
+        }
 
-            // We also check for the element visibility when running JS tests.
-            if ($this->running_javascript()) {
-                foreach ($nodes as $node) {
+        // If we are not running javascript we have enough with the
+        // element existing as we can't check if it is visible.
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        // We also check the element visibility when running JS tests.
+        $this->spin(
+            function($context, $args) {
+
+                foreach ($args['nodes'] as $node) {
                     if ($node->isVisible()) {
-                        return;
+                        return true;
                     }
                 }
 
-                throw new ExpectationException("'{$text}' text was found in the {$element} element but was not visible", $this->getSession());
-            }
-
-        } catch (ElementNotFoundException $e) {
-            throw new ExpectationException('"' . $text . '" text was not found in the ' . $element . ' element', $this->getSession());
-        }
-
+                throw new ExpectationException('"' . $args['text'] . '" text was found in the "' . $args['element'] . '" element but was not visible', $context->getSession());
+            },
+            array('nodes' => $nodes, 'text' => $text, 'element' => $element)
+        );
     }
 
     /**
@@ -498,18 +575,45 @@ class behat_general extends behat_base {
      */
     public function assert_element_not_contains_text($text, $element, $selectortype) {
 
-        // Delegating the process to assert_element_contains_text.
+        // Getting the container where the text should be found.
+        $container = $this->get_selected_node($selectortype, $element);
+
+        // Looking for all the matching nodes without any other descendant matching the
+        // same xpath (we are using contains(., ....).
+        $xpathliteral = $this->getSession()->getSelectorsHandler()->xpathLiteral($text);
+        $xpath = "/descendant-or-self::*[contains(., $xpathliteral)]" .
+            "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
+
+        // We should wait a while to ensure that the page is not still loading elements.
+        // Giving preference to the reliability of the results rather than to the performance.
         try {
-            $this->assert_element_contains_text($text, $element, $selectortype);
-        } catch (ExpectationException $e) {
-            // It should not appear, so this is good.
-            // We only catch ExpectationException as ElementNotFoundException
-            // will be thrown if the container does not exist.
+            $nodes = $this->find_all('xpath', $xpath, false, $container);
+        } catch (ElementNotFoundException $e) {
+            // All ok.
             return;
         }
 
-        // If the element contains the text this is failing.
-        throw new ExpectationException('"' . $text . '" text was found in the ' . $element . ' element', $this->getSession());
+        // If we are not running javascript we have enough with the
+        // element not being found as we can't check if it is visible.
+        if (!$this->running_javascript()) {
+            throw new ExpectationException('"' . $text . '" text was found in the "' . $element . '" element', $this->getSession());
+        }
+
+        // We need to ensure all the found nodes are hidden.
+        $this->spin(
+            function($context, $args) {
+
+                foreach ($args['nodes'] as $node) {
+                    if ($node->isVisible()) {
+                        throw new ExpectationException('"' . $args['text'] . '" text was found in the "' . $args['element'] . '" element', $context->getSession());
+                    }
+                }
+
+                // If all the found nodes are hidden we are happy.
+                return true;
+            },
+            array('nodes' => $nodes, 'text' => $text, 'element' => $element)
+        );
     }
 
     /**

@@ -1387,44 +1387,9 @@ class environment_results {
     }
 }
 
-/// Here all the bypass functions are coded to be used by the environment
-/// checker. All those functions will receive the result object and will
-/// return it modified as needed (status and bypass string)
-
-/**
- * This function will bypass MySQL 4.1.16 reqs if:
- *   - We are using MySQL > 4.1.12, informing about problems with non latin chars in the future
- *
- * @param object result object to handle
- * @return boolean true/false to determinate if the bypass has to be performed (true) or no (false)
- */
-function bypass_mysql416_reqs ($result) {
-/// See if we are running MySQL >= 4.1.12
-    if (version_compare($result->getCurrentVersion(), '4.1.12', '>=')) {
-        return true;
-    }
-
-    return false;
-}
-
 /// Here all the restrict functions are coded to be used by the environment
 /// checker. All those functions will receive the result object and will
 /// return it modified as needed (status and bypass string)
-
-/**
- * This function will restrict PHP reqs if:
- *   - We are using PHP 5.0.x, informing about the buggy version
- *
- * @param object $result object to handle
- * @return boolean true/false to determinate if the restrict has to be performed (true) or no (false)
- */
-function restrict_php50_version($result) {
-    if (version_compare($result->getCurrentVersion(), '5.0.0', '>=')
-      and version_compare($result->getCurrentVersion(), '5.0.99', '<')) {
-        return true;
-    }
-    return false;
-}
 
 /**
  * @param array $element the element from the environment.xml file that should have

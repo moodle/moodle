@@ -1,6 +1,31 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 2.7 ===
+
+* $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
+
+DEPRECATIONS:
+* Abstract class \core\event\course_module_instances_list_viewed is deprecated now, use \core\event\instances_list_viewed instead.
+* mod_book\event\instances_list_viewed has been deprecated. Please use mod_book\event\course_module_instance_list_viewed instead.
+* mod_chat\event\instances_list_viewed has been deprecated. Please use mod_chat\event\course_module_instance_list_viewed instead.
+* mod_choice\event\instances_list_viewed has been deprecated. Please use mod_choice\event\course_module_instance_list_viewed instead.
+* mod_feedback\event\instances_list_viewed has been deprecated. Please use mod_feedback\event\course_module_instance_list_viewed instead.
+* mod_page\event\instances_list_viewed has been deprecated. Please use mod_page\event\course_module_instance_list_viewed instead.
+* The constants FRONTPAGECOURSELIST, FRONTPAGETOPICONLY & FRONTPAGECOURSELIMIT have been removed.
+* Various cm_info methods have been deprecated in favour of their read-only properties (get_url(), get_content(), get_extra_classes(),
+  get_on_click(), get_custom_data(), get_after_link, get_after_edit_icons)
+
+YUI:
+  * The lightbox attribute for moodle-core-notification-dialogue has been
+    deprecated and replaced by the modal attribute. This was actually
+    changed in Moodle 2.2, but has only been marked as deprecated now. It
+    will be removed in Moodle 2.9.
+
+JavaSript:
+    * The findChildNodes global function has been deprecated. Y.all should
+      be used instead.
+
 === 2.6 ===
 
 * Use new methods from core_component class instead of get_core_subsystems(), get_plugin_types(),
@@ -59,6 +84,11 @@ information provided here is intended especially for developers.
 * The library to interact with Box.net (class boxclient) is only compatible with their APIv1 which
   reaches its end of life on the 14th of Dec. You should migrate your scripts to make usage of the
   new class boxnet_client(). Note that the method names and return values have changed.
+* Settings pages are now possible for Calendar type plugins. Calendar type plugins that require a settings page to
+  work properly will need to set their requires version to a number that is equal to or grater than the 2.6.1 release version.
+* The admin/tool/generator tool was overhauled to use testing data generators and the previous interface to create
+  test data was removed (it was not working correctly anyway). If you were using this tool you will probably need to
+  update your code.
 
 DEPRECATIONS:
 Various previously deprecated functions have now been altered to throw DEBUG_DEVELOPER debugging notices

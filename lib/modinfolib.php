@@ -1167,7 +1167,17 @@ class cm_info implements IteratorAggregate {
      * @return mixed
      */
     public function __call($name, $arguments) {
+        global $CFG;
+
         if (in_array($name, self::$standardmethods)) {
+            if ($CFG->debugdeveloper) {
+                if ($alternative = array_search($name, self::$standardproperties)) {
+                    // All standard methods do not have arguments anyway.
+                    debugging("cm_info::$name() is deprecated, please use the property cm_info->$alternative instead.", DEBUG_DEVELOPER);
+                } else {
+                    debugging("cm_info::$name() is deprecated and should not be used.", DEBUG_DEVELOPER);
+                }
+            }
             // All standard methods do not have arguments anyway.
             return $this->$name();
         }
@@ -2077,7 +2087,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         $select = array('id'=>$courseid);
     } else {
         $select = array();
-        @set_time_limit(0);  // this could take a while!   MDL-10954
+        core_php_time_limit::raise();  // this could take a while!   MDL-10954
     }
 
     $rs = $DB->get_recordset("course", $select,'','id,'.join(',', course_modinfo::$cachedfields));
@@ -2426,7 +2436,7 @@ class section_info implements IteratorAggregate {
     public function __empty($name) {
         if (method_exists($this, 'get_'.$name) ||
                 property_exists($this, '_'.$name) ||
-                in_array($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
+                array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
             $value = $this->__get($name);
             return empty($value);
         }
@@ -2451,7 +2461,7 @@ class section_info implements IteratorAggregate {
             return $this->cachedformatoptions[$name];
         }
         // precheck if the option is defined in format to avoid unnecessary DB queries in get_format_options()
-        if (in_array($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
+        if (array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
             $formatoptions = course_get_format($this->modinfo->get_course())->get_format_options($this);
             return $formatoptions[$name];
         }

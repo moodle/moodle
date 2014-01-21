@@ -271,4 +271,3 @@ Y.BootstrapEngine = BootstrapEngine;
 
 
 }, '@VERSION@' ,{requires:['node','base-base']});
-;

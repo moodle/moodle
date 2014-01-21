@@ -12,7 +12,7 @@
 .dir-rtl .section_add_menus .urlselect select { margin-right: .2em; margin-left: 0;}
 .section_add_menus .urlselect img.iconhelp { padding: 0; margin: 0; vertical-align: text-bottom;}
 
-.site-topic ul.section,
+.sitetopic ul.section { margin: 5px; padding: 0; }
 .course-content ul.section { margin: 1em;}
 .sitetopic .section .activity img.activityicon,
 .course-content .section .activity img.activityicon {
@@ -43,6 +43,11 @@
 .section .activity .mod-indent-outer {
     display: table;
     padding-left: 24px;
+}
+
+.section .label .mod-indent-outer {
+    padding-left: 24px;
+    display: block;
 }
 
 .dir-rtl .section .activity .mod-indent-outer {
@@ -91,6 +96,16 @@
     padding-right: 32px;
     height: 2em;
     display: table-cell;
+
+}
+
+.sitetopic .section .label .activityinstance,
+.course-content .section .label .activityinstance,
+.sitetopic .section .label .contentwithoutlink,
+.course-content .section .label .contentwithoutlink {
+    padding-right: 32px;
+    display: block;
+    height: inherit;
 }
 
 .dir-rtl .sitetopic .section .activity .activityinstance,
@@ -204,8 +219,6 @@ li.section.hidden span.commands a.editing_hide,
 li.section.hidden span.commands a.editing_show {cursor:default;}
 
 .section img.movetarget {height:16px;width:80px;}
-
-.course ul.section {margin:5px;padding:0;}
 
 .weeks-format, /* Window-width: 800 pixels.IE doesn't support, see inline IE conditional comment. */
 .topics-format {margin-top: 8px;min-width: 763px;}
@@ -463,14 +476,11 @@ input.titleeditor { vertical-align: text-bottom; }
 .dir-rtl #course-category-listings .listitem > div > .float-right {float:left;text-align:left;}
 
 #course-category-listings .listitem[data-visible="0"],
-#course-category-listings .listitem[data-visible="0"] a.categoryname,
 #course-category-listings .listitem[data-visible="0"] > div > a {color:#AAA;}
 #course-category-listings .listitem > div .item-actions .action-hide,
 #course-category-listings .listitem[data-visible="0"] > div .item-actions .action-show {display:inline;}
 #course-category-listings .listitem > div .item-actions .action-show,
 #course-category-listings .listitem[data-visible="0"] > div .item-actions .action-hide,
-#course-category-listings .listitem[data-visible="0"] > ul .item-actions.category-item-actions .action-hide,
-#course-category-listings .listitem[data-visible="0"] > ul .item-actions.category-item-actions .action-show,
 
 #category-listing .listitem:first-child > div .item-actions .action-moveup,
 #category-listing .listitem:last-child > div .item-actions .action-movedown,

@@ -44,7 +44,7 @@ class block_site_main_menu extends block_list {
                     $content = $cm->get_formatted_content(array('overflowdiv' => true, 'noclean' => true));
                     $instancename = $cm->get_formatted_name();
 
-                    if (!($url = $cm->get_url())) {
+                    if (!($url = $cm->url)) {
                         $this->content->items[] = $content;
                         $this->content->icons[] = '';
                     } else {
@@ -89,6 +89,20 @@ class block_site_main_menu extends block_list {
                 }
                 if (!$ismoving) {
                     $actions = course_get_cm_edit_actions($mod, -1);
+
+                    // Add the action move.
+                    $modcontext = context_module::instance($mod->id);
+                    $hasmanageactivities = has_capability('moodle/course:manageactivities', $modcontext);
+                    if ($hasmanageactivities) {
+                        $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
+                        $actions['move'] = new action_menu_link_primary(
+                            new moodle_url($baseurl, array('copy' => $mod->id)),
+                            new pix_icon('t/move', get_string('move'), 'moodle', array('class' => 'iconsmall', 'title' => '')),
+                            null,
+                            array('title' => get_string('move'))
+                        );
+                    }
+
                     $editbuttons = html_writer::tag('div',
                         $courserenderer->course_section_cm_edit_actions($actions, $mod, array('donotenhance' => true)),
                         array('class' => 'buttons')
@@ -109,7 +123,7 @@ class block_site_main_menu extends block_list {
                     $instancename = $mod->get_formatted_name();
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
 
-                    if (!($url = $mod->get_url())) {
+                    if (!($url = $mod->url)) {
                         $this->content->items[] = $content . $editbuttons;
                         $this->content->icons[] = '';
                     } else {

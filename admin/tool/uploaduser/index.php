@@ -36,7 +36,7 @@ require_once('user_form.php');
 $iid         = optional_param('iid', '', PARAM_INT);
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
 
-@set_time_limit(60*60); // 1 hour should be enough
+core_php_time_limit::raise(60*60); // 1 hour should be enough
 raise_memory_limit(MEMORY_HUGE);
 
 require_login();
@@ -123,12 +123,11 @@ if (empty($iid)) {
         $content = $mform1->get_file_content('userfile');
 
         $readcount = $cir->load_csv_content($content, $formdata->encoding, $formdata->delimiter_name);
+        $csvloaderror = $cir->get_error();
         unset($content);
 
-        if ($readcount === false) {
-            print_error('csvloaderror', '', $returnurl);
-        } else if ($readcount == 0) {
-            print_error('csvemptyfile', 'error', $returnurl);
+        if (!is_null($csvloaderror)) {
+            print_error('csvloaderror', '', $returnurl, $csvloaderror);
         }
         // test if columns ok
         $filecolumns = uu_validate_user_upload_columns($cir, $STD_FIELDS, $PRF_FIELDS, $returnurl);
@@ -235,10 +234,10 @@ if ($formdata = $mform2->is_cancelled()) {
                     $user->$key['text']   = $value;
                     $user->$key['format'] = FORMAT_MOODLE;
                 } else {
-                    $user->$key = $value;
+                    $user->$key = trim($value);
                 }
             } else {
-                $user->$key = $value;
+                $user->$key = trim($value);
             }
 
             if (in_array($key, $upt->columns)) {
@@ -550,8 +549,6 @@ if ($formdata = $mform2->is_cancelled()) {
                         continue;
                     }
                     if (!property_exists($user, $column) or !property_exists($existinguser, $column)) {
-                        // this should never happen
-                        debugging("Could not find $column on the user objects", DEBUG_DEVELOPER);
                         continue;
                     }
                     if ($updatetype == UU_UPDATE_MISSING) {
@@ -966,7 +963,7 @@ if ($formdata = $mform2->is_cancelled()) {
                     $status = null;
 
                     if (isset($user->{'enrolstatus'.$i})) {
-                        $enrolstatus = trim($user->{'enrolstatus'.$i});
+                        $enrolstatus = $user->{'enrolstatus'.$i};
                         if ($enrolstatus == '') {
                             $status = null;
                         } else if ($enrolstatus === (string)ENROL_USER_ACTIVE) {
@@ -1109,7 +1106,7 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     $rowcols = array();
     $rowcols['line'] = $linenum;
     foreach($fields as $key => $field) {
-        $rowcols[$filecolumns[$key]] = s($field);
+        $rowcols[$filecolumns[$key]] = s(trim($field));
     }
     $rowcols['status'] = array();
 
@@ -1135,7 +1132,7 @@ while ($linenum <= $previewrows and $fields = $cir->next()) {
     }
 
     if (isset($rowcols['city'])) {
-        $rowcols['city'] = trim($rowcols['city']);
+        $rowcols['city'] = $rowcols['city'];
     }
     // Check if rowcols have custom profile field with correct data and update error state.
     $noerror = uu_check_custom_profile_data($rowcols) && $noerror;

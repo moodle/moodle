@@ -562,11 +562,8 @@ $CFG->admin = 'admin';
 //=========================================================================
 // 10. SECRET PASSWORD SALT
 //=========================================================================
-// A single site-wide password salt is no longer required *unless* you are
-// upgrading an older version of Moodle (prior to 2.5), or if you are using
-// a PHP version below 5.3.7. If upgrading, keep any values from your old
-// config.php file. If you are using PHP < 5.3.7 set to a long random string
-// below:
+// A site-wide password salt is no longer used in new installations.
+// If upgrading from 2.6 or older, keep all existing salts in config.php file.
 //
 // $CFG->passwordsaltmain = 'a_very_long_random_string_of_characters#@6&*1';
 //
@@ -584,15 +581,11 @@ $CFG->admin = 'admin';
 //=========================================================================
 // 11. BEHAT SUPPORT
 //=========================================================================
-// Behat needs a separate data directory and unique database prefix:
+// Behat test site needs a unique www root, data directory and database prefix:
 //
+// $CFG->behat_wwwroot = 'http://127.0.0.1/moodle';
 // $CFG->behat_prefix = 'bht_';
 // $CFG->behat_dataroot = '/home/example/bht_moodledata';
-//
-// Behat uses http://localhost:8000 as default URL to run
-// the acceptance tests, you can override this value.
-// Example:
-//   $CFG->behat_wwwroot = 'http://192.168.1.250:8000';
 //
 // You can override default Moodle configuration for Behat and add your own
 // params; here you can add more profiles, use different Mink drivers than Selenium...
@@ -638,16 +631,6 @@ $CFG->admin = 'admin';
 //       )
 //   );
 //
-// You can completely switch to test environment when "php admin/tool/behat/cli/util --enable",
-// this means that all the site accesses will be routed to the test environment instead of
-// the regular one, so NEVER USE THIS SETTING IN PRODUCTION SITES. This setting is useful
-// when working with cloud CI (continous integration) servers which requires public sites to run the
-// tests, or in testing/development installations when you are developing in a pre-PHP 5.4 server.
-// Note that with this setting enabled $CFG->behat_wwwroot is ignored and $CFG->behat_wwwroot
-// value will be the regular $CFG->wwwroot value.
-// Example:
-//   $CFG->behat_switchcompletely = true;
-//
 // You can force the browser session (not user's sessions) to restart after N seconds. This could
 // be useful if you are using a cloud-based service with time restrictions in the browser side.
 // Setting this value the browser session that Behat is using will be restarted. Set the time in
@@ -660,6 +643,20 @@ $CFG->admin = 'admin';
 // used to expand the default white list with an array of extra settings.
 // Example:
 //   $CFG->behat_extraallowedsettings = array('logsql', 'dblogerror');
+//
+// You should explicitly allow the usage of the deprecated behat steps, otherwise an exception will
+// be thrown when using them. The setting is disabled by default.
+// Example:
+//   $CFG->behat_usedeprecated = true;
+//
+// Including feature files from directories outside the dirroot is possible if required. The setting
+// requires that the running user has executable permissions on all parent directories in the paths.
+// Example:
+//   $CFG->behat_additionalfeatures = array('/home/developer/code/wipfeatures');
+//
+// You can make behat save a screenshot when a scenario fails.
+// Example:
+//   $CFG->behat_screenshots_path = '/my/path/to/save/screenshots';
 //
 //=========================================================================
 // 12. DEVELOPER DATA GENERATOR

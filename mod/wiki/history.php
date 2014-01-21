@@ -61,7 +61,17 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 require_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/wiki:viewpage', $context);
-add_to_log($course->id, 'wiki', 'history', "history.php?pageid=".$pageid, $pageid, $cm->id);
+
+// Trigger history viewed event.
+$event = \mod_wiki\event\page_history_viewed::create(
+        array(
+            'context' => $context,
+            'objectid' => $pageid
+            ));
+$event->add_record_snapshot('wiki_pages', $page);
+$event->add_record_snapshot('wiki', $wiki);
+$event->add_record_snapshot('wiki_subwikis', $subwiki);
+$event->trigger();
 
 /// Print the page header
 $wikipage = new page_wiki_history($wiki, $subwiki, $cm);

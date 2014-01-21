@@ -48,7 +48,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
     var scorm_bloody_labelclick = false;
     var scorm_nav_panel;
 
-    Y.use('button', 'dd-plugin', 'panel', 'resize', 'moodle-mod_scorm-treeview', function(Y) {
+    Y.use('button', 'dd-plugin', 'panel', 'resize', 'gallery-sm-treeview', function(Y) {
 
         Y.TreeView.prototype.getNodeByAttribute = function(attribute, value) {
             var node = null,
@@ -187,6 +187,7 @@ M.mod_scorm.init = function(Y, nav_display, navposition_left, navposition_top, h
                     var cwidth = scormplayerdata.cwidth;
                     var cheight = scormplayerdata.cheight;
                     var poptions = scormplayerdata.popupoptions;
+                    poptions = poptions + ',resizable=yes'; // Added for IE (MDL-32506).
                     scorm_openpopup(M.cfg.wwwroot + "/mod/scorm/loadSCO.php?" + node.title, window_name, poptions, cwidth, cheight);
                 } else {
                     content.replaceChild(obj, old);

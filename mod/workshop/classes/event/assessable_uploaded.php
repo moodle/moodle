@@ -29,6 +29,13 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * mod_workshop assessable uploaded event class.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type array pathnamehashes uploaded files path name hashes.
+ *      @type string content string.
+ * }
+ *
  * @package    mod_workshop
  * @copyright  2013 Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

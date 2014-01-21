@@ -3,10 +3,6 @@
     padding: 8px 0;
 }
 
-.block .header h2 {
-    padding: .2em 0 0 .2em;
-    margin: 0;
-}
 .block .header .title h2,
 .block h3 {
   .nav-header;
@@ -39,14 +35,22 @@
     width:auto;
 }
 
-.block .content {
-    padding: 4px 14px;
-}
-.block .content hr {
-    margin: 5px 0;
+.block {
+    .header h2 {
+        word-wrap: break-word;
+        padding: .2em 0 0 .2em;
+        margin: 0;
+    }
+    .content {
+        padding: 4px 14px;
+        word-wrap: break-word;
+        hr {
+            margin: 5px 0;
+        }
+    }
 }
 
-.block.hidden .content {
+.jsenabled .block.hidden .content {
     display: none;
 }
 

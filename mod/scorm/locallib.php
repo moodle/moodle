@@ -716,7 +716,7 @@ function scorm_grade_user($scorm, $userid) {
 
         break;
         case AVERAGEATTEMPT:
-            $attemptcount = scorm_get_attempt_count($userid, $scorm, true);
+            $attemptcount = scorm_get_attempt_count($userid, $scorm, true, true);
             if (empty($attemptcount)) {
                 return 0;
             } else {
@@ -1217,27 +1217,43 @@ function scorm_get_attempt_status($user, $scorm, $cm='') {
  *
  * @param object $user Current context user
  * @param object $scorm a moodle scrom object - mdl_scorm
- * @param bool $attempts return the list of attempts
+ * @param bool $returnobjects if true returns a object with attempts, if false returns count of attempts.
+ * @param bool $ignoremissingcompletion - ignores attempts that haven't reported a grade/completion.
  * @return int - no. of attempts so far
  */
-function scorm_get_attempt_count($userid, $scorm, $attempts_only=false) {
+function scorm_get_attempt_count($userid, $scorm, $returnobjects = false, $ignoremissingcompletion = false) {
     global $DB;
-    $attemptcount = 0;
-    $element = 'cmi.core.score.raw';
-    if ($scorm->grademethod == GRADESCOES) {
-        $element = 'cmi.core.lesson_status';
-    }
+
+    // Historically attempts that don't report these elements haven't been included in the average attempts grading method
+    // we may want to change this in future, but to avoid unexpected grade decreases we're leaving this in. MDL-43222
     if (scorm_version_check($scorm->version, SCORM_13)) {
         $element = 'cmi.score.raw';
+    } else if ($scorm->grademethod == GRADESCOES) {
+        $element = 'cmi.core.lesson_status';
+    } else {
+        $element = 'cmi.core.score.raw';
     }
-    $attempts = $DB->get_records_select('scorm_scoes_track', "element=? AND userid=? AND scormid=?", array($element, $userid, $scorm->id), 'attempt', 'DISTINCT attempt AS attemptnumber');
-    if ($attempts_only) {
+
+    if ($returnobjects) {
+        $params = array('userid' => $userid, 'scormid' => $scorm->id);
+        if ($ignoremissingcompletion) { // Exclude attempts that don't have the completion element requested.
+            $params['element'] = $element;
+        }
+        $attempts = $DB->get_records('scorm_scoes_track', $params, 'attempt', 'DISTINCT attempt AS attemptnumber');
         return $attempts;
+    } else {
+        $params = array($userid, $scorm->id);
+        $sql = "SELECT COUNT(DISTINCT attempt)
+                  FROM {scorm_scoes_track}
+                 WHERE userid = ? AND scormid = ?";
+        if ($ignoremissingcompletion) { // Exclude attempts that don't have the completion element requested.
+            $sql .= ' AND element = ?';
+            $params[] = $element;
+        }
+
+        $attemptscount = $DB->count_records_sql($sql, $params);
+        return $attemptscount;
     }
-    if (!empty($attempts)) {
-        $attemptcount = count($attempts);
-    }
-    return $attemptcount;
 }
 
 /**
@@ -1268,9 +1284,9 @@ function scorm_debugging($scorm) {
  * Delete Scorm tracks for selected users
  *
  * @param array $attemptids list of attempts that need to be deleted
- * @param int $scorm instance
+ * @param stdClass $scorm instance
  *
- * return bool true deleted all responses, false failed deleting an attempt - stopped here
+ * @return bool true deleted all responses, false failed deleting an attempt - stopped here
  */
 function scorm_delete_responses($attemptids, $scorm) {
     if (!is_array($attemptids) || empty($attemptids)) {
@@ -1302,15 +1318,27 @@ function scorm_delete_responses($attemptids, $scorm) {
  * Delete Scorm tracks for selected users
  *
  * @param int $userid ID of User
- * @param int $scormid ID of Scorm
+ * @param stdClass $scorm Scorm object
  * @param int $attemptid user attempt that need to be deleted
  *
- * return bool true suceeded
+ * @return bool true suceeded
  */
 function scorm_delete_attempt($userid, $scorm, $attemptid) {
     global $DB;
 
     $DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id, 'attempt' => $attemptid));
+    $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+
+    // Trigger instances list viewed event.
+    $event = \mod_scorm\event\attempt_deleted::create(array(
+         'other' => array('attemptid' => $attemptid),
+         'context' => context_module::instance($cm->id),
+         'relateduserid' => $userid
+    ));
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('scorm', $scorm);
+    $event->trigger();
+
     include_once('lib.php');
     scorm_update_grades($scorm, $userid, true);
     return true;
@@ -1730,7 +1758,7 @@ function scorm_get_toc($user, $scorm, $cmid, $toclink=TOCJSLINK, $currentorg='',
     global $CFG, $DB, $OUTPUT;
 
     if (empty($attempt)) {
-        $attempt = scorm_get_attempt_count($user->id, $scorm);
+        $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
 
     $result = new stdClass();
@@ -1871,11 +1899,8 @@ function scorm_get_adlnav_json ($scoes, &$adlnav = array(), $parentscoid = null)
  */
 function scorm_check_url($url) {
     $curl = new curl;
-
-    if (!ini_get('open_basedir') and !ini_get('safe_mode')) {
-        // Same options as in {@link download_file_content()}, used in {@link scorm_parse_scorm()}.
-        $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => true, 'CURLOPT_MAXREDIRS' => 5));
-    }
+    // Same options as in {@link download_file_content()}, used in {@link scorm_parse_scorm()}.
+    $curl->setopt(array('CURLOPT_FOLLOWLOCATION' => true, 'CURLOPT_MAXREDIRS' => 5));
     $cmsg = $curl->head($url);
     $info = $curl->get_info();
     if (empty($info['http_code']) || $info['http_code'] != 200) {

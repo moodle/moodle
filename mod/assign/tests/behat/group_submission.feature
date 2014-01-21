@@ -50,8 +50,8 @@ Feature: Group assignment submissions
     And I press "Save changes"
     And I expand "Users" node
     And I follow "Groups"
-    And I add "student0" user to "Group 1" group
-    And I add "student1" user to "Group 1" group
+    And I add "Student 0 (student0@asd.com)" user to "Group 1" group members
+    And I add "Student 1 (student1@asd.com)" user to "Group 1" group members
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I follow "View/grade all submissions"

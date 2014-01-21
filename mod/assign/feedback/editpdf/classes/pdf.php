@@ -77,6 +77,8 @@ class pdf extends \FPDI {
      */
     public function combine_pdfs($pdflist, $outfilename) {
 
+        raise_memory_limit(MEMORY_EXTRA);
+
         $this->setPageUnit('pt');
         $this->setPrintHeader(false);
         $this->setPrintFooter(false);
@@ -122,6 +124,8 @@ class pdf extends \FPDI {
      * @return int the number of pages in the PDF
      */
     public function load_pdf($filename) {
+        raise_memory_limit(MEMORY_EXTRA);
+
         $this->setPageUnit('pt');
         $this->scale = 72.0 / 100.0;
         $this->SetFont('helvetica', '', 16.0 * $this->scale);
@@ -133,6 +137,7 @@ class pdf extends \FPDI {
         $this->setPrintFooter(false);
         $this->pagecount = $this->setSourceFile($filename);
         $this->filename = $filename;
+
         return $this->pagecount;
     }
 
@@ -426,14 +431,14 @@ class pdf extends \FPDI {
 
         if ($generate) {
             // Use ghostscript to generate an image of the specified page.
-            $gsexec = \get_config('assignfeedback_editpdf', 'gspath');
-            $imageres = 100;
-            $filename = $this->filename;
-            $pagenoinc = $pageno + 1;
+            $gsexec = \escapeshellarg(\get_config('assignfeedback_editpdf', 'gspath'));
+            $imageres = \escapeshellarg(100);
+            $imagefilearg = \escapeshellarg($imagefile);
+            $filename = \escapeshellarg($this->filename);
+            $pagenoinc = \escapeshellarg($pageno + 1);
             $command = "$gsexec -q -sDEVICE=png16m -dSAFER -dBATCH -dNOPAUSE -r$imageres -dFirstPage=$pagenoinc -dLastPage=$pagenoinc ".
-                "-dGraphicsAlphaBits=4 -dTextAlphaBits=4 -sOutputFile=\"$imagefile\" \"$filename\"";
+                "-dGraphicsAlphaBits=4 -dTextAlphaBits=4 -sOutputFile=$imagefilearg $filename";
 
-            //$command = escapeshellcmd($command);
             $output = null;
             $result = exec($command, $output);
             if (!file_exists($imagefile)) {
@@ -484,9 +489,10 @@ class pdf extends \FPDI {
 
         $file->copy_content_to($tempsrc); // Copy the file.
 
-        $gsexec = \get_config('assignfeedback_editpdf', 'gspath');
-        $command = "$gsexec -q -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=\"$tempdst\" \"$tempsrc\"";
-        //$command = escapeshellcmd($command);
+        $gsexec = \escapeshellarg(\get_config('assignfeedback_editpdf', 'gspath'));
+        $tempdstarg = \escapeshellarg($tempdst);
+        $tempsrcarg = \escapeshellarg($tempsrc);
+        $command = "$gsexec -q -sDEVICE=pdfwrite -dBATCH -dNOPAUSE -sOutputFile=$tempdstarg $tempsrcarg";
         exec($command);
         @unlink($tempsrc);
         if (!file_exists($tempdst)) {

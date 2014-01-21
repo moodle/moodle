@@ -35,17 +35,15 @@ Feature: Organize students into groups
     And I fill the moodle form with:
       | Group name | Group 2 |
     And I press "Save changes"
-    When I add "student0" user to "Group 1" group
-    And I add "student1" user to "Group 1" group
-    And I add "student2" user to "Group 2" group
-    And I add "student3" user to "Group 2" group
+    When I add "Student 0 (student0@asd.com)" user to "Group 1" group members
+    And I add "Student 1 (student1@asd.com)" user to "Group 1" group members
+    And I add "Student 2 (student2@asd.com)" user to "Group 2" group members
+    And I add "Student 3 (student3@asd.com)" user to "Group 2" group members
     Then I select "Group 1 (2)" from "groups"
-    And I wait "5" seconds
     And the "members" select box should contain "Student 0"
     And the "members" select box should contain "Student 1"
     And the "members" select box should not contain "Student 2"
     And I select "Group 2 (2)" from "groups"
-    And I wait "5" seconds
     And the "members" select box should contain "Student 2"
     And the "members" select box should contain "Student 3"
     And the "members" select box should not contain "Student 0"

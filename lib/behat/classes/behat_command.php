@@ -66,10 +66,30 @@ class behat_command {
 
     /**
      * Returns the executable path
+     *
+     * Allows returning a customized command for cygwin when the
+     * command is just displayed, when using exec(), system() and
+     * friends we stay with DIRECTORY_SEPARATOR as they use the
+     * normal cmd.exe (in Windows).
+     *
+     * @param  bool $custombyterm  If the provided command should depend on the terminal where it runs
      * @return string
      */
-    public final static function get_behat_command() {
-        return 'vendor' . DIRECTORY_SEPARATOR . 'bin' . DIRECTORY_SEPARATOR . 'behat';
+    public final static function get_behat_command($custombyterm = false) {
+
+        $separator = DIRECTORY_SEPARATOR;
+        $exec = 'behat';
+
+        // Cygwin uses linux-style directory separators.
+        if ($custombyterm && testing_is_cygwin()) {
+            $separator = '/';
+
+            // MinGW can not execute .bat scripts.
+            if (!testing_is_mingw()) {
+                $exec = 'behat.bat';
+            }
+        }
+        return 'vendor' . $separator . 'bin' . $separator . $exec;
     }
 
     /**
@@ -100,17 +120,10 @@ class behat_command {
      * It checks behat dependencies have been installed and runs
      * the behat help command to ensure it works as expected
      *
-     * @param  bool $checkphp Extra check for the PHP version
      * @return int Error code or 0 if all ok
      */
-    public static function behat_setup_problem($checkphp = false) {
+    public static function behat_setup_problem() {
         global $CFG;
-
-        // We don't check the PHP version if $CFG->behat_switchcompletely has been enabled.
-        // Here we are in CLI.
-        if (empty($CFG->behat_switchcompletely) && $checkphp && version_compare(PHP_VERSION, '5.4.0', '<')) {
-            behat_error(BEHAT_EXITCODE_REQUIREMENT, 'PHP 5.4 is required. See config-dist.php for possible alternatives');
-        }
 
         $clibehaterrorstr = "Behat dependencies not installed. Ensure you ran the composer installer. " . self::DOCS_URL . "#Installation\n";
 
@@ -148,6 +161,9 @@ class behat_command {
         }
 
         // Checking behat dataroot existence otherwise echo about admin/tool/behat/cli/init.php.
+        if (!empty($CFG->behat_dataroot)) {
+            $CFG->behat_dataroot = realpath($CFG->behat_dataroot);
+        }
         if (empty($CFG->behat_dataroot) || !is_dir($CFG->behat_dataroot) || !is_writable($CFG->behat_dataroot)) {
             self::output_msg(get_string('runclitool', 'tool_behat', 'php admin/tool/behat/cli/init.php'));
             return BEHAT_EXITCODE_CONFIG;

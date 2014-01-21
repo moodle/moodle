@@ -65,7 +65,7 @@ class tinymce_managefiles_manage_form extends moodleform {
         $mform->registerNoSubmitButton('refresh');
 
         $mform->addElement('static', '', '',
-                html_writer::tag('span', '', array('class' => 'managefilesstatus')));
+                html_writer::tag('div', '', array('class' => 'managefilesstatus')));
 
         $mform->addElement('header', 'deletefiles', get_string('unusedfilesheader', 'tinymce_managefiles'));
         $mform->addElement('static', '', '',

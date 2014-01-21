@@ -282,6 +282,7 @@ if (!empty($action) && confirm_sesskey()) {
 
 $PAGE->set_title($title);
 $PAGE->set_heading($SITE->fullname);
+/* @var core_cache_renderer $renderer */
 $renderer = $PAGE->get_renderer('core_cache');
 
 echo $renderer->header();

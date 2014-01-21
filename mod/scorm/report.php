@@ -59,7 +59,16 @@ if (count($reportlist) < 1) {
     print_error('erroraccessingreport', 'scorm');
 }
 
-add_to_log($course->id, 'scorm', 'report', 'report.php?id='.$cm->id, $scorm->id, $cm->id);
+// Trigger a report viewed event.
+$event = \mod_scorm\event\report_viewed::create(array(
+    'objectid' => $scorm->id,
+    'context' => $contextmodule,
+    'other' => array('mode' => $mode)
+));
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('scorm', $scorm);
+$event->trigger();
+
 $userdata = null;
 if (!empty($download)) {
     $noheader = true;

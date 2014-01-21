@@ -430,7 +430,12 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $DB->update_record('course_categories', $updatedata);
         }
 
-        add_to_log(SITEID, "category", 'add', "editcategory.php?id=$newcategory->id", $newcategory->id);
+        $event = \core\event\course_category_created::create(array(
+            'objectid' => $newcategory->id,
+            'context' => $categorycontext
+        ));
+        $event->trigger();
+
         cache_helper::purge_by_event('changesincoursecat');
 
         return self::get($newcategory->id, MUST_EXIST, true);
@@ -519,13 +524,19 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
 
         $newcategory->timemodified = time();
 
+        $categorycontext = $this->get_context();
         if ($editoroptions) {
-            $categorycontext = $this->get_context();
             $newcategory = file_postupdate_standard_editor($newcategory, 'description', $editoroptions, $categorycontext,
                                                            'coursecat', 'description', 0);
         }
         $DB->update_record('course_categories', $newcategory);
-        add_to_log(SITEID, "category", 'update', "editcategory.php?id=$this->id", $this->id);
+
+        $event = \core\event\course_category_updated::create(array(
+            'objectid' => $newcategory->id,
+            'context' => $categorycontext
+        ));
+        $event->trigger();
+
         fix_course_sortorder();
         // Purge cache even if fix_course_sortorder() did not do it.
         cache_helper::purge_by_event('changesincoursecat');
@@ -1764,7 +1775,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             foreach ($children as $childcat) {
                 $childcat->change_parent_raw($newparentcat);
                 // Log action.
-                add_to_log(SITEID, "category", "move", "editcategory.php?id=$childcat->id", $childcat->id);
+                $event = \core\event\course_category_updated::create(array(
+                    'objectid' => $childcat->id,
+                    'context' => $childcat->get_context()
+                ));
+                $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'editcategory.php?id=' . $childcat->id,
+                    $childcat->id));
+                $event->trigger();
             }
             fix_course_sortorder();
         }
@@ -1932,7 +1949,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             fix_course_sortorder();
             cache_helper::purge_by_event('changesincoursecat');
             $this->restore();
-            add_to_log(SITEID, "category", "move", "editcategory.php?id=$this->id", $this->id);
+
+            $event = \core\event\course_category_updated::create(array(
+                'objectid' => $this->id,
+                'context' => $this->get_context()
+            ));
+            $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'editcategory.php?id=' . $this->id, $this->id));
+            $event->trigger();
         }
     }
 
@@ -1998,7 +2021,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     public function hide() {
         if ($this->hide_raw(0)) {
             cache_helper::purge_by_event('changesincoursecat');
-            add_to_log(SITEID, "category", "hide", "editcategory.php?id=$this->id", $this->id);
+
+            $event = \core\event\course_category_updated::create(array(
+                'objectid' => $this->id,
+                'context' => $this->get_context()
+            ));
+            $event->set_legacy_logdata(array(SITEID, 'category', 'hide', 'editcategory.php?id=' . $this->id, $this->id));
+            $event->trigger();
         }
     }
 
@@ -2051,7 +2080,13 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     public function show() {
         if ($this->show_raw()) {
             cache_helper::purge_by_event('changesincoursecat');
-            add_to_log(SITEID, "category", "show", "editcategory.php?id=$this->id", $this->id);
+
+            $event = \core\event\course_category_updated::create(array(
+                'objectid' => $this->id,
+                'context' => $this->get_context()
+            ));
+            $event->set_legacy_logdata(array(SITEID, 'category', 'show', 'editcategory.php?id=' . $this->id, $this->id));
+            $event->trigger();
         }
     }
 
@@ -2426,6 +2461,14 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
     }
 
     /**
+     * Returns true if the user is able to restore a course into this category as a new course.
+     * @return bool
+     */
+    public function can_restore_courses_into() {
+        return has_capability('moodle/course:create', $this->get_context());
+    }
+
+    /**
      * Resorts the sub categories of this category by the given field.
      *
      * @param string $field
@@ -2552,7 +2595,15 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             $DB->set_field('course_categories', 'sortorder', $swapcategory->sortorder, array('id' => $this->id));
             $DB->set_field('course_categories', 'sortorder', $this->sortorder, array('id' => $swapcategory->id));
             $this->sortorder = $swapcategory->sortorder;
-            add_to_log(SITEID, "category", "move", "management.php?categoryid={$this->id}", $this->id);
+
+            $event = \core\event\course_category_updated::create(array(
+                'objectid' => $this->id,
+                'context' => $this->get_context()
+            ));
+            $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'management.php?categoryid=' . $this->id,
+                $this->id));
+            $event->trigger();
+
             // Finally reorder courses.
             fix_course_sortorder();
             cache_helper::purge_by_event('changesincoursecat');

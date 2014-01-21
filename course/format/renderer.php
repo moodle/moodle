@@ -186,7 +186,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         if ($PAGE->user_is_editing() && has_capability('moodle/course:update', $context)) {
             $url = new moodle_url('/course/editsection.php', array('id'=>$section->id, 'sr'=>$sectionreturn));
             $o.= html_writer::link($url,
-                html_writer::empty_tag('img', array('src' => $this->output->pix_url('t/edit'),
+                html_writer::empty_tag('img', array('src' => $this->output->pix_url('i/settings'),
                     'class' => 'iconsmall edit', 'alt' => get_string('edit'))),
                 array('title' => get_string('editsummary')));
         }
@@ -821,21 +821,5 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $options->noclean = true;
         $options->overflowdiv = true;
         return format_text($summarytext, $section->summaryformat, $options);
-    }
-
-    /**
-     * Is the section passed in the current section?
-     *
-     * @deprecated since 2.4
-     * @see format_base::is_section_current()
-     *
-     * @param stdClass $course The course entry from DB
-     * @param stdClass $section The course_section entry from the DB
-     * @return bool true if the section is current
-     */
-    protected final function is_section_current($section, $course) {
-        debugging('Function format_section_renderer_base::is_section_current() is deprecated. '.
-                'Use course_get_format($course)->is_section_current($section) instead', DEBUG_DEVELOPER);
-        return course_get_format($course)->is_section_current($section);
     }
 }

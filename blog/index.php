@@ -40,7 +40,7 @@ if (empty($CFG->enableblogs)) {
 
 //correct tagid if a text tag is provided as a param
 if (!empty($tag)) {
-    if ($tagrec = $DB->get_record_sql("SELECT * FROM {tag} WHERE ". $DB->sql_like('name', '?', false), array("%$tag%"))) {
+    if ($tagrec = $DB->get_record('tag', array('name' => $tag))) {
         $tagid = $tagrec->id;
     } else {
         unset($tagid);
@@ -223,5 +223,13 @@ $bloglisting = new blog_listing($blogheaders['filters']);
 $bloglisting->print_entries();
 
 echo $OUTPUT->footer();
-
-add_to_log($courseid, 'blog', 'view', 'index.php?entryid='.$entryid.'&amp;tagid='.@$tagid.'&amp;tag='.$tag, 'view blog entry');
+$eventparams = array(
+    'other' => array('entryid' => $entryid, 'tagid' => $tagid, 'userid' => $userid, 'modid' => $modid, 'groupid' => $groupid,
+                     'search' => $search, 'fromstart' => $start)
+);
+if (!empty($userid)) {
+    $eventparams['relateduserid'] = $userid;
+}
+$eventparams['other']['courseid'] = ($courseid === SITEID) ? 0 : $courseid;
+$event = \core\event\blog_entries_viewed::create($eventparams);
+$event->trigger();

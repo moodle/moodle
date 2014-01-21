@@ -32,7 +32,9 @@ if (!empty($id)) {
 require_course_login($course);
 $PAGE->set_pagelayout('incourse');
 
-add_to_log($course->id, "scorm", "view all", "index.php?id=$course->id", "");
+// Trigger instances list viewed event.
+$event = \mod_scorm\event\course_module_instance_list_viewed::create(array('context' => context_course::instance($course->id)));
+$event->trigger();
 
 $strscorm = get_string("modulename", "scorm");
 $strscorms = get_string("modulenameplural", "scorm");

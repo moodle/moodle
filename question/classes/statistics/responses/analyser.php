@@ -137,7 +137,7 @@ class analyser {
         global $DB;
 
         $timemodified = time() - self::TIME_TO_CACHE;
-        $rows = $DB->get_records_select('question_response_analysis', 'hashcode = ? AND questionid = ? AND timemodified > ? ',
+        $rows = $DB->get_records_select('question_response_analysis', 'hashcode = ? AND questionid = ? AND timemodified > ?',
                                         array($qubaids->get_hash_code(), $this->questiondata->id, $timemodified));
         if (!$rows) {
             return false;
@@ -161,8 +161,8 @@ class analyser {
         global $DB;
 
         $timemodified = time() - self::TIME_TO_CACHE;
-        return $DB->get_field_select('question_response_analysis', 'timemodified', 'hashcode = ? AND timemodified > ? '.
-                                                          'ORDER BY timemodified DESC LIMIT 1',
-                                     array($qubaids->get_hash_code(), $timemodified));
+        return $DB->get_field_select('question_response_analysis', 'timemodified',
+                                     'hashcode = ? AND questionid = ? AND timemodified > ?',
+                                     array($qubaids->get_hash_code(), $this->questiondata->id, $timemodified), IGNORE_MULTIPLE);
     }
 }

@@ -31,6 +31,12 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Class for event to be triggered when a note is created.
  *
+ * @property-read array $other {
+ *      Extra information about event.
+ *
+ *      @type string publishstate publish state.
+ * }
+ *
  * @package    core
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

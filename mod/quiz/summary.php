@@ -64,7 +64,7 @@ if (!$attemptobj->is_preview_user() && $messages) {
             $output->access_messages($messages));
 }
 if ($accessmanager->is_preflight_check_required($attemptobj->get_attemptid())) {
-    redirect($attemptobj->start_attempt_url(null, $page));
+    redirect($attemptobj->start_attempt_url(null));
 }
 
 $displayoptions = $attemptobj->get_display_options(false);

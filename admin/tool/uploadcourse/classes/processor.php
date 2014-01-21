@@ -195,7 +195,7 @@ class tool_uploadcourse_processor {
         $errors = 0;
 
         // We will most certainly need extra time and memory to process big files.
-        @set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_EXTRA);
 
         // Loop over the CSV lines.
@@ -335,7 +335,7 @@ class tool_uploadcourse_processor {
         $tracker->start();
 
         // We might need extra time and memory depending on the number of rows to preview.
-        @set_time_limit(0);
+        core_php_time_limit::raise();
         raise_memory_limit(MEMORY_EXTRA);
 
         // Loop over the CSV lines.

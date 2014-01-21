@@ -54,8 +54,7 @@ require_capability('mod/page:view', $context);
 // Trigger module viewed event.
 $event = \mod_page\event\course_module_viewed::create(array(
    'objectid' => $page->id,
-   'context' => $context,
-   'other' => array('content' => 'pageresourceview')
+   'context' => $context
 ));
 $event->add_record_snapshot('course_modules', $cm);
 $event->add_record_snapshot('course', $course);

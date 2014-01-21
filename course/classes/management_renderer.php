@@ -209,7 +209,8 @@ class core_course_management_renderer extends plugin_renderer_base {
             'name' => 'bcat[]',
             'value' => $category->id,
             'class' => 'bulk-action-checkbox',
-            'aria-label' => get_string('bulkactionselect', 'moodle', $text)
+            'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+            'data-action' => 'select'
         );
 
         if (!$category->can_resort_subcategories() && !$category->has_manage_capability()) {
@@ -615,7 +616,8 @@ class core_course_management_renderer extends plugin_renderer_base {
             'name' => 'bc[]',
             'value' => $course->id,
             'class' => 'bulk-action-checkbox',
-            'aria-label' => get_string('bulkactionselect', 'moodle', $text)
+            'aria-label' => get_string('bulkactionselect', 'moodle', $text),
+            'data-action' => 'select'
         );
         if (!$category->has_manage_capability()) {
             // Very very hardcoded here.
