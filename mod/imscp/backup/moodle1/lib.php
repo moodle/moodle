@@ -83,7 +83,7 @@ class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
         $this->fileman->migrate_directory('moddata/resource/'.$data['id']);
 
         // parse manifest
-        $structure = $this->parse_structure($this->converter->get_tempdir_path().'/moddata/resource/'.$data['id'].'/imsmanifest.xml');
+        $structure = $this->parse_structure($this->converter->get_tempdir_path().'/moddata/resource/'.$data['id'].'/imsmanifest.xml', $imscp, $contextid);
         $imscp['structure'] = is_array($structure) ? serialize($structure) : null;
 
         // write imscp.xml
@@ -113,7 +113,7 @@ class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
      *
      * @param string $manifestfilepath the full path to the manifest file to parse
      */
-    protected function parse_structure($manifestfilepath) {
+    protected function parse_structure($manifestfilepath, $imscp, $context) {
         global $CFG;
 
         if (!file_exists($manifestfilepath)) {
@@ -127,6 +127,6 @@ class moodle1_mod_imscp_handler extends moodle1_resource_successor_handler {
         }
 
         require_once($CFG->dirroot.'/mod/imscp/locallib.php');
-        return imscp_parse_manifestfile($manifestfilecontents);
+        return imscp_parse_manifestfile($manifestfilecontents, $imscp, $context);
     }
 }
