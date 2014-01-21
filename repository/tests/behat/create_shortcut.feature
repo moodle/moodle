@@ -1,4 +1,4 @@
-@core @core_filepicker @repository @repository_user @_only_local
+@core @core_filepicker @repository @repository_user @_file_upload
 Feature: Create shortcuts
   In order to automatically synchronize copies of the file with the source
   As a teacher

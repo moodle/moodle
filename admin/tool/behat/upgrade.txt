@@ -1,0 +1,6 @@
+This files describes API changes in the assign code.
+
+=== 2.7 ===
+
+* @_only_local tag used in .feature files replaced by @_file_upload tag
+* @_alerts tag used in .feature files replaced by @_alert tag

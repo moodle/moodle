@@ -1,4 +1,4 @@
-@core @core_files @_only_local
+@core @core_files
 Feature: Course files
   In order to add legacy files
   As a user
