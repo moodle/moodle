@@ -50,12 +50,6 @@
     .form-buttons {
         padding-left: @horizontalComponentOffset980;
     }
-    .dir-rtl {
-        .userprofile dl.list dd {
-            margin-right: @horizontalComponentOffset980;
-        }
-    }
-
 }
 
 @media (max-width: 873px) {
@@ -95,6 +89,16 @@
     .fp-repo-items .fp-navbar {
         border-top: 1px solid rgb(187, 187, 187);
     }
+
+    .dir-rtl {
+        .userprofile dl.list dt,
+        .userprofile dl.list dd {
+            float: none;
+            text-align: right;
+            margin-right: 0;
+        }
+    }
+
 }
 
 // login page
@@ -130,7 +134,7 @@
         .mform .fdescription.required,
         .userprofile dl.list dd,
         .form-horizontal .controls {
-            margin-right: @horizontalComponentOffset1200 - 100px;
+            margin-right: (@horizontalComponentOffset1200 - 100px);
         }
         #page-mod-forum-search .c1 {
             margin-right: @horizontalComponentOffset1200;
@@ -139,7 +143,7 @@
         .mform .fitem div.fitemtitle,
         .userprofile dl.list dt,
         .form-horizontal .control-label {
-            width: @horizontalComponentOffset1200 - 120px;
+            width: (@horizontalComponentOffset1200 - 120px);
         }
 
     }
