@@ -170,7 +170,7 @@ function quiz_delete_instance($id) {
     quiz_delete_all_attempts($quiz);
     quiz_delete_all_overrides($quiz);
 
-    $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->id));
+    $DB->delete_records('quiz_question_instances', array('quizid' => $quiz->id));
     $DB->delete_records('quiz_feedback', array('quizid' => $quiz->id));
 
     $events = $DB->get_records('event', array('modulename' => 'quiz', 'instance' => $quiz->id));
@@ -1283,7 +1283,7 @@ function quiz_questions_in_use($questionids) {
     require_once($CFG->libdir . '/questionlib.php');
     list($test, $params) = $DB->get_in_or_equal($questionids);
     return $DB->record_exists_select('quiz_question_instances',
-            'question ' . $test, $params) || question_engine::questions_in_use(
+            'questionid ' . $test, $params) || question_engine::questions_in_use(
             $questionids, new qubaid_join('{quiz_attempts} quiza',
             'quiza.uniqueid', 'quiza.preview = 0'));
 }

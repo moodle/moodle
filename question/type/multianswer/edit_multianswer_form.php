@@ -63,18 +63,16 @@ class qtype_multianswer_edit_form extends question_edit_form {
         $this->used_in_quiz = false;
 
         if (isset($question->id) && $question->id != 0) {
+            // TODO should not have quiz-specific code here.
             $this->savedquestiondisplay = fullclone($question);
-            if ($list = $DB->get_records('quiz_question_instances',
-                    array('question' => $question->id))) {
-                foreach ($list as $key => $li) {
-                    $this->nb_of_quiz ++;
-                    if ($att = $DB->get_records('quiz_attempts',
-                            array('quiz' => $li->quiz, 'preview' => '0'))) {
-                        $this->nb_of_attempts += count($att);
-                        $this->used_in_quiz = true;
-                    }
-                }
-            }
+            $this->nb_of_quiz = $DB->count_records('quiz_question_instances', array('questionid' => $question->id));
+            $this->used_in_quiz = $this->nb_of_quiz > 0;
+            $this->nb_of_attempts = $DB->count_records_sql("
+                    SELECT count(1)
+                      FROM {quiz_question_instances} qqi
+                      JOIN {quiz_attempts} quiza ON quiza.quiz = qqi.quizid
+                     WHERE qqi.questionid = ?
+                       AND quiza.preview = 0", array($question->id));
         }
 
         parent::__construct($submiturl, $question, $category, $contexts, $formeditable);

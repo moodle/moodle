@@ -1,5 +1,13 @@
 This files describes API changes in the quiz code.
 
+=== 2.7 ===
+
+* The columns of the quiz_question_instances table have been renamed to match
+  the coding guidelines. Specifically
+      quiz     -> quizid
+      question -> questionid
+      grade    -> maxmark
+
 
 === 2.6 ===
 * As part of improving the page usability and accessibility, we updated the

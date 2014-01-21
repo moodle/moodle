@@ -17,8 +17,7 @@
 /**
  * Upgrade script for the quiz module.
  *
- * @package    mod
- * @subpackage quiz
+ * @package    mod_quiz
  * @copyright  2006 Eloy Lafuente (stronk7)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -409,6 +408,97 @@ function xmldb_quiz_upgrade($oldversion) {
 
     // Moodle v2.6.0 release upgrade line.
     // Put any upgrade step following this.
+
+    if ($oldversion < 2014011300) {
+
+        // Define key quiz (foreign) to be dropped form quiz_question_instances.
+        $table = new xmldb_table('quiz_question_instances');
+        $key = new xmldb_key('quiz', XMLDB_KEY_FOREIGN, array('quiz'), 'quiz', array('id'));
+
+        // Launch drop key quiz.
+        $dbman->drop_key($table, $key);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011300, 'quiz');
+    }
+
+    if ($oldversion < 2014011301) {
+
+        // Rename field quiz on table quiz_question_instances to quizid.
+        $table = new xmldb_table('quiz_question_instances');
+        $field = new xmldb_field('quiz', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'id');
+
+        // Launch rename field quiz.
+        $dbman->rename_field($table, $field, 'quizid');
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011301, 'quiz');
+    }
+
+    if ($oldversion < 2014011302) {
+
+        // Define key quizid (foreign) to be added to quiz_question_instances.
+        $table = new xmldb_table('quiz_question_instances');
+        $key = new xmldb_key('quizid', XMLDB_KEY_FOREIGN, array('quizid'), 'quiz', array('id'));
+
+        // Launch add key quizid.
+        $dbman->add_key($table, $key);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011302, 'quiz');
+    }
+
+    if ($oldversion < 2014011303) {
+
+        // Define key question (foreign) to be dropped form quiz_question_instances.
+        $table = new xmldb_table('quiz_question_instances');
+        $key = new xmldb_key('question', XMLDB_KEY_FOREIGN, array('question'), 'question', array('id'));
+
+        // Launch drop key question.
+        $dbman->drop_key($table, $key);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011303, 'quiz');
+    }
+
+    if ($oldversion < 2014011304) {
+
+        // Rename field question on table quiz_question_instances to questionid.
+        $table = new xmldb_table('quiz_question_instances');
+        $field = new xmldb_field('question', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'quiz');
+
+        // Launch rename field question.
+        $dbman->rename_field($table, $field, 'questionid');
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011304, 'quiz');
+    }
+
+    if ($oldversion < 2014011305) {
+
+        // Define key questionid (foreign) to be added to quiz_question_instances.
+        $table = new xmldb_table('quiz_question_instances');
+        $key = new xmldb_key('questionid', XMLDB_KEY_FOREIGN, array('questionid'), 'question', array('id'));
+
+        // Launch add key questionid.
+        $dbman->add_key($table, $key);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011305, 'quiz');
+    }
+
+    if ($oldversion < 2014011306) {
+
+        // Rename field grade on table quiz_question_instances to maxmark.
+        $table = new xmldb_table('quiz_question_instances');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, XMLDB_NOTNULL, null, '0', 'question');
+
+        // Launch rename field grade.
+        $dbman->rename_field($table, $field, 'maxmark');
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014011306, 'quiz');
+    }
 
     return true;
 }

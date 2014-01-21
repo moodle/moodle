@@ -136,8 +136,8 @@ class quiz {
             throw new moodle_quiz_exception($this, 'noquestions', $this->edit_url());
         }
         $this->questions = question_preload_questions($this->questionids,
-                'qqi.grade AS maxmark, qqi.id AS instance',
-                '{quiz_question_instances} qqi ON qqi.quiz = :quizid AND q.id = qqi.question',
+                'qqi.maxmark, qqi.id AS instance',
+                '{quiz_question_instances} qqi ON qqi.quizid = :quizid AND q.id = qqi.questionid',
                 array('quizid' => $this->quiz->id));
     }
 
