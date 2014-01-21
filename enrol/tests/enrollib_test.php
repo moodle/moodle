@@ -318,6 +318,7 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($expectedlegacyeventdata, $event);
         $expected = array($course1->id, 'course', 'enrol', '../enrol/users.php?id=' . $course1->id, $course1->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -359,5 +360,6 @@ class core_enrollib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($expectedlegacyeventdata, $event);
         $expected = array($course->id, 'course', 'unenrol', '../enrol/users.php?id=' . $course->id, $course->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }

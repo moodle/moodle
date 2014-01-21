@@ -57,6 +57,7 @@ class core_event_course_module_instance_list_viewed_testcase extends advanced_te
         $this->assertEventLegacyLogData($legacydata, $event);
         $url = new moodle_url('/mod/unittests/index.php', array('id' => $course->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
 
     }
 

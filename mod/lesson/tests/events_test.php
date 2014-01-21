@@ -80,6 +80,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, 'lesson', 'view grade', 'essay.php?id=' . $this->lesson->properties()->cmid .
             '&mode=grade&attemptid=1', get_string('manualgrading', 'lesson'), $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -119,6 +120,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, 'lesson', 'update highscores', 'highscores.php?id=' . $this->lesson->properties()->cmid,
             'noob', $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -147,6 +149,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, 'lesson', 'view highscores', 'highscores.php?id=' . $this->lesson->properties()->cmid,
             $this->lesson->properties()->name, $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -165,6 +168,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, 'lesson', 'start', 'view.php?id=' . $this->lesson->properties()->cmid,
             $this->lesson->properties()->id, $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -193,6 +197,7 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, 'lesson', 'end', 'view.php?id=' . $this->lesson->properties()->cmid,
             $this->lesson->properties()->id, $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -228,5 +233,6 @@ class mod_lesson_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, 'lesson', 'update grade', 'essay.php?id=' . $this->lesson->properties()->cmid,
                 $this->lesson->name, $this->lesson->properties()->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }

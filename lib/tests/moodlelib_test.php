@@ -1889,6 +1889,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertSame($eventdata['other']['picture'], $user->picture);
         $this->assertSame($eventdata['other']['mnethostid'], $user->mnethostid);
         $this->assertEquals($user, $event->get_record_snapshot('user', $event->objectid));
+        $this->assertEventContextNotUsed($event);
 
         // Try invalid params.
         $record = new stdClass();
@@ -2459,6 +2460,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $this->assertEquals('user', $event->objecttable);
         $this->assertEquals($user->id, $event->objectid);
         $this->assertEquals(context_system::instance()->id, $event->contextid);
+        $this->assertEventContextNotUsed($event);
 
         $user = $DB->get_record('user', array('id'=>$user->id));
 
@@ -2504,6 +2506,7 @@ class core_moodlelib_testcase extends advanced_testcase {
         $expectedlogdata = array(SITEID, 'user', 'logout', 'view.php?id='.$event->objectid.'&course='.SITEID, $event->objectid, 0,
             $event->objectid);
         $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_email_to_user() {
@@ -2586,6 +2589,7 @@ class core_moodlelib_testcase extends advanced_testcase {
             $this->assertEquals(context_user::instance($user->id), $event->get_context());
             $expectedlogdata = array(SITEID, 'user', 'update', 'view.php?id='.$user->id, '');
             $this->assertEventLegacyLogData($expectedlogdata, $event);
+            $this->assertEventContextNotUsed($event);
         }
     }
 

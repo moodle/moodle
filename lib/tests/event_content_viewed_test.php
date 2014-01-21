@@ -75,6 +75,7 @@ class core_event_content_viewed_testcase extends advanced_testcase {
         $result = $sink->get_events();
         $event = $result[1];
         $this->assertEventLegacyLogData(null, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -89,6 +90,7 @@ class core_event_content_viewed_testcase extends advanced_testcase {
         $pageevent = \core_tests\event\content_viewed::create();
         $pageevent->set_page_detail();
         $pageevent->trigger();
+        $this->assertEventContextNotUsed($pageevent);
     }
 }
 

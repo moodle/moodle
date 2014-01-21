@@ -106,6 +106,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($cohort->contextid, $event->contextid);
         $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $id));
         $this->assertEventLegacyData($cohort, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_cohort_update_cohort() {
@@ -176,6 +177,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($updatedcohort->contextid, $event->contextid);
         $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $id));
         $this->assertEventLegacyData($cohort, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_cohort_delete_cohort() {
@@ -213,6 +215,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($cohort->id, $event->objectid);
         $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $cohort->id));
         $this->assertEventLegacyData($cohort, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_cohort_delete_category() {
@@ -270,6 +273,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEventLegacyData((object) array('cohortid' => $cohort->id, 'userid' => $user->id), $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_cohort_remove_member() {
@@ -313,6 +317,7 @@ class core_cohort_cohortlib_testcase extends advanced_testcase {
         $this->assertEquals($user->id, $event->relateduserid);
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEventLegacyData((object) array('cohortid' => $cohort->id, 'userid' => $user->id), $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_cohort_is_member() {

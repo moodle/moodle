@@ -68,6 +68,7 @@ class mod_resource_events_testcase extends advanced_testcase {
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $expected = array($course->id, 'resource', 'view all', 'index.php?id='.$course->id, '');
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -99,5 +100,6 @@ class mod_resource_events_testcase extends advanced_testcase {
         $this->assertEquals($resource->id, $event->objectid);
         $expected = array($course->id, 'resource', 'view', 'view.php?id=' . $resource->cmid, $resource->id, $resource->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }

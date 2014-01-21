@@ -51,6 +51,7 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEquals(context_coursecat::instance($category->id), $event->get_context());
         $expected = array(SITEID, 'category', 'add', 'editcategory.php?id=' . $category->id, $category->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -139,6 +140,7 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEquals(context_coursecat::instance($category2->id), $event->get_context());
         $expected = array(SITEID, 'category', 'show', 'editcategory.php?id=' . $category2->id, $category2->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -170,5 +172,6 @@ class core_events_testcase extends advanced_testcase {
         $this->assertEquals(context_system::instance(), $event->get_context());
         $expected = array(SITEID, 'library', 'mailer', qualified_me(), 'ERROR: The email failed to send!');
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }

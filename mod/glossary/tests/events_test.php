@@ -76,6 +76,7 @@ class glossary_event_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $url = new moodle_url('/mod/glossary/view.php', array('id' => $glossary->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -120,5 +121,6 @@ class glossary_event_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $url = new moodle_url('/mod/glossary/view.php', array('id' => $glossary->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 }

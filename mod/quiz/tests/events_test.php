@@ -117,6 +117,7 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $legacydata->submitterid = null;
         $legacydata->timefinish = $timefinish;
         $this->assertEventLegacyData($legacydata, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_attempt_becameoverdue() {
@@ -150,6 +151,7 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $legacydata->quizid = $quizobj->get_quizid();
         $legacydata->submitterid = null; // Should be the user, but PHP Unit complains...
         $this->assertEventLegacyData($legacydata, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_attempt_abandoned() {
@@ -183,6 +185,7 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $legacydata->quizid = $quizobj->get_quizid();
         $legacydata->submitterid = null; // Should be the user, but PHP Unit complains...
         $this->assertEventLegacyData($legacydata, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_attempt_started() {
@@ -218,5 +221,6 @@ class mod_quiz_events_testcase extends advanced_testcase {
         $this->assertEquals($quizobj->get_context(), $event->get_context());
         $this->assertEquals('quiz_attempt_started', $event->get_legacy_eventname());
         $this->assertEventLegacyData($legacydata, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }

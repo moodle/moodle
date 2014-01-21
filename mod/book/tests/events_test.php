@@ -70,6 +70,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $expected = array($course->id, 'book', 'add chapter', 'view.php?id='.$book->cmid.'&chapterid='.$chapter->id,
             $chapter->id, $book->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_chapter_updated() {
@@ -102,6 +103,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $expected = array($course->id, 'book', 'update chapter', 'view.php?id='.$book->cmid.'&chapterid='.$chapter->id,
             $chapter->id, $book->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_chapter_deleted() {
@@ -135,6 +137,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $this->assertEquals($chapter->id, $event->objectid);
         $this->assertEquals($chapter, $event->get_record_snapshot('book_chapters', $chapter->id));
         $this->assertEventLegacyLogData(array('1', 2, false), $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_course_module_instance_list_viewed() {
@@ -159,6 +162,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $expected = array($course->id, 'book', 'view all', 'index.php?id='.$course->id, '');
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_course_module_viewed() {
@@ -187,6 +191,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $this->assertEquals($book->id, $event->objectid);
         $expected = array($course->id, 'book', 'view', 'view.php?id=' . $book->cmid, $book->id, $book->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_chapter_viewed() {
@@ -219,6 +224,7 @@ class mod_book_events_testcase extends advanced_testcase {
         $expected = array($course->id, 'book', 'view chapter', 'view.php?id=' . $book->cmid . '&amp;chapterid=' .
             $chapter->id, $chapter->id, $book->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 }

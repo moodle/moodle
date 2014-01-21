@@ -67,6 +67,7 @@ class booktool_exportimscp_events_testcase extends advanced_testcase {
         $expected = array($course->id, 'book', 'exportimscp', 'tool/exportimscp/index.php?id=' . $book->cmid,
             $book->id, $book->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 }

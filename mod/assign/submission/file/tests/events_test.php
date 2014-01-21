@@ -90,6 +90,7 @@ class assignsubmission_file_events_testcase extends advanced_testcase {
         $expected->files = $files;
         $expected->pathnamehashes = array($fi->get_pathnamehash(), $fi2->get_pathnamehash());
         $this->assertEventLegacyData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 }

@@ -165,6 +165,7 @@ class data_lib_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $url = new moodle_url('/mod/data/view.php', array('id' => $module->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -228,5 +229,6 @@ class data_lib_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $url = new moodle_url('/mod/data/view.php', array('id' => $module->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 }

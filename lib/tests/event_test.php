@@ -749,4 +749,16 @@ class core_event_testcase extends advanced_testcase {
 
         $this->assertSame($event->get_data(), $data);
     }
+
+    /**
+     * @expectedException PHPUnit_Framework_Error_Notice
+     */
+    public function test_context_not_used() {
+        $event = \core_tests\event\context_used_in_event::create(array('courseid' => 1, 'other' => array('sample' => 1, 'xx' => 10)));
+        $this->assertEventContextNotUsed($event);
+
+        $eventcontext = phpunit_event_mock::testable_get_event_context($event);
+        phpunit_event_mock::testable_set_event_context($event, null);
+        $this->assertEventContextNotUsed($event);
+    }
 }

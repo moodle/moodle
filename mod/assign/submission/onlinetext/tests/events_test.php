@@ -70,6 +70,7 @@ class assignsubmission_onlinetext_events_testcase extends advanced_testcase {
         $expected->userid = $user->id;
         $expected->content = 'Submission text';
         $this->assertEventLegacyData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 }

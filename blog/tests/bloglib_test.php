@@ -183,6 +183,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEquals("blog_entry_added", $event->get_legacy_eventname());
         $this->assertEventLegacyData($blog, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -215,6 +216,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($blog, $event);
         $arr = array (SITEID, 'blog', 'update', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id, $blog->subject);
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -249,6 +251,7 @@ class core_bloglib_testcase extends advanced_testcase {
                 $blog->id);
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventLegacyData($blog, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 
@@ -301,6 +304,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $arr = array(SITEID, 'blog', 'add association', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id,
                      $blog->subject, $this->cmid, $this->userid);
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -381,6 +385,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEquals($url, $event->get_url());
         $arr = array(SITEID, 'blog', 'view', $url2->out(), 'view blog entry');
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -416,6 +421,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEquals($this->postid, $event->other['itemid']);
         $url = new moodle_url('/blog/index.php', array('entryid' => $this->postid));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -452,6 +458,7 @@ class core_bloglib_testcase extends advanced_testcase {
         $this->assertEquals($this->postid, $event->other['itemid']);
         $url = new moodle_url('/blog/index.php', array('entryid' => $this->postid));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 }
 

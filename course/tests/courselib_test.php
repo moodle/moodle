@@ -1449,6 +1449,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         // as they have already been validated in the previous steps. Here we only want to make sure that when the
         // imsenterprise plugin creates a course an event is triggered.
         $this->assertInstanceOf('\core\event\course_created', $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -1527,6 +1528,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($movedcoursehidden, $event);
         $expectedlog = array($movedcoursehidden->id, 'course', 'move', 'edit.php?id=' . $movedcoursehidden->id, $movedcoursehidden->id);
         $this->assertEventLegacyLogData($expectedlog, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -1572,6 +1574,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($course, $event);
         $expectedlog = array(SITEID, 'course', 'delete', 'view.php?id=' . $course->id, $course->fullname . '(ID ' . $course->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -1613,6 +1616,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $course->context = $coursecontext;
         $course->options = array();
         $this->assertEventLegacyData($course, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -1675,6 +1679,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $this->assertEventLegacyData($category2, $event);
         $expectedlog = array(SITEID, 'category', 'delete', 'index.php', $category2->name . '(ID ' . $category2->id . ')');
         $this->assertEventLegacyLogData($expectedlog, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -1740,6 +1745,7 @@ class core_course_courselib_testcase extends advanced_testcase {
             'samesite' => $rc->is_samesite()
         );
         $this->assertEventLegacyData($legacydata, $event);
+        $this->assertEventContextNotUsed($event);
 
         // Destroy the resource controller since we are done using it.
         $rc->destroy();
@@ -1794,6 +1800,7 @@ class core_course_courselib_testcase extends advanced_testcase {
         $sectionnum = $section->section;
         $expectedlegacydata = array($course->id, "course", "editsection", 'editsection.php?id=' . $id, $sectionnum);
         $this->assertEventLegacyLogData($expectedlegacydata, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_course_integrity_check() {
@@ -1953,6 +1960,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         $arr = array($cm->course, "course", "add mod", "../mod/assign/view.php?id=$mod->id", "assign $cm->instance");
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
 
     }
 
@@ -2058,7 +2066,7 @@ class core_course_courselib_testcase extends advanced_testcase {
 
         $arr = array($cm->course, "course", "update mod", "../mod/forum/view.php?id=$mod->id", "forum $cm->instance");
         $this->assertEventLegacyLogData($arr, $event);
-
+        $this->assertEventContextNotUsed($event);
     }
 
     /**

@@ -73,6 +73,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
         $expected->content = $fakepost->message;
         $expected->pathnamehashes = array($fi->get_pathnamehash());
         $this->assertEventLegacyData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_forum_get_courses_user_posted_in() {

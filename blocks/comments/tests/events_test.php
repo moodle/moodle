@@ -113,6 +113,7 @@ class block_comments_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $url = new moodle_url('/mod/wiki/view.php', array('id' => $this->wiki->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -178,5 +179,6 @@ class block_comments_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $url = new moodle_url('/mod/wiki/view.php', array('id' => $this->wiki->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 }

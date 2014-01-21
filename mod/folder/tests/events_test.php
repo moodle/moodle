@@ -66,5 +66,6 @@ class mod_folder_events_testcase extends advanced_testcase {
         $this->assertEquals($folder->id, $event->objectid);
         $expected = array($course->id, 'folder', 'edit', 'edit.php?id=' . $folder->cmid, $folder->id, $folder->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }

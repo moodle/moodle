@@ -48,14 +48,7 @@ class mod_choice_events_testcase extends advanced_testcase {
     protected $context;
 
     /**
-     * Setup
-     * often
-     * used
-     * objects
-     * for
-     * the
-     * following
-     * tests.
+     * Setup often used objects for the following tests.
      */
     protected function setup() {
         global $DB;
@@ -65,7 +58,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->course = $this->getDataGenerator()->create_course();
         $this->choice = $this->getDataGenerator()->create_module('choice', array('course' => $this->course->id));
         $this->cm = $DB->get_record('course_modules', array('id' => $this->choice->cmid));
-        $this->context = context_module::instance($this->choice->id);
+        $this->context = context_module::instance($this->choice->cmid);
     }
 
     /**
@@ -89,6 +82,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->assertEquals(3, $events[0]->other['optionid']);
         $expected = array($this->course->id, "choice", "choose", 'view.php?id=' . $this->cm->id, $this->choice->id, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $events[0]);
+        $this->assertEventContextNotUsed($events[0]);
         $sink->close();
     }
 
@@ -110,6 +104,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->setExpectedException('coding_exception');
         $event = \mod_choice\event\answer_submitted::create($eventdata);
         $event->trigger();
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -139,6 +134,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, "choice", "choose again", 'view.php?id=' . $this->cm->id,
                 $this->choice->id, $this->cm->id);
         $this->assertEventLegacyLogData($expected, $events[0]);
+        $this->assertEventContextNotUsed($events[0]);
         $sink->close();
     }
 
@@ -161,6 +157,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->setExpectedException('coding_exception');
         $event = \mod_choice\event\answer_updated::create($eventdata);
         $event->trigger();
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -196,6 +193,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, "choice", "report", 'report.php?id=' . $this->context->instanceid,
                 $this->choice->id, $this->context->instanceid);
         $this->assertEventLegacyLogData($expected, $event[0]);
+        $this->assertEventContextNotUsed($event[0]);
         $sink->close();
     }
 
@@ -230,6 +228,7 @@ class mod_choice_events_testcase extends advanced_testcase {
         $expected = array($this->course->id, "choice", "view", 'view.php?id=' . $this->context->instanceid,
                 $this->choice->id, $this->context->instanceid);
         $this->assertEventLegacyLogData($expected, $event[0]);
+        $this->assertEventContextNotUsed($event[0]);
         $sink->close();
     }
 
@@ -254,5 +253,6 @@ class mod_choice_events_testcase extends advanced_testcase {
         $this->assertEquals(context_course::instance($this->course->id), $event->get_context());
         $expected = array($this->course->id, 'choice', 'view all', 'index.php?id=' . $this->course->id, '');
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }

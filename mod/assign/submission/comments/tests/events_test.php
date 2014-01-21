@@ -75,6 +75,7 @@ class assignsubmission_comments_events_testcase extends mod_assign_base_testcase
         $this->assertEquals($context, $event->get_context());
         $url = new moodle_url('/mod/assign/view.php', array('id' => $submission->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -112,5 +113,6 @@ class assignsubmission_comments_events_testcase extends mod_assign_base_testcase
         $this->assertEquals($context, $event->get_context());
         $url = new moodle_url('/mod/assign/view.php', array('id' => $submission->id));
         $this->assertEquals($url, $event->get_url());
+        $this->assertEventContextNotUsed($event);
     }
 }

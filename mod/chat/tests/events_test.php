@@ -89,6 +89,7 @@ class mod_chat_events_testcase extends advanced_testcase {
         $this->assertEquals($user2->id, $event->userid);
         $expected = array($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id, $user2->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
 
         // Sending a message from the system should not trigger any event.
         $sink->clear();
@@ -132,6 +133,7 @@ class mod_chat_events_testcase extends advanced_testcase {
         $this->assertEquals($chat, $event->get_record_snapshot('chat', $chat->id));
         $expected = array($course->id, 'chat', 'report', "report.php?id=$chat->cmid", $chat->id, $chat->cmid);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_course_module_instance_list_viewed() {
@@ -156,6 +158,7 @@ class mod_chat_events_testcase extends advanced_testcase {
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
         $expected = array($course->id, 'chat', 'view all', "index.php?id=$course->id", '');
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 }

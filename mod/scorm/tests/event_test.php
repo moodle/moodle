@@ -80,6 +80,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $expected = array($this->eventcourse->id, 'scorm', 'delete attempts', 'report.php?id=' . $this->eventcm->id,
                 4, $this->eventscorm->id);
         $this->assertEventLegacyLogData($expected, $events[0]);
+        $this->assertEventContextNotUsed($event);
 
         // Test event validations.
         $this->setExpectedException('coding_exception');
@@ -113,6 +114,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $expected = array($this->eventcourse->id, 'scorm', 'pre-view', 'view.php?id=' . $this->eventcm->id,
                 $this->eventscorm->id, $this->eventcm->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -136,6 +138,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         // Check that the legacy log data is valid.
         $expected = array($this->eventcourse->id, 'scorm', 'view all', 'index.php?id=' . $this->eventcourse->id, '');
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -162,6 +165,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $expected = array($this->eventcourse->id, 'scorm', 'userreportinteractions', 'report/userreportinteractions.php?id=' .
                 $this->eventcm->id . '&user=5&attempt=' . 2, $this->eventscorm->id, $this->eventcm->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -216,6 +220,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $expected = array($this->eventcourse->id, 'scorm', 'report', 'report.php?id=' . $this->eventcm->id . '&mode=basic',
                 $this->eventscorm->id, $this->eventcm->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
 
         // Test validations.
         $this->setExpectedException('coding_exception');
@@ -250,6 +255,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $expected = array($this->eventcourse->id, 'scorm', 'launch', 'view.php?id=' . $this->eventcm->id,
                           'url_to_content_that_was_laoded.php', $this->eventcm->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
 
         // Test validations.
         $this->setExpectedException('coding_exception');
@@ -285,6 +291,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $expected = array($this->eventcourse->id, 'scorm', 'userreporttracks', 'report/userreporttracks.php?id=' .
                 $this->eventcm->id . '&user=5&attempt=' . 2 . '&scoid=3', $this->eventscorm->id, $this->eventcm->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -352,6 +359,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $expected = array($this->eventcourse->id, 'scorm', 'userreport', 'report/userreport.php?id=' .
                 $this->eventcm->id . '&user=5&attempt=' . 2, $this->eventscorm->id, $this->eventcm->id);
         $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**

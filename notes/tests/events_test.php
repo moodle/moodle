@@ -83,6 +83,7 @@ class core_notes_events_testcase extends advanced_testcase {
         $logurl->set_anchor('note-' . $this->eventnote->id);
         $arr = array($this->eventnote->courseid, 'notes', 'delete', $logurl, 'delete note');
         $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -113,7 +114,7 @@ class core_notes_events_testcase extends advanced_testcase {
         $logurl->set_anchor('note-' . $note->id);
         $arr = array($note->courseid, 'notes', 'add', $logurl, 'add note');
         $this->assertEventLegacyLogData($arr, $event);
-
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -144,7 +145,7 @@ class core_notes_events_testcase extends advanced_testcase {
         $logurl->set_anchor('note-' . $note->id);
         $arr = array($note->courseid, 'notes', 'update', $logurl, 'update note');
         $this->assertEventLegacyLogData($arr, $event);
-
+        $this->assertEventContextNotUsed($event);
     }
 }
 
