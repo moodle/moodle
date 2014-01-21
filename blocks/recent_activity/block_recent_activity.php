@@ -125,54 +125,58 @@ class block_recent_activity extends block_base {
      *    'module' - instance of cm_info (for 'delete mod' it is an object with attributes modname and modfullname)
      */
     protected function get_structural_changes() {
-        global $DB, $CFG;
+        global $DB;
         $course = $this->page->course;
         $timestart = $this->get_timestart();
         $changelist = array();
-        $logs = $DB->get_records_select('log',
-                "time > ? AND course = ? AND
-                    module = 'course' AND
-                    (action = 'add mod' OR action = 'update mod' OR action = 'delete mod')",
-                array($timestart, $course->id), "id ASC");
+        // The following query will retrieve the latest action for each course module in the specified course.
+        // Also the query filters out the modules that were created and then deleted during the given interval.
+        $sql = "SELECT
+                    cmid, MIN(action) AS minaction, MAX(action) AS maxaction, MAX(modname) AS modname
+                FROM {block_recent_activity}
+                WHERE timecreated > ? AND courseid = ?
+                GROUP BY cmid
+                ORDER BY MAX(timecreated) ASC";
+        $params = array($timestart, $course->id);
+        $logs = $DB->get_records_sql($sql, $params);
+        if (isset($logs[0])) {
+            // If special record for this course and cmid=0 is present, migrate logs.
+            self::migrate_logs($course);
+            $logs = $DB->get_records_sql($sql, $params);
+        }
         if ($logs) {
             $modinfo = get_fast_modinfo($course);
-            $newgones = array(); // added and later deleted items
-            foreach ($logs as $key => $log) {
-                $info = explode(' ', $log->info);
+            foreach ($logs as $log) {
+                // We used aggregate functions since constants CM_CREATED, CM_UPDATED and CM_DELETED have ascending order (0,1,2).
+                $wasdeleted = ($log->maxaction == block_recent_activity_observer::CM_DELETED);
+                $wascreated = ($log->minaction == block_recent_activity_observer::CM_CREATED);
 
-                if (count($info) != 2) {
-                    debugging("Incorrect log entry info: id = ".$log->id, DEBUG_DEVELOPER);
+                if ($wasdeleted && $wascreated) {
+                    // Activity was created and deleted within this interval. Do not show it.
                     continue;
-                }
-
-                $modname    = $info[0];
-                $instanceid = $info[1];
-
-                if ($log->action == 'delete mod') {
-                    if (plugin_supports('mod', $modname, FEATURE_NO_VIEW_LINK, false)) {
-                        // we should better call cm_info::has_view() because it can be
-                        // dynamic. But there is no instance of cm_info now
+                } else if ($wasdeleted) {
+                    if (plugin_supports('mod', $log->modname, FEATURE_NO_VIEW_LINK, false)) {
+                        // Better to call cm_info::has_view() because it can be dynamic.
+                        // But there is no instance of cm_info now.
                         continue;
                     }
-                    // unfortunately we do not know if the mod was visible
-                    if (!array_key_exists($log->info, $newgones)) {
-                        $changelist[$log->info] = array('action' => $log->action,
-                            'module' => (object)array(
-                                'modname' => $modname,
-                                'modfullname' => get_string('modulename', $modname)
-                             ));
-                    }
-                } else {
-                    if (!isset($modinfo->instances[$modname][$instanceid])) {
-                        if ($log->action == 'add mod') {
-                            // do not display added and later deleted activities
-                            $newgones[$log->info] = true;
-                        }
-                        continue;
-                    }
-                    $cm = $modinfo->instances[$modname][$instanceid];
-                    if ($cm->has_view() && $cm->uservisible && empty($changelist[$log->info])) {
-                        $changelist[$log->info] = array('action' => $log->action, 'module' => $cm);
+                    // Unfortunately we do not know if the mod was visible.
+                    $modnames = get_module_types_names();
+                    $changelist[$log->cmid] = array('action' => 'delete mod',
+                        'module' => (object)array(
+                            'modname' => $log->modname,
+                            'modfullname' => $modnames[$log->modname]
+                         ));
+
+                } else if (!$wasdeleted && isset($modinfo->cms[$log->cmid])) {
+                    // Module was either added or updated during this interval and it currently exists.
+                    // If module was both added and updated show only "add" action.
+                    $cm = $modinfo->cms[$log->cmid];
+                    if ($cm->has_view() && $cm->uservisible) {
+                        $changelist[$log->cmid] = array(
+                            'action' => $wascreated ? 'add mod' : 'update mod',
+                            'module' => $cm
+                        );
                     }
                 }
             }
@@ -215,6 +219,84 @@ class block_recent_activity extends block_base {
      */
     function applicable_formats() {
         return array('all' => true, 'my' => false, 'tag' => false);
+    }
+
+    /**
+     * Remove old entries from table block_recent_activity
+     */
+    public function cron() {
+        global $DB;
+        // Those entries will never be displayed as RECENT anyway.
+        $DB->delete_records_select('block_recent_activity', 'timecreated < ?',
+                array(time() - COURSE_MAX_RECENT_PERIOD));
+    }
+
+    /**
+     * Migrates entries from table {log} into {block_recent_activity}
+     *
+     * We only migrate logs for the courses that actually have recent activity
+     * block and that are being viewed within COURSE_MAX_RECENT_PERIOD time
+     * after the upgrade.
+     *
+     * The presence of entry in {block_recent_activity} with the cmid=0 indicates
+     * that the course needs log migration. Those entries were installed in
+     * db/upgrade.php when the table block_recent_activity was created.
+     *
+     * @param stdClass $course
+     */
+    protected static function migrate_logs($course) {
+        global $DB;
+        if (!$logstarted = $DB->get_record('block_recent_activity',
+                array('courseid' => $course->id, 'cmid' => 0),
+                'id, timecreated')) {
+            return;
+        }
+        $DB->delete_records('block_recent_activity', array('id' => $logstarted->id));
+        try {
+            $logs = $DB->get_records_select('log',
+                    "time > ? AND time < ? AND course = ? AND
+                        module = 'course' AND
+                        (action = 'add mod' OR action = 'update mod' OR action = 'delete mod')",
+                    array(time()-COURSE_MAX_RECENT_PERIOD, $logstarted->timecreated, $course->id),
+                    'id ASC', 'id, time, userid, cmid, action, info');
+        } catch (Exception $e) {
+            // Probably table {log} was already removed.
+            return;
+        }
+        if (!$logs) {
+            return;
+        }
+        $modinfo = get_fast_modinfo($course);
+        $entries = array();
+        foreach ($logs as $log) {
+            $info = explode(' ', $log->info);
+            if (count($info) != 2) {
+                continue;
+            }
+            $modname = $info[0];
+            $instanceid = $info[1];
+            $entry = array('courseid' => $course->id, 'userid' => $log->userid,
+                'timecreated' => $log->time, 'modname' => $modname);
+            if ($log->action == 'delete mod') {
+                if (!$log->cmid) {
+                    continue;
+                }
+                $entry['action'] = 2;
+                $entry['cmid'] = $log->cmid;
+            } else {
+                if (!isset($modinfo->instances[$modname][$instanceid])) {
+                    continue;
+                }
+                $entry['cmid'] = $modinfo->instances[$modname][$instanceid]->id;
+                if ($log->action == 'add mod') {
+                    $entry['action'] = 0;
+                } else {
+                    $entry['action'] = 1;
+                }
+            }
+            $entries[] = $entry;
+        }
+        $DB->insert_records('block_recent_activity', $entries);
     }
 }
 

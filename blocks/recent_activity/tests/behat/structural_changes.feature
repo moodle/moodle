@@ -165,7 +165,7 @@ Feature: View structural changes in recent activity block
     And I follow "Course 1"
     And I follow "ForumNew"
     And I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | name | ForumUpdated |
     And I press "Save and return to course"
     And I log out
