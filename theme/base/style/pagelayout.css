@@ -37,7 +37,7 @@ body {margin:auto 0px;width:auto;}
 #page-content #region-main {margin-right:0px;margin-left:400px;overflow:hidden;}
 #page-content #region-pre {float:left;left:200px;overflow:hidden;position:relative;width:200px;margin-left:-50%;}
 #page-content #region-post {float:left;left:0px;overflow:hidden;position:relative;width:200px;}
-#page-content .region-content {overflow:hidden;padding:10px;}
+#page-content .region-content {padding:10px;}
 #page-footer {clear:both;float:left;width:100%;}
 
 /** Only side pre **/

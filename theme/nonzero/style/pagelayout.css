@@ -55,7 +55,6 @@ body {margin:auto 0px;width:auto;}
 
 #page-content #region-pre .region-content,
 #page-content #region-post .region-content {
-    overflow: hidden;
     padding: 20px 10px;
 }
 

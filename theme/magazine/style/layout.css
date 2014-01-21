@@ -33,7 +33,6 @@
 #page-content #region-pre {
     float: left;
     left: 26%;
-    overflow: visible;
     position: relative;
     width: 21%;
 }
@@ -41,13 +40,11 @@
 #page-content #region-post {
     float: left;
     left: 82%;
-    overflow: visible;
     position: relative;
     width: 21%;
 }
 
 #page-content .region-content {
-    overflow: visible;
     padding: 10px 0;
     border: 0px solid #3333cc;
 }

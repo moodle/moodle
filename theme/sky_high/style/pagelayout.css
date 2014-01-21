@@ -69,14 +69,12 @@ body {
 }
 
 #page-content #region-main .region-content {
-    overflow: hidden;
     margin: 20px;
     padding-bottom: 20px;
 }
 
 #page-content #region-pre .region-content,
 #page-content #region-post .region-content {
-    overflow: hidden;
     padding: 20px 10px;
 }
 
