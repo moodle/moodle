@@ -63,7 +63,7 @@ class qtype_multianswer_edit_form extends question_edit_form {
         $this->used_in_quiz = false;
 
         if (isset($question->id) && $question->id != 0) {
-            // TODO should not have quiz-specific code here.
+            // TODO MDL-43779 should not have quiz-specific code here.
             $this->savedquestiondisplay = fullclone($question);
             $this->nb_of_quiz = $DB->count_records('quiz_question_instances', array('questionid' => $question->id));
             $this->used_in_quiz = $this->nb_of_quiz > 0;

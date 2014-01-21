@@ -1705,7 +1705,7 @@ class qtype_calculated extends question_type {
                     }
                     $line++;
                     $text .= "<td align=\"left\" style=\"white-space:nowrap;\">$qu->name</td>";
-                    // TODO should not have quiz-specific code here.
+                    // TODO MDL-43779 should not have quiz-specific code here.
                     $nbofquiz = $DB->count_records('quiz_question_instances', array('questionid' => $qu->id));
                     $nbofattempts = $DB->count_records_sql("
                             SELECT count(1)

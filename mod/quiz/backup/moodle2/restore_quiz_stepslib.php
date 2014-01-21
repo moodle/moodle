@@ -235,7 +235,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
 
         $data = (object)$data;
 
-        // Backwards compatibility for MDL-43670.
+        // Backwards compatibility for old field names (MDL-43670).
         if (!isset($data->questionid) && isset($data->question)) {
             $data->questionid = $data->question;
         }
