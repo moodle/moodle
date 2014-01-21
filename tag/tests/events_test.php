@@ -245,4 +245,100 @@ class core_tag_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\tag_unflagged', $event);
         $this->assertEquals(context_system::instance(), $event->get_context());
     }
+
+    /**
+     * Test the tag deleted event.
+     */
+    public function test_tag_deleted() {
+        global $DB;
+
+        $this->setAdminUser();
+
+        // Create a course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create tag we are going to delete.
+        $tag = $this->getDataGenerator()->create_tag();
+
+        // Trigger and capture the event for deleting a tag.
+        $sink = $this->redirectEvents();
+        tag_delete($tag->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the tag was deleted and the event data is valid.
+        $this->assertEquals(0, $DB->count_records('tag'));
+        $this->assertInstanceOf('\core\event\tag_deleted', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+
+        // Create two tags we are going to delete to ensure passing multiple tags work.
+        $tag = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+
+        // Trigger and capture the events for deleting multiple tags.
+        $sink = $this->redirectEvents();
+        tag_delete(array($tag->id, $tag2->id));
+        $events = $sink->get_events();
+
+        // Check that the tags were deleted and the events data is valid.
+        $this->assertEquals(0, $DB->count_records('tag'));
+        foreach ($events as $event) {
+            $this->assertInstanceOf('\core\event\tag_deleted', $event);
+            $this->assertEquals(context_system::instance(), $event->get_context());
+        }
+
+        // Create another tag to delete.
+        $tag = $this->getDataGenerator()->create_tag();
+
+        // Add a tag instance to a course.
+        tag_assign('course', $course->id, $tag->id, 0, 2, 'course', context_course::instance($course->id)->id);
+
+        // Trigger and capture the event for deleting a personal tag for a user for a course.
+        $sink = $this->redirectEvents();
+        coursetag_delete_keyword($tag->id, 2, $course->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the tag was deleted and the event data is valid.
+        $this->assertEquals(0, $DB->count_records('tag'));
+        $this->assertInstanceOf('\core\event\tag_deleted', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+
+        // Create a new tag we are going to delete.
+        $tag = $this->getDataGenerator()->create_tag();
+
+        // Add the tag instance to the course again as it was deleted.
+        tag_assign('course', $course->id, $tag->id, 0, 2, 'course', context_course::instance($course->id)->id);
+
+        // Trigger and capture the event for deleting all tags in a course.
+        $sink = $this->redirectEvents();
+        coursetag_delete_course_tags($course->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the tag was deleted and the event data is valid.
+        $this->assertEquals(0, $DB->count_records('tag'));
+        $this->assertInstanceOf('\core\event\tag_deleted', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+
+        // Create two tags we are going to delete to ensure passing multiple tags work.
+        $tag = $this->getDataGenerator()->create_tag();
+        $tag2 = $this->getDataGenerator()->create_tag();
+
+        // Add multiple tag instances now and check that it still works.
+        tag_assign('course', $course->id, $tag->id, 0, 2, 'course', context_course::instance($course->id)->id);
+        tag_assign('course', $course->id, $tag2->id, 0, 2, 'course', context_course::instance($course->id)->id);
+
+        // Trigger and capture the event for deleting all tags in a course.
+        $sink = $this->redirectEvents();
+        coursetag_delete_course_tags($course->id);
+        $events = $sink->get_events();
+
+        // Check that the tags were deleted and the events data is valid.
+        $this->assertEquals(0, $DB->count_records('tag'));
+        foreach ($events as $event) {
+            $this->assertInstanceOf('\core\event\tag_deleted', $event);
+            $this->assertEquals(context_system::instance(), $event->get_context());
+        }
+    }
 }
