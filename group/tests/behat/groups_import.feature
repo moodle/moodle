@@ -1,4 +1,4 @@
-@core @core_group @_only_local
+@core @core_group @_only_local @_file_upload
 Feature: Importing of groups and groupings
   In order to import groups and grouping
   As a teacher

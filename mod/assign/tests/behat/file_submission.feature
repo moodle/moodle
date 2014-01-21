@@ -1,4 +1,4 @@
-@mod @mod_assign @_only_local
+@mod @mod_assign @_only_local @_file_upload
 Feature: In an assignment, students can upload files for assessment
   In order to complete my assignments providing files
   As a student
