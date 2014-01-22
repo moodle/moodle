@@ -2911,5 +2911,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2013111801.02);
     }
 
+    if ($oldversion < 2013111801.04) {
+        // Remove deleted users home pages.
+        $active = $DB->get_fieldset_select('user', 'id', 'deleted = ?', array(0));
+        list($insql, $params) = $DB->get_in_or_equal($active, SQL_PARAMS_QM, 'param', false);
+        $sql = 'DELETE FROM {my_pages}
+                WHERE userid ' . $insql;
+
+        $DB->execute($sql, $params);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2013111801.04);
+    }
+
     return true;
 }
