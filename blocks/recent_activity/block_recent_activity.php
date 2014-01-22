@@ -127,6 +127,13 @@ class block_recent_activity extends block_base {
     protected function get_structural_changes() {
         global $DB;
         $course = $this->page->course;
+        $context = context_course::instance($course->id);
+        $canviewdeleted = has_capability('block/recent_activity:viewdeletemodule', $context);
+        $canviewupdated = has_capability('block/recent_activity:viewaddupdatemodule', $context);
+        if (!$canviewdeleted && !$canviewupdated) {
+            return;
+        }
+
         $timestart = $this->get_timestart();
         $changelist = array();
         // The following query will retrieve the latest action for each course module in the specified course.
@@ -154,7 +161,7 @@ class block_recent_activity extends block_base {
                 if ($wasdeleted && $wascreated) {
                     // Activity was created and deleted within this interval. Do not show it.
                     continue;
-                } else if ($wasdeleted) {
+                } else if ($wasdeleted && $canviewdeleted) {
                     if (plugin_supports('mod', $log->modname, FEATURE_NO_VIEW_LINK, false)) {
                         // Better to call cm_info::has_view() because it can be dynamic.
                         // But there is no instance of cm_info now.
@@ -168,7 +175,7 @@ class block_recent_activity extends block_base {
                             'modfullname' => $modnames[$log->modname]
                          ));
 
-                } else if (!$wasdeleted && isset($modinfo->cms[$log->cmid])) {
+                } else if (!$wasdeleted && isset($modinfo->cms[$log->cmid]) && $canviewupdated) {
                     // Module was either added or updated during this interval and it currently exists.
                     // If module was both added and updated show only "add" action.
                     $cm = $modinfo->cms[$log->cmid];
