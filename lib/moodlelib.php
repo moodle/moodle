@@ -4233,6 +4233,9 @@ function delete_user(stdClass $user) {
     // Remove users private keys.
     $DB->delete_records('user_private_key', array('userid' => $user->id));
 
+    // Remove users customised pages.
+    $DB->delete_records('my_pages', array('userid' => $user->id, 'private' => 1));
+
     // Force logout - may fail if file based sessions used, sorry.
     \core\session\manager::kill_user_sessions($user->id);
 
