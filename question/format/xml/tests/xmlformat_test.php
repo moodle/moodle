@@ -1413,6 +1413,31 @@ END;
         $this->assert_same_xml($expectedxml, $xml);
     }
 
+    public function test_export_multianswer_withdollars() {
+        $qdata = test_question_maker::get_question_data('multianswer', 'dollarsigns');
+
+        $exporter = new qformat_xml();
+        $xml = $exporter->writequestion($qdata);
+
+        $expectedxml = '<!-- question: 0  -->
+  <question type="cloze">
+    <name>
+      <text>Multianswer with $s</text>
+    </name>
+    <questiontext format="html">
+      <text>Which is the right order? {1:MULTICHOICE:=y,y,$3~$3,y,y}</text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text></text>
+    </generalfeedback>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+  </question>
+';
+
+        $this->assert_same_xml($expectedxml, $xml);
+    }
+
     public function test_import_files_as_draft() {
         $this->resetAfterTest();
         $this->setAdminUser();
