@@ -37,52 +37,6 @@ require_once($CFG->dirroot . '/mod/quiz/editlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_quiz_editlib_testcase extends basic_testcase {
-    public function test_quiz_move_question_up() {
-        $this->assertEquals(quiz_move_question_up('0', 123), '0');
-        $this->assertEquals(quiz_move_question_up('1,2,0', 1), '1,2,0');
-        $this->assertEquals(quiz_move_question_up('1,2,0', 0), '1,2,0');
-        $this->assertEquals(quiz_move_question_up('1,2,0', 2), '2,1,0');
-        $this->assertEquals(quiz_move_question_up('1,2,0,3,4,0', 3), '1,2,3,0,4,0');
-        $this->assertEquals(quiz_move_question_up('1,2,3,0,4,0', 4), '1,2,3,4,0,0');
-    }
-
-    public function test_quiz_move_question_down() {
-        $this->assertEquals(quiz_move_question_down('0', 123), '0');
-        $this->assertEquals(quiz_move_question_down('1,2,0', 2), '1,2,0');
-        $this->assertEquals(quiz_move_question_down('1,2,0', 0), '1,2,0');
-        $this->assertEquals(quiz_move_question_down('1,2,0', 1), '2,1,0');
-        $this->assertEquals(quiz_move_question_down('1,2,0,3,4,0', 2), '1,0,2,3,4,0');
-        $this->assertEquals(quiz_move_question_down('1,0,2,3,0,4,0', 1), '0,1,2,3,0,4,0');
-    }
-
-    public function test_quiz_delete_empty_page() {
-        $this->assertEquals(quiz_delete_empty_page('0', 0), '0');
-        $this->assertEquals(quiz_delete_empty_page('1,2,0', 2), '1,2,0');
-        $this->assertEquals(quiz_delete_empty_page('0,1,2,0', -1), '1,2,0');
-        $this->assertEquals(quiz_delete_empty_page('0,1,2,0', 0), '0,1,2,0');
-        $this->assertEquals(quiz_delete_empty_page('1,2,0', 3), '1,2,0');
-        $this->assertEquals(quiz_delete_empty_page('1,2,0', -1), '1,2,0');
-        $this->assertEquals(quiz_delete_empty_page('1,2,0,0', 2), '1,2,0');
-        $this->assertEquals(quiz_delete_empty_page('1,2,0,0', 1), '1,2,0,0');
-        $this->assertEquals(quiz_delete_empty_page('1,2,0,0,3,4,0', 2), '1,2,0,3,4,0');
-        $this->assertEquals(quiz_delete_empty_page('0,0,1,2,0', 0), '0,1,2,0');
-    }
-
-    public function test_quiz_add_page_break_after() {
-        $this->assertEquals(quiz_add_page_break_after('0', 1), '0');
-        $this->assertEquals(quiz_add_page_break_after('1,2,0', 1), '1,0,2,0');
-        $this->assertEquals(quiz_add_page_break_after('1,2,0', 2), '1,2,0,0');
-        $this->assertEquals(quiz_add_page_break_after('1,2,0', 0), '1,2,0');
-    }
-
-    public function test_quiz_add_page_break_at() {
-        $this->assertEquals(quiz_add_page_break_at('0', 0), '0,0');
-        $this->assertEquals(quiz_add_page_break_at('1,2,0', 0), '0,1,2,0');
-        $this->assertEquals(quiz_add_page_break_at('1,2,0', 1), '1,0,2,0');
-        $this->assertEquals(quiz_add_page_break_at('1,2,0', 2), '1,2,0,0');
-        $this->assertEquals(quiz_add_page_break_at('1,2,0', 3), '1,2,0');
-    }
-
     public function test_quiz_question_tostring() {
         $question = new stdClass();
         $question->qtype = 'multichoice';

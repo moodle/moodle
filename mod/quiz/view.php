@@ -184,7 +184,7 @@ if ($quiz->attempts != 1) {
 }
 
 // Determine wheter a start attempt button should be displayed.
-$viewobj->quizhasquestions = (bool) quiz_clean_layout($quiz->questions, true);
+$viewobj->quizhasquestions = $quizobj->has_questions();
 $viewobj->preventmessages = array();
 if (!$viewobj->quizhasquestions) {
     $viewobj->buttontext = '';

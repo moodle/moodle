@@ -47,7 +47,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
             'reviewspecificfeedback', 'reviewgeneralfeedback',
             'reviewrightanswer', 'reviewoverallfeedback',
             'questionsperpage', 'navmethod', 'shufflequestions', 'shuffleanswers',
-            'questions', 'sumgrades', 'grade', 'timecreated',
+            'sumgrades', 'grade', 'timecreated',
             'timemodified', 'password', 'subnet', 'browsersecurity',
             'delay1', 'delay2', 'showuserpicture', 'showblocks'));
 
@@ -57,7 +57,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', array('id'), array(
-            'questionid', 'maxmark'));
+            'slot', 'page', 'questionid', 'maxmark'));
 
         $feedbacks = new backup_nested_element('feedbacks');
 
@@ -107,7 +107,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         // Define sources.
         $quiz->set_source_table('quiz', array('id' => backup::VAR_ACTIVITYID));
 
-        $qinstance->set_source_table('quiz_question_instances',
+        $qinstance->set_source_table('quiz_slots',
                 array('quizid' => backup::VAR_PARENTID));
 
         $feedback->set_source_table('quiz_feedback',

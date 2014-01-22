@@ -4236,7 +4236,7 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
     /**
      * Process the attempt data defined by {@link add_legacy_question_attempt_data()}.
-     * @param object $data contains all the grouped attempt data ot process.
+     * @param object $data contains all the grouped attempt data to process.
      * @param pbject $quiz data about the activity the attempts belong to. Required
      * fields are (basically this only works for the quiz module):
      *      oldquestions => list of question ids in this activity - using old ids.
@@ -4298,7 +4298,8 @@ abstract class restore_questions_activity_structure_step extends restore_activit
         $this->inform_new_usage_id($usage->id);
 
         $data->uniqueid = $usage->id;
-        $upgrader->save_usage($quiz->preferredbehaviour, $data, $qas, $quiz->questions);
+        $upgrader->save_usage($quiz->preferredbehaviour, $data, $qas,
+                 $this->questions_recode_layout($quiz->oldquestions));
     }
 
     protected function find_question_session_and_states($data, $questionid) {

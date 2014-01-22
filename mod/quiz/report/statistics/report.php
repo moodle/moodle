@@ -59,7 +59,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         $this->context = context_module::instance($cm->id);
 
-        if (!quiz_questions_in_quiz($quiz->questions)) {
+        if (!quiz_has_questions($quiz->id)) {
             $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
             echo quiz_no_questions_message($quiz, $cm, $this->context);
             return true;

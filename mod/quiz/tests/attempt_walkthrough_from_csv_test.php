@@ -113,10 +113,7 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
         $this->randqids = array();
         foreach ($slots as $slotno => $slotquestion) {
             if ($slotquestion['type'] !== 'random') {
-                quiz_add_quiz_question($slotquestion['id'], $this->quiz, 0);
-                // Setting default mark above does not affect the grade for multi-answer question type (and maybe others??).
-                // Set the mark again just to be sure.
-                quiz_update_question_instance($slotquestion['mark'], $slotquestion['id'], $this->quiz);
+                quiz_add_quiz_question($slotquestion['id'], $this->quiz, 0, $slotquestion['mark']);
             } else {
                 quiz_add_random_questions($this->quiz, 0, $slotquestion['catid'], 1, 0);
                 $this->randqids[$slotno] = $qidsbycat[$slotquestion['catid']];

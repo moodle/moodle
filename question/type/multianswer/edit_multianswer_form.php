@@ -65,13 +65,13 @@ class qtype_multianswer_edit_form extends question_edit_form {
         if (isset($question->id) && $question->id != 0) {
             // TODO MDL-43779 should not have quiz-specific code here.
             $this->savedquestiondisplay = fullclone($question);
-            $this->nb_of_quiz = $DB->count_records('quiz_question_instances', array('questionid' => $question->id));
+            $this->nb_of_quiz = $DB->count_records('quiz_slots', array('questionid' => $question->id));
             $this->used_in_quiz = $this->nb_of_quiz > 0;
             $this->nb_of_attempts = $DB->count_records_sql("
                     SELECT count(1)
-                      FROM {quiz_question_instances} qqi
-                      JOIN {quiz_attempts} quiza ON quiza.quiz = qqi.quizid
-                     WHERE qqi.questionid = ?
+                      FROM {quiz_slots} slot
+                      JOIN {quiz_attempts} quiza ON quiza.quiz = slot.quizid
+                     WHERE slot.questionid = ?
                        AND quiza.preview = 0", array($question->id));
         }
 

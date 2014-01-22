@@ -48,7 +48,6 @@ class quizaccess_ipaddress_testcase extends basic_testcase {
         // does not always work, for example using the mac install package on my laptop.
         $quiz->subnet = getremoteaddr(null);
         if (!empty($quiz->subnet)) {
-            $quiz->questions = '';
             $quizobj = new quiz($quiz, $cm, null);
             $rule = new quizaccess_ipaddress($quizobj, 0);
 
@@ -61,7 +60,6 @@ class quizaccess_ipaddress_testcase extends basic_testcase {
         }
 
         $quiz->subnet = '0.0.0.0';
-        $quiz->questions = '';
         $quizobj = new quiz($quiz, $cm, null);
         $rule = new quizaccess_ipaddress($quizobj, 0);
 

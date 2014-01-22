@@ -286,10 +286,10 @@ class question_engine_upgrade_question_loader {
 
         if ($quizid) {
             $question = $DB->get_record_sql("
-                SELECT q.*, qqi.maxmark
+                SELECT q.*, slot.maxmark
                 FROM {question} q
-                JOIN {quiz_question_instances} qqi ON qqi.questionid = q.id
-                WHERE q.id = ? AND qqi.quizid = ?", array($questionid, $quizid));
+                JOIN {quiz_slots} slot ON slot.questionid = q.id
+                WHERE q.id = ? AND slot.quizid = ?", array($questionid, $quizid));
         } else {
             $question = $DB->get_record('question', array('id' => $questionid));
         }

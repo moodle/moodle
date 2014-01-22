@@ -42,7 +42,6 @@ class mod_quiz_class_testcase extends basic_testcase {
         $quiz->reviewattempt = 0x10010;
         $quiz->timeclose = 0;
         $quiz->attempts = 0;
-        $quiz->questions = '1,2,0,3,4,0';
 
         $cm = new stdClass();
         $cm->id = 123;
@@ -64,20 +63,5 @@ class mod_quiz_class_testcase extends basic_testcase {
 
         $this->assertEquals(get_string('noreviewuntil', 'quiz', userdate($closetime)),
             $quizobj->cannot_review_message(mod_quiz_display_options::LATER_WHILE_OPEN));
-    }
-
-    public function test_empty_quiz() {
-        $quiz = new stdClass();
-        $quiz->reviewattempt = 0x10010;
-        $quiz->timeclose = 0;
-        $quiz->attempts = 0;
-        $quiz->questions = '0';
-
-        $cm = new stdClass();
-        $cm->id = 123;
-
-        $quizobj = new quiz($quiz, $cm, new stdClass(), false);
-
-        $this->assertFalse($quizobj->has_questions());
     }
 }
