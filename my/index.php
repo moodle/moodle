@@ -101,6 +101,7 @@ if (!isguestuser()) {   // Skip default home page for guests
 if ($PAGE->user_allowed_editing()) {
     if ($reset !== null) {
         if (!is_null($userid)) {
+            require_sesskey();
             if(!$currentpage = my_reset_page($userid, MY_PAGE_PRIVATE)){
                 print_error('reseterror', 'my');
             }
