@@ -950,6 +950,7 @@ function scorm_pluginfile($course, $cm, $context, $filearea, $args, $forcedownlo
         if (!has_capability('moodle/course:manageactivities', $context)) {
             return false;
         }
+        $revision = (int)array_shift($args); // Prevents caching problems - ignored here.
         $relativepath = implode('/', $args);
         $fullpath = "/$context->id/mod_scorm/package/0/$relativepath";
         $lifetime = 0; // No caching here.
