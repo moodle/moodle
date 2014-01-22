@@ -566,7 +566,7 @@ class moodle_url {
      */
     public function out_omit_querystring($includeanchor = false) {
 
-        $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto') ? '':'//'): '';
+        $uri = $this->scheme ? $this->scheme.':'.((strtolower($this->scheme) == 'mailto' || (strtolower($this->scheme) == 'javascript')) ? '':'//'): '';
         $uri .= $this->user ? $this->user.($this->pass? ':'.$this->pass:'').'@':'';
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
