@@ -34,7 +34,7 @@ class highscore_added extends \core\event\base {
     protected function init() {
         $this->data['objecttable'] = 'lesson_high_scores';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**

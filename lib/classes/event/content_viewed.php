@@ -61,7 +61,7 @@ abstract class content_viewed extends base {
         global $PAGE;
 
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = $PAGE->context;
     }
 

@@ -45,7 +45,7 @@ class report_viewed extends \core\event\content_viewed {
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'choice';
     }
 

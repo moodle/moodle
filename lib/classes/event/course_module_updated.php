@@ -50,7 +50,7 @@ class course_module_updated extends base {
     protected function init() {
         $this->data['objecttable'] = 'course_modules';
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**

@@ -42,7 +42,7 @@ class user_profile_viewed extends base {
     protected function init() {
         $this->data['objecttable'] = 'user';
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**

@@ -33,7 +33,7 @@ class course_completed extends base {
     protected function init() {
         $this->data['objecttable'] = 'course_completions';
         $this->data['crud'] = 'u';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**

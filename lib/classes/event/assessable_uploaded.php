@@ -56,7 +56,7 @@ abstract class assessable_uploaded extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**

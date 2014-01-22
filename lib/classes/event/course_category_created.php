@@ -33,7 +33,7 @@ class course_category_created extends base {
     protected function init() {
         $this->data['objecttable'] = 'course_categories';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**

@@ -84,7 +84,7 @@ class chapter_deleted extends \core\event\base {
      */
     protected function init() {
         $this->data['crud'] = 'd';
-        $this->data['level'] = self::LEVEL_TEACHING;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
         $this->data['objecttable'] = 'book_chapters';
     }
 

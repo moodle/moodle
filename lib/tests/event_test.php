@@ -52,7 +52,7 @@ class core_event_testcase extends advanced_testcase {
         $this->assertSame('unittest', $event->target);
         $this->assertSame(5, $event->objectid);
         $this->assertSame('u', $event->crud);
-        $this->assertSame(\core\event\base::LEVEL_PARTICIPATING, $event->level);
+        $this->assertSame(\core\event\base::LEVEL_PARTICIPATING, $event->edulevel);
 
         $this->assertEquals($system, $event->get_context());
         $this->assertSame($system->id, $event->contextid);
@@ -449,6 +449,23 @@ class core_event_testcase extends advanced_testcase {
         $this->assertSame(
             array('external_observer-1', 'observe_one-1', 'observe_one-2'),
             \core_tests\event\unittest_observer::$info);
+    }
+
+    public function test_deprecated() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $event = \core_tests\event\deprecated_event1::create();
+        $this->assertDebuggingCalled('level property is deprecated, use edulevel property instead');
+
+        $this->assertSame($event::LEVEL_TEACHING, $event->level);
+        $this->assertDebuggingCalled('level property is deprecated, use edulevel property instead');
+
+        $this->assertTrue(isset($event->level));
+        $this->assertDebuggingCalled('level property is deprecated, use edulevel property instead');
+
+        $this->assertSame($event::LEVEL_TEACHING, $event->edulevel);
     }
 
     public function test_legacy() {

@@ -47,7 +47,7 @@ class user_loggedout extends base {
         $this->context = \context_system::instance();
         $this->data['objecttable'] = 'user';
         $this->data['crud'] = 'r';
-        $this->data['level'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_OTHER;
     }
 
     /**

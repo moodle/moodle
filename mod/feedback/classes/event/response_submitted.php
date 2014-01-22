@@ -53,7 +53,7 @@ class response_submitted extends \core\event\base {
         require_once($CFG->dirroot.'/mod/feedback/lib.php');
         $this->data['objecttable'] = 'feedback_completed';
         $this->data['crud'] = 'c';
-        $this->data['level'] = self::LEVEL_PARTICIPATING;
+        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
     }
 
     /**
