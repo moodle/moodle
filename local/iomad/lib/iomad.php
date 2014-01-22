@@ -27,6 +27,12 @@ class iomad {
      */
     public static function get_my_companyid($context) {
         global $SESSION;
+
+        // are we logged in?
+        if (empty($USER)) {
+            return -1;
+        }
+
         // Set the companyid to bypass the company select form if possible.
         if (!empty($SESSION->currenteditingcompany)) {
             $companyid = $SESSION->currenteditingcompany;
