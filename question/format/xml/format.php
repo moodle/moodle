@@ -1271,7 +1271,7 @@ class qformat_xml extends qformat_default {
 
             case 'multianswer':
                 foreach ($question->options->questions as $index => $subq) {
-                    $expout = preg_replace('~{#' . $index . '}~', $subq->questiontext, $expout);
+                    $expout = str_replace('{#' . $index . '}', $subq->questiontext, $expout);
                 }
                 break;
 
