@@ -6,8 +6,8 @@
 .que .history {font-size:0.8em;}
 .que .incorrect {background-color: #faa;}
 .que .partiallycorrect {background-color: #ff9;}
-.que .r0 {background-color: #F5F5F5;}
-.que .r1 {background-color: #EEE;}
+.que > tbody > tr:nth-of-type(odd) {background-color: #F5F5F5;}
+.que > tbody > tr:nth-of-type(even) {background-color: #EEE;}
 
 #chooseqtype .qtypename {font-weight: bold;}
 

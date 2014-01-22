@@ -596,10 +596,10 @@ table#user-grades tr.avg td.vmarked {
     font-size:90%;
     border:1px solid #999;
 }
-.userenrolment tr.r0 {
+.userenrolment > tbody > tr:nth-of-type(odd) {
     background-color: #F9F9F9;
 }
-.userenrolment tr.r1 {
+.userenrolment > tbody > tr:nth-of-type(even) {
     background-color: #F3F3F3;
 }
 .userenrolment td {

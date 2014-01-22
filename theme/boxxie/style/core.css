@@ -936,10 +936,10 @@ td.eventskey {
     padding: 2px 8px;
 }
 
-#page-user-action_redir .generaltable .r1 td,
-#page-user-index #participants .r0 td,
+#page-user-action_redir .generaltable > tbody > tr:nth-of-type(even) td,
+#page-user-index #participants > tbody > tr:nth-of-type(odd) td,
 .path-mod-choice .results .count,
-.path-mod-forum .forumheaderlist .r1 td {
+.path-mod-forum .forumheaderlist > tbody > tr:nth-of-type(even) td {
     background: #f3f8ed;
 }
 

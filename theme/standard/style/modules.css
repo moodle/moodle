@@ -156,8 +156,8 @@ a#mod-scorm-log-toggle {font-size: 0.7em;font-weight: bold;}
 .path-mod-survey .resultgraph {text-align:center;border-width:1px;border-style: solid;}
 .path-mod-survey .questiontext {font-size:1em;}
 .path-mod-survey .surveytable .rblock label {text-align: center;}
-#page-mod-survey-view .r0 {background-color: #EEEEEE;}
-#page-mod-survey-view .r1 {background-color: #DDDDDD;}
+#page-mod-survey-view > tbody > tr:nth-of-type(odd) {background-color: #EEEEEE;}
+#page-mod-survey-view > tbody > tr:nth-of-type(even) {background-color: #DDDDDD;}
 #page-mod-survey-report .reportsummary,
 #page-mod-survey-report .studentreport,
 #page-mod-survey-report .reportbuttons,

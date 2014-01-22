@@ -129,7 +129,7 @@ table.formtable tbody th {background-color: transparent;background-image: none;}
 .logtable {margin-left:auto;margin-right:auto;}
 .logtable td {font-size: 0.8em;}
 .logtable th {font-size: 0.9em;}
-.logtable .r1 {background-color:#EEEEEE;}
+.logtable > tbody > tr:nth-of-type(even) {background-color:#EEEEEE;}
 
 /**
  * Blog
@@ -428,14 +428,14 @@ table#tag-management-list {margin: 10px auto;width: 80%;}
  * Enrol
  */
 .userenrolment {border:1px solid #999;}
-.userenrolment tr.r0 {background-color:#F9F9F9;}
-.userenrolment tr.r1 {background-color:#F3F3F3;}
+.userenrolment > tbody > tr:nth-of-type(odd) {background-color:#F9F9F9;}
+.userenrolment > tbody > tr:nth-of-type(even) {background-color:#F3F3F3;}
 .userenrolment td {border:1px solid #E9E9E9;border-top-color:#F6F6F6;border-right-color:#EEE;border-left-color:#F3F3F3;}
 .userenrolment td.c0 {border-left-width:0;}
 .userenrolment td.lastcol {border-right-color:#999;}
 .userenrolment .col_bulkops {vertical-align:middle;text-align:center;}
-.userenrolment .r0 .col_bulkops {background-color:#FFFFFF;}
-.userenrolment .r1 .col_bulkops {background-color:#F9F9F9;}
+.userenrolment > tbody > tr:nth-of-type(odd) .col_bulkops {background-color:#FFFFFF;}
+.userenrolment > tbody > tr:nth-of-type(even) .col_bulkops {background-color:#F9F9F9;}
 .userenrolment tr.lastrow td {border-bottom-width:0;}
 .userenrolment .col_userdetails {min-width:35%;}
 .userenrolment .col_role .role a img {height:8px;}

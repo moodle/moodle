@@ -213,8 +213,8 @@ div#dock {
 
 .path-mod-survey {
     .surveytable {
-        .r0 {background-color: #eee;}
-        .r1 {background-color: #ddd;}
+      > tbody > tr:nth-of-type(odd) {background-color: #eee;}
+      > tbody > tr:nth-of-type(even) {background-color: #ddd;}
         .rblock label {text-align: center;}
     }
     .resultgraph, .reportsummary, .studentreport, .reportbuttons, .centerpara {
