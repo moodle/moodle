@@ -62,8 +62,12 @@ $strfiltergroups     = get_string('filtergroups', 'group');
 $strnogroups         = get_string('nogroups', 'group');
 $strdescription      = get_string('description');
 
-// Get all groupings
+// Get all groupings and sort them by formatted name.
 $groupings = $DB->get_records('groupings', array('courseid'=>$courseid), 'name');
+foreach ($groupings as $gid => $grouping) {
+    $groupings[$gid]->formattedname = format_string($grouping->name, true, array('context' => $context));
+}
+core_collator::asort_objects_by_property($groupings, 'formattedname');
 $members = array();
 foreach ($groupings as $grouping) {
     $members[$grouping->id] = array();
@@ -136,7 +140,7 @@ echo $strfiltergroups;
 $options = array();
 $options[0] = get_string('all');
 foreach ($groupings as $grouping) {
-    $options[$grouping->id] = strip_tags(format_string($grouping->name));
+    $options[$grouping->id] = strip_tags($grouping->formattedname);
 }
 $popupurl = new moodle_url($rooturl.'&group='.$groupid);
 $select = new single_select($popupurl, 'grouping', $options, $groupingid, array());
@@ -199,7 +203,7 @@ foreach ($members as $gpgid=>$groupdata) {
     if ($gpgid < 0) {
         echo $OUTPUT->heading($strnotingrouping, 3);
     } else {
-        echo $OUTPUT->heading(format_string($groupings[$gpgid]->name), 3);
+        echo $OUTPUT->heading($groupings[$gpgid]->formattedname, 3);
         $description = file_rewrite_pluginfile_urls($groupings[$gpgid]->description, 'pluginfile.php', $context->id, 'grouping', 'description', $gpgid);
         $options = new stdClass;
         $options->noclean = true;
