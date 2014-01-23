@@ -522,9 +522,6 @@ class core_renderer extends renderer_base {
               <li><a href="http://www.contentquality.com/mynewtester/cynthia.exe?rptmode=0&amp;warnp2n3e=1&amp;url1=' . urlencode(qualified_me()) . '">WCAG 1 (2,3) Check</a></li>
             </ul></div>';
         }
-        if (!empty($CFG->additionalhtmlfooter)) {
-            $output .= "\n".$CFG->additionalhtmlfooter;
-        }
         return $output;
     }
 
@@ -546,15 +543,22 @@ class core_renderer extends renderer_base {
 
     /**
      * The standard tags (typically script tags that are not needed earlier) that
-     * should be output after everything else, . Designed to be called in theme layout.php files.
+     * should be output after everything else. Designed to be called in theme layout.php files.
      *
      * @return string HTML fragment.
      */
     public function standard_end_of_body_html() {
+        global $CFG;
+
         // This function is normally called from a layout.php file in {@link core_renderer::header()}
         // but some of the content won't be known until later, so we return a placeholder
         // for now. This will be replaced with the real content in {@link core_renderer::footer()}.
-        return $this->unique_end_html_token;
+        $output = '';
+        if (!empty($CFG->additionalhtmlfooter)) {
+            $output .= "\n".$CFG->additionalhtmlfooter;
+        }
+        $output .= $this->unique_end_html_token;
+        return $output;
     }
 
     /**
