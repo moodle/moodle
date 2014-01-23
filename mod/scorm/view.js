@@ -59,6 +59,7 @@ M.mod_scormform.init = function(Y) {
         // this shouldn't happen as the pop-up here is launched on user action but good to make sure.
         setTimeout(function() {
             if (!winobj) {
+                var scormintro = Y.one('#intro');
                 scormintro.setHTML(M.str.scorm.popupsblocked);
             }}, 800);
     }
