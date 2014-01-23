@@ -78,7 +78,7 @@ class mod_trainingevent_mod_form extends moodleform_mod {
 
     }
 
-    public function validation($data) {
+    public function validation($data, $files) {
         global $DB;
 
         $errors = array();
