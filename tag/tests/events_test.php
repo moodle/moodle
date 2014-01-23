@@ -108,7 +108,7 @@ class core_tag_events_testcase extends advanced_testcase {
         $sink = $this->redirectEvents();
         tag_set('course', $course->id, array('A tag'), 'core', context_course::instance($course->id)->id);
         $events = $sink->get_events();
-        $event = reset($events);
+        $event = $events[1];
 
         // Check that the course was tagged and that the event data is valid.
         $this->assertEquals(1, $DB->count_records('tag_instance', array('component' => 'core')));
@@ -340,5 +340,23 @@ class core_tag_events_testcase extends advanced_testcase {
             $this->assertInstanceOf('\core\event\tag_deleted', $event);
             $this->assertEquals(context_system::instance(), $event->get_context());
         }
+    }
+
+    /**
+     * Test the tag created event.
+     */
+    public function test_tag_created() {
+        global $DB;
+
+        // Trigger and capture the event for creating a tag.
+        $sink = $this->redirectEvents();
+        tag_add('A really awesome tag!');
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the tag was created and the event data is valid.
+        $this->assertEquals(1, $DB->count_records('tag'));
+        $this->assertInstanceOf('\core\event\tag_created', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
     }
 }

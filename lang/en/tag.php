@@ -38,6 +38,7 @@ $string['errordeleting'] = 'Error deleting tag with id {$a}, please report to yo
 $string['errortagfrontpage'] = 'Tagging the site main page is not allowed';
 $string['errorupdatingrecord'] = 'Error updating tag record';
 $string['eventitemtagged'] = 'Item tagged';
+$string['eventtagcreated'] = 'Tag created';
 $string['eventtagdeleted'] = 'Tag deleted';
 $string['eventtagflagged'] = 'Tag flagged';
 $string['eventtagunflagged'] = 'Tag unflagged';

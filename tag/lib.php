@@ -843,6 +843,17 @@ function tag_add($tags, $type="default") {
             $tag_object->name    = $tag_name_lc;
             //var_dump($tag_object);
             $tags_ids[$tag_name_lc] = $DB->insert_record('tag', $tag_object);
+
+            $event = \core\event\tag_created::create(array(
+                'objectid' => $tags_ids[$tag_name_lc],
+                'relateduserid' => $tag_object->userid,
+                'context' => context_system::instance(),
+                'other' => array(
+                    'name' => $tag_object->name,
+                    'rawname' => $tag_object->rawname
+                )
+            ));
+            $event->trigger();
         }
     }
 
