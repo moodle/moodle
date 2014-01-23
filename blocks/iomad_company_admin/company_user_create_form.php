@@ -190,7 +190,16 @@ class user_edit_form extends company_moodleform {
         $mform->addElement('html', $this->currentcourses->display(true));
         $mform->addElement('html', "</div></div>");
 
-        $this->add_action_buttons();
+        // add action buttons
+        $buttonarray = array();
+        $buttonarray[] = &$mform->createElement('submit', 'submitbutton',
+                            get_string('createuseragain', 'block_iomad_company_admin'));
+        $buttonarray[] = &$mform->createElement('submit', 'submitandback',
+                            get_string('createuserandback', 'block_iomad_company_admin'));
+        $buttonarray[] = &$mform->createElement('cancel');
+        $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform->closeHeaderBefore('buttonar');
+
     }
 
     public function get_data() {
@@ -276,6 +285,7 @@ $companylist = new moodle_url('/local/iomad_dashboard/index.php', $urlparams);
 $linktext = get_string('createuser', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_user_create_form.php');
+$dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
 // Build the nav bar.
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
@@ -289,7 +299,7 @@ if ($companyform->is_cancelled() || $mform->is_cancelled()) {
     if ($returnurl) {
         redirect($returnurl);
     } else {
-        redirect($linkurl);
+        redirect($dashboardurl);
     }
 } else if ($data = $mform->get_data()) {
     $data->userid = $USER->id;
@@ -367,7 +377,11 @@ if ($companyform->is_cancelled() || $mform->is_cancelled()) {
         $userdata = $DB->get_record('user', array('id' => $userid));
         company_user::enrol($userdata, $createcourses);
     }
-    redirect($linkurl."?createdok=1");
+    if (isset($data->submitandback)) {
+        redirect($dashboardurl);
+    } else {
+        redirect($linkurl."?createdok=1");
+    }
 }
 $blockpage->display_header();
 
