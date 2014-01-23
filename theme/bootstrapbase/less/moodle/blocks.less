@@ -1,145 +1,161 @@
+// General block styles.
 .block {
     .well;
     padding: 8px 0;
-}
 
-.block .header .title h2,
-.block h3 {
-  .nav-header;
-  font-size: 1.1em;
-}
+    .header {
+        h2 {
+            .nav-header;
+            font-size: 1.1em;
+            word-wrap: break-word;
+            margin: 0;
+        }
+        .block_action {
+            padding: 3px 15px;
+            float: right;
+            > * {
+                margin-left:3px;
+            }
+            .block-hider-show,
+            .block-hider-hide {
+                cursor: pointer;
+            }
+            .block-hider-show {
+                display: none;
+            }
+        }
+        .commands {
+            clear: both;
+            text-align: right;
+            display: block;
+            padding: 3px 15px;
 
-.block .header .title .commands,
-.block_adminblock .content,
-.block .footer {
-    display: block;
-    padding: 3px 5px;
-}
-.block .header .block_action {
-    padding:4px;
-    float: right;
-}
-.block .header .commands {
-    clear: both;
-    text-align: right;
-}
-.block .header .commands > a {
-    margin: 0 3px;
-}
-.block .header .commands .icon img {
-    width: 12px;
-    height: 12px;
-}
-
-.block .header .commands img.actionmenu {
-    width:auto;
-}
-
-.block {
-    .header h2 {
-        word-wrap: break-word;
-        padding: .2em 0 0 .2em;
-        margin: 0;
+            > a {
+                margin: 0 3px;
+            }
+            .icon img {
+                width: 12px;
+                height: 12px;
+            }
+            img.actionmenu {
+                width:auto;
+            }
+        }
     }
     .content {
         padding: 4px 14px;
         word-wrap: break-word;
+
+        h3 {
+            .nav-header;
+            font-size: 1.1em;
+        }
         hr {
             margin: 5px 0;
         }
+        .userpicture {
+            width: 16px;
+            height: 16px;
+            margin-right: 6px;
+        }
+        .list {
+            li.listentry {
+                clear: both;
+            }
+            .c0 {
+                display: inline;
+            }
+            .c1 {
+                margin-left: 5px;
+                display: inline;
+            }
+        }
+    }
+    .footer {
+        margin-bottom: 4px;
+        display: block;
+        padding: 3px 5px;
+    }
+    &.beingmoved {
+        border-width: 2px;
+        border-style: dashed;
+    }
+    &.invisible {
+        .opacity(50);
+    }
+
+    &.hidden .header .block_action {
+        .block-hider-hide {
+            display: none;
+        }
+        .block-hider-show {
+            display: inline;
+        }
+    }
+    &.list_block .unlist > li > .column {
+        display: inline-block;
+        .ie7-inline-block();
     }
 }
 
+// Hide the block content when the block has been minimised.
 .jsenabled .block.hidden .content {
     display: none;
 }
 
-.block .content .userpicture {
-    width: 16px;
-    height: 16px;
-    margin-right: 6px;
-}
-.block .content .list li.listentry {
-    clear: both;
-}
-.block .content .list .c0 {
-    display: inline;
-}
-.block .content .list .c1 {
-    margin-left: 5px;
-    display: inline;
-}
-
-.block .footer {
-    margin-bottom: 4px;
-}
-
-.block .blockannotation {
-    font-size: 0.75em;
-    margin: -1em 0 1em;
-}
-
-.block.list_block .unlist > li > .column {
-    display: inline-block;
-    .ie7-inline-block();
-}
-
-.blockmovetarget,
-.block.beingmoved {
+// Style the div used as a move target for non-drag+drop block moves.
+.blockmovetarget {
     border-width: 2px;
     border-style: dashed;
-}
-.blockmovetarget {
     display: block;
     height: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 20px;
 }
 
-.block.invisible {
-    .opacity(50);
+// Style the div that contains the cancel link for moving a block with JS disabled.
+.blockannotation {
+    // Blocks have a bottom margin of 20px, to associate this link with the block being moved
+    // we move it up 10px, and then give it a bottom margin of 10px giving it a better visual association
+    position: relative;
+    top: -10px;
+    margin-bottom: 10px;
 }
 
-.block .block-hider-show,
-.block .block-hider-hide {
-    cursor: pointer;
-    padding-right: 5px;
-    padding-left: 5px;
-}
-.block .block-hider-show,
-.block.hidden .block-hider-hide {
-    display: none;
-}
-.block.hidden .block-hider-show {
-    display: inline;
+// Styles for the blog menu block.
+.block_blog_menu #blogsearchquery {
+    max-width: 92%;
 }
 
-.block_calendar_upcoming {
-    .footer {
-        margin-top: .5em;
+// Styles for the admin block.
+.block_settings {
+    #adminsearchquery {
+        max-width: 92%;
     }
+}
+
+// Styles for the search forums block.
+.block_search_forums {
+    #searchform_search {
+        width: auto;
+        max-width: 92%;
+    }
+}
+
+// Styles for the Calendar Upcoming block.
+.block_calendar_upcoming {
     .content {
         .date {
             padding-left: 22px;
         }
         .footer {
+            margin-top: .5em;
             padding-top: 10px;
             padding-left: 0px;
         }
     }
 }
 
-#adminsearchquery,
-#blogsearchquery,
-#searchform_search,
-.block_adminblock select {
-    max-width: 92%;
-}
-.block_adminblock .singleselect {
-    display: block;
-}
-#searchform_search {
-    width: auto;
-}
+// Styles for the RSS client block.
 .block_rss_client {
     .content li {
         margin-bottom: 10px;
@@ -155,6 +171,7 @@
     }
 }
 
+// Styles for the news items block.
 .block_news_items .content {
     .newlink {
         padding-bottom: 10px;
@@ -199,18 +216,41 @@
     }
 }
 
-// Overide for RTL layout.
+// Styles for the special "Add block" block shown while editing.
+.block_adminblock {
+    .content {
+        display: block;
+        padding: 3px 5px;
+    }
+    select {
+        max-width: 92%;
+    }
+}
+
+// RTL styles for blocks.
 .dir-rtl {
-    .block .header,
-    .block h2.header {
-        text-align:right;
+
+    // RTL styles for blocks in general.
+    .block {
+        .header {
+            text-align:right;
+            h2 {
+                text-align:right;
+            }
+            .commands {
+                text-align: left;
+                > * {
+                    margin-left:0;
+                    margin-right:3px;
+                }
+            }
+            .block_action {
+                float: left;
+            }
+        }
     }
-    .block .header .commands {
-        text-align: left;
-    }
-    .block .header .block_action {
-        float: left;
-    }
+
+    // LTR styles for the calendar upcoming block.
     .block_calendar_upcoming {
         .content {
             .date {
@@ -221,6 +261,8 @@
             }
         }
     }
+
+    // RTL styles for the news items block.
     .block_news_items .content {
         ul li {
             .name {
