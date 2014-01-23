@@ -3,13 +3,13 @@
     padding: 8px 0;
 }
 
-.block .header .title h2,
 .block h3.main {
   .nav-header;
   font-size: 1.1em;
 }
 
-.block .header .title .commands,
+.block .header .commands,
+.block .header .block_action,
 .block_adminblock .content,
 .block .footer {
     display: block;
@@ -31,8 +31,9 @@
 }
 .block {
     .header h2 {
+        .nav-header;
+        font-size: 1.1em;
         word-wrap: break-word;
-        padding: .2em 0 0 .2em;
         margin: 0;
     }
     .content {
@@ -68,9 +69,13 @@
     margin-bottom: 4px;
 }
 
-.block .blockannotation {
-    font-size: 0.75em;
-    margin: -1em 0 1em;
+// Style the div that contains the cancel link for moving a block with JS disabled.
+.blockannotation {
+    // Blocks have a bottom margin of 20px, to associate this link with the block being moved
+    // we move it up 10px, and then give it a bottom margin of 10px giving it a better visual association
+    position: relative;
+    top: -10px;
+    margin-bottom: 10px;
 }
 
 .block.list_block .unlist > li > .column {
@@ -86,7 +91,7 @@
 .blockmovetarget {
     display: block;
     height: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 20px;
 }
 
 .block.invisible {
@@ -110,14 +115,11 @@
 .block_calendar_upcoming .footer {
     margin-top: .5em;
 }
-#adminsearchquery,
-#blogsearchquery,
-#searchform_search,
+.block_settings #adminsearchquery,
+.block_blog_menu  #blogsearchquery,
+.block_search_forums #searchform_search,
 .block_adminblock select {
     max-width: 92%;
-}
-.block_adminblock .singleselect {
-    display: block;
 }
 #searchform_search {
     width: auto;
