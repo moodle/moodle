@@ -82,7 +82,7 @@ function xmldb_trainingevent_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2011111701, 'trainingevent');
     }
 
-    if ($oldversion < 2013071000) {
+    if ($oldversion < 2014012301) {
 
         // Define field approvaltype to be added to trainingevent.
         $table = new xmldb_table('trainingevent');
@@ -94,7 +94,7 @@ function xmldb_trainingevent_upgrade($oldversion) {
         }
 
         // Trainingevent savepoint reached.
-        upgrade_mod_savepoint(true, 2013071000, 'trainingevent');
+        upgrade_mod_savepoint(true, 2014012301, 'trainingevent');
     }
 
     return $result;
