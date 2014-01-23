@@ -453,9 +453,12 @@ class company {
     public static function get_userlevel($user) {
 
         global $DB;
-        $userdepartment = $DB->get_record('company_users', array('userid' => $user->id));
-        $userlevel = $DB->get_record('department', array('id' => $userdepartment->departmentid));
-        return $userlevel;
+        if ($userdepartment = $DB->get_record('company_users', array('userid' => $user->id))) {
+            $userlevel = $DB->get_record('department', array('id' => $userdepartment->departmentid));
+            return $userlevel;
+        } else {
+            return false;
+        }
     }
 
     /**

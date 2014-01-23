@@ -155,8 +155,11 @@ if (!empty($idlist[0])) {
     $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid);
 } else {
     $searchinfo = new stdclass();
-    $userlevel = company::get_userlevel($USER);
-    $searchinfo->departmentid = $userlevel->id;
+    if ($userlevel = company::get_userlevel($USER)) {
+        $searchinfo->departmentid = $userlevel->id;
+    } else {
+        $searchinfo->departmentid = '';
+    }
     $searchinfo->sqlsearch = " 1 = 2";
     $searchinfo->sqlsort = "";
 }
