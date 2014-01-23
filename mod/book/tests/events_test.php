@@ -65,7 +65,7 @@ class mod_book_events_testcase extends advanced_testcase {
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_book\event\chapter_created', $event);
-        $this->assertEquals(context_module::instance($book->id), $event->get_context());
+        $this->assertEquals(context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($chapter->id, $event->objectid);
         $expected = array($course->id, 'book', 'add chapter', 'view.php?id='.$book->cmid.'&chapterid='.$chapter->id,
             $chapter->id, $book->cmid);
@@ -97,7 +97,7 @@ class mod_book_events_testcase extends advanced_testcase {
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_book\event\chapter_updated', $event);
-        $this->assertEquals(context_module::instance($book->id), $event->get_context());
+        $this->assertEquals(context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($chapter->id, $event->objectid);
         $expected = array($course->id, 'book', 'update chapter', 'view.php?id='.$book->cmid.'&chapterid='.$chapter->id,
             $chapter->id, $book->cmid);
@@ -131,7 +131,7 @@ class mod_book_events_testcase extends advanced_testcase {
 
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_book\event\chapter_deleted', $event);
-        $this->assertEquals(context_module::instance($book->id), $event->get_context());
+        $this->assertEquals(context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($chapter->id, $event->objectid);
         $this->assertEquals($chapter, $event->get_record_snapshot('book_chapters', $chapter->id));
         $this->assertEventLegacyLogData(array('1', 2, false), $event);

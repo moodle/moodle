@@ -812,7 +812,7 @@ class core_completionlib_testcase extends advanced_testcase {
         $this->assertInstanceOf('\core\event\course_module_completion_updated', $event);
         $this->assertEquals($forum->cmid, $event->get_record_snapshot('course_modules_completion', $event->objectid)->coursemoduleid);
         $this->assertEquals($current, $event->get_record_snapshot('course_modules_completion', $event->objectid));
-        $this->assertEquals(context_module::instance($forum->id), $event->get_context());
+        $this->assertEquals(context_module::instance($forum->cmid), $event->get_context());
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals($this->user->id, $event->other['relateduserid']);
         $this->assertInstanceOf('moodle_url', $event->get_url());
