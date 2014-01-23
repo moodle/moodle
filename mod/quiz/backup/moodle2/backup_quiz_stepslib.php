@@ -137,7 +137,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $attempt->set_source_alias('attempt', 'attemptnum');
 
         // Define id annotations.
-        $qinstance->annotate_ids('question', 'question');
+        $qinstance->annotate_ids('question', 'questionid');
         $override->annotate_ids('user', 'userid');
         $override->annotate_ids('group', 'groupid');
         $grade->annotate_ids('user', 'userid');
