@@ -52,7 +52,7 @@ class core_grade_edittreelib_testcase extends advanced_testcase {
         $scale = $this->getDataGenerator()->create_scale();
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->getDataGenerator()->create_module('assign', array('course' => $course->id));
-        $modulecontext = context_module::instance($assign->id);
+        $modulecontext = context_module::instance($assign->cmid);
         // The generator returns a dummy object, lets get the real assign object.
         $assign = new assign($modulecontext, false, false);
         $cm = $assign->get_course_module();
