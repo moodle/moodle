@@ -176,10 +176,7 @@ class admin_uploaduser_form2 extends company_moodleform {
 
         // Remove the company profile field from the form (this was added by the call to profile_definition
         // above but we don't want the user to edit this here).
-        if ($mform->elementExists("profile_field_company")) {
-            $mform->removeElement("profile_field_company");
-        }
-
+        
         // Hidden fields.
         $mform->addElement('hidden', 'iid');
         $mform->setType('iid', PARAM_INT);

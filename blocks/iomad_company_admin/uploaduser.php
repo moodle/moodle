@@ -185,8 +185,7 @@ $mform->set_data(array('iid' => $iid,
                        'readcount' => $readcount,
                        'uutypelabel' => $choices[$uploadtype],
                        'uutype' => $uploadtype,
-                       'companyid' => $companyid,
-                       'profile_field_company' => $USER->profile["company"]));
+                       'companyid' => $companyid));
 
 // If a file has been uploaded, then process it.
 if ($formdata = $mform->is_cancelled()) {
@@ -698,18 +697,8 @@ if ($formdata = $mform->is_cancelled()) {
                 }
             }
 
-            // If user has company set the user is only allowed to upload users for their company,
-            // make sure to overwrite profile field for this user.
-            if (company_user::is_company_user()) {
-                $user->profile_field_company = $USER->profile["company"];
-            }
-
-            if (!isset($user->profile_field_company) && !empty($companyshortname)) {
-                $user->profile_field_company = $companyshortname;
-            }
-
             // Merge user with company user defaults.
-            if ($user->profile_field_company) {
+            if (!empty($companyid)) {
                 $company = new company($companyid);
                 $defaults = $company->get_user_defaults();
 
@@ -735,6 +724,9 @@ if ($formdata = $mform->is_cancelled()) {
 
             // Make sure user context exists.
             get_context_instance(CONTEXT_USER, $user->id);
+
+            // Add the user to the company
+            $company->assign_user_to_company($user->id);
 
             // Add the user to the company default hierarchy level.
             company::assign_user_to_department($formdata->userdepartment, $user->id);
