@@ -34,11 +34,10 @@ define("COURSECLASSROOM_MAX_NAME_LENGTH", 50);
  * @return string
  */
 function get_trainingevent_name($trainingevent) {
-    $textlib = textlib_get_instance();
 
     $name = strip_tags(format_string($trainingevent->intro, true));
-    if ($textlib->strlen($name) > COURSECLASSROOM_MAX_NAME_LENGTH) {
-        $name = $textlib->substr($name, 0, COURSECLASSROOM_MAX_NAME_LENGTH)."...";
+    if (textlib::strlen($name) > COURSECLASSROOM_MAX_NAME_LENGTH) {
+        $name = textlib::substr($name, 0, COURSECLASSROOM_MAX_NAME_LENGTH)."...";
     }
 
     if (empty($name)) {
