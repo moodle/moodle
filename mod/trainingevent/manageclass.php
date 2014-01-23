@@ -28,7 +28,7 @@ require_once($CFG->dirroot."/local/email/lib.php");
 require_once($CFG->libdir."/gradelib.php");
 require_once('lib.php');
 
-$id = required_param('id', 0, PARAM_INT);    // Course Module ID, or.
+$id = required_param('id', PARAM_INT);    // Course Module ID, or.
 $attending = optional_param('attending', null, PARAM_ALPHA);
 $view = optional_param('view', 0, PARAM_INTEGER);
 $publish = optional_param('publish', 0, PARAM_INTEGER);
