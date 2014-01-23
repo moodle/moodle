@@ -297,7 +297,6 @@ class company_user {
 
         if ( $sendemail ) {
             $user->newpassword = $temppassword;
-            $course->id = 103;  // FAQ Course.
             if (!empty($CFG->iomad_email_senderisreal)) {
                 EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER));
             } else {
