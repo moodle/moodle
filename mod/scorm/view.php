@@ -100,8 +100,6 @@ if (!empty($scorm->popup)) {
                                                            'cwidth' => $scorm->width,
                                                            'cheight' => $scorm->height,
                                                            'popupoptions' => $scorm->options), true);
-    $PAGE->requires->string_for_js('popupsblocked', 'scorm');
-    $PAGE->requires->string_for_js('popuplaunched', 'scorm');
     $PAGE->requires->js('/mod/scorm/view.js', true);
 }
 
