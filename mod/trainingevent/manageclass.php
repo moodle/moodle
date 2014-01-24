@@ -530,7 +530,8 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
             $eventtable .= "<td>".$OUTPUT->single_button("$CFG->wwwroot/mod/trainingevent/manageclass.php?id=$id&view=1",
                                                          get_string('viewattendees', 'trainingevent'))."</td>";
         }
-        if (has_capability('mod/trainingevent:add', $context) && $numattending < $location->capacity) {
+        if (has_capability('mod/trainingevent:add', $context) && $numattending < $location->capacity
+                            && time() < $event->startdatetime) {
             $eventtable .= "<td>".$OUTPUT->single_button(new moodle_url("/mod/trainingevent/searchusers.php",
                                                                         array('eventid' => $id)),
                                                                         get_string('selectother',
