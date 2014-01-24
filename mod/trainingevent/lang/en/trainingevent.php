@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['trainingevent:addinstance'] = 'Add a training event activity';
+
 $string['action'] = 'Action';
 $string['alreadybookedondates'] = 'You are already booked to an event on these dates';
 $string['approvalrequested'] = 'Approval pending';

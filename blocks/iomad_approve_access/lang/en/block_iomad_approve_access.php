@@ -20,6 +20,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['iomad_approve_access:addinstance'] = 'Add an Iomad approve access block';
+$string['iomad_approve_access:approve'] = 'Approve access to a user to an approval activity';
+$string['iomad_approve_access:myaddinstance'] = 'Add an Iomad approve access block to my moodle page';
+
 $string['approvecourse'] = "Approve Course";
 $string['approveusers'] = 'Approve Course to the User';
 $string['approveusers:addinstance'] = 'Add Approve Course Instance';
