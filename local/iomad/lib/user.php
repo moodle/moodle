@@ -170,10 +170,15 @@ class company_user {
 
         foreach ($courseids as $courseid) {
             // Check if course is shared.
-            if (!$DB->get_record('iomad_courses', array('courseid' => $courseid, 'shared' => 0))) {
-                $shared = true;
-            } else {
-                $shared = false;
+            if ($courseinfo = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
+                if ($courseinfo->licensed == 1) {
+                    continue;
+                }
+                if ($courseinfo->shared != 0) {
+                    $shared = true;
+                } else {
+                    $shared = false;
+                }
             }
             if (!isset($manualcache[$courseid])) {
                 if ($instances = enrol_get_instances($courseid, false)) {

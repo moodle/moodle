@@ -742,131 +742,30 @@ if ($formdata = $mform->is_cancelled()) {
 
         // Find course enrolments, groups, roles/types and enrol periods.
         foreach ($columns as $column) {
-            if (!preg_match('/^course\d+$/', $column)) {
-                continue;
-            }
-            $i = substr($column, 6);
-
-            if (empty($user->{'course'.$i})) {
-                continue;
-            }
-            $shortname = $user->{'course'.$i};
-            if (!array_key_exists($shortname, $ccache)) {
-                if (!$course = $DB->get_record('course', array('shortname' => $shortname), 'id, shortname')) {
-                    $upt->track('enrolments', get_string('unknowncourse', 'error', $shortname), 'error');
+            if (preg_match('/^course\d+$/', $column)) {
+                $i = substr($column, 6);
+    
+                if (empty($user->{'course'.$i})) {
                     continue;
                 }
-                $ccache[$shortname] = $course;
-                $ccache[$shortname]->groups = null;
+                $shortname = $user->{'course'.$i};
+                if (!array_key_exists($shortname, $ccache)) {
+                    if (!$course = $DB->get_record('course', array('shortname' => $shortname), 'id, shortname')) {
+                        $upt->track('enrolments', get_string('unknowncourse', 'error', $shortname), 'error');
+                        continue;
+                    }
+                    $ccache[$shortname] = $course;
+                    $ccache[$shortname]->groups = null;
+                }
+                company_user::enrol($user, $ccache[$shortname], $companyid);
             }
-            $courseid      = $ccache[$shortname]->id;
-            $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
-            if (!isset($manualcache[$courseid])) {
-                if ($instances = enrol_get_instances($courseid, false)) {
-                    $manualcache[$courseid] = reset($instances);
-                } else {
-                    $manualcache[$courseid] = false;
+            if (!empty($formdata->selectedcourses)) {
+                // add the user to the courses selected in the upload form.
+                $courseids = array();
+                foreach ($formdata->selectedcourses as $selectedcourse) {
+                    $courseids[] = $selectedcourse->id;
                 }
-            }
-
-            if ($manual and $manualcache[$courseid]) {
-
-                // Find role.
-                $rid = false;
-                if (!empty($user->{'role'.$i})) {
-                    $addrole = $user->{'role'.$i};
-                    if (array_key_exists($addrole, $rolecache)) {
-                        $rid = $rolecache[$addrole]->id;
-                    } else {
-                        $upt->track('enrolments', get_string('unknownrole', 'error', $addrole), 'error');
-                        continue;
-                    }
-
-                } else if (!empty($user->{'type'.$i})) {
-                    // If no role, then find "old" enrolment type.
-                    $addtype = $user->{'type'.$i};
-                    if ($addtype < 1 or $addtype > 3) {
-                        $upt->track('enrolments', $strerror.': typeN = 1|2|3', 'error');
-                        continue;
-                    } else if (empty($formdata->{'uulegacy'.$addtype})) {
-                        continue;
-                    } else {
-                        $rid = $formdata->{'uulegacy'.$addtype};
-                    }
-                } else {
-                    // No role specified, use the default from manual enrol plugin.
-                    $rid = $manualcache[$courseid]->roleid;
-                }
-
-                if ($rid) {
-                    // Find duration.
-                    $timeend   = 0;
-                    if (!empty($user->{'enrolperiod'.$i})) {
-                        $duration = (int)$user->{'enrolperiod'.$i} * 86400; // Convert days to seconds.
-                        if ($duration > 0) { // Sanity check.
-                            $timeend   = $today + $duration;
-                        }
-                    }
-
-                    $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, ENROL_USER_ACTIVE);
-
-                    $a = new stdClass();
-                    $a->course = $shortname;
-                    $a->role   = $rolecache[$rid]->name;
-                    $upt->track('enrolments', get_string('enrolledincourserole', 'enrol_manual', $a));
-                }
-            }
-
-            // Find group to add to.
-            if (!empty($user->{'group'.$i})) {
-                // Make sure user is enrolled into course before adding into groups.
-                if (!is_enrolled($coursecontext, $user->id)) {
-                    $upt->track('enrolments', get_string('addedtogroupnotenrolled', '', $user->{'group'.$i}), 'error');
-                    continue;
-                }
-                // Build group cache.
-                if (is_null($ccache[$shortname]->groups)) {
-                    $ccache[$shortname]->groups = array();
-                    if ($groups = groups_get_all_groups($courseid)) {
-                        foreach ($groups as $gid => $group) {
-                            $ccache[$shortname]->groups[$gid] = new stdClass();
-                            $ccache[$shortname]->groups[$gid]->id   = $gid;
-                            $ccache[$shortname]->groups[$gid]->name = $group->name;
-                            if (!is_numeric($group->name)) { // Only non-numeric names are supported!!!
-                                $ccache[$shortname]->groups[$group->name] = new stdClass();
-                                $ccache[$shortname]->groups[$group->name]->id   = $gid;
-                                $ccache[$shortname]->groups[$group->name]->name = $group->name;
-                            }
-                        }
-                    }
-                }
-                // Group exists?
-                $addgroup = $user->{'group'.$i};
-                if (!array_key_exists($addgroup, $ccache[$shortname]->groups)) {
-                    // If group doesn't exist,  create it.
-                    $newgroupdata = new stdClass();
-                    $newgroupdata->name = $addgroup;
-                    $newgroupdata->courseid = $ccache[$shortname]->id;
-                    if ($ccache[$shortname]->groups[$addgroup]->id = groups_create_group($newgroupdata)) {
-                        $ccache[$shortname]->groups[$addgroup]->name = $newgroupdata->name;
-                    } else {
-                        $upt->track('enrolments', get_string('unknowngroup', 'error', $addgroup), 'error');
-                        continue;
-                    }
-                }
-                $gid   = $ccache[$shortname]->groups[$addgroup]->id;
-                $gname = $ccache[$shortname]->groups[$addgroup]->name;
-
-                try {
-                    if (groups_add_member($gid, $user->id)) {
-                        $upt->track('enrolments', get_string('addedtogroup', '', $gname));
-                    } else {
-                        $upt->track('enrolments', get_string('addedtogroupnot', '', $gname), 'error');
-                    }
-                } catch (moodle_exception $e) {
-                    $upt->track('enrolments', get_string('addedtogroupnot', '', $gname), 'error');
-                    continue;
-                }
+                company_user::enrol($user, $courseids, $companyid);
             }
         }
 
