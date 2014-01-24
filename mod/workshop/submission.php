@@ -52,7 +52,19 @@ if ($edit) {
 
 if ($id) { // submission is specified
     $submission = $workshop->get_submission_by_id($id);
-    $workshop->log('view submission', $workshop->submission_url($submission->id), $submission->id);
+
+    $params = array(
+        'objectid' => $submission->id,
+        'context' => $workshop->context,
+        'courseid' => $workshop->course->id,
+        'relateduserid' => $submission->authorid,
+        'other' => array(
+            'workshopid' => $workshop->id
+        )
+    );
+
+    $event = \mod_workshop\event\submission_viewed::create($params);
+    $event->trigger();
 
 } else { // no submission specified
     if (!$submission = $workshop->get_submission_by_author($USER->id)) {
@@ -188,16 +200,27 @@ if ($edit) {
         if ($workshop->phase == workshop::PHASE_ASSESSMENT) {
             $formdata->late = $formdata->late | 0x2;
         }
+
+        // Event information.
+        $params = array(
+            'context' => $workshop->context,
+            'courseid' => $workshop->course->id,
+            'other' => array(
+                'submissiontitle' => $formdata->title
+            )
+        );
         $logdata = null;
         if (is_null($submission->id)) {
             $submission->id = $formdata->id = $DB->insert_record('workshop_submissions', $formdata);
-            $logdata = $workshop->log('add submission', $workshop->submission_url($submission->id), $submission->id, true);
+            $params['objectid'] = $submission->id;
+            $event = \mod_workshop\event\submission_created::create($params);
+            $event->trigger();
         } else {
-            $logdata = $workshop->log('update submission', $workshop->submission_url($submission->id), $submission->id, true);
             if (empty($formdata->id) or empty($submission->id) or ($formdata->id != $submission->id)) {
                 throw new moodle_exception('err_submissionid', 'workshop');
             }
         }
+        $params['objectid'] = $submission->id;
         // save and relink embedded images and save attachments
         $formdata = file_postupdate_standard_editor($formdata, 'content', $contentopts, $workshop->context,
                                                       'mod_workshop', 'submission_content', $submission->id);
@@ -209,19 +232,17 @@ if ($edit) {
         }
         // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
         $DB->update_record('workshop_submissions', $formdata);
+        $event = \mod_workshop\event\submission_updated::create($params);
+        $event->add_record_snapshot('workshop_submissions', $formdata);
+        $event->trigger();
 
         // send submitted content for plagiarism detection
         $fs = get_file_storage();
         $files = $fs->get_area_files($workshop->context->id, 'mod_workshop', 'submission_attachment', $submission->id);
 
-        $params = array(
-            'context' => $workshop->context,
-            'objectid' => $submission->id,
-            'other' => array(
-                'content' => $formdata->content,
-                'pathnamehashes' => array_keys($files)
-            )
-        );
+        $params['other']['content'] = $formdata->content;
+        $params['other']['pathnamehashes'] = array_keys($files);
+
         $event = \mod_workshop\event\assessable_uploaded::create($params);
         $event->set_legacy_logdata($logdata);
         $event->trigger();

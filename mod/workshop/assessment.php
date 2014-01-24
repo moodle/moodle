@@ -161,11 +161,6 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
     if ($mform->is_cancelled()) {
         redirect($workshop->view_url());
     } elseif ($assessmenteditable and ($data = $mform->get_data())) {
-        if (is_null($assessment->grade)) {
-            $workshop->log('add assessment', $workshop->assess_url($assessment->id), $assessment->submissionid);
-        } else {
-            $workshop->log('update assessment', $workshop->assess_url($assessment->id), $assessment->submissionid);
-        }
 
         // Let the grading strategy subplugin save its data.
         $rawgrade = $strategy->save_assessment($assessment, $data);
@@ -194,6 +189,24 @@ if (is_null($assessment->grade) and !$assessmenteditable) {
         // Update the assessment data if there is something other than just the 'id'.
         if (count((array)$coredata) > 1 ) {
             $DB->update_record('workshop_assessments', $coredata);
+            $params = array(
+                'objectid' => $assessment->id,
+                'context' => $workshop->context,
+                'other' => array(
+                    'workshopid' => $workshop->id,
+                    'submissionid' => $assessment->submissionid
+                )
+            );
+
+            if (is_null($assessment->grade)) {
+                // All workshop_assessments are created when allocations are made. The create event is of more use located here.
+                $event = \mod_workshop\event\submission_assessed::create($params);
+                $event->trigger();
+            } else {
+                $params['other']['grade'] = $assessment->grade;
+                $event = \mod_workshop\event\submission_reassessed::create($params);
+                $event->trigger();
+            }
         }
 
         // And finally redirect the user's browser.
