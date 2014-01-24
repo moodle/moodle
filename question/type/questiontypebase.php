@@ -259,7 +259,7 @@ class question_type {
                 $permissionstrs[] = get_string('permissionsaveasnew', 'question');
             }
         }
-        if (!$question->formoptions->movecontext  && count($permissionstrs)) {
+        if (count($permissionstrs)) {
             echo $OUTPUT->heading(get_string('permissionto', 'question'), 3);
             $html = '<ul>';
             foreach ($permissionstrs as $permissionstr) {
