@@ -25,14 +25,13 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__  . '/behat_form_select.php');
+require_once(__DIR__  . '/behat_form_group.php');
 
 /**
  * Date form field.
  *
- * Simple extension of behat_form_select to allow date-type
- * select fields to be filled like select elements instead of
- * text elements.
+ * Simple extension of behat_form_group to allow the different
+ * date_selector fields to be filled according to it's type.
  *
  * This class will be refactored in case we are interested in
  * creating more complex formats to fill date and date-time fields.
@@ -42,4 +41,5 @@ require_once(__DIR__  . '/behat_form_select.php');
  * @copyright  2013 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_date_selector extends behat_form_select {}
+class behat_form_date_selector extends behat_form_group {
+}
