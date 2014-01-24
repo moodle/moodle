@@ -38,7 +38,7 @@ $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $firstname       = optional_param('firstname', 0, PARAM_CLEAN);
 $lastname      = optional_param('lastname', '', PARAM_CLEAN);   // Md5 confirmation hash.
 $email  = optional_param('email', 0, PARAM_CLEAN);
-$eventid = required_param('eventid', 0, PARAM_INTEGER);
+$eventid = required_param('eventid', PARAM_INTEGER);
 
 $params = array();
 
