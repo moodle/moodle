@@ -433,7 +433,7 @@ class question_type {
      * Saves question-type specific options
      *
      * This is called by {@link save_question()} to save the question-type specific data
-     * @return object $result->error or $result->noticeyesno or $result->notice
+     * @return object $result->error or $result->notice
      * @param object $question  This holds the information from the editing form,
      *      it is not a standard question object.
      */
@@ -461,9 +461,162 @@ class question_type {
 
             $DB->{$function}($question_extension_table, $options);
         }
+    }
 
+    /**
+     * Save the answers, with any extra data.
+     *
+     * Questions that use answers will call it from {@link save_question_options()}.
+     * @param object $question  This holds the information from the editing form,
+     *      it is not a standard question object.
+     * @return object $result->error or $result->notice
+     */
+    public function save_question_answers($question) {
+        global $DB;
+
+        $context = $question->context;
+        $oldanswers = $DB->get_records('question_answers',
+                array('question' => $question->id), 'id ASC');
+
+        // We need separate arrays for answers and extra answer data, so no JOINS there.
         $extraanswerfields = $this->extra_answer_fields();
-        // TODO save the answers, with any extra data.
+        $isextraanswerfields = is_array($extraanswerfields);
+        $extraanswertable = '';
+        $oldanswerextras = array();
+        if ($isextraanswerfields) {
+            $extraanswertable = array_shift($extraanswerfields);
+            if (!empty($oldanswers)) {
+                $oldanswerextras = $DB->get_records_sql("SELECT * FROM {{$extraanswertable}} WHERE " .
+                    'answerid IN (SELECT id FROM {question_answers} WHERE question = ' . $question->id . ')' );
+            }
+        }
+
+        // Insert all the new answers.
+        foreach ($question->answer as $key => $answerdata) {
+            // Check for, and ignore, completely blank answer from the form.
+            if ($this->is_answer_empty($question, $key)) {
+                continue;
+            }
+
+            // Update an existing answer if possible.
+            $answer = array_shift($oldanswers);
+            if (!$answer) {
+                $answer = new stdClass();
+                $answer->question = $question->id;
+                $answer->answer = '';
+                $answer->feedback = '';
+                $answer->id = $DB->insert_record('question_answers', $answer);
+            }
+
+            $answer = $this->fill_answer_fields($answer, $question, $key, $context);
+            $DB->update_record('question_answers', $answer);
+
+            if ($isextraanswerfields) {
+                // Check, if this answer contains some extra field data.
+                if ($this->is_extra_answer_fields_empty($question, $key)) {
+                    continue;
+                }
+
+                $answerextra = array_shift($oldanswerextras);
+                if (!$answerextra) {
+                    $answerextra = new stdClass();
+                    $answerextra->answerid = $answer->id;
+                    // Avoid looking for correct default for any possible DB field type
+                    // by setting real values.
+                    $answerextra = $this->fill_extra_answer_fields($answerextra, $question, $key, $context, $extraanswerfields);
+                    $answerextra->id = $DB->insert_record($extraanswertable, $answerextra);
+                } else {
+                    // Update answerid, as record may be reused from another answer.
+                    $answerextra->answerid = $answer->id;
+                    $answerextra = $this->fill_extra_answer_fields($answerextra, $question, $key, $context, $extraanswerfields);
+                    $DB->update_record($extraanswertable, $answerextra);
+                }
+            }
+        }
+
+        if ($isextraanswerfields) {
+            // Delete any left over extra answer fields records.
+            $oldanswerextraids = array();
+            foreach ($oldanswerextras as $oldextra) {
+                $oldanswerextraids[] = $oldextra->id;
+            }
+            $DB->delete_records_list($extraanswertable, 'id', $oldanswerextraids);
+        }
+
+        // Delete any left over old answer records.
+        $fs = get_file_storage();
+        foreach ($oldanswers as $oldanswer) {
+            $fs->delete_area_files($context->id, 'question', 'answerfeedback', $oldanswer->id);
+            $DB->delete_records('question_answers', array('id' => $oldanswer->id));
+        }
+    }
+
+    /**
+     * Returns true is answer with the $key is empty in the question data and should not be saved in DB.
+     *
+     * The questions using question_answers table may want to overload this. Default code will work
+     * for shortanswer and similar question types.
+     * @param object $questiondata This holds the information from the question editing form or import.
+     * @param int $key A key of the answer in question.
+     * @return bool True if answer shouldn't be saved in DB.
+     */
+    protected function is_answer_empty($questiondata, $key) {
+        return trim($questiondata->answer[$key]) == '' && $questiondata->fraction[$key] == 0 &&
+                    html_is_blank($questiondata->feedback[$key]['text']);
+    }
+
+    /**
+     * Return $answer, filling necessary fields for the question_answers table.
+     *
+     * The questions using question_answers table may want to overload this. Default code will work
+     * for shortanswer and similar question types.
+     * @param stdClass $answer Object to save data.
+     * @param object $questiondata This holds the information from the question editing form or import.
+     * @param int $key A key of the answer in question.
+     * @param object $context needed for working with files.
+     * @return $answer answer with filled data.
+     */
+    protected function fill_answer_fields($answer, $questiondata, $key, $context) {
+        $answer->answer   = $questiondata->answer[$key];
+        $answer->fraction = $questiondata->fraction[$key];
+        $answer->feedback = $this->import_or_save_files($questiondata->feedback[$key],
+                $context, 'question', 'answerfeedback', $answer->id);
+        $answer->feedbackformat = $questiondata->feedback[$key]['format'];
+        return $answer;
+    }
+
+    /**
+     * Returns true if extra answer fields for answer with the $key is empty 
+     * in the question data and should not be saved in DB.
+     *
+     * Questions where extra answer fields are optional will want to overload this.
+     * @param object $questiondata This holds the information from the question editing form or import.
+     * @param int $key A key of the answer in question.
+     * @return bool True if extra answer data shouldn't be saved in DB.
+     */
+    protected function is_extra_answer_fields_empty($questiondata, $key) {
+        // No extra answer data in base class.
+        return true;
+    }
+
+    /**
+     * Return $answerextra, filling necessary fields for the extra answer fields table.
+     *
+     * The questions may want to overload it to save files or do other data processing.
+     * @param stdClass $answerextra Object to save data.
+     * @param object $questiondata This holds the information from the question editing form or import.
+     * @param int $key A key of the answer in question.
+     * @param object $context needed for working with files.
+     * @param array $extraanswerfields extra answer fields (without table name).
+     * @return $answer answerextra with filled data.
+     */
+    protected function fill_extra_answer_fields($answerextra, $questiondata, $key, $context, $extraanswerfields) {
+        foreach ($extraanswerfields as $field) {
+            // The $questiondata->$field[$key] won't work in PHP, break it down to two strings of code.
+            $fieldarray = $questiondata->$field;
+            $answerextra->$field = $fieldarray[$key];
+        }
+        return $answerextra;
     }
 
     public function save_hints($formdata, $withparts = false) {
