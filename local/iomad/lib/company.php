@@ -657,7 +657,7 @@ class company {
 
         $parentnode = self::get_departmentbyid($parentnodeid);
         $parentlist = array();
-        $parentlist[$parentnode->id] = $parentnode->name;
+        $parentlist[$parentnodeid] = $parentnode->name;
         $departmenttree = self::get_subdepartments($parentnode);
         $departmentlist = self::array_flatten($parentlist +
                                               self::get_department_list($departmenttree));
