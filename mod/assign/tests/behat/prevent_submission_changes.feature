@@ -58,6 +58,7 @@ Feature: Prevent or allow assignment submission changes
     And I follow "View/grade all submissions"
     And I click on "//tr[contains(., 'Student 1')]/descendant::td/descendant::img[@alt='Actions']/parent::a" "xpath_element"
     And I follow "Allow submission changes"
+    And I should not see "Submission changes not allowed"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
