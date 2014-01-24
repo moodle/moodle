@@ -106,7 +106,7 @@ if ($departmentcourses = company::get_recursive_department_courses($departmentid
 }
 
 // Get the company course instances.
-$sql = "SELECT c.id, c.fullname from {course_modules} cm, {course} c WHERE
+$sql = "SELECT DISTINCT c.id, c.fullname from {course_modules} cm, {course} c WHERE
         cm.module = ".$scormmod->id." AND c.id = cm.course $departmentsql";
 
 if (!$courselist = $DB->get_records_sql($sql)) {
@@ -167,6 +167,8 @@ if (!empty($courseid)) {
                             continue;
                         } else if ($data->element == "cmi.core.lesson_location") {
                             continue;
+                        } else if ($data->element == "cmi.completion_status") {
+                            continue;
                         } else {
                             // Check we have interaction_ and not interaction.
                             if (strpos($data->element, 'interaction_')) {
@@ -195,9 +197,8 @@ if (!empty($courseid)) {
             }
         } else {
             if (empty($dodownload)) {
-                echo "<h2>".$scormid->name.
-                      get_string('scormnoresults', 'local_report_scorm_overview').
-                      "</h2>";
+                echo "<h2>".$scormid->name. "</h2>";
+                echo get_string('scormnoresults', 'local_report_scorm_overview');
             }
             continue;
         }
