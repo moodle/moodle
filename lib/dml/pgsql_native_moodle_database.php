@@ -37,6 +37,7 @@ require_once(__DIR__.'/pgsql_native_moodle_temptables.php');
  */
 class pgsql_native_moodle_database extends moodle_database {
 
+    /** @var resource $pgsql database resource */
     protected $pgsql     = null;
     protected $bytea_oid = null;
 
@@ -631,16 +632,24 @@ class pgsql_native_moodle_database extends moodle_database {
      */
     public function change_database_structure($sql) {
         $this->get_manager(); // Includes DDL exceptions classes ;-)
-        $sqls = (array)$sql;
+        if (is_array($sql)) {
+            $sql = implode("\n;\n", $sql);
+        }
+        if (!$this->is_transaction_started()) {
+            // It is better to do all or nothing, this helps with recovery...
+            $sql = "BEGIN ISOLATION LEVEL SERIALIZABLE;\n$sql\n; COMMIT";
+        }
 
         try {
-            foreach ($sqls as $sql) {
-                $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
-                $result = pg_query($this->pgsql, $sql);
-                $this->query_end($result);
-                pg_free_result($result);
-            }
+            $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+            $result = pg_query($this->pgsql, $sql);
+            $this->query_end($result);
+            pg_free_result($result);
         } catch (ddl_change_structure_exception $e) {
+            if (!$this->is_transaction_started()) {
+                $result = @pg_query($this->pgsql, "ROLLBACK");
+                @pg_free_result($result);
+            }
             $this->reset_caches();
             throw $e;
         }
