@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/workshop/locallib.php'); // Include the code to test
+require_once(__DIR__ . '/fixtures/testable.php');
 
 
 /**
@@ -415,20 +416,4 @@ class mod_workshop_internal_api_testcase extends advanced_testcase {
         // excersise SUT
         $a = $this->workshop->prepare_example_reference_assessment($fakerawrecord);
     }
-}
-
-
-/**
- * Test subclass that makes all the protected methods we want to test public.
- */
-class testable_workshop extends workshop {
-
-    public function aggregate_submission_grades_process(array $assessments) {
-        parent::aggregate_submission_grades_process($assessments);
-    }
-
-    public function aggregate_grading_grades_process(array $assessments, $timegraded = null) {
-        parent::aggregate_grading_grades_process($assessments, $timegraded);
-    }
-
 }
