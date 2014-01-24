@@ -645,15 +645,17 @@ class question_type {
 
         $extraanswerfields = $this->extra_answer_fields();
         if (is_array($extraanswerfields)) {
-            $answer_extension_table = array_shift($extraanswerfields);
+            $answerextensiontable = array_shift($extraanswerfields);
+            // Use LEFT JOIN in case not every answer has extra data.
             $question->options->answers = $DB->get_records_sql("
-                    SELECT qa.*, qax." . implode(', qax.', $extraanswerfields) . "
-                    FROM {question_answers} qa, {{$answer_extension_table}} qax
-                    WHERE qa.question = ? AND qax.answerid = qa.id
+                    SELECT qa.*, qax." . implode(', qax.', $extraanswerfields) . '
+                    FROM {question_answers} qa ' . "
+                    LEFT JOIN {{$answerextensiontable}} qax ON qa.id = qax.answerid
+                    WHERE qa.question = ?
                     ORDER BY qa.id", array($question->id));
             if (!$question->options->answers) {
                 echo $OUTPUT->notification('Failed to load question answers from the table ' .
-                        $answer_extension_table . 'for questionid ' . $question->id);
+                        $answerextensiontable . 'for questionid ' . $question->id);
                 return false;
             }
         } else {
