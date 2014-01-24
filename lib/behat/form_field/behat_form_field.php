@@ -96,6 +96,30 @@ class behat_form_field {
     }
 
     /**
+     * Generic match implementation
+     *
+     * Will work well with text-based fields, extension required
+     * for most of the other cases.
+     *
+     * @param string $expectedvalue
+     * @return bool The provided value matches the field value?
+     */
+    public function matches($expectedvalue) {
+
+        // If we are not dealing with a text-based tag try to find the most appropiate
+        // behat_form_* class to deal with it.
+        if ($instance = $this->guess_type()) {
+            return $instance->matches($expectedvalue);
+        }
+
+        // Text-based comparison.
+        if (trim($expectedvalue) != trim($this->get_value())) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Guesses the element type we are dealing with in case is not a text-based element.
      *
      * This class is the generic field type, behat_field_manager::get_form_field()

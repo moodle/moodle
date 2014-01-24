@@ -15,30 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Date form field class.
+ * Generic group field class.
  *
  * @package    core_form
  * @category   test
- * @copyright  2013 David Monllaó
+ * @copyright  2014 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__  . '/behat_form_group.php');
+require_once(__DIR__  . '/behat_form_field.php');
 
 /**
- * Date form field.
+ * Class to re-guess the field type as grouped fields can have different field types.
  *
- * Simple extension of behat_form_group to allow the different
- * date_selector fields to be filled according to it's type.
- *
- * This class will be refactored in case we are interested in
- * creating more complex formats to fill date and date-time fields.
+ * When filling fields in a fgroup field element we don't know what kind
+ * of field are we dealing with, so we should re-guess it.
  *
  * @package    core_form
  * @category   test
- * @copyright  2013 David Monllaó
+ * @copyright  2014 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_date_selector extends behat_form_group {}
+class behat_form_group extends behat_form_field {}
