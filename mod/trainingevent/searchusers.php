@@ -93,7 +93,7 @@ $company = new company($location->companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/eldms_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
+if (has_capability('block/iomad_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = company::get_userlevel($USER);
@@ -106,7 +106,7 @@ if ($departmentid == 0 ) {
 // Get the appropriate list of departments.
 $subhierarchieslist = company::get_all_subdepartments($userhierarchylevel);
 $select = new single_select($baseurl, 'departmentid', $subhierarchieslist, $departmentid);
-$select->label = get_string('department', 'block_eldms_company_admin');
+$select->label = get_string('department', 'block_iomad_company_admin');
 $select->formid = 'choosedepartment';
 echo html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_department_selector'));
 $fwselectoutput = html_writer::tag('div', $OUTPUT->render($select), array('id' => 'iomad_company_selector'));
@@ -221,7 +221,7 @@ $usercount = count($userrecords);
 
 echo $OUTPUT->heading("$usercount ".get_string('users'));
 
-$alphabet = explode(',', get_string('alphabet', 'block_eldms_company_admin'));
+$alphabet = explode(',', get_string('alphabet', 'block_iomad_company_admin'));
 $strall = get_string('all');
 
 $baseurl = new moodle_url('editusers.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));

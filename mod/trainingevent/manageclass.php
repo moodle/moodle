@@ -70,7 +70,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
             } else {
                 $myapprovallevel = "none";
             }
-        } else if (has_capability('block/eldms_company_admin:company_add', get_context_instance(CONTEXT_SYSTEM))) {
+        } else if (has_capability('block/iomad_company_admin:company_add', get_context_instance(CONTEXT_SYSTEM))) {
             $myapprovallevel = "company";
         } else {
             $myapprovallevel = "none";
@@ -122,9 +122,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
         }
         if (!empty($booking)) {
             if ('yes' == $booking  || 'again' == $booking) {
-                if (!$userbooking = $DB->get_record('block_eldms_approve_enroll', array('activityid' => $id,
+                if (!$userbooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $id,
                                                                                         'userid' => $USER->id))) {
-                    if (!$DB->insert_record('block_eldms_approve_enroll', array('activityid' => $id,
+                    if (!$DB->insert_record('block_iomad_approve_access', array('activityid' => $id,
                                                                                 'userid' => $USER->id,
                                                                                 'courseid' => $event->course,
                                                                                 'tm_ok' => 0,
@@ -165,7 +165,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                 } else {
                     $userbooking->tm_ok = 0;
                     $userbooking->manager_ok = 0;
-                    $DB->update_record('block_eldms_approve_enroll', $userbooking);
+                    $DB->update_record('block_iomad_approve_access', $userbooking);
                     $course = $DB->get_record('course', array('id' => $event->course));
                     $location->time = date('jS \of F Y \a\t h:i', $event->startdatetime);
                     // Get the list of managers we need to send an email to.
@@ -197,9 +197,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                                $USER->id);
                 }
             } else if ( 'no' == $booking) {
-                if ($dereq = (array) $DB->get_record('block_eldms_approve_enroll', array('activityid' => $id,
+                if ($dereq = (array) $DB->get_record('block_iomad_approve_access', array('activityid' => $id,
                                                                                          'userid' => $USER->id))) {
-                    $DB->delete_records('block_eldms_approve_enroll', $dereq);
+                    $DB->delete_records('block_iomad_approve_access', $dereq);
                     add_to_log($event->course,
                                'trainingevent',
                                'User removed approved access',
@@ -244,7 +244,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                         // Remove from the current event.
                         $DB->delete_records('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id));
                         if ($event->approvaltype != 0) {
-                            $DB->delete_records('block_eldms_approve_enroll', array('userid' => $userid,
+                            $DB->delete_records('block_iomad_approve_access', array('userid' => $userid,
                                                                                     'activityid' => $event->id));
                         }
                         $location->time = date('jS \of F Y \a\t h:i', $event->startdatetime);
@@ -263,9 +263,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                     } else if (($chosenevent->approvaltype == 3 || $chosenevent->approvaltype == 2)
                                && $myapprovallevel == "department") {
                         // More levels of approval are required.
-                        if (!$userbooking = $DB->get_record('block_eldms_approve_enroll', array('activityid' => $chosenevent->id,
+                        if (!$userbooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $chosenevent->id,
                                                                                                 'userid' => $user->id))) {
-                            if (!$DB->insert_record('block_eldms_approve_enroll', array('activityid' => $chosenevent->id,
+                            if (!$DB->insert_record('block_iomad_approve_access', array('activityid' => $chosenevent->id,
                                                                                         'userid' => $user->id,
                                                                                         'courseid' => $chosenevent->course,
                                                                                         'tm_ok' => 0,
@@ -300,7 +300,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                         } else {
                             $userbooking->tm_ok = 0;
                             $userbooking->manager_ok = 1;
-                            $DB->update_record('block_eldms_approve_enroll', $userbooking);
+                            $DB->update_record('block_iomad_approve_access', $userbooking);
                             $course = $DB->get_record('course', array('id' => $event->course));
                             $location->time = date('jS \of F Y \a\t h:i', $event->startdatetime);
                             $user = $DB->get_record('user', array('id' => $userid));
@@ -327,7 +327,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                         // Remove from the current event.
                         $DB->delete_records('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id));
                         if ($event->approvaltype != 0) {
-                            $DB->delete_records('block_eldms_approve_enroll', array('userid' => $userid,
+                            $DB->delete_records('block_iomad_approve_access', array('userid' => $userid,
                                                                                     'activityid' => $event->id));
                         }
                         $location->time = date('jS \of F Y \a\t h:i', $event->startdatetime);
@@ -395,9 +395,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                     }
                 } else if (($event->approvaltype == 3 || $event->approvaltype == 2)&& $myapprovallevel == "department") {
                     // More levels of approval are required.
-                    if (!$userbooking = $DB->get_record('block_eldms_approve_enroll', array('activityid' => $id,
+                    if (!$userbooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $id,
                                                                                             'userid' => $user->id))) {
-                        if (!$DB->insert_record('block_eldms_approve_enroll', array('activityid' => $id,
+                        if (!$DB->insert_record('block_iomad_approve_access', array('activityid' => $id,
                                                                                     'userid' => $user->id,
                                                                                     'courseid' => $event->course,
                                                                                     'tm_ok' => 0,
@@ -430,7 +430,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                     } else {
                         $userbooking->tm_ok = 0;
                         $userbooking->manager_ok = 1;
-                        $DB->update_record('block_eldms_approve_enroll', $userbooking);
+                        $DB->update_record('block_iomad_approve_access', $userbooking);
                         $course = $DB->get_record('course', array('id' => $event->course));
                         $location->time = date('jS \of F Y \a\t h:i', $event->startdatetime);
                         $user = $DB->get_record('user', array('id' => $userid));
@@ -492,7 +492,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
 
         // Are we sending out emails?
         if (!empty($publish)) {
-            if (has_capability('block/eldms_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
+            if (has_capability('block/iomad_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
                 $userhierarchylevel = $parentlevel->id;
             } else {
                 $userlevel = company::get_userlevel($USER);
@@ -541,7 +541,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
         $eventtable .= "<tr><th>" . get_string('location', 'trainingevent') . "</th><td>" . $location->name . "</td></tr>";
         $eventtable .= "<tr><th>" . get_string('address') . "</th><td>" . $location->address . "</td></tr>";
         $eventtable .= "<tr><th>" . get_string('city') . "</th><td>" . $location->city . "</td></tr>";
-        $eventtable .= "<tr><th>" . get_string('postcode', 'block_eldms_commerce') . "</th><td>" .
+        $eventtable .= "<tr><th>" . get_string('postcode', 'block_iomad_commerce') . "</th><td>" .
                        $location->postcode . "</td></tr>";
         $eventtable .= "<tr><th>" . get_string('country') . "</th><td>" . $location->country . "</td></tr>";
         $dateformat = "d F Y, g:ia";
@@ -578,7 +578,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                                                             array('id' => $id, 'attending' => 'yes')),
                                                             get_string("attend", 'trainingevent'));
                             } else if ($event->approvaltype != 4 ) {
-                                if (!$mybooking = $DB->get_record('block_eldms_approve_enroll', array('activityid' => $event->id,
+                                if (!$mybooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $event->id,
                                                                                                       'userid' => $USER->id))) {
                                     echo $OUTPUT->single_button(new moodle_url('/mod/trainingevent/manageclass.php',
                                                                 array('id' => $id, 'booking' => 'yes')),
@@ -629,7 +629,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
                 $parentlevel = company::get_company_parentnode($company->id);
                 $companydepartment = $parentlevel->id;
 
-                if (has_capability('block/eldms_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
+                if (has_capability('block/iomad_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
                     $userhierarchylevel = $parentlevel->id;
                 } else {
                     $userlevel = company::get_userlevel($USER);
@@ -731,7 +731,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $id))) {
             $parentlevel = company::get_company_parentnode($company->id);
             $companydepartment = $parentlevel->id;
 
-            if (has_capability('block/eldms_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
+            if (has_capability('block/iomad_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
                 $userhierarchylevel = $parentlevel->id;
             } else {
                 $userlevel = company::get_userlevel($USER);
