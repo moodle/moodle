@@ -950,12 +950,22 @@ class question_type {
             return;
         }
         foreach ($questiondata->options->answers as $a) {
-            $question->answers[$a->id] = new question_answer($a->id, $a->answer,
-                    $a->fraction, $a->feedback, $a->feedbackformat);
+            $question->answers[$a->id] = $this->make_answer($a);
             if (!$forceplaintextanswers) {
                 $question->answers[$a->id]->answerformat = $a->answerformat;
             }
         }
+    }
+
+    /**
+     * Create a question_answer, or an appropriate subclass for this question,
+     * from a row loaded from the database.
+     * @param object $answer the DB row from the question_answers table plus extra answer fields.
+     * @return question_answer
+     */
+    protected function make_answer($answer) {
+        return new question_answer($answer->id, $answer->answer,
+                    $answer->fraction, $answer->feedback, $answer->feedbackformat);
     }
 
     /**
