@@ -880,5 +880,63 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2013050100, 'local', 'iomad');
     }
 
+    if ($oldversion < 2014012400) {
+
+        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
+        // Get the Company Manager role.
+        if ($companymanager = $DB->get_record( 'role', array( 'shortname' => 'companymanager') )) {
+            $companymanagerid = $companymanager->id;
+            $companymanagercaps = array(
+                'local/iomad_dashboard:view',
+                'block/iomad_reports:view',
+                'local_report_attendance:view',
+                'local_report_completion:view',
+                'local_report_users:view',
+                'local_report_scorm_overview:view',
+            );
+
+            foreach ($companymanagercaps as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companymanagerid, $systemcontext->id );
+            }
+        }
+
+        // Get the Company Department Manager role.
+        if ($companydepartmentmanager = $DB->get_record('role',
+                                         array( 'shortname' => 'companydepartmentmanager'))) {
+            $companydepartmentmanagerid = $companydepartmentmanager->id;
+            $companydepartmentmanagercaps = array(
+                'local/iomad_dashboard:view',
+                'block/iomad_reports:view',
+                'local_report_attendance:view',
+                'local_report_completion:view',
+                'local_report_users:view',
+                'local_report_scorm_overview:view',
+            );
+    
+            foreach ($companydepartmentmanagercaps as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $companydepartmentmanagerid, $systemcontext->id );
+            }
+        }
+
+        // Get the Client Administrator role.
+        if ($clientadministrator = $DB->get_record('role',
+                                                     array('shortname' => 'clientadministrator'))) {
+            $clientadministratorid = $clientadministrator->id;
+            $clientadministratorcaps = array(
+                'local/iomad_dashboard:view',
+                'block/iomad_reports:view',
+                'local_report_attendance:view',
+                'local_report_completion:view',
+                'local_report_users:view',
+                'local_report_scorm_overview:view',
+            );
+    
+            foreach ($clientadministratorcaps as $cap) {
+                assign_capability( $cap, CAP_ALLOW, $clientadministratorid, $systemcontext->id );
+            }
+        }
+    }
+
     return $result;
 }
