@@ -661,6 +661,10 @@ class core_plugin_manager {
             return 'svn';
         }
 
+        if (is_dir($pluginroot.'/.hg')) {
+            return 'mercurial';
+        }
+
         return false;
     }
 
