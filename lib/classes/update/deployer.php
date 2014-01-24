@@ -189,6 +189,10 @@ class deployer {
             return 'svn';
         }
 
+        if (is_dir($pluginroot.'/.hg')) {
+            return 'mercurial';
+        }
+
         return false;
     }
 
