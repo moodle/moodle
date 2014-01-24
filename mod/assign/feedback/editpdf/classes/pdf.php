@@ -78,6 +78,7 @@ class pdf extends \FPDI {
     public function combine_pdfs($pdflist, $outfilename) {
 
         raise_memory_limit(MEMORY_EXTRA);
+        $olddebug = error_reporting(0);
 
         $this->setPageUnit('pt');
         $this->setPrintHeader(false);
@@ -97,6 +98,7 @@ class pdf extends \FPDI {
         }
 
         $this->save_pdf($outfilename);
+        error_reporting($olddebug);
 
         return $totalpagecount;
     }
@@ -125,6 +127,7 @@ class pdf extends \FPDI {
      */
     public function load_pdf($filename) {
         raise_memory_limit(MEMORY_EXTRA);
+        $olddebug = error_reporting(0);
 
         $this->setPageUnit('pt');
         $this->scale = 72.0 / 100.0;
@@ -138,6 +141,7 @@ class pdf extends \FPDI {
         $this->pagecount = $this->setSourceFile($filename);
         $this->filename = $filename;
 
+        error_reporting($olddebug);
         return $this->pagecount;
     }
 
@@ -389,7 +393,9 @@ class pdf extends \FPDI {
      * @param string $filename the filename for the PDF (including the full path)
      */
     public function save_pdf($filename) {
+        $olddebug = error_reporting(0);
         $this->Output($filename, 'F');
+        error_reporting($olddebug);
     }
 
     /**
@@ -461,33 +467,26 @@ class pdf extends \FPDI {
      * @return string path to copy or converted pdf (false == fail)
      */
     public static function ensure_pdf_compatible(\stored_file $file) {
-        global $CFG;
-
-        $fp = $file->get_content_file_handle();
-        $ident = fread($fp, 10);
-        if (substr_compare('%PDF-', $ident, 0, 5) !== 0) {
-            return false; // This is not a PDF file at all.
-        }
-        $ident = substr($ident, 5); // Remove the '%PDF-' part.
-        $ident = explode('\x0A', $ident); // Truncate to first '0a' character.
-        list($major, $minor) = explode('.', $ident[0]); // Split the major / minor version.
-        $major = intval($major);
-        $minor = intval($minor);
-        if ($major == 0 || $minor == 0) {
-            return false; // Not a valid PDF version number.
-        }
         $temparea = \make_temp_directory('assignfeedback_editpdf');
         $hash = $file->get_contenthash(); // Use the contenthash to make sure the temp files have unique names.
         $tempsrc = $temparea . "/src-$hash.pdf";
         $tempdst = $temparea . "/dst-$hash.pdf";
+        $file->copy_content_to($tempsrc); // Copy the file.
 
-        if ($major = 1 && $minor<=4) {
-            // PDF is valid version - just create a copy we can use.
-            $file->copy_content_to($tempdst); // Copy the file.
-            return $tempdst;
+        $pdf = new pdf();
+        $pagecount = 0;
+        try {
+            $pagecount = $pdf->load_pdf($tempsrc);
+        } catch (\Exception $e) {
+            // PDF was not valid - try running it through ghostscript to clean it up.
+            $pagecount = 0;
         }
 
-        $file->copy_content_to($tempsrc); // Copy the file.
+        if ($pagecount > 0) {
+            // Page is valid and can be read by tcpdf.
+            return $tempsrc;
+        }
+
 
         $gsexec = \escapeshellarg(\get_config('assignfeedback_editpdf', 'gspath'));
         $tempdstarg = \escapeshellarg($tempdst);
@@ -497,6 +496,20 @@ class pdf extends \FPDI {
         @unlink($tempsrc);
         if (!file_exists($tempdst)) {
             // Something has gone wrong in the conversion.
+            return false;
+        }
+
+        $pdf = new pdf();
+        $pagecount = 0;
+        try {
+            $pagecount = $pdf->load_pdf($tempdst);
+        } catch (\Exception $e) {
+            // PDF was not valid - try running it through ghostscript to clean it up.
+            $pagecount = 0;
+        }
+        if ($pagecount <= 0) {
+            @unlink($tempdst);
+            // Could not parse the converted pdf.
             return false;
         }
 
