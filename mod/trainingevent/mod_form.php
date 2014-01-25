@@ -34,7 +34,7 @@ class mod_trainingevent_mod_form extends moodleform_mod {
     public function definition() {
         global $USER, $SESSION, $DB;
 
-        $mform = $this->_form;
+        $mform =& $this->_form;
 
         $mform->addElement('date_time_selector', 'startdatetime', get_string('startdatetime', 'trainingevent'));
         $mform->addRule('startdatetime', get_string('missingstartdatetime', 'trainingevent'), 'required', null, 'client');
@@ -71,6 +71,7 @@ class mod_trainingevent_mod_form extends moodleform_mod {
                         get_string('enrolonly', 'trainingevent'));
         $mform->addElement('select', 'approvaltype', get_string('approvaltype', 'trainingevent'), $choices);
 
+        $this->standard_grading_coursemodule_elements();
         $this->standard_coursemodule_elements();
 
         // Add the buttons.

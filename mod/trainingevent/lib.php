@@ -250,13 +250,13 @@ function trainingevent_get_extra_capabilities() {
 function trainingevent_supports($feature) {
     switch($feature) {
         case FEATURE_IDNUMBER: {
-            return false;
+            return true;
         }
         case FEATURE_GROUPS: {
-            return true;
+            return false;
         }
         case FEATURE_GROUPINGS: {
-            return true;
+            return false;
         }
         case FEATURE_GROUPMEMBERSONLY: {
             return true;
@@ -268,7 +268,7 @@ function trainingevent_supports($feature) {
             return true;
         }
         case FEATURE_GRADE_HAS_GRADE: {
-            return true;
+            return false;
         }
         case FEATURE_GRADE_OUTCOMES: {
             return false;
