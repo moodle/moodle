@@ -21,4 +21,5 @@
 $string['cannotemailnontemporarypasswords'] = 'It is insecure to send passwords by email without forcing them to be changed on first login.';
 $string['companycourses'] = 'Other company courses';
 $string['missingaccesstocourse'] = 'You\'re not allowed to that.';
+$string['pluginname'] = 'Iomad';
 $string['setupiomad'] = 'Start setting up iomad';
