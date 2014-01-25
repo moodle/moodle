@@ -83,7 +83,7 @@ $THEME->layouts = array(
         'options' => array('nonavbar'=>true),
     ),
     'admin' => array(
-        'file' => 'iomad.php',
+        'file' => 'iomad2.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
@@ -138,7 +138,7 @@ $THEME->layouts = array(
     ),
     // The pagelayout used for reports.
     'report' => array(
-        'file' => 'iomad.php',
+        'file' => 'iomad2.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
