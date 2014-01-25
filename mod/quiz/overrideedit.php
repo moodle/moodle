@@ -159,19 +159,19 @@ if ($mform->is_cancelled()) {
         }
     }
 
+    // Set the common parameters for one of the events we may be triggering.
+    $params = array(
+        'context' => $context,
+        'other' => array(
+            'quizid' => $quiz->id
+        )
+    );
     if (!empty($override->id)) {
         $fromform->id = $override->id;
         $DB->update_record('quiz_overrides', $fromform);
 
-        // Set the common parameters for one of the events we will be triggering.
-        $params = array(
-            'objectid' => $fromform->id,
-            'context' => $context,
-            'other' => array(
-                'quizid' => $fromform->quiz
-            )
-        );
         // Determine which override updated event to fire.
+        $params['objectid'] = $override->id;
         if (!$groupmode) {
             $params['relateduserid'] = $fromform->userid;
             $event = \mod_quiz\event\user_override_updated::create($params);
@@ -185,6 +185,19 @@ if ($mform->is_cancelled()) {
     } else {
         unset($fromform->id);
         $fromform->id = $DB->insert_record('quiz_overrides', $fromform);
+
+        // Determine which override created event to fire.
+        $params['objectid'] = $fromform->id;
+        if (!$groupmode) {
+            $params['relateduserid'] = $fromform->userid;
+            $event = \mod_quiz\event\user_override_created::create($params);
+        } else {
+            $params['other']['groupid'] = $fromform->groupid;
+            $event = \mod_quiz\event\group_override_created::create($params);
+        }
+
+        // Trigger the override created event.
+        $event->trigger();
     }
 
     quiz_update_open_attempts(array('quizid'=>$quiz->id));

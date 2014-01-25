@@ -311,6 +311,7 @@ $string['eventattemptreviewed'] = 'Quiz attempt reviewed';
 $string['eventattemptsummaryviewed'] = 'Quiz attempt summary viewed';
 $string['eventattemptviewed'] = 'Quiz attempt viewed';
 $string['eventeditpageviewed'] = 'Quiz edit page viewed';
+$string['eventoverridecreated'] = 'Quiz override created';
 $string['eventoverridedeleted'] = 'Quiz override deleted';
 $string['eventoverrideupdated'] = 'Quiz override updated';
 $string['eventquestionmanuallygraded'] = 'Question manually graded';
