@@ -66,6 +66,7 @@ if ($lastname) {
 if ($email) {
     $params['email'] = $email;
 }
+$params['eventid'] = $eventid;
 
 if (!$event = $DB->get_record('trainingevent', array('id' => $eventid))) {
     print_error('invalid event ID');

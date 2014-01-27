@@ -89,8 +89,8 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
         if (!empty($attending)) {
             if ('yes' == $attending) {
-                if (!$DB->get_record('trainingevent_users', array('trainingeventid' => $id, 'userid' => $USER->id))) {
-                    if (!$DB->insert_record('trainingevent_users', array('trainingeventid' => $id, 'userid' => $USER->id))) {
+                if (!$DB->get_record('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id))) {
+                    if (!$DB->insert_record('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id))) {
                         print_error('error creating attendance record');
                     } else {
                         $course = $DB->get_record('course', array('id' => $event->course));
@@ -109,7 +109,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     }
                 }
             } else if ('no' == $attending) {
-                if ($attendingrecord = $DB->get_record('trainingevent_users', array('trainingeventid' => $id,
+                if ($attendingrecord = $DB->get_record('trainingevent_users', array('trainingeventid' => $event->id,
                                                                                     'userid' => $USER->id))) {
                     if (!$DB->delete_records('trainingevent_users', array('id' => $attendingrecord->id))) {
                         print_error('error removing attendance record');
@@ -133,9 +133,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         }
         if (!empty($booking)) {
             if ('yes' == $booking  || 'again' == $booking) {
-                if (!$userbooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $id,
+                if (!$userbooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $event->id,
                                                                                         'userid' => $USER->id))) {
-                    if (!$DB->insert_record('block_iomad_approve_access', array('activityid' => $id,
+                    if (!$DB->insert_record('block_iomad_approve_access', array('activityid' => $event->id,
                                                                                 'userid' => $USER->id,
                                                                                 'courseid' => $event->course,
                                                                                 'tm_ok' => 0,
@@ -208,7 +208,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                $USER->id);
                 }
             } else if ( 'no' == $booking) {
-                if ($dereq = (array) $DB->get_record('block_iomad_approve_access', array('activityid' => $id,
+                if ($dereq = (array) $DB->get_record('block_iomad_approve_access', array('activityid' => $event->id,
                                                                                          'userid' => $USER->id))) {
                     $DB->delete_records('block_iomad_approve_access', $dereq);
                     add_to_log($event->course,
@@ -406,9 +406,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     }
                 } else if (($event->approvaltype == 3 || $event->approvaltype == 2)&& $myapprovallevel == "department") {
                     // More levels of approval are required.
-                    if (!$userbooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $id,
+                    if (!$userbooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $event->id,
                                                                                             'userid' => $user->id))) {
-                        if (!$DB->insert_record('block_iomad_approve_access', array('activityid' => $id,
+                        if (!$DB->insert_record('block_iomad_approve_access', array('activityid' => $event->id,
                                                                                     'userid' => $user->id,
                                                                                     'courseid' => $event->course,
                                                                                     'tm_ok' => 0,
@@ -478,9 +478,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $gradeparams['grademax']  = 100;
             $gradeparams['grademin']  = 0;
             $gradeparams['reset'] = false;
-            grade_update('mod/trainingevent', $event->course, 'mod', 'trainingevent', $id, 0, $gradegrade, $gradeparams);
+            grade_update('mod/trainingevent', $event->course, 'mod', 'trainingevent', $event->id, 0, $gradegrade, $gradeparams);
         }
-        if ($attendance = (array) $DB->get_records('trainingevent_users', array('trainingeventid' => $id), null, 'userid')) {
+        if ($attendance = (array) $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id), null, 'userid')) {
             $attendancecount = count($attendance);
             if (array_key_exists($USER->id, $attendance)) {
                 $attending = true;
@@ -544,7 +544,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         if (has_capability('mod/trainingevent:add', $context) && $numattending < $location->capacity
                             && time() < $event->startdatetime) {
             $eventtable .= "<td>".$OUTPUT->single_button(new moodle_url("/mod/trainingevent/searchusers.php",
-                                                                        array('eventid' => $id)),
+                                                                        array('eventid' => $event->id)),
                                                                         get_string('selectother',
                                                                         'trainingevent')). "</td>";
         }
@@ -712,7 +712,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         }
 
                         if (has_capability('mod/trainingevent:grade', $context)) {
-                            $usergradeentry = grade_get_grades($event->course, 'mod', 'trainingevent', $id, $user->id);
+                            $usergradeentry = grade_get_grades($event->course, 'mod', 'trainingevent', $event->id, $user->id);
                             $gradehtml = '<form action="view.php" method="get">
                                          <input type="hidden" name="id" value="' . $id . '" />
                                          <input type="hidden" name="userid" value="'.$user->id.'" />
@@ -775,7 +775,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                AND userid IN ('.$allowedlist.')')) {
                 foreach ($users as $user) {
                     $fulluserdata = $DB->get_record('user', array('id' => $user->id));
-                    $usergradeentry = grade_get_grades($event->course, 'mod', 'trainingevent', $id, $user->id);
+                    $usergradeentry = grade_get_grades($event->course, 'mod', 'trainingevent', $event->id, $user->id);
                     if (!empty($usergradeentry->items[0]->grades[$user->id]->str_grade)) {
                         $user->grade = $usergradeentry->items[0]->grades[$user->id]->str_grade;
                     } else {
