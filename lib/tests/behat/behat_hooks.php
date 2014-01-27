@@ -321,7 +321,7 @@ class behat_hooks extends behat_base {
 
         // All the run screenshots in the same parent dir.
         if (!$screenshotsdirname = self::get_run_screenshots_dir()) {
-            $screenshotsdirname = self::$screenshotsdirname = date('Ymd_Hi');
+            $screenshotsdirname = self::$screenshotsdirname = date('Ymd_His');
 
             $dir = $CFG->behat_screenshots_path . DIRECTORY_SEPARATOR . $screenshotsdirname;
 
