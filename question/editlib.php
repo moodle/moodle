@@ -760,32 +760,6 @@ class question_bank_preview_action_column extends question_bank_action_column_ba
 
 
 /**
- * Question bank columns for the move action icon.
- *
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class question_bank_move_action_column extends question_bank_action_column_base {
-    protected $strmove;
-
-    public function init() {
-        parent::init();
-        $this->strmove = get_string('move');
-    }
-
-    public function get_name() {
-        return 'moveaction';
-    }
-
-    protected function display_content($question, $rowclasses) {
-        if (question_has_capability_on($question, 'move')) {
-            $this->print_icon('t/move', $this->strmove, $this->qbank->move_question_url($question->id));
-        }
-    }
-}
-
-
-/**
  * action to delete (or hide) a question, or restore a previously hidden question.
  *
  * @copyright  2009 Tim Hunt
@@ -987,8 +961,7 @@ class question_bank_view {
 
     protected function wanted_columns() {
         $columns = array('checkbox', 'qtype', 'questionname', 'editaction', 'copyaction',
-                'previewaction', 'moveaction', 'deleteaction', 'creatorname',
-                'modifiername');
+                        'previewaction', 'deleteaction', 'creatorname', 'modifiername');
         if (question_get_display_preference('qbshowtext', 0, PARAM_BOOL, new moodle_url(''))) {
             $columns[] = 'questiontext';
         }
@@ -1014,7 +987,6 @@ class question_bank_view {
             new question_bank_edit_action_column($this),
             new question_bank_copy_action_column($this),
             new question_bank_preview_action_column($this),
-            new question_bank_move_action_column($this),
             new question_bank_delete_action_column($this),
             new question_bank_question_text_row($this),
         );
@@ -1290,10 +1262,6 @@ class question_bank_view {
      */
     public function copy_question_url($questionid) {
         return $this->editquestionurl->out(true, array('id' => $questionid, 'makecopy' => 1));
-    }
-
-    public function move_question_url($questionid) {
-        return $this->editquestionurl->out(true, array('id' => $questionid, 'movecontext' => 1));
     }
 
     public function preview_question_url($question) {
