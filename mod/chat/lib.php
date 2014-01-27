@@ -301,7 +301,6 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
         // ok, last post was not for my group - we have to query db to get last message from one of my groups
         // only minor problem is that the order will not be correct
         $mygroupids = implode(',', $mygroupids);
-        $cm->mygroupids = $mygroupids;
 
         if (!$mcm = $DB->get_record_sql("SELECT cm.id, MAX(chm.timestamp) AS lasttime
                                            FROM {course_modules} cm
@@ -354,8 +353,11 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
 
         foreach ($current as $cm) {
             //count users first
-            if (isset($cm->mygroupids)) {
-                $groupselect = "AND (chu.groupid IN ({$cm->mygroupids}) OR chu.groupid = 0)";
+            $mygroupids = $modinfo->groups[$cm->groupingid];
+            if (!empty($mygroupids)) {
+                list($subquery, $subparams) = $DB->get_in_or_equal($mygroupids, SQL_PARAMS_NAMED, 'gid');
+                $params += $subparams;
+                $groupselect = "AND (chu.groupid $subquery OR chu.groupid = 0)";
             } else {
                 $groupselect = "";
             }
