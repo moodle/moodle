@@ -67,13 +67,14 @@ class editsection_form extends moodleform {
             // Grouping conditions - only if grouping is enabled at site level
             if (!empty($CFG->enablegroupmembersonly)) {
                 $options = array();
-                $options[0] = get_string('none');
                 if ($groupings = $DB->get_records('groupings', array('courseid' => $course->id))) {
                     foreach ($groupings as $grouping) {
                         $options[$grouping->id] = format_string(
                                 $grouping->name, true, array('context' => $context));
                     }
                 }
+                core_collator::asort($options);
+                $options = array(0 => get_string('none')) + $options;
                 $mform->addElement('select', 'groupingid', get_string('groupingsection', 'group'), $options);
                 $mform->addHelpButton('groupingid', 'groupingsection', 'group');
             }

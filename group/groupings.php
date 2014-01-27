@@ -68,9 +68,13 @@ echo $OUTPUT->heading($strgroupings);
 $data = array();
 if ($groupings = $DB->get_records('groupings', array('courseid'=>$course->id), 'name')) {
     $canchangeidnumber = has_capability('moodle/course:changeidnumber', $context);
+    foreach ($groupings as $gid => $grouping) {
+        $groupings[$gid]->formattedname = format_string($grouping->name, true, array('context' => $context));
+    }
+    core_collator::asort_objects_by_property($groupings, 'formattedname');
     foreach($groupings as $grouping) {
         $line = array();
-        $line[0] = format_string($grouping->name);
+        $line[0] = $grouping->formattedname;
 
         if ($groups = groups_get_all_groups($courseid, 0, $grouping->id)) {
             $groupnames = array();
