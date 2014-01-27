@@ -174,22 +174,34 @@ abstract class pdo_moodle_database extends moodle_database {
 
     /**
      * Do NOT use in code, to be used by database_manager only!
-     * @param string $sql query
-     * @return bool success
+     * @param string|array $sql query
+     * @return bool true
+     * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
     public function change_database_structure($sql) {
-        $result = true;
-        $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+        $this->get_manager(); // Includes DDL exceptions classes ;-)
+        $sqls = (array)$sql;
 
         try {
-            $this->pdb->exec($sql);
+            foreach ($sqls as $sql) {
+                $result = true;
+                $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+
+                try {
+                    $this->pdb->exec($sql);
+                } catch (PDOException $ex) {
+                    $this->lastError = $ex->getMessage();
+                    $result = false;
+                }
+                $this->query_end($result);
+            }
+        } catch (ddl_change_structure_exception $e) {
             $this->reset_caches();
-        } catch (PDOException $ex) {
-            $this->lastError = $ex->getMessage();
-            $result = false;
+            throw $e;
         }
-        $this->query_end($result);
-        return $result;
+
+        $this->reset_caches();
+        return true;
     }
 
     public function delete_records_select($table, $select, array $params=null) {

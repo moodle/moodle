@@ -1092,9 +1092,9 @@ abstract class moodle_database {
 
     /**
      * Do NOT use in code, this is for use by database_manager only!
-     * @param string $sql query
+     * @param string|array $sql query or array of queries
      * @return bool true
-     * @throws dml_exception A DML specific exception is thrown for any errors.
+     * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
     public abstract function change_database_structure($sql);
 

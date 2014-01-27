@@ -37,6 +37,7 @@ require_once(__DIR__.'/mysqli_native_moodle_temptables.php');
  */
 class mysqli_native_moodle_database extends moodle_database {
 
+    /** @var mysqli $mysqli */
     protected $mysqli = null;
 
     private $transactions_supported = null;
@@ -821,17 +822,38 @@ class mysqli_native_moodle_database extends moodle_database {
 
     /**
      * Do NOT use in code, to be used by database_manager only!
-     * @param string $sql query
+     * @param string|array $sql query
      * @return bool true
-     * @throws dml_exception A DML specific exception is thrown for any errors.
+     * @throws ddl_change_structure_exception A DDL specific exception is thrown for any errors.
      */
     public function change_database_structure($sql) {
+        $this->get_manager(); // Includes DDL exceptions classes ;-)
+        if (is_array($sql)) {
+            $sql = implode("\n;\n", $sql);
+        }
+
+        try {
+            $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
+            $result = $this->mysqli->multi_query($sql);
+            if ($result === false) {
+                $this->query_end(false);
+            }
+            while ($this->mysqli->more_results()) {
+                $result = $this->mysqli->next_result();
+                if ($result === false) {
+                    $this->query_end(false);
+                }
+            }
+            $this->query_end(true);
+        } catch (ddl_change_structure_exception $e) {
+            while (@$this->mysqli->more_results()) {
+                @$this->mysqli->next_result();
+            }
+            $this->reset_caches();
+            throw $e;
+        }
+
         $this->reset_caches();
-
-        $this->query_start($sql, null, SQL_QUERY_STRUCTURE);
-        $result = $this->mysqli->query($sql);
-        $this->query_end($result);
-
         return true;
     }
 

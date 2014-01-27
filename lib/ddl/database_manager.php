@@ -69,26 +69,21 @@ class database_manager {
     /**
      * This function will execute an array of SQL commands.
      *
-     * @param array $sqlarr Array of sql statements to execute.
-     * @throws ddl_exception This exception is thrown if any error is found.
+     * @param string[] $sqlarr Array of sql statements to execute.
+     * @throws ddl_change_structure_exception This exception is thrown if any error is found.
      */
     protected function execute_sql_arr(array $sqlarr) {
-        foreach ($sqlarr as $sql) {
-            $this->execute_sql($sql);
-        }
+        $this->mdb->change_database_structure($sqlarr);
     }
 
     /**
      * Execute a given sql command string.
      *
      * @param string $sql The sql string you wish to be executed.
-     * @throws ddl_exception This exception is thrown if any error is found.
+     * @throws ddl_change_structure_exception This exception is thrown if any error is found.
      */
     protected function execute_sql($sql) {
-        if (!$this->mdb->change_database_structure($sql)) {
-            // in case driver does not throw exceptions yet ;-)
-            throw new ddl_change_structure_exception($this->mdb->get_last_error(), $sql);
-        }
+        $this->mdb->change_database_structure($sql);
     }
 
     /**
