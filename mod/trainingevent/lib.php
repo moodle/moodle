@@ -177,16 +177,16 @@ function trainingevent_get_coursemodule_info($coursemodule) {
 
         // No filtering here because this info is cached and filtered later.
 
+        $extra = "";
         if ($trainingevent->classroomid) {
-            $extra = "";
             if ($classroom = $DB->get_record('classroom', array('id' => $trainingevent->classroomid), '*')) {
-                $extra .= get_string('location', 'trainingevent') . ": " . $classroom->name . " - ";
+                $extra .= get_string('location', 'trainingevent') . ": " . $classroom->name . "</br>";
             }
         }
         $dateformat = "d F Y, g:ia";
 
         $extra .= get_string('startdatetime', 'trainingevent') . ": " . date($dateformat, $trainingevent->startdatetime);
-        $extra .= "</br><a href='$CFG->wwwroot/mod/trainingevent/manageclass.php?id=$trainingevent->id'>".
+        $extra .= "</br><a href='$CFG->wwwroot/mod/trainingevent/view.php?id=$coursemodule->id'>".
                    get_string('details', 'trainingevent')."</a></br>";
 
         // Sneakily prepend the extra info to the intro value (only for the remainder of this function).
@@ -253,10 +253,10 @@ function trainingevent_supports($feature) {
             return true;
         }
         case FEATURE_GROUPS: {
-            return false;
+            return true;
         }
         case FEATURE_GROUPINGS: {
-            return false;
+            return true;
         }
         case FEATURE_GROUPMEMBERSONLY: {
             return true;
@@ -268,16 +268,19 @@ function trainingevent_supports($feature) {
             return true;
         }
         case FEATURE_GRADE_HAS_GRADE: {
-            return false;
+            return true;
         }
         case FEATURE_GRADE_OUTCOMES: {
-            return false;
+            return true;
         }
         case FEATURE_BACKUP_MOODLE2: {
             return true;
         }
-        case FEATURE_NO_VIEW_LINK: {
+        case FEATURE_SHOW_DESCRIPTION: {
             return true;
+        }
+        case FEATURE_NO_VIEW_LINK: {
+            return false;
         }
 
         default: {

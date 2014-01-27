@@ -150,7 +150,7 @@ if (!empty($fieldnames)) {
 }
 
 
-$returnurl = "manageclass.php?eventid=$eventid";
+$returnurl = "view.php?eventid=$eventid";
 
 // Carry on with the user listing.
 
@@ -283,7 +283,7 @@ if (!$users) {
         }
 
         if (has_capability('mod/trainingevent:add', $context) && $attending < $location->capacity) {
-            $enrolmentbutton = $OUTPUT->single_button(new moodle_url("/mod/trainingevent/manageclass.php",
+            $enrolmentbutton = $OUTPUT->single_button(new moodle_url("/mod/trainingevent/view.php",
                                                                       array('id' => $event->id,
                                                                             'chosenevent' => $event->id,
                                                                             'userid' => $user->id,
