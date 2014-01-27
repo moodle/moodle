@@ -83,7 +83,7 @@ if ($course->id == SITEID) {
 
 } else {
     $PAGE->set_url('/report/log/live.php', array('id'=>$course->id));
-    $PAGE->set_title($course->shortname .': '. $strlogs);
+    $PAGE->set_title($course->shortname .': '. $strlivelogs);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 }
