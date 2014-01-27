@@ -464,6 +464,8 @@ span.editinstructions {
 
 /* Course drag and drop upload styles */
 #dndupload-status {
+    position: fixed;
+    left:0;
     width: 40%;
     margin: 0 30%;
     padding: 6px;
@@ -471,11 +473,9 @@ span.editinstructions {
     text-align: center;
     background: @infoBackground;
     color: @infoText;
-    position: absolute;
-    z-index: 9999;
+    z-index: 1; // Required in order to have this above relatively positioned course content.
     .box-shadow(2px 2px 5px 1px #ccc);
-    .border-bottom-radius(8px);
-    z-index: 0;
+    .border-radius(8px);
 }
 .dndupload-preview {
     color: #909090;
