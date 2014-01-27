@@ -114,10 +114,22 @@ class behat_form_field {
         // Textareas are considered text based elements.
         $tagname = strtolower($this->field->getTagName());
         if ($tagname == 'textarea') {
-            return false;
-        }
 
-        if ($tagname == 'input') {
+            if (!$this->running_javascript()) {
+                return false;
+            }
+
+            // If there is an iframe with $id + _ifr there a TinyMCE editor loaded.
+            $xpath = '//iframe[@id="' . $this->field->getAttribute('id') . '_ifr"]';
+            if (!$this->session->getPage()->find('xpath', $xpath)) {
+
+                // Generic one if it is a normal textarea.
+                return false;
+            }
+
+            $classname = 'behat_form_editor';
+
+        } else if ($tagname == 'input') {
             $type = $this->field->getAttribute('type');
             switch ($type) {
                 case 'text':
