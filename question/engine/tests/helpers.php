@@ -251,7 +251,7 @@ class test_question_maker {
             array($qtype,    $which), $methodtemplate);
 
         if (!method_exists($helper, $method)) {
-            throw new coding_exception('Method ' . $method . ' does not exist on the' .
+            throw new coding_exception('Method ' . $method . ' does not exist on the ' .
                 $qtype . ' question type test helper class.');
         }
 

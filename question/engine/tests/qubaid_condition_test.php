@@ -31,12 +31,12 @@ require_once(dirname(__FILE__) . '/../lib.php');
 
 
 /**
- * Unit tests for some of the code in ../datalib.php.
+ * Unit tests for qubaid_condition and subclasses.
  *
  * @copyright  2009 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qubaid_condition_test extends advanced_testcase {
+class qubaid_condition_testcase extends advanced_testcase {
 
     protected function normalize_sql($sql, $params) {
         $newparams = array();
