@@ -102,31 +102,32 @@ M.course_dndupload = {
      * is available (or to explain why it is not available)
      */
     add_status_div: function() {
-        var coursecontents = document.getElementById(this.pagecontentid);
+        var Y = this.Y,
+            coursecontents = Y.one('#' + this.pagecontentid),
+            div,
+            handlefile = (this.handlers.filehandlers.length > 0),
+            handletext = false,
+            handlelink = false,
+            i = 0,
+            styletop,
+            styletopunit;
+
         if (!coursecontents) {
             return;
         }
 
-        var div = document.createElement('div');
-        div.id = 'dndupload-status';
-        div.style.opacity = 0.0;
-        coursecontents.insertBefore(div, coursecontents.firstChild);
+        div = Y.Node.create('<div id="dndupload-status"></div>').setStyle('opacity', '0.0');
+        coursecontents.insert(div, 0);
 
-        var Y = this.Y;
-        div = Y.one(div);
-        var handlefile = (this.handlers.filehandlers.length > 0);
-        var handletext = false;
-        var handlelink = false;
-        var i;
-        for (i=0; i<this.handlers.types.length; i++) {
+        for (i = 0; i < this.handlers.types.length; i++) {
             switch (this.handlers.types[i].identifier) {
-            case 'text':
-            case 'text/html':
-                handletext = true;
-                break;
-            case 'url':
-                handlelink = true;
-                break;
+                case 'text':
+                case 'text/html':
+                    handletext = true;
+                    break;
+                case 'url':
+                    handlelink = true;
+                    break;
             }
         }
         $msgident = 'dndworking';
@@ -141,16 +142,20 @@ M.course_dndupload = {
         }
         div.setContent(M.util.get_string($msgident, 'moodle'));
 
+        styletop = div.getStyle('top') || '0px';
+        styletopunit = styletop.replace(/^\d+/, '');
+        styletop = parseInt(styletop.replace(/\D*$/, ''), 10);
+
         var fadeanim = new Y.Anim({
             node: '#dndupload-status',
             from: {
                 opacity: 0.0,
-                top: '-30px'
+                top: (styletop - 30).toString() + styletopunit
             },
 
             to: {
                 opacity: 1.0,
-                top: '0px'
+                top: styletop.toString() + styletopunit
             },
             duration: 0.5
         });
