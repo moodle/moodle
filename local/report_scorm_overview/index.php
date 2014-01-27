@@ -29,6 +29,19 @@ require_login($SITE);
 $context = context_system::instance();
 require_capability('local/report_scorm_overview:view', $context);
 
+// Url stuff.
+$url = new moodle_url('/local/report_scorm_overview/index.php',
+                      array('departmentid' => $departmentid, 'courseid' => $courseid));
+$dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
+
+// Page stuff:.
+$strcompletion = get_string('pluginname', 'local_report_scorm_overview');
+$PAGE->set_url($url);
+$PAGE->set_pagelayout('report');
+$PAGE->set_title($strcompletion);
+$PAGE->set_heading($SITE->fullname);
+$PAGE->requires->css("/local/report_scorm_overvew/styles.css");
+
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
 
@@ -46,19 +59,6 @@ if (has_capability('block/iomad_company_admin:edit_all_departments', $context)) 
 if ($departmentid == 0) {
     $departmentid = $userhierarchylevel;
 }
-
-// Url stuff.
-$url = new moodle_url('/local/report_scorm_overview/index.php',
-                      array('departmentid' => $departmentid, 'courseid' => $courseid));
-$dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
-
-// Page stuff:.
-$strcompletion = get_string('pluginname', 'local_report_scorm_overview');
-$PAGE->set_url($url);
-$PAGE->set_pagelayout('report');
-$PAGE->set_title($strcompletion);
-$PAGE->set_heading($SITE->fullname);
-$PAGE->requires->css("/local/report_scorm_overvew/styles.css");
 
 // Set the url.
 company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);

@@ -76,9 +76,6 @@ $systemcontext = context_system::instance();
 
 require_login();
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($systemcontext);
-
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('edit_users_title', 'block_iomad_company_admin');
@@ -90,6 +87,9 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 // Print the page header.
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_edit_users_title');
 $blockpage->setup();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 

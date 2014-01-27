@@ -31,9 +31,6 @@ $context = context_system::instance();
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 $PAGE->set_context($context);
 
 // Correct the navbar.
@@ -46,6 +43,9 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_license_list_title');
 $blockpage->setup();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;

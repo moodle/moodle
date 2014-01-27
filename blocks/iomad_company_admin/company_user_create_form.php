@@ -269,9 +269,6 @@ $context = context_system::instance();
 require_login();
 require_capability('block/iomad_company_admin:user_create', $context);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 $PAGE->set_context($context);
 
 $urlparams = array('companyid' => $companyid);
@@ -291,6 +288,9 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'user_create_title');
 $blockpage->setup();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
 
 $companyform = new company_select_form($PAGE->url, $companyid, 'createuserforcompany');
 $mform = new user_edit_form($PAGE->url, $companyid, $departmentid);

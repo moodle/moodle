@@ -29,9 +29,6 @@ $context = context_system::instance();
 require_login();
 require_capability('block/iomad_company_admin:user_upload', $context);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('users_download', 'block_iomad_company_admin');
@@ -42,6 +39,9 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'user_bulk_download_title');
 $blockpage->setup();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
 
 $return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 

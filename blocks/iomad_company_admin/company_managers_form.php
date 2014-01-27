@@ -296,16 +296,6 @@ $context = context_system::instance();
 require_login();
 require_capability('block/iomad_company_admin:company_manager', $context);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
-$PAGE->set_context($context);
-
-$urlparams = array('companyid' => $companyid);
-if ($returnurl) {
-    $urlparams['returnurl'] = $returnurl;
-}
-
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('assignmanagers', 'block_iomad_company_admin');
@@ -317,6 +307,15 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_manager_form_title');
 $blockpage->setup();
 
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
+$PAGE->set_context($context);
+
+$urlparams = array('companyid' => $companyid);
+if ($returnurl) {
+    $urlparams['returnurl'] = $returnurl;
+}
 // Set up the allocation form.
 $managersform = new company_managers_form($PAGE->url, $context, $companyid, $departmentid, $roleid);
 

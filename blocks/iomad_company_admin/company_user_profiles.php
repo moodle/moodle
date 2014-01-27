@@ -34,9 +34,6 @@ $strcreatefield     = get_string('profilecreatefield', 'admin');
 $context = context_system::instance();
 require_login();
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 $PAGE->set_context($context);
 
 // Correct the navbar.
@@ -49,6 +46,9 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'companyprofilefields');
 $blockpage->setup();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
 
 // Do we have any actions to perform before printing the header?
 

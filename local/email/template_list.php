@@ -53,7 +53,6 @@ if (!empty($SESSION->currenteditingcompany)) {
 } else if (!has_capability('local/email:list', context_system::instance())) {
     print_error('There has been a configuration error, please contact the site administrator');
 } else {
-    $blockpage->display_header();
     redirect(new moodle_url('/local/iomad_dashboard/index.php'),
                             'Please select a company from the dropdown first');
 }

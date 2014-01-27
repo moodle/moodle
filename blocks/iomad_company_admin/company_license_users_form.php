@@ -257,18 +257,7 @@ $context = context_system::instance();
 require_login();
 require_capability('block/iomad_company_admin:allocate_licenses', $context);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 $PAGE->set_context($context);
-
-$urlparams = array('companyid' => $companyid);
-if ($returnurl) {
-    $urlparams['returnurl'] = $returnurl;
-}
-if ($courseid) {
-    $urlparams['courseid'] = $courseid;
-}
 
 // Correct the navbar.
 // Set the name for the page.
@@ -280,6 +269,17 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'company_license_users_title');
 $blockpage->setup();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
+$urlparams = array('companyid' => $companyid);
+if ($returnurl) {
+    $urlparams['returnurl'] = $returnurl;
+}
+if ($courseid) {
+    $urlparams['courseid'] = $courseid;
+}
 
 // Get the top level department.
 $parentlevel = company::get_company_parentnode($companyid);

@@ -139,16 +139,7 @@ $context = context_system::instance();
 require_login();
 require_capability('block/iomad_company_admin:createcourse', $context);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 $PAGE->set_context($context);
-
-$urlparams = array('companyid' => $companyid);
-if ($returnurl) {
-    $urlparams['returnurl'] = $returnurl;
-}
-$companylist = new moodle_url('/local/iomad_dashboard/index.php', $urlparams);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -161,7 +152,16 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/company_course_create_for
 company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'createcourse_title');
-$blockpage->setup($urlparams);
+$blockpage->setup();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
+$urlparams = array('companyid' => $companyid);
+if ($returnurl) {
+    $urlparams['returnurl'] = $returnurl;
+}
+$companylist = new moodle_url('/local/iomad_dashboard/index.php', $urlparams);
 
 /* next line copied from /course/edit.php */
 $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES,

@@ -271,9 +271,6 @@ $context = context_system::instance();
 require_login();
 require_capability('block/iomad_company_admin:company_course', $context);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 $PAGE->set_context($context);
 
 $urlparams = array('companyid' => $companyid);
@@ -292,6 +289,9 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block',
                            'company_course_form_title');
 $blockpage->setup();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
 
 $mform = new company_courses_form($PAGE->url, $context, $companyid, $departmentid);
 

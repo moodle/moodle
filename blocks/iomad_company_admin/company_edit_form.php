@@ -298,22 +298,6 @@ $new = optional_param('createnew', 0, PARAM_INT);
 $context = context_system::instance();
 require_login();
 
-if (!$new) {
-    // Set the companyid
-    $companyid = iomad::get_my_companyid($context);
-
-    $isadding = false;
-    $companyrecord = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
-
-    require_capability('block/iomad_company_admin:company_edit', $context);
-} else {
-    $isadding = true;
-    $companyid = 0;
-    $companyrecord = new stdClass;
-
-    require_capability('block/iomad_company_admin:company_add', $context);
-}
-
 $PAGE->set_context($context);
 // Correct the navbar.
 // Set the name for the page.
@@ -330,6 +314,22 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block',
                            ($new ? 'addnewcompany' : 'editacompany'));
 $blockpage->setup();
+
+if (!$new) {
+    // Set the companyid
+    $companyid = iomad::get_my_companyid($context);
+
+    $isadding = false;
+    $companyrecord = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
+
+    require_capability('block/iomad_company_admin:company_edit', $context);
+} else {
+    $isadding = true;
+    $companyid = 0;
+    $companyrecord = new stdClass;
+
+    require_capability('block/iomad_company_admin:company_add', $context);
+}
 
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {

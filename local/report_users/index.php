@@ -86,6 +86,9 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'report_users', 'local', 'report_users_title');
 $blockpage->setup();
 
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+
 $blockpage->display_header();
 
 // Get the associated department id.

@@ -46,14 +46,6 @@ $montharray = array('jan' => '01',
 $context = context_system::instance();
 require_login();
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
-$companyshortname = '';
-if ($companyid ) {
-    $company = new company($companyid);
-    $companyshortname = $company->get_shortname();
-}
 
 define('UU_ADDNEW', 0);
 define('UU_ADDINC', 1);
@@ -82,6 +74,14 @@ company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
 $blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'user_upload_title');
 $blockpage->setup();
 
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
+$companyshortname = '';
+if ($companyid ) {
+    $company = new company($companyid);
+    $companyshortname = $company->get_shortname();
+}
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
 $systemcontext = context_system::instance();

@@ -65,6 +65,16 @@ require_login();
 require_capability('block/iomad_company_admin:managecourses', $systemcontext);
 $PAGE->set_context($systemcontext);
 
+// Set the url.
+$linkurl = new moodle_url('/blocks/iomad_company_admin/iomad_courses_form.php');
+$linktext = get_string('iomad_courses_title', 'block_iomad_company_admin');
+// Build the nav bar.
+company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
+
+// Print the page header.
+$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'iomad_company_courses_title');
+$blockpage->setup();
+
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
 
@@ -197,16 +207,6 @@ if (!empty($update)) {
         }
     }
 }
-
-// Set the url.
-$linkurl = new moodle_url('/blocks/iomad_company_admin/iomad_courses_form.php');
-$linktext = get_string('iomad_courses_title', 'block_iomad_company_admin');
-// Build the nav bar.
-company_admin_fix_breadcrumb($PAGE, $linktext, $linkurl);
-
-// Print the page header.
-$blockpage = new blockpage($PAGE, $OUTPUT, 'iomad_company_admin', 'block', 'iomad_company_courses_title');
-$blockpage->setup();
 
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;

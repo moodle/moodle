@@ -44,9 +44,6 @@ require_login($SITE);
 $context = context_system::instance();
 require_capability('local/report_completion:view', $context);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 if ($firstname) {
     $params['firstname'] = $firstname;
 }
@@ -103,6 +100,21 @@ if ($comptoraw) {
     $compto = 0;
 }
 
+// Url stuff.
+$url = new moodle_url('/local/report_completion/index.php', $params);
+$dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
+
+// Page stuff:.
+$strcompletion = get_string('pluginname', 'local_report_completion');
+$PAGE->set_url($url);
+$PAGE->set_pagelayout('report');
+$PAGE->set_title($strcompletion);
+$PAGE->set_heading($SITE->fullname);
+$PAGE->requires->css("/local/report_completion/styles.css");
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+
 // Work out department level.
 $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
@@ -122,18 +134,6 @@ if ($departmentid == 0 ) {
 $foundobj = iomad::add_user_filter_params($params, $companyid);
 $idlist = $foundobj->idlist;
 $foundfields = $foundobj->foundfields;
-
-// Url stuff.
-$url = new moodle_url('/local/report_completion/index.php', $params);
-$dashboardurl = new moodle_url('/local/iomad_dashboard/index.php');
-
-// Page stuff:.
-$strcompletion = get_string('pluginname', 'local_report_completion');
-$PAGE->set_url($url);
-$PAGE->set_pagelayout('report');
-$PAGE->set_title($strcompletion);
-$PAGE->set_heading($SITE->fullname);
-$PAGE->requires->css("/local/report_completion/styles.css");
 
 // Set the url.
 company_admin_fix_breadcrumb($PAGE, $strcompletion, $url);
