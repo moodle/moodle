@@ -40,7 +40,10 @@ $chosen = optional_param('chosen', 0, PARAM_INTEGER);
 $action = optional_param('action', null, PARAM_ALPHA);
 $booking = optional_param('booking', null, PARAM_ALPHA);
 
-
+/*echo "$_POST = <pre>";
+print_r($_POST);
+die;
+*/
 if (! $cm = get_coursemodule_from_id('trainingevent', $id)) {
     print_error('invalidcoursemodule');
 }
@@ -735,6 +738,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 echo html_writer::start_tag('div', array('id' => 'trainingeventattendancetable'));
                 echo html_writer::table($attendancetable);
                 echo html_writer::end_tag('div');
+            }
+            if (has_capability('mod/trainingevent:grade', $context)) {
+                echo '<input type="submit" value="' . get_string('grade') . '" />';
             }
             echo $OUTPUT->footer();
         } else {
