@@ -797,7 +797,7 @@ class flexible_table {
             }
             return format_text($text, $format, $options);
         } else {
-            $eci =& $this->export_class_instance();
+            $eci = $this->export_class_instance();
             return $eci->format_text($text, $format, $options, $courseid);
         }
     }
@@ -1527,9 +1527,9 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
         $filename = $filename.'.'.$this->fileextension;
         $this->define_workbook();
         // format types
-        $this->formatnormal =& $this->workbook->add_format();
+        $this->formatnormal = $this->workbook->add_format();
         $this->formatnormal->set_bold(0);
-        $this->formatheaders =& $this->workbook->add_format();
+        $this->formatheaders = $this->workbook->add_format();
         $this->formatheaders->set_bold(1);
         $this->formatheaders->set_align('center');
         // Sending HTTP headers
