@@ -42,7 +42,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
     /**
      * @var $imsplugin enrol_imsenterprise_plugin IMS plugin instance.
      */
-    protected $imsplugin;
+    public $imsplugin;
 
     /**
      * Setup required for all tests.
@@ -254,7 +254,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
     /**
      * Sets the plugin configuration for testing
      */
-    protected function set_test_config() {
+    public function set_test_config() {
         $this->imsplugin->set_config('mailadmins', false);
         $this->imsplugin->set_config('prev_path', '');
         $this->imsplugin->set_config('createnewusers', true);
@@ -268,7 +268,7 @@ class enrol_imsenterprise_testcase extends advanced_testcase {
      * @param bool|array $users false or array of users StdClass
      * @param bool|array $courses false or of courses StdClass
      */
-    protected function set_xml_file($users = false, $courses = false) {
+    public function set_xml_file($users = false, $courses = false) {
 
         $xmlcontent = '<enterprise>';
 
