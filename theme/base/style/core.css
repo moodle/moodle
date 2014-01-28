@@ -1800,3 +1800,8 @@ a:hover .caret {
     -o-animation: progress-bar-stripes 2s linear infinite;
     animation: progress-bar-stripes 2s linear infinite;
 }
+
+body.lockscroll {
+  height: 100%;
+  overflow: hidden;
+}
