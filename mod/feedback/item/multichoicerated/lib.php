@@ -520,6 +520,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         } else {
             $hv = 'v';
         }
+        echo '<fieldset>';
         echo '<ul>';
         if (!$this->hidenoselect($item)) {
             ?>
@@ -576,6 +577,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $index++;
         }
         echo '</ul>';
+        echo '</fieldset>';
     }
 
     private function print_item_dropdown($item, $value, $info, $align, $showrating, $lines) {
@@ -584,10 +586,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
         } else {
             $hv = 'v';
         }
-        echo '<ul>';
         ?>
-        <li class="feedback_item_select_<?php echo $hv.'_'.$align;?>">
-            <label class="accesshide" for="<?php echo $item->typ.'_'.$item->id;?>"><?php echo $item->name; ?></label>
+        <div class="feedback_item_select_<?php echo $hv.'_'.$align;?>">
             <select id="<?php echo $item->typ.'_'.$item->id;?>" name="<?php echo $item->typ.'_'.$item->id;?>">
                 <option value="0">&nbsp;</option>
                 <?php
@@ -613,9 +613,8 @@ class feedback_item_multichoicerated extends feedback_item_base {
                 }
                 ?>
             </select>
-        </li>
+        </div>
         <?php
-        echo '</ul>';
     }
 
     public function prepare_presentation_values($linesep1,
