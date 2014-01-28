@@ -156,10 +156,10 @@ switch($action) {
 }
 
 if ($err_notice) {
-    echo $OUTPUT->notification($err_notice, 'red');
+    echo $OUTPUT->notification($err_notice, 'notifyproblem');
 }
 if ($notice) {
-    echo $OUTPUT->notification($notice, 'green');
+    echo $OUTPUT->notification($notice, 'notifysuccess');
 }
 
 // small form to add an official tag
