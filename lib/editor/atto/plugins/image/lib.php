@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 function atto_image_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = array('e/insert_edit_image', 'editor_atto');
+    $icon = array('e/insert_edit_image', 'core');
 
     $PAGE->requires->strings_for_js(array('createimage',
                                           'enterurl',

@@ -29,7 +29,7 @@
 function atto_unlink_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = array('e/remove_link', 'editor_atto');
+    $icon = array('e/remove_link', 'core');
 
     $PAGE->requires->yui_module('moodle-atto_unlink-button',
                                 'M.atto_unlink.init',

@@ -29,7 +29,7 @@
 function atto_unorderedlist_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = array('e/bullet_list', 'editor_atto');
+    $icon = array('e/bullet_list', 'core');
 
     $PAGE->requires->yui_module('moodle-atto_unorderedlist-button',
                                 'M.atto_unorderedlist.init',

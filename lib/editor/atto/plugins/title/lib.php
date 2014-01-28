@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 function atto_title_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = array('e/styleprops', 'editor_atto');
+    $icon = array('e/styleprops', 'core');
 
     $PAGE->requires->strings_for_js(array('h3',
                                           'h4',

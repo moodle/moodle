@@ -29,7 +29,7 @@
 function atto_media_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = array('e/insert_edit_video', 'editor_atto');
+    $icon = array('e/insert_edit_video', 'core');
 
     $PAGE->requires->strings_for_js(array('createmedia',
                                           'enterurl',

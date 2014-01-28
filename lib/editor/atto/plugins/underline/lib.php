@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 function atto_underline_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = array('e/underline', 'editor_atto');
+    $icon = array('e/underline', 'core');
 
     $PAGE->requires->yui_module('moodle-atto_underline-button',
                                 'M.atto_underline.init',

@@ -29,7 +29,7 @@
 function atto_outdent_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = array('e/decrease_indent', 'editor_atto');
+    $icon = array('e/decrease_indent', 'core');
 
     $PAGE->requires->yui_module('moodle-atto_outdent-button',
                                 'M.atto_outdent.init',

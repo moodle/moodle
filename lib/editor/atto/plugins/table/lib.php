@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 function atto_table_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = array('e/table', 'editor_atto');
+    $icon = array('e/table', 'core');
 
     $PAGE->requires->strings_for_js(array('createtable',
                                           'accessibilityhint',

@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 function atto_link_init_editor($elementid) {
     global $PAGE, $OUTPUT;
 
-    $icon = array('e/insert_edit_link', 'editor_atto');
+    $icon = array('e/insert_edit_link', 'core');
 
     $PAGE->requires->strings_for_js(array('createlink',
                                           'enterurl',
