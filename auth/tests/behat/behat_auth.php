@@ -48,12 +48,45 @@ class behat_auth extends behat_base {
      */
     public function i_log_in_as($username) {
 
-        return array(new Given('I am on homepage'),
+        // Running this step using the API rather than a chained step because
+        // we need to see if the 'Log in' link is available or we need to click
+        // the dropdown to expand the navigation bar before.
+        $this->getSession()->visit($this->locate_path('/'));
+
+        // Generic steps (we will prefix them later expanding the navigation dropdown if necessary).
+        $steps = array(
             new Given('I follow "' . get_string('login') . '"'),
             new Given('I fill in "' . get_string('username') . '" with "' . $this->escape($username) . '"'),
             new Given('I fill in "' . get_string('password') . '" with "'. $this->escape($username) . '"'),
             new Given('I press "' . get_string('login') . '"')
         );
+
+        // If Javascript is disabled we have enough with these steps.
+        if (!$this->running_javascript()) {
+            return $steps;
+        }
+
+        // Wait for the homepage to be ready.
+        $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
+
+        // Checking if we need to click the navbar button to show the navigation menu, it
+        // is hidden by default when using clean theme and a medium or small size screen size.
+
+        // The DOM and the JS should be all ready and loaded. Running without spinning
+        // as this is a widely used step and we can not spend time here trying to see
+        // a DOM node that is not always there (at the moment clean is not even the
+        // default theme...).
+        $navbuttonjs = "return (
+            Y.one('.btn-navbar') &&
+            Y.one('.btn-navbar').getComputedStyle('display') !== 'none'
+        )";
+
+        // Adding an extra click we need to show the 'Log in' link.
+        if ($this->getSession()->getDriver()->evaluateScript($navbuttonjs)) {
+            array_unshift($steps, new Given('I click on ".btn-navbar" "css_element"'));
+        }
+
+        return $steps;
     }
 
     /**
