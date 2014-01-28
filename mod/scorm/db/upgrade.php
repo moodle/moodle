@@ -17,8 +17,7 @@
 /**
  * Upgrade script for the scorm module.
  *
- * @package    mod
- * @subpackage scorm
+ * @package    mod_scorm
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -203,6 +202,55 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2013110501, 'scorm');
     }
 
+    if ($oldversion < 2013110502) {
+        // Fix invalid $scorm->launch records that launch an org sco instead of a real sco.
+        $sql = "SELECT s.*, c.identifier
+                 FROM {scorm} s
+            LEFT JOIN {scorm_scoes} c ON s.launch = c.id
+                WHERE ".$DB->sql_isempty('scorm_scoes', 'c.launch', false, true);
+        $scorms = $DB->get_recordset_sql($sql);
+        foreach ($scorms as $scorm) {
+            upgrade_set_timeout(60);  // Increase execution time just in case. (60 sec is minimum but prob excessive here).
+            $originallaunch = $scorm->launch;
+            // Find the first sco using the current identifier as it's parent
+            // we use get records here as we need to pass a limit in the query that works cross db.
+            $firstsco = $DB->get_records('scorm_scoes',
+                                         array('scorm' => $scorm->id, 'parent' => $scorm->identifier), 'sortorder', '*', 0, 1);
+            if (!empty($firstsco)) {
+                $firstsco = reset($firstsco);
+            }
+            if (!empty($firstsco->launch)) {
+                // Usual behavior - this is a valid sco with a launch param so use it.
+                $scorm->launch = $firstsco->id;
+            } else {
+                // The firstsco found is not launchable - find the first launchable sco after this sco.
+                $sqlselect = 'scorm = ? AND sortorder > ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true);
+                // We use get_records here as we need to pass a limit in the query that works cross db.
+                $scoes = $DB->get_records_select('scorm_scoes', $sqlselect,
+                                                 array($scorm->id, $firstsco->sortorder), 'sortorder', 'id', 0, 1);
+                if (!empty($scoes)) {
+                    $sco = reset($scoes); // We only care about the first record - the above query only returns one.
+                    $scorm->launch = $sco->id;
+                } else {
+                    // This is an invalid package - it has a default org that doesn't contain a launchable sco.
+                    // Check for any valid sco with a launch param.
+                    $sqlselect = 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true);
+                    // We use get_records here as we need to pass a limit in the query that works cross db.
+                    $scoes = $DB->get_records_select('scorm_scoes', $sqlselect, array($scorm->id), 'sortorder', 'id', 0, 1);
+                    if (!empty($scoes)) {
+                        $sco = reset($scoes); // We only care about the first record - the above query only returns one.
+                        $scorm->launch = $sco->id;
+                    }
+                }
+            }
+            if ($originallaunch != $scorm->launch) {
+                $DB->update_record('scorm', $scorm);
+            }
+        }
+        $scorms->close();
+
+        upgrade_mod_savepoint(true, 2013110502, 'scorm');
+    }
     return true;
 }
 

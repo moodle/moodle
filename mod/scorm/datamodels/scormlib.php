@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * functions used by SCORM 1.2/2004 packages.
+ *
+ * @package    mod_scorm
+ * @copyright 1999 onwards Roberto Pinna
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 function scorm_get_resources($blocks) {
     $resources = array();
     foreach ($blocks as $block) {
@@ -503,7 +511,14 @@ function scorm_get_manifest($blocks, $scoes) {
     return $scoes;
 }
 
-function scorm_parse_scorm($scorm, $manifest) {
+/**
+ * Sets up SCORM 1.2/2004 packages using the manifest file.
+ * Called whenever SCORM changes
+ * @param object $scorm instance - fields are updated and changes saved into database
+ * @param stored_file|string $manifest - path to manifest file or stored_file.
+ * @return bool
+ */
+function scorm_parse_scorm(&$scorm, $manifest) {
     global $CFG, $DB;
 
     // load manifest into string
@@ -514,7 +529,8 @@ function scorm_parse_scorm($scorm, $manifest) {
         $xmltext = download_file_content($manifest);
     }
 
-    $launch = 0;
+    $defaultorgid = 0;
+    $firstinorg = 0;
 
     $pattern = '/&(?!\w{2,6};)/';
     $replacement = '&amp;';
@@ -525,6 +541,7 @@ function scorm_parse_scorm($scorm, $manifest) {
     $scoes = new stdClass();
     $scoes->version = '';
     $scoes = scorm_get_manifest($manifests, $scoes);
+    $newscoes = array();
     $sortorder = 0;
     if (count($scoes->elements) > 0) {
         $olditems = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id));
@@ -547,6 +564,10 @@ function scorm_parse_scorm($scorm, $manifest) {
                         }
                     }
 
+                    if (!empty($defaultorgid) && empty($firstinorg) && $newitem->parent == $scoes->defaultorg) {
+                        $firstinorg = $sortorder;
+                    }
+
                     if (!empty($olditems) && ($olditemid = scorm_array_search('identifier', $newitem->identifier, $olditems))) {
                         $newitem->id = $olditemid;
                         // Update the Sco sortorder but keep id so that user tracks are kept against the same ids.
@@ -567,6 +588,7 @@ function scorm_parse_scorm($scorm, $manifest) {
                         // Insert the new SCO, and retain the link between the old and new for later adjustment
                         $id = $DB->insert_record('scorm_scoes', $newitem);
                     }
+                    $newscoes[$id] = $newitem; // Save this sco in memory so we can use it later.
 
                     if ($optionaldatas = scorm_optionals_data($item, $standarddatas)) {
                         $data = new stdClass();
@@ -651,8 +673,8 @@ function scorm_parse_scorm($scorm, $manifest) {
                             }
                         }
                     }
-                    if (($launch == 0) && ((empty($scoes->defaultorg)) || ($scoes->defaultorg == $identifier))) {
-                        $launch = $id;
+                    if (empty($defaultorgid) && ((empty($scoes->defaultorg)) || ($scoes->defaultorg == $identifier))) {
+                        $defaultorgid = $id;
                     }
                 }
             }
@@ -673,11 +695,34 @@ function scorm_parse_scorm($scorm, $manifest) {
         if (empty($scoes->version)) {
             $scoes->version = 'SCORM_1.2';
         }
-        $DB->set_field('scorm', 'version', $scoes->version, array('id'=>$scorm->id));
+        $DB->set_field('scorm', 'version', $scoes->version, array('id' => $scorm->id));
         $scorm->version = $scoes->version;
     }
-
-    $scorm->launch = $launch;
+    $scorm->launch = 0;
+    // Check launch sco is valid.
+    if (!empty($defaultorgid) && isset($newscoes[$defaultorgid]) && !empty($newscoes[$defaultorgid]->launch)) {
+        // Launch param is valid - do nothing.
+        $scorm->launch = $defaultorgid;
+    } else if (!empty($defaultorgid) && isset($newscoes[$defaultorgid]) && empty($newscoes[$defaultorgid]->launch)) {
+        // The launch is probably the default org so we need to find the first launchable item inside this org.
+        $sqlselect = 'scorm = ? AND sortorder > ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true);
+        // We use get_records here as we need to pass a limit in the query that works cross db.
+        $scoes = $DB->get_records_select('scorm_scoes', $sqlselect, array($scorm->id, $firstinorg), 'sortorder', 'id', 0, 1);
+        if (!empty($scoes)) {
+            $sco = reset($scoes); // We only care about the first record - the above query only returns one.
+            $scorm->launch = $sco->id;
+        }
+    }
+    if (empty($scorm->launch)) {
+        // No valid Launch is specified - find the first launchable sco instead.
+        $sqlselect = 'scorm = ? AND '.$DB->sql_isnotempty('scorm_scoes', 'launch', false, true);
+        // We use get_records here as we need to pass a limit in the query that works cross db.
+        $scoes = $DB->get_records_select('scorm_scoes', $sqlselect, array($scorm->id), 'sortorder', 'id', 0, 1);
+        if (!empty($scoes)) {
+            $sco = reset($scoes); // We only care about the first record - the above query only returns one.
+            $scorm->launch = $sco->id;
+        }
+    }
 
     return true;
 }
