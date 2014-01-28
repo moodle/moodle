@@ -386,7 +386,6 @@ if ($feedback_can_submit) {
         if (is_array($feedbackitems)) {
             echo $OUTPUT->box_start('feedback_form');
             echo '<form action="complete_guest.php" method="post" onsubmit=" ">';
-            echo '<fieldset>';
             echo '<input type="hidden" name="anonymous" value="0" />';
             $inputvalue = 'value="'.FEEDBACK_ANONYMOUS_YES.'"';
             echo '<input type="hidden" name="anonymous_response" '.$inputvalue.' />';
@@ -501,7 +500,6 @@ if ($feedback_can_submit) {
                 echo '<input name="savevalues" type="submit" '.$inputvalue.' />';
             }
 
-            echo '</fieldset>';
             echo '</form>';
             echo $OUTPUT->box_end();
 
@@ -516,11 +514,9 @@ if ($feedback_can_submit) {
                 }
             }
             echo '<form '.$action.' method="post" onsubmit=" ">';
-            echo '<fieldset>';
             echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
             echo '<input type="hidden" name="courseid" value="'. $courseid . '" />';
             echo '<button type="submit">'.get_string('cancel').'</button>';
-            echo '</fieldset>';
             echo '</form>';
             echo $OUTPUT->box_end();
             $SESSION->feedback->is_started = true;
