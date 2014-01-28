@@ -47,21 +47,27 @@ div.feedback_item_commands_right {
 
 li.feedback_item_check_h_left,
 li.feedback_item_check_h_right,
-li.feedback_item_select_h_left,
-li.feedback_item_select_h_right,
 li.feedback_item_radio_h_left,
-li.feedback_item_radio_h_right{
+li.feedback_item_radio_h_right {
 	list-style-type:none;
 	display:inline;
 }
 
+div.feedback_item_select_h_left,
+div.feedback_item_select_h_right {
+	display:block;
+}
+
 li.feedback_item_check_v_left,
 li.feedback_item_check_v_right,
-li.feedback_item_select_v_left,
-li.feedback_item_select_v_right,
 li.feedback_item_radio_v_left,
-li.feedback_item_radio_v_right{
+li.feedback_item_radio_v_right {
 	list-style-type:none;
+	display:block;
+}
+
+div.feedback_item_select_v_left,
+div.feedback_item_select_v_right {
 	display:block;
 }
 
