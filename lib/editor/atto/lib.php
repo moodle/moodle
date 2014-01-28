@@ -67,7 +67,7 @@ class atto_texteditor extends texteditor {
     }
 
     /**
-     * Use this editor for give element.
+     * Use this editor for given element.
      *
      * @param string $elementid
      * @param array $options
@@ -75,21 +75,49 @@ class atto_texteditor extends texteditor {
      */
     public function use_editor($elementid, array $options=null, $fpoptions=null) {
         global $PAGE;
-        $PAGE->requires->yui_module('moodle-editor_atto-editor',
+
+        $configstr = get_config('editor_atto', 'toolbar');
+
+        $grouplines = explode("\n", $configstr);
+
+        $groups = array();
+
+        foreach ($grouplines as $groupline) {
+            $line = explode('=', $groupline);
+            if (count($line) > 1) {
+                $group = trim(array_shift($line));
+                $plugins = array_map('trim', explode(',', array_shift($line)));
+                $groups[$group] = $plugins;
+            }
+        }
+
+        $modules = array('moodle-editor_atto-editor');
+
+        $jsplugins = array();
+        foreach ($groups as $group => $plugins) {
+            $groupplugins = array();
+            foreach ($plugins as $plugin) {
+                $jsplugin = array();
+                $jsplugin['name'] = $plugin;
+                $jsplugin['params'] = array();
+                $modules[] = 'moodle-atto_' . $plugin . '-button';
+
+                component_callback('atto_' . $plugin, 'strings_for_js');
+                $extra = component_callback('atto_' . $plugin, 'params_for_js');
+
+                if ($extra) {
+                    $jsplugin['params'] = $extra;
+                }
+                // We always need the plugin name.
+                $PAGE->requires->string_for_js('pluginname', 'atto_' . $plugin);
+                $groupplugins[] = $jsplugin;
+            }
+            $jsplugins[] = array('group'=>$group, 'plugins'=>$groupplugins);
+        }
+
+        $PAGE->requires->yui_module($modules,
                                     'M.editor_atto.init',
-                                    array($this->get_init_params($elementid, $options, $fpoptions)));
-
-        $plugins = core_component::get_plugin_list('atto');
-
-        foreach ($plugins as $name => $fulldir) {
-            $PAGE->requires->string_for_js('pluginname', 'atto_' . $name);
-            $plugins[$name] = component_callback('atto_' . $name, 'sort_order', array($elementid));
-        }
-
-        asort($plugins);
-        foreach ($plugins as $name => $sort) {
-            component_callback('atto_' . $name, 'init_editor', array($elementid));
-        }
+                                    array($this->get_init_params($elementid, $options, $fpoptions, $jsplugins)));
 
     }
 
@@ -100,7 +128,7 @@ class atto_texteditor extends texteditor {
      * @param array $options
      * @param array $fpoptions
      */
-    protected function get_init_params($elementid, array $options=null, array $fpoptions=null) {
+    protected function get_init_params($elementid, array $options = null, array $fpoptions = null, $plugins = null) {
         global $PAGE;
 
         $directionality = get_string('thisdirection', 'langconfig');
@@ -114,7 +142,8 @@ class atto_texteditor extends texteditor {
             'content_css' => $contentcss,
             'language' => $lang,
             'directionality' => $directionality,
-            'filepickeroptions' => array()
+            'filepickeroptions' => array(),
+            'plugins' => $plugins
         );
         if ($fpoptions) {
             $params['filepickeroptions'] = $fpoptions;

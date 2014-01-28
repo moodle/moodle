@@ -25,13 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Initialise this plugin
- * @param string $elementid
+ * Initialise the js strings required for this module.
  */
-function atto_table_init_editor($elementid) {
-    global $PAGE, $OUTPUT;
-
-    $icon = array('e/table', 'core');
+function atto_table_strings_for_js() {
+    global $PAGE;
 
     $PAGE->requires->strings_for_js(array('createtable',
                                           'accessibilityhint',
@@ -52,17 +49,5 @@ function atto_table_init_editor($elementid) {
                                           'deleterow',
                                           'deletecolumn'),
                                     'atto_table');
-
-    $PAGE->requires->yui_module('moodle-atto_table-button',
-                                'M.atto_table.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'list')));
-
 }
 
-/**
- * Return the order this plugin should be displayed in the toolbar
- * @return int the absolute position within the toolbar
- */
-function atto_table_sort_order() {
-    return 11;
-}

@@ -24,14 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Initialise this plugin
- * @param string $elementid
- */
-function atto_title_init_editor($elementid) {
-    global $PAGE, $OUTPUT;
-
-    $icon = array('e/styleprops', 'core');
+function atto_title_strings_for_js() {
+    global $PAGE;
 
     $PAGE->requires->strings_for_js(array('h3',
                                           'h4',
@@ -39,16 +33,5 @@ function atto_title_init_editor($elementid) {
                                           'blockquote',
                                           'pre',
                                           'p'), 'atto_title');
-    $PAGE->requires->yui_module('moodle-atto_title-button',
-                                'M.atto_title.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'title')));
-
 }
 
-/**
- * Return the order this plugin should be displayed in the toolbar
- * @return int the absolute position within the toolbar
- */
-function atto_title_sort_order() {
-    return 9;
-}

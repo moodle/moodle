@@ -25,13 +25,10 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Initialise this plugin
- * @param string $elementid
+ * Initialise the strings required for js
  */
-function atto_image_init_editor($elementid) {
-    global $PAGE, $OUTPUT;
-
-    $icon = array('e/insert_edit_image', 'core');
+function atto_image_strings_for_js() {
+    global $PAGE;
 
     $PAGE->requires->strings_for_js(array('createimage',
                                           'enterurl',
@@ -43,16 +40,5 @@ function atto_image_init_editor($elementid) {
                                           'presentationoraltrequired',
                                           'width',
                                           'height'), 'atto_image');
-    $PAGE->requires->yui_module('moodle-atto_image-button',
-                                'M.atto_image.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'file')));
-
 }
 
-/**
- * Return the order this plugin should be displayed in the toolbar
- * @return int the absolute position within the toolbar
- */
-function atto_image_sort_order() {
-    return 13;
-}

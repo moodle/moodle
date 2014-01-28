@@ -23,13 +23,10 @@
  */
 
 /**
- * Initialise this plugin
- * @param string $elementid
+ * Initialise the js strings required for this plugin
  */
-function atto_media_init_editor($elementid) {
-    global $PAGE, $OUTPUT;
-
-    $icon = array('e/insert_edit_video', 'core');
+function atto_media_strings_for_js() {
+    global $PAGE;
 
     $PAGE->requires->strings_for_js(array('createmedia',
                                           'enterurl',
@@ -37,16 +34,4 @@ function atto_media_init_editor($elementid) {
                                           'browserepositories',
                                           'accessibilityhint'),
                                     'atto_media');
-    $PAGE->requires->yui_module('moodle-atto_media-button',
-                                'M.atto_media.init',
-                                array(array('elementid'=>$elementid, 'icon'=>$icon, 'group'=>'file')));
-
-}
-
-/**
- * Return the order this plugin should be displayed in the toolbar
- * @return int the absolute position within the toolbar
- */
-function atto_media_sort_order() {
-    return 14;
 }
