@@ -83,6 +83,8 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configcheckbox('enrol_imsenterprise/imscapitafix', get_string('usecapitafix', 'enrol_imsenterprise'), get_string('usecapitafix_desc', 'enrol_imsenterprise'), 0));
 
-    $importnowstring = get_string('aftersaving...', 'enrol_imsenterprise').' <a href="../enrol/imsenterprise/importnow.php">'.get_string('doitnow', 'enrol_imsenterprise').'</a>';
+    $importurl = new moodle_url('/enrol/imsenterprise/importnow.php', array('sesskey' => sesskey()));
+    $importnowstring = get_string('aftersaving...', 'enrol_imsenterprise').' '.
+        html_writer::link($importurl, get_string('doitnow', 'enrol_imsenterprise'));
     $settings->add(new admin_setting_heading('enrol_imsenterprise_doitnowmessage', '', $importnowstring));
 }

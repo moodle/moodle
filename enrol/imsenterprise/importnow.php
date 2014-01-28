@@ -2,6 +2,7 @@
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
 require_login(0, false);
 require_capability('moodle/site:config', context_system::instance());
+require_sesskey();
 
 $site = get_site();
 
