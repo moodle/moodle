@@ -1,0 +1,12 @@
+{
+  "moodle-editor_atto-editor": {
+    "requires": [
+        "node",
+        "io",
+        "overlay",
+        "escape",
+        "event",
+        "moodle-core-notification"
+      ]
+  }
+}

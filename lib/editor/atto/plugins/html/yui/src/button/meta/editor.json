@@ -1,0 +1,8 @@
+{
+  "moodle-atto_html-button": {
+    "requires": [
+        "node",
+        "event-valuechange"
+    ]
+  }
+}

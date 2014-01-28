@@ -1,0 +1,7 @@
+div.editor_atto_content td,
+div.editor_atto_content th {
+    border: 1px dashed #BBB;
+    position: relative;
+    min-width: 30px;
+    height: 13px;
+}

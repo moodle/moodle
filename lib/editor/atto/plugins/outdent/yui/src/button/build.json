@@ -1,0 +1,10 @@
+{
+  "name": "moodle-atto_outdent-button",
+  "builds": {
+    "moodle-atto_outdent-button": {
+      "jsfiles": [
+        "button.js"
+      ]
+    }
+  }
+}

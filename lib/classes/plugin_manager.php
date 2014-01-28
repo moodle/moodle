@@ -930,6 +930,11 @@ class core_plugin_manager {
 
         $standard_plugins = array(
 
+            'atto' => array(
+                'bold', 'html', 'indent', 'link', 'orderedlist', 'strike', 'title', 'unlink',
+                'clear', 'image', 'italic', 'media', 'outdent', 'table', 'underline', 'unorderedlist'
+            ),
+
             'assignment' => array(
                 'offline', 'online', 'upload', 'uploadsingle'
             ),
