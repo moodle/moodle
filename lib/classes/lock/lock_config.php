@@ -61,16 +61,13 @@ class lock_config {
             // DB Specific lock factory is prefered - should support auto-release.
             $lockfactoryclass = "\\core\\lock\\${dbtype}_lock_factory";
             if (!class_exists($lockfactoryclass)) {
-                if (empty($CFG->preventfilelocking)) {
-                    // File locking is second option - if $CFG->preventfilelocking allows it.
-                    $lockfactoryclass = '\core\lock\file_lock_factory';
-                } else {
-                    // Final fallback - DB row locking. Does not support auto-release - so on failures
-                    // we will have to wait for a timeout.
-                    $lockfactoryclass = '\core\lock\db_record_lock_factory';
-                }
+                $lockfactoryclass = '\core\lock\file_lock_factory';
             }
             $lockfactory = new $lockfactoryclass($type);
+            if (!$lockfactory->is_available()) {
+                // Final fallback - DB row locking.
+                $lockfactory = new \core\lock\db_record_lock_factory($type);
+            }
         }
 
         return $lockfactory;

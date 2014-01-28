@@ -94,10 +94,15 @@ class file_lock_factory implements lock_factory {
 
     /**
      * Is available.
-     * @return boolean - True if this lock type is available in this environment.
+     * @return boolean - True if preventfilelocking is not set - or the file_lock_root is not in dataroot.
      */
     public function is_available() {
-        return true;
+        $preventfilelocking = !empty($CFG->preventfilelocking);
+        $lockdirisdataroot = true;
+        if (!empty($CFG->file_lock_root) && strpos($CFG->file_lock_root, $CFG->dataroot) !== 0) {
+            $lockdirisdataroot = false;
+        }
+        return !$preventfilelocking || !$lockdirisdataroot;
     }
 
     /**
