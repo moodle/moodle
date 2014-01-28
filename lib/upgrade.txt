@@ -22,6 +22,8 @@ YUI:
     deprecated and replaced by the modal attribute. This was actually
     changed in Moodle 2.2, but has only been marked as deprecated now. It
     will be removed in Moodle 2.9.
+  * When destroying any type of dialogue based on moodle-core-notification, the relevant content is also removed from
+    the DOM. Previously it was left orphaned.
 
 JavaSript:
     * The findChildNodes global function has been deprecated. Y.all should
