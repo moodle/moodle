@@ -320,7 +320,7 @@ class pgsql_native_moodle_database extends moodle_database {
         if ($result) {
             while ($row = pg_fetch_row($result)) {
                 $tablename = reset($row);
-                if ($this->prefix !== '') {
+                if ($this->prefix !== false && $this->prefix !== '') {
                     if (strpos($tablename, $this->prefix) !== 0) {
                         continue;
                     }
