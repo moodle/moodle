@@ -1101,8 +1101,7 @@ M.core_filepicker.init = function(Y, options) {
             for (var linktype in filelink) {
                 var el = selectnode.one('.fp-linktype-'+linktype);
                 el.addClassIf('uneditable', !(filelink[linktype] && filelinkcount>1));
-                el.one('input').set('disabled', (filelink[linktype] && filelinkcount>1) ? '' : 'disabled').
-                    set('checked', (firstfilelink == linktype) ? 'checked' : '').simulate('change')
+                el.one('input').set('checked', (firstfilelink == linktype) ? 'checked' : '').simulate('change');
             }
 
             // TODO MDL-32532: attributes 'hasauthor' and 'haslicense' need to be obsolete,
