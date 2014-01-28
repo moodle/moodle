@@ -382,7 +382,7 @@ class pgsql_native_moodle_database extends moodle_database {
      * Returns detailed information about columns in table. This information is cached internally.
      * @param string $table name
      * @param bool $usecache
-     * @return array array of database_column_info objects indexed with column names
+     * @return database_column_info[] array of database_column_info objects indexed with column names
      */
     public function get_columns($table, $usecache=true) {
         if ($usecache) {
@@ -935,6 +935,108 @@ class pgsql_native_moodle_database extends moodle_database {
 
         return ($returnid ? $id : true);
 
+    }
+
+    /**
+     * Insert multiple records into database as fast as possible.
+     *
+     * Order of inserts is maintained, but the operation is not atomic,
+     * use transactions if necessary.
+     *
+     * This method is intended for inserting of large number of small objects,
+     * do not use for huge objects with text or binary fields.
+     *
+     * @since 2.7
+     *
+     * @param string $table  The database table to be inserted into
+     * @param array|Traversable $dataobjects list of objects to be inserted, must be compatible with foreach
+     * @return void does not return new record ids
+     *
+     * @throws coding_exception if data objects have different structure
+     * @throws dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function insert_records($table, $dataobjects) {
+        if (!is_array($dataobjects) and !($dataobjects instanceof Traversable)) {
+            throw new coding_exception('insert_records() passed non-traversable object');
+        }
+
+        // PostgreSQL does not seem to have problems with huge queries.
+        $chunksize = 500;
+        if (!empty($this->dboptions['bulkinsertsize'])) {
+            $chunksize = (int)$this->dboptions['bulkinsertsize'];
+        }
+
+        $columns = $this->get_columns($table, true);
+
+        // Make sure there are no nasty blobs!
+        foreach ($columns as $column) {
+            if ($column->binary) {
+                parent::insert_records($table, $dataobjects);
+                return;
+            }
+        }
+
+        $fields = null;
+        $count = 0;
+        $chunk = array();
+        foreach ($dataobjects as $dataobject) {
+            if (!is_array($dataobject) and !is_object($dataobject)) {
+                throw new coding_exception('insert_records() passed invalid record object');
+            }
+            $dataobject = (array)$dataobject;
+            if ($fields === null) {
+                $fields = array_keys($dataobject);
+                $columns = array_intersect_key($columns, $dataobject);
+                unset($columns['id']);
+            } else if ($fields !== array_keys($dataobject)) {
+                throw new coding_exception('All dataobjects in insert_records() must have the same structure!');
+            }
+
+            $count++;
+            $chunk[] = $dataobject;
+
+            if ($count === $chunksize) {
+                $this->insert_chunk($table, $chunk, $columns);
+                $chunk = array();
+                $count = 0;
+            }
+        }
+
+        if ($count) {
+            $this->insert_chunk($table, $chunk, $columns);
+        }
+    }
+
+    /**
+     * Insert records in chunks, no binary support, strict param types...
+     *
+     * Note: can be used only from insert_records().
+     *
+     * @param string $table
+     * @param array $chunk
+     * @param database_column_info[] $columns
+     */
+    protected function insert_chunk($table, array $chunk, array $columns) {
+        $i = 1;
+        $params = array();
+        $values = array();
+        foreach ($chunk as $dataobject) {
+            $vals = array();
+            foreach ($columns as $field => $column) {
+                $params[] = $this->normalise_value($column, $dataobject[$field]);
+                $vals[] = "\$".$i++;
+            }
+            $values[] = '('.implode(',', $vals).')';
+        }
+
+        $fieldssql = '('.implode(',', array_keys($columns)).')';
+        $valuessql = implode(',', $values);
+
+        $sql = "INSERT INTO {$this->prefix}$table $fieldssql VALUES $valuessql";
+        $this->query_start($sql, $params, SQL_QUERY_INSERT);
+        $result = pg_query_params($this->pgsql, $sql, $params);
+        $this->query_end($result);
+        pg_free_result($result);
     }
 
     /**

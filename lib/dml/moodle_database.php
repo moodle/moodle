@@ -1609,6 +1609,45 @@ abstract class moodle_database {
     public abstract function insert_record($table, $dataobject, $returnid=true, $bulk=false);
 
     /**
+     * Insert multiple records into database as fast as possible.
+     *
+     * Order of inserts is maintained, but the operation is not atomic,
+     * use transactions if necessary.
+     *
+     * This method is intended for inserting of large number of small objects,
+     * do not use for huge objects with text or binary fields.
+     *
+     * @since 2.7
+     *
+     * @param string $table  The database table to be inserted into
+     * @param array|Traversable $dataobjects list of objects to be inserted, must be compatible with foreach
+     * @return void does not return new record ids
+     *
+     * @throws coding_exception if data objects have different structure
+     * @throws dml_exception A DML specific exception is thrown for any errors.
+     */
+    public function insert_records($table, $dataobjects) {
+        if (!is_array($dataobjects) and !($dataobjects instanceof Traversable)) {
+            throw new coding_exception('insert_records() passed non-traversable object');
+        }
+
+        $fields = null;
+        // Note: override in driver if there is a faster way.
+        foreach ($dataobjects as $dataobject) {
+            if (!is_array($dataobject) and !is_object($dataobject)) {
+                throw new coding_exception('insert_records() passed invalid record object');
+            }
+            $dataobject = (array)$dataobject;
+            if ($fields === null) {
+                $fields = array_keys($dataobject);
+            } else if ($fields !== array_keys($dataobject)) {
+                throw new coding_exception('All dataobjects in insert_records() must have the same structure!');
+            }
+            $this->insert_record($table, $dataobject, false);
+        }
+    }
+
+    /**
      * Import a record into a table, id field is required.
      * Safety checks are NOT carried out. Lobs are supported.
      *
