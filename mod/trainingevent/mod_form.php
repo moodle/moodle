@@ -36,6 +36,19 @@ class mod_trainingevent_mod_form extends moodleform_mod {
 
         $mform =& $this->_form;
 
+        $mform->addElement('header', 'general', get_string('general', 'form'));
+
+        $mform->addElement('text', 'name', get_string('trainingeventname', 'trainingevent'), array('size'=>'64'));
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEANHTML);
+        }
+        $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+
+        $this->add_intro_editor(true, get_string('trainingeventintro', 'trainingevent'));
+
         $mform->addElement('date_time_selector', 'startdatetime', get_string('startdatetime', 'trainingevent'));
         $mform->addRule('startdatetime', get_string('missingstartdatetime', 'trainingevent'), 'required', null, 'client');
 
@@ -61,8 +74,6 @@ class mod_trainingevent_mod_form extends moodleform_mod {
         $choices = array('' => get_string('selectaroom', 'trainingevent').'...') + $choices;
         $mform->addElement('select', 'classroomid', get_string('selectaroom', 'trainingevent'), $choices);
         $mform->addRule('classroomid', get_string('required'), 'required', null, 'client');
-
-        $this->add_intro_editor(true, get_string('summary', 'trainingevent'));
 
         $choices = array(get_string('none', 'trainingevent'),
                         get_string('manager', 'trainingevent'),

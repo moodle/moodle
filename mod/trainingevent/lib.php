@@ -35,7 +35,7 @@ define("COURSECLASSROOM_MAX_NAME_LENGTH", 50);
  */
 function get_trainingevent_name($trainingevent) {
 
-    $name = strip_tags(format_string($trainingevent->intro, true));
+    $name = strip_tags(format_string($trainingevent->name, true));
     if (textlib::strlen($name) > COURSECLASSROOM_MAX_NAME_LENGTH) {
         $name = textlib::substr($name, 0, COURSECLASSROOM_MAX_NAME_LENGTH)."...";
     }
@@ -176,8 +176,8 @@ function trainingevent_get_coursemodule_info($coursemodule) {
         $info = new cached_cm_info();
 
         // No filtering here because this info is cached and filtered later.
+        $extra = $trainingevent->intro;
 
-        $extra = "";
         if ($trainingevent->classroomid) {
             if ($classroom = $DB->get_record('classroom', array('id' => $trainingevent->classroomid), '*')) {
                 $extra .= get_string('location', 'trainingevent') . ": " . $classroom->name . "</br>";
