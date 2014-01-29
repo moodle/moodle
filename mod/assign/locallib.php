@@ -1699,8 +1699,12 @@ class assign {
                 // Context lookups are already cached.
                 $contextmodule = context_module::instance($mod->id);
 
-                if (!$mod->visible) {
-                    // Hold mail notification for hidden assignments until later.
+                // Get assignment visibility information for user.
+                $modinfo = get_fast_modinfo($course, $user->id);
+                $cm = $modinfo->get_cm($mod->id);
+
+                if (!$cm->uservisible) {
+                    // Hold mail notification for assignments the user cannot access until later.
                     continue;
                 }
 
