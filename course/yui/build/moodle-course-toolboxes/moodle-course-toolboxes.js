@@ -863,26 +863,43 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
     },
 
     /**
-     * Set the visibility of the current resource (identified by the element) to match the hidden parameter (this is not
-     * a toggle).
+     * Set the visibility of the specified resource to match the visible parameter.
      *
-     * Only changes the visibility in the browser (no ajax update).
+     * Note: This is not a toggle function and only changes the visibility
+     * in the browser (no ajax update is performed).
      *
      * @method set_visibility_resource_ui
-     * @param {Object} args An object with 'element' being the A node containing the resource and 'visible' being the
-     * state that the visibility should be set to.
+     * @param {object} args An object containing the required information to trigger a change.
+     * @param {Node} args.element The resource to toggle
+     * @param {Boolean} args.visible The target visibility
      */
     set_visibility_resource_ui: function(args) {
         var element = args.element,
-            shouldbevisible = args.visible,
-            buttonnode = element.one(SELECTOR.SHOW),
-            visible = (buttonnode === null),
-            action = 'show';
-        if (visible) {
-            buttonnode = element.one(SELECTOR.HIDE);
-            action = 'hide';
+            buttonnode = element.one(SELECTOR.HIDE),
+            // By default we assume that the item is visible and we're going to hide it.
+            currentVisibility = true,
+            targetVisibility = false;
+
+        if (!buttonnode) {
+            // If the buttonnode was not found, try to find the HIDE button
+            // and change the target visibility setting to false.
+            buttonnode = element.one(SELECTOR.SHOW);
+            currentVisibility = false;
+            targetVisibility = true;
         }
-        if (visible !== shouldbevisible) {
+
+        if (typeof args.visible !== 'undefined') {
+            // If we were provided with a visibility argument, use that instead.
+            targetVisibility = args.visible;
+        }
+
+        // Only trigger a change if necessary.
+        if (currentVisibility !== targetVisibility) {
+            var action = 'hide';
+            if (targetVisibility) {
+                action = 'show';
+            }
+
             this.handle_resource_dim(buttonnode, element, action);
         }
     }
