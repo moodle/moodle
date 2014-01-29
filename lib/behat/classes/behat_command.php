@@ -142,8 +142,25 @@ class behat_command {
             return BEHAT_EXITCODE_COMPOSER;
         }
 
+        // No empty values.
         if (empty($CFG->behat_dataroot) || empty($CFG->behat_prefix) || empty($CFG->behat_wwwroot)) {
             self::output_msg(get_string('errorsetconfig', 'tool_behat'));
+            return BEHAT_EXITCODE_CONFIG;
+
+        }
+
+        // Not repeated values.
+        // We only need to check this when the behat site is not running as
+        // at this point, when it is running, all $CFG->behat_* vars have
+        // already been copied to $CFG->dataroot, $CFG->prefix and $CFG->wwwroot.
+        if (!defined('BEHAT_SITE_RUNNING') &&
+                ($CFG->behat_prefix == $CFG->prefix ||
+                $CFG->behat_dataroot == $CFG->dataroot ||
+                $CFG->behat_wwwroot == $CFG->wwwroot ||
+                (!empty($CFG->phpunit_prefix) && $CFG->phpunit_prefix == $CFG->behat_prefix) ||
+                (!empty($CFG->phpunit_dataroot) && $CFG->phpunit_dataroot == $CFG->behat_dataroot)
+                )) {
+            self::output_msg(get_string('erroruniqueconfig', 'tool_behat'));
             return BEHAT_EXITCODE_CONFIG;
         }
 

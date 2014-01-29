@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2013110501;
+$plugin->version   = 2014012900;
 $plugin->requires  = 2013110500; // Requires Moodle 2.5.
 $plugin->component = 'tool_behat';
