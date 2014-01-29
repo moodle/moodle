@@ -681,9 +681,11 @@ $CFG->admin = 'admin';
 // Example:
 //   $CFG->behat_additionalfeatures = array('/home/developer/code/wipfeatures');
 //
-// You can make behat save a screenshot when a scenario fails.
+// You can make behat save several dumps when a scenario fails. The dumps currently saved are:
+// * a dump of the DOM in it's state at the time of failure; and
+// * a screenshot (JavaScript is required for the screenshot functionality, so not all browsers support this option)
 // Example:
-//   $CFG->behat_screenshots_path = '/my/path/to/save/screenshots';
+//   $CFG->behat_faildump_path = '/my/path/to/save/failure/dumps';
 //
 //=========================================================================
 // 12. DEVELOPER DATA GENERATOR
