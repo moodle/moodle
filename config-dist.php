@@ -470,6 +470,33 @@ $CFG->admin = 'admin';
 // will be sent to supportemail.
 //      $CFG->supportuserid = -20;
 //
+// Moodle 2.7 introduces a locking api for critical tasks (e.g. cron).
+// The default locking system to use is DB locking for MySQL and Postgres, and File
+// locking for Oracle and SQLServer. If $CFG->preventfilelocking is set, then the default
+// will always be DB locking. It can be manually set to one of the lock
+// factory classes listed below, or one of your own custom classes implementing the
+// \core\lock\lock_factory interface.
+//
+//      $CFG->lock_factory = "auto";
+//
+// The list of available lock factories is:
+//
+// "\\core\\lock\\file_lock_factory" - File locking
+//      Uses lock files stored by default in the dataroot. Whether this
+//      works on clusters depends on the file system used for the dataroot.
+//
+// "\\core\\lock\\db_row_lock_factory" - DB locking based on table rows.
+//
+// "\\core\\lock\\postgres_lock_factory" - DB locking based on postgres advisory locks.
+//
+// "\\core\\lock\\mysql_lock_factory" - DB locking based on mysql lock functions.
+//
+// Settings used by the lock factories
+//
+// Location for lock files used by the File locking factory. This must exist
+// on a shared file system that supports locking.
+//      $CFG->lock_file_root = $CFG->dataroot . '/lock';
+//
 //=========================================================================
 // 7. SETTINGS FOR DEVELOPMENT SERVERS - not intended for production use!!!
 //=========================================================================
