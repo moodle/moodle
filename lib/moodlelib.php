@@ -4335,16 +4335,24 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
         // Use manual if auth not set.
         $auth = empty($user->auth) ? 'manual' : $user->auth;
         if (!empty($user->suspended)) {
-            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             $failurereason = AUTH_LOGIN_SUSPENDED;
+
+            // Trigger login failed event.
+            $event = \core\event\user_login_failed::create(array('userid' => $user->id,
+                    'other' => array('username' => $username, 'reason' => $failurereason)));
+            $event->trigger();
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
         if ($auth=='nologin' or !is_enabled_auth($auth)) {
-            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             // Legacy way to suspend user.
             $failurereason = AUTH_LOGIN_SUSPENDED;
+
+            // Trigger login failed event.
+            $event = \core\event\user_login_failed::create(array('userid' => $user->id,
+                    'other' => array('username' => $username, 'reason' => $failurereason)));
+            $event->trigger();
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Disabled Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
         $auths = array($auth);
@@ -4352,16 +4360,27 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
     } else {
         // Check if there's a deleted record (cheaply), this should not happen because we mangle usernames in delete_user().
         if ($DB->get_field('user', 'id', array('username' => $username, 'mnethostid' => $CFG->mnet_localhost_id,  'deleted' => 1))) {
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             $failurereason = AUTH_LOGIN_NOUSER;
+
+            // Trigger login failed event.
+            $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
+                    'reason' => $failurereason)));
+            $event->trigger();
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Deleted Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
 
         // Do not try to authenticate non-existent accounts when user creation is not disabled.
         if (!empty($CFG->authpreventaccountcreation)) {
-            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             $failurereason = AUTH_LOGIN_NOUSER;
+
+            // Trigger login failed event.
+            $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
+                    'reason' => $failurereason)));
+            $event->trigger();
+
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Unknown user, can not create new accounts:  $username  ".
+                    $_SERVER['HTTP_USER_AGENT']);
             return false;
         }
 
@@ -4377,9 +4396,14 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
     } else if ($user->id) {
         // Verify login lockout after other ways that may prevent user login.
         if (login_is_lockedout($user)) {
-            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Login lockout:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             $failurereason = AUTH_LOGIN_LOCKOUT;
+
+            // Trigger login failed event.
+            $event = \core\event\user_login_failed::create(array('userid' => $user->id,
+                    'other' => array('username' => $username, 'reason' => $failurereason)));
+            $event->trigger();
+
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Login lockout:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
     } else {
@@ -4425,14 +4449,21 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
 
         if (empty($user->id)) {
             $failurereason = AUTH_LOGIN_NOUSER;
+            // Trigger login failed event.
+            $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
+                    'reason' => $failurereason)));
+            $event->trigger();
             return false;
         }
 
         if (!empty($user->suspended)) {
             // Just in case some auth plugin suspended account.
-            add_to_log(SITEID, 'login', 'error', 'index.php', $username);
-            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             $failurereason = AUTH_LOGIN_SUSPENDED;
+            // Trigger login failed event.
+            $event = \core\event\user_login_failed::create(array('userid' => $user->id,
+                    'other' => array('username' => $username, 'reason' => $failurereason)));
+            $event->trigger();
+            error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Suspended Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
             return false;
         }
 
@@ -4442,7 +4473,6 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
     }
 
     // Failed if all the plugins have failed.
-    add_to_log(SITEID, 'login', 'error', 'index.php', $username);
     if (debugging('', DEBUG_ALL)) {
         error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
     }
@@ -4450,8 +4480,16 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
     if ($user->id) {
         login_attempt_failed($user);
         $failurereason = AUTH_LOGIN_FAILED;
+        // Trigger login failed event.
+        $event = \core\event\user_login_failed::create(array('userid' => $user->id,
+                'other' => array('username' => $username, 'reason' => $failurereason)));
+        $event->trigger();
     } else {
         $failurereason = AUTH_LOGIN_NOUSER;
+        // Trigger login failed event.
+        $event = \core\event\user_login_failed::create(array('other' => array('username' => $username,
+                'reason' => $failurereason)));
+        $event->trigger();
     }
 
     return false;
