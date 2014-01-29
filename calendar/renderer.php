@@ -715,7 +715,8 @@ class core_calendar_renderer extends plugin_renderer_base {
     /**
      * Displays a course filter selector
      *
-     * @param array $getvars
+     * @param moodle_url $returnurl The URL that the user should be taken too upon selecting a course.
+     * @param string $label The label to use for the course select.
      * @return string
      */
     protected function course_filter_selector(moodle_url $returnurl, $label=null) {
@@ -745,7 +746,9 @@ class core_calendar_renderer extends plugin_renderer_base {
         } else {
             $selected = '';
         }
-        $select = new single_select(new moodle_url(CALENDAR_URL.'set.php', array('return' => base64_encode($returnurl->out(false)), 'var' => 'setcourse', 'sesskey'=>sesskey())), 'id', $courseoptions, $selected, null);
+        $courseurl = new moodle_url($returnurl);
+        $courseurl->remove_params('course');
+        $select = new single_select($courseurl, 'course', $courseoptions, $selected, null);
         $select->class = 'cal_courses_flt';
         if ($label !== null) {
             $select->set_label($label);
