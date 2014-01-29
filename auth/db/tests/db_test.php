@@ -28,10 +28,16 @@ defined('MOODLE_INTERNAL') || die();
 
 
 class auth_db_testcase extends advanced_testcase {
+    /** @var string Original error log */
+    protected $oldlog;
 
     protected function init_auth_database() {
         global $DB, $CFG;
         require_once("$CFG->dirroot/auth/db/auth.php");
+
+        // Discard error logs from AdoDB.
+        $this->oldlog = ini_get('error_log');
+        ini_set('error_log', "$CFG->dataroot/testlog.log");
 
         $dbman = $DB->get_manager();
 
@@ -133,6 +139,8 @@ class auth_db_testcase extends advanced_testcase {
         $dbman = $DB->get_manager();
         $table = new xmldb_table('auth_db_users');
         $dbman->drop_table($table);
+
+        ini_set('error_log', $this->oldlog);
     }
 
     public function test_plugin() {

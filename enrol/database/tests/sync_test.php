@@ -31,8 +31,15 @@ class enrol_database_testcase extends advanced_testcase {
     protected static $users = array();
     protected static $roles = array();
 
+    /** @var string Original error log */
+    protected $oldlog;
+
     protected function init_enrol_database() {
         global $DB, $CFG;
+
+        // Discard error logs from AdoDB.
+        $this->oldlog = ini_get('error_log');
+        ini_set('error_log', "$CFG->dataroot/testlog.log");
 
         $dbman = $DB->get_manager();
 
@@ -160,6 +167,8 @@ class enrol_database_testcase extends advanced_testcase {
         self::$courses = null;
         self::$users = null;
         self::$roles = null;
+
+        ini_set('error_log', $this->oldlog);
     }
 
     protected function reset_enrol_database() {
