@@ -162,6 +162,7 @@ class core_plugin_manager {
 
         $this->installedplugins = array();
 
+        // TODO: Delete this block once Moodle 2.6 or later becomes minimum required version to upgrade.
         if ($CFG->version < 2013092001.02) {
             // We did not upgrade the database yet.
             $modules = $DB->get_records('modules', array(), 'name ASC', 'id, name, version');
