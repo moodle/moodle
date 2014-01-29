@@ -61,7 +61,7 @@ interface lock_factory {
     public function supports_auto_release();
 
     /**
-     * supports_recursion
+     * Supports recursion.
      *
      * @return boolean - True if attempting to get 2 locks on the same resource will "stack"
      */

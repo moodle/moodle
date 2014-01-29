@@ -40,7 +40,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class lock {
 
-    /** @var string|int $key A uniq key representing a held lock */
+    /** @var string|int $key A unique key representing a held lock */
     protected $key = '';
 
     /** @var lock_factory $factory The factory that generated this lock */
@@ -51,7 +51,8 @@ class lock {
 
     /**
      * Construct a lock containing the unique key required to release it.
-     * @param string $key - The lock key.
+     * @param mixed $key - The lock key. The type of this is up to the lock_factory being used.
+     *      For file locks this is a file handle. For MySQL this is a string.
      * @param lock_factory $factory - The factory that generated this lock.
      */
     public function __construct($key, $factory) {

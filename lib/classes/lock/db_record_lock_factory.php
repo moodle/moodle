@@ -41,7 +41,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class db_record_lock_factory implements lock_factory {
 
-    /** @var moodle_database $db Hold a reference to the global $DB */
+    /** @var \moodle_database $db Hold a reference to the global $DB */
     protected $db;
 
     /** @var string $type Used to prefix lock keys */
@@ -99,7 +99,7 @@ class db_record_lock_factory implements lock_factory {
 
     /**
      * This function generates a unique token for the lock to use.
-     * It is important that this token is not soley based on time as this could lead
+     * It is important that this token is not solely based on time as this could lead
      * to duplicates in a clustered environment (especially on VMs due to poor time precision).
      */
     protected function generate_unique_token() {

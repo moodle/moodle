@@ -50,7 +50,7 @@ class postgres_lock_factory implements lock_factory {
     /** @var array $lockidcache - static cache for string -> int conversions required for pg advisory locks. */
     protected static $lockidcache = array();
 
-    /** @var moodle_database $db Hold a reference to the global $DB */
+    /** @var \moodle_database $db Hold a reference to the global $DB */
     protected $db;
 
     /** @var string $type Used to prefix lock keys */
@@ -133,10 +133,9 @@ class postgres_lock_factory implements lock_factory {
      *
      * @param string $key
      * @return int
+     * @throws \moodle_exception
      */
     protected function get_index_from_key($key) {
-        global $DB;
-
         if (isset(self::$lockidcache[$key])) {
             return self::$lockidcache[$key];
         }
@@ -152,7 +151,7 @@ class postgres_lock_factory implements lock_factory {
             $record->resourcekey = $key;
             try {
                 $index = $this->db->insert_record('lock_db', $record);
-            } catch (dml_exception $de) {
+            } catch (\dml_exception $de) {
                 // Race condition - never mind - now the value is guaranteed to exist.
                 $record = $this->db->get_record('lock_db', array('resourcekey' => $key));
                 if ($record) {
@@ -162,7 +161,7 @@ class postgres_lock_factory implements lock_factory {
         }
 
         if (!$index) {
-            throw new moodle_exception('Could not generate unique index for key');
+            throw new \moodle_exception('Could not generate unique index for key');
         }
 
         self::$lockidcache[$key] = $index;

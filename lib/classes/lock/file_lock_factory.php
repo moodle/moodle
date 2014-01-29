@@ -97,6 +97,7 @@ class file_lock_factory implements lock_factory {
      * @return boolean - True if preventfilelocking is not set - or the file_lock_root is not in dataroot.
      */
     public function is_available() {
+        global $CFG;
         $preventfilelocking = !empty($CFG->preventfilelocking);
         $lockdirisdataroot = true;
         if (!empty($CFG->file_lock_root) && strpos($CFG->file_lock_root, $CFG->dataroot) !== 0) {
@@ -129,8 +130,6 @@ class file_lock_factory implements lock_factory {
      * @return boolean - true if a lock was obtained.
      */
     public function get_lock($resource, $timeout, $maxlifetime = 86400) {
-        global $CFG;
-
         $giveuptime = time() + $timeout;
 
         $hash = md5($this->type . '_' . $resource);

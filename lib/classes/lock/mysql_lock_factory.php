@@ -39,7 +39,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class mysql_lock_factory implements lock_factory {
 
-    /** @var moodle_database $db Hold a reference to the global $DB */
+    /** @var \moodle_database $db Hold a reference to the global $DB */
     protected $db;
 
     /** @var string $type Used to prefix lock keys */
