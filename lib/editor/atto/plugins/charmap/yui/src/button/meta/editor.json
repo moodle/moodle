@@ -1,0 +1,8 @@
+{
+  "moodle-atto_charmap-button": {
+    "requires": [
+        "node",
+        "escape"
+    ]
+  }
+}
