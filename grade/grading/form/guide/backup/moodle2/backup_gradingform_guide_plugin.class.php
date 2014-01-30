@@ -65,7 +65,7 @@ class backup_gradingform_guide_plugin extends backup_gradingform_plugin {
 
         $pluginwrapper->add_child($criteria);
         $criteria->add_child($criterion);
-        $criteria->add_child($comments);
+        $pluginwrapper->add_child($comments);
         $comments->add_child($comment);
 
         // Set sources to populate the data.
