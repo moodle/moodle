@@ -50,10 +50,6 @@ use Behat\Behat\Exception\PendingException as PendingException;
  */
 class behat_data_generators extends behat_base {
 
-    const cap_allow = 'Allow';
-    const cap_prevent = 'Prevent';
-    const cap_prohibit = 'Prohibit';
-
     /**
      * @var testing_data_generator
      */
@@ -303,13 +299,13 @@ class behat_data_generators extends behat_base {
         $context = $this->get_context($data['contextlevel'], $data['reference']);
 
         switch ($data['permission']) {
-            case self::cap_allow:
+            case get_string('allow', 'role'):
                 $permission = CAP_ALLOW;
                 break;
-            case self::cap_prevent:
+            case get_string('prevent', 'role'):
                 $permission = CAP_PREVENT;
                 break;
-            case self::cap_prohibit:
+            case get_string('prohibit', 'role'):
                 $permission = CAP_PROHIBIT;
                 break;
             default:

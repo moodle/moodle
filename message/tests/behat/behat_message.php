@@ -57,7 +57,8 @@ class behat_message extends behat_base {
         }
 
         $steps[] = new Given('I follow "' . get_string('messages', 'message') . '"');
-        $steps[] = new Given('I fill in "' . get_string('searchcombined', 'message') . '" with "' . $this->escape($userfullname) . '"');
+        $steps[] = new Given('I set the field "' . get_string('searchcombined', 'message') .
+            '" to "' . $this->escape($userfullname) . '"');
         $steps[] = new Given('I press "' . get_string('searchcombined', 'message') . '"');
         $steps[] = new Given('I follow "' . $this->escape(get_string('sendmessageto', 'message', $userfullname)) . '"');
         $steps[] = new Given('I fill in "id_message" with "' . $this->escape($messagecontent) . '"');

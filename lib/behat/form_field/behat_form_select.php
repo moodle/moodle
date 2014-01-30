@@ -124,7 +124,7 @@ class behat_form_select extends behat_form_field {
         // Single select sometimes needs an extra click in the option.
         if (!$multiple) {
 
-            // $options only contains 1 option.
+            // Var $options only contains 1 option.
             $optionxpath = $this->get_option_xpath(end($options), $selectxpath);
 
             // Using the driver direcly because Element methods are messy when dealing
@@ -297,14 +297,14 @@ class behat_form_select extends behat_form_field {
                         // If the select is multiple, text commas must be encoded.
                         $selectedoptions[] = trim(str_replace(',', '\,', $option->{$method}()));
                     } else {
-                        $selectedoptions[] =  trim($option->{$method}());
+                        $selectedoptions[] = trim($option->{$method}());
                     }
                 }
             }
 
-        // Goutte does not keep the 'selected' attribute updated, but its getValue() returns
-        // the selected elements correctly, also those having commas within them.
         } else {
+            // Goutte does not keep the 'selected' attribute updated, but its getValue() returns
+            // the selected elements correctly, also those having commas within them.
 
             // Goutte returns the values as an array or as a string depending
             // on whether multiple options are selected or not.
@@ -322,7 +322,7 @@ class behat_form_select extends behat_form_field {
                         // If the select is multiple, text commas must be encoded.
                         $selectedoptions[] = trim(str_replace(',', '\,', $option->{$method}()));
                     } else {
-                        $selectedoptions[] =  trim($option->{$method}());
+                        $selectedoptions[] = trim($option->{$method}());
                     }
                 }
             }

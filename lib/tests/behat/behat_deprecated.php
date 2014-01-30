@@ -28,7 +28,8 @@
 require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
 
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException,
-    Behat\Behat\Context\Step\Given as Given;
+    Behat\Behat\Context\Step\Given as Given,
+    Behat\Behat\Context\Step\Then as Then;
 
 /**
  * Deprecated behat step definitions.
@@ -300,6 +301,170 @@ class behat_deprecated extends behat_base {
         $this->deprecated_message($alternative);
 
         return new Given($alternative);
+    }
+
+    /**
+     * Fills in form text field with specified id|name|label|value. It works with text-based fields.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_forms::i_set_the_field_to()
+     *
+     * @When /^I fill in "(?P<field_string>(?:[^"]|\\")*)" with "(?P<value_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field
+     * @param string $value
+     */
+    public function fill_field($field, $value) {
+        $alternative = 'I set the field "' . $this->escape($field) . '" to "' . $this->escape($value) . '"';
+        $this->deprecated_message($alternative);
+
+        return new Given($alternative);
+    }
+
+    /**
+     * Selects option in select field with specified id|name|label|value.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_forms::i_set_the_field_to()
+     *
+     * @When /^I select "(?P<option_string>(?:[^"]|\\")*)" from "(?P<select_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $option
+     * @param string $select
+     */
+    public function select_option($option, $select) {
+        $alternative = 'I set the field "' . $this->escape($select) . '" to "' . $this->escape($option) . '"';
+        $this->deprecated_message($alternative);
+
+        return new Given($alternative);
+    }
+
+    /**
+     * Selects the specified id|name|label from the specified radio button.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_forms::i_set_the_field_to()
+     *
+     * @When /^I select "(?P<radio_button_string>(?:[^"]|\\")*)" radio button$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $radio The radio button id, name or label value
+     */
+    public function select_radio($radio) {
+        $alternative = 'I set the field "' . $this->escape($radio) . '" to "1"';
+        $this->deprecated_message($alternative);
+
+        return new Given($alternative);
+    }
+
+    /**
+     * Checks checkbox with specified id|name|label|value.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_forms::i_set_the_field_to()
+     *
+     * @When /^I check "(?P<option_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $option
+     */
+    public function check_option($option) {
+        $alternative = 'I set the field "' . $this->escape($option) . '" to "1"';
+        $this->deprecated_message($alternative);
+
+        return new Given($alternative);
+    }
+
+    /**
+     * Unchecks checkbox with specified id|name|label|value.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_forms::i_set_the_field_to()
+     *
+     * @When /^I uncheck "(?P<option_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $option
+     */
+    public function uncheck_option($option) {
+        $alternative = 'I set the field "' . $this->escape($option) . '" to ""';
+        $this->deprecated_message($alternative);
+
+        return new Given($alternative);
+    }
+
+    /**
+     * Checks that the field matches the specified value. When using multi-select fields use commas to separate selected options.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_forms::the_field_matches_value()
+     *
+     * @Then /^the "(?P<field_string>(?:[^"]|\\")*)" field should match "(?P<value_string>(?:[^"]|\\")*)" value$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $locator
+     * @param string $value
+     */
+    public function the_field_should_match_value($locator, $value) {
+        $alternative = 'the field "' . $this->escape($locator) . '" matches value "' . $this->escape($value) . '"';
+        $this->deprecated_message($alternative);
+
+        return new Then($alternative);
+    }
+
+    /**
+     * Checks, that checkbox with specified in|name|label|value is checked.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_forms::the_field_matches_value()
+     *
+     * @Then /^the "(?P<checkbox_string>(?:[^"]|\\")*)" checkbox should be checked$/
+     * @param string $checkbox
+     */
+    public function assert_checkbox_checked($checkbox) {
+        $alternative = 'the field "' . $this->escape($checkbox) . '" matches value "1"';
+        $this->deprecated_message($alternative);
+
+        return new Then($alternative);
+    }
+
+    /**
+     * Checks, that checkbox with specified in|name|label|value is unchecked.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_forms::the_field_matches_value()
+     *
+     * @Then /^the "(?P<checkbox_string>(?:[^"]|\\")*)" checkbox should not be checked$/
+     * @param string $checkbox
+     */
+    public function assert_checkbox_not_checked($checkbox) {
+        $alternative = 'the field "' . $this->escape($checkbox) . '" matches value ""';
+        $this->deprecated_message($alternative);
+
+        return new Then($alternative);
+    }
+
+    /**
+     * Fills a moodle form with field/value data.
+     *
+     * @deprecated since 2.7
+     * @todo MDL-42862 This will be deleted in Moodle 2.9
+     * @see behat_forms::i_set_the_following_fields_to_these_values()
+     *
+     * @Given /^I fill the moodle form with:$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param TableNode $data
+     */
+    public function i_fill_the_moodle_form_with(TableNode $data) {
+        $alternative = 'I set the following fields to these values:';
+        $this->deprecated_message($alternative);
+
+        return new Given($alternative, $data);
     }
 
     /**

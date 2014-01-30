@@ -38,4 +38,5 @@ require_once(__DIR__  . '/behat_form_field.php');
  * @copyright  2014 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_group extends behat_form_field {}
+class behat_form_group extends behat_form_field {
+}
