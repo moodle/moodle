@@ -25,7 +25,7 @@ Feature: Publish rubrics as templates
     And I log in as "manager1"
     And I follow "Course 1"
     And I go to "Test assignment 1 name" advanced grading definition page
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Assignment 1 rubric |
       | Description | Assignment 1 description |
     And I define the following rubric:
@@ -45,12 +45,12 @@ Feature: Publish rubrics as templates
 
   @javascript
   Scenario: Create a rubric template and reuse it as a teacher, with Javascript enabled
-    Then the "Description" field should match "<p>Assignment 1 description</p>" value
+    Then the field "Description" matches value "<p>Assignment 1 description</p>"
     And I should see "Criterion 1"
     And I press "Cancel"
 
   Scenario: Create a rubric template and reuse it as a teacher, with Javascript disabled
-    Then the "Description" field should match "Assignment 1 description" value
+    Then the field "Description" matches value "Assignment 1 description"
     # Trying to avoid pointing by id or name as the code internals may change.
     And "//table[@class='criteria']//textarea[text()='Criterion 1']" "xpath_element" should exists
     And I press "Cancel"

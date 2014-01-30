@@ -25,7 +25,7 @@ Feature: A teacher can duplicate questions in the question bank
     And I follow "Course 1"
     And I follow "Question bank"
     When I click on "Duplicate" "link" in the "Test question to be copied" "table_row"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Question name | Duplicated question name |
       | Question text | Write a lot about duplicating questions |
     And I press "Save changes"
@@ -34,7 +34,7 @@ Feature: A teacher can duplicate questions in the question bank
     And I should see "Teacher 1" in the ".categoryquestionscontainer tbody tr.r0 .creatorname" "css_element"
     And I should see "Admin User" in the ".categoryquestionscontainer tbody tr.r1 .creatorname" "css_element"
     And I click on "Duplicate" "link" in the "Duplicated question name" "table_row"
-    And the "Question name" field should match "Duplicated question name (copy)" value
+    And the field "Question name" matches value "Duplicated question name (copy)"
     And I press "Cancel"
     Then I should see "Duplicated question name"
     And I should see "Test question to be copied"

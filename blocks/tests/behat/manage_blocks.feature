@@ -33,7 +33,7 @@ Feature: Block appearances
       | Name | Test book name |
       | Description | Test book description |
     And I follow "Test book name"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Chapter title | Book title |
       | Content       | Book content test test |
     And I press "Save changes"
@@ -44,7 +44,7 @@ Feature: Block appearances
     And I add the "Comments" block
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Display on page types | Any page |
     And I press "Save changes"
 
@@ -55,7 +55,7 @@ Feature: Block appearances
     And I follow "Course 1"
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Display on page types | Any course page |
     And I press "Save changes"
     And I follow "Turn editing off"
@@ -67,7 +67,7 @@ Feature: Block appearances
     When I follow "Test book name"
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Visible | No |
     And I press "Save changes"
     And I follow "Turn editing off"
@@ -77,7 +77,7 @@ Feature: Block appearances
     And I follow "Turn editing on"
     And I open the "Comments" blocks action menu
     And I follow "Configure Comments block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Visible | Yes |
       | Region  | Right |
     And I press "Save changes"

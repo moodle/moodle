@@ -30,7 +30,7 @@ Feature: Restrict activity availability through date conditions
   @javascript
   Scenario: Show activity greyed-out to students when available from date is in future
     Given I click on "id_availablefrom_enabled" "checkbox"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Assignment name | Test assignment 1 |
       | Description | This assignment is restricted by date |
       | assignsubmission_onlinetext_enabled | 1 |
@@ -50,7 +50,7 @@ Feature: Restrict activity availability through date conditions
   @javascript
   Scenario: Show activity hidden to students when available until date is in past
     Given I click on "id_availableuntil_enabled" "checkbox"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Assignment name | Test assignment 2 |
       | Description | This assignment is restricted by date |
       | assignsubmission_onlinetext_enabled | 1 |

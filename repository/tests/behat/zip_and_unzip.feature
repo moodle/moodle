@@ -13,7 +13,7 @@ Feature: Zip folders and unzip compressed files
     And I follow "Course 1"
     And I turn editing mode on
     And I add a "Folder" to section "0"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Folder resource |
       | Description | The description |
     And I create "Folder 1" folder in "Files" filemanager

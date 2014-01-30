@@ -15,8 +15,8 @@ Feature: Test we can resort categories in the management interface.
     And I log in as "admin"
     And I go to the courses management page
     And I should see the "Course categories" management page
-    And I select "All categories" from "menuselectsortby"
-    And I select <sortby> from "menuresortcategoriesby"
+    And I set the field "menuselectsortby" to "All categories"
+    And I set the field "menuresortcategoriesby" to <sortby>
     And I press "Sort"
     # Redirect.
     And I should see the "Course categories" management page
@@ -42,8 +42,8 @@ Feature: Test we can resort categories in the management interface.
     And I click on "Test category" "link"
     # Redirect.
     And I should see the "Course categories and courses" management page
-    And I select "This category" from "menuselectsortby"
-    And I select <sortby> from "menuresortcategoriesby"
+    And I set the field "menuselectsortby" to "This category"
+    And I set the field "menuresortcategoriesby" to <sortby>
     And I press "Sort"
     # Redirect.
     And I should see the "Course categories and courses" management page

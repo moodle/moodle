@@ -102,10 +102,10 @@ class behat_course extends behat_base {
             // Adding a forced wait until editors are loaded as otherwise selenium sometimes tries clicks on the
             // format field when the editor is being rendered and the click misses the field coordinates.
             $steps[] = new Given('I expand all fieldsets');
-            $steps[] = new Given('I select "' . $formatvalue . '" from "' . $formatfield . '"');
-            $steps[] = new Given('I fill the moodle form with:', $table);
+            $steps[] = new Given('I set the field "' . $formatfield . '" to "' . $formatvalue . '"');
+            $steps[] = new Given('I set the following fields to these values:', $table);
         } else {
-            $steps[] = new Given('I fill the moodle form with:', $table);
+            $steps[] = new Given('I set the following fields to these values:', $table);
         }
 
         $steps[] = new Given('I press "' . get_string('savechanges') . '"');
@@ -141,7 +141,7 @@ class behat_course extends behat_base {
 
         return array(
             new Given('I add a "' . $this->escape($activity) . '" to section "' . $this->escape($section) . '"'),
-            new Given('I fill the moodle form with:', $data),
+            new Given('I set the following fields to these values:', $data),
             new Given('I press "' . get_string('savechangesandreturntocourse') . '"')
         );
     }
@@ -288,7 +288,7 @@ class behat_course extends behat_base {
 
         return array(
             new Given('I edit the section "' . $sectionnumber . '"'),
-            new Given('I fill the moodle form with:', $data),
+            new Given('I set the following fields to these values:', $data),
             new Given('I press "' . get_string('savechanges') . '"')
         );
     }
@@ -577,7 +577,7 @@ class behat_course extends behat_base {
         $activity = $this->escape($activityname);
         return array(
             new Given('I click on "' . get_string('edittitle') . '" "link" in the "' . $activity .'" activity'),
-            new Given('I fill in "title" with "' . $this->escape($newactivityname) . chr(10) . '"')
+            new Given('I set the field "title" to "' . $this->escape($newactivityname) . chr(10) . '"')
         );
     }
 
@@ -783,7 +783,7 @@ class behat_course extends behat_base {
             $steps[] = new Given('I press "' . get_string('continue') .'"');
             $steps[] = new Given('I press "' . get_string('duplicatecontedit') . '"');
         }
-        $steps[] = new Given('I fill the moodle form with:', $data);
+        $steps[] = new Given('I set the following fields to these values:', $data);
         $steps[] = new Given('I press "' . get_string('savechangesandreturntocourse') . '"');
         return $steps;
     }
@@ -1185,7 +1185,7 @@ class behat_course extends behat_base {
     public function i_move_category_to_top_level_in_the_management_interface($name) {
         $this->i_select_category_in_the_management_interface($name);
         return array(
-            new Given('I select "' .  coursecat::get(0)->get_formatted_name() . '" from "menumovecategoriesto"'),
+            new Given('I set the field "menumovecategoriesto" to "' .  coursecat::get(0)->get_formatted_name() . '"'),
             new Given('I press "bulkmovecategories"'),
         );
     }

@@ -39,7 +39,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Enrolment key | moodle_rules |
     And I press "Enrol me"
     Then I should see "Topic 1"
@@ -62,14 +62,14 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
       | Use group enrolment keys | Yes |
     And I follow "Groups"
     And I press "Create group"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group name | Group 1 |
       | Enrolment key | testgroupenrolkey |
     And I press "Save changes"
     And I log out
     And I log in as "student1"
     And I follow "Course 1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Enrolment key | testgroupenrolkey |
     And I press "Enrol me"
     Then I should see "Topic 1"

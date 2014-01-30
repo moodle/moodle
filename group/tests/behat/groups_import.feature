@@ -56,25 +56,25 @@ Feature: Importing of groups and groupings
     And I should see "Group group-noid-1 added successfully"
     And I should see "Group group-noid-2 added successfully"
     And I press "Continue"
-    And I select "group-id-1" from "groups"
+    And I set the field "groups" to "group-id-1"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "group-id-1" value
+    And the field "id_idnumber" matches value "group-id-1"
     And I press "Cancel"
-    And I select "group-id-2" from "groups"
+    And I set the field "groups" to "group-id-2"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "group-id-2" value
+    And the field "id_idnumber" matches value "group-id-2"
     And I press "Cancel"
-    And I select "group-id-1-duplicate" from "groups"
+    And I set the field "groups" to "group-id-1-duplicate"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-noid-1" from "groups"
+    And I set the field "groups" to "group-noid-1"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-noid-2" from "groups"
+    And I set the field "groups" to "group-noid-2"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
 
   @javascript
@@ -94,23 +94,23 @@ Feature: Importing of groups and groupings
     When I upload "group/tests/fixtures/groups_import.csv" file to "Import" filemanager
     And I press "Import groups"
     And I press "Continue"
-    Then I select "group-id-1" from "groups"
+    Then I set the field "groups" to "group-id-1"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-id-2" from "groups"
+    And I set the field "groups" to "group-id-2"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-id-1-duplicate" from "groups"
+    And I set the field "groups" to "group-id-1-duplicate"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-noid-1" from "groups"
+    And I set the field "groups" to "group-noid-1"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"
-    And I select "group-noid-2" from "groups"
+    And I set the field "groups" to "group-noid-2"
     And I press "Edit group settings"
-    And the "id_idnumber" field should match "" value
+    And the field "id_idnumber" matches value ""
     And I press "Cancel"

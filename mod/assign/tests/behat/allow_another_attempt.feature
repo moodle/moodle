@@ -31,7 +31,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I follow "Course 1"
     And I follow "Test assignment name"
     When I press "Add submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student first submission |
     And I press "Save changes"
     And I log out
@@ -40,7 +40,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
     And I follow "Test assignment name"
     And I follow "View/grade all submissions"
     And I click on "Grade Student 1" "link" in the "Student 1" "table_row"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Allow another attempt | 1 |
     And I press "Save changes"
     And I log out

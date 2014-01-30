@@ -58,7 +58,7 @@ Feature: Course activity controls works as expected
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
     And I should see "Updating Forum"
     And I should see "Display description on course page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Forum name | Just to check that I can edit the name |
       | Description | Just to check that I can edit the description |
       | Display description on course page | 1 |

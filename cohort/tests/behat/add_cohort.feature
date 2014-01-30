@@ -18,7 +18,7 @@ Feature: Add cohorts of users
     And I expand "Accounts" node
     And I follow "Cohorts"
     And I press "Add"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Test cohort name |
       | Context | System |
       | Cohort ID | 333 |
@@ -46,13 +46,13 @@ Feature: Add cohorts of users
   @javascript
   Scenario: Add users to a cohort using a bulk user action
     When I follow "Bulk user actions"
-    And I select "Third User" from "Available"
+    And I set the field "Available" to "Third User"
     And I press "Add to selection"
-    And I select "Forth User" from "Available"
+    And I set the field "Available" to "Forth User"
     And I press "Add to selection"
-    And I select "Add to cohort" from "id_action"
+    And I set the field "id_action" to "Add to cohort"
     And I press "Go"
-    And I select "Test cohort name [333]" from "Cohort"
+    And I set the field "Cohort" to "Test cohort name [333]"
     And I press "Add to cohort"
     And I follow "Cohorts"
     Then I should see "2" in the "#cohorts" "css_element"

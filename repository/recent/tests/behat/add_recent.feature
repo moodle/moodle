@@ -19,7 +19,7 @@ Feature: Recent files repository lists the recently used files
     And I follow "Course 1"
     And I turn editing mode on
     When I add a "Folder" to section "1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Folder name |
       | Description | Folder description |
     And I add "empty.txt" file from "Recent files" to "Files" filemanager

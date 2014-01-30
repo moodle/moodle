@@ -25,12 +25,12 @@ Feature: Duplicate activities
     And I wait until section "1" is available
     And I open "Test database name" actions menu
     And I click on "Edit settings" "link" in the "Test database name" activity
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Original database name |
     And I press "Save and return to course"
     And I open "Test database name" actions menu
     And I click on "Edit settings" "link" in the "Test database name" activity
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Duplicated database name |
       | Description | Duplicated database description |
     And I press "Save and return to course"

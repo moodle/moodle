@@ -24,12 +24,12 @@ Feature: A teacher can set three types of survey activity
     And I follow "Test survey name"
     Then I should see "Attitudes Towards Thinking and Learning"
     And I follow "Edit settings"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Survey type | Critical incidents |
     And I press "Save and display"
     And I should see "At what moment in class were you most engaged as a learner?"
     And I follow "Edit settings"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Survey type | COLLES (Preferred and Actual) |
     And I press "Save and display"
     And I should see "In this online unit..."

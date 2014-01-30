@@ -19,11 +19,11 @@ Feature: A teacher can put questions in categories in the question bank
     # Add 2 test categories.
     And I follow "Question bank"
     And I follow "Categories"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | New Category 1 |
       | Parent category | Top |
     And I press "id_submitbutton"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | New Category 2 |
       | Parent category | Top |
     And I press "id_submitbutton"
@@ -35,9 +35,9 @@ Feature: A teacher can put questions in categories in the question bank
 
   @javascript
   Scenario: Move a question between categories via the question page
-    When I select "New Category 1 (1)" from "category"
+    When I set the field "category" to "New Category 1 (1)"
     And I click on "my test question" "checkbox" in the "my test question" "table_row"
-    And I select "New Category 2" from "menucategory"
+    And I set the field "menucategory" to "New Category 2"
     And I press "Move to >>"
     Then I should see "my test question"
     And the "category" select box should contain "New Category 2 (1)"
@@ -48,7 +48,7 @@ Feature: A teacher can put questions in categories in the question bank
   Scenario: Move a question between categories via the question settings page
     When I click on "Edit" "link" in the "my test question" "table_row"
     And I click on "Use this category" "checkbox"
-    And I select "New Category 2" from "Save in category"
+    And I set the field "Save in category" to "New Category 2"
     And I press "Save changes"
     Then I should see "my test question"
     And the "category" select box should contain "New Category 2 (1)"

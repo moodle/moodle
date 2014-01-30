@@ -43,7 +43,7 @@ Feature: Automatic creation of groups
 
   @javascript
   Scenario: Split automatically the course users in groups and add the groups to a new grouping
-    Given I fill the moodle form with:
+    Given I set the following fields to these values:
       | Auto create based on | Number of groups |
       | Group/member count | 2 |
       | Grouping of auto-created groups | New grouping |
@@ -64,7 +64,7 @@ Feature: Automatic creation of groups
 
   @javascript
   Scenario: Split automatically the course users in groups based on group member count
-    Given I fill the moodle form with:
+    Given I set the following fields to these values:
       | Auto create based on | Members per group |
       | Group/member count | 4 |
       | Grouping of auto-created groups | New grouping |
@@ -78,7 +78,7 @@ Feature: Automatic creation of groups
     And I should see "4" in the "Group A" "table_row"
     And I should see "4" in the "Group B" "table_row"
     And I should see "2" in the "Group C" "table_row"
-    And I check "Prevent last small group"
+    And I set the field "Prevent last small group" to "1"
     And I press "Preview"
     And I should see "Group A" in the ".generaltable" "css_element"
     And I should see "Group B" in the ".generaltable" "css_element"

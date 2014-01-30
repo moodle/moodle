@@ -52,7 +52,7 @@ Feature: Teachers can edit or delete any forum post
     And I follow "Test forum name"
     And I follow "Teacher post subject"
     And I click on "Edit" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' forumpost ')][contains(., 'Student post subject')]" "xpath_element"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Subject | Edited student subject |
     And I press "Save changes"
     And I wait to be redirected

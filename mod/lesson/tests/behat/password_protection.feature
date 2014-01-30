@@ -26,7 +26,7 @@ Feature: A teacher can password protect a lesson
       | id_password | moodle_rules |
     And I follow "Test lesson"
     And I follow "Add a content page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Page title | First page name |
       | Page contents | First page contents |
       | Description | The first one |
@@ -37,10 +37,10 @@ Feature: A teacher can password protect a lesson
     When I follow "Test lesson"
     Then I should see "Test lesson is a password protected lesson"
     And I should not see "First page contents"
-    And I fill in "userpassword" with "moodle"
+    And I set the field "userpassword" to "moodle"
     And I press "Continue"
     And I should see "Login failed, please try again..."
     And I should see "Test lesson is a password protected lesson"
-    And I fill in "userpassword" with "moodle_rules"
+    And I set the field "userpassword" to "moodle_rules"
     And I press "Continue"
     And I should see "First page contents"

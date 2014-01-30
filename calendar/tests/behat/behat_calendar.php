@@ -54,7 +54,7 @@ class behat_calendar extends behat_base {
         return array(
             new Given('I follow "' . get_string('monththis', 'calendar') . '"'),
             new Given('I click on "' . get_string('newevent', 'calendar') .'" "button"'),
-            new Given('I fill the moodle form with:', $data),
+            new Given('I set the following fields to these values:', $data),
             new Given('I press "' . get_string('savechanges') . '"'),
             new Given('I should see "' . $eventname . '"')
         );

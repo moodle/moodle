@@ -26,7 +26,7 @@ Feature: Set a certain number of discussions as a completion condition for a for
     And I follow "Course 1"
     And I turn editing mode on
     And I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Enable completion tracking | Yes |
     And I press "Save changes"
     When I add a "Forum" to section "1" and I fill the form with:

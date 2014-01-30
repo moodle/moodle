@@ -41,11 +41,11 @@ Feature: Group assignment submissions
     And "//tr[contains(., 'Student 2')][contains(., 'Default group')]" "xpath_element" should exists
     And "//tr[contains(., 'Student 3')][contains(., 'Default group')]" "xpath_element" should exists
     And I follow "Edit settings"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save and return to course"
     And I click on "Edit settings" "link" in the "Administration" "block"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save changes"
     And I expand "Users" node
@@ -58,7 +58,7 @@ Feature: Group assignment submissions
     And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exists
     And "//tr[contains(., 'Student 1')][contains(., 'Group 1')]" "xpath_element" should exists
     And I should not see "Student 2"
-    And I select "All participants" from "Separate groups"
+    And I set the field "Separate groups" to "All participants"
     And "//tr[contains(., 'Student 0')][contains(., 'Group 1')]" "xpath_element" should exists
     And "//tr[contains(., 'Student 1')][contains(., 'Group 1')]" "xpath_element" should exists
     And "//tr[contains(., 'Student 2')][contains(., 'Default group')]" "xpath_element" should exists

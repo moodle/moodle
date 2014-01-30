@@ -32,7 +32,7 @@ Feature: In an assignment, teachers can edit a students submission inline
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student first submission |
     And I press "Save changes"
     And I log out

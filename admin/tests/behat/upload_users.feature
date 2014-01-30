@@ -41,5 +41,5 @@ Feature: Upload users
     And I follow "Maths"
     And I expand "Users" node
     And I follow "Groups"
-    And I select "Section 1 (1)" from "groups"
+    And I set the field "groups" to "Section 1 (1)"
     And the "members" select box should contain "Tom Jones"

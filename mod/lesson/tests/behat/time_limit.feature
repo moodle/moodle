@@ -26,7 +26,7 @@ Feature: A teacher can set a time limit for a lesson
       | maxtime | 1 |
     And I follow "Test lesson"
     And I follow "Add a content page"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Page title | Lesson page name |
       | Page contents | Single lesson page contents |
       | Description | Single button |

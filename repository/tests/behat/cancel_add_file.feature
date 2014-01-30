@@ -18,7 +18,7 @@ Feature: A selected file can be cancelled
     And I follow "Course 1"
     And I turn editing mode on
     When I add a "Folder" to section "1"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Name | Folder name |
       | Description | Folder description |
     And I upload "lib/tests/fixtures/upload_users.csv" file to "Files" filemanager

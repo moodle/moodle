@@ -22,22 +22,22 @@ Feature: Uniqueness of Group ID number
   @javascript
   Scenario: Group ID number uniqueness
     Given I press "Create group"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group name | Group 1 |
       | Group ID number | G1 |
     And I press "Save changes"
     When I press "Create group"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group name | Group 2 |
       | Group ID number | G1 |
     And I press "Save changes"
     Then I should see "This ID number is already taken"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group ID number | G2 |
     And I press "Save changes"
-    And I select "Group 1 (0)" from "groups"
+    And I set the field "groups" to "Group 1 (0)"
     And I press "Edit group settings"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Group ID number | G2 |
     And I press "Save changes"
     And I should see "This ID number is already taken"
@@ -47,21 +47,21 @@ Feature: Uniqueness of Group ID number
   Scenario: Grouping ID number uniqueness
     Given I follow "Groupings"
     And I press "Create grouping"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grouping name | Grouping 1 |
       | Grouping ID number | GG1 |
     And I press "Save changes"
     When I press "Create grouping"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grouping name | Grouping 2 |
       | Grouping ID number | GG1 |
     And I press "Save changes"
     Then I should see "This ID number is already taken"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grouping ID number | GG2 |
     And I press "Save changes"
     And I click on "Edit" "link" in the "Grouping 1" "table_row"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Grouping ID number | GG2 |
     And I press "Save changes"
     And I should see "This ID number is already taken"

@@ -30,11 +30,11 @@ Feature: Prevent or allow assignment submission changes
     And I follow "Course 1"
     And I follow "Test assignment name"
     And I press "Add submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission |
     And I press "Save changes"
     And I press "Edit submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission and he/she edited me |
     And I press "Save changes"
     And I log out
@@ -65,7 +65,7 @@ Feature: Prevent or allow assignment submission changes
     And I follow "Test assignment name"
     And I should not see "This assignment is not accepting submissions"
     And I press "Edit submission"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Online text | I'm the student submission edited again |
     And I press "Save changes"
     And I should see "I'm the student submission edited again"

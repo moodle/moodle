@@ -13,7 +13,7 @@ Feature: Users can search their message history
     When I send "Give me your biscuits" message to "User Two" user
     And I expand "My profile" node
     And I click on "Messages" "link" in the "Navigation" "block"
-    And I fill in "Search people and messages" with "your biscuits"
+    And I set the field "Search people and messages" to "your biscuits"
     And I press "Search people and messages"
     Then I should see "User Two"
     And I click on "context" "link" in the "User Two" "table_row"
