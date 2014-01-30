@@ -35,3 +35,6 @@ $string['onlinetextsubmission'] = 'Allow online text submission';
 $string['pluginname'] = 'Online text submissions';
 $string['numwords'] = '({$a} words)';
 $string['numwordsforlog'] = 'Submission word count: {$a} words';
+$string['wordlimit'] = 'Word limit';
+$string['wordlimit_help'] = 'If online text submissions are enabled, this is the maximum number ' .
+        'of words that each student will be allowed to submit.';

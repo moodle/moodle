@@ -59,6 +59,69 @@ class assign_submission_onlinetext extends assign_submission_plugin {
     }
 
     /**
+     * Get the settings for onlinetext submission plugin
+     *
+     * @param MoodleQuickForm $mform The form to add elements to
+     * @return void
+     */
+    public function get_settings(MoodleQuickForm $mform) {
+        global $CFG, $COURSE;
+
+        $defaultwordlimit = $this->get_config('wordlimit') == 0 ? '' : $this->get_config('wordlimit');
+        $defaultwordlimitenabled = $this->get_config('wordlimitenabled');
+
+        $options = array('size' => '6', 'maxlength' => '6');
+        $name = get_string('wordlimit', 'assignsubmission_onlinetext');
+
+        // Create a text box that can be enabled/disabled for onlinetext word limit.
+        $wordlimitgrp = array();
+        $wordlimitgrp[] = $mform->createElement('text', 'assignsubmission_onlinetext_wordlimit', '', $options);
+        $wordlimitgrp[] = $mform->createElement('checkbox', 'assignsubmission_onlinetext_wordlimit_enabled',
+                '', get_string('enable'));
+        $mform->addGroup($wordlimitgrp, 'assignsubmission_onlinetext_wordlimit_group', $name, ' ', false);
+        $mform->addHelpButton('assignsubmission_onlinetext_wordlimit_group',
+                              'wordlimit',
+                              'assignsubmission_onlinetext');
+        $mform->disabledIf('assignsubmission_onlinetext_wordlimit',
+                           'assignsubmission_onlinetext_wordlimit_enabled',
+                           'notchecked');
+
+        // Add numeric rule to text field.
+        $wordlimitgrprules = array();
+        $wordlimitgrprules['assignsubmission_onlinetext_wordlimit'][] = array(null, 'numeric', null, 'client');
+        $mform->addGroupRule('assignsubmission_onlinetext_wordlimit_group', $wordlimitgrprules);
+
+        // Rest of group setup.
+        $mform->setDefault('assignsubmission_onlinetext_wordlimit', $defaultwordlimit);
+        $mform->setDefault('assignsubmission_onlinetext_wordlimit_enabled', $defaultwordlimitenabled);
+        $mform->setType('assignsubmission_onlinetext_wordlimit', PARAM_INT);
+        $mform->disabledIf('assignsubmission_onlinetext_wordlimit_group',
+                           'assignsubmission_onlinetext_enabled',
+                           'notchecked');
+    }
+
+    /**
+     * Save the settings for onlinetext submission plugin
+     *
+     * @param stdClass $data
+     * @return bool
+     */
+    public function save_settings(stdClass $data) {
+        if (empty($data->assignsubmission_onlinetext_wordlimit) || empty($data->assignsubmission_onlinetext_wordlimit_enabled)) {
+            $wordlimit = 0;
+            $wordlimitenabled = 0;
+        } else {
+            $wordlimit = $data->assignsubmission_onlinetext_wordlimit;
+            $wordlimitenabled = 1;
+        }
+
+        $this->set_config('wordlimit', $wordlimit);
+        $this->set_config('wordlimitenabled', $wordlimitenabled);
+
+        return true;
+    }
+
+    /**
      * Add form elements for settings
      *
      * @param mixed $submission can be null
