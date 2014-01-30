@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['buffersize'] = 'Write buffer size';
 $string['pluginname'] = 'Standard log';
 $string['pluginname_desc'] = 'Standard log plugin, the data is stored in Moodle database table.';
 $string['standard:read'] = 'Read logs';

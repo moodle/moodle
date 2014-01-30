@@ -40,6 +40,11 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
         $this->logguests = $this->get_config('logguests', 1);
     }
 
+    /**
+     * Finally store the events into the database.
+     *
+     * @param \core\event\base[] $events
+     */
     protected function insert_events($events) {
         global $DB;
 
@@ -102,5 +107,15 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
     }
 
     public function cron() {
+        global $DB;
+        $loglifetime = $this->get_config('loglifetime', 0);
+
+        // NOTE: we should do this only once a day, new cron will deal with this.
+
+        if ($loglifetime > 0) {
+            $loglifetime = time() - ($loglifetime * 3600 * 24);  // Value in days.
+            $DB->delete_records_select("logstore_standard_log", "timecreated < ?", array($loglifetime));
+            mtrace(" Deleted old log records from standard store.");
+        }
     }
 }
