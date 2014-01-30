@@ -4,7 +4,7 @@ Feature: A selected file can be cancelled
   As a user
   I need to cancel a selected file
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Cancel a selected recent file from being added to a folder
     Given the following "courses" exists:
       | fullname | shortname | category |

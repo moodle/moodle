@@ -4,7 +4,7 @@ Feature: Create folders in the file manager
   As a user
   I need to create folders and subfolders in a file area
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Create folders and subfolders
     Given the following "courses" exists:
       | fullname | shortname | category |

@@ -4,7 +4,7 @@ Feature: Zip folders and unzip compressed files
   As a user
   I need to zip and unzip folders and files
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Zip and unzip folders and files
     Given the following "courses" exists:
       | fullname | shortname | category |
