@@ -63,8 +63,10 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
             $data['other'] = serialize($data['other']);
             if (CLI_SCRIPT) {
                 $data['origin'] = 'cli';
+                $data['ip'] = null;
             } else {
-                $data['origin'] = getremoteaddr();
+                $data['origin'] = 'web';
+                $data['ip'] = getremoteaddr();
             }
             $data['realuserid'] = \core\session\manager::is_loggedinas() ? $_SESSION['USER']->realuser : null;
             $dataobj[] = $data;
@@ -80,7 +82,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
         $records = $DB->get_records_select('logstore_standard_log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
 
         foreach ($records as $data) {
-            $extra = array('origin' => $data->origin, 'realuserid' => $data->realuserid);
+            $extra = array('origin' => $data->origin, 'ip' => $data->ip, 'realuserid' => $data->realuserid);
             $data = (array)$data;
             $id = $data['id'];
             $data['other'] = unserialize($data['other']);
@@ -88,6 +90,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
                 $data['other'] = array();
             }
             unset($data['origin']);
+            unset($data['ip']);
             unset($data['realuserid']);
             unset($data['id']);
 
