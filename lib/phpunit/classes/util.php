@@ -384,6 +384,9 @@ class phpunit_util extends testing_util {
 
         install_cli_database($options, false);
 
+        // Disable all logging for performance and sanity reasons.
+        set_config('enabled_stores', '', 'tool_log');
+
         // install timezone info
         $timezones = get_records_csv($CFG->libdir.'/timezone.txt', 'timezone');
         update_timezone_records($timezones);

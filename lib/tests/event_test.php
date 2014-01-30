@@ -29,17 +29,6 @@ require_once(__DIR__.'/fixtures/event_fixtures.php');
 
 class core_event_testcase extends advanced_testcase {
 
-    protected function setUp() {
-        global $CFG;
-        // No need to always modify log table here.
-        $CFG->loglifetime = '-1';
-    }
-
-    protected function tearDown() {
-        global $CFG;
-        $CFG->loglifetime = '0';
-    }
-
     public function test_event_properties() {
         global $USER;
 
@@ -469,7 +458,7 @@ class core_event_testcase extends advanced_testcase {
     }
 
     public function test_legacy() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->resetAfterTest(true);
 
@@ -486,6 +475,12 @@ class core_event_testcase extends advanced_testcase {
                 'priority'    => 9999,
             ),
         );
+
+        // Enable legacy logging plugin.
+        $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/log/store/legacy/version.php");
+        set_config('enabled_stores', 'logstore_legacy', 'tool_log');
+        set_config('loglegacy', 1, 'logstore_legacy');
+        get_log_manager(true);
 
         $DB->delete_records('log', array());
         events_update_definition('unittest');
@@ -529,6 +524,10 @@ class core_event_testcase extends advanced_testcase {
         $this->assertEquals(3, $log->course);
         $this->assertSame('core_unittest', $log->module);
         $this->assertSame('view', $log->action);
+
+        // Disable all logging again.
+        set_config('enabled_stores', 'logstore_legacy', 'tool_log');
+        get_log_manager(true);
     }
 
     public function test_restore_event() {
