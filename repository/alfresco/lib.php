@@ -205,18 +205,6 @@ class repository_alfresco extends repository {
         return parent::get_file($url, $file);
     }
 
-    /**
-     * Return file URL
-     *
-     * @param string $url the url of file
-     * @return string
-     */
-    public function get_link($uuid) {
-        $node = $this->user_session->getNode($this->store, $uuid);
-        $url = $this->get_url($node);
-        return $url;
-    }
-
     public function print_search() {
         $str = parent::print_search();
         $str .= html_writer::label(get_string('space', 'repository_alfresco'), 'space', false, array('class' => 'accesshide'));
@@ -294,6 +282,6 @@ class repository_alfresco extends repository {
         }
     }
     public function supported_returntypes() {
-        return (FILE_INTERNAL | FILE_EXTERNAL);
+        return FILE_INTERNAL;
     }
 }
