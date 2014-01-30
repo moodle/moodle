@@ -4,7 +4,7 @@ Feature: Create shortcuts
   As a teacher
   I need to be able to pick file as a shortcut
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Upload a file as a copy and as a shortcut in filemanager
     Given the following "users" exists:
       | username | firstname | lastname | email |

@@ -4,7 +4,7 @@ Feature: Delete files and folders from the file manager
   As a user
   I need to delete files from file areas
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Delete a file and a folder
     Given I log in as "admin"
     And I expand "My profile" node

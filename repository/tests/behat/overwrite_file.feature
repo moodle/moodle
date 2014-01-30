@@ -4,7 +4,7 @@ Feature: Overwrite file feature
   As a user
   I need to pick the file with the same name and select to overwrite
 
-  @javascript
+  @javascript @_bug_phantomjs
   Scenario: Upload a file in filemanager and overwrite it
     Given the following "users" exists:
       | username | firstname | lastname | email |
