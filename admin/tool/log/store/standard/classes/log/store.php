@@ -52,7 +52,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
 
         // Filter events.
         foreach ($events as $event) {
-            if (!CLI_SCRIPT and !$this->logguests) {
+            if ((!CLI_SCRIPT or PHPUNIT_TEST) and !$this->logguests) {
                 // Always log inside CLI scripts because we do not login there.
                 if (!isloggedin() or isguestuser()) {
                     continue;

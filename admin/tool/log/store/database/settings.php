@@ -40,7 +40,7 @@ if ($hassiteconfig) {
 
     $settings->add(new admin_setting_configtext('logstore_database/dbhost', get_string('databasehost', 'install'), '', ''));
     $settings->add(new admin_setting_configtext('logstore_database/dbuser', get_string('databaseuser', 'install'), '', ''));
-    $settings->add(new admin_setting_configtext('logstore_database/dbpass', get_string('databasepass', 'install'), '', ''));
+    $settings->add(new admin_setting_configpasswordunmask('logstore_database/dbpass', get_string('databasepass', 'install'), '', ''));
     $settings->add(new admin_setting_configtext('logstore_database/dbname', get_string('databasename', 'install'), '', ''));
     $settings->add(new admin_setting_configtext('logstore_database/dbtable', get_string('databasetable', 'logstore_database'),
             get_string('databasetable_help', 'logstore_database'), ''));

@@ -476,12 +476,6 @@ class core_event_testcase extends advanced_testcase {
             ),
         );
 
-        // Enable legacy logging plugin.
-        $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/log/store/legacy/version.php");
-        set_config('enabled_stores', 'logstore_legacy', 'tool_log');
-        set_config('loglegacy', 1, 'logstore_legacy');
-        get_log_manager(true);
-
         $DB->delete_records('log', array());
         events_update_definition('unittest');
         $DB->delete_records_select('events_handlers', "component <> 'unittest'");
@@ -508,26 +502,7 @@ class core_event_testcase extends advanced_testcase {
         $this->assertSame(array(1, 5), \core_tests\event\unittest_observer::$event[2]);
 
         $logs = $DB->get_records('log', array(), 'id ASC');
-        $this->assertCount(3, $logs);
-
-        $log = array_shift($logs);
-        $this->assertEquals(1, $log->course);
-        $this->assertSame('core_unittest', $log->module);
-        $this->assertSame('view', $log->action);
-
-        $log = array_shift($logs);
-        $this->assertEquals(2, $log->course);
-        $this->assertSame('core_unittest', $log->module);
-        $this->assertSame('view', $log->action);
-
-        $log = array_shift($logs);
-        $this->assertEquals(3, $log->course);
-        $this->assertSame('core_unittest', $log->module);
-        $this->assertSame('view', $log->action);
-
-        // Disable all logging again.
-        set_config('enabled_stores', 'logstore_legacy', 'tool_log');
-        get_log_manager(true);
+        $this->assertCount(0, $logs);
     }
 
     public function test_restore_event() {

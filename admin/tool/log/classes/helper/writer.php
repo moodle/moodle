@@ -62,11 +62,21 @@ trait writer {
         }
 
         if ($this->count >= $this->buffersize) {
-            $events = $this->buffer;
-            $this->insert_events($events);
-            $this->count = 0;
-            $this->buffer = array();
+            $this->flush();
         }
+    }
+
+    /**
+     * Flush event buffer.
+     */
+    public function flush() {
+        if ($this->count == 0) {
+            return;
+        }
+        $events = $this->buffer;
+        $this->count = 0;
+        $this->buffer = array();
+        $this->insert_events($events);
     }
 
     /**
@@ -75,9 +85,6 @@ trait writer {
      *
      */
     public function dispose() {
-        $events = $this->buffer;
-        $this->insert_events($events);
-        $this->count = 0;
-        $this->buffer = array();
+        $this->flush();
     }
 }
