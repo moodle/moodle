@@ -148,7 +148,7 @@ class behat_forms extends behat_base {
     /**
      * Sets the specified value to the field.
      *
-     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to "(?P<value_string>(?:[^"]|\\")*)"$/
+     * @Given /^I set the field "(?P<field_string>(?:[^"]|\\")*)" to "(?P<field_value_string>(?:[^"]|\\")*)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $field
      * @param string $value
@@ -161,7 +161,7 @@ class behat_forms extends behat_base {
     /**
      * Checks, the field matches the value. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
      *
-     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" matches value "(?P<value_string>(?:[^"]|\\")*)"$/
+     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" matches value "(?P<field_value_string>(?:[^"]|\\")*)"$/
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $field
      * @param string $value
@@ -187,7 +187,7 @@ class behat_forms extends behat_base {
     /**
      * Checks, the field does not match the value. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
      *
-     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" does not match value "(?P<value_string>(?:[^"]|\\")*)"$/
+     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" does not match value "(?P<field_value_string>(?:[^"]|\\")*)"$/
      * @throws ExpectationException
      * @throws ElementNotFoundException Thrown by behat_base::find
      * @param string $field
@@ -232,7 +232,7 @@ class behat_forms extends behat_base {
     }
 
     /**
-     * Checks that fields values do not match the provided values. Provide a table with field/value data.
+     * Checks that the provided field/value pairs don't match. More info in http://docs.moodle.org/dev/Acceptance_testing#Providing_values_to_steps.
      *
      * @Then /^the following fields do not match these values:$/
      * @throws ExpectationException
