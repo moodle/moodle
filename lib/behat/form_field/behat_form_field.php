@@ -190,4 +190,21 @@ class behat_form_field {
         return get_class($this->session->getDriver()) !== 'Behat\Mink\Driver\GoutteDriver';
     }
 
+    /**
+     * Gets the field internal id used by selenium wire protocol.
+     *
+     * Only available when running_javascript().
+     *
+     * @throws coding_exception
+     * @return int
+     */
+    protected function get_internal_field_id() {
+
+        if (!$this->running_javascript()) {
+            throw new coding_exception('You can only get an internal ID using the selenium driver.');
+        }
+
+        return $this->session->getDriver()->getWebDriverSession()->element('xpath', $this->field->getXPath())->getID();
+    }
+
 }

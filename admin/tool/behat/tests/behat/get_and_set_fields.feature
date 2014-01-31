@@ -150,10 +150,13 @@ Feature: Verify that all form fields values can be get and set
     And I follow "Groups"
     # Select (multi-select & AJAX) - Checking "I select from" and "select box should contain".
     And I select "Group 2" from "groups"
+    And I wait "5" seconds
     And the "members" select box should contain "Student 2"
     And the "members" select box should contain "Student 3"
     And the "members" select box should not contain "Student 1"
     And I select "Group 1" from "groups"
+    And I wait "5" seconds
+    And the "members" select box should contain "Student 2"
     And the "members" select box should contain "Student 1"
     And the "members" select box should contain "Student 2"
     And the "members" select box should not contain "Student 3"
