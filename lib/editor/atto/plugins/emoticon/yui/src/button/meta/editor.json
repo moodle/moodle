@@ -1,0 +1,5 @@
+{
+  "moodle-atto_emoticon-button": {
+    "requires": ["node"]
+  }
+}
