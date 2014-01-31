@@ -42,6 +42,7 @@ $lessonoutput = $PAGE->get_renderer('mod_lesson');
 
 $url = new moodle_url('/mod/lesson/continue.php', array('id'=>$cm->id));
 $PAGE->set_url($url);
+$PAGE->set_pagetype('mod-lesson-view');
 $PAGE->navbar->add(get_string('continue', 'lesson'));
 
 // This is the code updates the lesson time for a timed test
