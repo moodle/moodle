@@ -169,7 +169,7 @@ class qtype_ddmarker_context_list_item extends qtype_ddmarker_list_item {
     }
 
     public function item_name() {
-        return print_context_name($this->record);
+        return context_helper::preload_from_record($this->record)->get_context_name();
     }
 
     public function course_context_id() {
@@ -218,10 +218,10 @@ class qtype_ddmarker_context_list extends qtype_ddmarker_list {
             if (!isset($this->records[$contextid])) {
                 $this->records[$contextid] = context::instance_by_id($contextid);
             }
-            $parents = get_parent_contexts($this->records[$contextid]);
-            foreach ($parents as $parentcontextid) {
-                if (!isset($this->records[$parentcontextid])) {
-                    $this->records[$parentcontextid] = context::instance_by_id($parentcontextid);
+            $parents = $this->records[$contextid]->get_parent_contexts();
+            foreach ($parents as $parentcontext) {
+                if (!isset($this->records[$parentcontext->id])) {
+                    $this->records[$parentcontext->id] = $parentcontext;
                 }
             }
         }

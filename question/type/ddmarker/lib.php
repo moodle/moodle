@@ -44,7 +44,7 @@ function qtype_ddmarker_pluginfile($course, $cm, $context, $filearea, $args, $fo
 function qtype_ddmarker_course_context_id($catcontextid) {
     $context = context::instance_by_id($catcontextid);
     while ($context->contextlevel != CONTEXT_COURSE) {
-        $context = context::instance_by_id(get_parent_contextid($context));
+        $context = $context->get_parent_context();
     }
     return $context->id;
 }
