@@ -47,11 +47,11 @@ if ($options['help'] || !($options['courseid'] || $options['courseshortname'])) 
 Perform backup of the given course.
 
 Options:
---courseid=INTEGER          Course ID for backup,
---courseshortname=STRING    Course shortname for backup,
---destination=STRING        Path where to store backup file. If not set, the backup
-                            will stored within the same course backup area.
--h, --help                  Print out this help
+--courseid=INTEGER          Course ID for backup.
+--courseshortname=STRING    Course shortname for backup.
+--destination=STRING        Path where to store backup file. If not set the backup
+                            will be stored within the course backup file area.
+-h, --help                  Print out this help.
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/backup.php --courseid=2 --destination=/moodle/backup/\n
@@ -83,7 +83,7 @@ if ($options['courseid']) {
     $course = $DB->get_record('course', array('shortname' => $options['courseshortname']), '*', MUST_EXIST);
 }
 
-cli_heading('Performing back-up...');
+cli_heading('Performing backup...');
 $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
                             backup::INTERACTIVE_YES, backup::MODE_GENERAL, $admin->id);
 // Set the default filename.
@@ -107,13 +107,13 @@ if (!empty($dir)) {
         mtrace("Writing " . $dir.'/'.$filename);
         if ($file->copy_content_to($dir.'/'.$filename)) {
             $file->delete();
-            mtrace("Backup is completed.");
+            mtrace("Backup completed.");
         } else {
-            mtrace("Destination directory does not exists or not writable. Leaving the file in the course backup area.");
+            mtrace("Destination directory does not exist or is not writable. Leaving the backup in the course backup file area.");
         }
     }
 } else {
-    mtrace("Backup is done, the new file is listed in the backup area of the given course");
+    mtrace("Backup completed, the new file is listed in the backup area of the given course");
 }
 $bc->destroy();
 exit(0);
