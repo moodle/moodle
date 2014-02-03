@@ -373,7 +373,8 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
                 if ($cancomplete && $completioninfo->is_enabled($thismod) != COMPLETION_TRACKING_NONE) {
                     $total++;
                     $completiondata = $completioninfo->get_data($thismod, true);
-                    if ($completiondata->completionstate == COMPLETION_COMPLETE) {
+                    if ($completiondata->completionstate == COMPLETION_COMPLETE ||
+                            $completiondata->completionstate == COMPLETION_COMPLETE_PASS) {
                         $complete++;
                     }
                 }
