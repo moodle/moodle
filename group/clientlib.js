@@ -64,22 +64,6 @@ function UpdatableGroupsCombo(wwwRoot, courseId) {
         }
 
     };
-
-    // Add onchange event to groups list box.
-    // Okay, this is not working in IE. The onchange is never fired...
-    // I'm hard coding the onchange in ../index.php. Not ideal, but it works
-    // then. vyshane AT moodle DOT com.
-    /*
-    groupsComboEl = document.getElementById("groups");
-    if (groupsComboEl) {
-        groupsComboEl.setAttribute("onchange", "membersCombo.refreshMembers(this.options[this.selectedIndex].value);");
-    }
-    */
-
-    // Hide the updategroups input since AJAX will take care of this.
-    YUI().use('yui2-dom', function (Y) {
-        Y.YUI2.util.Dom.setStyle("updategroups", "display", "none");
-    });
 }
 
 
@@ -131,9 +115,10 @@ function UpdatableMembersCombo(wwwRoot, courseId) {
     };
 
     // Hide the updatemembers input since AJAX will take care of this.
-    YUI().use('yui2-dom', function (Y) {
-        Y.YUI2.util.Dom.setStyle("updatemembers", "display", "none");
-    });
+    var updatemembers = Y.one('#updatemembers');
+    if (updatemembers) {
+        updatemembers.hide();
+    }
 }
 
 /**
