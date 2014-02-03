@@ -78,7 +78,7 @@ class mod_scorm_event_testcase extends advanced_testcase {
         $this->assertEquals(4, $event->other['attemptid']);
         $this->assertEquals(2, $event->relateduserid);
         $expected = array($this->eventcourse->id, 'scorm', 'delete attempts', 'report.php?id=' . $this->eventcm->id,
-                4, $this->eventscorm->id);
+                4, $this->eventcm->id);
         $this->assertEventLegacyLogData($expected, $events[0]);
         $this->assertEventContextNotUsed($event);
 

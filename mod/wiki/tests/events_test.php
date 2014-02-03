@@ -237,7 +237,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_wiki\event\page_viewed', $event);
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($page->id, $event->objectid);
-        $expected = array($this->course->id, 'wiki', 'view', 'view.php?pageid=' . $page->id, $page->id, $this->wiki->id);
+        $expected = array($this->course->id, 'wiki', 'view', 'view.php?pageid=' . $page->id, $page->id, $this->wiki->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -272,7 +272,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_wiki\event\page_viewed', $event);
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($page->id, $event->objectid);
-        $expected = array($this->course->id, 'wiki', 'view', 'prettyview.php?pageid=' . $page->id, $page->id, $this->wiki->id);
+        $expected = array($this->course->id, 'wiki', 'view', 'prettyview.php?pageid=' . $page->id, $page->id, $this->wiki->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -345,7 +345,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_wiki\event\page_locks_deleted', $event);
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($page->id, $event->objectid);
-        $expected = array($this->course->id, 'wiki', 'overridelocks', 'view.php?pageid=' . $page->id, $page->id, $this->wiki->id);
+        $expected = array($this->course->id, 'wiki', 'overridelocks', 'view.php?pageid=' . $page->id, $page->id, $this->wiki->cmid);
         $this->assertEventLegacyLogData($expected, $event);
 
         // Delete all pages.
@@ -431,7 +431,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($page->id, $event->objectid);
         $expected = array($this->course->id, 'wiki', 'diff', 'diff.php?pageid=' . $page->id . '&comparewith=' .
-            1 . '&compare=' .  2, $page->id, $this->wiki->id);
+            1 . '&compare=' .  2, $page->id, $this->wiki->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -465,7 +465,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $this->assertInstanceOf('\mod_wiki\event\page_history_viewed', $event);
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($page->id, $event->objectid);
-        $expected = array($this->course->id, 'wiki', 'history', 'history.php?pageid=' . $page->id, $page->id, $this->wiki->id);
+        $expected = array($this->course->id, 'wiki', 'history', 'history.php?pageid=' . $page->id, $page->id, $this->wiki->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -503,7 +503,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($page->id, $event->objectid);
         $this->assertEquals(0, $event->other['option']);
-        $expected = array($this->course->id, 'wiki', 'map', 'map.php?pageid=' . $page->id, $page->id, $this->wiki->id);
+        $expected = array($this->course->id, 'wiki', 'map', 'map.php?pageid=' . $page->id, $page->id, $this->wiki->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -542,7 +542,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $this->assertEquals($page->id, $event->objectid);
         $this->assertEquals(1, $event->other['versionid']);
         $expected = array($this->course->id, 'wiki', 'history', 'viewversion.php?pageid=' . $page->id . '&versionid=1',
-            $page->id, $this->wiki->id);
+            $page->id, $this->wiki->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
@@ -569,7 +569,7 @@ class mod_wiki_events_testcase extends advanced_testcase {
         $this->assertEquals($context, $event->get_context());
         $this->assertEquals($version->id, $event->objectid);
         $this->assertEquals($page->id, $event->other['pageid']);
-        $expected = array($this->course->id, 'wiki', 'restore', 'view.php?pageid=' . $page->id, $page->id, $this->wiki->id);
+        $expected = array($this->course->id, 'wiki', 'restore', 'view.php?pageid=' . $page->id, $page->id, $this->wiki->cmid);
         $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }

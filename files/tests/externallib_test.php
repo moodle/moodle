@@ -223,7 +223,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         // Insert the information about the file.
         $contentid = $DB->insert_record('data_content', $datacontent);
         // Required information for uploading a file.
-        $context = context_module::instance($module->id);
+        $context = context_module::instance($module->cmid);
         $usercontext = context_user::instance($USER->id);
         $component = 'mod_data';
         $filearea = 'content';
@@ -301,7 +301,7 @@ class core_files_externallib_testcase extends advanced_testcase {
         $modified = 0;
         // Context level and instance ID are used to determine what the context is.
         $contextlevel = 'module';
-        $instanceid = $module->id;
+        $instanceid = $module->cmid;
         $testfilelisting = core_files_external::get_files($nocontext, $component, $filearea, $itemid, '/', $filename, $modified, $contextlevel, $instanceid);
         $this->assertEquals($testfilelisting, $testdata);
     }

@@ -52,7 +52,7 @@ class glossary_event_testcase extends advanced_testcase {
 
         $entry = $glossarygenerator->create_content($glossary);
 
-        $context = context_module::instance($glossary->id);
+        $context = context_module::instance($glossary->cmid);
         $cm = get_coursemodule_from_instance('data', $glossary->id, $course->id);
         $cmt = new stdClass();
         $cmt->component = 'mod_glossary';
@@ -96,7 +96,7 @@ class glossary_event_testcase extends advanced_testcase {
 
         $entry = $glossarygenerator->create_content($glossary);
 
-        $context = context_module::instance($glossary->id);
+        $context = context_module::instance($glossary->cmid);
         $cm = get_coursemodule_from_instance('data', $glossary->id, $course->id);
         $cmt = new stdClass();
         $cmt->component = 'mod_glossary';

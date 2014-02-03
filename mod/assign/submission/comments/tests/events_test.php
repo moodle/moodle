@@ -73,7 +73,7 @@ class assignsubmission_comments_events_testcase extends mod_assign_base_testcase
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\assignsubmission_comments\event\comment_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/assign/view.php', array('id' => $submission->id));
+        $url = new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }
@@ -111,7 +111,7 @@ class assignsubmission_comments_events_testcase extends mod_assign_base_testcase
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\assignsubmission_comments\event\comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/assign/view.php', array('id' => $submission->id));
+        $url = new moodle_url('/mod/assign/view.php', array('id' => $assign->get_course_module()->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }

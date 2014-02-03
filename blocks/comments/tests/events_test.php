@@ -88,7 +88,7 @@ class block_comments_events_testcase extends advanced_testcase {
         $this->assertEquals($url, $event->get_url());
 
         // Comments when block is on module (wiki) page.
-        $context = context_module::instance($this->wiki->id);
+        $context = context_module::instance($this->wiki->cmid);
         $args = new stdClass;
         $args->context   = $context;
         $args->course    = $this->course;
@@ -111,7 +111,7 @@ class block_comments_events_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\block_comments\event\comment_created', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/wiki/view.php', array('id' => $this->wiki->id));
+        $url = new moodle_url('/mod/wiki/view.php', array('id' => $this->wiki->cmid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }
@@ -153,7 +153,7 @@ class block_comments_events_testcase extends advanced_testcase {
         $this->assertEquals($url, $event->get_url());
 
         // Comments when block is on module (wiki) page.
-        $context = context_module::instance($this->wiki->id);
+        $context = context_module::instance($this->wiki->cmid);
         $args = new stdClass;
         $args->context   = $context;
         $args->course    = $this->course;
@@ -177,7 +177,7 @@ class block_comments_events_testcase extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\block_comments\event\comment_deleted', $event);
         $this->assertEquals($context, $event->get_context());
-        $url = new moodle_url('/mod/wiki/view.php', array('id' => $this->wiki->id));
+        $url = new moodle_url('/mod/wiki/view.php', array('id' => $this->wiki->cmid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
     }

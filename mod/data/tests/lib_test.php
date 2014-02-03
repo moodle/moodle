@@ -142,7 +142,7 @@ class data_lib_testcase extends advanced_testcase {
         $contentid = $DB->insert_record('data_content', $datacontent);
         $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
 
-        $context = context_module::instance($module->id);
+        $context = context_module::instance($module->cmid);
         $cmt = new stdClass();
         $cmt->context = $context;
         $cmt->course = $course;
@@ -205,7 +205,7 @@ class data_lib_testcase extends advanced_testcase {
         $contentid = $DB->insert_record('data_content', $datacontent);
         $cm = get_coursemodule_from_instance('data', $module->id, $course->id);
 
-        $context = context_module::instance($module->id);
+        $context = context_module::instance($module->cmid);
         $cmt = new stdClass();
         $cmt->context = $context;
         $cmt->course = $course;
