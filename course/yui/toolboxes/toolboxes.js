@@ -481,12 +481,6 @@ YUI.add('moodle-course-toolboxes', function(Y) {
             // Prevent the default button action
             ev.preventDefault();
 
-            // Return early if the current section is hidden
-            var section = activity.ancestor(M.course.format.get_section_selector(Y));
-            if (section && section.hasClass(CSS.SECTIONHIDDENCLASS)) {
-                return;
-            }
-
             // Get the element we're working on
             var element = activity;
             var value = this.handle_resource_dim(button, activity, action);
