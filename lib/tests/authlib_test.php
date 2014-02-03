@@ -133,35 +133,104 @@ class core_authlib_testcase extends advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user(array('username'=>'username1', 'password'=>'password1'));
         $user2 = $this->getDataGenerator()->create_user(array('username'=>'username2', 'password'=>'password2', 'suspended'=>1));
         $user3 = $this->getDataGenerator()->create_user(array('username'=>'username3', 'password'=>'password3', 'auth'=>'nologin'));
-
+        // Capture events.
+        $sink = $this->redirectEvents();
         $result = authenticate_user_login('username1', 'password1');
+        $events = $sink->get_events();
+        $sink->close();
+
+        // No event is triggred.
+        $this->assertEmpty($events);
         $this->assertInstanceOf('stdClass', $result);
         $this->assertEquals($user1->id, $result->id);
 
         $reason = null;
+        // Capture event.
+        $sink = $this->redirectEvents();
         $result = authenticate_user_login('username1', 'password1', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+
+        // No event is triggred.
+        $this->assertEmpty($events);
         $this->assertInstanceOf('stdClass', $result);
         $this->assertEquals(AUTH_LOGIN_OK, $reason);
 
         $reason = null;
+        // Capture failed login event.
+        $sink = $this->redirectEvents();
         $result = authenticate_user_login('username1', 'nopass', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
         $this->assertFalse($result);
         $this->assertEquals(AUTH_LOGIN_FAILED, $reason);
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username1');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username1');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_FAILED);
+        $this->assertEventContextNotUsed($event);
 
         $reason = null;
+        // Capture failed login event.
+        $sink = $this->redirectEvents();
         $result = authenticate_user_login('username2', 'password2', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
         $this->assertFalse($result);
         $this->assertEquals(AUTH_LOGIN_SUSPENDED, $reason);
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username2');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username2');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_SUSPENDED);
+        $this->assertEventContextNotUsed($event);
 
         $reason = null;
+        // Capture failed login event.
+        $sink = $this->redirectEvents();
         $result = authenticate_user_login('username3', 'password3', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
         $this->assertFalse($result);
         $this->assertEquals(AUTH_LOGIN_SUSPENDED, $reason);
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username3');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username3');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_SUSPENDED);
+        $this->assertEventContextNotUsed($event);
 
         $reason = null;
+        // Capture failed login event.
+        $sink = $this->redirectEvents();
         $result = authenticate_user_login('username4', 'password3', false, $reason);
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
         $this->assertFalse($result);
         $this->assertEquals(AUTH_LOGIN_NOUSER, $reason);
+        // Test Event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $expectedlogdata = array(SITEID, 'login', 'error', 'index.php', 'username4');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username4');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_NOUSER);
+        $this->assertEventContextNotUsed($event);
 
         set_config('lockoutthreshold', 3);
 
