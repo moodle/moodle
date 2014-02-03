@@ -48,6 +48,11 @@ class restore_gradingform_guide_plugin extends restore_gradingform_plugin {
         $paths[] = new restore_path_element('gradingform_guide_comment',
             $this->get_pathfor('/guidecomments/guidecomment'));
 
+        // MDL-37714: Correctly locate frequent used comments in both the
+        // current and incorrect old format.
+        $paths[] = new restore_path_element('gradingform_guide_comment_legacy',
+            $this->get_pathfor('/guidecriteria/guidecomments/guidecomment'));
+
         return $paths;
     }
 
@@ -91,6 +96,20 @@ class restore_gradingform_guide_plugin extends restore_gradingform_plugin {
      * @param array|stdClass $data The data to insert as a comment
      */
     public function process_gradingform_guide_comment($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $data->definitionid = $this->get_new_parentid('grading_definition');
+
+        $DB->insert_record('gradingform_guide_comments', $data);
+    }
+
+    /**
+     * Processes comments element data
+     *
+     * @param array|stdClass $data The data to insert as a comment
+     */
+    public function process_gradingform_guide_comment_legacy($data) {
         global $DB;
 
         $data = (object)$data;
