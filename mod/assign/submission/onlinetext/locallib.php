@@ -211,6 +211,13 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                                      'id',
                                      false);
 
+        // Check word count before submitting anything.
+        $exceeded = $this->check_word_count(trim($data->onlinetext));
+        if ($exceeded) {
+            $this->set_error($exceeded);
+            return false;
+        }
+
         $params = array(
             'context' => context_module::instance($this->assignment->get_course_module()->id),
             'courseid' => $this->assignment->get_course()->id,
@@ -595,6 +602,33 @@ class assign_submission_onlinetext extends assign_submission_plugin {
                               'itemid' => new external_value(PARAM_INT, 'The draft area id for files attached to the submission'));
         $editorstructure = new external_single_structure($editorparams);
         return array('onlinetext_editor' => $editorstructure);
+    }
+
+    /**
+     * Compare word count of onlinetext submission to word limit, and return result.
+     *
+     * @param string $submissiontext Onlinetext submission text from editor
+     * @return string Error message if limit is enabled and exceeded, otherwise null
+     */
+    public function check_word_count($submissiontext) {
+        global $OUTPUT;
+
+        $wordlimitenabled = $this->get_config('wordlimitenabled');
+        $wordlimit = $this->get_config('wordlimit');
+
+        if ($wordlimitenabled == 0) {
+            return null;
+        }
+
+        // Count words and compare to limit.
+        $wordcount = count_words($submissiontext);
+        if ($wordcount <= $wordlimit) {
+            return null;
+        } else {
+            $errormsg = get_string('wordlimitexceeded', 'assignsubmission_onlinetext',
+                    array('limit' => $wordlimit, 'count' => $wordcount));
+            return $OUTPUT->error_text($errormsg);
+        }
     }
 
 }
