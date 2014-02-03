@@ -754,6 +754,9 @@ class assign_grading_table extends table_sql implements renderable {
                               id="selectuser_' . $row->userid . '"
                               name="selectedusers"
                               value="' . $row->userid . '"/>';
+        $selectcol .= '<input type="hidden"
+                              name="grademodified_' . $row->userid . '"
+                              value="' . $row->timemarked . '"/>';
         return $selectcol;
     }
 
