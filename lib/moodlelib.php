@@ -3397,9 +3397,7 @@ function get_user_key($script, $userid, $instance=null, $iprestriction=null, $va
  * @return bool Always returns true
  */
 function update_user_login_times() {
-    global $USER, $DB, $CFG;
-
-    require_once($CFG->dirroot.'/user/lib.php');
+    global $USER, $DB;
 
     if (isguestuser()) {
         // Do not update guest access times/ips for performance.
@@ -3425,7 +3423,9 @@ function update_user_login_times() {
     $USER->lastaccess = $user->lastaccess = $now;
     $USER->lastip = $user->lastip = getremoteaddr();
 
-    user_update_user($user, false);
+    // Note: do not call user_update_user() here because this is part of the login process,
+    //       the login event means that these fields were updated.
+    $DB->update_record('user', $user);
     return true;
 }
 

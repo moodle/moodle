@@ -2474,10 +2474,8 @@ class core_moodlelib_testcase extends advanced_testcase {
         $events = $sink->get_events();
         $sink->close();
 
-        $this->assertCount(2, $events);
-        $event = $events[0];
-        $this->assertInstanceOf('\core\event\user_updated', $event);
-        $event = $events[1];
+        $this->assertCount(1, $events);
+        $event = reset($events);
         $this->assertInstanceOf('\core\event\user_loggedin', $event);
         $this->assertEquals('user', $event->objecttable);
         $this->assertEquals($user->id, $event->objectid);
@@ -2491,7 +2489,6 @@ class core_moodlelib_testcase extends advanced_testcase {
 
         $this->assertTimeCurrent($USER->firstaccess);
         $this->assertTimeCurrent($USER->lastaccess);
-        $this->assertTimeCurrent($USER->timemodified);
         $this->assertTimeCurrent($USER->currentlogin);
         $this->assertSame(sesskey(), $USER->sesskey);
         $this->assertTimeCurrent($USER->preference['_lastloaded']);
