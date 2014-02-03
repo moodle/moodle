@@ -2096,16 +2096,13 @@ function upgrade_fix_missing_root_folders() {
     global $DB, $USER;
 
     $transaction = $DB->start_delegated_transaction();
-    $sql = "SELECT distinct f1.contextid, f1.component, f1.filearea, f1.itemid
-        FROM {files} f1 left JOIN {files} f2
-        ON f1.contextid = f2.contextid
-        AND f1.component = f2.component
-        AND f1.filearea = f2.filearea
-        AND f1.itemid = f2.itemid
-        AND f2.filename = '.'
-        AND f2.filepath = '/'
-        WHERE (f1.component <> 'user' or f1.filearea <> 'draft')
-        and f2.id is null";
+
+    $sql = "SELECT contextid, component, filearea, itemid
+              FROM {files}
+             WHERE (component <> 'user' OR filearea <> 'draft')
+          GROUP BY contextid, component, filearea, itemid
+            HAVING MAX(CASE WHEN filename = '.' AND filepath = '/' THEN 1 ELSE 0 END) = 0";
+
     $rs = $DB->get_recordset_sql($sql);
     $defaults = array('filepath' => '/',
         'filename' => '.',
