@@ -406,7 +406,7 @@ class oci_native_moodle_database extends moodle_database {
         oci_free_statement($stmt);
         $records = array_map('strtolower', $records['TABLE_NAME']);
         foreach ($records as $tablename) {
-            if ($this->prefix !== '') {
+            if ($this->prefix !== false && $this->prefix !== '') {
                 if (strpos($tablename, $this->prefix) !== 0) {
                     continue;
                 }
