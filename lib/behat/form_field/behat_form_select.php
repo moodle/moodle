@@ -94,8 +94,23 @@ class behat_form_select extends behat_form_field {
             return;
         }
 
+        // Wrapped in try & catch as the element may disappear if an AJAX request was submitted.
+        try {
+            $multiple = $this->field->hasAttribute('multiple');
+        } catch (Exception $e) {
+            // We do not specify any specific Exception type as there are
+            // different exceptions that can be thrown by the driver and
+            // we can not control them all, also depending on the selenium
+            // version the exception type can change.
+            return;
+        }
+
+        // Wait for all the possible AJAX requests that have been
+        // already triggered by selectOption() to be finished.
+        $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
+
         // Single select sometimes needs an extra click in the option.
-        if (!$this->field->hasAttribute('multiple')) {
+        if (!$multiple) {
 
             // Using the driver direcly because Element methods are messy when dealing
             // with elements inside containers.
@@ -104,11 +119,6 @@ class behat_form_select extends behat_form_field {
                 // Wrapped in a try & catch as we can fall into race conditions
                 // and the element may not be there.
                 try {
-
-                    // Wait for all the possible AJAX requests that have been
-                    // already triggered by selectOption() to be finished.
-                    $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
-
                     current($optionnodes)->click();
                 } catch (Exception $e) {
                     // We continue and return as this means that the element is not there or it is not the same.
@@ -117,10 +127,6 @@ class behat_form_select extends behat_form_field {
             }
 
         } else {
-
-            // Wait for all the possible AJAX requests that have been
-            // already triggered by selectOption() to be finished.
-            $this->session->wait(behat_base::TIMEOUT * 1000, behat_base::PAGE_READY_JS);
 
             // Wrapped in a try & catch as we can fall into race conditions
             // and the element may not be there.
