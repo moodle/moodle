@@ -92,6 +92,7 @@ class atto_texteditor extends texteditor {
         }
 
         $modules = array('moodle-editor_atto-editor');
+        $options['context'] = empty($options['context']) ? context_system::instance() : $options['context'];
 
         $jsplugins = array();
         foreach ($groups as $group => $plugins) {
@@ -103,7 +104,7 @@ class atto_texteditor extends texteditor {
                 $modules[] = 'moodle-atto_' . $plugin . '-button';
 
                 component_callback('atto_' . $plugin, 'strings_for_js');
-                $extra = component_callback('atto_' . $plugin, 'params_for_js');
+                $extra = component_callback('atto_' . $plugin, 'params_for_js', array($elementid, $options, $fpoptions));
 
                 if ($extra) {
                     $jsplugin['params'] = $extra;
