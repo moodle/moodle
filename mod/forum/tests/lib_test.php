@@ -36,7 +36,7 @@ class mod_forum_lib_testcase extends advanced_testcase {
 
         $this->setUser($user->id);
         $fakepost = (object) array('id' => 123, 'message' => 'Yay!', 'discussion' => 100);
-        $cm = get_coursemodule_from_instance('forum', $forum->cmid);
+        $cm = get_coursemodule_from_instance('forum', $forum->id);
 
         $fs = get_file_storage();
         $dummy = (object) array(

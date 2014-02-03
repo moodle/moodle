@@ -66,7 +66,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         // Create a teacher and give them capabilities.
         $coursecontext = context_course::instance($course->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $coursecontext->id, 3);
-        $modulecontext = context_module::instance($cm->id);
+        $modulecontext = context_module::instance($cm->cmid);
         $this->assignUserCapability('mod/assign:grade', $modulecontext->id, $roleid);
 
         // Create the teacher's enrolment record.
@@ -146,7 +146,7 @@ class core_grading_externallib_testcase extends externallib_advanced_testcase {
         $DB->insert_record('gradingform_rubric_levels', $rubriclevel2);
 
         // Call the external function.
-        $cmids = array ($cm->id);
+        $cmids = array ($cm->cmid);
         $areaname = 'submissions';
         $result = core_grading_external::get_definitions($cmids, $areaname);
 

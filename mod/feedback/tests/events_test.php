@@ -283,7 +283,7 @@ class mod_feedback_events_testcase extends advanced_testcase {
 
         // Test legacy data.
         $arr = array($this->eventcourse->id, 'feedback', 'submit', 'view.php?id=' . $this->eventcm->id, $this->eventfeedback->id,
-                     $this->eventfeedback->id, $USER->id);
+                     $this->eventcm->id, $USER->id);
         $this->assertEventLegacyLogData($arr, $event);
 
         // Test can_view().

@@ -60,7 +60,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertNotEmpty($ACCESSLIB_PRIVATE->rolepermissions);
         $this->assertNotEmpty($ACCESSLIB_PRIVATE->rolepermissions);
         $this->assertNotEmpty($ACCESSLIB_PRIVATE->accessdatabyuser);
-        accesslib_clear_all_caches(true);
+        accesslib_clear_all_caches_for_unit_testing();
         $this->assertEmpty($ACCESSLIB_PRIVATE->rolepermissions);
         $this->assertEmpty($ACCESSLIB_PRIVATE->rolepermissions);
         $this->assertEmpty($ACCESSLIB_PRIVATE->dirtycontexts);
@@ -2095,7 +2095,7 @@ class core_accesslib_testcase extends advanced_testcase {
         unassign_capability('moodle/site:accessallgroups', $allroles['teacher'], $frontpagecontext->id, true);
         unset($rc);
 
-        accesslib_clear_all_caches(false); // Must be done after assign_capability().
+        accesslib_clear_all_caches_for_unit_testing(); // Must be done after assign_capability().
 
 
         // Test role_assign(), role_unassign(), role_unassign_all() functions.
@@ -2112,7 +2112,7 @@ class core_accesslib_testcase extends advanced_testcase {
         $this->assertEquals(0, $DB->count_records('role_assignments', array('contextid'=>$context->id)));
         unset($context);
 
-        accesslib_clear_all_caches(false); // Just in case.
+        accesslib_clear_all_caches_for_unit_testing(); // Just in case.
 
 
         // Test has_capability(), get_users_by_capability(), role_switch(), reload_all_capabilities() and friends functions.
@@ -2173,7 +2173,7 @@ class core_accesslib_testcase extends advanced_testcase {
 
         assign_capability('mod/page:view', CAP_PREVENT, $allroles['guest'], $systemcontext, true);
 
-        accesslib_clear_all_caches(false); // Must be done after assign_capability().
+        accesslib_clear_all_caches_for_unit_testing(); /// Must be done after assign_capability().
 
         // Extra tests for guests and not-logged-in users because they can not be verified by cross checking
         // with get_users_by_capability() where they are ignored.
@@ -2296,7 +2296,7 @@ class core_accesslib_testcase extends advanced_testcase {
         unset($permissions);
         unset($roles);
 
-        accesslib_clear_all_caches(false); // Must be done after assign_capability().
+        accesslib_clear_all_caches_for_unit_testing(); // must be done after assign_capability().
 
         // Test time - let's set up some real user, just in case the logic for USER affects the others...
         $USER = $DB->get_record('user', array('id'=>$testusers[3]));
