@@ -1,19 +1,20 @@
 @dockWidth: 36px;
 @dockTitleMargin: 3px;
 @dockPanelWidth: (768px / 2);
+@dockTitleFontSize: 11px;
 
 /**
  * This styles the H2 node the dock creates to test the width before making its title rotation.
  * We need to apply these EXACT styles to the #dock .dockedtitle h2 to be sure things are spaced correctly.
  */
-.transform-test-node {
+.transform-test-heading {
     font-family: @sansFontFamily;
-    font-size: 1.2em;
+    font-size: @dockTitleFontSize;
     line-height: @dockWidth;
     text-align: center;
     font-weight: bold;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
 }
 
 body.has_dock {
@@ -51,7 +52,7 @@ body.has_dock {
         padding:0;
         cursor: pointer;
         h2 {
-            .transform-test-node;
+            .transform-test-heading;
         }
         .filterrotate {
             margin-left: 8px;
@@ -119,13 +120,6 @@ body.has_dock {
                 cursor: pointer;
             }
         }
-        a.editing_move,
-        a.editing_edit,
-        a.editing_roles,
-        a.editing_delete,
-        a.editing_hide {
-            display: none;
-        }
     }
 }
 
@@ -138,25 +132,16 @@ body.has_dock {
         left: auto;
         right: 0%;
         .dockedtitle {
-            border-bottom: 1px solid darken(@grayLighter, 10%);
-            border-top: 1px solid @grayLighter;
-            cursor: pointer;
+            h2 {
+                line-height: @dockWidth - @dockTitleFontSize;
+            }
         }
     }
     #dockeditempanel {
         right: 100%;
         .dockeditempanel_hd {
-            h2 {
-                padding: 10px;
-                margin: 0;
-                border-bottom: 1px solid @white;
-            }
             .commands {
-                float: left;
-                right: auto;
-                left: 0px;
                 text-align: left;
-                top: 6px;
             }
         }
     }
