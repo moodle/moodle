@@ -240,6 +240,14 @@ $CFG->admin = 'admin';
 //      $CFG->session_memcached_acquire_lock_timeout = 120;
 //      $CFG->session_memcached_lock_expire = 7200;       // Ignored if memcached extension <= 2.1.0
 //
+//   Memcache session handler (requires memcached server and memcache extension):
+//      $CFG->session_handler_class = '\core\session\memcache';
+//      $CFG->session_memcache_save_path = '127.0.0.1:11211';
+//      $CFG->session_memcache_acquire_lock_timeout = 120;
+//      ** NOTE: Memcache extension has less features than memcached and may be
+//         less reliable. Use memcached where possible or if you encounter
+//         session problems. **
+//
 // Following setting allows you to alter how frequently is timemodified updated in sessions table.
 //      $CFG->session_update_timemodified_frequency = 20; // In seconds.
 //
