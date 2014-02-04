@@ -36,8 +36,6 @@ class quiz_statistics_question_stats {
     public $questions;
     public $subquestions = array();
 
-    protected $s;
-    protected $summarksavg;
     protected $allattempts;
 
     /** @var mixed states from which to calculate stats - iteratable. */
@@ -49,12 +47,8 @@ class quiz_statistics_question_stats {
     /**
      * Constructor.
      * @param $questions the questions.
-     * @param $s the number of attempts included in the stats.
-     * @param $summarksavg the average attempt summarks.
      */
-    public function __construct($questions, $s, $summarksavg) {
-        $this->s = $s;
-        $this->summarksavg = $summarksavg;
+    public function __construct($questions) {
 
         foreach ($questions as $slot => $question) {
             $question->_stats = $this->make_blank_question_stats();
@@ -74,6 +68,7 @@ class quiz_statistics_question_stats {
         $stats->s = 0;
         $stats->totalmarks = 0;
         $stats->totalothermarks = 0;
+        $stats->totalsumgrades = 0;
         $stats->markvariancesum = 0;
         $stats->othermarkvariancesum = 0;
         $stats->covariancesum = 0;
@@ -285,6 +280,7 @@ class quiz_statistics_question_stats {
     protected function initial_steps_walker($step, $stats, $positionstat = true) {
         $stats->s++;
         $stats->totalmarks += $step->mark;
+        $stats->totalsumgrades += $step->sumgrades;
         $stats->markarray[] = $step->mark;
 
         if ($positionstat) {
@@ -313,6 +309,7 @@ class quiz_statistics_question_stats {
         }
 
         $stats->othermarkaverage = $stats->totalothermarks / $stats->s;
+        $stats->sumgradeaverage = $stats->totalsumgrades / $stats->s;
 
         sort($stats->markarray, SORT_NUMERIC);
         sort($stats->othermarksarray, SORT_NUMERIC);
@@ -334,7 +331,7 @@ class quiz_statistics_question_stats {
             $othermarkdifference = $step->sumgrades - $step->mark -
                     $stats->othermarkaverage;
         }
-        $overallmarkdifference = $step->sumgrades - $this->summarksavg;
+        $overallmarkdifference = $step->sumgrades - $stats->sumgradeaverage;
 
         $sortedmarkdifference = array_shift($stats->markarray) - $stats->markaverage;
         $sortedothermarkdifference = array_shift($stats->othermarksarray) -
