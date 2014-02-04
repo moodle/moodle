@@ -1503,7 +1503,7 @@ function install_core($version, $verbose) {
  * @return void, may throw exception
  */
 function upgrade_core($version, $verbose) {
-    global $CFG;
+    global $CFG, $SITE, $DB, $COURSE;
 
     raise_memory_limit(MEMORY_EXTRA);
 
@@ -1533,6 +1533,10 @@ function upgrade_core($version, $verbose) {
             // store version if not already there
             upgrade_main_savepoint($result, $version, false);
         }
+
+        // In case structure of 'course' table has been changed and we forgot to update $SITE, re-read it from db.
+        $SITE = $DB->get_record('course', array('id' => $SITE->id));
+        $COURSE = clone($SITE);
 
         // perform all other component upgrade routines
         update_capabilities('moodle');
