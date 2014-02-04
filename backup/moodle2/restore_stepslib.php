@@ -3564,7 +3564,7 @@ class restore_create_question_files extends restore_execution_step {
 
         // Track progress, as this task can take a long time.
         $progress = $this->task->get_progress();
-        $progress->start_progress($this->get_name(), core_backup_progress::INDETERMINATE);
+        $progress->start_progress($this->get_name(), \core\progress\base::INDETERMINATE);
 
         // Let's process only created questions
         $questionsrs = $DB->get_recordset_sql("SELECT bi.itemid, bi.newitemid, bi.parentitemid, q.qtype

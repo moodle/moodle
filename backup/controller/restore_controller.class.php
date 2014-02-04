@@ -70,10 +70,10 @@ class restore_controller extends base_controller {
      * @param int $mode backup::MODE_[ GENERAL | HUB | IMPORT | SAMESITE ]
      * @param int $userid
      * @param int $target backup::TARGET_[ NEW_COURSE | CURRENT_ADDING | CURRENT_DELETING | EXISTING_ADDING | EXISTING_DELETING ]
-     * @param core_backup_progress $progress Optional progress monitor
+     * @param \core\progress\base $progress Optional progress monitor
      */
     public function __construct($tempdir, $courseid, $interactive, $mode, $userid, $target,
-            core_backup_progress $progress = null) {
+            \core\progress\base $progress = null) {
         $this->tempdir = $tempdir;
         $this->courseid = $courseid;
         $this->interactive = $interactive;
@@ -111,7 +111,7 @@ class restore_controller extends base_controller {
         if ($progress) {
             $this->progress = $progress;
         } else {
-            $this->progress = new core_backup_null_progress();
+            $this->progress = new \core\progress\null();
         }
         $this->progress->start_progress('Constructing restore_controller');
 

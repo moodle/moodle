@@ -51,7 +51,7 @@ class restore_ui extends base_ui {
     protected $stage = null;
 
     /**
-     * @var core_backup_progress Progress indicator (where there is no controller)
+     * @var \core\progress\base Progress indicator (where there is no controller)
      */
     protected $progressreporter = null;
 
@@ -146,11 +146,11 @@ class restore_ui extends base_ui {
      * there are long-running tasks even though there is no restore controller
      * in use.
      *
-     * @return core_backup_null_progress
+     * @return \core\progress\null
      */
     public function get_progress_reporter() {
         if (!$this->progressreporter) {
-            $this->progressreporter = new core_backup_null_progress();
+            $this->progressreporter = new \core\progress\null();
         }
         return $this->progressreporter;
     }
@@ -158,9 +158,9 @@ class restore_ui extends base_ui {
     /**
      * Sets the progress reporter that will be returned by get_progress_reporter.
      *
-     * @param core_backup_progress $progressreporter Progress reporter
+     * @param c\core\progress\base$progressreporter Progress reporter
      */
-    public function set_progress_reporter(core_backup_progress $progressreporter) {
+    public function set_progress_reporter(\core\progress\base $progressreporter) {
         $this->progressreporter = $progressreporter;
     }
 

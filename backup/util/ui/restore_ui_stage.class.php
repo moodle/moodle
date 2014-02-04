@@ -94,7 +94,7 @@ abstract class restore_ui_stage extends base_ui_stage {
  */
 abstract class restore_ui_independent_stage {
     /**
-     * @var core_backup_progress Optional progress reporter
+     * @var \core\progress\base Optional progress reporter
      */
     private $progressreporter;
 
@@ -117,11 +117,11 @@ abstract class restore_ui_independent_stage {
      * in use. There is a similar function in restore_ui. but that class is not
      * used on some stages.
      *
-     * @return core_backup_null_progress
+     * @return \core\progress\null
      */
     public function get_progress_reporter() {
         if (!$this->progressreporter) {
-            $this->progressreporter = new core_backup_null_progress();
+            $this->progressreporter = new \core\progress\null();
         }
         return $this->progressreporter;
     }
@@ -129,9 +129,9 @@ abstract class restore_ui_independent_stage {
     /**
      * Sets the progress reporter that will be returned by get_progress_reporter.
      *
-     * @param core_backup_progress $progressreporter Progress reporter
+     * @param \core\progress\base $progressreporter Progress reporter
      */
-    public function set_progress_reporter(core_backup_progress $progressreporter) {
+    public function set_progress_reporter(\core\progress\base $progressreporter) {
         $this->progressreporter = $progressreporter;
     }
 
@@ -272,13 +272,13 @@ class restore_ui_stage_confirm extends restore_ui_independent_stage implements f
         // Start tracking progress if necessary.
         if (!$this->startedprogress) {
             $reporter->start_progress('extract_file_to_dir',
-                    ($max == file_progress::INDETERMINATE) ? core_backup_progress::INDETERMINATE : $max);
+                    ($max == file_progress::INDETERMINATE) ? \core\progress\base::INDETERMINATE : $max);
             $this->startedprogress = true;
         }
 
         // Pass progress through to whatever handles it.
         $reporter->progress(
-                ($progress == file_progress::INDETERMINATE) ? core_backup_progress::INDETERMINATE : $progress);
+                ($progress == file_progress::INDETERMINATE) ? \core\progress\base::INDETERMINATE : $progress);
     }
 
     /**

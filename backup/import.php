@@ -95,7 +95,7 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     echo $renderer->progress_bar($backup->get_progress_bar());
 
     // Start the progress display - we split into 2 chunks for backup and restore.
-    $progress = new core_backup_display_progress();
+    $progress = new \core\progress\display();
     $progress->start_progress('', 2);
     $backup->get_controller()->set_progress($progress);
 

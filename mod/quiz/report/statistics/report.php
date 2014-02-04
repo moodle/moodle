@@ -46,11 +46,16 @@ class quiz_statistics_report extends quiz_default_report {
     /** @var quiz_statistics_table instance of table class used for main questions stats table. */
     protected $table;
 
+    /** @var \core\progress\base|null $progress Handles progress reporting or not. */
+    protected $progress = null;
+
     /**
      * Display the report.
      */
     public function display($quiz, $cm, $course) {
-        global $CFG, $DB, $OUTPUT, $PAGE;
+        global $OUTPUT;
+
+        raise_memory_limit(MEMORY_HUGE);
 
         $this->context = context_module::instance($cm->id);
 
@@ -130,13 +135,19 @@ class quiz_statistics_report extends quiz_default_report {
                 get_string('quizstructureanalysis', 'quiz_statistics'));
         $questions = $this->load_and_initialise_questions_for_calculations($quiz);
 
+        // Print the page header stuff (if not downloading.
+        if (!$this->table->is_downloading()) {
+            $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
+        }
+
         if (!$nostudentsingroup) {
             // Get the data to be displayed.
+            $progress = $this->get_progress_trace_instance();
             list($quizstats, $questionstats, $subquestionstats) =
-                $this->get_quiz_and_questions_stats($quiz, $whichattempts, $groupstudents, $questions);
+                $this->get_all_stats_and_analysis($quiz, $whichattempts, $groupstudents, $questions, $progress);
         } else {
             // Or create empty stats containers.
-            $quizstats = new quiz_statistics_calculated($whichattempts);
+            $quizstats = new \quiz_statistics\calculated($whichattempts);
             $questionstats = array();
             $subquestionstats = array();
         }
@@ -146,9 +157,8 @@ class quiz_statistics_report extends quiz_default_report {
             $this->table->statistics_setup($quiz, $cm->id, $reporturl, $quizstats->s());
         }
 
-        // Print the page header stuff (if not downloading.
+        // Print the rest of the page header stuff (if not downloading.
         if (!$this->table->is_downloading()) {
-            $this->print_header_and_tabs($cm, $course, $quiz, 'statistics');
 
             if (groups_get_activity_groupmode($cm)) {
                 groups_print_activity_menu($cm, $reporturl->out());
@@ -488,36 +498,46 @@ class quiz_statistics_report extends quiz_default_report {
      * Get the quiz and question statistics, either by loading the cached results,
      * or by recomputing them.
      *
-     * @param object $quiz the quiz settings.
-     * @param string $whichattempts which attempts to use, represented internally as one of the constants as used in
+     * @param object $quiz               the quiz settings.
+     * @param string $whichattempts      which attempts to use, represented internally as one of the constants as used in
      *                                   $quiz->grademethod ie.
      *                                   QUIZ_GRADEAVERAGE, QUIZ_GRADEHIGHEST, QUIZ_ATTEMPTLAST or QUIZ_ATTEMPTFIRST
      *                                   we calculate stats based on which attempts would affect the grade for each student.
-     * @param array $groupstudents students in this group.
-     * @param array $questions full question data.
+     * @param array  $groupstudents      students in this group.
+     * @param array  $questions          full question data.
      * @return array with 4 elements:
      *     - $quizstats The statistics for overall attempt scores.
      *     - $questionstats array of \core_question\statistics\questions\calculated objects keyed by slot.
      *     - $subquestionstats array of \core_question\statistics\questions\calculated_for_subquestion objects keyed by question id.
      */
-    public function get_quiz_and_questions_stats($quiz, $whichattempts, $groupstudents, $questions) {
+    public function get_all_stats_and_analysis($quiz, $whichattempts, $groupstudents, $questions, $progress = null) {
+
+        if ($progress === null) {
+            $progress = new \core\progress\null();
+        }
 
         $qubaids = quiz_statistics_qubaids_condition($quiz->id, $groupstudents, $whichattempts);
 
-        $qcalc = new \core_question\statistics\questions\calculator($questions);
+        $qcalc = new \core_question\statistics\questions\calculator($questions, $progress);
 
-        $quizcalc = new quiz_statistics_calculator();
+        $quizcalc = new \quiz_statistics\calculator($progress);
 
         if ($quizcalc->get_last_calculated_time($qubaids) === false) {
+
+            $progress->start_progress('', 3);
+
             // Recalculate now.
             list($questionstats, $subquestionstats) = $qcalc->calculate($qubaids);
+            $progress->progress(1);
 
             $quizstats = $quizcalc->calculate($quiz->id, $whichattempts, $groupstudents, count($questions),
                                               $qcalc->get_sum_of_mark_variance());
-
+            $progress->progress(2);
             if ($quizstats->s()) {
-                $this->analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestionstats);
+                $this->analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestionstats, $progress);
             }
+            $progress->progress(3);
+            $progress->end_progress();
         } else {
             $quizstats = $quizcalc->get_cached($qubaids);
             list($questionstats, $subquestionstats) = $qcalc->get_cached($qubaids);
@@ -526,10 +546,41 @@ class quiz_statistics_report extends quiz_default_report {
         return array($quizstats, $questionstats, $subquestionstats);
     }
 
-    protected function analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestionstats) {
+    /**
+     * Appropriate instance depending if we want html output for the user or not.
+     *
+     * @return \core\progress\base child of \core\progress\base to handle the display (or not) of task progress.
+     */
+    protected function get_progress_trace_instance() {
+        if ($this->progress === null) {
+            if (!$this->table->is_downloading()) {
+                $this->progress =  new \core\progress\display_if_slow(get_string('calculatingallstats', 'quiz_statistics'));
+                $this->progress->set_display_names();
+            } else {
+                $this->progress = new \core\progress\null();
+            }
+        }
+        return $this->progress;
+    }
+
+    protected function analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestionstats,
+                                                                            $progress = null) {
+
+        if ($progress === null) {
+            $progress = new \core\progress\null();
+        }
+
+        // Starting response analysis tasks.
+        $progress->start_progress('', count($questions) + count($subquestionstats));
+
+        // Starting response analysis of main questions.
+        $progress->start_progress('', count($questions), count($questions));
 
         $done = array();
+        $donecount = 1;
         foreach ($questions as $question) {
+            $progress->progress($donecount);
+            $donecount++;
             if (!question_bank::get_qtype($question->qtype, false)->can_analyse_responses()) {
                 continue;
             }
@@ -538,8 +589,15 @@ class quiz_statistics_report extends quiz_default_report {
             $responesstats = new \core_question\statistics\responses\analyser($question);
             $responesstats->calculate($qubaids);
         }
+        $progress->end_progress();
 
+        // Starting response analysis of sub-questions.
+        $countsubquestions = count($subquestionstats);
+        $progress->start_progress('', $countsubquestions, $countsubquestions);
+        $donecount = 1;
         foreach ($subquestionstats as $subquestionstat) {
+            $progress->progress($donecount);
+            $donecount++;
             if (!question_bank::get_qtype($subquestionstat->question->qtype, false)->can_analyse_responses() ||
                     isset($done[$subquestionstat->question->id])) {
                 continue;
@@ -549,6 +607,11 @@ class quiz_statistics_report extends quiz_default_report {
             $responesstats = new \core_question\statistics\responses\analyser($subquestionstat->question);
             $responesstats->calculate($qubaids);
         }
+        // Finished sub-question tasks.
+        $progress->end_progress();
+
+        // Finished all response analysis tasks.
+        $progress->end_progress();
     }
 
     /**

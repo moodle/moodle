@@ -185,7 +185,7 @@ abstract class base_plan implements checksumable, executable {
      * Gets the progress reporter, which can be used to report progress within
      * the backup or restore process.
      *
-     * @return core_backup_progress Progress reporting object
+     * @return \core\progress\base Progress reporting object
      */
     public abstract function get_progress();
 

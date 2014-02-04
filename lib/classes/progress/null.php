@@ -14,14 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\progress;
+
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Progress handler that ignores progress entirely.
  *
- * @package core_backup
+ * @package core_progress
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_null_progress extends core_backup_progress {
+class null extends base {
     public function update_progress() {
         // Do nothing.
     }

@@ -24,7 +24,7 @@
  */
 abstract class base_controller extends backup implements loggable {
     /**
-     * @var core_backup_progress Progress reporting object.
+     * @var \core\progress\base Progress reporting object.
      */
     protected $progress;
 
@@ -37,7 +37,7 @@ abstract class base_controller extends backup implements loggable {
      * Gets the progress reporter, which can be used to report progress within
      * the backup or restore process.
      *
-     * @return core_backup_progress Progress reporting object
+     * @return \core\progress\base Progress reporting object
      */
     public function get_progress() {
         return $this->progress;
@@ -46,9 +46,9 @@ abstract class base_controller extends backup implements loggable {
     /**
      * Sets the progress reporter.
      *
-     * @param core_backup_progress $progress Progress reporting object
+     * @param \core\progress\base $progress Progress reporting object
      */
-    public function set_progress(core_backup_progress $progress) {
+    public function set_progress(\core\progress\base $progress) {
         $this->progress = $progress;
     }
 

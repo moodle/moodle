@@ -14,23 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\progress;
+
+defined('MOODLE_INTERNAL') || die();
+
 /**
  * Progress handler that uses a standard Moodle progress bar to display
  * progress. The Moodle progress bar cannot show indeterminate progress,
  * so we do extra output in addition to the bar.
  *
- * @package core_backup
+ * @package core_progress
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_backup_display_progress extends core_backup_progress {
+class display extends base {
     /**
      * @var int Number of wibble states (state0...stateN-1 classes in CSS)
      */
     const WIBBLE_STATES = 13;
 
     /**
-     * @var progress_bar Current progress bar.
+     * @var \progress_bar Current progress bar.
      */
     private $bar;
 
@@ -54,8 +58,8 @@ class core_backup_display_progress extends core_backup_progress {
     }
 
     /**
-     * By default, the progress section names do not display because (in backup)
-     * these are usually untranslated and incomprehensible. To make them
+     * By default, the progress section names do not display because
+     * these will probably be untranslated and incomprehensible. To make them
      * display, call this method.
      *
      * @param bool $displaynames True to display names
@@ -69,15 +73,15 @@ class core_backup_display_progress extends core_backup_progress {
      *
      * Called in constructor and in update_progress if required.
      *
-     * @throws coding_exception If already started
+     * @throws \coding_exception If already started
      */
     public function start_html() {
         if ($this->bar) {
-            throw new coding_exception('Already started');
+            throw new \coding_exception('Already started');
         }
-        $this->bar = new progress_bar();
+        $this->bar = new \progress_bar();
         $this->bar->create();
-        echo html_writer::start_div('wibbler');
+        echo \html_writer::start_div('wibbler');
     }
 
     /**
@@ -92,13 +96,13 @@ class core_backup_display_progress extends core_backup_progress {
         $this->bar = null;
 
         // End wibbler div.
-        echo html_writer::end_div();
+        echo \html_writer::end_div();
     }
 
     /**
      * When progress is updated, updates the bar.
      *
-     * @see core_backup_progress::update_progress()
+     * @see \core\progress\base::update_progress()
      */
     public function update_progress() {
         // If finished...
@@ -114,7 +118,7 @@ class core_backup_display_progress extends core_backup_progress {
             // (up to once per second).
             if (time() != $this->lastwibble) {
                 $this->lastwibble = time();
-                echo html_writer::div('', 'wibble state' . $this->currentstate);
+                echo \html_writer::div('', 'wibble state' . $this->currentstate);
 
                 // Go on to next colour.
                 $this->currentstate += $this->direction;

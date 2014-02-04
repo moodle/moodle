@@ -81,13 +81,13 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
         $groupstudents = array();
         $questions = $this->report->load_and_initialise_questions_for_calculations($this->quiz);
         list($quizstats, $questionstats, $subquestionstats) =
-                        $this->report->get_quiz_and_questions_stats($this->quiz, $whichattempts, $groupstudents, $questions);
+                        $this->report->get_all_stats_and_analysis($this->quiz, $whichattempts, $groupstudents, $questions);
 
         $qubaids = quiz_statistics_qubaids_condition($this->quiz->id, $groupstudents, $whichattempts);
 
         // We will create some quiz and question stat calculator instances and some response analyser instances, just in order
         // to check the time of the
-        $quizcalc = new quiz_statistics_calculator();
+        $quizcalc = new \quiz_statistics\calculator();
         // Should not be a delay of more than one second between the calculation of stats above and here.
         $this->assertTimeCurrent($quizcalc->get_last_calculated_time($qubaids));
 
