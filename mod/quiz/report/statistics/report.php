@@ -38,6 +38,8 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/statisticslib.php');
  */
 class quiz_statistics_report extends quiz_default_report {
 
+    const SUBQ_AND_VARIANT_ROW_LIMIT = 10;
+
     /**
      * @var context_module
      */
@@ -413,37 +415,92 @@ class quiz_statistics_report extends quiz_default_report {
             // Output the data for these question statistics.
             $this->table->add_data_keyed($this->table->format_row($questionstat));
             if (count($questionstat->variantstats) > 1) {
-                ksort($questionstat->variantstats);
-                foreach ($questionstat->variantstats as $variantstat) {
-                    $this->table->add_data_keyed($this->table->format_row($variantstat));
+                if (count($questionstat->variantstats) > static::SUBQ_AND_VARIANT_ROW_LIMIT) {
+                    $statstoadd = $this->find_min_median_and_max_facility_stats_objects($questionstat->variantstats);
+                } else {
+                    ksort($questionstat->variantstats);
+                    $statstoadd = $questionstat->variantstats;
                 }
+                $this->add_array_of_rows_to_table($statstoadd);
             }
 
             if (empty($questionstat->subquestions)) {
                 continue;
             }
 
-            // And its subquestions, if it has any.
+            // And its sub-questions, if it has any.
             $subitemstodisplay = explode(',', $questionstat->subquestions);
+
+            // We need to get all variants out of sub-questions to count them and possibly find min, median and max.
             $displayorder = 1;
+            $subqvariants = array();
             foreach ($subitemstodisplay as $subitemid) {
-                $subquestionstats[$subitemid]->maxmark = $questionstat->maxmark;
-                $subquestionstats[$subitemid]->subqdisplayorder = $displayorder;
-                $subquestionstats[$subitemid]->question->number = $questionstat->question->number;
-                $this->table->add_data_keyed($this->table->format_row($subquestionstats[$subitemid]));
                 if (count($subquestionstats[$subitemid]->variantstats) > 1) {
                     ksort($subquestionstats[$subitemid]->variantstats);
                     foreach ($subquestionstats[$subitemid]->variantstats as $variantstat) {
                         $variantstat->subqdisplayorder = $displayorder;
                         $variantstat->question->number = $questionstat->question->number;
-                        $this->table->add_data_keyed($this->table->format_row($variantstat));
+                        $subqvariants[] = $variantstat;
                     }
                 }
                 $displayorder++;
             }
+            if (count($subqvariants) > static::SUBQ_AND_VARIANT_ROW_LIMIT) {
+                // Too many variants from randomly selected questions.
+                $toadd = $this->find_min_median_and_max_facility_stats_objects($subqvariants);
+                $this->add_array_of_rows_to_table($toadd);
+            } else if (count($subitemstodisplay) > static::SUBQ_AND_VARIANT_ROW_LIMIT) {
+                // Too many randomly selected questions.
+                $toadd = $this->find_min_median_and_max_facility_stats_objects($subitemstodisplay);
+                $this->add_array_of_rows_to_table($toadd);
+            } else {
+                foreach ($subitemstodisplay as $subitemid) {
+                    $subquestionstats[$subitemid]->maxmark = $questionstat->maxmark;
+                    $subquestionstats[$subitemid]->subqdisplayorder = $displayorder;
+                    $subquestionstats[$subitemid]->question->number = $questionstat->question->number;
+                    $this->table->add_data_keyed($this->table->format_row($subquestionstats[$subitemid]));
+                    if (count($subquestionstats[$subitemid]->variantstats) > 1) {
+                        ksort($subquestionstats[$subitemid]->variantstats);
+                        foreach ($subquestionstats[$subitemid]->variantstats as $variantstat) {
+                            $this->table->add_data_keyed($this->table->format_row($variantstat));
+                        }
+                    }
+                }
+            }
+
         }
 
         $this->table->finish_output(!$this->table->is_downloading());
+    }
+
+    protected function find_min_median_and_max_facility_stats_objects($questionstats) {
+        $facilities = array();
+        foreach ($questionstats as $key => $questionstat) {
+            $facilities[$key] = (float)$questionstat->facility;
+        }
+        asort($facilities);
+        $facilitykeys = array_keys($facilities);
+        $keyformin = $facilitykeys[0];
+        $keyformedian = $facilitykeys[(int)(round(count($facilitykeys) / 2)-1)];
+        $keyformax = $facilitykeys[count($facilitykeys) - 1];
+        $toreturn = array();
+        foreach (array($keyformin => 'minimumfacility',
+                       $keyformedian => 'medianfacility',
+                       $keyformax => 'maximumfacility') as $key => $stringid) {
+            $questionstats[$key]->minmedianmaxnotice = get_string($stringid, 'quiz_statistics');
+            $toreturn[] = $questionstats[$key];
+        }
+        return $toreturn;
+    }
+
+
+    /**
+     * @param \core_question\statistics\questions\calculator $statstoadd
+     */
+    protected function add_array_of_rows_to_table($statstoadd) {
+        foreach ($statstoadd as $stattoadd) {
+            $this->table->add_data_keyed($this->table->format_row($stattoadd));
+        }
     }
 
     /**

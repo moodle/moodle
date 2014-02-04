@@ -138,7 +138,7 @@ class quiz_statistics_table extends flexible_table {
     protected function col_number($questionstat) {
         $number = $questionstat->question->number;
 
-        if ($questionstat->subquestion) {
+        if (isset($questionstat->subqdisplayorder)) {
             $number = $number . '.'.$questionstat->subqdisplayorder;
         }
 
@@ -211,6 +211,10 @@ class quiz_statistics_table extends flexible_table {
 
         if ($this->is_dubious_question($questionstat)) {
             $name = html_writer::tag('div', $name, array('class' => 'dubious'));
+        }
+
+        if (!empty($questionstat->minmedianmaxnotice)) {
+            $name = $questionstat->minmedianmaxnotice . '<br />' . $name;
         }
 
         return $name;
