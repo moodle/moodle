@@ -117,7 +117,6 @@ Feature: In an assignment, teachers grade multiple students on one page
     And I click on "Hide Submission comments" "link"
     And I click on "Hide Last modified (grade)" "link"
     And I click on "Hide Feedback comments" "link"
-    And I click on "Hide Annotate PDF" "link"
     And I click on "Hide Final grade" "link"
     And I click on "Hide Outcomes" "link"
     And I press "Save all quick grading changes"
