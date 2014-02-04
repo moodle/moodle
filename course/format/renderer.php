@@ -556,7 +556,7 @@ abstract class format_section_renderer_base extends plugin_renderer_base {
         $o.= html_writer::tag('div', '', array('class' => 'left side'));
         $o.= html_writer::tag('div', '', array('class' => 'right side'));
         $o.= html_writer::start_tag('div', array('class' => 'content'));
-        $o.= get_string('notavailable');
+        $o.= html_writer::tag('div', get_string('notavailable').' '.get_section_name(optional_param('id', 0, PARAM_INT), $sectionno)    , array('class' => 'availabilityinfo'));
         $o.= html_writer::end_tag('div');
         $o.= html_writer::end_tag('li');
         return $o;
