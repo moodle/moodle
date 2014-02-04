@@ -99,6 +99,7 @@ class calculated {
      */
     public $randomguessscore = null;
 
+
     // End of fields in db.
 
     protected $fieldsindb = array('questionid', 'slot', 'subquestion', 's', 'effectiveweight', 'negcovar', 'discriminationindex',
@@ -109,6 +110,11 @@ class calculated {
     public $totalmarks = 0;
 
     public $totalothermarks = 0;
+
+    /**
+     * @var float The total of marks achieved for all positions in all attempts where this item was seen.
+     */
+    public $totalsummarks = 0;
 
     public $markvariancesum = 0;
 
@@ -129,6 +135,11 @@ class calculated {
     public $markaverage;
 
     public $othermarkaverage;
+
+    /**
+     * @var float The average for all attempts, of the sum of the marks for all positions in which this item appeared.
+     */
+    public $summarksaverage;
 
     public $markvariance;
     public $othermarkvariance;
