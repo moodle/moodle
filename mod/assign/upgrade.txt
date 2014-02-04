@@ -3,6 +3,12 @@ This files describes API changes in the assign code.
 * Added setting sendstudentnotifications to assign DB table with admin defaults. This sets the default value for the
   "Notify students" option on the grading forms. This setting can be retrieved via webservices.
 
+=== 2.7 ===
+
+* Web service function mod_assign_save_grade has an additional optional parameter $advancedgradingdata which allows
+  advanced grading data to be used.
+* A new web service function mod_assign_save_grades has been added which allows multiple grades to be processed.
+
 === 2.6.1 ===
 
 * format_text() is no longer used for formating assignment content to be used in events (assign_submission_onlinetext::save()) or
