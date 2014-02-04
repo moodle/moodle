@@ -63,15 +63,21 @@ if ($version == 'moodle' && count($parts) >= 3) {
 } else if ($version == 'gallery' && count($parts) >= 3) {
     list($revision, $module, , , , $image) = $parts;
     $imagepath = "$CFG->dirroot/lib/yuilib/gallery/$module/assets/skins/sam/$image";
-} else if (count($parts) == 1 && ($version == $CFG->yui3version || $version == $CFG->yui2version)) {
-    list($image) = $parts;
-    if ($version == $CFG->yui3version) {
-        $imagepath = "$CFG->dirroot/lib/yuilib/$CFG->yui3version/assets/skins/sam/$image";
-    } else  {
-        $imagepath = "$CFG->dirroot/lib/yuilib/2in3/$CFG->yui2version/build/assets/skins/sam/$image";
-    }
 } else {
-    yui_image_not_found();
+    // Allow support for revisions on YUI between official releases.
+    // We can just discard the subrevision since it is only used to invalidate the browser cache.
+    $yuipatchedversion = explode('_', $version);
+    $yuiversion = $yuipatchedversion[0];
+    if (count($parts) == 1 && ($yuiversion == $CFG->yui3version || $yuiversion == $CFG->yui2version)) {
+        list($image) = $parts;
+        if ($yuiversion == $CFG->yui3version) {
+            $imagepath = "$CFG->dirroot/lib/yuilib/$CFG->yui3version/assets/skins/sam/$image";
+        } else  {
+            $imagepath = "$CFG->dirroot/lib/yuilib/2in3/$CFG->yui2version/build/assets/skins/sam/$image";
+        }
+    } else {
+        yui_image_not_found();
+    }
 }
 
 if (!file_exists($imagepath)) {

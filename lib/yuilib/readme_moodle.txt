@@ -12,6 +12,9 @@ Description of import of various YUI libraries into Moodle:
 * update lib/thrirdpartylibs.xml
 * verify our simpleyui rollup contents in /theme/yui_combo.php
 
+If you need to patch the YUI library between its official releases, you *must* read
+http://docs.moodle.org/dev/YUI/Patching.
+
 3/ YUI3 Gallery version gallery-2013.10.02-20-26:
 * selective copy of the "build" directory for the checked out tag of yui3-gallery.
   Unit test code coverage files (*-coverage.js) are removed but no other changes are made.

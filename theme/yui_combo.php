@@ -102,6 +102,11 @@ while (count($parts)) {
                 continue;
             }
 
+            // Allow support for revisions on YUI between official releases.
+            // We can just discard the subrevision since it is only used to invalidate the browser cache.
+            $yuipatchedversion = explode('_', $revision);
+            $yuiversion = $yuipatchedversion[0];
+
             $yuimodules = array(
                 // Include everything from original SimpleYUI,
                 // this list can be built using http://yuilibrary.com/yui/configurator/ by selecting all modules
@@ -193,14 +198,14 @@ while (count($parts)) {
             if ($type === 'js') {
                 $newparts = array();
                 foreach ($yuimodules as $module) {
-                    $newparts[] = $revision . '/' . $module . '/' . $module . $filesuffix;
+                    $newparts[] = $yuiversion . '/' . $module . '/' . $module . $filesuffix;
                 }
                 $newparts[] = 'yuiuseall/yuiuseall';
                 $parts = array_merge($newparts, $parts);
             } else {
                 $newparts = array();
                 foreach ($yuimodules as $module) {
-                    $candidate =  $revision . '/' . $module . '/assets/skins/sam/' . $module . '.css';
+                    $candidate =  $yuiversion . '/' . $module . '/assets/skins/sam/' . $module . '.css';
                     if (!file_exists("$CFG->libdir/yuilib/$candidate")) {
                         continue;
                     }
@@ -306,10 +311,17 @@ while (count($parts)) {
         $filecontent = "var Y = YUI().use('*');";
 
     } else {
-        if ($version != $CFG->yui3version) {
+        // Allow support for revisions on YUI between official releases.
+        // We can just discard the subrevision since it is only used to invalidate the browser cache.
+        $yuipatchedversion = explode('_', $version);
+        $yuiversion = $yuipatchedversion[0];
+        if ($yuiversion != $CFG->yui3version) {
             $content .= "\n// Wrong yui version $part!\n";
             continue;
         }
+        $newpart = explode('/', $part);
+        $newpart[0] = $yuiversion;
+        $part = implode('/', $newpart);
         $contentfile = "$CFG->libdir/yuilib/$part";
     }
     if (!file_exists($contentfile) or !is_file($contentfile)) {
