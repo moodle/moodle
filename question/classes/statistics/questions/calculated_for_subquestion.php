@@ -34,4 +34,9 @@ class calculated_for_subquestion extends calculated {
     public $differentweights = false;
 
     public $negcovar = 0;
+
+    /**
+     * @var int only set immediately before display in the table. The order of display in the table.
+     */
+    public $subqdisplayorder;
 }

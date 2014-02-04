@@ -148,6 +148,37 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
         foreach ($itemstats as $statname => $expected) {
             $this->assert_stat_equals($questionstats, $subquestionstats, 1, null, 'numerical', $statname, $expected);
         }
+
+
+
+        // These variant's stats are calculated in stats_for_variant_1.xls and stats_for_variant_8.xls
+        // The calculations in the spreadsheets are the same but applied just to the attempts where the variants appeared.
+
+        $statsforslot2variants = array(1 => array('s' => 6,
+                                                    'effectiveweight' => null,
+                                                    'discriminationindex' => -10.5999788,
+                                                    'discriminativeefficiency' => -14.28571429,
+                                                    'sd' => 0.5477225575,
+                                                    'facility' => 0.50,
+                                                    'maxmark' => 1,
+                                                    'variant' => 1,
+                                                    'slot' => 2,
+                                                    'subquestion' => false),
+                                      8 => array('s' => 5,
+                                                    'effectiveweight' => null,
+                                                    'discriminationindex' => -57.77466679,
+                                                    'discriminativeefficiency' => -71.05263241,
+                                                    'sd' => 0.547722558,
+                                                    'facility' => 0.40,
+                                                    'maxmark' => 1,
+                                                    'variant' => 8,
+                                                    'slot' => 2,
+                                                    'subquestion' => false));
+        foreach ($statsforslot2variants as $variant => $stats) {
+             foreach ($stats as $statname => $expected) {
+                 $this->assert_stat_equals($questionstats, $subquestionstats, 2, $variant, null, $statname, $expected);
+             }
+        }
     }
 
     /**

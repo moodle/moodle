@@ -66,6 +66,7 @@ $string['lastattemptsavg'] = 'Average grade of last attempts';
 $string['lastcalculated'] = 'Last calculated {$a->lastcalculated} ago there have been {$a->count} attempts since then.';
 $string['median'] = 'Median grade (for {$a})';
 $string['modelresponse'] = 'Model response';
+$string['nameforvariant'] = 'Variant {$a->variant} of {$a->name}';
 $string['negcovar'] = 'Negative covariance of grade with total attempt grade';
 $string['negcovar_help'] = 'This question\'s grade for this set of attempts on the quiz varies in an opposite way to the overall attempt grade. This means overall attempt grade tends to be below average when the grade for this question is above average and vice-versa.
 
