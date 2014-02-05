@@ -63,7 +63,7 @@ $completion->set_module_viewed($cm);
     $showscales = ($template->name != 'ciqname');
 
     $strsurvey = get_string("modulename", "survey");
-    $PAGE->set_title(format_string($survey->name));
+    $PAGE->set_title($survey->name);
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->heading($survey->name);

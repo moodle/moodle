@@ -154,8 +154,8 @@ if ($course->id == SITEID) {
 $PAGE->navbar->add(get_string('feedback:complete', 'feedback'));
 $urlparams = array('id'=>$cm->id, 'gopage'=>$gopage, 'courseid'=>$course->id);
 $PAGE->set_url('/mod/feedback/complete.php', $urlparams);
-$PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_title(format_string($feedback->name));
+$PAGE->set_heading($course->fullname);
+$PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
 
 //ishidden check.

@@ -143,7 +143,7 @@ if ($accessmanager->is_preflight_check_required($currentattemptid)) {
 
         // Form not submitted successfully, re-display it and stop.
         $PAGE->set_url($quizobj->start_attempt_url($page));
-        $PAGE->set_title(format_string($quizobj->get_quiz_name()));
+        $PAGE->set_title($quizobj->get_quiz_name());
         $accessmanager->setup_attempt_page($PAGE);
         if (empty($quizobj->get_quiz()->showblocks)) {
             $PAGE->blocks->show_only_fake_blocks();
