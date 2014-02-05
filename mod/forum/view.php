@@ -106,9 +106,9 @@
 
 /// Print header.
 
-    $PAGE->set_title(format_string($forum->name));
+    $PAGE->set_title($forum->name);
     $PAGE->add_body_class('forumtype-'.$forum->type);
-    $PAGE->set_heading(format_string($course->fullname));
+    $PAGE->set_heading($course->fullname);
 
     echo $OUTPUT->header();
 

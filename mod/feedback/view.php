@@ -122,8 +122,8 @@ if ($course->id == SITEID) {
     $PAGE->set_pagelayout('incourse');
 }
 $PAGE->set_url('/mod/feedback/view.php', array('id'=>$cm->id, 'do_show'=>'view'));
-$PAGE->set_title(format_string($feedback->name));
-$PAGE->set_heading(format_string($course->fullname));
+$PAGE->set_title($feedback->name);
+$PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 //ishidden check.

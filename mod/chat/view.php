@@ -61,7 +61,7 @@ $PAGE->set_context($context);
 
 // show some info for guests
 if (isguestuser()) {
-    $PAGE->set_title(format_string($chat->name));
+    $PAGE->set_title($chat->name);
     echo $OUTPUT->header();
     echo $OUTPUT->confirm('<p>'.get_string('noguests', 'chat').'</p>'.get_string('liketologin'),
             get_login_url(), $CFG->wwwroot.'/course/view.php?id='.$course->id);
