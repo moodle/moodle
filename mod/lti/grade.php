@@ -155,7 +155,7 @@ $table = str_replace('<!--table body-->', $rows, $html);
 
 $title = get_string('submissionsfor', 'lti', $lti->name);
 
-$PAGE->set_title(format_string($title , true));
+$PAGE->set_title($title);
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();

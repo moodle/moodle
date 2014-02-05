@@ -81,8 +81,8 @@ $context = context_module::instance($cm->id);
 if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
     $strdatabases = get_string("modulenameplural", "data");
 
-    $PAGE->set_title(format_string($data->name));
-    $PAGE->set_heading(format_string($course->fullname));
+    $PAGE->set_title($data->name);
+    $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
     notice(get_string("activityiscurrentlyhidden"));
 }

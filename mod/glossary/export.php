@@ -48,7 +48,7 @@ $strexportentries = get_string('exportentriestoxml', 'glossary');
 
 $PAGE->set_url('/mod/glossary/export.php', array('id'=>$cm->id));
 $PAGE->navbar->add($strexportentries);
-$PAGE->set_title(format_string($glossary->name));
+$PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
