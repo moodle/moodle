@@ -1637,6 +1637,7 @@ function course_delete_module($cmid) {
     require_once($CFG->libdir.'/gradelib.php');
     require_once($CFG->dirroot.'/blog/lib.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
+    require_once($CFG->dirroot . '/tag/lib.php');
 
     // Get the course module.
     if (!$cm = $DB->get_record('course_modules', array('id' => $cmid))) {
@@ -1703,8 +1704,8 @@ function course_delete_module($cmid) {
     $DB->delete_records('course_completion_criteria', array('moduleinstance' => $cm->id,
                                                             'criteriatype' => COMPLETION_CRITERIA_TYPE_ACTIVITY));
 
-    // Delete the tag instances.
-    $DB->delete_records('tag_instance', array('component' => 'mod_' . $modulename, 'contextid' => $modcontext->id));
+    // Delete all tag instances associated with the instance of this module.
+    tag_delete_instances('mod_' . $modulename, $modcontext->id);
 
     // Delete the context.
     context_helper::delete_instance(CONTEXT_MODULE, $cm->id);

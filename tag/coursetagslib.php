@@ -267,30 +267,7 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
  * @param    int      $courseid the course that the tag is associated with
  */
 function coursetag_delete_keyword($tagid, $userid, $courseid) {
-    global $DB;
-
-    $sql = "SELECT *
-              FROM {tag_instance}
-             WHERE tagid = :tagid
-               AND tiuserid = :userid
-               AND itemtype = 'course'
-               AND itemid = :courseid";
-    if ($DB->record_exists_sql($sql, array('tagid' => $tagid, 'userid' => $userid, 'courseid' => $courseid))) {
-        $sql = "tagid = :tagid
-                AND tiuserid = :userid
-                AND itemtype = 'course'
-                AND itemid = :courseid";
-        $DB->delete_records_select('tag_instance', $sql, array('tagid' => $tagid, 'userid' => $userid, 'courseid' => $courseid));
-        // If there are no other instances of the tag then consider deleting the tag as well.
-        if (!$DB->record_exists('tag_instance', array('tagid' => $tagid))) {
-            // If the tag is a personal tag then delete it - don't do official tags.
-            if ($tag = $DB->get_record('tag', array('id' => $tagid, 'tagtype' => 'default'))) {
-                tag_delete($tagid);
-            }
-        }
-    } else {
-        print_error("errordeleting", 'tag', '', $tagid);
-    }
+    tag_delete_instance('course', $courseid, $tagid, $userid);
 }
 
 /**
