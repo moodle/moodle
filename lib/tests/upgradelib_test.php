@@ -178,6 +178,9 @@ class core_upgradelib_testcase extends advanced_testcase {
         $folderrecord = $selectargs;
         $folderrecord['filepath'] = '/';
         $folderrecord['filename'] = '.';
+
+        // Get previous folder record.
+        $oldrecord = $DB->get_record('files', $folderrecord);
         $DB->delete_records('files', $folderrecord);
 
         // Verify the folder record has been removed.
@@ -193,6 +196,8 @@ class core_upgradelib_testcase extends advanced_testcase {
         $newareafilecount = $DB->count_records('files', $selectargs);
         $this->assertSame($newareafilecount, $areafilecount);
 
-        $this->assertTrue($DB->record_exists('files', $folderrecord));
+        $newrecord = $DB->get_record('files', $folderrecord, '*', MUST_EXIST);
+        // Verify the hash is correctly created.
+        $this->assertSame($oldrecord->pathnamehash, $newrecord->pathnamehash);
     }
 }

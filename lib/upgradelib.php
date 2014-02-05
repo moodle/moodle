@@ -2107,13 +2107,13 @@ function upgrade_fix_missing_root_folders() {
     $rs = $DB->get_recordset_sql($sql);
     $defaults = array('filepath' => '/',
         'filename' => '.',
-        'userid' => $USER->id,
+        'userid' => 0, // Don't rely on any particular user for these system records.
         'filesize' => 0,
         'timecreated' => time(),
         'timemodified' => time(),
         'contenthash' => sha1(''));
     foreach ($rs as $r) {
-        $pathhash = sha1("/$r->contextid/$r->component/$r->filearea/$r->itemid".'/.');
+        $pathhash = sha1("/$r->contextid/$r->component/$r->filearea/$r->itemid/.");
         $DB->insert_record('files', (array)$r + $defaults +
             array('pathnamehash' => $pathhash));
     }
