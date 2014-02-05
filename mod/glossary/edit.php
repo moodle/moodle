@@ -182,7 +182,7 @@ if (!empty($id)) {
     $PAGE->navbar->add(get_string('edit'));
 }
 
-$PAGE->set_title(format_string($glossary->name));
+$PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading(format_string($glossary->name), 2);
