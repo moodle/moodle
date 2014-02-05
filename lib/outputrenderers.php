@@ -3267,6 +3267,9 @@ EOD;
             } else {
                 $additionalclasses[] = 'empty-region-'.$region;
             }
+            if ($this->page->blocks->region_completely_docked($region, $this)) {
+                $additionalclasses[] = 'docked-region-'.$region;
+            }
         }
         foreach ($this->page->layout_options as $option => $value) {
             if ($value) {
