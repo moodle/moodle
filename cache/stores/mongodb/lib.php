@@ -175,7 +175,7 @@ class cachestore_mongodb extends cache_store implements cache_is_configurable {
      * @return int
      */
     public static function get_supported_modes(array $configuration = array()) {
-        return self::MODE_APPLICATION + self::MODE_SESSION;
+        return self::MODE_APPLICATION;
     }
 
     /**
