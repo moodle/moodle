@@ -45,7 +45,7 @@
         }
     }
 
-    $PAGE->set_title(format_string($choice->name));
+    $PAGE->set_title($choice->name);
     $PAGE->set_heading($course->fullname);
 
     // Mark viewed by user (if required)

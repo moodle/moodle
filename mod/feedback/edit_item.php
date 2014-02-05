@@ -122,8 +122,8 @@ if ($item->id) {
 } else {
     $PAGE->navbar->add(get_string('add_item', 'feedback'));
 }
-$PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_title(format_string($feedback->name));
+$PAGE->set_heading($course->fullname);
+$PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
 /// print the tabs
 require('tabs.php');

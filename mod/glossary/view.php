@@ -240,7 +240,7 @@ $strsearch = get_string("search");
 $strwaitingapproval = get_string('waitingapproval', 'glossary');
 
 /// If we are in approval mode, prit special header
-$PAGE->set_title(format_string($glossary->name));
+$PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
 $url = new moodle_url('/mod/glossary/view.php', array('id'=>$cm->id));
 if (isset($mode)) {

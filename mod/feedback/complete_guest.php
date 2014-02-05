@@ -162,8 +162,8 @@ $PAGE->set_pagelayout('incourse');
 $urlparams = array('id'=>$course->id);
 $PAGE->navbar->add($strfeedbacks, new moodle_url('/mod/feedback/index.php', $urlparams));
 $PAGE->navbar->add(format_string($feedback->name));
-$PAGE->set_heading(format_string($course->fullname));
-$PAGE->set_title(format_string($feedback->name));
+$PAGE->set_heading($course->fullname);
+$PAGE->set_title($feedback->name);
 echo $OUTPUT->header();
 
 //ishidden check.

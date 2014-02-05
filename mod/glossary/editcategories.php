@@ -75,7 +75,7 @@ if (!empty($action)) {
     $navaction = get_string($action). " " . textlib::strtolower(get_string("category","glossary"));
     $PAGE->navbar->add($navaction);
 }
-$PAGE->set_title(format_string($glossary->name));
+$PAGE->set_title($glossary->name);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
