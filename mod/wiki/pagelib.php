@@ -119,7 +119,7 @@ abstract class page_wiki {
     function print_header() {
         global $OUTPUT, $PAGE, $CFG, $USER, $SESSION;
 
-        $PAGE->set_heading(format_string($PAGE->course->fullname));
+        $PAGE->set_heading($PAGE->course->fullname);
 
         $this->set_url();
 
