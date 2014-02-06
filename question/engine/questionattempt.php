@@ -1285,6 +1285,27 @@ class question_attempt {
     }
 
     /**
+     * This is used by the manual grading code, particularly in association with
+     * validation. If there is a comment submitted in the request, then use that,
+     * otherwise use the latest comment for this question.
+     * @return number the current mark for this question.
+     * {@link get_fraction()} * {@link get_max_mark()}.
+     */
+    public function get_current_manual_comment() {
+        $comment = $this->get_submitted_var($this->get_behaviour_field_name('comment'), PARAM_RAW);
+        if (is_null($comment)) {
+            return $this->get_manual_comment();
+        } else {
+            $commentformat = $this->get_submitted_var(
+                    $this->get_behaviour_field_name('commentformat'), PARAM_INT);
+            if ($commentformat === null) {
+                $commentformat = FORMAT_HTML;
+            }
+            return array($comment, $commentformat);
+        }
+    }
+
+    /**
      * Break down a student response by sub part and classification.
      * See also {@link question_type::get_possible_responses()}
      * Used for response analysis.

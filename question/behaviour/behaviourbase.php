@@ -192,7 +192,7 @@ abstract class question_behaviour {
             return array();
         }
 
-        $vars = array('comment' => PARAM_RAW);
+        $vars = array('comment' => PARAM_RAW, 'commentformat' => PARAM_INT);
         if ($this->qa->get_max_mark()) {
             $vars['mark'] = question_attempt::PARAM_MARK;
             $vars['maxmark'] = PARAM_FLOAT;
