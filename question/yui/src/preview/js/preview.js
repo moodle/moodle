@@ -22,18 +22,22 @@
  */
 
 M.question = M.question || {};
+M.question.preview = M.question.preview || {};
 
 /**
  * Initialise JavaScript-specific parts of the question preview popup.
  */
-M.question.preview.init = function(Y) {
+M.question.preview.init = function() {
     M.core_question_engine.init_form(Y, '#responseform');
 
     // Add a close button to the window.
-    var closebutton = Y.Node.create('<input type="button" />');
-    closebutton.set('value', M.str.question.closepreview);
+    var closebutton = Y.Node.create('<input type="button" />')
+            .set('value', M.util.get_string('closepreview', 'question'));
+
+    closebutton.on('click', function() {
+        window.close();
+    });
     Y.one('#previewcontrols').append(closebutton);
-    Y.on('click', function() { window.close(); }, closebutton);
 
     // Stop a question form being submitted more than once.
     Y.on('submit', M.core_question_engine.prevent_repeat_submission, '#mform1', null, Y);
