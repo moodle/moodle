@@ -74,6 +74,7 @@ Feature: Rubrics can be created and edited
     And I follow "Course 1"
     And I follow "Test assignment 1 name"
     And I should see "22.62" in the ".feedback" "css_element"
+    And I should see "Rubric test description" in the ".feedback" "css_element"
     And I should see "In general... work harder..."
     And the level with "10" points is selected for the rubric criterion "Criterion 2"
     And the level with "20" points is selected for the rubric criterion "Criterion 1"
@@ -129,6 +130,28 @@ Feature: Rubrics can be created and edited
     And I follow "Test assignment 1 name"
     And I should see "12.16" in the ".feedback" "css_element"
     And the level with "20" points is not selected for the rubric criterion "Criterion 1"
+    # Hide all rubric info for students
+    And I log out
+    And I log in as "teacher1"
+    And I follow "Course 1"
+    And I go to "Test assignment 1 name" advanced grading definition page
+    And I uncheck "Allow users to preview rubric used in the module (otherwise rubric will only become visible after grading)"
+    And I uncheck "Display rubric description during evaluation"
+    And I uncheck "Display rubric description to those being graded"
+    And I uncheck "Display points for each level during evaluation"
+    And I uncheck "Display points for each level to those being graded"
+    And I press "Save"
+    And I select "Do not mark for regrade" from "menurubricregrade"
+    And I press "Continue"
+    And I log out
+    # Students should not see anything.
+    And I log in as "student1"
+    And I follow "Course 1"
+    And I follow "Test assignment 1 name"
+    And I should not see "Criterion 1" in the ".submissionstatustable" "css_element"
+    And I should not see "Criterion 2" in the ".submissionstatustable" "css_element"
+    And I should not see "Criterion 3" in the ".submissionstatustable" "css_element"
+    And I should not see "Rubric test description" in the ".feedback" "css_element"
 
   @javascript
   Scenario: I can use rubrics to grade and edit them later updating students grades with Javascript enabled
