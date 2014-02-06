@@ -249,33 +249,29 @@ class completion_criteria_activity extends completion_criteria {
      *     type, criteria, requirement, status
      */
     public function get_details($completion) {
-        global $DB, $CFG;
-
         // Get completion info
-        $course = new stdClass();
-        $course->id = $completion->course;
-        $info = new completion_info($course);
-
-        $module = $DB->get_record('course_modules', array('id' => $this->moduleinstance));
-        $data = $info->get_data($module, false, $completion->userid);
-
-        $activity = $DB->get_record($this->module, array('id' => $module->instance));
+        $modinfo = get_fast_modinfo($completion->course);
+        $cm = $modinfo->get_cm($this->moduleinstance);
 
         $details = array();
         $details['type'] = $this->get_title();
-        $details['criteria'] = '<a href="'.$CFG->wwwroot.'/mod/'.$this->module.'/view.php?id='.$this->moduleinstance.'">'.$activity->name.'</a>';
+        if ($cm->has_view()) {
+            $details['criteria'] = html_writer::link($cm->url, $cm->get_formatted_name());
+        } else {
+            $details['criteria'] = $cm->get_formatted_name();
+        }
 
         // Build requirements
         $details['requirement'] = array();
 
-        if ($module->completion == 1) {
+        if ($cm->completion == COMPLETION_TRACKING_MANUAL) {
             $details['requirement'][] = get_string('markingyourselfcomplete', 'completion');
-        } elseif ($module->completion == 2) {
-            if ($module->completionview) {
+        } elseif ($cm->completion == COMPLETION_TRACKING_AUTOMATIC) {
+            if ($cm->completionview) {
                 $details['requirement'][] = get_string('viewingactivity', 'completion', $this->module);
             }
 
-            if (!is_null($module->completiongradeitemnumber)) {
+            if (!is_null($cm->completiongradeitemnumber)) {
                 $details['requirement'][] = get_string('achievinggrade', 'completion');
             }
         }
