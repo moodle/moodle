@@ -6,6 +6,7 @@
         "overlay",
         "escape",
         "event",
+        "event-simulate",
         "moodle-core-notification"
       ]
   }
