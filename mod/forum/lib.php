@@ -4815,7 +4815,19 @@ function forum_subscribe($userid, $forumid) {
     $sub->userid  = $userid;
     $sub->forum = $forumid;
 
-    return $DB->insert_record("forum_subscriptions", $sub);
+    $result = $DB->insert_record("forum_subscriptions", $sub);
+
+    $cm = get_coursemodule_from_instance('forum', $forumid);
+    $params = array(
+        'context' => context_module::instance($cm->id),
+        'relateduserid' => $userid,
+        'other' => array('forumid' => $forumid),
+
+    );
+    $event  = \mod_forum\event\subscription_created::create($params);
+    $event->trigger();
+
+    return $result;
 }
 
 /**
@@ -4827,8 +4839,21 @@ function forum_subscribe($userid, $forumid) {
  */
 function forum_unsubscribe($userid, $forumid) {
     global $DB;
-    return ($DB->delete_records('forum_digests', array('userid' => $userid, 'forum' => $forumid))
-            && $DB->delete_records('forum_subscriptions', array('userid' => $userid, 'forum' => $forumid)));
+
+    $DB->delete_records('forum_digests', array('userid' => $userid, 'forum' => $forumid));
+    $DB->delete_records('forum_subscriptions', array('userid' => $userid, 'forum' => $forumid));
+
+    $cm = get_coursemodule_from_instance('forum', $forumid);
+    $params = array(
+        'context' => context_module::instance($cm->id),
+        'relateduserid' => $userid,
+        'other' => array('forumid' => $forumid),
+
+    );
+    $event = \mod_forum\event\subscription_deleted::create($params);
+    $event->trigger();
+
+    return true;
 }
 
 /**
