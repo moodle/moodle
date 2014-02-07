@@ -1,5 +1,6 @@
 .editor_atto_content_wrap {
     background-color: white;
+    color: #333;
 }
 .editor_atto_content {
     padding: 4px;
@@ -31,7 +32,7 @@ div.editor_atto_toolbar {
 div.editor_atto_toolbar button {
     padding: 3px 9px;
     background: none;
-    border: 0px;
+    border: 0;
     margin: 0;
     border-radius: 0;
     cursor: pointer;
@@ -57,9 +58,13 @@ div.editor_atto_toolbar button[disabled] {
     background-color: #dfdfdf;
 }
 
-div.editor_atto_toolbar button img {
+div.editor_atto_toolbar button img.icon {
     padding: 1px;
     margin: 1px 0;
+    /* The following is dedicated to the beloved IE8, clashing with Bootstrap. God bless you IE. */
+    vertical-align: text-bottom;
+    width: auto;
+    height: auto;
 }
 
 div.editor_atto_toolbar div.atto_group {
@@ -67,12 +72,17 @@ div.editor_atto_toolbar div.atto_group {
     border: 1px solid #CCC;
     border-bottom: 1px solid #B3B3B3;
     border-radius: 4px;
-    margin: 9px 0px 0px 9px;
+    margin: 9px 0 0 9px;
     background: #FFF;
 }
 
 .editor_atto_content img {
     resize: both; overflow: auto;
+}
+
+.atto_hasmenu {
+    /* IE8 places the images on top of each other if that is not set. */
+    white-space: nowrap;
 }
 
 .atto_menuentry img {
@@ -83,6 +93,7 @@ div.editor_atto_toolbar div.atto_group {
 .atto_menu {
     background: white;
     padding: 1px;
+    white-space: inherit;
 }
 
 .atto_menu a {
@@ -129,7 +140,7 @@ body.dir-rtl div.editor_atto_toolbar img.icon {
 }
 
 body.dir-rtl div.editor_atto_toolbar div.atto_group {
-    margin: 9px 9px 0px 0px;
+    margin: 9px 9px 0 0;
 }
 
 .atto_control {
@@ -152,12 +163,12 @@ div.editor_atto_content:hover .atto_control {
 }
 .editor_atto_controlmenu li {
     list-style-type: none;
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
 }
 .editor_atto_controlmenu ul {
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
 }
 .editor_atto_controlmenu .moodle-dialogue-hd,
 .editor_atto_controlmenu .moodle-dialogue-ft {
