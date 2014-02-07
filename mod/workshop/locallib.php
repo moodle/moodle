@@ -2282,7 +2282,7 @@ SQL;
             list($participantids, $params) = $DB->get_in_or_equal(array_keys($participants), SQL_PARAMS_NAMED);
             list($sort, $sortparams) = users_order_by_sql('e');
             $params['workshopid'] = $this->id;
-            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.reviewerid, a.weight,
+            $sql = "SELECT a.id AS assessmentid, a.submissionid, a.grade, a.gradinggrade, a.gradinggradeover, a.reviewerid, a.weight, a.feedbackauthor,
                            s.id AS submissionid,
                            e.id AS authorid, e.lastname, e.firstname, e.picture, e.imagealt, e.email
                       FROM {user} u
@@ -2356,6 +2356,7 @@ SQL;
             $info->gradinggrade = $this->real_grading_grade($reviewee->gradinggrade);
             $info->gradinggradeover = $this->real_grading_grade($reviewee->gradinggradeover);
             $info->weight = $reviewee->weight;
+            $info->feedback = $reviewee->feedbackauthor;
             $grades[$reviewee->reviewerid]->reviewerof[$reviewee->authorid] = $info;
         }
         unset($reviewees);

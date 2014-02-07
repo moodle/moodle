@@ -380,4 +380,19 @@ The small bars are the individual example assessments, while the tall, thick bar
 You can use this tool to help you create an even spread of example assessments.
 MDOWN;
 
+//Additions: Download Marks
 
+$string['downloadmarks'] = 'Download Marks';
+$string['name'] = 'Name';
+$string['idnumber'] = 'ID Number';
+$string['overallmarks'] = 'Overall Marks';
+$string['individualmarks'] = 'Individual Marks';
+$string['markedsubmission'] = 'Marked Submission';
+$string['overallmark'] = 'Overall Mark';
+$string['scaledmark'] = 'Scaled Mark';
+$string['referencemarker'] = 'Reference Marker';
+$string['submittedby'] = 'Submitted by';
+$string['markeridnumber'] = 'ID Number';
+$string['markername'] = 'Marker Name';
+$string['comments'] = 'Comments';
+$string['feedback'] = 'Feedback';

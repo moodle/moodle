@@ -1,0 +1,281 @@
+<?php
+
+/**
+ * Download workshop marks
+ *
+ * @package    mod
+ * @subpackage workshop
+ * @copyright  2014 Morgan Harris <morgan.harris@unsw.edu.au>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once(dirname(__FILE__).'/locallib.php');
+require_once(dirname(dirname(dirname(__FILE__))).'/lib/csvlib.class.php');
+
+header('Content-type: text/plain');
+
+$id         = required_param('id', PARAM_INT); // course_module ID
+$sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
+$sorthow    = optional_param('sorthow', 'ASC', PARAM_ALPHA);
+
+$cm         = get_coursemodule_from_id('workshop', $id, 0, false, MUST_EXIST);
+$course     = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+$workshop   = $DB->get_record('workshop', array('id' => $cm->instance), '*', MUST_EXIST);
+
+require_login($course, false, $cm);
+if (isguestuser()) {
+    print_error('guestsarenotallowed');
+}
+$workshop = new workshop($workshop, $cm, $course);
+
+$groupid = groups_get_activity_group($cm, true);
+
+// First we need to gather our initial data.
+
+if ($workshop->teammode) {
+	$data = $workshop->prepare_grading_report_data_grouped($USER->id, $groupid, 0, PHP_INT_MAX, $sortby, $sorthow);
+} else {
+ 	$data = $workshop->prepare_grading_report_data($USER->id, $groupid, 0, PHP_INT_MAX, $sortby, $sorthow);
+}
+
+// Our grading report is a good start, but unfortunately it's not quite enough.
+// We also need some ancillary user information.
+
+// For some stupid reason sometimes the keys aren't integers. Yes. I know. Ridiculous.
+$userids = array();
+foreach($data->userinfo as $k => $v) {
+    if (is_int($k)) $userids[] = $k;
+}
+
+list($select, $params) = $DB->get_in_or_equal($userids);
+
+$users = $DB->get_records_select('user',"id $select",$params);
+
+foreach($users as $k => $v) {
+    $fields = array("idnumber", "username");
+    foreach($fields as $m) {
+        $data->userinfo[$k]->$m = $v->$m;
+    }
+}
+
+$dimensions = $workshop->grading_strategy_instance()->get_dimensions_info();
+
+$maximumscore = 0;
+foreach($dimensions as $d) {
+    $maximumscore += $d->max;
+}
+
+$examples = $workshop->get_examples_for_manager();
+
+// $assessments[reviewerid][submissionid]
+$assessments = array();
+$assessments_rs = $workshop->grading_strategy_instance()->get_assessments_recordset(null, true);
+foreach($assessments_rs as $k => $record) {
+    if(array_key_exists($k, $examples) && $record->assessmentweight == 1) {
+        $examples[$k]->grades[$record->dimensionid] = $record;
+    }
+    $assessments[$record->reviewerid][$k][$record->dimensionid] = $record;
+}
+
+//we also need assessment totals for example submissions
+
+list($select, $params) = $DB->get_in_or_equal(array_keys($examples));
+$exampletotals = $DB->get_records_select("workshop_assessments", "submissionid $select", $params);
+
+$examplegrades = array();
+foreach($exampletotals as $record) {
+    $examplegrades[$record->reviewerid][$record->submissionid] = $record;
+}
+
+$submissions = $workshop->get_submissions();
+
+// Define some functions for later
+
+$csv = new csv_export_writer();
+
+function table_to_csv($headers, $table) {
+    global $csv;
+    
+    $h = array();
+    foreach($headers as $k => $v) {
+        $h[] = $v;
+    }
+    $csv->add_data($h);
+    
+    foreach($table as $row) {
+        $r = array();
+        foreach($headers as $k => $v) {
+            $r[] = @$row[$k];
+        }
+        $csv->add_data($r);
+    }
+
+}
+
+// We include two tables in this report.
+
+// The first is the grade summary.
+// First we need an array of headers.
+
+$headers = array();
+foreach(array("idnumber", "name", "submissiontitle", "submissiongrade", "gradinggrade") as $i) {
+    $headers[$i] = get_string($i, 'workshop');
+}
+
+// That gives us the direction for the data array.
+
+$table1 = array();
+
+// $table1 is an enumerated array of associative arrays; a list of dicts.
+
+foreach($data->grades as $k => $grade) {
+    $user = $data->userinfo[$k];
+    
+    $row = array();
+    $row['idnumber'] = $user->username;
+    $row['name'] = $user->firstname . ' ' . $user->lastname;
+    $row['submission'] = $grade->submissiontitle;
+    $row['submissiongrade'] = $grade->submissiongrade;
+    $row['gradinggrade'] = $grade->gradinggrade;
+    
+    $table1[] = $row;
+}
+
+$csv->add_data(array( get_string('overallmarks', 'workshop') ));
+
+table_to_csv($headers, $table1);
+
+$csv->add_data(array(""));
+
+// Our second table is the individual marks. It's a bit more complicated!
+
+// We build the headers after the table, since some of them depend
+// on the content of the table.
+
+$table2 = array();
+
+$table2[] = array("markername" => get_string('referencemarker','workshop'));
+
+foreach($examples as $ex) {
+    $row = array();
+
+    $row['submittedby'] = get_string('example','workshop');
+    $row['markedsubmission'] = $ex->title;
+    
+    $total = 0;
+    foreach($dimensions as $dimid => $dim) {
+        $row["dim$dimid"] = round($ex->grades[$dimid]->grade,2);
+        $total += $ex->grades[$dimid]->grade;
+    }
+    
+    $row['overallmark'] = $total;
+    $row['scaledmark'] = round($ex->grade, 2);
+    
+    $table2[] = $row;
+}
+
+$table2[] = array();
+
+// this is an array of comment fields that have values
+// if a comment field is not in this array then it will not get a comments field
+$needs_comments = array();
+$needs_feedback = false;
+
+foreach($assessments as $reviewerid => $a) {
+    $user = $data->userinfo[$reviewerid];
+    $reviewheader = array();
+    $reviewheader['markeridnumber'] = $user->username;
+    $reviewheader['markername'] = $user->firstname . ' ' . $user->lastname;
+    
+    $table2[] = $reviewheader;
+    
+    foreach($examples as $exid => $ex) {
+        if(!array_key_exists($exid, $a))
+            continue;
+        
+        $row = array();
+        $marks = $a[$exid];
+        
+        $row['submittedby'] = get_string('example','workshop');
+        $row['markedsubmission'] = $ex->title;
+        
+        $total = 0;
+        foreach($dimensions as $dimid => $dim) {
+            $row["dim$dimid"] = round($marks[$dimid]->grade,2);
+            $row["comment$dimid"] = trim($marks[$dimid]->peercomment);
+            if (strlen($row["comment$dimid"])) {
+                $needs_comments[$dimid] = true;
+            }
+            $total += $marks[$dimid]->grade;
+        }
+        
+       $row['overallmark'] = $total;
+       $row['scaledmark'] = round($examplegrades[$reviewerid][$exid]->grade, 2);
+        
+        $table2[] = $row;
+    }
+    
+    foreach($a as $submissionid => $marks) {
+        
+        if (!array_key_exists($submissionid, $submissions))
+            continue;
+        
+        $submission = $submissions[$submissionid];
+        $subuser = $data->userinfo[$submission->authorid];
+        
+        $row = array();
+        $row['submitteridnumber'] = $subuser->username;
+        $row['submittedby'] = $subuser->firstname . ' ' . $subuser->lastname;
+        $row['markedsubmission'] = $submission->title;
+        
+        $total = 0;
+        foreach($dimensions as $dimid => $dim) {
+            $row["dim$dimid"] = round($marks[$dimid]->grade,2);
+            $total += $marks[$dimid]->grade;
+        }
+        
+        $row['feedback'] = trim(strip_tags($data->grades[$reviewerid]->reviewerof[$submission->authorid]->feedback));
+        if (strlen($row['feedback']) > 1) {
+            $needs_feedback = true;
+        }
+        $row['overallmark'] = $total;
+        $row['scaledmark'] = empty($submission->gradeover) ? round($submission->grade, 2) : round($submission->gradeover, 2);
+        
+        $table2[] = $row;
+    }
+    
+    //add a blank line
+    $table2[] = array();
+} 
+
+// Build our headers
+
+$headers = array();
+foreach(array("markeridnumber", "markername", "markedsubmission", "submittedby") as $i) {
+    $headers[$i] = get_string($i, 'workshop');
+}
+
+foreach($dimensions as $dim) {
+    $title = strip_tags($dim->title);
+    $title = strtok($title, "\n"); //up to the first newline
+    $title = substr($title, 0, 100);
+    $headers["dim$dim->id"] = $title . ' / ' . round($dim->max, 2);
+    if (! empty($needs_comments[$dim->id])) {
+        $headers["comment$dim->id"] = get_string('comments', 'workshop');
+    }
+}
+
+if ($needs_feedback == true) {
+    $headers["feedback"] = get_string('feedback', 'workshop');
+}
+$headers["overallmark"] = get_string('overallmark', 'workshop') . ' / ' . $maximumscore;
+$headers["scaledmark"] = get_string('scaledmark', 'workshop') . ' / 100';
+
+
+$csv->add_data(array( get_string('individualmarks', 'workshop') ));
+table_to_csv($headers, $table2);
+
+$csv->download_file();
+
+// $csv->print_csv_data();

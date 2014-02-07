@@ -503,6 +503,9 @@ case workshop::PHASE_EVALUATION:
             }
             echo $output->render($pagingbar);
             echo $output->perpage_selector($perpage);
+            $url = new moodle_url("download.php", array("id" => $cm->id));
+            $btn = new single_button($url, get_string('downloadmarks', 'workshop'), 'get');
+            echo $output->render($btn);
             echo $output->box_end();
             print_collapsible_region_end();
         }

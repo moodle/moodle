@@ -351,7 +351,7 @@ class workshop_rubric_strategy implements workshop_strategy {
 
         $sql = 'SELECT s.id AS submissionid,
                        a.id AS assessmentid, a.weight AS assessmentweight, a.reviewerid, a.gradinggrade,
-                       g.dimensionid, g.grade
+                       g.dimensionid, g.grade, g.peercomment
                   FROM {workshop_submissions} s
                   JOIN {workshop_assessments} a ON (a.submissionid = s.id)
                   JOIN {workshop_grades} g ON (g.assessmentid = a.id AND g.strategy = :strategy)
