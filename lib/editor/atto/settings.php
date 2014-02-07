@@ -37,7 +37,7 @@ if ($ADMIN->fulltree) {
                'files = image, media, managefiles' . "\n" .
                'style2 = underline, strike, subscript, superscript' . "\n" .
                'indent = indent, outdent' . "\n" .
-               'insert = charmap, table, clear' . "\n" .
+               'insert = equation, charmap, table, clear' . "\n" .
                'accessibility = accessibilitychecker, accessibilityhelper' . "\n" .
                'other = html';
     $setting = new admin_setting_configtextarea('editor_atto/toolbar',
@@ -46,7 +46,6 @@ if ($ADMIN->fulltree) {
                                                     $default);
 
     $settings->add($setting);
-
 }
 $ADMIN->add('editoratto', $settings);
 
@@ -58,3 +57,4 @@ foreach (core_plugin_manager::instance()->get_plugins_of_type('atto') as $plugin
 // Required or the editor plugininfo will add this section twice.
 unset($settings);
 $settings = null;
+

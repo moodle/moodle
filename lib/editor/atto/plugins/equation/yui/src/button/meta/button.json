@@ -1,0 +1,11 @@
+{
+  "moodle-atto_equation-button": {
+    "requires": [
+        "node",
+        "escape",
+        "io",
+        "event-valuechange",
+        "tabview"
+    ]
+  }
+}
