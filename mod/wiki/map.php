@@ -54,11 +54,14 @@ if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
 }
 
 require_login($course, true, $cm);
-$context = context_module::instance($cm->id);
-require_capability('mod/wiki:viewpage', $context);
+
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
 
 $wikipage = new page_wiki_map($wiki, $subwiki, $cm);
 
+$context = context_module::instance($cm->id);
 $event = \mod_wiki\event\page_map_viewed::create(
         array(
             'context' => $context,

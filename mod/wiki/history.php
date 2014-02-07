@@ -59,10 +59,13 @@ if (!$cm = get_coursemodule_from_instance('wiki', $wiki->id)) {
 $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
 
 require_login($course, true, $cm);
-$context = context_module::instance($cm->id);
-require_capability('mod/wiki:viewpage', $context);
+
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
 
 // Trigger history viewed event.
+$context = context_module::instance($cm->id);
 $event = \mod_wiki\event\page_history_viewed::create(
         array(
             'context' => $context,

@@ -755,13 +755,27 @@ function wiki_parser_get_token($markup, $name) {
 /**
  * Checks if current user can view a subwiki
  *
- * @param $subwiki
+ * @param stdClass $subwiki usually record from {wiki_subwikis}. Must contain fields 'wikiid', 'groupid', 'userid'.
+ *     If it also contains fields 'course' and 'groupmode' from table {wiki} it will save extra DB query.
+ * @param stdClass $wiki optional wiki object if known
+ * @return bool
  */
-function wiki_user_can_view($subwiki) {
+function wiki_user_can_view($subwiki, $wiki = null) {
     global $USER;
 
-    $wiki = wiki_get_wiki($subwiki->wikiid);
-    $cm = get_coursemodule_from_instance('wiki', $wiki->id);
+    if (empty($wiki) || $wiki->id != $subwiki->wikiid) {
+        $wiki = wiki_get_wiki($subwiki->wikiid);
+    }
+    $modinfo = get_fast_modinfo($wiki->course);
+    if (!isset($modinfo->instances['wiki'][$subwiki->wikiid])) {
+        // Module does not exist.
+        return false;
+    }
+    $cm = $modinfo->instances['wiki'][$subwiki->wikiid];
+    if (!$cm->uservisible) {
+        // The whole module is not visible to the current user.
+        return false;
+    }
     $context = context_module::instance($cm->id);
 
     // Working depending on activity groupmode
@@ -803,7 +817,7 @@ function wiki_user_can_view($subwiki) {
         //      Each person owns a wiki.
         if ($wiki->wikimode == 'collaborative' || $wiki->wikimode == 'individual') {
             // Only members of subwiki group could view that wiki
-            if (groups_is_member($subwiki->groupid)) {
+            if (in_array($subwiki->groupid, $modinfo->get_groups($cm->groupingid))) {
                 // Only view capability needed
                 return has_capability('mod/wiki:viewpage', $context);
 
