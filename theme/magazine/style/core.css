@@ -872,7 +872,7 @@ table#categoryquestions th a {
     padding: 0;
 }
 
-tr.r1 td {
+> tbody > tr:nth-of-type(even) td {
     background-color: #f9f9f9;
 }
 

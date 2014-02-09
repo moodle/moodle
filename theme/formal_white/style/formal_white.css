@@ -146,8 +146,8 @@ th.header,
 .generalbox th,
 .generaltable th.header {background-image:url([[pix:theme|trend/__setting_trendcolor__/gradient_h]]);background-color:[[setting:blockheaderbackground]];background-repeat:repeat-x;border-top:1px solid #C6BDA8;}
 #modules, #compatibleblockstable {margin-left:auto; margin-right:auto;}
-table.flexible .r0, table.generaltable .r0 {background-color: #F0F0F0;}
-table.flexible .r1, table.generaltable .r1 {background-color: #FAFAFA;}
+table.flexible > tbody > tr:nth-of-type(odd), table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
+table.flexible > tbody > tr:nth-of-type(even), table.generaltable > tbody > tr:nth-of-type(even) {background-color: #FAFAFA;}
 
 /* admin pages */
 div#chooseuser {border:0 transparent none;}
@@ -202,15 +202,15 @@ pre, code, tt {
     color:grey;
 }
 
-#listdirectories tr.r0,
-#listtables tr.r0,
-#listfields tr.r0 {
+#listdirectories > tbody > tr:nth-of-type(odd)
+#listtables > tbody > tr:nth-of-type(odd),
+#listfields > tbody > tr:nth-of-type(odd) {
     background: none repeat scroll 0 0 #F0F0F0;
 }
 
-#listdirectories tr.r1,
-#listtables tr.r1,
-#listfields tr.r1 {
+#listdirectories > tbody > tr:nth-of-type(even),
+#listtables > tbody > tr:nth-of-type(even),
+#listfields > tbody > tr:nth-of-type(even) {
     background: none repeat scroll 0 0 #FAFAFA;
 }
 

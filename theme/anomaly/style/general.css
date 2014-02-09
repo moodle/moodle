@@ -373,10 +373,10 @@ h2.tagline {
     border: 1px solid #C8C9C7;
     border-width: 0 1px;
 }
-.user .r1 .cell,
-#categoryquestions .r1 .cell,
-.group .r1 .cell,
-.admin table .r1 .cell {
+.user > tbody > tr:nth-of-type(even) .cell,
+#categoryquestions > tbody > tr:nth-of-type(even) .cell,
+.group > tbody > tr:nth-of-type(even) .cell,
+.admin table > tbody > tr:nth-of-type(even) .cell {
     background-color: #EEE;
 }
 .singlebutton,

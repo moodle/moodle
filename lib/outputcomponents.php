@@ -1426,6 +1426,9 @@ class html_writer {
      * method. In most cases this is not an issue at all so we do not clone by default for performance
      * and memory consumption reasons.
      *
+     * Please do not use .r0/.r1 for css, as they will be removed in Moodle 2.9.
+     * @todo MDL-43902 , remove r0 and r1 from tr classes.
+     *
      * @param html_table $table data to be rendered
      * @return string HTML code
      */

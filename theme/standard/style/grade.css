@@ -7,8 +7,8 @@
 
 #page-grade-index .grades {border-color:#000;}
 #page-grade-index .grades td {border-color:#E0E0E0;}
-#page-grade-index .grades .r0 {background-color: #FFF;}
-#page-grade-index .grades .r1 {background-color: #F0F0F0;}
+#page-grade-index .grades > tbody > tr:nth-of-type(odd) {background-color: #FFF;}
+#page-grade-index .grades > tbody > tr:nth-of-type(even) {background-color: #F0F0F0;}
 
 td.grade div.overridden {background-color: #DDDDDD;}
 
