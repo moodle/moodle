@@ -1638,7 +1638,9 @@ function quiz_groups_group_deleted_handler($event) {
               FROM {quiz_overrides} o
               JOIN {quiz} quiz ON quiz.id = o.quiz
          LEFT JOIN {groups} grp ON grp.id = o.groupid
-             WHERE quiz.course = :courseid AND grp.id IS NULL";
+             WHERE quiz.course = :courseid
+               AND o.groupid IS NOT NULL
+               AND grp.id IS NULL";
     $params = array('courseid'=>$event->courseid);
     $records = $DB->get_records_sql_menu($sql, $params);
     if (!$records) {
