@@ -2068,7 +2068,7 @@ function upgrade_grade_item_fix_sortorder() {
 
     $transaction = $DB->start_delegated_transaction();
 
-    $sql = "SELECT g1.id, g1.courseid, g1.sortorder
+    $sql = "SELECT DISTINCT g1.id, g1.courseid, g1.sortorder
               FROM {grade_items} g1
               JOIN {grade_items} g2 ON g1.courseid = g2.courseid
              WHERE g1.sortorder = g2.sortorder AND g1.id != g2.id
