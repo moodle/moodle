@@ -4,13 +4,14 @@ information provided here is intended especially for theme designer.
 === 2.7 ===
 
 * Please update your css to use 'tr:nth-of-type(odd/even)' instead of '.ro/.r1' to apply tr specific css for various tables.
-  These classes are deprecated now and will be removed in Moodle 2.9. Here is an example to update your css:-
-  old code
-  table.generaltable .r0 {background-color: #F0F0F0;}
-  table.generaltable .r1 {background-color: #F0F0F0;}
-  new code
-  table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
-  table.generaltable > tbody > tr:nth-of-type(even) {background-color: #F0F0F0;}
+  These classes are deprecated now and will be removed in Moodle 2.9. This has done to better support styling tables that will be altered by JavaScript.
+  Here is an example to update your css:
+  Old code:
+    table.generaltable .r0 {background-color: #F0F0F0;}
+    table.generaltable .r1 {background-color: #F0F0F0;}
+  New code:
+    table.generaltable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
+    table.generaltable > tbody > tr:nth-of-type(even) {background-color: #F0F0F0;}
 
 
 === 2.6 ===
