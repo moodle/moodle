@@ -62,6 +62,7 @@ class qtype_essay_qe2_attempt_updater extends question_qtype_attempt_updater {
     public function set_data_elements_for_step($state, &$data) {
         if (!empty($state->answer)) {
             $data['answer'] = $state->answer;
+            $data['answerformat'] = FORMAT_HTML;
         }
     }
 }
