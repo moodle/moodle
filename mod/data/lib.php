@@ -215,9 +215,25 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         global $DB;
 
         if (!empty($this->field->id)) {
+            // Get the field before we delete it.
+            $field = $DB->get_record('data_fields', array('id' => $this->field->id));
+
             $this->delete_content();
             $DB->delete_records('data_fields', array('id'=>$this->field->id));
+
+            // Trigger an event for deleting this field.
+            $event = \mod_data\event\field_deleted::create(array(
+                'objectid' => $this->field->id,
+                'context' => $this->context,
+                'other' => array(
+                    'fieldname' => $this->field->name,
+                    'dataid' => $this->data->id
+                 )
+            ));
+            $event->add_record_snapshot('data_fields', $field);
+            $event->trigger();
         }
+
         return true;
     }
 

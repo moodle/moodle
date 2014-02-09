@@ -194,9 +194,6 @@ switch ($mode) {
                         $DB->update_record('data', $rec);
                     }
 
-                    add_to_log($course->id, 'data', 'fields delete',
-                               "field.php?d=$data->id", $field->field->name, $cm->id);
-
                     $displaynoticegood = get_string('fielddeleted', 'data');
                 }
 
