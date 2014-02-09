@@ -1837,7 +1837,9 @@ function quiz_process_group_deleted_in_course($courseid) {
               FROM {quiz_overrides} o
               JOIN {quiz} quiz ON quiz.id = o.quiz
          LEFT JOIN {groups} grp ON grp.id = o.groupid
-             WHERE quiz.course = :courseid AND grp.id IS NULL";
+             WHERE quiz.course = :courseid
+               AND o.groupid IS NOT NULL
+               AND grp.id IS NULL";
     $params = array('courseid' => $courseid);
     $records = $DB->get_records_sql_menu($sql, $params);
     if (!$records) {
