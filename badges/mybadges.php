@@ -42,7 +42,14 @@ if (empty($CFG->enablebadges)) {
     print_error('badgesdisabled', 'badges');
 }
 
+$url = new moodle_url('/badges/mybadges.php');
+$PAGE->set_url($url);
+
 if (isguestuser()) {
+    $PAGE->set_context(context_system::instance());
+    echo $OUTPUT->header();
+    echo $OUTPUT->box(get_string('error:guestuseraccess', 'badges'), 'notifyproblem');
+    echo $OUTPUT->footer();
     die();
 }
 
@@ -80,9 +87,6 @@ if ($hide) {
 $context = context_user::instance($USER->id);
 require_capability('moodle/badges:manageownbadges', $context);
 
-$url = new moodle_url('/badges/mybadges.php');
-
-$PAGE->set_url($url);
 $PAGE->set_context($context);
 
 $title = get_string('mybadges', 'badges');

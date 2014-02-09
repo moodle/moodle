@@ -217,6 +217,7 @@ $string['error:connectionunknownreason'] = 'The connection was unsuccessful but 
 $string['error:clone'] = 'Cannot clone the badge.';
 $string['error:duplicatename'] = 'Badge with such name already exists in the system.';
 $string['error:externalbadgedoesntexist'] = 'Badge not found';
+$string['error:guestuseraccess'] = 'You are currently using guest access. To see badges you need to log in with your user account.';
 $string['error:invalidbadgeurl'] = 'Invalid badge issuer URL format.';
 $string['error:invalidcriteriatype'] = 'Invalid criteria type.';
 $string['error:invalidexpiredate'] = 'Expiry date has to be in the future.';
