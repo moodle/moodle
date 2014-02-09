@@ -146,7 +146,7 @@ switch($requestmethod) {
                         }
 
                         $isvisible = moveto_module($cm, $section, $beforemod);
-                        echo json_encode(array('visible' => $isvisible));
+                        echo json_encode(array('visible' => (bool) $isvisible));
                         break;
                     case 'gettitle':
                         require_capability('moodle/course:manageactivities', $modcontext);
