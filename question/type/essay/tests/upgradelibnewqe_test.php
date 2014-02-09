@@ -240,7 +240,7 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     'timecreated' => 1271670445,
                     'userid' => 118065,
                     'data' => array('answer' => '<p>Variable typeing</p>
-        <p>Namespaces</p>'),
+        <p>Namespaces</p>', 'answerformat' => FORMAT_HTML),
                 ),
                 2 => (object) array(
                     'sequencenumber' => 2,
@@ -249,7 +249,7 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     'timecreated' => 1271671440,
                     'userid' => 118065,
                     'data' => array('answer' => '<p>Variable can be typed</p>
-        <p>xml Schemas fully support Namespaces</p>'),
+        <p>xml Schemas fully support Namespaces</p>', 'answerformat' => FORMAT_HTML),
                 ),
                 3 => (object) array(
                     'sequencenumber' => 3,
@@ -258,7 +258,7 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     'timecreated' => 1271671440,
                     'userid' => 118065,
                     'data' => array('answer' => '<p>Variable can be typed</p>
-        <p>xml Schemas fully support Namespaces</p>', '-finish' => 1),
+        <p>xml Schemas fully support Namespaces</p>', '-finish' => 1, 'answerformat' => FORMAT_HTML),
                 ),
                 4 => (object) array(
                     'sequencenumber' => 4,
@@ -266,7 +266,7 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     'fraction' => 1,
                     'timecreated' => 1273068477,
                     'userid' => null,
-                    'data' => array('-comment' => '', '-mark' => 2, '-maxmark' => 2),
+                    'data' => array('-comment' => '', '-mark' => 2, '-maxmark' => 2, 'answerformat' => FORMAT_HTML),
                 ),
             ),
         );
@@ -439,7 +439,7 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     'fraction' => null,
                     'timecreated' => 1179134869,
                     'userid' => 96864,
-                    'data' => array('answer' => 'it would be better to point our a \'red colour\' on the number which indicates the questions that we have done wrong. similar to previously, from question 1 to 10, green colour shows the right answer and red colour shows the wrong answer, so that we do not need to click on each answer to find out if it is right or wrong.'),
+                    'data' => array('answer' => 'it would be better to point our a \'red colour\' on the number which indicates the questions that we have done wrong. similar to previously, from question 1 to 10, green colour shows the right answer and red colour shows the wrong answer, so that we do not need to click on each answer to find out if it is right or wrong.', 'answerformat' => FORMAT_HTML),
                 ),
                 2 => (object) array(
                     'sequencenumber' => 2,
@@ -447,7 +447,7 @@ class qtype_essay_attempt_upgrader_test extends question_attempt_upgrader_test_b
                     'fraction' => null,
                     'timecreated' => 1179134869,
                     'userid' => 96864,
-                    'data' => array('-finish' => 1, 'answer' => 'it would be better to point our a \'red colour\' on the number which indicates the questions that we have done wrong. similar to previously, from question 1 to 10, green colour shows the right answer and red colour shows the wrong answer, so that we do not need to click on each answer to find out if it is right or wrong.'),
+                    'data' => array('-finish' => 1, 'answer' => 'it would be better to point our a \'red colour\' on the number which indicates the questions that we have done wrong. similar to previously, from question 1 to 10, green colour shows the right answer and red colour shows the wrong answer, so that we do not need to click on each answer to find out if it is right or wrong.', 'answerformat' => FORMAT_HTML),
                 ),
             ),
         );
