@@ -255,8 +255,13 @@
         set_user_preference('data_perpage_'.$data->id, $perpage);
     }
 
-    add_to_log($course->id, 'data', 'view', "view.php?id=$cm->id", $data->id, $cm->id);
-
+    $params = array(
+        'context' => $context,
+        'objectid' => $data->id
+    );
+    $event = \mod_data\event\course_module_viewed::create($params);
+    $event->add_record_snapshot('data', $data);
+    $event->trigger();
 
     $urlparams = array('d' => $data->id);
     if ($record) {
