@@ -149,4 +149,55 @@ class core_upgradelib_testcase extends advanced_testcase {
 
         return $DB->get_record('grade_items', array('id' => $item->id));
     }
+
+    public function test_upgrade_fix_missing_root_folders() {
+        global $DB, $SITE;
+
+        $this->resetAfterTest(true);
+
+        // Setup some broken data...
+        // Create two resources (and associated file areas).
+        $this->setAdminUser();
+        $resource1 = $this->getDataGenerator()->get_plugin_generator('mod_resource')
+            ->create_instance(array('course' => $SITE->id));
+        $resource2 = $this->getDataGenerator()->get_plugin_generator('mod_resource')
+            ->create_instance(array('course' => $SITE->id));
+
+        // Delete the folder record of resource1 to simulate broken data.
+        $context = context_module::instance($resource1->cmid);
+        $selectargs = array('contextid' => $context->id,
+                            'component' => 'mod_resource',
+                            'filearea' => 'content',
+                            'itemid' => 0);
+
+        // Verify file records exist.
+        $areafilecount = $DB->count_records('files', $selectargs);
+        $this->assertNotEmpty($areafilecount);
+
+        // Delete the folder record.
+        $folderrecord = $selectargs;
+        $folderrecord['filepath'] = '/';
+        $folderrecord['filename'] = '.';
+
+        // Get previous folder record.
+        $oldrecord = $DB->get_record('files', $folderrecord);
+        $DB->delete_records('files', $folderrecord);
+
+        // Verify the folder record has been removed.
+        $newareafilecount = $DB->count_records('files', $selectargs);
+        $this->assertSame($newareafilecount, $areafilecount - 1);
+
+        $this->assertFalse($DB->record_exists('files', $folderrecord));
+
+        // Run the upgrade step!
+        upgrade_fix_missing_root_folders();
+
+        // Verify the folder record has been restored.
+        $newareafilecount = $DB->count_records('files', $selectargs);
+        $this->assertSame($newareafilecount, $areafilecount);
+
+        $newrecord = $DB->get_record('files', $folderrecord, '*', MUST_EXIST);
+        // Verify the hash is correctly created.
+        $this->assertSame($oldrecord->pathnamehash, $newrecord->pathnamehash);
+    }
 }
