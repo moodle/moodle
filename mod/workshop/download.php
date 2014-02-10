@@ -155,10 +155,8 @@ $csv->add_data(array(""));
 
 $table2 = array();
 
-$table2[] = array("markername" => get_string('referencemarker','workshop'));
-
 foreach($examples as $ex) {
-    $row = array();
+    $row = array("markername" => get_string('referencemarker','workshop'));
 
     $row['submittedby'] = get_string('example','workshop');
     $row['markedsubmission'] = $ex->title;
@@ -185,10 +183,6 @@ $needs_feedback = false;
 foreach($assessments as $reviewerid => $a) {
     $user = $data->userinfo[$reviewerid];
     $reviewheader = array();
-    $reviewheader['markeridnumber'] = $user->username;
-    $reviewheader['markername'] = $user->firstname . ' ' . $user->lastname;
-    
-    $table2[] = $reviewheader;
     
     foreach($examples as $exid => $ex) {
         if(!array_key_exists($exid, $a))
@@ -196,6 +190,9 @@ foreach($assessments as $reviewerid => $a) {
         
         $row = array();
         $marks = $a[$exid];
+        
+        $row['markeridnumber'] = $user->username;
+        $row['markername'] = $user->firstname . ' ' . $user->lastname;
         
         $row['submittedby'] = get_string('example','workshop');
         $row['markedsubmission'] = $ex->title;
@@ -225,6 +222,9 @@ foreach($assessments as $reviewerid => $a) {
         $subuser = $data->userinfo[$submission->authorid];
         
         $row = array();
+        $row['markeridnumber'] = $user->username;
+        $row['markername'] = $user->firstname . ' ' . $user->lastname;
+        
         $row['submitteridnumber'] = $subuser->username;
         $row['submittedby'] = $subuser->firstname . ' ' . $subuser->lastname;
         $row['markedsubmission'] = $submission->title;
