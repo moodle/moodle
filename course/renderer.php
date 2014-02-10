@@ -1506,7 +1506,7 @@ class core_course_renderer extends plugin_renderer_base {
     protected function coursecat_include_js() {
         global $CFG;
         static $jsloaded = false;
-        if (!$jsloaded && $CFG->enableajax) {
+        if (!$jsloaded) {
             // We must only load this module once.
             $this->page->requires->yui_module('moodle-course-categoryexpander',
                     'Y.Moodle.course.categoryexpander.init');
