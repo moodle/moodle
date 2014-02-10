@@ -26,13 +26,13 @@ defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
     'logstore/standard:read' => array(
-        'riskbitmask' => RISK_PERSONAL,
-        'captype' => 'read',
+        'riskbitmask'  => RISK_PERSONAL,
+        'captype'      => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
-            'manager' => CAP_ALLOW,
+        'archetypes'   => array(
+            'manager'        => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'teacher' => CAP_ALLOW,
+            'teacher'        => CAP_ALLOW,
         ),
     ),
 );

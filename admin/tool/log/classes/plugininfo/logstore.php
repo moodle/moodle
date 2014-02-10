@@ -39,7 +39,7 @@ class logstore extends base {
         }
 
         $enabled = array_flip(explode(',', $enabled));
-        return isset($enabled['logstore_'.$this->name]);
+        return isset($enabled['logstore_' . $this->name]);
     }
 
     public function get_settings_section_name() {
@@ -68,7 +68,7 @@ class logstore extends base {
     }
 
     public static function get_manage_url() {
-        return new moodle_url('/admin/settings.php', array('section'=>'managelogging'));
+        return new moodle_url('/admin/settings.php', array('section' => 'managelogging'));
     }
 
     public function is_uninstall_allowed() {
@@ -79,7 +79,7 @@ class logstore extends base {
         $enabled = get_config('tool_log', 'enabled_stores');
         if ($enabled) {
             $enabled = array_flip(explode(',', $enabled));
-            unset($enabled['logstore_'.$this->name]);
+            unset($enabled['logstore_' . $this->name]);
             $enabled = array_flip($enabled);
             set_config('enabled_stores', implode(',', $enabled), 'tool_log');
         }

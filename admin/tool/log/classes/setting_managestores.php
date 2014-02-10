@@ -96,22 +96,22 @@ class tool_log_setting_managestores extends admin_setting {
      * @param string $query
      * @return string
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query = '') {
         global $OUTPUT, $PAGE;
 
         // Display strings.
-        $strup        = get_string('up');
-        $strdown      = get_string('down');
-        $strsettings  = get_string('settings');
-        $strenable    = get_string('enable');
-        $strdisable   = get_string('disable');
+        $strup = get_string('up');
+        $strdown = get_string('down');
+        $strsettings = get_string('settings');
+        $strenable = get_string('enable');
+        $strdisable = get_string('disable');
         $struninstall = get_string('uninstallplugin', 'core_admin');
-        $strversion   = get_string('version');
+        $strversion = get_string('version');
 
         $pluginmanager = core_plugin_manager::instance();
 
         $available = \tool_log\log\manager::get_store_plugins();
-        $enabled   = get_config('tool_log', 'enabled_stores');
+        $enabled = get_config('tool_log', 'enabled_stores');
         if (!$enabled) {
             $enabled = array();
         } else {
@@ -132,16 +132,16 @@ class tool_log_setting_managestores extends admin_setting {
         $return .= $OUTPUT->box_start('generalbox loggingui');
 
         $table = new html_table();
-        $table->head  = array(get_string('name'), $strversion, $strenable, $strup.'/'.$strdown, $strsettings, $struninstall);
+        $table->head = array(get_string('name'), $strversion, $strenable, $strup . '/' . $strdown, $strsettings, $struninstall);
         $table->colclasses = array('leftalign', 'centeralign', 'centeralign', 'centeralign', 'centeralign', 'centeralign');
         $table->id = 'logstoreplugins';
         $table->attributes['class'] = 'admintable generaltable';
-        $table->data  = array();
+        $table->data = array();
 
         // Iterate through store plugins and add to the display table.
         $updowncount = 1;
         $storecount = count($enabled);
-        $url = new moodle_url('/admin/tool/log/stores.php', array('sesskey'=>sesskey()));
+        $url = new moodle_url('/admin/tool/log/stores.php', array('sesskey' => sesskey()));
         $printed = array();
         foreach ($allstores as $store => $unused) {
             $plugininfo = $pluginmanager->get_plugin_info($store);
@@ -158,21 +158,23 @@ class tool_log_setting_managestores extends admin_setting {
 
             // Hide/show links.
             if (isset($enabled[$store])) {
-                $aurl = new moodle_url($url, array('action'=>'disable', 'store'=>$store));
+                $aurl = new moodle_url($url, array('action' => 'disable', 'store' => $store));
                 $hideshow = "<a href=\"$aurl\">";
                 $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/hide') . "\" class=\"iconsmall\" alt=\"$strdisable\" /></a>";
                 $isenabled = true;
                 $displayname = "<span>$name</span>";
-            } else if (isset($available[$store])) {
-                $aurl = new moodle_url($url, array('action'=>'enable', 'store'=>$store));
-                $hideshow = "<a href=\"$aurl\">";
-                $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"$strenable\" /></a>";
-                $isenabled = false;
-                $displayname = "<span class=\"dimmed_text\">$name</span>";
             } else {
-                $hideshow = '';
-                $isenabled = false;
-                $displayname = '<span class="notifyproblem">'.$name.'</span>';
+                if (isset($available[$store])) {
+                    $aurl = new moodle_url($url, array('action' => 'enable', 'store' => $store));
+                    $hideshow = "<a href=\"$aurl\">";
+                    $hideshow .= "<img src=\"" . $OUTPUT->pix_url('t/show') . "\" class=\"iconsmall\" alt=\"$strenable\" /></a>";
+                    $isenabled = false;
+                    $displayname = "<span class=\"dimmed_text\">$name</span>";
+                } else {
+                    $hideshow = '';
+                    $isenabled = false;
+                    $displayname = '<span class="notifyproblem">' . $name . '</span>';
+                }
             }
             if ($PAGE->theme->resolve_image_location('icon', $store, false)) {
                 $icon = $OUTPUT->pix_icon('icon', '', $store, array('class' => 'icon pluginicon'));
@@ -184,14 +186,14 @@ class tool_log_setting_managestores extends admin_setting {
             $updown = '';
             if ($isenabled) {
                 if ($updowncount > 1) {
-                    $aurl = new moodle_url($url, array('action'=>'up', 'store'=>$store));
+                    $aurl = new moodle_url($url, array('action' => 'up', 'store' => $store));
                     $updown .= "<a href=\"$aurl\">";
                     $updown .= "<img src=\"" . $OUTPUT->pix_url('t/up') . "\" alt=\"$strup\" class=\"iconsmall\" /></a>&nbsp;";
                 } else {
                     $updown .= "<img src=\"" . $OUTPUT->pix_url('spacer') . "\" class=\"iconsmall\" alt=\"\" />&nbsp;";
                 }
                 if ($updowncount < $storecount) {
-                    $aurl = new moodle_url($url, array('action'=>'down', 'store'=>$store));
+                    $aurl = new moodle_url($url, array('action' => 'down', 'store' => $store));
                     $updown .= "<a href=\"$aurl\">";
                     $updown .= "<img src=\"" . $OUTPUT->pix_url('t/down') . "\" alt=\"$strdown\" class=\"iconsmall\" /></a>";
                 } else {
@@ -203,10 +205,12 @@ class tool_log_setting_managestores extends admin_setting {
             // Add settings link.
             if (!$version) {
                 $settings = '';
-            } else if ($surl = $plugininfo->get_settings_url()) {
-                $settings = html_writer::link($surl, $strsettings);
             } else {
-                $settings = '';
+                if ($surl = $plugininfo->get_settings_url()) {
+                    $settings = html_writer::link($surl, $strsettings);
+                } else {
+                    $settings = '';
+                }
             }
 
             // Add uninstall info.
@@ -216,13 +220,13 @@ class tool_log_setting_managestores extends admin_setting {
             }
 
             // Add a row to the table.
-            $table->data[] = array($icon.$displayname, $version, $hideshow, $updown, $settings, $uninstall);
+            $table->data[] = array($icon . $displayname, $version, $hideshow, $updown, $settings, $uninstall);
 
             $printed[$store] = true;
         }
 
         $return .= html_writer::table($table);
-        $return .= get_string('configlogplugins', 'tool_log').'<br />'.get_string('tablenosave', 'admin');
+        $return .= get_string('configlogplugins', 'tool_log') . '<br />' . get_string('tablenosave', 'admin');
         $return .= $OUTPUT->box_end();
         return highlight($query, $return);
     }

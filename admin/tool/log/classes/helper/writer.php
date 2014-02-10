@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
  * Helper trait writer
  *
@@ -29,20 +28,20 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Helper trait writer. Adds buffer support for the store.
  * \tool_log\helper\store must be included before using this trait.
- * 
+ *
  * @package    tool_log
  * @copyright  2014 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 trait writer {
 
-    /** @var array $buffer buffer of events.*/
+    /** @var array $buffer buffer of events. */
     protected $buffer = array();
 
-    /** @var array $buffer buffer size of events.*/
+    /** @var array $buffer buffer size of events. */
     protected $buffersize;
 
-    /** @var int $count Counter.*/
+    /** @var int $count Counter. */
     protected $count = 0;
 
     /**

@@ -33,13 +33,14 @@ class store implements \tool_log\log\store, \core\log\reader {
     public function __construct(\tool_log\log\manager $manager) {
         $this->helper_setup($manager);
     }
+
     /** @var array list of db fields which needs to be replaced for legacy log query */
     protected $standardtolegacyfields = array(
-                                'timecreated' => 'time',
-                                'courseid' => 'course',
-                                'contextinstanceid' => 'cmid',
-                                'origin' => 'ip'
-                                );
+        'timecreated'       => 'time',
+        'courseid'          => 'course',
+        'contextinstanceid' => 'cmid',
+        'origin'            => 'ip'
+    );
 
     public function get_events($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;
@@ -60,7 +61,7 @@ class store implements \tool_log\log\store, \core\log\reader {
         try {
             $records = $DB->get_records_select('log', $selectwhere, $params, $sort, '*', $limitfrom, $limitnum);
         } catch (\moodle_exception $ex) {
-            debugging("error converting legacy event data ". $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
+            debugging("error converting legacy event data " . $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
         }
 
         foreach ($records as $data) {
@@ -85,7 +86,7 @@ class store implements \tool_log\log\store, \core\log\reader {
         try {
             return $DB->count_records_select('log', $selectwhere, $params);
         } catch (\moodle_exception $ex) {
-            debugging("error converting legacy event data ". $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
+            debugging("error converting legacy event data " . $ex->getMessage() . $ex->debuginfo, DEBUG_DEVELOPER);
             return 0;
         }
     }
@@ -94,7 +95,7 @@ class store implements \tool_log\log\store, \core\log\reader {
         global $CFG, $DB;
 
         // Delete old logs to save space (this might need a timer to slow it down...).
-        if (!empty($CFG->loglifetime)) {  // value in days
+        if (!empty($CFG->loglifetime)) { // Value in days.
             $loglifetime = time(0) - ($CFG->loglifetime * 3600 * 24);
             $DB->delete_records_select("log", "time < ?", array($loglifetime));
             mtrace(" Deleted old log records");
@@ -107,12 +108,12 @@ class store implements \tool_log\log\store, \core\log\reader {
     /**
      * Legacy add_to_log() code.
      *
-     * @param    int     $courseid  The course id
-     * @param    string  $module  The module name  e.g. forum, journal, resource, course, user etc
-     * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
-     * @param    string  $url     The file and parameters used to see the results of the action
-     * @param    string  $info    Additional description information
-     * @param    int     $cm      The course_module->id if there is one
+     * @param    int $courseid The course id
+     * @param    string $module The module name  e.g. forum, journal, resource, course, user etc
+     * @param    string $action 'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
+     * @param    string $url The file and parameters used to see the results of the action
+     * @param    string $info Additional description information
+     * @param    int $cm The course_module->id if there is one
      * @param    int|\stdClass $user If log regards $user other than $USER
      */
     public function legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user) {
@@ -131,7 +132,7 @@ class store implements \tool_log\log\store, \core\log\reader {
         if ($user) {
             $userid = $user;
         } else {
-            if (\core\session\manager::is_loggedinas()) {  // Don't log.
+            if (\core\session\manager::is_loggedinas()) { // Don't log.
                 return;
             }
             $userid = empty($USER->id) ? '0' : $USER->id;
@@ -143,7 +144,7 @@ class store implements \tool_log\log\store, \core\log\reader {
             }
         }
 
-        $REMOTE_ADDR = getremoteaddr();
+        $remoteaddr = getremoteaddr();
 
         $timenow = time();
         if (!empty($url)) { // Could break doing html_entity_decode on an empty var.
@@ -156,38 +157,42 @@ class store implements \tool_log\log\store, \core\log\reader {
         // database so that it doesn't cause a DB error. Log a warning so that
         // developers can avoid doing things which are likely to cause this on a
         // routine basis.
-        if(!empty($info) && \core_text::strlen($info)>255) {
-            $info = \core_text::substr($info,0,252).'...';
-            debugging('Warning: logged very long info',DEBUG_DEVELOPER);
+        if (!empty($info) && \core_text::strlen($info) > 255) {
+            $info = \core_text::substr($info, 0, 252) . '...';
+            debugging('Warning: logged very long info', DEBUG_DEVELOPER);
         }
 
         // If the 100 field size is changed, also need to alter print_log in course/lib.php.
-        if(!empty($url) && \core_text::strlen($url)>100) {
-            $url = \core_text::substr($url,0,97).'...';
-            debugging('Warning: logged very long URL',DEBUG_DEVELOPER);
+        if (!empty($url) && \core_text::strlen($url) > 100) {
+            $url = \core_text::substr($url, 0, 97) . '...';
+            debugging('Warning: logged very long URL', DEBUG_DEVELOPER);
         }
 
-        if (defined('MDL_PERFDB')) { global $PERF ; $PERF->logwrites++;};
+        if (defined('MDL_PERFDB')) {
+            global $PERF;
+            $PERF->logwrites++;
+        };
 
-        $log = array('time'=>$timenow, 'userid'=>$userid, 'course'=>$courseid, 'ip'=>$REMOTE_ADDR, 'module'=>$module,
-            'cmid'=>$cm, 'action'=>$action, 'url'=>$url, 'info'=>$info);
+        $log = array('time' => $timenow, 'userid' => $userid, 'course' => $courseid, 'ip' => $remoteaddr,
+                     'module' => $module, 'cmid' => $cm, 'action' => $action, 'url' => $url, 'info' => $info);
 
         try {
             $DB->insert_record_raw('log', $log, false);
         } catch (\dml_exception $e) {
-            debugging('Error: Could not insert a new entry to the Moodle log. '. $e->error, DEBUG_ALL);
+            debugging('Error: Could not insert a new entry to the Moodle log. ' . $e->errorcode, DEBUG_ALL);
 
             // MDL-11893, alert $CFG->supportemail if insert into log failed.
             if ($CFG->supportemail and empty($CFG->noemailever)) {
                 // Function email_to_user is not usable because email_to_user tries to write to the logs table,
                 // and this will get caught in an infinite loop, if disk is full.
                 $site = get_site();
-                $subject = 'Insert into log failed at your moodle site '.$site->fullname;
-                $message = "Insert into log table failed at ". date('l dS \of F Y h:i:s A') .".\n It is possible that your disk is full.\n\n";
+                $subject = 'Insert into log failed at your moodle site ' . $site->fullname;
+                $message = "Insert into log table failed at " . date('l dS \of F Y h:i:s A') .
+                    ".\n It is possible that your disk is full.\n\n";
                 $message .= "The failed query parameters are:\n\n" . var_export($log, true);
 
                 $lasttime = get_config('admin', 'lastloginserterrormail');
-                if(empty($lasttime) || time() - $lasttime > 60*60*24) { // limit to 1 email per day
+                if (empty($lasttime) || time() - $lasttime > 60 * 60 * 24) { // Limit to 1 email per day.
                     // Using email directly rather than messaging as they may not be able to log in to access a message.
                     mail($CFG->supportemail, $subject, $message);
                     set_config('lastloginserterrormail', time(), 'admin');

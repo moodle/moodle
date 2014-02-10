@@ -29,8 +29,8 @@ class store implements \tool_log\log\writer, \core\log\reader {
     use \tool_log\helper\store,
         \tool_log\helper\reader,
         \tool_log\helper\writer {
-            dispose as helper_dispose;
-        }
+        dispose as helper_dispose;
+    }
 
     /** @var \moodle_database $extdb */
     protected $extdb;
@@ -57,7 +57,6 @@ class store implements \tool_log\log\writer, \core\log\reader {
         $levels = $this->get_config('excludelevels', '');
         $this->excludeactions = $actions === '' ? array() : explode(',', $actions);
         $this->excludelevels = $levels === '' ? array() : explode(',', $levels);
-
     }
 
     /**
@@ -111,7 +110,7 @@ class store implements \tool_log\log\writer, \core\log\reader {
     /**
      * Insert events in bulk to the database.
      *
-     * @param $events
+     * @param \core\event\base[] $events
      */
     protected function insert_events($events) {
         if (!$this->init()) {
@@ -125,7 +124,8 @@ class store implements \tool_log\log\writer, \core\log\reader {
         // Filter events.
         foreach ($events as $event) {
             if (in_array($event->crud, $this->excludeactions) ||
-                in_array($event->edulevel,  $this->excludelevels)) {
+                in_array($event->edulevel, $this->excludelevels)
+            ) {
                 // Ignore event if the store settings do not want to store it.
                 continue;
             }
@@ -159,10 +159,10 @@ class store implements \tool_log\log\writer, \core\log\reader {
      * Get an array of events based on the passed on params.
      *
      * @param string $selectwhere select conditions.
-     * @param array  $params      params.
-     * @param string $sort        sortorder.
-     * @param int    $limitfrom   limit constraints.
-     * @param int    $limitnum    limit constraints.
+     * @param array $params params.
+     * @param string $sort sortorder.
+     * @param int $limitfrom limit constraints.
+     * @param int $limitnum limit constraints.
      *
      * @return array|\core\event\base[] array of events.
      */
@@ -201,7 +201,7 @@ class store implements \tool_log\log\writer, \core\log\reader {
      * Get number of events present for the given select clause.
      *
      * @param string $selectwhere select conditions.
-     * @param array  $params      params.
+     * @param array $params params.
      *
      * @return int Number of events available for the given conditions
      */

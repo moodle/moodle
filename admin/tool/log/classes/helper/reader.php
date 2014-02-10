@@ -33,6 +33,9 @@ defined('MOODLE_INTERNAL') || die();
  * @package    tool_log
  * @copyright  2014 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @property string $component Frankenstyle plugin name initialised in store trait.
+ * @property string $store short plugin name initialised in store trait.
  */
 trait reader {
     /**
@@ -62,7 +65,7 @@ trait reader {
     /**
      * If the current user can access current store or not.
      *
-     * @param \context $context.
+     * @param \context $context
      *
      * @return bool
      */

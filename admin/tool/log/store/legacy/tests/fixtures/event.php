@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace logstore_legacy\event;
-
 /**
  * Fixtures for legacy logging testing.
  *
@@ -23,6 +21,8 @@ namespace logstore_legacy\event;
  * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+namespace logstore_legacy\event;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -42,7 +42,7 @@ class unittest_executed extends \core\event\base {
     }
 
     public function get_url() {
-        return new \moodle_url('/somepath/somefile.php', array('id'=>$this->data['other']['sample']));
+        return new \moodle_url('/somepath/somefile.php', array('id' => $this->data['other']['sample']));
     }
 
     public static function get_legacy_eventname() {
@@ -58,6 +58,7 @@ class unittest_executed extends \core\event\base {
         if ($this->contextlevel == CONTEXT_MODULE) {
             $cmid = $this->contextinstanceid;
         }
-        return array($this->data['courseid'], 'core_unittest', 'view', 'unittest.php?id='.$this->data['other']['sample'], 'bbb', $cmid);
+        return array($this->data['courseid'], 'core_unittest', 'view',
+            'unittest.php?id=' . $this->data['other']['sample'], 'bbb', $cmid);
     }
 }

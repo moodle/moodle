@@ -25,7 +25,6 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class legacy_logged extends \core\event\base {
 
     public function init() {
@@ -37,7 +36,7 @@ class legacy_logged extends \core\event\base {
     }
 
     public function get_description() {
-        return $this->other['module'].' '.$this->other['action'].' '.$this->other['info'];
+        return $this->other['module'] . ' ' . $this->other['action'] . ' ' . $this->other['info'];
     }
 
     public function get_url() {

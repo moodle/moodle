@@ -35,8 +35,6 @@ interface sql_reader extends reader {
      * Note: this table must be used for reading only,
      * it is strongly recommended to use this in complex reports only.
      *
-     * TODO: define the standard log columns - watch out for "level" reserved word!
-     *
      * @return string
      */
     public function get_log_table();

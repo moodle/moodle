@@ -22,9 +22,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-require_once (__DIR__ . '/fixtures/event.php');
+require_once(__DIR__ . '/fixtures/event.php');
 
 class logstore_legacy_store_testcase extends advanced_testcase {
     public function test_log_writing() {
@@ -35,9 +35,9 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
-        $module1 = $this->getDataGenerator()->create_module('resource', array('course'=>$course1));
+        $module1 = $this->getDataGenerator()->create_module('resource', array('course' => $course1));
         $course2 = $this->getDataGenerator()->create_course();
-        $module2 = $this->getDataGenerator()->create_module('resource', array('course'=>$course2));
+        $module2 = $this->getDataGenerator()->create_module('resource', array('course' => $course2));
 
         // Enable legacy logging plugin.
         set_config('enabled_stores', 'logstore_legacy', 'tool_log');
@@ -50,11 +50,13 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         $this->setCurrentTimeStart();
 
         $this->setUser(0);
-        $event1 = \logstore_legacy\event\unittest_executed::create(array('context'=>context_module::instance($module1->cmid), 'other'=>array('sample'=>5, 'xx'=>10)));
+        $event1 = \logstore_legacy\event\unittest_executed::create(
+            array('context' => context_module::instance($module1->cmid), 'other' => array('sample' => 5, 'xx' => 10)));
         $event1->trigger();
 
         $this->setUser($user1);
-        $event2 = \logstore_legacy\event\unittest_executed::create(array('context'=>context_course::instance($course2->id), 'other'=>array('sample'=>6, 'xx'=>11)));
+        $event2 = \logstore_legacy\event\unittest_executed::create(
+            array('context' => context_course::instance($course2->id), 'other' => array('sample' => 6, 'xx' => 11)));
         $event2->trigger();
 
         $this->setUser($user2);
@@ -126,7 +128,8 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         set_config('loglegacy', 0, 'logstore_legacy');
         get_log_manager(true);
 
-        \logstore_legacy\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>5, 'xx'=>10)))->trigger();
+        \logstore_legacy\event\unittest_executed::create(
+            array('context' => \context_system::instance(), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         add_to_log($course1->id, 'xxxx', 'yyyy', '', '7', 0, 0);
         //$this->assertDebuggingCalled();
         $this->assertEquals(4, $DB->count_records('log'));
@@ -136,7 +139,8 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         set_config('loglegacy', 1, 'logstore_legacy');
         get_log_manager(true);
 
-        \logstore_legacy\event\unittest_executed::create(array('context'=>\context_system::instance(), 'other'=>array('sample'=>5, 'xx'=>10)))->trigger();
+        \logstore_legacy\event\unittest_executed::create(
+            array('context' => \context_system::instance(), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
         add_to_log($course1->id, 'xxxx', 'yyyy', '', '7', 0, 0);
         //$this->assertDebuggingCalled();
         $this->assertEquals(4, $DB->count_records('log'));

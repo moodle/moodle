@@ -23,10 +23,10 @@
  */
 
 require_once('../../../config.php');
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir . '/adminlib.php');
 
 $action = required_param('action', PARAM_ALPHANUMEXT);
-$enrol  = required_param('store', PARAM_PLUGIN);
+$enrol = required_param('store', PARAM_PLUGIN);
 
 $PAGE->set_url('/admin/tool/log/stores.php');
 $PAGE->set_context(context_system::instance());
@@ -35,7 +35,7 @@ require_login();
 require_capability('moodle/site:config', context_system::instance());
 require_sesskey();
 
-$all     = \tool_log\log\manager::get_store_plugins();
+$all = \tool_log\log\manager::get_store_plugins();
 $enabled = get_config('tool_log', 'enabled_stores');
 if (!$enabled) {
     $enabled = array();
@@ -43,7 +43,7 @@ if (!$enabled) {
     $enabled = array_flip(explode(',', $enabled));
 }
 
-$return = new moodle_url('/admin/settings.php', array('section'=>'managelogging'));
+$return = new moodle_url('/admin/settings.php', array('section' => 'managelogging'));
 
 $syscontext = context_system::instance();
 

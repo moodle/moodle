@@ -33,7 +33,7 @@ class manager implements \core\log\manager {
     /** @var \tool_log\log\writer[] $writers list of initialised log writers */
     protected $writers;
 
-    /** @var \tool_log\log\store[] $stores */
+    /** @var \tool_log\log\store[] $stores list of all enabled stores */
     protected $stores;
 
     /**
@@ -84,7 +84,8 @@ class manager implements \core\log\manager {
             try {
                 $writer->write($event, $this);
             } catch (\Exception $e) {
-                debugging('Exception detected when logging event '.$event->eventname.' in '.$plugin.': '.$e->getMessage(), DEBUG_NORMAL, $e->getTrace());
+                debugging('Exception detected when logging event ' . $event->eventname . ' in ' . $plugin . ': ' .
+                    $e->getMessage(), DEBUG_NORMAL, $e->getTrace());
             }
         }
     }
@@ -146,15 +147,15 @@ class manager implements \core\log\manager {
      *
      * NOTE: this is hardcoded to legacy log store plugin, hopefully we can get rid of it soon.
      *
-     * @param    int     $courseid  The course id
-     * @param    string  $module  The module name  e.g. forum, journal, resource, course, user etc
-     * @param    string  $action  'view', 'update', 'add' or 'delete', possibly followed by another word to clarify.
-     * @param    string  $url     The file and parameters used to see the results of the action
-     * @param    string  $info    Additional description information
-     * @param    int     $cm      The course_module->id if there is one
-     * @param    int|\stdClass $user If log regards $user other than $USER
+     * @param int $courseid The course id
+     * @param string $module The module name  e.g. forum, journal, resource, course, user etc
+     * @param string $action 'view', 'update', 'add' or 'delete', possibly followed by another word to clarify
+     * @param string $url The file and parameters used to see the results of the action
+     * @param string $info Additional description information
+     * @param int $cm The course_module->id if there is one
+     * @param int|\stdClass $user If log regards $user other than $USER
      */
-    public function legacy_add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user=0) {
+    public function legacy_add_to_log($courseid, $module, $action, $url = '', $info = '', $cm = 0, $user = 0) {
         $this->init();
         if (isset($this->stores['logstore_legacy'])) {
             $this->stores['logstore_legacy']->legacy_add_to_log($courseid, $module, $action, $url, $info, $cm, $user);

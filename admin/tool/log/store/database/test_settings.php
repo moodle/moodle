@@ -22,8 +22,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require('../../../../../config.php');
-require_once($CFG->dirroot. '/lib/adminlib.php');
+require_once('../../../../../config.php');
+require_once($CFG->dirroot . '/lib/adminlib.php');
 
 require_login();
 $context = context_system::instance();
@@ -88,14 +88,14 @@ if (!in_array($dbtable, $tables)) {
     echo $OUTPUT->footer();
     die();
 }
-echo $OUTPUT->notification('Table '. $dbtable. ' found.', 'notifysuccess');
+echo $OUTPUT->notification('Table ' . $dbtable . ' found.', 'notifysuccess');
 
 $cols = $db->get_columns($dbtable);
 if (empty($cols)) {
     echo $OUTPUT->notification('Can not read external table.', 'notifyproblem');
 } else {
     $columns = array_keys((array)$cols);
-    echo $OUTPUT->notification('External table contains following columns:<br />'.implode(', ', $columns), 'notifysuccess');
+    echo $OUTPUT->notification('External table contains following columns:<br />' . implode(', ', $columns), 'notifysuccess');
 }
 
 $db->dispose();

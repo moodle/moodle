@@ -31,6 +31,7 @@ class dummy_manager implements manager {
     public function get_readers() {
         return array();
     }
+
     public function dispose() {
     }
 }
