@@ -85,6 +85,9 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
         $newcm->showdescription = 0;
     }
 
+    // From this point we make database changes, so start transaction.
+    $transaction = $DB->start_delegated_transaction();
+
     if (!$moduleinfo->coursemodule = add_course_module($newcm)) {
         print_error('cannotaddcoursemodule');
     }
@@ -98,14 +101,21 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     }
 
     $addinstancefunction    = $moduleinfo->modulename."_add_instance";
-    $returnfromfunc = $addinstancefunction($moduleinfo, $mform);
+    try {
+        $returnfromfunc = $addinstancefunction($moduleinfo, $mform);
+    } catch (moodle_exception $e) {
+        $returnfromfunc = $e;
+    }
     if (!$returnfromfunc or !is_number($returnfromfunc)) {
-        // Undo everything we can.
+        // Undo everything we can. This is not necessary for databases which
+        // support transactions, but improves consistency for other databases.
         $modcontext = context_module::instance($moduleinfo->coursemodule);
         context_helper::delete_instance(CONTEXT_MODULE, $moduleinfo->coursemodule);
         $DB->delete_records('course_modules', array('id'=>$moduleinfo->coursemodule));
 
-        if (!is_number($returnfromfunc)) {
+        if ($e instanceof moodle_exception) {
+            throw $e;
+        } else if (!is_number($returnfromfunc)) {
             print_error('invalidfunction', '', course_get_url($course, $moduleinfo->section));
         } else {
             print_error('cannotaddnewmodule', '', course_get_url($course, $moduleinfo->section), $moduleinfo->modulename);
@@ -152,6 +162,7 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
                "$moduleinfo->instance", $moduleinfo->coursemodule);
 
     $moduleinfo = edit_module_post_actions($moduleinfo, $course);
+    $transaction->allow_commit();
 
     return $moduleinfo;
 }
