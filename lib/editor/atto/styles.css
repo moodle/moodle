@@ -59,8 +59,8 @@ div.editor_atto_toolbar button[disabled] {
 
 div.editor_atto_toolbar button img {
     padding: 1px;
+    margin: 1px 0;
 }
-
 
 div.editor_atto_toolbar div.atto_group {
     display: inline-block;
@@ -81,7 +81,6 @@ div.editor_atto_toolbar div.atto_group {
 }
 
 .atto_menu {
-    min-width: 12em;
     background: white;
     padding: 1px;
 }
@@ -154,7 +153,7 @@ div.editor_atto_content:hover .atto_control {
 .editor_atto_controlmenu li {
     list-style-type: none;
     padding: 0px;
-    margin; 0px;
+    margin: 0px;
 }
 .editor_atto_controlmenu ul {
     padding: 0px;
