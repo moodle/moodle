@@ -28,7 +28,9 @@ require_once($CFG->libdir.'/tablelib.php');
 
 /**
  * This table has one row for each question in the quiz, with sub-rows when
- * random questions appear. There are columns for the various statistics.
+ * random questions and variants appear.
+ *
+ * There are columns for the various item and position statistics.
  *
  * @copyright 2008 Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -136,6 +138,9 @@ class quiz_statistics_table extends flexible_table {
      * @return string contents of this table cell.
      */
     protected function col_number($questionstat) {
+        if (!isset($questionstat->question->number)) {
+            return '';
+        }
         $number = $questionstat->question->number;
 
         if (isset($questionstat->subqdisplayorder)) {
@@ -214,7 +219,7 @@ class quiz_statistics_table extends flexible_table {
         }
 
         if (!empty($questionstat->minmedianmaxnotice)) {
-            $name = $questionstat->minmedianmaxnotice . '<br />' . $name;
+            $name = get_string($questionstat->minmedianmaxnotice, 'quiz_statistics') . '<br />' . $name;
         }
 
         return $name;

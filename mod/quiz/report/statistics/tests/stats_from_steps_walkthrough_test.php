@@ -80,7 +80,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
         $whichattempts = QUIZ_GRADEAVERAGE;
         $groupstudents = array();
         $questions = $this->report->load_and_initialise_questions_for_calculations($this->quiz);
-        list($quizstats, $questionstats, $subquestionstats) =
+        list($quizstats, $questionstats) =
                         $this->report->get_all_stats_and_analysis($this->quiz, $whichattempts, $groupstudents, $questions);
 
         $qubaids = quiz_statistics_qubaids_condition($this->quiz->id, $groupstudents, $whichattempts);
@@ -102,11 +102,9 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
             $this->assertTimeCurrent($responesstats->get_last_analysed_time($qubaids));
         }
 
-        // These quiz stats and the question stats found in qstats00.csv were calculated independently in spreadsheets which are
+        // These quiz stats and the question stats found in qstats00.csv were calculated independently in spreadsheet which is
         // available in open document or excel format here :
         // https://github.com/jamiepratt/moodle-quiz-tools/tree/master/statsspreadsheet
-
-        // These quiz stats and the position stats here are calculated in stats.xls and stats.ods available, see above github URL.
         $quizstatsexpected = array(
             'median' => 4.5,
             'firstattemptsavg' => 4.617333332,
@@ -129,8 +127,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
             $slotqstats = $csvdata['qstats']->getRow($rowno);
             foreach ($slotqstats as $statname => $slotqstat) {
                 if ($statname !== 'slot') {
-                    $this->assert_stat_equals($questionstats, $subquestionstats, $slotqstats['slot'],
-                                              null, null, $statname, (float)$slotqstat);
+                    $this->assert_stat_equals($questionstats, $slotqstats['slot'], null, null, $statname, (float)$slotqstat);
                 }
             }
         }
@@ -146,7 +143,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
                           'slot' => null,
                           'subquestion' => true);
         foreach ($itemstats as $statname => $expected) {
-            $this->assert_stat_equals($questionstats, $subquestionstats, 1, null, 'numerical', $statname, $expected);
+            $this->assert_stat_equals($questionstats, 1, null, 'numerical', $statname, $expected);
         }
 
 
@@ -176,7 +173,7 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
                                                     'subquestion' => false));
         foreach ($statsforslot2variants as $variant => $stats) {
              foreach ($stats as $statname => $expected) {
-                 $this->assert_stat_equals($questionstats, $subquestionstats, 2, $variant, null, $statname, $expected);
+                 $this->assert_stat_equals($questionstats, 2, $variant, null, $statname, $expected);
              }
         }
     }
@@ -184,22 +181,21 @@ class quiz_report_statistics_from_steps_testcase extends mod_quiz_attempt_walkth
     /**
      * Check that the stat is as expected within a reasonable tolerance.
      *
-     * @param \core_question\statistics\questions\calculated[] $questionstats
-     * @param \core_question\statistics\questions\calculated_for_subquestion[] $subquestionstats
+     * @param \core_question\statistics\questions\all_calculated_for_qubaid_condition $questionstats
      * @param int                                              $slot
      * @param int|null                                         $variant if null then not a variant stat.
      * @param string|null                                      $subqname if null then not an item stat.
      * @param string                                           $statname
      * @param float                                            $expected
      */
-    protected function assert_stat_equals($questionstats, $subquestionstats, $slot, $variant, $subqname, $statname, $expected) {
+    protected function assert_stat_equals($questionstats, $slot, $variant, $subqname, $statname, $expected) {
 
         if ($variant === null && $subqname === null) {
-            $actual = $questionstats[$slot]->{$statname};
+            $actual = $questionstats->for_slot($slot)->{$statname};
         } else if ($subqname !== null) {
-            $actual = $subquestionstats[$this->randqids[$slot][$subqname]]->{$statname};
+            $actual = $questionstats->for_subq($this->randqids[$slot][$subqname])->{$statname};
         } else {
-            $actual = $questionstats[$slot]->variantstats[$variant]->{$statname};
+            $actual = $questionstats->for_slot($slot, $variant)->{$statname};
         }
         if (is_bool($expected) || is_string($expected)) {
             $this->assertEquals($expected, $actual, "$statname for slot $slot");
