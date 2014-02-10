@@ -175,8 +175,15 @@ img.icon-pre {
     display: inline;
 }
 
+// Allow the custom menu to expand/collapse when the user hovers over it with JS disabled.
+body:not(.jsenabled) .dropdown:hover > .dropdown-menu {
+    display: block;
+    margin-top: -6px; // We need to move it up to counter the arrows as they introduce hover bugs.
+}
+
 // Extends bootstrapbase/less/bootstrap/navbar.less
 // to enable scroll in the language menu.
+body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 .langmenu.open > .dropdown-menu {
     display: block;
     max-height: 150px;
