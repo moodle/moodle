@@ -134,7 +134,7 @@ class manager implements \core\log\manager {
      */
     public function cron() {
         $this->init();
-        foreach ($this->stores['legacy'] as $store) {
+        foreach ($this->stores as $store) {
             $store->cron();
         }
     }
