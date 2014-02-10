@@ -2241,30 +2241,7 @@ function xmldb_main_upgrade($oldversion) {
     if ($oldversion < 2013051402.10) {
         // Find all fileareas that have missing root folder entry and add the root folder entry.
         if (empty($CFG->filesrootrecordsfixed)) {
-            $sql = "SELECT distinct f1.contextid, f1.component, f1.filearea, f1.itemid
-                FROM {files} f1 left JOIN {files} f2
-                    ON f1.contextid = f2.contextid
-                    AND f1.component = f2.component
-                    AND f1.filearea = f2.filearea
-                    AND f1.itemid = f2.itemid
-                    AND f2.filename = '.'
-                    AND f2.filepath = '/'
-                WHERE (f1.component <> 'user' or f1.filearea <> 'draft')
-                and f2.id is null";
-            $rs = $DB->get_recordset_sql($sql);
-            $defaults = array('filepath' => '/',
-                            'filename' => '.',
-                            'userid' => $USER->id,
-                            'filesize' => 0,
-                            'timecreated' => time(),
-                            'timemodified' => time(),
-                            'contenthash' => sha1(''));
-            foreach ($rs as $r) {
-                $pathhash = sha1("/$r->contextid/$r->component/$r->filearea/$r->itemid".'/.');
-                $DB->insert_record('files', (array)$r + $defaults +
-                        array('pathnamehash' => $pathhash));
-            }
-            $rs->close();
+            upgrade_fix_missing_root_folders();
             // To skip running the same script on the upgrade to the next major release.
             set_config('filesrootrecordsfixed', 1);
         }
