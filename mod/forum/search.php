@@ -112,7 +112,13 @@ if (!$course = $DB->get_record('course', array('id'=>$id))) {
 
 require_course_login($course);
 
-add_to_log($course->id, "forum", "search", "search.php?id=$course->id&amp;search=".urlencode($search), $search);
+$params = array(
+    'context' => $PAGE->context,
+    'other' => array('searchterm' => $search)
+);
+
+$event = \mod_forum\event\course_searched::create($params);
+$event->trigger();
 
 $strforums = get_string("modulenameplural", "forum");
 $strsearch = get_string("search", "forum");

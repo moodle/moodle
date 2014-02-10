@@ -51,7 +51,11 @@ $coursecontext = context_course::instance($course->id);
 
 unset($SESSION->fromdiscussion);
 
-add_to_log($course->id, 'forum', 'view forums', "index.php?id=$course->id");
+$params = array(
+    'context' => context_course::instance($course->id)
+);
+$event = \mod_forum\event\course_module_instance_list_viewed::create($params);
+$event->trigger();
 
 $strforums       = get_string('forums', 'forum');
 $strforum        = get_string('forum', 'forum');
