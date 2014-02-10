@@ -71,7 +71,7 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
     public function manual_comment_fields(question_attempt $qa, question_display_options $options) {
         $inputname = $qa->get_behaviour_field_name('comment');
         $id = $inputname . '_id';
-        list($commenttext, $commentformat) = $qa->get_manual_comment();
+        list($commenttext, $commentformat) = $qa->get_current_manual_comment();
 
         $editor = editors_get_preferred_editor($commentformat);
         $strformats = format_text_menu();
