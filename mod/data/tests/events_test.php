@@ -39,6 +39,42 @@ class mod_data_events_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the field created event.
+     */
+    public function test_field_created() {
+        $this->setAdminUser();
+
+        // Create a course we are going to add a data module to.
+        $course = $this->getDataGenerator()->create_course();
+
+        // The generator used to create a data module.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+
+        // Create a data module.
+        $data = $generator->create_instance(array('course' => $course->id));
+
+        // Now we want to create a field.
+        $field = data_get_field_new('text', $data);
+        $fielddata = new stdClass();
+        $fielddata->name = 'Test';
+        $fielddata->description = 'Test description';
+        $field->define_field($fielddata);
+
+        // Trigger and capture the event for creating a field.
+        $sink = $this->redirectEvents();
+        $field->insert_field();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_data\event\field_created', $event);
+        $this->assertEquals(context_module::instance($data->cmid), $event->get_context());
+        $expected = array($course->id, 'data', 'fields add', 'field.php?d=' . $data->id . '&amp;mode=display&amp;fid=' .
+            $field->field->id, $field->field->id, $data->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
+
+    /**
      * Test the field deleted event.
      */
     public function test_field_deleted() {

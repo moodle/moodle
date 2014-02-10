@@ -121,9 +121,6 @@ switch ($mode) {
             /// Update some templates
                 data_append_new_field_to_templates($data, $fieldinput->name);
 
-                add_to_log($course->id, 'data', 'fields add',
-                           "field.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
-
                 $displaynoticegood = get_string('fieldadded','data');
             }
         }

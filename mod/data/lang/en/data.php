@@ -119,6 +119,7 @@ $string['editordisable'] = 'Disable editor';
 $string['editorenable'] = 'Enable editor';
 $string['emptyadd'] = 'The Add template is empty, generating a default form...';
 $string['emptyaddform'] = 'You did not fill out any fields!';
+$string['eventfieldcreated'] = 'Field created';
 $string['eventfielddeleted'] = 'Field deleted';
 $string['fileencoding'] = 'Encoding';
 $string['entries'] = 'Entries';

@@ -188,6 +188,18 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         }
 
         $this->field->id = $DB->insert_record('data_fields',$this->field);
+
+        // Trigger an event for creating this field.
+        $event = \mod_data\event\field_created::create(array(
+            'objectid' => $this->field->id,
+            'context' => $this->context,
+            'other' => array(
+                'fieldname' => $this->field->name,
+                'dataid' => $this->data->id
+            )
+        ));
+        $event->trigger();
+
         return true;
     }
 
