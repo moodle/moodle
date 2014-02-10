@@ -98,6 +98,12 @@ class atto_texteditor extends texteditor {
         foreach ($groups as $group => $plugins) {
             $groupplugins = array();
             foreach ($plugins as $plugin) {
+                // Do not die on missing plugin.
+                if (!core_component::get_component_directory('atto_' . $plugin))  {
+                    debugging('Missing atto plugin ' . $plugin, DEBUG_DEVELOPER);
+                    continue;
+                }
+
                 $jsplugin = array();
                 $jsplugin['name'] = $plugin;
                 $jsplugin['params'] = array();
