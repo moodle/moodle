@@ -102,6 +102,15 @@ class store implements \tool_log\log\store, \core\log\reader {
         }
     }
 
+    /**
+     * Are the new events appearing in the reader?
+     *
+     * @return bool true means new log events are being added, false means no new data will be added
+     */
+    public function is_logging() {
+        return (bool)$this->get_config('loglegacy', true);
+    }
+
     public function dispose() {
     }
 
@@ -121,7 +130,7 @@ class store implements \tool_log\log\store, \core\log\reader {
         // This is for a good reason: it is the most frequently used DB update function,
         // so it has been optimised for speed.
         global $DB, $CFG, $USER;
-        if (!$this->legacy_logging_enabled()) {
+        if (!$this->is_logging()) {
             return;
         }
 
@@ -199,13 +208,5 @@ class store implements \tool_log\log\store, \core\log\reader {
                 }
             }
         }
-    }
-
-    /**
-     * Did admin request to keep adding new data to legacy log table?
-     * @return bool
-     */
-    protected function legacy_logging_enabled() {
-        return (bool)get_config('logstore_legacy', 'loglegacy');
     }
 }

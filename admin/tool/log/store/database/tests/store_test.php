@@ -44,6 +44,12 @@ class logstore_database_store_testcase extends advanced_testcase {
         $course2 = $this->getDataGenerator()->create_course();
         $module2 = $this->getDataGenerator()->create_module('resource', array('course' => $course2));
 
+        // Test all plugins are disabled by this command.
+        set_config('enabled_stores', '', 'tool_log');
+        $manager = get_log_manager(true);
+        $stores = $manager->get_readers();
+        $this->assertCount(0, $stores);
+
         // Fake the settings, we will abuse the standard plugin table here...
         $parts = explode('_', get_class($DB));
         set_config('dbdriver', $parts[1] . '/' . $parts[0], 'logstore_database');
@@ -90,6 +96,7 @@ class logstore_database_store_testcase extends advanced_testcase {
         $store = $stores['logstore_database'];
         $this->assertInstanceOf('logstore_database\log\store', $store);
         $this->assertInstanceOf('tool_log\log\writer', $store);
+        $this->assertTrue($store->is_logging());
 
         $logs = $DB->get_records('logstore_standard_log', array(), 'id ASC');
         $this->assertCount(0, $logs);

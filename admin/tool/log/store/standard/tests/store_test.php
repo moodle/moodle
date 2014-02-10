@@ -40,6 +40,12 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $course2 = $this->getDataGenerator()->create_course();
         $module2 = $this->getDataGenerator()->create_module('resource', array('course' => $course2));
 
+        // Test all plugins are disabled by this command.
+        set_config('enabled_stores', '', 'tool_log');
+        $manager = get_log_manager(true);
+        $stores = $manager->get_readers();
+        $this->assertCount(0, $stores);
+
         // Enable logging plugin.
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
         set_config('buffersize', 0, 'logstore_standard');
@@ -52,6 +58,7 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $store = $stores['logstore_standard'];
         $this->assertInstanceOf('logstore_standard\log\store', $store);
         $this->assertInstanceOf('tool_log\log\writer', $store);
+        $this->assertTrue($store->is_logging());
 
         $logs = $DB->get_records('logstore_standard_log', array(), 'id ASC');
         $this->assertCount(0, $logs);

@@ -121,4 +121,15 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
             mtrace(" Deleted old log records from standard store.");
         }
     }
+
+    /**
+     * Are the new events appearing in the reader?
+     *
+     * @return bool true means new log events are being added, false means no new data will be added
+     */
+    public function is_logging() {
+        // Only enabled stpres are queried,
+        // this means we can return true here unless store has some extra switch.
+        return true;
+    }
 }

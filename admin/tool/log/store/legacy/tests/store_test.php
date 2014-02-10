@@ -42,7 +42,15 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         // Enable legacy logging plugin.
         set_config('enabled_stores', 'logstore_legacy', 'tool_log');
         set_config('loglegacy', 1, 'logstore_legacy');
-        get_log_manager(true);
+        $manager = get_log_manager(true);
+
+        $stores = $manager->get_readers();
+        $this->assertCount(1, $stores);
+        $this->assertEquals(array('logstore_legacy'), array_keys($stores));
+        $store = $stores['logstore_legacy'];
+        $this->assertInstanceOf('logstore_legacy\log\store', $store);
+        $this->assertInstanceOf('core\log\reader', $store);
+        $this->assertTrue($store->is_logging());
 
         $logs = $DB->get_records('log', array(), 'id ASC');
         $this->assertCount(0, $logs);
@@ -126,7 +134,10 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         // Test if disabling works.
         set_config('enabled_stores', 'logstore_legacy', 'tool_log');
         set_config('loglegacy', 0, 'logstore_legacy');
-        get_log_manager(true);
+        $manager = get_log_manager(true);
+        $stores = $manager->get_readers();
+        $store = $stores['logstore_legacy'];
+        $this->assertFalse($store->is_logging());
 
         \logstore_legacy\event\unittest_executed::create(
             array('context' => \context_system::instance(), 'other' => array('sample' => 5, 'xx' => 10)))->trigger();
@@ -144,7 +155,6 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         add_to_log($course1->id, 'xxxx', 'yyyy', '', '7', 0, 0);
         //$this->assertDebuggingCalled();
         $this->assertEquals(4, $DB->count_records('log'));
-
         // Set everything back.
         set_config('enabled_stores', '', 'tool_log');
         set_config('loglegacy', 0, 'logstore_legacy');

@@ -221,6 +221,18 @@ class store implements \tool_log\log\writer, \core\log\reader {
     }
 
     /**
+     * Are the new events appearing in the reader?
+     *
+     * @return bool true means new log events are being added, false means no new data will be added
+     */
+    public function is_logging() {
+        if (!$this->init()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Dispose off database connection after pushing any buffered events to the database.
      */
     public function dispose() {

@@ -69,4 +69,11 @@ interface reader {
      * @return int
      */
     public function get_events_count($selectwhere, array $params);
+
+    /**
+     * Are the new events appearing in the reader?
+     *
+     * @return bool true means new log events are being added, false means no new data will be added
+     */
+    public function is_logging();
 }
