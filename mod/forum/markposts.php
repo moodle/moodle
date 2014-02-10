@@ -90,7 +90,7 @@ if ($mark == 'read') {
             // may return 0
             $currentgroup=false;
         }
-        forum_tp_mark_forum_read($user, $forum->id,$currentgroup);
+        forum_tp_mark_forum_read($user, $forum->id, $currentgroup);
     }
 
 /// FUTURE - Add ability to mark them as unread.
