@@ -2,6 +2,9 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 2.7 ===
+* The ->testedbrowsers array no longer needs to be defined in supports_ajax().
+
 === 2.6 ===
 
 * core_course_renderer::course_section_cm_edit_actions has two new optional arguments and now uses and action_menu component.

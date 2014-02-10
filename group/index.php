@@ -152,20 +152,11 @@ $currenttab = 'groups';
 require('tabs.php');
 
 $disabled = 'disabled="disabled"';
-$ajaxenabled = ajaxenabled();
-if ($ajaxenabled) {
-    // Some buttons are enabled if single group selected
-    $showaddmembersform_disabled = $singlegroup ? '' : $disabled;
-    $showeditgroupsettingsform_disabled = $singlegroup ? '' : $disabled;
-    $deletegroup_disabled = count($groupids)>0 ? '' : $disabled;
-} else {
-    // Do not disable buttons. The buttons work based on the selected group,
-    // which you can change without reloading the page, so it is not appropriate
-    // to disable them if no group is selected.
-    $showaddmembersform_disabled = '';
-    $showeditgroupsettingsform_disabled = '';
-    $deletegroup_disabled = '';
-}
+
+// Some buttons are enabled if single group selected.
+$showaddmembersform_disabled = $singlegroup ? '' : $disabled;
+$showeditgroupsettingsform_disabled = $singlegroup ? '' : $disabled;
+$deletegroup_disabled = count($groupids) > 0 ? '' : $disabled;
 
 echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) .' '.$strgroups, 3);
 echo '<form id="groupeditform" action="index.php" method="post">'."\n";
@@ -179,11 +170,7 @@ echo '<tr>'."\n";
 echo "<td>\n";
 echo '<p><label for="groups"><span id="groupslabel">'.get_string('groups').':</span><span id="thegrouping">&nbsp;</span></label></p>'."\n";
 
-if ($ajaxenabled) { // TODO: move this to JS init!
-    $onchange = 'M.core_group.membersCombo.refreshMembers();';
-} else {
-    $onchange = '';
-}
+$onchange = 'M.core_group.membersCombo.refreshMembers();';
 
 echo '<select name="groups[]" multiple="multiple" id="groups" size="15" class="select" onchange="'.$onchange.'"'."\n";
 echo ' onclick="window.status=this.selectedIndex==-1 ? \'\' : this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
@@ -276,10 +263,8 @@ echo '</table>'."\n";
 echo '</div>'."\n";
 echo '</form>'."\n";
 
-if ($ajaxenabled) {
-    $PAGE->requires->js_init_call('M.core_group.init_index', array($CFG->wwwroot, $courseid));
-    $PAGE->requires->js_init_call('M.core_group.groupslist', array($preventgroupremoval));
-}
+$PAGE->requires->js_init_call('M.core_group.init_index', array($CFG->wwwroot, $courseid));
+$PAGE->requires->js_init_call('M.core_group.groupslist', array($preventgroupremoval));
 
 echo $OUTPUT->footer();
 
