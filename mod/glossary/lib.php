@@ -364,7 +364,7 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
     $params['timestart'] = $timestart;
     $params['glossaryid'] = $cm->instance;
 
-    $ufields = user_picture::fields('u', array('lastaccess', 'firstname', 'lastname', 'email', 'picture', 'imagealt'));
+    $ufields = user_picture::fields('u');
     $entries = $DB->get_records_sql("
               SELECT ge.id AS entryid, ge.*, $ufields
                 FROM {glossary_entries} ge
@@ -399,6 +399,9 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
         }
 
         $tmpactivity                       = new stdClass();
+        $tmpactivity->user = username_load_fields_from_object(new stdClass(), $entry, null,
+                explode(',', user_picture::fields()));
+        $tmpactivity->user->fullname       = fullname($tmpactivity->user, $viewfullnames);
         $tmpactivity->type                 = 'glossary';
         $tmpactivity->cmid                 = $cm->id;
         $tmpactivity->glossaryid           = $entry->glossaryid;
@@ -409,14 +412,6 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
         $tmpactivity->content->entryid     = $entry->entryid;
         $tmpactivity->content->concept     = $entry->concept;
         $tmpactivity->content->definition  = $entry->definition;
-        $tmpactivity->user                 = new stdClass();
-        $tmpactivity->user->id             = $entry->userid;
-        $tmpactivity->user->firstname      = $entry->firstname;
-        $tmpactivity->user->lastname       = $entry->lastname;
-        $tmpactivity->user->fullname       = fullname($entry, $viewfullnames);
-        $tmpactivity->user->picture        = $entry->picture;
-        $tmpactivity->user->imagealt       = $entry->imagealt;
-        $tmpactivity->user->email          = $entry->email;
 
         $activities[$index++] = $tmpactivity;
     }
