@@ -4497,6 +4497,7 @@ class settings_navigation_ajax extends settings_navigation {
         if ($this->initialised || during_initial_install()) {
             return false;
         }
+        $this->context = $this->page->context;
         $this->load_administration_settings();
 
         // Check if local plugins is adding node to site admin.
