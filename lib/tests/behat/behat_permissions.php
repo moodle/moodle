@@ -142,4 +142,44 @@ class behat_permissions extends behat_base {
         }
     }
 
+    /**
+     * Checks if the capability has the specified permission. Works in the role definition advanced page.
+     *
+     * @Then /^"(?P<capability_string>(?:[^"]|\\")*)" capability has "(?P<permission_string>Not set|Allow|Prevent|Prohibit)" permission$/
+     * @throws ExpectationException
+     * @param string $capabilityname
+     * @param string $permission
+     * @return void
+     */
+    public function capability_has_permission($capabilityname, $permission) {
+
+        // We already know the name, so we just need the value.
+        $radioxpath = "//table[@class='rolecap']/descendant::input[@type='radio']" .
+            "[@name='" . $capabilityname . "'][@checked]";
+
+        $checkedradio = $this->find('xpath', $radioxpath);
+
+        switch ($permission) {
+            case get_string('notset', 'role'):
+                $perm = CAP_INHERIT;
+                break;
+            case get_string('allow', 'role'):
+                $perm = CAP_ALLOW;
+                break;
+            case get_string('prevent', 'role'):
+                $perm = CAP_PREVENT;
+                break;
+            case get_string('prohibit', 'role'):
+                $perm = CAP_PROHIBIT;
+                break;
+            default:
+                throw new ExpectationException('"' . $permission . '" permission does not exist', $this->getSession());
+                break;
+        }
+
+        if ($checkedradio->getAttribute('value') != $perm) {
+            throw new ExpectationException('"' . $capabilityname . '" permission is not "' . $permission . '"', $this->getSession());
+        }
+    }
+
 }

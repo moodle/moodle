@@ -90,10 +90,10 @@ Feature: Set up contextual data for tests
     And I expand "Users" node
     And I follow "Permissions"
     And I select "Student (1)" from "Advanced role override"
-    Then the "mod/forum:editanypost" field should match "1" value
+    Then "mod/forum:editanypost" capability has "Allow" permission
     And I press "Cancel"
     And I select "Teacher (1)" from "Advanced role override"
-    And the "mod/forum:replynews" field should match "-1" value
+    And "mod/forum:replynews" capability has "Prevent" permission
     And I press "Cancel"
 
   Scenario: Add course enrolments
