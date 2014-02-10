@@ -3238,11 +3238,15 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'clicktochangeinbrackets',
             'markthistopic',
             'markedthistopic',
-            'move',
             'movesection',
+            'movecoursemodule',
+            'movecoursesection',
             'movecontent',
             'tocontent',
-            'emptydragdropregion'
+            'emptydragdropregion',
+            'afterresource',
+            'aftersection',
+            'totopofsection',
         ), 'moodle');
 
     // Include section-specific strings for formats which support sections.
