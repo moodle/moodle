@@ -160,9 +160,6 @@ switch ($mode) {
             /// Update the templates.
                 data_replace_field_in_templates($data, $oldfieldname, $field->field->name);
 
-                add_to_log($course->id, 'data', 'fields update',
-                           "field.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
-
                 $displaynoticegood = get_string('fieldupdated','data');
             }
         }
