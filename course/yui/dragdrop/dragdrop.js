@@ -278,7 +278,16 @@ YUI.add('moodle-course-dragdrop', function(Y) {
             this.groups = ['resource'];
             this.samenodeclass = CSS.ACTIVITY;
             this.parentnodeclass = CSS.SECTION;
-            this.resourcedraghandle = this.get_drag_handle(M.str.moodle.move, CSS.EDITINGMOVE, CSS.ICONCLASS, true);
+            this.resourcedraghandle = this.get_drag_handle(M.util.get_string('movecoursemodule', 'moodle'), CSS.EDITINGMOVE, CSS.ICONCLASS, true);
+
+            this.samenodelabel = {
+                identifier: 'afterresource',
+                component: 'moodle'
+            };
+            this.parentnodelabel = {
+                identifier: 'totopofsection',
+                component: 'moodle'
+            };
 
             // Go through all sections
             var sectionlistselector = M.course.format.get_section_selector(Y);
