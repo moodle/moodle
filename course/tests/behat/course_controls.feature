@@ -1,13 +1,12 @@
-@core @core_course @_alert
+@core @core_course
 Feature: Course activity controls works as expected
   In order to manage my course's activities
   As a teacher
   I need to edit, hide, show and indent activities inside course sections
 
   # The difference between these two scenario outlines is that one is with
-  # JS enabled and the other one with JS disabled, also with JS disabled we
-  # add the delete activity checking; we can not use Background sections
-  # when using Scenario Outlines because of Behat framework restrictions.
+  # JS enabled and the other one with JS disabled; we can not use Background
+  # sections when using Scenario Outlines because of Behat framework restrictions.
 
   # We are testing:
   # * Javascript on and off
@@ -16,7 +15,7 @@ Feature: Course activity controls works as expected
   # * Course controls with paged mode in the course home page
   # * Course controls with paged mode in a section's page
 
-  @javascript @_cross_browser
+  @javascript @_cross_browser @_alert
   Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected
     Given the following "users" exists:
       | username | firstname | lastname | email |
@@ -68,7 +67,9 @@ Feature: Course activity controls works as expected
     And I open "Test forum name 1" actions menu
     And I click on "Hide" "link" in the "Test forum name 1" activity
     And "#section-2" "css_element" <should_see_other_sections> exists
-    And I close "Test forum name 1" actions menu
+    And I open "Test forum name 1" actions menu
+    And I delete "Test forum name 1" activity
+    And I should not see "Test forum name 1" in the "#region-main" "css_element"
     And I duplicate "Test forum name 2" activity editing the new copy with:
       | Forum name | Edited test forum name 2 |
     And "#section-2" "css_element" <should_see_other_sections> exists
