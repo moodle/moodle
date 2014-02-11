@@ -78,19 +78,18 @@ foreach($assessments as $k => $v) {
     if (!empty($v->assessmentid)) {
         $assessment = $workshop->get_assessment_by_id($v->assessmentid);
         $mformassessment = $strategy->get_assessment_form($PAGE->url, 'assessment', $assessment, false);
+        
+        $options = array(
+            'showreviewer'  => true,
+            'showauthor'    => false,
+            'showform'      => true,
+        );
+    
+        $exassessment = $workshop->prepare_example_assessment($assessment, $mformassessment, $options);
+        $exassessment->reference_form = $mformreference;
+    
+        echo $output->render($exassessment);
     }
-    
-    $options = array(
-        'showreviewer'  => true,
-        'showauthor'    => false,
-        'showform'      => true,
-    );
-    
-    $exassessment = $workshop->prepare_example_assessment($assessment, $mformassessment, $options);
-    $exassessment->reference_form = $mformreference;
-    
-    echo $output->render($exassessment);
-
     
 }
 
