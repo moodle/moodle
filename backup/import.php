@@ -176,7 +176,7 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     // Display a notification and a continue button
     if ($warnings) {
         echo $OUTPUT->box_start();
-        echo $OUTPUT->notification(get_string('warning'), 'notifywarning');
+        echo $OUTPUT->notification(get_string('warning'), 'notifyproblem');
         echo html_writer::start_tag('ul', array('class'=>'list'));
         foreach ($warnings as $warning) {
             echo html_writer::tag('li', $warning);

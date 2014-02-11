@@ -410,7 +410,7 @@ class core_backup_renderer extends plugin_renderer_base {
         }
         if (array_key_exists('warnings', $results)) {
             foreach ($results['warnings'] as $warning) {
-                $output .= $this->output->notification($warning, 'notifywarning notifyproblem');
+                $output .= $this->output->notification($warning, 'notifyproblem');
             }
         }
         return $output.html_writer::end_tag('div');
