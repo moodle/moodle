@@ -97,22 +97,5 @@ function xmldb_trainingevent_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014012301, 'trainingevent');
     }
 
-    if ($oldversion < 2014012700) {
-
-        // moved module away from manageclass.php to standard view.php
-        // get all the courses which may have this installed.
-        if ($courses = $DB->get_records_sql("SELECT * from {course}
-                                             WHERE modinfo LIKE :trainingevent",
-                                             array('trainingevent' => "%manageclass.php%"))) {
-            foreach ($courses as $course) {
-                $course->modinfo = str_replace('manageclass.php', 'view.php', $course->modinfo);
-                $DB->update_record('course', $course);
-            }
-        }
-
-        // Trainingevent savepoint reached.
-        upgrade_mod_savepoint(true, 2014012700, 'trainingevent');
-    }
-
     return $result;
 }

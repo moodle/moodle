@@ -74,7 +74,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $eventid))) {
 
 // Page stuff.
 $url = new moodle_url('/course/view.php', array('id' => $event->course));
-$context = get_context_instance(CONTEXT_COURSE, $event->course);
+$context = context_course::instance($event->course);
 require_login($event->course); // Adds to $PAGE, creates $OUTPUT.
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
@@ -94,7 +94,7 @@ $company = new company($location->companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', get_context_instance(CONTEXT_SYSTEM))) {
+if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = company::get_userlevel($USER);
