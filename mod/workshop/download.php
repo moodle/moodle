@@ -125,6 +125,9 @@ function table_to_csv($headers, $table) {
 
 }
 
+//Yet more Excel bullshit - it won't read UTF-8 without a byte order mark
+$csv->add_data(array("\xEF\xBB\xBF"));
+
 // We include two tables in this report.
 
 // The first is the grade summary.
