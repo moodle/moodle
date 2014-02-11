@@ -29,10 +29,7 @@ function xmldb_tool_log_install() {
 
     $enabled = array();
 
-    if (file_exists("$CFG->dirroot/$CFG->admin/tool/log/store/standard")) {
-        $enabled[] = 'logstore_standard';
-    }
-
+    // For now enable only the legacy logging, this keeps 100% BC.
     if (file_exists("$CFG->dirroot/$CFG->admin/tool/log/store/legacy")) {
         $enabled[] = 'logstore_legacy';
     }
