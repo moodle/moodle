@@ -13,7 +13,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/csvlib.class.php');
 
-header('Content-type: text/plain');
+header('Content-type: text/csv');
 
 $id         = required_param('id', PARAM_INT); // course_module ID
 $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
@@ -153,6 +153,11 @@ $csv->add_data(array(""));
 // We build the headers after the table, since some of them depend
 // on the content of the table.
 
+// this is an array of comment fields that have values
+// if a comment field is not in this array then it will not get a comments field
+$needs_comments = array();
+$needs_feedback = false;
+
 $table2 = array();
 
 foreach($examples as $ex) {
@@ -164,6 +169,15 @@ foreach($examples as $ex) {
     $total = 0;
     foreach($dimensions as $dimid => $dim) {
         $row["dim$dimid"] = round($ex->grades[$dimid]->grade,2);
+        $comment = trim(strip_tags($ex->grades[$dimid]->peercomment));
+        $comment = str_replace("\n","\r",$comment);
+        if (in_array(substr($comment,0,1), array("-","+","="))) {
+            $comment = " $comment";
+        }
+        $row["comment$dimid"] = $comment;
+        if (strlen($comment)) {
+            $needs_comments[$dimid] = true;
+        }
         $total += $ex->grades[$dimid]->grade;
     }
     
@@ -173,12 +187,8 @@ foreach($examples as $ex) {
     $table2[] = $row;
 }
 
+//insert a blank line
 $table2[] = array();
-
-// this is an array of comment fields that have values
-// if a comment field is not in this array then it will not get a comments field
-$needs_comments = array();
-$needs_feedback = false;
 
 foreach($assessments as $reviewerid => $a) {
     $user = $data->userinfo[$reviewerid];
@@ -200,8 +210,13 @@ foreach($assessments as $reviewerid => $a) {
         $total = 0;
         foreach($dimensions as $dimid => $dim) {
             $row["dim$dimid"] = round($marks[$dimid]->grade,2);
-            $row["comment$dimid"] = trim($marks[$dimid]->peercomment);
-            if (strlen($row["comment$dimid"])) {
+            $comment = trim(strip_tags($marks[$dimid]->peercomment));
+            $comment = str_replace("\n","\r",$comment);
+            if (in_array(substr($comment,0,1), array("-","+","="))) {
+                $comment = " $comment";
+            }
+            $row["comment$dimid"] = $comment;
+            if (strlen($comment)) {
                 $needs_comments[$dimid] = true;
             }
             $total += $marks[$dimid]->grade;
@@ -232,10 +247,20 @@ foreach($assessments as $reviewerid => $a) {
         $total = 0;
         foreach($dimensions as $dimid => $dim) {
             $row["dim$dimid"] = round($marks[$dimid]->grade,2);
+            $comment = trim(strip_tags($marks[$dimid]->peercomment));
+            $comment = str_replace("\n","\r",$comment);
+            if (in_array(substr($comment,0,1), array("-","+","="))) {
+                $comment = " $comment";
+            }
+            $row["comment$dimid"] = $comment;
+            if (strlen($row["comment$dimid"])) {
+                $needs_comments[$dimid] = true;
+            }
             $total += $marks[$dimid]->grade;
         }
         
         $row['feedback'] = trim(strip_tags($data->grades[$reviewerid]->reviewerof[$submission->authorid]->feedback));
+        $row['feedback'] = str_replace("\n", "\r", $row['feedback']);
         if (strlen($row['feedback']) > 1) {
             $needs_feedback = true;
         }
@@ -271,7 +296,7 @@ if ($needs_feedback == true) {
 }
 $headers["overallmark"] = get_string('overallmark', 'workshop') . ' / ' . $maximumscore;
 $headers["scaledmark"] = get_string('scaledmark', 'workshop') . ' / 100';
-
+$headers["scaledmark"] .= "\r";
 
 $csv->add_data(array( get_string('individualmarks', 'workshop') ));
 table_to_csv($headers, $table2);
