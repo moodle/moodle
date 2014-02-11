@@ -13,7 +13,7 @@ require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(dirname(dirname(__FILE__))).'/lib/csvlib.class.php');
 
-header('Content-type: text/csv');
+//header('Content-type: text/plain');
 
 $id         = required_param('id', PARAM_INT); // course_module ID
 $sortby     = optional_param('sortby', 'lastname', PARAM_ALPHA);
@@ -33,7 +33,8 @@ $groupid = groups_get_activity_group($cm, true);
 
 // First we need to gather our initial data.
 
-if ($workshop->teammode) {
+$teammode = $workshop->teammode;
+if ($teammode) {
 	$data = $workshop->prepare_grading_report_data_grouped($USER->id, $groupid, 0, PHP_INT_MAX, $sortby, $sorthow);
 } else {
  	$data = $workshop->prepare_grading_report_data($USER->id, $groupid, 0, PHP_INT_MAX, $sortby, $sorthow);
@@ -78,6 +79,12 @@ foreach($assessments_rs as $k => $record) {
     $assessments[$record->reviewerid][$k][$record->dimensionid] = $record;
 }
 
+if($teammode) {
+    $submissions = $workshop->get_submissions_grouped();
+} else {
+    $submissions = $workshop->get_submissions();
+}
+
 //we also need assessment totals for example submissions
 
 list($select, $params) = $DB->get_in_or_equal(array_keys($examples));
@@ -88,7 +95,12 @@ foreach($exampletotals as $record) {
     $examplegrades[$record->reviewerid][$record->submissionid] = $record;
 }
 
-$submissions = $workshop->get_submissions();
+list($select, $params) = $DB->get_in_or_equal(array_keys($submissions));
+$feedbackset = $DB->get_records_select("workshop_assessments", "submissionid $select", $params);
+
+foreach($feedbackset as $record) {
+    $submissions[$record->submissionid]->feedback[$record->reviewerid] = $record->feedbackauthor;
+}
 
 // Define some functions for later
 
@@ -119,7 +131,8 @@ function table_to_csv($headers, $table) {
 // First we need an array of headers.
 
 $headers = array();
-foreach(array("idnumber", "name", "submissiontitle", "submissiongrade", "gradinggrade") as $i) {
+$h = $teammode ? array("name", "submissiontitle", "submissiongrade") : array("idnumber", "name", "submissiontitle", "submissiongrade", "gradinggrade");
+foreach($h as $i) {
     $headers[$i] = get_string($i, 'workshop');
 }
 
@@ -130,14 +143,19 @@ $table1 = array();
 // $table1 is an enumerated array of associative arrays; a list of dicts.
 
 foreach($data->grades as $k => $grade) {
-    $user = $data->userinfo[$k];
-    
     $row = array();
-    $row['idnumber'] = $user->username;
-    $row['name'] = $user->firstname . ' ' . $user->lastname;
-    $row['submission'] = $grade->submissiontitle;
+    
+    if ($teammode) {
+        $row['name'] = $grade->name;
+    } else {
+        $user = $data->userinfo[$k];
+        $row['idnumber'] = $user->username;
+        $row['name'] = $user->firstname . ' ' . $user->lastname;
+        $row['gradinggrade'] = $grade->gradinggrade;
+    }
+
+    $row['submissiontitle'] = $grade->submissiontitle;
     $row['submissiongrade'] = $grade->submissiongrade;
-    $row['gradinggrade'] = $grade->gradinggrade;
     
     $table1[] = $row;
 }
@@ -211,7 +229,9 @@ foreach($assessments as $reviewerid => $a) {
         foreach($dimensions as $dimid => $dim) {
             $row["dim$dimid"] = round($marks[$dimid]->grade,2);
             $comment = trim(strip_tags($marks[$dimid]->peercomment));
+            //Excel does not like line feeds inside fields
             $comment = str_replace("\n","\r",$comment);
+            //It also doesn't like fields that start with -, + or =
             if (in_array(substr($comment,0,1), array("-","+","="))) {
                 $comment = " $comment";
             }
@@ -222,8 +242,12 @@ foreach($assessments as $reviewerid => $a) {
             $total += $marks[$dimid]->grade;
         }
         
-       $row['overallmark'] = $total;
-       $row['scaledmark'] = round($examplegrades[$reviewerid][$exid]->grade, 2);
+        $row['overallmark'] = $total;
+        $row['scaledmark'] = round($examplegrades[$reviewerid][$exid]->grade, 2);
+
+        if($teammode) {
+           $row['gradinggrade'] = $data->userinfo[$user->id]->gradinggrade;
+        }
         
         $table2[] = $row;
     }
@@ -234,14 +258,19 @@ foreach($assessments as $reviewerid => $a) {
             continue;
         
         $submission = $submissions[$submissionid];
-        $subuser = $data->userinfo[$submission->authorid];
-        
         $row = array();
         $row['markeridnumber'] = $user->username;
         $row['markername'] = $user->firstname . ' ' . $user->lastname;
+  
+        if($teammode) {
+           $row['submittedby'] = $submission->group->name;
+           $row['gradinggrade'] = $data->userinfo[$user->id]->gradinggrade;
+        } else {
+            $subuser = $data->userinfo[$submission->authorid];
+            $row['submitteridnumber'] = $subuser->username;
+            $row['submittedby'] = $subuser->firstname . ' ' . $subuser->lastname;
+        }
         
-        $row['submitteridnumber'] = $subuser->username;
-        $row['submittedby'] = $subuser->firstname . ' ' . $subuser->lastname;
         $row['markedsubmission'] = $submission->title;
         
         $total = 0;
@@ -259,11 +288,18 @@ foreach($assessments as $reviewerid => $a) {
             $total += $marks[$dimid]->grade;
         }
         
-        $row['feedback'] = trim(strip_tags($data->grades[$reviewerid]->reviewerof[$submission->authorid]->feedback));
-        $row['feedback'] = str_replace("\n", "\r", $row['feedback']);
-        if (strlen($row['feedback']) > 1) {
-            $needs_feedback = true;
+        if(!empty($submissions[$submissionid]->feedback)) {
+            $feedback = trim(strip_tags($submissions[$submissionid]->feedback[$reviewerid]));
+            $feedback = str_replace("\n", "\r", $feedback);
+            if (in_array(substr($feedback,0,1), array("-","+","="))) {
+                $feedback = " $comment";
+            }
+            $row['feedback'] = $feedback;
+            if (strlen($feedback) > 1) {
+                $needs_feedback = true;
+            }
         }
+        
         $row['overallmark'] = $total;
         $row['scaledmark'] = empty($submission->gradeover) ? round($submission->grade, 2) : round($submission->gradeover, 2);
         
@@ -281,6 +317,10 @@ foreach(array("markeridnumber", "markername", "markedsubmission", "submittedby")
     $headers[$i] = get_string($i, 'workshop');
 }
 
+if (!$teammode) {
+    $headers["submitteridnumber"] = get_string("submitteridnumber", 'workshop');
+}
+
 foreach($dimensions as $dim) {
     $title = strip_tags($dim->title);
     $title = strtok($title, "\n"); //up to the first newline
@@ -296,7 +336,10 @@ if ($needs_feedback == true) {
 }
 $headers["overallmark"] = get_string('overallmark', 'workshop') . ' / ' . $maximumscore;
 $headers["scaledmark"] = get_string('scaledmark', 'workshop') . ' / 100';
-$headers["scaledmark"] .= "\r";
+
+if ($teammode) {
+    $headers["gradinggrade"] = get_string("gradinggrade", "workshop");
+}
 
 $csv->add_data(array( get_string('individualmarks', 'workshop') ));
 table_to_csv($headers, $table2);
