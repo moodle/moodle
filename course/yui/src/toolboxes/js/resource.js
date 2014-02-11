@@ -274,22 +274,29 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             confirmstring = M.util.get_string('deletechecktype', 'moodle', plugindata);
         }
 
-        // Confirm element removal
-        if (!confirm(confirmstring)) {
-            return this;
-        }
+        // Create the confirmation dialogue.
+        var confirm = new M.core.confirm({
+            question: confirmstring,
+            modal: true
+        });
 
-        // Actually remove the element
-        element.remove();
-        var data = {
-            'class': 'resource',
-            'action': 'DELETE',
-            'id': Y.Moodle.core_course.util.cm.getId(element)
-        };
-        this.send_request(data);
-        if (M.core.actionmenu && M.core.actionmenu.instance) {
-            M.core.actionmenu.instance.hideMenu();
-        }
+        // If it is confirmed.
+        confirm.on('complete-yes', function() {
+
+            // Actually remove the element.
+            element.remove();
+            var data = {
+                'class': 'resource',
+                'action': 'DELETE',
+                'id': Y.Moodle.core_course.util.cm.getId(element)
+            };
+            this.send_request(data);
+            if (M.core.actionmenu && M.core.actionmenu.instance) {
+                M.core.actionmenu.instance.hideMenu();
+            }
+
+        }, this);
+
         return this;
     },
 
