@@ -589,11 +589,35 @@ case workshop::PHASE_CLOSED:
         echo $output->box(format_text($conclusion, $workshop->conclusionformat, array('overflowdiv'=>true)), array('generalbox', 'conclusion'));
         print_collapsible_region_end();
     }
+    
     $finalgrades = $workshop->get_gradebook_grades($USER->id);
+    
+    $groupid = groups_get_activity_group($workshop->cm, true);
+    if ($workshop->teammode) {
+    	$data = $workshop->prepare_grading_report_data_grouped($USER->id, $groupid, 0, 1, $sortby, $sorthow);
+    } else {
+     	$data = $workshop->prepare_grading_report_data($USER->id, $groupid, 0, 1, $sortby, $sorthow);
+    }
+    $showauthornames    = has_capability('mod/workshop:viewauthornames', $workshop->context);
+    $showreviewernames  = has_capability('mod/workshop:viewreviewernames', $workshop->context);
+    
+    $reportopts = new stdClass;
+    $reportopts->showauthornames        = $showauthornames;
+    $reportopts->showreviewernames      = $showreviewernames;
+    $reportopts->sortby                 = $sortby;
+    $reportopts->sorthow                = $sorthow;
+    $reportopts->showsubmissiongrade    = true;
+    $reportopts->showgradinggrade       = true;    
+    
     if (!empty($finalgrades)) {
         print_collapsible_region_start('', 'workshop-viewlet-yourgrades', get_string('yourgrades', 'workshop'));
         echo $output->box_start('generalbox grades-yourgrades');
         echo $output->render($finalgrades);
+        if ($workshop->teammode) {
+            echo $output->render(new workshop_grouped_grading_report($data, $reportopts));
+        } else {
+            echo $output->render(new workshop_grading_report($data, $reportopts));
+        }
         echo $output->box_end();
         print_collapsible_region_end();
     }
@@ -649,11 +673,38 @@ case workshop::PHASE_CLOSED:
         } else {
             echo $output->container(get_string('noyoursubmission', 'workshop'));
         }
+
         echo $output->box_end();
+        
+
+
+        // display example assessments
+        if ($workshop->useexamples)
+        {
+            echo $output->heading(html_writer::link($workshop->all_exassess_url($USER->id), get_string('showyourexamples','workshop',fullname($USER))), 3);
+
+            $eval = $workshop->grading_evaluation_instance();
+
+            if (method_exists($eval, 'prepare_explanation_for_assessor')) {    
+                print_collapsible_region_start('', uniqid('workshop-grading-evaluation-explanation'), get_string('yourexplanation', 'workshop', fullname($USER)), '', true);
+                echo $output->box_start();
+    
+
+                $eval_output = $PAGE->get_renderer('workshopeval_calibrated');
+                $renderable = $eval->prepare_explanation_for_assessor($USER->id);
+                echo $eval_output->render($renderable);
+        
+                echo $output->box_end();
+                print_collapsible_region_end();
+            }
+    
+        }
 
         if (!empty($submission->gradeoverby) and strlen(trim($submission->feedbackauthor)) > 0) {
             echo $output->render(new workshop_feedback_author($submission));
         }
+
+
 
         print_collapsible_region_end();
     }
