@@ -188,7 +188,7 @@ if ($usernew = $userform->get_data()) {
         $usercreated = false;
     }
 
-    $usercontext = get_context_instance(CONTEXT_USER, $usernew->id);
+    $usercontext = context_user::instance($usernew->id);
 
     // Update preferences.
     useredit_update_user_preference($usernew);

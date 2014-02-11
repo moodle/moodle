@@ -32,7 +32,7 @@ class department_display_form extends company_moodleform {
         global $CFG, $USER;
 
         $this->selectedcompany = $companyid;
-        $this->context = get_context_instance(CONTEXT_COURSECAT, $CFG->defaultrequestcategory);
+        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
         $syscontext = context_system::instance();
 
         $company = new company($this->selectedcompany);
@@ -122,7 +122,7 @@ class department_edit_form extends company_moodleform {
         global $CFG;
 
         $this->selectedcompany = $companyid;
-        $this->context = get_context_instance(CONTEXT_COURSECAT, $CFG->defaultrequestcategory);
+        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
         $this->departmentid = $departmentid;
         $this->chosenid = $chosenid;
         $this->action = $action;

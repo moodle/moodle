@@ -42,7 +42,7 @@ class course_edit_form extends moodleform {
         $this->shopsettingsid = $shopsettingsid;
         $this->course = $course;
         $this->priceblocks = $priceblocks;
-        $this->context = get_context_instance(CONTEXT_COURSECAT, $CFG->defaultrequestcategory);
+        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
         $this->editoroptions = $editoroptions;
 
         if ($isadding) {

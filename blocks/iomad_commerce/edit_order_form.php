@@ -36,7 +36,7 @@ class order_edit_form extends moodleform {
         global $CFG;
 
         $this->invoiceid = $invoiceid;
-        $this->context = get_context_instance(CONTEXT_COURSECAT, $CFG->defaultrequestcategory);
+        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
 
         parent::__construct($actionurl);
     }

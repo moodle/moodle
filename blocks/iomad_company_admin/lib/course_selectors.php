@@ -49,7 +49,7 @@ abstract class company_course_selector_base extends course_selector_base {
                                      FROM {iomad_courses}
                                      WHERE courseid=$id
                                      AND shared = 0")) {  // Deal with own courses.
-                $context = get_context_instance(CONTEXT_COURSE, $id);
+                $context = context_course::instance($id);
                 if (count_enrolled_users($context) > 0) {
                     $courselist[ $id ]->hasenrollments = true;
                     $courselist[ $id ]->fullname = "<span class=\"hasenrollments\">

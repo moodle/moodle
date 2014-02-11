@@ -62,7 +62,7 @@ class user_edit_form extends company_moodleform {
                          'license' => false);
         $this->currentcourses = new potential_subdepartment_course_selector('currentcourses', $options);
         $this->currentcourses->set_rows(20);
-        $this->context = get_context_instance(CONTEXT_COURSECAT, $CFG->defaultrequestcategory);
+        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
 
         parent::moodleform($actionurl);
     }

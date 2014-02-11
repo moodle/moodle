@@ -33,7 +33,7 @@ class course_edit_form extends moodleform {
         global $CFG;
 
         $this->selectedcompany = $companyid;
-        $this->context = get_context_instance(CONTEXT_COURSECAT, $CFG->defaultrequestcategory);
+        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
         $this->editoroptions = $editoroptions;
 
         parent::__construct($actionurl);

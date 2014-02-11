@@ -374,7 +374,7 @@ if ($mform->is_cancelled()) {
         $coursecat->name = $data->name;
         $coursecat->sortorder = 999;
         $coursecat->id = $DB->insert_record('course_categories', $coursecat);
-        $coursecat->context = get_context_instance(CONTEXT_COURSECAT, $coursecat->id);
+        $coursecat->context = context_coursecat::instance($coursecat->id);
         $categorycontext = $coursecat->context;
         mark_context_dirty($coursecat->context->path);
         $DB->update_record('course_categories', $coursecat);

@@ -31,7 +31,7 @@ class report_scheduler_form extends company_moodleform {
         global $CFG;
 
         $this->selectedcompany = $companyid;
-        $this->context = get_context_instance(CONTEXT_COURSECAT, $CFG->defaultrequestcategory);
+        $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
 
         parent::moodleform($actionurl);
     }
