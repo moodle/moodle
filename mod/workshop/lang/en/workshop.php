@@ -352,7 +352,9 @@ $string['examplesrequired'] = 'You must select <strong>Use examples</strong> to 
 $string['examplesmoderequired'] = 'Do not use <strong>voluntary</strong> example assessment when using <strong>Calibrated</strong> grading.';
 $string['exampleassessmentsname'] = '{$a}\'s example assessments';
 $string['explanation'] = 'Assessment grade breakdown for {$a}';
-$string['showexamples'] = 'Show {$a}\'s examples assessments';
+$string['yourexplanation'] = 'Your assessment grade breakdown';
+$string['showexamples'] = 'Show {$a}\'s example assessments';
+$string['showyourexamples'] = 'Show your example assessments';
 $string['showsubmission'] = 'Show Submission';
 
 //Additions: Random Examples
@@ -392,7 +394,8 @@ $string['overallmark'] = 'Overall Mark';
 $string['scaledmark'] = 'Scaled Mark';
 $string['referencemarker'] = 'Reference Marker';
 $string['submittedby'] = 'Submitted by';
-$string['markeridnumber'] = 'ID Number';
+$string['submittedby'] = 'Submitter ID Number';
+$string['markeridnumber'] = 'Marker ID Number';
 $string['markername'] = 'Marker Name';
 $string['comments'] = 'Comments';
 $string['feedback'] = 'Feedback';
