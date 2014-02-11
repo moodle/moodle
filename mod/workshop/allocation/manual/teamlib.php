@@ -177,7 +177,8 @@ class workshop_teammode_manual_allocator extends workshop_manual_allocator {
 		
         list($insql, $params) = $DB->get_in_or_equal(array_keys($participants));
         
-        
+        $groupingsql = '';
+        $params2 = array();
         if($this->workshop->cm->groupingid) {
             $groupinggroups = groups_get_all_groups($this->workshop->cm->course, 0, $this->workshop->cm->groupingid, 'g.id');
             list($groupingsql, $params2) = $DB->get_in_or_equal(array_keys($groupinggroups));
