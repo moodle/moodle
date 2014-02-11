@@ -148,6 +148,33 @@ class mod_data_events_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the record created event.
+     */
+    public function test_record_created() {
+        // Create a course we are going to add a data module to.
+        $course = $this->getDataGenerator()->create_course();
+
+        // The generator used to create a data module.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+
+        // Create a data module.
+        $data = $generator->create_instance(array('course' => $course->id));
+
+        // Trigger and capture the event for creating the record.
+        $sink = $this->redirectEvents();
+        $recordid = data_add_record($data);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_data\event\record_created', $event);
+        $this->assertEquals(context_module::instance($data->cmid), $event->get_context());
+        $expected = array($course->id, 'data', 'add', 'view.php?d=' . $data->id . '&amp;rid=' . $recordid,
+            $data->id, $data->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
+
+    /**
      * Test the record updated event.
      *
      * There is no external API for updating a record, so the unit test will simply create

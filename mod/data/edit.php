@@ -246,8 +246,6 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
                 }
             }
 
-            add_to_log($course->id, 'data', 'add', "view.php?d=$data->id&amp;rid=$recordid", $data->id, $cm->id);
-
             if (!empty($datarecord->saveandview)) {
                 redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$recordid);
             }
