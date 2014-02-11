@@ -351,6 +351,23 @@ class behat_course extends behat_base {
         // Section should be hidden.
         $exception = new ExpectationException('The section is not hidden', $this->getSession());
         $this->find('xpath', $sectionxpath . "[contains(concat(' ', normalize-space(@class), ' '), ' hidden ')]", $exception);
+    }
+
+    /**
+     * Checks that all actiities in the specified section are hidden. You need to be in the course page. It can be used being logged as a student and as a teacher on editing mode.
+     *
+     * @Then /^all activities in section "(?P<section_number>\d+)" should be hidden$/
+     * @throws ExpectationException
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param int $sectionnumber
+     */
+    public function section_activities_should_be_hidden($sectionnumber) {
+        $sectionxpath = $this->section_exists($sectionnumber);
+
+        // Preventive in case there is any action in progress.
+        // Adding it here because we are interacting (click) with
+        // the elements, not necessary when we just find().
+        $this->i_wait_until_section_is_available($sectionnumber);
 
         // The checking are different depending on user permissions.
         if ($this->is_course_editor()) {
@@ -362,50 +379,19 @@ class behat_course extends behat_base {
             if ($activities = $this->get_section_activities($sectionxpath)) {
 
                 $dimmedexception = new ExpectationException('There are activities that are not dimmed', $this->getSession());
-                $visibilityexception = new ExpectationException('There are activities which visibility icons are clickable', $this->getSession());
                 foreach ($activities as $activity) {
-
                     // Dimmed.
                     $this->find('xpath', "//div[contains(concat(' ', normalize-space(@class), ' '), ' activityinstance ')]" .
                         "/a[contains(concat(' ', normalize-space(@class), ' '), ' dimmed ')]", $dimmedexception, $activity);
-
-                    // Non-JS browsers can not click on img elements.
-                    if ($this->running_javascript()) {
-
-                        // Expanding the actions menu if it is not shown.
-                        $classes = array_flip(explode(' ', $activity->getAttribute('class')));
-                        if (empty($classes['action-menu-shown'])) {
-                            $actionsmenu = $this->find('css', "a[role='menuitem']", false, $activity);
-                            $actionsmenu->click();
-                        }
-
-                        // To check that the visibility is not clickable we check the funcionality rather than the applied style.
-                        $visibilityiconnode = $this->find('css', 'a.editing_show img', false, $activity);
-                        $visibilityiconnode->click();
-                    }
-
-                    // We ensure that we still see the show icon.
-                    $visibilityiconnode = $this->find('css', 'a.editing_show img', $visibilityexception, $activity);
-
-                    // It is there only when running JS scenarios.
-                    if ($this->running_javascript()) {
-
-                        // Collapse the actions menu if it is displayed.
-                        $classes = array_flip(explode(' ', $activity->getAttribute('class')));
-                        if (!empty($classes['action-menu-shown'])) {
-                            $actionsmenu = $this->find('css', "a[role='menuitem']", false, $activity);
-                            $actionsmenu->click();
-                        }
-                    }
                 }
             }
-
         } else {
             // There shouldn't be activities.
             if ($this->get_section_activities($sectionxpath)) {
                 throw new ExpectationException('There are activities in the section and they should be hidden', $this->getSession());
             }
         }
+
     }
 
     /**
