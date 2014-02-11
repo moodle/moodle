@@ -19,7 +19,7 @@
 function xmldb_local_iomad_install() {
     global $CFG, $DB;
 
-    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext = context_system::instance();
 
     // Create new Company Manager role.
     if (!$companymanager = $DB->get_record( 'role', array( 'shortname' => 'companymanager') )) {

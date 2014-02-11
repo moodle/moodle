@@ -882,7 +882,7 @@ function xmldb_local_iomad_upgrade($oldversion) {
 
     if ($oldversion < 2014012400) {
 
-        $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+        $systemcontext = context_system::instance();
 
         // Get the Company Manager role.
         if ($companymanager = $DB->get_record( 'role', array( 'shortname' => 'companymanager') )) {
