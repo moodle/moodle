@@ -186,7 +186,17 @@ if ($datarecord = data_submitted() and confirm_sesskey()) {
             }
         }
 
-        add_to_log($course->id, 'data', 'update', "view.php?d=$data->id&amp;rid=$rid", $data->id, $cm->id);
+        // Trigger an event for updating this record.
+        $event = \mod_data\event\record_updated::create(array(
+            'objectid' => $rid,
+            'context' => $context,
+            'courseid' => $course->id,
+            'other' => array(
+                'dataid' => $data->id
+            )
+        ));
+        $event->add_record_snapshot('data', $data);
+        $event->trigger();
 
         redirect($CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&rid='.$rid);
 

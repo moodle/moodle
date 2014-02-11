@@ -122,6 +122,7 @@ $string['emptyaddform'] = 'You did not fill out any fields!';
 $string['eventfieldcreated'] = 'Field created';
 $string['eventfielddeleted'] = 'Field deleted';
 $string['eventfieldupdated'] = 'Field updated';
+$string['eventrecordupdated'] = 'Record updated';
 $string['fileencoding'] = 'Encoding';
 $string['entries'] = 'Entries';
 $string['entrieslefttoadd'] = 'You must add {$a->entriesleft} more entry/entries in order to complete this activity';
