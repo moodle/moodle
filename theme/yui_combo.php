@@ -223,6 +223,7 @@ while (count($parts)) {
             $yuimodules = array(
                 'core/tooltip/tooltip',
                 'core/popuphelp/popuphelp',
+                'core/widget-focusafterclose/widget-focusafterclose',
                 'core/dock/dock-loader',
                 'core/notification/notification-dialogue',
             );
