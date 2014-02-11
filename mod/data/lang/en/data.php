@@ -124,6 +124,7 @@ $string['eventfielddeleted'] = 'Field deleted';
 $string['eventfieldupdated'] = 'Field updated';
 $string['eventrecordcreated'] = 'Record created';
 $string['eventrecordupdated'] = 'Record updated';
+$string['eventtemplateupdated'] = 'Template updated';
 $string['eventtemplateviewed'] = 'Templates viewed';
 $string['fileencoding'] = 'Encoding';
 $string['entries'] = 'Entries';

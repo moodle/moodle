@@ -144,7 +144,16 @@ if (($mytemplate = data_submitted()) && confirm_sesskey()) {
             if (empty($disableeditor) && empty($enableeditor)) {
                 $DB->update_record('data', $newtemplate);
                 echo $OUTPUT->notification(get_string('templatesaved', 'data'), 'notifysuccess');
-                add_to_log($course->id, 'data', 'templates saved', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
+
+                // Trigger an event for saving the templates.
+                $event = \mod_data\event\template_updated::create(array(
+                    'context' => $context,
+                    'courseid' => $course->id,
+                    'other' => array(
+                        'dataid' => $data->id,
+                    )
+                ));
+                $event->trigger();
             }
         }
     }
