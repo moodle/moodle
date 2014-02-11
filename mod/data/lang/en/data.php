@@ -124,6 +124,7 @@ $string['eventfielddeleted'] = 'Field deleted';
 $string['eventfieldupdated'] = 'Field updated';
 $string['eventrecordcreated'] = 'Record created';
 $string['eventrecordupdated'] = 'Record updated';
+$string['eventtemplateviewed'] = 'Templates viewed';
 $string['fileencoding'] = 'Encoding';
 $string['entries'] = 'Entries';
 $string['entrieslefttoadd'] = 'You must add {$a->entriesleft} more entry/entries in order to complete this activity';

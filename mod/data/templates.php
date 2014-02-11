@@ -73,8 +73,16 @@ if (!$DB->count_records('data_fields', array('dataid'=>$data->id))) {      // Br
     redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
 }
 
-add_to_log($course->id, 'data', 'templates view', "templates.php?id=$cm->id&amp;d=$data->id", $data->id, $cm->id);
-
+// Trigger an event for viewing templates.
+$event = \mod_data\event\template_viewed::create(array(
+    'context' => $context,
+    'courseid' => $course->id,
+    'other' => array(
+        'dataid' => $data->id
+    )
+));
+$event->add_record_snapshot('data', $data);
+$event->trigger();
 
 /// Print the page header
 

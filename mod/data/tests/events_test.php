@@ -212,4 +212,43 @@ class mod_data_events_testcase extends advanced_testcase {
         $expected = array($course->id, 'data', 'update', 'view.php?d=' . $data->id . '&amp;rid=1', $data->id, $data->cmid);
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the template viewed event.
+     *
+     * There is no external API for viewing templates, so the unit test will simply create
+     * and trigger the event and ensure the legacy log data is returned as expected.
+     */
+    public function test_template_viewed() {
+        // Create a course we are going to add a data module to.
+        $course = $this->getDataGenerator()->create_course();
+
+        // The generator used to create a data module.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+
+        // Create a data module.
+        $data = $generator->create_instance(array('course' => $course->id));
+
+        // Trigger an event for updating this record.
+        $event = \mod_data\event\template_viewed::create(array(
+            'context' => context_module::instance($data->cmid),
+            'courseid' => $course->id,
+            'other' => array(
+                'dataid' => $data->id
+            )
+        ));
+
+        // Trigger and capture the event for updating the data record.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_data\event\template_viewed', $event);
+        $this->assertEquals(context_module::instance($data->cmid), $event->get_context());
+        $expected = array($course->id, 'data', 'templates view', 'templates.php?id=' . $data->cmid . '&amp;d=' .
+            $data->id, $data->id, $data->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
 }
