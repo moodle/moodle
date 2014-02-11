@@ -55,7 +55,7 @@ li.feedback_item_radio_h_right {
 
 div.feedback_item_select_h_left,
 div.feedback_item_select_h_right {
-	display:block;
+    display:block;
 }
 
 li.feedback_item_check_v_left,
@@ -68,7 +68,7 @@ li.feedback_item_radio_v_right {
 
 div.feedback_item_select_v_left,
 div.feedback_item_select_v_right {
-	display:block;
+    display:block;
 }
 
 div.feedback_items label{
