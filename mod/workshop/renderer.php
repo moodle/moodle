@@ -860,12 +860,12 @@ class mod_workshop_renderer extends plugin_renderer_base {
                 $o .= $this->output->container_start('center');
                 
                 $o .= $this->output->container_start('inline-block');
-                $o .= $this->output->heading(get_string('assessmentreference','workshop'));
+                $o .= $this->output->heading(get_string('assessmentreference','workshop'), 2, 'reference-assessment');
                 $o .= $this->output->container(self::moodleform($assessment->reference_form));
                 $o .= $this->output->container_end();
                 
                 $o .= $this->output->container_start('inline-block');
-                $o .= $this->output->heading(get_string('assessmentbyfullname','workshop', fullname($assessment->reviewer)));
+                $o .= $this->output->heading(get_string('assessmentbyfullname','workshop', fullname($assessment->reviewer)), 2, 'example-assessment');
                 $o .= $this->output->container(self::moodleform($assessment->form));
                 $o .= $this->output->container_end();
                 

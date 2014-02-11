@@ -721,3 +721,13 @@
 {
   text-align:center;
 }
+
+.path-mod-workshop h2.reference-assessment
+{
+  color: #22DD66;
+}
+
+.path-mod-workshop h2.example-assessment
+{
+  color: #DD6622;
+}
