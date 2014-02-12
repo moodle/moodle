@@ -2437,8 +2437,14 @@ SQL;
     	//first get all the submissions
     	$submissions = $this->get_submissions_grouped();
     	if (!$canviewall) {
-    		$grpid = $this->user_group($userid);
-    		$submissions = array($grpid => $submissions[$grpid]);
+    		$group = $this->user_group($userid);
+            $usersub = null;
+            foreach($submissions as $s) {
+                if ($s->group->id == $group->id) {
+                    $usersub = $s;
+                }
+            }
+    		$submissions = array($group->id => $usersub);
     	}
     	
     	//pack out $grades

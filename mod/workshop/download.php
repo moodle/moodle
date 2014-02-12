@@ -80,7 +80,11 @@ foreach($assessments_rs as $k => $record) {
 }
 
 if($teammode) {
-    $submissions = $workshop->get_submissions_grouped();
+    $grouped_submissions = $workshop->get_submissions_grouped();
+    $submissions = array();
+    foreach($grouped_submissions as $s) {
+        $submissions[$s->id] = $s;
+    }
 } else {
     $submissions = $workshop->get_submissions();
 }
