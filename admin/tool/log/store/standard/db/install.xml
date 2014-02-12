@@ -33,7 +33,7 @@
       <INDEXES>
         <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
         <INDEX NAME="contextid-component" UNIQUE="false" FIELDS="contextid, component"/>
-        <INDEX NAME="userid-contextid" UNIQUE="false" FIELDS="userid, contextid"/>
+        <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
         <INDEX NAME="eventname" UNIQUE="false" FIELDS="eventname"/>
         <INDEX NAME="crud" UNIQUE="false" FIELDS="crud"/>
         <INDEX NAME="edulevel" UNIQUE="false" FIELDS="edulevel"/>
