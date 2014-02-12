@@ -1,0 +1,5 @@
+{
+  "moodle-atto_rtl-button": {
+    "requires": ["node"]
+  }
+}
