@@ -80,23 +80,21 @@ foreach($assessments_rs as $k => $record) {
 }
 
 if($teammode) {
-    $grouped_submissions = $workshop->get_submissions_grouped();
-    $submissions = array();
-    foreach($grouped_submissions as $s) {
-        $submissions[$s->id] = $s;
-    }
+    $submissions = $workshop->get_submissions_grouped();
 } else {
     $submissions = $workshop->get_submissions();
 }
 
 //we also need assessment totals for example submissions
 
-list($select, $params) = $DB->get_in_or_equal(array_keys($examples));
-$exampletotals = $DB->get_records_select("workshop_assessments", "submissionid $select", $params);
+if (count($examples)) {
+    list($select, $params) = $DB->get_in_or_equal(array_keys($examples));
+    $exampletotals = $DB->get_records_select("workshop_assessments", "submissionid $select", $params);
 
-$examplegrades = array();
-foreach($exampletotals as $record) {
-    $examplegrades[$record->reviewerid][$record->submissionid] = $record;
+    $examplegrades = array();
+    foreach($exampletotals as $record) {
+        $examplegrades[$record->reviewerid][$record->submissionid] = $record;
+    }
 }
 
 list($select, $params) = $DB->get_in_or_equal(array_keys($submissions));
