@@ -7,6 +7,8 @@
         "escape",
         "event",
         "event-simulate",
+        "event-custom",
+        "yui-throttle",
         "moodle-core-notification"
       ]
   }

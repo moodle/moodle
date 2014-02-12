@@ -53,7 +53,7 @@ div.editor_atto_toolbar button[disabled] {
     background-color: #ebebeb;
 }
 
-.editor_atto_toolbar button:active {
+.editor_atto_toolbar button:active, .editor_atto_toolbar button.highlight {
     background-image: radial-gradient(ellipse at center, #ffffff 40%,#dfdfdf 100%);
     background-color: #dfdfdf;
 }
