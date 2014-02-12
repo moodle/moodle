@@ -17,7 +17,7 @@
 /**
  * Form for editing tag block instances.
  *
- * @package   moodlecore
+ * @package   block_tags
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

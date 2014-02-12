@@ -17,8 +17,7 @@
 /**
  * Version information for the block_quiz_results plugin.
  *
- * @package    block
- * @subpackage quiz_results
+ * @package    block_quiz_results
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

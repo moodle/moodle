@@ -21,8 +21,7 @@
  * can easily check the logged-in user matches the person
  * operating the computer.
  *
- * @package    block
- * @subpackage myprofile
+ * @package    block_myprofile
  * @copyright  2010 Remote-Learner.net
  * @author     Olav Jordan <olav.jordan@remote-learner.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

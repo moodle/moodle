@@ -17,8 +17,7 @@
 /**
  * Blog Menu Block page.
  *
- * @package    block
- * @subpackage blog_menu
+ * @package    block_blog_menu
  * @copyright  2009 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
