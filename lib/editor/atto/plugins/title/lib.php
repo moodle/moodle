@@ -30,7 +30,6 @@ function atto_title_strings_for_js() {
     $PAGE->requires->strings_for_js(array('h3',
                                           'h4',
                                           'h5',
-                                          'blockquote',
                                           'pre',
                                           'p'), 'atto_title');
 }
