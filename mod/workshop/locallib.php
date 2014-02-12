@@ -2419,7 +2419,7 @@ SQL;
     	//We do this because the group might not have submitted anything
     	
     	$groups = groups_get_all_groups($this->course->id,0,$this->cm->groupingid);
-    	foreach($groups as $k => $g) {
+    	foreach($groups as $k => $g) {            
     		$gradeitem = new stdClass;
     		$gradeitem->groupid = $k;
     		$gradeitem->name = $g->name;
@@ -2436,20 +2436,42 @@ SQL;
     	
     	//first get all the submissions
     	$submissions = $this->get_submissions_grouped();
+        
+        //if we're getting this for one student then we just get their stuff
     	if (!$canviewall) {
     		$group = $this->user_group($userid);
             $usersub = null;
             foreach($submissions as $s) {
                 if ($s->group->id == $group->id) {
                     $usersub = $s;
+                    break;
                 }
             }
     		$submissions = array($group->id => $usersub);
+            
+            //we actually just wipe out the array
+            $grades = array();
+            
+            if($usersub == null) {
+        		$gradeitem = new stdClass;
+        		$gradeitem->groupid = $k;
+        		$gradeitem->name = $g->name;
+        		$gradeitem->submissionid = null;
+        		$gradeitem->submissiontitle = null;
+        		$gradeitem->submissiongrade = null;
+        		$gradeitem->submissiongradeover = null;
+        		$gradeitem->submissiongradeoverby = null;
+        		$gradeitem->submissionpublished = null;
+        		$gradeitem->reviewedby = array();
+        		$gradeitem->reviewerof = array();
+        		$grades[$group->id] = $gradeitem;
+            }
     	}
     	
     	//pack out $grades
     	foreach($submissions as $k => $v) {
-    		
+            if (empty($v)) continue;
+            
     		$gradeitem = $grades[$v->group->id] or new stdClass;
     		$gradeitem->groupid = $v->group->id;
     		$gradeitem->name = $v->group->name;
@@ -2462,7 +2484,9 @@ SQL;
     		
     		$grades[$v->group->id] = $gradeitem;
     	}
-    	
+        
+        
+        
     	// do sorting and paging now
     	foreach($grades as $k => $v) {
     		$sortfield[$k] = $v->$sortby;
@@ -2518,7 +2542,7 @@ SQL;
         $data->totalcount = count($submissions);
         $data->maxgrade = $this->real_grade(100);
         $data->maxgradinggrade = $this->real_grading_grade(100);
-    	
+        
         return $data;
     }
     
