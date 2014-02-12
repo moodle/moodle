@@ -29,6 +29,7 @@ global $CFG;
 require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/statslib.php');
 require_once($CFG->libdir . '/cronlib.php');
+require_once(__DIR__ . '/fixtures/stats_events.php');
 
 /**
  * Test functions that affect daily stats.
@@ -343,6 +344,43 @@ class core_statslib_testcase extends advanced_testcase {
 
         $this->prepare_db($dataset[1], array('stats_daily'));
         $this->assertEquals($day + (24 * 3600), stats_get_start_from('daily'), 'Daily stats start time');
+
+        // New log stores.
+        $this->preventResetByRollback();
+
+        $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/log/store/standard/version.php");
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        set_config('buffersize', 0, 'logstore_standard');
+        set_config('logguests', 1, 'logstore_standard');
+        get_log_manager(true);
+
+        $this->assertEquals(0, $DB->count_records('logstore_standard_log'));
+
+        $DB->delete_records('stats_daily');
+        $CFG->statsfirstrun = 'all';
+        $firstoldtime = $DB->get_field_sql('SELECT MIN(time) FROM {log}');
+
+        $this->assertEquals($firstoldtime, stats_get_start_from('daily'));
+
+        \core_tests\event\create_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\read_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\update_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
+
+        $logs = $DB->get_records('logstore_standard_log');
+        $this->assertCount(4, $logs);
+
+        $firstnew = reset($logs);
+        $this->assertGreaterThan($firstoldtime, $firstnew->timecreated);
+        $DB->set_field('logstore_standard_log', 'timecreated', 10, array('id' => $firstnew->id));
+        $this->assertEquals(10, stats_get_start_from('daily'));
+
+        $DB->set_field('logstore_standard_log', 'timecreated', $firstnew->timecreated, array('id' => $firstnew->id));
+        $DB->delete_records('log');
+        $this->assertEquals($firstnew->timecreated, stats_get_start_from('daily'));
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
     }
 
     /**
@@ -491,7 +529,7 @@ class core_statslib_testcase extends advanced_testcase {
      * @depends test_statslib_temp_table_create_and_drop
      */
     public function test_statslib_temp_table_fill() {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
 
         $dataset = $this->load_xml_data_file(__DIR__."/fixtures/statslib-test09.xml");
 
@@ -506,6 +544,80 @@ class core_statslib_testcase extends advanced_testcase {
         $this->assertEquals(1, $DB->count_records('temp_log1'));
         $this->assertEquals(1, $DB->count_records('temp_log2'));
 
+        stats_temp_table_drop();
+
+        // New log stores.
+        $this->preventResetByRollback();
+        stats_temp_table_create();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+        $fcontext = context_course::instance(SITEID);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/log/store/standard/version.php");
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        set_config('buffersize', 0, 'logstore_standard');
+        set_config('logguests', 1, 'logstore_standard');
+        get_log_manager(true);
+
+        $DB->delete_records('logstore_standard_log');
+
+        \core_tests\event\create_executed::create(array('context' => $fcontext, 'courseid' => SITEID))->trigger();
+        \core_tests\event\read_executed::create(array('context' => $context, 'courseid' => $course->id))->trigger();
+        \core_tests\event\update_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
+
+        \core\event\user_loggedin::create(
+            array(
+                'userid' => $USER->id,
+                'objectid' => $USER->id,
+                'other' => array('username' => $USER->username),
+            )
+        )->trigger();
+
+        $DB->set_field('logstore_standard_log', 'timecreated', 10);
+
+        $this->assertEquals(5, $DB->count_records('logstore_standard_log'));
+
+        \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
+        \core_tests\event\delete_executed::create(array('context' => context_system::instance()))->trigger();
+
+        $this->assertEquals(7, $DB->count_records('logstore_standard_log'));
+
+        stats_temp_table_fill(9, 11);
+
+        $logs1 = $DB->get_records('temp_log1');
+        $logs2 = $DB->get_records('temp_log2');
+        $this->assertCount(5, $logs1);
+        $this->assertCount(5, $logs2);
+        // The order of records in the temp tables is not guaranteed...
+
+        $viewcount = 0;
+        $updatecount = 0;
+        $logincount = 0;
+        foreach ($logs1 as $log) {
+            if ($log->course == $course->id) {
+                $this->assertEquals('view', $log->action);
+                $viewcount++;
+            } else {
+                $this->assertTrue(in_array($log->action, array('update', 'login')));
+                if ($log->action === 'update') {
+                    $updatecount++;
+                } else {
+                    $logincount++;
+                }
+                $this->assertEquals(SITEID, $log->course);
+            }
+            $this->assertEquals($user->id, $log->userid);
+        }
+        $this->assertEquals(1, $viewcount);
+        $this->assertEquals(3, $updatecount);
+        $this->assertEquals(1, $logincount);
+
+        set_config('enabled_stores', '', 'tool_log');
+        get_log_manager(true);
         stats_temp_table_drop();
     }
 
