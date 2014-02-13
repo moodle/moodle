@@ -110,6 +110,8 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        $user1 = $this->getDataGenerator()->create_user();
+
         $coursedata['idnumber'] = 'idnumbercourse1';
         $coursedata['fullname'] = 'Lightwork Course 1';
         $coursedata['summary'] = 'Lightwork Course 1 description';
@@ -122,14 +124,20 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $manual_enrol_data['courseid'] = $course1->id;
         $enrolid = $DB->insert_record('enrol', $manual_enrol_data);
 
-        // Create the user and give them capabilities in the course context.
+        // Create the users and give them capabilities in the course context.
         $context = context_course::instance($course1->id);
         $roleid = $this->assignUserCapability('moodle/course:viewparticipants', $context->id, 3);
 
-        // Create a student.
-        $student1  = self::getDataGenerator()->create_user();
+        // Create 2 students.
+        $student1 = self::getDataGenerator()->create_user();
+        $student2 = self::getDataGenerator()->create_user();
 
-        // Enrol both the user and the student in the course.
+        // Give the capability to student2.
+        assign_capability('moodle/course:viewparticipants', CAP_ALLOW, 3, $context->id);
+        role_assign(3, $student2->id, $context->id);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        // Enrol both the user and the students in the course.
         $user_enrolment_data['status'] = 0;
         $user_enrolment_data['enrolid'] = $enrolid;
         $user_enrolment_data['userid'] = $USER->id;
@@ -140,8 +148,13 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $user_enrolment_data['userid'] = $student1->id;
         $DB->insert_record('user_enrolments', $user_enrolment_data);
 
-        $params = array("coursecapabilities" =>array
-        ('courseid' => $course1->id, 'capabilities' => array('moodle/course:viewparticipants')));
+        $user_enrolment_data['status'] = 0;
+        $user_enrolment_data['enrolid'] = $enrolid;
+        $user_enrolment_data['userid'] = $student2->id;
+        $DB->insert_record('user_enrolments', $user_enrolment_data);
+
+        $params = array("coursecapabilities" => array('courseid' => $course1->id,
+            'capabilities' => array('moodle/course:viewparticipants')));
         $options = array();
         $result = core_enrol_external::get_enrolled_users_with_capability($params, $options);
 
@@ -152,8 +165,31 @@ class core_enrol_externallib_testcase extends externallib_advanced_testcase {
         $expecteduserlist = $result[0];
         $this->assertEquals($course1->id, $expecteduserlist['courseid']);
         $this->assertEquals('moodle/course:viewparticipants', $expecteduserlist['capability']);
-        $this->assertEquals(1, count($expecteduserlist['users']));
+        $this->assertEquals(2, count($expecteduserlist['users']));
 
+        // Now doing the query again with options.
+        $params = array(
+            "coursecapabilities" => array(
+                'courseid' => $course1->id,
+                'capabilities' => array('moodle/course:viewparticipants')
+            )
+        );
+        $options = array(
+            array('name' => 'limitfrom', 'value' => 1),
+            array('name' => 'limitnumber', 'value' => 1),
+            array('name' => 'userfields', 'value' => 'id')
+        );
+
+        $result = core_enrol_external::get_enrolled_users_with_capability($params, $options);
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $result = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_with_capability_returns(), $result);
+
+        // Check an array containing the expected user for the course capability is returned.
+        $expecteduserlist = $result[0]['users'];
+        $expecteduser = reset($expecteduserlist);
+        $this->assertEquals(1, count($expecteduserlist));
+        $this->assertEquals($student2->id, $expecteduser['id']);
     }
 
     /**
