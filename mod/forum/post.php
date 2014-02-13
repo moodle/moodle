@@ -335,8 +335,17 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
                 }
                 forum_delete_discussion($discussion, false, $course, $cm, $forum);
 
-                add_to_log($discussion->course, "forum", "delete discussion",
-                           "view.php?id=$cm->id", "$forum->id", $cm->id);
+                $params = array(
+                    'objectid' => $discussion->id,
+                    'context' => $modcontext,
+                    'other' => array(
+                        'forumid' => $forum->id,
+                    )
+                );
+
+                $event = \mod_forum\event\discussion_deleted::create($params);
+                $event->add_record_snapshot('forum_discussions', $discussion);
+                $event->trigger();
 
                 redirect("view.php?f=$discussion->forum");
 
@@ -773,8 +782,16 @@ if ($fromform = $mform_post->get_data()) {
         $message = '';
         if ($discussion->id = forum_add_discussion($discussion, $mform_post, $message)) {
 
-            add_to_log($course->id, "forum", "add discussion",
-                    "discuss.php?d=$discussion->id", "$discussion->id", $cm->id);
+            $params = array(
+                'context' => $modcontext,
+                'objectid' => $discussion->id,
+                'other' => array(
+                    'forumid' => $forum->id,
+                )
+            );
+            $event = \mod_forum\event\discussion_created::create($params);
+            $event->add_record_snapshot('forum_discussions', $discussion);
+            $event->trigger();
 
             $timemessage = 2;
             if (!empty($message)) { // if we're printing stuff about the file upload
