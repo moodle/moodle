@@ -129,7 +129,7 @@ function xmldb_main_install() {
         'sessiontimeout'        => 7200, // must be present during roles installation
         'stringfilters'         => '', // These two are managed in a strange way by the filters
         'filterall'             => 0, // setting page, so have to be initialised here.
-        'texteditors'           => 'tinymce,textarea',
+        'texteditors'           => 'atto,tinymce,textarea',
     );
     foreach($defaults as $key => $value) {
         set_config($key, $value);

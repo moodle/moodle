@@ -577,70 +577,14 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
     /**
      * Ensures that all the page's editors are loaded.
      *
-     * This method is expensive as it waits for .mceEditor CSS
-     * so use with caution and only where there will be editors.
-     *
+     * @deprecated since Moodle 2.7 MDL-44084 - please do not use this function any more.
      * @throws ElementNotFoundException
      * @throws ExpectationException
      * @return void
      */
     protected function ensure_editors_are_loaded() {
-
-        if (!$this->running_javascript()) {
-            return;
-        }
-
-        // If there are no editors we don't need to wait.
-        try {
-            $this->find('css', '.mceEditor', false, false, self::REDUCED_TIMEOUT);
-        } catch (ElementNotFoundException $e) {
-            return;
-        }
-
-        // Exception if it timesout and the element is not appearing.
-        $msg = 'The editors are not completely loaded';
-        $exception = new ExpectationException($msg, $this->getSession());
-
-        // Here we know that there are .mceEditor editors in the page and we will
-        // probably need to interact with them, if we use tinyMCE JS var before
-        // it exists it will throw an exception and we want to catch it until all
-        // the page's editors are ready to interact with them.
-        $this->spin(
-            function($context) {
-
-                // It may return 0 if tinyMCE is loaded but not the instances, so we just loop again.
-                $neditors = $context->getSession()->evaluateScript('return tinyMCE.editors.length;');
-                if ($neditors == 0) {
-                    return false;
-                }
-
-                // It may be there but not ready.
-                $iframeready = $context->getSession()->evaluateScript('
-                    var readyeditors = new Array;
-                    for (editorid in tinyMCE.editors) {
-                        if (tinyMCE.editors[editorid].getDoc().readyState === "complete") {
-                            readyeditors[editorid] = editorid;
-                        }
-                    }
-                    if (tinyMCE.editors.length === readyeditors.length) {
-                        return "complete";
-                    }
-                    return "";
-                ');
-
-                // Now we know that the editors are there.
-                if ($iframeready) {
-                    return true;
-                }
-
-                // Loop again if it is not ready.
-                return false;
-            },
-            false,
-            self::EXTENDED_TIMEOUT,
-            $exception,
-            true
-        );
+        debugging('Function behat_base::ensure_editors_are_loaded() is deprecated. It is no longer required.');
+        return;
     }
 
 }
