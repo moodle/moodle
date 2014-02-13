@@ -369,10 +369,12 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Checks, that the specified element is not visible. Only available in tests using Javascript.
+     * Checks, that the existing element is not visible. Only available in tests using Javascript.
      *
-     * As a "not" method, it's performance is not specially good as we should ensure that the element
-     * have time to appear.
+     * As a "not" method, it's performance could not be good, but in this
+     * case the performance is good because the element must exist,
+     * otherwise there would be a ElementNotFoundException, also here we are
+     * not spinning until the element is visible.
      *
      * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>(?:[^"]|\\")*)" should not be visible$/
      * @throws ElementNotFoundException
@@ -419,7 +421,12 @@ class behat_general extends behat_base {
     }
 
     /**
-     * Checks, that the specified element is not visible inside the specified container. Only available in tests using Javascript.
+     * Checks, that the existing element is not visible inside the existing container. Only available in tests using Javascript.
+     *
+     * As a "not" method, it's performance could not be good, but in this
+     * case the performance is good because the element must exist,
+     * otherwise there would be a ElementNotFoundException, also here we are
+     * not spinning until the element is visible.
      *
      * @Then /^"(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*)" in the "(?P<element_container_string>(?:[^"]|\\")*)" "(?P<text_selector_string>[^"]*)" should not be visible$/
      * @throws ElementNotFoundException
@@ -470,7 +477,8 @@ class behat_general extends behat_base {
         }
 
         // We spin as we don't have enough checking that the element is there, we
-        // should also ensure that the element is visible.
+        // should also ensure that the element is visible. Using microsleep as this
+        // is a repeated step and global performance is important.
         $this->spin(
             function($context, $args) {
 
@@ -483,7 +491,10 @@ class behat_general extends behat_base {
                 // If non of the nodes is visible we loop again.
                 throw new ExpectationException('"' . $args['text'] . '" text was found but was not visible', $context->getSession());
             },
-            array('nodes' => $nodes, 'text' => $text)
+            array('nodes' => $nodes, 'text' => $text),
+            false,
+            false,
+            true
         );
 
     }
@@ -504,9 +515,10 @@ class behat_general extends behat_base {
             "[count(descendant::*[contains(., $xpathliteral)]) = 0]";
 
         // We should wait a while to ensure that the page is not still loading elements.
-        // Giving preference to the reliability of the results rather than to the performance.
+        // Waiting less than self::TIMEOUT as we already waited for the DOM to be ready and
+        // all JS to be executed.
         try {
-            $nodes = $this->find_all('xpath', $xpath);
+            $nodes = $this->find_all('xpath', $xpath, false, false, self::REDUCED_TIMEOUT);
         } catch (ElementNotFoundException $e) {
             // All ok.
             return;
@@ -531,7 +543,10 @@ class behat_general extends behat_base {
                 // If non of the found nodes is visible we consider that the text is not visible.
                 return true;
             },
-            array('nodes' => $nodes, 'text' => $text)
+            array('nodes' => $nodes, 'text' => $text),
+            self::REDUCED_TIMEOUT,
+            false,
+            true
         );
 
     }
@@ -570,7 +585,8 @@ class behat_general extends behat_base {
             return;
         }
 
-        // We also check the element visibility when running JS tests.
+        // We also check the element visibility when running JS tests. Using microsleep as this
+        // is a repeated step and global performance is important.
         $this->spin(
             function($context, $args) {
 
@@ -582,7 +598,10 @@ class behat_general extends behat_base {
 
                 throw new ExpectationException('"' . $args['text'] . '" text was found in the "' . $args['element'] . '" element but was not visible', $context->getSession());
             },
-            array('nodes' => $nodes, 'text' => $text, 'element' => $element)
+            array('nodes' => $nodes, 'text' => $text, 'element' => $element),
+            false,
+            false,
+            true
         );
     }
 
@@ -610,7 +629,7 @@ class behat_general extends behat_base {
         // We should wait a while to ensure that the page is not still loading elements.
         // Giving preference to the reliability of the results rather than to the performance.
         try {
-            $nodes = $this->find_all('xpath', $xpath, false, $container);
+            $nodes = $this->find_all('xpath', $xpath, false, $container, self::REDUCED_TIMEOUT);
         } catch (ElementNotFoundException $e) {
             // All ok.
             return;
@@ -635,7 +654,10 @@ class behat_general extends behat_base {
                 // If all the found nodes are hidden we are happy.
                 return true;
             },
-            array('nodes' => $nodes, 'text' => $text, 'element' => $element)
+            array('nodes' => $nodes, 'text' => $text, 'element' => $element),
+            self::REDUCED_TIMEOUT,
+            false,
+            true
         );
     }
 
@@ -794,8 +816,28 @@ class behat_general extends behat_base {
      */
     public function should_not_exists($element, $selectortype) {
 
+        // Getting Mink selector and locator.
+        list($selector, $locator) = $this->transform_selector($selectortype, $element);
+
         try {
-            $this->should_exists($element, $selectortype);
+
+            // Using directly the spin method as we want a reduced timeout but there is no
+            // need for a 0.1 seconds interval because in the optimistic case we will timeout.
+            $params = array('selector' => $selector, 'locator' => $locator);
+            // The exception does not really matter as we will catch it and will never "explode".
+            $exception = new ElementNotFoundException($this->getSession(), $selectortype, null, $element);
+
+            // If all goes good it will throw an ElementNotFoundExceptionn that we will catch.
+            $this->spin(
+                function($context, $args) {
+                    return $context->getSession()->getPage()->findAll($args['selector'], $args['locator']);
+                },
+                $params,
+                false,
+                $exception,
+                self::REDUCED_TIMEOUT
+            );
+
             throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the current page', $this->getSession());
         } catch (ElementNotFoundException $e) {
             // It passes.
@@ -851,8 +893,20 @@ class behat_general extends behat_base {
      * @param string $containerselectortype The container locator
      */
     public function should_not_exist_in_the($element, $selectortype, $containerelement, $containerselectortype) {
+
+        // Get the container node; here we throw an exception
+        // if the container node does not exist.
+        $containernode = $this->get_selected_node($containerselectortype, $containerelement);
+
+        list($selector, $locator) = $this->transform_selector($selectortype, $element);
+
+        // Will throw an ElementNotFoundException if it does not exist, but, actually
+        // it should not exists, so we try & catch it.
         try {
-            $this->should_exist_in_the($element, $selectortype, $containerelement, $containerselectortype);
+            // Would be better to use a 1 second sleep because the element should not be there,
+            // but we would need to duplicate the whole find_all() logic to do it, the benefit of
+            // changing to 1 second sleep is not significant.
+            $this->find($selector, $locator, false, $containernode, self::REDUCED_TIMEOUT);
             throw new ExpectationException('The "' . $element . '" "' . $selectortype . '" exists in the "' .
                 $containerelement . '" "' . $containerselectortype . '"', $this->getSession());
         } catch (ElementNotFoundException $e) {
