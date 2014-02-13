@@ -43,6 +43,8 @@ class core_enrol_external_testcase extends externallib_advanced_testcase {
         $course = self::getDataGenerator()->create_course();
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
+        $user3 = self::getDataGenerator()->create_user();
+        $this->setUser($user3);
 
         // Set the required capabilities by the external function.
         $context = context_course::instance($course->id);
@@ -52,7 +54,7 @@ class core_enrol_external_testcase extends externallib_advanced_testcase {
         // Enrol the users in the course.
         $this->getDataGenerator()->enrol_user($user1->id, $course->id, $roleid, 'manual');
         $this->getDataGenerator()->enrol_user($user2->id, $course->id, $roleid, 'manual');
-        $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid, 'manual');
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id, $roleid, 'manual');
 
         // Call the external function.
         $enrolledusers = core_enrol_external::get_enrolled_users($course->id);
@@ -60,8 +62,25 @@ class core_enrol_external_testcase extends externallib_advanced_testcase {
         // We need to execute the return values cleaning process to simulate the web service server.
         $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
 
-        // Check we retrieve the good total number of enrolled users.
+        // Check the result set.
         $this->assertEquals(3, count($enrolledusers));
+        $this->assertArrayHasKey('email', $enrolledusers[0]);
+
+        // Call the function with some parameters set.
+        $enrolledusers = core_enrol_external::get_enrolled_users($course->id, array(
+            array('name' => 'limitfrom', 'value' => 2),
+            array('name' => 'limitnumber', 'value' => 1),
+            array('name' => 'userfields', 'value' => 'id')
+        ));
+
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $enrolledusers = external_api::clean_returnvalue(core_enrol_external::get_enrolled_users_returns(), $enrolledusers);
+
+        // Check the result set, we should only get the 3rd result, which is $user3.
+        $this->assertCount(1, $enrolledusers);
+        $this->assertEquals($user3->id, $enrolledusers[0]['id']);
+        $this->assertArrayHasKey('id', $enrolledusers[0]);
+        $this->assertArrayNotHasKey('email', $enrolledusers[0]);
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/course:viewparticipants', $context->id, $roleid);
