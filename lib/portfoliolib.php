@@ -930,30 +930,9 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
     echo $output;
 }
 
-
-/**
- * Event handler for the portfolio_send event
- *
- * @param int $eventdata event id
- * @return bool
- */
-function portfolio_handle_event($eventdata) {
-    global $CFG;
-
-    require_once($CFG->libdir . '/portfolio/exporter.php');
-    $exporter = portfolio_exporter::rewaken_object($eventdata);
-    $exporter->process_stage_package();
-    $exporter->process_stage_send();
-    $exporter->save();
-    $exporter->process_stage_cleanup();
-    return true;
-}
-
 /**
  * Main portfolio cronjob.
  * Currently just cleans up expired transfer records.
- *
- * @todo - MDL-15997 - Add hooks in the plugins - either per instance or per plugin
  */
 function portfolio_cron() {
     global $DB, $CFG;
@@ -967,6 +946,20 @@ function portfolio_cron() {
             } catch (Exception $e) {
                 mtrace('Exception thrown in portfolio cron while cleaning up ' . $d->id . ': ' . $e->getMessage());
             }
+        }
+    }
+
+    $process = $DB->get_records('portfolio_tempdata', array('queued' => 1), 'id ASC', 'id');
+    foreach ($process as $d) {
+        try {
+            $exporter = portfolio_exporter::rewaken_object($d->id);
+            $exporter->process_stage_package();
+            $exporter->process_stage_send();
+            $exporter->save();
+            $exporter->process_stage_cleanup();
+        } catch (Exception $e) {
+            // This will get probably retried in the next cron until it is discarded by the code above.
+            mtrace('Exception thrown in portfolio cron while processing ' . $d->id . ': ' . $e->getMessage());
         }
     }
 }
