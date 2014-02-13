@@ -30,17 +30,18 @@ $settings = new admin_settingpage('editorsettingsatto', new lang_string('setting
 if ($ADMIN->fulltree) {
     $name = new lang_string('toolbarconfig', 'editor_atto');
     $desc = new lang_string('toolbarconfig_desc', 'editor_atto');
-    $default = 'collapse = collapse' . "\n" .
-               'style1 = title, bold, italic' . "\n" .
-               'list = unorderedlist, orderedlist' . "\n" .
-               'links = link, unlink' . "\n" .
-               'files = image, media, managefiles' . "\n" .
-               'style2 = underline, strike, subscript, superscript' . "\n" .
-               'align = align' . "\n" .
-               'indent = indent, outdent' . "\n" .
-               'insert = equation, charmap, table, clear' . "\n" .
-               'accessibility = accessibilitychecker, accessibilityhelper' . "\n" .
-               'other = html';
+    $default = 'collapse = collapse
+style1 = title, bold, italic
+list = unorderedlist, orderedlist
+links = link, unlink
+files = image, media, managefiles
+style2 = underline, strike, subscript, superscript
+align = align
+indent = indent, outdent
+insert = equation, charmap, table, clear
+undo = undo
+accessibility = accessibilitychecker, accessibilityhelper
+other = html';
     $setting = new admin_setting_configtextarea('editor_atto/toolbar',
                                                     $name,
                                                     $desc,
