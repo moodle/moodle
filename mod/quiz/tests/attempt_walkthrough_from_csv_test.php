@@ -264,7 +264,6 @@ class mod_quiz_attempt_walkthrough_from_csv_testcase extends advanced_testcase {
                 $attemptid = $attemptids[$step['quizattempt']];
             }
 
-
             // Process some responses from the student.
             $attemptobj = quiz_attempt::create($attemptid);
             $attemptobj->process_submitted_actions($timenow, false, $step['responses']);

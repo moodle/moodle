@@ -66,6 +66,21 @@ class question_attempt {
      */
     const PARAM_RAW_FILES = 'paramrawfiles';
 
+    /**
+     * @var string means first try at a question during an attempt by a user.
+     */
+    const FIRST_TRY = 'firsttry';
+
+    /**
+     * @var string means last try at a question during an attempt by a user.
+     */
+    const LAST_TRY = 'lasttry';
+
+    /**
+     * @var string means all tries at a question during an attempt by a user.
+     */
+    const ALL_TRIES = 'alltries';
+
     /** @var integer if this attempts is stored in the question_attempts table, the id of that row. */
     protected $id = null;
 
@@ -346,7 +361,7 @@ class question_attempt {
 
     /**
      * Get one of the steps in this attempt.
-     * For internal/test code use only.
+     *
      * @param int $i the step number.
      * @return question_attempt_step
      */
@@ -1412,6 +1427,16 @@ class question_attempt {
 
         return $qa;
     }
+
+    /**
+     * Allow access to steps with responses submitted by students for grading in a question attempt.
+     *
+     * @return question_attempt_steps_with_submitted_response_iterator to access all steps with submitted data for questions that
+     *                                                      allow multiple submissions that count towards grade, per attempt.
+     */
+    public function get_steps_with_submitted_response_iterator() {
+        return new question_attempt_steps_with_submitted_response_iterator($this);
+    }
 }
 
 
@@ -1577,4 +1602,142 @@ class question_attempt_reverse_step_iterator extends question_attempt_step_itera
     public function rewind() {
         $this->i = $this->qa->get_num_steps() - 1;
     }
+}
+
+/**
+ * A variant of {@link question_attempt_step_iterator} that iterates through the
+ * steps with submitted tries.
+ *
+ * @copyright  2014 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_attempt_steps_with_submitted_response_iterator extends question_attempt_step_iterator implements Countable {
+
+    /** @var question_attempt the question_attempt being iterated over. */
+    protected $qa;
+
+    /** @var integer records the current position in the iteration. */
+    protected $submittedresponseno;
+
+    /**
+     * Index is the submitted response number and value is the step no.
+     *
+     * @var int[]
+     */
+    protected $stepswithsubmittedresponses;
+
+    /**
+     * Do not call this constructor directly.
+     * Use {@link question_attempt::get_submission_step_iterator()}.
+     * @param question_attempt $qa the attempt to iterate over.
+     */
+    public function __construct(question_attempt $qa) {
+        $this->qa = $qa;
+        $this->find_steps_with_submitted_response();
+        $this->rewind();
+    }
+
+    /**
+     * Find the step nos  in which a student has submitted a response. Including any step with a response that is saved before
+     * the question attempt finishes.
+     *
+     * Called from constructor, should not be called from elsewhere.
+     *
+     */
+    protected function find_steps_with_submitted_response() {
+        $stepnos = array();
+        $lastsavedstep = null;
+        foreach ($this->qa->get_step_iterator() as $stepno => $step) {
+            if ($this->qa->get_behaviour()->step_has_a_submitted_response($step)) {
+                $stepnos[] = $stepno;
+                $lastsavedstep = null;
+            } else {
+                $qtdata = $step->get_qt_data();
+                if (count($qtdata)) {
+                    $lastsavedstep = $stepno;
+                }
+            }
+        }
+
+        if (!is_null($lastsavedstep)) {
+            $stepnos[] = $lastsavedstep;
+        }
+        if (empty($stepnos)) {
+            $this->stepswithsubmittedresponses = array();
+        } else {
+            // Re-index array so index starts with 1.
+            $this->stepswithsubmittedresponses = array_combine(range(1, count($stepnos)), $stepnos);
+        }
+    }
+
+    /** @return question_attempt_step */
+    public function current() {
+        return $this->offsetGet($this->submittedresponseno);
+    }
+    /** @return int */
+    public function key() {
+        return $this->submittedresponseno;
+    }
+    public function next() {
+        ++$this->submittedresponseno;
+    }
+    public function rewind() {
+        $this->submittedresponseno = 1;
+    }
+    /** @return bool */
+    public function valid() {
+        return $this->offsetExists($this->submittedresponseno);
+    }
+
+    /**
+     * @param int $submittedresponseno
+     * @return bool
+     */
+    public function offsetExists($submittedresponseno) {
+        return $submittedresponseno >= 1;
+    }
+
+    /**
+     * @param int $submittedresponseno
+     * @return question_attempt_step
+     */
+    public function offsetGet($submittedresponseno) {
+        if ($submittedresponseno > count($this->stepswithsubmittedresponses)) {
+            return null;
+        } else {
+            return $this->qa->get_step($this->step_no_for_try($submittedresponseno));
+        }
+    }
+
+    /**
+     * @return int the count of steps with tries.
+     */
+    public function count() {
+        return count($this->stepswithsubmittedresponses);
+    }
+
+    /**
+     * @param int $submittedresponseno
+     * @throws coding_exception
+     * @return int|null the step number or null if there is no such submitted response.
+     */
+    public function step_no_for_try($submittedresponseno) {
+        if (isset($this->stepswithsubmittedresponses[$submittedresponseno])) {
+            return $this->stepswithsubmittedresponses[$submittedresponseno];
+        } else if ($submittedresponseno > count($this->stepswithsubmittedresponses)) {
+            return null;
+        } else {
+            throw new coding_exception('Try number not found. It should be 1 or more.');
+        }
+    }
+
+    public function offsetSet($offset, $value) {
+        throw new coding_exception('You are only allowed read-only access to question_attempt::states '.
+                                   'through a question_attempt_step_iterator. Cannot set.');
+    }
+    public function offsetUnset($offset) {
+        throw new coding_exception('You are only allowed read-only access to question_attempt::states '.
+                                   'through a question_attempt_step_iterator. Cannot unset.');
+    }
+
 }

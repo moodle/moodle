@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file defines the quiz responses table.
+ * This file defines the quiz responses table for showing last try at question.
  *
  * @package   quiz_responses
  * @copyright 2008 Jean-Michel Vedrine
@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_table.php');
  * @copyright 2008 Jean-Michel Vedrine
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_responses_table extends quiz_attempts_report_table {
+class quiz_last_responses_table extends quiz_attempts_report_table {
 
     /**
      * Constructor
@@ -78,24 +78,11 @@ class quiz_responses_table extends quiz_attempts_report_table {
     }
 
     public function data_col($slot, $field, $attempt) {
-        global $CFG;
-
         if ($attempt->usageid == 0) {
             return '-';
         }
 
-        $question = $this->questions[$slot];
-        if (!isset($this->lateststeps[$attempt->usageid][$slot])) {
-            return '-';
-        }
-
-        $stepdata = $this->lateststeps[$attempt->usageid][$slot];
-
-        if (property_exists($stepdata, $field . 'full')) {
-            $value = $stepdata->{$field . 'full'};
-        } else {
-            $value = $stepdata->$field;
-        }
+        $value = $this->field_from_extra_data($attempt, $slot, $field);
 
         if (is_null($value)) {
             $summary = '-';
@@ -115,6 +102,28 @@ class quiz_responses_table extends quiz_attempts_report_table {
         return $this->make_review_link($summary, $attempt, $slot);
     }
 
+    /**
+     * Column text from the extra data loaded in load_extra_data(), before html formatting etc.
+     *
+     * @param object $attempt
+     * @param int $slot
+     * @param string $field
+     * @return string
+     */
+    protected function field_from_extra_data($attempt, $slot, $field) {
+        if (!isset($this->lateststeps[$attempt->usageid][$slot])) {
+            return '-';
+        }
+        $stepdata = $this->lateststeps[$attempt->usageid][$slot];
+
+        if (property_exists($stepdata, $field . 'full')) {
+            $value = $stepdata->{$field . 'full'};
+        } else {
+            $value = $stepdata->$field;
+        }
+        return $value;
+    }
+
     public function other_cols($colname, $attempt) {
         if (preg_match('/^question(\d+)$/', $colname, $matches)) {
             return $this->data_col($matches[1], 'questionsummary', $attempt);
@@ -130,7 +139,7 @@ class quiz_responses_table extends quiz_attempts_report_table {
         }
     }
 
-    protected function requires_latest_steps_loaded() {
+    protected function requires_extra_data() {
         return true;
     }
 
@@ -143,8 +152,9 @@ class quiz_responses_table extends quiz_attempts_report_table {
 
     /**
      * Get any fields that might be needed when sorting on date for a particular slot.
-     * @param int $slot the slot for the column we want.
+     * @param int    $slot  the slot for the column we want.
      * @param string $alias the table alias for latest state information relating to that slot.
+     * @return string sql fragment to alias fields.
      */
     protected function get_required_latest_state_fields($slot, $alias) {
         global $DB;
