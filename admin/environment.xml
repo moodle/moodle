@@ -1128,5 +1128,12 @@
         </FEEDBACK>
       </PHP_SETTING>
     </PHP_SETTINGS>
+    <CUSTOM_CHECKS>
+      <CUSTOM_CHECK file="question/engine/upgrade/upgradelib.php" function="quiz_attempts_upgraded" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="quizattemptsupgradedmessage" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+    </CUSTOM_CHECKS>
   </MOODLE>
 </COMPATIBILITY_MATRIX>
