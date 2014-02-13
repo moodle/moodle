@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = '管理目錄';
 $string['availablelangs'] = '可使用的語言包';
 $string['chooselanguagehead'] = '選擇一種語言';
-$string['chooselanguagesub'] = '請選擇在安裝過程中使用的語言。稍後您可以根據需要重新選擇用於網站和使用者的語言。';
+$string['chooselanguagesub'] = '請為這安裝過程選擇一種語言。這語言將成為這網站的預設語言。日後您還是可以根據需要重新選擇。';
 $string['clialreadyconfigured'] = '檔案 config.php  已經存在，若你要安裝這一網站，請使用dmin/cli/install_database.php';
 $string['clialreadyinstalled'] = '檔案 config.php  已經存在，若你要升級這一網站，請使用admin/cli/upgrade.php';
 $string['cliinstallheader'] = 'Moodle {$a} 命令列安裝程式';
@@ -49,16 +49,16 @@ $string['environmentsub2'] = '每一個Moodle版本都有一些PHP版本的最�
 若你不知道要怎樣新的PHP版本或啟用PHP擴展，請聯絡伺服器管理員。';
 $string['errorsinenvironment'] = '環境檢查失敗!';
 $string['installation'] = '安裝';
-$string['langdownloaderror'] = '很不幸地，語言“{$a}”並未安裝。安裝過程將以英文繼續。';
-$string['memorylimithelp'] = '<p>PHP記憶體上限目前設定為{$a}。</p>
-<p>稍後它可能會造成Moodle記憶體的問題，尤其是您啟動了很多的模組及大量的使用者後。
-<p>建議您儘可能將PHP的上限設得高一點，比如16M。
+$string['langdownloaderror'] = '很不幸地，語言“{$a}”並未安裝。這安裝過程將會以英文繼續。';
+$string['memorylimithelp'] = '<p>你的伺服器的PHP記憶體上限目前設定為{$a}。</p>
+<p>稍後它可能會造成Moodle記憶體的問題，尤其是您啟動了很多的模組和/或有大量的用戶。
+<p>建議您儘可能將PHP的上限設得高一點，比如40M。</p>
 以下有幾種方式您可以試試:
 <ol>
-<li>如果可以的話，用<i>--enable-memory-limit</i>重新編譯PHP。讓Moodle自己設定記憶體上限.
-<li>如果您要使用php.ini檔, 您可以改變<b>memory_limit</b>這個設定值，例如到16M。如果您無法使用這個檔，您可以請您的管理者幫您做
-<li>在一些PHP伺服器上，您可以在Moodle目錄下，建立.htaccess檔，包含這行:<p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>然而，在一些伺服器上，這將造成<b>所有的</b> PHP 網頁無法運作(當您看這些網頁時，您就會看到錯誤) 因此，您就必須將 .htaccess 檔案移除。
+<li>如果可以的話，用<i>--enable-memory-limit</i>重新編譯PHP。</li>這會讓Moodle自己設定記憶體上限。
+<li>如果您要使用php.ini檔, 您可以改變<b>memory_limit</b>這個設定值，例如到40M。如果您無法存取這個檔案，您可以請您的管理員幫您做。</li>
+<li>在某些PHP伺服器上，您可以在Moodle目錄下，建立.htaccess檔，包含這行:<p><blockquote>php_value memory_limit 40M</blockquote>
+<p>然而，在一些伺服器上，這將造成<b>所有的</b> PHP 網頁無法運作(當您看這些網頁時，您就會看到錯誤) 因此，您就必須將 .htaccess 檔案移除。</p></li>
 </ol>';
 $string['paths'] = '路徑';
 $string['pathserrcreatedataroot'] = '資料目錄 ({$a->dataroot})無法由這安裝程式建立';
