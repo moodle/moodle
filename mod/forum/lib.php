@@ -773,8 +773,6 @@ function forum_cron() {
                 if (!$mailresult){
                     mtrace("Error: mod/forum/lib.php forum_cron(): Could not send out mail for id $post->id to user $userto->id".
                          " ($userto->email) .. not trying again.");
-                    add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#p$post->id",
-                               substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                     $errorcount[$post->id]++;
                 } else {
                     $mailcount[$post->id]++;
@@ -1073,9 +1071,8 @@ function forum_cron() {
                 $mailresult = email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, $attachment, $attachname);
 
                 if (!$mailresult) {
-                    mtrace("ERROR!");
-                    echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
-                    add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);
+                    mtrace("ERROR: mod/forum/cron.php: Could not send out digest mail to user $userto->id ".
+                        "($userto->email)... not trying again.");
                 } else {
                     mtrace("success.");
                     $usermailcount++;
