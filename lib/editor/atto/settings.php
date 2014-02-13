@@ -31,11 +31,15 @@ if ($ADMIN->fulltree) {
     $name = new lang_string('toolbarconfig', 'editor_atto');
     $desc = new lang_string('toolbarconfig_desc', 'editor_atto');
     $default = 'collapse = collapse' . "\n" .
-               'style = bold, italic, underline, strike, clear, title' . "\n" .
-               'paragraph = subscript, superscript, indent, outdent, orderedlist, unorderedlist' . "\n" .
+               'style1 = title, bold, italic' . "\n" .
+               'list = unorderedlist, orderedlist' . "\n" .
                'links = link, unlink' . "\n" .
-               'insert = table, image, media, managefiles, charmap, emoticon' . "\n" .
-               'other = html, accessibilitychecker, accessibilityhelper';
+               'files = image, media, managefiles' . "\n" .
+               'style2 = underline, strike, subscript, superscript' . "\n" .
+               'indent = indent, outdent' . "\n" .
+               'insert = charmap, table, clear' . "\n" .
+               'accessibility = accessibilitychecker, accessibilityhelper' . "\n" .
+               'other = html';
     $setting = new admin_setting_configtextarea('editor_atto/toolbar',
                                                     $name,
                                                     $desc,

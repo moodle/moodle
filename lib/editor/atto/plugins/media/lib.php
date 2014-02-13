@@ -31,7 +31,6 @@ function atto_media_strings_for_js() {
     $PAGE->requires->strings_for_js(array('createmedia',
                                           'enterurl',
                                           'entername',
-                                          'browserepositories',
-                                          'accessibilityhint'),
+                                          'browserepositories'),
                                     'atto_media');
 }

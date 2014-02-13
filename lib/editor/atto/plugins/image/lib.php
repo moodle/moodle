@@ -36,7 +36,6 @@ function atto_image_strings_for_js() {
                                           'presentation',
                                           'preview',
                                           'browserepositories',
-                                          'accessibilityhint',
                                           'presentationoraltrequired',
                                           'width',
                                           'height'), 'atto_image');

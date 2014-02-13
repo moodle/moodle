@@ -34,8 +34,7 @@ function atto_link_strings_for_js() {
     $PAGE->requires->strings_for_js(array('createlink',
                                           'enterurl',
                                           'browserepositories',
-                                          'openinnewwindow',
-                                          'accessibilityhint'),
+                                          'openinnewwindow'),
                                     'atto_link');
 }
 

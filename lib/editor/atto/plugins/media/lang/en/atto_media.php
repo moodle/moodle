@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['accessibilityhint'] = '<h3>Accessibility recommendation</h3><p>Provide text alternatives for any non-text content so that it can be changed into other forms people need, such as large print, braille, speech, symbols or simpler language.</p><p><a href="http://www.w3.org/TR/UNDERSTANDING-WCAG20/text-equiv.html" target="_blank">Web Content Accessibility Guidelines 2.0</a></p>';
 $string['browserepositories'] = 'Browse repositories...';
 $string['createmedia'] = 'Insert media';
 $string['entername'] = 'Enter name';

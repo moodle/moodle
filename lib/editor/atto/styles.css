@@ -58,6 +58,12 @@ div.editor_atto_toolbar button[disabled] {
     background-color: #dfdfdf;
 }
 
+/* Make firefox button sizes match other browsers */
+div.editor_atto_toolbar button::-moz-focus-inner {
+    border:0;
+    padding:0;
+}
+
 div.editor_atto_toolbar button img.icon {
     padding: 1px;
     margin: 1px 0;
@@ -114,7 +120,7 @@ div.editor_atto_toolbar div.atto_group {
 
 .atto_form label.sameline {
     display: inline-block;
-    min-width: 4em;
+    min-width: 10em;
 }
 .atto_form textarea.fullwidth,
 .atto_form input.fullwidth {

@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['accessibilityhint'] = '<h3>Accessibility recommendation</h3><p>A mechanism is available to allow the purpose of each link to be identified from link text alone, except where the purpose of the link would be ambiguous to users in general.</p><p><a href="http://www.w3.org/TR/UNDERSTANDING-WCAG20/text-equiv.html" target="_blank">Web Content Accessibility Guidelines 2.0</a></p>';
 $string['browserepositories'] = 'Browse repositories...';
 $string['createlink'] = 'Create link';
 $string['enterurl'] = 'Enter a URL';

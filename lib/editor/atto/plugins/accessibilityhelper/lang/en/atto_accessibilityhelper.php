@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Accessibility helper';
+$string['pluginname'] = 'Screenreader helper';
 $string['liststyles'] = 'Styles for current selection:';
 $string['nostyles'] = 'No styles';
 $string['listlinks'] = 'Links in text editor:';

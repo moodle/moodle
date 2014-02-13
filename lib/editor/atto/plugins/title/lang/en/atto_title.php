@@ -25,7 +25,7 @@
 $string['h3'] = 'Heading 1';
 $string['h4'] = 'Heading 2';
 $string['h5'] = 'Heading 3';
-$string['p'] = 'Plain';
+$string['p'] = 'Paragraph';
 $string['pluginname'] = 'Paragraph styles';
 $string['pre'] = 'Pre-formatted';
 $string['title'] = 'Paragraph styles';
