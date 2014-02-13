@@ -3005,5 +3005,33 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014021300.01);
     }
 
+    if ($oldversion < 2014021300.02) {
+
+        // Define table question_states to be dropped.
+        $table = new xmldb_table('question_states');
+
+        // Conditionally launch drop table for question_states.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014021300.02);
+    }
+
+    if ($oldversion < 2014021300.03) {
+
+        // Define table question_sessions to be dropped.
+        $table = new xmldb_table('question_sessions');
+
+        // Conditionally launch drop table for question_sessions.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014021300.03);
+    }
+
     return true;
 }

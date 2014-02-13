@@ -1426,48 +1426,6 @@
         <INDEX NAME="attemptstepid-name" UNIQUE="true" FIELDS="attemptstepid, name"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="question_states" COMMENT="Stores user responses to an attempt, and percentage grades">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="question" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="seq_number" TYPE="int" LENGTH="6" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="answer" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="event" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7"/>
-        <FIELD NAME="raw_grade" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7"/>
-        <FIELD NAME="penalty" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="question_attempts" REFFIELDS="id"/>
-        <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="question_sessions" COMMENT="Gives ids of the newest open and newest graded states">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="newest" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="newgraded" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="sumpenalty" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7"/>
-        <FIELD NAME="manualcomment" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="manualcommentformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="flagged" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The person attempting the question may mark certain questions within their question_attempt if the module that owns the attempt allow it. This field stores the status of that flag."/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="attemptid" TYPE="foreign" FIELDS="attemptid" REFTABLE="question_attempts" REFFIELDS="id"/>
-        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
-        <KEY NAME="newest" TYPE="foreign" FIELDS="newest" REFTABLE="question_states" REFFIELDS="id"/>
-        <KEY NAME="newgraded" TYPE="foreign" FIELDS="newgraded" REFTABLE="question_states" REFFIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="attemptid-questionid" UNIQUE="true" FIELDS="attemptid, questionid"/>
-      </INDEXES>
-    </TABLE>
     <TABLE NAME="question_statistics" COMMENT="Statistics for individual questions used in an activity.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>

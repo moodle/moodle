@@ -110,7 +110,6 @@ class question_engine_attempt_upgrader {
     protected function set_quiz_attempt_layout($qubaid, $layout) {
         global $DB;
         $DB->set_field('quiz_attempts', 'layout', $layout, array('uniqueid' => $qubaid));
-        $DB->set_field('quiz_attempts', 'needsupgradetonewqe', 0, array('uniqueid' => $qubaid));
     }
 
     protected function delete_quiz_attempt($qubaid) {

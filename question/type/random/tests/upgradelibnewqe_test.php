@@ -86,7 +86,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'timemodified' => '1238182560',
             'layout' => '28698,0,34245,0,34248,0,35005,0,35009,0,35013,0',
             'preview' => '0',
-            'needsupgradetonewqe' => '1',
         );
         $question = (object) array(
             'id' => '34248',
@@ -315,7 +314,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'timemodified' => '1274178763',
             'layout' => '101989,101985,101994,0,101988,101986,101992,0,101997,101990,101991,0,101984,101995,101987,0,101983,101993,101996,0',
             'preview' => '0',
-            'needsupgradetonewqe' => '1',
         );
         $question = (object) array(
             'id' => '101984',
@@ -565,7 +563,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'timemodified' => '1269508052',
             'layout' => '68646,0,81245,0,81246,0,81247,0,81248,0,81249,0,81250,0,82795,0,82797,0,82798,0,82799,0,82800,0,82801,0,82802,0,82803,0,82804,0,82805,0,82806,0,82807,0',
             'preview' => '0',
-            'needsupgradetonewqe' => '1',
         );
         $question = (object) array(
             'id' => '81247',
@@ -835,7 +832,6 @@ class qtype_random_attempt_upgrader_test extends question_attempt_upgrader_test_
             'timemodified' => '1305273672',
             'layout' => '6,12,13,15,14,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '14',

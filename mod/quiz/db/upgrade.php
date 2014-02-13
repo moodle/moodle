@@ -500,6 +500,21 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2014011306, 'quiz');
     }
 
+    if ($oldversion < 2014021300) {
+
+        // Define field needsupgradetonewqe to be dropped from quiz_attempts.
+        $table = new xmldb_table('quiz_attempts');
+        $field = new xmldb_field('needsupgradetonewqe');
+
+        // Conditionally launch drop field needsupgradetonewqe.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2014021300, 'quiz');
+    }
+
     return true;
 }
 
