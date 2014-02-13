@@ -2996,5 +2996,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014020500.00);
     }
 
+    if ($oldversion < 2014021300.01) {
+        // Force uninstall of deleted tool.
+        if (!file_exists("$CFG->dirroot/$CFG->admin/tool/qeupgradehelper")) {
+            // Remove all other associated config.
+            unset_all_config_for_plugin('tool_qeupgradehelper');
+        }
+        upgrade_main_savepoint(true, 2014021300.01);
+    }
+
     return true;
 }
