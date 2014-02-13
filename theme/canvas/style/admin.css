@@ -19,12 +19,17 @@
     padding: 1em 0;
 }
 
+#page-admin-index .adminerror,
 #page-admin-index .adminwarning {
     border: 1px solid #a35f1d;
     background: #ffeeba;
     padding: 10px;
     margin: 10px auto;
     width: 75%;
+}
+
+#page-admin-index .adminerror {
+    background: #ffd3d9;
 }
 
 #page-admin-index .copyright {
