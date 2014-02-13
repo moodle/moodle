@@ -111,22 +111,32 @@ Feature: Set up contextual data for tests
     Then I should see "Topic 1"
 
   Scenario: Add role assigns
-    Given the following "users" exists:
+    Given the following "roles" exists:
+      | name                   | shortname | description      | archetype      |
+      | Custom editing teacher | custom1   | My custom role 1 | editingteacher |
+      | Custom student         | custom2   |                  |                |
+    And the following "users" exists:
       | username | firstname | lastname | email |
       | user1 | User | 1 | user1@moodlemoodle.com |
       | user2 | User | 2 | user2@moodlemoodle.com |
       | user3 | User | 3 | user3@moodlemoodle.com |
+      | user4 | User | 4 | user4@moodlemoodle.com |
+      | user5 | User | 5 | user5@moodlemoodle.com |
     And the following "categories" exists:
       | name | category | idnumber |
       | Cat 1 | 0 | CAT1 |
     And the following "courses" exists:
       | fullname | shortname | category |
       | Course 1 | C1 | CAT1 |
+    And the following "course enrolments" exists:
+      | user | course | role |
+      | user4 | C1 | custom1 |
     And the following "role assigns" exists:
       | user  | role           | contextlevel | reference |
       | user1 | manager        | System       |           |
       | user2 | editingteacher | Category     | CAT1      |
       | user3 | editingteacher | Course       | C1        |
+      | user5 | custom2        | System       |           |
     When I log in as "user1"
     Then I should see "Front page settings"
     And I log out
@@ -137,6 +147,16 @@ Feature: Set up contextual data for tests
     And I log in as "user3"
     And I follow "Course 1"
     And I should see "Turn editing on"
+    And I log out
+    And I log in as "user4"
+    And I follow "Course 1"
+    And I should see "Turn editing on"
+    And I log out
+    And I log in as "user5"
+    And I should see "You are logged in as"
+    And I follow "Course 1"
+    And I should see "You can not enrol yourself in this course."
+
 
   Scenario: Add modules
     Given the following "courses" exists:
