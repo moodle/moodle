@@ -17,10 +17,9 @@
 /**
  * Data module version information
  *
- * @package    mod
- * @subpackage data
- * @copyright  2005 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_data
+ * @copyright 2005 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
