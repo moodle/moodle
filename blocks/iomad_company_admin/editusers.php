@@ -548,7 +548,7 @@ function iomad_get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recor
     }
 
     // Warning: will return UNCONFIRMED USERS!
-    return $DB->get_records_sql("SELECT u.id, u.username, u.email, u.firstname, u.lastname, u.lastaccess, d.name
+    return $DB->get_records_sql("SELECT u.*, d.name
                                  FROM {user} u, {department} d, {company_users} cu
                                  WHERE $select and cu.userid = u.id and d.id = cu.departmentid
                                  $sort", $params, $page, $recordsperpage);
