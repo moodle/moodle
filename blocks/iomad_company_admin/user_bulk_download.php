@@ -159,7 +159,7 @@ function user_download_ods($userids, $fields, $includecompanyfield) {
 
     $worksheet = array();
 
-    $worksheet[0] =& $workbook->add_worksheet('');
+    $worksheet[0] = $workbook->add_worksheet('');
     $col = 0;
     foreach ($fields as $fieldname) {
         if ($includecompanyfield || $fieldname != "profile_field_company") {
@@ -208,7 +208,7 @@ function user_download_xls($userids, $fields, $includecompanyfield) {
 
     $worksheet = array();
 
-    $worksheet[0] =& $workbook->add_worksheet('');
+    $worksheet[0] = $workbook->add_worksheet('');
     $col = 0;
     foreach ($fields as $fieldname) {
         if ($includecompanyfield || $fieldname != "profile_field_company") {
