@@ -17,7 +17,7 @@
 /**
  * Data generator.
  *
- * @package mod_resource
+ * @package    mod_resource
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Resource module data generator class.
  *
- * @package mod_resource
+ * @package    mod_resource
  * @copyright 2013 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
