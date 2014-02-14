@@ -17,7 +17,7 @@
 /**
  * Manage files in wiki
  *
- * @package   mod-wiki-2.0
+ * @package   mod_wiki
  * @copyright 2011 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
