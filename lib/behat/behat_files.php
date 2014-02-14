@@ -63,15 +63,24 @@ class behat_files extends behat_base {
         // More info about the problem (in case there is a problem).
         $exception = new ExpectationException('"' . $filepickerelement . '" filepicker can not be found', $this->getSession());
 
-        // Gets the ffilemanager node specified by the locator which contains the filepicker container.
-        $filepickerelement = $this->getSession()->getSelectorsHandler()->xpathLiteral($filepickerelement);
-        $filepickercontainer = $this->find(
-            'xpath',
-            "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
-                "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ') or " .
-                "contains(concat(' ', normalize-space(@class), ' '), ' ffilepicker ')]",
-            $exception
-        );
+        // If no file picker label is mentioned take the first file picker from the page.
+        if (empty($filepickerelement)) {
+            $filepickercontainer = $this->find(
+                'xpath',
+                "//*[@class=\"form-filemanager\"]",
+                $exception
+            );
+        } else {
+            // Gets the ffilemanager node specified by the locator which contains the filepicker container.
+            $filepickerelement = $this->getSession()->getSelectorsHandler()->xpathLiteral($filepickerelement);
+            $filepickercontainer = $this->find(
+                'xpath',
+                "//input[./@id = //label[normalize-space(.)=$filepickerelement]/@for]" .
+                    "//ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' ffilemanager ') or " .
+                    "contains(concat(' ', normalize-space(@class), ' '), ' ffilepicker ')]",
+                $exception
+            );
+        }
 
         return $filepickercontainer;
     }
