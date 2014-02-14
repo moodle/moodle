@@ -1,5 +1,13 @@
 This files describes API changes for question type plugins.
 
+=== 2.7 ===
+  + We have added a new method to the question_type base class 'break_down_stats_and_response_analysis_by_variant'. By default it
+   returns true. If your question type does not have variants of question instances then you can ignore this method as it only
+   applies to question types that have variants. If a question type does have variants the default action is to break down
+   response analysis and question stats by variant. But for some question types there might be an almost infinite quantity of
+   variants for the question, in this case you can suppress break down by variant by returning false from this method. See for
+   example the non-core question type varnumeric or the slightly more complex stack question type.
+
 === 2.6 ===
   + The changes in MDL-32750 were reverted in favour of the new pdw toggle toolbars
     plugin for TinyMCE. The get_non_collapsible_editor_options method has been deprecated.
