@@ -19,7 +19,7 @@
  * This file is responsible for saving the results of a users survey and displaying
  * the final message.
  *
- * @package   mod-survey
+ * @package   mod_survey
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
