@@ -18,8 +18,7 @@
 /**
  * Various workshop maintainance utilities
  *
- * @package    mod
- * @subpackage workshop
+ * @package    mod_workshop
  * @copyright  2010 David Mudrak <david.mudrak@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -18,10 +18,9 @@
 /**
  * Workshop subplugin types declaration
  *
- * @package    mod
- * @subpackage workshop
- * @copyright  2010 Petr Skoda (http://skodak.org)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_workshop
+ * @copyright 2010 Petr Skoda (http://skodak.org)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
