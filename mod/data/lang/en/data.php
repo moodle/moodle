@@ -123,6 +123,7 @@ $string['eventfieldcreated'] = 'Field created';
 $string['eventfielddeleted'] = 'Field deleted';
 $string['eventfieldupdated'] = 'Field updated';
 $string['eventrecordcreated'] = 'Record created';
+$string['eventrecorddeleted'] = 'Record deleted';
 $string['eventrecordupdated'] = 'Record updated';
 $string['eventtemplateupdated'] = 'Template updated';
 $string['eventtemplateviewed'] = 'Templates viewed';

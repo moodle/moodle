@@ -214,6 +214,54 @@ class mod_data_events_testcase extends advanced_testcase {
     }
 
     /**
+     * Test the record deleted event.
+     */
+    public function test_record_deleted() {
+        global $DB;
+
+        // Create a course we are going to add a data module to.
+        $course = $this->getDataGenerator()->create_course();
+
+        // The generator used to create a data module.
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_data');
+
+        // Create a data module.
+        $data = $generator->create_instance(array('course' => $course->id));
+
+        // Now we want to create a field.
+        $field = data_get_field_new('text', $data);
+        $fielddata = new stdClass();
+        $fielddata->name = 'Test';
+        $fielddata->description = 'Test description';
+        $field->define_field($fielddata);
+        $field->insert_field();
+
+        // Create data record.
+        $datarecords = new stdClass();
+        $datarecords->userid = '2';
+        $datarecords->dataid = $data->id;
+        $datarecords->id = $DB->insert_record('data_records', $datarecords);
+
+        // Create data content.
+        $datacontent = new stdClass();
+        $datacontent->fieldid = $field->field->id;
+        $datacontent->recordid = $datarecords->id;
+        $datacontent->id = $DB->insert_record('data_content', $datacontent);
+
+        // Trigger and capture the event for deleting the data record.
+        $sink = $this->redirectEvents();
+        data_delete_record($datarecords->id, $data, $course->id, $data->cmid);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\mod_data\event\record_deleted', $event);
+        $this->assertEquals(context_module::instance($data->cmid), $event->get_context());
+        $expected = array($course->id, 'data', 'record delete', 'view.php?id=' . $data->cmid, $data->id, $data->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
+
+    /**
      * Test the template viewed event.
      *
      * There is no external API for viewing templates, so the unit test will simply create

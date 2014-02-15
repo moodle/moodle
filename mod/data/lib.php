@@ -3736,7 +3736,18 @@ function data_delete_record($recordid, $data, $courseid, $cmid) {
                 $DB->delete_records('data_content', array('recordid'=>$deleterecord->id));
                 $DB->delete_records('data_records', array('id'=>$deleterecord->id));
 
-                add_to_log($courseid, 'data', 'record delete', "view.php?id=$cmid", $data->id, $cmid);
+                // Trigger an event for deleting this record.
+                $event = \mod_data\event\record_deleted::create(array(
+                    'objectid' => $deleterecord->id,
+                    'context' => context_module::instance($cmid),
+                    'courseid' => $courseid,
+                    'other' => array(
+                        'dataid' => $deleterecord->dataid
+                    )
+                ));
+                $event->add_record_snapshot('data_records', $deleterecord);
+                $event->trigger();
+
                 return true;
             }
         }
