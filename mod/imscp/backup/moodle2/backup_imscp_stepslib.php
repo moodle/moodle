@@ -18,8 +18,7 @@
 /**
  * Define all the backup steps that will be used by the backup_imscp_activity_task
  *
- * @package    mod
- * @subpackage imscp
+ * @package mod_imscp
  * @copyright  2010 onwards Eloy Lafuente (stronk7) {@link http://stronk7.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
