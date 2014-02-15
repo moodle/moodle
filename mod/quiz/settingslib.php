@@ -18,10 +18,9 @@
  * This page is the entry page into the quiz UI. Displays information about the
  * quiz to students and teachers, and lets students see their previous attempts.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2008 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2008 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 

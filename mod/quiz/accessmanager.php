@@ -17,10 +17,9 @@
 /**
  * Classes to enforce the various access rules that can apply to a quiz.
  *
- * @package    mod
- * @subpackage quiz
- * @copyright  2009 Tim Hunt
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2009 Tim Hunt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 
