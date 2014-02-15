@@ -36,8 +36,7 @@
  * This file contains all the backup steps that will be used
  * by the backup_lti_activity_task
  *
- * @package    mod
- * @subpackage lti
+ * @package mod_lti
  * @copyright  2009 Marc Alier, Jordi Piguillem, Nikolas Galanis
  *  marc.alier@upc.edu
  * @copyright  2009 Universitat Politecnica de Catalunya http://www.upc.edu
