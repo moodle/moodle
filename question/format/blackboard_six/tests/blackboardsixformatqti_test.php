@@ -44,7 +44,7 @@ class qformat_blackboard_six_qti_test extends question_testcase {
         $xmlfile = new qformat_blackboard_six_file();
         $xmlfile->filetype = 1;
         $xmlfile->text = file_get_contents(__DIR__ . '/fixtures/sample_blackboard_qti.dat');
-        return array(0=>$xmlfile);
+        return array(0 => $xmlfile);
     }
     public function test_import_match() {
         $xml = $this->make_test_xml();

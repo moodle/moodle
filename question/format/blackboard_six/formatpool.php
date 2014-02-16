@@ -27,22 +27,26 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/xmlize.php');
 
 /**
- * Blackboard pool question importer.
+ * Blackboard pool question importer class.
  *
+ * @package    qformat_blackboard_six
  * @copyright  2003 Scott Elliott
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
-    // Is the current question's question text escaped HTML (true for most if not all Blackboard files).
+    /**
+     * @var bool Is the current question's question text escaped HTML
+     * (true for most if not all Blackboard files).
+     */
     public $ishtml = true;
 
     /**
      * Parse the xml document into an array of questions
-     * this *could* burn memory - but it won't happen that much
+     *
+     * This *could* burn memory - but it won't happen that much
      * so fingers crossed!
-     * @param array of lines from the input file.
-     * @param stdClass $context
+     *
+     * @param array $text array of lines from the input file.
      * @return array (of objects) questions objects.
      */
     protected function readquestions($text) {
@@ -72,6 +76,7 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
 
     /**
      * Do question import processing common to every qtype.
+     *
      * @param array $questiondata the xml tree related to the current question
      * @return object initialized question object.
      */
@@ -128,8 +133,8 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
 
     /**
      * Process Essay Questions
-     * @param array xml the xml tree
-     * @param array questions the questions already parsed
+     * @param array $xml the xml tree
+     * @param array $questions the questions already parsed
      */
     public function process_essay($xml, &$questions) {
 
@@ -149,8 +154,8 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
             $question->answer = '';
             $answer = $this->getpath($thisquestion,
                     array('#', 'ANSWER', 0, '#', 'TEXT', 0, '#'), '', true);
-            $question->graderinfo =  $this->cleaned_text_field($answer);
-            $question->responsetemplate =  $this->text_field('');
+            $question->graderinfo = $this->cleaned_text_field($answer);
+            $question->responsetemplate = $this->text_field('');
             $question->feedback = '';
             $question->responseformat = 'editor';
             $question->responserequired = 1;
@@ -165,8 +170,8 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
 
     /**
      * Process True / False Questions
-     * @param array xml the xml tree
-     * @param array questions the questions already parsed
+     * @param array $xml the xml tree
+     * @param array $questions the questions already parsed
      */
     public function process_tf($xml, &$questions) {
 
@@ -214,8 +219,8 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
 
     /**
      * Process Multiple Choice Questions with single answer
-     * @param array xml the xml tree
-     * @param array questions the questions already parsed
+     * @param array $xml the xml tree
+     * @param array $questions the questions already parsed
      */
     public function process_mc($xml, &$questions) {
 
@@ -250,7 +255,7 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
             foreach ($choices as $choice) {
                 $choicetext = $this->getpath($choice, array('#', 'TEXT', 0, '#'), '', true);
                 // Put this choice in the question object.
-                $question->answer[] =  $this->cleaned_text_field($choicetext);
+                $question->answer[] = $this->cleaned_text_field($choicetext);
 
                 $choiceid = $this->getpath($choice, array('@', 'id'), '', true);
                 // If choice is the right answer, give 100% mark, otherwise give 0%.
@@ -260,7 +265,7 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
                     $question->fraction[] = 0;
                 }
                 // There is never feedback specific to each choice.
-                $question->feedback[] =  $this->text_field('');
+                $question->feedback[] = $this->text_field('');
             }
             $questions[] = $question;
         }
@@ -268,8 +273,8 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
 
     /**
      * Process Multiple Choice Questions With Multiple Answers
-     * @param array xml the xml tree
-     * @param array questions the questions already parsed
+     * @param array $xml the xml tree
+     * @param array $questions the questions already parsed
      */
     public function process_ma($xml, &$questions) {
         if ($this->getpath($xml, array('POOL', '#', 'QUESTION_MULTIPLEANSWER'), false, false)) {
@@ -307,12 +312,12 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
                             '', true);
                 }
             }
-            $fraction = 1/count($correctanswerids);
+            $fraction = 1 / count($correctanswerids);
 
             foreach ($choices as $choice) {
                 $choicetext = $this->getpath($choice, array('#', 'TEXT', 0, '#'), '', true);
                 // Put this choice in the question object.
-                $question->answer[] =  $this->cleaned_text_field($choicetext);
+                $question->answer[] = $this->cleaned_text_field($choicetext);
 
                 $choiceid = $this->getpath($choice, array('@', 'id'), '', true);
 
@@ -324,7 +329,7 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
                     $question->fraction[] = 0;
                 }
                 // There is never feedback specific to each choice.
-                $question->feedback[] =  $this->text_field('');
+                $question->feedback[] = $this->text_field('');
             }
             $questions[] = $question;
         }
@@ -332,8 +337,8 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
 
     /**
      * Process Fill in the Blank Questions
-     * @param array xml the xml tree
-     * @param array questions the questions already parsed
+     * @param array $xml the xml tree
+     * @param array $questions the questions already parsed
      */
     public function process_fib($xml, &$questions) {
         if ($this->getpath($xml, array('POOL', '#', 'QUESTION_FILLINBLANK'), false, false)) {
@@ -373,8 +378,8 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
 
     /**
      * Process Matching Questions
-     * @param array xml the xml tree
-     * @param array questions the questions already parsed
+     * @param array $xml the xml tree
+     * @param array $questions the questions already parsed
      */
     public function process_matching($xml, &$questions) {
         if ($this->getpath($xml, array('POOL', '#', 'QUESTION_MATCH'), false, false)) {
