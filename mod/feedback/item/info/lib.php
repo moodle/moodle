@@ -194,7 +194,8 @@ class feedback_item_info extends feedback_item_base {
 
         $align = right_to_left() ? 'right' : 'left';
         $presentation = $item->presentation;
-        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        $requiredmark = ($item->required == 1)?'<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />':'';
 
         if ($item->feedback) {
             $courseid = $DB->get_field('feedback', 'course', array('id'=>$item->feedback));
@@ -272,11 +273,12 @@ class feedback_item_info extends feedback_item_base {
 
         $presentation = $item->presentation;
         if ($highlightrequire AND $item->required AND strval($value) == '') {
-            $highlight = ' missingrequire';
+            $highlight = 'error';
         } else {
             $highlight = '';
         }
-        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        $requiredmark = ($item->required == 1)?'<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />':'';
 
         $feedback = $DB->get_record('feedback', array('id'=>$item->feedback));
 
@@ -326,8 +328,10 @@ class feedback_item_info extends feedback_item_base {
         }
 
         //print the question and label
-        echo '<div class="feedback_item_label_'.$align.$highlight.'">';
+        echo '<div class="feedback_item_label_'.$align.'">';
+        echo '<span class="'.$highlight.'">';
             echo format_text($item->name.$requiredmark, true, false, false);
+        echo '</span>';
         echo '</div>';
 
         //print the presentation
@@ -350,7 +354,8 @@ class feedback_item_info extends feedback_item_base {
         $align = right_to_left() ? 'right' : 'left';
 
         $presentation = $item->presentation;
-        $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
+        $requiredmark = ($item->required == 1)?'<img class="req" title="'.get_string('requiredelement', 'form').'" alt="'.
+            get_string('requiredelement', 'form').'" src="'.$OUTPUT->pix_url('req') .'" />':'';
 
         if ($presentation == 1) {
             $value = $value ? userdate($value) : '&nbsp;';
