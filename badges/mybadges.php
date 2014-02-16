@@ -63,10 +63,10 @@ if ($clearsearch) {
 
 if ($hide) {
     require_sesskey();
-    $DB->set_field('badge_issued', 'visible', 0, array('id' => $hide));
+    $DB->set_field('badge_issued', 'visible', 0, array('id' => $hide, 'userid' => $USER->id));
 } else if ($show) {
     require_sesskey();
-    $DB->set_field('badge_issued', 'visible', 1, array('id' => $show));
+    $DB->set_field('badge_issued', 'visible', 1, array('id' => $show, 'userid' => $USER->id));
 } else if ($download && $hash) {
     require_sesskey();
     $badge = new badge($download);
