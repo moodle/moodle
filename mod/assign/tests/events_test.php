@@ -615,7 +615,7 @@ class assign_events_testcase extends mod_assign_base_testcase {
 
         // Insert a grade for this submission.
         $grade = new stdClass();
-        $grade->assignment = 1;
+        $grade->assignment = $assign->get_instance()->id;
         $grade->userid = $this->students[0]->id;
         $gradeid = $DB->insert_record('assign_grades', $grade);
 
