@@ -1,5 +1,36 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Afterburner overridden renderers.
+ *
+ * This file contains renderers that have been overridden by the afterburner theme.
+ *
+ * @package    theme_afterburner
+ * @copyright  2011 Mary Evans
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Overridden core_renderer.
+ *
+ * @package    theme_afterburner
+ * @copyright  2011 Mary Evans
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class theme_afterburner_core_renderer extends core_renderer {
 
     /**
@@ -13,12 +44,12 @@ class theme_afterburner_core_renderer extends core_renderer {
      */
     protected function render_custom_menu(custom_menu $menu) {
 
-        // If the menu has no children return an empty string
+        // If the menu has no children return an empty string.
         if (!$menu->has_children()) {
             return '';
         }
 
-        // Add a login or logout link
+        // Add a login or logout link.
         if (isloggedin()) {
             $branchlabel = get_string('logout');
             $branchurl   = new moodle_url('/login/logout.php');
@@ -28,15 +59,15 @@ class theme_afterburner_core_renderer extends core_renderer {
         }
         $branch = $menu->add($branchlabel, $branchurl, $branchlabel, -1);
 
-        // Initialise this custom menu
-        $content = html_writer::start_tag('ul', array('class'=>'dropdown dropdown-horizontal'));
-        // Render each child
+        // Initialise this custom menu.
+        $content = html_writer::start_tag('ul', array('class' => 'dropdown dropdown-horizontal'));
+        // Render each child.
         foreach ($menu->get_children() as $item) {
             $content .= $this->render_custom_menu_item($item);
         }
-        // Close the open tags
+        // Close the open tags.
         $content .= html_writer::end_tag('ul');
-        // Return the custom menu
+        // Return the custom menu.
         return $content;
     }
 
@@ -53,19 +84,19 @@ class theme_afterburner_core_renderer extends core_renderer {
      * @return string
      */
     protected function render_custom_menu_item(custom_menu_item $menunode) {
-        // Required to ensure we get unique trackable id's
+        // Required to ensure we get unique trackable id's.
         static $submenucount = 0;
         $content = html_writer::start_tag('li');
         if ($menunode->has_children()) {
-            // If the child has menus render it as a sub menu
+            // If the child has menus render it as a sub menu.
             $submenucount++;
             if ($menunode->get_url() !== null) {
                 $url = $menunode->get_url();
             } else {
                 $url = '#cm_submenu_'.$submenucount;
             }
-            $content .= html_writer::start_tag('span', array('class'=>'customitem'));
-            $content .= html_writer::link($url, $menunode->get_text(), array('title'=>$menunode->get_title()));
+            $content .= html_writer::start_tag('span', array('class' => 'customitem'));
+            $content .= html_writer::link($url, $menunode->get_text(), array('title' => $menunode->get_title()));
             $content .= html_writer::end_tag('span');
             $content .= html_writer::start_tag('ul');
             foreach ($menunode->get_children() as $menunode) {
@@ -73,17 +104,17 @@ class theme_afterburner_core_renderer extends core_renderer {
             }
             $content .= html_writer::end_tag('ul');
         } else {
-            // The node doesn't have children so produce a final menuitem
+            // The node doesn't have children so produce a final menuitem.
 
             if ($menunode->get_url() !== null) {
                 $url = $menunode->get_url();
             } else {
                 $url = '#';
             }
-            $content .= html_writer::link($url, $menunode->get_text(), array('title'=>$menunode->get_title()));
+            $content .= html_writer::link($url, $menunode->get_text(), array('title' => $menunode->get_title()));
         }
         $content .= html_writer::end_tag('li');
-        // Return the sub menu
+        // Return the sub menu.
         return $content;
     }
 
@@ -98,16 +129,16 @@ class theme_afterburner_core_renderer extends core_renderer {
         $title = $item->get_title();
         if ($item->icon instanceof renderable && !$item->hideicon) {
             $icon = $this->render($item->icon);
-            $content = $icon.$content; // use CSS for spacing of icons
+            $content = $icon.$content; // Use CSS for spacing of icons.
         }
         if ($item->helpbutton !== null) {
-            $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class'=>'clearhelpbutton'));
+            $content = trim($item->helpbutton).html_writer::tag('span', $content, array('class' => 'clearhelpbutton'));
         }
         if ($content === '') {
             return '';
         }
         if ($item->action instanceof action_link) {
-            //adds class dimmed to hidden courses and categories
+            // Adds class dimmed to hidden courses and categories.
             $link = $item->action;
             if ($item->hidden) {
                 $link->add_class('dimmed');
