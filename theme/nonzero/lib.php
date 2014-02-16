@@ -29,8 +29,7 @@
 
 function nonzero_process_css($css, $theme) {
 
-
-    // Set the region-pre and region-post widths
+    // Set the region-pre and region-post widths.
     if (!empty($theme->settings->regionprewidth) && !empty($theme->settings->regionpostwidth)) {
         $regionprewidth = $theme->settings->regionprewidth;
         $regionpostwidth = $theme->settings->regionpostwidth;
@@ -40,8 +39,7 @@ function nonzero_process_css($css, $theme) {
     }
     $css = nonzero_set_regionwidths($css, $regionprewidth, $regionpostwidth);
 
-
-    // Set the custom CSS
+    // Set the custom CSS.
     if (!empty($theme->settings->customcss)) {
         $customcss = $theme->settings->customcss;
     } else {
@@ -49,7 +47,7 @@ function nonzero_process_css($css, $theme) {
     }
     $css = nonzero_set_customcss($css, $customcss);
 
-    // Return the CSS
+    // Return the CSS.
     return $css;
 }
 
@@ -57,10 +55,10 @@ function nonzero_process_css($css, $theme) {
  * Sets the region width variable in CSS
  *
  * @param string $css
- * @param mixed $regionwidth
+ * @param string $regionprewidth
+ * @param string $regionpostwidth
  * @return string
  */
-
 function nonzero_set_regionwidths($css, $regionprewidth, $regionpostwidth) {
     $tag1 = '[[setting:regionprewidth]]';
     $tag2 = '[[setting:regionpostwidth]]';
@@ -74,20 +72,18 @@ function nonzero_set_regionwidths($css, $regionprewidth, $regionpostwidth) {
     }
     $css = str_replace($tag1, $replacement1.'px', $css);
     $css = str_replace($tag2, $replacement2.'px', $css);
-    $css = str_replace($tag3, ($replacement1+$replacement2).'px', $css);
-    $css = str_replace($tag4, (2*$replacement1+$replacement2).'px', $css);
+    $css = str_replace($tag3, ($replacement1 + $replacement2).'px', $css);
+    $css = str_replace($tag4, (2 * $replacement1 + $replacement2).'px', $css);
     return $css;
 }
-
 
 /**
  * Sets the custom css variable in CSS
  *
  * @param string $css
- * @param mixed $customcss
+ * @param string $customcss
  * @return string
  */
-
 function nonzero_set_customcss($css, $customcss) {
     $tag = '[[setting:customcss]]';
     $replacement = $customcss;
