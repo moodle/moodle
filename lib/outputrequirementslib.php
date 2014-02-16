@@ -141,11 +141,6 @@ class page_requirements_manager {
     protected $M_cfg;
 
     /**
-     * @var array Stores debug backtraces from when JS modules were included in the page
-     */
-    protected $debug_moduleloadstacktraces = array();
-
-    /**
      * @var array list of requested jQuery plugins
      */
     protected $jqueryplugins = array();
@@ -791,14 +786,6 @@ class page_requirements_manager {
             throw new coding_exception('Missing YUI3 module details.');
         }
 
-        // Don't load this module if we already have, no need to!
-        if ($this->js_module_loaded($module['name'])) {
-            if ($CFG->debugdeveloper) {
-                $this->debug_moduleloadstacktraces[$module['name']][] = format_backtrace(debug_backtrace());
-            }
-            return;
-        }
-
         $module['fullpath'] = $this->js_fix_url($module['fullpath'])->out(false);
         // Add all needed strings.
         if (!empty($module['strings'])) {
@@ -827,12 +814,6 @@ class page_requirements_manager {
         } else {
             $this->YUI_config->add_module_config($module['name'], $module);
         }
-        if ($CFG->debugdeveloper) {
-            if (!array_key_exists($module['name'], $this->debug_moduleloadstacktraces)) {
-                $this->debug_moduleloadstacktraces[$module['name']] = array();
-            }
-            $this->debug_moduleloadstacktraces[$module['name']][] = format_backtrace(debug_backtrace());
-        }
     }
 
     /**
@@ -849,14 +830,6 @@ class page_requirements_manager {
         }
         return array_key_exists($modulename, $this->YUI_config->modules) ||
                array_key_exists($modulename, $this->extramodules);
-    }
-
-    /**
-     * Returns the stacktraces from loading js modules.
-     * @return array
-     */
-    public function get_loaded_modules() {
-        return $this->debug_moduleloadstacktraces;
     }
 
     /**
