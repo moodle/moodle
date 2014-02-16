@@ -140,7 +140,6 @@ $string['insufficient_responses_help'] = 'There are insufficient responses for t
 To keep the feedback anonymous, a minimum of 2 responses must be done.';
 $string['item_label'] = 'Label';
 $string['item_name'] = 'Question';
-$string['items_are_required'] = 'Answers are required to starred questions.';
 $string['label'] = 'Label';
 $string['line_values'] = 'Rating';
 $string['mapcourseinfo'] = 'This is a site-wide feedback that is available to all courses using the feedback block. You can however limit the courses to which it will appear by mapping them. Search the course and map it to this feedback.';

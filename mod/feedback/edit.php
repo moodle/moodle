@@ -257,9 +257,10 @@ if ($do_show == 'edit') {
         $params = array('feedback' => $feedback->id, 'required' => 1);
         $countreq = $DB->count_records('feedback_item', $params);
         if ($countreq > 0) {
-            echo '<span class="feedback_required_mark">(*)';
-            echo get_string('items_are_required', 'feedback');
-            echo '</span>';
+            echo '<div class="fdescription required">';
+            echo get_string('somefieldsrequired', 'form', '<img alt="'.get_string('requiredelement', 'form').
+                '" src="'.$OUTPUT->pix_url('req') .'" class="req" />');
+            echo '</div>';
         }
 
         //Use list instead a table
