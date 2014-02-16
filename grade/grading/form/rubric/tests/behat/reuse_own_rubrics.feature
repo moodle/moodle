@@ -1,5 +1,5 @@
 @gradingform @gradingform_rubric
-Feature: Reuse rubrics in other activities
+Feature: Reuse my rubrics in other activities
   In order to save time creating duplicated grading forms
   As a teacher
   I need to reuse rubrics that I created previously
