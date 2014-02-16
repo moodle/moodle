@@ -57,14 +57,14 @@ $THEME->layouts = array(
         'file' => 'columns3.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
-        'options' => array('langmenu'=>true),
+        'options' => array('langmenu' => true),
     ),
     'coursecategory' => array(
         'file' => 'columns3.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
     ),
-    // part of course, typical for modules - default page layout if $cm specified in require_login().
+    // Part of course, typical for modules - default page layout if $cm specified in require_login().
     'incourse' => array(
         'file' => 'columns3.php',
         'regions' => array('side-pre', 'side-post'),
@@ -75,7 +75,7 @@ $THEME->layouts = array(
         'file' => 'columns3.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
-        'options' => array('nonavbar'=>true),
+        'options' => array('nonavbar' => true),
     ),
     // Server administration scripts.
     'admin' => array(
@@ -88,7 +88,7 @@ $THEME->layouts = array(
         'file' => 'columns3.php',
         'regions' => array('side-pre', 'side-post'),
         'defaultregion' => 'side-pre',
-        'options' => array('langmenu'=>true),
+        'options' => array('langmenu' => true),
     ),
     // My public page.
     'mypublic' => array(
@@ -99,20 +99,20 @@ $THEME->layouts = array(
     'login' => array(
         'file' => 'columns1.php',
         'regions' => array(),
-        'options' => array('langmenu'=>true),
+        'options' => array('langmenu' => true),
     ),
 
     // Pages that appear in pop-up windows - no navigation, no blocks, no header.
     'popup' => array(
         'file' => 'popup.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>true),
+        'options' => array('nofooter' => true, 'nonavbar' => true),
     ),
     // No blocks and minimal footer - used for legacy frame layouts only!
     'frametop' => array(
         'file' => 'columns1.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nocoursefooter'=>true),
+        'options' => array('nofooter' => true, 'nocoursefooter' => true),
     ),
     // Embeded pages, like iframe/object embeded in moodleform - it needs as much space as possible.
     'embedded' => array(
@@ -130,7 +130,7 @@ $THEME->layouts = array(
     'print' => array(
         'file' => 'columns1.php',
         'regions' => array(),
-        'options' => array('nofooter'=>true, 'nonavbar'=>false),
+        'options' => array('nofooter' => true, 'nonavbar' => false),
     ),
     // The pagelayout used when a redirection is occuring.
     'redirect' => array(
