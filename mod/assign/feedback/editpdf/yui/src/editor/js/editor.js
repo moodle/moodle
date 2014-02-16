@@ -288,6 +288,7 @@ EDITOR.prototype = {
                 headerContent: this.get('header'),
                 bodyContent: this.get('body'),
                 footerContent: this.get('footer'),
+                modal: true,
                 width: '840px',
                 visible: false,
                 draggable: true
