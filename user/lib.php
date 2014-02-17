@@ -33,11 +33,11 @@
  * @return int id of the newly created user
  */
 function user_create_user($user, $updatepassword = true) {
-    global $DB;
+    global $CFG, $DB;
 
     // Set the timecreate field to the current time.
     if (!is_object($user)) {
-            $user = (object)$user;
+        $user = (object) $user;
     }
 
     // Check username.
@@ -59,6 +59,16 @@ function user_create_user($user, $updatepassword = true) {
 
         $userpassword = $user->password;
         unset($user->password);
+    }
+
+    // Make sure calendartype, if set, is valid.
+    if (!empty($user->calendartype)) {
+        $availablecalendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
+        if (empty($availablecalendartypes[$user->calendartype])) {
+            $user->calendartype = $CFG->calendartype;
+        }
+    } else {
+        $user->calendartype = $CFG->calendartype;
     }
 
     $user->timecreated = time();
@@ -101,7 +111,7 @@ function user_update_user($user, $updatepassword = true) {
 
     // set the timecreate field to the current time
     if (!is_object($user)) {
-            $user = (object)$user;
+        $user = (object) $user;
     }
 
     //check username
@@ -125,6 +135,18 @@ function user_update_user($user, $updatepassword = true) {
 
         $passwd = $user->password;
         unset($user->password);
+    }
+
+    // Make sure calendartype, if set, is valid.
+    if (!empty($user->calendartype)) {
+        $availablecalendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
+        // If it doesn't exist, then unset this value, we do not want to update the user's value.
+        if (empty($availablecalendartypes[$user->calendartype])) {
+            unset($user->calendartype);
+        }
+    } else {
+        // Unset this variable, must be an empty string, which we do not want to update the calendartype to.
+        unset($user->calendartype);
     }
 
     $user->timemodified = time();
