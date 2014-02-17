@@ -39,7 +39,11 @@ $PAGE->set_pagelayout('incourse');
 
 $context = context_course::instance($course->id);
 
-add_to_log($course->id, "data", "view all", "index.php?id=$course->id", "");
+$params = array(
+    'context' => context_course::instance($course->id)
+);
+$event = \mod_data\event\course_module_instance_list_viewed::create($params);
+$event->trigger();
 
 $strname = get_string('name');
 $strdata = get_string('modulename','data');

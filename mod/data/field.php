@@ -121,9 +121,6 @@ switch ($mode) {
             /// Update some templates
                 data_append_new_field_to_templates($data, $fieldinput->name);
 
-                add_to_log($course->id, 'data', 'fields add',
-                           "field.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
-
                 $displaynoticegood = get_string('fieldadded','data');
             }
         }
@@ -163,9 +160,6 @@ switch ($mode) {
             /// Update the templates.
                 data_replace_field_in_templates($data, $oldfieldname, $field->field->name);
 
-                add_to_log($course->id, 'data', 'fields update',
-                           "field.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
-
                 $displaynoticegood = get_string('fieldupdated','data');
             }
         }
@@ -193,9 +187,6 @@ switch ($mode) {
                         $rec->defaultsortdir = 0;
                         $DB->update_record('data', $rec);
                     }
-
-                    add_to_log($course->id, 'data', 'fields delete',
-                               "field.php?d=$data->id", $field->field->name, $cm->id);
 
                     $displaynoticegood = get_string('fielddeleted', 'data');
                 }
