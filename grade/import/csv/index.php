@@ -235,7 +235,7 @@ if ($formdata = $mform2->get_data()) {
                     $studentid = $value;
                 break;
                 case 'useridnumber':
-                    if (!$user = $DB->get_record('user', array('idnumber' => $value))) {
+                    if (empty($value) || !$user = $DB->get_record('user', array('idnumber' => $value))) {
                          // user not found, abort whole import
                         import_cleanup($importcode);
                         echo $OUTPUT->notification("user mapping error, could not find user with idnumber \"$value\"");
