@@ -67,7 +67,39 @@ class core_tablelib_testcase extends basic_testcase {
         return $data;
     }
 
+    /**
+     * Create a table with properties as passed in params, add data and output html.
+     *
+     * @param string[] $columns
+     * @param string[] $headers
+     * @param bool     $sortable
+     * @param bool     $collapsible
+     * @param string[] $suppress
+     * @param string[] $nosorting
+     * @param (array|object)[] $data
+     * @param int      $pagesize
+     */
     protected function run_table_test($columns, $headers, $sortable, $collapsible, $suppress, $nosorting, $data, $pagesize) {
+        $table = $this->create_and_setup_table($columns, $headers, $sortable, $collapsible, $suppress, $nosorting);
+        $table->pagesize($pagesize, count($data));
+        foreach ($data as $row) {
+            $table->add_data_keyed($row);
+        }
+        $table->finish_output();
+    }
+
+    /**
+     * Create a table with properties as passed in params.
+     *
+     * @param string[] $columns
+     * @param string[] $headers
+     * @param bool $sortable
+     * @param bool $collapsible
+     * @param string[] $suppress
+     * @param string[] $nosorting
+     * @return flexible_table
+     */
+    protected function create_and_setup_table($columns, $headers, $sortable, $collapsible, $suppress, $nosorting) {
         $table = new flexible_table('tablelib_test');
 
         $table->define_columns($columns);
@@ -84,13 +116,8 @@ class core_tablelib_testcase extends basic_testcase {
             $table->no_sorting($column);
         }
 
-
         $table->setup();
-        $table->pagesize($pagesize, count($data));
-        foreach ($data as $row) {
-            $table->add_data_keyed($row);
-        }
-        $table->finish_output();
+        return $table;
     }
 
     public function test_empty_table() {
@@ -113,7 +140,7 @@ class core_tablelib_testcase extends basic_testcase {
         $columns = $this->generate_columns(2);
         $headers = $this->generate_headers(2);
 
-        // Search for pagination controls containing 1.*2</a>.*Next</a>
+        // Search for pagination controls containing '1.*2</a>.*Next</a>'.
         $this->expectOutputRegex('/1.*2<\/a>.*' . get_string('next') . '<\/a>/');
 
         $this->run_table_test(
@@ -134,7 +161,7 @@ class core_tablelib_testcase extends basic_testcase {
         $columns = $this->generate_columns(2);
         $headers = $this->generate_headers(2);
 
-        // Search for 'hide' links in the column headers
+        // Search for 'hide' links in the column headers.
         $this->expectOutputRegex('/' . get_string('hide') . '/');
 
         $this->run_table_test(
@@ -179,7 +206,7 @@ class core_tablelib_testcase extends basic_testcase {
         $columns = $this->generate_columns(2);
         $headers = $this->generate_headers(2);
 
-        // Search for pagination controls containing 1.*2</a>.*Next</a>
+        // Search for pagination controls containing '1.*2</a>.*Next</a>'.
         $this->expectOutputRegex('/' . get_string('sortby') . '/');
 
         $this->run_table_test(

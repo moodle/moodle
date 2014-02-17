@@ -416,25 +416,15 @@ class quiz_statistics_report extends quiz_default_report {
      *                                                                                               variants.
      */
     protected function output_quiz_structure_analysis_table($questionstats) {
+        $tooutput = array();
         foreach ($questionstats->get_all_slots() as $slot) {
             // Output the data for these question statistics.
-            $this->table->add_data_keyed($this->table->format_row($questionstats->for_slot($slot)));
+            $tooutput[] = $questionstats->for_slot($slot);
 
             $limitvariants = !$this->table->is_downloading();
-            $this->add_array_of_rows_to_table($questionstats->all_subq_and_variant_stats_for_slot($slot, $limitvariants));
-
+            $tooutput = array_merge($tooutput, $questionstats->all_subq_and_variant_stats_for_slot($slot, $limitvariants));
         }
-
-        $this->table->finish_output(!$this->table->is_downloading());
-    }
-
-    /**
-     * @param \core_question\statistics\questions\calculated[] $statstoadd
-     */
-    protected function add_array_of_rows_to_table($statstoadd) {
-        foreach ($statstoadd as $stattoadd) {
-            $this->table->add_data_keyed($this->table->format_row($stattoadd));
-        }
+        $this->table->format_and_add_array_of_rows($tooutput);
     }
 
     /**
