@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/fixtures/event.php');
+require_once(__DIR__ . '/fixtures/store.php');
 
 class logstore_legacy_store_testcase extends advanced_testcase {
     public function test_log_writing() {
@@ -159,5 +160,59 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         set_config('enabled_stores', '', 'tool_log');
         set_config('loglegacy', 0, 'logstore_legacy');
         get_log_manager(true);
+    }
+
+    /**
+     * Test replace_crud
+     */
+    public function test_replace_crud() {
+
+        $crudregex = logstore_legacy\test\unittest_logstore_legacy::CRUD_REGEX;
+
+        $selectwhere = "edulevel = 0";
+        $updatewhere = preg_replace_callback($crudregex,
+                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
+        $this->assertEquals($selectwhere, $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud = 'u'";
+        $updatewhere = preg_replace_callback($crudregex,
+                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
+        $this->assertEquals("edulevel = 0 and action LIKE '%update%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud != 'u'";
+        $updatewhere = preg_replace_callback($crudregex,
+                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
+        $this->assertEquals("edulevel = 0 and action NOT LIKE '%update%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud <> 'u'";
+        $updatewhere = preg_replace_callback($crudregex,
+                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
+        $this->assertEquals("edulevel = 0 and action NOT LIKE '%update%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud = 'r'";
+        $updatewhere = preg_replace_callback($crudregex,
+                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
+        $this->assertEquals("edulevel = 0 and action LIKE '%view%' OR action LIKE '%report%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud != 'r'";
+        $updatewhere = preg_replace_callback($crudregex,
+            'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
+        $this->assertEquals("edulevel = 0 and action NOT LIKE '%view%' AND action NOT LIKE '%report%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud <> 'r'";
+        $updatewhere = preg_replace_callback($crudregex,
+            'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
+        $this->assertEquals("edulevel = 0 and action NOT LIKE '%view%' AND action NOT LIKE '%report%'", $updatewhere);
+
+        // The slq is incorrect, since quotes must not be present. Make sure this is not parsed.
+        $selectwhere = "edulevel = 0 and 'crud' != 'u'";
+        $updatewhere = preg_replace_callback($crudregex,
+                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
+        $this->assertNotEquals("edulevel = 0 and action NOT LIKE '%update%'", $updatewhere);
+
+        $selectwhere = "edulevel = 0 and crud = 'u' OR crud != 'r' or crud <> 'd'";
+        $updatewhere = preg_replace_callback($crudregex,
+                'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
+        $this->assertEquals("edulevel = 0 and action LIKE '%update%' OR action NOT LIKE '%view%' AND action NOT LIKE '%report%' or action NOT LIKE '%delete%'", $updatewhere);
     }
 }

@@ -42,6 +42,9 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
         'origin'            => 'ip'
     );
 
+    /** @var string Regex to replace the crud params */
+    const CRUD_REGEX = "/(crud).*?(<>|=|!=).*?'(.*?)'/s";
+
     public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;
 
@@ -54,7 +57,7 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
                 unset($params[$from]);
             }
         }
-
+        $selectwhere = preg_replace_callback(self::CRUD_REGEX, 'self::replace_crud', $selectwhere);
         $events = array();
         $records = array();
 
@@ -82,6 +85,7 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
                 unset($params[$from]);
             }
         }
+        $selectwhere = preg_replace_callback(self::CRUD_REGEX, 'self::replace_crud', $selectwhere);
 
         try {
             return $DB->count_records_select('log', $selectwhere, $params);
@@ -208,5 +212,82 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
                 }
             }
         }
+    }
+
+    /**
+     * Generate a replace string for crud related sql conditions. This function is called as callback to preg_replace_callback()
+     * on the actual sql.
+     *
+     * @param array $match matched string for the passed pattern
+     *
+     * @return string The sql string to use instead of original
+     */
+    protected static function replace_crud($match) {
+        $return = '';
+        unset($match[0]); // The first entry is the whole string.
+        foreach ($match as $m) {
+            // We can hard code LIKE here because we are not worried about case sensitivity and we don't want this to be faster.
+            switch ($m) {
+                case 'crud' :
+                    $replace = 'action';
+                    break;
+                case 'c' :
+                    switch ($match[2]) {
+                        case '=' :
+                            $replace = " LIKE '%add%'";
+                            break;
+                        case '!=' :
+                        case '<>' :
+                            $replace = " NOT LIKE '%add%'";
+                            break;
+                        default:
+                            $replace = '';
+                    }
+                    break;
+                case 'r' :
+                    switch ($match[2]) {
+                        case '=' :
+                            $replace = " LIKE '%view%' OR action LIKE '%report%'";
+                            break;
+                        case '!=' :
+                        case '<>' :
+                            $replace = " NOT LIKE '%view%' AND action NOT LIKE '%report%'";
+                            break;
+                        default:
+                            $replace = '';
+                    }
+                    break;
+                case 'u' :
+                    switch ($match[2]) {
+                        case '=' :
+                            $replace = " LIKE '%update%'";
+                            break;
+                        case '!=' :
+                        case '<>' :
+                            $replace = " NOT LIKE '%update%'";
+                            break;
+                        default:
+                            $replace = '';
+                    }
+                    break;
+                case 'd' :
+                    switch ($match[2]) {
+                        case '=' :
+                            $replace = " LIKE '%delete%'";
+                            break;
+                        case '!=' :
+                        case '<>' :
+                            $replace = " NOT LIKE '%delete%'";
+                            break;
+                        default:
+                            $replace = '';
+                    }
+                    break;
+                default :
+                    $replace = '';
+            }
+            $return .= $replace;
+        }
+        return $return;
     }
 }
