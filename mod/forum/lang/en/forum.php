@@ -146,6 +146,7 @@ $string['editedpostupdated'] = '{$a}\'s post was updated';
 $string['editing'] = 'Editing';
 $string['eventcoursesearched'] = 'Course searched';
 $string['eventdiscussioncreated'] = 'Discussion created';
+$string['eventdiscussionupdated'] = 'Discussion updated';
 $string['eventdiscussiondeleted'] = 'Discussion deleted';
 $string['eventdiscussionmoved'] = 'Discussion moved';
 $string['eventdiscussionviewed'] = 'Discussion viewed';

@@ -202,6 +202,98 @@ class mod_forum_events_testcase extends advanced_testcase {
     }
 
     /**
+     * Ensure discussion_updated event validates that forumid is set.
+     */
+    public function test_discussion_updated_forumid_validation() {
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $context = context_module::instance($forum->cmid);
+
+        $params = array(
+            'context' => $context,
+        );
+
+        $this->setExpectedException('coding_exception', 'forumid must be set in $other.');
+        \mod_forum\event\discussion_updated::create($params);
+    }
+
+    /**
+     * Ensure discussion_updated event validates that discussionid is set.
+     */
+    public function test_discussion_updated_objectid_validation() {
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $context = context_module::instance($forum->cmid);
+
+        $params = array(
+            'context' => $context,
+            'other' => array('forumid' => $forum->id)
+        );
+
+        $this->setExpectedException('coding_exception', 'objectid must be set to the discussionid.');
+        \mod_forum\event\discussion_updated::create($params);
+    }
+
+    /**
+     * Ensure discussion_created event validates that the context is the correct level.
+     */
+    public function test_discussion_updated_context_validation() {
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+
+        $params = array(
+            'context' => context_system::instance(),
+            'other' => array('forumid' => $forum->id),
+        );
+
+        $this->setExpectedException('coding_exception', 'Context passed must be module context.');
+        \mod_forum\event\discussion_updated::create($params);
+    }
+
+    /**
+     * Test discussion_created event.
+     */
+    public function test_discussion_updated() {
+
+        // Setup test data.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
+        $user = $this->getDataGenerator()->create_user();
+
+        // Add a discussion.
+        $record = array();
+        $record['course'] = $course->id;
+        $record['forum'] = $forum->id;
+        $record['userid'] = $user->id;
+        $discussion = $this->getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
+
+        $context = context_module::instance($forum->cmid);
+
+        $params = array(
+            'context' => $context,
+            'objectid' => $discussion->id,
+            'other' => array('forumid' => $forum->id),
+        );
+
+        // Create the event.
+        $event = \mod_forum\event\discussion_updated::create($params);
+
+        // Trigger and capturing the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+
+        // Check that the event contains the expected values.
+        $this->assertInstanceOf('\mod_forum\event\discussion_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+
+        $this->assertNotEmpty($event->get_name());
+    }
+
+    /**
      * Ensure discussion_deleted event validates that forumid is set.
      */
     public function test_discussion_deleted_forumid_validation() {

@@ -483,6 +483,16 @@ if (!empty($forum)) {      // User is starting a new discussion in a forum
         // Fire events to reflect the split..
         $params = array(
             'context' => $modcontext,
+            'objectid' => $discussion->id,
+            'other' => array(
+                'forumid' => $forum->id,
+            )
+        );
+        $event = \mod_forum\event\discussion_updated::create($params);
+        $event->trigger();
+
+        $params = array(
+            'context' => $modcontext,
             'objectid' => $newid,
             'other' => array(
                 'forumid' => $forum->id,
