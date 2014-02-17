@@ -547,7 +547,7 @@ class quiz_statistics_report extends quiz_default_report {
             $progress->progress(2);
             if ($quizstats->s()) {
                 $subquestions = $questionstats->get_sub_questions();
-                $this->analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestions, $progress);
+                $this->analyse_responses_for_all_questions_and_subquestions($questions, $subquestions, $qubaids, $progress);
             }
             $progress->progress(3);
             $progress->end_progress();
@@ -576,9 +576,7 @@ class quiz_statistics_report extends quiz_default_report {
         return $this->progress;
     }
 
-    protected function analyse_responses_for_all_questions_and_subquestions($qubaids, $questions, $subquestions,
-                                                                            $progress = null) {
-
+    protected function analyse_responses_for_all_questions_and_subquestions($questions, $subquestions, $qubaids, $progress = null) {
         if ($progress === null) {
             $progress = new \core\progress\null();
         }
@@ -586,45 +584,33 @@ class quiz_statistics_report extends quiz_default_report {
         // Starting response analysis tasks.
         $progress->start_progress('', count($questions) + count($subquestions));
 
-        // Starting response analysis of main questions.
-        $progress->start_progress('', count($questions), count($questions));
+        $done = $this->analyse_responses_for_questions($questions, $qubaids, $progress);
 
-        $done = array();
-        $donecount = 1;
-        foreach ($questions as $question) {
-            $progress->progress($donecount);
-            $donecount++;
-            if (!question_bank::get_qtype($question->qtype, false)->can_analyse_responses()) {
-                continue;
-            }
-            $done[$question->id] = 1;
-
-            $responesstats = new \core_question\statistics\responses\analyser($question);
-            $responesstats->calculate($qubaids);
-        }
-        $progress->end_progress();
-
-        // Starting response analysis of sub-questions.
-        $countsubquestions = count($subquestions);
-        $progress->start_progress('', $countsubquestions, $countsubquestions);
-        $donecount = 1;
-        foreach ($subquestions as $subquestion) {
-            $progress->progress($donecount);
-            $donecount++;
-            if (!question_bank::get_qtype($subquestion->qtype, false)->can_analyse_responses() ||
-                    isset($done[$subquestion->id])) {
-                continue;
-            }
-            $done[$subquestion->id] = 1;
-
-            $responesstats = new \core_question\statistics\responses\analyser($subquestion);
-            $responesstats->calculate($qubaids);
-        }
-        // Finished sub-question tasks.
-        $progress->end_progress();
+        $this->analyse_responses_for_questions($subquestions, $qubaids, $progress, $done);
 
         // Finished all response analysis tasks.
         $progress->end_progress();
+    }
+
+    protected function analyse_responses_for_questions($questions, $qubaids, $progress = null, $done = array()) {
+        $countquestions = count($questions);
+        if (!$countquestions) {
+            return array();
+        }
+        if ($progress === null) {
+            $progress = new \core\progress\null();
+        }
+        $progress->start_progress('', $countquestions, $countquestions);
+        foreach ($questions as $question) {
+            $progress->increment_progress();
+            if (question_bank::get_qtype($question->qtype, false)->can_analyse_responses()  && !isset($done[$question->id])) {
+                $responesstats = new \core_question\statistics\responses\analyser($question);
+                $responesstats->calculate($qubaids);
+            }
+            $done[$question->id] = 1;
+        }
+        $progress->end_progress();
+        return $done;
     }
 
     /**
