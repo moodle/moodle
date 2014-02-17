@@ -773,8 +773,6 @@ function forum_cron() {
                 if (!$mailresult){
                     mtrace("Error: mod/forum/lib.php forum_cron(): Could not send out mail for id $post->id to user $userto->id".
                          " ($userto->email) .. not trying again.");
-                    add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#p$post->id",
-                               substr(format_string($post->subject,true),0,30), $cm->id, $userto->id);
                     $errorcount[$post->id]++;
                 } else {
                     $mailcount[$post->id]++;
@@ -1073,9 +1071,8 @@ function forum_cron() {
                 $mailresult = email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml, $attachment, $attachname);
 
                 if (!$mailresult) {
-                    mtrace("ERROR!");
-                    echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
-                    add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);
+                    mtrace("ERROR: mod/forum/cron.php: Could not send out digest mail to user $userto->id ".
+                        "($userto->email)... not trying again.");
                 } else {
                     mtrace("success.");
                     $usermailcount++;
@@ -4818,7 +4815,19 @@ function forum_subscribe($userid, $forumid) {
     $sub->userid  = $userid;
     $sub->forum = $forumid;
 
-    return $DB->insert_record("forum_subscriptions", $sub);
+    $result = $DB->insert_record("forum_subscriptions", $sub);
+
+    $cm = get_coursemodule_from_instance('forum', $forumid);
+    $params = array(
+        'context' => context_module::instance($cm->id),
+        'relateduserid' => $userid,
+        'other' => array('forumid' => $forumid),
+
+    );
+    $event  = \mod_forum\event\subscription_created::create($params);
+    $event->trigger();
+
+    return $result;
 }
 
 /**
@@ -4830,8 +4839,21 @@ function forum_subscribe($userid, $forumid) {
  */
 function forum_unsubscribe($userid, $forumid) {
     global $DB;
-    return ($DB->delete_records('forum_digests', array('userid' => $userid, 'forum' => $forumid))
-            && $DB->delete_records('forum_subscriptions', array('userid' => $userid, 'forum' => $forumid)));
+
+    $DB->delete_records('forum_digests', array('userid' => $userid, 'forum' => $forumid));
+    $DB->delete_records('forum_subscriptions', array('userid' => $userid, 'forum' => $forumid));
+
+    $cm = get_coursemodule_from_instance('forum', $forumid);
+    $params = array(
+        'context' => context_module::instance($cm->id),
+        'relateduserid' => $userid,
+        'other' => array('forumid' => $forumid),
+
+    );
+    $event = \mod_forum\event\subscription_deleted::create($params);
+    $event->trigger();
+
+    return true;
 }
 
 /**

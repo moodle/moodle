@@ -129,12 +129,13 @@
 /// find out current groups mode
     groups_print_activity_menu($cm, $CFG->wwwroot . '/mod/forum/view.php?id=' . $cm->id);
 
-/// Okay, we can show the discussions. Log the forum view.
-    if ($cm->id) {
-        add_to_log($course->id, "forum", "view forum", "view.php?id=$cm->id", "$forum->id", $cm->id);
-    } else {
-        add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
-    }
+    $params = array(
+        'context' => $context,
+        'objectid' => $forum->id
+    );
+    $event = \mod_forum\event\forum_viewed::create($params);
+    $event->add_record_snapshot('forum', $forum);
+    $event->trigger();
 
     $SESSION->fromdiscussion = qualified_me();   // Return here if we post or set subscription etc
 

@@ -62,8 +62,6 @@ if ($perpage != 5) {
     $url->param('perpage', $perpage);
 }
 
-add_to_log(($isspecificcourse)?$courseid:SITEID, "forum", "user report", 'user.php?'.$url->get_query_string(), $userid);
-
 $user = $DB->get_record("user", array("id" => $userid), '*', MUST_EXIST);
 $usercontext = context_user::instance($user->id, MUST_EXIST);
 // Check if the requested user is the guest user
@@ -116,6 +114,15 @@ if ($isspecificcourse) {
     // All courses where the user has posted within a forum will be returned.
     $courses = forum_get_courses_user_posted_in($user, $discussionsonly);
 }
+
+
+$params = array(
+    'context' => $PAGE->context,
+    'relateduserid' => $user->id,
+    'other' => array('reportmode' => $mode),
+);
+$event = \mod_forum\event\userreport_viewed::create($params);
+$event->trigger();
 
 // Get the posts by the requested user that the current user can access.
 $result = forum_get_posts_by_user($user, $courses, $isspecificcourse, $discussionsonly, ($page * $perpage), $perpage);
