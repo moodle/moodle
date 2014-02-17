@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,7 +19,7 @@
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package user
+ * @package core_user
  */
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
@@ -29,13 +28,13 @@ require_once($CFG->dirroot . '/repository/lib.php');
 $config = optional_param('config', 0, PARAM_INT);
 $course  = optional_param('course', SITEID, PARAM_INT);
 
-$url = new moodle_url('/user/repository.php', array('course'=>$course));
+$url = new moodle_url('/user/repository.php', array('course' => $course));
 if ($config !== 0) {
     $url->param('config', $config);
 }
 $PAGE->set_url($url);
 
-$course = $DB->get_record("course", array("id"=>$course), '*', MUST_EXIST);
+$course = $DB->get_record("course", array("id" => $course), '*', MUST_EXIST);
 
 $user = $USER;
 $baseurl = $CFG->wwwroot . '/user/repository.php';
@@ -48,7 +47,7 @@ $pluginstr = get_string('plugin', 'repository');
 require_login($course, false);
 $coursecontext = context_course::instance($course->id, MUST_EXIST);
 
-$link = new moodle_url('/user/view.php', array('id'=>$user->id));
+$link = new moodle_url('/user/view.php', array('id' => $user->id));
 $PAGE->navbar->add($fullname, $link);
 $PAGE->navbar->add($strrepos);
 $PAGE->set_title("$course->fullname: $fullname: $strrepos");
@@ -57,7 +56,7 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 $currenttab = 'repositories';
-include('tabs.php');
+require('tabs.php');
 
 echo $OUTPUT->heading($configstr);
 echo $OUTPUT->box_start();

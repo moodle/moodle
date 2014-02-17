@@ -1,12 +1,38 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Text field filter
+ *
+ * @package   core_user
+ * @category  user
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once($CFG->dirroot.'/user/filters/lib.php');
 
 /**
  * Generic filter for text fields.
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_filter_text extends user_filter_type {
-    var $_field;
+    /** @var string */
+    public $_field;
 
     /**
      * Constructor
@@ -15,7 +41,7 @@ class user_filter_text extends user_filter_type {
      * @param boolean $advanced advanced form element flag
      * @param string $field user table filed name
      */
-    function user_filter_text($name, $label, $advanced, $field) {
+    public function user_filter_text($name, $label, $advanced, $field) {
         parent::user_filter_type($name, $label, $advanced);
         $this->_field = $field;
     }
@@ -24,23 +50,23 @@ class user_filter_text extends user_filter_type {
      * Returns an array of comparison operators
      * @return array of comparison operators
      */
-    function getOperators() {
+    public function getOperators() {
         return array(0 => get_string('contains', 'filters'),
-                     1 => get_string('doesnotcontain','filters'),
-                     2 => get_string('isequalto','filters'),
-                     3 => get_string('startswith','filters'),
-                     4 => get_string('endswith','filters'),
-                     5 => get_string('isempty','filters'));
+                     1 => get_string('doesnotcontain', 'filters'),
+                     2 => get_string('isequalto', 'filters'),
+                     3 => get_string('startswith', 'filters'),
+                     4 => get_string('endswith', 'filters'),
+                     5 => get_string('isempty', 'filters'));
     }
 
     /**
      * Adds controls specific to this filter in the form.
      * @param object $mform a MoodleForm object to setup
      */
-    function setupForm(&$mform) {
+    public function setupForm(&$mform) {
         $objs = array();
-        $objs[] =& $mform->createElement('select', $this->_name.'_op', null, $this->getOperators());
-        $objs[] =& $mform->createElement('text', $this->_name, null);
+        $objs[] = $mform->createElement('select', $this->_name.'_op', null, $this->getOperators());
+        $objs[] = $mform->createElement('text', $this->_name, null);
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $mform->setType($this->_name, PARAM_RAW);
         $mform->disabledIf($this->_name, $this->_name.'_op', 'eq', 5);
@@ -54,13 +80,13 @@ class user_filter_text extends user_filter_type {
      * @param object $formdata data submited with the form
      * @return mixed array filter data or false when filter not set
      */
-    function check_data($formdata) {
+    public function check_data($formdata) {
         $field    = $this->_name;
         $operator = $field.'_op';
 
         if (array_key_exists($operator, $formdata)) {
             if ($formdata->$operator != 5 and $formdata->$field == '') {
-                // no data - no change except for empty filter
+                // No data - no change except for empty filter.
                 return false;
             }
             // If field value is set then use it, else it's null.
@@ -68,7 +94,7 @@ class user_filter_text extends user_filter_type {
             if (isset($formdata->$field)) {
                 $fieldvalue = $formdata->$field;
             }
-            return array('operator' => (int)$formdata->$operator, 'value' =>  $fieldvalue);
+            return array('operator' => (int)$formdata->$operator, 'value' => $fieldvalue);
         }
 
         return false;
@@ -79,7 +105,7 @@ class user_filter_text extends user_filter_type {
      * @param array $data filter settings
      * @return array sql string and $params
      */
-    function get_sql_filter($data) {
+    public function get_sql_filter($data) {
         global $DB;
         static $counter = 0;
         $name = 'ex_text'.$counter++;
@@ -95,27 +121,27 @@ class user_filter_text extends user_filter_type {
         }
 
         switch($operator) {
-            case 0: // contains
+            case 0: // Contains.
                 $res = $DB->sql_like($field, ":$name", false, false);
                 $params[$name] = "%$value%";
                 break;
-            case 1: // does not contain
+            case 1: // Does not contain.
                 $res = $DB->sql_like($field, ":$name", false, false, true);
                 $params[$name] = "%$value%";
                 break;
-            case 2: // equal to
+            case 2: // Equal to.
                 $res = $DB->sql_like($field, ":$name", false, false);
                 $params[$name] = "$value";
                 break;
-            case 3: // starts with
+            case 3: // Starts with.
                 $res = $DB->sql_like($field, ":$name", false, false);
                 $params[$name] = "$value%";
                 break;
-            case 4: // ends with
+            case 4: // Ends with.
                 $res = $DB->sql_like($field, ":$name", false, false);
                 $params[$name] = "%$value";
                 break;
-            case 5: // empty
+            case 5: // Empty.
                 $res = "$field = :$name";
                 $params[$name] = '';
                 break;
@@ -130,7 +156,7 @@ class user_filter_text extends user_filter_type {
      * @param array $data filter settings
      * @return string active filter label
      */
-    function get_label($data) {
+    public function get_label($data) {
         $operator  = $data['operator'];
         $value     = $data['value'];
         $operators = $this->getOperators();
@@ -140,15 +166,14 @@ class user_filter_text extends user_filter_type {
         $a->value    = '"'.s($value).'"';
         $a->operator = $operators[$operator];
 
-
         switch ($operator) {
-            case 0: // contains
-            case 1: // doesn't contain
-            case 2: // equal to
-            case 3: // starts with
-            case 4: // ends with
+            case 0: // Contains.
+            case 1: // Doesn't contain.
+            case 2: // Equal to.
+            case 3: // Starts with.
+            case 4: // Ends with.
                 return get_string('textlabel', 'filters', $a);
-            case 5: // empty
+            case 5: // Empty.
                 return get_string('textlabelnovalue', 'filters', $a);
         }
 

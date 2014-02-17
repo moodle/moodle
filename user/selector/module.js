@@ -36,11 +36,11 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
         /** Number of seconds to delay before submitting a query request */
         querydelay : 0.5,
         /** The input element that contains the search term. */
-        searchfield : Y.one('#'+name + '_searchtext'),
+        searchfield : Y.one('#' + name + '_searchtext'),
         /** The clear button. */
         clearbutton : null,
         /** The select element that contains the list of users. */
-        listbox : Y.one('#'+name),
+        listbox : Y.one('#' + name),
         /** Used to hold the timeout id of the timeout that waits before doing a search. */
         timeoutid : null,
         /** Stores any in-progress remote requests. */
@@ -56,8 +56,8 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
          */
         init : function() {
             // Hide the search button and replace it with a label.
-            var searchbutton = Y.one('#'+this.name + '_searchbutton');
-            this.searchfield.insert(Y.Node.create('<label for="'+this.name + '_searchtext">'+searchbutton.get('value')+'</label>'), this.searchfield);
+            var searchbutton = Y.one('#' + this.name + '_searchbutton');
+            this.searchfield.insert(Y.Node.create('<label for="' + this.name + '_searchtext">' + searchbutton.get('value') + '</label>'), this.searchfield);
             searchbutton.remove();
 
             // Hook up the event handler for when the search text changes.
@@ -76,10 +76,10 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
             this.selectionempty = this.is_selection_empty();
 
             // Replace the Clear submit button with a clone that is not a submit button.
-            var clearbtn = Y.one('#'+this.name + '_clearbutton');
-            this.clearbutton = Y.Node.create('<input type="button" value="'+clearbtn.get('value')+'" />');
+            var clearbtn = Y.one('#' + this.name + '_clearbutton');
+            this.clearbutton = Y.Node.create('<input type="button" value="' + clearbtn.get('value') + '" />');
             clearbtn.replace(Y.Node.getDOMNode(this.clearbutton));
-            this.clearbutton.set('id', this.name+"_clearbutton");
+            this.clearbutton.set('id', this.name + "_clearbutton");
             this.clearbutton.on('click', this.handle_clear, this);
             this.clearbutton.set('disabled', (this.get_search_text() == ''));
 
@@ -92,7 +92,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
         handle_keyup : function(e) {
             //  Trigger an ajax search after a delay.
             this.cancel_timeout();
-            this.timeoutid = Y.later(this.querydelay*1000, e, function(obj){obj.send_query(false)}, this);
+            this.timeoutid = Y.later(this.querydelay * 1000, e, function(obj){obj.send_query(false)}, this);
 
             // Enable or diable the clear button.
             this.clearbutton.set('disabled', (this.get_search_text() == ''));
@@ -149,7 +149,7 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
 
             var iotrans = Y.io(M.cfg.wwwroot + '/user/selector/search.php', {
                 method: 'POST',
-                data: 'selectorid='+hash+'&sesskey='+M.cfg.sesskey+'&search='+value + '&userselector_searchanywhere=' + this.get_option('searchanywhere'),
+                data: 'selectorid=' + hash + '&sesskey=' + M.cfg.sesskey + '&search=' + value + '&userselector_searchanywhere=' + this.get_option('searchanywhere'),
                 on: {
                     complete: this.handle_response
                 },
@@ -212,10 +212,10 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
             for (var key in data.results) {
                 var groupdata = data.results[key];
                 this.output_group(groupdata.name, groupdata.users, selectedusers, true);
-                count++;
+                count ++;
             }
             if (!count) {
-                var searchstr = (this.lastsearch != '')?this.insert_search_into_str(M.str.moodle.nomatchingusers, this.lastsearch):M.str.moodle.none;
+                var searchstr = (this.lastsearch != '') ? this.insert_search_into_str(M.str.moodle.nomatchingusers, this.lastsearch) : M.str.moodle.none;
                 this.output_group(searchstr, {}, selectedusers, true)
             }
 
@@ -239,10 +239,10 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
             var count = 0;
             for (var key in users) {
                 var user = users[key];
-                var option = Y.Node.create('<option value="'+user.id+'">'+user.name+'</option>');
+                var option = Y.Node.create('<option value="' + user.id + '">' + user.name + '</option>');
                 if (user.disabled) {
                     option.set('disabled', true);
-                } else if (selectedusers===true || selectedusers[user.id]) {
+                } else if (selectedusers === true || selectedusers[user.id]) {
                     option.set('selected', true);
                     delete selectedusers[user.id];
                 } else {
@@ -254,12 +254,12 @@ M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearc
                     extraoption.appendChild(document.createTextNode(user.infobelow));
                     optgroup.append(extraoption);
                 }
-                count++;
+                count ++;
             }
 
             if (count > 0) {
-                optgroup.set('label', groupname+' ('+count+')');
-                if (processsingle && count===1 && this.get_option('autoselectunique') && option.get('disabled') == false) {
+                optgroup.set('label', groupname + ' (' + count + ')');
+                if (processsingle && count === 1 && this.get_option('autoselectunique') && option.get('disabled') == false) {
                     option.set('selected', true);
                 }
             } else {
@@ -352,7 +352,7 @@ M.core_user.init_user_selector_options_tracker = function(Y) {
             ];
             for (var s in settings) {
                 var setting = settings[s];
-                Y.one('#'+setting+'id').on('click', this.set_user_preference, this, setting);
+                Y.one('#' + setting + 'id').on('click', this.set_user_preference, this, setting);
             }
         },
         /**
@@ -361,7 +361,7 @@ M.core_user.init_user_selector_options_tracker = function(Y) {
          * @param {string} name The name of the preference to set
          */
         set_user_preference : function(e, name) {
-            M.util.set_user_preference(name, Y.one('#'+name+'id').get('checked'));
+            M.util.set_user_preference(name, Y.one('#' + name + 'id').get('checked'));
         }
     };
     // Initialise the options tracker
