@@ -219,10 +219,8 @@
         redirect($CFG->wwwroot .'/');
     }
 
-    $ajaxenabled = ajaxenabled();
-
     $completion = new completion_info($course);
-    if ($completion->is_enabled() && $ajaxenabled) {
+    if ($completion->is_enabled()) {
         $PAGE->requires->string_for_js('completion-title-manual-y', 'completion');
         $PAGE->requires->string_for_js('completion-title-manual-n', 'completion');
         $PAGE->requires->string_for_js('completion-alt-manual-y', 'completion');
@@ -251,7 +249,7 @@
     $PAGE->set_heading($course->fullname);
     echo $OUTPUT->header();
 
-    if ($completion->is_enabled() && $ajaxenabled) {
+    if ($completion->is_enabled()) {
         // This value tracks whether there has been a dynamic change to the page.
         // It is used so that if a user does this - (a) set some tickmarks, (b)
         // go to another page, (c) clicks Back button - the page will

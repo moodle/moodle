@@ -17,6 +17,7 @@ DEPRECATIONS:
 * The constants FRONTPAGECOURSELIST, FRONTPAGETOPICONLY & FRONTPAGECOURSELIMIT have been removed.
 * Various cm_info methods have been deprecated in favour of their read-only properties (get_url(), get_content(), get_extra_classes(),
   get_on_click(), get_custom_data(), get_after_link, get_after_edit_icons)
+* The ajaxenabled function has been deprecated and always returns true. All code should be fully functional in Javascript.
 
 YUI:
   * The lightbox attribute for moodle-core-notification-dialogue has been

@@ -353,7 +353,6 @@ abstract class format_base {
      *
      * The returned object's property (boolean)capable indicates that
      * the course format supports Moodle course ajax features.
-     * The property (array)testedbrowsers can be used as a parameter for {@link ajaxenabled()}.
      *
      * @return stdClass
      */
@@ -361,7 +360,6 @@ abstract class format_base {
         // no support by default
         $ajaxsupport = new stdClass();
         $ajaxsupport->capable = false;
-        $ajaxsupport->testedbrowsers = array();
         return $ajaxsupport;
     }
 

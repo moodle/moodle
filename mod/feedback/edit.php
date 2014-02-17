@@ -160,7 +160,7 @@ $PAGE->set_title($feedback->name);
 
 //Adding the javascript module for the items dragdrop.
 if (count($feedbackitems) > 1) {
-    if ($do_show == 'edit' and $CFG->enableajax) {
+    if ($do_show == 'edit') {
         $PAGE->requires->strings_for_js(array(
                'pluginname',
                'move_item',

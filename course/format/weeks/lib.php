@@ -122,14 +122,12 @@ class format_weeks extends format_base {
      *
      * The returned object's property (boolean)capable indicates that
      * the course format supports Moodle course ajax features.
-     * The property (array)testedbrowsers can be used as a parameter for {@link ajaxenabled()}.
      *
      * @return stdClass
      */
     public function supports_ajax() {
         $ajaxsupport = new stdClass();
         $ajaxsupport->capable = true;
-        $ajaxsupport->testedbrowsers = array('MSIE' => 6.0, 'Gecko' => 20061111, 'Safari' => 531, 'Chrome' => 6.0);
         return $ajaxsupport;
     }
 

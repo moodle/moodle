@@ -1002,9 +1002,7 @@ class rating_manager {
             return true;
         }
 
-        if (!empty($CFG->enableajax)) {
-            $page->requires->js_init_call('M.core_rating.init');
-        }
+        $page->requires->js_init_call('M.core_rating.init');
         $done = true;
 
         return true;

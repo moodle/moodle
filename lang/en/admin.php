@@ -198,7 +198,6 @@ $string['configdoctonewwindow'] = 'If you enable this, then links to Moodle Docs
 $string['configeditordictionary'] = 'This value will be used if aspell doesn\'t have dictionary for users own language.';
 $string['configeditorfontlist'] = 'Select the fonts that should appear in the editor\'s drop-down list.';
 $string['configemailchangeconfirmation'] = 'Require an email confirmation step when users change their email address in their profile.';
-$string['configenableajax'] = 'This setting controls the use of AJAX across the site. AJAX is required for certain functionality such as drag and drop.';
 $string['configenablecalendarexport'] = 'Enable exporting or subscribing to calendars.';
 $string['configenablecomments'] = 'Enable comments';
 $string['configenablecourserequests'] = 'This will allow any user to request a course be created.';
@@ -461,7 +460,6 @@ $string['emoticons_desc'] = 'This form defines the emoticons (or smileys) used a
 * Alternative text (optional) - String identifier and component of the alternative text of the emoticon.';
 $string['emoticonsreset'] = 'Reset emoticons setting to default values';
 $string['emptysettingvalue'] = 'Empty';
-$string['enableajax'] = 'Enable AJAX';
 $string['enableblogs'] = 'Enable blogs';
 $string['enablecalendarexport'] = 'Enable calendar export';
 $string['enablecomments'] = 'Enable comments';

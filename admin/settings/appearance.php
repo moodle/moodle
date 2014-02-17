@@ -220,7 +220,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     $ADMIN->add('appearance', $temp);
 
     $temp = new admin_settingpage('ajax', new lang_string('ajaxuse'));
-    $temp->add(new admin_setting_configcheckbox('enableajax', new lang_string('enableajax', 'admin'), new lang_string('configenableajax', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('useexternalyui', new lang_string('useexternalyui', 'admin'), new lang_string('configuseexternalyui', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('yuicomboloading', new lang_string('yuicomboloading', 'admin'), new lang_string('configyuicomboloading', 'admin'), 1));
     $setting = new admin_setting_configcheckbox('cachejs', new lang_string('cachejs', 'admin'), new lang_string('cachejs_help', 'admin'), 1);
