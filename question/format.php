@@ -387,7 +387,7 @@ class qformat_default {
             $question->modifiedby = $USER->id;
             $question->timemodified = time();
             $fileoptions = array(
-                    'subdirs' => false,
+                    'subdirs' => true,
                     'maxfiles' => -1,
                     'maxbytes' => 0,
                 );
