@@ -249,13 +249,13 @@
 
             if($this->config->display_description && !empty($description)){
 
-                $description = break_up_long_words($description, 30);
-
                 $formatoptions = new stdClass();
                 $formatoptions->para = false;
 
                 $r.= html_writer::start_tag('div',array('class'=>'description'));
-                    $r.= format_text($description, FORMAT_HTML, $formatoptions, $this->page->course->id);
+                    $description = format_text($description, FORMAT_HTML, $formatoptions, $this->page->course->id);
+                    $description = break_up_long_words($description, 30);
+                    $r.= $description;
                 $r.= html_writer::end_tag('div');
             }
         $r.= html_writer::end_tag('li');
