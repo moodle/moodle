@@ -1995,3 +1995,126 @@ function user_can_create_courses() {
     $catsrs->close();
     return false;
 }
+
+/**
+ * This method can update the values in mulitple database rows for a colum with
+ * a unique index, without violating that constraint.
+ *
+ * Suppose we have a table with a unique index on (otherid, sortorder), and
+ * for a particular value of otherid, we want to change all the sort orders.
+ * You have to do this carefully or you will violate the unique index at some time.
+ * This method takes care of the details for you.
+ *
+ * Note that, it is the responsibility of the caller to make sure that the
+ * requested rename is legal. For example, if you ask for [1 => 2, 2 => 2]
+ * then you will get a unique key violation error from the database.
+ *
+ * @param string $table The database table to modify.
+ * @param string $field the field that contains the values we are going to change.
+ * @param array $newvalues oldvalue => newvalue how to change the values.
+ *      E.g. [1 => 4, 2 => 1, 3 => 3, 4 => 2].
+ * @param array $otherconditions array fieldname => requestedvalue extra WHERE clause
+ *      conditions to restrict which rows are affected. E.g. array('otherid' => 123).
+ * @param int $unusedvalue (defaults to -1) a value that is never used in $ordercol.
+ */
+function update_field_with_unique_index($table, $field, array $newvalues,
+        array $otherconditions, $unusedvalue = -1) {
+    global $DB;
+    $safechanges = decompose_update_into_safe_changes($newvalues, $unusedvalue);
+
+    $transaction = $DB->start_delegated_transaction();
+    foreach ($safechanges as $change) {
+        list($from, $to) = $change;
+        $otherconditions[$field] = $from;
+        $DB->set_field($table, $field, $to, $otherconditions);
+    }
+    $transaction->allow_commit();
+}
+
+/**
+ * Helper used by {@link update_field_with_unique_index()}. Given a desired
+ * set of changes, break them down into single udpates that can be done one at
+ * a time without breaking any unique index constraints.
+ *
+ * Suppose the input is array(1 => 2, 2 => 1) and -1. Then the output will be
+ * array (array(1, -1), array(2, 1), array(-1, 2)). This function solves this
+ * problem in the general case, not just for simple swaps. The unit tests give
+ * more examples.
+ *
+ * Note that, it is the responsibility of the caller to make sure that the
+ * requested rename is legal. For example, if you ask for something impossible
+ * like array(1 => 2, 2 => 2) then the results are undefined. (You will probably
+ * get a unique key violation error from the database later.)
+ *
+ * @param array $newvalues The desired re-ordering.
+ *      E.g. array(1 => 4, 2 => 1, 3 => 3, 4 => 2).
+ * @param int $unusedvalue A value that is not currently used.
+ * @return array A safe way to perform the re-order. An array of two-element
+ *      arrays array($from, $to).
+ *      E.g. array(array(1, -1), array(2, 1), array(4, 2), array(-1, 4)).
+ */
+function decompose_update_into_safe_changes(array $newvalues, $unusedvalue) {
+    $nontrivialmap = array();
+    foreach ($newvalues as $from => $to) {
+        if ($from == $unusedvalue || $to == $unusedvalue) {
+            throw new \coding_exception('Supposedly unused value ' . $unusedvalue . ' is actually used!');
+        }
+        if ($from != $to) {
+            $nontrivialmap[$from] = $to;
+        }
+    }
+
+    if (empty($nontrivialmap)) {
+        return array();
+    }
+
+    // First we deal with all renames that are not part of cycles.
+    // This bit is O(n^2) and it ought to be possible to do better,
+    // but it does not seem worth the effort.
+    $safechanges = array();
+    $nontrivialmapchanged = true;
+    while ($nontrivialmapchanged) {
+        $nontrivialmapchanged = false;
+
+        foreach ($nontrivialmap as $from => $to) {
+            if (array_key_exists($to, $nontrivialmap)) {
+                continue; // Cannot currenly do this rename.
+            }
+            // Is safe to do this rename now.
+            $safechanges[] = array($from, $to);
+            unset($nontrivialmap[$from]);
+            $nontrivialmapchanged = true;
+        }
+    }
+
+    // Are we done?
+    if (empty($nontrivialmap)) {
+        return $safechanges;
+    }
+
+    // Now what is left in $nontrivialmap must be a permutation,
+    // which must be a combination of disjoint cycles. We need to break them.
+    while (!empty($nontrivialmap)) {
+        // Extract the first cycle.
+        reset($nontrivialmap);
+        $current = $cyclestart = key($nontrivialmap);
+        $cycle = array();
+        do {
+            $cycle[] = $current;
+            $next = $nontrivialmap[$current];
+            unset($nontrivialmap[$current]);
+            $current = $next;
+        } while ($current !== $cyclestart);
+
+        // Now convert it to a sequence of safe renames by using a temp.
+        $safechanges[] = array($cyclestart, $unusedvalue);
+        $cycle[0] = $unusedvalue;
+        $to = $cyclestart;
+        while ($from = array_pop($cycle)) {
+            $safechanges[] = array($from, $to);
+            $to = $from;
+        }
+    }
+
+    return $safechanges;
+}
