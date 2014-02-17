@@ -5173,6 +5173,85 @@ class core_dml_testcase extends database_driver_testcase {
         $DB->get_records_sql("SELECT * FROM {{$tablename}}", null, 1, -2);
         $this->assertDebuggingCalled("Negative limitnum parameter detected: -2, did you pass the correct arguments?");
     }
+
+    public function test_queries_counter() {
+
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+
+        // Test database.
+        $table = $this->get_test_table();
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('fieldvalue', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+        $dbman->create_table($table);
+        $tablename = $table->getName();
+
+        // Initial counters values.
+        $initreads = $DB->perf_get_reads();
+        $initwrites = $DB->perf_get_writes();
+        $previousqueriestime = $DB->perf_get_queries_time();
+
+        // Selects counts as reads.
+
+        // The get_records_sql() method generates only 1 db query.
+        $whatever = $DB->get_records_sql("SELECT * FROM {{$tablename}}");
+        $this->assertEquals($initreads + 1, $DB->perf_get_reads());
+
+        // The get_records() method generates 2 queries the first time is called
+        // as it is fetching the table structure.
+        $whatever = $DB->get_records($tablename);
+        $this->assertEquals($initreads + 3, $DB->perf_get_reads());
+        $this->assertEquals($initwrites, $DB->perf_get_writes());
+
+        // The elapsed time is counted.
+        $lastqueriestime = $DB->perf_get_queries_time();
+        $this->assertGreaterThan($previousqueriestime, $lastqueriestime);
+        $previousqueriestime = $lastqueriestime;
+
+        // Only 1 now, it already fetched the table columns.
+        $whatever = $DB->get_records($tablename);
+        $this->assertEquals($initreads + 4, $DB->perf_get_reads());
+
+        // And only 1 more from now.
+        $whatever = $DB->get_records($tablename);
+        $this->assertEquals($initreads + 5, $DB->perf_get_reads());
+
+        // Inserts counts as writes.
+
+        $rec1 = new stdClass();
+        $rec1->fieldvalue = 11;
+        $rec1->id = $DB->insert_record($tablename, $rec1);
+        $this->assertEquals($initwrites + 1, $DB->perf_get_writes());
+        $this->assertEquals($initreads + 5, $DB->perf_get_reads());
+
+        // The elapsed time is counted.
+        $lastqueriestime = $DB->perf_get_queries_time();
+        $this->assertGreaterThan($previousqueriestime, $lastqueriestime);
+        $previousqueriestime = $lastqueriestime;
+
+        $rec2 = new stdClass();
+        $rec2->fieldvalue = 22;
+        $rec2->id = $DB->insert_record($tablename, $rec2);
+        $this->assertEquals($initwrites + 2, $DB->perf_get_writes());
+
+        // Updates counts as writes.
+
+        $rec1->fieldvalue = 111;
+        $DB->update_record($tablename, $rec1);
+        $this->assertEquals($initwrites + 3, $DB->perf_get_writes());
+        $this->assertEquals($initreads + 5, $DB->perf_get_reads());
+
+        // The elapsed time is counted.
+        $lastqueriestime = $DB->perf_get_queries_time();
+        $this->assertGreaterThan($previousqueriestime, $lastqueriestime);
+        $previousqueriestime = $lastqueriestime;
+
+        // Sum of them.
+        $totaldbqueries = $DB->perf_get_reads() + $DB->perf_get_writes();
+        $this->assertEquals($totaldbqueries, $DB->perf_get_queries());
+    }
 }
 
 /**
