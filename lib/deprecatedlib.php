@@ -4269,12 +4269,14 @@ function can_use_html_editor() {
 
 /**
  * Returns whether ajax is enabled/allowed or not.
- * @param array $browsers optional list of alowed browsers, empty means use default list
+ * This function is deprecated and always returns true.
+ *
+ * @param array $unused - not used any more.
  * @return bool
  * @deprecated since 2.7 MDL-33099 - please do not use this function any more.
  * @todo MDL-44088 This will be removed in Moodle 2.9.
  */
 function ajaxenabled(array $browsers = null) {
-    debugging('ajaxenabled() is deprecated.', DEBUG_DEVELOPER);
+    debugging('ajaxenabled() is deprecated - please update your code to assume it returns true.', DEBUG_DEVELOPER);
     return true;
 }
