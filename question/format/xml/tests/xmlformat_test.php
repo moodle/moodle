@@ -1463,4 +1463,51 @@ END;
         $this->assertEquals('/',          $file->filepath);
         $this->assertEquals(6,            $file->size);
     }
+
+    public function test_import_truefalse_wih_files() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $xml = '<question type="truefalse">
+    <name>
+      <text>truefalse</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<p><a href="@@PLUGINFILE@@/myfolder/moodle.txt">This text file</a> contains the word Moodle.</p>]]></text>
+<file name="moodle.txt" path="/myfolder/" encoding="base64">TW9vZGxl</file>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>For further information, see the documentation about Moodle.</p>]]></text>
+</generalfeedback>
+    <defaultgrade>1.0000000</defaultgrade>
+    <penalty>1.0000000</penalty>
+    <hidden>0</hidden>
+    <answer fraction="100" format="moodle_auto_format">
+      <text>true</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+    <answer fraction="0" format="moodle_auto_format">
+      <text>false</text>
+      <feedback format="html">
+        <text></text>
+      </feedback>
+    </answer>
+  </question>';
+        $xmldata = xmlize($xml);
+
+        $importer = new qformat_xml();
+        $q = $importer->import_truefalse($xmldata['question']);
+
+        $draftitemid = $q->questiontextitemid;
+        $files = file_get_drafarea_files($draftitemid, '/myfolder/');
+
+        $this->assertEquals(1, count($files->list));
+
+        $file = $files->list[0];
+        $this->assertEquals('moodle.txt', $file->filename);
+        $this->assertEquals('/myfolder/', $file->filepath);
+        $this->assertEquals(6,            $file->size);
+    }
 }
