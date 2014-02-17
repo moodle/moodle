@@ -2982,7 +2982,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014012400.00);
     }
 
-    if ($oldversion < 2014020500.00) {
+    if ($oldversion < 2014021300.01) {
+        // Delete any cached stats to force recalculation later, then we can be sure that cached records will have the correct
+        // field.
+        $DB->delete_records('question_response_analysis');
+        $DB->delete_records('question_statistics');
+        $DB->delete_records('quiz_statistics');
+
         // Define field variant to be added to question_statistics.
         $table = new xmldb_table('question_statistics');
         $field = new xmldb_field('variant', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'subquestion');
@@ -2993,7 +2999,22 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2014020500.00);
+        upgrade_main_savepoint(true, 2014021300.01);
+    }
+
+    if ($oldversion < 2014021300.02) {
+
+        // Define field variant to be added to question_response_analysis.
+        $table = new xmldb_table('question_response_analysis');
+        $field = new xmldb_field('variant', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'questionid');
+
+        // Conditionally launch add field variant.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014021300.02);
     }
 
     return true;

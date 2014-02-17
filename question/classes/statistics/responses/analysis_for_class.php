@@ -85,11 +85,12 @@ class analysis_for_class {
     /**
      * @param \qubaid_condition $qubaids
      * @param int               $questionid the question id
+     * @param int               $variantno
      * @param string            $subpartid
      */
-    public function cache($qubaids, $questionid, $subpartid) {
+    public function cache($qubaids, $questionid, $variantno, $subpartid) {
         foreach ($this->actualresponses as $response => $actualresponse) {
-            $actualresponse->cache($qubaids, $questionid, $subpartid, $this->responseclassid, $response);
+            $actualresponse->cache($qubaids, $questionid, $variantno, $subpartid, $this->responseclassid, $response);
         }
     }
 

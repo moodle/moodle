@@ -39,6 +39,7 @@ $string['completestatsfilename'] = 'completestats';
 $string['count'] = 'Count';
 $string['coursename'] = 'Course name';
 $string['detailedanalysis'] = 'More detailed analysis of the responses to this question';
+$string['detailedanalysisforvariant'] = 'More detailed analysis of the responses to variant {$a} of this question';
 $string['discrimination_index'] = 'Discrimination index';
 $string['discriminative_efficiency'] = 'Discriminative efficiency';
 $string['downloadeverything'] = 'Download full report as {$a->formatsmenu} {$a->downloadbutton}';
@@ -107,3 +108,6 @@ $string['statisticsreport'] = 'Statistics report';
 $string['statisticsreportgraph'] = 'Statistics for question positions';
 $string['statistics:view'] = 'View statistics report';
 $string['statsfor'] = 'Quiz statistics (for {$a})';
+$string['variant'] = 'Variant';
+$string['variantno'] = 'Variant {$a}';
+

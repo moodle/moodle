@@ -45,8 +45,10 @@ class analyser {
     public $analysis;
 
     /**
-     * @var array Two index array first index is unique for each sub question part, the second index is the 'class' that this sub
-     *          question part can be classified into. This is the return value from {@link \question_type::get_possible_responses()}
+     * @var array Two index array first index is unique string for each sub question part, the second string index is the 'class'
+     * that sub-question part can be classified into.
+     *
+     * This is the return value from {@link \question_type::get_possible_responses()} see that method for fuller documentation.
      */
     public $responseclasses = array();
 
@@ -117,7 +119,7 @@ class analyser {
         // Analyse it.
         foreach ($questionattempts as $qa) {
             $responseparts = $qa->classify_response();
-            $this->analysis->count_response_parts($responseparts);
+            $this->analysis->count_response_parts($qa->get_variant(), $responseparts);
         }
         $this->analysis->cache($qubaids, $this->questiondata->id);
         return $this->analysis;
@@ -144,7 +146,7 @@ class analyser {
         }
 
         foreach ($rows as $row) {
-            $class = $this->analysis->get_subpart($row->subqid)->get_response_class($row->aid);
+            $class = $this->analysis->get_analysis_for_subpart($row->variant, $row->subqid)->get_response_class($row->aid);
             $class->add_response_and_count($row->response, $row->credit, $row->rcount);
         }
         return $this->analysis;
