@@ -1383,7 +1383,7 @@ class core_course_renderer extends plugin_renderer_base {
     protected function coursecat_include_js() {
         global $CFG;
         static $jsloaded = false;
-        if (!$jsloaded && $CFG->enableajax) {
+        if (!$jsloaded) {
             // We must only load this module once.
             $this->page->requires->yui_module('moodle-course-categoryexpander',
                     'Y.Moodle.course.categoryexpander.init');
@@ -1463,8 +1463,6 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'with_children';
                 $classes[] = 'collapsed';
             }
-            // Make sure JS file to expand category content is included.
-            $this->coursecat_include_js();
         } else {
             // load category content
             $categorycontent = $this->coursecat_category_content($chelper, $coursecat, $depth);
@@ -1474,6 +1472,10 @@ class core_course_renderer extends plugin_renderer_base {
                 $classes[] = 'expanded';
             }
         }
+
+        // Make sure JS file to expand category content is included.
+        $this->coursecat_include_js();
+
         $content = html_writer::start_tag('div', array(
             'class' => join(' ', $classes),
             'data-categoryid' => $coursecat->id,
