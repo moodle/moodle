@@ -8,7 +8,7 @@ YUI.add('moodle-course-modchooser', function (Y, NAME) {
 
 var CSS = {
     PAGECONTENT : 'body',
-    SECTION : 'li.section',
+    SECTION: null,
     SECTIONMODCHOOSER : 'span.section-modchooser-link',
     SITEMENU : 'div.block_site_main_menu',
     SITETOPIC : 'div.sitetopic'
@@ -44,6 +44,10 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
      * @method initializer
      */
     initializer : function() {
+        var sectionclass = M.course.format.get_sectionwrapperclass();
+        if (sectionclass) {
+            CSS.SECTION = '.' + sectionclass;
+        }
         var dialogue = Y.one('.chooserdialoguebody');
         var header = Y.one('.choosertitle');
         var params = {};
@@ -75,9 +79,11 @@ Y.extend(MODCHOOSER, M.core.chooserdialogue, {
         }, this);
 
         // Setup for standard course topics
-        Y.one(baseselector).all(CSS.SECTION).each(function(section) {
-            this._setup_for_section(section);
-        }, this);
+        if (CSS.SECTION) {
+            Y.one(baseselector).all(CSS.SECTION).each(function(section) {
+                this._setup_for_section(section);
+            }, this);
+        }
 
         // Setup for the block site menu
         Y.one(baseselector).all(CSS.SITEMENU).each(function(section) {

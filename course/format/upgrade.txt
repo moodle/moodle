@@ -2,6 +2,10 @@ This files describes API changes for course formats
 
 Overview of this plugin type at http://docs.moodle.org/dev/Course_formats
 
+=== 2.8 ===
+* The activity chooser now uses M.course.format.get_sectionwrapperclass()
+  to determine the section selector, rather than a hard-coded `li.section`.
+
 === 2.7 ===
 * The ->testedbrowsers array no longer needs to be defined in supports_ajax().
 * format_section_renderer_base::section_hidden has an new second optional argument $courseorid.
