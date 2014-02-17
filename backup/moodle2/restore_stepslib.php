@@ -4069,6 +4069,9 @@ abstract class restore_questions_activity_structure_step extends restore_activit
 
         $data->questionusageid = $this->get_new_parentid($nameprefix . 'question_usage');
         $data->questionid      = $question->newitemid;
+        if (!property_exists($data, 'variant')) {
+            $data->variant = 1;
+        }
         $data->timemodified    = $this->apply_date_offset($data->timemodified);
 
         if (!property_exists($data, 'maxfraction')) {
