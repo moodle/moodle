@@ -17,8 +17,7 @@
 /**
  * Feedback version information
  *
- * @package    mod
- * @subpackage feedback
+ * @package mod_feedback
  * @author     Andreas Grabs
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

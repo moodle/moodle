@@ -18,7 +18,7 @@
  * Library of functions and constants for module feedback
  * includes the main-part of feedback-functions
  *
- * @package mod-feedback
+ * @package mod_feedback
  * @copyright Andreas Grabs
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
