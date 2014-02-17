@@ -18,7 +18,7 @@
 /**
  * This file contains a custom renderer class used by the forum module.
  *
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -27,7 +27,7 @@
  * A custom renderer class that extends the plugin_renderer_base and
  * is used by the forum module.
  *
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  **/

@@ -18,7 +18,7 @@
 /**
  * Set tracking option for the forum.
  *
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2005 mchurch
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

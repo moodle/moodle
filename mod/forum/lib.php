@@ -15,10 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package    mod
- * @subpackage forum
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_forum
+ * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -7797,7 +7796,7 @@ function forum_extend_settings_navigation(settings_navigation $settingsnav, navi
 
 /**
  * Abstract class used by forum subscriber selection controls
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -7857,7 +7856,7 @@ abstract class forum_subscriber_selector_base extends user_selector_base {
 
 /**
  * A user selector control for potential subscribers to the selected forum
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -7986,7 +7985,7 @@ class forum_potential_subscriber_selector extends forum_subscriber_selector_base
 
 /**
  * User selector control for removing subscribed users
- * @package mod-forum
+ * @package   mod_forum
  * @copyright 2009 Sam Hemelryk
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
