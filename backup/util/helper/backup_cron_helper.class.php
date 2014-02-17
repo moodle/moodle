@@ -153,14 +153,9 @@ abstract class backup_cron_automated_helper {
                 // If config backup_auto_skip_modif_days is set to true, skip courses
                 // that have not been modified since the number of days defined.
                 if ($shouldrunnow && !$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_days) {
-                    $sqlwhere = "course=:courseid AND time>:time AND ".$DB->sql_like('action', ':action', false, true, true);
                     $timenotmodifsincedays = $now - ($config->backup_auto_skip_modif_days * DAYSECS);
                     // Check log if there were any modifications to the course content.
-                    $params = array('courseid' => $course->id,
-                                    'time' => $timenotmodifsincedays,
-                                    'action' => '%view%');
-                    $logexists = $DB->record_exists_select('log', $sqlwhere, $params);
-
+                    $logexists = self::is_course_modified($course->id, $timenotmodifsincedays);
                     $skipped = ($course->timemodified <= $timenotmodifsincedays && !$logexists);
                     $skippedmessage = 'Not modified in the past '.$config->backup_auto_skip_modif_days.' days';
                 }
@@ -169,12 +164,7 @@ abstract class backup_cron_automated_helper {
                 // that have not been modified since previous backup.
                 if ($shouldrunnow && !$skipped && $lastbackupwassuccessful && $config->backup_auto_skip_modif_prev) {
                     // Check log if there were any modifications to the course content.
-                    $sqlwhere = "course=:courseid AND time>:time AND ".$DB->sql_like('action', ':action', false, true, true);
-                    $params = array('courseid' => $course->id,
-                                    'time' => $backupcourse->laststarttime,
-                                    'action' => '%view%');
-                    $logexists = $DB->record_exists_select('log', $sqlwhere, $params);
-
+                    $logexists = self::is_course_modified($course->id, $backupcourse->laststarttime);
                     $skipped = ($course->timemodified <= $backupcourse->laststarttime && !$logexists);
                     $skippedmessage = 'Not modified since previous backup';
                 }
@@ -667,5 +657,27 @@ abstract class backup_cron_automated_helper {
         }
 
         return true;
+    }
+
+    /**
+     * Check logs to find out if a course was modified since the given time.
+     *
+     * @param int $courseid course id to check
+     * @param int $since timestamp, from which to check
+     *
+     * @return bool true if the course was modified, false otherwise. This also returns false if no readers are enabled. This is
+     * intentional, since we cannot reliably determine if any modification was made or not.
+     */
+    protected static function is_course_modified($courseid, $since) {
+        $logmang = get_log_manager();
+        $readers = $logmang->get_readers('core\log\sql_select_reader');
+        $where = "courseid = :courseid and timecreated > :since and crud <> 'r'";
+        $params = array('courseid' => $courseid, 'since' => $since);
+        foreach ($readers as $reader) {
+            if ($reader->get_events_select_count($where, $params)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

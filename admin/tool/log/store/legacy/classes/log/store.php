@@ -226,7 +226,7 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
         $return = '';
         unset($match[0]); // The first entry is the whole string.
         foreach ($match as $m) {
-            // We can hard code LIKE here because we are not worried about case sensitivity and we don't want this to be faster.
+            // We hard code LIKE here because we are not worried about case sensitivity and want this to be fast.
             switch ($m) {
                 case 'crud' :
                     $replace = 'action';
