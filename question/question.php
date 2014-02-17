@@ -263,6 +263,14 @@ if ($mform->is_cancelled()) {
     // Purge this question from the cache.
     question_bank::notify_question_edited($question->id);
 
+    // If we are saving and continuing to edit the question.
+    if (!empty($fromform->updatebutton)) {
+        if ($question->id !== 0) {
+            $url->param('id', $question->id);
+        }
+        redirect($url);
+    }
+
     if ($qtypeobj->finished_edit_wizard($fromform)) {
         if ($inpopup) {
             echo $OUTPUT->notification(get_string('changessaved'), '');
