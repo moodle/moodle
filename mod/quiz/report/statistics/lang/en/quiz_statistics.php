@@ -96,6 +96,7 @@ $string['random_guess_score'] = 'Random guess score';
 $string['recalculatenow'] = 'Recalculate now';
 $string['reportsettings'] = 'Statistics calculation settings';
 $string['response'] = 'Response';
+$string['slotstructureanalysis'] = 'Structural analysis for question number {$a}';
 $string['skewness'] = 'Score distribution skewness (for {$a})';
 $string['standarddeviation'] = 'Standard deviation (for {$a})';
 $string['standarddeviationq'] = 'Standard deviation';

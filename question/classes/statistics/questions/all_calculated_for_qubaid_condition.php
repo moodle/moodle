@@ -145,20 +145,6 @@ class all_calculated_for_qubaid_condition {
     }
 
     /**
-     * Array of variants that have appeared in the attempt data for a question in one slot.
-     *
-     * @param $slot
-     * @return int[]
-     */
-    public function get_variants_for_slot($slot) {
-        if (count($this->questionstats[$slot]->variantstats) > 1) {
-            return array_keys($this->questionstats[$slot]->variantstats);
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * Reference to position stats instance for a slot and optional variant no.
      *
      * @param      $slot
@@ -314,10 +300,8 @@ class all_calculated_for_qubaid_condition {
      */
     protected function all_variant_stats_for_one_slot($slot) {
         $toreturn = array();
-        if ($variants = $this->get_variants_for_slot($slot)){
-            foreach ($variants as $variant) {
-                $toreturn[] = $this->for_slot($slot, $variant);
-            }
+        foreach ($this->for_slot($slot)->get_variants() as $variant) {
+            $toreturn[] = $this->for_slot($slot, $variant);
         }
         return $toreturn;
     }
@@ -364,11 +348,11 @@ class all_calculated_for_qubaid_condition {
      *  - variants of randomly selected questions
      *  - randomly selected questions
      *
-     * @param int $slot
-     * @param bool $limited
-     * @return calculated[]
+     * @param int $slot the slot no
+     * @param bool $limited limit number of variants and sub-questions displayed?
+     * @return calculated|calculated_for_subquestion[] stats to display
      */
-    public function all_subq_and_variant_stats_for_slot($slot, $limited) {
+    protected function all_subq_and_variant_stats_for_slot($slot, $limited) {
         // Random question in this slot?
         if ($this->for_slot($slot)->get_sub_question_ids()) {
             if ($limited) {
@@ -404,6 +388,21 @@ class all_calculated_for_qubaid_condition {
             }
         }
 
+    }
+
+    /**
+     * Return all stats for one slot, stats for the slot itself, and either :
+     *  - variants of question
+     *  - variants of randomly selected questions
+     *  - randomly selected questions
+     *
+     * @param int $slot the slot no
+     * @param int $limitvariants limit number of variants and sub-questions displayed?
+     * @return calculated|calculated_for_subquestion[] stats to display
+     */
+    public function structure_analysis_for_one_slot($slot, $limitvariants = false) {
+        return array_merge(array($this->for_slot($slot)),
+                           $this->all_subq_and_variant_stats_for_slot($slot, $limitvariants));
     }
 
     /**
