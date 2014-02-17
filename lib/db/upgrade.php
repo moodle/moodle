@@ -3006,7 +3006,7 @@ function xmldb_main_upgrade($oldversion) {
 
         // Define field variant to be added to question_response_analysis.
         $table = new xmldb_table('question_response_analysis');
-        $field = new xmldb_field('variant', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, 0, 'questionid');
+        $field = new xmldb_field('variant', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'questionid');
 
         // Conditionally launch add field variant.
         if (!$dbman->field_exists($table, $field)) {
