@@ -83,6 +83,40 @@ $PAGE->set_title($course->shortname .': '. $strparticipation);
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
+$uselegacyreader = false; // Use legacy reader with sql_internal_reader to aggregate records.
+$onlyuselegacyreader = false; // Use only legacy log table to aggregate records.
+
+// Get prefered sql_internal_reader reader (if enabled).
+$logmanager = get_log_manager();
+$readers = $logmanager->get_readers();
+
+// Get preferred reader.
+if (!empty($readers)) {
+    foreach ($readers as $readerpluginname => $reader) {
+        // If legacy reader is preferred reader.
+        if ($readerpluginname == 'logstore_legacy') {
+            $onlyuselegacyreader = true;
+            break;
+        }
+
+        // If sql_internal_reader is preferred reader.
+        if ($reader instanceof \core\log\sql_internal_reader) {
+            $onlyuselegacyreader = false;
+            $logtable = $reader->get_internal_log_table_name();
+            break;
+        }
+    }
+}
+
+// If no legacy and no logtable then don't proceed.
+if (!$onlyuselegacyreader && empty($logtable)) {
+    echo $OUTPUT->box_start('generalbox', 'notice');
+    echo get_string('nologreaderenabled', 'report_participation');
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->footer();
+    die();
+}
+
 $modinfo = get_fast_modinfo($course);
 
 $modules = $DB->get_records_select('modules', "visible = 1", null, 'name ASC');
@@ -108,8 +142,29 @@ foreach ($modules as $module) {
 }
 
 $timeoptions = array();
-// get minimum log time for this course
-$minlog = $DB->get_field_sql('SELECT min(time) FROM {log} WHERE course = ?', array($course->id));
+
+$minloginternalreader = 0; // Time of first record in sql_internal_reader.
+
+if ($onlyuselegacyreader) {
+    // If no sql_inrenal_reader enabled then get min. time from log table.
+    $minlog = $DB->get_field_sql('SELECT min(time) FROM {log} WHERE course = ?', array($course->id));
+} else {
+    $uselegacyreader = true;
+    $minlog = $DB->get_field_sql('SELECT min(time) FROM {log} WHERE course = ?', array($course->id));
+
+    // If legacy reader is not logging then get data from new log table.
+    // Get minimum log time for this course from preferred log reader.
+    $minloginternalreader = $DB->get_field_sql('SELECT min(timecreated) FROM {' . $logtable . '}
+                                                 WHERE courseid = ?', array($course->id));
+    // If new log store has oldest data then don't use old log table.
+    if (empty($minlog) || ($minloginternalreader <= $minlog)) {
+        $uselegacyreader = false;
+        $minlog = $minloginternalreader;
+    } else if (!empty($timefrom) && ($minloginternalreader > $timefrom)) {
+        // If timefrom is less then first record in sql_internal_reader then get record from legacy log only.
+        $onlyuselegacyreader = true;
+    }
+}
 
 $now = usergetmidnight(time());
 
@@ -190,20 +245,6 @@ if (!empty($instanceid) && !empty($roleid)) {
         exit;
     }
 
-    $modulename = get_string('modulename', $cm->modname);
-
-    include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
-
-    $viewfun = $cm->modname.'_get_view_actions';
-    $postfun = $cm->modname.'_get_post_actions';
-
-    if (!function_exists($viewfun) || !function_exists($postfun)) {
-        print_error('modulemissingcode', 'error', $baseurl, $cm->modname);
-    }
-
-    $viewnames = $viewfun();
-    $postnames = $postfun();
-
     $table = new flexible_table('course-participation-'.$course->id.'-'.$cm->id.'-'.$roleid);
     $table->course = $course;
 
@@ -227,50 +268,16 @@ if (!empty($instanceid) && !empty($roleid)) {
                                         ));
     $table->setup();
 
-    switch ($action) {
-        case 'view':
-            $actions = $viewnames;
-            break;
-        case 'post':
-            $actions = $postnames;
-            break;
-        default:
-            // some modules have stuff we want to hide, ie mail blocked etc so do actually need to limit here.
-            $actions = array_merge($viewnames, $postnames);
-    }
-
-    list($actionsql, $params) = $DB->get_in_or_equal($actions, SQL_PARAMS_NAMED, 'action');
-    $actionsql = "action $actionsql";
-
     // We want to query both the current context and parent contexts.
-    list($relatedctxsql, $relatedctxparams) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+    list($relatedctxsql, $params) = $DB->get_in_or_equal($context->get_parent_context_ids(true), SQL_PARAMS_NAMED, 'relatedctx');
+    $params['roleid'] = $roleid;
+    $params['instanceid'] = $instanceid;
+    $params['timefrom'] = $timefrom;
 
     $groupsql = "";
     if (!empty($currentgroup)) {
         $groupsql = "JOIN {groups_members} gm ON (gm.userid = u.id AND gm.groupid = :groupid)";
         $params['groupid'] = $currentgroup;
-    }
-    $usernamefields = get_all_user_name_fields(true, 'u');
-    $sql = "SELECT ra.userid, $usernamefields, u.idnumber, l.actioncount AS count
-            FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
-            JOIN {user} u ON u.id = ra.userid
-            $groupsql
-            LEFT JOIN (
-                SELECT userid, COUNT(action) AS actioncount FROM {log} WHERE cmid = :instanceid AND time > :timefrom AND $actionsql GROUP BY userid
-            ) l ON (l.userid = ra.userid)";
-    $params = array_merge($params, $relatedctxparams);
-    $params['roleid'] = $roleid;
-    $params['instanceid'] = $instanceid;
-    $params['timefrom'] = $timefrom;
-
-    list($twhere, $tparams) = $table->get_sql_where();
-    if ($twhere) {
-        $sql .= ' WHERE '.$twhere; //initial bar
-        $params = array_merge($params, $tparams);
-    }
-
-    if ($table->get_sql_sort()) {
-        $sql .= ' ORDER BY '.$table->get_sql_sort();
     }
 
     $countsql = "SELECT COUNT(DISTINCT(ra.userid))
@@ -281,21 +288,142 @@ if (!empty($instanceid) && !empty($roleid)) {
 
     $totalcount = $DB->count_records_sql($countsql, $params);
 
+    list($twhere, $tparams) = $table->get_sql_where();
     if ($twhere) {
         $matchcount = $DB->count_records_sql($countsql.' AND '.$twhere, $params);
     } else {
         $matchcount = $totalcount;
     }
 
+    $modulename = get_string('modulename', $cm->modname);
     echo '<div id="participationreport">' . "\n";
-    echo '<p class="modulename">'.$modulename . ' ' . $strviews.': '.implode(', ',$viewnames).'<br />'."\n"
-        . $modulename . ' ' . $strposts.': '.implode(', ',$postnames).'</p>'."\n";
+    echo '<p class="modulename">' . $modulename . ' ' . $strviews . '<br />'."\n"
+        . $modulename . ' ' . $strposts . '</p>'."\n";
 
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $matchcount);
 
-    if (!$users = $DB->get_records_sql($sql, $params, $table->get_page_start(), $table->get_page_size())) {
-        $users = array(); // tablelib will handle saying 'Nothing to display' for us.
+    $viewnames = array();
+    $postnames = array();
+    if ($uselegacyreader || $onlyuselegacyreader) {
+        include_once($CFG->dirroot.'/mod/'.$cm->modname.'/lib.php');
+
+        $viewfun = $cm->modname.'_get_view_actions';
+        $postfun = $cm->modname.'_get_post_actions';
+
+        if (function_exists($viewfun)) {
+            $viewnames = $viewfun();
+        }
+
+        if (function_exists($postfun)) {
+            $postnames = $postfun();
+        }
+    }
+
+    switch ($action) {
+        case 'view':
+            $actions = $viewnames;
+            $crud = 'r';
+            break;
+        case 'post':
+            $actions = $postnames;
+            $crud = array('c', 'u', 'd');
+            break;
+        default:
+            // Some modules have stuff we want to hide, ie mail blocked etc so do actually need to limit here.
+            $actions = array_merge($viewnames, $postnames);
+            $crud = array();
+    }
+
+    if (!empty($actions)) {
+        list($actionsql, $actionparams) = $DB->get_in_or_equal($actions, SQL_PARAMS_NAMED, 'action');
+        $actionsql = " AND action $actionsql";
+        $params = array_merge($params, $actionparams);
+    }
+
+    if (!empty($crud)) {
+        list($crudsql, $crudparams) = $DB->get_in_or_equal($crud, SQL_PARAMS_NAMED, 'crud');
+        $crudsql = " AND crud $crudsql";
+        $params = array_merge($params, $crudparams);
+    }
+
+    $usernamefields = get_all_user_name_fields(true, 'u');
+    $users = array();
+    // If using legacy log then get users from old table.
+    if ($uselegacyreader || $onlyuselegacyreader) {
+        $limittime = '';
+        if ($uselegacyreader && !empty($minloginternalreader)) {
+            $limittime = ' AND time < :tilltime ';
+            $params['tilltime'] = $minloginternalreader;
+        }
+        $sql = "SELECT ra.userid, $usernamefields, u.idnumber, l.actioncount AS count
+                  FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
+                  JOIN {user} u ON u.id = ra.userid
+             $groupsql
+             LEFT JOIN (
+                    SELECT userid, COUNT(action) AS actioncount
+                      FROM {log}
+                     WHERE cmid = :instanceid
+                           AND time > :timefrom " . $limittime . $actionsql .
+                " GROUP BY userid) l ON (l.userid = ra.userid)";
+        if ($twhere) {
+            $sql .= ' WHERE '.$twhere; // Initial bar.
+            $params = array_merge($params, $tparams);
+        }
+
+        if ($table->get_sql_sort()) {
+            $sql .= ' ORDER BY '.$table->get_sql_sort();
+        }
+        if (!$users = $DB->get_records_sql($sql, $params, $table->get_page_start(), $table->get_page_size())) {
+            $users = array(); // Tablelib will handle saying 'Nothing to display' for us.
+        }
+    }
+
+    // Get record from sql_internal_reader and merge with records got from legacy log (if needed).
+    if (!$onlyuselegacyreader) {
+        $sql = "SELECT ra.userid, $usernamefields, u.idnumber, l.actioncount AS count
+                  FROM (SELECT * FROM {role_assignments} WHERE contextid $relatedctxsql AND roleid = :roleid ) ra
+                  JOIN {user} u ON u.id = ra.userid
+             $groupsql
+             LEFT JOIN (
+                    SELECT userid, COUNT(crud) AS actioncount
+                      FROM {" . $logtable . "}
+                     WHERE contextinstanceid = :instanceid
+                       AND timecreated > :timefrom" . $crudsql ."
+                       AND edulevel = :edulevel
+                       AND anonymous = 0
+                       AND contextlevel = :contextlevel
+                  GROUP BY userid) l ON (l.userid = ra.userid)";
+
+        $params['edulevel'] = core\event\base::LEVEL_PARTICIPATING;
+        $params['contextlevel'] = CONTEXT_MODULE;
+
+        if ($twhere) {
+            $sql .= ' WHERE '.$twhere; // Initial bar.
+            $params = array_merge($params, $tparams);
+        }
+
+        if ($table->get_sql_sort()) {
+            $sql .= ' ORDER BY '.$table->get_sql_sort();
+        }
+        if ($u = $DB->get_records_sql($sql, $params, $table->get_page_start(), $table->get_page_size())) {
+            if (empty($users)) {
+                $users = $u;
+            } else {
+                // Merge two users array.
+                foreach ($u as $key => $value) {
+                    if (isset($users[$key]) && !empty($users[$key]->count)) {
+                        if ($value->count) {
+                            $users[$key]->count += $value->count;
+                        }
+                    } else {
+                        $users[$key] = $value;
+                    }
+                }
+            }
+            unset($u);
+            $u = null;
+        }
     }
 
     $data = array();
@@ -355,5 +483,3 @@ if (!empty($instanceid) && !empty($roleid)) {
 }
 
 echo $OUTPUT->footer();
-
-
