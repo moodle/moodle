@@ -55,6 +55,7 @@ $string['enabled'] = 'Enabled';
 $string['errorcallingprocessor'] = 'Error calling defined output';
 $string['errortranslatingdefault'] = 'Error translating default setting provided by plugin, using system defaults instead.';
 $string['eventmessagecontactadded'] = 'Message contact added';
+$string['eventmessagecontactremoved'] = 'Message contact removed';
 $string['forced'] = 'Forced';
 $string['formorethan'] = 'For more than';
 $string['guestnoeditmessage'] = 'Guest user can not edit messaging options';

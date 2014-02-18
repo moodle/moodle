@@ -142,7 +142,6 @@ if ($addcontact and confirm_sesskey()) {
     redirect($CFG->wwwroot . '/message/index.php?viewing=contacts&id='.$addcontact);
 }
 if ($removecontact and confirm_sesskey()) {
-    add_to_log(SITEID, 'message', 'remove contact', 'index.php?user1='.$removecontact.'&amp;user2='.$USER->id, $removecontact);
     message_remove_contact($removecontact);
 }
 if ($blockcontact and confirm_sesskey()) {
