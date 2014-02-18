@@ -138,7 +138,6 @@ if (!empty($user2->id) && $user2realuser && ($user2->id != $USER->id)) {
 
 /// Process any contact maintenance requests there may be
 if ($addcontact and confirm_sesskey()) {
-    add_to_log(SITEID, 'message', 'add contact', 'index.php?user1='.$addcontact.'&amp;user2='.$USER->id, $addcontact);
     message_add_contact($addcontact);
     redirect($CFG->wwwroot . '/message/index.php?viewing=contacts&id='.$addcontact);
 }

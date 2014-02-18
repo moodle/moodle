@@ -1021,7 +1021,18 @@ function message_add_contact($contactid, $blocked=0) {
         $contact->userid = $USER->id;
         $contact->contactid = $contactid;
         $contact->blocked = $blocked;
-        return $DB->insert_record('message_contacts', $contact, false);
+        $contact->id = $DB->insert_record('message_contacts', $contact);
+
+        // Trigger event for adding a contact.
+        $event = \core\event\message_contact_added::create(array(
+            'objectid' => $contact->id,
+            'userid' => $contact->userid,
+            'relateduserid' => $contact->contactid,
+            'context'  => context_user::instance($contact->userid)
+        ));
+        $event->trigger();
+
+        return true;
     }
 }
 
