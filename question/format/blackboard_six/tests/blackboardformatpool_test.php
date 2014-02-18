@@ -44,7 +44,7 @@ class qformat_blackboard_six_pool_test extends question_testcase {
         $xmlfile = new qformat_blackboard_six_file();
         $xmlfile->filetype = 2;
         $xmlfile->text = file_get_contents(__DIR__ . '/fixtures/sample_blackboard_pool.dat');
-        return array(0=>$xmlfile);
+        return array(0 => $xmlfile);
     }
 
     public function test_import_match() {
