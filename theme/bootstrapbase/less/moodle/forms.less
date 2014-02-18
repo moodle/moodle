@@ -389,7 +389,7 @@ fieldset.coursesearchbox label {
 #region-main .mform:not(.unresponsive) .fitem .fitemtitle label {
     font-weight: bold;
 }
-@media (max-width: 1199px) {
+.makeFormsVertical() {
     #region-main .mform:not(.unresponsive) {
         .fitem {
             .fitemtitle {
@@ -434,7 +434,7 @@ fieldset.coursesearchbox label {
             }
         }
     }
-    .dir-rtl #region-main .mform:not(.unresponsive) {
+    &.dir-rtl #region-main .mform:not(.unresponsive) {
         .femptylabel .fitemtitle {
             margin-right: 0px;
             margin-left: 8px;
@@ -453,5 +453,30 @@ fieldset.coursesearchbox label {
         .fitem_fcheckbox .felement {
             float: right;
         }
+    }
+}
+
+/**
+ * Make forms vertical when the screen is less than 1200px;
+ */
+@media (max-width: 1199px) {
+    body {
+        .makeFormsVertical;
+    }
+}
+
+/**
+ * Make forms vertical when the screen is less than 1474px AND both side-pre and side-post contain blocks.
+ * This is an extra special media rule.
+ * It causes forms to show vertically when the screen size is calculated as:
+ * 1199px + (1199px * 23%)
+ * Where 23% is the width of span3
+ * Full calculation is:
+ *   @maxWidthForVerticalForms: 1199px * (unit(((@fluidGridColumnWidth1200 * 3) + (@fluidGridGutterWidth * (3 - 1)))) / 100) + 1199px;
+ */
+@maxWidthForVerticalForms: 1474px;
+@media (max-width: @maxWidthForVerticalForms) {
+    .used-region-side-pre.used-region-side-post {
+        .makeFormsVertical;
     }
 }
