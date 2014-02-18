@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * General layout for the splash theme
+ * Report layout for the splash theme
  *
  * @package    theme_splash
  * @copyright  2012 Caroline Kennedy - Synergy Learning
