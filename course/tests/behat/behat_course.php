@@ -702,26 +702,20 @@ class behat_course extends behat_base {
 
         $deletestring = get_string('delete');
 
+        $steps = array(
+            new Given('I click on "' . $this->escape($deletestring) . '" "link" in the "' . $this->escape($activityname) . '" activity')
+        );
+
         // JS enabled.
         // Not using chain steps here because the exceptions catcher have problems detecting
         // JS modal windows and avoiding interacting them at the same time.
         if ($this->running_javascript()) {
-
-            $element = $this->get_activity_element($deletestring, 'link', $activityname);
-            $element->click();
-
-            $this->getSession()->getDriver()->getWebDriverSession()->accept_alert();
-
+            $steps[] = new Given('I click on "' . get_string('yes') . '" "button" in the "Confirm" "dialogue"');
         } else {
-
-            // With JS disabled.
-            $steps = array(
-                new Given('I click on "' . $this->escape($deletestring) . '" "link" in the "' . $this->escape($activityname) . '" activity'),
-                new Given('I press "' . get_string('yes') . '"')
-            );
-
-            return $steps;
+            $steps[] = new Given('I press "' . get_string('yes') . '"');
         }
+
+        return $steps;
     }
 
     /**
