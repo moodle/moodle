@@ -16,6 +16,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
+ * Controller for various actions of the block.
+ *
  * This page display the community course search form.
  * It also handles adding a course to the community block.
  * It also handles downloading a course template.
