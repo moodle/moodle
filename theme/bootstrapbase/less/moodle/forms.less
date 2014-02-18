@@ -389,7 +389,8 @@ fieldset.coursesearchbox label {
 #region-main .mform:not(.unresponsive) .fitem .fitemtitle label {
     font-weight: bold;
 }
-@media (max-width: 1199px) {
+
+.makeFormsVertical() {
     #region-main .mform:not(.unresponsive) .fitem .fitemtitle {
         display: block;
         margin-top: 4px;
@@ -402,11 +403,11 @@ fieldset.coursesearchbox label {
         width: auto;
         margin-right: 8px;
     }
-    .dir-rtl #region-main .mform:not(.unresponsive) .femptylabel .fitemtitle {
+    &.dir-rtl #region-main .mform:not(.unresponsive) .femptylabel .fitemtitle {
         margin-right: 0px;
         margin-left: 8px;
     }
-    .dir-rtl #region-main .mform:not(.unresponsive) .fitem .fitemtitle {
+    &.dir-rtl #region-main .mform:not(.unresponsive) .fitem .fitemtitle {
         text-align: right;
     }
 
@@ -426,7 +427,7 @@ fieldset.coursesearchbox label {
         padding-top: 5px;
         width: auto;
     }
-    .dir-rtl #region-main .mform:not(.unresponsive) .fitem .felement {
+    &.dir-rtl #region-main .mform:not(.unresponsive) .fitem .felement {
         margin-right: 0;
         float: right;
         padding-right: 0;
@@ -437,10 +438,33 @@ fieldset.coursesearchbox label {
         display: inline-block;
         width: auto;
     }
-    .dir-rtl #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
+    &.dir-rtl #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
         float: right;
     }
     #region-main .mform:not(.unresponsive) .fitem_fcheckbox .felement {
         padding: 6px;
+    }
+}
+
+/**
+ * Make forms vertical when the screen is less than 1200px;
+ */
+@media (max-width: 1199px) {
+    body {
+        .makeFormsVertical;
+    }
+}
+
+/**
+ * Make forms vertical when the screen is less than 1474px AND both side-pre and side-post contain blocks.
+ * This is an extra special media rule.
+ * It causes forms to show vertically when the screen size is calculated as:
+ *    1199px + (1199px * 23%)
+ * Where 23% is the width of span3
+ */
+@maxWidthForVerticalForms: 1199px * (unit(((@fluidGridColumnWidth1200 * 3) + (@fluidGridGutterWidth * (3 - 1)))) / 100) + 1199px;
+@media (max-width: @maxWidthForVerticalForms) {
+    .used-region-side-pre.used-region-side-post {
+        .makeFormsVertical;
     }
 }
