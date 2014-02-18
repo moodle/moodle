@@ -157,7 +157,7 @@ class core_calendar_external extends external_api {
      * Get Calendar events
      *
      * @param array $events A list of events
-     * @package array $options various options
+     * @param array $options various options
      * @return array Array of event details
      * @since Moodle 2.5
      */
