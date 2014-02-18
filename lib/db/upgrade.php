@@ -3612,6 +3612,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014041500.01);
     }
 
+
     if ($oldversion < 2014050100.00) {
         // Fixing possible wrong MIME type for DigiDoc files.
         $extensions = array('%.bdoc', '%.cdoc', '%.ddoc');
@@ -3626,6 +3627,35 @@ function xmldb_main_upgrade($oldversion) {
             );
         }
         upgrade_main_savepoint(true, 2014050100.00);
+    }
+
+    // MDL-32543 Make sure that the log table has correct length for action and url fields.
+    if ($oldversion < 2014051200.01) {
+
+        $table = new xmldb_table('log');
+
+        $columns = $DB->get_columns('log');
+        if ($columns['action']->max_length < 40) {
+            $index1 = new xmldb_index('course-module-action', XMLDB_INDEX_NOTUNIQUE, array('course', 'module', 'action'));
+            if ($dbman->index_exists($table, $index1)) {
+                $dbman->drop_index($table, $index1);
+            }
+            $index2 = new xmldb_index('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
+            if ($dbman->index_exists($table, $index2)) {
+                $dbman->drop_index($table, $index2);
+            }
+            $field = new xmldb_field('action', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, 'cmid');
+            $dbman->change_field_precision($table, $field);
+            $dbman->add_index($table, $index1);
+            $dbman->add_index($table, $index2);
+        }
+
+        if ($columns['url']->max_length < 100) {
+            $field = new xmldb_field('url', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'action');
+            $dbman->change_field_precision($table, $field);
+        }
+
+        upgrade_main_savepoint(true, 2014051200.01);
     }
 
     return true;
