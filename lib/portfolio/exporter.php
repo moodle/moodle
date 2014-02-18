@@ -434,10 +434,11 @@ class portfolio_exporter {
      * @return bool whether or not to process the next stage. this is important as the control function is called recursively.
      */
     public function process_stage_queueorwait() {
+        global $DB;
+
         $wait = $this->instance->get_export_config('wait');
         if (empty($wait)) {
-            // TODO MDL-42541 Removing usage of events_trigger().
-            events_trigger_legacy('portfolio_send', $this->id);
+            $DB->set_field('portfolio_tempdata', 'queued', 1, array('id' => $this->id));
             $this->queued = true;
             return $this->process_stage_finished(true);
         }

@@ -342,17 +342,6 @@ function cron_run() {
         mtrace('done');
     }
 
-
-    if ($CFG->enableportfolios) {
-        // Portfolio cron
-        mtrace('Starting the portfolio cron...');
-        cron_trace_time_and_memory();
-        require_once($CFG->libdir . '/portfoliolib.php');
-        portfolio_cron();
-        mtrace('done');
-    }
-
-
     //now do plagiarism checks
     require_once($CFG->libdir.'/plagiarismlib.php');
     plagiarism_cron();
@@ -462,6 +451,15 @@ function cron_run() {
     mtrace('Running cache cron routines');
     cache_helper::cron();
     mtrace('done.');
+
+    // Portfolio cron - this needs to be close to the end because it may take a long time.
+    if ($CFG->enableportfolios) {
+        mtrace('Starting the portfolio cron...');
+        cron_trace_time_and_memory();
+        require_once($CFG->libdir . '/portfoliolib.php');
+        portfolio_cron();
+        mtrace('done');
+    }
 
     // Run automated backups if required - these may take a long time to execute
     require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');

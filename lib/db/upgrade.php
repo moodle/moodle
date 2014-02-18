@@ -3017,5 +3017,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014021300.02);
     }
 
+    if ($oldversion < 2014021800.00) {
+
+        // Define field queued to be added to portfolio_tempdata.
+        $table = new xmldb_table('portfolio_tempdata');
+        $field = new xmldb_field('queued', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'instance');
+
+        // Conditionally launch add field queued.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014021800.00);
+    }
+
     return true;
 }
