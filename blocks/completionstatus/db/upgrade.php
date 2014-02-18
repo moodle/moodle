@@ -32,7 +32,7 @@
  * before any action that may take longer time to finish.
  *
  * @since 2.0
- * @package blocks
+ * @package block_completionstatus
  * @copyright 2012 Mark Nelson <markn@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

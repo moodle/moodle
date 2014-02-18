@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -18,7 +17,7 @@
 /**
  * A block which displays Remote feeds
  *
- * @package    rss_client
+ * @package   block_rss_client
  * @copyright  Daryl Hawes
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL
  */

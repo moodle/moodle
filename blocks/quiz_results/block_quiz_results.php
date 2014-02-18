@@ -17,8 +17,7 @@
 /**
  * Classes to enforce the various access rules that can apply to a quiz.
  *
- * @package    block
- * @subpackage quiz_results
+ * @package    block_quiz_results
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,8 +34,7 @@ require_once($CFG->dirroot . '/mod/quiz/lib.php');
  * This block can be added to a course page or a quiz page to display of list of
  * the best/worst students/groups in a particular quiz.
  *
- * @package    block
- * @subpackage quiz_results
+ * @package    block_quiz_results
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

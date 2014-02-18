@@ -17,8 +17,7 @@
 /**
  * Block for displaying logged in user's course completion status
  *
- * @package    block
- * @subpackage completion
+ * @package    block_completionstatus
  * @copyright  2009-2012 Catalyst IT Ltd
  * @author     Aaron Barnes <aaronb@catalyst.net.nz>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
