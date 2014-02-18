@@ -14,6 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Library of internal classes and functions for module SCORM
+ *
+ * @package    mod_scorm
+ * @copyright  1999 onwards Roberto Pinna
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 require_once("$CFG->dirroot/mod/scorm/lib.php");
 require_once("$CFG->libdir/filelib.php");
 
@@ -897,7 +905,7 @@ function scorm_view_display ($user, $scorm, $action, $cm) {
         }
         ?>
               <br />
-              <input type="hidden" name="scoid"/>
+              <input type="hidden" name="scoid" value="<?php echo $scorm->launch ?>" />
               <input type="hidden" name="cm" value="<?php echo $cm->id ?>"/>
               <input type="hidden" name="currentorg" value="<?php echo $orgidentifier ?>" />
               <input type="submit" value="<?php print_string('enter', 'scorm') ?>" />
