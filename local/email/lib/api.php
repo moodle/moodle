@@ -144,7 +144,7 @@ class EmailTemplate {
 
         // Set the sender to the default site one if use real sender is not true.
         if (empty($CFG->iomad_email_senderisreal)) {
-            $sender = generate_email_supportuser();
+            $sender = core_user::get_support_user();
         }
 
         $this->user = $this->get_user($user);
@@ -419,11 +419,11 @@ class EmailTemplate {
                 $returnid = $usercompany->defaultcontactid;
             } else {
                 // Use the default support email account.
-                $returnid = generate_email_supportuser();
+                $returnid = core_user::get_support_user();
             }
         } else {
             // No company use default support user.
-            $returnid = generate_email_supportuser();
+            $returnid = core_user::get_support_user();
         }
         return $returnid;
     }
