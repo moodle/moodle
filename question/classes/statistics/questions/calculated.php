@@ -272,4 +272,17 @@ class calculated {
             return array();
         }
     }
+
+    public function break_down_by_variant() {
+        $qtype = \question_bank::get_qtype($this->question->qtype);
+        return $qtype->break_down_stats_and_response_analysis_by_variant($this->question);
+    }
+
+
+    /**
+     * Delete the data structure for storing variant stats.
+     */
+    public function clear_variants() {
+        $this->variantstats = array();
+    }
 }

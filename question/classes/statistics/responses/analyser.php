@@ -53,6 +53,12 @@ class analyser {
     public $responseclasses = array();
 
     /**
+     * @var bool whether to break down response analysis by variant. This only applies to questions that have variants and is
+     *           used to suppress the break down of analysis by variant when there are going to be very many variants.
+     */
+    protected $breakdownbyvariant;
+
+    /**
      * Create a new instance of this class for holding/computing the statistics
      * for a particular question.
      *
@@ -62,7 +68,7 @@ class analyser {
         $this->questiondata = $questiondata;
         $qtypeobj = \question_bank::get_qtype($this->questiondata->qtype);
         $this->analysis = new analysis_for_question($qtypeobj->get_possible_responses($this->questiondata));
-
+        $this->breakdownbyvariant = $qtypeobj->break_down_stats_and_response_analysis_by_variant($this->questiondata);
     }
 
     /**
@@ -119,7 +125,12 @@ class analyser {
         // Analyse it.
         foreach ($questionattempts as $qa) {
             $responseparts = $qa->classify_response();
-            $this->analysis->count_response_parts($qa->get_variant(), $responseparts);
+            if ($this->breakdownbyvariant) {
+                $this->analysis->count_response_parts($qa->get_variant(), $responseparts);
+            } else {
+                $this->analysis->count_response_parts(1, $responseparts);
+            }
+
         }
         $this->analysis->cache($qubaids, $this->questiondata->id);
         return $this->analysis;
