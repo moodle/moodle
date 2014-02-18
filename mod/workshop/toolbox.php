@@ -38,18 +38,26 @@ require_login($course, false, $cm);
 $workshop = new workshop($workshop, $cm, $course);
 require_sesskey();
 
+$params = array(
+    'objectid' => $workshop->id,
+    'context' => $workshop->context,
+    'courseid' => $course->id
+);
+
 switch ($tool) {
 case 'clearaggregatedgrades':
     require_capability('mod/workshop:overridegrades', $workshop->context);
-    $workshop->log('update clear aggregated grades');
     $workshop->clear_submission_grades();
     $workshop->clear_grading_grades();
+    $event = \mod_workshop\event\assessment_evaluations_reset::create($params);
+    $event->trigger();
     break;
 
 case 'clearassessments':
     require_capability('mod/workshop:overridegrades', $workshop->context);
-    $workshop->log('update clear assessments');
     $workshop->clear_assessments();
+    $event = \mod_workshop\event\submission_assessments_reset::create($params);
+    $event->trigger();
     break;
 }
 

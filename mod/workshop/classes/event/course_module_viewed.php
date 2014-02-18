@@ -23,7 +23,11 @@
  */
 
 namespace mod_workshop\event;
+
 defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("$CFG->dirroot/mod/workshop/locallib.php");
 
 /**
  * Event for when a workshop activity is viewed.

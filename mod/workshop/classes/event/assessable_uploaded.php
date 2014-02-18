@@ -101,7 +101,7 @@ class assessable_uploaded extends \core\event\assessable_uploaded {
      * @return string
      */
     public static function get_name() {
-        return get_string('event_assessable_uploaded', 'mod_workshop');
+        return get_string('eventassessableuploaded', 'mod_workshop');
     }
 
     /**
