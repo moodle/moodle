@@ -17,15 +17,14 @@
 /**
  * scorm version information.
  *
- * @package    mod
- * @subpackage scorm
+ * @package    mod_scorm
  * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$module->version   = 2013110501;       // The current module version (Date: YYYYMMDDXX)
+$module->version   = 2013110502;       // The current module version (Date: YYYYMMDDXX)
 $module->requires  = 2013110500;    // Requires this Moodle version
 $module->component = 'mod_scorm'; // Full name of the plugin (used for diagnostics)
 $module->cron      = 300;
