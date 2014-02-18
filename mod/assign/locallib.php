@@ -33,8 +33,12 @@ define('ASSIGN_SUBMISSION_STATUS_SUBMITTED', 'submitted');
 
 // Search filters for grading page.
 define('ASSIGN_FILTER_SUBMITTED', 'submitted');
+define('ASSIGN_FILTER_NOT_SUBMITTED', 'notsubmitted');
 define('ASSIGN_FILTER_SINGLE_USER', 'singleuser');
 define('ASSIGN_FILTER_REQUIRE_GRADING', 'require_grading');
+
+// Marker filter for grading page.
+define('ASSIGN_MARKER_FILTER_NO_MARKER', -1);
 
 // Reopen attempt methods.
 define('ASSIGN_ATTEMPT_REOPEN_METHOD_NONE', 'none');
@@ -3044,6 +3048,7 @@ class assign {
         if ($markingallocation) {
             $markers = get_users_by_capability($this->context, 'mod/assign:grade');
             $markingallocationoptions[''] = get_string('filternone', 'assign');
+            $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
             foreach ($markers as $marker) {
                 $markingallocationoptions[$marker->id] = fullname($marker);
             }
@@ -5248,6 +5253,7 @@ class assign {
         $markingallocationoptions = array();
         if ($markingallocation) {
             $markingallocationoptions[''] = get_string('filternone', 'assign');
+            $markingallocationoptions[ASSIGN_MARKER_FILTER_NO_MARKER] = get_string('markerfilternomarker', 'assign');
             $markers = get_users_by_capability($this->context, 'mod/assign:grade');
             foreach ($markers as $marker) {
                 $markingallocationoptions[$marker->id] = fullname($marker);

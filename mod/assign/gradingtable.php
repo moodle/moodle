@@ -180,6 +180,9 @@ class assign_grading_table extends table_sql implements renderable {
                                  s.status = :submitted) ';
                 $params['submitted'] = ASSIGN_SUBMISSION_STATUS_SUBMITTED;
 
+            } else if ($filter == ASSIGN_FILTER_NOT_SUBMITTED) {
+                $where .= ' AND (s.timemodified IS NULL) ';
+
             } else if ($filter == ASSIGN_FILTER_REQUIRE_GRADING) {
                 $where .= ' AND (s.timemodified IS NOT NULL AND
                                  s.status = :submitted AND
@@ -198,8 +201,12 @@ class assign_grading_table extends table_sql implements renderable {
                 // Check to see if marker filter is set.
                 $markerfilter = (int)get_user_preferences('assign_markerfilter', '');
                 if (!empty($markerfilter)) {
-                    $where .= ' AND uf.allocatedmarker = :markerid';
-                    $params['markerid'] = $markerfilter;
+                    if ($markerfilter == ASSIGN_MARKER_FILTER_NO_MARKER) {
+                        $where .= ' AND (uf.allocatedmarker IS NULL OR uf.allocatedmarker = 0)';
+                    } else {
+                        $where .= ' AND uf.allocatedmarker = :markerid';
+                        $params['markerid'] = $markerfilter;
+                    }
                 }
             } else { // Only show users allocated to this marker.
                 $where .= ' AND uf.allocatedmarker = :markerid';
