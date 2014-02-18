@@ -113,6 +113,7 @@ class core_enrol_external extends external_api {
                     foreach ($thefields as $f) {
                         $userfields[] = clean_param($f, PARAM_ALPHANUMEXT);
                     }
+                    break;
                 case 'limitfrom' :
                     $limitfrom = clean_param($option['value'], PARAM_INT);
                     break;
@@ -414,6 +415,7 @@ class core_enrol_external extends external_api {
                 foreach ($thefields as $f) {
                     $userfields[] = clean_param($f, PARAM_ALPHANUMEXT);
                 }
+                break;
             case 'limitfrom' :
                 $limitfrom = clean_param($option['value'], PARAM_INT);
                 break;
