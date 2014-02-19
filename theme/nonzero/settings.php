@@ -30,7 +30,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
-    // Block region-pre width
+    // Block region-pre width.
     $name = 'theme_nonzero/regionprewidth';
     $title = get_string('regionprewidth','theme_nonzero');
     $description = get_string('regionprewidthdesc', 'theme_nonzero');
@@ -40,7 +40,7 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
-    // Block region-post width
+    // Block region-post width.
     $name = 'theme_nonzero/regionpostwidth';
     $title = get_string('regionpostwidth','theme_nonzero');
     $description = get_string('regionpostwidthdesc', 'theme_nonzero');
@@ -50,7 +50,7 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $settings->add($setting);
 
-    // Custom CSS file
+    // Custom CSS file.
     $name = 'theme_nonzero/customcss';
     $title = get_string('customcss','theme_nonzero');
     $description = get_string('customcssdesc', 'theme_nonzero');
