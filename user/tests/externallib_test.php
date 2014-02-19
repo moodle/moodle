@@ -340,6 +340,16 @@ class core_user_external_testcase extends externallib_advanced_testcase {
 
         // Only the own $USER username should be returned
         $this->assertEquals(1, count($returnedusers));
+
+        // And finally test as one of the enrolled users.
+        $this->setUser($user1);
+
+        // Call the external function.
+        $returnedusers = core_user_external::get_users_by_field('username',
+            array($USER->username, $user1->username, $user2->username));
+
+        // Only the own $USER username should be returned still.
+        $this->assertEquals(1, count($returnedusers));
     }
 
     /**
