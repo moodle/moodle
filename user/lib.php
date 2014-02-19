@@ -509,7 +509,7 @@ function user_get_user_details_courses($user) {
     } else {
         // Try through course profile.
         foreach ($courses as $course) {
-            if ($can_view_user_details_cap($user, $course) || ($user->id == $USER->id) || has_coursecontact_role($user->id)) {
+            if (can_view_user_details_cap($user, $course) || ($user->id == $USER->id) || has_coursecontact_role($user->id)) {
                 $userdetails = user_get_user_details($user, $course);
             }
         }
