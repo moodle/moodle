@@ -112,4 +112,30 @@ class core_message_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'message', 'block contact', 'index.php?user1=' . $user->id . '&amp;user2=2', $user->id);
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the message contact unblocked event.
+     */
+    public function test_message_contact_unblocked() {
+        // Set this user as the admin.
+        $this->setAdminUser();
+
+        // Create a user to add to the admin's contact list.
+        $user = $this->getDataGenerator()->create_user();
+
+        // Add the user to the admin's contact list.
+        message_add_contact($user->id);
+
+        // Trigger and capture the event when unblocking a contact.
+        $sink = $this->redirectEvents();
+        message_unblock_contact($user->id);
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\message_contact_unblocked', $event);
+        $this->assertEquals(context_user::instance(2), $event->get_context());
+        $expected = array(SITEID, 'message', 'unblock contact', 'index.php?user1=' . $user->id . '&amp;user2=2', $user->id);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
 }

@@ -148,7 +148,6 @@ if ($blockcontact and confirm_sesskey()) {
     message_block_contact($blockcontact);
 }
 if ($unblockcontact and confirm_sesskey()) {
-    add_to_log(SITEID, 'message', 'unblock contact', 'index.php?user1='.$unblockcontact.'&amp;user2='.$USER->id, $unblockcontact);
     message_unblock_contact($unblockcontact);
 }
 

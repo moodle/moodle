@@ -1020,6 +1020,16 @@ function message_add_contact($contactid, $blocked=0) {
                 ));
                 $event->add_record_snapshot('message_contacts', $contact);
                 $event->trigger();
+            } else {
+                // Trigger event for unblocking a contact.
+                $event = \core\event\message_contact_unblocked::create(array(
+                    'objectid' => $contact->id,
+                    'userid' => $contact->userid,
+                    'relateduserid' => $contact->contactid,
+                    'context'  => context_user::instance($contact->userid)
+                ));
+                $event->add_record_snapshot('message_contacts', $contact);
+                $event->trigger();
             }
 
             return true;
@@ -1084,8 +1094,7 @@ function message_remove_contact($contactid) {
  * @return bool returns the result of delete_records()
  */
 function message_unblock_contact($contactid) {
-    global $USER, $DB;
-    return $DB->delete_records('message_contacts', array('userid' => $USER->id, 'contactid' => $contactid));
+    return message_add_contact($contactid, 0);
 }
 
 /**

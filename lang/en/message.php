@@ -57,6 +57,7 @@ $string['errortranslatingdefault'] = 'Error translating default setting provided
 $string['eventmessagecontactadded'] = 'Message contact added';
 $string['eventmessagecontactblocked'] = 'Message contact blocked';
 $string['eventmessagecontactremoved'] = 'Message contact removed';
+$string['eventmessagecontactunblocked'] = 'Message contact unblocked';
 $string['forced'] = 'Forced';
 $string['formorethan'] = 'For more than';
 $string['guestnoeditmessage'] = 'Guest user can not edit messaging options';
