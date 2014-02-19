@@ -148,6 +148,25 @@ if ($type === 'editor') {
     css_store_css($theme, "$candidatedir/editor.css", $csscontent, false);
 
 } else {
+
+    $lock = null;
+
+    // Lock system to prevent concurrent requests to compile LESS, which is really slow and CPU intensive.
+    // Each client should wait for one to finish the compilation before starting a new compiling process.
+    // We only do this when the file will be cached...
+    if ($type === 'less' && $cache) {
+        $lockfactory = \core\lock\lock_config::get_lock_factory('core_theme_get_css_content');
+        // We wait for the lock to be acquired, the timeout does not need to be strict here.
+        $lock = $lockfactory->get_lock($themename, rand(15, 30));
+        if (file_exists($candidatesheet)) {
+            // The file was built while we waited for the lock, we release the lock and serve the file.
+            if ($lock) {
+                $lock->release();
+            }
+            css_send_cached_css($candidatesheet, $etag);
+        }
+    }
+
     // Older IEs require smaller chunks.
     $csscontent = $theme->get_css_content();
 
@@ -165,7 +184,13 @@ if ($type === 'editor') {
             $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type=all&svg=0";
         }
     }
+
     css_store_css($theme, "$candidatedir/all.css", $csscontent, true, $chunkurl);
+
+    // Release the lock.
+    if ($lock) {
+        $lock->release();
+    }
 }
 
 if (!$cache) {

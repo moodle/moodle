@@ -149,6 +149,17 @@ class theme_config {
     public $parents_exclude_sheets = null;
 
     /**
+     * @var array The names of all the stylesheets from parents that should be excluded.
+     * True value may be used to specify all parents or all themes from one parent.
+     * If no value specified value from parent theme used.
+     * The difference with {@link self::$parents_exclude_sheets} is that this will only ignore
+     * the files whenever the compilation of the {@link self::$lessfile} succeeded.
+     * This is ideal to provide a fallback for cases where a misconfiguration
+     * leads to a blank website.
+     */
+    protected $parents_exclude_sheets_when_lessfile = null;
+
+    /**
      * @var array List of plugin sheets to be excluded.
      * If no value specified value from parent theme used.
      */
@@ -363,6 +374,24 @@ class theme_config {
     private $usesvg = null;
 
     /**
+     * The LESS file to compile. When set, the theme will attempt to compile the file itself.
+     * @var bool
+     */
+    public $lessfile = false;
+
+    /**
+     * The name of the function to call to get the LESS code to inject.
+     * @var string
+     */
+    public $extralesscallback = null;
+
+    /**
+     * The name of the function to call to get extra LESS variables.
+     * @var string
+     */
+    public $lessvariablescallback = null;
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -430,7 +459,8 @@ class theme_config {
         $configurable = array('parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'javascripts', 'javascripts_footer',
                               'parents_exclude_javascripts', 'layouts', 'enable_dock', 'enablecourseajax', 'supportscssoptimisation',
                               'rendererfactory', 'csspostprocess', 'editor_sheets', 'rarrow', 'larrow', 'hidefromselector', 'doctype',
-                              'yuicssmodules', 'blockrtlmanipulations');
+                              'yuicssmodules', 'blockrtlmanipulations', 'lessfile', 'extralesscallback',
+                              'lessvariablescallback', 'parents_exclude_sheets_when_lessfile');
 
         foreach ($config as $key=>$value) {
             if (in_array($key, $configurable)) {
@@ -683,34 +713,39 @@ class theme_config {
             $urls[] = $url;
 
         } else {
-            $css = $this->get_css_files(true);
             $baseurl = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php');
-            if (!$svg) {
-                // We add an SVG param so that we know not to serve SVG images.
-                // We do this because all modern browsers support SVG and this param will one day be removed.
-                $baseurl->param('svg', '0');
-            }
-            if (core_useragent::is_ie()) {
-                // Lalala, IE does not allow more than 31 linked CSS files from main document.
-                $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
-                foreach ($css['parents'] as $parent=>$sheets) {
-                    // We need to serve parents individually otherwise we may easily exceed the style limit IE imposes (4096).
-                    $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'ie', 'subtype'=>'parents', 'sheet'=>$parent));
-                }
-                $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'theme'));
 
+            if (!empty($this->lessfile)) {
+                $urls[] = new moodle_url($baseurl, array('theme' => $this->name, 'type' => 'less'));
             } else {
-                foreach ($css['plugins'] as $plugin=>$unused) {
-                    $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'plugin', 'subtype'=>$plugin));
+                $css = $this->get_css_files(true);
+                if (!$svg) {
+                    // We add an SVG param so that we know not to serve SVG images.
+                    // We do this because all modern browsers support SVG and this param will one day be removed.
+                    $baseurl->param('svg', '0');
                 }
-                foreach ($css['parents'] as $parent=>$sheets) {
-                    foreach ($sheets as $sheet=>$unused2) {
-                        $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'parent', 'subtype'=>$parent, 'sheet'=>$sheet));
+                if (core_useragent::is_ie()) {
+                    // Lalala, IE does not allow more than 31 linked CSS files from main document.
+                    $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
+                    foreach ($css['parents'] as $parent=>$sheets) {
+                        // We need to serve parents individually otherwise we may easily exceed the style limit IE imposes (4096).
+                        $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'ie', 'subtype'=>'parents', 'sheet'=>$parent));
                     }
-                }
-                foreach ($css['theme'] as $sheet=>$unused) {
-                    // Sheet first in order to make long urls easier to read.
-                    $urls[] = new moodle_url($baseurl, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme'));
+                    $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'theme'));
+
+                } else {
+                    foreach ($css['plugins'] as $plugin=>$unused) {
+                        $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'plugin', 'subtype'=>$plugin));
+                    }
+                    foreach ($css['parents'] as $parent=>$sheets) {
+                        foreach ($sheets as $sheet=>$unused2) {
+                            $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'parent', 'subtype'=>$parent, 'sheet'=>$sheet));
+                        }
+                    }
+                    foreach ($css['theme'] as $sheet=>$unused) {
+                        // Sheet first in order to make long urls easier to read.
+                        $urls[] = new moodle_url($baseurl, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme'));
+                    }
                 }
             }
         }
@@ -729,19 +764,29 @@ class theme_config {
         global $CFG;
         require_once($CFG->dirroot.'/lib/csslib.php');
 
-        $csscontent = '';
-        foreach ($this->get_css_files(false) as $value) {
-            foreach ($value as $val) {
-                if (is_array($val)) {
-                    foreach ($val as $v) {
-                        $csscontent .= file_get_contents($v) . "\n";
+        $csscontent = null;
+
+        // Try to retrieve the content from LESS.
+        if (!empty($this->lessfile)) {
+            $csscontent = $this->get_css_content_from_less(false);
+        }
+
+        // We do not have any content, or LESS failed.
+        if (empty($csscontent)) {
+            $csscontent = '';
+            foreach ($this->get_css_files(false) as $value) {
+                foreach ($value as $val) {
+                    if (is_array($val)) {
+                        foreach ($val as $v) {
+                            $csscontent .= file_get_contents($v) . "\n";
+                        }
+                    } else {
+                        $csscontent .= file_get_contents($val) . "\n";
                     }
-                } else {
-                    $csscontent .= file_get_contents($val) . "\n";
                 }
             }
+            $csscontent = $this->post_process($csscontent);
         }
-        $csscontent = $this->post_process($csscontent);
 
         if (!empty($CFG->enablecssoptimiser) && $this->supportscssoptimisation) {
             // This is an experimental feature introduced in Moodle 2.3
@@ -782,6 +827,14 @@ class theme_config {
             // the CSS before it is cached removing excess styles and rules and stripping
             // out any extraneous content such as comments and empty rules.
             $optimiser = new css_optimiser();
+        }
+
+        // If the type is LESS, then we retrieve all the content. If it fails, we proceed with regular CSS.
+        if ($type === 'less') {
+            $csscontent = $this->get_css_content_from_less(true);
+            if ($csscontent !== false) {
+                return $csscontent;
+            }
         }
 
         $cssfiles = array();
@@ -860,18 +913,20 @@ class theme_config {
      * Returns an array of organised CSS files required for this output.
      *
      * @param bool $themedesigner
+     * @param bool $includeless Whether or not to consider LESS files when retrieving the list.
      * @return array nested array of file paths
      */
-    protected function get_css_files($themedesigner) {
+    protected function get_css_files($themedesigner, $includeless = false) {
         global $CFG;
 
         $cache = null;
+        $cachekey = 'cssfiles:' . ($includeless ? 'less' : 'css');
         if ($themedesigner) {
             require_once($CFG->dirroot.'/lib/csslib.php');
             // We need some kind of caching here because otherwise the page navigation becomes
             // way too slow in theme designer mode. Feel free to create full cache definition later...
             $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'themedesigner', array('theme' => $this->name));
-            if ($files = $cache->get('cssfiles')) {
+            if ($files = $cache->get($cachekey)) {
                 if ($files['created'] > time() - THEME_DESIGNER_CACHE_LIFETIME) {
                     unset($files['created']);
                     return $files;
@@ -895,10 +950,15 @@ class theme_config {
                         continue;
                     }
 
-                    // Add main stylesheet.
-                    $sheetfile = "$fulldir/styles.css";
-                    if (is_readable($sheetfile)) {
+                    // Try to acquire the LESS file first.
+                    $sheetfile = "$fulldir/styles.less";
+                    if ($includeless && is_readable($sheetfile)) {
                         $cssfiles['plugins'][$type.'_'.$plugin] = $sheetfile;
+                    } else {
+                        $sheetfile = "$fulldir/styles.css";
+                        if (is_readable($sheetfile)) {
+                            $cssfiles['plugins'][$type.'_'.$plugin] = $sheetfile;
+                        }
                     }
 
                     // Create a list of candidate sheets from parents (direct parent last) and current theme.
@@ -910,9 +970,15 @@ class theme_config {
 
                     // Add the sheets found.
                     foreach ($candidates as $candidate) {
-                        $sheetthemefile = "$fulldir/styles_{$candidate}.css";
-                        if (is_readable($sheetthemefile)) {
+                        // Try to acquire the LESS file first.
+                        $sheetthemefile = "$fulldir/styles_{$candidate}.less";
+                        if ($includeless && is_readable($sheetthemefile)) {
                             $cssfiles['plugins'][$type.'_'.$plugin.'_'.$candidate] = $sheetthemefile;
+                        } else {
+                            $sheetthemefile = "$fulldir/styles_{$candidate}.css";
+                            if (is_readable($sheetthemefile)) {
+                                $cssfiles['plugins'][$type.'_'.$plugin.'_'.$candidate] = $sheetthemefile;
+                            }
                         }
                     }
                 }
@@ -920,7 +986,11 @@ class theme_config {
         }
 
         // Find out wanted parent sheets.
-        $excludes = $this->resolve_excludes('parents_exclude_sheets');
+        if ($includeless) {
+            $excludes = $this->resolve_excludes('parents_exclude_sheets_when_lessfile');
+        } else {
+            $excludes = $this->resolve_excludes('parents_exclude_sheets');
+        }
         if ($excludes !== true) {
             foreach (array_reverse($this->parent_configs) as $parent_config) { // Base first, the immediate parent last.
                 $parent = $parent_config->name;
@@ -928,10 +998,12 @@ class theme_config {
                     continue;
                 }
                 foreach ($parent_config->sheets as $sheet) {
-                    if (!empty($excludes[$parent]) and is_array($excludes[$parent])
-                        and in_array($sheet, $excludes[$parent])) {
+                    if (!empty($excludes[$parent]) && is_array($excludes[$parent])
+                            && in_array($sheet, $excludes[$parent])) {
                         continue;
                     }
+
+                    // We never refer to the parent LESS files.
                     $sheetfile = "$parent_config->dir/style/$sheet.css";
                     if (is_readable($sheetfile)) {
                         $cssfiles['parents'][$parent][$sheet] = $sheetfile;
@@ -940,11 +1012,20 @@ class theme_config {
             }
         }
 
-        // Current theme sheets.
+        // Current theme sheets and less file.
+        // We first add the LESS files because we want the CSS ones to be included after the
+        // LESS code. However, if both the LESS file and the CSS file share the same name,
+        // the CSS file is ignored.
+        if ($includeless && $this->lessfile) {
+            $sheetfile = "{$this->dir}/less/{$this->lessfile}.less";
+            if (is_readable($sheetfile)) {
+                $cssfiles['theme'][$this->lessfile] = $sheetfile;
+            }
+        }
         if (is_array($this->sheets)) {
             foreach ($this->sheets as $sheet) {
                 $sheetfile = "$this->dir/style/$sheet.css";
-                if (is_readable($sheetfile)) {
+                if (is_readable($sheetfile) && !isset($cssfiles['theme'][$sheet])) {
                     $cssfiles['theme'][$sheet] = $sheetfile;
                 }
             }
@@ -953,10 +1034,152 @@ class theme_config {
         if ($cache) {
             $files = $cssfiles;
             $files['created'] = time();
-            $cache->set('cssfiles', $files);
+            $cache->set($cachekey, $files);
+        }
+        return $cssfiles;
+    }
+
+    /**
+     * Return the CSS content generated from LESS files.
+     *
+     * @param bool $themedesigner True if theme designer is enabled.
+     * @return bool|string Return false when the compilation failed. Else the compiled string.
+     */
+    protected function get_css_content_from_less($themedesigner) {
+
+        $lessfile = $this->lessfile;
+        if (!$lessfile || !is_readable($this->dir . '/less/' . $lessfile . '.less')) {
+            throw new coding_exception('The theme did not define a LESS file, or it is not readable.');
         }
 
-        return $cssfiles;
+        // We might need more memory to do this, so let's play safe.
+        raise_memory_limit(MEMORY_EXTRA);
+
+        // Files list.
+        $files = $this->get_css_files($themedesigner, true);
+
+        // Get the LESS file path for relative imports.
+        $relativeto = $files['theme'][$lessfile];
+
+        // Instantiate the compiler.
+        $compiler = new core_lessc(array(
+            // We need to set the import directory to where $lessfile is.
+            'import_dirs' => array(dirname($relativeto) => '/'),
+            // Always disable default caching.
+            'cache_method' => false,
+            // Disable the relative URLs, we have post_process() to handle that.
+            'relativeUrls' => false,
+        ));
+
+        try {
+            foreach ($files as $type => $filelist) {
+                foreach ($filelist as $identifier => $filespaths) {
+                    if (!is_array($filespaths)) {
+                        // Some groups, like 'parents' are set in an array or theme, let's make sure we always have an array.
+                        $filespaths = array($identifier => $filespaths);
+                    }
+                    foreach ($filespaths as $identifier => $filepath) {
+                        $isless = strtolower(substr($filepath, -5)) === '.less';
+                        if ($type == 'theme' && $isless && $identifier === $lessfile) {
+                            // This is the theme LESS file.
+                            $compiler->parse_file_content($filepath);
+                        } else if ($isless) {
+                            // This is a LESS file, we import it to preserve @imports.
+                            $compiler->import_file($filepath, $relativeto);
+                        } else {
+                            // This is a CSS file, we import its content manually because we need to post_process() it.
+                            // If we delay the post processing of this CSS, we might end up with invalid LESS.
+                            // A good example of this is our [[setting:customcss]] which is not LESS compatible.
+                            $compiler->parse($this->post_process(file_get_contents($filepath)));
+                        }
+                    }
+                }
+            }
+
+            // Get the callbacks.
+            $compiler->parse($this->get_extra_less_code());
+            $compiler->ModifyVars($this->get_less_variables());
+
+            // Compile the CSS.
+            $compiled = $compiler->getCss();
+
+            // Post process the entire thing.
+            $compiled = $this->post_process($compiled);
+        } catch (Less_Exception_Parser $e) {
+            $compiled = false;
+            debugging('Error while compiling LESS ' . $lessfile . ' file: ' . $e->getMessage(), DEBUG_DEVELOPER);
+        }
+
+        // Try to save memory.
+        $compiler = null;
+        unset($compiler);
+
+        return $compiled;
+    }
+
+    /**
+     * Return extra LESS variables to use when compiling.
+     *
+     * @return array Where keys are the variable names (omitting the @), and the values are the value.
+     */
+    protected function get_less_variables() {
+        $variables = array();
+
+        // Getting all the candidate functions.
+        $candidates = array();
+        foreach ($this->parent_configs as $parent_config) {
+            if (!isset($parent_config->lessvariablescallback)) {
+                continue;
+            }
+            $candidates[] = $parent_config->lessvariablescallback;
+        }
+        $candidates[] = $this->lessvariablescallback;
+
+        // Calling the functions.
+        foreach ($candidates as $function) {
+            if (function_exists($function)) {
+                $vars = $function($this);
+                if (!is_array($vars)) {
+                    debugging('Callback ' . $function . ' did not return an array() as expected', DEBUG_DEVELOPER);
+                    continue;
+                }
+                $variables = array_merge($variables, $vars);
+            }
+        }
+
+        return $variables;
+    }
+
+    /**
+     * Return extra LESS code to add when compiling.
+     *
+     * This is intended to be used by themes to inject some LESS code
+     * before it gets compiled. If you want to inject variables you
+     * should use {@link self::get_less_variables()}.
+     *
+     * @return string The LESS code to inject.
+     */
+    protected function get_extra_less_code() {
+        $content = '';
+
+        // Getting all the candidate functions.
+        $candidates = array();
+        foreach ($this->parent_configs as $parent_config) {
+            if (!isset($parent_config->extralesscallback)) {
+                continue;
+            }
+            $candidates[] = $parent_config->extralesscallback;
+        }
+        $candidates[] = $this->extralesscallback;
+
+        // Calling the functions.
+        foreach ($candidates as $function) {
+            if (function_exists($function)) {
+                $content .= "\n/** Extra LESS from $function **/\n" . $function($this) . "\n";
+            }
+        }
+
+        return $content;
     }
 
     /**
