@@ -89,7 +89,6 @@ class qtype_calculated_attempt_upgrader_test extends question_attempt_upgrader_t
             'timemodified' => '1305830656',
             'layout' => '16,0,17,0,18,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '18',
@@ -289,7 +288,6 @@ Remember to type a unit.',
             'timemodified' => '1305830729',
             'layout' => '16,0,17,0,18,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '18',
@@ -532,7 +530,6 @@ Remember to type a unit.',
             'timemodified' => '1305830792',
             'layout' => '16,0,17,0,18,0',
             'preview' => '0',
-            'needsupgradetonewqe' => 1,
         );
         $question = (object) array(
             'id' => '18',

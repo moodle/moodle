@@ -45,182 +45,6 @@ class question_engine_attempt_upgrader {
     protected $questionloader;
     /** @var question_engine_assumption_logger */
     protected $logger;
-    /** @var int used by {@link prevent_timeout()}. */
-    protected $dotcounter = 0;
-    /** @var progress_bar */
-    protected $progressbar = null;
-    /** @var boolean */
-    protected $doingbackup = false;
-
-    /**
-     * Called before starting to upgrade all the attempts at a particular quiz.
-     * @param int $done the number of quizzes processed so far.
-     * @param int $outof the total number of quizzes to process.
-     * @param int $quizid the id of the quiz that is about to be processed.
-     */
-    protected function print_progress($done, $outof, $quizid) {
-        if (is_null($this->progressbar)) {
-            $this->progressbar = new progress_bar('qe2upgrade');
-            $this->progressbar->create();
-        }
-
-        gc_collect_cycles(); // This was really helpful in PHP 5.2. Perhaps remove.
-        $a = new stdClass();
-        $a->done = $done;
-        $a->outof = $outof;
-        $a->info = $quizid;
-        $this->progressbar->update($done, $outof, get_string('upgradingquizattempts', 'quiz', $a));
-    }
-
-    protected function prevent_timeout() {
-        core_php_time_limit::raise(300);
-        if ($this->doingbackup) {
-            return;
-        }
-        echo '.';
-        $this->dotcounter += 1;
-        if ($this->dotcounter % 100 == 0) {
-            echo '<br />';
-        }
-    }
-
-    protected function get_quiz_ids() {
-        global $CFG, $DB;
-
-        // Look to see if the admin has set things up to only upgrade certain attempts.
-        $partialupgradefile = $CFG->dirroot . '/' . $CFG->admin .
-                '/tool/qeupgradehelper/partialupgrade.php';
-        $partialupgradefunction = 'tool_qeupgradehelper_get_quizzes_to_upgrade';
-        if (is_readable($partialupgradefile)) {
-            include_once($partialupgradefile);
-            if (function_exists($partialupgradefunction)) {
-                $quizids = $partialupgradefunction();
-
-                // Ignore any quiz ids that do not acually exist.
-                if (empty($quizids)) {
-                    return array();
-                }
-                list($test, $params) = $DB->get_in_or_equal($quizids);
-                return $DB->get_fieldset_sql("
-                        SELECT id
-                          FROM {quiz}
-                         WHERE id $test
-                      ORDER BY id", $params);
-            }
-        }
-
-        // Otherwise, upgrade all attempts.
-        return $DB->get_fieldset_sql('SELECT id FROM {quiz} ORDER BY id');
-    }
-
-    public function convert_all_quiz_attempts() {
-        global $DB;
-
-        $quizids = $this->get_quiz_ids();
-        if (empty($quizids)) {
-            return true;
-        }
-
-        $done = 0;
-        $outof = count($quizids);
-        $this->logger = new question_engine_assumption_logger();
-
-        foreach ($quizids as $quizid) {
-            $this->print_progress($done, $outof, $quizid);
-
-            $quiz = $DB->get_record('quiz', array('id' => $quizid), '*', MUST_EXIST);
-            $this->update_all_attempts_at_quiz($quiz);
-
-            $done += 1;
-        }
-
-        $this->print_progress($outof, $outof, 'All done!');
-        $this->logger = null;
-    }
-
-    public function get_attempts_extra_where() {
-        return ' AND needsupgradetonewqe = 1';
-    }
-
-    public function update_all_attempts_at_quiz($quiz) {
-        global $DB;
-
-        // Wipe question loader cache.
-        $this->questionloader = new question_engine_upgrade_question_loader($this->logger);
-
-        $transaction = $DB->start_delegated_transaction();
-
-        $params = array('quizid' => $quiz->id);
-        $where = 'quiz = :quizid AND preview = 0' . $this->get_attempts_extra_where();
-
-        $quizattemptsrs = $DB->get_recordset_select('quiz_attempts', $where, $params, 'uniqueid');
-        $questionsessionsrs = $DB->get_recordset_sql("
-                SELECT s.*
-                  FROM {question_sessions} s
-                  JOIN {quiz_attempts} a ON (attemptid = uniqueid)
-                 WHERE $where
-              ORDER BY attemptid, questionid
-        ", $params);
-
-        $questionsstatesrs = $DB->get_recordset_sql("
-                SELECT s.*
-                  FROM {question_states} s
-                  JOIN {quiz_attempts} ON (s.attempt = uniqueid)
-                 WHERE $where
-              ORDER BY s.attempt, question, seq_number, s.id
-        ", $params);
-
-        $datatodo = $quizattemptsrs && $questionsessionsrs && $questionsstatesrs;
-        while ($datatodo && $quizattemptsrs->valid()) {
-            $attempt = $quizattemptsrs->current();
-            $quizattemptsrs->next();
-            $this->convert_quiz_attempt($quiz, $attempt, $questionsessionsrs, $questionsstatesrs);
-        }
-
-        $quizattemptsrs->close();
-        $questionsessionsrs->close();
-        $questionsstatesrs->close();
-
-        $transaction->allow_commit();
-    }
-
-    protected function convert_quiz_attempt($quiz, $attempt, moodle_recordset $questionsessionsrs,
-            moodle_recordset $questionsstatesrs) {
-        $qas = array();
-        $this->logger->set_current_attempt_id($attempt->id);
-        while ($qsession = $this->get_next_question_session($attempt, $questionsessionsrs)) {
-            $question = $this->load_question($qsession->questionid, $quiz->id);
-            $qstates = $this->get_question_states($attempt, $question, $questionsstatesrs);
-            try {
-                $qas[$qsession->questionid] = $this->convert_question_attempt(
-                        $quiz, $attempt, $question, $qsession, $qstates);
-            } catch (Exception $e) {
-                notify($e->getMessage());
-            }
-        }
-        $this->logger->set_current_attempt_id(null);
-
-        $questionorder = array();
-        foreach (explode(',', $quiz->questions) as $questionid) {
-            if ($questionid == 0) {
-                continue;
-            }
-            if (!array_key_exists($questionid, $qas)) {
-                $this->logger->log_assumption("Supplying minimal open state for
-                        question {$questionid} in attempt {$attempt->id} at quiz
-                        {$attempt->quiz}, since the session was missing.", $attempt->id);
-                try {
-                    $question = $this->load_question($questionid, $quiz->id);
-                    $qas[$questionid] = $this->supply_missing_question_attempt(
-                            $quiz, $attempt, $question);
-                } catch (Exception $e) {
-                    notify($e->getMessage());
-                }
-            }
-        }
-
-        return $this->save_usage($quiz->preferredbehaviour, $attempt, $qas, $quiz->questions);
-    }
 
     public function save_usage($preferredbehaviour, $attempt, $qas, $quizlayout) {
         $missing = array();
@@ -286,7 +110,6 @@ class question_engine_attempt_upgrader {
     protected function set_quiz_attempt_layout($qubaid, $layout) {
         global $DB;
         $DB->set_field('quiz_attempts', 'layout', $layout, array('uniqueid' => $qubaid));
-        $DB->set_field('quiz_attempts', 'needsupgradetonewqe', 0, array('uniqueid' => $qubaid));
     }
 
     protected function delete_quiz_attempt($qubaid) {
@@ -390,7 +213,6 @@ class question_engine_attempt_upgrader {
     }
 
     public function convert_question_attempt($quiz, $attempt, $question, $qsession, $qstates) {
-        $this->prevent_timeout();
 
         if ($question->qtype == 'random') {
             list($question, $qstates) = $this->decode_random_attempt($qstates, $question->maxmark);
@@ -438,7 +260,6 @@ class question_engine_attempt_upgrader {
     }
 
     public function prepare_to_restore() {
-        $this->doingbackup = true; // Prevent printing of dots to stop timeout on upgrade.
         $this->logger = new dummy_question_engine_assumption_logger();
         $this->questionloader = new question_engine_upgrade_question_loader($this->logger);
     }
@@ -620,4 +441,33 @@ class question_deleted_question_attempt_updater extends question_qtype_attempt_u
     public function set_data_elements_for_step($state, &$data) {
         $data['upgradedfromdeletedquestion'] = $state->answer;
     }
+}
+
+/**
+ * This check verifies that all quiz attempts were upgraded since following
+ * the question engine upgrade in Moodle 2.1.
+ *
+ * @param environment_results object to update, if relevant.
+ * @return environment_results updated results object, or null if this test is not relevant.
+ */
+function quiz_attempts_upgraded(environment_results $result) {
+    global $DB;
+
+    $dbman = $DB->get_manager();
+    $table = new xmldb_table('quiz_attempts');
+    $field = new xmldb_field('needsupgradetonewqe');
+
+    if (!$dbman->table_exists($table) || !$dbman->field_exists($table, $field)) {
+        // DB already upgraded. This test is no longer relevant.
+        return null;
+    }
+
+    if (!$DB->record_exists('quiz_attempts', array('needsupgradetonewqe' => 1))) {
+        // No 1s present in that column means there are no problems.
+        return null;
+    }
+
+    // Only display anything if the admins need to be aware of the problem.
+    $result->setStatus(false);
+    return $result;
 }

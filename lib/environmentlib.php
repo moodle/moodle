@@ -1123,7 +1123,7 @@ class environment_results {
      */
     var $part;
     /**
-     * @var bool
+     * @var bool true means the test passed and all is OK. false means it failed.
      */
     var $status;
     /**
@@ -1180,11 +1180,11 @@ class environment_results {
     /**
      * Set the status
      *
-     * @param boolean $status the status (true/false)
+     * @param bool $testpassed true means the test passed and all is OK. false means it failed.
      */
-    function setStatus($status) {
-        $this->status=$status;
-        if ($status) {
+    function setStatus($testpassed) {
+        $this->status = $testpassed;
+        if ($testpassed) {
             $this->setErrorCode(NO_ERROR);
         }
     }
@@ -1274,7 +1274,7 @@ class environment_results {
     /**
      * Get the status
      *
-     * @return boolean result
+     * @return bool true means the test passed and all is OK. false means it failed.
      */
     function getStatus() {
         return $this->status;

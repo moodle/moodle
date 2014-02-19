@@ -3032,5 +3032,42 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014021800.00);
     }
 
+    if ($oldversion < 2014021300.01) {
+        // Force uninstall of deleted tool.
+        if (!file_exists("$CFG->dirroot/$CFG->admin/tool/qeupgradehelper")) {
+            // Remove all other associated config.
+            unset_all_config_for_plugin('tool_qeupgradehelper');
+        }
+        upgrade_main_savepoint(true, 2014021300.01);
+    }
+
+    if ($oldversion < 2014021300.02) {
+
+        // Define table question_states to be dropped.
+        $table = new xmldb_table('question_states');
+
+        // Conditionally launch drop table for question_states.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014021300.02);
+    }
+
+    if ($oldversion < 2014021900.00) {
+
+        // Define table question_sessions to be dropped.
+        $table = new xmldb_table('question_sessions');
+
+        // Conditionally launch drop table for question_sessions.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014021900.00);
+    }
+
     return true;
 }
