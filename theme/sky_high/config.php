@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- *
- *
  * DO NOT MODIFY THIS THEME!
  * COPY IT FIRST, THEN RENAME THE COPY AND MODIFY IT INSTEAD.
  *
@@ -24,7 +22,9 @@
  *  http://docs.moodle.org/dev/Themes_2.0
  *
  * @package   theme_sky_high
-  */
+ * @copyright  2010 John Stabinger (http://newschoollearning.com/)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 $THEME->name = 'sky_high';
 
