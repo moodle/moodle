@@ -39,7 +39,7 @@ function nimble_process_css($css, $theme) {
     }
     $css = nimble_set_linkcolor($css, $linkcolor);
 
-	// Set the link hover color.
+    // Set the link hover color.
     if (!empty($theme->settings->linkhover)) {
         $linkhover = $theme->settings->linkhover;
     } else {
