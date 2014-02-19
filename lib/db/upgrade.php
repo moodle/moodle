@@ -3055,7 +3055,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014021900.02);
     }
 
-    if ($oldversion < 2014021900.00) {
+    if ($oldversion < 2014021900.03) {
 
         // Define table question_sessions to be dropped.
         $table = new xmldb_table('question_sessions');
@@ -3066,7 +3066,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
         // Main savepoint reached.
-        upgrade_main_savepoint(true, 2014021900.00);
+        upgrade_main_savepoint(true, 2014021900.03);
     }
 
     return true;
