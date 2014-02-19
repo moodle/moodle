@@ -1003,13 +1003,26 @@ function message_add_contact($contactid, $blocked=0) {
         return false;
     }
 
+    // Check if a record already exists as we may be changing blocking status.
     if (($contact = $DB->get_record('message_contacts', array('userid' => $USER->id, 'contactid' => $contactid))) !== false) {
-    // A record already exists. We may be changing blocking status.
-
+        // Check if blocking status has been changed.
         if ($contact->blocked !== $blocked) {
-            // Blocking status has been changed.
             $contact->blocked = $blocked;
-            return $DB->update_record('message_contacts', $contact);
+            $DB->update_record('message_contacts', $contact);
+
+            if ($blocked == 1) {
+                // Trigger event for blocking a contact.
+                $event = \core\event\message_contact_blocked::create(array(
+                    'objectid' => $contact->id,
+                    'userid' => $contact->userid,
+                    'relateduserid' => $contact->contactid,
+                    'context'  => context_user::instance($contact->userid)
+                ));
+                $event->add_record_snapshot('message_contacts', $contact);
+                $event->trigger();
+            }
+
+            return true;
         } else {
             // No change to blocking status.
             return true;
@@ -1076,9 +1089,10 @@ function message_unblock_contact($contactid) {
 }
 
 /**
- * block a user
+ * Block a user.
  *
  * @param int $contactid the user ID of the user to block
+ * @return bool
  */
 function message_block_contact($contactid) {
     return message_add_contact($contactid, 1);
