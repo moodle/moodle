@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Atto text editor integration version file.
+ * Atto text editor align plugin lib.
  *
- * @package    atto_outdent
- * @copyright  2013 Damyon Wiese  <damyon@moodle.com>
+ * @package    atto_align
+ * @copyright  2014 Jason Fowler
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2014012800;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2013110500;        // Requires this Moodle version.
-$plugin->component = 'atto_outdent';  // Full name of the plugin (used for diagnostics).
+/**
+ * Initialise the strings required for JS.
+ *
+ * @return void
+ */
+function atto_indent_strings_for_js() {
+    global $PAGE;
+    $PAGE->requires->strings_for_js(array('indent', 'outdent'), 'atto_indent');
+}

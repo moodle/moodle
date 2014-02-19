@@ -1,5 +1,0 @@
-{
-  "moodle-atto_outdent-button": {
-    "requires": ["node"]
-  }
-}
