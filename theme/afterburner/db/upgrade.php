@@ -22,6 +22,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+/**
+ * Upgrade steps for the Afterburner theme.
+ *
+ * @param int $oldversion
+ * @return bool
+ */
 function xmldb_theme_afterburner_upgrade($oldversion) {
     global $CFG, $DB, $OUTPUT;
 
