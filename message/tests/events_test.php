@@ -138,4 +138,33 @@ class core_message_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'message', 'unblock contact', 'index.php?user1=' . $user->id . '&amp;user2=2', $user->id);
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the message sent event.
+     *
+     * We can not use the message_send() function in the unit test to check that the event was fired as there is a
+     * conditional check to ensure a fake message is sent during unit tests when calling that particular function.
+     */
+    public function test_message_sent() {
+        $event = \core\event\message_sent::create(array(
+            'userid' => 1,
+            'context'  => context_system::instance(),
+            'relateduserid' => 2,
+            'other' => array(
+                'messageid' => 3
+            )
+        ));
+
+        // Trigger and capturing the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\message_sent', $event);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $expected = array(SITEID, 'message', 'write', 'index.php?user=1&id=2&history=1#m3', 1);
+        $this->assertEventLegacyLogData($expected, $event);
+    }
 }

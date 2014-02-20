@@ -247,6 +247,18 @@ function message_send($eventdata) {
         }
     }
 
+    // Trigger event for sending a message.
+    $event = \core\event\message_sent::create(array(
+        'userid' => $eventdata->userfrom->id,
+        'context'  => context_user::instance($eventdata->userfrom->id),
+        'relateduserid' => $eventdata->userto->id,
+        'other' => array(
+            'messageid' => $messageid // Can't use this as the objectid as it can either be the id in the 'message_read'
+                                      // or 'message' table.
+        )
+    ));
+    $event->trigger();
+
     return $messageid;
 }
 
