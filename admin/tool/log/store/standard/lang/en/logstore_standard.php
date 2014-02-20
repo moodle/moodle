@@ -24,5 +24,5 @@
 
 $string['buffersize'] = 'Write buffer size';
 $string['pluginname'] = 'Standard log';
-$string['pluginname_desc'] = 'Standard log plugin, the data is stored in Moodle database table.';
+$string['pluginname_desc'] = 'A log plugin stores log entries in a Moodle database table.';
 $string['standard:read'] = 'Read logs';
