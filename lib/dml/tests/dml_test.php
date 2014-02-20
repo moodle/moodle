@@ -48,7 +48,7 @@ class core_dml_testcase extends database_driver_testcase {
 
         $table = new xmldb_table($tablename);
         $table->setComment("This is a test'n drop table. You can drop it safely");
-        return new xmldb_table($tablename);
+        return $table;
     }
 
     public function test_diagnose() {
