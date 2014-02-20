@@ -31,11 +31,10 @@ require_once($CFG->dirroot.'/user/profile/lib.php');
 require_once('lib.php');
 require_once($CFG->dirroot.'/local/email/lib.php');
 
-httpsrequired();
-
 $id = optional_param('id', $USER->id, PARAM_INT);    // User id; -1 if creating new user.
 
 require_login();
+$PAGE->https_required();
 
 $url = new moodle_url('/blocks/iomad_company_admin/editadvanced.php');
 if ($id !== $USER->id) {
