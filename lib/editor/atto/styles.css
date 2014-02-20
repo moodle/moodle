@@ -4,6 +4,13 @@
 }
 .editor_atto_content {
     padding: 4px;
+    resize: vertical;
+    overflow: auto;
+    height: 200px;
+}
+/* Resize doesn't work in IE so revert to having the editor grow with the content */
+body.ie .editor_atto_content {
+    height: auto;
 }
 
 .editor_atto_content_wrap,
