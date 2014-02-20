@@ -2528,8 +2528,7 @@ class assign {
             $action,
             $fullurl,
             $info,
-            $this->get_course_module()->id,
-            $USER->id
+            $this->get_course_module()->id
         );
 
         if ($return) {
