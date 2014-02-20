@@ -240,7 +240,7 @@ if ($usernew = $userform->get_data()) {
             redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
         }
     } else {
-        session_gc(); // Remove stale sessions.
+        \core\session\manager::gc(); // Remove stale sessions.
         redirect("$CFG->wwwroot/blocks/iomad_company_admin/editusers.php");
     }
     // Never reached.
