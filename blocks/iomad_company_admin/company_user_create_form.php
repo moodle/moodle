@@ -20,6 +20,7 @@
 
 require_once(dirname(__FILE__) . '/../../config.php');
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->dirroot . '/user/editlib.php');
 require_once('lib.php');
 
 class user_edit_form extends company_moodleform {
@@ -81,22 +82,13 @@ class user_edit_form extends company_moodleform {
         /* copied from /user/editlib.php */
         $strrequired = get_string('required');
 
-        $nameordercheck = new stdClass();
-        $nameordercheck->firstname = 'a';
-        $nameordercheck->lastname  = 'b';
-        if (fullname($nameordercheck) == 'b a') {  // See MDL-4325.
-            $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
-            $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
-        } else {
-            $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
-            $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
-        }
-
-        $mform->addRule('firstname', $strrequired, 'required', null, 'client');
-        $mform->setType('firstname', PARAM_NOTAGS);
-
-        $mform->addRule('lastname', $strrequired, 'required', null, 'client');
-        $mform->setType('lastname', PARAM_NOTAGS);
+        // Deal with the name order sorting and required fields.
+        $necessarynames = useredit_get_required_name_fields();
+        foreach ($necessarynames as $necessaryname) {
+            $mform->addElement('text', $necessaryname, get_string($necessaryname), 'maxlength="100" size="30"');
+            $mform->addRule($necessaryname, $strrequired, 'required', null, 'client');
+            $mform->setType($necessaryname, PARAM_NOTAGS);
+        } 
 
         // Do not show email field if change confirmation is pending.
         if (!empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
