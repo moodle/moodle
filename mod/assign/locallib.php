@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 define('ASSIGN_SUBMISSION_STATUS_REOPENED', 'reopened');
 define('ASSIGN_SUBMISSION_STATUS_DRAFT', 'draft');
 define('ASSIGN_SUBMISSION_STATUS_SUBMITTED', 'submitted');
+define('ASSIGN_SUBMISSION_STATUS_NOTSUBMITTED', '');
 
 // Search filters for grading page.
 define('ASSIGN_FILTER_SUBMITTED', 'submitted');
@@ -5322,6 +5323,8 @@ class assign {
         if ($pluginerror || $allempty) {
             if ($allempty) {
                 $notices[] = get_string('submissionempty', 'mod_assign');
+                $submission->status = ASSIGN_SUBMISSION_STATUS_NOTSUBMITTED;
+                $this->update_submission($submission, $USER->id, true, $instance->teamsubmission);
             }
             return false;
         }
