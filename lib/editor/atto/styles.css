@@ -201,3 +201,10 @@ div.editor_atto_content:hover .atto_control {
     border-radius: 2px;
     display: block;
 }
+
+/* Get broken images back in firefox */
+.editor_atto_content img:-moz-broken {
+    -moz-force-broken-image-icon:1;
+    min-width:24px;
+    min-height:24px;
+}
