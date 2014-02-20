@@ -124,11 +124,6 @@ if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $con
     echo $OUTPUT->header();
     notice(get_string("activityiscurrentlyhidden"));
 }
-add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id&amp;tab=$tab", $glossary->id, $cm->id);
-
-// Mark as viewed
-$completion = new completion_info($course);
-$completion->set_module_viewed($cm);
 
 /// stablishing flag variables
 if ( $sortorder = strtolower($sortorder) ) {
@@ -228,6 +223,21 @@ default:
     $showcommonelements = 1;
 break;
 }
+
+// Trigger module viewed event.
+$event = \mod_glossary\event\course_module_viewed::create(array(
+    'objectid' => $glossary->id,
+    'context' => $context,
+    'other' => array('mode' => $mode)
+));
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('glossary', $glossary);
+$event->trigger();
+
+// Mark as viewed
+$completion = new completion_info($course);
+$completion->set_module_viewed($cm);
 
 /// Printing the heading
 $strglossaries = get_string("modulenameplural", "glossary");
