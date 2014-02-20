@@ -26,10 +26,10 @@ class iomad {
      * @returns int
      */
     public static function get_my_companyid($context) {
-        global $SESSION,$USER;
+        global $SESSION, $USER;
 
         // are we logged in?
-        if (empty($USER)) {
+        if (empty($USER->id)) {
             return -1;
         }
 
