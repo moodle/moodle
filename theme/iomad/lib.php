@@ -200,7 +200,7 @@ function theme_iomad_process_company_css($css, $theme) {
     if (isset($USER->company)) {
         // prepare logo fullpath
         $tag = '[[setting:clientlogo]]';
-        $context = get_context_instance(CONTEXT_SYSTEM);
+        $context = context_system::instance();
         $logo = file_rewrite_pluginfile_urls('@@PLUGINFILE@@/[[company:logo_filename]]',
                                              'pluginfile.php',
                                              $context->id,
