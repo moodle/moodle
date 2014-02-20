@@ -585,7 +585,12 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        $numbers = $data['number'];
+
+        if (array_key_exists('number', $data)) {
+            $numbers = $data['number'];
+        } else {
+            $numbers = array();
+        }
         foreach ($numbers as $key => $number) {
             if (! is_numeric($number)) {
                 if (stristr($number, ',')) {
