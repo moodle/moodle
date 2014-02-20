@@ -11,5 +11,13 @@
         "yui-throttle",
         "moodle-core-notification"
       ]
+  },
+  "moodle-editor_atto-editor-shortcut": {
+      "requires": [
+          "node",
+          "event",
+          "event-custom",
+          "moodle-editor_atto-editor"
+      ]
   }
 }

@@ -7,6 +7,11 @@
         "controlmenu.js",
         "clean.js"
       ]
+    },
+    "moodle-editor_atto-editor-shortcut": {
+      "jsfiles": [
+        "shortcut.js"
+      ]
     }
   }
 }

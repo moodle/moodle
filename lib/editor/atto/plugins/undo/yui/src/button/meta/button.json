@@ -1,5 +1,5 @@
 {
   "moodle-atto_undo-button": {
-    "requires": ["node"]
+    "requires": ["node", "moodle-editor_atto-editor-shortcut"]
   }
 }

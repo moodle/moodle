@@ -1,5 +1,5 @@
 {
   "moodle-atto_underline-button": {
-    "requires": ["node"]
+    "requires": ["node", "moodle-editor_atto-editor-shortcut"]
   }
 }
