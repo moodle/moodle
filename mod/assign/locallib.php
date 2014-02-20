@@ -64,6 +64,7 @@ require_once($CFG->dirroot . '/mod/assign/renderable.php');
 require_once($CFG->dirroot . '/mod/assign/gradingtable.php');
 require_once($CFG->libdir . '/eventslib.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
+require_once($CFG->dirroot . '/mod/assign/lib.php');
 
 /**
  * Standard base class for mod_assign (assignment types).
