@@ -137,7 +137,7 @@ class behat_permissions extends behat_base {
             // Converting from permission to constant value.
             $permissionvalue = constant($permissionconstant);
 
-            // Here we wait for the element to appear and exception if it does not exists.
+            // Here we wait for the element to appear and exception if it does not exist.
             $radio = $this->find('xpath', '//input[@name="' . $capability . '" and @value="' . $permissionvalue . '"]');
             $radio->click();
         }

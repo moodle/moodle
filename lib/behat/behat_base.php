@@ -277,7 +277,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * The arguments of the closure are mixed, use $args depending on your needs.
      *
      * You can provide an exception to give more accurate feedback to tests writers, otherwise the
-     * closure exception will be used, but you must provide an exception if the closure does not throws
+     * closure exception will be used, but you must provide an exception if the closure does not throw
      * an exception.
      *
      * @throws Exception If it timeouts without receiving something != false from the closure
