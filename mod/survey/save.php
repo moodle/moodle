@@ -54,7 +54,13 @@
         print_error('invalidsurveyid', 'survey');
     }
 
-    add_to_log($course->id, "survey", "submit", "view.php?id=$cm->id", "$survey->id", "$cm->id");
+    $params = array(
+        'context' => $context,
+        'courseid' => $course->id,
+        'other' => array('surveyid' => $survey->id)
+    );
+    $event = \mod_survey\event\response_submitted::create($params);
+    $event->trigger();
 
     $strsurveysaved = get_string('surveysaved', 'survey');
 
