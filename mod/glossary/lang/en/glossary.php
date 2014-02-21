@@ -162,6 +162,7 @@ $string['evententryapproved'] = 'Entry has been approved';
 $string['evententrycreated'] = 'Entry has been created';
 $string['evententrydeleted'] = 'Entry has been deleted';
 $string['evententrydisapproved'] = 'Entry has been disapproved';
+$string['evententryviewed'] = 'Entry has been viewed';
 $string['evententryupdated'] = 'Entry has been updated';
 $string['explainaddentry'] = 'Add a new entry to the current glossary.<br />Concept and definition are mandatory fields.';
 $string['explainall'] = 'Shows ALL entries on one page';
