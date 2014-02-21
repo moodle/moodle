@@ -102,7 +102,14 @@ if ( $hook >0 ) {
             $cat->usedynalink = $usedynalink;
 
             $DB->update_record("glossary_categories", $cat);
-            add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
+            $event = \mod_glossary\event\category_updated::create(array(
+                'context' => $context,
+                'objectid' => $hook
+            ));
+            $cat->glossaryid = $glossary->id;
+            $event->add_record_snapshot('glossary_categories', $cat);
+            $event->add_record_snapshot('glossary', $glossary);
+            $event->trigger();
 
         } else {
             echo $OUTPUT->header();
@@ -121,7 +128,13 @@ if ( $hook >0 ) {
             $DB->delete_records("glossary_entries_categories", array("categoryid"=>$hook));
             $DB->delete_records("glossary_categories", array("id"=>$hook));
 
-            add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook,$cm->id);
+            $event = \mod_glossary\event\category_deleted::create(array(
+                'context' => $context,
+                'objectid' => $hook
+            ));
+            $event->add_record_snapshot('glossary_categories', $category);
+            $event->add_record_snapshot('glossary', $glossary);
+            $event->trigger();
 
             redirect("editcategories.php?id=$cm->id", get_string("categorydeleted", "glossary"), 2);
         } else {
@@ -181,7 +194,13 @@ if ( $hook >0 ) {
             $cat->glossaryid = $glossary->id;
 
             $cat->id = $DB->insert_record("glossary_categories", $cat);
-            add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id,$cm->id);
+            $event = \mod_glossary\event\category_created::create(array(
+                'context' => $context,
+                'objectid' => $cat->id
+            ));
+            $event->add_record_snapshot('glossary_categories', $cat);
+            $event->add_record_snapshot('glossary', $glossary);
+            $event->trigger();
         }
     } else {
         echo $OUTPUT->header();
