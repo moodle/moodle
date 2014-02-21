@@ -762,7 +762,6 @@ $string['explanation'] = 'Explanation';
 $string['extendenrol'] = 'Extend enrolment (individual)';
 $string['extendperiod'] = 'Extended period';
 $string['failedloginattempts'] = '{$a->attempts} failed logins since your last login';
-$string['failedloginattemptsall'] = '{$a->attempts} failed logins for {$a->accounts} accounts';
 $string['feedback'] = 'Feedback';
 $string['file'] = 'File';
 $string['fileexists'] = 'There is already a file called {$a}';

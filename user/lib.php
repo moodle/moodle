@@ -576,3 +576,29 @@ function can_view_user_details_cap($user, $course = null) {
 function user_page_type_list($pagetype, $parentcontext, $currentcontext) {
     return array('user-profile' => get_string('page-user-profile', 'pagetype'));
 }
+
+/**
+ * Count the number of failed login attempts for the given user, since last successful login.
+ *
+ * @param int|stdclass $user user id or object.
+ * @param bool $reset Resets failed login count, if set to true.
+ *
+ * @return int number of failed login attempts since the last successful login.
+ */
+function user_count_login_failures($user, $reset = true) {
+    global $DB;
+
+    if (!is_object($user)) {
+        $user = $DB->get_record('user', array('id' => $user), '*', MUST_EXIST);
+    }
+    if ($user->deleted) {
+        // Deleted user, nothing to do.
+        return 0;
+    }
+    $count = get_user_preferences('login_failed_count_since_success', 0, $user);
+    if ($reset) {
+        set_user_preference('login_failed_count_since_success', 0, $user);
+    }
+    return $count;
+}
+

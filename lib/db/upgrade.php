@@ -3347,5 +3347,18 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2014032700.01);
     }
 
+    if ($oldversion < 2014032700.02) {
+
+        // Update displayloginfailures setting.
+        if (empty($CFG->displayloginfailures)) {
+            set_config('displayloginfailures', 0);
+        } else {
+            set_config('displayloginfailures', 1);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2014032700.02);
+    }
+
     return true;
 }

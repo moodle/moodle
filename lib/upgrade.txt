@@ -25,6 +25,7 @@ DEPRECATIONS:
 * Various cm_info methods have been deprecated in favour of their read-only properties (get_url(), get_content(), get_extra_classes(),
   get_on_click(), get_custom_data(), get_after_link, get_after_edit_icons)
 * The ajaxenabled function has been deprecated and always returns true. All code should be fully functional in Javascript.
+* count_login_failures() has been deprecated, use user_count_login_failures() instead. Refer MDL-42891 for details.
 
 YUI:
   * The lightbox attribute for moodle-core-notification-dialogue has been

@@ -647,15 +647,18 @@ function login_attempt_failed($user) {
         return;
     }
 
+    $count = get_user_preferences('login_failed_count', 0, $user);
+    $last = get_user_preferences('login_failed_last', 0, $user);
+    $sincescuccess = get_user_preferences('login_failed_count_since_success', $count, $user);
+    $sincescuccess = $sincescuccess + 1;
+    set_user_preference('login_failed_count_since_success', $sincescuccess, $user);
+
     if (empty($CFG->lockoutthreshold)) {
         // No threshold means no lockout.
         // Always unlock here, there might be some race conditions or leftovers when switching threshold.
         login_unlock_account($user);
         return;
     }
-
-    $count = get_user_preferences('login_failed_count', 0, $user);
-    $last = get_user_preferences('login_failed_last', 0, $user);
 
     if (!empty($CFG->lockoutwindow) and time() - $last > $CFG->lockoutwindow) {
         $count = 0;

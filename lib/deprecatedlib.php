@@ -4335,3 +4335,43 @@ function can_use_html_editor() {
     debugging('can_use_html_editor has been deprecated please update your code to assume it returns true.', DEBUG_DEVELOPER);
     return true;
 }
+
+
+/**
+ * Returns an object with counts of failed login attempts
+ *
+ * Returns information about failed login attempts.  If the current user is
+ * an admin, then two numbers are returned:  the number of attempts and the
+ * number of accounts.  For non-admins, only the attempts on the given user
+ * are shown.
+ *
+ * @deprecate since Moodle 2.7, use {@link user_count_login_failures()} instead.
+ * @global moodle_database $DB
+ * @uses CONTEXT_SYSTEM
+ * @param string $mode Either 'admin' or 'everybody'
+ * @param string $username The username we are searching for
+ * @param string $lastlogin The date from which we are searching
+ * @return int
+ */
+function count_login_failures($mode, $username, $lastlogin) {
+    global $DB;
+
+    debugging('This method has been deprecated. Please use user_count_login_failures() instead.', DEBUG_DEVELOPER);
+
+    $params = array('mode'=>$mode, 'username'=>$username, 'lastlogin'=>$lastlogin);
+    $select = "module='login' AND action='error' AND time > :lastlogin";
+
+    $count = new stdClass();
+
+    if (is_siteadmin()) {
+        if ($count->attempts = $DB->count_records_select('log', $select, $params)) {
+            $count->accounts = $DB->count_records_select('log', $select, $params, 'COUNT(DISTINCT info)');
+            return $count;
+        }
+    } else if ($mode == 'everybody') {
+        if ($count->attempts = $DB->count_records_select('log', "$select AND info = :username", $params)) {
+            return $count;
+        }
+    }
+    return NULL;
+}
