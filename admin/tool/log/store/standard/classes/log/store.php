@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 class store implements \tool_log\log\writer, \core\log\sql_reader {
     use \tool_log\helper\store,
-        \tool_log\helper\writer,
+        \tool_log\helper\buffered_writer,
         \tool_log\helper\reader;
 
     /** @var string $logguests true if logging guest access */

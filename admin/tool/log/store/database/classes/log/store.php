@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 class store implements \tool_log\log\writer, \core\log\reader {
     use \tool_log\helper\store,
         \tool_log\helper\reader,
-        \tool_log\helper\writer {
+        \tool_log\helper\buffered_writer {
         dispose as helper_dispose;
     }
 

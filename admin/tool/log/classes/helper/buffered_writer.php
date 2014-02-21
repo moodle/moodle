@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Helper trait writer
+ * Helper trait buffered_writer
  *
  * @package    tool_log
  * @copyright  2014 onwards Ankit Agarwal
@@ -26,14 +26,14 @@ namespace tool_log\helper;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Helper trait writer. Adds buffer support for the store.
+ * Helper trait buffered_writer. Adds buffer support for the store.
  * \tool_log\helper\store must be included before using this trait.
  *
  * @package    tool_log
  * @copyright  2014 onwards Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-trait writer {
+trait buffered_writer {
 
     /** @var array $buffer buffer of events. */
     protected $buffer = array();
@@ -45,8 +45,8 @@ trait writer {
     protected $count = 0;
 
     /**
-     * Write event in the store with buffering. Insert_events() must be
-     * defined. override in stores if the store doesn't support buffering.
+     * Write event in the store with buffering. Method insert_events() must be
+     * defined.
      *
      * @param \core\event\base $event
      *
@@ -77,6 +77,23 @@ trait writer {
         $this->buffer = array();
         $this->insert_events($events);
     }
+
+    /**
+     * Bulk write a given array of events to the backend. Stores must implement this.
+     *
+     * @param array $events An array of events to write.
+     */
+    abstract protected function insert_events($events);
+
+    /**
+     * Get a config value for the store.
+     *
+     * @param string $name Config name
+     * @param mixed $default default value
+     *
+     * @return mixed config value if set, else the default value.
+     */
+    abstract protected function get_config($name, $default = null);
 
     /**
      * Push any remaining events to the database. Insert_events() must be
