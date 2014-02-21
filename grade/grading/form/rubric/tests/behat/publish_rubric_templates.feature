@@ -5,21 +5,21 @@ Feature: Publish rubrics as templates
   I need to publish rubrics and make them available to all teachers
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | manager1 | Manager | 1 | manager1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "activities" exists:
+    And the following "activities" exist:
       | activity | course | idnumber | name                   | intro | advancedgradingmethod_submissions |
       | assign   | C1     | A1       | Test assignment 1 name | TA1   | rubric                            |
       | assign   | C1     | A2       | Test assignment 2 name | TA2   | rubric                            |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And the following "system role assigns" exists:
+    And the following "system role assigns" exist:
       | user | role | contextlevel | reference |
       | manager1 | manager | System | |
     And I log in as "manager1"
@@ -52,5 +52,5 @@ Feature: Publish rubrics as templates
   Scenario: Create a rubric template and reuse it as a teacher, with Javascript disabled
     Then the field "Description" matches value "Assignment 1 description"
     # Trying to avoid pointing by id or name as the code internals may change.
-    And "//table[@class='criteria']//textarea[text()='Criterion 1']" "xpath_element" should exists
+    And "//table[@class='criteria']//textarea[text()='Criterion 1']" "xpath_element" should exist
     And I press "Cancel"

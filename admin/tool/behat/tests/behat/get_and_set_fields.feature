@@ -5,31 +5,31 @@ Feature: Verify that all form fields values can be get and set
   I need to verify it all works in real moodle forms
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | email | firstname | lastname |
       | student1 | s1@asd.com | Student | 1 |
       | student2 | s2@asd.com | Student | 2 |
       | student3 | s3@asd.com | Student | 3 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | student1 | C1 | student |
       | student2 | C1 | student |
       | student3 | C1 | student |
       | admin | C1 | editingteacher |
-    And the following "groups" exists:
+    And the following "groups" exist:
       | name | description | course | idnumber |
       | Group 1 | G1 description | C1 | G1 |
       | Group 2 | G1 description | C1 | G2 |
-    And the following "group members" exists:
+    And the following "group members" exist:
       | user | group |
       | student1 | G1 |
       | student2 | G1 |
       | student2 | G2 |
       | student3 | G2 |
-    And the following "activities" exists:
+    And the following "activities" exist:
       | activity | course | idnumber | name | intro | firstpagetitle | wikimode | visible |
       | wiki | C1 | wiki1 | Test this one | Test this one | Test this one | collaborative | 0 |
     And I log in as "admin"

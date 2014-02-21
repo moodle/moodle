@@ -498,7 +498,7 @@ class behat_course extends behat_base {
 
         if ($this->is_course_editor()) {
 
-            // The activity should exists.
+            // The activity should exist.
             $activitynode = $this->get_activity_node($activityname);
 
             // Should be hidden.
@@ -511,7 +511,7 @@ class behat_course extends behat_base {
 
         } else {
 
-            // It should not exists at all.
+            // It should not exist at all.
             try {
                 $this->find_link($activityname);
                 throw new ExpectationException('The "' . $activityname . '" should not appear');
@@ -1440,20 +1440,20 @@ class behat_course extends behat_base {
         );
         switch ($mode) {
             case "Courses":
-                $return[] = new Given('"#category-listing" "css_element" should not exists');
-                $return[] = new Given('"#course-listing" "css_element" should exists');
+                $return[] = new Given('"#category-listing" "css_element" should not exist');
+                $return[] = new Given('"#course-listing" "css_element" should exist');
                 break;
             case "Course categories":
-                $return[] = new Given('"#category-listing" "css_element" should exists');
-                $return[] = new Given('"#course-listing" "css_element" should not exists');
+                $return[] = new Given('"#category-listing" "css_element" should exist');
+                $return[] = new Given('"#course-listing" "css_element" should not exist');
                 break;
             case "Courses categories and courses":
             default:
-                $return[] = new Given('"#category-listing" "css_element" should exists');
-                $return[] = new Given('"#course-listing" "css_element" should exists');
+                $return[] = new Given('"#category-listing" "css_element" should exist');
+                $return[] = new Given('"#course-listing" "css_element" should exist');
                 break;
         }
-        $return[] = new Given('"#course-detail" "css_element" should not exists');
+        $return[] = new Given('"#course-detail" "css_element" should not exist');
         return $return;
     }
 
@@ -1467,7 +1467,7 @@ class behat_course extends behat_base {
     public function i_should_see_the_courses_management_page_with_a_course_selected($mode) {
         $return = $this->i_should_see_the_courses_management_page($mode);
         array_pop($return);
-        $return[] = new Given('"#course-detail" "css_element" should exists');
+        $return[] = new Given('"#course-detail" "css_element" should exist');
         return $return;
     }
 

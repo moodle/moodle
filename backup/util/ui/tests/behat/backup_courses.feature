@@ -5,11 +5,11 @@ Feature: Backup Moodle courses
   I need to create backups of courses
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | numsections |
       | Course 1 | C1 | 0 | 10 |
       | Course 2 | C2 | 0 | 2 |
-    And the following "activities" exists:
+    And the following "activities" exist:
       | activity | course | idnumber | name | intro | section |
       | assign | C2 | assign1 | Test assign | Assign description | 1 |
       | data | C2 | data1 | Test data | Database description | 2 |
@@ -37,8 +37,8 @@ Feature: Backup Moodle courses
     And I should not see "Section 3"
     And I press "Continue"
     And I click on "Continue" "button" in the ".bcs-current-course" "css_element"
-    And "//div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')][contains(., 'Include calendar events')]/descendant::img" "xpath_element" should exists
-    And "Include course logs" "checkbox" should exists
+    And "//div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')][contains(., 'Include calendar events')]/descendant::img" "xpath_element" should exist
+    And "Include course logs" "checkbox" should exist
     And I press "Next"
 
   @javascript

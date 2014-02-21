@@ -5,7 +5,7 @@ Feature: Manage contacts
   I need to add and remove users to/from my contacts list
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | user1 | User | One | one@asd.com |
       | user2 | User | Two | two@asd.com |

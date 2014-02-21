@@ -6,13 +6,13 @@ Feature: Create shortcuts
 
   @javascript @_bug_phantomjs
   Scenario: Upload a file as a copy and as a shortcut in filemanager
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Terry | Teacher | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     When I log in as "teacher1"
@@ -31,7 +31,7 @@ Feature: Create shortcuts
     And I add "empty.txt" file from "Private files" to "Files" filemanager
     And I should see "1" elements in "Files" filemanager
     And I should see "empty.txt" in the ".fp-content .fp-file" "css_element"
-    And ".fp-content .fp-file.fp-isreference" "css_element" should not exists
+    And ".fp-content .fp-file.fp-isreference" "css_element" should not exist
     And I add "empty.txt" file from "Private files" to "Files" filemanager as:
       | Save as | empty_ref.txt |
       | Create an alias/shortcut to the file | 1 |
@@ -47,13 +47,13 @@ Feature: Create shortcuts
     And I add and overwrite "empty.txt" file from "Private files" to "Files" filemanager as:
       | Save as | empty_ref.txt |
     And I should see "2" elements in "Files" filemanager
-    And ".fp-content .fp-file.fp-isreference" "css_element" should not exists
+    And ".fp-content .fp-file.fp-isreference" "css_element" should not exist
     And I press "Save changes"
     And I should see "empty.txt"
     And I should see "empty_ref.txt"
     And I press "Edit"
     And I should see "2" elements in "Files" filemanager
-    And ".fp-content .fp-file.fp-isreference" "css_element" should not exists
+    And ".fp-content .fp-file.fp-isreference" "css_element" should not exist
     # ------ Overwriting non-reference with a reference ---------
     And I add and overwrite "empty.txt" file from "Private files" to "Files" filemanager as:
       | Save as | empty_ref.txt |

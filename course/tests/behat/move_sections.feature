@@ -5,13 +5,13 @@ Feature: Sections can be moved
   I need to move sections up and down
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format | coursedisplay | numsections |
       | Course 1 | C1 | topics | 0 | 5 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And I log in as "teacher1"
@@ -49,7 +49,7 @@ Feature: Sections can be moved
       | Forum name | Test forum name |
       | Description | Test forum description |
     When I follow "Topic 2"
-    Then "#section-1" "css_element" should not exists
-    And "#section-3" "css_element" should not exists
-    And "Move down" "link" should not exists
-    And "Move up" "link" should not exists
+    Then "#section-1" "css_element" should not exist
+    And "#section-3" "css_element" should not exist
+    And "Move down" "link" should not exist
+    And "Move up" "link" should not exist

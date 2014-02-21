@@ -14,7 +14,7 @@ Feature: Authentication
     Then I should see "You are logged in as Admin User"
 
   Scenario: Log in as an existing admin user filling the form
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | password | firstname | lastname | email |
       | testuser | testuser | Test | User | moodle@moodlemoodle.com |
     And I am on homepage
@@ -25,7 +25,7 @@ Feature: Authentication
     Then I should see "You are logged in as"
 
   Scenario: Log in as an unexisting user filling the form
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | password | firstname | lastname | email |
       | testuser | testuser | Test | User | moodle@moodlemoodle.com |
     And I am on homepage

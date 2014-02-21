@@ -6,7 +6,7 @@ Feature: Course files
 
   @javascript
   Scenario: Add legacy files
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | legacyfiles |
       | Course 1 | C1 | 0 | 2 |
     And I log in as "admin"
@@ -23,7 +23,7 @@ Feature: Course files
 
   @javascript
   Scenario: Add legacy file disabled
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | legacyfiles |
       | Course 1 | C1 | 0 | 2 |
     And I log in as "admin"

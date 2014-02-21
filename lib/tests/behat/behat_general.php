@@ -878,7 +878,7 @@ class behat_general extends behat_base {
         list($selector, $locator) = $this->transform_selector($selectortype, $element);
 
         // Will throw an ElementNotFoundException if it does not exist, but, actually
-        // it should not exists, so we try & catch it.
+        // it should not exist, so we try & catch it.
         try {
             // Would be better to use a 1 second sleep because the element should not be there,
             // but we would need to duplicate the whole find_all() logic to do it, the benefit of

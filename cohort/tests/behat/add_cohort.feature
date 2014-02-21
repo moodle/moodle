@@ -5,7 +5,7 @@ Feature: Add cohorts of users
   I need to create cohorts and add users on them
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | user1 | First | User | first@user.com |
       | user2 | Second | User | second@user.com |

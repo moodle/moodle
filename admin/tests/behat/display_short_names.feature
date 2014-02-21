@@ -5,7 +5,7 @@ Feature: Display extended course names
   I need to display courses short names along with courses full names
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course fullname | C_shortname | 0 |
     And I log in as "admin"

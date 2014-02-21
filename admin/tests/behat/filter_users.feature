@@ -5,19 +5,19 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
   I need to filter the users account list using different filter
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email | auth | confirmed |
       | user1 | User | One | one@asd.com | manual | 0 |
       | user2 | User | Two | two@asd.com | ldap | 1 |
       | user3 | User | Three | three@asd.com | manual | 1 |
       | user4 | User | Four | four@asd.com | ldap | 0 |
-    And the following "cohorts" exists:
+    And the following "cohorts" exist:
       | name | idnumber |
       | Cohort 1 | CH1 |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | user1 | C1 | student |
       | user2 | C1 | student |

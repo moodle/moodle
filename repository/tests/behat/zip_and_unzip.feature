@@ -6,7 +6,7 @@ Feature: Zip folders and unzip compressed files
 
   @javascript @_bug_phantomjs
   Scenario: Zip and unzip folders and files
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
     And I log in as "admin"

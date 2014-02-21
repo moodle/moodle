@@ -6,15 +6,15 @@ Feature: A history of each wiki page is available
 
   @javascript
   Scenario: Wiki page edition history changes list
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
       | student2 | Student | 2 | student2@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -50,7 +50,7 @@ Feature: A history of each wiki page is available
     And I press "Save"
     And I follow "History"
     # Checking that there are 3 history items (the first one is are th)
-    And "//*[@id='region-main']/descendant::table/descendant::tr[4]" "xpath_element" should exists
+    And "//*[@id='region-main']/descendant::table/descendant::tr[4]" "xpath_element" should exist
     And I click on "1" "link" in the "Teacher 1" "table_row"
     And I should see "First edition"
     And I should see "Teacher 1"

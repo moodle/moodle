@@ -6,10 +6,10 @@ Feature: Upload users
 
   @javascript
   Scenario: Upload users enrolling them on courses and groups
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Maths | math102 | 0 |
-    And the following "groups" exists:
+    And the following "groups" exist:
       | name | course | idnumber |
       | Section 1 | math102 | S1 |
       | Section 3 | math102 | S3 |

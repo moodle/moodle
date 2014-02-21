@@ -5,7 +5,7 @@ Feature: Message history displays correctly
   I need to view the conversation with another user
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | user1 | User | One | one@asd.com |
       | user2 | User | Two | two@asd.com |

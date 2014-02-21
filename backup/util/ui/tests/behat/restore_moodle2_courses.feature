@@ -5,12 +5,12 @@ Feature: Restore Moodle 2 course backups
   I need to restore them inside other Moodle courses or in new courses
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category | format | numsections | coursedisplay |
       | Course 1 | C1 | 0 | topics | 15 | 1 |
       | Course 2 | C2 | 0 | topics | 5 | 0 |
       | Course 3 | C3 | 0 | topics | 2 | 0 |
-    And the following "activities" exists:
+    And the following "activities" exist:
       | activity | course | idnumber | name | intro | section |
       | assign | C3 | assign1 | Test assign name | Assign description | 1 |
       | data | C3 | data1 | Test database name | Database description | 2 |

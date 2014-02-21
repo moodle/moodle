@@ -5,10 +5,10 @@ Feature: Automatic creation of groups
   I need to create groups automatically and allocate them in groupings if necessary
 
   Background:
-    Given the following "courses" exists:
+    Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And the following "users" exists:
+    And the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student0 | Student | 0 | student0@asd.com |
@@ -21,7 +21,7 @@ Feature: Automatic creation of groups
       | student7 | Student | 7 | student7@asd.com |
       | student8 | Student | 8 | student8@asd.com |
       | student9 | Student | 9 | student9@asd.com |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student0 | C1 | student |

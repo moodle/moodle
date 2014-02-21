@@ -5,24 +5,24 @@ Feature: Workshop submission and assessment
   I need to be able to add a submission and assess those of my peers
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email            |
       | student1 | Sam1      | Student1 | student1@asd.com |
       | student2 | Sam2      | Student2 | student2@asd.com |
       | student3 | Sam3      | Student3 | student3@asd.com |
       | student4 | Sam4      | Student4 | student3@asd.com |
       | teacher1 | Terry1    | Teacher1 | teacher1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname  | shortname |
       | Course1   | c1        |
-    And the following "course enrolments" exists:
+    And the following "course enrolment" exist:
       | user     | course | role           |
       | student1 | c1     | student        |
       | student2 | c1     | student        |
       | student3 | c1     | student        |
       | student4 | c1     | student        |
       | teacher1 | c1     | editingteacher |
-    And the following "activities" exists:
+    And the following "activities" exist:
       | activity | name         | intro                     | course | idnumber  |
       | workshop | TestWorkshop | Test workshop description | c1     | workshop1 |
 # teacher1 sets up assessment form and changes the phase to submission
@@ -42,7 +42,7 @@ Feature: Workshop submission and assessment
     And I add a submission in workshop "TestWorkshop" as:"
       | Title              | Submission1  |
       | Submission content | Some content |
-    And "//div[@class='submission-full' and contains(.,'Submission1') and contains(.,'submitted on')]" "xpath_element" should exists
+    And "//div[@class='submission-full' and contains(.,'Submission1') and contains(.,'submitted on')]" "xpath_element" should exist
     And I log out
 # student2 submits
     And I log in as "student2"
@@ -82,14 +82,14 @@ Feature: Workshop submission and assessment
     And I log in as "student1"
     And I follow "Course1"
     And I follow "TestWorkshop"
-    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 2') and contains(.,'total: 2')]" "xpath_element" should exists
+    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 2') and contains(.,'total: 2')]" "xpath_element" should exist
     And I assess submission "Sam2" in workshop "TestWorkshop" as:"
       | grade__idx_0            | 5 / 10            |
       | peercomment__idx_0      | You can do better |
       | grade__idx_1            | 10 / 10           |
       | peercomment__idx_1      | Amazing           |
       | Feedback for the author | Good work         |
-    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 1') and contains(.,'total: 2')]" "xpath_element" should exists
+    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 1') and contains(.,'total: 2')]" "xpath_element" should exist
     And I follow "Course1"
     And I assess submission "Sam3" in workshop "TestWorkshop" as:"
       | grade__idx_0            | 9 / 10      |
@@ -97,20 +97,20 @@ Feature: Workshop submission and assessment
       | grade__idx_1            | 8 / 10      |
       | peercomment__idx_1      | Very good   |
       | Feedback for the author | No comments |
-    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 0') and contains(.,'total: 2')]" "xpath_element" should exists
+    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 0') and contains(.,'total: 2')]" "xpath_element" should exist
     And I log out
 # student2 assesses work of student1
     And I log in as "student2"
     And I follow "Course1"
     And I follow "TestWorkshop"
-    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 1') and contains(.,'total: 1')]" "xpath_element" should exists
+    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 1') and contains(.,'total: 1')]" "xpath_element" should exist
     And I assess submission "Sam1" in workshop "TestWorkshop" as:"
       | grade__idx_0            | 6 / 10     |
       | peercomment__idx_0      |            |
       | grade__idx_1            | 7 / 10     |
       | peercomment__idx_1      |            |
       | Feedback for the author | Keep it up |
-    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 0') and contains(.,'total: 1')]" "xpath_element" should exists
+    And "//ul[@class='tasks']/li[div[@class='title' and contains(.,'Assess peers')]]/div[@class='details' and contains(.,'pending: 0') and contains(.,'total: 1')]" "xpath_element" should exist
     And I log out
 # teacher1 makes sure he can see all peer grades
     And I log in as "teacher1"

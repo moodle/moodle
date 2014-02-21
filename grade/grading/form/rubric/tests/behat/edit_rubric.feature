@@ -5,14 +5,14 @@ Feature: Rubrics can be created and edited
   I need to edit previously used rubrics
 
   Background:
-    Given the following "users" exists:
+    Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@asd.com |
       | student1 | Student | 1 | student1@asd.com |
-    And the following "courses" exists:
+    And the following "courses" exist:
       | fullname | shortname | format |
       | Course 1 | C1 | topics |
-    And the following "course enrolments" exists:
+    And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
@@ -84,7 +84,7 @@ Feature: Rubrics can be created and edited
     And I follow "Course 1"
     # Editing a rubric definition without regrading students.
     And I go to "Test assignment 1 name" advanced grading definition page
-    And "Save as draft" "button" should not exists
+    And "Save as draft" "button" should not exist
     And I click on "Move up" "button" in the "Criterion 1" "table_row"
     And I replace "Level 11" rubric level with "Level 11 edited" in "Criterion 1" criterion
     And I press "Save"
