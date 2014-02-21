@@ -353,7 +353,7 @@ function grade_get_grades($courseid, $itemtype = null, $itemmodule = null, $item
         }
     }
 
-    $params = array('courseid'=>$courseid);
+    $params = array('courseid' => $courseid);
     if (!empty($itemtype)) {
         $params['itemtype'] = $itemtype;
     }
