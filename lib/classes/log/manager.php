@@ -38,9 +38,11 @@ interface manager {
     /**
      * Return list of available log readers.
      *
+     * @param string $interface All returned readers must implement this interface.
+     *
      * @return \core\log\reader[]
      */
-    public function get_readers();
+    public function get_readers($interface = null);
 
     /**
      * Dispose all initialised stores.

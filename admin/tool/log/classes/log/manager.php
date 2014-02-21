@@ -95,13 +95,17 @@ class manager implements \core\log\manager {
      *
      * This way the reports find out available sources of data.
      *
+     * @param string $interface Returned stores must implement this interface.
+     *
      * @return \core\log\reader[] list of available log data readers
      */
-    public function get_readers() {
+    public function get_readers($interface = null) {
         $this->init();
         $return = array();
         foreach ($this->readers as $plugin => $reader) {
-            $return[$plugin] = $reader;
+            if (empty($interface) || ($reader instanceof $interface)) {
+                $return[$plugin] = $reader;
+            }
         }
         return $return;
     }
