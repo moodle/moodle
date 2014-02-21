@@ -1323,7 +1323,7 @@ $string['notice'] = 'Notice';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle {$a->backuprelease} ({$a->backupversion}) and it\'s newer than your currently installed Moodle {$a->serverrelease} ({$a->serverversion}). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifications'] = 'Notifications';
 $string['notifyloginfailuresmessage'] = '{$a->time}, IP: {$a->ip}, User: {$a->info}';
-$string['notifyloginfailuresmessageend'] = 'You can view these logs at {$a}/report/log/index.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'You can view these logs at {$a}';
 $string['notifyloginfailuresmessagestart'] = 'Here is a list of failed login attempts at {$a} since you were last notified';
 $string['notifyloginfailuressubject'] = '{$a} :: Failed logins notification';
 $string['notincluded'] = 'Not included';
