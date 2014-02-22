@@ -562,11 +562,23 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     public function cron_overdue_warning($cronoverdue) {
+        global $CFG;
         if (!$cronoverdue) {
             return '';
         }
 
-        return $this->warning(get_string('cronwarning', 'admin') . '&nbsp;' .
+        if (empty($CFG->cronclionly)) {
+            $url = new moodle_url('/admin/cron.php');
+            if (!empty($CFG->cronremotepassword)) {
+                $url = new moodle_url('/admin/cron.php', array('password' => $CFG->cronremotepassword));
+            }
+
+            return $this->warning(get_string('cronwarning', 'admin', $url->out()) . '&nbsp;' .
+                    $this->help_icon('cron', 'admin'));
+        }
+
+        // $CFG->cronclionly is not empty: cron can run only from CLI.
+        return $this->warning(get_string('cronwarningcli', 'admin') . '&nbsp;' .
                 $this->help_icon('cron', 'admin'));
     }
 
