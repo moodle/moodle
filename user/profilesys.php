@@ -56,6 +56,6 @@ $PAGE->set_subpage($currentpage->id);
 
 echo $OUTPUT->header();
 
-echo $OUTPUT->blocks_for_region('content');
+echo $OUTPUT->custom_block_region('content');
 
 echo $OUTPUT->footer();
