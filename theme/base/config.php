@@ -174,3 +174,6 @@ $THEME->hidefromselector = true;
 /** List of javascript files that need to included on each page */
 $THEME->javascripts = array();
 $THEME->javascripts_footer = array();
+
+// Set this to the method you will use in your layout files for
+$THEME->blockrendermethod = 'blocks_for_region';
