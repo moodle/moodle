@@ -35,13 +35,6 @@ require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
 function theme_iomad_process_css($css, $theme) {
     global $CFG;
 
-    // Set the background image for the logo
-    $logo = $theme->setting_file_url('logo', 'logo');
-    if (empty($logo)) {
-        $logo = $CFG->wwwroot.'/theme/iomad/pix/iomad_logo.png';
-    }
-    $css = theme_iomad_set_logo($css, $logo);
-
     // Set custom CSS.
     if (!empty($theme->settings->customcss)) {
         $customcss = $theme->settings->customcss;
@@ -50,30 +43,9 @@ function theme_iomad_process_css($css, $theme) {
     }
     $css = theme_iomad_set_customcss($css, $customcss);
 
-    $css = theme_iomad_process_company_css($css, $theme);
-
     // deal with webfonts
     $tag = '[[font:theme|astonish.woff]]';
     $replacement = $CFG->wwwroot.'/theme/iomad/fonts/astonish.woff';
-    $css = str_replace($tag, $replacement, $css);
-
-    return $css;
-}
-
-/**
- * Adds the logo to CSS.
- *
- * @param string $css The CSS.
- * @param string $logo The URL of the logo.
- * @return string The parsed CSS
- */
-function theme_iomad_set_logo($css, $logo) {
-    $tag = '[[setting:logo]]';
-    $replacement = $logo;
-    if (is_null($replacement)) {
-        $replacement = '';
-    }
-
     $css = str_replace($tag, $replacement, $css);
 
     return $css;
@@ -92,26 +64,20 @@ function theme_iomad_set_logo($css, $logo) {
  * @return bool
  */
 function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
-    global $USER, $CFG;
 
-    if ($context->contextlevel == CONTEXT_SYSTEM and $filearea === 'logo') {
-        $theme = theme_config::load('iomad');
-        return $theme->setting_file_serve('logo', $args, $forcedownload, $options);
-    } else {
-        send_file_not_found();
-    }
-/*
     $fs = get_file_storage();
     $relativepath = implode('/', $args);
-    $fullpath = "/$context->id/theme_iomad/$filearea/$relativepath";
-//echo "<pre>$fullpath"; var_dump($args); die;
+    $filename = $args[1];
+    $itemid = $args[0];
+    if ($itemid == -1) {
+        $itemid = 0;
+    }
 
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+    if (!$file = $fs->get_file($context->id, 'theme_iomad', 'logo', $itemid, '/', $filename) or $file->is_directory()) {
         send_file_not_found();
     }
 
     send_stored_file($file, 0, 0, $forcedownload);
-*/
 }
 
 
@@ -145,7 +111,7 @@ function theme_iomad_set_customcss($css, $customcss) {
  *      - footnote HTML to use as a footnote. By default ''.
  */
 function theme_iomad_get_html_for_settings(renderer_base $output, moodle_page $page) {
-    global $CFG;
+    global $CFG, $USER, $DB;
     $return = new stdClass;
 
     $return->navbarclass = '';
@@ -153,14 +119,31 @@ function theme_iomad_get_html_for_settings(renderer_base $output, moodle_page $p
         $return->navbarclass .= ' navbar-inverse';
     }
 
-    //if (!empty($page->theme->settings->logo)) {
-        $return->heading = "<div id='sitelogo'>".html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'logo'))."</div>";
-        $return->heading .= "<div id='siteheading'>".$output->page_heading()."</div>";
-        $return->heading .= "<div id='clientlogo'>".html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'clientlogo'))."</div>";
-    /*} else {
-        $return->heading = $output->page_heading();
-        $return->heading .= html_writer::link($CFG->wwwroot, '', array('title' => get_string('home'), 'class' => 'clientlogo'));
-    }*/
+    // get logos
+    $theme = $page->theme;
+    $logo = $theme->setting_file_url('logo', 'logo');
+    if (empty($logo)) {
+        $logo = $CFG->wwwroot.'/theme/iomad/pix/iomad_logo.png';
+    }
+    $clientlogo = '';
+    if ($companyid = iomad::is_company_user()) {
+        $context = get_context_instance(CONTEXT_SYSTEM);
+        if ($files = $DB->get_records('files', array('contextid' => $context->id, 'component' => 'theme_iomad', 'filearea' => 'logo', 'itemid' => $companyid))) {
+            foreach ($files as $file) {
+                if ($file->filename != '.') {
+                    $clientlogo = $CFG->wwwroot . "/pluginfile.php/{$context->id}/theme_iomad/logo/$companyid/{$file->filename}";
+                }
+            }
+        }
+    }
+
+    $return->heading = '<div id="sitelogo">' . 
+        '<a href="' . $CFG->wwwroot . '" ><img src="' . $logo . '" /></a></div>';
+    $return->heading .= '<div id="siteheading">' . $output->page_heading() . '</div>';
+    if ($clientlogo) {
+        $return->heading .= '<div id="clientlogo">' . 
+            '<a href="' . $CFG->wwwroot . '" ><img src="' . $clientlogo . '" /></a></div>';
+    }
 
     $return->footnote = '';
     if (!empty($page->theme->settings->footnote)) {
@@ -207,16 +190,6 @@ function theme_iomad_process_company_css($css, $theme) {
     company_user::load_company();
 
     if (isset($USER->company)) {
-        // prepare logo fullpath
-        $tag = '[[setting:clientlogo]]';
-        $context = get_context_instance(CONTEXT_SYSTEM);
-        $logo = file_rewrite_pluginfile_urls('@@PLUGINFILE@@/[[company:logo_filename]]',
-                                             'pluginfile.php',
-                                             $context->id,
-                                             'theme_iomad',
-                                             'logo',
-                                             $USER->company->id);
-        $css = str_replace($tag, $logo, $css);
 
         // replace company properties
         foreach($USER->company as $key => $value) {
