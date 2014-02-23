@@ -46,7 +46,7 @@ function user_preference_allow_ajax_update($name, $paramtype) {
  * This should be used in combination with ajax_check_captured_output to
  * report any captured output to the user.
  *
- * @retrun Boolean Returns true on success or false on failure.
+ * @return Boolean Returns true on success or false on failure.
  */
 function ajax_capture_output() {
     // Start capturing output in case of broken plugins.

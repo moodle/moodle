@@ -189,7 +189,7 @@ class FPDF_TPL extends FPDF {
      * @param int $_y The y-position
      * @param int $_w The new width of the template
      * @param int $_h The new height of the template
-     * @retrun array The height and width of the template
+     * @return array The height and width of the template
      */
     function useTemplate($tplidx, $_x = null, $_y = null, $_w = 0, $_h = 0) {
         if ($this->page <= 0)

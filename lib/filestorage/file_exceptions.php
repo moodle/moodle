@@ -121,7 +121,7 @@ class file_pool_content_exception extends file_exception {
  * Problem with records in the {files_reference} table.
  *
  * @package   core_files
- * @catehory  files
+ * @category  files
  * @copyright 2012 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

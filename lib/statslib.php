@@ -1701,7 +1701,7 @@ function stats_temp_table_drop() {
  *
  * @param timestart timestamp of the start time of logs view
  * @param timeend timestamp of the end time of logs view
- * @returns boolen success (true) or failure(false)
+ * @return boolen success (true) or failure(false)
  */
 function stats_temp_table_setup() {
     global $DB;
@@ -1724,7 +1724,7 @@ function stats_temp_table_setup() {
  *
  * @param timestart timestamp of the start time of logs view
  * @param timeend timestamp of the end time of logs view
- * @returns boolen success (true) or failure(false)
+ * @return boolen success (true) or failure(false)
  */
 function stats_temp_table_fill($timestart, $timeend) {
     global $DB;
@@ -1752,7 +1752,7 @@ function stats_temp_table_fill($timestart, $timeend) {
 /**
  * Deletes summary logs table for stats calculation
  *
- * @returns boolen success (true) or failure(false)
+ * @return boolen success (true) or failure(false)
  */
 function stats_temp_table_clean() {
     global $DB;
