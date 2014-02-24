@@ -98,7 +98,7 @@ if ($xml = glossary_read_imported_file($result)) {
             $glossary->showall = ($xmlglossary['SHOWALL'][0]['#']);
             $glossary->timecreated = time();
             $glossary->timemodified = time();
-            $glossary->cmidnumber = $cm->idnumber;
+            $glossary->cmidnumber = null;
 
             // Setting the default values if no values were passed
             if ( isset($xmlglossary['ENTBYPAGE'][0]['#']) ) {
@@ -132,6 +132,9 @@ if ($xml = glossary_read_imported_file($result)) {
                 $glossary->defaultapproval = $CFG->glossary_defaultapproval;
             }
 
+            // This field was not included in export, assume zero.
+            $glossary->assessed = 0;
+
             // Include new glossary and return the new ID
             if ( !$glossary->id = glossary_add_instance($glossary) ) {
                 echo $OUTPUT->notification("Error while trying to create the new glossary.");
@@ -141,6 +144,7 @@ if ($xml = glossary_read_imported_file($result)) {
             } else {
                 //The instance has been created, so lets do course_modules
                 //and course_sections
+                $mod = new stdClass();
                 $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
 
                 $mod->instance = $glossary->id;
