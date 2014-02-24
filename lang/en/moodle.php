@@ -1003,6 +1003,7 @@ $string['languagegood'] = 'This language pack is up-to-date! :-)';
 $string['last'] = 'Last';
 $string['lastaccess'] = 'Last access';
 $string['lastedited'] = 'Last edited';
+$string['lastip'] = 'Last IP address';
 $string['lastlogin'] = 'Last login';
 $string['lastmodified'] = 'Last modified';
 $string['lastname'] = 'Surname';

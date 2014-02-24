@@ -505,6 +505,16 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/user:update'
     ),
 
+    'moodle/user:viewlastip' => array(
+        'riskbitmask' => RISK_PERSONAL,
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_USER,
+        'archetypes' => array(
+            'manager' => CAP_ALLOW
+        ),
+        'clonepermissionsfrom' => 'moodle/user:update'
+    ),
+
     'moodle/user:viewhiddendetails' => array(
 
         'riskbitmask' => RISK_PERSONAL,
