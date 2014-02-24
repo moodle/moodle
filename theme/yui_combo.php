@@ -83,7 +83,8 @@ while (count($parts)) {
 
     $version = array_shift($bits);
     if ($version === 'rollup') {
-        $revision = array_shift($bits);
+        $yuipatchedversion = explode('_', array_shift($bits));
+        $revision = $yuipatchedversion[0];
         $rollupname = array_shift($bits);
 
         if (strpos($rollupname, 'yui-moodlesimple') !== false) {
