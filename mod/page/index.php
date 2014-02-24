@@ -18,8 +18,7 @@
 /**
  * List of all pages in course
  *
- * @package    mod
- * @subpackage page
+ * @package mod_page
  * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
