@@ -18,7 +18,7 @@
 /**
  * Moodle Wiki 2.0 Renderer
  *
- * @package   mod-wiki
+ * @package   mod_wiki
  * @copyright 2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

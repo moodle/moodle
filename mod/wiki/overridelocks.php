@@ -18,7 +18,7 @@
 /**
  * This file contains all necessary code to edit a wiki page
  *
- * @package mod-wiki-2.0
+ * @package mod_wiki
  * @copyright 2009 Marc Alier, Jordi Piguillem marc.alier@upc.edu
  * @copyright 2009 Universitat Politecnica de Catalunya http://www.upc.edu
  *
