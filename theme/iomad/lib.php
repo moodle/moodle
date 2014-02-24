@@ -69,11 +69,11 @@ function theme_iomad_pluginfile($course, $cm, $context, $filearea, $args, $force
     $relativepath = implode('/', $args);
     $filename = $args[1];
     $itemid = $args[0];
-    if ($itemid == -1) {
+    if ($filearea == 'logo') {
         $itemid = 0;
     }
 
-    if (!$file = $fs->get_file($context->id, 'theme_iomad', 'logo', $itemid, '/', $filename) or $file->is_directory()) {
+    if (!$file = $fs->get_file($context->id, 'theme_iomad', $filearea, $itemid, '/', $filename) or $file->is_directory()) {
         send_file_not_found();
     }
 
@@ -128,10 +128,10 @@ function theme_iomad_get_html_for_settings(renderer_base $output, moodle_page $p
     $clientlogo = '';
     if ($companyid = iomad::is_company_user()) {
         $context = get_context_instance(CONTEXT_SYSTEM);
-        if ($files = $DB->get_records('files', array('contextid' => $context->id, 'component' => 'theme_iomad', 'filearea' => 'logo', 'itemid' => $companyid))) {
+        if ($files = $DB->get_records('files', array('contextid' => $context->id, 'component' => 'theme_iomad', 'filearea' => 'companylogo', 'itemid' => $companyid))) {
             foreach ($files as $file) {
                 if ($file->filename != '.') {
-                    $clientlogo = $CFG->wwwroot . "/pluginfile.php/{$context->id}/theme_iomad/logo/$companyid/{$file->filename}";
+                    $clientlogo = $CFG->wwwroot . "/pluginfile.php/{$context->id}/theme_iomad/companylogo/$companyid/{$file->filename}";
                 }
             }
         }
