@@ -53,6 +53,15 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException,
 class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
     /**
+     * Small timeout.
+     *
+     * A reduced timeout for cases where self::TIMEOUT is too much
+     * and a simple $this->getSession()->getPage()->find() could not
+     * be enough.
+     */
+    const REDUCED_TIMEOUT = 2;
+
+    /**
      * The timeout for each Behat step (load page, wait for an element to load...).
      */
     const TIMEOUT = 6;
@@ -88,12 +97,13 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @param mixed $locator It depends on the $selector, can be the xpath, a name, a css locator...
      * @param Exception $exception Otherwise we throw exception with generic info
      * @param NodeElement $node Spins around certain DOM node instead of the whole page
+     * @param int $timeout Forces a specific time out (in seconds).
      * @return NodeElement
      */
-    protected function find($selector, $locator, $exception = false, $node = false) {
+    protected function find($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
         // Returns the first match.
-        $items = $this->find_all($selector, $locator, $exception, $node);
+        $items = $this->find_all($selector, $locator, $exception, $node, $timeout);
         return count($items) ? reset($items) : null;
     }
 
@@ -107,9 +117,10 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
      * @param mixed $locator It depends on the $selector, can be the xpath, a name, a css locator...
      * @param Exception $exception Otherwise we throw expcetion with generic info
      * @param NodeElement $node Spins around certain DOM node instead of the whole page
+     * @param int $timeout Forces a specific time out (in seconds). If 0 is provided the default timeout will be applied.
      * @return array NodeElements list
      */
-    protected function find_all($selector, $locator, $exception = false, $node = false) {
+    protected function find_all($selector, $locator, $exception = false, $node = false, $timeout = false) {
 
         // Generic info.
         if (!$exception) {
@@ -136,6 +147,17 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
         // Pushing $node if required.
         if ($node) {
             $params['node'] = $node;
+        }
+
+        // How much we will be waiting for the element to appear.
+        if (!$timeout) {
+            $timeout = self::TIMEOUT;
+            $microsleep = false;
+        } else {
+            // Spinning each 0.1 seconds if the timeout was forced as we understand
+            // that is a special case and is good to refine the performance as much
+            // as possible.
+            $microsleep = true;
         }
 
         // Waits for the node to appear if it exists, otherwise will timeout and throw the provided exception.
@@ -170,8 +192,9 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
                 return $context->getSession()->getDriver()->find(implode('|', $unions));
             },
             $params,
-            self::TIMEOUT,
-            $exception
+            $timeout,
+            $exception,
+            $microsleep
         );
     }
 
@@ -569,7 +592,7 @@ class behat_base extends Behat\MinkExtension\Context\RawMinkContext {
 
         // If there are no editors we don't need to wait.
         try {
-            $this->find('css', '.mceEditor');
+            $this->find('css', '.mceEditor', false, false, self::REDUCED_TIMEOUT);
         } catch (ElementNotFoundException $e) {
             return;
         }
