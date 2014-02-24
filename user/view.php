@@ -341,6 +341,11 @@ if (!isset($hiddenfields['mycourses'])) {
     }
 }
 
+require_once($CFG->libdir . '/badgeslib.php');
+if (!empty($CFG->enablebadges) && !empty($CFG->badges_allowcoursebadges)) {
+    profile_display_badges($user->id, $courseid);
+}
+
 if (!isset($hiddenfields['suspended'])) {
     if ($user->suspended) {
         echo html_writer::tag('dt', "&nbsp;");
