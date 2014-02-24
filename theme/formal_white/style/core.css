@@ -50,12 +50,6 @@ textarea {
     text-align: right;
 }
 
-#page-admin-index .adminwarning.maturityinfo.maturity50,
-#page-admin-index .adminwarning.maturityinfo.maturity100,
-#page-admin-index .adminwarning.maturityinfo.maturity150 {
-    background-color: #C2E3C2;
-}
-
 .dir-rtl .loginbox .loginform .form-label {
     float: none;
     width: 100%;

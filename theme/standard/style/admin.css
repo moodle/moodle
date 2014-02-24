@@ -19,8 +19,6 @@
 #page-admin-index .adminerror,
 #page-admin-index .adminwarning {margin:20px;}
 
-#page-admin-index .maturitywarning,
-#page-admin-index .testsitewarning {margin-left:auto;margin-right:auto;text-align:center;width:60%;background-color:#ffd3d9;}
 #page-admin-index .releasenoteslink {margin-left:auto;margin-right:auto;text-align:center;width:60%;}
 
 #page-admin-enrol .enrolplugintable {width:700px;margin:1em auto;}
@@ -81,7 +79,8 @@
 .admin .generalboxcontent {background-color:#EEEEEE;}
 .admin .generalbox {border-color:#BBBBBB;background-color:#EEEEEE;}
 .admin .informationbox {border-color:#BBBBBB;background-color:#FFFFFF;}
-#page-admin-index .adminerror {background-color:#FF6666;}
+#page-admin-index .adminwarning {background-color:#f3f2aa;}
+#page-admin-index .adminerror {background-color:#ffd3d9;}
 #page-admin-index .c0 {background-color: #FAFAFA;}
 .path-admin .blockstable > tbody > tr:nth-of-type(odd) {background-color: #F0F0F0;}
 .path-admin .blockstable > tbody > tr:nth-of-type(even) {background-color: #FAFAFA;}

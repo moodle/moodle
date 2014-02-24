@@ -138,10 +138,6 @@
 #page-admin-index .adminwarning .singlebutton,
 #page-admin-index #layout-table .singlebutton {margin:20px;}
 
-#page-admin-index .adminwarning.maturityinfo.maturity50 {background-color:#ffd3d9;}
-#page-admin-index .adminwarning.maturityinfo.maturity100,
-#page-admin-index .adminwarning.maturityinfo.maturity150 {background-color:#f3f2aa;}
-
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo {line-height:1.8;margin:20px auto;width:60%;text-align:left;}
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo .info.release {margin-right:10px;padding:5px 10px;-moz-border-radius: 10px;-webkit-border-radius: 10px;border-radius: 10px;}
 #page-admin-index .adminwarning.availableupdatesinfo .moodleupdateinfo.maturity50 .info.release {background-color:#ffd3d9;}
