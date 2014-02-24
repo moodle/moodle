@@ -69,21 +69,9 @@ class behat_auth extends behat_base {
         // Wait for the homepage to be ready.
         $this->getSession()->wait(self::TIMEOUT * 1000, self::PAGE_READY_JS);
 
-        // Checking if we need to click the navbar button to show the navigation menu, it
-        // is hidden by default when using clean theme and a medium or small size screen size.
-
-        // The DOM and the JS should be all ready and loaded. Running without spinning
-        // as this is a widely used step and we can not spend time here trying to see
-        // a DOM node that is not always there (at the moment clean is not even the
-        // default theme...).
-        $navbuttonjs = "return (
-            Y.one('.btn-navbar') &&
-            Y.one('.btn-navbar').getComputedStyle('display') !== 'none'
-        )";
-
-        // Adding an extra click we need to show the 'Log in' link.
-        if ($this->getSession()->getDriver()->evaluateScript($navbuttonjs)) {
-            array_unshift($steps, new Given('I click on ".btn-navbar" "css_element"'));
+        // If it is needed, it expands the navigation bar with the 'Log in' link.
+        if ($clicknavbar = $this->get_expand_navbar_step()) {
+            array_unshift($steps, $clicknavbar);
         }
 
         return $steps;
@@ -95,7 +83,50 @@ class behat_auth extends behat_base {
      * @Given /^I log out$/
      */
     public function i_log_out() {
-        return new When('I follow "' . get_string('logout') . '"');
+
+        $steps = array(new When('I follow "' . get_string('logout') . '"'));
+
+        // No need to check anything else if we run without JS.
+        if (!$this->running_javascript()) {
+            return $steps;
+        }
+
+        // If it is needed, it expands the navigation bar with the 'Log out' link.
+        if ($clicknavbar = $this->get_expand_navbar_step()) {
+            array_unshift($steps, $clicknavbar);
+        }
+
+        return $steps;
     }
 
+    /**
+     * Returns a step to open the navigation bar if it is needed.
+     *
+     * The top log in and log out links are hidden when middle or small
+     * size windows (or devices) are used. This step returns a step definition
+     * clicking to expand the navbar if it is hidden.
+     *
+     * @return Given|bool A step definition or false if there is no need to show the navbar.
+     */
+    protected function get_expand_navbar_step() {
+
+        // Checking if we need to click the navbar button to show the navigation menu, it
+        // is hidden by default when using clean theme and a medium or small screen size.
+
+        // The DOM and the JS should be all ready and loaded. Running without spinning
+        // as this is a widely used step and we can not spend time here trying to see
+        // a DOM node that is not always there (at the moment clean is not even the
+        // default theme...).
+        $navbuttonjs = "return (
+            Y.one('.btn-navbar') &&
+            Y.one('.btn-navbar').getComputedStyle('display') !== 'none'
+        )";
+
+        // Adding an extra click we need to show the 'Log in' link.
+        if (!$this->getSession()->getDriver()->evaluateScript($navbuttonjs)) {
+            return false;
+        }
+
+        return new Given('I click on ".btn-navbar" "css_element"');
+    }
 }
