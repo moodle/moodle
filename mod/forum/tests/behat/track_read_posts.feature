@@ -59,7 +59,7 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I follow "Test forum name"
     And I follow "Track unread posts"
     And I wait to be redirected
-    And I follow "1"
+    And I click on "1" "link" in the "Admin User" "table_row"
     And I follow "Course 1"
     And I should not see "1 unread post"
 
@@ -156,7 +156,7 @@ Feature: A teacher can set one of 3 possible options for tracking read forum pos
     And I follow "Test forum name"
     And I follow "Track unread posts"
     And I wait to be redirected
-    And I follow "1"
+    And I click on "1" "link" in the "Admin User" "table_row"
     And I follow "Course 1"
     And I should not see "1 unread post"
 

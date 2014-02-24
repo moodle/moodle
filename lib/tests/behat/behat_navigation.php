@@ -200,8 +200,11 @@ class behat_navigation extends behat_base {
         if ($node->hasClass('collapsed') || ($node->hasAttribute('data-loaded') && $node->getAttribute('data-loaded') == 0)) {
             $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]/span";
             $nodetoexpand = $node->find('xpath', $xpath);
-            $this->ensure_node_is_visible($nodetoexpand);
-            $nodetoexpand->click();
+
+            if ($this->running_javascript()) {
+                $this->ensure_node_is_visible($nodetoexpand);
+                $nodetoexpand->click();
+            }
         }
 
         // If sub-parent nodes then get to the last one.
@@ -214,8 +217,10 @@ class behat_navigation extends behat_base {
                     $xpath = "/p[contains(concat(' ', normalize-space(@class), ' '), ' tree_item ')]";
                     if ($node->hasClass('collapsed')) {
                         $nodetoexpand = $node->find('xpath', $xpath);
-                        $this->ensure_node_is_visible($nodetoexpand);
-                        $nodetoexpand->click();
+                        if ($this->running_javascript()) {
+                            $this->ensure_node_is_visible($nodetoexpand);
+                            $nodetoexpand->click();
+                        }
                     }
                 }
             }
@@ -227,12 +232,16 @@ class behat_navigation extends behat_base {
                 "/a[normalize-space(.)=" . $nodetextliteral . "]";
         $node = $node->find('xpath', $xpath);
 
-        // Throw exxeption if no node found.
+        // Throw exception if no node found.
         if (!$node) {
             throw new ExpectationException('Navigation node "' . $nodetext . ' not found under "' . $parentnodes .
                     '" block', $this->getSession());
         }
-        $this->ensure_node_is_visible($node);
+
+        if ($this->running_javascript()) {
+            $this->ensure_node_is_visible($node);
+        }
+
         $node->click();
     }
 }
