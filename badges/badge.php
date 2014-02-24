@@ -35,7 +35,7 @@ $output = $PAGE->get_renderer('core', 'badges');
 
 $badge = new issued_badge($id);
 
-if ($bake && ($badge->recipient == $USER->id)) {
+if ($bake && ($badge->recipient->id == $USER->id)) {
     $name = str_replace(' ', '_', $badge->issued['badge']['name']) . '.png';
     ob_start();
     $file = badges_bake($id, $badge->badgeid);
