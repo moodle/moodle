@@ -374,7 +374,7 @@ class mod_scorm_mod_form extends moodleform_mod {
                     if (!$file->is_external_file()) {
                         $errors['packagefile'] = get_string('aliasonly', 'mod_scorm');
                     } else {
-                        $repository = repository::get_repository_by_id($file->get_repository_id(), CONTEXT_SYSTEM);
+                        $repository = repository::get_repository_by_id($file->get_repository_id(), context_system::instance());
                         if (!$repository->supports_relative_file()) {
                             $errors['packagefile'] = get_string('repositorynotsupported', 'mod_scorm');
                         }
