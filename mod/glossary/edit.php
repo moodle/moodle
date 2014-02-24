@@ -101,6 +101,9 @@ if ($mform->is_cancelled()){
         $entry->timecreated      = $timenow;
         $entry->sourceglossaryid = 0;
         $entry->teacherentry     = has_capability('mod/glossary:manageentries', $context);
+        $isnewentry              = true;
+    } else {
+        $isnewentry              = false;
     }
 
     $entry->concept          = trim($entry->concept);
@@ -117,25 +120,12 @@ if ($mform->is_cancelled()){
         $entry->approved = 1;
     }
 
-    if (empty($entry->id)) {
-        //new entry
+    if ($isnewentry) {
+        // Add new entry.
         $entry->id = $DB->insert_record('glossary_entries', $entry);
-
-        // Update completion state
-        $completion = new completion_info($course);
-        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries && $entry->approved) {
-            $completion->update_state($cm, COMPLETION_COMPLETE);
-        }
-
-        add_to_log($course->id, "glossary", "add entry",
-                   "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id", $entry->id, $cm->id);
-
     } else {
-        //existing entry
+        // Update existing entry.
         $DB->update_record('glossary_entries', $entry);
-        add_to_log($course->id, "glossary", "update entry",
-                   "view.php?id=$cm->id&amp;mode=entry&amp;hook=$entry->id",
-                   $entry->id, $cm->id);
     }
 
     // save and relink embedded images and save attachments
@@ -172,6 +162,27 @@ if ($mform->is_cancelled()){
                 $newalias->alias   = $alias;
                 $DB->insert_record('glossary_alias', $newalias, false);
             }
+        }
+    }
+
+    // Trigger event and update completion (if entry was created).
+    $eventparams = array(
+        'context' => $context,
+        'objectid' => $entry->id,
+        'other' => array('concept' => $entry->concept)
+    );
+    if ($isnewentry) {
+        $event = \mod_glossary\event\entry_created::create($eventparams);
+    } else {
+        $event = \mod_glossary\event\entry_updated::create($eventparams);
+    }
+    $event->add_record_snapshot('glossary_entries', $entry);
+    $event->trigger();
+    if ($isnewentry) {
+        // Update completion state
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC && $glossary->completionentries && $entry->approved) {
+            $completion->update_state($cm, COMPLETION_COMPLETE);
         }
     }
 
