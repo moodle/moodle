@@ -408,7 +408,7 @@ if (!isset($hiddenfields['lastaccess'])) {
 if (has_capability('moodle/user:viewlastip', $usercontext) && !isset($hiddenfields['lastip'])) {
     if ($user->lastip) {
         $iplookupurl = new moodle_url('/iplookup/index.php', array('ip' => $user->lastip, 'user' => $USER->id));
-        $ipstring = html_writer($iplookupurl, $user->lastip);
+        $ipstring = html_writer::link($iplookupurl, $user->lastip);
     } else {
         $ipstring = get_string("none");
     }
