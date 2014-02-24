@@ -109,11 +109,15 @@ function ajax_check_captured_output() {
     $output = ob_get_contents();
     ob_end_clean();
 
-    if ($CFG->debug == DEBUG_DEVELOPER && !empty($output)) {
-        // Only throw an error if the site is in debugdeveloper.
-        throw new coding_exception('Unexpected output whilst processing AJAX request. ' .
+    if (!empty($output)) {
+        $message = 'Unexpected output whilst processing AJAX request. ' .
                 'This could be caused by trailing whitespace. Output received: ' .
-                var_export($output, true));
+                var_export($output, true);
+        if ($CFG->debug == DEBUG_DEVELOPER && !empty($output)) {
+            // Only throw an error if the site is in debugdeveloper.
+            throw new coding_exception($message);
+        }
+        error_log('Potential coding error: ' . $message);
     }
     return $output;
 }
