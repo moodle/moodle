@@ -193,7 +193,7 @@ class mod_workshop_events_testcase extends advanced_testcase {
 
         $context = context_course::instance($this->course->id);
 
-        $event = \mod_workshop\event\instances_list_viewed::create(array('context' => $context));
+        $event = \mod_workshop\event\course_module_instance_list_viewed::create(array('context' => $context));
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();

@@ -108,7 +108,6 @@ $string['eventassessmentevaluationsreset'] = 'Assessment evaluations reset';
 $string['eventassessableuploaded'] = 'Assessable uploaded';
 $string['eventassessmentevaluated'] = 'Assessment evaluated';
 $string['eventassessmentreevaluated'] = 'Assessment re-evaluated';
-$string['eventinstanceslistviewed'] = 'Workshop instance list viewed';
 $string['eventsubmissionassessed'] = 'Submission assessed';
 $string['eventsubmissionassessmentsreset'] = 'Submission assessments cleared';
 $string['eventsubmissioncreated'] = 'Submission created';

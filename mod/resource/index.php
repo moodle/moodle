@@ -36,6 +36,7 @@ $params = array(
     'context' => context_course::instance($course->id)
 );
 $event = \mod_resource\event\course_module_instance_list_viewed::create($params);
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 $strresource     = get_string('modulename', 'resource');

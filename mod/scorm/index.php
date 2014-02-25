@@ -34,6 +34,7 @@ $PAGE->set_pagelayout('incourse');
 
 // Trigger instances list viewed event.
 $event = \mod_scorm\event\course_module_instance_list_viewed::create(array('context' => context_course::instance($course->id)));
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 $strscorm = get_string("modulename", "scorm");

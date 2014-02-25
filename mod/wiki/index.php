@@ -46,6 +46,7 @@ $PAGE->set_pagelayout('incourse');
 $context = context_course::instance($course->id);
 
 $event = \mod_wiki\event\course_module_instance_list_viewed::create(array('context' => $context));
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 /// Get all required stringswiki
