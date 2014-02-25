@@ -73,4 +73,14 @@ class atto extends base {
             $ADMIN->add($parentnodename, $settings);
         }
     }
+
+    /**
+     * Get the settings section name.
+     * It's used to get the setting links in the Atto sub-plugins table.
+     *
+     * @return null|string the settings section name.
+     */
+    public function get_settings_section_name() {
+        return 'atto' . $this->name . 'settings';
+    }
 }

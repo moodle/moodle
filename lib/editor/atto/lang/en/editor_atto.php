@@ -24,6 +24,7 @@
 
 $string['pluginname'] = 'Atto HTML editor';
 $string['subplugintype_atto'] = 'Atto plugin';
+$string['subplugintype_atto_plural'] = 'Atto plugins';
 $string['settings'] = 'Atto toolbar settings';
 $string['toolbarconfig'] = 'Toolbar config';
 $string['toolbarconfig_desc'] = 'The list of plugins and the order they are displayed can be configured here. The configuration consists of groups (one per line) followed by the ordered list of plugins for that group. The group is separated from the plugins with an equals sign and the plugins are separated with commas. The group must be one of the following: style, paragraph, links, insert, other.';
