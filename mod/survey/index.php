@@ -14,7 +14,12 @@
     require_course_login($course);
     $PAGE->set_pagelayout('incourse');
 
-    add_to_log($course->id, "survey", "view all", "index.php?id=$course->id", "");
+    $params = array(
+        'context' => context_course::instance($course->id),
+        'courseid' => $course->id
+    );
+    $event = \mod_survey\event\course_module_instance_list_viewed::create($params);
+    $event->trigger();
 
     $strsurveys = get_string("modulenameplural", "survey");
     $strname = get_string("name");
