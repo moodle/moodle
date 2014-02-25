@@ -50,5 +50,3 @@ Feature: Add a quiz
 
   @javascript
   Scenario: Add and configure small quiz and perform an attempt as a student with Javascript enabled
-
-  #Scenario: Add and configure small quiz and perform an attempt as a student with Javascript disabled
