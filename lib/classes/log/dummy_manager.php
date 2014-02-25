@@ -28,7 +28,7 @@ namespace core\log;
 defined('MOODLE_INTERNAL') || die();
 
 class dummy_manager implements manager {
-    public function get_readers() {
+    public function get_readers($interface = null) {
         return array();
     }
 
