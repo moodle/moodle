@@ -1479,6 +1479,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             array_push($contexts, $this->config->create_context);
         }
 
+        $ldap_cookie = '';
         $ldap_pagedresults = ldap_paged_results_supported($this->config->ldap_version);
         foreach ($contexts as $context) {
             $context = trim($context);
