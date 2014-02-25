@@ -1,0 +1,10 @@
+quizattempt,submittedstepno,slot.1.fraction,slot.1.responsesummary,slot.1.state,slot.2.responsesummary,slot.2.fraction,slot.2.state,slot.3.responsesummary,slot.3.fraction,slot.3.state,slot.4.responsesummary,slot.4.fraction,slot.4.state
+1,1,,toad,todo,19.4,1.0,gradedright,"frog -> mammal; cat -> mammal; newt -> amphibian",,todo,True,1.0,gradedright
+1,2,1.0,frog,gradedright,,,,"frog -> amphibian; cat -> mammal; newt -> amphibian",0.8888889,gradedright,,,
+2,1,,frog,todo,-0.6,,todo,"frog -> amphibian; cat -> mammal; newt -> amphibian",,todo,True,,todo
+3,1,0,3.142,gradedwrong,19.4,1.0,gradedright,"frog -> amphibian; cat -> mammal; newt -> amphibian",1.0,gradedright,False,0.0,gradedwrong
+4,1,,2,todo,9.4,1.0,gradedright,"frog -> mammal; cat -> amphibian; newt -> amphibian",0.3333333,gradedpartial,False,0.0,gradedwrong
+4,2,0,3.142,gradedwrong,,,,,,,,,
+5,1,1.0,frog,gradedright,7.1,1.0,gradedright,"frog -> amphibian; cat -> mammal; newt -> amphibian",1.0,gradedright,True,1.0,gradedright
+6,1,0,3.1,gradedwrong,9.1,1.0,gradedright,"frog -> amphibian; cat -> mammal; newt -> amphibian",1.0,gradedright,True,1.0,gradedright
+7,1,0,2.5,gradedwrong,-0.2,0.0,gradedwrong,"frog -> amphibian; cat -> mammal; newt -> amphibian",1.0,gradedright,False,0,gradedwrong

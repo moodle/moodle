@@ -525,6 +525,10 @@ table.quizreviewsummary td.cell {
     font-weight: normal;
 }
 
+#page-mod-quiz-report tr.lastrowforattempt {
+    border-bottom: lightgrey solid 0.2em;
+}
+
 /** Mod quiz edit **/
 #page-mod-quiz-edit h2.main {
     display: inline;

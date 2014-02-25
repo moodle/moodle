@@ -504,6 +504,20 @@ abstract class question_behaviour {
     public function summarise_finish($step) {
         return get_string('attemptfinished', 'question');
     }
+
+    /**
+     * Does this step include a response submitted by a student?
+     *
+     * This method should return true for any attempt explicitly submitted by a student. The question engine itself will also
+     * automatically recognise any last saved response before the attempt is finished, you don't need to return true here for these
+     * steps with responses which are not explicitly submitted by the student.
+     *
+     * @param question_attempt_step $step
+     * @return bool is this a step within a question attempt that includes a submitted response by a student.
+     */
+    public function step_has_a_submitted_response($step) {
+        return false;
+    }
 }
 
 
@@ -625,6 +639,11 @@ abstract class question_behaviour_with_save extends question_behaviour {
     }
 }
 
+abstract class question_behaviour_with_multiple_tries extends question_behaviour_with_save {
+    public function step_has_a_submitted_response($step) {
+        return $step->has_behaviour_var('submit') && $step->get_state() != question_state::$invalid;
+    }
+}
 
 /**
  * This helper class contains the constants and methods required for
