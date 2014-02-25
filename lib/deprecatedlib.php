@@ -31,6 +31,58 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
+ * Adds a file upload to the log table so that clam can resolve the filename to the user later if necessary
+ *
+ * @deprecated since 2.7 - use new file picker instead
+ *
+ * @param string $newfilepath
+ * @param stdClass $course
+ * @param bool $nourl
+ */
+function clam_log_upload($newfilepath, $course=null, $nourl=false) {
+    debugging('clam_log_upload() is not supposed to be used any more, use new file picker instead', DEBUG_DEVELOPER);
+}
+
+/**
+ * This function logs to error_log and to the log table that an infected file has been found and what's happened to it.
+ *
+ * @deprecated since 2.7 - use new file picker instead
+ *
+ * @param string $oldfilepath
+ * @param string $newfilepath
+ * @param int $userid The user
+ */
+function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
+    debugging('clam_log_infected() is not supposed to be used any more, use new file picker instead', DEBUG_DEVELOPER);
+}
+
+/**
+ * Some of the modules allow moving attachments (glossary), in which case we need to hunt down an original log and change the path.
+ *
+ * @deprecated since 2.7 - use new file picker instead
+ *
+ * @param string $oldpath
+ * @param string $newpath
+ * @param boolean $update
+ */
+function clam_change_log($oldpath, $newpath, $update=true) {
+    debugging('clam_change_log() is not supposed to be used any more, use new file picker instead', DEBUG_DEVELOPER);
+}
+
+/**
+ * Replaces the given file with a string.
+ *
+ * @deprecated since 2.7 - infected files are now deleted in file picker
+ *
+ * @param string $file
+ * @return boolean
+ */
+function clam_replace_infected_file($file) {
+    debugging('clam_change_log() is not supposed to be used any more', DEBUG_DEVELOPER);
+    return false;
+}
+
+/**
  * Checks whether the password compatibility library will work with the current
  * version of PHP. This cannot be done using PHP version numbers since the fix
  * has been backported to earlier versions in some distributions.
