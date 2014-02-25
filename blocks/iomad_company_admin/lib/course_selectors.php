@@ -414,8 +414,14 @@ class potential_company_course_selector extends company_course_selector_base {
                 return $this->too_many_results($search, $potentialmemberscount);
             }
         }
-        $availablecourses = $DB->get_records_sql($fields . $sql . $order, $params) +
+        $allcourses = $DB->get_records_sql($fields . $sql . $order, $params) +
         $DB->get_records_sql($distinctfields . $sqldistinct . $order, $params);
+
+        // Only show one list of courses
+        $availablecourses = array();
+        foreach ($allcourses as $course) {
+            $availablecourses[$course->id] = $course;
+        }
 
         if (empty($availablecourses)) {
             return array();
