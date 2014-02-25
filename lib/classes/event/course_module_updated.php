@@ -110,8 +110,12 @@ class course_module_updated extends base {
      * @return array of parameters to be passed to legacy add_to_log() function.
      */
     protected function get_legacy_logdata() {
-        return array ($this->courseid, "course", "update mod", "../mod/" . $this->other['modulename'] . "/view.php?id=" .
+        $log1 = array($this->courseid, "course", "update mod", "../mod/" . $this->other['modulename'] . "/view.php?id=" .
                 $this->objectid, $this->other['modulename'] . " " . $this->other['instanceid']);
+        $log2 = array($this->courseid, $this->other['modulename'], "update",
+               "view.php?id={$this->objectid}",
+               "{$this->other['instanceid']}", $this->objectid);
+        return array($log1, $log2);
     }
 
     /**

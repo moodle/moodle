@@ -160,10 +160,6 @@ function add_moduleinfo($moduleinfo, $course, $mform = null) {
     ));
     $event->trigger();
 
-    add_to_log($course->id, $moduleinfo->modulename, "add",
-               "view.php?id=$moduleinfo->coursemodule",
-               "$moduleinfo->instance", $moduleinfo->coursemodule);
-
     $moduleinfo = edit_module_post_actions($moduleinfo, $course);
     $transaction->allow_commit();
 
@@ -540,10 +536,6 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         )
     ));
     $event->trigger();
-
-    add_to_log($course->id, $moduleinfo->modulename, "update",
-               "view.php?id=$moduleinfo->coursemodule",
-               "$moduleinfo->instance", $moduleinfo->coursemodule);
 
     $moduleinfo = edit_module_post_actions($moduleinfo, $course);
 

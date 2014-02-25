@@ -1943,7 +1943,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $eventdata->userid     = $USER->id;
         $this->assertEventLegacyData($eventdata, $event);
 
-        $arr = array($cm->course, "course", "add mod", "../mod/assign/view.php?id=$cm->id", "assign $cm->instance");
+        $arr = array(
+            array($cm->course, "course", "add mod", "../mod/assign/view.php?id=$cm->id", "assign $cm->instance"),
+            array($cm->course, "assign", "add", "view.php?id=$cm->id", $cm->instance, $cm->id)
+        );
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
 
@@ -2049,7 +2052,10 @@ class core_course_courselib_testcase extends advanced_testcase {
         $eventdata->userid     = $USER->id;
         $this->assertEventLegacyData($eventdata, $event);
 
-        $arr = array($cm->course, "course", "update mod", "../mod/forum/view.php?id=$cm->id", "forum $cm->instance");
+        $arr = array(
+            array($cm->course, "course", "update mod", "../mod/forum/view.php?id=$cm->id", "forum $cm->instance"),
+            array($cm->course, "forum", "update", "view.php?id=$cm->id", $cm->instance, $cm->id)
+        );
         $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
