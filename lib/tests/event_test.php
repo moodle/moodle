@@ -709,8 +709,9 @@ class core_event_testcase extends advanced_testcase {
 
         $event->add_record_snapshot('course', $course1);
 
-        $result = $event->get_record_snapshot('course', 1, $course1);
-        $this->assertSame($course1, $result);
+        $result = $event->get_record_snapshot('course', 1);
+        // Convert to arrays because record snapshot returns a clone of the object.
+        $this->assertSame((array)$course1, (array)$result);
 
         $user = $event->get_record_snapshot('user', 1);
         $this->assertEquals(1, $user->id);
