@@ -20,9 +20,10 @@
  * This will create generic filter with checkbox option and can be used for
  * disabling other elements for specific condition.
  *
- * @package    user
- * @copyright  2011 Rajesh Taneja
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core_user
+ * @category  user
+ * @copyright 2011 Rajesh Taneja
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -31,6 +32,8 @@ require_once($CFG->dirroot.'/user/filters/lib.php');
 
 /**
  * Generic filter based for checkbox and can be used for disabling items
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_filter_checkbox extends user_filter_type {
     /**
@@ -81,7 +84,7 @@ class user_filter_checkbox extends user_filter_type {
         if ($this->_advanced) {
             $mform->setAdvanced($this->_name.'_grp');
         }
-        //Check if disable if options are set. if yes then set rules
+        // Check if disable if options are set. if yes then set rules.
         if (!empty($this->disableelements) && is_array($this->disableelements)) {
             foreach ($this->disableelements as $disableelement) {
                 $mform->disabledIf($disableelement, $this->_name, 'checked');
@@ -97,7 +100,7 @@ class user_filter_checkbox extends user_filter_type {
      */
     public function check_data($formdata) {
         $field = $this->_name;
-        //Check if disable if options are set. if yes then don't add this.
+        // Check if disable if options are set. if yes then don't add this..
         if (!empty($this->disableelements) && is_array($this->disableelements)) {
             foreach ($this->disableelements as $disableelement) {
                 if (array_key_exists($disableelement, $formdata)) {

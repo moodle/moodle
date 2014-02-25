@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -20,7 +19,7 @@
  *
  * @copyright 1999 Martin Dougiamas  http://dougiamas.com
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @package user
+ * @package core_user
  */
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
@@ -36,12 +35,12 @@ $config   = optional_param('config', 0, PARAM_INT);
 $hide     = optional_param('hide', 0, PARAM_INT);
 $courseid = optional_param('courseid', SITEID, PARAM_INT);
 
-$url = new moodle_url('/user/portfolio.php', array('courseid'=>$courseid));
+$url = new moodle_url('/user/portfolio.php', array('courseid' => $courseid));
 
 if ($config !== 0) {
     $url->param('config', $config);
 }
-if (! $course = $DB->get_record("course", array("id"=>$courseid))) {
+if (! $course = $DB->get_record("course", array("id" => $courseid))) {
     print_error('invalidcourseid');
 }
 
@@ -53,7 +52,7 @@ $namestr = get_string('name');
 $pluginstr = get_string('plugin', 'portfolio');
 $baseurl = $CFG->wwwroot . '/user/portfolio.php';
 
-$display = true; // set this to false in the conditions to stop processing
+$display = true; // Set this to false in the conditions to stop processing.
 
 require_login($course, false);
 
@@ -67,19 +66,18 @@ echo $OUTPUT->header();
 $showroles = 1;
 
 if (!empty($config)) {
-    navigation_node::override_active_url(new moodle_url('/user/portfolio.php', array('courseid'=>$courseid)));
+    navigation_node::override_active_url(new moodle_url('/user/portfolio.php', array('courseid' => $courseid)));
     $instance = portfolio_instance($config);
     $mform = new portfolio_user_form('', array('instance' => $instance, 'userid' => $user->id));
-    if ($mform->is_cancelled()){
+    if ($mform->is_cancelled()) {
         redirect($baseurl);
         exit;
-    } else if ($fromform = $mform->get_data()){
+    } else if ($fromform = $mform->get_data()) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
-        //this branch is where you process validated data.
+        // This branch is where you process validated data.
         $success = $instance->set_user_config($fromform, $USER->id);
-            //$success = $success && $instance->save();
         if ($success) {
             core_plugin_manager::reset_caches();
             redirect($baseurl, get_string('instancesaved', 'portfolio'), 3);
@@ -117,7 +115,7 @@ if ($display) {
         $visible = $i->get_user_config('visible', $USER->id);
         $table->data[] = array($i->get('name'), $i->get('plugin'),
             ($i->has_user_config()
-                ?  '<a href="' . $baseurl . '?config=' . $i->get('id') . '"><img src="' . $OUTPUT->pix_url('t/edit') . '" alt="' . get_string('configure') . '" /></a>' : '') .
+                ? '<a href="' . $baseurl . '?config=' . $i->get('id') . '"><img src="' . $OUTPUT->pix_url('t/edit') . '" alt="' . get_string('configure') . '" /></a>' : '') .
                    ' <a href="' . $baseurl . '?hide=' . $i->get('id') . '"><img src="' . $OUTPUT->pix_url('t/' . (($visible) ? 'hide' : 'show')) . '" alt="' . get_string($visible ? 'hide' : 'show') . '" /></a><br />'
         );
     }
@@ -126,4 +124,3 @@ if ($display) {
     echo $OUTPUT->box_end();
 }
 echo $OUTPUT->footer();
-

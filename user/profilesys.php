@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -21,8 +20,7 @@
  * This script allows the site administrator to edit the default site
  * profile.
  *
- * @package    moodlecore
- * @subpackage my
+ * @package    core_user
  * @copyright  2010 Remote-Learner.net
  * @author     Hubert Chathi <hubert@remote-learner.net>
  * @author     Olav Jordan <olav.jordan@remote-learner.net>
@@ -33,7 +31,7 @@ require_once(dirname(__FILE__) . '/../config.php');
 require_once($CFG->dirroot . '/my/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off
+$edit   = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off.
 
 require_login();
 

@@ -1,19 +1,47 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Value select filter.
+ *
+ * @package   core_user
+ * @category  user
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once($CFG->dirroot.'/user/filters/lib.php');
 
 /**
  * Generic filter based on a list of values.
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_filter_select extends user_filter_type {
     /**
      * options for the list values
+     * @var array
      */
-    var $_options;
+    public $_options;
 
-    var $_field;
+    /** @var string */
+    public $_field;
 
-    var $_default;
+    /** @var mixed|null */
+    public $_default;
 
     /**
      * Constructor
@@ -24,7 +52,7 @@ class user_filter_select extends user_filter_type {
      * @param array $options select options
      * @param mixed $default option
      */
-    function user_filter_select($name, $label, $advanced, $field, $options, $default=null) {
+    public function user_filter_select($name, $label, $advanced, $field, $options, $default=null) {
         parent::user_filter_type($name, $label, $advanced);
         $this->_field   = $field;
         $this->_options = $options;
@@ -35,20 +63,20 @@ class user_filter_select extends user_filter_type {
      * Returns an array of comparison operators
      * @return array of comparison operators
      */
-    function get_operators() {
-        return array(0 => get_string('isanyvalue','filters'),
-                     1 => get_string('isequalto','filters'),
-                     2 => get_string('isnotequalto','filters'));
+    public function get_operators() {
+        return array(0 => get_string('isanyvalue', 'filters'),
+                     1 => get_string('isequalto', 'filters'),
+                     2 => get_string('isnotequalto', 'filters'));
     }
 
     /**
      * Adds controls specific to this filter in the form.
-     * @param object $mform a MoodleForm object to setup
+     * @param moodleform $mform a MoodleForm object to setup
      */
-    function setupForm(&$mform) {
+    public function setupForm(&$mform) {
         $objs = array();
-        $objs[] =& $mform->createElement('select', $this->_name.'_op', null, $this->get_operators());
-        $objs[] =& $mform->createElement('select', $this->_name, null, $this->_options);
+        $objs[] = $mform->createElement('select', $this->_name.'_op', null, $this->get_operators());
+        $objs[] = $mform->createElement('select', $this->_name, null, $this->_options);
         $grp =& $mform->addElement('group', $this->_name.'_grp', $this->_label, $objs, '', false);
         $mform->disabledIf($this->_name, $this->_name.'_op', 'eq', 0);
         if (!is_null($this->_default)) {
@@ -61,10 +89,10 @@ class user_filter_select extends user_filter_type {
 
     /**
      * Retrieves data from the form data
-     * @param object $formdata data submited with the form
+     * @param stdClass $formdata data submited with the form
      * @return mixed array filter data or false when filter not set
      */
-    function check_data($formdata) {
+    public function check_data($formdata) {
         $field    = $this->_name;
         $operator = $field.'_op';
 
@@ -81,7 +109,7 @@ class user_filter_select extends user_filter_type {
      * @param array $data filter settings
      * @return array sql string and $params
      */
-    function get_sql_filter($data) {
+    public function get_sql_filter($data) {
         static $counter = 0;
         $name = 'ex_select'.$counter++;
 
@@ -92,11 +120,11 @@ class user_filter_select extends user_filter_type {
         $params = array();
 
         switch($operator) {
-            case 1: // equal to
+            case 1: // Equal to.
                 $res = "=:$name";
                 $params[$name] = $value;
                 break;
-            case 2: // not equal to
+            case 2: // Not equal to.
                 $res = "<>:$name";
                 $params[$name] = $value;
                  break;
@@ -111,7 +139,7 @@ class user_filter_select extends user_filter_type {
      * @param array $data filter settings
      * @return string active filter label
      */
-    function get_label($data) {
+    public function get_label($data) {
         $operators = $this->get_operators();
         $operator  = $data['operator'];
         $value     = $data['value'];

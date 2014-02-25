@@ -1,4 +1,27 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file contains the User Filter API.
+ *
+ * @package   core_user
+ * @category  user
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 require_once($CFG->dirroot.'/user/filters/text.php');
 require_once($CFG->dirroot.'/user/filters/date.php');
@@ -14,19 +37,25 @@ require_once($CFG->dirroot.'/user/filters/checkbox.php');
 
 /**
  * User filtering wrapper class.
+ *
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_filtering {
-    var $_fields;
-    var $_addform;
-    var $_activeform;
+    /** @var array */
+    public $_fields;
+    /** @var \user_add_filter_form */
+    public $_addform;
+    /** @var \user_active_filter_form */
+    public $_activeform;
 
     /**
      * Contructor
-     * @param array array of visible user fields
-     * @param string base url used for submission/return, null if the same of current page
-     * @param array extra page parameters
+     * @param array $fieldnames array of visible user fields
+     * @param string $baseurl base url used for submission/return, null if the same of current page
+     * @param array $extraparams extra page parameters
      */
-    function user_filtering($fieldnames=null, $baseurl=null, $extraparams=null) {
+    public function user_filtering($fieldnames = null, $baseurl = null, $extraparams = null) {
         global $SESSION;
 
         if (!isset($SESSION->user_filtering)) {
@@ -34,47 +63,47 @@ class user_filtering {
         }
 
         if (empty($fieldnames)) {
-            $fieldnames = array('realname'=>0, 'lastname'=>1, 'firstname'=>1, 'email'=>1, 'city'=>1, 'country'=>1,
-                                'confirmed'=>1, 'suspended'=>1, 'profile'=>1, 'courserole'=>1, 'systemrole'=>1, 'cohort'=>1,
-                                'firstaccess'=>1, 'lastaccess'=>1, 'neveraccessed'=>1, 'timemodified'=>1,
-                                'nevermodified'=>1, 'username'=>1, 'auth'=>1, 'mnethostid'=>1);
+            $fieldnames = array('realname' => 0, 'lastname' => 1, 'firstname' => 1, 'email' => 1, 'city' => 1, 'country' => 1,
+                                'confirmed' => 1, 'suspended' => 1, 'profile' => 1, 'courserole' => 1, 'systemrole' => 1,
+                                'cohort' => 1, 'firstaccess' => 1, 'lastaccess' => 1, 'neveraccessed' => 1, 'timemodified' => 1,
+                                'nevermodified' => 1, 'username' => 1, 'auth' => 1, 'mnethostid' => 1);
         }
 
         $this->_fields  = array();
 
-        foreach ($fieldnames as $fieldname=>$advanced) {
+        foreach ($fieldnames as $fieldname => $advanced) {
             if ($field = $this->get_field($fieldname, $advanced)) {
                 $this->_fields[$fieldname] = $field;
             }
         }
 
-        // fist the new filter form
-        $this->_addform = new user_add_filter_form($baseurl, array('fields'=>$this->_fields, 'extraparams'=>$extraparams));
+        // Fist the new filter form.
+        $this->_addform = new user_add_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         if ($adddata = $this->_addform->get_data()) {
-            foreach($this->_fields as $fname=>$field) {
+            foreach ($this->_fields as $fname => $field) {
                 $data = $field->check_data($adddata);
                 if ($data === false) {
-                    continue; // nothing new
+                    continue; // Nothing new.
                 }
                 if (!array_key_exists($fname, $SESSION->user_filtering)) {
                     $SESSION->user_filtering[$fname] = array();
                 }
                 $SESSION->user_filtering[$fname][] = $data;
             }
-            // clear the form
+            // Clear the form.
             $_POST = array();
-            $this->_addform = new user_add_filter_form($baseurl, array('fields'=>$this->_fields, 'extraparams'=>$extraparams));
+            $this->_addform = new user_add_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         }
 
-        // now the active filters
-        $this->_activeform = new user_active_filter_form($baseurl, array('fields'=>$this->_fields, 'extraparams'=>$extraparams));
+        // Now the active filters.
+        $this->_activeform = new user_active_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         if ($adddata = $this->_activeform->get_data()) {
             if (!empty($adddata->removeall)) {
                 $SESSION->user_filtering = array();
 
             } else if (!empty($adddata->removeselected) and !empty($adddata->filter)) {
-                foreach($adddata->filter as $fname=>$instances) {
-                    foreach ($instances as $i=>$val) {
+                foreach ($adddata->filter as $fname => $instances) {
+                    foreach ($instances as $i => $val) {
                         if (empty($val)) {
                             continue;
                         }
@@ -85,11 +114,11 @@ class user_filtering {
                     }
                 }
             }
-            // clear+reload the form
+            // Clear+reload the form.
             $_POST = array();
-            $this->_activeform = new user_active_filter_form($baseurl, array('fields'=>$this->_fields, 'extraparams'=>$extraparams));
+            $this->_activeform = new user_active_filter_form($baseurl, array('fields' => $this->_fields, 'extraparams' => $extraparams));
         }
-        // now the active filters
+        // Now the active filters.
     }
 
     /**
@@ -98,7 +127,7 @@ class user_filtering {
      * @param boolean $advanced
      * @return object filter
      */
-    function get_field($fieldname, $advanced) {
+    public function get_field($fieldname, $advanced) {
         global $USER, $CFG, $DB, $SITE;
 
         switch ($fieldname) {
@@ -129,16 +158,16 @@ class user_filtering {
                 return new user_filter_simpleselect('auth', get_string('authentication'), $advanced, 'auth', $choices);
 
             case 'mnethostid':
-                // include all hosts even those deleted or otherwise problematic
+                // Include all hosts even those deleted or otherwise problematic.
                 if (!$hosts = $DB->get_records('mnet_host', null, 'id', 'id, wwwroot, name')) {
                     $hosts = array();
                 }
                 $choices = array();
                 foreach ($hosts as $host) {
                     if ($host->id == $CFG->mnet_localhost_id) {
-                        $choices[$host->id] =  format_string($SITE->fullname).' ('.get_string('local').')';
+                        $choices[$host->id] = format_string($SITE->fullname).' ('.get_string('local').')';
                     } else if (empty($host->wwwroot)) {
-                        // All hosts
+                        // All hosts.
                         continue;
                     } else {
                         $choices[$host->id] = $host->name.' ('.$host->wwwroot.')';
@@ -152,21 +181,22 @@ class user_filtering {
                     }
                 }
                 if (count($choices) < 2) {
-                    return null; // filter not needed
+                    return null; // Filter not needed.
                 }
                 return new user_filter_simpleselect('mnethostid', get_string('mnetidprovider', 'mnet'), $advanced, 'mnethostid', $choices);
 
-            default:            return null;
+            default:
+                return null;
         }
     }
 
     /**
      * Returns sql where statement based on active user filters
      * @param string $extra sql
-     * @param array named params (recommended prefix ex)
+     * @param array $params named params (recommended prefix ex)
      * @return array sql string and $params
      */
-    function get_sql_filter($extra='', array $params=null) {
+    public function get_sql_filter($extra='', array $params=null) {
         global $SESSION;
 
         $sqls = array();
@@ -176,12 +206,12 @@ class user_filtering {
         $params = (array)$params;
 
         if (!empty($SESSION->user_filtering)) {
-            foreach ($SESSION->user_filtering as $fname=>$datas) {
+            foreach ($SESSION->user_filtering as $fname => $datas) {
                 if (!array_key_exists($fname, $this->_fields)) {
-                    continue; // filter not used
+                    continue; // Filter not used.
                 }
                 $field = $this->_fields[$fname];
-                foreach($datas as $i=>$data) {
+                foreach ($datas as $i => $data) {
                     list($s, $p) = $field->get_sql_filter($data);
                     $sqls[] = $s;
                     $params = $params + $p;
@@ -200,14 +230,14 @@ class user_filtering {
     /**
      * Print the add filter form.
      */
-    function display_add() {
+    public function display_add() {
         $this->_addform->display();
     }
 
     /**
      * Print the active filter form.
      */
-    function display_active() {
+    public function display_active() {
         $this->_activeform->display();
     }
 
@@ -215,22 +245,28 @@ class user_filtering {
 
 /**
  * The base user filter class. All abstract classes must be implemented.
+ *
+ * @copyright 1999 Martin Dougiamas  http://dougiamas.com
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class user_filter_type {
     /**
      * The name of this filter instance.
+     * @var string
      */
-    var $_name;
+    public $_name;
 
     /**
      * The label of this filter instance.
+     * @var string
      */
-    var $_label;
+    public $_label;
 
     /**
      * Advanced form element flag
+     * @var bool
      */
-    var $_advanced;
+    public $_advanced;
 
     /**
      * Constructor
@@ -238,7 +274,7 @@ class user_filter_type {
      * @param string $label the label of the filter instance
      * @param boolean $advanced advanced form element flag
      */
-    function user_filter_type($name, $label, $advanced) {
+    public function user_filter_type($name, $label, $advanced) {
         $this->_name     = $name;
         $this->_label    = $label;
         $this->_advanced = $advanced;
@@ -249,24 +285,24 @@ class user_filter_type {
      * @param array $data filter settings
      * @return string the filtering condition or null if the filter is disabled
      */
-    function get_sql_filter($data) {
+    public function get_sql_filter($data) {
         print_error('mustbeoveride', 'debug', '', 'get_sql_filter');
     }
 
     /**
      * Retrieves data from the form data
-     * @param object $formdata data submited with the form
+     * @param stdClass $formdata data submited with the form
      * @return mixed array filter data or false when filter not set
      */
-    function check_data($formdata) {
+    public function check_data($formdata) {
         print_error('mustbeoveride', 'debug', '', 'check_data');
     }
 
     /**
      * Adds controls specific to this filter in the form.
-     * @param object $mform a MoodleForm object to setup
+     * @param moodleform $mform a MoodleForm object to setup
      */
-    function setupForm(&$mform) {
+    public function setupForm(&$mform) {
         print_error('mustbeoveride', 'debug', '', 'setupForm');
     }
 
@@ -275,7 +311,7 @@ class user_filter_type {
      * @param array $data filter settings
      * @return string active filter label
      */
-    function get_label($data) {
+    public function get_label($data) {
         print_error('mustbeoveride', 'debug', '', 'get_label');
     }
 }

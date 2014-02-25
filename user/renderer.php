@@ -15,8 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Provides user rendering functionality such as printing private files tree and
- * displaying a search utility
+ * Provides user rendering functionality such as printing private files tree and displaying a search utility
  *
  * @package    core_user
  * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
@@ -26,8 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Provides user rendering functionality such as printing private files tree and
- * displaying a search utility
+ * Provides user rendering functionality such as printing private files tree and displaying a search utility
  * @copyright  2010 Dongsheng Cai <dongsheng@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,14 +41,16 @@ class core_user_renderer extends plugin_renderer_base {
 
     /**
      * Render user files tree
+     *
      * @param user_files_tree $tree
+     * @return string HTML
      */
     public function render_user_files_tree(user_files_tree $tree) {
         if (empty($tree->dir['subdirs']) && empty($tree->dir['files'])) {
             $html = $this->output->box(get_string('nofilesavailable', 'repository'));
         } else {
             $htmlid = 'user_files_tree_'.uniqid();
-            $module = array('name'=>'core_user', 'fullpath'=>'/user/module.js');
+            $module = array('name' => 'core_user', 'fullpath' => '/user/module.js');
             $this->page->requires->js_init_call('M.core_user.init_tree', array(false, $htmlid), false, $module);
             $html = '<div id="'.$htmlid.'">';
             $html .= $this->htmllize_tree($tree, $tree->dir);
@@ -63,6 +63,7 @@ class core_user_renderer extends plugin_renderer_base {
      * Internal function - creates htmls structure suitable for YUI tree.
      * @param user_files_tree $tree
      * @param array $dir
+     * @return string HTML
      */
     protected function htmllize_tree($tree, $dir) {
         global $CFG;
@@ -74,14 +75,17 @@ class core_user_renderer extends plugin_renderer_base {
         }
         $result = '<ul>';
         foreach ($dir['subdirs'] as $subdir) {
-            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle', array('class'=>'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.$this->htmllize_tree($tree, $subdir).'</li>';
+            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle', array('class' => 'icon'));
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.s($subdir['dirname']).'</div> '.
+                $this->htmllize_tree($tree, $subdir).'</li>';
         }
         foreach ($dir['files'] as $file) {
-            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$tree->context->id.'/user/private'.$file->get_filepath().$file->get_filename(), true);
+            $url = file_encode_url("$CFG->wwwroot/pluginfile.php", '/'.$tree->context->id.'/user/private'.
+                $file->get_filepath().$file->get_filename(), true);
             $filename = $file->get_filename();
-            $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class'=>'icon'));
-            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($url, $filename).'</div></li>';
+            $image = $this->output->pix_icon(file_file_icon($file), $filename, 'moodle', array('class' => 'icon'));
+            $result .= '<li yuiConfig=\''.json_encode($yuiconfig).'\'><div>'.$image.' '.html_writer::link($url, $filename).
+                '</div></li>';
         }
         $result .= '</ul>';
 
@@ -169,8 +173,14 @@ class core_user_renderer extends plugin_renderer_base {
  */
 class user_files_tree implements renderable {
 
+    /**
+     * @var context_user $context
+     */
     public $context;
 
+    /**
+     * @var array $dir
+     */
     public $dir;
 
     /**
