@@ -165,7 +165,7 @@ class completion_criteria_duration extends completion_criteria {
      * @return string
      */
     public function get_title_detailed() {
-        return ceil($this->enrolperiod / (60 * 60 * 24)) . ' days';
+        return get_string('xdays', 'completion', ceil($this->enrolperiod / (60 * 60 * 24)));
     }
 
     /**
@@ -190,7 +190,8 @@ class completion_criteria_duration extends completion_criteria {
 
         $daysleft = ceil($timeleft / (60 * 60 * 24));
 
-        return ($daysleft > 0 ? $daysleft : 0).' of '.$enrolperiod;
+        return get_string('daysoftotal', 'completion', array(
+                'days' => $daysleft > 0 ? $daysleft : 0, 'total' => $enrolperiod));
     }
 
     /**
