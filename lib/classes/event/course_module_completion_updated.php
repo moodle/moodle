@@ -81,4 +81,18 @@ class course_module_completion_updated extends base {
         return $this->get_record_snapshot('course_modules_completion', $this->objectid);
     }
 
+    /**
+     * Custom validation.
+     *
+     * @throws \coding_exception in case of a problem.
+     */
+    protected function validate_data() {
+        // Make sure the context level is set to module.
+        if ($this->contextlevel !== CONTEXT_MODULE) {
+            throw new \coding_exception('Context passed must be module context.');
+        }
+        if (!isset($this->relateduserid)) {
+            throw new \coding_exception('relateduserid must be set');
+        }
+    }
 }

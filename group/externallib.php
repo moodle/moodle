@@ -312,7 +312,7 @@ class core_group_external extends external_api {
         foreach ($params['groupids'] as $groupid) {
             // validate params
             $groupid = validate_param($groupid, PARAM_INT);
-            if (!$group = groups_get_group($groupid, 'id, courseid', IGNORE_MISSING)) {
+            if (!$group = groups_get_group($groupid, '*', IGNORE_MISSING)) {
                 // silently ignore attempts to delete nonexisting groups
                 continue;
             }

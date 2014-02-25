@@ -1744,6 +1744,7 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
     $ra->itemid       = $itemid;
     $ra->timemodified = $timemodified;
     $ra->modifierid   = empty($USER->id) ? 0 : $USER->id;
+    $ra->sortorder    = 0;
 
     $ra->id = $DB->insert_record('role_assignments', $ra);
 

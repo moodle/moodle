@@ -127,6 +127,8 @@ function quiz_create_attempt(quiz $quizobj, $attemptnumber, $lastattempt, $timen
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
     $attempt->state = quiz_attempt::IN_PROGRESS;
+    $attempt->currentpage = 0;
+    $attempt->sumgrades = null;
 
     // If this is a preview, mark it as such.
     if ($ispreview) {

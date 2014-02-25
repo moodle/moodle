@@ -4342,6 +4342,12 @@ function forum_add_new_post($post, $mform, &$message) {
     $post->mailed     = FORUM_MAILED_PENDING;
     $post->userid     = $USER->id;
     $post->attachment = "";
+    if (!isset($post->totalscore)) {
+        $post->totalscore = 0;
+    }
+    if (!isset($post->mailnow)) {
+        $post->mailnow    = 0;
+    }
 
     $post->id = $DB->insert_record("forum_posts", $post);
     $post->message = file_save_draft_area_files($post->itemid, $context->id, 'mod_forum', 'post', $post->id,
@@ -4469,6 +4475,7 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
     $discussion->timemodified = $timenow;
     $discussion->usermodified = $post->userid;
     $discussion->userid       = $userid;
+    $discussion->assessed     = 0;
 
     $post->discussion = $DB->insert_record("forum_discussions", $discussion);
 

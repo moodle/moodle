@@ -755,7 +755,6 @@ if ($fromform = $mform_post->get_data()) {
         }
 
         $event = \mod_forum\event\post_updated::create($params);
-        $event->add_record_snapshot('forum_posts', $fromform);
         $event->add_record_snapshot('forum_discussions', $discussion);
         $event->trigger();
 
