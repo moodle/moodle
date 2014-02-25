@@ -45,7 +45,13 @@ require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/imscp:view', $context);
 
-add_to_log($course->id, 'imscp', 'view', 'view.php?id='.$cm->id, $imscp->id, $cm->id);
+$params = array(
+    'context' => $context,
+    'objectid' => $imscp->id
+);
+$event = \mod_imscp\event\course_module_viewed::create($params);
+$event->add_record_snapshot('imscp', $imscp);
+$event->trigger();
 
 // Update 'viewed' state if required by completion system
 $completion = new completion_info($course);
