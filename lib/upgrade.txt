@@ -35,6 +35,9 @@ JavaSript:
       events provided.
 
 * New locking api and admin settings to configure the system locking type.
+* New "Time spent waiting for the database" performance metric displayed along with the
+  other MDL_PERF vars; the change affects both the error logs and the vars displayed in
+  the page footer.
 
 === 2.6 ===
 
