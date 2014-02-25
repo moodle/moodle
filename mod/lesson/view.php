@@ -287,9 +287,10 @@ if ($pageid != LESSON_EOL) {
     // Trigger module viewed event.
     $event = \mod_lesson\event\course_module_viewed::create(array(
         'objectid' => $lesson->id,
-        'context' => $context,
-        'courseid' => $course->id
+        'context' => $context
     ));
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
     $event->trigger();
 
     // This is where several messages (usually warnings) are displayed

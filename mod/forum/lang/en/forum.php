@@ -150,7 +150,6 @@ $string['eventdiscussionupdated'] = 'Discussion updated';
 $string['eventdiscussiondeleted'] = 'Discussion deleted';
 $string['eventdiscussionmoved'] = 'Discussion moved';
 $string['eventdiscussionviewed'] = 'Discussion viewed';
-$string['eventforumviewed'] = 'Forum viewed';
 $string['eventuserreportviewed'] = 'User report viewed';
 $string['eventpostcreated'] = 'Post created';
 $string['eventpostdeleted'] = 'Post deleted';

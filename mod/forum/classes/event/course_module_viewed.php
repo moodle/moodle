@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2014 Dan Poltawski <dan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class forum_viewed extends \core\event\base {
+class course_module_viewed extends \core\event\course_module_viewed {
 
     /**
      * Init method.
@@ -47,30 +47,12 @@ class forum_viewed extends \core\event\base {
     }
 
     /**
-     * Returns description of what happened.
-     *
-     * @return string
-     */
-    public function get_description() {
-        return "The user {$this->userid} has viewed the forum {$this->objectid}";
-    }
-
-    /**
-     * Return localised event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('eventforumviewed', 'mod_forum');
-    }
-
-    /**
      * Get URL related to the action
      *
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/forum/view.php', array('d' => $this->objectid));
+        return new \moodle_url('/mod/forum/view.php', array('f' => $this->objectid));
     }
 
     /**
@@ -81,25 +63,6 @@ class forum_viewed extends \core\event\base {
     protected function get_legacy_logdata() {
         return array($this->courseid, 'forum', 'view forum', 'view.php?f=' . $this->objectid,
             $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
-     * Custom validation.
-     *
-     * @throws \coding_exception
-     * @return void
-     */
-    protected function validate_data() {
-        parent::validate_data();
-
-        if ($this->contextlevel != CONTEXT_MODULE) {
-            throw new \coding_exception('Context passed must be module context.');
-        }
-
-        if (!isset($this->objectid)) {
-            throw new \coding_exception('objectid must be set to the forumid.');
-        }
-
     }
 
 }

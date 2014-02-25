@@ -100,6 +100,8 @@ $params = array(
     'objectid' => $lti->id
 );
 $event = \mod_lti\event\course_module_viewed::create($params);
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('lti', $lti);
 $event->trigger();
 

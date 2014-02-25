@@ -595,9 +595,9 @@ class mod_forum_events_testcase extends advanced_testcase {
     }
 
     /**
-     * Ensure forum_viewed event validates that the forumid is set.
+     * Ensure course_module_viewed event validates that the forumid is set.
      */
-    public function test_forum_viewed_objectid_validation() {
+    public function test_course_module_viewed_objectid_validation() {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
         $context = context_module::instance($forum->cmid);
@@ -606,14 +606,14 @@ class mod_forum_events_testcase extends advanced_testcase {
             'context' => $context,
         );
 
-        $this->setExpectedException('coding_exception', 'objectid must be set to the forumid.');
-        \mod_forum\event\forum_viewed::create($params);
+        $this->setExpectedException('coding_exception', 'must define objectid');
+        \mod_forum\event\course_module_viewed::create($params);
     }
 
     /**
-     * Ensure forum_viewed event validates that the contextlevel is correct.
+     * Ensure course_module_viewed event validates that the contextlevel is correct.
      */
-    public function test_forum_viewed_context_validation() {
+    public function test_course_module_viewed_context_validation() {
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
 
@@ -623,13 +623,13 @@ class mod_forum_events_testcase extends advanced_testcase {
         );
 
         $this->setExpectedException('coding_exception', 'Context passed must be module context.');
-        \mod_forum\event\forum_viewed::create($params);
+        \mod_forum\event\course_module_viewed::create($params);
     }
 
     /**
-     * Test the forum_viewed event.
+     * Test the course_module_viewed event.
      */
-    public function test_forum_viewed() {
+    public function test_course_module_viewed() {
         // Setup test data.
         $course = $this->getDataGenerator()->create_course();
         $forum = $this->getDataGenerator()->create_module('forum', array('course' => $course->id));
@@ -641,7 +641,7 @@ class mod_forum_events_testcase extends advanced_testcase {
             'objectid' => $forum->id,
         );
 
-        $event = \mod_forum\event\forum_viewed::create($params);
+        $event = \mod_forum\event\course_module_viewed::create($params);
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
@@ -651,7 +651,7 @@ class mod_forum_events_testcase extends advanced_testcase {
         $event = reset($events);
 
         // Checking that the event contains the expected values.
-        $this->assertInstanceOf('\mod_forum\event\forum_viewed', $event);
+        $this->assertInstanceOf('\mod_forum\event\course_module_viewed', $event);
         $this->assertEquals($context, $event->get_context());
         $expected = array($course->id, 'forum', 'view forum', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
         $this->assertEventLegacyLogData($expected, $event);

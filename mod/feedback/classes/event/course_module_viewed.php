@@ -92,9 +92,6 @@ class course_module_viewed extends \core\event\course_module_viewed {
         if (!isset($this->other['anonymous'])) {
             throw new \coding_exception("Field other['anonymous'] cannot be empty");
         }
-        if (!isset($this->other['cmid'])) {
-            throw new \coding_exception("Field other['cmid'] cannot be empty");
-        }
 
         // Call parent validations.
         parent::validate_data();
