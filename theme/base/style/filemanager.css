@@ -423,6 +423,23 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
 .dir-rtl .filemanager-container .yui3-skin-sam .yui3-datatable-header {text-align:right;}
 .dir-rtl .filemanager .fp-restrictions { text-align: left; }
 
+/*
+ * Forms for file picker.
+ */
+.fp-formset {margin:0 auto;width:500px;}
+.fp-formset div {text-align:left;}
+.fp-formset .controls {text-align:left;}
+.fp-formset label {display:block;float:left;width:210px;text-align:right;margin:0 10px 0 0;}
+.fp-formset .fp-popup { text-align: center; }
+.fp-formset .fp-setlicense select {width:280px;}
+.fp-forminset label {display:block;float:left;width:95px;text-align:right;margin:0 10px 0 0;}
+.fp-forminset .controls {float:left;}
+.dir-rtl .fp-forminset label {display:block;float:right;width:95px;text-align:right;margin:0 0 0 10px;}
+.dir-rtl .fp-forminset .controls {float:right;}
+.dir-rtl .fp-forminset .fp-select-buttons {float:left;}
+.dir-rtl .fp-forminset .fp-setlicense select, .dir-rtl .fp-forminset .fp-license select {width:248px;}
+.dir-rtl .fp-formset label {float:right;text-align:left; margin:0 0 0 10px;}
+.dir-rtl .fp-formset div {text-align:right;}
 
 /**
  * Responsive styles for the filepicker
@@ -437,5 +454,7 @@ a.ygtvspacer:hover {color:transparent;text-decoration:none;}
     .fp-content .mdl-right {text-align:left;}
     .dir-rtl .fp-content .mdl-right {text-align:right;}
     .fp-repo-items .fp-navbar {border-top:1px solid rgb(187, 187, 187);}
+    .fp-formset, .fp-forminset {margin:0 10px;width:auto;}
+    .fp-formset label, .fp-forminset label {float:none;width:210px;text-align:left;margin:5px 0;}
+    .dir-rtl .fp-formset label, .dir-rtl .fp-forminset label {text-align:right;float:none;}
 }
-
