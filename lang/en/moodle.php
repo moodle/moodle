@@ -1025,6 +1025,7 @@ $string['local'] = 'Local';
 $string['localplugins'] = 'Local plugins';
 $string['localpluginsmanage'] = 'Manage local plugins';
 $string['location'] = 'Location';
+$string['locktimeout'] = 'The operation timed out while waiting for a lock.';
 $string['log_excel_date_format'] = 'yyyy mmmm d h:mm';
 $string['loggedinas'] = 'You are logged in as {$a}';
 $string['loggedinasguest'] = 'You are currently using guest access';

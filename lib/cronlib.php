@@ -40,7 +40,6 @@ function cron_run() {
     }
 
     require_once($CFG->libdir.'/adminlib.php');
-    require_once($CFG->libdir.'/gradelib.php');
 
     if (!empty($CFG->showcronsql)) {
         $DB->set_debug(true);
@@ -62,442 +61,67 @@ function cron_run() {
     $timenow  = time();
     mtrace("Server Time: ".date('r', $timenow)."\n\n");
 
-
-    // Run cleanup core cron jobs, but not every time since they aren't too important.
-    // These don't have a timer to reduce load, so we'll use a random number
-    // to randomly choose the percentage of times we should run these jobs.
-    $random100 = rand(0,100);
-    if ($random100 < 20) {     // Approximately 20% of the time.
-        mtrace("Running clean-up tasks...");
+    // Run all scheduled tasks.
+    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
+           $task = \core\task\manager::get_next_scheduled_task($timenow)) {
+        mtrace("Execute scheduled task: " . $task->get_name());
         cron_trace_time_and_memory();
-
-        // Delete users who haven't confirmed within required period
-        if (!empty($CFG->deleteunconfirmed)) {
-            $cuttime = $timenow - ($CFG->deleteunconfirmed * 3600);
-            $rs = $DB->get_recordset_sql ("SELECT *
-                                             FROM {user}
-                                            WHERE confirmed = 0 AND firstaccess > 0
-                                                  AND firstaccess < ?", array($cuttime));
-            foreach ($rs as $user) {
-                delete_user($user); // we MUST delete user properly first
-                $DB->delete_records('user', array('id'=>$user->id)); // this is a bloody hack, but it might work
-                mtrace(" Deleted unconfirmed user for ".fullname($user, true)." ($user->id)");
+        $predbqueries = null;
+        $predbqueries = $DB->perf_get_queries();
+        $pretime      = microtime(1);
+        try {
+            $task->execute();
+            if (isset($predbqueries)) {
+                mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
+                mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
-            $rs->close();
-        }
-
-
-        // Delete users who haven't completed profile within required period
-        if (!empty($CFG->deleteincompleteusers)) {
-            $cuttime = $timenow - ($CFG->deleteincompleteusers * 3600);
-            $rs = $DB->get_recordset_sql ("SELECT *
-                                             FROM {user}
-                                            WHERE confirmed = 1 AND lastaccess > 0
-                                                  AND lastaccess < ? AND deleted = 0
-                                                  AND (lastname = '' OR firstname = '' OR email = '')",
-                                          array($cuttime));
-            foreach ($rs as $user) {
-                if (isguestuser($user) or is_siteadmin($user)) {
-                    continue;
-                }
-                delete_user($user);
-                mtrace(" Deleted not fully setup user $user->username ($user->id)");
+            mtrace("Scheduled task complete: " . $task->get_name());
+            \core\task\manager::scheduled_task_complete($task);
+        } catch (Exception $e) {
+            if ($DB && $DB->is_transaction_started()) {
+                error_log('Database transaction aborted automatically in ' . get_class($task));
+                $DB->force_transaction_rollback();
             }
-            $rs->close();
+            if (isset($predbqueries)) {
+                mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
+                mtrace("... used " . (microtime(1) - $pretime) . " seconds");
+            }
+            mtrace("Scheduled task failed: " . $task->get_name() . "," . $e->getMessage());
+            \core\task\manager::scheduled_task_failed($task);
         }
-
-
-        // Delete old logs to save space (this might need a timer to slow it down...)
-        if (!empty($CFG->loglifetime)) {  // value in days
-            $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
-            $DB->delete_records_select("log", "time < ?", array($loglifetime));
-            mtrace(" Deleted old log records");
-        }
-
-
-        // Delete old backup_controllers and logs.
-        $loglifetime = get_config('backup', 'loglifetime');
-        if (!empty($loglifetime)) {  // Value in days.
-            $loglifetime = $timenow - ($loglifetime * 3600 * 24);
-            // Delete child records from backup_logs.
-            $DB->execute("DELETE FROM {backup_logs}
-                           WHERE EXISTS (
-                               SELECT 'x'
-                                 FROM {backup_controllers} bc
-                                WHERE bc.backupid = {backup_logs}.backupid
-                                  AND bc.timecreated < ?)", array($loglifetime));
-            // Delete records from backup_controllers.
-            $DB->execute("DELETE FROM {backup_controllers}
-                          WHERE timecreated < ?", array($loglifetime));
-            mtrace(" Deleted old backup records");
-        }
-
-
-        if (!empty($CFG->usetags)) {
-            require_once($CFG->dirroot.'/tag/lib.php');
-            tag_cron();
-            mtrace(' Executed tag cron');
-        }
-
-
-        // Context maintenance stuff
-        context_helper::cleanup_instances();
-        mtrace(' Cleaned up context instances');
-        context_helper::build_all_paths(false);
-        // If you suspect that the context paths are somehow corrupt
-        // replace the line below with: context_helper::build_all_paths(true);
-        mtrace(' Built context paths');
-
-
-        // Remove expired cache flags
-        gc_cache_flags();
-        mtrace(' Cleaned cache flags');
-
-
-        // Cleanup messaging
-        if (!empty($CFG->messagingdeletereadnotificationsdelay)) {
-            $notificationdeletetime = time() - $CFG->messagingdeletereadnotificationsdelay;
-            $DB->delete_records_select('message_read', 'notification=1 AND timeread<:notificationdeletetime', array('notificationdeletetime'=>$notificationdeletetime));
-            mtrace(' Cleaned up read notifications');
-        }
-
-        mtrace(' Deleting temporary files...');
-        cron_delete_from_temp();
-
-        // Cleanup user password reset records
-        // Delete any reset request records which are expired by more than a day.
-        // (We keep recently expired requests around so we can give a different error msg to users who
-        // are trying to user a recently expired reset attempt).
-        $pwresettime = isset($CFG->pwresettime) ? $CFG->pwresettime : 1800;
-        $earliestvalid = time() - $pwresettime - DAYSECS;
-        $DB->delete_records_select('user_password_resets', "timerequested < ?", array($earliestvalid));
-        mtrace(' Cleaned up old password reset records');
-
-        mtrace("...finished clean-up tasks");
-
-    } // End of occasional clean-up tasks
-
-
-    // Send login failures notification - brute force protection in moodle is weak,
-    // we should at least send notices early in each cron execution
-    if (notify_login_failures()) {
-        mtrace(' Notified login failures');
+        unset($task);
     }
 
-
-    // Make sure all context instances are properly created - they may be required in auth, enrol, etc.
-    context_helper::create_instances();
-    mtrace(' Created missing context instances');
-
-
-    // Session gc.
-    mtrace("Running session gc tasks...");
-    \core\session\manager::gc();
-    mtrace("...finished stale session cleanup");
-
-
-    // Run the auth cron, if any before enrolments
-    // because it might add users that will be needed in enrol plugins
-    $auths = get_enabled_auth_plugins();
-    mtrace("Running auth crons if required...");
-    cron_trace_time_and_memory();
-    foreach ($auths as $auth) {
-        $authplugin = get_auth_plugin($auth);
-        if (method_exists($authplugin, 'cron')) {
-            mtrace("Running cron for auth/$auth...");
-            $authplugin->cron();
-            if (!empty($authplugin->log)) {
-                mtrace($authplugin->log);
-            }
-        }
-        unset($authplugin);
-    }
-    // Generate new password emails for users - ppl expect these generated asap
-    if ($DB->count_records('user_preferences', array('name'=>'create_password', 'value'=>'1'))) {
-        mtrace('Creating passwords for new users...');
-        $usernamefields = get_all_user_name_fields(true, 'u');
-        $newusers = $DB->get_recordset_sql("SELECT u.id as id, u.email,
-                                                 $usernamefields, u.username, u.lang,
-                                                 p.id as prefid
-                                            FROM {user} u
-                                            JOIN {user_preferences} p ON u.id=p.userid
-                                           WHERE p.name='create_password' AND p.value='1' AND u.email !='' AND u.suspended = 0 AND u.auth != 'nologin' AND u.deleted = 0");
-
-        // note: we can not send emails to suspended accounts
-        foreach ($newusers as $newuser) {
-            // Use a low cost factor when generating bcrypt hash otherwise
-            // hashing would be slow when emailing lots of users. Hashes
-            // will be automatically updated to a higher cost factor the first
-            // time the user logs in.
-            if (setnew_password_and_mail($newuser, true)) {
-                unset_user_preference('create_password', $newuser);
-                set_user_preference('auth_forcepasswordchange', 1, $newuser);
-            } else {
-                trigger_error("Could not create and mail new user password!");
-            }
-        }
-        $newusers->close();
-    }
-
-
-    // It is very important to run enrol early
-    // because other plugins depend on correct enrolment info.
-    mtrace("Running enrol crons if required...");
-    $enrols = enrol_get_plugins(true);
-    foreach($enrols as $ename=>$enrol) {
-        // do this for all plugins, disabled plugins might want to cleanup stuff such as roles
-        if (!$enrol->is_cron_required()) {
-            continue;
-        }
-        mtrace("Running cron for enrol_$ename...");
+    // Run all adhoc tasks.
+    while (!\core\task\manager::static_caches_cleared_since($timenow) &&
+           $task = \core\task\manager::get_next_adhoc_task($timenow)) {
+        mtrace("Execute adhoc task: " . get_class($task));
         cron_trace_time_and_memory();
-        $enrol->cron();
-        $enrol->set_config('lastcron', time());
-    }
-
-
-    // Run all cron jobs for each module
-    mtrace("Starting activity modules");
-    get_mailer('buffer');
-    if ($mods = $DB->get_records_select("modules", "cron > 0 AND ((? - lastcron) > cron) AND visible = 1", array($timenow))) {
-        foreach ($mods as $mod) {
-            $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
-            if (file_exists($libfile)) {
-                include_once($libfile);
-                $cron_function = $mod->name."_cron";
-                if (function_exists($cron_function)) {
-                    mtrace("Processing module function $cron_function ...", '');
-                    cron_trace_time_and_memory();
-                    $pre_dbqueries = null;
-                    $pre_dbqueries = $DB->perf_get_queries();
-                    $pre_time      = microtime(1);
-                    if ($cron_function()) {
-                        $DB->set_field("modules", "lastcron", $timenow, array("id"=>$mod->id));
-                    }
-                    if (isset($pre_dbqueries)) {
-                        mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");
-                        mtrace("... used " . (microtime(1) - $pre_time) . " seconds");
-                    }
-                    // Reset possible changes by modules to time_limit. MDL-11597
-                    core_php_time_limit::raise();
-                    mtrace("done.");
-                }
+        $predbqueries = null;
+        $predbqueries = $DB->perf_get_queries();
+        $pretime      = microtime(1);
+        try {
+            $task->execute();
+            if (isset($predbqueries)) {
+                mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
+                mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
-        }
-    }
-    get_mailer('close');
-    mtrace("Finished activity modules");
-
-
-    mtrace("Starting blocks");
-    if ($blocks = $DB->get_records_select("block", "cron > 0 AND ((? - lastcron) > cron) AND visible = 1", array($timenow))) {
-        // We will need the base class.
-        require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
-        foreach ($blocks as $block) {
-            $blockfile = $CFG->dirroot.'/blocks/'.$block->name.'/block_'.$block->name.'.php';
-            if (file_exists($blockfile)) {
-                require_once($blockfile);
-                $classname = 'block_'.$block->name;
-                $blockobj = new $classname;
-                if (method_exists($blockobj,'cron')) {
-                    mtrace("Processing cron function for ".$block->name.'....','');
-                    cron_trace_time_and_memory();
-                    if ($blockobj->cron()) {
-                        $DB->set_field('block', 'lastcron', $timenow, array('id'=>$block->id));
-                    }
-                    // Reset possible changes by blocks to time_limit. MDL-11597
-                    core_php_time_limit::raise();
-                    mtrace('done.');
-                }
+            mtrace("Adhoc task complete: " . get_class($task));
+            \core\task\manager::adhoc_task_complete($task);
+        } catch (Exception $e) {
+            if ($DB && $DB->is_transaction_started()) {
+                error_log('Database transaction aborted automatically in ' . get_class($task));
+                $DB->force_transaction_rollback();
             }
-
-        }
-    }
-    mtrace('Finished blocks');
-
-
-    mtrace('Starting admin reports');
-    cron_execute_plugin_type('report');
-    mtrace('Finished admin reports');
-
-
-    mtrace('Starting main gradebook job...');
-    cron_trace_time_and_memory();
-    grade_cron();
-    mtrace('done.');
-
-
-    mtrace('Starting processing the event queue...');
-    cron_trace_time_and_memory();
-    events_cron();
-    mtrace('done.');
-
-
-    if ($CFG->enablecompletion) {
-        // Completion cron
-        mtrace('Starting the completion cron...');
-        cron_trace_time_and_memory();
-        require_once($CFG->dirroot.'/completion/cron.php');
-        completion_cron();
-        mtrace('done');
-    }
-
-    //now do plagiarism checks
-    require_once($CFG->libdir.'/plagiarismlib.php');
-    plagiarism_cron();
-
-
-    mtrace('Starting course reports');
-    cron_execute_plugin_type('coursereport');
-    mtrace('Finished course reports');
-
-
-    // run gradebook import/export/report cron
-    mtrace('Starting gradebook plugins');
-    cron_execute_plugin_type('gradeimport');
-    cron_execute_plugin_type('gradeexport');
-    cron_execute_plugin_type('gradereport');
-    mtrace('Finished gradebook plugins');
-
-    // run calendar cron
-    require_once "{$CFG->dirroot}/calendar/lib.php";
-    calendar_cron();
-
-    // Run external blog cron if needed
-    if (!empty($CFG->enableblogs) && $CFG->useexternalblogs) {
-        require_once($CFG->dirroot . '/blog/lib.php');
-        mtrace("Fetching external blog entries...", '');
-        cron_trace_time_and_memory();
-        $sql = "timefetched < ? OR timefetched = 0";
-        $externalblogs = $DB->get_records_select('blog_external', $sql, array(time() - $CFG->externalblogcrontime));
-
-        foreach ($externalblogs as $eb) {
-            blog_sync_external_entries($eb);
-        }
-        mtrace('done.');
-    }
-    // Run blog associations cleanup
-    if (!empty($CFG->enableblogs) && $CFG->useblogassociations) {
-        require_once($CFG->dirroot . '/blog/lib.php');
-        // delete entries whose contextids no longer exists
-        mtrace("Deleting blog associations linked to non-existent contexts...", '');
-        cron_trace_time_and_memory();
-        $DB->delete_records_select('blog_association', 'contextid NOT IN (SELECT id FROM {context})');
-        mtrace('done.');
-    }
-
-
-    // Run question bank clean-up.
-    mtrace("Starting the question bank cron...", '');
-    cron_trace_time_and_memory();
-    require_once($CFG->libdir . '/questionlib.php');
-    question_bank::cron();
-    mtrace('done.');
-
-
-    //Run registration updated cron
-    mtrace(get_string('siteupdatesstart', 'hub'));
-    cron_trace_time_and_memory();
-    require_once($CFG->dirroot . '/' . $CFG->admin . '/registration/lib.php');
-    $registrationmanager = new registration_manager();
-    $registrationmanager->cron();
-    mtrace(get_string('siteupdatesend', 'hub'));
-
-    // If enabled, fetch information about available updates and eventually notify site admins
-    if (empty($CFG->disableupdatenotifications)) {
-        $updateschecker = \core\update\checker::instance();
-        $updateschecker->cron();
-    }
-
-    //cleanup old session linked tokens
-    //deletes the session linked tokens that are over a day old.
-    mtrace("Deleting session linked tokens more than one day old...", '');
-    cron_trace_time_and_memory();
-    $DB->delete_records_select('external_tokens', 'lastaccess < :onedayago AND tokentype = :tokentype',
-                    array('onedayago' => time() - DAYSECS, 'tokentype' => EXTERNAL_TOKEN_EMBEDDED));
-    mtrace('done.');
-
-
-    // all other plugins
-    cron_execute_plugin_type('message', 'message plugins');
-    cron_execute_plugin_type('filter', 'filters');
-    cron_execute_plugin_type('editor', 'editors');
-    cron_execute_plugin_type('format', 'course formats');
-    cron_execute_plugin_type('profilefield', 'profile fields');
-    cron_execute_plugin_type('webservice', 'webservices');
-    cron_execute_plugin_type('repository', 'repository plugins');
-    cron_execute_plugin_type('qbehaviour', 'question behaviours');
-    cron_execute_plugin_type('qformat', 'question import/export formats');
-    cron_execute_plugin_type('qtype', 'question types');
-    cron_execute_plugin_type('plagiarism', 'plagiarism plugins');
-    cron_execute_plugin_type('theme', 'themes');
-    cron_execute_plugin_type('tool', 'admin tools');
-
-
-    // and finally run any local cronjobs, if any
-    if ($locals = core_component::get_plugin_list('local')) {
-        mtrace('Processing customized cron scripts ...', '');
-        // new cron functions in lib.php first
-        cron_execute_plugin_type('local');
-        // legacy cron files are executed directly
-        foreach ($locals as $local => $localdir) {
-            if (file_exists("$localdir/cron.php")) {
-                include("$localdir/cron.php");
+            if (isset($predbqueries)) {
+                mtrace("... used " . ($DB->perf_get_queries() - $predbqueries) . " dbqueries");
+                mtrace("... used " . (microtime(1) - $pretime) . " seconds");
             }
+            mtrace("Adhoc task failed: " . get_class($task) . "," . $e->getMessage());
+            \core\task\manager::adhoc_task_failed($task);
         }
-        mtrace('done.');
+        unset($task);
     }
-
-    mtrace('Running cache cron routines');
-    cache_helper::cron();
-    mtrace('done.');
-
-    // Portfolio cron - this needs to be close to the end because it may take a long time.
-    if ($CFG->enableportfolios) {
-        mtrace('Starting the portfolio cron...');
-        cron_trace_time_and_memory();
-        require_once($CFG->libdir . '/portfoliolib.php');
-        portfolio_cron();
-        mtrace('done');
-    }
-
-    // Run automated backups if required - these may take a long time to execute
-    require_once($CFG->dirroot.'/backup/util/includes/backup_includes.php');
-    require_once($CFG->dirroot.'/backup/util/helper/backup_cron_helper.class.php');
-    backup_cron_automated_helper::run_automated_backup();
-
-
-    // Run stats as at the end because they are known to take very long time on large sites
-    if (!empty($CFG->enablestats) and empty($CFG->disablestatsprocessing)) {
-        require_once($CFG->dirroot.'/lib/statslib.php');
-        // check we're not before our runtime
-        $timetocheck = stats_get_base_daily() + $CFG->statsruntimestarthour*60*60 + $CFG->statsruntimestartminute*60;
-
-        if (time() > $timetocheck) {
-            // process configured number of days as max (defaulting to 31)
-            $maxdays = empty($CFG->statsruntimedays) ? 31 : abs($CFG->statsruntimedays);
-            if (stats_cron_daily($maxdays)) {
-                if (stats_cron_weekly()) {
-                    if (stats_cron_monthly()) {
-                        stats_clean_old();
-                    }
-                }
-            }
-            core_php_time_limit::raise();
-        } else {
-            mtrace('Next stats run after:'. userdate($timetocheck));
-        }
-    }
-
-    // Run badges review cron.
-    mtrace("Starting badges cron...");
-    require_once($CFG->dirroot . '/badges/cron.php');
-    badge_cron();
-    mtrace('done.');
-
-    // cleanup file trash - not very important
-    $fs = get_file_storage();
-    $fs->cron();
 
     mtrace("Cron script completed correctly");
 
@@ -505,6 +129,16 @@ function cron_run() {
     mtrace('Cron completed at ' . date('H:i:s') . '. Memory used ' . display_size(memory_get_usage()) . '.');
     $difftime = microtime_diff($starttime, microtime());
     mtrace("Execution took ".$difftime." seconds");
+}
+
+/**
+ * Output some standard information during cron runs. Specifically current time
+ * and memory usage. This method also does gc_collect_cycles() (before displaying
+ * memory usage) to try to help PHP manage memory better.
+ */
+function cron_trace_time_and_memory() {
+    gc_collect_cycles();
+    mtrace('... started ' . date('H:i:s') . '. Current memory use ' . display_size(memory_get_usage()) . '.');
 }
 
 /**
@@ -632,185 +266,4 @@ function cron_bc_hack_plugin_functions($plugintype, $plugins) {
     }
 
     return $plugins;
-}
-
-/**
- * Output some standard information during cron runs. Specifically current time
- * and memory usage. This method also does gc_collect_cycles() (before displaying
- * memory usage) to try to help PHP manage memory better.
- */
-function cron_trace_time_and_memory() {
-    gc_collect_cycles();
-    mtrace('... started ' . date('H:i:s') . '. Current memory use ' . display_size(memory_get_usage()) . '.');
-}
-
-/**
- * Notify admin users or admin user of any failed logins (since last notification).
- *
- * Note that this function must be only executed from the cron script
- * It uses the cache_flags system to store temporary records, deleting them
- * by name before finishing
- *
- * @return bool True if executed, false if not
- */
-function notify_login_failures() {
-    global $CFG, $DB, $OUTPUT;
-
-    if (empty($CFG->notifyloginfailures)) {
-        return false;
-    }
-
-    $recip = get_users_from_config($CFG->notifyloginfailures, 'moodle/site:config');
-
-    if (empty($CFG->lastnotifyfailure)) {
-        $CFG->lastnotifyfailure=0;
-    }
-
-    // If it has been less than an hour, or if there are no recipients, don't execute.
-    if (((time() - HOURSECS) < $CFG->lastnotifyfailure) || !is_array($recip) || count($recip) <= 0) {
-        return false;
-    }
-
-    // we need to deal with the threshold stuff first.
-    if (empty($CFG->notifyloginthreshold)) {
-        $CFG->notifyloginthreshold = 10; // default to something sensible.
-    }
-
-    // Get all the IPs with more than notifyloginthreshold failures since lastnotifyfailure
-    // and insert them into the cache_flags temp table
-    $sql = "SELECT ip, COUNT(*)
-              FROM {log}
-             WHERE module = 'login' AND action = 'error'
-                   AND time > ?
-          GROUP BY ip
-            HAVING COUNT(*) >= ?";
-    $params = array($CFG->lastnotifyfailure, $CFG->notifyloginthreshold);
-    $rs = $DB->get_recordset_sql($sql, $params);
-    foreach ($rs as $iprec) {
-        if (!empty($iprec->ip)) {
-            set_cache_flag('login_failure_by_ip', $iprec->ip, '1', 0);
-        }
-    }
-    $rs->close();
-
-    // Get all the INFOs with more than notifyloginthreshold failures since lastnotifyfailure
-    // and insert them into the cache_flags temp table
-    $sql = "SELECT info, count(*)
-              FROM {log}
-             WHERE module = 'login' AND action = 'error'
-                   AND time > ?
-          GROUP BY info
-            HAVING count(*) >= ?";
-    $params = array($CFG->lastnotifyfailure, $CFG->notifyloginthreshold);
-    $rs = $DB->get_recordset_sql($sql, $params);
-    foreach ($rs as $inforec) {
-        if (!empty($inforec->info)) {
-            set_cache_flag('login_failure_by_info', $inforec->info, '1', 0);
-        }
-    }
-    $rs->close();
-
-    // Now, select all the login error logged records belonging to the ips and infos
-    // since lastnotifyfailure, that we have stored in the cache_flags table
-    $sql = "SELECT * FROM (
-        SELECT l.*, u.firstname, u.lastname
-              FROM {log} l
-              JOIN {cache_flags} cf ON l.ip = cf.name
-         LEFT JOIN {user} u         ON l.userid = u.id
-             WHERE l.module = 'login' AND l.action = 'error'
-                   AND l.time > ?
-                   AND cf.flagtype = 'login_failure_by_ip'
-        UNION ALL
-            SELECT l.*, u.firstname, u.lastname
-              FROM {log} l
-              JOIN {cache_flags} cf ON l.info = cf.name
-         LEFT JOIN {user} u         ON l.userid = u.id
-             WHERE l.module = 'login' AND l.action = 'error'
-                   AND l.time > ?
-                   AND cf.flagtype = 'login_failure_by_info') t
-        ORDER BY t.time DESC";
-    $params = array($CFG->lastnotifyfailure, $CFG->lastnotifyfailure);
-
-    // Init some variables
-    $count = 0;
-    $messages = '';
-    // Iterate over the logs recordset
-    $rs = $DB->get_recordset_sql($sql, $params);
-    foreach ($rs as $log) {
-        $log->time = userdate($log->time);
-        $messages .= get_string('notifyloginfailuresmessage','',$log)."\n";
-        $count++;
-    }
-    $rs->close();
-
-    // If we have something useful to report.
-    if ($count > 0) {
-        $site = get_site();
-        $subject = get_string('notifyloginfailuressubject', '', format_string($site->fullname));
-        // Calculate the complete body of notification (start + messages + end)
-        $body = get_string('notifyloginfailuresmessagestart', '', $CFG->wwwroot) .
-                (($CFG->lastnotifyfailure != 0) ? '('.userdate($CFG->lastnotifyfailure).')' : '')."\n\n" .
-                $messages .
-                "\n\n".get_string('notifyloginfailuresmessageend','',$CFG->wwwroot)."\n\n";
-
-        // For each destination, send mail
-        mtrace('Emailing admins about '. $count .' failed login attempts');
-        foreach ($recip as $admin) {
-            //emailing the admins directly rather than putting these through the messaging system
-            email_to_user($admin, core_user::get_support_user(), $subject, $body);
-        }
-    }
-
-    // Update lastnotifyfailure with current time
-    set_config('lastnotifyfailure', time());
-
-    // Finally, delete all the temp records we have created in cache_flags
-    $DB->delete_records_select('cache_flags', "flagtype IN ('login_failure_by_ip', 'login_failure_by_info')");
-
-    return true;
-}
-
-/**
- * Delete files and directories older than one week from directory provided by $CFG->tempdir.
- *
- * @throws Exception Failed reading/accessing file or directory
- * @return bool True on successful file and directory deletion; otherwise, false on failure
- */
-function cron_delete_from_temp() {
-    global $CFG;
-
-    $tmpdir = $CFG->tempdir;
-    // Default to last weeks time.
-    $time = strtotime('-1 week');
-
-    try {
-        $dir = new RecursiveDirectoryIterator($tmpdir);
-        // Show all child nodes prior to their parent.
-        $iter = new RecursiveIteratorIterator($dir, RecursiveIteratorIterator::CHILD_FIRST);
-
-        for ($iter->rewind(); $iter->valid(); $iter->next()) {
-            $node = $iter->getRealPath();
-            if (!is_readable($node)) {
-                continue;
-            }
-            // Check if file or directory is older than the given time.
-            if ($iter->getMTime() < $time) {
-                if ($iter->isDir() && !$iter->isDot()) {
-                    if (@rmdir($node) === false) {
-                        mtrace("Failed removing directory '$node'.");
-                    }
-                }
-                if ($iter->isFile()) {
-                    if (@unlink($node) === false) {
-                        mtrace("Failed removing file '$node'.");
-                    }
-                }
-            }
-        }
-    } catch (Exception $e) {
-        mtrace('Failed reading/accessing file or directory.');
-        return false;
-    }
-
-    return true;
 }

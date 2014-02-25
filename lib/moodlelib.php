@@ -1610,6 +1610,7 @@ function purge_all_caches() {
     remove_dir($CFG->localcachedir, true);
     set_config('localcachedirpurged', time());
     make_localcache_directory('', true);
+    \core\task\manager::clear_static_caches();
 }
 
 /**

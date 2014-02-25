@@ -1,0 +1,87 @@
+<?php
+
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * Output rendering for the plugin.
+ *
+ * @package     tool_task
+ * @copyright   2014 Damyon Wiese
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+/**
+ * Implements the plugin renderer
+ *
+ * @copyright 2014 Damyon Wiese
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class tool_task_renderer extends plugin_renderer_base {
+    /**
+     * This function will render one beautiful table with all the scheduled tasks.
+     *
+     * @param array(scheduled_task) - list of all scheduled tasks.
+     * @return string HTML to output.
+     */
+    public function scheduled_tasks_table($tasks) {
+        $table = new html_table();
+        $table->head  = array(get_string('name'),
+                              get_string('edit'),
+                              get_string('lastruntime', 'tool_task'),
+                              get_string('nextruntime', 'tool_task'),
+                              get_string('taskscheduleminute', 'tool_task'),
+                              get_string('taskschedulehour', 'tool_task'),
+                              get_string('taskscheduleday', 'tool_task'),
+                              get_string('taskscheduledayofweek', 'tool_task'),
+                              get_string('taskschedulemonth', 'tool_task'),
+                              get_string('faildelay', 'tool_task'),
+                              get_string('default', 'tool_task'));
+        $table->attributes['class'] = 'admintable generaltable';
+        $data = array();
+        $yes = get_string('yes');
+        $no = get_string('no');
+        $never = get_string('never');
+        $now = get_string('now');
+        foreach ($tasks as $task) {
+            $customised = $task->is_customised() ? $no : $yes;
+            $lastrun = $task->get_last_run_time() ? userdate($task->get_last_run_time()) : $never;
+            $nextrun = $task->get_next_run_time() ? userdate($task->get_next_run_time()) : $now;
+            $configureurl = new moodle_url('/admin/tool/task/scheduledtasks.php', array('action'=>'edit', 'task' => get_class($task)));
+            $editlink = $this->action_icon($configureurl, new pix_icon('t/edit', get_string('edittaskschedule', 'tool_task', $task->get_name())));
+
+            $namecell = new html_table_cell($task->get_name());
+            $namecell->header = true;
+
+            $row = new html_table_row(array( $namecell,
+                        new html_table_cell($editlink),
+                        new html_table_cell($lastrun),
+                        new html_table_cell($nextrun),
+                        new html_table_cell($task->get_minute()),
+                        new html_table_cell($task->get_hour()),
+                        new html_table_cell($task->get_day()),
+                        new html_table_cell($task->get_day_of_week()),
+                        new html_table_cell($task->get_month()),
+                        new html_table_cell($task->get_fail_delay()),
+                        new html_table_cell($customised)));
+
+            $data[] = $row;
+        }
+        $table->data = $data;
+        return html_writer::table($table);
+    }
+}
