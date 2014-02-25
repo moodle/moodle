@@ -773,7 +773,7 @@ function notify_login_failures() {
 /**
  * Delete files and directories older than one week from directory provided by $CFG->tempdir.
  *
- * @exception Exception Failed reading/accessing file or directory
+ * @throws Exception Failed reading/accessing file or directory
  * @return bool True on successful file and directory deletion; otherwise, false on failure
  */
 function cron_delete_from_temp() {

@@ -122,7 +122,7 @@ abstract class database_exporter {
      * @see $check_schema is true), queries the database and calls
      * appropriate callbacks.
      *
-     * @exception dbtransfer_exception if any checking (e.g. database schema) fails
+     * @throws dbtransfer_exception if any checking (e.g. database schema) fails
      *
      * @param string $description a user description of the data.
      */

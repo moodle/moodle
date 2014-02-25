@@ -1787,7 +1787,6 @@ class moodle_page {
 
     /**
      * Ensure the theme has not been loaded yet. If it has an exception is thrown.
-     * @source
      *
      * @throws coding_exception
      */
