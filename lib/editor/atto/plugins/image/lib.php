@@ -30,14 +30,29 @@ defined('MOODLE_INTERNAL') || die();
 function atto_image_strings_for_js() {
     global $PAGE;
 
-    $PAGE->requires->strings_for_js(array('createimage',
-                                          'enterurl',
-                                          'enteralt',
-                                          'presentation',
-                                          'preview',
-                                          'browserepositories',
-                                          'presentationoraltrequired',
-                                          'width',
-                                          'height'), 'atto_image');
+    $strings = array(
+        'alignment',
+        'alignment_baseline',
+        'alignment_bottom',
+        'alignment_left',
+        'alignment_middle',
+        'alignment_right',
+        'alignment_sub',
+        'alignment_super',
+        'alignment_textbottom',
+        'alignment_texttop',
+        'alignment_top',
+        'browserepositories',
+        'createimage',
+        'enterurl',
+        'enteralt',
+        'height',
+        'presentation',
+        'preview',
+        'presentationoraltrequired',
+        'width',
+    );
+
+    $PAGE->requires->strings_for_js($strings, 'atto_image');
 }
 
