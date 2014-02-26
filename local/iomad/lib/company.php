@@ -395,7 +395,8 @@ class company {
                 FROM
 	                {company_users} cu
                     INNER JOIN {user} u ON (cu.userid = u.id)
-                WHERE u.deleted = 0";
+                WHERE u.deleted = 0
+                AND cu.companyid = :companyid";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 

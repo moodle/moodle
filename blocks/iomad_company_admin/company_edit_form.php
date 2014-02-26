@@ -383,7 +383,7 @@ if ($mform->is_cancelled()) {
         $coursecat->id = $DB->insert_record('course_categories', $coursecat);
         $coursecat->context = context_coursecat::instance($coursecat->id);
         $categorycontext = $coursecat->context;
-        mark_context_dirty($coursecat->context->path);
+        $categorycontext->mark_dirty();
         $DB->update_record('course_categories', $coursecat);
         fix_course_sortorder();
         $companydetails = $DB->get_record('company', array('id' => $companyid));
