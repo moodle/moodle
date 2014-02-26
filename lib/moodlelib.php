@@ -3689,6 +3689,8 @@ function get_all_user_name_fields($returnsql = false, $tableprefix = null, $pref
 /**
  * Reduces lines of duplicated code for getting user name fields.
  *
+ * See also {@link user_picture::unalias()}
+ *
  * @param object $addtoobject Object to add user name fields to.
  * @param object $secondobject Object that contains user name field information.
  * @param string $prefix prefix to be added to all fields (including $additionalfields) e.g. authorfirstname.
