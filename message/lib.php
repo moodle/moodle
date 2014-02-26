@@ -2376,7 +2376,21 @@ function message_mark_message_read($message, $timeread, $messageworkingempty=fal
         $DB->delete_records('message_working', array('unreadmessageid' => $messageid));
     }
     $messagereadid = $DB->insert_record('message_read', $message);
+
     $DB->delete_records('message', array('id' => $messageid));
+
+    // Trigger event for reading a message.
+    $event = \core\event\message_read::create(array(
+        'objectid' => $messagereadid,
+        'userid' => $message->useridto, // Using the user who read the message as they are the ones performing the action.
+        'context'  => context_user::instance($message->useridto),
+        'relateduserid' => $message->useridfrom,
+        'other' => array(
+            'messageid' => $messageid
+        )
+    ));
+    $event->trigger();
+
     return $messagereadid;
 }
 

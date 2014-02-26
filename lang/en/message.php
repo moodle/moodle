@@ -58,6 +58,7 @@ $string['eventmessagecontactadded'] = 'Message contact added';
 $string['eventmessagecontactblocked'] = 'Message contact blocked';
 $string['eventmessagecontactremoved'] = 'Message contact removed';
 $string['eventmessagecontactunblocked'] = 'Message contact unblocked';
+$string['eventmessageread'] = 'Message read';
 $string['eventmessagesent'] = 'Message sent';
 $string['forced'] = 'Forced';
 $string['formorethan'] = 'For more than';

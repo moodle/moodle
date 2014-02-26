@@ -167,4 +167,29 @@ class core_message_events_testcase extends advanced_testcase {
         $expected = array(SITEID, 'message', 'write', 'index.php?user=1&id=2&history=1#m3', 1);
         $this->assertEventLegacyLogData($expected, $event);
     }
+
+    /**
+     * Test the message read event.
+     */
+    public function test_message_read() {
+        global $DB;
+
+        // Create a message to mark as read.
+        $message = new stdClass();
+        $message->useridfrom = '1';
+        $message->useridto = '2';
+        $message->subject = 'Subject';
+        $message->message = 'Message';
+        $message->id = $DB->insert_record('message', $message);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        message_mark_message_read($message, time());
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\message_read', $event);
+        $this->assertEquals(context_user::instance(2), $event->get_context());
+    }
 }
