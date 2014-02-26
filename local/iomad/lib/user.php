@@ -49,6 +49,9 @@ class company_user {
 
         $user->username = self::generate_username( $user->email );
         $user->username = clean_param($user->username, PARAM_USERNAME);
+        
+        // Deal with the company theme.
+        $user->theme = $company->get_theme();
 
         if ($user->sendnewpasswordemails && !$user->preference_auth_forcepasswordchange) {
             throw new Exception(get_string('cannotemailnontemporarypasswords', 'local_iomad'));
@@ -247,7 +250,10 @@ class company_user {
     /**
      * Generate a username based on the email address of the user.
      * @param text $email
-     * @return text
+     * @return textDear nick@connectedshopping.com,
+
+Thank you for your request.
+
      */
     public static function generate_username( $email ) {
         global $DB;

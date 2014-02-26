@@ -423,6 +423,10 @@ class company {
         if (!$DB->insert_record('company_users', $userrecord)) {
             print_error(get_string('cantassignusersdb', 'block_iomad_company_admin'));
         }
+
+        // Deal with the company theme.
+        $DB->set_field('user', 'theme', $this->get_theme(), array('id' => $userid));
+
         return true;
     }
 

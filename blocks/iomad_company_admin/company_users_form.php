@@ -133,6 +133,9 @@ class company_users_form extends moodleform {
                             role_unassign($departmentmanagerrole->id, $removeuser->id, $this->context->id);
                         }
                         $DB->delete_records('company_users', array('userid' => $removeuser->id));
+                        // Deal with the company theme.
+                        $DB->set_field('user', 'theme', '', array('id' => $removeuser->id));
+
 
                     }
 
