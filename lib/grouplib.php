@@ -791,6 +791,77 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
 }
 
 /**
+ * Filter a user list and return only the users that can see the course module based on
+ * groups/permissions etc. It is assumed that the users are pre-filtered to those who are enrolled in the course.
+ *
+ * @category group
+ * @param stdClass $cm The course module
+ * @param array $users An array of users, indexed by userid
+ * @return array A filtered list of users that can see the module, indexed by userid.
+ */
+function groups_filter_users_by_course_module_visible($cm, $users) {
+    global $CFG, $DB;
+
+    if (empty($CFG->enablegroupmembersonly)) {
+        return $users;
+    }
+    if (empty($cm->groupmembersonly)) {
+        return $users;
+    }
+    list($usql, $uparams) = $DB->get_in_or_equal(array_keys($users), SQL_PARAMS_NAMED, 'userid', true);
+
+    // Group membership sub-query.
+    if ($cm->groupingid) {
+        // Find out if member of any group in selected activity grouping.
+        $igsql = "SELECT gm.userid
+                  FROM {groups_members} gm
+                  LEFT JOIN {groupings_groups} gg
+                  ON gm.groupid = gg.groupid
+                  WHERE gm.userid $usql AND gg.groupingid = :groupingid";
+        $igparams = array_merge($uparams, array('groupingid' => $cm->groupingid));
+
+    } else {
+        // No grouping used - check all groups in course.
+        $igsql = "SELECT gm.userid
+                  FROM {groups_members} gm
+                  LEFT JOIN {groups} g
+                  ON gm.groupid = g.id
+                  WHERE gm.userid $usql AND g.courseid = :courseid";
+        $igparams = array_merge($uparams, array('courseid' => $cm->course));
+    }
+
+    $context = context_module::instance($cm->id);
+
+    // Get the list of users in a valid group.
+    $usersingroup = $DB->get_records_sql($igsql, $igparams);
+    if (!$usersingroup) {
+        $usersingroup = array();
+    } else {
+        $usersingroup = array_keys($usersingroup);
+    }
+
+    // Get the list of users who can access all groups.
+    list($accessallgroupssql, $accessallgroupsparams) = get_enrolled_sql($context, 'moodle/site:accessallgroups');
+
+    $userswithaccessallgroups = $DB->get_records_sql($accessallgroupssql, $accessallgroupsparams);
+    if (!$userswithaccessallgroups) {
+        $userswithaccessallgroups = array();
+    } else {
+        $userswithaccessallgroups = array_keys($userswithaccessallgroups);
+    }
+
+    // Explaining this array mangling:
+    // $users is an array of $user[$userid] => stdClass etc
+    // $userswithaccessallgroups is an array of $userswithaccessallgroups[random int] = $userid
+    // $usersingroup is an array of $usersingroup[random int] = $userid
+    // so - the inner array_merge combines the values of the 2 arrays disregarding the keys (because they are ints)
+    // this is then flipped so the values become the keys (and the values are now nonsense)
+    // this is then intersected with the users array only by looking at the keys - this
+    // returns only the users from the original array that had a value in one of the two $usersxxx lists.
+    return array_intersect_key($users, array_flip(array_merge($userswithaccessallgroups, $usersingroup)));
+}
+
+/**
  * Determine if a course module is currently visible to a user
  *
  * $USER If $userid is null, use the global object.
