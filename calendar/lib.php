@@ -2950,7 +2950,7 @@ function calendar_process_subscription_row($subscriptionid, $pollinterval, $acti
  *
  * @param int|stdClass $subscription subscription or it's id, which needs to be deleted.
  */
-function calendar_delete_subscription($subscription,$courseid) {
+function calendar_delete_subscription($subscription) {
     global $DB;
 
     if (is_object($subscription)) {

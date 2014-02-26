@@ -82,7 +82,7 @@ if (!empty($formdata)) {
             add_to_log($courseid, 'calendar', 'subscribe', 'managesubscriptions.php?course='.$courseid, 'subscriptionid='.$subscriptionid);
         } catch (moodle_exception $e) {
             // Delete newly added subscription and show invalid url error.
-            calendar_delete_subscription($subscriptionid,$courseid);
+            calendar_delete_subscription($subscriptionid);
             print_error($e->errorcode, $e->module, $PAGE->url);
         }
     }
