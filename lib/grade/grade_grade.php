@@ -779,19 +779,18 @@ class grade_grade extends grade_object {
             unset($SESSION->gradescorecache[$this->itemid]);
         }
 
-        // Ignore during restore
-        // TODO There should be a proper way to determine when we are in restore
-        // so that this hack looking for a $restore global is not needed.
-        global $restore;
-        if (!empty($restore->backup_unique_code)) {
-            return;
-        }
-
         require_once($CFG->libdir.'/completionlib.php');
 
         // Bail out immediately if completion is not enabled for site (saves loading
-        // grade item below)
+        // grade item & requiring the restore stuff).
         if (!completion_info::is_enabled_for_site()) {
+            return;
+        }
+
+        // Ignore during restore, as completion data will be updated anyway and
+        // doing it now will result in incorrect dates (it will say they got the
+        // grade completion now, instead of the correct time).
+        if (class_exists('restore_controller', false) && restore_controller::is_executing()) {
             return;
         }
 

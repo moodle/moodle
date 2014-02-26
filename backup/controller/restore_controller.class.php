@@ -59,6 +59,9 @@ class restore_controller extends backup implements loggable {
 
     protected $checksum; // Cache @checksumable results for lighter @is_checksum_correct() uses
 
+    /** @var int Number of restore_controllers that are currently executing */
+    protected static $executing = 0;
+
     /**
      *
      * @param string $tempdir Directory under tempdir/backup awaiting restore
@@ -312,7 +315,26 @@ class restore_controller extends backup implements loggable {
             $this->log('notifying plan about excluded activities by type', backup::LOG_DEBUG);
             $this->plan->set_excluding_activities();
         }
-        return $this->plan->execute();
+        self::$executing++;
+        try {
+            $this->plan->execute();
+        } catch (Exception $e) {
+            self::$executing--;
+            throw $e;
+        }
+        self::$executing--;
+    }
+
+    /**
+     * Checks whether restore is currently executing. Certain parts of code that
+     * is called during restore, but not directly part of the restore system, may
+     * need to behave differently during restore (e.g. do not bother resetting a
+     * cache because we know it will be reset at end of operation).
+     *
+     * @return bool True if any restore is currently executing
+     */
+    public static function is_executing() {
+        return self::$executing > 0;
     }
 
     /**
