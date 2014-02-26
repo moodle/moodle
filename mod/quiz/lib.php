@@ -847,7 +847,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
     $params['timestart'] = $timestart;
     $params['quizid'] = $quiz->id;
 
-    $ufields = user_picture::fields('u');
+    $ufields = user_picture::fields('u', null, 'useridagain');
     if (!$attempts = $DB->get_records_sql("
               SELECT qa.*,
                      {$ufields}
@@ -920,8 +920,7 @@ function quiz_get_recent_mod_activity(&$activities, &$index, $timestart,
             $tmpactivity->content->maxgrade  = null;
         }
 
-        $tmpactivity->user = username_load_fields_from_object(new stdClass(), $attempt, null,
-                explode(',', user_picture::fields()));
+        $tmpactivity->user = user_picture::unalias($attempt, null, 'useridagain');
         $tmpactivity->user->fullname  = fullname($tmpactivity->user, $viewfullnames);
 
         $activities[$index++] = $tmpactivity;
