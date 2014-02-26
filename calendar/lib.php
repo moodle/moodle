@@ -2359,6 +2359,7 @@ class calendar_event {
 
         // Delete the event
         $DB->delete_records('event', array('id'=>$this->properties->id));
+        add_to_log($this->properties->courseid, 'calendar', 'delete', 'delete.php?id='.$this->properties->id.'&amp;course='.$this->properties->courseid, $this->properties->name);
 
         // If we are deleting parent of a repeated event series, promote the next event in the series as parent
         if (($this->properties->id == $this->properties->repeatid) && !$deleterepeated) {
@@ -2949,7 +2950,7 @@ function calendar_process_subscription_row($subscriptionid, $pollinterval, $acti
  *
  * @param int|stdClass $subscription subscription or it's id, which needs to be deleted.
  */
-function calendar_delete_subscription($subscription) {
+function calendar_delete_subscription($subscription,$courseid) {
     global $DB;
 
     if (is_object($subscription)) {
