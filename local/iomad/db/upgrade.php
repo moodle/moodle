@@ -938,5 +938,10 @@ function xmldb_local_iomad_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2014022600) {
+
+        // Change the site to force user allowed themes.
+        set_config('allowuserthemes', 1);
+    }
     return $result;
 }

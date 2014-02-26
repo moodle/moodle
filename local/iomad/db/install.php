@@ -369,6 +369,7 @@ function xmldb_local_iomad_install() {
     // Even worse - change the theme.
     $theme = theme_config::load('iomad');
     set_config('theme', $theme->name);
+    set_config('allowuserthemes', 1);
 
     // Enable completion tracking.
     set_config('enablecompletion', 1);

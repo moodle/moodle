@@ -210,14 +210,21 @@ class company_edit_form extends company_moodleform {
                 $mform->disabledIf('id_bgcolor_content', 'usedefaulttheme', 'checked');
             } else {
                 $mform->addElement('hidden', 'id_companylogo', $this->companyrecord->companylogo);
+                $mform->addElement('hidden', 'companylogo', $this->companyrecord->companylogo);
                 $mform->addElement('hidden', 'id_bgcolor_header',
                                     $this->companyrecord->bgcolor_header);
                 $mform->addElement('hidden', 'id_bgcolor_content',
                                     $this->companyrecord->bgcolor_content);
+                $mform->setType('companylogo', PARAM_CLEAN);
+                $mform->setType('id_companylogo', PARAM_CLEAN);
+                $mform->setType('id_bgcolor_header', PARAM_CLEAN);
+                $mform->setType('id_bgcolor_content', PARAM_CLEAN);
             }
         } else {
                 $mform->addElement('hidden', 'theme', $this->companyrecord->theme);
+                $mform->setType('theme', PARAM_TEXT);
                 $mform->addElement('hidden', 'companylogo', $this->companyrecord->companylogo);
+                $mform->setType('companylogo', PARAM_CLEAN);
                 $mform->addElement('hidden', 'bgcolor_header',
                                     $this->companyrecord->bgcolor_header);
                 $mform->addElement('hidden', 'bgcolor_content',
@@ -387,25 +394,13 @@ if ($mform->is_cancelled()) {
         $data->id = $companyid;
 
         $company = new company($companyid);
-        $oldshortname = $company->get_shortname();
+        $oldtheme = $company->get_theme();
 
-        $shortnamechanged = $oldshortname != $data->shortname;
+        $themechanged = $oldtheme != $data->theme;
         $DB->update_record('company', $data);
 
-        if ($shortnamechanged) {
-            company_user::update_company_reference($oldshortname, $data->shortname);
-            if (!$currcategory = $DB->get_record('user_info_category',
-                                                  array('name' => $oldshortname))) {
-                // No category there for some reason, so we add it.
-                $catdata = new object();
-                $catdata->sortorder = $DB->count_records('user_info_category') + 1;
-                $catdata->name = $data->shortname;
-                $DB->insert_record('user_info_category', $catdata, false);
-            } else {
-                // Got a record so update it..
-                $currcategory->name = $data->shortname;
-                $DB->update_record('user_info_category', $currcategory);
-            }
+        if ($themechanged) {
+            $company->update_theme($data->theme);
         }
 
         if (company_user::is_company_user()) {

@@ -102,6 +102,17 @@ class company {
     }
 
     /**
+     * Gets the company theme name for the current instance
+     *
+     * Returns text;
+     *
+     **/
+    public function get_theme() {
+        $companyrecord = $this->get('theme');
+        return $companyrecord->theme;
+    }
+
+    /**
      * Gets the file path for the company logo for the current instance
      *
      * Returns text;
@@ -341,6 +352,7 @@ class company {
 
     /**
      * Get the user ids associated to a company
+     * does not pass back any managers
      *
      * returns stdclass();
      *
@@ -348,8 +360,8 @@ class company {
     public function get_user_ids() {
         global $DB;
 
-                // By default wherecondition retrieves all users except the
-                // deleted, not confirmed and guest.
+        // By default wherecondition retrieves all users except the
+        // deleted, not confirmed and guest.
         $params['companyid'] = $this->id;
         $params['companyidforjoin'] = $this->id;
 
@@ -359,6 +371,31 @@ class company {
                     INNER JOIN {user} u ON (cu.userid = u.id)
                 WHERE u.deleted = 0
                       AND cu.managertype = 0";
+
+        $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
+
+        return $DB->get_records_sql_menu($sql . $order, $params);
+    }
+
+    /**
+     * Get all the user ids associated to a company
+     *
+     * returns stdclass();
+     *
+     **/
+    public function get_all_user_ids() {
+        global $DB;
+
+        // By default wherecondition retrieves all users except the
+        // deleted, not confirmed and guest.
+        $params['companyid'] = $this->id;
+        $params['companyidforjoin'] = $this->id;
+
+        $sql = " SELECT u.id, u.id AS mid
+                FROM
+	                {company_users} cu
+                    INNER JOIN {user} u ON (cu.userid = u.id)
+                WHERE u.deleted = 0";
 
         $order = ' ORDER BY u.lastname ASC, u.firstname ASC';
 
@@ -1320,5 +1357,27 @@ class company {
         }
         $DB->delete_records('company_shared_courses', array('courseid' => $courseid,
                                                             'companyid' => $companyid));
+    }
+
+    /**
+     * Updates the theme reference for all the users in the company
+     *
+     * Parameters -
+     *              $theme = string;
+     *
+     **/
+    public function update_theme($theme) {
+        global $DB;
+
+        // Get the company users.
+        $users = $this->get_all_user_ids();
+
+        // Update their theme.
+        foreach ($users as $userid) {
+            if ($user = $DB->get_record('user', array('id' => $userid))) {
+                $user->theme = $theme;
+                $DB->update_record('user', $user);
+            }
+        }
     }
 }
