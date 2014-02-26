@@ -134,6 +134,8 @@
 #page-admin-roles-override .overridenotice,
 #page-admin-roles-define .definenotice {margin: 1em 10% 2em 10%;text-align: left;}
 
+#page-admin-index .adminerror,
+#page-admin-index .adminwarning {background-color:#ffd3d9 }
 #page-admin-index .adminerror .singlebutton,
 #page-admin-index .adminwarning .singlebutton,
 #page-admin-index #layout-table .singlebutton {margin:20px;}
