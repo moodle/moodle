@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(dirname(__FILE__) . '/company.php');
+require_once('company.php');
 
 class iomad {
 
@@ -37,7 +37,7 @@ class iomad {
         if (!empty($SESSION->currenteditingcompany)) {
             $companyid = $SESSION->currenteditingcompany;
         } else if (self::is_company_user()) {
-            $companyid = company_user::companyid();
+            $companyid = self::companyid();
         } else if (!has_capability('block/iomad_company_admin:edit_departments', $context)) {
             print_error('There has been a configuration error, please contact the site administrator');
         } else {
