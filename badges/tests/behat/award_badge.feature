@@ -235,6 +235,8 @@ Feature: Award badges
     # We can't wait for cron to happen, so the admin manually triggers it.
     And I trigger cron
     # The admin needs to trigger cron twice to see the completion status as completed.
+    # We wait more than 1 minute because of the next cron run scheduled time.
+    And I wait "61" seconds
     And I trigger cron
     # Finally the admin goes back to homepage to continue the user story.
     And I am on homepage
