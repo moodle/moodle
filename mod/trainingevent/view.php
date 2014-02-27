@@ -154,6 +154,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         } else {
                             $mymanagers = $company->get_my_managers($USER->id, 1);
                         }
+                        if (empty($mymanagers)) {
+                            $mymanagers = $company->get_my_managers($USER->id, 1);
+                        }
                         foreach ($mymanagers as $mymanager) {
                             if ($manageruser = $DB->get_record('user', array('id' => $mymanager->userid))) {
                                 EmailTemplate::send('course_classroom_approval', array('course' => $course,

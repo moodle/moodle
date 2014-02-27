@@ -517,6 +517,26 @@ class company {
         return $DB->get_record('department', array('id' => $departmentid));
     }
 
+    public static function get_parentdepartments($department) {
+        global $DB;
+
+        $returnarray = $department;
+        // Check to see if its the top node.
+        if (isset($department->id)) {
+            if ($department->parent != 0) {
+                $parent = self::get_department_parentnode($department->id);
+                if ($parent->parent != 0 ) {
+
+                    $returnarray->parents[] = self::get_parentdepartments($parent);
+                } else {
+                    $returnarray->parents[] = $parent;
+                }
+            }
+        }
+
+        return $returnarray;
+    }
+
     /**
      * Get list of departments which are below this on on the tree.
      *
@@ -583,6 +603,29 @@ class company {
         }
 
         return $flatlist;
+    }
+
+    /**
+     * Get a list of all departments
+     *
+     * Parameters -
+     *              $tree = stdclass();
+     *              $path = text;
+     *
+     * Returns array();
+     *
+     **/
+    public static function get_parents_list($tree, &$return = array()) {
+
+        if (isset($tree->id)) {
+            $return[$tree->id] = $tree->id;
+        }
+
+        if (!empty($tree->parents)) {
+            foreach ($tree->parents as $parent) {
+                self::get_parents_list($parent, $return);
+            }
+        }
     }
 
     /**
@@ -755,6 +798,36 @@ class company {
         }
         return self::get_recursive_department_users($departmentid);
     }
+
+     /**
+      * Gets a list of the managers for that user
+      *
+      * Parameters -
+      *             $userid = int;
+      *             $managertype = int;
+      *
+      * Returns string
+      *
+      **/
+     public static function get_my_managers($userid, $managertype) {
+         global $DB, $USER;
+
+         // Get the users department.
+         $usercompanyinfo = $DB->get_record('company_users', array('userid' => $userid));
+         // Get the list of parent departments.
+         $userdepartment = self::get_departmentbyid($usercompanyinfo->departmentid);
+         $departmentlist = self::get_parentdepartments($userdepartment);
+         self::get_parents_list($departmentlist, $departments);
+
+         // Get the managers in that list of departments.
+         $managers = $DB->get_records_sql("SELECT userid FROM {company_users}
+                                           WHERE managertype = :managertype
+                                           AND userid != :userid
+                                           AND departmentid IN (".implode(',', array_keys($departments)).")",
+                                           array('managertype' => $managertype, 'userid' => $USER->id));
+         //  return them.
+         return $managers;
+     }
 
     /**
      * Gets a list of the users that manager is responsible for
