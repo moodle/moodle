@@ -204,7 +204,10 @@ class behat_form_select extends behat_form_field {
 
         // Same implementation as the parent if it is a single select.
         if (!$multiple) {
-            if (trim($expectedvalue) != trim($this->get_value())) {
+            $cleanexpectedvalue = trim($expectedvalue);
+            $selectedtext = trim($this->get_selected_options());
+            $selectedvalue = trim($this->get_selected_options(false));
+            if ($cleanexpectedvalue != $selectedvalue && $cleanexpectedvalue != $selectedtext) {
                 return false;
             }
             return true;

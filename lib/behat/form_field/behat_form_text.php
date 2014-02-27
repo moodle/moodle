@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Generic group field class.
+ * Text field class.
  *
  * @package    core_form
  * @category   test
@@ -28,16 +28,42 @@
 require_once(__DIR__  . '/behat_form_field.php');
 
 /**
- * Class to re-guess the field type as grouped fields can have different field types.
- *
- * When filling fields inside a fgroup field element we don't know what kind
- * of field are we dealing with, so we should re-guess it as behat_form_field
- * does.
+ * Class for test-based fields.
  *
  * @package    core_form
  * @category   test
  * @copyright  2014 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_group extends behat_form_field {
+class behat_form_text extends behat_form_field {
+
+    /**
+     * Sets the value to a field.
+     *
+     * @param string $value
+     * @return void
+     */
+    public function set_value($value) {
+        $this->field->setValue($value);
+    }
+
+    /**
+     * Returns the current value of the element.
+     *
+     * @return string
+     */
+    public function get_value() {
+        return $this->field->getValue();
+    }
+
+    /**
+     * Matches the provided value against the current field value.
+     *
+     * @param string $expectedvalue
+     * @return bool The provided value matches the field value?
+     */
+    public function matches($expectedvalue) {
+        return $this->text_matches($expectedvalue);
+    }
+
 }
