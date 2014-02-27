@@ -241,7 +241,7 @@ class core_files_renderer extends plugin_renderer_base {
         <div class="filemanager-updating">'.$icon_progress.'</div>
     </div>
 </div>';
-        return preg_replace('/\{\!\}/', '', $html);
+        return $html;
     }
 
     /**
@@ -321,8 +321,8 @@ class core_files_renderer extends plugin_renderer_base {
         <label id="fp-mkdir-dlg-title">' . get_string('newfoldername', 'repository') . '</label><br/>
         <input type="text" />
     </div>
-    <button class="fp-dlg-butcreate btn-primary">'.get_string('makeafolder').'</button>
-    <button class="fp-dlg-butcancel btn-cancel">'.get_string('cancel').'</button>
+    <button class="fp-dlg-butcreate btn-primary btn">'.get_string('makeafolder').'</button>
+    <button class="fp-dlg-butcancel btn-cancel btn">'.get_string('cancel').'</button>
 </div>';
         return $rv;
     }
@@ -437,8 +437,8 @@ class core_files_renderer extends plugin_renderer_base {
                 </div>
         </div>
         <div class="fp-select-buttons">
-            <button class="fp-file-update btn-primary">'.get_string('update', 'moodle').'</button>
-            <button class="fp-file-cancel btn-cancel">'.get_string('cancel').'</button>
+            <button class="fp-file-update btn-primary btn">'.get_string('update', 'moodle').'</button>
+            <button class="fp-file-cancel btn-cancel btn">'.get_string('cancel').'</button>
         </div>
     </form>
     <div class="fp-info clearfix">
@@ -470,8 +470,8 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="filemanager fp-dlg">
     <div class="fp-dlg-text"></div>
-    <button class="fp-dlg-butconfirm btn-primary">'.get_string('ok').'</button>
-    <button class="fp-dlg-butcancel btn-cancel">'.get_string('cancel').'</button>
+    <button class="fp-dlg-butconfirm btn-primary btn">'.get_string('ok').'</button>
+    <button class="fp-dlg-butcancel btn-cancel btn">'.get_string('cancel').'</button>
 </div>';
         return $rv;
     }
@@ -782,8 +782,8 @@ class core_files_renderer extends plugin_renderer_base {
                 </div>
         </div>
        <div class="fp-select-buttons">
-            <button class="fp-select-confirm btn-primary">'.get_string('getfile', 'repository').'</button>
-            <button class="fp-select-cancel btn-cancel">'.get_string('cancel').'</button>
+            <button class="fp-select-confirm btn-primary btn">'.get_string('getfile', 'repository').'</button>
+            <button class="fp-select-cancel btn-cancel btn">'.get_string('cancel').'</button>
         </div>
     </form>
     <div class="fp-info clearfix">
@@ -853,7 +853,7 @@ class core_files_renderer extends plugin_renderer_base {
             </div>
         </form>
         <div class="mdl-align">
-            <button class="fp-upload-btn btn-primary">'.get_string('upload', 'repository').'</button>
+            <button class="fp-upload-btn btn-primary btn">'.get_string('upload', 'repository').'</button>
         </div>
     </div>
 </div> ';
@@ -906,7 +906,7 @@ class core_files_renderer extends plugin_renderer_base {
         $rv = '
 <div class="file-picker fp-msg" role="alertdialog" aria-live="assertive" aria-labelledby="fp-msg-labelledby">
     <p class="fp-msg-text" id="fp-msg-labelledby"></p>
-    <button class="fp-msg-butok btn-primary">'.get_string('ok').'</button>
+    <button class="fp-msg-butok btn-primary btn">'.get_string('ok').'</button>
 </div>';
         return $rv;
     }
@@ -931,9 +931,9 @@ class core_files_renderer extends plugin_renderer_base {
 <div class="file-picker fp-dlg">
     <p class="fp-dlg-text"></p>
     <div class="fp-dlg-buttons">
-        <button class="fp-dlg-butoverwrite">'.get_string('overwrite', 'repository').'</button>
-        <button class="fp-dlg-butrename"></button>
-        <button class="fp-dlg-butcancel">'.get_string('cancel').'</button>
+        <button class="fp-dlg-butoverwrite btn">'.get_string('overwrite', 'repository').'</button>
+        <button class="fp-dlg-butrename btn"></button>
+        <button class="fp-dlg-butcancel btn btn-cancel">'.get_string('cancel').'</button>
     </div>
 </div>';
         return $rv;
@@ -997,7 +997,7 @@ class core_files_renderer extends plugin_renderer_base {
             <div class="fp-formset">
                 <div class="fp-login-popup control-group clearfix">
                     <div class="controls fp-popup">
-                        <button class="fp-login-popup-but btn-primary">'.get_string('login', 'repository').'</button>
+                        <button class="fp-login-popup-but btn-primary btn">'.get_string('login', 'repository').'</button>
                     </div>
                 </div>
                 <div class="fp-login-textarea control-group clearfix">
@@ -1017,7 +1017,7 @@ class core_files_renderer extends plugin_renderer_base {
                     <div class="controls fp-login-radio"><input /> <label></label></div>
                 </div>
             </div>
-            <p><button class="fp-login-submit btn-primary">'.get_string('submit', 'repository').'</button></p>
+            <p><button class="fp-login-submit btn-primary btn">'.get_string('submit', 'repository').'</button></p>
         </form>
     </div>
 </div>';
