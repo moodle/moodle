@@ -26,7 +26,7 @@ namespace logstore_standard\log;
 
 defined('MOODLE_INTERNAL') || die();
 
-class store implements \tool_log\log\writer, \core\log\sql_reader {
+class store implements \tool_log\log\writer, \core\log\sql_internal_reader {
     use \tool_log\helper\store,
         \tool_log\helper\buffered_writer,
         \tool_log\helper\reader;
@@ -75,7 +75,7 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
         $DB->insert_records('logstore_standard_log', $dataobj);
     }
 
-    public function get_events($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
+    public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;
 
         $events = array();
@@ -100,12 +100,12 @@ class store implements \tool_log\log\writer, \core\log\sql_reader {
         return $events;
     }
 
-    public function get_events_count($selectwhere, array $params) {
+    public function get_events_select_count($selectwhere, array $params) {
         global $DB;
         return $DB->count_records_select('logstore_standard_log', $selectwhere, $params);
     }
 
-    public function get_log_table() {
+    public function get_internal_log_table_name() {
         return 'logstore_standard_log';
     }
 

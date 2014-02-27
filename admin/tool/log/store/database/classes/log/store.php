@@ -25,7 +25,7 @@
 namespace logstore_database\log;
 defined('MOODLE_INTERNAL') || die();
 
-class store implements \tool_log\log\writer, \core\log\reader {
+class store implements \tool_log\log\writer, \core\log\sql_select_reader {
     use \tool_log\helper\store,
         \tool_log\helper\reader,
         \tool_log\helper\buffered_writer {
@@ -166,7 +166,7 @@ class store implements \tool_log\log\writer, \core\log\reader {
      *
      * @return array|\core\event\base[] array of events.
      */
-    public function get_events($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
+    public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         if (!$this->init()) {
             return array();
         }
@@ -205,7 +205,7 @@ class store implements \tool_log\log\writer, \core\log\reader {
      *
      * @return int Number of events available for the given conditions
      */
-    public function get_events_count($selectwhere, array $params) {
+    public function get_events_select_count($selectwhere, array $params) {
         if (!$this->init()) {
             return 0;
         }

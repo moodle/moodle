@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Log storage sql reader interface.
+ * Log storage reader interface.
  *
  * @package    core
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
@@ -26,16 +26,25 @@ namespace core\log;
 
 defined('MOODLE_INTERNAL') || die();
 
-interface sql_reader extends reader {
+interface sql_select_reader extends reader {
+    /**
+     * Fetch records using given criteria.
+     *
+     * @param string $selectwhere
+     * @param array $params
+     * @param string $sort
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return \core\event\base[]
+     */
+    public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum);
 
     /**
-     * Returns name of the table or database view that
-     * holds the log data in standardised format.
+     * Return number of events matching given criteria.
      *
-     * Note: this table must be used for reading only,
-     * it is strongly recommended to use this in complex reports only.
-     *
-     * @return string
+     * @param string $selectwhere
+     * @param array $params
+     * @return int
      */
-    public function get_log_table();
+    public function get_events_select_count($selectwhere, array $params);
 }

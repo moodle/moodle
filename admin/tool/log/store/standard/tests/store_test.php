@@ -111,8 +111,13 @@ class logstore_standard_store_testcase extends advanced_testcase {
         $data['realuserid'] = 2;
         $this->assertEquals($data, $log3);
 
+        // Test table exists.
+        $tablename = $store->get_internal_log_table_name();
+        $this->assertTrue($DB->get_manager()->table_exists($tablename));
+
         // Test reading.
-        $events = $store->get_events('', array(), 'id', 0, 0);
+        $this->assertSame(3, $store->get_events_select_count('', array()));
+        $events = $store->get_events_select('', array(), 'id', 0, 0);
         $this->assertCount(3, $events);
         $resev1 = array_shift($events);
         array_shift($events);

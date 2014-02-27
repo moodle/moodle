@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Log storage reader interface.
+ * Log storage sql reader interface.
  *
  * @package    core
- * @copyright  2013 Petr Skoda {@link http://skodak.org}
+ * @copyright  2014 Petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,33 +26,16 @@ namespace core\log;
 
 defined('MOODLE_INTERNAL') || die();
 
-interface reader {
+interface sql_internal_reader extends sql_select_reader {
+
     /**
-     * Localised name of the reader.
+     * Returns name of the table or database view that
+     * holds the log data in standardised format.
      *
-     * To be used in selection for in reports.
+     * Note: this table must be used for reading only,
+     * it is strongly recommended to use this in complex reports only.
      *
      * @return string
      */
-    public function get_name();
-
-    /**
-     * Longer description of the log data source.
-     * @return string
-     */
-    public function get_description();
-
-    /**
-     * Can the current user access this store?
-     * @param \context $context
-     * @return bool
-     */
-    public function can_access(\context $context);
-
-    /**
-     * Are the new events appearing in the reader?
-     *
-     * @return bool true means new log events are being added, false means no new data will be added
-     */
-    public function is_logging();
+    public function get_internal_log_table_name();
 }

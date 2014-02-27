@@ -26,7 +26,7 @@ namespace logstore_legacy\log;
 
 defined('MOODLE_INTERNAL') || die();
 
-class store implements \tool_log\log\store, \core\log\reader {
+class store implements \tool_log\log\store, \core\log\sql_select_reader {
     use \tool_log\helper\store,
         \tool_log\helper\reader;
 
@@ -42,7 +42,7 @@ class store implements \tool_log\log\store, \core\log\reader {
         'origin'            => 'ip'
     );
 
-    public function get_events($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
+    public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;
 
         // Replace db field names to make it compatible with legacy log.
@@ -71,7 +71,7 @@ class store implements \tool_log\log\store, \core\log\reader {
         return $events;
     }
 
-    public function get_events_count($selectwhere, array $params) {
+    public function get_events_select_count($selectwhere, array $params) {
         global $DB;
 
         // Replace db field names to make it compatible with legacy log.
