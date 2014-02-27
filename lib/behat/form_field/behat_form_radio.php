@@ -89,9 +89,6 @@ class behat_form_radio extends behat_form_checkbox {
      * @return bool
      */
     public function matches($expectedvalue = false) {
-        if (trim($expectedvalue) != trim($this->get_value())) {
-            return false;
-        }
-        return true;
+        return $this->text_matches($expectedvalue);
     }
 }

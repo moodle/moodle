@@ -30,9 +30,6 @@ require_once(__DIR__  . '/behat_form_group.php');
 /**
  * Date form field.
  *
- * Simple extension of behat_form_group to allow the different
- * date_selector fields to be filled according to it's type.
- *
  * This class will be refactored in case we are interested in
  * creating more complex formats to fill date and date-time fields.
  *

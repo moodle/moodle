@@ -36,7 +36,7 @@ Feature: Add a quiz
     And I press "Attempt quiz now"
     Then I should see "Question 1"
     And I should see "Answer the first question"
-    And I select "True" radio button
+    And I set the field "True" to "1"
     And I press "Next"
     And I should see "Answer saved"
     And I press "Submit all and finish"

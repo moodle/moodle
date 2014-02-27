@@ -60,9 +60,9 @@ class behat_mod_quiz extends behat_base {
             new Given("I follow \"$quizname\""),
             new Given("I follow \"$editquiz\""),
             new Given("I press \"$addaquestion\""),
-            new Given("I select \"$questiontype\" radio button"),
+            new Given("I set the field \"$questiontype\" to \"1\""),
             new Given("I press \"$next\""),
-            new Given("I fill the moodle form with:", $table),
+            new Given("I set the following fields to these values:", $table),
             new Given("I press \"$savechanges\"")
         );
     }
