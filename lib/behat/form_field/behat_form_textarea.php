@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Generic group field class.
+ * Textarea field class.
  *
  * @package    core_form
  * @category   test
@@ -25,19 +25,15 @@
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
-require_once(__DIR__  . '/behat_form_field.php');
+require_once(__DIR__  . '/behat_form_text.php');
 
 /**
- * Class to re-guess the field type as grouped fields can have different field types.
- *
- * When filling fields inside a fgroup field element we don't know what kind
- * of field are we dealing with, so we should re-guess it as behat_form_field
- * does.
+ * Textarea field class.
  *
  * @package    core_form
  * @category   test
  * @copyright  2014 David Monllaó
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_form_group extends behat_form_field {
+class behat_form_textarea extends behat_form_text {
 }
