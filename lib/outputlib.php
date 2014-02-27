@@ -55,6 +55,11 @@ function theme_reset_all_caches() {
 
     set_config('themerev', $next); // time is unique even when you reset/switch database
 
+    if (!empty($CFG->themedesignermode)) {
+        $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'themedesigner');
+        $cache->purge();
+    }
+
     if ($PAGE) {
         $PAGE->reload_theme();
     }
@@ -66,8 +71,9 @@ function theme_reset_all_caches() {
  * @param bool $state
  */
 function theme_set_designer_mod($state) {
-    theme_reset_all_caches();
     set_config('themedesignermode', (int)!empty($state));
+    // Reset caches after switching mode so that any designer mode caches get purged too.
+    theme_reset_all_caches();
 }
 
 /**
@@ -594,14 +600,12 @@ class theme_config {
     /**
      * Returns the content of the CSS to be used in editor content
      *
-     * @return string
+     * @return array
      */
     public function editor_css_files() {
-        global $CFG;
-
         $files = array();
 
-        // first editor plugins
+        // First editor plugins.
         $plugins = core_component::get_plugin_list('editor');
         foreach ($plugins as $plugin=>$fulldir) {
             $sheetfile = "$fulldir/editor_styles.css";
@@ -609,8 +613,8 @@ class theme_config {
                 $files['plugin_'.$plugin] = $sheetfile;
             }
         }
-        // then parent themes
-        foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
+        // Then parent themes - base first, the immediate parent last.
+        foreach (array_reverse($this->parent_configs) as $parent_config) {
             if (empty($parent_config->editor_sheets)) {
                 continue;
             }
@@ -621,7 +625,7 @@ class theme_config {
                 }
             }
         }
-        // finally this theme
+        // Finally this theme.
         if (!empty($this->editor_sheets)) {
             foreach ($this->editor_sheets as $sheet) {
                 $sheetfile = "$this->dir/style/$sheet.css";
@@ -635,10 +639,10 @@ class theme_config {
     }
 
     /**
-     * Get the stylesheet URL of this theme
+     * Get the stylesheet URL of this theme.
      *
      * @param moodle_page $page Not used... deprecated?
-     * @return array of moodle_url
+     * @return moodle_url[]
      */
     public function css_urls(moodle_page $page) {
         global $CFG;
@@ -679,50 +683,7 @@ class theme_config {
             $urls[] = $url;
 
         } else {
-            // find out the current CSS and cache it now for 5 seconds
-            // the point is to construct the CSS only once and pass it through the
-            // dataroot to the script that actually serves the sheets
-            if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
-                define('THEME_DESIGNER_CACHE_LIFETIME', 4); // this can be also set in config.php
-            }
-            $candidatedir = "$CFG->cachedir/theme/$this->name";
-            if ($svg) {
-                $candidatesheet = "$candidatedir/designer.ser";
-            } else {
-                $candidatesheet = "$candidatedir/designer_nosvg.ser";
-            }
-            $rebuild = true;
-            if (file_exists($candidatesheet) and filemtime($candidatesheet) > time() - THEME_DESIGNER_CACHE_LIFETIME) {
-                if ($css = file_get_contents($candidatesheet)) {
-                    $css = unserialize($css);
-                    if (is_array($css)) {
-                        $rebuild = false;
-                    }
-                }
-            }
-            if ($rebuild) {
-                // Prepare the CSS optimiser if it is to be used,
-                // please note that it may be very slow and is therefore strongly discouraged in theme designer mode.
-                $optimiser = null;
-                if (!empty($CFG->enablecssoptimiser) && $this->supportscssoptimisation) {
-                    require_once($CFG->dirroot.'/lib/csslib.php');
-                    $optimiser = new css_optimiser;
-                }
-                $css = $this->css_content($optimiser);
-
-                // We do not want any errors here because this may fail easily because of the concurrent access.
-                $prevabort = ignore_user_abort(true);
-                check_dir_exists($candidatedir);
-                $tempfile = tempnam($candidatedir, 'tmpdesigner');
-                file_put_contents($tempfile, serialize($css));
-                $reporting = error_reporting(0);
-                chmod($tempfile, $CFG->filepermissions);
-                unlink($candidatesheet); // Do not rely on rename() deleting original, they may decide to change it at any time as usually.
-                rename($tempfile, $candidatesheet);
-                error_reporting($reporting);
-                ignore_user_abort($prevabort);
-            }
-
+            $css = $this->get_css_files(true);
             $baseurl = new moodle_url($CFG->httpswwwroot.'/theme/styles_debug.php');
             if (!$svg) {
                 // We add an SVG param so that we know not to serve SVG images.
@@ -730,10 +691,10 @@ class theme_config {
                 $baseurl->param('svg', '0');
             }
             if (core_useragent::is_ie()) {
-                // lalala, IE does not allow more than 31 linked CSS files from main document
+                // Lalala, IE does not allow more than 31 linked CSS files from main document.
                 $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'plugins'));
                 foreach ($css['parents'] as $parent=>$sheets) {
-                    // We need to serve parents individually otherwise we may easily exceed the style limit IE imposes (4096)
+                    // We need to serve parents individually otherwise we may easily exceed the style limit IE imposes (4096).
                     $urls[] = new moodle_url($baseurl, array('theme'=>$this->name,'type'=>'ie', 'subtype'=>'parents', 'sheet'=>$parent));
                 }
                 $urls[] = new moodle_url($baseurl, array('theme'=>$this->name, 'type'=>'ie', 'subtype'=>'theme'));
@@ -748,7 +709,8 @@ class theme_config {
                     }
                 }
                 foreach ($css['theme'] as $sheet=>$unused) {
-                    $urls[] = new moodle_url($baseurl, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme')); // sheet first in order to make long urls easier to read
+                    // Sheet first in order to make long urls easier to read.
+                    $urls[] = new moodle_url($baseurl, array('sheet'=>$sheet, 'theme'=>$this->name, 'type'=>'theme'));
                 }
             }
         }
@@ -757,14 +719,162 @@ class theme_config {
     }
 
     /**
-     * Returns an array of organised CSS files required for this output
+     * Get the whole css stylesheet for production mode.
      *
-     * @return array
+     * @return string CSS markup, already optimised and compressed
      */
-    public function css_files() {
+    public function get_css_content() {
+        global $CFG;
+        require_once($CFG->dirroot.'/lib/csslib.php');
+
+        $csscontent = '';
+        foreach ($this->get_css_files(false) as $value) {
+            foreach ($value as $val) {
+                if (is_array($val)) {
+                    foreach ($val as $v) {
+                        $csscontent .= file_get_contents($v) . "\n";
+                    }
+                } else {
+                    $csscontent .= file_get_contents($val) . "\n";
+                }
+            }
+        }
+        $csscontent = $this->post_process($csscontent);
+
+        if (!empty($CFG->enablecssoptimiser) && $this->supportscssoptimisation) {
+            // This is an experimental feature introduced in Moodle 2.3
+            // The CSS optimiser organises the CSS in order to reduce the overall number
+            // of rules and styles being sent to the client. It does this by collating
+            // the CSS before it is cached removing excess styles and rules and stripping
+            // out any extraneous content such as comments and empty rules.
+            $optimiser = new css_optimiser();
+            $csscontent = $optimiser->process($csscontent);
+
+        } else {
+            $csscontent = core_minify::css($csscontent);
+        }
+
+        return $csscontent;
+    }
+
+    /**
+     * Get the theme designer css markup,
+     * the parameters are coming from css_urls().
+     *
+     * @param string $type
+     * @param string $subtype
+     * @param string $sheet
+     * @return string CSS markup
+     */
+    public function get_css_content_debug($type, $subtype, $sheet) {
+        global $CFG;
+        require_once($CFG->dirroot.'/lib/csslib.php');
+
+        $optimiser = null;
+        if (!empty($CFG->enablecssoptimiser) && $this->supportscssoptimisation) {
+            // This is an experimental feature introduced in Moodle 2.3
+            // The CSS optimiser organises the CSS in order to reduce the overall number
+            // of rules and styles being sent to the client. It does this by collating
+            // the CSS before it is cached removing excess styles and rules and stripping
+            // out any extraneous content such as comments and empty rules.
+            $optimiser = new css_optimiser();
+        }
+
+        $cssfiles = array();
+        $css = $this->get_css_files(true);
+
+        if ($type === 'ie') {
+            // IE is a sloppy browser with weird limits, sorry.
+            if ($subtype === 'plugins') {
+                $cssfiles = $css['plugins'];
+
+            } else if ($subtype === 'parents') {
+                if (empty($sheet)) {
+                    // Do not bother with the empty parent here.
+                } else {
+                    // Build up the CSS for that parent so we can serve it as one file.
+                    foreach ($css[$subtype][$sheet] as $parent => $css) {
+                        $cssfiles[] = $css;
+                    }
+                }
+            } else if ($subtype === 'theme') {
+                $cssfiles = $css['theme'];
+            }
+
+        } else if ($type === 'plugin') {
+            if (isset($css['plugins'][$subtype])) {
+                $cssfiles[] = $css['plugins'][$subtype];
+            }
+
+        } else if ($type === 'parent') {
+            if (isset($css['parents'][$subtype][$sheet])) {
+                $cssfiles[] = $css['parents'][$subtype][$sheet];
+            }
+
+        } else if ($type === 'theme') {
+            if (isset($css['theme'][$sheet])) {
+                $cssfiles[] = $css['theme'][$sheet];
+            }
+        }
+
+        $csscontent = '';
+        foreach ($cssfiles as $file) {
+            $contents = file_get_contents($file);
+            $contents = $this->post_process($contents);
+            $comment = "/** Path: $type $subtype $sheet.' **/\n";
+            $stats = '';
+            if ($optimiser) {
+                $contents = $optimiser->process($contents);
+                if (!empty($CFG->cssoptimiserstats)) {
+                    $stats = $optimiser->output_stats_css();
+                }
+            }
+            $csscontent .= $comment.$stats.$contents."\n\n";
+        }
+
+        return $csscontent;
+    }
+
+    /**
+     * Get the whole css stylesheet for editor iframe.
+     * @return string CSS markup
+     */
+    public function get_css_content_editor() {
+        // Do not bother to optimise anything here, just very basic stuff.
+        $cssfiles = $this->editor_css_files();
+        $css = '';
+        foreach ($cssfiles as $file) {
+            $css .= file_get_contents($file)."\n";
+        }
+        return $this->post_process($css);
+    }
+
+    /**
+     * Returns an array of organised CSS files required for this output.
+     *
+     * @param bool $themedesigner
+     * @return array nested array of file paths
+     */
+    protected function get_css_files($themedesigner) {
+        global $CFG;
+
+        $cache = null;
+        if ($themedesigner) {
+            require_once($CFG->dirroot.'/lib/csslib.php');
+            // We need some kind of caching here because otherwise the page navigation becomes
+            // way too slow in theme designer mode. Feel free to create full cache definition later...
+            $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'themedesigner', array('theme' => $this->name));
+            if ($files = $cache->get('cssfiles')) {
+                if ($files['created'] > time() - THEME_DESIGNER_CACHE_LIFETIME) {
+                    unset($files['created']);
+                    return $files;
+                }
+            }
+        }
+
         $cssfiles = array('plugins'=>array(), 'parents'=>array(), 'theme'=>array());
 
-        // get all plugin sheets
+        // Get all plugin sheets.
         $excludes = $this->resolve_excludes('plugins_exclude_sheets');
         if ($excludes !== true) {
             foreach (core_component::get_plugin_types() as $type=>$unused) {
@@ -802,10 +912,10 @@ class theme_config {
             }
         }
 
-        // find out wanted parent sheets
+        // Find out wanted parent sheets.
         $excludes = $this->resolve_excludes('parents_exclude_sheets');
         if ($excludes !== true) {
-            foreach (array_reverse($this->parent_configs) as $parent_config) { // base first, the immediate parent last
+            foreach (array_reverse($this->parent_configs) as $parent_config) { // Base first, the immediate parent last.
                 $parent = $parent_config->name;
                 if (empty($parent_config->sheets) || (!empty($excludes[$parent]) and $excludes[$parent] === true)) {
                     continue;
@@ -823,7 +933,7 @@ class theme_config {
             }
         }
 
-        // current theme sheets
+        // Current theme sheets.
         if (is_array($this->sheets)) {
             foreach ($this->sheets as $sheet) {
                 $sheetfile = "$this->dir/style/$sheet.css";
@@ -833,56 +943,14 @@ class theme_config {
             }
         }
 
+        if ($cache) {
+            $files = $cssfiles;
+            $files['created'] = time();
+            $cache->set('cssfiles', $files);
+        }
+
         return $cssfiles;
     }
-
-    /**
-     * Returns the content of the one huge CSS merged from all style sheets.
-     *
-     * @param css_optimiser|null $optimiser A CSS optimiser to use during on the content. Null = don't optimise
-     * @return string
-     */
-    public function css_content(css_optimiser $optimiser = null) {
-        $files = array_merge($this->css_files(), array('editor'=>$this->editor_css_files()));
-        $css = $this->css_files_get_contents($files, array(), $optimiser);
-        return $css;
-    }
-
-    /**
-     * Given an array of file paths or a single file path loads the contents of
-     * the CSS file, processes it then returns it in the same structure it was given.
-     *
-     * Can be used recursively on the results of {@link css_files}
-     *
-     * @param array|string $file An array of file paths or a single file path
-     * @param array $keys An array of previous array keys [recursive addition]
-     * @param css_optimiser|null $optimiser A CSS optimiser to use during on the content. Null = don't optimise
-     * @return The converted array or the contents of the single file ($file type)
-     */
-    protected function css_files_get_contents($file, array $keys, css_optimiser $optimiser = null) {
-        global $CFG;
-        if (is_array($file)) {
-            // We use a separate array to keep everything in the exact same order.
-            $return = array();
-            foreach ($file as $key=>$f) {
-                $return[clean_param($key, PARAM_SAFEDIR)] = $this->css_files_get_contents($f, array_merge($keys, array($key)), $optimiser);
-            }
-            return $return;
-        } else {
-            $contents = file_get_contents($file);
-            $contents = $this->post_process($contents);
-            $comment = '/** Path: '.implode(' ', $keys).' **/'."\n";
-            $stats = '';
-            if (!is_null($optimiser)) {
-                $contents = $optimiser->process($contents);
-                if (!empty($CFG->cssoptimiserstats)) {
-                    $stats = $optimiser->output_stats_css();
-                }
-            }
-            return $comment.$stats.$contents;
-        }
-    }
-
 
     /**
      * Generate a URL to the file that serves theme JavaScript files.
@@ -1359,7 +1427,6 @@ class theme_config {
     /**
      * Return true if we should look for SVG images as well.
      *
-     * @staticvar bool $svg
      * @return bool
      */
     public function use_svg_icons() {

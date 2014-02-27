@@ -22,19 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-// disable moodle specific debug messages and any errors in output,
+// Disable moodle specific debug messages and any errors in output,
 // comment out when debugging or better look into error log!
 define('NO_DEBUG_DISPLAY', true);
 
-// we need just the values from config.php and minlib.php
 define('ABORT_AFTER_CONFIG', true);
-require('../config.php'); // this stops immediately at the beginning of lib/setup.php
+require('../config.php');
 require_once($CFG->dirroot.'/lib/csslib.php');
-
-if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
-    define('THEME_DESIGNER_CACHE_LIFETIME', 4); // this can be also set in config.php
-}
 
 if ($slashargument = min_get_slash_argument()) {
     $slashargument = ltrim($slashargument, '/');
@@ -43,7 +37,7 @@ if ($slashargument = min_get_slash_argument()) {
     }
 
     if (strpos($slashargument, '_s/') === 0) {
-        // Can't use SVG
+        // Can't use SVG.
         $slashargument = substr($slashargument, 3);
         $usesvg = false;
     } else {
@@ -79,9 +73,9 @@ if ($type === 'editor') {
 }
 
 if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
-    // exists
+    // The theme exists in standard location - ok.
 } else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$themename/config.php")) {
-    // exists
+    // Alternative theme location contains this theme - ok.
 } else {
     header('HTTP/1.0 404 not found');
     die('Theme was not found, sorry.');
@@ -105,19 +99,18 @@ $etag = sha1($etag);
 
 if (file_exists($candidatesheet)) {
     if (!empty($_SERVER['HTTP_IF_NONE_MATCH']) || !empty($_SERVER['HTTP_IF_MODIFIED_SINCE'])) {
-        // we do not actually need to verify the etag value because our files
-        // never change in cache because we increment the rev parameter
+        // We do not actually need to verify the etag value because our files
+        // never change in cache because we increment the rev counter.
         css_send_unmodified(filemtime($candidatesheet), $etag);
     }
     css_send_cached_css($candidatesheet, $etag);
 }
 
-//=================================================================================
-// ok, now we need to start normal moodle script, we need to load all libs and $DB
+// Ok, now we need to start normal moodle script, we need to load all libs and $DB.
 define('ABORT_AFTER_CONFIG_CANCEL', true);
 
-define('NO_MOODLE_COOKIES', true); // Session not used here
-define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check
+define('NO_MOODLE_COOKIES', true); // Session not used here.
+define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check.
 
 require("$CFG->dirroot/lib/setup.php");
 
@@ -131,7 +124,7 @@ if ($themerev <= 0 or $themerev != $rev) {
     $rev = $themerev;
     $cache = false;
 
-    $candidatedir = "$CFG->cachedir/theme/$rev/$themename/css";
+    $candidatedir = "$CFG->localcachedir/theme/$rev/$themename/css";
     $etag = "$rev/$themename/$type";
     $candidatename = $type;
     if (!$usesvg) {
@@ -151,12 +144,13 @@ if ($themerev <= 0 or $themerev != $rev) {
 make_localcache_directory('theme', false);
 
 if ($type === 'editor') {
-    $cssfiles = $theme->editor_css_files();
-    css_store_css($theme, "$candidatedir/editor.css", $cssfiles, false);
+    $csscontent = $theme->get_css_content_editor();
+    css_store_css($theme, "$candidatedir/editor.css", $csscontent, false);
 
 } else {
     // Older IEs require smaller chunks.
-    $css = $theme->css_files();
+    $csscontent = $theme->get_css_content();
+
     $relroot = preg_replace('|^http.?://[^/]+|', '', $CFG->wwwroot);
     if (!empty($slashargument)) {
         if ($usesvg) {
@@ -171,36 +165,19 @@ if ($type === 'editor') {
             $chunkurl = "{$relroot}/theme/styles.php?theme={$themename}&rev={$rev}&type=all&svg=0";
         }
     }
-    $cssfiles = array();
-    foreach ($css as $key => $value) {
-        foreach ($value as $val) {
-            if (is_array($val)) {
-                foreach ($val as $k=>$v) {
-                    $cssfiles[] = $v;
-                }
-            } else {
-                $cssfiles[] = $val;
-            }
-        }
-    }
-    css_store_css($theme, "$candidatedir/all.css", $cssfiles, true, $chunkurl);
+    css_store_css($theme, "$candidatedir/all.css", $csscontent, true, $chunkurl);
 }
 
-// verify nothing failed in cache file creation
-clearstatcache();
-if (!file_exists($candidatesheet)) {
-    // We need to send at least something, IE does not get it chunked properly but who cares.
-    $css = '';
-    foreach ($cssfiles as $file) {
-        $css .= file_get_contents($file)."\n";
-    }
-    css_send_uncached_css($css, false);
+if (!$cache) {
+    // Do not pollute browser caches if invalid revision requested,
+    // let's ignore legacy IE breakage here too.
+    css_send_uncached_css($csscontent);
 
-} else if (!$cache) {
-    // Do not pollute browser caches if invalid revision requested.
-    css_send_uncached_css(file_get_contents($candidatesheet), false);
+} else if ($chunk and file_exists($candidatesheet)) {
+    // Greetings stupid legacy IEs!
+    css_send_cached_css($candidatesheet, $etag);
 
 } else {
-    // This is the expected result!
-    css_send_cached_css($candidatesheet, $etag);
+    // Real browsers - this is the expected result!
+    css_send_cached_css_content($csscontent, $etag);
 }

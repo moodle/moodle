@@ -25,100 +25,47 @@
 // Disable moodle specific debug messages and any errors in output,
 // comment out when debugging or better look into error log!
 define('NO_DEBUG_DISPLAY', true);
+define('NO_UPGRADE_CHECK', true);
+define('NO_MOODLE_COOKIES', true);
 
-define('ABORT_AFTER_CONFIG', true);
-require('../config.php'); // this stops immediately at the beginning of lib/setup.php
+require('../config.php');
 require_once($CFG->dirroot.'/lib/csslib.php');
 
-$themename = min_optional_param('theme', 'standard', 'SAFEDIR');
-$type      = min_optional_param('type', '', 'SAFEDIR');
-$subtype   = min_optional_param('subtype', '', 'SAFEDIR');
-$sheet     = min_optional_param('sheet', '', 'SAFEDIR');
-$usesvg    = (bool)min_optional_param('svg', '1', 'INT');
-
-if (!defined('THEME_DESIGNER_CACHE_LIFETIME')) {
-    define('THEME_DESIGNER_CACHE_LIFETIME', 4); // this can be also set in config.php
-}
+$themename = optional_param('theme', 'standard', PARAM_SAFEDIR);
+$type      = optional_param('type', '', PARAM_SAFEDIR);
+$subtype   = optional_param('subtype', '', PARAM_SAFEDIR);
+$sheet     = optional_param('sheet', '', PARAM_SAFEDIR);
+$usesvg    = optional_param('svg', 1, PARAM_BOOL);
 
 if (file_exists("$CFG->dirroot/theme/$themename/config.php")) {
-    // exists
+    // The theme exists in standard location - ok.
 } else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$themename/config.php")) {
-    // exists
+    // Alternative theme location contains this theme - ok.
 } else {
     css_send_css_not_found();
 }
 
-// no gzip compression when debugging
-
-if ($usesvg) {
-    $candidatesheet = "$CFG->cachedir/theme/$themename/designer.ser";
-} else {
-    // Add to the sheet name, one day we'll be able to just drop this.
-    $candidatesheet = "$CFG->cachedir/theme/$themename/designer_nosvg.ser";
-}
-
-$css = false;
-if (is_readable($candidatesheet) and filemtime($candidatesheet) > time() - THEME_DESIGNER_CACHE_LIFETIME) {
-    $css = @unserialize(file_get_contents($candidatesheet));
-}
-
-if (!is_array($css)) {
-    // Ok, we need to start normal moodle script, we need to load all libs and $DB.
-    define('ABORT_AFTER_CONFIG_CANCEL', true);
-
-    define('NO_MOODLE_COOKIES', true); // Session not used here.
-    define('NO_UPGRADE_CHECK', true);  // Ignore upgrade check.
-
-    require("$CFG->dirroot/lib/setup.php");
-    $theme = theme_config::load($themename);
-    $css = $theme->css_content();
-}
+$theme = theme_config::load($themename);
+$theme->force_svg_use($usesvg);
 
 if ($type === 'editor') {
-    if (isset($css['editor'])) {
-        css_send_uncached_css($css['editor']);
-    }
-} else if ($type === 'ie') {
-    // IE is a sloppy browser with weird limits, sorry
-    if ($subtype === 'plugins') {
-        css_send_uncached_css($css['plugins']);
+    $csscontent = $theme->get_css_content_editor();
+    css_send_uncached_css($csscontent);
+}
 
-    } else if ($subtype === 'parents') {
-        $sendcss = array();
-        if (empty($sheet)) {
-            // If not specific parent has been specified as $sheet then build a
-            // collection of @import statements into this one sheet.
-            // We shouldn't ever actually get here, but none the less we'll deal
-            // with it incase we ever do.
-            // @import statements arn't processed until after concurrent CSS requests
-            // making them slightly evil.
-            foreach (array_keys($css['parents']) as $sheet) {
-                $sendcss[] = "@import url(styles_debug.php?theme=$themename&type=$type&subtype=$subtype&sheet=$sheet);";
-            }
-        } else {
-            // Build up the CSS for that parent so we can serve it as one file.
-            foreach ($css[$subtype][$sheet] as $parent=>$css) {
-                $sendcss[] = $css;
-            }
-        }
-        css_send_uncached_css($sendcss);
-    } else if ($subtype === 'theme') {
-        css_send_uncached_css($css['theme']);
-    }
-
-} else if ($type === 'plugin') {
-    if (isset($css['plugins'][$subtype])) {
-        css_send_uncached_css($css['plugins'][$subtype]);
-    }
-
-} else if ($type === 'parent') {
-    if (isset($css['parents'][$subtype][$sheet])) {
-        css_send_uncached_css($css['parents'][$subtype][$sheet]);
-    }
-
-} else if ($type === 'theme') {
-    if (isset($css['theme'][$sheet])) {
-        css_send_uncached_css($css['theme'][$sheet]);
+// We need some kind of caching here because otherwise the page navigation becomes
+// way too slow in theme designer mode. Feel free to create full cache definition later...
+$key = "$type $subtype $sheet $usesvg";
+$cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'core', 'themedesigner', array('theme' => $themename));
+if ($content = $cache->get($key)) {
+    if ($content['created'] > time() - THEME_DESIGNER_CACHE_LIFETIME) {
+        $csscontent = $content['data'];
+        css_send_uncached_css($csscontent);
     }
 }
-css_send_css_not_found();
+
+$csscontent = $theme->get_css_content_debug($type, $subtype, $sheet);
+
+$cache->set($key, array('data' => $csscontent, 'created' => time()));
+
+css_send_uncached_css($csscontent);
