@@ -214,5 +214,20 @@ class logstore_legacy_store_testcase extends advanced_testcase {
         $updatewhere = preg_replace_callback($crudregex,
                 'logstore_legacy\test\unittest_logstore_legacy::replace_crud', $selectwhere);
         $this->assertEquals("edulevel = 0 and action LIKE '%update%' OR action NOT LIKE '%view%' AND action NOT LIKE '%report%' or action NOT LIKE '%delete%'", $updatewhere);
+
+    }
+
+    /**
+     * Test replace_sql_hacks()
+     */
+    public function test_replace_sql_hacks() {
+        $select = "userid = :userid AND courseid = :courseid AND eventname = :eventname AND timecreated > :since";
+        $params = array('userid' => 2, 'since' => 3, 'courseid' => 4, 'eventname' => '\core\event\course_created');
+        $expectedselect = "module = 'course' AND action = 'new' AND userid = :userid AND url = :url AND time > :since";
+        $expectedparams = $params + array('url' => "view.php?id=4");
+
+        list($replaceselect, $replaceparams) = \logstore_legacy\test\unittest_logstore_legacy::replace_sql_hack($select, $params);
+        $this->assertEquals($replaceselect, $expectedselect);
+        $this->assertEquals($replaceparams, $expectedparams);
     }
 }

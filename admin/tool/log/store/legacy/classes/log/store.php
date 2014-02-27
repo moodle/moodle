@@ -44,9 +44,30 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
 
     /** @var string Regex to replace the crud params */
     const CRUD_REGEX = "/(crud).*?(<>|=|!=).*?'(.*?)'/s";
+    /**
+     * This method contains hacks required for Moodle core to make legacy store compatible with other sql_select_reader based
+     * queries.
+     *
+     * @param string $select Select statment
+     * @param array $params params for the sql
+     *
+     * @return array returns an array containing the sql predicate and an array of params.
+     */
+    protected static function replace_sql_hacks($select, array $params) {
+        if ($select == "userid = :userid AND courseid = :courseid AND eventname = :eventname AND timecreated > :since") {
+            $replace = "module = 'course' AND action = 'new' AND userid = :userid AND url = :url AND time > :since";
+            $params += array('url' => "view.php?id={$params['courseid']}");
+            return array($replace, $params);
+        }
+
+        return array($select, $params);
+    }
 
     public function get_events_select($selectwhere, array $params, $sort, $limitfrom, $limitnum) {
         global $DB;
+
+        // Replace the query with hardcoded hacks required for core.
+        list($selectwhere, $params) = self::replace_sql_hacks($selectwhere, $params);
 
         // Replace db field names to make it compatible with legacy log.
         foreach ($this->standardtolegacyfields as $from => $to) {
@@ -76,6 +97,9 @@ class store implements \tool_log\log\store, \core\log\sql_select_reader {
 
     public function get_events_select_count($selectwhere, array $params) {
         global $DB;
+
+        // Replace the query with hardcoded hacks required for core.
+        list($selectwhere, $params) = self::replace_sql_hacks($selectwhere, $params);
 
         // Replace db field names to make it compatible with legacy log.
         foreach ($this->standardtolegacyfields as $from => $to) {
