@@ -1,0 +1,12 @@
+{
+    "name": "moodle-form-dateselector",
+    "builds": {
+        "moodle-form-dateselector": {
+            "jsfiles": [
+                "dateselector.js",
+                "moodlecalendar.js",
+                "calendar.js"
+            ]
+        }
+    }
+}
