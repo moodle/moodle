@@ -1643,7 +1643,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             'context' => $coursecatcontext,
             'other' => array('name' => $this->name)
         ));
-        $event->set_legacy_eventdata($this);
+        $event->set_coursecat($this);
         $event->trigger();
 
         // If we deleted $CFG->defaultrequestcategory, make it point somewhere else.
@@ -1798,7 +1798,7 @@ class coursecat implements renderable, cacheable_object, IteratorAggregate {
             'context' => $context,
             'other' => array('name' => $this->name)
         ));
-        $event->set_legacy_eventdata($this);
+        $event->set_coursecat($this);
         $event->trigger();
 
         cache_helper::purge_by_event('changesincoursecat');

@@ -124,12 +124,6 @@ class core_group_lib_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\grouping_created', $event);
 
-        // 'Repairing' the object for comparison because of type of variables being wrong.
-        $group->id = (int) $group->id;
-        $group->timemodified = (int) $group->timemodified;
-        $group->timecreated = (int) $group->timecreated;
-        unset($group->idnumber);
-        unset($group->configdata);
         $this->assertEventLegacyData($group, $event);
         $this->assertSame('groups_grouping_created', $event->get_legacy_eventname());
 
@@ -187,10 +181,16 @@ class core_group_lib_testcase extends advanced_testcase {
 
         $this->assertInstanceOf('\core\event\grouping_updated', $event);
 
-        // 'Repairing' the object for comparison because of type of variables being wrong.
-        $data->id = (int) $grouping->id;
+        // Get the timemodified from DB for comparison with snapshot.
         $data->timemodified = $DB->get_field('groupings', 'timemodified', array('id'=>$grouping->id));
         $this->assertTimeCurrent($data->timemodified);
+        // Following fields were not updated so the snapshot should have them the same as in original group.
+        $data->description = $grouping->description;
+        $data->descriptionformat = $grouping->descriptionformat;
+        $data->configdata = $grouping->configdata;
+        $data->idnumber = $grouping->idnumber;
+        $data->timecreated = $grouping->timecreated;
+        // Assert legacy event data.
         $this->assertEventLegacyData($data, $event);
         $this->assertSame('groups_grouping_updated', $event->get_legacy_eventname());
 
