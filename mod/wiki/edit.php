@@ -75,7 +75,10 @@ if (!empty($section) && !$sectioncontent = wiki_get_section_page($page, $section
 require_login($course, true, $cm);
 
 $context = context_module::instance($cm->id);
-require_capability('mod/wiki:editpage', $context);
+
+if (!wiki_user_can_edit($subwiki)) {
+    print_error('cannoteditpage', 'wiki');
+}
 
 if ($option == get_string('save', 'wiki')) {
     if (!confirm_sesskey()) {

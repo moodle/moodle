@@ -280,7 +280,7 @@ function wiki_print_recent_activity($course, $viewfullnames, $timestart) {
     global $CFG, $DB, $OUTPUT;
 
     $usernamefields = get_all_user_name_fields(true, 'u');
-    $sql = "SELECT p.*, w.id as wikiid, sw.groupid, $usernamefields
+    $sql = "SELECT p.id, p.timemodified, p.subwikiid, sw.wikiid, w.wikimode, sw.userid, sw.groupid, $usernamefields
             FROM {wiki_pages} p
                 JOIN {wiki_subwikis} sw ON sw.id = p.subwikiid
                 JOIN {wiki} w ON w.id = sw.wikiid
@@ -290,48 +290,25 @@ function wiki_print_recent_activity($course, $viewfullnames, $timestart) {
     if (!$pages = $DB->get_records_sql($sql, array($timestart, $course->id))) {
         return false;
     }
-    $modinfo = get_fast_modinfo($course);
+    require_once($CFG->dirroot . "/mod/wiki/locallib.php");
 
     $wikis = array();
 
     $modinfo = get_fast_modinfo($course);
 
+    $subwikivisible = array();
     foreach ($pages as $page) {
-        if (!isset($modinfo->instances['wiki'][$page->wikiid])) {
-            // not visible
-            continue;
+        if (!isset($subwikivisible[$page->subwikiid])) {
+            $subwiki = (object)array('id' => $page->subwikiid, 'wikiid' => $page->wikiid,
+                'groupid' => $page->groupid, 'userid' => $page->userid);
+            $wiki = (object)array('id' => $page->wikiid, 'course' => $course->id, 'wikimode' => $page->wikimode);
+            $subwikivisible[$page->subwikiid] = wiki_user_can_view($subwiki, $wiki);
         }
-        $cm = $modinfo->instances['wiki'][$page->wikiid];
-        if (!$cm->uservisible) {
-            continue;
+        if ($subwikivisible[$page->subwikiid]) {
+            $wikis[] = $page;
         }
-        $context = context_module::instance($cm->id);
-
-        if (!has_capability('mod/wiki:viewpage', $context)) {
-            continue;
-        }
-
-        $groupmode = groups_get_activity_groupmode($cm, $course);
-
-        if ($groupmode) {
-            if ($groupmode == SEPARATEGROUPS and !has_capability('mod/wiki:managewiki', $context)) {
-                // separate mode
-                if (isguestuser()) {
-                    // shortcut
-                    continue;
-                }
-
-                if (is_null($modinfo->groups)) {
-                    $modinfo->groups = groups_get_user_groups($course->id); // load all my groups and cache it in modinfo
-                    }
-
-                if (!in_array($page->groupid, $modinfo->groups[0])) {
-                    continue;
-                }
-            }
-        }
-        $wikis[] = $page;
     }
+    unset($subwikivisible);
     unset($pages);
 
     if (!$wikis) {
