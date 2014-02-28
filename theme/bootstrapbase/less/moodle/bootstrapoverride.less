@@ -5,6 +5,9 @@
  * rules defined in Bootstrap.
 */
 
+// Create missing variables.
+@wellBorder: darken(@wellBackground, 7%);
+
 // Headings.
 h1 { font-size: round(@baseFontSize * 2.30); } // ~32px
 h2 { font-size: round(@baseFontSize * 2.00); } // ~28px
@@ -32,4 +35,21 @@ h4 small { font-size: round(@baseFontSize * 0.85); } // ~12px
 .fluid-span-full (@columns, @columnWidth, @gutterWidth) {
     width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1));
     *width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1)) - (.5 / @gridRowWidth * 100 * 1%);
+}
+
+/**
+ * Implement missing variables, or faulty ones, in Bootstrap rules.
+ *
+ * Those are minimal overrides of Bootstrap rules to introduce the usage
+ * of a variable, or to fix a variable being used.
+ */
+legend {
+    border-bottom-color: @tableBorder;
+    color: @textColor;
+}
+.breadcrumb {
+    background-color: @wellBackground;
+}
+.well {
+    border-color: @wellBorder;
 }

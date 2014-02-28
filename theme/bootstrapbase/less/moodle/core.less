@@ -664,16 +664,6 @@ table.mod_index {
     right: auto;
     margin: .3em;
 }
-.comment-delete-confirm {
-    background: #eee;
-    padding: 2px;
-    width: 5em;
-    text-align: center;
-}
-.comment-container {
-    float: left;
-    margin: 4px;
-}
 .comment-report-selectall{
     display: none
 }
@@ -837,8 +827,8 @@ table#tag-management-list th {
     position: absolute;
     width: 420px;
     left: 20%;
-    border: 1px solid #404040;
-    background: #fff;
+    border: 1px solid @dropdownBorder;
+    background: @dropdownBackground;
     overflow: hidden;
     z-index: 9050;
 }
@@ -867,7 +857,8 @@ table#tag-management-list th {
     white-space: nowrap;
 }
 #relatedtags-autocomplete li.yui-ac-highlight{
-    background: #FFFFCC;
+    background: @dropdownLinkBackgroundHover;
+    color: @dropdownLinkColorHover;
 }
 h2.tag-heading,
 div#tag-description,
@@ -1898,7 +1889,7 @@ a.criteria-action {
 }
 table.issuedbadgebox {
     width: 750px;
-    background-color: #FFFFFF;
+    background-color: @wellBackground;
 }
 table.badgeissuedimage {
     width: 150px;
@@ -2121,8 +2112,8 @@ img#persona_signin {
         display:block;
         position: absolute;
         text-align: left;
-        background-color: #fff;
-        border: 1px solid #ccc;
+        background-color: @dropdownBackground;
+        border: 1px solid @dropdownBorder;
         z-index:1000;
         .border-radius(5px);
         .box-shadow(5px 5px 20px 0 #666);

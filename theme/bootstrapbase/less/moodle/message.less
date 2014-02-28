@@ -24,15 +24,8 @@
     font-weight: bold;
     font-size: 1.1em;
 }
-table.message_search_results td {
-    border-color: #ddd;
-}
-.message .time,
-.message.me .author {
-    color: #999;
-}
-.message.other .author {
-    color: #88c;
+.message .time {
+    .muted;
 }
 #page-message-messages {
     padding: 10px;
@@ -65,7 +58,7 @@ table.message .searchresults td {
 }
 .message .messagearea  {
     padding-left: 1%;
-    border-left: 1px solid #d3d3d3;
+    border-left: 1px solid @tableBorder;
     width: 74%;
     float: right;
     min-height: 200px;
@@ -112,8 +105,9 @@ table.message .searchresults td {
     float:left;
 }
 .message .messagearea .messagehistory .notification {
-    padding: 10px;
-    background-color: #eee;
+    .well;
+    .well-small;
+    margin-bottom: 0;
     margin-top: 5px;
 }
 .message .messagearea .messagesend {
@@ -133,7 +127,7 @@ table.message .searchresults td {
     width: 100%;
 }
 .message .messagearea .messagerecent .singlemessage {
-    border-bottom: 1px solid #d3d3d3;
+    border-bottom: 1px solid @tableBorder;
     padding: 10px;
 }
 .message .messagearea .messagerecent .singlemessage .otheruser span {
@@ -177,9 +171,8 @@ table.message .searchresults td {
     padding: 0 .45em 0 0;
 }
 #newmessageoverlay {
-    background-color: #d3d3d3;
-    border: 1px solid black;
-    padding: 20px;
+    .well;
+    margin: 0 1em;
     position: fixed;
     bottom: 0;
     right: 0;
