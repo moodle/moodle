@@ -75,7 +75,7 @@ class behat_mod_workshop extends behat_base {
         return array(
             new Given("I follow \"$workshopname\""),
             new Given("I click on \"$xpath\" \"xpath_element\""),
-            new Given("I fill the moodle form with:", $table),
+            new Given("I set the following fields to these values:", $table),
             new Given("I press \"$savechanges\""),
         );
     }
@@ -94,7 +94,7 @@ class behat_mod_workshop extends behat_base {
         return array(
             new Given("I follow \"$workshopname\""),
             new Given("I follow \"$editassessmentform\""),
-            new Given("I fill the moodle form with:", $table),
+            new Given("I set the following fields to these values:", $table),
             new Given("I press \"$saveandclose\""),
         );
     }
@@ -117,7 +117,7 @@ class behat_mod_workshop extends behat_base {
         return array(
             new Given("I follow \"$workshopname\""),
             new Given("I click on \"$assess\" \"button\" in the \"$xpath\" \"xpath_element\""),
-            new Given("I fill the moodle form with:", $table),
+            new Given("I set the following fields to these values:", $table),
             new Given("I press \"$saveandclose\""),
         );
     }

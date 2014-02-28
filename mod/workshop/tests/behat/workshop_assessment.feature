@@ -128,7 +128,7 @@ Feature: Workshop submission and assessment
     And I should see "Amazing" in the "//fieldset[contains(.,'Aspect2')]" "xpath_element"
     And I should see "Good work" in the ".overallfeedback" "css_element"
 # teacher1 assesses the work on submission1 and assesses the assessment of peer
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | Override grade for assessment | 11 |
       | Feedback for the reviewer     |    |
     And I press "Save and close"
@@ -136,7 +136,7 @@ Feature: Workshop submission and assessment
     And I follow "Submission1"
     And I should see "Grade: 52 of 80" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' assessment-full ') and contains(.,'Sam2')]" "xpath_element"
     And I press "Assess"
-    And I fill the moodle form with:
+    And I set the following fields to these values:
       | grade__idx_0            | 1 / 10                      |
       | peercomment__idx_0      | Extremely bad               |
       | grade__idx_1            | 2 / 10                      |
