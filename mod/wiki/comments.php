@@ -59,6 +59,10 @@ $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST)
 
 require_login($course, true, $cm);
 
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
+
 add_to_log($course->id, 'wiki', 'comments', "comments.php?pageid=".$pageid, $pageid, $cm->id);
 
 /// Print the page header
