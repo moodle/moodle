@@ -1,0 +1,6 @@
+This files describes API changes in the lti code.
+
+=== 2.7 ===
+
+* mod_lti\event\unknown_service_api_called now has less data stored in 'other'
+  but everything is still available for event observers via method get_message_data()
