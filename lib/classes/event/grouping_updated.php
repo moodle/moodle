@@ -35,13 +35,6 @@ defined('MOODLE_INTERNAL') || die();
 class grouping_updated extends \core\event\base {
 
     /**
-     * Legacy data.
-     *
-     * @var mixed
-     */
-    protected $legacydata;
-
-    /**
      * Returns description of what happened.
      *
      * @return string
@@ -56,7 +49,7 @@ class grouping_updated extends \core\event\base {
      * @return stdClass
      */
     protected function get_legacy_eventdata() {
-        return $this->legacydata;
+        return $this->get_record_snapshot('groupings', $this->objectid);
     }
 
     /**
@@ -104,7 +97,7 @@ class grouping_updated extends \core\event\base {
      * @return void
      */
     public function set_legacy_eventdata($legacydata) {
-        $this->legacydata = $legacydata;
+        // This function is not used and will be removed in 2.7.
     }
 
 }
