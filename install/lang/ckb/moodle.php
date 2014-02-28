@@ -32,4 +32,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['language'] = 'زمان';
 $string['next'] = 'دواتر';
+$string['previous'] = 'پێشوو';
 $string['reload'] = 'بارکردنەوە';
