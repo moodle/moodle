@@ -361,6 +361,19 @@ class condition_info_section extends condition_info_base {
     protected function get_context() {
         return context_course::instance($this->item->course);
     }
+
+    public function get_full_information($modinfo=null) {
+        $information = parent::get_full_information($modinfo);
+
+        // Grouping conditions.
+        if ($this->item->groupingid > 0) {
+            $information .= get_string(
+                    'requires_grouping',
+                    'condition', groups_get_grouping_name($this->item->groupingid));
+        }
+
+        return $information;
+    }
 }
 
 
@@ -772,7 +785,6 @@ abstract class condition_info_base {
         $this->require_data();
 
         $information = '';
-
 
         // Completion conditions
         if (count($this->item->conditionscompletion) > 0) {
