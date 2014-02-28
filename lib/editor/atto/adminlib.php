@@ -130,10 +130,13 @@ class atto_subplugins_settings extends admin_setting {
         $table->data  = array();
         $table->attributes['class'] = 'admintable generaltable';
 
-        $corepluginicons = array('accessibilitychecker' => $OUTPUT->pix_url('e/visual_blocks', 'core'),
+        $corepluginicons = array(
+            'accessibilitychecker' => $OUTPUT->pix_url('e/visual_blocks', 'core'),
             'accessibilityhelper' => $OUTPUT->pix_url('e/visual_aid'),
-            'align' => array($OUTPUT->pix_url('e/align_left', 'core'),
-                $OUTPUT->pix_url('e/align_center', 'core'), $OUTPUT->pix_url('e/align_right', 'core')),
+            'align' => array(
+                $OUTPUT->pix_url('e/align_left', 'core'),
+                $OUTPUT->pix_url('e/align_center', 'core'), $OUTPUT->pix_url('e/align_right', 'core')
+            ),
             'backcolor' => $OUTPUT->pix_url('e/text_highlight', 'core'),
             'bold' => $OUTPUT->pix_url('e/bold', 'core'),
             'charmap' => $OUTPUT->pix_url('e/special_character', 'core'),
@@ -143,13 +146,15 @@ class atto_subplugins_settings extends admin_setting {
             'fontcolor' => $OUTPUT->pix_url('e/text_color', 'core'),
             'html' => $OUTPUT->pix_url('e/source_code', 'core'),
             'image' => $OUTPUT->pix_url('e/insert_edit_image', 'core'),
-            'indent' => $OUTPUT->pix_url('e/increase_indent', 'core'),
+            'indent' => array(
+                $OUTPUT->pix_url('e/increase_indent', 'core'),
+                $OUTPUT->pix_url('e/decrease_indent', 'core'),
+            ),
             'italic' => $OUTPUT->pix_url('e/italic', 'core'),
             'link' => $OUTPUT->pix_url('e/insert_edit_link', 'core'),
             'managefiles' => $OUTPUT->pix_url('e/manage_files', 'core'),
             'media' => $OUTPUT->pix_url('e/insert_edit_video', 'core'),
             'orderedlist' => $OUTPUT->pix_url('e/numbered_list', 'core'),
-            'outdent' => $OUTPUT->pix_url('e/decrease_indent', 'core'),
             'rtl' => array($OUTPUT->pix_url('e/left_to_right', 'core'),
                 $OUTPUT->pix_url('e/right_to_left', 'core')),
             'strike' => $OUTPUT->pix_url('e/strikethrough', 'core'),
