@@ -276,7 +276,7 @@ abstract class scheduled_task extends task_base {
         $validhours = $this->eval_cron_field($this->hour, 0, 23);
 
         $daysinmonth = date("t");
-        $validdays = $this->eval_cron_field($this->day, 0, $daysinmonth);
+        $validdays = $this->eval_cron_field($this->day, 1, $daysinmonth);
         $validdaysofweek = $this->eval_cron_field($this->dayofweek, 0, 7);
         $validmonths = $this->eval_cron_field($this->month, 1, 12);
         $nextvalidyear = date('Y');
