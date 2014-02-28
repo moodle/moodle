@@ -54,6 +54,10 @@ if (!$wiki = wiki_get_wiki($subwiki->wikiid)) {
 }
 require_login($course, true, $cm);
 
+if (!wiki_user_can_view($subwiki, $wiki)) {
+    print_error('cannotviewpage', 'wiki');
+}
+
 $editcomments = new page_wiki_editcomment($wiki, $subwiki, $cm);
 $comment = new stdClass();
 if ($action == 'edit') {
