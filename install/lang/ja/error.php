@@ -48,5 +48,5 @@ $string['invalidmd5'] = 'チェック変数が正しくありません - 再度�
 $string['missingrequiredfield'] = 'いくつかの必須入力フィールドが入力されていません。';
 $string['remotedownloaderror'] = 'あなたのサーバへのコンポーネントのダウンロードに失敗しました。プロクシ設定を確認してください。PHP cURL拡張モジュールの使用を強くお勧めします。<br /><br /><a href="{$a->url}">{$a->url}</a>ファイルを手動でダウンロードした後、あなたのサーバの「{$a->dest}」にコピーおよび解凍してください。';
 $string['wrongdestpath'] = '宛先パスが正しくありません。';
-$string['wrongsourcebase'] = 'ソースURIベースが正しくありません。';
+$string['wrongsourcebase'] = 'ソースURLベースが正しくありません。';
 $string['wrongzipfilename'] = 'ZIPファイル名が正しくありません。';
