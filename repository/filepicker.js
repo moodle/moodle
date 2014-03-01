@@ -340,12 +340,6 @@ YUI.add('moodle-core_filepicker', function(Y) {
                 {key: "mimetype", label: M.str.repository.type, allowHTML: true,
                     sortable: true, sortFn: sortFoldersFirst}
             ];
-            for (var k in fileslist) {
-                // to speed up sorting and formatting
-                fileslist[k].displayname = file_get_displayname(fileslist[k]);
-                fileslist[k].isfolder = file_is_folder(fileslist[k]);
-                fileslist[k].classname = options.classnamecallback(fileslist[k]);
-            }
             scope.tableview = new Y.DataTable({columns: cols, data: fileslist});
             scope.tableview.delegate('click', function (e, tableview) {
                 var record = tableview.getRecord(e.currentTarget.get('id'));
@@ -366,8 +360,12 @@ YUI.add('moodle-core_filepicker', function(Y) {
         }
         /** append items in table view mode */
         var append_files_table = function() {
-            var parentnode = scope.one('.'+classname);
-            scope.tableview.render(parentnode);
+            if (options.appendonly) {
+                fileslist.forEach(function(el) {
+                    this.tableview.data.add(el);
+                },scope);
+            }
+            scope.tableview.render(scope.one('.'+classname));
             scope.tableview.sortable = options.sortable ? true : false;
         };
         /** append items in tree view mode */
@@ -426,6 +424,16 @@ YUI.add('moodle-core_filepicker', function(Y) {
                     element.on('contextmenu', options.rightclickcallback, options.callbackcontext, node);
                 }
             }
+        }
+
+        // If table view, need some additional properties
+        // before passing fileslist to the YUI tableview
+        if (options.viewmode == 3) {
+            fileslist.forEach(function(el) {
+                el.displayname = file_get_displayname(el);
+                el.isfolder = file_is_folder(el);
+                el.classname = options.classnamecallback(el);
+            }, scope);
         }
 
         // initialize files view
