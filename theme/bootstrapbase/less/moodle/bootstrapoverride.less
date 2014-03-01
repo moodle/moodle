@@ -11,3 +11,12 @@
     content: "";
   }
 }
+
+// Bootstrap's calculation of blocks within a fluid grid. Copied from their grid code.
+.fluid-span (@columns) {
+    .fluid-span-full(@columns, @fluidGridColumnWidth, @fluidGridGutterWidth);
+}
+.fluid-span-full (@columns, @columnWidth, @gutterWidth) {
+    width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1));
+    *width: (@columnWidth * @columns) + (@gutterWidth * (@columns - 1)) - (.5 / @gridRowWidth * 100 * 1%);
+}
