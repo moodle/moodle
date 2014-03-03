@@ -721,6 +721,8 @@ class theme_config {
     /**
      * Get the whole css stylesheet for production mode.
      *
+     * NOTE: this method is not expected to be used from any addons.
+     *
      * @return string CSS markup, already optimised and compressed
      */
     public function get_css_content() {
@@ -760,6 +762,8 @@ class theme_config {
     /**
      * Get the theme designer css markup,
      * the parameters are coming from css_urls().
+     *
+     * NOTE: this method is not expected to be used from any addons.
      *
      * @param string $type
      * @param string $subtype
@@ -837,6 +841,9 @@ class theme_config {
 
     /**
      * Get the whole css stylesheet for editor iframe.
+     *
+     * NOTE: this method is not expected to be used from any addons.
+     *
      * @return string CSS markup
      */
     public function get_css_content_editor() {

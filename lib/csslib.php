@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains CSS related class, and function for the CSS optimiser
+ * This file contains CSS related class, and function for the CSS optimiser.
  *
  * Please see the {@link css_optimiser} class for greater detail.
+ *
+ * NOTE: these functions are not expected to be used from any addons.
  *
  * @package core
  * @subpackage cssoptimiser
