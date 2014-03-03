@@ -364,7 +364,7 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
     $params['timestart'] = $timestart;
     $params['glossaryid'] = $cm->instance;
 
-    $ufields = user_picture::fields('u');
+    $ufields = user_picture::fields('u', null, 'useridagain');
     $entries = $DB->get_records_sql("
               SELECT ge.id AS entryid, ge.*, $ufields
                 FROM {glossary_entries} ge
@@ -399,8 +399,7 @@ function glossary_get_recent_mod_activity(&$activities, &$index, $timestart, $co
         }
 
         $tmpactivity                       = new stdClass();
-        $tmpactivity->user = username_load_fields_from_object(new stdClass(), $entry, null,
-                explode(',', user_picture::fields()));
+        $tmpactivity->user                 = user_picture::unalias($entry, null, 'useridagain');
         $tmpactivity->user->fullname       = fullname($tmpactivity->user, $viewfullnames);
         $tmpactivity->type                 = 'glossary';
         $tmpactivity->cmid                 = $cm->id;
