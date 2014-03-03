@@ -232,7 +232,7 @@ if ($edit) {
         // store the updated values or re-save the new submission (re-saving needed because URLs are now rewritten)
         $DB->update_record('workshop_submissions', $formdata);
         $event = \mod_workshop\event\submission_updated::create($params);
-        $event->add_record_snapshot('workshop_submissions', $formdata);
+        $event->add_record_snapshot('workshop', $workshop);
         $event->trigger();
 
         // send submitted content for plagiarism detection

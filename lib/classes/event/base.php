@@ -573,6 +573,13 @@ abstract class base implements \IteratorAggregate {
         if ($CFG->debugdeveloper) {
             if (!$DB->get_manager()->table_exists($tablename)) {
                 debugging("Invalid table name '$tablename' specified, database table does not exist.", DEBUG_DEVELOPER);
+            } else {
+                $columns = $DB->get_columns($tablename);
+                $missingfields = array_diff(array_keys($columns), array_keys((array)$record));
+                if (!empty($missingfields)) {
+                    debugging("Fields list in snapshot record does not match fields list in '$tablename'. Record is missing fields: ".
+                            join(', ', $missingfields), DEBUG_DEVELOPER);
+                }
             }
         }
         $this->recordsnapshots[$tablename][$record->id] = $record;
@@ -595,7 +602,7 @@ abstract class base implements \IteratorAggregate {
         }
 
         if (isset($this->recordsnapshots[$tablename][$id])) {
-            return $this->recordsnapshots[$tablename][$id];
+            return clone($this->recordsnapshots[$tablename][$id]);
         }
 
         $record = $DB->get_record($tablename, array('id'=>$id));

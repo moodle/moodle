@@ -105,8 +105,8 @@ abstract class course_module_instance_list_viewed extends base{
      * @return void
      */
     protected function validate_data() {
-        if ($this->contextlevel !== CONTEXT_COURSE) {
-            throw new \coding_exception('The context must be a course level context.');
+        if ($this->contextlevel != CONTEXT_COURSE) {
+            throw new \coding_exception('Context passed must be course context.');
         }
     }
 

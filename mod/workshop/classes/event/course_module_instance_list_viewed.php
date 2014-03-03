@@ -34,42 +34,5 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2013 Adrian Greeve
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class instances_list_viewed extends \core\event\course_module_instance_list_viewed {
-
-    /**
-     * Returns description of what happened.
-     *
-     * @return string
-     */
-    public function get_description() {
-        return 'User ' . $this->userid . ' viewed the list of workshop activities in the course ' . $this->courseid . '.';
-    }
-
-    /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'workshop', 'view all', 'index.php?id=' . $this->courseid, '');
-    }
-
-    /**
-     * Return localised event name.
-     *
-     * @return string
-     */
-    public static function get_name() {
-        return get_string('eventinstanceslistviewed', 'mod_workshop');
-    }
-
-    /**
-     * Get URL related to the action
-     *
-     * @return \moodle_url
-     */
-    public function get_url() {
-        return new \moodle_url('/mod/workshop/index.php', array('id' => $this->courseid));
-    }
-
+class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
 }

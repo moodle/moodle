@@ -61,7 +61,6 @@ $completion->set_module_viewed($cm);
 $eventdata = array();
 $eventdata['objectid']         = $workshop->id;
 $eventdata['context']          = $workshop->context;
-$eventdata['courseid']         = $course->id;
 
 $PAGE->set_url($workshop->view_url());
 $event = \mod_workshop\event\course_module_viewed::create($eventdata);

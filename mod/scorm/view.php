@@ -118,6 +118,7 @@ $event = \mod_scorm\event\course_module_viewed::create(array(
     'objectid' => $scorm->id,
     'context' => $contextmodule,
 ));
+$event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('scorm', $scorm);
 $event->add_record_snapshot('course_modules', $cm);
 $event->trigger();

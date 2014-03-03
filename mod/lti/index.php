@@ -59,6 +59,7 @@ $params = array(
     'context' => context_course::instance($course->id)
 );
 $event = \mod_lti\event\course_module_instance_list_viewed::create($params);
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 $PAGE->set_url('/mod/lti/index.php', array('id' => $course->id));

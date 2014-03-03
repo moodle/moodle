@@ -43,7 +43,8 @@ $PAGE->navbar->add(get_string('modulenameplural', 'workshop'));
 echo $OUTPUT->header();
 
 $params = array('context' => context_course::instance($course->id));
-$event = \mod_workshop\event\instances_list_viewed::create($params);
+$event = \mod_workshop\event\course_module_instance_list_viewed::create($params);
+$event->add_record_snapshot('course', $course);
 $event->trigger();
 
 /// Get all the appropriate data

@@ -296,7 +296,6 @@ if($pageid) {
                 )
             );
     $event->add_record_snapshot('wiki_pages', $page);
-    $event->trigger();
 } else if($id) {
     $event = \mod_wiki\event\course_module_viewed::create(
             array(
@@ -304,8 +303,6 @@ if($pageid) {
                 'objectid' => $wiki->id
                 )
             );
-    $event->add_record_snapshot('wiki', $wiki);
-    $event->trigger();
 } else if($wid && $title) {
     $event = \mod_wiki\event\page_viewed::create(
             array(
@@ -320,9 +317,11 @@ if($pageid) {
                 )
             );
     $event->add_record_snapshot('wiki_pages', $page);
-    $event->add_record_snapshot('wiki', $wiki);
-    $event->trigger();
 }
+$event->add_record_snapshot('course_modules', $cm);
+$event->add_record_snapshot('course', $course);
+$event->add_record_snapshot('wiki', $wiki);
+$event->trigger();
 
 $wikipage->print_header();
 $wikipage->print_content();

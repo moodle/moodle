@@ -81,9 +81,10 @@
     $eventdata = array();
     $eventdata['objectid'] = $choice->id;
     $eventdata['context'] = $context;
-    $eventdata['courseid'] = $course->id;
 
     $event = \mod_choice\event\course_module_viewed::create($eventdata);
+    $event->add_record_snapshot('course_modules', $cm);
+    $event->add_record_snapshot('course', $course);
     $event->trigger();
 
     /// Check to see if groups are being used in this choice
