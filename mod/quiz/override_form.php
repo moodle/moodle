@@ -157,10 +157,15 @@ class quiz_override_form extends moodleform {
                 }
 
                 $userchoices = array();
+                $canviewemail = in_array('email', get_extra_user_fields($this->context));
                 foreach ($users as $id => $user) {
                     if (empty($invalidusers[$id]) || (!empty($override) &&
                             $id == $override->userid)) {
-                        $userchoices[$id] = fullname($user) . ', ' . $user->email;
+                        if ($canviewemail) {
+                            $userchoices[$id] = fullname($user) . ', ' . $user->email;
+                        } else {
+                            $userchoices[$id] = fullname($user);
+                        }
                     }
                 }
                 unset($users);
