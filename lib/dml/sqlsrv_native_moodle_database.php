@@ -145,6 +145,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @throws dml_connection_exception if error
      */
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $prefix, array $dboptions=null) {
+        if ($prefix == '' and !$this->external) {
+            // Enforce prefixes for everybody but mysql.
+            throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
+        }
+
         $driverstatus = $this->driver_installed();
 
         if ($driverstatus !== true) {
