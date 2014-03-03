@@ -119,7 +119,6 @@ $scrollpos = optional_param('scrollpos', '', PARAM_INT);
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
         question_edit_setup('editq', '/mod/quiz/edit.php', true);
-$quiz->questions = quiz_clean_layout($quiz->questions);
 
 $defaultcategoryobj = question_make_default_categories($contexts->all());
 $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
@@ -161,23 +160,14 @@ add_to_log($cm->course, 'quiz', 'editquestions',
 // You need mod/quiz:manage in addition to question capabilities to access this page.
 require_capability('mod/quiz:manage', $contexts->lowest());
 
-if (empty($quiz->grades)) {
-    $quiz->grades = quiz_get_all_question_grades($quiz);
-}
-
 // Process commands ============================================================
-if ($quiz->shufflequestions) {
-    // Strip page breaks before processing actions, so that re-ordering works
-    // as expected when shuffle questions is on.
-    $quiz->questions = quiz_repaginate($quiz->questions, 0);
-}
 
 // Get the list of question ids had their check-boxes ticked.
-$selectedquestionids = array();
+$selectedslots = array();
 $params = (array) data_submitted();
 foreach ($params as $key => $value) {
     if (preg_match('!^s([0-9]+)$!', $key, $matches)) {
-        $selectedquestionids[] = $matches[1];
+        $selectedslots[] = $matches[1];
     }
 }
 
@@ -186,15 +176,13 @@ if ($scrollpos) {
     $afteractionurl->param('scrollpos', $scrollpos);
 }
 if (($up = optional_param('up', false, PARAM_INT)) && confirm_sesskey()) {
-    $quiz->questions = quiz_move_question_up($quiz->questions, $up);
-    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
+    quiz_move_question_up($quiz, $up);
     quiz_delete_previews($quiz);
     redirect($afteractionurl);
 }
 
 if (($down = optional_param('down', false, PARAM_INT)) && confirm_sesskey()) {
-    $quiz->questions = quiz_move_question_down($quiz->questions, $down);
-    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
+    quiz_move_question_down($quiz, $down);
     quiz_delete_previews($quiz);
     redirect($afteractionurl);
 }
@@ -202,8 +190,7 @@ if (($down = optional_param('down', false, PARAM_INT)) && confirm_sesskey()) {
 if (optional_param('repaginate', false, PARAM_BOOL) && confirm_sesskey()) {
     // Re-paginate the quiz.
     $questionsperpage = optional_param('questionsperpage', $quiz->questionsperpage, PARAM_INT);
-    $quiz->questions = quiz_repaginate($quiz->questions, $questionsperpage );
-    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
+    quiz_repaginate_questions($quiz->id, $questionsperpage );
     quiz_delete_previews($quiz);
     redirect($afteractionurl);
 }
@@ -248,51 +235,46 @@ if ((optional_param('addrandom', false, PARAM_BOOL)) && confirm_sesskey()) {
 }
 
 if (optional_param('addnewpagesafterselected', null, PARAM_CLEAN) &&
-        !empty($selectedquestionids) && confirm_sesskey()) {
-    foreach ($selectedquestionids as $questionid) {
-        $quiz->questions = quiz_add_page_break_after($quiz->questions, $questionid);
+        !empty($selectedslots) && confirm_sesskey()) {
+    foreach ($selectedslots as $slot) {
+        quiz_add_page_break_after_slot($quiz, $slot);
     }
-    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
     quiz_delete_previews($quiz);
     redirect($afteractionurl);
 }
 
 $addpage = optional_param('addpage', false, PARAM_INT);
 if ($addpage !== false && confirm_sesskey()) {
-    $quiz->questions = quiz_add_page_break_at($quiz->questions, $addpage);
-    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
+    quiz_add_page_break_after_slot($quiz, $addpage);
     quiz_delete_previews($quiz);
     redirect($afteractionurl);
 }
 
 $deleteemptypage = optional_param('deleteemptypage', false, PARAM_INT);
 if (($deleteemptypage !== false) && confirm_sesskey()) {
-    $quiz->questions = quiz_delete_empty_page($quiz->questions, $deleteemptypage);
-    $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
+    quiz_delete_empty_page($quiz, $deleteemptypage);
     quiz_delete_previews($quiz);
     redirect($afteractionurl);
 }
 
 $remove = optional_param('remove', false, PARAM_INT);
-if ($remove && confirm_sesskey()) {
+if ($remove && confirm_sesskey() && quiz_has_question_use($quiz, $remove)) {
     // Remove a question from the quiz.
     // We require the user to have the 'use' capability on the question,
     // so that then can add it back if they remove the wrong one by mistake,
     // but, if the question is missing, it can always be removed.
-    if ($DB->record_exists('question', array('id' => $remove))) {
-        quiz_require_question_use($remove);
-    }
-    quiz_remove_question($quiz, $remove);
+    quiz_remove_slot($quiz, $remove);
     quiz_delete_previews($quiz);
     quiz_update_sumgrades($quiz);
     redirect($afteractionurl);
 }
 
 if (optional_param('quizdeleteselected', false, PARAM_BOOL) &&
-        !empty($selectedquestionids) && confirm_sesskey()) {
-    foreach ($selectedquestionids as $questionid) {
-        if (quiz_has_question_use($questionid)) {
-            quiz_remove_question($quiz, $questionid);
+        !empty($selectedslots) && confirm_sesskey()) {
+    // Work backwards, since removing a question renumbers following slots.
+    foreach (array_reverse($selectedslots) as $slot) {
+        if (quiz_has_question_use($quiz, $slot)) {
+            quiz_remove_slot($quiz, $slot);
         }
     }
     quiz_delete_previews($quiz);
@@ -304,8 +286,6 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
     $deletepreviews = false;
     $recomputesummarks = false;
 
-    $oldquestions = explode(',', $quiz->questions); // The questions in the old order.
-    $questions = array(); // For questions in the new order.
     $rawdata = (array) data_submitted();
     $moveonpagequestions = array();
     $moveselectedonpage = optional_param('moveselectedonpagetop', 0, PARAM_INT);
@@ -313,73 +293,111 @@ if (optional_param('savechanges', false, PARAM_BOOL) && confirm_sesskey()) {
         $moveselectedonpage = optional_param('moveselectedonpagebottom', 0, PARAM_INT);
     }
 
+    $newslotorder = array();
     foreach ($rawdata as $key => $value) {
         if (preg_match('!^g([0-9]+)$!', $key, $matches)) {
             // Parse input for question -> grades.
-            $questionid = $matches[1];
-            $quiz->grades[$questionid] = unformat_float($value);
-            quiz_update_question_instance($quiz->grades[$questionid], $questionid, $quiz);
+            $slotnumber = $matches[1];
+            $newgrade = unformat_float($value);
+            quiz_update_slot_maxmark($DB->get_record('quiz_slots',
+                    array('quizid' => $quiz->id, 'slot' => $slotnumber), '*', MUST_EXIST), $newgrade);
             $deletepreviews = true;
             $recomputesummarks = true;
 
         } else if (preg_match('!^o(pg)?([0-9]+)$!', $key, $matches)) {
             // Parse input for ordering info.
-            $questionid = $matches[2];
+            $slotnumber = $matches[2];
             // Make sure two questions don't overwrite each other. If we get a second
             // question with the same position, shift the second one along to the next gap.
             $value = clean_param($value, PARAM_INT);
-            while (array_key_exists($value, $questions)) {
+            while (array_key_exists($value, $newslotorder)) {
                 $value++;
             }
             if ($matches[1]) {
                 // This is a page-break entry.
-                $questions[$value] = 0;
+                $newslotorder[$value] = 0;
             } else {
-                $questions[$value] = $questionid;
+                $newslotorder[$value] = $slotnumber;
             }
             $deletepreviews = true;
         }
     }
 
-    // If ordering info was given, reorder the questions.
-    if ($questions) {
-        ksort($questions);
-        $questions[] = 0;
-        $quiz->questions = implode(',', $questions);
-        $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
-        $deletepreviews = true;
-    }
-
-    // Get a list of questions to move, later to be added in the appropriate
-    // place in the string.
     if ($moveselectedonpage) {
-        $questions = explode(',', $quiz->questions);
-        $newquestions = array();
-        // Remove the questions from their original positions first.
-        foreach ($questions as $questionid) {
-            if (!in_array($questionid, $selectedquestionids)) {
-                $newquestions[] = $questionid;
+
+        // Make up a $newslotorder, then let the next if statement do the work.
+        $oldslots = $DB->get_records('quiz_slots', array('quizid' => $quiz->id), 'slot');
+
+        $beforepage = array();
+        $onpage = array();
+        $afterpage = array();
+        foreach ($oldslots as $oldslot) {
+            if (in_array($oldslot->slot, $selectedslots)) {
+                $onpage[] = $oldslot;
+            } else if ($oldslot->page <= $moveselectedonpage) {
+                $beforepage[] = $oldslot;
+            } else {
+                $afterpage[] = $oldslot;
             }
         }
-        $questions = $newquestions;
 
-        // Move to the end of the selected page.
-        $pagebreakpositions = array_keys($questions, 0);
-        $numpages = count($pagebreakpositions);
-
-        // Ensure the target page number is in range.
-        for ($i = $moveselectedonpage; $i > $numpages; $i--) {
-            $questions[] = 0;
-            $pagebreakpositions[] = count($questions) - 1;
+        $newslotorder = array();
+        $currentpage = 1;
+        $index = 10;
+        foreach ($beforepage as $slot) {
+            while ($currentpage < $slot->page) {
+                $newslotorder[$index] = 0;
+                $index += 10;
+                $currentpage += 1;
+            }
+            $newslotorder[$index] = $slot->slot;
+            $index += 10;
         }
-        $moveselectedpos = $pagebreakpositions[$moveselectedonpage - 1];
 
-        // Do the move.
-        array_splice($questions, $moveselectedpos, 0, $selectedquestionids);
-        $quiz->questions = implode(',', $questions);
+        while ($currentpage < $moveselectedonpage) {
+            $newslotorder[$index] = 0;
+            $index += 10;
+            $currentpage += 1;
+        }
+        foreach ($onpage as $slot) {
+            $newslotorder[$index] = $slot->slot;
+            $index += 10;
+        }
 
-        // Update the database.
-        $DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id));
+        foreach ($afterpage as $slot) {
+            while ($currentpage < $slot->page) {
+                $newslotorder[$index] = 0;
+                $index += 10;
+                $currentpage += 1;
+            }
+            $newslotorder[$index] = $slot->slot;
+            $index += 10;
+        }
+    }
+
+    // If ordering info was given, reorder the questions.
+    if ($newslotorder) {
+        ksort($newslotorder);
+        $currentpage = 1;
+        $currentslot = 1;
+        $slotreorder = array();
+        $slotpages = array();
+        foreach ($newslotorder as $slotnumber) {
+            if ($slotnumber == 0) {
+                $currentpage += 1;
+                continue;
+            }
+            $slotreorder[$slotnumber] = $currentslot;
+            $slotpages[$currentslot] = $currentpage;
+            $currentslot += 1;
+        }
+        $trans = $DB->start_delegated_transaction();
+        update_field_with_unique_index('quiz_slots',
+                'slot', $slotreorder, array('quizid' => $quiz->id));
+        foreach ($slotpages as $slotnumber => $page) {
+            $DB->set_field('quiz_slots', 'page', $page, array('quizid' => $quiz->id, 'slot' => $slotnumber));
+        }
+        $trans->allow_commit();
         $deletepreviews = true;
     }
 
@@ -421,7 +439,11 @@ echo $OUTPUT->header();
 $quizeditconfig = new stdClass();
 $quizeditconfig->url = $thispageurl->out(true, array('qbanktool' => '0'));
 $quizeditconfig->dialoglisteners = array();
-$numberoflisteners = max(quiz_number_of_pages($quiz->questions), 1);
+$numberoflisteners = $DB->get_field_sql("
+    SELECT COALESCE(MAX(page), 1)
+      FROM {quiz_slots}
+     WHERE quizid = ?", array($quiz->id));
+
 for ($pageiter = 1; $pageiter <= $numberoflisteners; $pageiter++) {
     $quizeditconfig->dialoglisteners[] = 'addrandomdialoglaunch_' . $pageiter;
 }
@@ -487,7 +509,6 @@ echo '<div class="quizcontents ' . $quizcontentsclass . '" id="quizcontentsblock
 if ($quiz->shufflequestions) {
     $repaginatingdisabledhtml = 'disabled="disabled"';
     $repaginatingdisabled = true;
-    $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
 } else {
     $repaginatingdisabledhtml = '';
     $repaginatingdisabled = false;

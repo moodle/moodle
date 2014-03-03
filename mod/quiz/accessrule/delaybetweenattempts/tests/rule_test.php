@@ -44,7 +44,6 @@ class quizaccess_delaybetweenattempts_testcase extends basic_testcase {
         $quiz->delay1 = 1000;
         $quiz->delay2 = 0;
         $quiz->timeclose = 0;
-        $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
@@ -79,7 +78,6 @@ class quizaccess_delaybetweenattempts_testcase extends basic_testcase {
         $quiz->delay1 = 0;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
-        $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
@@ -119,7 +117,6 @@ class quizaccess_delaybetweenattempts_testcase extends basic_testcase {
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
-        $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
@@ -171,7 +168,6 @@ class quizaccess_delaybetweenattempts_testcase extends basic_testcase {
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 15000;
-        $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);
@@ -228,7 +224,6 @@ class quizaccess_delaybetweenattempts_testcase extends basic_testcase {
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
-        $quiz->questions = '';
         $cm = new stdClass();
         $cm->id = 0;
         $quizobj = new quiz($quiz, $cm, null);

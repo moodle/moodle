@@ -33,7 +33,6 @@
         <FIELD NAME="navmethod" TYPE="char" LENGTH="16" NOTNULL="true" DEFAULT="free" SEQUENCE="false" COMMENT="Any constraints on how the user is allowed to navigate around the quiz. Currently recognised values are 'free' and 'seq'."/>
         <FIELD NAME="shufflequestions" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the question order should be shuffled for each attempt."/>
         <FIELD NAME="shuffleanswers" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether the parts of the question should be shuffled, in those question types that support it."/>
-        <FIELD NAME="questions" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Comma-separated list of question ids, with 0s for page breaks. The quiz layout. See also the quiz_question_instances table."/>
         <FIELD NAME="sumgrades" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The total of all the question instance maxmarks."/>
         <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The total that the quiz overall grade is scaled to be out of."/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The time when the quiz was added to the course."/>
@@ -52,6 +51,57 @@
       <INDEXES>
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="quiz_slots" COMMENT="Stores the question used in a quiz, with the order, and for each question, which page it appears on, and the maximum mark (weight).">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="slot" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Where this question comes in order in the list of questions in this quiz. Like question_attempts.slot."/>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id."/>
+        <FIELD NAME="page" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The page number that this questions appears on. If the question in slot n appears on page p, then the question in slot n+1 must appear on page p or p+1. Well, except that when a quiz is being created, there may be empty pages, which would cause the page number to jump here."/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id."/>
+        <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7" COMMENT="How many marks this question contributes to quiz.sumgrades."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="quizid-slot" UNIQUE="true" FIELDS="quizid, slot"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="quiz_feedback" COMMENT="Feedback given to students based on which grade band their overall score lies.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id."/>
+        <FIELD NAME="feedbacktext" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The feedback to show for a attempt where mingrade &lt;= attempt grade &lt; maxgrade. See function quiz_feedback_for_grade in mod/quiz/locallib.php."/>
+        <FIELD NAME="feedbacktextformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="mingrade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The lower limit of this grade band. Inclusive."/>
+        <FIELD NAME="maxgrade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The upper limit of this grade band. Exclusive."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="quiz_overrides" COMMENT="The overrides to quiz settings on a per-user and per-group basis.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="quiz" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign key references groups.id.  Can be null if this is a per-user override."/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign key references user.id.  Can be null if this is a per-group override."/>
+        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time at which students may start attempting this quiz. Can be null, in which case the quiz default is used."/>
+        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time by which students must have completed their attempt.  Can be null, in which case the quiz default is used."/>
+        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time limit in seconds.  Can be null, in which case the quiz default is used."/>
+        <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Quiz password.  Can be null, in which case the quiz default is used."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id"/>
+        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
     <TABLE NAME="quiz_attempts" COMMENT="Stores users attempts at quizzes.">
       <FIELDS>
@@ -96,52 +146,6 @@
       <INDEXES>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
-    </TABLE>
-    <TABLE NAME="quiz_question_instances" COMMENT="Stores the maximum possible grade (weight) for each question used in a quiz.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id."/>
-        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references question.id."/>
-        <FIELD NAME="maxmark" TYPE="number" LENGTH="12" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="7" COMMENT="How many marks this question contributes to quiz.sumgrades."/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
-        <KEY NAME="questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="question" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="quiz_feedback" COMMENT="Feedback given to students based on which grade band their overall score lies.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id."/>
-        <FIELD NAME="feedbacktext" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The feedback to show for a attempt where mingrade &lt;= attempt grade &lt; maxgrade. See function quiz_feedback_for_grade in mod/quiz/locallib.php."/>
-        <FIELD NAME="feedbacktextformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="mingrade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The lower limit of this grade band. Inclusive."/>
-        <FIELD NAME="maxgrade" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="5" COMMENT="The upper limit of this grade band. Exclusive."/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="quiz_overrides" COMMENT="The overrides to quiz settings on a per-user and per-group basis.">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="quiz" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Foreign key references quiz.id"/>
-        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign key references groups.id.  Can be null if this is a per-user override."/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Foreign key references user.id.  Can be null if this is a per-group override."/>
-        <FIELD NAME="timeopen" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time at which students may start attempting this quiz. Can be null, in which case the quiz default is used."/>
-        <FIELD NAME="timeclose" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time by which students must have completed their attempt.  Can be null, in which case the quiz default is used."/>
-        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time limit in seconds.  Can be null, in which case the quiz default is used."/>
-        <FIELD NAME="attempts" TYPE="int" LENGTH="6" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="password" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Quiz password.  Can be null, in which case the quiz default is used."/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id"/>
-        <KEY NAME="groupid" TYPE="foreign" FIELDS="groupid" REFTABLE="groups" REFFIELDS="id"/>
-        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
-      </KEYS>
     </TABLE>
     <TABLE NAME="quiz_reports" COMMENT="Lists all the installed quiz reports and their display order and so on. No need to worry about deleting old records. Only records with an equivalent directory are displayed.">
       <FIELDS>

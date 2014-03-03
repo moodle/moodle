@@ -78,6 +78,15 @@ function quiz_report_unindex($datum) {
 }
 
 /**
+ * Are there any questions in this quiz?
+ * @param int $quizid the quiz id.
+ */
+function quiz_has_questions($quizid) {
+    global $DB;
+    return $DB->record_exists('quiz_slots', array('quizid' => $quizid));
+}
+
+/**
  * Get the slots of real questions (not descriptions) in this quiz, in order.
  * @param object $quiz the quiz.
  * @return array of slot => $question object with fields
@@ -86,41 +95,23 @@ function quiz_report_unindex($datum) {
 function quiz_report_get_significant_questions($quiz) {
     global $DB;
 
-    $questionids = quiz_questions_in_quiz($quiz->questions);
-    if (empty($questionids)) {
-        return array();
-    }
+    $qsbyslot = $DB->get_records_sql("
+            SELECT slot.slot,
+                   q.id,
+                   q.length,
+                   slot.maxmark
 
-    list($usql, $params) = $DB->get_in_or_equal(explode(',', $questionids));
-    $params[] = $quiz->id;
-    $questions = $DB->get_records_sql("
-SELECT
-    q.id,
-    q.length,
-    qqi.maxmark
+              FROM {question} q
+              JOIN {quiz_slots} slot ON slot.questionid = q.id
 
-FROM {question} q
-JOIN {quiz_question_instances} qqi ON qqi.questionid = q.id
+             WHERE slot.quizid = ?
+               AND q.length > 0
 
-WHERE
-    q.id $usql AND
-    qqi.quizid = ? AND
-    q.length > 0", $params);
+          ORDER BY slot.slot", array($quiz->id));
 
-    $qsbyslot = array();
     $number = 1;
-    foreach (explode(',', $questionids) as $key => $id) {
-        if (!array_key_exists($id, $questions)) {
-            continue;
-        }
-
-        $slot = $key + 1;
-        $question = $questions[$id];
-        $question->slot = $slot;
+    foreach ($qsbyslot as $question) {
         $question->number = $number;
-
-        $qsbyslot[$slot] = $question;
-
         $number += $question->length;
     }
 
