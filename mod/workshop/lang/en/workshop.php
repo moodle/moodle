@@ -394,8 +394,11 @@ $string['overallmark'] = 'Overall Mark';
 $string['scaledmark'] = 'Scaled Mark';
 $string['referencemarker'] = 'Reference Marker';
 $string['submittedby'] = 'Submitted by';
-$string['submittedidnumber'] = 'Submitter ID Number';
+$string['submitteridnumber'] = 'Submitter ID Number';
 $string['markeridnumber'] = 'Marker ID Number';
 $string['markername'] = 'Marker Name';
 $string['comments'] = 'Comments';
 $string['feedback'] = 'Feedback';
+
+
+$string['wordcount'] = 'Word count: {$a}';
