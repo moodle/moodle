@@ -3,6 +3,8 @@ information provided here is intended especially for theme designer.
 
 === 2.7 ===
 
+* CSS related functions in theme class and csslib.php were refactored, addons that are
+  using this private API need to be updated
 * Please update your css to use 'tr:nth-of-type(odd/even)' instead of '.ro/.r1' to apply tr specific css for various tables.
   These classes are deprecated now and will be removed in Moodle 2.9. This has done to better support styling tables that will be altered by JavaScript.
   Here is an example to update your css:
