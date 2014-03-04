@@ -8,10 +8,7 @@ Feature: Enable/disable password field based on authentication selected.
   Scenario: Verify the password field is enabled/disabled based on authentication selected, in user edit advanced page.
     Given I log in as "admin"
     And I follow "My home"
-    And I expand "Site administration" node
-    And I expand "Users" node
-    And I expand "Accounts" node
-    When I follow "Add a new user"
+    When I navigate to "Add a new user" node in "Site administration,Users,Accounts"
     Then the "newpassword" "field" should be enabled
     And I set the field "auth" to "Web services authentication"
     And the "newpassword" "field" should be disabled

@@ -7,9 +7,7 @@ Feature: List the system steps definitions
   Background:
     Given I am on homepage
     And I log in as "admin"
-    And I expand "Site administration" node
-    And I expand "Development" node
-    And  I follow "Acceptance testing"
+    And I navigate to "Acceptance testing" node in "Site administration,Development"
 
   @javascript
   Scenario: Accessing the list
