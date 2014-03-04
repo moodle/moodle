@@ -9,6 +9,7 @@ DEPRECATIONS:
 * $module uses in mod/xxx/version.php files is now deprecated. Please use $plugin instead. It will be removed in Moodle 2.10.
 * Update init methods in all event classes - "level" property was renamed to "edulevel", the level property is now deprecated.
 * Abstract class \core\event\course_module_instances_list_viewed is deprecated now, use \core\event\instances_list_viewed instead.
+* Abstract class core\event\content_viewed has been deprecated. Please extend base event or other relevant abstract class.
 * mod_book\event\instances_list_viewed has been deprecated. Please use mod_book\event\course_module_instance_list_viewed instead.
 * mod_chat\event\instances_list_viewed has been deprecated. Please use mod_chat\event\course_module_instance_list_viewed instead.
 * mod_choice\event\instances_list_viewed has been deprecated. Please use mod_choice\event\course_module_instance_list_viewed instead.

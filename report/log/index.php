@@ -115,11 +115,10 @@ $context = context_course::instance($course->id);
 
 require_capability('report/log:view', $context);
 
-// Trigger a content view event.
-$event = \report_log\event\content_viewed::create(array('courseid' => $course->id,
-                                                        'other'    => array('content' => 'logs')));
-$event->set_page_detail();
-$event->set_legacy_logdata(array($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->id));
+// Trigger a report viewed event.
+$event = \report_log\event\report_viewed::create(array('context' => $context, 'relateduserid' => $user,
+        'other' => array('groupid' => $group, 'date' => $date, 'modid' => $modid, 'modaction' => $modaction,
+        'logformat' => $logformat)));
 $event->trigger();
 
 if (!empty($page)) {

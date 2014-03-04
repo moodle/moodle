@@ -14,74 +14,81 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\event;
-
-defined('MOODLE_INTERNAL') || die();
-
 /**
- * Event for when a new note entry viewed.
+ * Event when user stats report is viewed.
  *
- * @package    core
+ * @package    report_stats
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace report_stats\event;
 
 /**
- * Class note_viewed
+ * Event triggered, when user stats report is viewed.
  *
- * Class for event to be triggered when a note is viewed.
- *
- * @package    core
+ * @package    report_stats
  * @copyright  2013 Ankit Agarwal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class notes_viewed extends \core\event\base {
+class user_report_viewed extends \core\event\base {
 
     /**
-     * Set basic properties for the event.
+     * Init method.
+     *
+     * @return void
      */
     protected function init() {
         $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     /**
-     * Returns localised general event name.
+     * Return localised event name.
      *
      * @return string
      */
     public static function get_name() {
-        return get_string("eventnotesviewed", "core_notes");
+        return get_string('eventuserreportviewed', 'report_stats');
     }
 
     /**
-     * Returns non-localised event description with id's for admin use only.
+     * Returns description of what happened.
      *
      * @return string
      */
     public function get_description() {
-        if (!empty($this->relateduserid)) {
-            return 'Note for user with id "'. $this->relateduserid . '" was viewed by user with id "'. $this->userid . '"';
-        } else {
-            return 'Note for course with id "'. $this->courseid . '" was viewed by user with id "'. $this->userid . '"';
-        }
+        return 'The user with id ' . $this->userid . ' viewed user statistics report for user with id ' . $this->relateduserid;
+    }
+
+    /**
+     * Return the legacy event log data.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $url = 'report/stats/user.php?id=' . $this->relateduserid . '&course=' . $this->courseid;
+        return (array($this->courseid, 'course', 'report stats', $url, $this->courseid));
     }
 
     /**
      * Returns relevant URL.
+     *
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/notes/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
+        return new \moodle_url('report/stats/user.php', array('id' => $this->relateduserid, 'course' => $this->courseid));
     }
 
     /**
-     * replace add_to_log() statement.
+     * Custom validation.
      *
-     * @return array of parameters to be passed to legacy add_to_log() function.
+     * @throws \coding_exception
+     * @return void
      */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'notes', 'view', 'index.php?course=' . $this->courseid.'&amp;user=' . $this->relateduserid,
-            'view notes');
+    protected function validate_data() {
+        if (empty($this->data['relateduserid'])) {
+            throw new \coding_exception('The property relateduserid must be set.');
+        }
     }
 }
+

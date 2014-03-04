@@ -24,6 +24,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['eventreportviewed'] = 'Log report viewed';
+$string['eventuserreportviewed'] = 'User log report viewed';
 $string['log:view'] = 'View course logs';
 $string['log:viewtoday'] = 'View today\'s logs';
 $string['page'] = 'Page {$a}';

@@ -16,8 +16,11 @@
 /**
  * Abstract event for content viewing.
  *
+ * This class has been deprecated, please extend base event or other relevent abstract class.
+ *
  * @package    core
  * @copyright  2013 Ankit Agarwal
+ * @deprecated since Moodle 2.7
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -25,28 +28,17 @@ namespace core\event;
 
 defined('MOODLE_INTERNAL') || die();
 
+debugging('core\event\content_viewed has been deprecated. Please extend base event or other relevant abstract class.',
+        DEBUG_DEVELOPER);
+
 /**
  * Class content_viewed.
  *
- * Base class for a content view event. Each plugin must extend this to create their own content view event.
- *
- * An example usage:-
- *  $event = \report_participation\event\content_viewed::create(array('courseid' => $course->id,
- *          'other' => array('content' => 'participants'));
- *  $event->set_page_detail();
- *  $event->set_legacy_logdata(array($course->id, "course", "report participation",
- *          "report/participation/index.php?id=$course->id", $course->id));
- *  $event->trigger();
- * where \report_participation\event\content_viewed extends \core\event\content_viewed
- *
- * @property-read array $other {
- *      Extra information about event.
- *
- *      @type string content viewed content identifier.
- * }
+ * This class has been deprecated, please extend base event or other relevent abstract class.
  *
  * @package    core
  * @copyright  2013 Ankit Agarwal
+ * @deprecated since Moodle 2.7
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class content_viewed extends base {

@@ -69,10 +69,8 @@ $PAGE->set_url(new moodle_url('/report/stats/index.php', array('course' => $cour
 navigation_node::override_active_url(new moodle_url('/report/stats/index.php', array('course' => $course->id)));
 
 // Trigger a content view event.
-$event = \report_stats\event\content_viewed::create(array('courseid' => $course->id,
-                                                          'other'    => array('content' => 'stats')));
-$event->set_page_detail();
-$event->set_legacy_logdata(array($course->id, "course", "report stats", "report/stats/index.php?course=$course->id", $course->id));
+$event = \report_stats\event\report_viewed::create(array('context' => $context, 'relateduserid' => $userid,
+        'other' => array('report' => $report, 'time' => $time, 'mode' => $mode)));
 $event->trigger();
 stats_check_uptodate($course->id);
 
