@@ -153,7 +153,7 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
 
     if (is_int($page) && $page >= 1) {
         // Adding on a given page.
-        $lastslotbefore = 1;
+        $lastslotbefore = 0;
         foreach (array_reverse($slots) as $otherslot) {
             if ($otherslot->page > $page) {
                 $DB->set_field('quiz_slots', 'slot', $otherslot->slot + 1, array('id' => $otherslot->id));
