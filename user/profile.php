@@ -116,11 +116,11 @@ if (isguestuser()) {     // Guests can never edit their profile.
 if (has_capability('moodle/user:viewhiddendetails', $context)) {
     $hiddenfields = array();
 } else {
-    $hiddenfields = array_flip(explode(', ', $CFG->hiddenuserfields));
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
 }
 
 if (has_capability('moodle/site:viewuseridentity', $context)) {
-    $identityfields = array_flip(explode(', ', $CFG->showuseridentity));
+    $identityfields = array_flip(explode(',', $CFG->showuseridentity));
 } else {
     $identityfields = array();
 }

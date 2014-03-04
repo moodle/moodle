@@ -199,7 +199,7 @@ if ($course->id == SITEID) {
 if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
     $hiddenfields = array();  // Teachers and admins are allowed to see everything.
 } else {
-    $hiddenfields = array_flip(explode(', ', $CFG->hiddenuserfields));
+    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
 }
 
 if (isset($hiddenfields['lastaccess'])) {
@@ -567,7 +567,7 @@ if ($mode === MODE_USERDETAILS) {    // Print simple listing.
             $firstinitial = $table->get_initial_first();
             $lastinitial  = $table->get_initial_last();
             $strall = get_string('all');
-            $alpha  = explode(', ', get_string('alphabet', 'langconfig'));
+            $alpha  = explode(',', get_string('alphabet', 'langconfig'));
 
             // Bar of first initials.
 
@@ -627,7 +627,7 @@ if ($mode === MODE_USERDETAILS) {    // Print simple listing.
                 if (has_capability('moodle/course:viewhiddenuserfields', $context)) {
                     $hiddenfields = array();
                 } else {
-                    $hiddenfields = array_flip(explode(', ', $CFG->hiddenuserfields));
+                    $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
                 }
                 $table = new html_table();
                 $table->attributes['class'] = 'userinfobox';
